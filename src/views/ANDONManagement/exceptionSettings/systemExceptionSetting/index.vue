@@ -26,7 +26,7 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <topOpts :icon="'el-icon-remove-outline'" @add="handleCancel" :addText="'批量取消'"></topOpts>
+          <topOpts @add="addOrUpdateHandle('', 'add')"></topOpts>
           <div></div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -42,37 +42,31 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="list" @sort-change="sortChange" class="dataTable" border
-          ref="listTable" custom-column hasC @selection-change="handleSelectAb">
-          <el-table-column prop="orderNo" label="申请单号" min-width="200" sortable="custom" />
-          <el-table-column prop="type" label="申请类型" min-width="120" sortable="custom">
+          ref="listTable" custom-column>
+          <el-table-column prop="code" label="异常编码" min-width="120" sortable="custom" />
+          <el-table-column prop="name" label="异常名称" min-width="120" sortable="custom" />
+          <el-table-column prop="cron" label="执行周期" min-width="120" sortable="custom" />
+          <el-table-column prop="remark" label="说明" min-width="160" sortable="custom" />
+
+          <el-table-column prop="status" label="启用状态" min-width="80" align="center">
+              <template slot-scope="scope">
+                <el-switch @change="changeState(scope.row)" v-model="scope.row.status"
+                active-value="enable" inactive-value="disabled">
+                </el-switch>
+              </template>
+            </el-table-column>
+
+          <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
+          <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
+          <el-table-column label="操作" width="200" fixed="right">
             <template slot-scope="scope">
-              <el-tag type='warning' v-if="scope.row.type === 'custom'">自定义异常</el-tag>
-              <el-tag type='danger' v-else>系统异常</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="abnormalType" label="异常类型" min-width="120" sortable="custom">
-            <template slot-scope="scope">
-              <el-tag>{{ scope.row.abnormalType }}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="abnormalContent" label="异常内容" min-width="120" sortable="custom">
-            <template slot-scope="scope">
-              <el-tag type="success">{{ scope.row.abnormalContent }}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="equipmentName" label="关联设备" min-width="120" sortable="custom" />
-          <el-table-column prop="productDrawingNo" label="关联产品" min-width="160" sortable="custom" />
-          <el-table-column prop="createByName" label="发起人" min-width="120" sortable="custom" />
-          <el-table-column prop="createTime" label="发起时间" min-width="180" sortable="custom" />
-          <!-- <el-table-column prop="personId" label="响应人" min-width="160" sortable="custom" />
-          <el-table-column prop="processDate" label="响应时间" min-width="160" sortable="custom" /> -->
-          <el-table-column label="操作" width="150" fixed="right">
-            <template slot-scope="scope">
-              <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id)">处理</el-button>
-              <el-button size="mini" type="text" @click="handleCancel(scope.row.flowTaskOperatorId)">取消</el-button>
+              <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)" :delDisabled="scope.row.status === 'enable' ? true : false">
+                  <el-button size="mini" type="text" @click.native="addOrUpdateHandle(scope.row.id,'look')">查看详情</el-button>
+                </tableOpts>
             </template>
           </el-table-column>
         </JNPF-table>
+
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData"
           class="pagination" style="text-align: left; padding-left: 20px;" />
       </div>
@@ -81,84 +75,53 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch"
       @close="superQueryVisible = false" />
-    <el-dialog title="取消" :close-on-click-modal="false" :visible.sync="visible" class="JNPF-dialog JNPF-dialog_center"
-      lock-scroll append-to-body width='600px'>
-      <el-form ref="dealForm" :model="dealForm" label-width="120px">
-        <el-form-item label="取消描述：" prop="processDescription">
-          <el-input v-model="dealForm.processDescription" placeholder="请输入取消描述" type="textarea" :rows="4" />
-        </el-form-item>
-
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="handleApproval()" :loading="approvalBtnLoading">
-          {{ $t('common.confirmButton') }}
-        </el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
 <script>
 import JNPFForm from './Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getAbnoramlData } from '@/api/abnormalManagement/index.js'
-import { Reject, batchReject } from '@/api/workFlow/FlowBefore'
+import { getSystemAbnoramlData ,delSystemData, updateState} from '@/api/abnormalManagement/index.js'
 export default {
-  components: { SuperQuery, JNPFForm },
+  components: { SuperQuery,JNPFForm },
   data() {
     return {
       superQueryVisible: false,
       superQueryJson: [
         {
-          prop: 'orderNo',
-          label: '申请单号',
+          prop: 'code',
+          label: '异常编码',
           type: 'input'
         },
         {
-          prop: 'type',
-          label: '申请类型',
+          prop: 'name',
+          label: '异常名称',
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: '说明',
+          type: 'input'
+        },
+        {
+          prop: 'status',
+          label: '启用状态',
           type: 'select',
-          options: [
-            { label: '自定义异常', value: 'custom' },
-            { label: '系统异常', value: 'system' }
-          ]
-        },
-        {
-          prop: 'abnormalType',
-          label: '异常类型',
-          type: 'input'
-        },
-        {
-          prop: 'abnormalContent',
-          label: '异常内容',
-          type: 'input'
-        },
-        {
-          prop: 'equipmentName',
-          label: '关联设备',
-          type: 'input'
-        },
-        {
-          prop: 'productDrawingNo',
-          label: '关联产品',
-          type: 'input'
+          options:[
+            { value: 'enable', label: '启用' },
+            { value: 'disabled', label: '禁用' },
+          ],
         },
         {
           prop: 'createByName',
-          label: '发起人',
+          label: '创建人',
           type: 'input'
         },
         {
           prop: 'createTime',
-          label: '发起时间',
+          label: '创建时间',
           type: 'datetime',
           valueFormat: "yyyy-MM-dd HH:mm:ss",
-        },
-        {
-          prop: 'personId',
-          label: '响应人',
-          type: 'input'
         },
       ],
       visible: false,
@@ -175,66 +138,32 @@ export default {
           asc: false,
           column: "create_time"
         }],
-        abnormalContent: "",
-        abnormalContentId: '',
-        abnormalType: "",
-        abnormalTypeId: '',
+        pageNum: 1,
+        pageSize: 20,
+        code: "",
         createByName: "",
         endTime: "",
         endUpdateTime: "",
-        equipmentName: "",
         keyword: "",
-        orderNo: "",
-        pageNum: 1,
-        pageSize: 20,
-        processEndTime: "",
-        processStartTime: "",
-        processStatus: "processing",
-        productionOrderNo: "",
+        name: "",
         startTime: "",
         startUpdateTime: "",
+        status: "",
         superQuery: {},
-        totalRowFlag: false,
-        type: "",
-        module: ''
+        totalRowFlag: false
       },
-      typeList: [
-        { label: '自定义异常', value: 'custom' },
-        { label: '系统异常', value: 'system' }
-      ],
       formVisible: false,
       basicQuery: {},
       superQuery: {},
       searchList: [
-        { fieldValue: '', field: 'orderNo', label: '申请单号', prop: 'orderNo', symbol: 'like', searchType: 1 },
-        { fieldValue: '', field: 'type', label: '申请类型', prop: 'type', symbol: 'like', searchType: 4, options: [{ label: '自定义异常', value: 'custom' }, { label: '系统异常', value: 'system' }] },
-        { fieldValue: '', field: 'abnormalType', label: '异常类型', prop: 'abnormalType', symbol: 'like', searchType: 1 },
-        { fieldValue: '', field: 'abnormalContent', label: '异常内容', prop: 'abnormalContent', symbol: 'like', searchType: 1 },
+        { fieldValue: '', field: 'code', label: '异常编码', prop: 'code', symbol: 'like', searchType: 1 },
+        { fieldValue: '', field: 'name', label: '异常名称', prop: 'name', symbol: 'like', searchType: 1 },
       ],
-      selectAb: [],
-      dealForm: {
-        processDescription: '',
-      },
-      batchId: ''
     }
   },
   created() {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.initData()
-  },
-  watch: {
-    '$route.query.abnormalType': {
-      immediate: true,
-      handler(val) {
-        if (val) {
-          this.initListQuery.abnormalType = val
-          this.searchList.forEach(item=>{
-            if (item.field === 'abnormalType') item.fieldValue = val
-          })
-        }
-      },
-      deep: true
-    },
   },
   methods: {
     superQuerySearch(query) {
@@ -244,6 +173,13 @@ export default {
     },
     columnSetFun() {
       this.$refs.listTable.showDrawer()
+    },
+    changeState(row) {
+      updateState(row).then(res => {
+        if (res.msg === 'Success') {
+          this.initData()
+        }
+      })
     },
     sortChange({ prop, order }) {
       let newProp = ''
@@ -262,17 +198,17 @@ export default {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
-      getAbnoramlData(this.listQuery).then((res) => {
+      getSystemAbnoramlData(this.listQuery).then((res) => {
         this.list = res.data.records || []
         this.total = res.data.total
         this.listLoading = false
       }).catch(() => this.listLoading = false)
     },
     // 新增数据
-    addOrUpdateHandle(id) {
+    addOrUpdateHandle(id,btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.JNPFForm.init(id)
+        this.$refs.JNPFForm.init(id,btnType)
       })
     },
     search(type) {
@@ -305,32 +241,18 @@ export default {
       this.searchList.forEach(item => { item.fieldValue = '' })
       this.search()
     },
-    handleSelectAb(val) {
-      this.selectAb = val
-    },
-    handleCancel(id) {
-      if (!id) {
-        if (!this.selectAb.length) return this.$message.error("请选择您要取消的数据!")
-        this.batchFlag = ''
-      } else {
-        this.batchId = id
-      }
-      this.visible = true
-      this.$nextTick(() => { this.$refs.dealForm.resetFields() })
-    },
-    handleApproval() {
-      this.approvalBtnLoading = true
-
-      let flowModel = {
-        ids: !this.batchId ? this.selectAb.map(item => item.flowTaskOperatorId) : [this.batchId],
-        handleOpinion: this.dealForm.processDescription
-      }
-      batchReject(flowModel).then(res => {
-        this.$message({ type: 'success', message: '处理成功', duration: 1000 })
-        this.approvalBtnLoading = false
-        this.visible = false
-        this.initData()
-      }).catch(() => { this.approvalBtnLoading = false })
+    handleDel(id) {
+      this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
+        type: 'warning'
+      }).then(() => {
+        delSystemData(id).then(res => {
+          this.initData()
+          this.$message({
+            type: 'success',
+            message: '删除成功'
+          });
+        })
+      }).catch(() => { });
     },
   }
 }

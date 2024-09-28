@@ -6,24 +6,19 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.orderNo" placeholder="请输入单号" clearable @keyup.enter.native="search()" />
+                <el-input v-model="orderForm.orderNo" placeholder="单号" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.partnerName" placeholder="请输入客户名称" clearable
+                <el-input v-model="orderForm.partnerName" placeholder="供应商名称" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
+        
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.customerProductNo" placeholder="请输入客户料号" clearable
-                  @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable
+                <el-input v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>

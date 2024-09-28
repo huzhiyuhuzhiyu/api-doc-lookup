@@ -8,7 +8,7 @@
               <el-form-item>
                 <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="'请输入' + item.label"
                   clearable @keyup.enter.native="search('basic')" />
-                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="'请输入' + item.label"
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="'请选择' + item.label"
                   clearable>
                   <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
                     :value="item2.value"></el-option>
@@ -46,12 +46,20 @@
           <el-table-column prop="orderNo" label="申请单号" min-width="200" sortable="custom" />
           <el-table-column prop="type" label="申请类型" min-width="120" sortable="custom">
             <template slot-scope="scope">
-              <div v-if="scope.row.type === 'custom'">自定义异常</div>
-              <div v-else>系统异常</div>
+              <el-tag type='warning' v-if="scope.row.type === 'custom'">自定义异常</el-tag>
+              <el-tag type='danger' v-else>系统异常</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="abnormalType" label="异常类型" min-width="120" sortable="custom" />
-          <el-table-column prop="abnormalContent" label="异常内容" min-width="120" sortable="custom" />
+          <el-table-column prop="abnormalType" label="异常类型" min-width="120" sortable="custom">
+            <template slot-scope="scope">
+              <el-tag>{{ scope.row.abnormalType }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="abnormalContent" label="异常内容" min-width="120" sortable="custom">
+            <template slot-scope="scope">
+              <el-tag type="success">{{ scope.row.abnormalContent }}</el-tag>
+            </template>
+          </el-table-column>
           <el-table-column prop="equipmentName" label="关联设备" min-width="120" sortable="custom" />
           <el-table-column prop="productDrawingNo" label="关联产品" min-width="160" sortable="custom" />
           <el-table-column prop="createByName" label="发起人" min-width="120" sortable="custom" />
@@ -200,14 +208,7 @@ export default {
       searchList: [
         { fieldValue: '', field: 'orderNo', label: '申请单号', prop: 'orderNo', symbol: 'like', searchType: 1 },
         { fieldValue: '', field: 'type', label: '申请类型', prop: 'type', symbol: 'like', searchType: 4, options: [{ label: '自定义异常', value: 'custom' }, { label: '系统异常', value: 'system' }] },
-        {
-          fieldValue: '', field: 'module', label: '异常模块', prop: 'module', symbol: 'like', searchType: 4,
-          options: [{ label: '质量异常', value: 'quality' },
-          { label: '物料异常', value: 'material' },
-          { label: '生产异常', value: 'produce' },
-          { label: '设备异常', value: 'facility' },
-          { label: '系统异常', value: 'system' }]
-        },
+        { fieldValue: '', field: 'abnormalType', label: '异常类型', prop: 'abnormalType', symbol: 'like', searchType: 1 },
         { fieldValue: '', field: 'abnormalContent', label: '异常内容', prop: 'abnormalContent', symbol: 'like', searchType: 1 },
       ],
       selectAb: [],
@@ -222,13 +223,13 @@ export default {
     this.initData()
   },
   watch: {
-    '$route.query.module': {
+    '$route.query.abnormalType': {
       immediate: true,
       handler(val) {
         if (val) {
-          this.initListQuery.module = val
+          this.initListQuery.abnormalType = val
           this.searchList.forEach(item=>{
-            if (item.field === 'module') item.fieldValue = val
+            if (item.field === 'abnormalType') item.fieldValue = val
           })
         }
       },
@@ -299,7 +300,7 @@ export default {
     },
     reset() {
       this.$refs['listTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.initListQuery.module = ''
+      this.initListQuery.abnormalType = ''
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.searchList.forEach(item => { item.fieldValue = '' })
       this.search()

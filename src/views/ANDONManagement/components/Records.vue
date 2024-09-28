@@ -48,8 +48,20 @@
             <el-table-column v-if="item.prop == 'type'" :prop="item.prop" :key="item.prop" :label="item.label"
               :fixed="item.fixed || false" :min-width="item.minWidth || 120">
               <template slot-scope="scope">
-                <div v-if="scope.row.type === 'custom'">自定义异常</div>
-                <div v-else>系统异常</div>
+                <el-tag type='warning' v-if="scope.row.type === 'custom'">自定义异常</el-tag>
+                <el-tag type='danger' v-else>系统异常</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column v-else-if="item.prop == 'abnormalType'" :prop="item.prop" :key="item.prop" :label="item.label"
+              :fixed="item.fixed || false" :min-width="item.minWidth || 120">
+              <template slot-scope="scope">
+                <el-tag>{{ scope.row.abnormalType }}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column v-else-if="item.prop == 'abnormalContent'" :prop="item.prop" :key="item.prop" :label="item.label"
+              :fixed="item.fixed || false" :min-width="item.minWidth || 120">
+              <template slot-scope="scope">
+                <el-tag  type="success">{{ scope.row.abnormalContent }}</el-tag>
               </template>
             </el-table-column>
             <el-table-column v-else :key="item.prop" :prop="item.prop" :label="item.label" :fixed="item.fixed || false"

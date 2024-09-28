@@ -6,31 +6,27 @@
           <div class="icon-box"><i class="icon-ym icon-ym-tree-department"></i></div>
           <div class="text-one-line">异常汇总表</div>
         </div>
-        <div class="xr-radio-menu-wrap">
-          <el-date-picker v-model="dataForm.year" type="year" value-format="yyyy" placeholder="选择年"
-            :picker-options="pickerOptions">
-          </el-date-picker>
-        </div>
-        <div class="xr-radio-menu-wrap">
-          <selectdepartment @change="departmentchange"></selectdepartment>
+        <div class="xr-radio-menu-wrap" style="width: 250px;">
+          <selectdate @change="datechange"></selectdate>
         </div>
         <el-button type="primary" icon="el-icon-search" @click="search()">
           {{ $t('common.search') }}</el-button>
-        <el-button type="primary" v-has="'btn_export'" icon="el-icon-download" @click="exportForm"
-          :disabled="!tableList.length">导出</el-button>
       </div>
       <div class="content-table-main">
-        <div class="axis-content">
-          <div class="content-title">异常数：<span>{{ totalcontractNum }}</span>个；</div>
+        <div class="axis-content" v-loading="chartLoading">
+          <div id="CustomerAnaly" :option="option" style="width: 100%; height: 400px;"></div>
         </div>
         <div class="table-content" v-loading="listLoading">
-          <JNPF-table ref="tabForm" :data="tableList" custom-column row-key="id" :hasNO="false"
-            style="border:1px solid #ebeef5;border-right:none;">
-            <el-table-column prop="type" label="时间" min-width="160" />
-            <el-table-column prop="contractNum" label="异常内容-1" min-width="140" />
-            <el-table-column prop="contractMoney" label="异常内容-2" min-width="140" />
-            <el-table-column prop="receivablesMoney" label="异常内容-3" min-width="140" />
-          </JNPF-table>
+          <div class="handle-bar">
+            <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" @click="exportForm" :disabled="!tableList.length">导出</el-button>
+          </div>
+          <div style="height: 400px;">
+            <JNPF-table ref="tabForm" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;">
+              <el-table-column prop="realName" label="日期" min-width="120" />
+              <el-table-column prop="customerSumNum" label="异常内容1" min-width="120" />
+              <el-table-column prop="customerNum" label="异常内容2" min-width="120" />
+            </JNPF-table>
+          </div>
         </div>
       </div>
     </div>
@@ -42,59 +38,58 @@
 import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { mapGetters } from 'vuex'
-import { gettotalContract } from "@/api/CRMmanagement/instrumentPanel/index";
+import { gettotalCustomerTable, gettotalCustomerStats } from "@/api/CRMmanagement/instrumentPanel/index";
 import selectdate from "@/views/CRMmanagement/reportAnalysis/components/selectdate";
-import selectdepartment from "@/views/CRMmanagement/reportAnalysis/components/selectdepartment";
 export default {
   components: {
     ExportForm,
     selectdate,
-    selectdepartment
   },
   data() {
     return {
       exportFormVisible: false,
-      pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now();
-        }
-      },
+      chartLoading: false,
       listLoading: false,
       dataForm: {
-        year: "",
+        startTime: "",
+        endTime: "",
+        type: "year",
         userIds: []
       },
-      tableList: []
+      tableList: [],
+      chartInstance: null,
+      option: {}
     }
   },
   computed: {
     ...mapGetters(['userInfo']),
-    totalcontractNum: function () {
-      let totalNum = 0;
-      for (var i = 0; i < this.tableList.length; i++) {
-        totalNum = this.jnpf.math('add', [totalNum, this.tableList[i].contractNum * 1])
-      }
-      return totalNum
-    },
-    totalcontractMoney: function () {
-      let totalNum = 0;
-      for (var i = 0; i < this.tableList.length; i++) {
-        totalNum = this.jnpf.math('add', [totalNum, this.tableList[i].contractMoney * 1])
-      }
-      return totalNum
-    },
-    totalreceivablesMoney: function () {
-      let totalNum = 0;
-      for (var i = 0; i < this.tableList.length; i++) {
-        totalNum = this.jnpf.math('add', [totalNum, this.tableList[i].receivablesMoney * 1])
-      }
-      return totalNum
-    },
   },
   created() {
     this.dataForm.userIds = [this.userInfo.userId]
-    this.dataForm.year = this.jnpf.getToday('YYYY')
     this.initData()
+  },
+  mounted() {
+    this.chartInstance = this.$echarts.init(document.getElementById('CustomerAnaly'));
+    this.chartInstance.setOption(this.option);
+    window.onresize = () => {
+      clearTimeout(this.timeout)
+      this.timeout = setTimeout(() => {
+        this.chartInstance.resize()
+      }, 100);
+    }
+  },
+  beforeDestroy() {
+    window.onresize = null
+  },
+  watch: {
+    option: {
+      handler(newOption) {
+        if (this.chartInstance) {
+          this.chartInstance.setOption(newOption);
+        }
+      },
+      deep: true
+    }
   },
   methods: {
     // 导出
@@ -113,8 +108,8 @@ export default {
         }
         let _data = {
           ...this.dataForm,
-          exportType: '1220',
-          exportName: '合同汇总表',
+          exportType: '1217',
+          exportName: '客户总量分析',
           includeFieldMap,
           pageSize: -1
         }
@@ -128,16 +123,91 @@ export default {
     search() {
       this.initData()
     },
+    datechange(data) {
+      this.dataForm.startTime = data.dateStart
+      this.dataForm.endTime = data.dateEnd
+      this.dataForm.type = data.value
+    },
     departmentchange(data) {
       this.dataForm.userIds = data
     },
     initData() {
+      this.chartLoading = true
       this.listLoading = true
-      gettotalContract(this.dataForm).then(res => {
-        this.tableList = res.data
+      gettotalCustomerStats(this.dataForm).then(res1 => {
+        this.option = {
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow'
+            }
+          },
+          toolbox: {
+            feature: {
+              saveAsImage: {}
+            },
+            showTitle: false
+          },
+          grid: {
+            top: '10%',
+            left: '1%',
+            right: '1%',
+            bottom: '15%',
+            containLabel: true
+          },
+          color: ['#42526e', '#0052cc'],
+          legend: {
+            data: ['系统异常数', '自定义异常数'],
+            bottom: 10
+          },
+          xAxis: [
+            {
+              type: 'category',
+              data: res1.data.map(item => item.type),
+              axisTick: {
+                alignWithLabel: true,
+                show: false
+              }
+            }
+          ],
+          yAxis: [
+            {
+              axisTick: {
+                show: false
+              },
+              axisLine: {
+                show: false
+              },
+              name: '个',
+              type: 'value'
+            }
+          ],
+          series: [
+            {
+              barWidth: '20%',
+              name: '系统异常数',
+              type: 'bar',
+              data: res1.data.map(item => item.dealCustomerNum)
+            },
+            {
+              barWidth: '20%',
+              name: '自定义异常数',
+              type: 'bar',
+              data: res1.data.map(item => item.customerNum)
+            }
+          ]
+        }
+        this.chartLoading = false
+      }).catch(() => {
+        this.chartLoading = false
+      })
+      gettotalCustomerTable(this.dataForm).then(res2 => {
+        this.tableList = res2.data
+        this.listLoading = false
+      }).catch(() => {
         this.listLoading = false
       })
-    }
+    },
   }
 }
 </script>
@@ -145,21 +215,17 @@ export default {
 .JNPF-flex-main {
   padding: 14px 0 0 14px;
 }
-
 .JNPF-common-layout {
   background-color: #fff;
 }
-
 .filtrate-content {
   ::v-deep .el-button--small {
     padding: 8px 15px;
   }
-
   .title-box {
     width: auto;
     max-width: 250px;
     margin-right: 24px;
-
     .icon-box {
       flex-shrink: 0;
       width: 34px;
@@ -171,7 +237,6 @@ export default {
       background-color: #dfe8ff;
       border-radius: 50%;
     }
-
     .text-one-line {
       font-size: 20px;
       font-weight: 700;
@@ -180,40 +245,21 @@ export default {
       white-space: nowrap;
     }
   }
-
   .xr-radio-menu-wrap {
     margin-right: 16px;
   }
 }
-
 .content-table-main {
   height: calc(100% - 54px);
   padding-bottom: 24px;
   margin-top: 24px;
   overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-
   .axis-content {
     margin-right: 40px;
-    margin-bottom: 15px;
-
-    .content-title {
-      padding: 8px 40px;
-      font-size: 16px;
-
-      span {
-        margin-right: 3px;
-        font-weight: 700;
-      }
-    }
+    margin-bottom: 24px;
   }
-
   .table-content {
-    flex: 1;
-    min-height: 500px;
-    padding-right: 14px;
-
+    padding-right: 40px;
     .handle-bar {
       margin-bottom: 8px;
       text-align: right;

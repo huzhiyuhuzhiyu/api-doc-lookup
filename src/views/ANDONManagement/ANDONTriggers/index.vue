@@ -5,27 +5,31 @@
         <div style="font-size: 20px;">异常上报</div>
         <div class="options">
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">保存并提交</el-button>
-          <el-button @click="goBack" v-if="content">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
       <div class="JNPF-common-layout">
         <div class="JNPF-common-layout-center JNPF-flex-main">
           <div class="JNPF-common-layout-main JNPF-flex-main" style="padding: 10px 5px;">
             <el-tabs @tab-click="changeTab" v-model="activeName" type="border-card" tab-position="left"
-              style="height:100%;padding:5px">
+              style="height:100%;padding:5px;font-size: 20px;">
               <el-tab-pane disabled label="异常类型:"></el-tab-pane>
               <el-tab-pane :label="item.name" :name="item.code" v-for="item in list" :key="item.id">
-                <div style="height:60px;line-height:60px;font-weight:bold;border-bottom:1px solid #dcdfe6;">
-                  异常名称：
+                <div
+                  style="height:60px;line-height:60px;font-weight:bold;border-bottom:1px solid #dcdfe6;font-size: 20px;">
+                  异常内容：
                 </div>
                 <div class="card-list" v-loading="listLoading">
-                  <div v-for="line in dataDetail" :key="line.id" @click="handleCard(line)">
-                    <el-card :shadow="line.code === currentCard ? 'always' : 'hover'" class="box-card">
-                      <div> {{ line.name }} </div>
-                      <div class="icon-checked" v-if="line.code === currentCard">
-                        <i class="el-icon-check"></i>
-                      </div>
-                    </el-card>
+                  <div v-for="line in dataDetail" :key="line.id" @click="handleCard(line)"
+                    @mousemove.native="showRemark(line)">
+                    <el-tooltip class="item" effect="light" :content="line.remark" placement="bottom" :disabled="!line.remark">
+                      <el-card :shadow="line.code === currentCard ? 'always' : 'hover'" class="box-card"
+                        :class="line.code === currentCard ? 'box-card-active' : ''">
+                        <div> {{ line.name }} </div>
+                        <div class="icon-checked" v-if="line.code === currentCard">
+                          <i class="el-icon-check"></i>
+                        </div>
+                      </el-card>
+                    </el-tooltip>
                   </div>
                 </div>
               </el-tab-pane>
@@ -50,6 +54,15 @@
             确 定</el-button>
         </span>
       </el-dialog>
+      <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+        :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
+        <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
+            提交成功啦！</span><span class="import_b">您还可以进行如下操作：</span></div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="goBack">返回首页</el-button>
+          <el-button type="primary" @click="continueAdd()">继续上报</el-button>
+        </span>
+      </el-dialog>
     </div>
   </transition>
 </template>
@@ -60,6 +73,7 @@ import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 export default {
   data() {
     return {
+      tipsvisible: false,
       btnLoading: false,
       visible: false,
       listLoading: false,
@@ -104,11 +118,11 @@ export default {
         processDescription: '',
         processStatus: 'processing',
         productionOrderId: '',
-        abnormalType:'',
-        abnormalContent:'',
-        type:'custom',
-        flowData:{},
-        module:''
+        abnormalType: '',
+        abnormalContent: '',
+        type: 'custom',
+        flowData: {},
+        module: ''
       },
       dataRule: {
         orderNo: [{ required: true, message: '请输入申请单号', trigger: 'blur' }]
@@ -122,13 +136,13 @@ export default {
     this.fetchData('ABARDH', true)
   },
   methods: {
-    getBusInfo(id){
-      getBusinessFlowInfo(id).then(res=>{
-        if (res.data){
+    getBusInfo(id) {
+      getBusinessFlowInfo(id).then(res => {
+        if (res.data) {
           this.dataForm.flowData = res.data
         }
         this.formLoading = false
-      }).catch(()=>{})
+      }).catch(() => { })
     },
     async fetchData(code, flag) {
       try {
@@ -178,6 +192,15 @@ export default {
         }
       })
     },
+    goBack() {
+      this.$router.push('/ANDONManagement/homePage')
+    },
+    // 继续新增
+    continueAdd() {
+      this.initData()
+      this.btnLoading = false
+      this.tipsvisible = false
+    },
     handleSubmit() {
       this.$refs.dataForm.validate((valid) => {
         if (valid) {
@@ -193,24 +216,25 @@ export default {
       } else {
         let flowObj = JSON.parse(JSON.stringify(this.dataForm.flowData))
         const flowList = Object.getOwnPropertyNames(flowObj)
-        if (!flowList.length){
+        if (!flowList.length) {
           this.btnLoading = false
           return this.$message.error('请检查所选异常是否设置模版！')
         }
-        if (!this.dataForm.abnormalContentId && !this.dataForm.abnormalTypeId){
+        if (!this.dataForm.abnormalContentId && !this.dataForm.abnormalTypeId) {
           this.btnLoading = false
           return this.$message.error('请先选择需要上报的异常！')
-        } 
+        }
         addAbnoramlData(this.dataForm).then(() => {
-          this.$message({
-            type: 'success',
-            message: '提交成功'
-          })
-          this.initData()
+          // this.$message({
+          //   type: 'success',
+          //   message: '提交成功'
+          // })
+          this.tipsvisible = true
+          // this.initData()
           this.fetchData('ABARDH', true)
           this.btnLoading = false
           this.visible = false
-        }).catch(() => {this.btnLoading = false})
+        }).catch(() => { this.btnLoading = false })
 
       }
     },
@@ -227,6 +251,7 @@ export default {
     width: 210px;
     margin: 5px 8px 0 0;
     position: relative;
+    font-size: 18px;
 
     .icon-checked {
       display: block;
@@ -248,6 +273,11 @@ export default {
         color: #fff;
       }
     }
+
+    &.box-card-active {
+      background-color: #3fb9f8;
+      color: #fff;
+    }
   }
 }
 
@@ -261,19 +291,40 @@ export default {
     text-align: center;
     height: 60px;
     line-height: 60px;
+    font-size: 20px;
 
     &.is-active {
-      border-color: #d1dbe5
+      border-color: #d1dbe5;
+      background-color: #3fb9f8;
+      color: #fff;
     }
 
     &.is-disabled {
       color: #000;
       font-weight: bold;
+      font-size: 20px;
     }
   }
 
   .el-tabs__content {
     padding: 0px;
   }
+}
+
+.import_t {
+  font-size: 22px;
+  color: rgb(103, 194, 58);
+  vertical-align: top;
+  margin-top: 40px;
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.import_b {
+  font-size: 18px;
+  /* color: #67c23a; */
+  vertical-align: top;
+  margin-top: 43px;
+  display: inline-block;
 }
 </style>

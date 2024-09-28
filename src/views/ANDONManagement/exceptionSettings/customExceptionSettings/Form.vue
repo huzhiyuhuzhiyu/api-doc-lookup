@@ -70,10 +70,10 @@ export default {
             }
           ], sm: 12, itemDisabled:this.btnType === 'look' ? true : this.codeConfig.codeWay == 'auto' && !this.codeConfig.modifyFlag ? true : false
         },
-        { prop: "module", label: "异常模块", value: "", type: "select", itemRules: [{ required: true, message: '异常模块不能为空', trigger: "change" }], 
-          sm: 12,itemDisabled:this.btnType === 'look' ? true : false ,
-          options: [{ label: '质量异常', value: 'quality' },{ label: '物料异常', value: 'material' },{ label: '生产异常', value: 'produce' },{ label: '设备异常', value: 'facility' }]
-        },
+        // { prop: "module", label: "异常模块", value: "", type: "select", itemRules: [{ required: true, message: '异常模块不能为空', trigger: "change" }], 
+        //   sm: 12,itemDisabled:this.btnType === 'look' ? true : false ,
+        //   options: [{ label: '质量异常', value: 'quality' },{ label: '物料异常', value: 'material' },{ label: '生产异常', value: 'produce' },{ label: '设备异常', value: 'facility' }]
+        // },
         { prop: "name", label: "类型名称", value: "", type: "input", itemRules: [{ required: true, message: '类型名称不能为空', trigger: "blur" }], 
           sm: 12,itemDisabled:this.btnType === 'look' ? true : false 
         },

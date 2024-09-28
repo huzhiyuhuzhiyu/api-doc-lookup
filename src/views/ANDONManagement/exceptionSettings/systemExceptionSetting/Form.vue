@@ -20,7 +20,7 @@
         <el-button size="mini" @click="next" :disabled="activeStep >= 1 || loading" :loading="nextBtnLoading">
           {{ $t('common.next') }}
         </el-button>
-        <el-button size="mini" type="primary" @click="dataFormSubmit()" :disabled="activeStep != 1"
+        <el-button v-if="btnType !== 'look'" size="mini" type="primary" @click="dataFormSubmit()" :disabled="activeStep != 1"
           :loading="btnLoading">{{ $t('common.confirmButton') }}</el-button>
         <el-button size="mini" @click="closeDialog()">{{ $t('common.cancelButton') }}</el-button>
       </div>
@@ -80,7 +80,8 @@ export default {
       btnLoading: false,
       flowTemplateJson: {},
       codeConfig: {},
-      orderConfig: {}
+      orderConfig: {},
+      flowEngine:{}
     }
   },
   computed: {
@@ -193,7 +194,8 @@ export default {
             this.dialogTitle = `编辑异常`
             this.dataForm = res.data.exception
             this.dataForm.status = this.dataForm.status === 'enable' ? 1 : 0
-            res.data.flowEngine && (this.flowTemplateJson = res.data.flowEngine.flowTemplateJson)
+            res.data.flowEngine && (this.flowTemplateJson = JSON.parse(res.data.flowEngine.flowTemplateJson))
+            this.flowEngine = res.data.flowEngine
             this.loading = false
             this.fetchData('ExceptionType',false)
           }).catch(error => { })
@@ -206,7 +208,7 @@ export default {
         this.flowTemplateJson = JSON.stringify(res.formData)
         let _data = {
           exception: { ...this.dataForm, status: this.dataForm.status ? 'enable' : 'disabled' },
-          flowEngine: {
+          flowEngine: this.flowEngine ? {...this.flowEngine,flowTemplateJson: this.flowTemplateJson} :{
             busCallBack:"AbApplyRecordCallback",
             category:"exception",
             flowTemplateJson: this.flowTemplateJson,

@@ -9,7 +9,7 @@
             </div>
             <div class="item-right">
               <div class="item-head">
-                当前：<span :style="{ color: Number(item.value) ? 'red' : '#fff', fontSize: '1vw' }">{{ Number(item.value) ? item.value : '' }}</span>
+                <span :style="{ color: Number(item.value) ? 'red' : '#fff', fontSize: '1vw' }">{{ Number(item.value) ? item.value : '' }}</span>
                 {{ Number(item.value) ? '条异常' : '无异常' }}
               </div>
               <div class="item-bottom">{{ item.label }}</div>

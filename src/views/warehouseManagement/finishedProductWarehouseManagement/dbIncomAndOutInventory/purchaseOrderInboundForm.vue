@@ -60,6 +60,13 @@
                                 placeholder="请选择仓库"></ComSelect-list>
                             </el-form-item>
                           </el-col>
+                          <el-col :sm="6" :xs="24" v-if="allocationFlag && btnType != 'look'">
+                            <el-form-item label="库位" prop="shelfSpaceName">
+                              <el-input v-model="shelfSpaceName" placeholder="库位" readonly
+                                @focus="openSeleceWareDialog">
+                              </el-input>
+                            </el-form-item>
+                          </el-col>
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="检验结果" prop="inspectionResults">
                               <el-select v-model="dataForm.inspectionResults" placeholder="请选择检验结果"
@@ -109,7 +116,7 @@
                           </template>
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.shelfSpaceName" readonly :disabled="btnType == 'look'"
-                              @focus="openSeleceWareDialog(scope.row, scope.$index)" placeholder="库位">
+                              @focus="openSeleceWareDialog(scope.row, scope.$index, 'table')" placeholder="库位">
                             </el-input>
                           </template>
                         </el-table-column>
@@ -294,6 +301,8 @@ export default {
 
   data() {
     return {
+      shelfSpaceName: "",
+      shelfSpaceId: "",
       warehouseRequestObj: {
         type: 'normal', state: 'enable'
       },
@@ -419,23 +428,40 @@ export default {
     }
   },
   methods: {
-
     // 打开选择库位弹框
-    openSeleceWareDialog(row, index) {
+    openSeleceWareDialog(row, index, type) {
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库!")
       this.wareHouseVisible = true
       this.$nextTick(() => {
-        this.$refs.WareHouseForms.initData(this.dataForm.warehouseId)
+        this.$refs.WareHouseForms.initData(this.dataForm.warehouseId, type)
       })
-      this.currentProductIndex = index
+      if (index) this.currentProductIndex = index
     },
+
     // 所选的库位信息
-    selectWareHouseFun(data) {
+    selectWareHouseFun(data, type) {
       console.log("库位信息", data);
       let index = this.currentProductIndex
-      this.$set(this.productData[index], 'shelfSpaceName', data.name)
-      this.$set(this.productData[index], 'warehouseId', data.warehouseId)
-      this.$set(this.productData[index], 'shelfSpaceId', data.id)
+      if (!type) {
+        this.shelfSpaceId = data.id
+        this.shelfSpaceName = data.name
+      }
+
+      if (this.productData.length) {
+        this.productData.forEach(item => {
+          if (!item.shelfSpaceId) {
+            this.$set(item, 'shelfSpaceName', data.name)
+            this.$set(item, 'warehouseId', data.warehouseId)
+            this.$set(item, 'shelfSpaceId', data.id)
+          }
+        });
+        if (index) {
+          this.$set(this.productData[index], 'shelfSpaceName', data.name)
+          this.$set(this.productData[index], 'warehouseId', data.warehouseId)
+          this.$set(this.productData[index], 'shelfSpaceId', data.id)
+        }
+      }
+      this.index = ""
     },
 
 
@@ -548,6 +574,13 @@ export default {
 
         this.productData.push(item)
       });
+      this.productData.forEach(item => {
+          if (!item.shelfSpaceId) {
+            this.$set(item, 'shelfSpaceName', this.shelfSpaceName)
+            this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+            this.$set(item, 'shelfSpaceId', this.shelfSpaceId)
+          }
+        });
       console.log("this.dataFormTwo", this.productData);
     },
     // 产品信息列表多选

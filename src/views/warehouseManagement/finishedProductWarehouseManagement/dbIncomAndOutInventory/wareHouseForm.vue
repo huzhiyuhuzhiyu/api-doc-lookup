@@ -77,7 +77,8 @@ export default {
         children: 'childrenList',
         label: 'name'
       },
-      cpId: ""
+      cpId: "",
+      type:"",
     }
   },
   methods: {
@@ -87,8 +88,10 @@ export default {
       this.tableQuery.orderItems[0].column = newProp
       this.initData()
     },
-    initData(id) {
+    initData(id,type) {
+      console.log(id,type);
       this.listLoading = true
+      this.type=type
       this.tableQuery.warehouseId = id
       this.cpId = JSON.parse(JSON.stringify(id))
       this.locationVisible = true
@@ -109,7 +112,7 @@ export default {
 
     // 选择客户
     seleceWareHouseFun(row) {
-      this.$emit("selectWareHouseFun", row)
+      this.$emit("selectWareHouseFun", row,this.type)
       this.locationVisible = false
     },
 

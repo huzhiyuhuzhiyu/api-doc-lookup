@@ -137,7 +137,7 @@ export default {
         {
           prop: 'pickingWay',
           label: '领料方式',
-          value: '',
+          value: 'production_order',
           type: 'select',
           options: [
             { label: '按生产任务领料', value: 'production_order' },

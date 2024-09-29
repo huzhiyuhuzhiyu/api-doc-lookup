@@ -316,30 +316,30 @@ const ALL_TEXT ='全部'
 const fileExtFilterOption =Object.freeze( [
     {
         text:ALL_TEXT,
-        icon:'icon-quanbu'
+        icon:'zgt-ifont-quanbu'
     },
     {
         text:'pdf',
-        icon:'icon-pdf'
+        icon:'zgt-ifont-pdf'
     },
     {
         text:'word',
-        icon:'icon-doc'
+        icon:'zgt-ifont-doc'
     },
     {
         text:'excel',
-        icon:'icon-excel'
+        icon:'zgt-ifont-excel'
     },
     {
         text:'ppt',
-        icon:'icon-ppt'
+        icon:'zgt-ifont-ppt'
     },
     {
         text:'图片',
-        icon:'icon-tupian'
+        icon:'zgt-ifont-tupian'
     }, {
         text:'思维导图',
-        icon:'icon-suolvetu-siweidaotu'
+        icon:'zgt-ifont-suolvetu-siweidaotu'
     },
 ])
 const TIME_OPTION ={

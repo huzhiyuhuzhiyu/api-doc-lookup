@@ -45,7 +45,6 @@
               </el-button>
             </topOpts>
 
-
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -63,12 +62,9 @@
           <JNPF-table @selection-change="handeleFinshData" hasC v-if="flag" v-loading="listLoading"
             highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
             custom-column :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
-            <el-table-column prop="orderNo" label="外协单号" min-width="200" sortable="custom">
-
-            </el-table-column>
+            <el-table-column prop="orderNo" label="外协单号" min-width="200" sortable="custom"></el-table-column>
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
-
 
             <el-table-column prop="deliveryDate" label="交货日期" min-width="180" sortable="custom" />
             <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" min-width="180" sortable="custom" />
@@ -106,17 +102,11 @@
                     </el-dropdown-menu>
                   </el-dropdown>
                 </tableOpts>
-
               </template>
             </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
-            :limit.sync="listQuery.pageSize" @pagination="initData">
-            <div style="height: 40px; line-height: 40px; background: #f5f7fa;margin-top: -13px" class="text">
-              <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ computedValue }}</span>
-              <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue2 }}</span>
-            </div>
-          </pagination>
+            :limit.sync="listQuery.pageSize" @pagination="initData"></pagination>
         </div>
       </div>
     </div>
@@ -148,7 +138,7 @@ import withdrawnForm from '@/views/purchasingManagement/purchasingDemand/purchas
 import { excelExport } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
-import { CreateForm } from "../orderCreation/index.vue";
+import { CreateForm } from '../orderCreation/index.vue'
 export default {
   name: 'orderList',
   components: { JNPFForm, withdrawnForm, SuperQuery, CreateForm },
@@ -347,7 +337,6 @@ export default {
         count += item.purchaseQuantity * 1
       })
       this.computedValue = this.jnpf.numberFormat(count2)
-
     },
     // 导出
     exportForm(exportTableRef) {
@@ -593,7 +582,8 @@ export default {
 
     addSupplier(id, type) {
       this.$router.push({
-        path: '/outsourcingManagement/productOutsourcingOrder/orderCreation', query: { alert: "新建" }
+        path: '/outsourcingManagement/productOutsourcingOrder/orderCreation',
+        query: { alert: '新建' }
       })
     },
     // 生成采购订单 将选中的数据传递过去

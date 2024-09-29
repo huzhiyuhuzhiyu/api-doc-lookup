@@ -21,16 +21,16 @@
             <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" @click="exportForm" :disabled="!tableList.length">导出</el-button>
           </div>
           <div style="height: 400px;">
-            <JNPF-table  v-if="tableList.length > 0" ref="tabForm" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;">
-                <el-table-column prop="日期" label="日期" min-width="120" />
-                <el-table-column v-for="item in tableColumns" :prop="item" :key="item" :label="item" width="135"></el-table-column>
-
+            <JNPF-table ref="tabForm" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;">
+              <el-table-column prop="realName" label="日期" min-width="120" />
+              <el-table-column prop="customerSumNum" label="异常内容1" min-width="120" />
+              <el-table-column prop="customerNum" label="异常内容2" min-width="120" />
             </JNPF-table>
           </div>
         </div>
       </div>
     </div>
-    <ExportForm v-if="exportFormVisible" style="display: none" ref="exportForm" @download="download" :exportHidden="true" />
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" :exportHidden="true" />
   </div>
 </template>
 
@@ -40,12 +40,6 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import { mapGetters } from 'vuex'
 import { gettotalCustomerTable, gettotalCustomerStats } from "@/api/CRMmanagement/instrumentPanel/index";
 import selectdate from "@/views/CRMmanagement/reportAnalysis/components/selectdate";
-import {
-    analysisByContent,
-    analysisByType,
-    exportAnalysisByContent,
-    exportAnalysisByType
-} from "@/api/abnormalManagement";
 export default {
   components: {
     ExportForm,
@@ -71,7 +65,7 @@ export default {
     ...mapGetters(['userInfo']),
   },
   created() {
-    this.dataForm.userIds = []
+    this.dataForm.userIds = [this.userInfo.userId]
     this.initData()
   },
   mounted() {
@@ -103,10 +97,7 @@ export default {
       this.exportFormVisible = true
       let columnList = this.$refs.tabForm.columnList.filter(item => !!item.label && !!item.prop)
       columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
-      this.$nextTick(() => {
-          this.$refs.exportForm.init(columnList)
-          this.$refs.exportForm.downLoad()
-      })
+      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
     },
     download(data) {
       if (data) {
@@ -118,11 +109,11 @@ export default {
         let _data = {
           ...this.dataForm,
           exportType: '1217',
-          exportName: '异常分析-按内容',
+          exportName: '客户总量分析',
           includeFieldMap,
           pageSize: -1
         }
-        exportAnalysisByContent(_data).then(res => {
+        excelExport(_data).then(res => {
           this.exportFormVisible = false
           if (!res.data.url) return
           this.jnpf.downloadFile(res.data.url)
@@ -140,79 +131,82 @@ export default {
     departmentchange(data) {
       this.dataForm.userIds = data
     },
-   async initData() {
-       const dataField = '日期'
-       this.chartLoading = true
-       this.listLoading = true
-       try {
-           const res1 =  await  analysisByContent(this.dataForm)
-           const legendData =  Object.keys(res1.data[0]).filter(item=>item !== dataField)
-           this.tableColumns =legendData
-           this.tableList = res1.data
-           const barWidth= Math.floor(100 / legendData.length) +'%'
-           const series = legendData.map(item => {
-               return {
-                   name: item,
-                   type: 'bar',
-                   data: res1.data.map(i => i[item]),
-                   barWidth
-               }
-           })
-           this.option = {
-               tooltip: {
-                   trigger: 'axis',
-                   axisPointer: {
-                       type: 'shadow'
-                   }
-               },
-               toolbox: {
-                   feature: {
-                       saveAsImage: {}
-                   },
-                   showTitle: false
-               },
-               grid: {
-                   top: '10%',
-                   left: '1%',
-                   right: '1%',
-                   bottom: '15%',
-                   containLabel: true
-               },
-               // color: ['#42526e', '#0052cc'],
-               legend: {
-                   data: legendData,
-                   bottom: 10
-               },
-               xAxis: [
-                   {
-                       type: 'category',
-                       data: res1.data.map(item => item[dataField]),
-                       axisTick: {
-                           alignWithLabel: true,
-                           show: false
-                       }
-                   }
-               ],
-               yAxis: [
-                   {
-                       axisTick: {
-                           show: false
-                       },
-                       axisLine: {
-                           show: false
-                       },
-                       name: '个',
-                       type: 'value'
-                   }
-               ],
-               series
-           }
-           this.chartLoading = false
-           this.listLoading = false
-       }catch (e) {
-           this.chartLoading = false
-           this.listLoading = false
-       }
+    initData() {
+      this.chartLoading = true
+      this.listLoading = true
+      gettotalCustomerStats(this.dataForm).then(res1 => {
+        this.option = {
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow'
+            }
+          },
+          toolbox: {
+            feature: {
+              saveAsImage: {}
+            },
+            showTitle: false
+          },
+          grid: {
+            top: '10%',
+            left: '1%',
+            right: '1%',
+            bottom: '15%',
+            containLabel: true
+          },
+          color: ['#42526e', '#0052cc'],
+          legend: {
+            data: ['系统异常数', '自定义异常数'],
+            bottom: 10
+          },
+          xAxis: [
+            {
+              type: 'category',
+              data: res1.data.map(item => item.type),
+              axisTick: {
+                alignWithLabel: true,
+                show: false
+              }
+            }
+          ],
+          yAxis: [
+            {
+              axisTick: {
+                show: false
+              },
+              axisLine: {
+                show: false
+              },
+              name: '个',
+              type: 'value'
+            }
+          ],
+          series: [
+            {
+              barWidth: '20%',
+              name: '系统异常数',
+              type: 'bar',
+              data: res1.data.map(item => item.dealCustomerNum)
+            },
+            {
+              barWidth: '20%',
+              name: '自定义异常数',
+              type: 'bar',
+              data: res1.data.map(item => item.customerNum)
+            }
+          ]
+        }
+        this.chartLoading = false
+      }).catch(() => {
+        this.chartLoading = false
+      })
+      gettotalCustomerTable(this.dataForm).then(res2 => {
+        this.tableList = res2.data
+        this.listLoading = false
+      }).catch(() => {
+        this.listLoading = false
+      })
     },
   }
 }

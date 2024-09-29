@@ -216,12 +216,21 @@ export default {
         },
         {
           prop: 'receivingStatus',
-          label: '收货状态',
+          label: '订单状态',
           type: 'select',
           options: [
-            { label: '审批中', value: 'receiving' },
-            { label: '已完成', value: 'received' },
-            { label: '已停止', value: 'stopped' },
+            {
+              value: 'not_finished',
+              label: '未完成'
+            },
+            {
+              value: 'finished',
+              label: '已完成'
+            },
+            {
+              value: 'stopped',
+              label: '已停止'
+            }
           ]
         },
 

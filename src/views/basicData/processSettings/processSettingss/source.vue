@@ -17,7 +17,7 @@
         <el-tab-pane label="人员" name="personnel">
           <!-- 人员配置 -->
           <JNPF-table :hasC="type != 'look'" @selection-change="handelepersonInfoData" :data="personData"
-            style="width: 100%">
+            style="width: 100%;height: calc(100%-50px);">
             <el-table-column prop="resourceId" label="人员名称">
               <template slot-scope="scope">
                 <!-- <el-select v-model="scope.row.resourceId" filterable placeholder="请选择" style="width:100%;">
@@ -802,12 +802,12 @@ export default {
 }
 
 .footer {
-  /* margin: 20px 20px 20px;
+  margin: 0 20px 20px;
   display: flex;
-  justify-content: flex-end; */
-  position: fixed;
+  justify-content: flex-end;
+  /* position: fixed;
   bottom: 10px;
-  right: 10px;
+  right: 10px; */
 }
 
 ::v-deep .is-stretch {

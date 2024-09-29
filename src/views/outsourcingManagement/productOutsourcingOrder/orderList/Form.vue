@@ -52,7 +52,7 @@
                       </el-col>
                       <el-col :span="6" v-if="type === 'look'">
                         <el-form-item label="订单状态" prop="receivingStatus" ref="receivingStatus">
-                          <el-select v-model="value" style="width: 100%;" placeholder="请选择"
+                          <el-select v-model="dataForm.receivingStatus" style="width: 100%;" placeholder="请选择"
                             :disabled="type !== 'add' ? true : false">
                             <el-option v-for="item in receivingStatusOptions" :key="item.value" :label="item.label"
                               :value="item.value"></el-option>
@@ -339,7 +339,7 @@
                   </el-col>
                   <el-col :span="6" v-if="type === 'look'">
                     <el-form-item label="订单状态" prop="receivingStatus" ref="receivingStatus">
-                      <el-select v-model="value" placeholder="请选择" :disabled="type !== 'add' ? true : false">
+                      <el-select v-model="dataForm.receivingStatus" placeholder="请选择" :disabled="type !== 'add' ? true : false">
                         <el-option v-for="item in receivingStatusOptions" :key="item.value" :label="item.label"
                           :value="item.value"></el-option>
                       </el-select>

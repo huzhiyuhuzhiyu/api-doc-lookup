@@ -1,11 +1,11 @@
 <script>
 const iconMap = new Map([
-    [['pdf'],'iconfont icon-pdf'],
-    [['doc','docx'],'iconfont icon-doc'],
-    [['xls','xlxs'],'iconfont icon-excel'],
-    [['ppt','pptx'],'iconfont icon-ppt'],
-    [['png','jpg','jpeg'],'iconfont icon-tupian'],
-    [['mind'],'iconfont icon-suolvetu-siweidaotu'],
+    [['pdf'],'zgt-ifont zgt-ifont-pdf'],
+    [['doc','docx'],'zgt-ifont zgt-ifont-doc'],
+    [['xls','xlxs'],'zgt-ifont zgt-ifont-excel'],
+    [['ppt','pptx'],'zgt-ifont zgt-ifont-ppt'],
+    [['png','jpg','jpeg'],'zgt-ifont zgt-ifont-tupian'],
+    [['mind'],'zgt-ifont zgt-ifont-suolvetu-siweidaotu'],
     [[''],'icon-ym icon-ym-extend-folder']
 ])
 export default {

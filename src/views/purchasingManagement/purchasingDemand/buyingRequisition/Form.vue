@@ -18,9 +18,9 @@
         <div class="main">
           <el-tabs v-model="activeName" v-if="!approvalFlag">
             <el-tab-pane label="基础信息" name="jcInfo">
-              <el-collapse v-model="activeNames">
+              <el-collapse v-model="activeNames" style="margin-top: 5px;">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                  <el-row :gutter="15" class="">
+                  <el-row :gutter="15" class="" style="margin: 0 0;">
                     <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
                       <el-col :sm="6" :xs="24">
@@ -33,7 +33,7 @@
                             "></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="24">
+                      <el-col :span="12">
                         <el-form-item label="申请理由" prop="applicationReason" ref="applicationReason">
                           <el-input type="textarea" :row="3" v-model="dataForm.applicationReason" placeholder="请输入申请理由"
                             maxlength="200" :disabled="type == 'look' ? true : false"></el-input>
@@ -179,10 +179,12 @@
               </el-collapse>
             </el-tab-pane>
             <el-tab-pane label="附件" name="annex">
-              <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"></UploadWj>
+              <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"
+                style="margin-top: 5px;">
+              </UploadWj>
             </el-tab-pane>
             <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
-              <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
+              <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" style="margin-top: 5px;" />
             </el-tab-pane>
             <el-tab-pane v-if="type == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
               <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
@@ -911,7 +913,7 @@ export default {
 }
 
 .main {
-  padding: 10px;
+  padding: 0 10px;
 }
 
 .required {
@@ -956,7 +958,7 @@ export default {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 0 10px 0px;
+  /* padding: 0 10px 0px; */
   border-top: none !important;
 }
 
@@ -992,6 +994,7 @@ export default {
   background-color: #f5f5f7 !important;
   color: #576a95;
 }
+
 ::v-deep .el-tabs__item {
   padding: 0 10px !important;
 }

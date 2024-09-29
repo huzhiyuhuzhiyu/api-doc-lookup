@@ -202,7 +202,8 @@
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="税率%" prop="taxRate">
-                        <el-select v-model="dataForm.taxRate" placeholder="请选择税率" style="width: 100%;">
+                        <el-select v-model="dataForm.taxRate" placeholder="请选择税率" style="width: 100%;"
+                          :disabled="btnType ? true : false">
                           <el-option v-for="item in taxRateList" :key="item.id" :label="item.fullName"
                             :value="item.enCode"></el-option>
                         </el-select>

@@ -20,8 +20,8 @@
           </template>
           <el-input v-model="dataForm.name" placeholder="请输入分类名称" maxlength="20" />
         </el-form-item>
-        <el-form-item label="排序值">
-          <el-input v-model.number="dataForm.sortCode" placeholder="请输入排序值" />
+        <el-form-item label="排序">
+          <el-input v-model.number="dataForm.sortCode" placeholder="请输入排序" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" placeholder="请输入备注" />

@@ -25,7 +25,7 @@
             <el-col :span="8">
               <el-form-item>
                 <el-button class="btnBox" size="mini" @click="btnsearch1()">已延期</el-button>
-                <el-button class="btnBox" size="mini" @click="btnsearch2()">近三天</el-button>
+                <el-button class="btnBox" size="mini" @click="btnsearch2()">近3天</el-button>
                 <el-button class="btnBox" size="mini" @click="btnsearch3()">近7天</el-button>
                 <el-button class="btnBox" size="mini" @click="btnsearch4()">近30天</el-button>
               </el-form-item>
@@ -77,7 +77,7 @@
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
             <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
-            <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" />
+            <!-- <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" /> -->
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" min-width="120" />
             <el-table-column prop="purchaseQuantity" label="数量" min-width="100" sortable="custom" />
@@ -95,7 +95,7 @@
             <el-table-column prop="remark" label="备注" min-width="120" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
-            <el-table-column label="操作" width="180" fixed="right">
+            <el-table-column label="操作" width="100" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text"
                   @click.native="handleUserRelation(scope.row.purchaseOrderId, 'look')">
@@ -137,7 +137,7 @@ import {
 } from '@/api/salesManagement/assemblyOrders'
 import { purchaseOrderReport } from '@/api/purchasingAndOutsourcingOrders/index'
 import Detail from '../../../outsourcingManagement/processOutsourcingOrders/orderList/Form.vue'
-import Form from "../receivingAdvice/Form.vue";
+import Form from '../receivingAdvice/Form.vue'
 import OrderFollow from '../../../salesManagement/orderManagement/orderList/orderFollow'
 import UserRelationList from '../../../salesManagement/orderManagement/orderList/userRelation'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -216,11 +216,11 @@ export default {
           type: 'input'
         },
 
-        {
-          prop: 'productName',
-          label: '产品名称',
-          type: 'input'
-        },
+        // {
+        //   prop: 'productName',
+        //   label: '产品名称',
+        //   type: 'input'
+        // },
         {
           prop: 'productCode',
           label: '产品编码',
@@ -422,7 +422,13 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp
-      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
+      if (
+        prop === 'productName' ||
+        prop === 'productCode' ||
+        prop === 'documentStatus' ||
+        prop === 'cooperativePartnerName' ||
+        prop === 'cooperativePartnerCode'
+      ) {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'
@@ -519,24 +525,23 @@ export default {
       })
     },
     addSupplier(id, btntype) {
-
-      if (!this.list.length) return this.$message.error("请选择您要新建的订单")
+      if (!this.list.length) return this.$message.error('请选择您要新建的订单')
       let flag = this.hasDifferentCooperativePartnerCode(this.list)
-      if (flag) return this.$message.error("只能选择相同供应商的明细订单")
-      console.log(this.list);
+      if (flag) return this.$message.error('只能选择相同供应商的明细订单')
+      console.log(this.list)
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.Form.init(id, btntype, false, this.list)
       })
     },
     hasDifferentCooperativePartnerCode(arr) {
-      const codes = new Set();
+      const codes = new Set()
 
       for (const item of arr) {
-        codes.add(item.cooperativePartnerCode);
+        codes.add(item.cooperativePartnerCode)
       }
 
-      return codes.size > 1; // 如果有多个不同的代码，则返回 true  
+      return codes.size > 1 // 如果有多个不同的代码，则返回 true
     },
 
     handleDel(id) {

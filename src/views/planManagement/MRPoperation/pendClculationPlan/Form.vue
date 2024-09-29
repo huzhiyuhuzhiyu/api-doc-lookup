@@ -77,9 +77,9 @@
               </el-row>
             </el-form>
           </el-collapse-item>
-          <el-collapse-item title="已选择的计划" name="productInfo">
+          <el-collapse-item title="已选择的计划" name="productInfo" class="productInfo">
             <div>
-              <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+              <el-button type="text" style="margin-right:8px;margin-left: 4px; font-size:14px!important"
                 icon="el-icon-plus" @click="openSeleceProductDialog()">添加计划</el-button>|
               <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                 icon="el-icon-delete" @click="batchDelete">删除计划</el-button>
@@ -94,8 +94,8 @@
                   }}</el-link>
                 </template>
               </el-table-column>
-              <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
-              <el-table-column prop="productCode" label="产品编码" min-width="120" />
+              <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" />
+              <el-table-column prop="productCode" label="产品编码" min-width="180" />
               <el-table-column prop="productSource" label="产品来源" min-width="160">
                 <template slot-scope="scope">
                   <div v-if="scope.row.productSource == 'purchase'">采购</div>
@@ -157,7 +157,7 @@
                 </div>
                 <JNPF-table @sort-change="sortChange" :data="assembleData" :setColumnDisplayList="columnList1"
                   highlight-current-row :fixedNO="true" class="dataTable" border ref="assembleRef">
-                  <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
+                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                   <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                     <template slot-scope="scope">
@@ -188,7 +188,7 @@
                   <el-table-column prop="specialRequire" label="特殊要求" min-width="120" sortable="custom" />
                   <el-table-column label="操作" width="120" fixed="right" :key="15">
                     <template slot-scope="scope">
-                      <el-button type="text" @click="QTsearch(scope.row.id, 'assemble')">齐套查询</el-button>
+                      <el-button type="text" :disabled="!scope.row.bomFlag" @click="QTsearch(scope.row.id, 'assemble')">齐套查询</el-button>
                     </template>
                   </el-table-column>
 
@@ -220,7 +220,7 @@
                 <JNPF-table :partentOrChild="'produce'" @sort-change="sortChange" :data="produceData"
                   :setColumnDisplayList="columnList2" highlight-current-row :fixedNO="true" class="dataTable" border
                   ref="produceRef">
-                  <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
+                  <el-table-column prop="productDrawingNo" label="品名规格"  min-width="330" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                   <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                     <template slot-scope="scope">
@@ -277,8 +277,8 @@
                   <el-table-column label="操作" width="180" fixed="right" :key="15">
                     <template slot-scope="scope">
                       <el-button type="text" @click="tracMainProduct(scope.row.id, 'produce')"
-                        :disabled="scope.row.outputQuantity == 0 || scope.row.mainProductFlag">追溯主产品</el-button>
-                      <el-button type="text" @click="QTsearch(scope.row.id, 'produce')">齐套查询</el-button>
+                        :disabled="scope.row.outputQuantity == 0 || scope.row.mainProductFlag  ">追溯主产品</el-button>
+                      <el-button :disabled="!scope.row.bomFlag" type="text" @click="QTsearch(scope.row.id, 'produce')">齐套查询</el-button>
                     </template>
                   </el-table-column>
 
@@ -314,7 +314,7 @@
                 <JNPF-table :partentOrChild="'purchase'" @sort-change="sortChange" :data="purchaseData"
                   :setColumnDisplayList="columnList3" highlight-current-row :fixedNO="true" class="dataTable" border
                   ref="purchaseRef">
-                  <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
+                  <el-table-column prop="productDrawingNo" label="品名规格"  min-width="330" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                   <el-table-column prop="immediatelyBuyFlag" label="立即采购" width="140" sortable="custom">
                     <template slot-scope="scope">
@@ -399,7 +399,7 @@
                 <JNPF-table custom-column  @sort-change="sortChange" :data="outData" highlight-current-row
                   :setColumnDisplayList="columnList4" :fixedNO="true" class="dataTable" border ref="outRef">
                   
-                  <el-table-column prop="productDrawingNo" label="品名规格" width="180" sortable="custom" />
+                  <el-table-column prop="productDrawingNo" label="品名规格"  min-width="330" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                   <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                     <template slot-scope="scope">
@@ -457,7 +457,7 @@
                     <template slot-scope="scope">
                       <el-button type="text" @click="tracMainProduct(scope.row.id, 'out')"
                         :disabled="scope.row.outputQuantity == 0 || scope.row.mainProductFlag">追溯主产品</el-button>
-                      <el-button type="text" @click="QTsearch(scope.row.id, 'out')">齐套查询</el-button>
+                      <el-button :disabled="!scope.row.bomFlag" type="text" @click="QTsearch(scope.row.id, 'out')">齐套查询</el-button>
                     </template>
                   </el-table-column>
 
@@ -518,11 +518,11 @@
                 </el-col>
               </el-form>
             </el-row>
-            <div class=" JNPF-flex-main">
+            <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table :data="planTableData" hasC @sort-change="sortChange" @selection-change="selectPlanFun"
                 ref="dataTableRef" @row-click="handleRowClick">
                 <el-table-column prop="planNo" label="计划单号" min-width="180" sortable="custom"> </el-table-column>
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" sortable="custom" />
+                <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
                 <el-table-column prop="productSource" label="产品来源" min-width="160" sortable="custom">
                   <template slot-scope="scope">
@@ -1277,5 +1277,11 @@ export default {
 
 .dataTable {
   height: calc(100% - 70px);
+}
+.productInfo ::v-deep .el-collapse-item__wrap{
+  padding: 0;
+}
+::v-deep .el-tabs__item{
+  padding: 0 10px;
 }
 </style>

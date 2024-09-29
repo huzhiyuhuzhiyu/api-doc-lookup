@@ -8,14 +8,14 @@
       <div class="main">
         <JNPF-table ref="popupTitleData" v-loading="listLoading" border :data="popupList" show-summary
           :summary-method="getSummaries">
-          <el-table-column prop="productCode" label="来源产品编码" width="130"></el-table-column>
+          <el-table-column prop="productCode" label="来源产品编码" min-width="130"></el-table-column>
           <el-table-column prop="productName" label="来源产品名称" width="120" />
-          <el-table-column prop="productDrawingNo" label="来源产品图号" min-width="320" />
+          <el-table-column prop="productDrawingNo" label="来源品名规格" min-width="320" />
           <el-table-column prop="mainUnit" label="单位" width="80" />
 
 
-          <el-table-column prop="demandQuantity" label="子件需求数量" />
-          <el-table-column prop="createTime" label="创建时间" />
+          <el-table-column prop="demandQuantity" label="子件需求数量" min-width="120" />
+          <el-table-column prop="createTime" label="创建时间" min-width="180"/>
 
         </JNPF-table>
         <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
@@ -63,14 +63,11 @@ export default {
       const { columns, data } = param;
       const sums = [];
       columns.forEach((column, index) => {
-        if (index === 0) {
+        if (index === 1) {
           sums[index] = '合计';
           return;
         }
-        if (index === 1) {
-          sums[index] = '';
-          return;
-        }
+       
         const values = this.popupList.map(item => item[column.property] ? Number(item[column.property]) : '');
         if (!values.every(value => isNaN(value))) {
           sums[index] = values.reduce((prev, curr) => {
@@ -191,5 +188,8 @@ export default {
 
 .tableContainer {
   height: inherit;
+}
+::v-deep  .gutter{
+  display: none;
 }
 </style>

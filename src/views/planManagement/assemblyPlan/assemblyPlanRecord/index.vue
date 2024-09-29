@@ -66,7 +66,7 @@
                 }}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
             <el-table-column prop="planStartDate" label="计划开始日期" min-width="150" sortable="custom" />
             <el-table-column prop="planEndDate" label="计划结束日期" min-width="150" sortable="custom" />

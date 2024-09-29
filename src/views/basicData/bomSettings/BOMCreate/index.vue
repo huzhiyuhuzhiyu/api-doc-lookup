@@ -301,6 +301,37 @@ export default {
   created() {
     if (this.$route.query.alert) {
       this.content = '新建'
+    } else {
+      if (this.$route.params.content) {
+        this.content = this.$route.params.content
+      } else {
+        this.content = ''
+      }
+      if (this.$route.params.name) {
+        this.dataForm.productName = this.$route.params.name
+      } else {
+        this.dataForm.productName = ''
+      }
+      if (this.$route.params.id) {
+        this.dataForm.productId = this.$route.params.id
+      } else {
+        this.dataForm.productId = ''
+      }
+      if (this.$route.params.drawNo) {
+        this.dataForm.drawNo = this.$route.params.drawNo
+      } else {
+        this.dataForm.drawNo = ''
+      }
+      if (this.$route.params.classAttribute) {
+        this.dataForm.classAttribute = this.$route.params.classAttribute
+      } else {
+        this.dataForm.classAttribute = ''
+      }
+      if (this.$route.params.productSource) {
+        this.dataForm.productSource = this.$route.params.productSource
+      } else {
+        this.dataForm.productSource = ''
+      }
     }
     this.dataFormItems.forEach((tc) => {
       this.dataForm[tc.prop] = tc.value || '' // 设置默认value
@@ -365,31 +396,7 @@ export default {
         })
       }
     })
-    if (this.$route.params.name) {
-      this.dataForm.productName = this.$route.params.name
-    } else {
-      this.dataForm.productName = ''
-    }
-    if (this.$route.params.id) {
-      this.dataForm.productId = this.$route.params.id
-    } else {
-      this.dataForm.productId = ''
-    }
-    if (this.$route.params.drawNo) {
-      this.dataForm.drawNo = this.$route.params.drawNo
-    } else {
-      this.dataForm.drawNo = ''
-    }
-    if (this.$route.params.classAttribute) {
-      this.dataForm.classAttribute = this.$route.params.classAttribute
-    } else {
-      this.dataForm.classAttribute = ''
-    }
-    if (this.$route.params.productSource) {
-      this.dataForm.productSource = this.$route.params.productSource
-    } else {
-      this.dataForm.productSource = ''
-    }
+
     this.dataForm.approvalFlag = false
     this.getBusInfo()
   },
@@ -828,9 +835,16 @@ export default {
       this.dataForm.productId = data[0].id
     },
     goBack() {
-      this.$router.push({
-        path: '/basicData/bomSettings/productionBom'
-      })
+      if (this.$route.query.alert) {
+        this.$router.push({
+          path: '/basicData/bomSettings/productionBom'
+        })
+      } else {
+        this.$router.push({
+          path: '/basicData/bomSettings/productNoBomQuery'
+        })
+      }
+
     },
     goBom() {
       this.$router.push({

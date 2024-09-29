@@ -55,20 +55,7 @@
               <el-input v-model="listQuery.productCode" @keyup.enter.native="search()" placeholder="产品编码" clearable />
             </el-form-item>
           </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="listQuery.productName" @keyup.enter.native="search()" placeholder="产品名称" clearable />
-            </el-form-item>
-          </el-col>
 
-          <!-- <el-col :span="4">
-            <el-form-item>
-              <el-select v-model="listQuery.documentStatus" placeholder="请选择单据状态" clearable style="width: 100%;">
-                <el-option v-for="item in global.documentStatusList" :key="item.value" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col> -->
           <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
@@ -107,7 +94,7 @@
         </div>
         <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableData" @sort-change="sortChange" custom-column
           fixedNO @selection-change="selectionChange" :element-loading-text="loadingText"
-          :setColumnDisplayList="columnList" v-if="tableData.length">
+          :setColumnDisplayList="columnList">
           <el-table-column prop="drawNo" label="品名规格" min-width="600" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="200" sortable="custom">
             <template slot-scope="scope">
@@ -116,8 +103,6 @@
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="productName" label="产品名称" min-width="200" sortable="custom" />
-
           <el-table-column prop="pickingWay" label="领料方式" min-width="180">
             <template slot-scope="{ row }">
               <template v-if="row.pickingWay == 'production_order'">
@@ -223,12 +208,6 @@ export default {
           label: '产品编码',
           type: 'input'
         },
-
-        {
-          prop: 'productName',
-          label: '产品名称',
-          type: 'input'
-        },
         {
           prop: 'pickingWay',
           label: '领料方式',
@@ -276,7 +255,6 @@ export default {
         name: '',
         drawNo: '',
         productCode: '',
-        productName: '',
         startTime: '',
         endTime: '',
         startAndEndTime: [],
@@ -309,7 +287,7 @@ export default {
       loadingText: '',
       btnLoading: false,
       selectedData: [],
-      columnList: ['productName', 'pickingWay', 'createByName', 'createTime'],
+      columnList: ['pickingWay', 'createByName', 'createTime'],
       showAppCodeFlag: true
     }
   },

@@ -14,11 +14,7 @@
               <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="listQuery.productName" placeholder="产品名称" clearable @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
+       
           <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
@@ -70,7 +66,7 @@
           </el-table-column>
           <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
           <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
-          <el-table-column label="操作" width="180">
+          <el-table-column label="操作" width="80">
             <template slot-scope="scope">
               <el-button type="text" size="mini" @click.native="add(scope.row)">
                 新建
@@ -168,7 +164,6 @@ export default {
         pageNum: 1,
         pageSize: 20,
         productDrawingNo: '',
-        productName: '',
         productCode: '',
         startTime: '',
         endTime: '',
@@ -464,6 +459,7 @@ export default {
         name: 'BOMCreate',
         params: {
           id: item.id,
+          content: '新建',
           name: item.name,
           drawNo: item.drawingNo,
           classAttribute: item.classAttribute,

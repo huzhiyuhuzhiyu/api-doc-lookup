@@ -55,11 +55,7 @@
               <el-input v-model="listQuery.productCode" @keyup.enter.native="search()" placeholder="产品编码" clearable />
             </el-form-item>
           </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="listQuery.productName" @keyup.enter.native="search()" placeholder="产品名称" clearable />
-            </el-form-item>
-          </el-col>
+       
 
           <el-col :span="6">
             <el-form-item>
@@ -107,7 +103,6 @@
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="productName" label="产品名称" min-width="200" sortable="custom" />
           <el-table-column prop="pickingWay" label="领料方式" min-width="180">
             <template slot-scope="{ row }">
               <template v-if="row.pickingWay == 'production_order'">
@@ -190,12 +185,6 @@ export default {
           type: 'input'
         },
         {
-          prop: 'productName',
-          label: '产品名称',
-          type: 'input'
-        },
-
-        {
           prop: 'pickingWay',
           label: '领料方式',
           type: 'select',
@@ -243,7 +232,6 @@ export default {
         name: '',
         drawNo: '',
         productCode: '',
-        productName: '',
         startTime: '',
         endTime: '',
         historyFlag: 1,
@@ -277,7 +265,7 @@ export default {
       loadingText: '',
       btnLoading: false,
       selectedData: [],
-      columnList: ['productName', 'pickingWay', 'createByName', 'createTime']
+      columnList: ['pickingWay', 'createByName', 'createTime']
     }
   },
   watch: {
@@ -397,7 +385,6 @@ export default {
         name: '',
         drawNo: '',
         productCode: '',
-        productName: '',
         startTime: '',
         endTime: '',
         startAndEndTime: [],

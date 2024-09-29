@@ -821,7 +821,7 @@
 
         </div>
         <el-dialog title="选择客户" :close-on-click-modal="false" :close-on-press-escape="false"
-          :visible.sync="customerVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="50%"
+          :visible.sync="customerVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="1200PX"
           append-to-body @close="handleClose">
 
           <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
@@ -857,17 +857,17 @@
                 <el-form @submit.native.prevent>
                   <el-col :span="6">
                     <el-form-item>
-                      <el-input v-model="form.code" placeholder="请输入客户编码" clearable />
+                      <el-input v-model="form.code" placeholder="客户编码" clearable />
                     </el-form-item>
                   </el-col>
                   <el-col :span="6">
                     <el-form-item>
-                      <el-input v-model="form.name" placeholder="请输入客户名称" clearable />
+                      <el-input v-model="form.name" placeholder="客户名称" clearable />
                     </el-form-item>
                   </el-col>
                   <el-col :span="6">
                     <el-form-item>
-                      <el-input v-model="form.taxId" placeholder="请输入税号" clearable />
+                      <el-input v-model="form.taxId" placeholder="税号" clearable />
                     </el-form-item>
                   </el-col>
 

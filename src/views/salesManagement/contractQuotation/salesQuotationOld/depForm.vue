@@ -128,13 +128,13 @@
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="productDrawingNo" label="品名规格" min-width="160">
+                    <el-table-column prop="productDrawingNo" label="品名规格" min-width="330">
                       <template slot="header">
                         <span class="required">*</span> 品名规格
                       </template>
                       <template slot-scope="scope">
                         <el-autocomplete v-model="scope.row.productDrawingNo" :fetch-suggestions="querySearchAsync"
-                          placeholder="请输入" prefix-icon="el-icon-search"
+                          placeholder="请输入" prefix-icon="el-icon-search" style="width: 100%;"
                           @select="handleSelect(scope.row, scope.$index, $event)"
                           @keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)"
                           :disabled="status"></el-autocomplete>
@@ -171,7 +171,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="taxRate" label="税率" width="100">
+                    <el-table-column prop="taxRate" label="税率" width="140">
                       <template slot="header">
                         <span class="required">*</span>税率
                       </template>
@@ -191,13 +191,13 @@
                       </template>
                     
                     </el-table-column>
-                    <el-table-column prop="excludingTaxUnitPrice" label="单价(不含税)" width="120" show-overflow-tooltip>
+                    <el-table-column prop="excludingTaxUnitPrice" label="单价(不含税)" width="150" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="totalTaxAmount" label="税额" width="100" show-overflow-tooltip>
+                    <el-table-column prop="totalTaxAmount" label="税额" width="150" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="amounts" label="金额(含税)" width="100" show-overflow-tooltip>
+                    <el-table-column prop="amounts" label="金额(含税)" width="150" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="excludingTaxAmounts" label="金额(不含税)" width="160" show-overflow-tooltip>
+                    <el-table-column prop="excludingTaxAmounts" label="金额(不含税)" width="150" show-overflow-tooltip>
                     </el-table-column>
 
 
@@ -919,9 +919,9 @@ export default {
               this.taxRateList.push(obj)
             }
           } else {
-            console.log("index", index);
-            item.data.taxRate = this.taxRate
-            item.data.productDrawingNo = item.value
+            console.log("index", index,this.dataFormTwo.lines);
+            item.data.taxRate = this.taxRate*1
+            this.$set(item.data,'productDrawingNo',item.value)
             item.data.productsId = item.data.id
 
             this.$set(this.dataFormTwo.lines, index, item.data)
@@ -939,9 +939,9 @@ export default {
     changeTaxRate(row, index) {
       console.log(row, index);
       let productArr = [...this.dataFormTwo.lines]
-      productArr[index].excludingTaxUnitPrice = this.jnpf.numberFormat(row.unitPrice / (1 + (row.taxRate * 1 / 100)), 4)
-      productArr[index].excludingTaxAmounts = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 4)
-      productArr[index].totalTaxAmount = this.jnpf.numberFormat((row.amounts * 1 - row.excludingTaxAmounts), 4)
+      productArr[index].excludingTaxUnitPrice = this.jnpf.numberFormat(row.unitPrice / (1 + (row.taxRate * 1 / 100)), 2)
+      productArr[index].excludingTaxAmounts = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 2)
+      productArr[index].totalTaxAmount = this.jnpf.numberFormat((row.amounts * 1 - row.excludingTaxAmounts), 2)
       this.dataFormTwo.lines = productArr
     },
     getTaxRateFun() {
@@ -1221,7 +1221,7 @@ export default {
         }
       }
       if (row.unitPrice && row.unitPrice != '0') {
-        let b = this.jnpf.numberFormat((row.unitPrice / (1 + row.taxRate / 100)), 4)
+        let b = this.jnpf.numberFormat((row.unitPrice / (1 + row.taxRate / 100)), 2)
         row.excludingTaxUnitPrice = b ? b : 0
       } else {
         row.excludingTaxUnitPrice = ''
@@ -1232,7 +1232,7 @@ export default {
         row.totalTaxAmount = ''
         this.dataForm.totalAmount = 0
       } else {
-        let a = this.jnpf.numberFormat((row.unitPrice * row.num), 6)
+        let a = this.jnpf.numberFormat((row.unitPrice * row.num), 2)
         console.log("aaa", a);
         row.amounts = a ? a : '' // 含税金额
         console.log("row.amounts", row.amounts);
@@ -1251,13 +1251,13 @@ export default {
         console.log("进来了");
       }
       if (row.excludingTaxUnitPrice && row.num) {
-        let c = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 6)
+        let c = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 2)
         row.excludingTaxAmounts = c ? c : ''
       } else {
         row.excludingTaxAmounts = ''
       }
       if (row.excludingTaxAmounts && row.amounts) { // 税额计算
-        let d = this.jnpf.numberFormat((row.amounts * 1 - row.excludingTaxAmounts * 1), 6)
+        let d = this.jnpf.numberFormat((row.amounts * 1 - row.excludingTaxAmounts * 1), 2)
         row.totalTaxAmount = d ? d : 0
       }
     },
@@ -1313,7 +1313,7 @@ export default {
 
 
       if (row.unitPrice && row.unitPrice != '0') {
-        let b = this.jnpf.numberFormat((row.unitPrice / (1 + row.taxRate / 100)), 4)
+        let b = this.jnpf.numberFormat((row.unitPrice / (1 + row.taxRate / 100)), 2)
         row.excludingTaxUnitPrice = b ? b : 0
       } else {
         row.excludingTaxUnitPrice = ''
@@ -1324,7 +1324,7 @@ export default {
         row.totalTaxAmount = ''
         this.dataForm.totalAmount = 0
       } else {
-        let a = this.jnpf.numberFormat((row.unitPrice * row.num), 6)
+        let a = this.jnpf.numberFormat((row.unitPrice * row.num), 2)
         row.amounts = a ? a : '' // 含税金额
       }
       var totalPrice = 0;
@@ -1334,13 +1334,13 @@ export default {
         totalPrice = this.jnpf.math('add', [totalPrice, item.amounts])
       }
       if (row.excludingTaxUnitPrice && row.num) {
-        let c = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 6)
+        let c = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 2)
         row.excludingTaxAmounts = c ? c : ''
       } else {
         row.excludingTaxAmounts = ''
       }
       if (row.excludingTaxAmounts && row.amounts) { // 税额计算
-        let d = this.jnpf.numberFormat((row.amounts * 1 - row.excludingTaxAmounts * 1), 6)
+        let d = this.jnpf.numberFormat((row.amounts * 1 - row.excludingTaxAmounts * 1),2)
         row.totalTaxAmount = d ? d : 0
       }
       console.log("pfijspdfjp");
@@ -1501,6 +1501,9 @@ export default {
         getQuotationInfo(this.dataForm.id).then(res => {
           this.$nextTick(() => {
             this.dataForm = res.data.sale
+            res.data.lines.forEach(item => {
+              item.taxRate=item.taxRate*1
+            });
             this.dataFormTwo.lines = res.data.lines
             this.dataForm.totalAmount = 0
 

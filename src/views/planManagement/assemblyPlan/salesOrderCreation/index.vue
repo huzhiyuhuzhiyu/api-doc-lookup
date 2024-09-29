@@ -70,7 +70,7 @@
             <el-table-column prop="orderNo" label="订单号" min-width="160" sortable="custom"> </el-table-column>
             <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="160" sortable="custom" />
             <el-table-column prop="cooperativePartnerCode" label="客户编码" min-width="160" sortable="custom" />
-            <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom" />
+            <el-table-column prop="drawingNo" label="品名规格" min-width="280" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" min-width="120" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
             <el-table-column prop="deliveryDate" label="交货日期" min-width="120" sortable="custom" />
@@ -138,6 +138,7 @@ export default {
       tableData: [],
       listLoading: false,
       orderForm: {
+        classAttribute:"finish_product",
         orderNo: "",
         drawingNo: "",
         deliveryEndTime:"",
@@ -727,6 +728,7 @@ export default {
         orderNo: "",
         drawingNo: "",
         deliveryEndTime:"",
+        classAttribute:"finish_product",
         deliveryStartTime:"",
         planStatus: "not_generated",
         pageNum: 1,

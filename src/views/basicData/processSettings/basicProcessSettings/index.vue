@@ -289,7 +289,7 @@ export default {
         label: 'name'
       },
       processingTypeOptions: [
-        { label: "全部", value: "" },
+        { label: "所有选项", value: "" },
         { label: "自制", value: "self_produced" },
         { label: "外协", value: "external_production" },
       ],

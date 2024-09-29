@@ -26,10 +26,10 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="type == 'look'
-                              ? true
-                              : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                                ? false
-                                : true
+                            ? true
+                            : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                              ? false
+                              : true
                             "></el-input>
                         </el-form-item>
                       </el-col>
@@ -282,7 +282,7 @@
                           </el-button>
                         </template>
                       </el-table-column>
-                    </JNPF-table>
+                    </jnpf-table>
                   </el-form>
                   <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
                     <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ computedValue3 }}</span>

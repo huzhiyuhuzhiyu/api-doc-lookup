@@ -264,15 +264,23 @@ export default {
             {label:"无",value:false},
           ]
         },
-        
         {
-          prop: 'deliverDate',
-          label: '计划日期',
+          prop: 'planStartDate',
+          label: '计划开始日期',
           type: 'daterange',
           valueFormat: "yyyy-MM-dd",
           startPlaceholder: '开始日期',
           endPlaceholder: '结束日期',
         },
+        {
+          prop: 'planEndDate',
+          label: '计划结束日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+        },
+        
         {
           prop: 'mainUnit',
           label: "单位",

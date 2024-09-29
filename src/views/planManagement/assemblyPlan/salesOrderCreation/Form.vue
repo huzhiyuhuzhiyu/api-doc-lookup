@@ -705,6 +705,7 @@ export default {
             obj.plan.classAttribute = this.productData[0].classAttribute
             obj.plan.clearance = this.productData[0].clearance
             obj.plan.deputyUnit = this.productData[0].deputyUnit
+            obj.plan.mainUnit = this.productData[0].mainUnit
           } else {
             obj.plan = this.planForm
           }

@@ -347,23 +347,12 @@ export default {
       }
     },
     async handleConfirm() {
-      this.btnLoading = true
       let submitFlag = true // 提交可行性判断
-
-      // 校验tabs渲染表单
-      for (let i = 0; i < this.$refs['dataForm'].length; i++) {
-        const item = this.$refs['dataForm'][i]
-        const form = item.$refs.main
-
-        const valid_1 = await form.validate().catch(() => false)
-
-        if (!valid_1 && submitFlag) {
+      const valid_1 = await this.$refs['dataForm'].$refs.main.validate().catch(err => false)
+      if (!valid_1 && submitFlag) {
           submitFlag = false
-          this.activeName = this.tabs[i].tabCode
-          this.jnpf.focusErrValidItem(form.fields)
         }
-      }
-
+     
       // 判断条件后发送请求
       if (submitFlag) {
         let obj = {
@@ -371,6 +360,8 @@ export default {
           stockLimitsAuthorities: this.stockLimitsAuthorities
         }
         const formMethod = this.dataForm.id ? editWarehouse : addWarehouse
+      this.btnLoading = true
+
         formMethod(obj)
           .then((res) => {
             let msg = res.msg

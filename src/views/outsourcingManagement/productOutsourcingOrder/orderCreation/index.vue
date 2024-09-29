@@ -282,7 +282,6 @@
                     <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue2 }}</span>
                     <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ computedValue3 }}</span>
                     <!-- <span style="font-weight:500;margin-right:10px">总金额(不含税)：{{ computedValue }}</span> -->
-
                   </div>
                 </el-collapse-item>
               </el-collapse>
@@ -309,7 +308,6 @@ import SourceArea from './source.vue'
 import {
   getShipmentList,
   getpurProcurementRequireDetail,
-  addpurProcurementRequire,
   editpurProcurementRequire,
   purProcurementRequirementsList
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
@@ -324,13 +322,8 @@ import {
 import { insertOutOrder } from '@/api/purchasingAndOutsourcingOrders/index'
 import { getCooperativeData } from '@/api/basicData/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
-import {
-  getcategoryTrees,
-  getcooperativeProduct,
-  getOrderDetail,
-  getsaleOrderDetailList
-} from '@/api/salesManagement/assemblyOrders'
-import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
+import { getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 export default {

@@ -41,7 +41,7 @@ export default {
         <div style="display:flex;align-items:center;">
             <el-tooltip class="item" placement="top" effect="light" :content="cSwitchList? '图文模式':'列表模式' ">
                 <i @click="cSwitchList = !cSwitchList"
-                   style="margin-right: 3px" class="pointer iconfont"
+                   style="margin-right: 3px" class="pointer zgt-ifont"
                    :class="[cSwitchList ?  'icon-liebiao' : 'icon-pingpu' ]"/>
             </el-tooltip>
             <el-dropdown @command="$emit('command',$event)">
@@ -54,7 +54,7 @@ export default {
                         :command="item.text"
                         v-for="item in fileExtFilterOption"
                         :key="item.text">
-                        <i style="font-size: 15px" class="iconfont" :class="item.icon"/>{{item.text}}
+                        <i style="font-size: 15px" class="zgt-ifont" :class="item.icon"/>{{item.text}}
                     </el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>

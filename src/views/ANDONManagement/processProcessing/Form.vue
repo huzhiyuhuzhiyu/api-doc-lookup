@@ -62,6 +62,7 @@ export default {
         { prop: "abnormalContent", label: "申请内容", value: "", type: "input", sm: 6, itemDisabled: true },
         { prop: "equipmentName", label: "设备名称", value: "", type: "input", sm: 6, itemDisabled: true },
         { prop: "productionOrderNo", label: "生产单号", value: "", type: "input", sm: 6, itemDisabled: true },
+        { prop: "planHandler", label: "计划处理人", value: "", type: "input", sm: 6, itemDisabled: true },
       ],
       dealForm: {
         processDescription: '',

@@ -314,6 +314,7 @@ export default {
     this.getProductClassFun()
   },
   created() {
+    this.superForm = this.listQuery
     // this.initData()
     this.getcategoryTree()
     this.getBusinessOptions()

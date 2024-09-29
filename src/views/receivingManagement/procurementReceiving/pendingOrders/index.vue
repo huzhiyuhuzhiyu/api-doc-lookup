@@ -217,12 +217,12 @@ export default {
         },
         {
           prop: 'cooperativePartnerCode',
-          label: '客户编码',
+          label: '供应商编码',
           type: 'input'
         },
         {
           prop: 'cooperativePartnerName',
-          label: '客户名称',
+          label: '供应商名称',
           type: 'input'
         },
 

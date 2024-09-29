@@ -1238,7 +1238,7 @@
                     <org-select ref="approver-user-org" title="添加用户"
                       v-model="approverForm.approvers" />
                   </el-form-item>
-                  <el-form-item style="margin-bottom:0!important"
+                  <!-- <el-form-item style="margin-bottom:0!important"
                     v-if="approverForm.assigneeType === 6">
                     <div slot="label">附加条件
                       <el-tooltip content="指定成员增加人员选择范围附加条件" placement="top">
@@ -1252,7 +1252,7 @@
                       <el-option label="发起人上级" :value="4"></el-option>
                       <el-option label="发起人下属" :value="5"></el-option>
                     </el-select>
-                  </el-form-item>
+                  </el-form-item> -->
                 </div>
               </el-form-item>
               <el-form-item label="处理方式">
@@ -1287,7 +1287,7 @@
                   </el-option>
                 </el-select>
               </el-form-item> -->
-              <el-form-item label="进度设置">
+              <!-- <el-form-item label="进度设置">
                 <div slot="label" class="form-item-label">进度设置</div>
                 <el-select class="form-item-content" v-model="approverForm.progress"
                   placeholder="请选择">
@@ -1295,7 +1295,7 @@
                     :value="item">
                   </el-option>
                 </el-select>
-              </el-form-item>
+              </el-form-item> -->
               <el-form-item label="抄送设置">
                 <div slot="label" class="form-item-label">抄送设置</div>
                 <div class="form-item-content">
@@ -1306,7 +1306,7 @@
                     class="mb-5" />
                   <org-select ref="approver-copy-user-org" v-model="approverForm.circulateUser"
                     title="添加用户" class="mb-5" />
-                  <el-form-item>
+                  <!-- <el-form-item>
                     <div slot="label">附加条件
                       <el-tooltip content="抄送人员增加人员选择范围附加条件" placement="top">
                         <a class="el-icon-warning-outline"></a>
@@ -1319,8 +1319,8 @@
                       <el-option label="发起人上级" :value="4"></el-option>
                       <el-option label="发起人下属" :value="5"></el-option>
                     </el-select>
-                  </el-form-item>
-                  <el-checkbox v-model="approverForm.isCustomCopy">允许自选抄送人</el-checkbox>
+                  </el-form-item> -->
+                  <!-- <el-checkbox v-model="approverForm.isCustomCopy">允许自选抄送人</el-checkbox> -->
                 </div>
               </el-form-item>
             </el-form>

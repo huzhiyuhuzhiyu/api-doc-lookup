@@ -1309,7 +1309,7 @@ export default {
       });
     },
     // 组装列表数据
-    getassembleData() {
+    getassembleData(type) {
       if (this.planDateArr.length) {
         this.assembleForm.planSsd = this.planDateArr[0]
         this.assembleForm.planSed = this.planDateArr[1]

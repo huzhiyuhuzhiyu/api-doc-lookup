@@ -133,11 +133,10 @@
 // import { purchaseOrderList } from '@/api/purchasingManagement/purchaseInquirySheet'
 import {
   purchaseOrderList,
-  detailpurchaseOrderList,
-  purPurchaseOrderExport,
   purPurchaseOrderdetail,
   purPurchaseBatch,
-  purPurchaseBatchLine
+  purPurchaseBatchLine,
+  deletePurPurchaseOrder
 } from '@/api/purchasingAndOutsourcingOrders/index'
 import JNPFForm from './Form'
 import moment from 'moment'
@@ -201,12 +200,21 @@ export default {
         },
         {
           prop: 'receivingStatus',
-          label: '收货状态',
+          label: '订单状态',
           type: 'select',
           options: [
-            { label: '待退货', value: 'receiving' },
-            { label: '已退货', value: 'received' },
-            { label: '已取消', value: 'stopped' }
+            {
+              value: 'not_finished',
+              label: '未完成'
+            },
+            {
+              value: 'finished',
+              label: '已完成'
+            },
+            {
+              value: 'stopped',
+              label: '已停止'
+            }
           ]
         },
         {
@@ -431,6 +439,24 @@ export default {
             this.btnLoading = false
           })
       }
+    },
+    handleDel(id) {
+      this.$confirm('此操作将删除该数据，是否继续？', this.$t('common.tipTitle'), {
+        type: 'warning'
+      })
+        .then(() => {
+          deletePurPurchaseOrder(id).then((res) => {
+            this.$message({
+              type: 'success',
+              message: '删除成功',
+              duration: 1500,
+              onClose: () => {
+                this.initData()
+              }
+            })
+          })
+        })
+        .catch(() => { })
     },
     // 明细列表 批量停止
     handleBatchStop() {
@@ -657,7 +683,7 @@ export default {
         })
       })
     },
-   
+
     // 处理分页
     printPageDataFn(data, pageSize = 20) {
       const printTable = []

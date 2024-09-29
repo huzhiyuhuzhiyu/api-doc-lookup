@@ -102,7 +102,7 @@
                       <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                         查看详情
                       </el-dropdown-item>
-                   
+
                     </el-dropdown-menu>
                   </el-dropdown>
                 </tableOpts>
@@ -134,11 +134,10 @@
 // import { purchaseOrderList } from '@/api/purchasingManagement/purchaseInquirySheet'
 import {
   purchaseOrderList,
-  detailpurchaseOrderList,
-  purPurchaseOrderExport,
   purPurchaseOrderdetail,
   purPurchaseBatch,
-  purPurchaseBatchLine
+  purPurchaseBatchLine,
+  deletePurPurchaseOrder
 } from '@/api/purchasingAndOutsourcingOrders/index'
 import JNPFForm from './Form'
 import moment from 'moment'
@@ -608,7 +607,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          withdrawn(_data).then((res) => {
+          deletePurPurchaseOrder(id).then((res) => {
             this.$message({
               type: 'success',
               message: '删除成功',
@@ -621,7 +620,7 @@ export default {
         })
         .catch(() => { })
     },
- 
+
     withdrawnHandle(formId) {
       let _data = {
         formId

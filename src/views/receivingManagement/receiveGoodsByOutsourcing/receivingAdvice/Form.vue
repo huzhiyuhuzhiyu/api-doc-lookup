@@ -1267,6 +1267,8 @@ export default {
           item.ordersNo = item.orderNo
         })
         this.dataFormTwo.productData = data
+        this.dataForm.partnerName = data[0].cooperativePartnerName
+        this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
       }
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
@@ -1290,6 +1292,7 @@ export default {
             this.dataForm.approvalStatus = ''
             this.dataForm.packingStatus = 'unboxed'
             this.fetchData('WXSH')
+            this.dataForm.salesman = this.userInfo.userName
             res.data.noticeLineList.forEach((item) => {
               item.receivedQuantity = ''
             })
@@ -1310,6 +1313,7 @@ export default {
         })
       } else {
         this.fetchData('WXSH')
+        this.dataForm.salesman = this.userInfo.userName
       }
 
       if (this.btnType == 'edit') {

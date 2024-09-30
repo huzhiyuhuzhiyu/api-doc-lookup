@@ -1494,6 +1494,8 @@ export default {
       this.approvalFlag = approvalFlag
       if (data) {
         this.dataFormTwo.productData = data
+        this.dataForm.partnerName = data[0].cooperativePartnerName
+        this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
       }
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
@@ -1517,6 +1519,7 @@ export default {
             this.datafilelist = []
             this.dataForm.approvalStatus = ''
             this.dataForm.packingStatus = 'unboxed'
+            this.dataForm.salesman = this.userInfo.userName
             this.fetchData('CGSH')
             // getOrderDetail(res.data.notice.ordersId).then(res1 => {
             //   res1.data.orderLines.map((item) => {
@@ -1553,6 +1556,7 @@ export default {
           }
         })
       } else {
+        this.dataForm.salesman = this.userInfo.userName
         this.fetchData('CGSH')
       }
       if (this.btnType == 'edit') {

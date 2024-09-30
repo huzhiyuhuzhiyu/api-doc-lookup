@@ -52,7 +52,7 @@
                       </el-col>
                       <el-col :span="6" v-if="type === 'look'">
                         <el-form-item label="订单状态" prop="receivingStatus" ref="receivingStatus">
-                          <el-select v-model="value" style="width: 100%;" placeholder="请选择"
+                          <el-select v-model="dataForm.receivingStatus" style="width: 100%;" placeholder="请选择"
                             :disabled="type !== 'add' ? true : false">
                             <el-option v-for="item in receivingStatusOptions" :key="item.value" :label="item.label"
                               :value="item.value"></el-option>
@@ -748,7 +748,7 @@ export default {
       console.log(paramsObj, 'o')
       let flag = true
       if (paramsObj.oldData.length) {
-        flag = await this.$confirm('切换供应商会更新产品价格信息，是否继续？', '提示', {
+        flag = await this.$confirm('切换供应商将清空产品信息，是否继续？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'

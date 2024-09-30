@@ -38,7 +38,17 @@
                             </el-select>
                           </el-form-item>
                         </el-col>
-
+                        <el-col :sm="6" :xs="24" v-if="partnerFlag">
+                          <el-form-item :label="partnerTitle" prop="cooperativePartnerIdText">
+                            <ComSelect-page key="partner" ref="ComSelect-page"
+                              v-model="dataForm.cooperativePartnerIdText" @change="partnerChange"
+                              :tableItems="partnerTableItems" :dialogTitle="partnerDialogTitle"
+                              :treeTitle="partnerTreeTitle" :placeholder="partnerPlaceholder"
+                              :methodArr="getCooperativeMethodArr" :listMethod="getCooperativeData"
+                              :listRequestObj="partnerRequestObj" :searchList="partnerSearchList"
+                              :treeNodeClick="yxPartnerTreeNodeClick" :isdisabled="btnType === 'look'" />
+                          </el-form-item>
+                        </el-col>
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="仓库" prop="warehouseName">
                             <ComSelect-list :requestObj="{ type: 'normal', state: 'enable' }" :dialogTitle="'选择仓库'"
@@ -47,15 +57,14 @@
                               @change="changeWarehousex"></ComSelect-list>
                           </el-form-item>
                         </el-col>
-                        <el-col :sm="6" :xs="24"  v-if="dataForm.documentType == 'inbound'">
-                            <el-form-item label="检验结果" prop="inspectionResults">
-                              <el-select v-model="dataForm.inspectionResults" placeholder="请选择检验结果"
-                                style="width: 100%;">
-                                <el-option v-for="(item, index) in inspectionResultsList" :key="index"
-                                  :label="item.label" :value="item.value"></el-option>
-                              </el-select>
-                            </el-form-item>
-                          </el-col>
+                        <el-col :sm="6" :xs="24" v-if="dataForm.documentType == 'inbound'">
+                          <el-form-item label="检验结果" prop="inspectionResults">
+                            <el-select v-model="dataForm.inspectionResults" placeholder="请选择检验结果" style="width: 100%;">
+                              <el-option v-for="(item, index) in inspectionResultsList" :key="index" :label="item.label"
+                                :value="item.value"></el-option>
+                            </el-select>
+                          </el-form-item>
+                        </el-col>
 
 
                         <el-col :sm="12" :xs="24">
@@ -459,7 +468,7 @@
 
 <script>
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
-import { getWarehouseList,getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
+import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
 import { getProductList } from '@/api/masterDataManagement/productManage'
 import { getBimProcessList } from '@/api/bimProcess/index'
 import {
@@ -471,7 +480,8 @@ import BatchNumberForm from './batchNumberForm.vue'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
-
+import { getCooperativeData } from '@/api/basicData/index'
+import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
 export default {
   components: { WareHouseForm, BatchNumberForm, CustomerForm, Process },
   props: {
@@ -539,8 +549,8 @@ export default {
       getWarehouseList,
 
       inspectionResultsList: [//检验下拉框数据
-      { label: "待检验", value: "unInspect" },
-      { label: "检验合格", value: "qualified" },
+        { label: "待检验", value: "unInspect" },
+        { label: "检验合格", value: "qualified" },
       ],
       dataRule: {
         documentType: [{ required: true, message: "单据类型不能为空", trigger: 'change' }],
@@ -548,6 +558,9 @@ export default {
         inspectionResults: [{ required: true, message: "检验结果不能为空", trigger: 'change' }],
 
         orderNo: [{ required: true, message: "请输入单号", trigger: 'blur' }],
+        cooperativePartnerIdText: [
+          { required: true, message: '客户不能为空', trigger: 'change' }
+        ],
         warehouseName: [
           { required: true, message: '仓库不能为空', trigger: 'change' }
         ],
@@ -629,6 +642,36 @@ export default {
       flowTemplateJson: {},
       flowData: {},
       classAttributeList: [],
+
+      // 客户
+      partnerFlag: false,
+      getcategoryTrees, // 客户列表
+      getCooperativeData, // 客户列表
+      getCooperativeMethodArr: { method: getcategoryTrees, requestObj: { type: 'customer' } },
+      partnerRequestObj: {
+        code: "",
+        name: "",
+        taxId: "",
+        mobilePhone: '',
+        pageNum: 1,
+        pageSize: 20,
+        partnerCategoryId: "",
+        type: "customer",
+      }, // 意向客户列表入参
+      partnerSearchList: [
+        { prop: 'code', label: '客户编码', type: 'input' },
+        { prop: 'name', label: '客户名称', type: 'input' },
+        { prop: 'taxId', label: '税号', type: 'input' }
+      ], // 客户搜索条件
+      partnerTableItems: [
+        { prop: 'code', label: '客户编码' },
+        { prop: 'name', label: '客户名称' },
+        { prop: 'taxId', label: '税号' },
+      ], // 客户列表字段
+      partnerTitle: '',
+      partnerDialogTitle: '',
+      partnerTreeTitle: '',
+      partnerPlaceholder: ''
     }
   },
   created() {
@@ -678,6 +721,7 @@ export default {
         console.log("产品信息", res);
         res.data.records.forEach(item => {
           item.productCode = item.code
+          item.productDrawingNo = item.drawingNo
           this.$set(item, 'num', '')
         });
         this.$nextTick(() => {
@@ -891,7 +935,7 @@ export default {
         item.ordersLineId = ""
         item.totalAmount = ""
         item.taxAmount = ""
-        item.productCode = item.code
+        item.productCode = item.productCode
         item.taxRate = 13
         if (this.dataForm.documentType == 'inbound') {
           item.productsId = item.id
@@ -1113,6 +1157,65 @@ export default {
         this.fetchData("RKDH")
 
       }
+      if (val == 'outbound_sale_send' || val == 'inbound_sale_return') {
+        this.partnerFlag = true
+        this.partnerTitle = '客户'
+        this.partnerDialogTitle = '选择客户'
+        this.partnerTreeTitle = '客户分类'
+        this.partnerPlaceholder = '请选择客户'
+        this.getCooperativeMethodArr = { method: getcategoryTrees, requestObj: { type: 'customer' } }
+        this.partnerRequestObj = {
+          code: "",
+          name: "",
+          taxId: "",
+          mobilePhone: '',
+          pageNum: 1,
+          pageSize: 20,
+          partnerCategoryId: "",
+          type: "customer",
+        } // 意向客户列表入参
+        this.dataRule.cooperativePartnerIdText[0].message = '客户不能为空'
+      } else if (val == 'inbound_purchase' || val == 'outbound_purchase') {
+        this.partnerFlag = true
+        this.partnerTitle = '采购供应商'
+        this.partnerDialogTitle = '选择采购供应商'
+        this.partnerTreeTitle = '采购供应商分类'
+        this.partnerPlaceholder = '请选择采购供应商'
+        this.getCooperativeMethodArr = { method: getcategoryTrees, requestObj: { type: 'supplier' } }
+        this.partnerRequestObj = {
+          code: "",
+          name: "",
+          taxId: "",
+          mobilePhone: '',
+          pageNum: 1,
+          pageSize: 20,
+          partnerCategoryId: "",
+          type: "supplier",
+        } // 意向客户列表入参
+        console.log(this.dataRule, 'this.dataRule')
+        this.dataRule.cooperativePartnerIdText[0].message = '采购供应商不能为空'
+        // this.dataRule
+      } else if (val == 'outbound_external_send' || val == 'inbound_external_return') {
+        this.partnerFlag = true
+        this.partnerTitle = '外协供应商'
+        this.partnerDialogTitle = '选择外协供应商'
+        this.partnerTreeTitle = '外协供应商分类'
+        this.partnerPlaceholder = '请选择外协供应商'
+        this.getCooperativeMethodArr = { method: getcategoryTrees, requestObj: { type: 'outsourcing_suppliers' } }
+        this.partnerRequestObj = {
+          code: "",
+          name: "",
+          taxId: "",
+          mobilePhone: '',
+          pageNum: 1,
+          pageSize: 20,
+          partnerCategoryId: "",
+          type: "outsourcing_suppliers",
+        } // 意向客户列表入参
+        this.dataRule.cooperativePartnerIdText[0].message = '外协供应商不能为空'
+      } else {
+        this.partnerFlag = false
+      }
       if (this.productData.length) {
         this.productData.forEach(item => {
           if (item.productDrawingNo) {
@@ -1174,14 +1277,14 @@ export default {
         path: "/warehouseManagement/finishedProductWarehouseManagement/inventoryList",
       })
     },
-    
+
     // 获取仓库id
     getWarehouseListFun() {
       getWarehouseList({ code: this.warehouseCode }).then(res => {
         this.dataForm.warehouseName = res.data[0].name
         this.dataForm.warehouseId = res.data[0].id
         // 获取仓库详情信息
-        getWarehouseInfo(res.data[0].id).then(response => { 
+        getWarehouseInfo(res.data[0].id).then(response => {
           this.dataForm.warehouseType = response.data.type
           this.allocationFlag = response.data.locationStatus == 'disabled' ? false : true
         })
@@ -1576,6 +1679,25 @@ export default {
           this.dataForm.approvalFlag = false
         }
       }).catch(() => { })
+    },
+    // 意向客户分类节点点击
+    yxPartnerTreeNodeClick(data, node, listQuery) {
+      if (listQuery.partnerCategoryId === data.id) return listQuery
+      listQuery.partnerCategoryId = data.id
+      return listQuery
+    },
+    // 客户选框传值
+    partnerChange(val, data, paramsObj) {
+      this.$nextTick(() => { this.$refs['dataForm'].validateField('cooperativePartnerIdText') }) // 校验操作的元素(name是组件绑定的value)
+      if (data && data.length) { // 数据有效，进行更新
+        const partnerInfo = data[0].all
+        this.partnerInfo = data[0].all
+        this.dataForm.cooperativePartnerId = partnerInfo.id
+        this.dataForm.cooperativePartnerIdText = partnerInfo.name
+      } else { // 不选择任何内容，置空绑定的值
+        this.dataForm.cooperativePartnerId = ""
+        this.dataForm.cooperativePartnerIdText = ""
+      }
     },
   },
 }

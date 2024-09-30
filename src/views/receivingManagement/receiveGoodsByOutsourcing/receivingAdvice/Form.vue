@@ -1289,7 +1289,7 @@ export default {
             this.datafilelist = []
             this.dataForm.approvalStatus = ''
             this.dataForm.packingStatus = 'unboxed'
-
+            this.fetchData('WXSH')
             res.data.noticeLineList.forEach((item) => {
               item.receivedQuantity = ''
             })
@@ -1308,13 +1308,15 @@ export default {
             }
           }
         })
+      } else {
+        this.fetchData('WXSH')
       }
 
       if (this.btnType == 'edit') {
         this.btnText = '继续修改'
       } else if (this.btnType == 'add' || this.btnType == 'copy') {
         this.btnText = '继续新增'
-        this.fetchData('WXSH')
+
       }
     },
     goBack() {

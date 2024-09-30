@@ -1517,7 +1517,7 @@ export default {
             this.datafilelist = []
             this.dataForm.approvalStatus = ''
             this.dataForm.packingStatus = 'unboxed'
-
+            this.fetchData('CGSH')
             // getOrderDetail(res.data.notice.ordersId).then(res1 => {
             //   res1.data.orderLines.map((item) => {
             //     res.data.lines.map((item1) => {
@@ -1552,12 +1552,15 @@ export default {
             }
           }
         })
+      } else {
+        this.fetchData('CGSH')
       }
       if (this.btnType == 'edit') {
         this.btnText = '继续修改'
       } else if (this.btnType == 'add' || this.btnType == 'copy') {
         this.btnText = '继续新增'
-        this.fetchData('CGSH')
+        console.log(6)
+
       }
     },
     goBack() {

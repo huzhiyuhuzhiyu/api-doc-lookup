@@ -773,7 +773,7 @@
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <el-button size="mini" type="text"
-                @click="incomAndOutInventFun(scope.row, 'add', 'Form', 'picking')">出库</el-button>
+                @click="incomAndOutInventFun(scope.row, 'add', 'Form', 'outbound_pick_out')">出库</el-button>
               <el-button size="mini" type="text"
                 @click="viewFun(scope.row.id, 'look', 'PickREFForm', pickFormVisible = true)">查看详情</el-button>
             </template>

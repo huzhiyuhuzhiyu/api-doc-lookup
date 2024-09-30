@@ -239,7 +239,7 @@ export default {
       ],
       historySearchList: [
         { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
       ],
       exportFormVisible: false,
       depFormVisible: false,
@@ -718,23 +718,38 @@ export default {
         let name = ''
         if (this.activeName == 'latestprice') {
           name = '最新价格'
+          let _data = {
+            ...this.superForm,
+            exportType: '1009',
+            exportName: '供应商产品' + '-' + name,
+            includeFieldMap,
+            pageSize: data.dataType == 0 ? this.superForm.pageSize : -1
+          }
+          excelExport(_data)
+            .then((res) => {
+              this.exportFormVisible = false
+              if (!res.data.url) return
+              this.jnpf.downloadFile(res.data.url)
+            })
+            .catch(() => { })
         } else {
           name = '历史价格'
+          let _data = {
+            ...this.superForm,
+            exportType: '1067',
+            exportName: '供应商产品' + '-' + name,
+            includeFieldMap,
+            pageSize: data.dataType == 0 ? this.superForm.pageSize : -1
+          }
+          excelExport(_data)
+            .then((res) => {
+              this.exportFormVisible = false
+              if (!res.data.url) return
+              this.jnpf.downloadFile(res.data.url)
+            })
+            .catch(() => { })
         }
-        let _data = {
-          ...this.superForm,
-          exportType: '1009',
-          exportName: '供应商产品' + '-' + name,
-          includeFieldMap,
-          pageSize: data.dataType == 0 ? this.superForm.pageSize : -1
-        }
-        excelExport(_data)
-          .then((res) => {
-            this.exportFormVisible = false
-            if (!res.data.url) return
-            this.jnpf.downloadFile(res.data.url)
-          })
-          .catch(() => { })
+
       }
     },
     handleClick(e) {

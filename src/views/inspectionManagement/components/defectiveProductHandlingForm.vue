@@ -901,10 +901,11 @@ export default {
       if (id) {
         if (btnType === 'add') {
           this.inspectionOrderNoChange(id)
-          this.fetchData('UQDH', true)
           this.refeshDataFormItems()
           this.refeshLinesListItems()
           this.title = '新建不良品处理单'
+          this.dataForm.orderNo = ''
+          this.fetchData('UQDH', true)
           this.formLoading = false
         }
         if (btnType === 'anew') {

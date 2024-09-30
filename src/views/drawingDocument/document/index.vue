@@ -547,7 +547,8 @@ export default {
             start,
             end,
             fileType,
-            documentType
+            documentType,
+            parentId:this.parentId
         }
 
         switch (this.activeTab){

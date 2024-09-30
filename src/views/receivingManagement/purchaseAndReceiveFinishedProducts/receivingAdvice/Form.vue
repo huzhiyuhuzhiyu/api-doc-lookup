@@ -1500,8 +1500,8 @@ export default {
             this.datafilelist = []
             this.dataForm.approvalStatus = ''
             this.dataForm.packingStatus = 'unboxed'
-          
-  
+            this.fetchData('CGSH')
+
             res.data.noticeLineList.forEach((item) => {
               item.receivedQuantity = ''
             })
@@ -1518,13 +1518,15 @@ export default {
             }
           }
         })
+      } else {
+        this.fetchData('CGSH')
       }
 
       if (this.btnType == 'edit') {
         this.btnText = '继续修改'
       } else if (this.btnType == 'add' || this.btnType == 'copy') {
         this.btnText = '继续新增'
-        this.fetchData('CGSH')
+
       }
     },
     goBack() {

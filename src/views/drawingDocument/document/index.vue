@@ -14,43 +14,22 @@
                 <a v-else @click="jump(item, i)">{{ item.fullName }}</a>
               </el-breadcrumb-item>
             </el-breadcrumb>
-            <SwitchListAndFilter @command="allFilterExtHandler" :switch-list.sync="allSwitchList" :current-ext.sync="allCurrentExt" :file-ext-filter-option="fileExtFilterOption"/>
+            <SwitchListAndFilter @command="filterExtHandler" :switch-list.sync="allSwitchList" :current-ext.sync="currentExt" :file-ext-filter-option="fileExtFilterOption"/>
           </div>
           <el-row class="JNPF-common-search-box searchWrapper">
-
-<!--              <el-col :span="19">-->
-<!--                  <el-row>-->
-                      <!--<el-form @submit.native.prevent>-->
-
-<!--                      <el-col  class="search-left" :span="searchFocus ? 24 : 8"   >-->
               <SearchPlane
+                  :loading.sync="searchPlaneLoading"
                   class="search-com"
                   :searchDropDownList="allSearchDropDownList"
-                  @search-change="allSearchChange"
-                  @file-click="allSearchFileClick"
-                  @source-click="allSearchSourceClick"
-                  :list="allSearchList"
-                  ></SearchPlane>
-
-<!--                      </el-col>-->
-                      <!--              <el-col :span="6">-->
-                      <!--                <el-form-item>-->
-                      <!--                  <el-button type="primary" icon="el-icon-search" @click="search()">-->
-                      <!--                    {{ $t('common.search') }}</el-button>-->
-                      <!--                  <el-button icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}-->
-                      <!--                  </el-button>-->
-                      <!--                </el-form-item>-->
-                      <!--              </el-col>-->
-                      <!--</el-form>-->
-<!--                  </el-row>-->
-<!--              </el-col>-->
+                  @search-change="searchChange"
+                  @item-click="searchItemClick"
+                  :list="searchList"
+                  :keyword.sync="keyword"
+              ></SearchPlane>
              <div style="width: 249px">
                  <el-button style="margin-left: 10px" @click="addFolder()">新建文件夹</el-button>
                  <el-button type="primary" icon="el-icon-upload2" @click="uploadFile()">上传文件</el-button>
              </div>
-
-
-
           </el-row>
           <div class="height-full">
             <JNPF-table class="table-style" v-if="allSwitchList" v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini">
@@ -114,25 +93,19 @@
             <el-breadcrumb>
               <el-breadcrumb-item>我的共享</el-breadcrumb-item>
             </el-breadcrumb>
-              <SwitchListAndFilter @command="shareFilterExtHandler" :switch-list.sync="shareSwitchList" :current-ext.sync="shareCurrentExt" :file-ext-filter-option="fileExtFilterOption"/>
+              <SwitchListAndFilter @command="filterExtHandler" :switch-list.sync="shareSwitchList" :current-ext.sync="currentExt" :file-ext-filter-option="fileExtFilterOption"/>
 
           </div>
-          <el-row class="JNPF-common-search-box" :gutter="16">
-            <el-form @submit.native.prevent>
-              <el-col :span="6">
-                <el-form-item label="文件名">
-                  <el-input v-model="keyword" placeholder="搜索我的文件" clearable />
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item>
-                  <el-button type="primary" icon="el-icon-search" @click="search()">
-                    {{ $t('common.search') }}</el-button>
-                  <el-button icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
-                  </el-button>
-                </el-form-item>
-              </el-col>
-            </el-form>
+          <el-row class="JNPF-common-search-box searchWrapper">
+              <SearchPlane
+                  :loading.sync="searchPlaneLoading"
+                  class="width-full"
+                  :searchDropDownList="otherSearchDropDownList"
+                  @search-change="searchChange"
+                  @item-click="searchItemClick"
+                  :list="searchList"
+                  :keyword.sync="keyword"
+              ></SearchPlane>
           </el-row>
           <div class="height-full">
             <JNPF-table class="table-style" v-if="shareSwitchList"  v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini">
@@ -169,26 +142,20 @@
             <el-breadcrumb>
               <el-breadcrumb-item>共享给我</el-breadcrumb-item>
             </el-breadcrumb>
-            <SwitchListAndFilter @command="shareToMeFilterExtHandler" :switch-list.sync="shareToMeSwitchList" :current-ext.sync="shareToMeCurrentExt" :file-ext-filter-option="fileExtFilterOption"/>
+            <SwitchListAndFilter @command="filterExtHandler" :switch-list.sync="shareToMeSwitchList" :current-ext.sync="currentExt" :file-ext-filter-option="fileExtFilterOption"/>
 
           </div>
-          <el-row class="JNPF-common-search-box" :gutter="16">
-            <el-form @submit.native.prevent>
-              <el-col :span="6">
-                <el-form-item label="文件名">
-                  <el-input v-model="keyword" placeholder="搜索我的文件" clearable />
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item>
-                  <el-button type="primary" icon="el-icon-search" @click="search()">
-                    {{ $t('common.search') }}</el-button>
-                  <el-button icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
-                  </el-button>
-                </el-form-item>
-              </el-col>
-            </el-form>
-          </el-row>
+            <el-row class="JNPF-common-search-box searchWrapper">
+                <SearchPlane
+                    :loading.sync="searchPlaneLoading"
+                    class="width-full"
+                    :searchDropDownList="otherSearchDropDownList"
+                    @search-change="searchChange"
+                    @item-click="searchItemClick"
+                    :list="searchList"
+                    :keyword.sync="keyword"
+                ></SearchPlane>
+            </el-row>
           <div class="height-full">
             <JNPF-table class="table-style" v-if="shareToMeSwitchList" v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini" >
               <el-table-column prop="fullName" label="文件名">
@@ -220,26 +187,20 @@
             <el-breadcrumb>
               <el-breadcrumb-item>回收站</el-breadcrumb-item>
             </el-breadcrumb>
-            <SwitchListAndFilter @command="trashFilterExtHandler" :switch-list.sync="trashSwitchList" :current-ext.sync="trashCurrentExt" :file-ext-filter-option="fileExtFilterOption"/>
+            <SwitchListAndFilter @command="filterExtHandler" :switch-list.sync="trashSwitchList" :current-ext.sync="currentExt" :file-ext-filter-option="fileExtFilterOption"/>
 
           </div>
-          <el-row class="JNPF-common-search-box" :gutter="16">
-            <el-form @submit.native.prevent>
-              <el-col :span="6">
-                <el-form-item label="文件名">
-                  <el-input v-model="keyword" placeholder="搜索我的文件" clearable />
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item>
-                  <el-button type="primary" icon="el-icon-search" @click="search()">
-                    {{ $t('common.search') }}</el-button>
-                  <el-button icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
-                  </el-button>
-                </el-form-item>
-              </el-col>
-            </el-form>
-          </el-row>
+            <el-row class="JNPF-common-search-box searchWrapper">
+                <SearchPlane
+                    :loading.sync="searchPlaneLoading"
+                    class="width-full"
+                    :searchDropDownList="otherSearchDropDownList"
+                    @search-change="searchChange"
+                    @item-click="searchItemClick"
+                    :list="searchList"
+                    :keyword.sync="keyword"
+                ></SearchPlane>
+            </el-row>
           <div class="height-full">
             <JNPF-table  class="table-style" v-if="trashSwitchList"  v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini" >
               <el-table-column prop="fullName" label="文件名">
@@ -286,18 +247,31 @@
 </template>
 
 <script>
-
+import moment from 'moment'
 import { AllList, Create, Delete, Download, DocumentInfo, ShareCancel, ShareOutList, ShareTomeList, TrashDelete, TrashList, TrashRecovery, Update } from '@/api/extend/document'
 import userBox from './UserBox'
 import folderTree from './FolderTree'
 import FileUploader from './fileUploader'
-import {isFile} from "@/views/drawingDocument/document/utils";
+import {
+    excelSuffix,
+    imgSuffix,
+    isFile,
+    mindSuffix,
+    pdfSuffix,
+    txtSuffix,
+    wordSuffix
+} from "@/views/drawingDocument/document/utils";
+import {formatTime, parseTime} from "@/utils";
 const ALL_TEXT ='全部'
 
 const fileExtFilterOption =Object.freeze( [
     {
         text:ALL_TEXT,
         icon:'zgt-ifont-quanbu'
+    },
+    {
+      text:'txt',
+      icon:'zgt-ifont-txt'
     },
     {
         text:'pdf',
@@ -330,18 +304,85 @@ const TIME_OPTION ={
     "TOW_MONTH":'最近两个月',
     "THREE_MONTH":'最近三个月'
 }
+function getBeforeDate(n){
+    const date = new Date()
+    date.setDate(date.getDate() - n)
+    date.setHours(0)
+    date.setMinutes(0)
+    date.setSeconds(0)
+    date.setMilliseconds(0)
+
+    return date
+}
+
+function timeOptionHandler(timeOption){
+    const data ={
+        start:'',
+        end: new Date()
+    }
+
+    if(timeOption === TIME_OPTION.NO_LIMIT){
+        data.end =''
+        return data
+    }
+    switch (timeOption){
+        case TIME_OPTION.ONE_WEEK:
+            data.start = getBeforeDate(7)
+            break;
+        case TIME_OPTION.ONE_MONTH:
+            data.start = getBeforeDate(30)
+            break;
+        case TIME_OPTION.TOW_MONTH:
+            data.start = getBeforeDate(60)
+            break;
+        case TIME_OPTION.THREE_MONTH:
+            data.start = getBeforeDate(90)
+            break;
+    }
+    data.start= moment(data.start).format('YYYY-MM-DD HH:mm:ss')
+    data.end = moment(data.end).format('YYYY-MM-DD HH:mm:ss')
+    return data
+}
+
+
+
 const FILE_EXT_OPTION=fileExtFilterOption.reduce((acc,cur)=>{
     acc[cur.text] = cur.text
     return acc
 },{})
-const FILE_CATEGORY_OPTION={
-    "ALL":'全部',
-    "MY_SHARE":'我的共享',
-    "SHARE_TO_ME":'共享给我'
+function fileExtOptionHandler(ext){
+    if(ext === FILE_EXT_OPTION[ALL_TEXT]){
+        return ''
+    }
+    switch (ext){
+        case '图片':
+            return 'pic'
+        case '思维导图':
+            return 'mindMap'
+        default:
+            return ext
+    }
 }
-const TIME_OPTION_FLAG =0;
-const FILE_EXT_OPTION_FLAG =1;
-const FILE_CATEGORY_OPTION_FLAG =2;
+const FILE_CATEGORY_OPTION={
+    "all":'全部',
+    "share":'我的共享',
+    "shareToMe":'共享给我'
+}
+function fileCategoryOptionHandler(category){
+    switch (category){
+        case FILE_CATEGORY_OPTION.all:
+            return ''
+        case FILE_CATEGORY_OPTION.share:
+            return 'share'
+        case FILE_CATEGORY_OPTION.shareToMe:
+            return 'shareToMe'
+        default:
+            return ''
+    }
+}
+const TIME_OPTION_FLAG ='time';
+const FILE_EXT_OPTION_FLAG ='fileType';
+const FILE_CATEGORY_OPTION_FLAG ='documentType';
 const FILE_OPERATE ={
     DOWNLOAD:'DOWNLOAD',
     DELETE:'DELETE',
@@ -382,30 +423,44 @@ export default {
       shareToMeSwitchList:false,
       trashSwitchList:false,
       fileExtFilterOption,
-      allCurrentExt:'',
-      shareCurrentExt:'',
-      shareToMeCurrentExt:'',
-      trashCurrentExt:'',
+      currentExt:'',
       searchFocus:false,
       searchPlaneTransform:'scale(0)',
       allSearchDropDownList:[
           {
               currentChoose:TIME_OPTION.NO_LIMIT,
+              defaultChoose:TIME_OPTION.NO_LIMIT,
               option:TIME_OPTION,
               flag:TIME_OPTION_FLAG
           },
           {
               currentChoose:FILE_EXT_OPTION[ALL_TEXT],
+              defaultChoose:FILE_EXT_OPTION[ALL_TEXT],
               option:FILE_EXT_OPTION,
               flag:FILE_EXT_OPTION_FLAG
           },
           {
-              currentChoose:FILE_CATEGORY_OPTION.ALL,
+              currentChoose:FILE_CATEGORY_OPTION.all,
+              defaultChoose:FILE_CATEGORY_OPTION.all,
               option:FILE_CATEGORY_OPTION,
               flag:FILE_CATEGORY_OPTION_FLAG
           }
       ],
-      allSearchList:[],
+      otherSearchDropDownList:[
+          {
+              currentChoose:TIME_OPTION.NO_LIMIT,
+                defaultChoose:TIME_OPTION.NO_LIMIT,
+              option:TIME_OPTION,
+              flag:TIME_OPTION_FLAG
+          },
+          {
+              currentChoose:FILE_EXT_OPTION[ALL_TEXT],
+              defaultChoose: FILE_EXT_OPTION[ALL_TEXT],
+              option:FILE_EXT_OPTION,
+              flag:FILE_EXT_OPTION_FLAG
+          },
+      ],
+      searchList:[],
       allFileOptions:[
           {
               text:'下载',
@@ -454,7 +509,9 @@ export default {
               text:'删除',
               value:FILE_OPERATE.TRASH_DEL,
           }
-      ]
+      ],
+      searchPlaneLoading:false,
+      listCopy:[]
 
     }
   },
@@ -474,19 +531,67 @@ export default {
     this.initData()
   },
   methods: {
-    allSearchChange(data){
+   getArrayItem(index,count){
+     return this.list.slice(index,index+count)
+   },
+   listSplice(index,count){
+       const ids =this.getArrayItem(index,count).map(item=>item.id)
+       this.list.splice(index,count)
+       this.listCopy = this.listCopy.filter(item=>!ids.includes(item.id))
+   },
+   async searchChange(data){
+        const { start,end }= timeOptionHandler(data[TIME_OPTION_FLAG])
+        const fileType = fileExtOptionHandler(data[FILE_EXT_OPTION_FLAG])
+        const documentType = fileCategoryOptionHandler(data[FILE_CATEGORY_OPTION_FLAG])
+        const params ={
+            keyword:data.keyword,
+            start,
+            end,
+            fileType,
+            documentType
+        }
+
+        switch (this.activeTab){
+            case "shareoutPanel":
+                params.documentType = 'share'
+                break;
+            case "sharetomePanel":
+                params.documentType = 'shareToMe'
+                break;
+            case "trashPanel":
+                params.documentType = 'trash'
+                break;
+
+        }
+        try {
+           this.searchPlaneLoading = true
+           const res = await AllList(params)
+           this.searchList = res.data.list.filter(item=>isFile(item))
+        }catch (e) {
+            console.error(e)
+        }finally {
+           this.searchPlaneLoading = false
+        }
 
     },
-    allSearchFileClick(item){
-
-    },
-    allSearchSourceClick(item){
-
+    searchItemClick(item,position){
+        console.log(item,position)
+        if(position === 'right'){
+            this.parentId = item.id
+            this.levelList = [{
+                id: "0",
+                fullName: '全部文档'
+            }]
+            this.reset()
+            return
+        }
+        return this.listItemClick(item)
     },
     async listItemClick(item){
         if(!isFile(item)){
-          return  this.openFolder(item)
+          return this.openFolder(item)
         }
+        this.$message.info("文件预览功能暂未开放,敬请期待")
        // const res = await DocumentInfo(item.id)
        //  console.log(res)
        //  this.previewVisible = true
@@ -537,28 +642,59 @@ export default {
                 break;
         }
     },
-    allFilterExtHandler(command){
-        this.filterExtHandler(command,'allCurrentExt')
-    },
-    shareFilterExtHandler(command){
-        this.filterExtHandler(command,'shareCurrentExt')
-    },
-    shareToMeFilterExtHandler(command){
-        this.filterExtHandler(command,'shareToMeCurrentExt')
-    },
-    trashFilterExtHandler(command){
-        this.filterExtHandler(command,'trashCurrentExt')
-    },
-    filterExtHandler(command,flag){
-          if(command === this[flag]) return
+
+    filterExtHandler(command){
+        console.log(command)
           if(command === ALL_TEXT){
-              return this[flag] = ''
+               this.currentExt= ''
+          }else{
+               this.currentExt= command
           }
-          this[flag] = command
+
+        switch (command){
+              case ALL_TEXT:
+                  this.list = this.listCopy
+                  break;
+              case '思维导图':
+                  this.list = this.listCopy.filter(item=>mindSuffix.includes(item.fileExtension) )
+                  break;
+              case '图片':
+                  this.list = this.listCopy.filter(item=>imgSuffix.includes(item.fileExtension))
+                  break;
+              case 'word':
+                  this.list = this.listCopy.filter(item=>wordSuffix.includes(item.fileExtension))
+                  break;
+              case 'txt':
+                  this.list = this.listCopy.filter(item=>txtSuffix.includes(item.fileExtension))
+                    break;
+              case 'pdf':
+                  this.list = this.listCopy.filter(item=>pdfSuffix.includes(item.fileExtension))
+                  break;
+              case 'excel':
+                  this.list = this.listCopy.filter(item=>excelSuffix.includes(item.fileExtension))
+                  break;
+              case 'ppt':
+                  this.list = this.listCopy.filter(item=>item.fileExtension === 'ppt' || item.fileExtension === 'pptx')
+                  break;
+
+
+              default:
+                      this.list = this.listCopy.filter(item=>item.fileExtension === command)
+        }
     },
     reset() {
       this.list = []
+      this.listCopy = []
+      this.searchList = []
       this.keyword = ''
+      this.currentExt = ''
+
+      this.otherSearchDropDownList.forEach(item=>{
+          item.currentChoose = item.defaultChoose
+      })
+      this.allSearchDropDownList.forEach(item=>{
+          item.currentChoose = item.defaultChoose
+      })
       this.initData()
     },
     initData() {
@@ -568,24 +704,28 @@ export default {
         data = { ...data, parentId: this.parentId }
         AllList(data).then(res => {
           this.list = res.data.list
+          this.listCopy = res.data.list
           this.listLoading = false
         })
       }
       if (this.activeTab === 'shareoutPanel') {
         ShareOutList(data).then(res => {
           this.list = res.data.list
+          this.listCopy = res.data.list
           this.listLoading = false
         })
       }
       if (this.activeTab === 'sharetomePanel') {
         ShareTomeList(data).then(res => {
           this.list = res.data.list
+          this.listCopy = res.data.list
           this.listLoading = false
         })
       }
       if (this.activeTab === 'trashPanel') {
         TrashList(data).then(res => {
           this.list = res.data.list
+          this.listCopy = res.data.list
           this.listLoading = false
         })
       }
@@ -598,11 +738,13 @@ export default {
         type: 'warning'
       }).then(() => {
         Delete(id).then(res => {
-          this.list.splice(index, 1)
-          this.$message({
+        // this.list.splice(index, 1)
+        this.listSplice(index,1)
+        this.$message({
             type: 'success',
             message: res.msg
           })
+
         })
       }).catch(() => { })
     },
@@ -611,7 +753,8 @@ export default {
         type: 'warning'
       }).then(() => {
         ShareCancel(id).then(res => {
-          this.list.splice(index, 1)
+          //this.list.splice(index, 1)
+          this.listSplice(index,1)
           this.$message({
             type: 'success',
             message: res.msg
@@ -624,7 +767,8 @@ export default {
         type: 'warning'
       }).then(() => {
         TrashRecovery(id).then(res => {
-          this.list.splice(index, 1)
+          // this.list.splice(index, 1)
+            this.listSplice(index,1)
           this.$message({
             type: 'success',
             message: res.msg
@@ -637,7 +781,8 @@ export default {
         type: 'warning'
       }).then(() => {
         TrashDelete(id).then(res => {
-          this.list.splice(index, 1)
+          // this.list.splice(index, 1)
+          this.listSplice(index,1)
           this.$message({
             type: 'success',
             message: res.msg

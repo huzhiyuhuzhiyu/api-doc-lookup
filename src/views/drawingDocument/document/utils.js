@@ -3,13 +3,22 @@ import {Message} from "element-ui";
 export function isFile(item){
     return item && item.type === 1
 }
+export const wordSuffix = ['doc','docx']
+export const excelSuffix = ['xls','xlxs']
+export const pptSuffix = ['ppt','pptx']
+export const pdfSuffix = ['pdf']
+export const imgSuffix = ['jpg','jpeg','png','gif','bmp']
+export const mindSuffix = ['mind']
+export const txtSuffix = ['txt']
+
 const iconMap = new Map([
-    [['pdf'],'zgt-ifont zgt-ifont-pdf'],
-    [['doc','docx'],'zgt-ifont zgt-ifont-doc'],
-    [['xls','xlxs'],'zgt-ifont zgt-ifont-excel'],
-    [['ppt','pptx'],'zgt-ifont zgt-ifont-ppt'],
-    [['png','jpg','jpeg'],'zgt-ifont zgt-ifont-tupian'],
-    [['mind'],'zgt-ifont zgt-ifont-suolvetu-siweidaotu'],
+    [pdfSuffix,'zgt-ifont zgt-ifont-pdf'],
+    [wordSuffix,'zgt-ifont zgt-ifont-doc'],
+    [excelSuffix,'zgt-ifont zgt-ifont-excel'],
+    [pptSuffix,'zgt-ifont zgt-ifont-ppt'],
+    [imgSuffix,'zgt-ifont zgt-ifont-tupian'],
+    [mindSuffix,'zgt-ifont zgt-ifont-suolvetu-siweidaotu'],
+    [txtSuffix,'zgt-ifont zgt-ifont-txt'],
     [[''],'icon-ym icon-ym-extend-folder']
 ])
 

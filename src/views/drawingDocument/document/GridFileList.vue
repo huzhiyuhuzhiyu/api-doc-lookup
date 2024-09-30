@@ -17,7 +17,6 @@ export default {
     },
     methods:{
         ext2Icon
-
     }
 }
 </script>
@@ -104,7 +103,7 @@ export default {
             }
         }
         .doc-item{
-
+            cursor: pointer;
             &:hover{
                 background: #f7f7f7;
                 .icon-more{

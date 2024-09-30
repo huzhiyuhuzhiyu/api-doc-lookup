@@ -142,12 +142,12 @@ export default {
             <div class="panel-body">
                 <div class="panel-body-list">
                     <div class="infinite-list">
-                        <div class="infinite-list-item" v-for="(item,index) in list" :key="index" @click="$emit('item-click',item,'left')">
+                        <div class="infinite-list-item" v-for="(item,index) in list" :key="index" @click="$emit('item-click',{item,position:'left',hideSearchPanel})">
                             <div class="item-wrap">
                                 <div class="item-wrap-base">
                                     <i :class="ext2Icon('ppt')" style="margin-right: 8px"></i>
                                     <div class="base-title">{{item.fullName}}</div>
-                                    <div class="base-source" @click.stop="$emit('item-click',item,'right')">
+                                    <div class="base-source" @click.stop="$emit('item-click',{item,position:'right',hideSearchPanel})">
                                         来自： <span class="source-btn">{{item.source || '暂无来源'}}</span>
                                     </div>
                                 </div>

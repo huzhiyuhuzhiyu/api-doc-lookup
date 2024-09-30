@@ -22,6 +22,16 @@ const iconMap = new Map([
     [[''],'icon-ym icon-ym-extend-folder']
 ])
 
+export const Type2SuffixArr=new Map([
+    ['思维导图',mindSuffix],
+    ['pdf',pdfSuffix],
+    ['word',wordSuffix],
+    ['excel',excelSuffix],
+    ['ppt',pptSuffix],
+    ['图片',imgSuffix],
+    ['txt',txtSuffix]
+])
+
 export function  ext2Icon(ext){
     const txt = ext ? ext.toLowerCase().replace('.','') : ""
     for(let [key,value] of iconMap){

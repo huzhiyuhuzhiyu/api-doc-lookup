@@ -26,7 +26,7 @@
                   :list="searchList"
                   :keyword.sync="keyword"
               ></SearchPlane>
-             <div style="width: 249px">
+             <div style="width: 250px">
                  <el-button style="margin-left: 10px" @click="addFolder()">新建文件夹</el-button>
                  <el-button type="primary" icon="el-icon-upload2" @click="uploadFile()">上传文件</el-button>
              </div>
@@ -258,10 +258,9 @@ import {
     isFile,
     mindSuffix,
     pdfSuffix,
-    txtSuffix,
+    txtSuffix, Type2SuffixArr,
     wordSuffix
 } from "@/views/drawingDocument/document/utils";
-import {formatTime, parseTime} from "@/utils";
 const ALL_TEXT ='全部'
 
 const fileExtFilterOption =Object.freeze( [
@@ -574,14 +573,36 @@ export default {
         }
 
     },
-    searchItemClick(item,position){
-        console.log(item,position)
+    searchItemClick({item,position,hideSearchPanel}){
+        // const item =  {
+        //     "id": "1839570984371814402",
+        //     "fullName": "轴管通-文件管理需求说明.docx",
+        //     "type": 1,
+        //     "creatorTime": "2024-09-27 15:41:14",
+        //     "isShare": 0,
+        //     "fileSize": "1895532",
+        //     "parentId": "1839217958427623425",
+        //     "fileExtension": "docx",
+        //     "canEdit": true,
+        //     "source": "全部文档/465",
+        //     "sourceId": "全部文档/1839217958427623425"
+        // }
+        // console.log(item,position)
         if(position === 'right'){
-            this.parentId = item.id
-            this.levelList = [{
-                id: "0",
-                fullName: '全部文档'
-            }]
+            const sourceName = item.source.split('/')
+            const sourceId = item.sourceId.split('/')
+            sourceId[0] = '0'
+            this.levelList = sourceName.map((fullName,id)=>({
+                id:sourceId[id],
+                fullName
+            }))
+
+            this.parentId = sourceId[sourceId.length-1]
+            // this.levelList = [{
+            //     id: "0",
+            //     fullName: '全部文档'
+            // }]
+            hideSearchPanel()
             this.reset()
             return
         }
@@ -644,42 +665,14 @@ export default {
     },
 
     filterExtHandler(command){
-        console.log(command)
-          if(command === ALL_TEXT){
-               this.currentExt= ''
-          }else{
-               this.currentExt= command
-          }
-
-        switch (command){
-              case ALL_TEXT:
-                  this.list = this.listCopy
-                  break;
-              case '思维导图':
-                  this.list = this.listCopy.filter(item=>mindSuffix.includes(item.fileExtension) )
-                  break;
-              case '图片':
-                  this.list = this.listCopy.filter(item=>imgSuffix.includes(item.fileExtension))
-                  break;
-              case 'word':
-                  this.list = this.listCopy.filter(item=>wordSuffix.includes(item.fileExtension))
-                  break;
-              case 'txt':
-                  this.list = this.listCopy.filter(item=>txtSuffix.includes(item.fileExtension))
-                    break;
-              case 'pdf':
-                  this.list = this.listCopy.filter(item=>pdfSuffix.includes(item.fileExtension))
-                  break;
-              case 'excel':
-                  this.list = this.listCopy.filter(item=>excelSuffix.includes(item.fileExtension))
-                  break;
-              case 'ppt':
-                  this.list = this.listCopy.filter(item=>item.fileExtension === 'ppt' || item.fileExtension === 'pptx')
-                  break;
-
-
-              default:
-                      this.list = this.listCopy.filter(item=>item.fileExtension === command)
+        if(command === ALL_TEXT){
+           this.currentExt= ''
+           return this.list = this.listCopy
+        }
+        this.currentExt= command
+        const suffixArr = Type2SuffixArr.get(command)
+        if(suffixArr && suffixArr.length){
+          return this.list = this.listCopy.filter(item=>suffixArr.includes(item.fileExtension))
         }
     },
     reset() {
@@ -912,7 +905,7 @@ export default {
     height: 100%;
 }
 .search-com{
-    width: calc(100% - 249px)
+    width: calc(100% - 250px)
 }
 ::v-deep .el-tabs__content{
     height: 100%;

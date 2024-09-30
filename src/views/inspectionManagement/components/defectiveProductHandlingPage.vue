@@ -57,7 +57,7 @@
           </div>
 
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO @sort-change="sortChange"
-            custom-column :setColumnDisplayList="columnList"  v-if="tableData.length">
+            custom-column :setColumnDisplayList="columnList" v-if="tableData.length">
             <el-table-column prop="orderNo" label="处理单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row, 'look')">
@@ -77,7 +77,8 @@
             <el-table-column prop="treatmentResults" label="处理结果" min-width="180" sortable="custom" />
             <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="120" sortable="custom" />
             <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="180" sortable="custom" />
-            <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center" v-if="showAppCodeFlag">
+            <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center"
+              v-if="showAppCodeFlag">
               <template slot-scope="scope">
                 <el-tag disable-transitions
                   v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus !== 'draft'">
@@ -318,16 +319,16 @@ export default {
       linesQuery: {},
 
       linesTotal: 0,
-      showAppCodeFlag:true
+      showAppCodeFlag: true
     }
   },
   async created() {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     let code = this.pageData.type === 'procure' ? 'b003' : this.pageData.type === 'sale_back' ? 'b006' : 'b004'
     const res = await this.jnpf.getBusInfo(code)
-    if (res){
+    if (res) {
       this.showAppCodeFlag = res.enabledMark
-    }else{
+    } else {
       this.showAppCodeFlag = false
     }
     this.initData()

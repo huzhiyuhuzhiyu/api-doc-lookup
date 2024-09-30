@@ -259,24 +259,6 @@ export default {
       if (!value) return true
       return data.fullName.indexOf(value) !== -1
     },
-    switchShow(row) {
-      if (!row.sort) return this.$message.error('请输入排序值')
-      let obj = row
-      updataClassAttribute(obj)
-        .then((response) => {
-          this.$message({
-            message: '修改成功',
-            type: 'success',
-            duration: 1500,
-            onClose: () => {
-              this.initData()
-            }
-          })
-        })
-        .catch(() => {
-          this.btnLoading = false
-        })
-    },
     initData() {
       if (this.createTimeArr && this.createTimeArr.length > 0) {
         this.superForm.startTime = this.createTimeArr[0] + ' 00:00:00'

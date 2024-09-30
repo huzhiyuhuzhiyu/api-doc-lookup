@@ -68,7 +68,8 @@
           <el-table-column prop="createTime" label="创建时间" width="180"></el-table-column>
           <el-table-column prop="sortCode" label="排序" width="100" align="center">
             <template slot-scope="scope">
-              <el-input @change="switchShow(scope.row, 'sortCode')" v-model="scope.row.sortCode"></el-input>
+              <el-input @change="switchShow(scope.row, 'sortCode')" @blur="sortCodeBlur(scope.row)"
+                v-model="scope.row.sortCode"></el-input>
             </template>
           </el-table-column>
           <el-table-column prop="remark" label="备注" width="300"></el-table-column>
@@ -166,7 +167,7 @@ export default {
       this.$refs.dataTable.showDrawer()
     },
     switchShow(row) {
-      if (!row.sortCode) return this.$message.error('请输入排序值')
+      if (!row.sortCode) return this.$message.error('请修改排序值')
       let obj = row
       delete obj.burdenSortCode
       editCategory(obj)
@@ -183,6 +184,10 @@ export default {
         .catch(() => {
           this.btnLoading = false
         })
+    },
+    sortCodeBlur(row) {
+      console.log(row, 'vaaaa')
+      if (!row.sortCode) this.initData()
     },
     initData() {
       this.loading = true

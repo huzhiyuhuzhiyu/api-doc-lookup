@@ -1,6 +1,20 @@
 <script>
 import {ext2Icon,previewFile} from "@/views/drawingDocument/document/utils";
-import {debounce} from "@/utils";
+import {debounce} from "throttle-debounce";
+
+
+function getPath(e){
+    let path = e.path || (e.composedPath && e.composedPath())
+    if(path){return path}
+    let el = e.target
+    path = []
+    while(el){
+        path.push(el)
+        el = el.parentElement
+    }
+    return path
+}
+
 
 export default {
     name: "SearchPlane",
@@ -11,11 +25,19 @@ export default {
         },
         debounceWait:{
             type:Number,
-            default:200
+            default:300
         },
         list:{
             type:Array,
             default:()=>[]
+        },
+        keyword:{
+            type:String,
+            default:''
+        },
+        loading:{
+            type:Boolean,
+            default:false
         }
     },
     data(){
@@ -23,8 +45,33 @@ export default {
             searchPlaneTransform:'scale(0)',
             searchFocus:false,
             keyword:'',
+
         }
     },
+    computed:{
+        inputKeyWord:{
+            get(){
+                return this.keyword
+            },
+            set(val){
+                this.$emit('update:keyword',val)
+            }
+        },
+        cLoading:{
+            get(){
+                return this.loading
+            },
+            set(val){
+                this.$emit('update:loading',val)
+            }
+        }
+    },
+    created() {
+        this.searchChange = debounce(this.debounceWait,false,()=>{
+            this.$emit('search-change',this.getSearchParams())
+        })
+    },
+
     methods:{
         getSearchParams(){
             const data ={
@@ -36,16 +83,14 @@ export default {
             },data)
             return data
         },
-        searchChange:debounce(function(){
-          this.$emit('search-change',this.getSearchParams())
-        },this.debounceWait,false),
+
         searchPlaneDropCommand(flag,command,item){
             console.log(flag,command,item)
             item.currentChoose =  item.option[command]
             this.searchChange()
         },
         windowClickHandler(e){
-            e.path
+            getPath(e)
                 .map(item=>[...(item.classList ? item.classList.values() : [])])
                 .flat(Infinity)
                 .includes('search-left') || this.hideSearchPanel()
@@ -63,9 +108,7 @@ export default {
             this.showSearchPanel()
             window.addEventListener('click',this.windowClickHandler,true)
         },
-
         ext2Icon,
-        previewFile
     }
 }
 </script>
@@ -73,11 +116,11 @@ export default {
 <template>
     <div class="search-left" style="transition: all 300ms;position: relative;">
         <!-- <el-form-item label="关键词" style="margin: 0!important;">-->
-        <el-input @change="searchChange"  :class="[searchFocus?'active':'']" class="search-input"  @focus="searchFocusHandler"   suffix-icon="el-icon-search" v-model="keyword" placeholder="请输入关键词查询" clearable/>
+        <el-input @input="searchChange"  :class="[searchFocus?'active':'']" class="search-input"  @focus="searchFocusHandler"   suffix-icon="el-icon-search" v-model="inputKeyWord" placeholder="请输入关键词查询" clearable/>
         <!-- </el-form-item>-->
-        <div  :style="{transform:searchPlaneTransform}" class="search-panel">
+        <div v-loading="cLoading"  :style="{transform:searchPlaneTransform}" class="search-panel">
             <div class="panel-head">
-                <div class="panel-head-left">共0条结果</div>
+                <div class="panel-head-left">共{{list.length}}条结果</div>
                 <div class="panel-head-right">
                     <div class="right-tag-item" v-for="item in searchDropDownList" :key="item.flag">
                         <el-dropdown @command="searchPlaneDropCommand(item.flag,$event,item)">
@@ -99,13 +142,13 @@ export default {
             <div class="panel-body">
                 <div class="panel-body-list">
                     <div class="infinite-list">
-                        <div class="infinite-list-item" v-for="item in 20" @click="$emit('file-click',item)">
+                        <div class="infinite-list-item" v-for="(item,index) in list" :key="index" @click="$emit('item-click',item,'left')">
                             <div class="item-wrap">
                                 <div class="item-wrap-base">
                                     <i :class="ext2Icon('ppt')" style="margin-right: 8px"></i>
-                                    <div class="base-title">国庆节日记(15篇)国庆节日记(15篇)国庆节日记(15篇)国庆节日记(15篇)国庆节日记(15篇)国庆节日记(15篇)</div>
-                                    <div class="base-source" @click.stop="$emit('source-click',item)">
-                                        来自： <span class="source-btn">全部文档\123\456\789\abc\efg\\123\456\789\abc\efg\123\456\789\abc\efg\</span>
+                                    <div class="base-title">{{item.fullName}}</div>
+                                    <div class="base-source" @click.stop="$emit('item-click',item,'right')">
+                                        来自： <span class="source-btn">{{item.source || '暂无来源'}}</span>
                                     </div>
                                 </div>
                             </div>
@@ -119,7 +162,7 @@ export default {
 
 <style scoped lang="scss">
 .search-input{
-    width: 30%;
+    width: 260px;
 }
 .search-input.active{
     width: 100%;

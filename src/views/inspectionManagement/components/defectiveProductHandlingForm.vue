@@ -1249,7 +1249,7 @@ export default {
           let oldObj = { ...res.data.inspection, approvalFlag: false }
           delete oldObj.treatmentResults
           this.dataForm = oldObj
-
+          this.dataForm.orderNo = ''
           this.dataForm.inspectionOrderNo = res.data.inspection.orderNo
           this.dataForm.inspectionUnqualifiedQuantity = this.dataForm.unqualifiedQuantity
           // this.dataForm.inspectionUnqualifiedQuantity = res.data.inspection.unqualifiedQuantity

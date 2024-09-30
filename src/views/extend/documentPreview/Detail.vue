@@ -27,6 +27,7 @@ export default {
       this.$emit('close')
     },
     init(id, name, type) {
+        console.log(id,name,type)
       let Base64 = require('js-base64').Base64;
       this.url = ''
       if (!id) return this.goBack()

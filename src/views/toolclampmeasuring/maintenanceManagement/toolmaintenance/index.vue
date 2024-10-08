@@ -299,6 +299,7 @@ export default {
       this.faultStartTime = []
       this.orderDateArr = []
       this.orderForm = {
+        classAttribute: "tool",
         maintenanceNo: '',
         equipmentIdCode: '',
         equipmentIdName: '',

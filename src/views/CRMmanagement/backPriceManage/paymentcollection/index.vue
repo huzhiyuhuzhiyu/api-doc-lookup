@@ -223,19 +223,13 @@ export default {
       listQuery: {},
       total: 0,
       formVisible: false,
+      totalreceivablesMoney: 'xxx'
     }
   },
   computed: {
     currMenuId() {
       return (this.$route.meta.modelId || '') + this.partentOrChild
-    },
-    totalreceivablesMoney: function () {
-      var totalreceivablesMoneyNum = 0;
-      for (var i = 0; i < this.tableData.length; i++) {
-        totalreceivablesMoneyNum = this.jnpf.math('add', [totalreceivablesMoneyNum, this.tableData[i].receivablesMoney * 1])
-      }
-      return totalreceivablesMoneyNum
-    },
+    }
   },
   created() {
     this.getDictionaryType()
@@ -363,6 +357,14 @@ export default {
         this.visible = false
       }).catch(() => {
         this.listLoading = false
+      })
+      let listQueryall = JSON.parse(JSON.stringify(this.initListQuery))
+      listQueryall.pageSize = -1
+      getcrmReceivableslist(listQueryall).then(res => {
+        this.totalreceivablesMoney = 0
+        for (let i = 0; i < res.data.records.length; i++) {
+          this.totalreceivablesMoney = this.jnpf.math('add', [this.totalreceivablesMoney, res.data.records[i].receivablesMoney * 1])
+        }
       })
     },
     // 关闭新建编辑页面

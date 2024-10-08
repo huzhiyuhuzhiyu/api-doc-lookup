@@ -126,7 +126,7 @@ import WareSide from './WareSide.vue'
 import Process from '@/components/Process/Preview'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
-import busFlow from '@/mixins/generator/busFlow';
+import busFlow from '@/mixins/generator/busFlow'
 export default {
   components: { TableFormProduct, workFlow, WareSide, Preview, TableFormWare, TableFormWareTwo, Process, recordList },
   mixins: [busFlow],
@@ -240,7 +240,7 @@ export default {
       flowTaskOperatorRecordList: [],
       endTime: 0,
       qualifiedQuantityDisabled: false,
-      endNode: false,
+      endNode: false
     }
   },
   beforeCreate() {
@@ -353,7 +353,7 @@ export default {
           }
         ].filter((o) => !o.disabled)
       }
-      this.dataFormItems = [
+      ; (this.dataFormItems = [
         {
           prop: 'orderNo',
           label: '处理单号',
@@ -401,8 +401,7 @@ export default {
           value: '',
           type: 'input',
           sm: 6,
-          render:
-            !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType)
+          render: !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType)
           // render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
           // itemDisabled: this.unqualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
         },
@@ -412,16 +411,15 @@ export default {
           value: '',
           type: 'input',
           sm: 6,
-          render:
-            !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType)
+          render: !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType)
           // render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
           // itemDisabled: this.unqualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
         },
-        { prop: 'description', label: '备注', value: '', type: 'textarea' },
+        { prop: 'description', label: '备注', value: '', type: 'textarea' }
 
         // { prop: "description", label: "处理说明", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 6 },
-      ],
-        this.inspectionInfo = [
+      ]),
+        (this.inspectionInfo = [
           {
             prop: 'inspectionOrderNo',
             label: '检验单号',
@@ -463,7 +461,7 @@ export default {
             type: 'input',
             itemRules: [{ required: true, trigger: 'blur' }],
             sm: 6,
-            itemDisabled: true,
+            itemDisabled: true
             // render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
           },
           {
@@ -473,7 +471,7 @@ export default {
             type: 'input',
             itemRules: [{ required: true, trigger: 'blur' }],
             sm: 6,
-            itemDisabled: true,
+            itemDisabled: true
             // render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
           },
           {
@@ -482,7 +480,7 @@ export default {
             value: '',
             type: 'input',
             sm: 6,
-            itemDisabled: true,
+            itemDisabled: true
             // render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
           },
           {
@@ -531,9 +529,8 @@ export default {
             sm: 6,
             // render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
             itemDisabled: true
-          },
-
-        ]
+          }
+        ])
     },
     // 刷新子表结构
     refeshLinesListItems() {
@@ -884,11 +881,6 @@ export default {
     },
     // 初始化
     init(id, btnType, approvalFlag, inspectionType) {
-      // let id = row.id
-
-      // this.dataForm = row
-      // this.dataForm.inspectionOrderNo = row.orderNo
-      // this.dataForm.inspectionUnqualifiedQuantity = row.unqualifiedQuantity
       this.dataForm.unqualifiedQuantity = 0
       this.visible = true
       this.formLoading = true
@@ -901,16 +893,19 @@ export default {
       if (id) {
         if (btnType === 'add') {
           this.inspectionOrderNoChange(id)
-
+          this.fetchData('UQDH', true)
           this.refeshDataFormItems()
           this.refeshLinesListItems()
           this.title = '新建不良品处理单'
-          this.fetchData('UQDH', true)
+
           this.formLoading = false
         }
         if (btnType === 'anew') {
           // 重新提交
           this.inspectionOrderNoChange(id)
+          this.fetchData('UQDH', true)
+          this.refeshDataFormItems()
+          this.refeshLinesListItems()
           this.title = '新建不良品处理单'
         } else if (btnType === 'edit') {
           this.title = '编辑不良品处理单'
@@ -922,7 +917,6 @@ export default {
           // 获取详情
           detailQcUnqualifiedData(id)
             .then(async (res) => {
-              console.log(res, 'oooo')
               if (res.data.attachmentList.length !== 0) {
                 res.data.attachmentList.forEach((item) => {
                   this.datafilelist.push({
@@ -934,10 +928,10 @@ export default {
                   })
                 })
               }
-              console.log(res.data, 'pppppppppp')
+
               this.dataForm = res.data.unqualified
               this.dataForm.inspectionMethod = res.data.inspection.inspectionMethod
-              console.log(this.dataForm, 'op')
+
               this.dataForm.inspectionResults = res.data.inspection.inspectionResults
               this.dataForm.inspectionUnqualifiedQuantity = res.data.inspection.unqualifiedQuantity
               this.inspectionList = res.data.itemList
@@ -1015,6 +1009,7 @@ export default {
         this.refeshDataFormItems()
         this.refeshLinesListItems()
         this.title = '新建不良品处理单'
+
         this.getBusInfo()
         this.formLoading = false
       }
@@ -1092,12 +1087,18 @@ export default {
     // 提交
     async handleConfirm(submitModel) {
       if (this.dataForm.treatmentResults == 'select') {
-        console.log(Number(this.dataForm.unqualifiedQuantity) + Number(this.dataForm.qualifiedQuantity), 'oooppppp')
-        if (Number(this.dataForm.unqualifiedQuantity) + Number(this.dataForm.qualifiedQuantity) !== Number(this.dataForm.inspectionQuantity)) return this.$message.error('合格数量+不合格数量不等于检验单报检数量。');
+        if (
+          Number(this.dataForm.unqualifiedQuantity) + Number(this.dataForm.qualifiedQuantity) !==
+          Number(this.dataForm.inspectionQuantity)
+        )
+          return this.$message.error('合格数量+不合格数量不等于检验单报检数量。')
       }
       if (this.dataForm.treatmentResults == 'discard_repair') {
-        console.log(Number(this.dataForm.unqualifiedQuantity) + Number(this.dataForm.qualifiedQuantity), 'oooppppp')
-        if (Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !== Number(this.dataForm.inspectionQuantity)) return this.$message.error('报废数量+返修数量不等于不合格数量。');
+        if (
+          Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !==
+          Number(this.dataForm.inspectionQuantity)
+        )
+          return this.$message.error('报废数量+返修数量不等于不合格数量。')
       }
       this.btnLoading = true
       let submitFlag = true // 自动聚焦是否可用
@@ -1305,8 +1306,11 @@ export default {
               this.flowData = res.data
               this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
               this.dataForm.approvalFlag = res.data.enabledMark
-              console.log(this.dataForm.approvalFlag);
-
+              console.log(this.dataForm.approvalFlag)
+              console.log(this.dataForm.orderNo, 'no')
+              if (!this.dataForm.orderNo) {
+                this.fetchData('UQDH', true)
+              }
             } else {
               this.flowTemplateJson = {}
               this.dataForm.approvalFlag = false
@@ -1330,7 +1334,7 @@ export default {
             this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
             let nodeCode = res.data.flowTaskInfo.thisStepId
             let nodeList = res.data.flowTaskNodeList
-            let findItem = nodeList.find(item => item.nodeCode === nodeCode)
+            let findItem = nodeList.find((item) => item.nodeCode === nodeCode)
             if (findItem) {
               if (findItem.nodeNext === 'end') {
                 this.endNode = true
@@ -1379,7 +1383,9 @@ export default {
       //   (this.scope.row ? this.scope.row.inspectionUnqualifiedQuantity : 0)
       // return this.scope.row ? tempUnqualifiedQuantity ? tempUnqualifiedQuantity : 0 : 0
 
-      return this.dataForm.inspectionUnqualifiedQuantity ? this.dataForm.inspectionUnqualifiedQuantity : this.dataForm.unqualifiedQuantity
+      return this.dataForm.inspectionUnqualifiedQuantity
+        ? this.dataForm.inspectionUnqualifiedQuantity
+        : this.dataForm.unqualifiedQuantity
     },
     nowNum() {
       let tempNum = 0

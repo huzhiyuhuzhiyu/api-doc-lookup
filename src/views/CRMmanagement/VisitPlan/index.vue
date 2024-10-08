@@ -51,7 +51,7 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
             <el-table-column prop="visitName" label="拜访计划名称" min-width="160" />
-            <el-table-column prop="visitTime" label="预计拜访时间" min-width="180" />
+            <el-table-column prop="visitTime" label="预计拜访时间" width="180" />
             <el-table-column prop="visitForm" label="拜访形式" min-width="180">
               <template slot-scope="scope">
                 {{visitFormfaction(scope.row.visitForm)}}
@@ -71,14 +71,14 @@
             <el-table-column prop="cancelReason" label="取消原因" min-width="180" />
             <el-table-column prop="cancelRemark" label="取消备注" min-width="180" />
             <el-table-column prop="activityName" label="跟进记录内容" min-width="180" />
-            <el-table-column prop="ownerUserName" label="负责人" min-width="180" />
-            <el-table-column prop="status" label="状态" min-width="180">
+            <el-table-column prop="ownerUserName" label="负责人" width="120" />
+            <el-table-column prop="status" label="状态" min-width="120" fixed="right" align="center">
               <template slot-scope="scope">
                 <div><el-tag :type="visitStatusfaction(scope.row.status)=='已完成'?'success':visitStatusfaction(scope.row.status)=='未完成'?'danger':'info'">{{visitStatusfaction(scope.row.status)}}</el-tag></div>
               </template>
             </el-table-column>
-            <el-table-column prop="createTime" label="创建时间" min-width="180" />
-            <el-table-column prop="createByName" label="创建人" min-width="120" />
+            <el-table-column prop="createTime" label="创建时间" width="180" />
+            <el-table-column prop="createByName" label="创建人" width="120" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)" :editDisabled="!!scope.row.activityName">

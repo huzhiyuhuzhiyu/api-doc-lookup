@@ -57,7 +57,7 @@
           </div>
 
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO @sort-change="sortChange"
-            custom-column :setColumnDisplayList="columnList" v-if="tableData.length">
+            custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="处理单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row, 'look')">

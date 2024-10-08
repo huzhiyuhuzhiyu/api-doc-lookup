@@ -919,6 +919,15 @@ export default {
     },
     // 表单提交
     dataFormSubmit() {
+      console.log(this.dataForm, 'oo')
+      if (this.activeName == 'zypz') {
+        if (!this.dataForm.name) return this.$message.error('工序名称为空')
+        if (!this.dataForm.code) return this.$message.error('工序编码为空')
+        if (!this.dataForm.productCategoryIdText) return this.$message.error('工序分类为空')
+        if (!this.dataForm.processingType) return this.$message.error('工序类型为空')
+      }
+
+
       this.btnLoading = true
       let data = [...this.personData, ...this.classData, ...this.equipData, ...this.toolData]
       if (data.length) {

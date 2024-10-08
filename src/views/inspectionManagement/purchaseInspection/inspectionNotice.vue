@@ -965,6 +965,7 @@ export default {
       this.initData()
     },
     addOrUpdateHandle(row, readOnly) {
+      console.log(readOnly, 're')
       if (readOnly) {
         this.detailFormVisible = true
         this.$nextTick(() => {

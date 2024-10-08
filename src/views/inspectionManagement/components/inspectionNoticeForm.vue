@@ -1,4 +1,5 @@
 <template>
+  <!-- 检验单 -->
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', readOnly ? 'noButtons' : '']">

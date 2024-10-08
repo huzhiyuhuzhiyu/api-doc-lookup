@@ -1262,14 +1262,14 @@ export default {
       this.approvalFlag = approvalFlag
       this.btnType = btnType
       console.log(this.btnType, 'this.btnType')
-      if (data) {
-        data.forEach(item => {
-          item.ordersNo = item.orderNo
-        })
-        this.dataFormTwo.productData = data
-        this.dataForm.partnerName = data[0].cooperativePartnerName
-        this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
-      }
+      // if (data) {
+      //   data.forEach(item => {
+      //     item.ordersNo = item.orderNo
+      //   })
+      //   this.dataFormTwo.productData = data
+      //   this.dataForm.partnerName = data[0].cooperativePartnerName
+      //   this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
+      // }
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice

@@ -280,8 +280,7 @@ export default {
 
         this.codeConfig = data
         if (flag) {
-          // this.dataForm.orderNo = data.number
-          Vue.set(this.dataForm, 'orderNo', data.number)
+          this.dataForm.orderNo = data.number
         }
       } catch (error) { }
     },
@@ -882,11 +881,6 @@ export default {
     },
     // 初始化
     init(id, btnType, approvalFlag, inspectionType) {
-      // let id = row.id
-
-      // this.dataForm = row
-      // this.dataForm.inspectionOrderNo = row.orderNo
-      // this.dataForm.inspectionUnqualifiedQuantity = row.unqualifiedQuantity
       this.dataForm.unqualifiedQuantity = 0
       this.visible = true
       this.formLoading = true
@@ -895,20 +889,15 @@ export default {
       this.inspectionType = inspectionType
       this.approvalFlag = approvalFlag
       // this.$nextTick(() => { this.dataFormFlag = true })
-      console.log(id, 'o')
-      console.log(btnType, 'btn')
+
       if (id) {
         if (btnType === 'add') {
           this.inspectionOrderNoChange(id)
-
+          this.fetchData('UQDH', true)
           this.refeshDataFormItems()
-          if (!this.dataForm.orderNo) {
-            console.log(78788)
-            this.fetchData('UQDH', true)
-          }
+          this.refeshLinesListItems()
           this.title = '新建不良品处理单'
 
-          console.log(321)
           this.formLoading = false
         }
         if (btnType === 'anew') {
@@ -916,19 +905,18 @@ export default {
           this.inspectionOrderNoChange(id)
           this.fetchData('UQDH', true)
           this.refeshDataFormItems()
-
+          this.refeshLinesListItems()
           this.title = '新建不良品处理单'
         } else if (btnType === 'edit') {
           this.title = '编辑不良品处理单'
         } else if (btnType === 'look') {
           this.fetchData('UQDH', false)
           // this.refeshDataFormItems()
-
+          this.refeshLinesListItems()
           this.title = '查看不良品处理单'
           // 获取详情
           detailQcUnqualifiedData(id)
             .then(async (res) => {
-              console.log(res, 'oooo')
               if (res.data.attachmentList.length !== 0) {
                 res.data.attachmentList.forEach((item) => {
                   this.datafilelist.push({
@@ -940,10 +928,10 @@ export default {
                   })
                 })
               }
-              console.log(res.data, 'pppppppppp')
+
               this.dataForm = res.data.unqualified
               this.dataForm.inspectionMethod = res.data.inspection.inspectionMethod
-              console.log(this.dataForm, 'op')
+
               this.dataForm.inspectionResults = res.data.inspection.inspectionResults
               this.dataForm.inspectionUnqualifiedQuantity = res.data.inspection.unqualifiedQuantity
               this.inspectionList = res.data.itemList
@@ -1021,7 +1009,7 @@ export default {
         this.refeshDataFormItems()
         this.refeshLinesListItems()
         this.title = '新建不良品处理单'
-        console.log(123)
+
         this.getBusInfo()
         this.formLoading = false
       }
@@ -1099,7 +1087,6 @@ export default {
     // 提交
     async handleConfirm(submitModel) {
       if (this.dataForm.treatmentResults == 'select') {
-        console.log(Number(this.dataForm.unqualifiedQuantity) + Number(this.dataForm.qualifiedQuantity), 'oooppppp')
         if (
           Number(this.dataForm.unqualifiedQuantity) + Number(this.dataForm.qualifiedQuantity) !==
           Number(this.dataForm.inspectionQuantity)
@@ -1107,7 +1094,6 @@ export default {
           return this.$message.error('合格数量+不合格数量不等于检验单报检数量。')
       }
       if (this.dataForm.treatmentResults == 'discard_repair') {
-        console.log(Number(this.dataForm.unqualifiedQuantity) + Number(this.dataForm.qualifiedQuantity), 'oooppppp')
         if (
           Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !==
           Number(this.dataForm.inspectionQuantity)
@@ -1273,29 +1259,29 @@ export default {
           this.linesListTwo = res.data.causesList
           // 获取审批模版
           this.getBusInfo()
-          // let tempLinesList = res.data.lines.filter((line) => line.unqualifiedQuantity != '0')
+          let tempLinesList = res.data.lines.filter((line) => line.unqualifiedQuantity != '0')
 
-          // tempLinesList.forEach((line) => {
-          //   line.inspectionUnqualifiedQuantity = line.unqualifiedQuantity
-          //   line.qualifiedQuantity = ''
-          //   line.unqualifiedQuantity = ''
-          //   line.scrapQuantity = ''
-          //   line.repairQuantity = ''
-          //   line.inspectionLineId = line.id
-          //   line.id = ''
+          tempLinesList.forEach((line) => {
+            line.inspectionUnqualifiedQuantity = line.unqualifiedQuantity
+            line.qualifiedQuantity = ''
+            line.unqualifiedQuantity = ''
+            line.scrapQuantity = ''
+            line.repairQuantity = ''
+            line.inspectionLineId = line.id
+            line.id = ''
 
-          //   line.scrapQuantityDisabled = true
-          //   line.repairQuantityDisabled = true
-          // })
+            line.scrapQuantityDisabled = true
+            line.repairQuantityDisabled = true
+          })
 
-          // if (['sale_back', 'process', 'finished'].includes(this.inspectionType.replace('_batch', ''))) {
-          //   tempLinesList.forEach((line) => {
-          //     line.unqualifiedQuantity = line.inspectionUnqualifiedQuantity
-          //     line.qualifiedQuantity = this.jnpf.math('subtract', [line.inspectionQuantity, line.unqualifiedQuantity])
-          //   })
-          // }
+          if (['sale_back', 'process', 'finished'].includes(this.inspectionType.replace('_batch', ''))) {
+            tempLinesList.forEach((line) => {
+              line.unqualifiedQuantity = line.inspectionUnqualifiedQuantity
+              line.qualifiedQuantity = this.jnpf.math('subtract', [line.inspectionQuantity, line.unqualifiedQuantity])
+            })
+          }
 
-          // this.linesList = tempLinesList
+          this.linesList = tempLinesList
           this.formLoading = false
         })
         .catch((err) => {
@@ -1321,7 +1307,10 @@ export default {
               this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
               this.dataForm.approvalFlag = res.data.enabledMark
               console.log(this.dataForm.approvalFlag)
-              console.log(this.dataForm.orderNo, 'oder')
+              console.log(this.dataForm.orderNo, 'no')
+              if (!this.dataForm.orderNo) {
+                this.fetchData('UQDH', true)
+              }
             } else {
               this.flowTemplateJson = {}
               this.dataForm.approvalFlag = false

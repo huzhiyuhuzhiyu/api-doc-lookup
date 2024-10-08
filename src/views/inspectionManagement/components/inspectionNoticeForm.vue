@@ -279,16 +279,16 @@ export default {
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
           itemDisabled: true
         },
-        {
-          prop: 'processName',
-          label: '工序名称',
-          value: '',
-          type: 'input',
-          itemRules: [{ required: true, trigger: 'blur' }],
-          sm: 6,
-          render: ['sale_back'].includes(this.inspectionType),
-          itemDisabled: true
-        },
+        // {
+        //   prop: 'processName',
+        //   label: '工序名称',
+        //   value: '',
+        //   type: 'input',
+        //   itemRules: [{ required: true, trigger: 'blur' }],
+        //   sm: 6,
+        //   render: ['sale_back'].includes(this.inspectionType),
+        //   itemDisabled: true
+        // },
         {
           prop: 'mainUnit',
           label: '单位',
@@ -653,6 +653,7 @@ export default {
       } else if (inspectionType === 'sale_back') {
         this.dataForm.inspectionQuantity = this.scope.deliveryQuantity
         this.dataForm.docId = this.scope.returnDeliveryNoticeId
+        this.dataForm.inspectionMethod = 'all'
         this.dataForm.docLineId = this.scope.id
         this.dataForm.docNo = this.scope.orderNo
       } else if (inspectionType === 'process') {

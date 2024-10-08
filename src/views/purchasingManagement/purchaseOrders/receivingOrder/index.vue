@@ -11,7 +11,7 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-date-picker v-model="orderForm.deliveryStartTime" type="date" value-format="yyyy-MM-dd"
+                <el-date-picker v-model="orderForm.deliveryStartDate" type="date" value-format="yyyy-MM-dd"
                   style="width: 100%;" placeholder="收货开始日期" clearable></el-date-picker>
                 -
               </el-form-item>
@@ -168,7 +168,7 @@ export default {
         classAttribute: 'other',
         orderType: 'procure',
         deliveryEndDate: '',
-        deliveryStartTime: '',
+        deliveryStartDate: '',
         // extensionFlag: 1,
         // deliverQueryFlag: 1,
         pageNum: 1,
@@ -332,7 +332,7 @@ export default {
     const start = new Date()
     end.setDate(end.getDate() + 3)
     this.deliveryDateArr = ['', end]
-    this.orderForm.deliveryStartTime = ''
+    this.orderForm.deliveryStartDate = ''
     this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
     this.dataFormSubmit()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
@@ -363,7 +363,7 @@ export default {
       let end = new Date()
       let start = new Date()
       this.deliveryDateArr = ['', end]
-      this.orderForm.deliveryStartTime = ''
+      this.orderForm.deliveryStartDate = ''
       this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
       this.dataFormSubmit()
     },
@@ -373,7 +373,7 @@ export default {
       const start = new Date()
       end.setDate(end.getDate() + 3)
       this.deliveryDateArr = ['', end]
-      this.orderForm.deliveryStartTime = ''
+      this.orderForm.deliveryStartDate = ''
       this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
@@ -385,7 +385,7 @@ export default {
       end.setDate(end.getDate() + 7)
 
       this.deliveryDateArr = ['', end]
-      this.orderForm.deliveryStartTime = ''
+      this.orderForm.deliveryStartDate = ''
       this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
@@ -396,7 +396,7 @@ export default {
       end.setDate(end.getDate() + 30)
 
       this.deliveryDateArr = ['', end]
-      this.orderForm.deliveryStartTime = ''
+      this.orderForm.deliveryStartDate = ''
       this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
@@ -487,7 +487,7 @@ export default {
         documentStatus: 'submit',
         orderState: 'not_finish',
         deliveryEndDate: this.dateFun(this.deliveryDateArr[1]),
-        deliveryStartTime: this.dateFun(this.deliveryDateArr[0]),
+        deliveryStartDate: '',
         extensionFlag: 1,
         deliverQueryFlag: 1,
         pageNum: 1,

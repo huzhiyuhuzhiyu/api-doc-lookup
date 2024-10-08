@@ -636,6 +636,7 @@ export default {
     },
     // 初始化
     async init(row, readOnly, inspectionType, type, businessCode) {
+      console.log(row, 'row123')
       this.scope = { ...row }
 
       this.fetchData(businessCode, true)

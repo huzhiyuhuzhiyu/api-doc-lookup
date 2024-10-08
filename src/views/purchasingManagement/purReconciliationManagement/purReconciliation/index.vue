@@ -5,21 +5,20 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.orderNo" placeholder="请输入对账单号" clearable
-                @keyup.enter.native="search()" />
+              <el-input v-model.trim="listQuery.orderNo" placeholder="对账单号" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
 
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.cooperativePartnerName" placeholder="请输入客户名称" clearable
+              <el-input v-model="listQuery.cooperativePartnerName" placeholder="供应商名称" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
               <el-date-picker v-model="reconciliationDate" type="daterange" value-format="yyyy-MM-dd"
-                style="width: 100%;" start-placeholder="请选择对账开始日期" end-placeholder="请选择对账结束日期"></el-date-picker>
+                style="width: 100%;" start-placeholder="对账开始日期" end-placeholder="对账结束日期"></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -61,8 +60,8 @@
           <el-table-column prop="reconciliationDate" label="对账日期" min-width="180" sortable="custom" />
 
           <!-- <el-table-column prop="orderNo" label="对账单号" width="180" sortable="custom" /> -->
-          <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="200" sortable="custom" />
-          <el-table-column prop="cooperativePartnerCode" label="客户编码" min-width="200" />
+          <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="200" sortable="custom" />
+          <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="200" />
           <el-table-column prop="excludingTaxAmount" label="不含税总金额" min-width="180">
             <template slot-scope="scope">
               <div :class="scope.row.excludingTaxAmount > 0 ? 'green' : 'red'">
@@ -273,12 +272,12 @@ export default {
         },
         {
           prop: 'cooperativePartnerName',
-          label: '客户名称',
+          label: '供应商名称',
           type: 'input'
         },
         {
           prop: 'cooperativePartnerCode',
-          label: '客户编码',
+          label: '供应商编码',
           type: 'input'
         },
         {

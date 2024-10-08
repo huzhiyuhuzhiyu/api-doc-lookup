@@ -140,7 +140,7 @@ import {
 } from '@/api/purchasingManagement/purchaseInquirySheet'
 import Form from '../components/inspectionNoticeForm.vue'
 // import DetailForm from '@/views/purchasingManagement/purchaseAndReceive/purchaseReceiptNote/Form.vue'
-import DetailForm from '../../../views/receivingManagement/purchaseAndReceiveFinishedProducts/receivingAdvice/Form.vue'
+import DetailForm from '../../../views/receivingManagement/procurementReceiving/receivingAdvice/Form.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {
   getbimProductAttributesList,

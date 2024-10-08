@@ -1,6 +1,6 @@
 <template>
   <div>
-123
+    123
   </div>
 </template>
 <script>
@@ -10,17 +10,15 @@ export default {
 
     }
   },
-  mounted(){
+  mounted() {
 
   },
-  computed:{
+  computed: {
 
   },
-  methods:{
+  methods: {
 
   },
 }
 </script>
-<style scoped>
-
-</style>
+<style scoped></style>

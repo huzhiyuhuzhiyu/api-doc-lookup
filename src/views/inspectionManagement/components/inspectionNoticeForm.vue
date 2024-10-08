@@ -235,7 +235,7 @@ export default {
           }
         ].filter((o) => !o.disabled)
       }
-      ; (this.dataFormItems = [
+      this.dataFormItems = [
         {
           prop: 'orderNo',
           label: '单号',
@@ -308,7 +308,7 @@ export default {
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
           itemDisabled: true
         }
-      ])
+      ]
       this.inspectionInfo = [
         {
           prop: 'inspectionMethod',
@@ -654,6 +654,7 @@ export default {
         this.dataForm.inspectionQuantity = this.scope.deliveryQuantity
         this.dataForm.docId = this.scope.returnDeliveryNoticeId
         this.dataForm.inspectionMethod = 'all'
+        this.dataForm.samplingQuantity = this.dataForm.inspectionQuantity
         this.dataForm.docLineId = this.scope.id
         this.dataForm.docNo = this.scope.orderNo
       } else if (inspectionType === 'process') {

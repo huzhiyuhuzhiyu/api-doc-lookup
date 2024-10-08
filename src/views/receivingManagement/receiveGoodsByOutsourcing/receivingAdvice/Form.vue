@@ -1292,7 +1292,7 @@ export default {
             this.dataForm.approvalStatus = ''
             this.dataForm.packingStatus = 'unboxed'
             this.fetchData('WXSH')
-            this.dataForm.salesman = this.userInfo.userName
+            // this.dataForm.salesman = this.userInfo.userName
             res.data.noticeLineList.forEach((item) => {
               item.receivedQuantity = ''
             })

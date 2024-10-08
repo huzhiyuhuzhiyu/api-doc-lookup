@@ -1,13 +1,7 @@
 <script>
-const iconMap = new Map([
-    [['pdf'],'zgt-ifont zgt-ifont-pdf'],
-    [['doc','docx'],'zgt-ifont zgt-ifont-doc'],
-    [['xls','xlxs'],'zgt-ifont zgt-ifont-excel'],
-    [['ppt','pptx'],'zgt-ifont zgt-ifont-ppt'],
-    [['png','jpg','jpeg'],'zgt-ifont zgt-ifont-tupian'],
-    [['mind'],'zgt-ifont zgt-ifont-suolvetu-siweidaotu'],
-    [[''],'icon-ym icon-ym-extend-folder']
-])
+import {ext2Icon} from "@/views/drawingDocument/document/utils";
+
+
 export default {
     name: "index",
     props:{
@@ -22,20 +16,15 @@ export default {
 
     },
     methods:{
-        ext2Icon(ext){
-            const txt = ext ? ext.toLowerCase().replace('.','') : ""
-            for(let [key,value] of iconMap){
-                if(key.includes(txt)) return value
-            }
-        },
+        ext2Icon
     }
 }
 </script>
 
 <template>
-    <div class="grid-file-list">
+    <div class="grid-file-list" :class="[list.length === 0 ? 'flex-row justify-center' : '']">
         <div class="file-list">
-            <div @click="$emit('item-click',item)" :class="['doc-item','pointer',item.isHover ? 'doc-item-hover' :'']" v-for="(item,index) in list" :key="item.id">
+            <div @click="$emit('item-click',item)" :class="['doc-item',item.isHover ? 'doc-item-hover' :'']" v-for="(item,index) in list" :key="item.id">
                 <div :class="['item-cover']">
                     <i :class="[ext2Icon(item.fileExtension || item.fullName.split('.')[1])]" style="font-size: 45px"></i>
                 </div>
@@ -82,6 +71,7 @@ export default {
                 </el-tooltip>
             </div>
         </div>
+        <el-empty v-if="list.length === 0" description="暂无数据"></el-empty>
     </div>
 </template>
 
@@ -113,7 +103,7 @@ export default {
             }
         }
         .doc-item{
-
+            cursor: pointer;
             &:hover{
                 background: #f7f7f7;
                 .icon-more{
@@ -122,7 +112,7 @@ export default {
             }
             align-items: center;
             border-radius: 8px;
-            cursor: pointer;
+            //cursor: pointer;
             display: flex;
             flex-direction: column;
             flex-shrink: 0;

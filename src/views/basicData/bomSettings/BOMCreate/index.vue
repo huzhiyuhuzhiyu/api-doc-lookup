@@ -1,60 +1,67 @@
 <template>
   <transition name="el-zoom-in-center">
-    <div class="JNPF-preview-main org-form" ref="main">
-      <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
-        <el-page-header @back="goBack" :content="content" v-if="content" />
-        <div style="font-size: 20px;" v-else>BOM创建</div>
-        <div class="options" v-if="btnType !== 'look'">
-          <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">保存草稿</el-button>
-          <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">保存并提交</el-button>
-          <el-button @click="goBack" v-if="content">{{ $t('common.cancelButton') }}</el-button>
-        </div>
-      </div>
-      <div class="contain">
-        <div class="JNPF-common-layout">
-          <div class="JNPF-common-layout-center JNPF-flex-main" v-loading="formLoading">
-            <div class="JNPF-common-layout-main JNPF-flex-main">
-              <el-tabs v-model="activeName">
-                <el-tab-pane label="基础信息" name="jcInfo" class="jcInfo">
-                  <el-collapse v-model="activeNames">
-                    <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                      <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm" :btnType="btnType" />
-                    </el-collapse-item>
-
-                    <el-collapse-item title="子件信息" name="productInfo">
-                      <TableForm-product :value="linesList" @input="contentChanges" ref="tableForm"
-                        :tableItems="linesListItems" :btnType="btnType" @addth="addOrDelLinesItem"
-                        @deleteth="addOrDelLinesItem" customStyle />
-                    </el-collapse-item>
-                  </el-collapse>
-                </el-tab-pane>
-                <el-tab-pane label="附件" name="annex">
-                  <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'">
-                  </UploadWj>
-                </el-tab-pane>
-                <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
-                  <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
-                </el-tab-pane>
-              </el-tabs>
+    <div style="height:100%">
+      <div class="JNPF-common-layout">
+        <div class="JNPF-common-layout-center JNPF-flex-main">
+          <div class="JNPF-preview-main org-form" ref="main">
+            <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
+              <el-page-header @back="goBack" :content="content" v-if="content" />
+              <div style="font-size: 20px;" v-else>BOM创建</div>
+              <div class="options" v-if="btnType !== 'look'">
+                <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">保存草稿</el-button>
+                <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">保存并提交</el-button>
+                <el-button @click="goBack" v-if="content">{{ $t('common.cancelButton') }}</el-button>
+              </div>
             </div>
+            <div class="contain">
+              <div class="JNPF-common-layout">
+                <div class="JNPF-common-layout-center JNPF-flex-main" v-loading="formLoading">
+                  <div class="JNPF-common-layout-main JNPF-flex-main">
+                    <el-tabs v-model="activeName">
+                      <el-tab-pane label="基础信息" name="jcInfo" class="jcInfo">
+                        <el-collapse v-model="activeNames">
+                          <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                            <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm"
+                              :btnType="btnType" />
+                          </el-collapse-item>
+
+                          <el-collapse-item title="子件信息" name="productInfo">
+                            <TableForm-product :value="linesList" @input="contentChanges" ref="tableForm"
+                              :tableItems="linesListItems" :btnType="btnType" @addth="addOrDelLinesItem"
+                              @deleteth="addOrDelLinesItem" customStyle />
+                          </el-collapse-item>
+                        </el-collapse>
+                      </el-tab-pane>
+                      <el-tab-pane label="附件" name="annex">
+                        <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'">
+                        </UploadWj>
+                      </el-tab-pane>
+                      <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
+                        <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
+                      </el-tab-pane>
+                    </el-tabs>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+              :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center"
+              width="500px">
+              <div>
+                <img src="@/assets/images/importSuccess.gif" alt="" style="width:100px" />
+                <span class="import_t">{{ submitmethodsTitle }}啦！</span>
+                <span class="import_b">您还可以进行如下操作：</span>
+              </div>
+
+              <span slot="footer" class="dialog-footer">
+                <el-button @click="goBom">返回列表</el-button>
+                <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()">{{ btnText }}</el-button>
+                <el-button v-else type="primary" @click="continueAdd()">{{ btnText }}</el-button>
+              </span>
+            </el-dialog>
           </div>
         </div>
       </div>
-      <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
-        :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center"
-        width="500px">
-        <div>
-          <img src="@/assets/images/importSuccess.gif" alt="" style="width:100px" />
-          <span class="import_t">{{ submitmethodsTitle }}啦！</span>
-          <span class="import_b">您还可以进行如下操作：</span>
-        </div>
-
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="goBom">返回列表</el-button>
-          <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()">{{ btnText }}</el-button>
-          <el-button v-else type="primary" @click="continueAdd()">{{ btnText }}</el-button>
-        </span>
-      </el-dialog>
     </div>
   </transition>
 </template>

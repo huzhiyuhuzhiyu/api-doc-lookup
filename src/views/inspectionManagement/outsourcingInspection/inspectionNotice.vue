@@ -82,7 +82,7 @@
 
             <el-table-column label="操作" width="140" fixed="right">
               <template slot-scope="scope">
-                <tableOpts @edit="addOrUpdateHandle(scope.row)" editText="检验" :hasDel="false">
+                <tableOpts @edit="addOrUpdateHandle(scope.row, false)" editText="检验" :hasDel="false">
                   <el-dropdown hide-on-click>
                     <span class="el-dropdown-link">
                       <el-button type="text" size="mini">
@@ -389,6 +389,7 @@ export default {
       this.initData()
     },
     addOrUpdateHandle(row, readOnly) {
+      console.log(readOnly, 'onlu')
       if (readOnly) {
         this.detailFormVisible = true
         this.$nextTick(() => {

@@ -123,11 +123,10 @@
 // import { purchaseOrderList } from '@/api/purchasingManagement/purchaseInquirySheet'
 import {
   purchaseOrderList,
-  detailpurchaseOrderList,
-  purPurchaseOrderExport,
   purPurchaseOrderdetail,
   purPurchaseBatch,
-  purPurchaseBatchLine
+  purPurchaseBatchLine,
+  deletePurPurchaseOrder
 } from '@/api/purchasingAndOutsourcingOrders/index'
 import JNPFForm from './Form'
 import moment from 'moment'
@@ -647,7 +646,7 @@ export default {
         })
       })
     },
-   
+
     // 处理分页
     printPageDataFn(data, pageSize = 20) {
       const printTable = []
@@ -712,7 +711,25 @@ export default {
           .replace(/(零.)+/g, '零')
           .replace(/^整$/, '零元整')
       )
-    }
+    },
+    handleDel(id) {
+      this.$confirm('此操作将删除该数据，是否继续？', this.$t('common.tipTitle'), {
+        type: 'warning'
+      })
+        .then(() => {
+          deletePurPurchaseOrder(id).then((res) => {
+            this.$message({
+              type: 'success',
+              message: '删除成功',
+              duration: 1500,
+              onClose: () => {
+                this.initData()
+              }
+            })
+          })
+        })
+        .catch(() => { })
+    },
   }
 }
 </script>

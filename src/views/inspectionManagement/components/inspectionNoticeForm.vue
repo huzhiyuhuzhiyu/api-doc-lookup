@@ -1,4 +1,5 @@
 <template>
+  <!-- 检验单 -->
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', readOnly ? 'noButtons' : '']">
@@ -235,7 +236,7 @@ export default {
           }
         ].filter((o) => !o.disabled)
       }
-      ; (this.dataFormItems = [
+      this.dataFormItems = [
         {
           prop: 'orderNo',
           label: '单号',
@@ -279,16 +280,16 @@ export default {
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
           itemDisabled: true
         },
-        {
-          prop: 'processName',
-          label: '工序名称',
-          value: '',
-          type: 'input',
-          itemRules: [{ required: true, trigger: 'blur' }],
-          sm: 6,
-          render: ['sale_back'].includes(this.inspectionType),
-          itemDisabled: true
-        },
+        // {
+        //   prop: 'processName',
+        //   label: '工序名称',
+        //   value: '',
+        //   type: 'input',
+        //   itemRules: [{ required: true, trigger: 'blur' }],
+        //   sm: 6,
+        //   render: ['sale_back'].includes(this.inspectionType),
+        //   itemDisabled: true
+        // },
         {
           prop: 'mainUnit',
           label: '单位',
@@ -308,7 +309,7 @@ export default {
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
           itemDisabled: true
         }
-      ])
+      ]
       this.inspectionInfo = [
         {
           prop: 'inspectionMethod',
@@ -635,6 +636,7 @@ export default {
     },
     // 初始化
     async init(row, readOnly, inspectionType, type, businessCode) {
+      console.log(row, 'row123')
       this.scope = { ...row }
 
       this.fetchData(businessCode, true)
@@ -653,6 +655,8 @@ export default {
       } else if (inspectionType === 'sale_back') {
         this.dataForm.inspectionQuantity = this.scope.deliveryQuantity
         this.dataForm.docId = this.scope.returnDeliveryNoticeId
+        this.dataForm.inspectionMethod = 'all'
+        this.dataForm.samplingQuantity = this.dataForm.inspectionQuantity
         this.dataForm.docLineId = this.scope.id
         this.dataForm.docNo = this.scope.orderNo
       } else if (inspectionType === 'process') {

@@ -104,12 +104,12 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <!-- <el-col :sm="6" :xs="24" v-if="dataForm.regionCode != 'foreign'">
-                      <el-form-item label="地址" prop="provincecityarea">
-                        <JNPF-Address v-model="dataForm.provincecityarea" @change="actiompro" placeholder="请选择地址" :disabled="btnType == 'look' ? true : false"></JNPF-Address>
-                      </el-form-item>
-                    </el-col> -->
                     <el-col :sm="6" :xs="24" v-if="dataForm.regionCode != 'foreign'">
+                      <el-form-item label="省/市/区" prop="provincecityarea">
+                        <JNPF-Address v-model="dataForm.provincecityarea" @change="actiompro" placeholder="请选择省/市/区" :disabled="btnType == 'look' ? true : false"></JNPF-Address>
+                      </el-form-item>
+                    </el-col>
+                    <!-- <el-col :sm="6" :xs="24" v-if="dataForm.regionCode != 'foreign'">
                   <el-form-item label="省" prop="province">
                     <el-select v-model="dataForm.province" placeholder="请选择省" style="width: 100%;"
                       :disabled="btnType=='look' ? true : false">
@@ -137,7 +137,7 @@
                       </el-option>
                     </el-select>
                   </el-form-item>
-                </el-col>
+                </el-col> -->
 
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="详细地址" prop="address">
@@ -677,6 +677,9 @@ export default {
         area: [
           { required: true, message: '区不能为空', trigger: 'change' }
 
+        ],
+        provincecityarea: [
+          { required: true, message: '省/市/区不能为空', trigger: 'change' }
         ],
         address: [
           { required: true, message: '请输入地址', trigger: 'blur' },

@@ -3,7 +3,7 @@
     <el-tabs tab-position="left" style="height:100%" v-model="activeTab">
       <el-tab-pane name="allPanel">
         <span slot="label"><i class="icon-ym icon-ym-extend-folder-open"></i>全部文档</span>
-        <div class="main JNPF-flex-main">
+        <div class="main JNPF-flex-main height-full">
           <div class="JNPF-common-head">
             <el-breadcrumb>
               <el-breadcrumb-item v-if="levelList.length > 1">
@@ -14,72 +14,24 @@
                 <a v-else @click="jump(item, i)">{{ item.fullName }}</a>
               </el-breadcrumb-item>
             </el-breadcrumb>
-            <SwitchListAndFilter @command="allFilterExtHandler" :switch-list.sync="allSwitchList" :current-ext.sync="allCurrentExt" :file-ext-filter-option="fileExtFilterOption"/>
+            <SwitchListAndFilter @command="filterExtHandler" :switch-list.sync="allSwitchList" :current-ext.sync="currentExt" :file-ext-filter-option="fileExtFilterOption"/>
           </div>
           <el-row class="JNPF-common-search-box searchWrapper">
-<!--              <el-col :span="19">-->
-<!--                  <el-row>-->
-                      <!--<el-form @submit.native.prevent>-->
-
-<!--                      <el-col  class="search-left" :span="searchFocus ? 24 : 8"   >-->
-
-              <div class="search-left" style="transition: all 300ms;position: relative;width: calc(100% - 249px)">
-                  <!-- <el-form-item label="关键词" style="margin: 0!important;">-->
-                  <el-input  :class="[searchFocus?'active':'']" class="search-input"  @focus="searchFocusHandler"   suffix-icon="el-icon-search" v-model="keyword" placeholder="请输入关键词查询" clearable @keyup.enter.native="search()"/>
-                  <!-- </el-form-item>-->
-                  <div  :style="{transform:searchPlaneTransform}" class="search-panel">
-                      <div class="panel-head">
-                          <div class="panel-head-left">共0条结果</div>
-                          <div class="panel-head-right">
-                              <div class="right-tag-item" v-for="item in searchDropDownList" :key="item.flag">
-                                  <el-dropdown @command="searchPlaneDropCommand(item.flag,$event,item)">
-                                         <span class="el-dropdown-link">
-                                             {{ item.currentChoose }}<i class="el-icon-arrow-down el-icon--right"></i>
-                                         </span>
-                                      <el-dropdown-menu
-                                          :append-to-body="false"
-                                          class="right-tag-dropdown" slot="dropdown">
-                                          <el-dropdown-item   v-for="(v,k,index) in item.option"
-                                                              :key="k"
-                                                              :class="item.currentChoose === v ?'dropdown-item-active':''"
-                                                              :command="k">{{v}}</el-dropdown-item>
-                                      </el-dropdown-menu>
-                                  </el-dropdown>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="panel-body">
-                          <div class="panel-body-history">
-                              <div class="history-list">
-                                  <i class=" el-icon-search"></i>
-                                  <div class="history-item"></div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-
-<!--                      </el-col>-->
-                      <!--              <el-col :span="6">-->
-                      <!--                <el-form-item>-->
-                      <!--                  <el-button type="primary" icon="el-icon-search" @click="search()">-->
-                      <!--                    {{ $t('common.search') }}</el-button>-->
-                      <!--                  <el-button icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}-->
-                      <!--                  </el-button>-->
-                      <!--                </el-form-item>-->
-                      <!--              </el-col>-->
-                      <!--</el-form>-->
-<!--                  </el-row>-->
-<!--              </el-col>-->
-             <div style="width: 249px">
+              <SearchPlane
+                  :loading.sync="searchPlaneLoading"
+                  class="search-com"
+                  :searchDropDownList="allSearchDropDownList"
+                  @search-change="searchChange"
+                  @item-click="searchItemClick"
+                  :list="searchList"
+                  :keyword.sync="keyword"
+              ></SearchPlane>
+             <div style="width: 250px">
                  <el-button style="margin-left: 10px" @click="addFolder()">新建文件夹</el-button>
                  <el-button type="primary" icon="el-icon-upload2" @click="uploadFile()">上传文件</el-button>
              </div>
-
-
-
           </el-row>
-          <div>
+          <div class="height-full">
             <JNPF-table class="table-style" v-if="allSwitchList" v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini">
               <el-table-column prop="fullName" label="文件名" custom-column>
                 <template slot-scope="scope">
@@ -136,32 +88,26 @@
       </el-tab-pane>
       <el-tab-pane name="shareoutPanel">
         <span slot="label"><i class="icon-ym icon-ym-extend-thumbs-up"></i>我的共享</span>
-        <div class="main JNPF-flex-main">
+        <div class="main JNPF-flex-main height-full">
           <div class="JNPF-common-head">
             <el-breadcrumb>
               <el-breadcrumb-item>我的共享</el-breadcrumb-item>
             </el-breadcrumb>
-              <SwitchListAndFilter @command="shareFilterExtHandler" :switch-list.sync="shareSwitchList" :current-ext.sync="shareCurrentExt" :file-ext-filter-option="fileExtFilterOption"/>
+              <SwitchListAndFilter @command="filterExtHandler" :switch-list.sync="shareSwitchList" :current-ext.sync="currentExt" :file-ext-filter-option="fileExtFilterOption"/>
 
           </div>
-          <el-row class="JNPF-common-search-box" :gutter="16">
-            <el-form @submit.native.prevent>
-              <el-col :span="6">
-                <el-form-item label="文件名">
-                  <el-input v-model="keyword" placeholder="搜索我的文件" clearable />
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item>
-                  <el-button type="primary" icon="el-icon-search" @click="search()">
-                    {{ $t('common.search') }}</el-button>
-                  <el-button icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
-                  </el-button>
-                </el-form-item>
-              </el-col>
-            </el-form>
+          <el-row class="JNPF-common-search-box searchWrapper">
+              <SearchPlane
+                  :loading.sync="searchPlaneLoading"
+                  class="width-full"
+                  :searchDropDownList="otherSearchDropDownList"
+                  @search-change="searchChange"
+                  @item-click="searchItemClick"
+                  :list="searchList"
+                  :keyword.sync="keyword"
+              ></SearchPlane>
           </el-row>
-          <div>
+          <div class="height-full">
             <JNPF-table class="table-style" v-if="shareSwitchList"  v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini">
               <el-table-column prop="fullName" label="文件名">
                 <template slot-scope="scope">
@@ -191,32 +137,26 @@
       </el-tab-pane>
       <el-tab-pane name="sharetomePanel">
         <span slot="label"><i class="icon-ym icon-ym-extend-share"></i>共享给我</span>
-        <div class="main JNPF-flex-main">
+        <div class="main JNPF-flex-main height-full">
           <div class="JNPF-common-head">
             <el-breadcrumb>
               <el-breadcrumb-item>共享给我</el-breadcrumb-item>
             </el-breadcrumb>
-            <SwitchListAndFilter @command="shareToMeFilterExtHandler" :switch-list.sync="shareToMeSwitchList" :current-ext.sync="shareToMeCurrentExt" :file-ext-filter-option="fileExtFilterOption"/>
+            <SwitchListAndFilter @command="filterExtHandler" :switch-list.sync="shareToMeSwitchList" :current-ext.sync="currentExt" :file-ext-filter-option="fileExtFilterOption"/>
 
           </div>
-          <el-row class="JNPF-common-search-box" :gutter="16">
-            <el-form @submit.native.prevent>
-              <el-col :span="6">
-                <el-form-item label="文件名">
-                  <el-input v-model="keyword" placeholder="搜索我的文件" clearable />
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item>
-                  <el-button type="primary" icon="el-icon-search" @click="search()">
-                    {{ $t('common.search') }}</el-button>
-                  <el-button icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
-                  </el-button>
-                </el-form-item>
-              </el-col>
-            </el-form>
-          </el-row>
-          <div>
+            <el-row class="JNPF-common-search-box searchWrapper">
+                <SearchPlane
+                    :loading.sync="searchPlaneLoading"
+                    class="width-full"
+                    :searchDropDownList="otherSearchDropDownList"
+                    @search-change="searchChange"
+                    @item-click="searchItemClick"
+                    :list="searchList"
+                    :keyword.sync="keyword"
+                ></SearchPlane>
+            </el-row>
+          <div class="height-full">
             <JNPF-table class="table-style" v-if="shareToMeSwitchList" v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini" >
               <el-table-column prop="fullName" label="文件名">
                 <template slot-scope="scope">
@@ -242,32 +182,26 @@
       </el-tab-pane>
       <el-tab-pane name="trashPanel">
         <span slot="label"><i class="icon-ym icon-ym-extend-trash"></i>回收站</span>
-        <div class="main JNPF-flex-main">
+        <div class="main JNPF-flex-main height-full">
           <div class="JNPF-common-head">
             <el-breadcrumb>
               <el-breadcrumb-item>回收站</el-breadcrumb-item>
             </el-breadcrumb>
-            <SwitchListAndFilter @command="trashFilterExtHandler" :switch-list.sync="trashSwitchList" :current-ext.sync="trashCurrentExt" :file-ext-filter-option="fileExtFilterOption"/>
+            <SwitchListAndFilter @command="filterExtHandler" :switch-list.sync="trashSwitchList" :current-ext.sync="currentExt" :file-ext-filter-option="fileExtFilterOption"/>
 
           </div>
-          <el-row class="JNPF-common-search-box" :gutter="16">
-            <el-form @submit.native.prevent>
-              <el-col :span="6">
-                <el-form-item label="文件名">
-                  <el-input v-model="keyword" placeholder="搜索我的文件" clearable />
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item>
-                  <el-button type="primary" icon="el-icon-search" @click="search()">
-                    {{ $t('common.search') }}</el-button>
-                  <el-button icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
-                  </el-button>
-                </el-form-item>
-              </el-col>
-            </el-form>
-          </el-row>
-          <div>
+            <el-row class="JNPF-common-search-box searchWrapper">
+                <SearchPlane
+                    :loading.sync="searchPlaneLoading"
+                    class="width-full"
+                    :searchDropDownList="otherSearchDropDownList"
+                    @search-change="searchChange"
+                    @item-click="searchItemClick"
+                    :list="searchList"
+                    :keyword.sync="keyword"
+                ></SearchPlane>
+            </el-row>
+          <div class="height-full">
             <JNPF-table  class="table-style" v-if="trashSwitchList"  v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini" >
               <el-table-column prop="fullName" label="文件名">
                 <template slot-scope="scope">
@@ -302,21 +236,41 @@
     <userBox v-if="userBoxVisible" ref="userBox" @refresh="initData" />
     <folderTree v-if="folderTreeVisible" ref="folderTree" @refresh="initData" />
     <fileUploader ref="fileUploader" :parentId="parentId" @fileSuccess="fileSuccess" />
+      <el-dialog
+          :visible.sync="previewVisible"
+          top="5vh"
+          width="80%">
+          <Detail @close="previewVisible = false" style="height: 90vh" ref="detail"></Detail>
+      </el-dialog>
+
   </div>
 </template>
 
 <script>
-
+import moment from 'moment'
 import { AllList, Create, Delete, Download, DocumentInfo, ShareCancel, ShareOutList, ShareTomeList, TrashDelete, TrashList, TrashRecovery, Update } from '@/api/extend/document'
 import userBox from './UserBox'
 import folderTree from './FolderTree'
 import FileUploader from './fileUploader'
+import {
+    excelSuffix,
+    imgSuffix,
+    isFile,
+    mindSuffix,
+    pdfSuffix,
+    txtSuffix, Type2SuffixArr,
+    wordSuffix
+} from "@/views/drawingDocument/document/utils";
 const ALL_TEXT ='全部'
 
 const fileExtFilterOption =Object.freeze( [
     {
         text:ALL_TEXT,
         icon:'zgt-ifont-quanbu'
+    },
+    {
+      text:'txt',
+      icon:'zgt-ifont-txt'
     },
     {
         text:'pdf',
@@ -349,18 +303,85 @@ const TIME_OPTION ={
     "TOW_MONTH":'最近两个月',
     "THREE_MONTH":'最近三个月'
 }
+function getBeforeDate(n){
+    const date = new Date()
+    date.setDate(date.getDate() - n)
+    date.setHours(0)
+    date.setMinutes(0)
+    date.setSeconds(0)
+    date.setMilliseconds(0)
+
+    return date
+}
+
+function timeOptionHandler(timeOption){
+    const data ={
+        start:'',
+        end: new Date()
+    }
+
+    if(timeOption === TIME_OPTION.NO_LIMIT){
+        data.end =''
+        return data
+    }
+    switch (timeOption){
+        case TIME_OPTION.ONE_WEEK:
+            data.start = getBeforeDate(7)
+            break;
+        case TIME_OPTION.ONE_MONTH:
+            data.start = getBeforeDate(30)
+            break;
+        case TIME_OPTION.TOW_MONTH:
+            data.start = getBeforeDate(60)
+            break;
+        case TIME_OPTION.THREE_MONTH:
+            data.start = getBeforeDate(90)
+            break;
+    }
+    data.start= moment(data.start).format('YYYY-MM-DD HH:mm:ss')
+    data.end = moment(data.end).format('YYYY-MM-DD HH:mm:ss')
+    return data
+}
+
+
+
 const FILE_EXT_OPTION=fileExtFilterOption.reduce((acc,cur)=>{
     acc[cur.text] = cur.text
     return acc
 },{})
-const FILE_CATEGORY_OPTION={
-    "ALL":'全部',
-    "MY_SHARE":'我的共享',
-    "SHARE_TO_ME":'共享给我'
+function fileExtOptionHandler(ext){
+    if(ext === FILE_EXT_OPTION[ALL_TEXT]){
+        return ''
+    }
+    switch (ext){
+        case '图片':
+            return 'pic'
+        case '思维导图':
+            return 'mindMap'
+        default:
+            return ext
+    }
 }
-const TIME_OPTION_FLAG =0;
-const FILE_EXT_OPTION_FLAG =1;
-const FILE_CATEGORY_OPTION_FLAG =2;
+const FILE_CATEGORY_OPTION={
+    "all":'全部',
+    "share":'我的共享',
+    "shareToMe":'共享给我'
+}
+function fileCategoryOptionHandler(category){
+    switch (category){
+        case FILE_CATEGORY_OPTION.all:
+            return ''
+        case FILE_CATEGORY_OPTION.share:
+            return 'share'
+        case FILE_CATEGORY_OPTION.shareToMe:
+            return 'shareToMe'
+        default:
+            return ''
+    }
+}
+const TIME_OPTION_FLAG ='time';
+const FILE_EXT_OPTION_FLAG ='fileType';
+const FILE_CATEGORY_OPTION_FLAG ='documentType';
 const FILE_OPERATE ={
     DOWNLOAD:'DOWNLOAD',
     DELETE:'DELETE',
@@ -371,19 +392,19 @@ const FILE_OPERATE ={
     RECOVERY:'RECOVERY',
     TRASH_DEL:'TRASH_DEL'
 }
-function isFile(item){
-    return item && item.type === 1
-}
+
 
 
 export default {
   name: 'extend-document',
-  components: { userBox, folderTree, FileUploader,GridFileList:()=>import('./GridFileList'),
+  components: {
+    SearchPlane:()=>import('@/views/drawingDocument/document/SearchPlane.vue'),
+    Detail:()=>import('@/views/extend/documentPreview/Detail.vue') ,userBox, folderTree, FileUploader,GridFileList:()=>import('./GridFileList'),
     SwitchListAndFilter:()=>import('./SwitchListAndFilter')
   },
   data() {
     return {
-
+      previewVisible:false,
       userBoxVisible: false,
       folderTreeVisible: false,
       detailVisible: false,
@@ -401,29 +422,44 @@ export default {
       shareToMeSwitchList:false,
       trashSwitchList:false,
       fileExtFilterOption,
-      allCurrentExt:'',
-      shareCurrentExt:'',
-      shareToMeCurrentExt:'',
-      trashCurrentExt:'',
+      currentExt:'',
       searchFocus:false,
       searchPlaneTransform:'scale(0)',
-      searchDropDownList:[
+      allSearchDropDownList:[
           {
               currentChoose:TIME_OPTION.NO_LIMIT,
+              defaultChoose:TIME_OPTION.NO_LIMIT,
               option:TIME_OPTION,
               flag:TIME_OPTION_FLAG
           },
           {
-                currentChoose:FILE_EXT_OPTION[ALL_TEXT],
-                option:FILE_EXT_OPTION,
-                flag:FILE_EXT_OPTION_FLAG
-            },
-            {
-                currentChoose:FILE_CATEGORY_OPTION.ALL,
-                option:FILE_CATEGORY_OPTION,
-                flag:FILE_CATEGORY_OPTION_FLAG
-            }
+              currentChoose:FILE_EXT_OPTION[ALL_TEXT],
+              defaultChoose:FILE_EXT_OPTION[ALL_TEXT],
+              option:FILE_EXT_OPTION,
+              flag:FILE_EXT_OPTION_FLAG
+          },
+          {
+              currentChoose:FILE_CATEGORY_OPTION.all,
+              defaultChoose:FILE_CATEGORY_OPTION.all,
+              option:FILE_CATEGORY_OPTION,
+              flag:FILE_CATEGORY_OPTION_FLAG
+          }
       ],
+      otherSearchDropDownList:[
+          {
+              currentChoose:TIME_OPTION.NO_LIMIT,
+                defaultChoose:TIME_OPTION.NO_LIMIT,
+              option:TIME_OPTION,
+              flag:TIME_OPTION_FLAG
+          },
+          {
+              currentChoose:FILE_EXT_OPTION[ALL_TEXT],
+              defaultChoose: FILE_EXT_OPTION[ALL_TEXT],
+              option:FILE_EXT_OPTION,
+              flag:FILE_EXT_OPTION_FLAG
+          },
+      ],
+      searchList:[],
       allFileOptions:[
           {
               text:'下载',
@@ -457,12 +493,12 @@ export default {
             value:FILE_OPERATE.UNSHARE,
          }
       ],
-     shareToMeFileOptions:[
+      shareToMeFileOptions:[
          {
              text:'下载',
              value:FILE_OPERATE.DOWNLOAD,
          }
-     ],
+      ],
       trashFileOptions:[
           {
               text:'还原',
@@ -472,7 +508,9 @@ export default {
               text:'删除',
               value:FILE_OPERATE.TRASH_DEL,
           }
-      ]
+      ],
+      searchPlaneLoading:false,
+      listCopy:[]
 
     }
   },
@@ -492,35 +530,104 @@ export default {
     this.initData()
   },
   methods: {
-    listItemClick(item){
-        if(!isFile(item)){
-            this.openFolder(item)
+   getArrayItem(index,count){
+     return this.list.slice(index,index+count)
+   },
+   listSplice(index,count){
+       const ids =this.getArrayItem(index,count).map(item=>item.id)
+       this.list.splice(index,count)
+       this.listCopy = this.listCopy.filter(item=>!ids.includes(item.id))
+   },
+   async searchChange(data){
+       if(data.keyword === ''){
+           this.searchList = []
+           return
+       }
+
+        const { start,end }= timeOptionHandler(data[TIME_OPTION_FLAG])
+        const fileType = fileExtOptionHandler(data[FILE_EXT_OPTION_FLAG])
+        const documentType = fileCategoryOptionHandler(data[FILE_CATEGORY_OPTION_FLAG])
+        const params ={
+            keyword:data.keyword,
+            start,
+            end,
+            fileType,
+            parentId:this.parentId,
+            documentType,
+            subsetFlag:true
         }
-    },
-    searchPlaneDropCommand(flag,command,item){
-        console.log(flag,command,item)
-      item.currentChoose =  item.option[command]
+
+        switch (this.activeTab){
+            case "shareoutPanel":
+                params.documentType = 'share'
+                break;
+            case "sharetomePanel":
+                params.documentType = 'shareToMe'
+                break;
+            case "trashPanel":
+                params.documentType = 'trash'
+                break;
+
+        }
+        try {
+           this.searchPlaneLoading = true
+           const res = await AllList(params)
+           this.searchList = res.data.list.filter(item=>isFile(item))
+        }catch (e) {
+            console.error(e)
+        }finally {
+           this.searchPlaneLoading = false
+        }
 
     },
-    windowClickHandler(e){
-        e.path
-            .map(item=>[...(item.classList?item.classList.values() : [])])
-            .flat(Infinity)
-                .includes('search-left') || this.hideSearchPanel()
+    searchItemClick({item,position,hideSearchPanel}){
+        // const item =  {
+        //     "id": "1839570984371814402",
+        //     "fullName": "轴管通-文件管理需求说明.docx",
+        //     "type": 1,
+        //     "creatorTime": "2024-09-27 15:41:14",
+        //     "isShare": 0,
+        //     "fileSize": "1895532",
+        //     "parentId": "1839217958427623425",
+        //     "fileExtension": "docx",
+        //     "canEdit": true,
+        //     "source": "全部文档/465",
+        //     "sourceId": "全部文档/1839217958427623425"
+        // }
+        // console.log(item,position)
+        if(position === 'right'){
+            const sourceName = item.source.split('/')
+            const sourceId = item.sourceId.split('/')
+            sourceId[0] = '0'
+            this.levelList = sourceName.map((fullName,id)=>({
+                id:sourceId[id],
+                fullName
+            }))
+
+            this.parentId = sourceId[sourceId.length-1]
+            // this.levelList = [{
+            //     id: "0",
+            //     fullName: '全部文档'
+            // }]
+            hideSearchPanel()
+            this.reset()
+            return
+        }
+        return this.listItemClick(item)
     },
-    hideSearchPanel(){
-          this.searchFocus = false
-          this.searchPlaneTransform='scale(0)'
-          window.removeEventListener('click',this.windowClickHandler,{capture:true})
+    async listItemClick(item){
+        if(!isFile(item)){
+          return this.openFolder(item)
+        }
+        this.$message.info("文件预览功能暂未开放,敬请期待")
+       // const res = await DocumentInfo(item.id)
+       //  console.log(res)
+       //  this.previewVisible = true
+       //  this.$nextTick(()=>{
+       //      this.$refs.detail.init(item.id,item.fullName,'yozoOnlinePreview')
+       //  })
     },
-    showSearchPanel(){
-      this.searchFocus = true
-      this.searchPlaneTransform = 'scale(1)'
-    },
-    searchFocusHandler(){
-        this.showSearchPanel()
-        window.addEventListener('click',this.windowClickHandler,true)
-    },
+
     allItemCommandHandler(command, {id,parentId},index){
         switch (command) {
             case FILE_OPERATE.DOWNLOAD:
@@ -563,28 +670,31 @@ export default {
                 break;
         }
     },
-    allFilterExtHandler(command){
-        this.filterExtHandler(command,'allCurrentExt')
-    },
-    shareFilterExtHandler(command){
-        this.filterExtHandler(command,'shareCurrentExt')
-    },
-    shareToMeFilterExtHandler(command){
-        this.filterExtHandler(command,'shareToMeCurrentExt')
-    },
-    trashFilterExtHandler(command){
-        this.filterExtHandler(command,'trashCurrentExt')
-    },
-    filterExtHandler(command,flag){
-          if(command === this[flag]) return
-          if(command === ALL_TEXT){
-              return this[flag] = ''
-          }
-          this[flag] = command
+
+    filterExtHandler(command){
+        if(command === ALL_TEXT){
+           this.currentExt= ''
+           return this.list = this.listCopy
+        }
+        this.currentExt= command
+        const suffixArr = Type2SuffixArr.get(command)
+        if(suffixArr && suffixArr.length){
+          return this.list = this.listCopy.filter(item=>suffixArr.includes(item.fileExtension))
+        }
     },
     reset() {
       this.list = []
+      this.listCopy = []
+      this.searchList = []
       this.keyword = ''
+      this.currentExt = ''
+
+      this.otherSearchDropDownList.forEach(item=>{
+          item.currentChoose = item.defaultChoose
+      })
+      this.allSearchDropDownList.forEach(item=>{
+          item.currentChoose = item.defaultChoose
+      })
       this.initData()
     },
     initData() {
@@ -594,24 +704,28 @@ export default {
         data = { ...data, parentId: this.parentId }
         AllList(data).then(res => {
           this.list = res.data.list
+          this.listCopy = res.data.list
           this.listLoading = false
         })
       }
       if (this.activeTab === 'shareoutPanel') {
         ShareOutList(data).then(res => {
           this.list = res.data.list
+          this.listCopy = res.data.list
           this.listLoading = false
         })
       }
       if (this.activeTab === 'sharetomePanel') {
         ShareTomeList(data).then(res => {
           this.list = res.data.list
+          this.listCopy = res.data.list
           this.listLoading = false
         })
       }
       if (this.activeTab === 'trashPanel') {
         TrashList(data).then(res => {
           this.list = res.data.list
+          this.listCopy = res.data.list
           this.listLoading = false
         })
       }
@@ -624,11 +738,13 @@ export default {
         type: 'warning'
       }).then(() => {
         Delete(id).then(res => {
-          this.list.splice(index, 1)
-          this.$message({
+        // this.list.splice(index, 1)
+        this.listSplice(index,1)
+        this.$message({
             type: 'success',
             message: res.msg
           })
+
         })
       }).catch(() => { })
     },
@@ -637,7 +753,8 @@ export default {
         type: 'warning'
       }).then(() => {
         ShareCancel(id).then(res => {
-          this.list.splice(index, 1)
+          //this.list.splice(index, 1)
+          this.listSplice(index,1)
           this.$message({
             type: 'success',
             message: res.msg
@@ -650,7 +767,8 @@ export default {
         type: 'warning'
       }).then(() => {
         TrashRecovery(id).then(res => {
-          this.list.splice(index, 1)
+          // this.list.splice(index, 1)
+            this.listSplice(index,1)
           this.$message({
             type: 'success',
             message: res.msg
@@ -663,7 +781,8 @@ export default {
         type: 'warning'
       }).then(() => {
         TrashDelete(id).then(res => {
-          this.list.splice(index, 1)
+          // this.list.splice(index, 1)
+          this.listSplice(index,1)
           this.$message({
             type: 'success',
             message: res.msg
@@ -783,162 +902,24 @@ export default {
         return "icon-ym-file-movie"
       }
       return "icon-ym-file-blank"
-    },
-      log(){
-            console.log(this.list)
-      }
+    }
   }
 }
 </script>
 <style lang="scss" scoped>
 .table-style{
-    height: 72vh;
     border: 1px solid #EBEEF5;
+    height: 100%;
 }
-.dropdown-item-active{
-    background-color: #ecf8fe;
-    color: #65c7f9;
+.search-com{
+    width: calc(100% - 250px)
 }
- .right-tag-dropdown{
-     ::v-deep .el-dropdown-menu__item{
-         box-sizing: border-box;
-         max-width: 150px;
-         overflow: hidden;
-         text-overflow: ellipsis;
-         white-space: nowrap;
-     }
- }
-.search-input{
-    width: 30%;
+::v-deep .el-tabs__content{
+    height: 100%;
 }
-.search-input.active{
-    width: 100%;
+::v-deep .el-tab-pane{
+    height: 100%;
 }
-.search-input.active ::v-deep .el-input__inner{
-    border-color: #3fb9f8;
-    outline: 0;
-}
-.search-panel{
-    transition: all 300ms;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 8px 24px 0 rgba(0,0,0,.17);
-    display: flex;
-    flex-direction: column;
-    left: 0;
-    padding: 12px 8px;
-    position: absolute;
-    right: 0;
-    top: 36px;
-    z-index: 1000;
-    transform: scale(0);
-    transform-origin: top left;
-    .panel-head{
-        align-items: center;
-        display: flex;
-        justify-content: space-between;
-        padding: 0 8px;
-        .panel-head-left{
-            color: #999;
-            font-size: 13px;
-            font-weight: 400;
-        }
-        .panel-head-right{
-            align-items: center;
-            display: flex;
-            flex: 1;
-            justify-content: flex-end;
-            .right-tag-item{
-                ::v-deep .el-dropdown{
-                    min-width: 110px;
-                    .el-dropdown-link{
-                        align-items: center;
-                        border: 1px solid #ccc;
-                        border-radius: 4px;
-                        box-sizing: border-box;
-                        color: #222;
-                        cursor: pointer;
-                        display: flex;
-                        font-size: 12px;
-                        height: 26px;
-                        justify-content: space-between;
-                        line-height: 24px;
-                        margin-left: 8px;
-                        padding: 0 10px;
-                        &:hover {
-                            border: 1px solid #3fb9f8;
-                            color: #3fb9f8;
-                        }
-                    }
-                }
-            }
-
-        }
-    }
-    .panel-body{
-        flex: 1;
-        margin-top: 10px;
-        overflow-y: hidden;
-        text-align: left;
-        .panel-body-history{
-            display: flex;
-            flex-direction: column;
-            height: 250px;
-            margin-top: 10px;
-            overflow-y: auto;
-            position: relative;
-            .history-list{
-                flex: 1;
-                overflow-y: auto;
-                .history-item{
-                    align-items: center;
-                    color: #222;
-                    cursor: pointer;
-                    display: flex;
-                    font-family: PingFangSC-Regular;
-                    font-size: 14px;
-                    font-weight: 400;
-                    padding: 12px 8px;
-                }
-                .history-clear{
-                    color: #21ab86;
-                    font-family: PingFangSC-Regular;
-                    font-size: 13px;
-                    font-weight: 400;
-                    margin: 10px 0 10px 8px;
-                }
-            }
-
-        }
-        .panel-body-list{
-            .infinite-list{
-                height: 100%;
-                margin-bottom: 10px;
-                overflow-x: hidden;
-                overflow-y: auto;
-                width: 100%;
-                .infinite-list-item{
-                    align-items: flex-start;
-                    box-sizing: border-box;
-                    display: flex;
-                    padding: 0 16px 0 8px;
-                    width: 100%;
-                    .item-wrap{
-                        border-top: 1px solid transparent;
-                        flex: 1;
-                        overflow: hidden;
-                        padding: 15px 0;
-                        .item-wrap-base{
-
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-
 
 .Document-container {
   position: relative;
@@ -956,7 +937,7 @@ export default {
     }
 
   .JNPF-common-head {
-    padding: 14px 0 10px;
+    padding: 12px 0 10px;
   }
 
   >>>.el-tabs__item {

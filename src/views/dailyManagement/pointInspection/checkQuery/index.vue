@@ -40,7 +40,7 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <div class="JNPF-common-head">
-                <topOpts @add="handleUserRelation('', 'add')" />
+                <div style="height: 32px;"></div>
                 <div class="JNPF-common-head-right">
                   <el-tooltip content="高级查询" placement="top">
                     <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
@@ -66,12 +66,13 @@
                 </el-table-column>
                 <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" fixed="left" />
                 <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom" fixed="left" />
+                <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
+                <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
                 <el-table-column prop="departmentIdName" label="计划点检部门" min-width="150" />
                 <el-table-column prop="maintainerIdName" min-width="120" label="计划点检人" />
-                <el-table-column prop="level" label="点检等级" min-width="150" />
                 <el-table-column prop="cycle" label="周期" min-width="150" />
                 <el-table-column prop="unit" label="单位" width="120" />
-                <el-table-column prop="nextMaintenanceTime" label="下次点检时间" min-width="180" sortable="custom" />
+                <el-table-column prop="nextMaintenanceTime" label="计划点检时间" min-width="180" sortable="custom" />
                 <el-table-column prop="state" label="状态" sortable="custom" width="120" fixed="right" align="center">
                   <template slot-scope="scope">
                     <div v-if="scope.row.state == 'disabled'"><el-tag type="danger">禁用</el-tag></div>
@@ -82,26 +83,9 @@
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="200" />
                 <el-table-column prop="createByName" label="创建人" width="120" />
                 <el-table-column prop="remark" label="备注" min-width="200" />
-                <el-table-column label="操作" min-width="180" fixed="right" align="center">
+                <el-table-column label="操作" min-width="90" fixed="right" align="center">
                   <template slot-scope="scope">
-                    <tableOpts @edit="handleUserRelation(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
-                      <el-dropdown hide-on-click>
-                        <span class="el-dropdown-link">
-                          <el-button type="text" size="mini">
-                            {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                          </el-button>
-                        </span>
-                        <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item :disabled="scope.row.istime" @click.native="maintenanceaction(scope.row.id, 'maintenance')">
-                            点检
-                          </el-dropdown-item>
-                          <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
-                            查看详情
-                          </el-dropdown-item>
-                        </el-dropdown-menu>
-                      </el-dropdown>
-                    </tableOpts>
-                    <!-- <el-button type="text" :disabled="scope.row.istime" @click="maintenanceaction(scope.row.id, 'maintenance')" size="mini">点检</el-button> -->
+                    <el-button type="text" :disabled="scope.row.istime" @click="maintenanceaction(scope.row.id, 'maintenance')" size="mini">点检</el-button>
                   </template>
                 </el-table-column>
               </JNPF-table>
@@ -170,12 +154,13 @@
                 </el-table-column>
                 <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" fixed="left" />
                 <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom" fixed="left" />
+                <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
+                <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
                 <el-table-column prop="departmentIdName" label="计划点检部门" min-width="150" />
                 <el-table-column prop="maintainerIdName" min-width="120" label="计划点检人" />
-                <el-table-column prop="level" label="点检等级" min-width="150" />
                 <el-table-column prop="cycle" label="周期" min-width="150" />
                 <el-table-column prop="unit" label="单位" width="120" />
-                <el-table-column prop="nextMaintenanceTime" label="下次点检时间" min-width="180" sortable="custom" />
+                <el-table-column prop="nextMaintenanceTime" label="计划点检时间" min-width="180" sortable="custom" />
                 <el-table-column prop="state" label="状态" sortable="custom" width="120" fixed="right" align="center">
                   <template slot-scope="scope">
                     <div v-if="scope.row.state == 'disabled'"><el-tag type="danger">禁用</el-tag></div>
@@ -187,26 +172,9 @@
                 <el-table-column prop="createByName" label="创建人" width="120" />
                 <el-table-column prop="remark" label="备注" min-width="200" />
 
-                <el-table-column label="操作" width="180" fixed="right" align="center">
+                <el-table-column label="操作" width="90" fixed="right" align="center">
                   <template slot-scope="scope">
-                    <tableOpts @edit="handleUserRelation(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
-                      <el-dropdown hide-on-click>
-                        <span class="el-dropdown-link">
-                          <el-button type="text" size="mini">
-                            {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                          </el-button>
-                        </span>
-                        <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item :disabled="scope.row.istime" @click.native="maintenanceaction(scope.row.id, 'maintenance')">
-                            点检
-                          </el-dropdown-item>
-                          <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
-                            查看详情
-                          </el-dropdown-item>
-                        </el-dropdown-menu>
-                      </el-dropdown>
-                    </tableOpts>
-                    <!-- <el-button type="text" :disabled="scope.row.istime" @click="maintenanceaction(scope.row.id, 'maintenance')" size="mini">点检</el-button> -->
+                    <el-button type="text" :disabled="scope.row.istime" @click="maintenanceaction(scope.row.id, 'maintenance')" size="mini">点检</el-button>
                   </template>
                 </el-table-column>
 

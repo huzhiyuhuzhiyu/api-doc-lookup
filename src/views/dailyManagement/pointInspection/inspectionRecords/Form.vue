@@ -15,20 +15,9 @@
 
         <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
           <el-collapse v-model="activeNames">
-            <el-collapse-item title="基本信息" name="basicInfo">
-              <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+            <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+              <el-collapse-item title="点检信息" name="basicInfo">
                 <el-row :gutter="30" class="custom-row">
-                  <el-col :sm="6" :xs="24">
-                    <el-form-item label="设备名称" prop="equipmentId">
-                      <!-- <ComSelectListone :requestObj="{ classAttribute: 'equipment' }" :dialogTitle="'请选择设备'"
-                      :disrequestobj="{ state: 'discard', classAttribute: 'equipment' }"
-                      v-model="dataForm.equipmentIdName" :placeholder="'请选择设备名称'"
-                      :isdisabled="btnType == 'look' || btnType == 'maintenance'" :method="editEquEquipmentAll"
-                      @change="changeWarehouse"></ComSelectListone> -->
-                      <el-input v-model="dataForm.equipmentIdName" placeholder="请选择设备名称" readonly @focus="openSeleceProductDialogss" :disabled="btnType !== 'add'">
-                      </el-input>
-                    </el-form-item>
-                  </el-col>
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="点检日期" prop="actualMaintenanceDate">
                       <el-date-picker v-model="dataForm.actualMaintenanceDate" placeholder="请选择点检日期" type="date" :disabled="btnType == 'look'" value-format="yyyy-MM-dd" style="width: 100%;" @change="cycleaction" :picker-options="{
@@ -39,14 +28,6 @@
                       </el-date-picker>
                     </el-form-item>
                   </el-col>
-                  <!-- <el-col :sm="6" :xs="24">
-                  <el-form-item label="点检日期" prop="actualMaintenanceDate">
-                    <el-date-picker v-model="dataForm.actualMaintenanceDate" type="datetime" placeholder="请选择点检日期"
-                      :picker-options="pickerOptions" :disabled="btnType == 'look'" style="width: 100%;" clearable
-                      @change="nextMaintenanceTimeaction">
-                    </el-date-picker>
-                  </el-form-item>
-                </el-col> -->
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="点检部门" prop="actualDepartmentId">
                       <ComSelect v-model="organizeIdTrees" :disabled="btnType === 'look'" placeholder="请选择点检部门" auth :dialogTitle="'请选择点检部门'" @change="changedepartment" :currOrgId="dataForm.actualDepartmentId || '0'" />
@@ -59,14 +40,93 @@
                       </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="12" :xs="24">
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="点检结果" prop="inspectionResults">
+                      <el-select v-model="dataForm.inspectionResults" placeholder="请选择点检结果" clearable style="width: 100%;" :disabled="btnType == 'look'">
+                        <el-option v-for="(item, index) in inspectionResultsList" :key="index" :label="item.label" :value="item.value"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
                     <el-form-item label="备注" prop="remark">
                       <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btnType == 'look'" type="textarea" maxlength="200" :rows="2" />
                     </el-form-item>
                   </el-col>
+                  <el-col :sm="24" :xs="24">
+                    <el-form-item label="点检拍照" prop="pic">
+                      <UploadImg v-model="dataForm.pic" :disabled="btnType == 'look'"></UploadImg>
+                    </el-form-item>
+                  </el-col>
                 </el-row>
-              </el-form>
-            </el-collapse-item>
+              </el-collapse-item>
+              <el-collapse-item title="设备信息" name="sbInfo">
+                <el-row :gutter="30">
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="设备名称" prop="equipmentId">
+                      <!-- <ComSelectListone :requestObj="{ classAttribute: 'equipment' }" :dialogTitle="'请选择设备'"
+                      :disrequestobj="{ state: 'discard', classAttribute: 'equipment' }"
+                      v-model="dataForm.equipmentIdName" :placeholder="'请选择设备名称'"
+                      :isdisabled="btnType == 'look' || btnType == 'maintenance'" :method="editEquEquipmentAll"
+                      @change="changeWarehouse"></ComSelectListone> -->
+                      <el-input v-model="dataForm.equipmentIdName" placeholder="请选择设备名称" readonly @focus="openSeleceProductDialogss" :disabled="btnType !== 'add'">
+                      </el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="设备编码" prop="equipmentIdCode">
+                      <el-input v-model="dataForm.equipmentIdCode" placeholder="请输入设备编码" :disabled="true" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="使用车间" prop="factoryFloor">
+                      <el-input v-model="dataForm.factoryFloor" placeholder="请输入使用车间" :disabled="true" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="安装地点" prop="mountedPlaces">
+                      <el-input v-model="dataForm.mountedPlaces" placeholder="请输入安装地点" :disabled="true" />
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-collapse-item>
+              <el-collapse-item title="点检任务" name="byrw">
+                <el-row :gutter="30">
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="计划点检人" prop="maintainerIdName">
+                      <el-input v-model="dataForm.maintainerIdName" placeholder="请输入计划点检人" :disabled="true" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="计划点检时间" prop="nextMaintenanceTime">
+                      <el-input v-model="dataForm.nextMaintenanceTime" placeholder="请输入计划点检时间" :disabled="true" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="点检任务名称" prop="name">
+                      <el-input v-model="dataForm.name" placeholder="请输入点检任务名称" :disabled="true" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="周期类型" prop="cycleType">
+                      <el-select v-model="dataForm.cycleType" placeholder="请选择周期类型" clearable style="width: 100%;" :disabled="true">
+                        <el-option v-for="(item, index) in cycleTypeStateList" :key="index" :label="item.label" :value="item.value"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24" v-if="dataForm.cycleType == 'cycle'" key="3">
+                    <el-form-item label="点检周期" prop="cycle">
+                      <el-input v-model="dataForm.cycle" placeholder="请输入点检周期" :disabled="true" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24" v-if="dataForm.cycleType == 'cycle'" key="1">
+                    <el-form-item label="单位" prop="unit">
+                      <el-input v-model="dataForm.unit" placeholder="请输入单位" :disabled="true" />
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-collapse-item>
+            </el-form>
+
             <el-collapse-item title="项目信息" name="xmxx">
               <div v-if="btnType == 'edit' || btnType == 'add'">
                 <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择项目</el-button>|
@@ -161,17 +221,27 @@
 </template>
     
 <script>
+import UploadImg from "@/components/Generator/components/Upload/UploadImg.vue";
 import { getcategoryTree } from '@/api/basicData/materialSettings'
-import { addequMaintenance, updateequMaintenance, detailequMaintenance, detailcheckmaintenance, equMaintenancemainte } from '@/api/dailyManagement/Maintenance'
+import { addequMaintenance, checkmaintenanceList, updateequMaintenance, detailequMaintenance, detailcheckmaintenance, equMaintenancemainte } from '@/api/dailyManagement/Maintenance'
 import { parametersShelveslist } from '@/api/basicData/index'
 import { getOrganizeInfo } from '@/api/permission/organize'
 import { getEquEquipmentList } from '@/api/basicData/index'
 import { getOrganization } from '@/api/permission/user'
-
+import { mapGetters } from 'vuex'
 export default {
+  components: { UploadImg },
   data() {
     return {
-      activeNames: ["basicInfo", "xmxx"],
+      inspectionResultsList: [
+        { label: "正常", value: "normal" },
+        { label: "异常", value: "abnormal" },
+      ],
+      cycleTypeStateList: [
+        { label: "周期", value: "cycle" },
+        { label: "一次", value: "disposable" },
+      ],
+      activeNames: ["basicInfo", 'byrw', 'sbInfo', "xmxx"],
       getcategoryTree,
       ProductTableSearchLists: [
         { prop: "code", label: "设备编码", type: 'input' },
@@ -187,7 +257,7 @@ export default {
           },
           {
             "asc": false,
-            "column": "createTime"
+            "column": "create_time"
           }
         ],
         code: "",
@@ -235,6 +305,17 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
+        inspectionResults: 'normal',
+        pic: '',
+        name: '',
+        cycleType: '',
+        cycle: '',
+        unit: '',
+        factoryFloor: '',
+        mountedPlaces: '',
+        equipmentIdCode: '',
+        maintainerIdName: '',
+        nextMaintenanceTime: '',
         maintenanceTaskId: '',
         departmentId: '',
         maintainerId: '',
@@ -257,6 +338,9 @@ export default {
       // },
       organizeIdTrees: [],
       dataRule: {
+        inspectionResults: [
+          { required: true, message: '请选择点检结果', trigger: 'change' }
+        ],
         equipmentId: [
           { required: true, message: '设备不能为空', trigger: 'change' }
         ],
@@ -277,6 +361,9 @@ export default {
     let tBody = document.querySelectorAll('.el-table')[1]
     tBody.style.height = 'auto'
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
+  },
+  computed: {
+    ...mapGetters(['userInfo']),
   },
   methods: {
     openSeleceProductDialogss() {
@@ -313,7 +400,6 @@ export default {
     //选择点检项目
     submitCustomerProduct() {
       this.productVisible = false
-      console.log("选中的项目", this.selectlist);
       this.selectlist.map(item => {
         this.dataFormTwo.productData.map((item1) => {
           if (item.code == item1.maintenanceItemCode) {
@@ -436,9 +522,27 @@ export default {
         this.$refs.dataForm.validateField('equipmentId')
       })
       if (!val && !data.length) return
-      console.log(data, '设备数据');
       this.dataForm.equipmentIdName = data[0].name
       this.dataForm.equipmentId = data[0].id
+      this.dataForm.equipmentIdCode = data[0].all.code
+      this.dataForm.factoryFloor = data[0].all.factoryFloor
+      this.dataForm.mountedPlaces = data[0].all.mountedPlaces
+      let a = {
+        classAttribute: "equipment",
+        equipmentIdCode: data[0].all.code,
+        taskType: 'inspection',
+        pageNum: 1,
+        pageSize: 20,
+      }
+      checkmaintenanceList(a).then(res => {
+        if (!res.data.records.length) return
+        this.dataForm.maintainerIdName = res.data.records[0].maintainerIdName
+        this.dataForm.nextMaintenanceTime = res.data.records[0].nextMaintenanceTime
+        this.dataForm.name = res.data.records[0].name
+        this.dataForm.cycleType = res.data.records[0].cycleType
+        this.dataForm.cycle = res.data.records[0].cycle
+        this.dataForm.unit = res.data.records[0].unit
+      })
     },
     dateFormat(dateData) {
       var date = new Date(dateData)
@@ -521,41 +625,69 @@ export default {
     init(id, btnType) {
       this.dataForm.id = id || ''
       this.btnType = btnType
-      if (this.dataForm.id && btnType !== 'maintenance') {
-        detailequMaintenance(this.dataForm.id).then(res => {
-          this.dataForm = res.data.maintenance
-          this.dataFormTwo.productData = res.data.lines
-          this.$nextTick(() => {
-            if (this.dataForm.actualDepartmentId) {
-              getOrganizeInfo(this.dataForm.actualDepartmentId).then(sss => {
-                this.organizeIdTrees = sss.data.organizeIdTree || []
-                this.organizeIdTrees.push(this.dataForm.actualDepartmentId)
-              })
-              getOrganization({ keyword: "", organizeId: this.dataForm.actualDepartmentId }).then(res => {
-                if (res.data.length > 0) {
-                  res.data.forEach(item => {
-                    item.name = item.fullName.split('/')[0]
-                  });
-                }
-                console.log(this.salesList);
-                this.salesList = res.data
-              })
-            } else {
-              console.log("没有bumen");
-              this.salesFlag = true
-            }
+      if (btnType !== 'maintenance') {
+        if (this.dataForm.id) {
+          detailequMaintenance(this.dataForm.id).then(res => {
+            this.dataForm = res.data.maintenance
+            this.dataFormTwo.productData = res.data.lines
+            this.$nextTick(() => {
+              if (this.dataForm.actualDepartmentId) {
+                getOrganizeInfo(this.dataForm.actualDepartmentId).then(sss => {
+                  this.organizeIdTrees = sss.data.organizeIdTree || []
+                  this.organizeIdTrees.push(this.dataForm.actualDepartmentId)
+                })
+                getOrganization({ keyword: "", organizeId: this.dataForm.actualDepartmentId }).then(res => {
+                  if (res.data.length > 0) {
+                    res.data.forEach(item => {
+                      item.name = item.fullName.split('/')[0]
+                    });
+                  }
+                  console.log(this.salesList);
+                  this.salesList = res.data
+                })
+              } else {
+                this.salesFlag = true
+              }
+            })
           })
-        })
+        } else {
+          this.dataForm.inspectionResults = 'normal'
+          this.dataForm.actualMaintenanceId = this.userInfo.userId
+          this.dataForm.actualMaintenanceIdText = this.userInfo.userName
+          this.dataForm.actualMaintenanceDate = this.jnpf.getToday()
+          this.organizeIdTrees.push(this.userInfo.organizeId)
+          this.dataForm.actualDepartmentId = this.userInfo.organizeId
+          getOrganization({ keyword: "", organizeId: this.userInfo.organizeId }).then(res => {
+            if (res.data.length > 0) {
+              res.data.forEach(item => {
+                item.name = item.fullName.split('/')[0]
+              });
+            }
+            this.salesList = res.data
+          })
+        }
       }
       if (this.dataForm.id && btnType == 'maintenance') {
         detailcheckmaintenance(id).then((res) => {
           this.tasklist = res.data.task
+          this.dataForm = res.data.task
           this.dataForm.maintenanceTaskId = id
-          this.dataForm.equipmentId = res.data.task.equipmentId
-          this.dataForm.equipmentIdName = res.data.task.equipmentIdName
-          this.dataForm.departmentId = res.data.task.departmentId
-          this.dataForm.maintainerId = res.data.task.maintainerId
           this.dataForm.planMaintenanceDate = res.data.task.nextMaintenanceTime
+          this.dataForm.actualMaintenanceId = this.userInfo.userId
+          this.dataForm.inspectionResults = 'normal'
+          this.dataForm.actualMaintenanceIdText = this.userInfo.userName
+          this.dataForm.actualMaintenanceDate = this.jnpf.getToday()
+          this.cycleaction(this.dataForm.actualMaintenanceDate)
+          this.organizeIdTrees.push(this.userInfo.organizeId)
+          this.dataForm.actualDepartmentId = this.userInfo.organizeId
+          getOrganization({ keyword: "", organizeId: this.userInfo.organizeId }).then(res => {
+            if (res.data.length > 0) {
+              res.data.forEach(item => {
+                item.name = item.fullName.split('/')[0]
+              });
+            }
+            this.salesList = res.data
+          })
           res.data.lines.forEach((item) => {
             item.maintenanceItemName = item.itemName,
               item.maintenanceItemCode = item.itemCode,
@@ -578,6 +710,7 @@ export default {
             return
           }
           this.dataForm.documentStatus = value
+          this.dataForm.recordType = 'inspection'
           let obj = {
             maintenance: this.dataForm,
             lines: this.dataFormTwo.productData

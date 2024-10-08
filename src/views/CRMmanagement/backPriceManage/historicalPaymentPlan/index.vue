@@ -238,32 +238,14 @@ export default {
       listQuery: {},
       total: 0,
       formVisible: false,
+      totalplanReceivablesMoney: 'xxx',
+      totalpracticeMoney: 'xxx',
+      totalunreceivedMoney: 'xxx'
     }
   },
   computed: {
     currMenuId() {
       return (this.$route.meta.modelId || '') + this.partentOrChild
-    },
-    totalplanReceivablesMoney: function () {
-      var totalplanReceivablesMoneyNum = 0;
-      for (var i = 0; i < this.tableData.length; i++) {
-        totalplanReceivablesMoneyNum = this.jnpf.math('add', [totalplanReceivablesMoneyNum, this.tableData[i].planReceivablesMoney * 1])
-      }
-      return totalplanReceivablesMoneyNum
-    },
-    totalpracticeMoney: function () {
-      var totalpracticeMoneyNum = 0;
-      for (var i = 0; i < this.tableData.length; i++) {
-        totalpracticeMoneyNum = this.jnpf.math('add', [totalpracticeMoneyNum, this.tableData[i].practiceMoney * 1])
-      }
-      return totalpracticeMoneyNum
-    },
-    totalunreceivedMoney: function () {
-      var totalunreceivedMoneyNum = 0;
-      for (var i = 0; i < this.tableData.length; i++) {
-        totalunreceivedMoneyNum = this.jnpf.math('add', [totalunreceivedMoneyNum, this.tableData[i].unreceivedMoney * 1])
-      }
-      return totalunreceivedMoneyNum
     }
   },
   created() {
@@ -433,6 +415,18 @@ export default {
         this.visible = false
       }).catch(() => {
         this.listLoading = false
+      })
+      let listQueryall = JSON.parse(JSON.stringify(this.initListQuery))
+      listQueryall.pageSize = -1
+      getcrmReceivablesPlanlist(listQueryall).then(res => {
+        this.totalplanReceivablesMoney = 0
+        this.totalpracticeMoney = 0
+        this.totalunreceivedMoney = 0
+        for (let i = 0; i < res.data.records.length; i++) {
+          this.totalplanReceivablesMoney = this.jnpf.math('add', [this.totalplanReceivablesMoney, res.data.records[i].planReceivablesMoney * 1])
+          this.totalpracticeMoney = this.jnpf.math('add', [this.totalpracticeMoney, res.data.records[i].practiceMoney * 1])
+          this.totalunreceivedMoney = this.jnpf.math('add', [this.totalunreceivedMoney, res.data.records[i].unreceivedMoney * 1])
+        }
       })
     },
     // 关闭新建编辑页面

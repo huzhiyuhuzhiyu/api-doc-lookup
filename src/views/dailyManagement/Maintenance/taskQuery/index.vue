@@ -40,7 +40,7 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <div class="JNPF-common-head">
-                <topOpts @add="handleUserRelation('', 'add')" />
+                <div style="height: 32px;"></div>
                 <div class="JNPF-common-head-right">
                   <el-tooltip content="高级查询" placement="top">
                     <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
@@ -64,14 +64,16 @@
                     </div>
                   </template>
                 </el-table-column>
+                <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
+                <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
                 <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" fixed="left" />
                 <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom" fixed="left" />
                 <el-table-column prop="departmentIdName" label="计划保养部门" min-width="150" />
                 <el-table-column prop="maintainerIdName" min-width="120" label="计划保养人" />
-                <el-table-column prop="level" label="保养等级" min-width="150" />
-                <el-table-column prop="cycle" label="周期" min-width="150" />
-                <el-table-column prop="unit" label="单位" width="120" />
-                <el-table-column prop="nextMaintenanceTime" label="下次保养时间" min-width="180" sortable="custom" />
+                <el-table-column prop="level" label="保养等级" min-width="140" />
+                <el-table-column prop="cycle" label="周期" width="90" />
+                <el-table-column prop="unit" label="单位" width="90" />
+                <el-table-column prop="nextMaintenanceTime" label="本次保养日期" width="180" sortable="custom" />
                 <el-table-column prop="state" label="状态" sortable="custom" width="120" fixed="right" align="center">
                   <template slot-scope="scope">
                     <div v-if="scope.row.state == 'disabled'"><el-tag type="danger">禁用</el-tag></div>
@@ -79,29 +81,12 @@
                     </div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="createTime" label="创建时间" sortable="custom" width="200" />
+                <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
                 <el-table-column prop="createByName" label="创建人" width="120" />
                 <el-table-column prop="remark" label="备注" min-width="200" />
-                <el-table-column label="操作" min-width="180" fixed="right" align="center">
+                <el-table-column label="操作" min-width="90" fixed="right" align="center">
                   <template slot-scope="scope">
-                    <tableOpts @edit="handleUserRelation(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
-                      <el-dropdown hide-on-click>
-                        <span class="el-dropdown-link">
-                          <el-button type="text" size="mini">
-                            {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                          </el-button>
-                        </span>
-                        <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item :disabled="scope.row.istime" @click.native="maintenanceaction(scope.row.id, 'maintenance')">
-                            保养
-                          </el-dropdown-item>
-                          <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
-                            查看详情
-                          </el-dropdown-item>
-                        </el-dropdown-menu>
-                      </el-dropdown>
-                    </tableOpts>
-                    <!-- <el-button type="text" :disabled="scope.row.istime" @click="maintenanceaction(scope.row.id, 'maintenance')" size="mini">保养</el-button> -->
+                    <el-button type="text" :disabled="scope.row.istime" @click="maintenanceaction(scope.row.id, 'maintenance')" size="mini">保养</el-button>
                   </template>
                 </el-table-column>
               </JNPF-table>
@@ -168,14 +153,16 @@
                     </div>
                   </template>
                 </el-table-column>
+                <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
+                <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
                 <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" fixed="left" />
                 <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom" fixed="left" />
                 <el-table-column prop="departmentIdName" label="计划保养部门" min-width="150" />
-                <el-table-column prop="maintainerIdName" min-width="120" label="计划保养人" />
-                <el-table-column prop="level" label="保养等级" min-width="150" />
-                <el-table-column prop="cycle" label="周期" min-width="150" />
-                <el-table-column prop="unit" label="单位" width="120" />
-                <el-table-column prop="nextMaintenanceTime" label="下次保养时间" min-width="180" sortable="custom" />
+                <el-table-column prop="maintainerIdName" width="120" label="计划保养人" />
+                <el-table-column prop="level" label="保养等级" min-width="140" />
+                <el-table-column prop="cycle" label="周期" width="90" />
+                <el-table-column prop="unit" label="单位" width="90" />
+                <el-table-column prop="nextMaintenanceTime" label="本次保养日期" width="180" sortable="custom" />
                 <el-table-column prop="state" label="状态" sortable="custom" width="120" fixed="right" align="center">
                   <template slot-scope="scope">
                     <div v-if="scope.row.state == 'disabled'"><el-tag type="danger">禁用</el-tag></div>
@@ -183,30 +170,12 @@
                     </div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="createTime" label="创建时间" sortable="custom" width="200" />
+                <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
                 <el-table-column prop="createByName" label="创建人" width="120" />
                 <el-table-column prop="remark" label="备注" min-width="200" />
-
-                <el-table-column label="操作" width="180" fixed="right" align="center">
+                <el-table-column label="操作" width="90" fixed="right" align="center">
                   <template slot-scope="scope">
-                    <tableOpts @edit="handleUserRelation(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
-                      <el-dropdown hide-on-click>
-                        <span class="el-dropdown-link">
-                          <el-button type="text" size="mini">
-                            {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                          </el-button>
-                        </span>
-                        <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item :disabled="scope.row.istime" @click.native="maintenanceaction(scope.row.id, 'maintenance')">
-                            保养
-                          </el-dropdown-item>
-                          <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
-                            查看详情
-                          </el-dropdown-item>
-                        </el-dropdown-menu>
-                      </el-dropdown>
-                    </tableOpts>
-                    <!-- <el-button type="text" :disabled="scope.row.istime" @click="maintenanceaction(scope.row.id, 'maintenance')" size="mini">保养</el-button> -->
+                    <el-button type="text" :disabled="scope.row.istime" @click="maintenanceaction(scope.row.id, 'maintenance')" size="mini">保养</el-button>
                   </template>
                 </el-table-column>
 
@@ -220,7 +189,6 @@
       </el-tabs>
     </div>
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
-    <deForm v-if="formVisible1" ref="deForm" @close="closeForm" />
 
   </div>
 </template>
@@ -229,10 +197,9 @@
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import Form from '@/views/dailyManagement/Maintenance/maintenanceRecords/Form.vue'
 import { checkmaintenanceList, deletecheckmaintenance } from '@/api/dailyManagement/Maintenance'
-import deForm from './Form'
 export default {
   name: 'taskQuery',
-  components: { Form, deForm, SuperQuery },
+  components: { Form, SuperQuery },
   data() {
     return {
       superQueryJson: [
@@ -249,6 +216,16 @@ export default {
             { label: "周期", value: "cycle" },
             { label: "一次", value: "disposable" }
           ]
+        },
+        {
+          prop: 'factoryFloor',
+          label: "使用车间",
+          type: 'input'
+        },
+        {
+          prop: 'mountedPlaces',
+          label: "安装地点",
+          type: 'input'
         },
         {
           prop: 'equipmentIdCode',
@@ -270,6 +247,18 @@ export default {
           label: "计划保养人",
           type: 'input'
         },
+        { // 下拉选
+          prop: 'level',
+          label: '保养等级',
+          type: 'select',
+          options: [
+            { label: "日常保养", value: "日常保养" },
+            { label: "二级保养", value: "二级保养" },
+            { label: "三级保养", value: "三级保养" },
+            { label: "四级保养", value: "四级保养" },
+            { label: "年度保养", value: "年度保养" }
+          ]
+        },
         {
           prop: 'cycle',
           label: "周期",
@@ -280,13 +269,14 @@ export default {
           label: "单位",
           type: 'input'
         },
-        {
+        { // 日期选择器（区间）
           prop: 'nextMaintenanceTime',
-          label: '下次保养时间',
-          type: 'datetimerange',
-          valueFormat: 'yyyy-MM-dd HH:mm:ss',
-          startPlaceholder: '开始时间',
-          endPlaceholder: '结束时间',
+          label: '本次保养日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: {}
         },
         {
           prop: 'state',
@@ -399,7 +389,6 @@ export default {
       ],
       superQueryVisible: false,
       superQueryVisible1: false,
-      formVisible1: false,
       formVisible: false,
       submitDate: [],
       createRequirementDate: [],
@@ -547,12 +536,6 @@ export default {
           })
         })
       }).catch(() => { })
-    },
-    handleUserRelation(id, btnType) {
-      this.formVisible1 = true
-      this.$nextTick(() => {
-        this.$refs.deForm.init(id, btnType)
-      })
     },
     // 关闭新建页面
     closeForm(isRefresh = 'ture') {

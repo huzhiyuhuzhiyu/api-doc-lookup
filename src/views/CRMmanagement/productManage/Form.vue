@@ -3,8 +3,8 @@
     <div class="JNPF-preview-main org-form">
       <div class="JNPF-common-page-header">
         <el-page-header @back="goBack" :content="btntype == 'edit' ? ' 编辑产品' : btntype == 'add' ? '新建产品' : '查看产品'" />
-        <div class="options" v-if="btntype !== 'look'">
-          <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
+        <div class="options">
+          <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()" v-if="btntype !== 'look'">
             提交</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>

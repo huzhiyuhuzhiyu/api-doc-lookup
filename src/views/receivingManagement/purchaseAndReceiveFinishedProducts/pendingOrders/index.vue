@@ -11,7 +11,7 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-date-picker v-model="orderForm.deliveryStartTime" type="date" value-format="yyyy-MM-dd"
+                <el-date-picker v-model="orderForm.deliveryStartDate" type="date" value-format="yyyy-MM-dd"
                   style="width: 100%;" placeholder="收货开始日期" clearable></el-date-picker>
                 -
               </el-form-item>
@@ -45,7 +45,7 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
-            <topOpts @add="addSupplier('', 'add')">
+            <topOpts @add="addSupplier('', 'add')" :addText="'新建收货单'">
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                 导出
               </el-button>
@@ -79,7 +79,7 @@
             <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
             <!-- <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" /> -->
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" min-width="120" />
+            <el-table-column prop="mainUnit" label="单位" width="60" />
             <el-table-column prop="purchaseQuantity" label="数量" min-width="100" sortable="custom" />
             <el-table-column prop="waitReceiptNum" label="待收货数量" min-width="130" sortable="custom" />
 
@@ -167,7 +167,7 @@ export default {
         // orderState: 'not_finish',
         orderType: 'procure',
         deliveryEndDate: '',
-        deliveryStartTime: '',
+        deliveryStartDate: '',
         classAttribute: 'finish_product',
         // extensionFlag: 1,
         // deliverQueryFlag: 1,
@@ -341,7 +341,7 @@ export default {
     const start = new Date()
     end.setDate(end.getDate() + 3)
     this.deliveryDateArr = ['', end]
-    this.orderForm.deliveryStartTime = ''
+    this.orderForm.deliveryStartDate = ''
     this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
     this.dataFormSubmit()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
@@ -373,7 +373,7 @@ export default {
       let end = new Date()
       let start = new Date()
       this.deliveryDateArr = ['', end]
-      this.orderForm.deliveryStartTime = ''
+      this.orderForm.deliveryStartDate = ''
       this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
       this.dataFormSubmit()
     },
@@ -383,7 +383,7 @@ export default {
       const start = new Date()
       end.setDate(end.getDate() + 3)
       this.deliveryDateArr = ['', end]
-      this.orderForm.deliveryStartTime = ''
+      this.orderForm.deliveryStartDate = ''
       this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
@@ -395,7 +395,7 @@ export default {
       end.setDate(end.getDate() + 7)
 
       this.deliveryDateArr = ['', end]
-      this.orderForm.deliveryStartTime = ''
+      this.orderForm.deliveryStartDate = ''
       this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
@@ -406,7 +406,7 @@ export default {
       end.setDate(end.getDate() + 30)
 
       this.deliveryDateArr = ['', end]
-      this.orderForm.deliveryStartTime = ''
+      this.orderForm.deliveryStartDate = ''
       this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
@@ -504,7 +504,7 @@ export default {
         documentStatus: 'submit',
         orderState: 'not_finish',
         deliveryEndDate: this.dateFun(this.deliveryDateArr[1]),
-        deliveryStartTime: this.dateFun(this.deliveryDateArr[0]),
+        deliveryStartDate: '',
         extensionFlag: 1,
         deliverQueryFlag: 1,
         pageNum: 1,

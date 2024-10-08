@@ -228,6 +228,14 @@ export function detailVerificationrecords (id) {
 }
 
 //报废申请单
+//报废申请单-明细列表
+export function ScrapApplicationFormListinfo (data) {
+  return request({
+    url: `/api/mes/equEquipmentScrapping/detail/list`,
+    method: 'POST',
+    data
+  })
+}
 //报废申请单-列表
 export function ScrapApplicationFormList (data) {
   return request({

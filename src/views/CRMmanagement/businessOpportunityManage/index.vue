@@ -196,19 +196,13 @@ export default {
       listQuery: {},
       total: 0,
       formVisible: false,
+      totalmoney: 'xxx'
     }
   },
   computed: {
     currMenuId() {
       return (this.$route.meta.modelId || '') + this.partentOrChild
-    },
-    totalmoney: function () {
-      var totalmoneyNum = 0;
-      for (var i = 0; i < this.tableData.length; i++) {
-        totalmoneyNum = this.jnpf.math('add', [totalmoneyNum, this.tableData[i].money * 1])
-      }
-      return totalmoneyNum
-    },
+    }
   },
   created() {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
@@ -278,6 +272,14 @@ export default {
         this.visible = false
       }).catch(() => {
         this.listLoading = false
+      })
+      let listQueryall = JSON.parse(JSON.stringify(this.initListQuery))
+      listQueryall.pageSize = -1
+      getcrmBusinessList(listQueryall).then(res => {
+        this.totalmoney = 0
+        for (let i = 0; i < res.data.records.length; i++) {
+          this.totalmoney = this.jnpf.math('add', [this.totalmoney, res.data.records[i].money * 1])
+        }
       })
     },
     sortChange({ prop, order }) {

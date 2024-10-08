@@ -10,7 +10,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.partnerName" placeholder="客户名称" clearable
+              <el-input v-model.trim="listQuery.partnerName" placeholder="供应商名称" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
@@ -170,12 +170,12 @@ export default {
         },
         {
           prop: 'partnerName',
-          label: '客户名称',
+          label: '供应商名称',
           type: 'input'
         },
         {
           prop: 'partnerCode',
-          label: '客户编码',
+          label: '供应商编码',
           type: 'input'
         },
         {
@@ -424,7 +424,7 @@ export default {
             this.$refs.procureForm.init(this.selectData)
           })
         } else {
-          this.$message.error('请选择客户相同的通知单!')
+          this.$message.error('请选择供应商相同的通知单!')
         }
       }
     }

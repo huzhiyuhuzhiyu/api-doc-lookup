@@ -1525,7 +1525,7 @@ export default {
         })
       } else {
         this.fetchData('CGSH')
-        this.dataForm.salesman = this.userInfo.userName
+        // this.dataForm.salesman = this.userInfo.userName
       }
 
       if (this.btnType == 'edit') {

@@ -63,7 +63,7 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column
-            :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" >
+            :checkSelectable="checkSelectable" @selection-change="handleSelectionChange">
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">
@@ -71,10 +71,10 @@
                 </el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="partnerCode" label="供应商编码" min-width="120" sortable="custom" />
-            <el-table-column prop="partnerName" label="供应商名称" min-width="120" sortable="custom" />
-            <el-table-column prop="salesman" label="操作员" width="200" sortable="custom" />
-            <el-table-column prop="deliverDate" label="收货日期" width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" />
+            <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
+            <el-table-column prop="salesman" label="操作员" width="100" sortable="custom" />
+            <el-table-column prop="deliverDate" label="收货日期" width="120" sortable="custom"></el-table-column>
 
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
               <template slot-scope="scope">

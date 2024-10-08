@@ -65,7 +65,7 @@
             header-cell-class-name="all-select" @sort-change="sortChange" custom-column
             :setColumnDisplayList="columnList" hasC @selection-change="selectFun" :checkSelectable="dispurchaseData">
             <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
-            <el-table-column prop="productsDrawingNo" label="品名规格" min-width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="productsDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="productsCode" label="产品编码" min-width="120" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="80" />
             <el-table-column prop="planProductionQuantity" label="计划生产数量" min-width="160" sortable="custom" />

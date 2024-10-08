@@ -156,7 +156,7 @@
                       @click="batchDeleteProcess">批量删除</el-button>|
                   </div>
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="processRef" class="data-form">
-                    <JNPF-table ref="product" :data="dataFormTwo.data" fixedNo v-loading="tableloading" hasC
+                    <JNPF-table ref="product" :data="dataFormTwo.data" fixedNO v-loading="tableloading" hasC
                       @selection-change="delProcessFun">
                       <el-table-column prop="processName" label="工序名称" min-width="170" />
                       <el-table-column prop="processCode" label="工序编码" width="130"></el-table-column>
@@ -238,27 +238,27 @@
                           </el-select>
                         </template>
                       </el-table-column> -->
-                      <el-table-column prop="pickingFlag" label="是否领料" min-width="160">
+                      <el-table-column prop="pickingFlag" label="是否领料" min-width="100">
                         <template slot-scope="scope">
                           <div>{{ scope.row.pickingFlag ? "是" : "否" }}</div>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="firstInspection" label="是否首检" min-width="160">
+                      <el-table-column prop="firstInspection" label="是否首检" min-width="100">
                         <template slot-scope="scope">
                           <div>{{ scope.row.firstInspection ? "是" : "否" }}</div>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="checkFlag" label="是否检验" min-width="160">
+                      <el-table-column prop="checkFlag" label="是否检验" min-width="100">
                         <template slot-scope="scope">
                           <div>{{ scope.row.checkFlag ? "是" : "否" }}</div>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="reportFlag" label="是否报工" min-width="160">
+                      <el-table-column prop="reportFlag" label="是否报工" min-width="100">
                         <template slot-scope="scope">
                           <div>{{ scope.row.reportFlag ? "是" : "否" }}</div>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="stockFlag" label="是否入库" min-width="160">
+                      <el-table-column prop="stockFlag" label="是否入库" min-width="100">
                         <template slot-scope="scope">
                           <div>{{ scope.row.stockFlag ? "是" : "否" }}</div>
                         </template>

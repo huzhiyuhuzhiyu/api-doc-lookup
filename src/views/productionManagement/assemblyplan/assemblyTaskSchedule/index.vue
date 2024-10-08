@@ -62,13 +62,45 @@
                 }}</el-link>
               </template>
             </el-table-column>
+
+            <el-table-column prop="processSchedule" label="工单进度条" min-width="980">
+              <template slot-scope="scope">
+                <div v-for="(item, index) in scope.row.processInfoList" :key="index" style="width:100px;display: inline-block;text-align: center;position: relative;">
+                  <el-progress type="circle" width="60" :percentage="item.value" :status="item.value==100?'success':''"></el-progress>
+                  <el-tooltip class="item" effect="dark" :content="item.name" placement="top-start">
+                    <p class="ProcessName">{{ item.name }}</p>
+                  </el-tooltip>
+                  <img v-if="index != scope.row.processInfoList.length - 1"
+                    style="width: 30px;height: 30px;position: absolute; top: 13px; right: -14px;"
+                    src="../../../../assets/images/right.png" alt="">
+                </div>
+
+                <!-- <el-progress type="circle" width="60" :percentage="25"></el-progress>
+                <el-progress type="circle" width="60" :percentage="100" status="success"></el-progress> -->
+                <!-- <div v-for="(item, index) in scope.row.processInfoList" :key="index"
+                  >
+                  <div style="position: relative;">
+                    <div class="processSchedule_top"
+                      :class="item.value == 0 ? 'noValue' : item.value == '100' ? 'sucess' : 'normal'">{{ item.value
+                      }}%</div>
+                    <el-tooltip class="item" effect="dark" :content="item.name" placement="top-start">
+                      <p class="ProcessName">{{ item.name }}</p>
+                    </el-tooltip>
+                    <img v-if="index != scope.row.processInfoList.length - 1"
+                      style="width: 30px;height: 30px;position: absolute; top: 13px; right: 10px;"
+                      src="../../../../assets/images/right.png" alt="">
+                  </div>
+
+                </div> -->
+              </template>
+            </el-table-column>
             <el-table-column prop="orderType" label="任务类型" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.orderType == 'normal'">正常订单</div>
                 <div v-if="scope.row.orderType == 'rework'">返工订单</div>
               </template>
             </el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="orderStatus" label="任务状态" min-width="140" sortable="custom">
@@ -81,25 +113,6 @@
             </el-table-column>
 
 
-            <el-table-column prop="processSchedule" label="工单进度条" min-width="980">
-              <template slot-scope="scope">
-                <div v-for="(item, index) in scope.row.processInfoList" :key="index"
-                  style="width:100px;display: inline-block;">
-                  <div style="position: relative;">
-                    <div class="processSchedule_top"
-                      :class="item.value == 0 ? 'noValue' : item.value == '100' ? 'sucess' : 'normal'">{{ item.value
-                      }}%</div>
-                    <el-tooltip class="item" effect="dark" :content=" item.name " placement="top-start">
-                      <p class="ProcessName">{{ item.name }}</p>
-                    </el-tooltip>
-                    <img v-if="index != scope.row.processInfoList.length - 1"
-                      style="width: 30px;height: 30px;position: absolute; top: 13px; right: 10px;"
-                      src="../../../../assets/images/right.png" alt="">
-                  </div>
-
-                </div>
-              </template>
-            </el-table-column>
 
 
             <el-table-column prop="mainUnit" label="单位" width="80" />
@@ -697,10 +710,9 @@ export default {
   border-color: #67c23A
 }
 
-.ProcessName {
-  margin-top: 10px;
+.ProcessName { 
   width: 70%;
-
+  font-size: 12px !important;
   overflow: hidden;
   /*超出的部分隐藏起来。*/
   white-space: nowrap;

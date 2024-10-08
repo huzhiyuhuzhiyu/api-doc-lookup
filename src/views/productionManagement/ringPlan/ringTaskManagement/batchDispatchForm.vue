@@ -188,7 +188,7 @@
             <el-tab-pane label="工单信息" name="workOrderInfo" v-if="btnType == 'all' || btnType == 'work'">
               <el-collapse v-model="activeNames2">
                 <el-collapse-item title="工单信息" name="workOrderInfoForm" class="workOrderInfoForm">
-                  <JNPF-table ref="work" :data="workOrderData" fixedNo v-loading="tableloading">
+                  <JNPF-table ref="work" :data="workOrderData" fixedNO v-loading="tableloading" class="data-form">
                     <el-table-column prop="processName" label="工序名称" min-width="120" />
                     <el-table-column prop="processCode" label="工序编码" min-width="120"></el-table-column>
                     <el-table-column prop="processingType" label="加工类型" min-width="120">
@@ -534,7 +534,7 @@
               </template>
             </el-table-column>
           </el-table>
-          <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
+          <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px" class="text">
             <span style="font-weight:500;margin-right:10px">总生产数量：{{ totalProductionQuantity }}</span>
             <span style="font-weight:500;margin-right:10px">合格数量：{{ totalQualifiedQuantity }}</span>
             <span style="font-weight:500;margin-right:10px">不合格数量：{{ totalUnqualifiedQuantity }}</span>
@@ -883,7 +883,9 @@ export default {
     margin-bottom: 0 !important;
   }
 }
-
+.data-form ::v-deep.el-table__body-wrapper{
+  height: auto!important;
+}
 ::v-deep .JNPF-common-page-header.noButtons {
   padding: 11px 10px;
 }

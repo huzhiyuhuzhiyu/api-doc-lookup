@@ -63,7 +63,7 @@
               }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="businessType" label="业务类型" sortable="custom" width="120">
+          <el-table-column prop="businessType" label="业务类型" sortable="custom" min-width="120">
             <template slot-scope="scope">
               <div v-if="scope.row.businessType == 'outbound_sale_send'">销售发货</div>
               <div v-if="scope.row.businessType == 'inbound_sale_return'">销售退货</div>
@@ -108,7 +108,7 @@
           <el-table-column prop="remark" label="备注" min-width="180" />
           <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
           <el-table-column prop="createByName" label="创建人" width="120" sortable="custom" />
-          <el-table-column label="操作" min-width="200" fixed="right">
+          <el-table-column label="操作" width="200" fixed="right">
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
                 :delDisabled="scope.row.documentStatus == 'submit'" :editDisabled="scope.row.documentStatus == 'submit'"

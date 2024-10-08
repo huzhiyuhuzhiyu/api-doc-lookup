@@ -98,9 +98,9 @@
                         </el-table-column> -->
                         <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
 
-                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
+                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" :key="6"
                           show-overflow-tooltip> </el-table-column>
-                        <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
+                        <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
 
                         <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112"
                           v-if="allocationFlag">
@@ -128,7 +128,7 @@
                         </el-table-column>
 
 
-                        <el-table-column prop="aperture" label="孔径" width="100"
+                        <!-- <el-table-column prop="aperture" label="孔径" width="100"
                           v-if="classAttribute != 'finish_product'">
                           <template slot-scope="scope">
                             <el-select :disabled="btnType=='look'" v-model="scope.row.aperture" placeholder="孔径" clearable style="width: 100%;">
@@ -136,7 +136,7 @@
                                 :value="item.name"></el-option>
                             </el-select>
                           </template>
-                        </el-table-column>
+                        </el-table-column> -->
                         <el-table-column prop="sealingCoverTyping" label="打字内容" width="120"
                           v-if="classAttribute == 'finish_product'" :key="12">
                           <template slot-scope="scope">

@@ -145,7 +145,7 @@
                 </el-collapse-item>
                 <el-collapse-item title="工序信息" name="productInfo" class="productInfo">
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                    <JNPF-table ref="product" :data="dataFormTwo.data" fixedNo v-loading="tableloading">
+                    <JNPF-table ref="product" :data="dataFormTwo.data" fixedNO v-loading="tableloading">
                       <el-table-column prop="processCode" label="工序编码" width="130"></el-table-column>
                       <el-table-column prop="processName" label="工序名称" min-width="170" />
                       <el-table-column prop="processingType" label="加工类型" width="100">
@@ -225,27 +225,27 @@
                           </el-select>
                         </template>
                       </el-table-column> -->
-                      <el-table-column prop="pickingFlag" label="是否领料" min-width="160">
+                      <el-table-column prop="pickingFlag" label="是否领料" min-width="100">
                         <template slot-scope="scope">
                           <div>{{ scope.row.pickingFlag ? "是" : "否" }}</div>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="firstInspection" label="是否首检" min-width="160">
+                      <el-table-column prop="firstInspection" label="是否首检" min-width="100">
                         <template slot-scope="scope">
                           <div>{{ scope.row.firstInspection ? "是" : "否" }}</div>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="checkFlag" label="是否检验" min-width="160">
+                      <el-table-column prop="checkFlag" label="是否检验" min-width="100">
                         <template slot-scope="scope">
                           <div>{{ scope.row.checkFlag ? "是" : "否" }}</div>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="reportFlag" label="是否报工" min-width="160">
+                      <el-table-column prop="reportFlag" label="是否报工" min-width="100">
                         <template slot-scope="scope">
                           <div>{{ scope.row.reportFlag ? "是" : "否" }}</div>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="stockFlag" label="是否入库" min-width="160">
+                      <el-table-column prop="stockFlag" label="是否入库" min-width="100">
                         <template slot-scope="scope">
                           <div>{{ scope.row.stockFlag ? "是" : "否" }}</div>
                         </template>
@@ -1152,7 +1152,9 @@ export default {
     margin-bottom: 0 !important;
   }
 }
-
+.data-form ::v-deep.el-table__body-wrapper{
+  height: auto!important;
+}
 ::v-deep .JNPF-common-page-header.noButtons {
   padding: 11px 10px;
 }

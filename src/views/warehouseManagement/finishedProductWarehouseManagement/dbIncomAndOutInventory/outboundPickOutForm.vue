@@ -742,7 +742,7 @@ export default {
     // { label: "外协收货", value: "inbound_external" },
     // { label: "外协退货", value: "outbound_external" },
     init(data, btnType, businessType, classAttributeList,warehouseCode) {
-      console.log("11", data, btnType, businessType);
+      console.log("11", data, btnType,classAttributeList, businessType);
       
       // this.visible = true
       this.dataForm.businessType = businessType

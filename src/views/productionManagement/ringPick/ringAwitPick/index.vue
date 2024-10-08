@@ -69,7 +69,7 @@
                 <div v-if="scope.row.orderType == 'rework'">返工订单</div>
               </template>
             </el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="mainUnit" label="单位" width="80" />
             <el-table-column prop="productionQuantity" label="生产数量" min-width="140" sortable="custom" />
             <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom"></el-table-column>

@@ -119,7 +119,7 @@
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-    <!-- <el-dialog title="扫码录入" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+    <el-dialog title="扫码录入" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
       :show-close="true" :visible.sync="scanDialog" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px"
       @close="closeScanDiaFun()">
       <div class="scand">
@@ -129,7 +129,7 @@
           <div class="tip">说明：扫产品码会自动匹配需要检验的产品。</div>
         </div>
       </div>
-    </el-dialog> -->
+    </el-dialog>
   </div>
 </template>
 

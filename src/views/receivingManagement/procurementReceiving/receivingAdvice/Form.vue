@@ -489,7 +489,7 @@
           <el-button v-else type="primary" @click="continueAdd()">{{ btnText }}</el-button>
         </span>
       </el-dialog>
-      <!-- <el-dialog title="扫码录入" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+      <el-dialog title="扫码录入" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
         :show-close="true" :visible.sync="scanDialog" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px"
         @close="closeScanDiaFun()">
         <div class="scand">
@@ -499,7 +499,7 @@
             <div class="tip">说明：根据产品码自动添加对应的产品</div>
           </div>
         </div>
-      </el-dialog> -->
+      </el-dialog>
     </div>
   </transition>
 </template>
@@ -1492,7 +1492,7 @@ export default {
       this.btnType = btnType
       console.log(btnType, 'iiiiii')
       this.approvalFlag = approvalFlag
-      if (data) {
+      if (data.length !== 0) {
         this.dataFormTwo.productData = data
         this.dataForm.partnerName = data[0].cooperativePartnerName
         this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId

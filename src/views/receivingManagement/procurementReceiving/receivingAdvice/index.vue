@@ -466,7 +466,7 @@ export default {
       console.log(id, btntype)
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype)
+        this.$refs.Form.init(id, btntype, false, [])
       })
     },
     addOrUpdateHandle(id, btntype) {
@@ -475,7 +475,7 @@ export default {
         console.log(id)
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.Form.init(id, btntype)
+          this.$refs.Form.init(id, btntype, false, [])
         })
         // }, 600);
       }

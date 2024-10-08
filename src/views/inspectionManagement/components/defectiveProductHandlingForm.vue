@@ -893,7 +893,7 @@ export default {
       if (id) {
         if (btnType === 'add') {
           this.inspectionOrderNoChange(id)
-          this.fetchData('UQDH', true)
+          // this.fetchData('UQDH', true)
           this.refeshDataFormItems()
           this.refeshLinesListItems()
           this.title = '新建不良品处理单'

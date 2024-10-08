@@ -34,7 +34,7 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <div class="JNPF-common-head" style="padding:10px">
+          <div class="JNPF-common-head" style="padding:8px">
             <div>
               <el-button size="mini" type="primary" @click="scanFun">
                 <i class="iconfont icon-saoma"></i>

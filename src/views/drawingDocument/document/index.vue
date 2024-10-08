@@ -539,6 +539,11 @@ export default {
        this.listCopy = this.listCopy.filter(item=>!ids.includes(item.id))
    },
    async searchChange(data){
+       if(data.keyword === ''){
+           this.searchList = []
+           return
+       }
+
         const { start,end }= timeOptionHandler(data[TIME_OPTION_FLAG])
         const fileType = fileExtOptionHandler(data[FILE_EXT_OPTION_FLAG])
         const documentType = fileCategoryOptionHandler(data[FILE_CATEGORY_OPTION_FLAG])
@@ -547,6 +552,7 @@ export default {
             start,
             end,
             fileType,
+            parentId:this.parentId,
             documentType
         }
 

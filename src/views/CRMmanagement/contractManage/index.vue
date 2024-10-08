@@ -248,32 +248,14 @@ export default {
       listQuery: {},
       total: 0,
       formVisible: false,
+      totalmoney: 'xxx',
+      totalreceivablesMoney: 'xxx',
+      totalunreceivedMoney: 'xxx'
     }
   },
   computed: {
     currMenuId() {
       return (this.$route.meta.modelId || '') + this.partentOrChild
-    },
-    totalmoney: function () {
-      var totalmoneyNum = 0;
-      for (var i = 0; i < this.tableData.length; i++) {
-        totalmoneyNum = this.jnpf.math('add', [totalmoneyNum, this.tableData[i].money * 1])
-      }
-      return totalmoneyNum
-    },
-    totalreceivablesMoney: function () {
-      var totalreceivablesMoneyNum = 0;
-      for (var i = 0; i < this.tableData.length; i++) {
-        totalreceivablesMoneyNum = this.jnpf.math('add', [totalreceivablesMoneyNum, this.tableData[i].receivablesMoney * 1])
-      }
-      return totalreceivablesMoneyNum
-    },
-    totalunreceivedMoney: function () {
-      var totalunreceivedMoneyNum = 0;
-      for (var i = 0; i < this.tableData.length; i++) {
-        totalunreceivedMoneyNum = this.jnpf.math('add', [totalunreceivedMoneyNum, this.tableData[i].unreceivedMoney * 1])
-      }
-      return totalunreceivedMoneyNum
     }
   },
   mounted() {
@@ -398,6 +380,18 @@ export default {
         this.visible = false
       }).catch(() => {
         this.listLoading = false
+      })
+      let listQueryall = JSON.parse(JSON.stringify(this.initListQuery))
+      listQueryall.pageSize = -1
+      getcrmContractlist(listQueryall).then(res => {
+        this.totalmoney = 0
+        this.totalreceivablesMoney = 0
+        this.totalunreceivedMoney = 0
+        for (let i = 0; i < res.data.records.length; i++) {
+          this.totalmoney = this.jnpf.math('add', [this.totalmoney, res.data.records[i].money * 1])
+          this.totalreceivablesMoney = this.jnpf.math('add', [this.totalreceivablesMoney, res.data.records[i].receivablesMoney * 1])
+          this.totalunreceivedMoney = this.jnpf.math('add', [this.totalunreceivedMoney, res.data.records[i].unreceivedMoney * 1])
+        }
       })
     },
     sortChange({ prop, order }) {

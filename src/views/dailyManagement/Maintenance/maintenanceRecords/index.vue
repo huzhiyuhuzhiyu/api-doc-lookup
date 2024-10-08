@@ -34,6 +34,12 @@
         <div class="JNPF-common-head">
           <topOpts @add="addSupplier('', 'add')" />
           <div class="JNPF-common-head-right">
+            <el-tooltip content="高级查询" placement="top">
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
@@ -41,15 +47,34 @@
         </div>
 
         <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column style="padding-bottom: 50px;">
-          <el-table-column prop="equipmentIdCode" label="设备编码" width="200" />
-          <el-table-column prop="equipmentIdName" label="设备名称" width="200" sortable="custom" />
-          <el-table-column prop="departmentIdText" label="计划保养部门" width="150" />
+          <el-table-column prop="maintenanceTaskIdText" label="任务名称" min-width="180" />
+          <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" />
+          <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom" />
+          <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
+          <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
+          <el-table-column prop="maintainerLevel" label="保养等级" width="140" />
+          <el-table-column prop="maintainerCycle" label="周期" width="90" />
+          <el-table-column prop="maintainerUnit" label="单位" width="90" />
+          <el-table-column prop="departmentIdText" label="计划保养部门" min-width="150" />
           <el-table-column prop="maintainerIdText" label="计划保养人" width="120"></el-table-column>
           <el-table-column prop="planMaintenanceDate" label="计划保养日期" width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="actualDepartmentIdText" label="实际保养部门" width="150" />
+          <el-table-column prop="actualDepartmentIdText" label="实际保养部门" min-width="150" />
           <el-table-column prop="actualMaintenanceIdText" label="实际保养人" width="120"></el-table-column>
           <el-table-column prop="actualMaintenanceDate" label="实际保养日期" width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
+          <el-table-column prop="pic" label="保养拍照" min-width="120">
+            <template slot-scope="scope">
+              <el-image @click="bigimg(``)" style="width: 25px;height: 25px;margin-left: 5px;" src="https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg" :preview-src-list="srcList"></el-image>
+            </template>
+          </el-table-column>
+          <el-table-column prop="cycleType" label="周期类型" width="120" sortable="custom" fixed="right" align="center">
+            <template slot-scope="scope">
+              <div v-if="scope.row.cycleType == 'cycle'"><el-tag type="success">周期</el-tag></div>
+              <div v-else-if="scope.row.cycleType == 'disposable'">
+                <el-tag type="success">一次</el-tag>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
           <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
           <el-table-column label="操作" width="180" fixed="right">
@@ -74,6 +99,8 @@
         <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize" @pagination="initData" />
       </div>
     </div>
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
   </div>
 </template>
@@ -85,6 +112,125 @@ export default {
   components: { Form, },
   data() {
     return {
+      srcList: [
+        'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg'
+      ],
+      superQueryJson: [
+        {
+          prop: 'maintenanceTaskIdText',
+          label: "任务名称",
+          type: 'input'
+        },
+        {
+          prop: 'equipmentIdCode',
+          label: "设备编码",
+          type: 'input'
+        },
+        {
+          prop: 'equipmentIdName',
+          label: "设备名称",
+          type: 'input'
+        },
+        {
+          prop: 'factoryFloor',
+          label: "使用车间",
+          type: 'input'
+        },
+        {
+          prop: 'mountedPlaces',
+          label: "安装地点",
+          type: 'input'
+        },
+        { // 下拉选
+          prop: 'maintainerLevel',
+          label: '保养等级',
+          type: 'select',
+          options: [
+            { label: "日常保养", value: "日常保养" },
+            { label: "二级保养", value: "二级保养" },
+            { label: "三级保养", value: "三级保养" },
+            { label: "四级保养", value: "四级保养" },
+            { label: "年度保养", value: "年度保养" }
+          ]
+        },
+        {
+          prop: 'maintainerCycle',
+          label: "周期",
+          type: 'input'
+        },
+        {
+          prop: 'maintainerUnit',
+          label: "单位",
+          type: 'input'
+        },
+        {
+          prop: 'departmentIdText',
+          label: "计划保养部门",
+          type: 'input'
+        },
+        {
+          prop: 'maintainerIdText',
+          label: "计划保养人",
+          type: 'input'
+        },
+        { // 日期选择器（区间）
+          prop: 'planMaintenanceDate',
+          label: '计划保养日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: {}
+        },
+        {
+          prop: 'actualDepartmentIdText',
+          label: "实际保养部门",
+          type: 'input'
+        },
+        {
+          prop: 'actualMaintenanceIdText',
+          label: "实际保养人",
+          type: 'input'
+        },
+        { // 日期选择器（区间）
+          prop: 'actualMaintenanceDate',
+          label: '实际保养日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: {}
+        },
+        { // 下拉选
+          prop: 'cycleType',
+          label: '周期类型',
+          type: 'select',
+          options: [
+            { label: '周期', value: 'cycle' },
+            { label: '一次', value: 'disposable' }
+          ]
+        },
+        { // 日期时间选择器（区间）
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'datetimerange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '创建开始时间',
+          endPlaceholder: '创建结束时间',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: "备注",
+          type: 'input'
+        }
+      ],
+      superQueryVisible: false,
       tableData: [],
       listLoading: false,
       orderForm: {
@@ -111,6 +257,14 @@ export default {
     this.initData()
   },
   methods: {
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
+    },
+    superQuerySearch(query) {
+      this.orderForm.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
     sortChange({ prop, order }) {
       let newProp
       if (prop === 'equipmentIdName') {

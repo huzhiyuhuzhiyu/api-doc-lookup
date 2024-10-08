@@ -11,31 +11,42 @@
       </div>
       <div class="main">
         <el-tabs v-model="activeName">
+          <el-alert title="注意：密码默认为123456" type="warning" :closable="false" show-icon style="margin-bottom: 3px;" v-if="!this.dataForm.id" />
           <el-collapse v-model="activeNames">
             <el-collapse-item title="基本信息" name="basicInfo">
               <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top" label-width="120px">
                 <el-row :gutter="30" class="custom-row">
-                  <el-col :sm="6" :xs="24" v-if="isval">
+                  <el-col :sm="8" :xs="24" v-if="isval">
                     <el-form-item label="所属员工" prop="name">
                       <ComSelect-page :dataFormatting="dataFormatting" v-model="dataForm.name" @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择员工" treeTitle="部门" placeholder="请选择员工" :methodArr="ProductMethodArr" :listMethod="getbaseEmployee" :listRequestObj="partnerRequestObj" :searchList="partnerSearchList" :treeNodeClick="PartnerTreeNodeClick" :isdisabled="onlyRead" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="6" :xs="24">
+                  <el-col :sm="isval?8:12" :xs="24">
+                    <el-form-item label="姓名" prop="realName">
+                      <el-input v-model="dataForm.realName" placeholder="请输入姓名" :disabled="onlyRead || isval" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="isval?8:12" :xs="24">
+                    <el-form-item label="所属组织" prop="organizeIdTree" ref="organizeIdTree">
+                      <ComSelect v-model="dataForm.organizeIdTree" placeholder="请选择所属组织" :disabled="onlyRead || !!this.dataForm.id || isval" multiple @change="onOrganizeChange" clearable auth />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="8" :xs="24">
                     <el-form-item label="账户" prop="account">
                       <el-input v-model="dataForm.account" placeholder="请输入账户" :disabled="onlyRead" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="6" :xs="24">
-                    <el-form-item label="姓名" prop="realName">
-                      <el-input v-model="dataForm.realName" placeholder="请输入姓名" :disabled="onlyRead" />
+                  <el-col :sm="8" :xs="24" v-if="!dataForm.id">
+                    <el-form-item label="密码" prop="password">
+                      <el-input v-model="dataForm.password" placeholder="请输入密码" show-password :disabled="onlyRead" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="6" :xs="24">
-                    <el-form-item label="所属组织" prop="organizeIdTree" ref="organizeIdTree">
-                      <ComSelect v-model="dataForm.organizeIdTree" placeholder="请选择所属组织" :disabled="onlyRead || !!this.dataForm.id" multiple @change="onOrganizeChange" clearable auth />
+                  <el-col :sm="8" :xs="24" v-if="!dataForm.id">
+                    <el-form-item label="确认密码" prop="submitpassword">
+                      <el-input placeholder="请输入确认密码" v-model="dataForm.submitpassword" show-password :disabled="onlyRead"></el-input>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="6" :xs="24">
+                  <el-col :sm="8" :xs="24">
                     <el-form-item label="角色" prop="roleId">
                       <el-select v-model="roleId" placeholder="请选择角色" :disabled="onlyRead" @change="onChange('roleId')" style="width: 100%;" @visible-change="visibleChange" multiple filterable clearable>
                         <el-option-group v-for="group in roleTreeData" :key="group.id" :label="group.fullName + (group.num ? '【' + group.num + '】' : '')">
@@ -45,27 +56,17 @@
                       </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="6" :xs="24" v-if="!this.dataForm.id">
-                    <el-form-item label="密码" prop="password">
-                      <el-input v-model="dataForm.password" placeholder="请输入密码" show-password :disabled="onlyRead" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :sm="6" :xs="24" v-if="!this.dataForm.id">
-                    <el-form-item label="确认密码" prop="submitpassword">
-                      <el-input placeholder="请输入确认密码" v-model="dataForm.submitpassword" show-password :disabled="onlyRead"></el-input>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :sm="6" :xs="24">
+                  <el-col :sm="8" :xs="24">
                     <el-form-item label="手机号" prop="mobilePhone">
                       <el-input v-model="dataForm.mobilePhone" placeholder="请输入手机号" :disabled="onlyRead" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="6" :xs="24">
+                  <el-col :sm="8" :xs="24">
                     <el-form-item label="邮箱" prop="email">
                       <el-input v-model="dataForm.email" placeholder="请输入邮箱" :disabled="onlyRead" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="6" :xs="24">
+                  <el-col :sm="24" :xs="24">
                     <el-form-item label="备注" prop="remark">
                       <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="onlyRead" type="textarea" maxlength="200" :rows="2" />
                     </el-form-item>
@@ -165,6 +166,12 @@ export default {
         ],
         roleId: [
           { required: true, message: '请选择角色', trigger: 'blur' },
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+        ],
+        submitpassword: [
+          { required: true, message: '请输入确认密码', trigger: 'blur' },
         ]
       },
     }
@@ -260,6 +267,8 @@ export default {
             this.formLoading = false
           }).catch(() => this.formLoading = false)
         } else {
+          this.dataForm.password = '123456'
+          this.dataForm.submitpassword = '123456'
           this.formLoading = false
         }
       })

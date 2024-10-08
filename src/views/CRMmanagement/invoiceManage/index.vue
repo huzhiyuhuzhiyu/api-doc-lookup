@@ -255,25 +255,13 @@ export default {
       listQuery: {},
       total: 0,
       formVisible: false,
+      totalcontractMoney:'xxx',
+      totalinvoiceMoney:'xxx'
     }
   },
   computed: {
     currMenuId() {
       return (this.$route.meta.modelId || '') + this.partentOrChild
-    },
-    totalcontractMoney: function () {
-      var totalcontractMoneyNum = 0;
-      for (var i = 0; i < this.tableData.length; i++) {
-        totalcontractMoneyNum = this.jnpf.math('add', [totalcontractMoneyNum, this.tableData[i].contractMoney * 1])
-      }
-      return totalcontractMoneyNum
-    },
-    totalinvoiceMoney: function () {
-      var totalinvoiceMoneyNum = 0;
-      for (var i = 0; i < this.tableData.length; i++) {
-        totalinvoiceMoneyNum = this.jnpf.math('add', [totalinvoiceMoneyNum, this.tableData[i].invoiceMoney * 1])
-      }
-      return totalinvoiceMoneyNum
     }
   },
   created() {
@@ -408,6 +396,16 @@ export default {
         this.visible = false
       }).catch(() => {
         this.listLoading = false
+      })
+      let listQueryall = JSON.parse(JSON.stringify(this.initListQuery))
+      listQueryall.pageSize = -1
+      getcrmInvoicelist(listQueryall).then(res => {
+        this.totalcontractMoney = 0
+        this.totalinvoiceMoney = 0
+        for (let i = 0; i < res.data.records.length; i++) {
+          this.totalcontractMoney = this.jnpf.math('add', [this.totalcontractMoney, res.data.records[i].contractMoney * 1])
+          this.totalinvoiceMoney = this.jnpf.math('add', [this.totalinvoiceMoney, res.data.records[i].invoiceMoney * 1])
+        }
       })
     },
     // 关闭新建编辑页面

@@ -553,7 +553,8 @@ export default {
             end,
             fileType,
             parentId:this.parentId,
-            documentType
+            documentType,
+            subsetFlag:true
         }
 
         switch (this.activeTab){

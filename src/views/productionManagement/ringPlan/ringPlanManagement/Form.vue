@@ -1098,7 +1098,9 @@ export default {
     margin-bottom: 0 !important;
   }
 }
-
+.data-form ::v-deep.el-table__body-wrapper{
+  height: auto!important;
+}
 ::v-deep .JNPF-common-page-header.noButtons {
   padding: 11px 10px;
 }

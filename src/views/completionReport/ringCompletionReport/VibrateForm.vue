@@ -268,7 +268,7 @@ export default {
 
     },
 
-    // 获取振动等级数据
+    // 获取孔径数据
     getvibrationLevelFun() {
 
       let obj3 = {
@@ -287,7 +287,6 @@ export default {
         ]
       };
       getbimProductAttributesList(obj3).then(res => {
-        console.log("振动等级数据", res);
         this.apertureList = res.data.records
 
         console.log(666666, this.form);

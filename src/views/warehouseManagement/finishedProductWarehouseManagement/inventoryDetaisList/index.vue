@@ -91,7 +91,7 @@
           <el-table-column prop="partnerCode" label="客户/供应商编码" sortable="custom" min-width="180">
 
           </el-table-column>
-          <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="120" />
+          <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="300" />
           <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
           <el-table-column prop="mainUnit" label="单位" min-width="140" />
           <el-table-column prop="num" label="数量" sortable="custom" min-width="140" />
@@ -149,7 +149,6 @@
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
           @pagination="initData">
           <div class="text">
-            <span>合计：</span>
             <span style="margin-left: 10px">数量:{{ num }}</span>
             <span style="margin-left: 10px">税额:{{ taxAmount }}</span>
             <span style="margin-left: 10px">总金额(含税):{{ totalAmount }}</span>

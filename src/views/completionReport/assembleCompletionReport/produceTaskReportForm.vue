@@ -13,11 +13,14 @@
         <el-collapse v-model="activeNames">
           <el-collapse-item title="任务信息" name="basicInfo" class="orderInfo" style="margin-top: 5px;">
             <div class="stoclInfo">
-              <el-descriptions class="margin-top" :column="4">
-                <el-descriptions-item label="任务单号" class="orderNo">
-                  {{ dataForm.orderNo }}</el-descriptions-item>
+              <el-descriptions   :column="1"  class="box">
                 <el-descriptions-item label="品名规格" class="drawingNo">{{ dataForm.productDrawingNo
                   }}</el-descriptions-item>
+              </el-descriptions>
+                <el-descriptions class="margin-top" :column="4">
+                <el-descriptions-item label="任务单号" class="orderNo">
+                  {{ dataForm.orderNo }}</el-descriptions-item>
+              
                 <el-descriptions-item label="产品编码">{{ dataForm.productCode }}</el-descriptions-item>
                 <el-descriptions-item label="总生产数量">{{ dataForm.productionQuantity }}</el-descriptions-item>
                 <el-descriptions-item label="工艺名称">{{ dataForm.routingName }}</el-descriptions-item>
@@ -248,7 +251,7 @@
 
                   <el-col :sm="24" :xs="24" v-if="!currentProcess.vibrateReportFlag">
                     <el-form-item label="合格数量" prop="qualifiedQuantity" class="iptLabel">
-                      <el-input v-model="currentProcess.qualifiedQuantity" placeholder="合格数量" class="ipt" />
+                      <el-input v-model="currentProcess.qualifiedQuantity" placeholder="合格数量" class="ipt" @blur="handleBlur(item)"/>
                     </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24" v-for="(item, index) in vibrationLevelList" :key="index"
@@ -611,6 +614,12 @@ export default {
         this.currentProcessId = res.data.workOrderList[0].processId
         this.currentProcess = res.data.workOrderList[0]
         this.$set(this.currentProcess, 'reportingQuantity', 0)
+      this.$set(this.currentProcess, 'qualifiedQuantity', 0)
+      this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
+      this.$set(this.currentProcess, 'materialWasteQuantity', 0)
+      this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
+      this.$set(this.currentProcess, 'reworkQuantity', 0)
+      
         this.commonFun()
         // this.getRoutingDetailFun(this.dataForm.routingId)
       })
@@ -619,31 +628,54 @@ export default {
       this.currentProcess = item
       this.currentProcessId = item.processId
       this.$set(this.currentProcess, 'reportingQuantity', 0)
+      this.$set(this.currentProcess, 'qualifiedQuantity', 0)
+      this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
+      this.$set(this.currentProcess, 'materialWasteQuantity', 0)
+      this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
+      this.$set(this.currentProcess, 'reworkQuantity', 0)
       console.log("当前current", item);
+      this.targetHeight=""
+      this.targetHeight2=""
       this.commonFun()
 
     },
     handleBlur(item, data) {
       console.log("item", item, data, this.currentProcess.item);
-      let total = Object.values(this.currentProcess.item)
+      let total
+      if(this.currentProcess.item){
+        total= Object.values(this.currentProcess.item)
         .map(Number) // 将每个值转换为数字  
         .reduce((acc, curr) => acc + curr, 0); // 使用 reduce 方法计算总和
+      }else{
+        total=this.currentProcess.qualifiedQuantity
+      }
+     
       this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [total, this.currentProcess.unqualifiedQuantity]), 6)
       this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
     },
     handleBlur2() {
       this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity]), 6)
-      let total = Object.values(this.currentProcess.item)
+      let total
+      if(this.currentProcess.item){
+        total= Object.values(this.currentProcess.item)
         .map(Number) // 将每个值转换为数字  
         .reduce((acc, curr) => acc + curr, 0); // 使用 reduce 方法计算总和
+      }else{
+        total=this.currentProcess.qualifiedQuantity
+      }
       this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [total, this.currentProcess.unqualifiedQuantity]), 6)
       this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
     },
     handleBlur3() {
       this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity]), 6)
-      let total = Object.values(this.currentProcess.item)
+      let total
+      if(this.currentProcess.item){
+        total= Object.values(this.currentProcess.item)
         .map(Number) // 将每个值转换为数字  
         .reduce((acc, curr) => acc + curr, 0); // 使用 reduce 方法计算总和
+      }else{
+        total=this.currentProcess.qualifiedQuantity
+      }
       this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [total, this.currentProcess.unqualifiedQuantity]), 6)
       this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
     },
@@ -655,9 +687,9 @@ export default {
       } else {
 
         this.$nextTick(() => {
-          const height = this.$refs.fixedInfo.$el.clientHeight
-          console.log('el-col的高度是：', height);
-          this.targetHeight2 = height;
+          const height = this.$refs.mycol.$el.clientHeight
+          console.log('el-col的高度是2：', height);
+          this.targetHeight = height;
         });
       }
       this.producePersonListFun(this.currentProcess.id)
@@ -715,7 +747,7 @@ export default {
         });
         this.$nextTick(() => {
           const height = this.$refs.mycol.$el.clientHeight
-          console.log('el-col的高度是：', height);
+          console.log('el-col的高度是1：', height);
           this.targetHeight = height;
         });
         console.log(666666, this.currentProcess);
@@ -816,7 +848,6 @@ export default {
               responsibilityWasteQuantity: this.currentProcess.responsibilityWasteQuantity,
               reworkQuantity: this.currentProcess.reworkQuantity,
               "materialWasteQuantity": this.currentProcess.materialWasteQuantity,
-              "orderNo": this.currentProcess.orderNo,
               "pricingType": this.currentProcess.pricingType,
               "processId": this.currentProcess.processId,
               "producerId": this.currentProcess.producerId,
@@ -924,6 +955,7 @@ padding: 9px 10px;
 
 .JNPF-preview-main .main {
   padding-top: 0;
+  margin-bottom: 10px;
 }
 
 ::v-deep .el-tabs__item {
@@ -1173,11 +1205,13 @@ box-card:nth-child(n+3) {
   display: inline-block !important;
 }
 
-::v-deep .el-descriptions__table {
+ ::v-deep .el-descriptions__table {
   background: linear-gradient(0deg, #11B481 0%, #6ADE7D 100%);
 }
 
-
+.box ::v-deep .el-descriptions__table{
+  background: #6ADE7D;
+}
 .info {
   margin-top: 20px;
 }

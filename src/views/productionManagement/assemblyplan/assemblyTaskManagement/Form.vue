@@ -257,7 +257,11 @@
                     <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
                     <el-table-column prop="materialsUsedQuantity" label="计划用量" />
                     <el-table-column prop="receivedQuantity" label="已领数量" />
-                    <el-table-column prop="inventoryQuantity" label="库存数量" />
+                    <el-table-column prop="inventoryQuantity" label="库存数量"  >
+                      <template slot-scope="scope">
+                        <div>{{ scope.row.inventoryQuantity?scope.row.inventoryQuantity:"0" }}</div>
+                      </template>
+                    </el-table-column>
 
 
 
@@ -330,7 +334,11 @@
                 <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
                 <el-table-column prop="materialsUsedQuantity" label="计划用量" />
                 <el-table-column prop="receivedQuantity" label="已领数量" />
-                <el-table-column prop="inventoryQuantity" label="库存数量" />
+                <el-table-column prop="inventoryQuantity" label="库存数量"  >
+                      <template slot-scope="scope">
+                        <div>{{ scope.row.inventoryQuantity?scope.row.inventoryQuantity:"0" }}</div>
+                      </template>
+                    </el-table-column>
 
 
 

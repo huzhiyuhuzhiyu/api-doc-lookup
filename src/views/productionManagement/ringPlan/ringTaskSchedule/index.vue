@@ -62,25 +62,6 @@
                 }}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="orderType" label="任务类型" min-width="120" sortable="custom">
-              <template slot-scope="scope">
-                <div v-if="scope.row.orderType == 'normal'">正常订单</div>
-                <div v-if="scope.row.orderType == 'rework'">返工订单</div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="orderStatus" label="任务状态" min-width="140" sortable="custom">
-              <template slot-scope="scope">
-                <div v-if="scope.row.orderStatus == 'normal'">进行中</div>
-                <div v-if="scope.row.orderStatus == 'suspend'">暂停</div>
-                <div v-if="scope.row.orderStatus == 'closed'">关闭</div>
-                <div v-if="scope.row.orderStatus == 'finish'">已完成</div>
-              </template>
-            </el-table-column>
-
-
             <el-table-column prop="processSchedule" label="工单进度条" min-width="980">
               <template slot-scope="scope">
                 <div v-for="(item, index) in scope.row.processInfoList" :key="index"
@@ -100,6 +81,26 @@
                 </div>
               </template>
             </el-table-column>
+            <el-table-column prop="orderType" label="任务类型" min-width="120" sortable="custom">
+              <template slot-scope="scope">
+                <div v-if="scope.row.orderType == 'normal'">正常订单</div>
+                <div v-if="scope.row.orderType == 'rework'">返工订单</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
+            <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="orderStatus" label="任务状态" min-width="140" sortable="custom">
+              <template slot-scope="scope">
+                <div v-if="scope.row.orderStatus == 'normal'">进行中</div>
+                <div v-if="scope.row.orderStatus == 'suspend'">暂停</div>
+                <div v-if="scope.row.orderStatus == 'closed'">关闭</div>
+                <div v-if="scope.row.orderStatus == 'finish'">已完成</div>
+              </template>
+            </el-table-column>
+
+
+          
 
 
             <el-table-column prop="mainUnit" label="单位" width="80" />

@@ -8,31 +8,30 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="4">
+            <!-- <el-col :span="4">
               <el-form-item>
                 <el-input v-model="form.workNo" placeholder="工单单号" clearable @keyup.enter.native="search()" />
               </el-form-item>
-              </el-col>
+            </el-col> -->
 
-              <el-col :span="4">
-                <el-form-item>
-                  <el-input v-model="form.orderNo" placeholder="报工单号" clearable @keyup.enter.native="search()" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="4">
-                <el-form-item>
-                  <el-input v-model="form.productDrawingNo" placeholder="品名规格" clearable
-                    @keyup.enter.native="search()" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item>
-                  <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
-                    {{ $t('common.search') }}</el-button>
-                  <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
-                  </el-button>
-                </el-form-item>
-              </el-col>
+            <el-col :span="4">
+              <el-form-item>
+                <el-input v-model="form.orderNo" placeholder="报工单号" clearable @keyup.enter.native="search()" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="4">
+              <el-form-item>
+                <el-input v-model="form.productDrawingNo" placeholder="品名规格" clearable @keyup.enter.native="search()" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item>
+                <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                  {{ $t('common.search') }}</el-button>
+                <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
+                </el-button>
+              </el-form-item>
+            </el-col>
 
           </el-form>
         </el-row>
@@ -41,8 +40,8 @@
             <el-table-column prop="productionOrderNo" label="任务单号" min-width="180" sortable="custom" />
             <el-table-column prop="workNo" label="工单单号" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="orderNo" label="报工单号" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
+            <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
             <el-table-column prop="productCategoryName" label="产品分类" min-width="120" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" width="160" sortable="custom" />
             <el-table-column prop="reportingTime" label="报工时间" min-width="160" sortable="custom" />
@@ -56,7 +55,7 @@
             <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
 
-            
+
           </JNPF-table>
           <pagination :total="total" :page.sync="form.pageNum" :limit.sync="form.pageSize"
             @pagination="getrecordsList" />
@@ -66,7 +65,7 @@
 
   </el-dialog>
 </template>
-<script> 
+<script>
 import { getWorkReportList } from "@/api/productOrdes/index.js"
 export default {
   data() {
@@ -96,7 +95,7 @@ export default {
   },
   methods: {
     init(data) {
-      this.form.workNo=data
+      this.form.workNo = data
       this.customerVisible = true
       this.getrecordsList()
     },

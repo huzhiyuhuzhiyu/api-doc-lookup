@@ -535,7 +535,7 @@
     <el-dialog :title="'物料下达'" :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="productVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center wlxd" width="1200px">
 
-      <JNPF-table ref="tableDataAss" v-loading="listLoading" :data="orderDetailData" style="margin-top: 20px"
+      <JNPF-table ref="tableDataAss" v-loading="listLoading" :data="orderDetailData"  
         height="600">
         <el-table-column prop="productionPlanNo" label="生产计划单号" width="180"
           v-if="activeName != 'purchase' && activeName != 'out' && codeConfig.codeWay != 'auto'"></el-table-column>

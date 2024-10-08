@@ -24,7 +24,7 @@
             </template>
             <el-col :span="4">
               <el-form-item>
-                <el-select v-model="listQuery.documentStatus" placeholder="请选择" clearable style="width: 100%;">
+                <el-select v-model="superForm.documentStatus" placeholder="请选择" clearable style="width: 100%;">
                   <el-option v-for="(item, index) in documentStatusList" :key="index" :label="item.label"
                     :value="item.value"></el-option>
                 </el-select>

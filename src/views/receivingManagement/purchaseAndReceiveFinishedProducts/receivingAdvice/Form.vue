@@ -4,12 +4,12 @@
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add'
-          ? '新建收货单'
-          : btnType == 'edit'
-            ? '编辑收货单'
-            : btnType == 'copy'
-              ? '新建收货单'
-              : '查看收货单'
+            ? '新建收货单'
+            : btnType == 'edit'
+              ? '编辑收货单'
+              : btnType == 'copy'
+                ? '新建收货单'
+                : '查看收货单'
           " />
         <div class="options" v-if="btnType != 'look'">
           <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
@@ -31,10 +31,10 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="单号" prop="orderNo">
                         <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
-                          ? true
-                          : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                            ? false
-                            : true
+                            ? true
+                            : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                              ? false
+                              : true
                           "></el-input>
                       </el-form-item>
                     </el-col>
@@ -150,7 +150,7 @@
                     <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
                     <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
                     <el-table-column prop="processName" label="工序" width="160" />
-                    <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom" />
+                    <el-table-column prop="orderNo" label="订单号" width="200" sortable="custom" />
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.remark" placeholder="请输入备注"
@@ -187,10 +187,10 @@
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="单号" prop="orderNo">
                     <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
-                      ? true
-                      : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                        ? false
-                        : true
+                        ? true
+                        : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                          ? false
+                          : true
                       "></el-input>
                   </el-form-item>
                 </el-col>
@@ -818,6 +818,7 @@ export default {
   created() {
     // this.handleChange()
     // this.getProvinceList()
+
     this.getAttributeline()
     this.getWarehouseList()
   },
@@ -1476,6 +1477,12 @@ export default {
       this.dataForm.id = id || ''
       this.approvalFlag = approvalFlag
       this.btnType = btnType
+
+      if (data) {
+        this.dataFormTwo.productData = data
+        this.dataForm.partnerName = data[0].cooperativePartnerName
+        this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
+      }
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
@@ -1497,8 +1504,9 @@ export default {
             this.datafilelist = []
             this.dataForm.approvalStatus = ''
             this.dataForm.packingStatus = 'unboxed'
+            this.dataForm.salesman = this.userInfo.userName
             this.fetchData('CGSH')
-  
+
             res.data.noticeLineList.forEach((item) => {
               item.receivedQuantity = ''
             })
@@ -1515,6 +1523,9 @@ export default {
             }
           }
         })
+      } else {
+        this.fetchData('CGSH')
+        this.dataForm.salesman = this.userInfo.userName
       }
 
       if (this.btnType == 'edit') {

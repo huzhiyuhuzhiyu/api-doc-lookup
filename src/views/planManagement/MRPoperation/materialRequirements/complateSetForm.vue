@@ -112,11 +112,19 @@
             <el-table-column prop="noKitQuantity" key="noKitQuantity" label="未齐套数量" min-width="140"></el-table-column>
             <el-table-column prop="lackQuantity" key="lackQuantity" label="缺料数量" min-width="100"></el-table-column>
             <el-table-column prop="inventoryQuantity" key="inventoryQuantity" label="库存数量"
-              min-width="100"></el-table-column>
+              min-width="100">
+              <template slot-scope="scope">
+              <div>{{ scope.row.inventoryQuantity?scope.row.inventoryQuantity:'0' }}</div>
+            </template>
+            </el-table-column>
             <el-table-column prop="occupancyQuantity" key="occupancyQuantity" label="库存占用数量"
               min-width="140"></el-table-column>
             <el-table-column prop="actualInTransitQuantity" key="actualInTransitQuantity" label="实际在途\在制数量"
-              min-width="160"></el-table-column>
+              min-width="160">
+              <template slot-scope="scope">
+              <div>{{ scope.row.actualInTransitQuantity?scope.row.actualInTransitQuantity:'0' }}</div>
+            </template>
+            </el-table-column>
           </el-table>
 
 

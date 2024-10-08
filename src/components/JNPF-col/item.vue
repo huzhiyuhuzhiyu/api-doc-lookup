@@ -11,7 +11,7 @@
           @change="item.hasOwnProperty('change') ? item.change($event) : ''" :key="1">
           <template v-if="item.itemSlot" :slot="item.itemSlot.position">
             <div v-if="!item.itemSlot.click" v-bind="item.itemSlot"> {{ item.itemSlot.content }} </div>
-            <el-button v-else @click="item.itemSlot.click($event, item)" v-bind="item.itemSlot">
+            <el-button v-else @click="item.itemSlot.click($event, item)" v-bind="item.itemSlot" :disabled="item.disabled||readOnly">
               {{ item.itemSlot.content }} </el-button>
           </template>
         </el-input>
@@ -89,7 +89,7 @@
         v-on="$listeners"></el-checkbox> -->
 
       <!-- 开关 -->
-      <!-- <el-switch v-else-if="item.type === 'switch'" v-bind="$attrs" v-on="$listeners"></el-switch> -->
+      <el-switch :disabled="item.disabled||readOnly" style="top:6px" v-else-if="item.type === 'switch'" v-bind="$attrs" v-on="$listeners"></el-switch>
 
       <!-- 评分 -->
       <!-- <el-rate v-else-if="item.type === 'rate'" v-bind="$attrs" :colors="['#99A9BF', '#F7BA2A', '#FF9900']"

@@ -32,7 +32,7 @@ export default {
                 this.$emit('update:currentExt',val)
             }
         }
-    }
+    },
 }
 </script>
 
@@ -41,10 +41,10 @@ export default {
         <div style="display:flex;align-items:center;">
             <el-tooltip class="item" placement="top" effect="light" :content="cSwitchList? '图文模式':'列表模式' ">
                 <i @click="cSwitchList = !cSwitchList"
-                   style="margin-right: 3px" class="pointer iconfont"
+                   style="margin-right: 3px" class="pointer zgt-ifont"
                    :class="[cSwitchList ?  'icon-liebiao' : 'icon-pingpu' ]"/>
             </el-tooltip>
-            <el-dropdown @command="$emit('command')">
+            <el-dropdown @command="$emit('command',$event)">
                 <el-link :style="{color: cCurrentExt !== ''? '#3fb9f8':'unset'}" icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"/>
                 <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item
@@ -54,7 +54,7 @@ export default {
                         :command="item.text"
                         v-for="item in fileExtFilterOption"
                         :key="item.text">
-                        <i style="font-size: 15px" class="iconfont" :class="item.icon"/>{{item.text}}
+                        <i style="font-size: 15px" class="zgt-ifont" :class="item.icon"/>{{item.text}}
                     </el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
@@ -63,5 +63,9 @@ export default {
 </template>
 
 <style scoped lang="scss">
+.dropdown-item-active{
+    background-color: #ecf8fe;
+    color: #65c7f9;
+}
 
 </style>

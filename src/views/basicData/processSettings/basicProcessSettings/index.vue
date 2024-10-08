@@ -69,7 +69,7 @@
           </template>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.processingType" placeholder="加工类别">
+              <el-select v-model="listQuery.processingType" placeholder="加工类别" clearable>
                 <el-option v-for="item in processingTypeOptions" :key="item.value" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -289,7 +289,7 @@ export default {
         label: 'name'
       },
       processingTypeOptions: [
-        { label: "所有选项", value: "" },
+        { label: "全部", value: "" },
         { label: "自制", value: "self_produced" },
         { label: "外协", value: "external_production" },
       ],
@@ -314,6 +314,7 @@ export default {
     this.getProductClassFun()
   },
   created() {
+    this.superForm = this.listQuery
     // this.initData()
     this.getcategoryTree()
     this.getBusinessOptions()

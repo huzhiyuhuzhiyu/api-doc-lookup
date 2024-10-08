@@ -45,7 +45,6 @@
               </el-button>
             </topOpts>
 
-
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -63,12 +62,9 @@
           <JNPF-table @selection-change="handeleFinshData" hasC v-if="flag" v-loading="listLoading"
             highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
             custom-column :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
-            <el-table-column prop="orderNo" label="外协单号" min-width="180" sortable="custom">
-
-            </el-table-column>
+            <el-table-column prop="orderNo" label="外协单号" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
-
 
             <el-table-column prop="deliveryDate" label="交货日期" min-width="180" sortable="custom" />
             <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" min-width="180" sortable="custom" />
@@ -102,34 +98,21 @@
                       <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                         查看详情
                       </el-dropdown-item>
-                      <el-dropdown-item @click.native="orderFormDownload(scope.row.id)">
-                        下载订货单
-                      </el-dropdown-item>
-                      <el-dropdown-item @click.native="printPurchaseOrder(scope.row.id)">
-                        打印订货单
-                      </el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </tableOpts>
-
               </template>
             </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
-            :limit.sync="listQuery.pageSize" @pagination="initData">
-            <div style="height: 40px; line-height: 40px; background: #f5f7fa;margin-top: -13px" class="text">
-              <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ computedValue }}</span>
-              <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue2 }}</span>
-            </div>
-          </pagination>
+            :limit.sync="listQuery.pageSize" @pagination="initData"></pagination>
         </div>
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="procureForm" @refresh="refresh" @close="closeForm" />
     <CreateForm v-if="createFormVisible" ref="createForm" @refresh="refresh" @close="closeForm" />
     <withdrawnForm v-if="withdrawnVisible" ref="withdrawnForm" @refresh="refresh" @close="closeForm" />
-    <PrintForm ref="PrintForm" :value="printData" :dataValue="printForm" :pages="pages" />
-    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -140,26 +123,25 @@
 // import { purchaseOrderList } from '@/api/purchasingManagement/purchaseInquirySheet'
 import {
   purchaseOrderList,
-  detailpurchaseOrderList,
-  purPurchaseOrderExport,
   purPurchaseOrderdetail,
   purPurchaseBatch,
-  purPurchaseBatchLine
+  purPurchaseBatchLine,
+  deletePurPurchaseOrder
 } from '@/api/purchasingAndOutsourcingOrders/index'
 import JNPFForm from './Form'
 import moment from 'moment'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 // import withdrawnForm from './withranForm'
 import withdrawnForm from '@/views/purchasingManagement/purchasingDemand/purchasingDemandPool/Form.vue'
-import PrintForm from './printForm'
+
 import { excelExport } from '@/api/basicData/index'
-import ExportForm from '@/components/no_mount/ExportBox/index'
+
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
-import { CreateForm } from "../orderCreation/index.vue";
+import { CreateForm } from '../orderCreation/index.vue'
 export default {
   name: 'orderList',
-  components: { JNPFForm, withdrawnForm, PrintForm, ExportForm, SuperQuery, CreateForm },
+  components: { JNPFForm, withdrawnForm, SuperQuery, CreateForm },
   data() {
     return {
       exportFormVisible: false,
@@ -355,7 +337,6 @@ export default {
         count += item.purchaseQuantity * 1
       })
       this.computedValue = this.jnpf.numberFormat(count2)
-
     },
     // 导出
     exportForm(exportTableRef) {
@@ -601,7 +582,8 @@ export default {
 
     addSupplier(id, type) {
       this.$router.push({
-        path: '/outsourcingManagement/processOutsourcingOrders/orderCreation', query: { alert: "新建" }
+        path: '/outsourcingManagement/processOutsourcingOrders/orderCreation',
+        query: { alert: '新建' }
       })
     },
     // 生成采购订单 将选中的数据传递过去
@@ -611,12 +593,7 @@ export default {
         this.$refs.procureForm.init(id, type)
       })
     },
-    // 导出订货单
-    orderFormDownload(id) {
-      purPurchaseOrderExport(id).then((res) => {
-        this.jnpf.downloadFile(res.data.url, res.data.name)
-      })
-    },
+
     withdrawnHandle(formId) {
       let _data = {
         formId
@@ -669,49 +646,7 @@ export default {
         })
       })
     },
-    // 打印
-    printPurchaseOrder(id) {
-      this.printData = []
-      this.printForm = {}
-      purPurchaseOrderdetail(id).then((res) => {
-        // this.printVisible = true
 
-        this.printData = res.data.purchaseOrderLineVOList
-        this.printForm = res.data
-        // 复制数据测试 打印分页
-        // for (var i = 0; i < 4; i++) {
-        //   this.printData = this.printData.concat(this.printData);
-        // }
-        // console.log(Math.ceil(this.printData.length/20));
-        this.pages = Math.ceil(this.printData.length / 20)
-        console.log(this.printPageDataFn(this.printData, 20))
-        this.printData = this.printPageDataFn(this.printData, 20)
-        this.$nextTick(() => {
-          console.log(this.$refs.PrintForm)
-          console.log(this.$refs.PrintForm.$el)
-          let oldStr = window.document.body.innerHTML
-          let newStr = this.$refs.PrintForm.$el.innerHTML
-
-          const iframe = document.createElement('iframe')
-          iframe.setAttribute('style', 'position: absolute; width: 0;height: 0;')
-          document.body.appendChild(iframe)
-          const doc = iframe.contentWindow.document
-          // 4. 写入内容//
-          doc.write('<style media="print"> @page {size: portrait;margin: 5mm; padding: 0;}</style>')
-          doc.write(`<link href="./printForm.scss" media="print" rel="stylesheet" />`)
-          doc.write(newStr)
-          const link = doc.getElementsByTagName('link')[0]
-          link.onload = () => {
-            // 样式文件加载完毕后打印// 5.执行打印
-            iframe.contentWindow.print()
-            iframe.contentWindow.location.reload(true)
-            // 6.重置工作
-            document.body.removeChild(iframe)
-            this.$refs.PrintForm.$el.removeAttribute('style')
-          }
-        })
-      })
-    },
     // 处理分页
     printPageDataFn(data, pageSize = 20) {
       const printTable = []
@@ -776,7 +711,25 @@ export default {
           .replace(/(零.)+/g, '零')
           .replace(/^整$/, '零元整')
       )
-    }
+    },
+    handleDel(id) {
+      this.$confirm('此操作将删除该数据，是否继续？', this.$t('common.tipTitle'), {
+        type: 'warning'
+      })
+        .then(() => {
+          deletePurPurchaseOrder(id).then((res) => {
+            this.$message({
+              type: 'success',
+              message: '删除成功',
+              duration: 1500,
+              onClose: () => {
+                this.initData()
+              }
+            })
+          })
+        })
+        .catch(() => { })
+    },
   }
 }
 </script>

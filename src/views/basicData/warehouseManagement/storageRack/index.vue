@@ -141,7 +141,7 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm"
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm" :fullName="fullName"
       ref="printForm" />
     <!-- 选择打印模版弹窗 -->
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
@@ -163,6 +163,7 @@ export default {
   components: { DepForm, AiForm, SuperQuery, PrintBrowse, PrintDialog },
   data() {
     return {
+      fullName:'',
       printVisible: false,
       visualizationTable: true,
       superQueryVisible: false,
@@ -576,6 +577,7 @@ export default {
     printView(enCode) {
       if (!this.selectList.length) return this.$message.error("请选择您要打印的数据!")
       this.enCode = enCode
+      this.fullName = '库位二维码'
       this.printVisible = true
       this.$nextTick(() => {
         this.$refs.printTemplate.init(enCode)

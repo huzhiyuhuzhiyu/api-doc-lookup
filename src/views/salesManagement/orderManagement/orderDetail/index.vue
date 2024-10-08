@@ -5,26 +5,29 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderNoS" @keyup.enter.native="search()" placeholder="订单号" clearable />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="cooperativePartnerNameS" @keyup.enter.native="search()"
-                  placeholder="客户名称" clearable />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="customerProductNoS" @keyup.enter.native="search()" placeholder="客户料号"
-                  clearable />
-              </el-form-item>
-            </el-col>
+            <template v-for="item in searchList">
+              <el-col :span="item.searchType === 3 ? 6 : 4">
+                <el-form-item>
+                  <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                    @keyup.enter.native="search('basic')" />
+
+                  <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                    clearable>
+                    <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                      :value="item2.value"></el-option>
+                  </el-select>
+                  <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                    :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                    :type="item.dateType"
+                    :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                </el-form-item>
+              </el-col>
+            </template>
+
+
             <el-col :span="6">
               <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
                   {{ $t('common.search') }}</el-button>
                 <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
                 </el-button>
@@ -67,7 +70,7 @@
             <el-table-column prop="departmentName" label="所属部门" width="160"></el-table-column>
             <el-table-column prop="salesName" label="所属销售" width="120" sortable="custom" />
             <el-table-column prop="customerProductNo" label=" 客户料号" width="160" sortable="custom" />
-            <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
+            <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
             <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
             <el-table-column prop="num" label="数量" width="80" sortable="custom" />
@@ -170,9 +173,18 @@ export default {
   components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery },
   data() {
     return {
-      customerProductNoS:"",
-      cooperativePartnerNameS:"",
-      orderNoS:"",
+      superQuery: {},
+      superForm: {},
+      basicQuery: {},
+      searchList: [
+        { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
+
+      ],
+
+
+
       totalNum: 0,
       columnList: ["cooperativePartnerCode", "departmentName", "productName", "deputyUnit", "assistantNum", "taxRate", "createTime",],
       orderFollowVisible: false,
@@ -212,25 +224,13 @@ export default {
         }],
 
         superQuery: {
-          condition:[],
-          matchLogic:""
+          condition: [],
+          matchLogic: ""
         },
       },
 
       detailTotal: 0,
-      pickerOptions: {
-        disabledDate(time) {
-          // 获取当前日期
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          // 获取6个月前的日期
-          const sixMonthsAgo = new Date();
-          sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-          sixMonthsAgo.setHours(0, 0, 0, 0);
-          // 如果选择的日期范围超过6个月，或者结束日期不是当前日期，则禁用
-          return time.getTime() < sixMonthsAgo || time.getTime() > today;
-        }
-      },
+
       gradeList: [],
       defaultProps: {
         children: 'childrenList',
@@ -430,6 +430,8 @@ export default {
     this.orderDateArr[1] = endDate
     this.orderForm.orderStartDate = startDate
     this.orderForm.orderEndDate = endDate
+    this.superForm = this.orderForm
+    this.search('basic')
     this.initData()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
@@ -725,7 +727,7 @@ export default {
           oilObj.options = arr;
         }
       })
-      
+
 
       // 获取税率(数据字典)
       getbimProductAttributes("585438081021126405").then(res => {
@@ -751,7 +753,7 @@ export default {
     getOrderLineReportFun() {
       getOrderLineReport(this.orderForm).then(res => {
         console.log("合计", res);
-        this.totalNum = res.data ? res.data.total.num : 0
+        this.totalNum = res.data.total ? res.data.total.num : 0
       })
     },
 
@@ -760,7 +762,7 @@ export default {
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
@@ -796,44 +798,7 @@ export default {
       this.initData()
     },
 
-
-    dataFormSubmit() {
-      this.orderForm.pageNum = 1
-      Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
-        let item = this.orderForm[key]
-        this.orderForm[key] = typeof item === 'string' ? item.trim() : item
-      })
-      if (this.orderDateArr && this.orderDateArr.length > 0) {
-        this.orderForm.orderStartDate = this.orderDateArr[0]
-        this.orderForm.orderEndDate = this.orderDateArr[1]
-      } else {
-        this.orderForm.orderStartDate = ""
-        this.orderForm.orderEndDate = ""
-      }
-      if (this.CompletionDate && this.CompletionDate.length > 0) {
-        this.orderForm.deliveryStartDate = this.CompletionDate[0]
-        this.orderForm.deliveryEndDate = this.CompletionDate[1]
-      } else {
-        this.orderForm.deliveryStartDate = ""
-        this.orderForm.deliveryEndDate = ""
-      }
-      if (this.deliveryDateArr && this.deliveryDateArr.length > 0) {
-        this.orderForm.deliveryStartDate = this.deliveryDateArr[0]
-        this.orderForm.deliveryEndDate = this.deliveryDateArr[1]
-      } else {
-        this.orderForm.deliveryStartDate = ""
-        this.orderForm.deliveryEndDate = ""
-      }
-      if (this.createTimeArr && this.createTimeArr.length > 0) {
-        this.orderForm.startTime = this.createTimeArr[0]
-        this.orderForm.endTime = this.createTimeArr[1]
-      } else {
-        this.orderForm.startTime = ""
-        this.orderForm.endTime = ""
-      }
-      this.initData()
-
-    },
+ 
 
 
     // 关闭新建编辑页面
@@ -842,30 +807,12 @@ export default {
       this.orderFollowVisible = false
       if (isRefresh) {
         this.keyword = ''
-        this.initData()
+        this.search('basic')
       }
     },
     initData() {
       this.listLoading = true
-      this.listLoading = true
-      if(this.orderNoS){
-        this.orderForm.superQuery.condition.push(
-          {"field":"orderNo","fieldValue":this.orderNoS,"symbol":"like"}
-        )
-      }
-      if(this.customerProductNoS){
-        this.orderForm.superQuery.condition.push(
-          {"field":"customerProductNo","fieldValue":this.customerProductNoS,"symbol":"like"}
-        )
-      }
-      if(this.cooperativePartnerNameS){
-        this.orderForm.superQuery.condition.push(
-          {"field":"cooperativePartnerName","fieldValue":this.cooperativePartnerNameS,"symbol":"like"}
-        )
-      }
-      if(this.orderNoS||this.customerProductNoS||this.cooperativePartnerNameS){
-        this.$set(this.orderForm.superQuery,'matchLogic','AND')
-      }
+
       getsaleOrderDetailList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -878,33 +825,42 @@ export default {
     },
 
 
-    search() {
-      this.dataFormSubmit()
+    search(type) {
+
+      this.orderForm.pageNum = 1
+      Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
+        let item = this.orderForm[key]
+        this.orderForm[key] = typeof item === 'string' ? item.trim() : item
+      })
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
+      this.initData()
     },
 
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.createTimeArr = []
-      this.orderDateArr = []
-      this.deliveryDateArr = []
-      this.CompletionDate = []
-      this.orderForm = {
-        cooperativePartnerCode: "",
+
+      this.superForm = this.orderForm = {
         cooperativePartnerName: "",
         customerProductDrawingNo: "",
-        // customerProductNo: "",
-        orderType: "",
-        drawingNo: "",
+
         orderNo: "",
-        productCode: "",
-        productName: "",
-        shipmentStatus: '',
-        orderStartDate: "",
-        orderEndDate: "",
-        deliveryStartTime: "",
-        deliveryEndTime: "",
-        startTime: "",
-        endTime: "",
+
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -915,16 +871,19 @@ export default {
           column: "t1.create_time"
         }],
         superQuery: {
-          condition:[],
-          matchLogic:""
+          condition: [],
+          matchLogic: ""
         },
       }
-      this.customerProductNoS="",
-      this.cooperativePartnerNameS="",
-      this.orderNoS="",
+      this.searchList = [
+        { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
+
+      ]
       this.$refs.SuperQuery.conditionList = []
 
-      this.search()
+      this.search('basic')
     },
 
     // 订单跟踪
@@ -1030,7 +989,7 @@ export default {
 
 .JNPF-common-search-box {
   padding: 8px 0 !important;
-    margin-left: 0!important;
+  margin-left: 0 !important;
 
   margin-bottom: 5px;
 }

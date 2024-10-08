@@ -164,9 +164,10 @@
                       <el-table-column prop="price" label="单价(含税)" width="120" :key="11">
 
                       </el-table-column>
-                      <el-table-column prop="taxRate" label="税率(%)" width="120" :key="171">
-
-
+                      <el-table-column prop="taxRate" label="税率" width="120" :key="171">
+                        <template slot-scope="scope">
+                          <div>{{ scope.row.taxRate }}%</div>
+                        </template>
                       </el-table-column>
                       <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
 
@@ -269,14 +270,14 @@
                         </el-input>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="taxRate" label="税率(%)" width="120" :key="171">
+                    <el-table-column prop="taxRate" label="税率" width="120" :key="171">
                       <template slot="header">
-                        <span class="required">*</span>税率(%)
+                        <span class="required">*</span>税率
                       </template>
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;"
                           @change="changeTaxRate(scope.row, scope.$index)">
-                          <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.enCode"
+                          <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                             :value="item.taxRate"></el-option>
                         </el-select>
                       </template>
@@ -588,9 +589,11 @@
                   <el-table-column prop="price" label="单价(含税)" width="120" :key="11">
 
                   </el-table-column>
-                  <el-table-column prop="taxRate" label="税率(%)" width="120" :key="171">
+                  <el-table-column prop="taxRate" label="税率" width="120" :key="171">
 
-
+                    <template slot-scope="scope">
+                      <div>{{ scope.row.taxRate }}%</div>
+                    </template>
                   </el-table-column>
                   <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
 
@@ -688,9 +691,9 @@
                     </el-input>
                   </template>
                 </el-table-column>
-                <el-table-column prop="taxRate" label="税率(%)" width="120" :key="171">
+                <el-table-column prop="taxRate" label="税率" width="120" :key="171">
                   <template slot="header">
-                    <span class="required">*</span>税率(%)
+                    <span class="required">*</span>税率
                   </template>
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;"
@@ -821,7 +824,7 @@
 
         </div>
         <el-dialog title="选择客户" :close-on-click-modal="false" :close-on-press-escape="false"
-          :visible.sync="customerVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="50%"
+          :visible.sync="customerVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="1200PX"
           append-to-body @close="handleClose">
 
           <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
@@ -857,17 +860,17 @@
                 <el-form @submit.native.prevent>
                   <el-col :span="6">
                     <el-form-item>
-                      <el-input v-model="form.code" placeholder="请输入客户编码" clearable />
+                      <el-input v-model="form.code" placeholder="客户编码" clearable />
                     </el-form-item>
                   </el-col>
                   <el-col :span="6">
                     <el-form-item>
-                      <el-input v-model="form.name" placeholder="请输入客户名称" clearable />
+                      <el-input v-model="form.name" placeholder="客户名称" clearable />
                     </el-form-item>
                   </el-col>
                   <el-col :span="6">
                     <el-form-item>
-                      <el-input v-model="form.taxId" placeholder="请输入税号" clearable />
+                      <el-input v-model="form.taxId" placeholder="税号" clearable />
                     </el-form-item>
                   </el-col>
 
@@ -1126,7 +1129,7 @@ export default {
         { prop: 'customerProductNo', label: ' 客户料号', fixed: 'left' },
         { prop: 'productCode', label: '产品编码' },
         { prop: 'drawingNo', label: '品名规格' },
-        { prop: 'mainUnit', label: '单位(主)' },
+        { prop: 'mainUnit', label: '单位' },
       ],
       // 选择客户产品参数
       ProductListRequestObjs: {
@@ -1460,6 +1463,7 @@ export default {
           console.log(777, this.productData);
           // this.productData.push(res.data.records[0])
           if (res.data.records.length) {
+            res.data.records[0].taxRate = res.data.records[0].taxRate * 1
             this.$set(this.productData, index, res.data.records[0])
             let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.records[0].taxRate));
             if (!exists && res.data.taxRate) {
@@ -1924,7 +1928,7 @@ export default {
       if (data) {
         console.log(data.name);
         this.dataForm.salesName = data.name;
-        this.$set(this.dataForm,'salesName',data.name)
+        this.$set(this.dataForm, 'salesName', data.name)
       }
     },
 
@@ -1989,8 +1993,8 @@ export default {
     changeTaxRate(row, index) {
       console.log(row, index);
       let productArr = [...this.productData]
-      productArr[index].excludingTaxPrice = this.jnpf.numberFormat(row.price / (1 + (row.taxRate * 1 / 100)), 4)
-      productArr[index].excludingTaxAmount = this.jnpf.numberFormat((row.excludingTaxPrice * row.num), 4)
+      productArr[index].excludingTaxPrice = this.jnpf.numberFormat(row.price / (1 + (row.taxRate * 1 / 100)), 2)
+      productArr[index].excludingTaxAmount = this.jnpf.numberFormat((row.excludingTaxPrice * row.num), 2)
       this.productData = productArr
     },
     // 监听含税价格输入
@@ -2045,9 +2049,9 @@ export default {
           row.price = row.price.substring(0, 8);
         }
       }
-      productArr[index].excludingTaxPrice = this.jnpf.numberFormat(row.price / (1 + (row.taxRate * 1 / 100)), 4)
-      productArr[index].excludingTaxAmount = this.jnpf.numberFormat((row.excludingTaxPrice * row.num), 4)
-      productArr[index].totalAmount = this.jnpf.numberFormat((row.price * row.num), 4)
+      productArr[index].excludingTaxPrice = this.jnpf.numberFormat(row.price / (1 + (row.taxRate * 1 / 100)), 2)
+      productArr[index].excludingTaxAmount = this.jnpf.numberFormat((row.excludingTaxPrice * row.num), 2)
+      productArr[index].totalAmount = this.jnpf.numberFormat((row.price * row.num), 2)
 
       this.productData = productArr
     },
@@ -2106,13 +2110,13 @@ export default {
       console.log("index", index);
       console.log("row.num", row.num);
       if (row.calculationDirection == 'multiplication') {
-        productArr[index].assistantNum = this.jnpf.numberFormat(row.num * row.ratio, 4)
-        productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 6)
-        productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.excludingTaxPrice]), 6)
+        productArr[index].assistantNum = this.jnpf.numberFormat(row.num * row.ratio, 2)
+        productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 2)
+        productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.excludingTaxPrice]), 2)
       } else {
-        productArr[index].assistantNum = this.jnpf.numberFormat(row.num / row.ratio, 4)
-        productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 6)
-        productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.excludingTaxPrice]), 6)
+        productArr[index].assistantNum = this.jnpf.numberFormat(row.num / row.ratio, 2)
+        productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 2)
+        productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.excludingTaxPrice]), 2)
       }
       console.log("productArr", productArr);
       this.productData = productArr
@@ -2159,9 +2163,9 @@ export default {
       console.log("all", allArray);
       allArray.forEach(item => {
 
-
         if (item.taxRate) {
-          item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.price) / (1 + (Number(item.taxRate)) / 100), 6)
+          item.taxRate = item.taxRate * 1
+          item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.price) / (1 + (Number(item.taxRate)) / 100), 2)
 
         } else {
           item.excludingTaxPrice = item.price
@@ -2178,13 +2182,13 @@ export default {
           item.price === "" &&
           item.deliveryDate === ""
         )
-        console.log(5555,index);
+        console.log(5555, index);
         if (index !== -1) {
           console.log(1212);
           // 使用 splice 插入 newDataArray
           this.productData.splice(index, 0, ...allArray);
-        }else{
-          this.productData=[...allArray, ...this.productData];
+        } else {
+          this.productData = [...allArray, ...this.productData];
         }
       }
     },
@@ -2880,9 +2884,29 @@ export default {
             })
             return
           } else {
+            let index = this.productData.findIndex(item =>
+              item.drawingNo === "" &&
+              item.productsId === "" &&
+              item.num === "" &&
+              item.price === "" &&
+              item.deliveryDate === ""
+            )
+            if (index !== -1) {
+              // 删除空行
+              this.productData.splice(index, 1);
+            }
             for (let index = 0; index < this.productData.length; index++) {
               const item = this.productData[index];
-              if (!item.num) {
+              if (!item.productsId) {
+                submitFlag = false
+                this.$message({
+                  message: "第" + (index + 1) + "行产品不存在",
+                  type: 'error',
+                  duration: 1500,
+                })
+                break
+              }
+              if (!item.num && item.productsId) {
                 submitFlag = false
                 this.$message({
                   message: "请输入第" + (index + 1) + "行产品的数量",
@@ -3013,7 +3037,9 @@ export default {
 
 
             }
-            obj.orderLineList = this.productData
+            let filteredArr = this.productData.filter(item => item.productDrawingNo && item.productsId);
+
+            obj.orderLineList = filteredArr
           }
           if (submitFlag === false) return
           this.btnLoading = true
@@ -3048,6 +3074,8 @@ export default {
             this.btnLoading = false
           })
 
+        } else {
+          this.btnLoading = false
         }
       })
     },

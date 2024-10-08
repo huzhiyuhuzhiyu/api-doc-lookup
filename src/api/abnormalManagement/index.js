@@ -45,6 +45,27 @@ export function  checkAbnoramlTypeCode(code,id) {
     method: 'GET'
   })
 }
+// 系统异常-检查编码是否存在
+export function  checkSystemCode(code,id) {
+  return request({
+    url: `/api/zgt/ab/system/exception/check/code/exist?code=${code}&id=${id}`,
+    method: 'GET'
+  })
+}
+export function  detailSystemAbnoram(id) {
+  return request({
+    url: `/api/zgt/ab/system/exception/detail/${id}`,
+    method: 'GET'
+  })
+}
+// 系统异常-检查编码是否存在
+export function  checkSystemValidSql(data) {
+  return request({
+    url: `/api/zgt/ab/system/exception/valid/sql`,
+    method: 'POST',
+    data
+  })
+}
 
 // 异常申请记录-列表
 export function  getAbnoramlData(data) {
@@ -52,6 +73,44 @@ export function  getAbnoramlData(data) {
     url: '/api/mes/ab/apply/record/list',
     method: 'POST',
     data
+  })
+}
+// 系统异常申请记录-列表
+export function  getSystemAbnoramlData(data) {
+  return request({
+    url: '/api/zgt/ab/system/exception/list',
+    method: 'POST',
+    data
+  })
+}
+export function  addSystemAbnoramlData(data) {
+  return request({
+    url: '/api/zgt/ab/system/exception/add',
+    method: 'POST',
+    data
+  })
+}
+// 系统异常 - 修改
+export function  updateSystemData(data) {
+  return request({
+    url: '/api/zgt/ab/system/exception/update',
+    method: 'PUT',
+    data
+  })
+}
+// 系统异常 - 修改状态
+export function  updateState(data) {
+  return request({
+    url: '/api/zgt/ab/system/exception/update/state',
+    method: 'PUT',
+    data
+  })
+}
+// 系统异常 - 删除
+export function  delSystemData(id) {
+  return request({
+    url: `/api/zgt/ab/system/exception/del/${id}`,
+    method: 'DELETE'
   })
 }
 // 异常申请记录-工具
@@ -91,4 +150,56 @@ export function  deleteAbnoramlData(id) {
     url: `/api/mes/ab/apply/record/del/${id}`,
     method: 'DELETE'
   })
+}
+
+/**
+ * 异常申请记录-分析-按类型
+ * @param data
+ * @returns {AxiosPromise}
+ */
+export function analysisByType(data) {
+  return request({
+    url: '/api/mes/ab/apply/record/stats/analysis/type',
+    method: 'POST',
+    data
+  })
+}
+
+/**
+ * 异常申请记录-分析-按内容
+ * @param data
+ * @returns {AxiosPromise}
+ */
+export function analysisByContent(data) {
+  return request({
+    url: '/api/mes/ab/apply/record/stats/analysis/content',
+    method: 'POST',
+    data
+  })
+}
+
+/**
+ * 异常申请记录-分析-导出-按内容
+ * @param data
+ * @returns {*}
+ */
+export function exportAnalysisByContent(data){
+    return request({
+        url:'/api/mes/ab/apply/record/export/analysis/content',
+        method:'POST',
+        data
+    })
+}
+
+/**
+ * 异常申请记录-分析-导出-按类型
+ * @param data
+ * @returns {*}
+ */
+export function exportAnalysisByType(data){
+    return request({
+        url:'/api/mes/ab/apply/record/export/analysis/type',
+        method:'POST',
+        data
+    })
 }

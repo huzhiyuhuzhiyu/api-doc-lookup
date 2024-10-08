@@ -61,13 +61,15 @@
                                 :method="getWarehouseList" placeholder="请选择仓库"
                                 @change="changeWarehousex"></ComSelect-list>
 
-
-
-
-
                             </el-form-item>
                           </el-col>
-
+                          <el-col :sm="6" :xs="24" v-if="allocationFlag">
+                            <el-form-item label="库位" prop="shelfSpaceName">
+                              <el-input v-model="shelfSpaceName" placeholder="库位" readonly
+                                @focus="openSeleceWareDialog">
+                              </el-input>
+                            </el-form-item>
+                          </el-col>
 
                           <el-col :sm="12" :xs="24">
                             <el-form-item label="备注" prop="remark">
@@ -95,9 +97,9 @@
 
                       </div>
 
-                      <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType!='look'"
+                      <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
                         @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
-                     
+
                         <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                         </el-table-column>
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
@@ -112,7 +114,7 @@
                           </template>
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.shelfSpaceName" readonly :disabled="btnType == 'look'"
-                              @focus="openSeleceWareDialog(scope.row, scope.$index)" placeholder="库位">
+                              @focus="openSeleceWareDialog(scope.row, scope.$index,'table')" placeholder="库位">
                             </el-input>
 
                           </template>
@@ -122,7 +124,8 @@
 
 
 
-                        <el-table-column prop="requiredReceivedQuantity" label="待收货数量" width="140" :key="777" v-if="btnType!='look'">
+                        <el-table-column prop="requiredReceivedQuantity" label="待收货数量" width="140" :key="777"
+                          v-if="btnType != 'look'">
                         </el-table-column>
 
 
@@ -317,7 +320,7 @@
 <script>
 import { getQuotationdatasenddatalist } from '@/api/salesManagement'
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
-import { getWarehouseList,getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
+import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
 import { getQuotationsendlist } from "@/api/salesManagement/index";
 
 import CustomerForm from './customerForm.vue'
@@ -333,6 +336,8 @@ export default {
 
   data() {
     return {
+      shelfSpaceName: "",
+      shelfSpaceId: "",
       warehouseRequestObj: {
         type: 'normal', state: 'enable'
       },
@@ -440,8 +445,8 @@ export default {
       activeName: "orderInfo",
       flowTemplateJson: {},
       flowData: {},
-      warehouseCode:"",
-      classAttributeList:[],
+      warehouseCode: "",
+      classAttributeList: [],
     }
   },
   created() {
@@ -475,21 +480,39 @@ export default {
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
     },
     // 打开选择库位弹框
-    openSeleceWareDialog(row, index) {
+    openSeleceWareDialog(row, index,type) {
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库!")
       this.wareHouseVisible = true
       this.$nextTick(() => {
-        this.$refs.WareHouseForms.initData(this.dataForm.warehouseId)
+        this.$refs.WareHouseForms.initData(this.dataForm.warehouseId,type)
       })
-      this.currentProductIndex = index
+      if (index) this.currentProductIndex = index
+
     },
     // 所选的库位信息
-    selectWareHouseFun(data) {
+    selectWareHouseFun(data,type) {
       console.log("库位信息", data);
       let index = this.currentProductIndex
-      this.$set(this.productData[index], 'shelfSpaceName', data.name)
-      this.$set(this.productData[index], 'warehouseId', data.warehouseId)
-      this.$set(this.productData[index], 'shelfSpaceId', data.id)
+      if(!type){
+        this.shelfSpaceId = data.id
+        this.shelfSpaceName = data.name
+      }
+      if (this.productData.length) {
+        this.productData.forEach(item => {
+          if (!item.shelfSpaceId) {
+            this.$set(item, 'shelfSpaceName', data.name)
+            this.$set(item, 'warehouseId', data.warehouseId)
+            this.$set(item, 'shelfSpaceId', data.id)
+          }
+        });
+        if (index) {
+          this.$set(this.productData[index], 'shelfSpaceName', data.name)
+          this.$set(this.productData[index], 'warehouseId', data.warehouseId)
+          this.$set(this.productData[index], 'shelfSpaceId', data.id)
+        }
+      }
+      this.index=""
+
     },
 
 
@@ -583,7 +606,7 @@ export default {
 
 
 
- 
+
 
         item.sourceNo = this.dataForm.sourceNo
         item.moveId = this.dataForm.id
@@ -591,6 +614,13 @@ export default {
 
         this.productData.push(item)
       });
+      this.productData.forEach(item => {
+          if (!item.shelfSpaceId) {
+            this.$set(item, 'shelfSpaceName', this.shelfSpaceName)
+            this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+            this.$set(item, 'shelfSpaceId', this.shelfSpaceId)
+          }
+        });
       console.log("this.dataFormTwo", this.productData);
     },
     // 产品信息列表多选
@@ -708,7 +738,7 @@ export default {
 
 
 
-  
+
     // 选择业务类型
     selectSourceTypeFun(val) {
       console.log(val);
@@ -754,7 +784,7 @@ export default {
         this.dataForm.warehouseType = ""
         return
       }
-      this.allocationFlag=data[0].all.locationStatus=='disabled'?false:true
+      this.allocationFlag = data[0].all.locationStatus == 'disabled' ? false : true
 
       this.dataForm.warehouseId = data[0].id
       this.dataForm.warehouseName = data[0].name
@@ -763,8 +793,8 @@ export default {
     goBack() {
       this.$emit('close', true)
     },
-   // 获取仓库id
-   getWarehouseListFun() {
+    // 获取仓库id
+    getWarehouseListFun() {
       getWarehouseList({ code: this.warehouseCode }).then(res => {
         this.dataForm.warehouseName = res.data[0].name
         this.dataForm.warehouseId = res.data[0].id
@@ -788,12 +818,12 @@ export default {
     // { label: "外协退料", value: "inbound_external_return" },
     // { label: "外协收货", value: "inbound_external" },
     // { label: "外协退货", value: "outbound_external" },
-    init(data, btnType, businessType, classAttributeList,warehouseCode) {
+    init(data, btnType, businessType, classAttributeList, warehouseCode) {
       console.log("11", data, btnType, businessType);
       // this.visible = true
       this.dataForm.businessType = businessType
-      this.warehouseCode=warehouseCode
-      this.classAttributeList = classAttributeList 
+      this.warehouseCode = warehouseCode
+      this.classAttributeList = classAttributeList
       this.btnType = btnType
       this.selectcustomerObj.type = 'supplier'
       this.$set(this.orderForm, 'receivingStatus', 'not_finished')
@@ -819,13 +849,13 @@ export default {
 
         getpurPurchaseReceiptReturnGoodsdetail(data.id).then(res => {
           console.log("详情", res);
-          let filteredArray = res.data.noticeLineList.filter(item => classAttributeList.includes(item.classAttribute) ); 
+          let filteredArray = res.data.noticeLineList.filter(item => classAttributeList.includes(item.classAttribute));
 
           // if(businessType == 'inbound_purchase'){
           //   filteredArray=filteredArray.filter(item => item.qualifiedQuantity>item.receiptQuantity);
           // }
           if (filteredArray.length) {
-            filteredArray.forEach(item => { 
+            filteredArray.forEach(item => {
               item.sourceNo = this.dataForm.sourceNo
               item.moveId = this.dataForm.id
               item.num = item.requiredReceivedQuantity
@@ -1011,7 +1041,7 @@ export default {
                 this.submitmethodsTitle = "提交成功"
 
               }
-             
+
               this.tipsvisible = true
 
 
@@ -1167,6 +1197,7 @@ export default {
 ::v-deep .el-tabs__header {
   margin-bottom: 5px !important;
 }
+
 .productInfo ::v-deep.el-collapse-item__wrap {
   padding: 0;
 }

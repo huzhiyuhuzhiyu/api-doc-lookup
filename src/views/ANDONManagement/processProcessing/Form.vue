@@ -21,7 +21,7 @@
       </div>
       <el-dialog title="处理" :close-on-click-modal="false" :visible.sync="visible" class="JNPF-dialog JNPF-dialog_center"
         lock-scroll append-to-body width='600px'>
-        <el-form ref="dealForm" :model="dealForm" label-width="80px">
+        <el-form ref="dealForm" :model="dealForm" label-width="120px">
           <el-form-item label="处理描述：" prop="processDescription">
             <el-input v-model="dealForm.processDescription" placeholder="请输入处理描述" type="textarea" :rows="4" />
           </el-form-item>
@@ -62,6 +62,7 @@ export default {
         { prop: "abnormalContent", label: "申请内容", value: "", type: "input", sm: 6, itemDisabled: true },
         { prop: "equipmentName", label: "设备名称", value: "", type: "input", sm: 6, itemDisabled: true },
         { prop: "productionOrderNo", label: "生产单号", value: "", type: "input", sm: 6, itemDisabled: true },
+        { prop: "planHandler", label: "计划处理人", value: "", type: "input", sm: 6, itemDisabled: true },
       ],
       dealForm: {
         processDescription: '',

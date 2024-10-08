@@ -3,19 +3,27 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
+          <template v-for="item in searchList">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="search('basic')" />
 
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.orderNo" placeholder="请输入出入库单号" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.partnerName" placeholder="请输入客户名称" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
+
+
+
           <el-col :span="5">
             <el-form-item>
               <el-date-picker v-model="createRequirementDate" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
@@ -27,7 +35,7 @@
 
           <el-col :span="6">
             <el-form-item>
-              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
+              <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
                 {{ $t('common.search') }}</el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{
                 $t('common.reset') }}
@@ -63,26 +71,31 @@
         <JNPF-table v-loading="listLoading" @selection-change="handeleProductInfoData" hasC highlight-current-row
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
           :setColumnDisplayList="columnList" :checkSelectable="checkSelectable">
-          <el-table-column prop="orderNo" label="出入库单号" min-width="240" sortable="custom" />
+          <el-table-column prop="orderNo" label="出入库单号" min-width="200" sortable="custom" />
           <el-table-column prop="partnerName" label="客户名称" min-width="180" sortable="custom" />
           <el-table-column prop="partnerCode" label="客户编码" min-width="180" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
           <el-table-column prop="drawingNo" label="品名规格" min-width="180" sortable="custom" />
-          <el-table-column prop="businessType" label="发/退货类型" min-width="180" sortable="custom">
+          <el-table-column prop="businessType" label="发/退货类型" min-width="150" sortable="custom">
             <template slot-scope="scope">
               <div v-if="scope.row.businessType == 'outbound_sale_send'">发货</div>
               <div v-else-if="scope.row.businessType == 'inbound_sale_return'">退货</div>
             </template>
           </el-table-column>
-          <el-table-column prop="mainUnit" label="单位" min-width="180" />
-          <el-table-column prop="num" label="出入库数量" min-width="180" />
-          <el-table-column prop="costPrice" label="单价(含税)" min-width="140" />
-          <el-table-column prop="taxRate" label="税率(%)" min-width="140" />
-          <el-table-column prop="totalAmount" label="金额" min-width="140">
+          <el-table-column prop="mainUnit" label="单位" min-width="80" />
+          <el-table-column prop="num" label="出入库数量" min-width="120" />
+          <el-table-column prop="costPrice" label="单价(含税)" min-width="120" />
+          <el-table-column prop="taxRate" label="税率" min-width="80" >
+            <template slot-scope="scope">
+              <div>{{ scope.row.taxRate }}%</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="totalAmount" label="金额" min-width="80">
             <template slot-scope="scope">
               <div v-if="scope.row.businessType == 'outbound_sale_send'" style="color: #67C23A">+{{
                 scope.row.totalAmount }}</div>
-              <div v-else-if="scope.row.businessType == 'inbound_sale_return'" style="color:red">-{{ scope.row.totalAmount
+              <div v-else-if="scope.row.businessType == 'inbound_sale_return'" style="color:red">-{{
+                scope.row.totalAmount
                 }}</div>
             </template>
           </el-table-column>
@@ -114,13 +127,19 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import JNPFForm from './Form'
 import moment from 'moment'
-import { excelExport  } from '@/api/basicData/index'
+import { excelExport } from '@/api/basicData/index'
 export default {
   name: 'salefinAccount',
   components: { JNPFForm, ExportForm, SuperQuery },
   data() {
     return {
-
+      superQuery: {},
+      superForm: {},
+      basicQuery: {},
+      searchList: [
+        { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+      ],
       columnList: ["partnerCode", "productCode", "productName", "createByName"],
       superQueryVisible: false,
       title: "更多查询",
@@ -159,7 +178,6 @@ export default {
         },
       ],
       createRequirementDate: [],
-      deliveryDate: [],
       selectData: [],                    // 选中的数据 带到form页
       total: 0,
       formVisible: false,
@@ -184,7 +202,7 @@ export default {
           label: "产品编码",
           type: 'input'
         },
-     
+
         {
           prop: 'productDrawingNo',
           label: "品名规格",
@@ -195,26 +213,7 @@ export default {
           label: "单位",
           type: 'input'
         },
-        {
-          prop: 'num',
-          label: "出入库数量",
-          type: 'input'
-        },
-        {
-          prop: 'price',
-          label: "单价(含税)",
-          type: 'input'
-        },
-        {
-          prop: 'taxRate',
-          label: "税率(%)",
-          type: 'input'
-        },
-        {
-          prop: 'excludingTaxAmount',
-          label: "金额",
-          type: 'input'
-        },
+
         {
           prop: 'createTime',
           label: '创建时间',
@@ -236,13 +235,14 @@ export default {
     }
   },
   created() {
-    this.initData()
+    this.superForm = this.listQuery
+    this.search('basic')
   },
   methods: {
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     exportType(data, ref) {
       if (data.length) {
@@ -310,6 +310,9 @@ export default {
       if (newProp === 'product_name') {
         newProp = 'productName'
       }
+      if (newProp === 'partner_name') {
+        newProp = 'partnerName'
+      }
       this.listQuery.orderItems[0].asc = order !== 'descending'
       this.listQuery.orderItems[0].column = order === null ? "" : newProp
       this.initData()
@@ -337,7 +340,7 @@ export default {
         this.listQuery.startTime = ''
         this.listQuery.endTime = ''
       }
-   
+
       getsalefinAccountList(this.listQuery).then(res => {
         console.log(res, '销售发/退货列表');
         res.data.records.forEach(item => {
@@ -358,18 +361,35 @@ export default {
         this.listLoading = false
       })
     },
-    search() {
+    search(type) {
       Object.keys(this.listQuery).forEach(key => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
       this.listQuery.pageNum = 1
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       this.initData()
     },
     reset() {
       this.$refs['tableForm'].$refs.JNPFTable.clearSort()
 
-      this.listQuery = {
+      this.superForm =this.listQuery = {
         orderItems: [{
           asc: false,
           column: ""
@@ -386,9 +406,15 @@ export default {
         businessType: 'send_return',
         superQuery: {},
       },
-        this.createRequirementDate = []
-      this.deliveryDate = []
-      this.search()
+        this.searchList = [
+          { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
+          { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+
+        ]
+      this.createRequirementDate = []
+      this.$refs.SuperQuery.conditionList = []
+
+      this.search('basic')
     },
     // addSupplier(id, type) {
     //   this.formVisible = true
@@ -433,7 +459,7 @@ export default {
 
 .JNPF-common-search-box {
   padding: 8px 0 !important;
-    margin-left: 0!important; 
+  margin-left: 0 !important;
   margin-bottom: 5px;
 }
 
@@ -465,7 +491,8 @@ export default {
 .el-tabs__nav-scroll {
   padding-left: 0;
 }
-.JNPF-common-head{
-  padding: 8px!important
+
+.JNPF-common-head {
+  padding: 8px !important
 }
 </style>

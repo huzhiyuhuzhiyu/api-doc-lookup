@@ -1262,6 +1262,14 @@ export default {
       this.approvalFlag = approvalFlag
       this.btnType = btnType
       console.log(this.btnType, 'this.btnType')
+      if (data) {
+        data.forEach(item => {
+          item.ordersNo = item.orderNo
+        })
+        this.dataFormTwo.productData = data
+        this.dataForm.partnerName = data[0].cooperativePartnerName
+        this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
+      }
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
@@ -1284,6 +1292,7 @@ export default {
             this.dataForm.approvalStatus = ''
             this.dataForm.packingStatus = 'unboxed'
             this.fetchData('WXSH')
+            this.dataForm.salesman = this.userInfo.userName
             res.data.noticeLineList.forEach((item) => {
               item.receivedQuantity = ''
             })
@@ -1302,12 +1311,16 @@ export default {
             }
           }
         })
+      } else {
+        this.fetchData('WXSH')
+        this.dataForm.salesman = this.userInfo.userName
       }
 
       if (this.btnType == 'edit') {
         this.btnText = '继续修改'
       } else if (this.btnType == 'add' || this.btnType == 'copy') {
         this.btnText = '继续新增'
+
       }
     },
     goBack() {

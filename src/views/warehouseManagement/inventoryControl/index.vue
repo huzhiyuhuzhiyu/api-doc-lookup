@@ -46,13 +46,13 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productDrawingNo" placeholder="请输入品名规格" clearable
+              <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productCode" placeholder="请输入产品编码" clearable
+              <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
@@ -249,15 +249,7 @@ export default {
           type: 'input'
         },
 
-        {
-          prop: 'createTime',
-          label: '创建时间',
-          type: 'datetimerange',
-          valueFormat: "yyyy-MM-dd HH:mm:ss",
-          startPlaceholder: '创建开始时间',
-          endPlaceholder: '创建结束时间',
-          pickerOptions: this.global.timePickerOptions
-        },
+      
 
 
 
@@ -420,6 +412,7 @@ export default {
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+      this.filterText=""
       this.$refs.SuperQuery.conditionList = []
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.selectedKeys = [];

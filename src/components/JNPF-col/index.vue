@@ -25,7 +25,7 @@
 <!-- value 绑定的对象(使用v-model绑定) 示例：{} -->
 <!-- openMode 表单打开方式（新建、编辑、只读） -->
 <template>
-  <el-form label-position="top" :model="value" v-bind="tabContent" ref="main">
+  <el-form :label-position="labelPosition" :model="value" v-bind="tabContent" ref="main">
     <el-row :gutter="30" class="custom-row">
 
       <FormItem v-for="item in tabContent" :key="item.prop+item.label+item.content" :item="item" v-bind="item" :value="value[item.prop]"
@@ -48,6 +48,10 @@ export default {
     return {}
   },
   props: {
+    labelPosition:{
+      type: String,
+      default: 'top'
+    },
     value: {
       type: Object,
       required: true

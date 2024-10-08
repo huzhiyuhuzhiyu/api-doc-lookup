@@ -2,7 +2,7 @@
 const baseRouter = [
     {
 	path: '/',
-	component: (resolve) => require(['@/views/basic/dashboard'], resolve),
+	component: (resolve) => require(['@/views/commonPage'], resolve),
 	name: 'home',
 	meta: {
 		title: 'home',

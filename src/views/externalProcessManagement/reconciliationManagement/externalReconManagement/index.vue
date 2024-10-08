@@ -309,13 +309,9 @@ export default {
       this.visible = true
     },
     sortChange({ prop, order }) {
-      let newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-      if (newProp === 'product_code') {
-        newProp = 'productCode'
-      }
-      if (newProp === 'product_name') {
-        newProp = 'productName'
-      }
+      let newProp
+      if (prop === 'partnerName') { newProp = prop }
+      else { newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase()); }
       this.listQuery.orderItems[0].asc = order !== 'descending'
       this.listQuery.orderItems[0].column = order === null ? "" : newProp
       this.initData()

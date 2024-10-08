@@ -5,17 +5,24 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.planNo" @keyup.enter.native="search()" placeholder="计划单号" clearable />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.productDrawingNo" @keyup.enter.native="search()" placeholder="品名规格"
-                  clearable />
-              </el-form-item>
-            </el-col>
+            <template v-for="item in searchList">
+              <el-col :span="item.searchType === 3 ? 6 : 4">
+                <el-form-item>
+                  <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                    @keyup.enter.native="search('basic')" />
+
+                  <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                    clearable>
+                    <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                      :value="item2.value"></el-option>
+                  </el-select>
+                  <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                    :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                    :type="item.dateType"
+                    :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                </el-form-item>
+              </el-col>
+            </template>
             <el-col :span="6">
               <el-form-item>
                 <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
@@ -25,7 +32,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
                   {{ $t('common.search') }}</el-button>
                 <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
                 </el-button>
@@ -159,6 +166,13 @@ export default {
   components: { PlanForm,Form, ExportForm, SuperQuery },
   data() {
     return { 
+      superQuery: {},
+      superForm: {},
+      basicQuery: {},
+      searchList: [
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
+      ],
       columnList: ["classAttribute", "planType", "planQuantity", "qualificationRate", "relaxQuantity", 'createByName'],
       superQueryVisible: false,
       exportFormVisible: false,
@@ -250,15 +264,23 @@ export default {
             {label:"无",value:false},
           ]
         },
-        
         {
-          prop: 'deliverDate',
-          label: '计划日期',
+          prop: 'planStartDate',
+          label: '计划开始日期',
           type: 'daterange',
           valueFormat: "yyyy-MM-dd",
           startPlaceholder: '开始日期',
           endPlaceholder: '结束日期',
         },
+        {
+          prop: 'planEndDate',
+          label: '计划结束日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+        },
+        
         {
           prop: 'mainUnit',
           label: "单位",
@@ -359,7 +381,8 @@ export default {
 
 
   created() {
-    this.initData()
+    this.superForm=this.orderForm
+    this.search('basic')
     this.getProductClassFun()
   },
   methods: {
@@ -679,7 +702,7 @@ export default {
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
@@ -707,26 +730,7 @@ export default {
       this.initData()
     },
 
-
-    dataFormSubmit() {
-      this.orderForm.pageNum = 1
-      Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
-        let item = this.orderForm[key]
-        this.orderForm[key] = typeof item === 'string' ? item.trim() : item
-      })
-
-      if (this.deliveryDateArr && this.deliveryDateArr.length > 0) {
-        this.orderForm.planSsd = this.deliveryDateArr[0]
-        this.orderForm.planSed = this.deliveryDateArr[1]
-      } else {
-        this.orderForm.planSsd = ""
-        this.orderForm.planSed = ""
-      }
-
-      this.initData()
-
-    },
-
+ 
 
     // 关闭新建编辑页面
     closeForm(isRefresh) {
@@ -751,13 +755,43 @@ export default {
     },
 
 
-    search() {
-      this.dataFormSubmit()
+    search(type) {
+      this.orderForm.pageNum = 1
+      Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
+        let item = this.orderForm[key]
+        this.orderForm[key] = typeof item === 'string' ? item.trim() : item
+      })
+
+      if (this.deliveryDateArr && this.deliveryDateArr.length > 0) {
+        this.orderForm.planSsd = this.deliveryDateArr[0]
+        this.orderForm.planSed = this.deliveryDateArr[1]
+      } else {
+        this.orderForm.planSsd = ""
+        this.orderForm.planSed = ""
+      }
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
+      this.initData()
     },
 
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.deliveryDateArr = []
+      this.superForm=this.deliveryDateArr = []
       this.orderForm = {
         planNo: "",
         documentStatus:"submit",
@@ -781,7 +815,11 @@ export default {
         },
       },
       this.$refs.SuperQuery.conditionList = []
-      this.search()
+      this. searchList= [
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
+      ]
+      this.search('basic')
     },
 
  

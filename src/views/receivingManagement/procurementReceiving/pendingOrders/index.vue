@@ -45,7 +45,7 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
-            <topOpts @add="addSupplier('', 'add')">
+            <topOpts @add="addSupplier('', 'add')" :addText="'新建收货单'">
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                 导出
               </el-button>
@@ -79,19 +79,12 @@
             <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
             <!-- <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" /> -->
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" min-width="120" />
+            <el-table-column prop="mainUnit" label="单位" width="60" />
             <el-table-column prop="purchaseQuantity" label="数量" min-width="100" sortable="custom" />
             <el-table-column prop="waitReceiptNum" label="待收货数量" min-width="130" sortable="custom" />
 
             <el-table-column prop="deliveryDate" label="收货日期" min-width="140" sortable="custom" />
-            <el-table-column prop="standardValue" label="规值" min-width="180" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" min-width="140" label="打字内容" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" min-width="140" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="140" sortable="custom" />
-            <el-table-column prop="oil" label="油脂" min-width="120" sortable="custom" />
-            <el-table-column prop="oilQuantity" label="油脂量" min-width="140" sortable="custom" />
-            <el-table-column prop="clearance" label="游隙" min-width="120" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" min-width="140" sortable="custom" />
+       
             <el-table-column prop="remark" label="备注" min-width="120" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
@@ -245,7 +238,7 @@ export default {
           label: '单位',
           type: 'input'
         },
-       
+
 
         {
           prop: 'deliveryDate',
@@ -257,54 +250,6 @@ export default {
           pickerOptions: this.global.timePickerOptions
         },
 
-        {
-          prop: 'standardValue',
-          label: '规值',
-          type: 'input'
-        },
-        {
-          prop: 'sealingCoverTyping',
-          label: '打字内容',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'accuracyLevel',
-          label: '精度等级',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'vibrationLevel',
-          label: '振动等级',
-          type: 'select',
-          options: []
-        },
-
-        {
-          prop: 'oil',
-          label: '油脂',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'oilQuantity',
-          label: '油脂量',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'clearance',
-          label: '游隙',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'packagingMethod',
-          label: '包装方式',
-          type: 'select',
-          options: []
-        },
         {
           prop: 'createTime',
           label: '创建时间',

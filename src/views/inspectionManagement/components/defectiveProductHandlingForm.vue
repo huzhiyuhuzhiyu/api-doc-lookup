@@ -901,10 +901,11 @@ export default {
       if (id) {
         if (btnType === 'add') {
           this.inspectionOrderNoChange(id)
-          this.fetchData('UQDH', true)
+
           this.refeshDataFormItems()
           this.refeshLinesListItems()
           this.title = '新建不良品处理单'
+          this.fetchData('UQDH', true)
           this.formLoading = false
         }
         if (btnType === 'anew') {
@@ -1248,7 +1249,7 @@ export default {
           let oldObj = { ...res.data.inspection, approvalFlag: false }
           delete oldObj.treatmentResults
           this.dataForm = oldObj
-
+          this.dataForm.orderNo = ''
           this.dataForm.inspectionOrderNo = res.data.inspection.orderNo
           this.dataForm.inspectionUnqualifiedQuantity = this.dataForm.unqualifiedQuantity
           // this.dataForm.inspectionUnqualifiedQuantity = res.data.inspection.unqualifiedQuantity

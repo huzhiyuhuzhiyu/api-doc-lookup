@@ -43,6 +43,13 @@ export function insertOutOrder(data) {
       data
     })
   }
+  // 删除
+  export const deletePurPurchaseOrder = (id) => {
+    return request({
+      url: `/api/erp/purPurchaseOrder/remove/${id}`,
+      method: 'delete'
+    })
+  }
   
     // 采购和外协订单明细-报表
     export function purchaseOrderReport(data) {

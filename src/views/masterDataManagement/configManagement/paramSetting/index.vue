@@ -24,14 +24,13 @@
             <template slot-scope="scope">
               <div v-if="scope.row.businessCode == 'warehouse'">
                 <el-radio-group v-model="scope.row.radio" @input="radioChange(scope.row)">
-                  <div style="display: flex;">
-                    <el-radio :label="0">
-                      <div class="multiline">{{ scope.row.radioOff }}</div>
-                    </el-radio>
-                    <el-radio :label="1">
-                      <div class="multiline">{{ scope.row.radioOn }}</div>
-                    </el-radio>
-                  </div>
+
+                  <el-radio :label="0">
+                    {{ scope.row.radioOff }}
+                  </el-radio>
+                  <el-radio :label="1">
+                    {{ scope.row.radioOn }}
+                  </el-radio>
 
                 </el-radio-group>
               </div>
@@ -46,7 +45,6 @@
                   </template>
                 </el-input>
               </div>
-
             </template>
           </el-table-column>
           <el-table-column prop="description" label="说明">
@@ -220,8 +218,7 @@ export default {
           width = 200
         }
         if (item.configKey == 'inbound_purchase' || item.configKey == 'inbound_external') {
-
-          width = 240
+          width = 290
         }
         // if (flag) {
         //   if (item.configKey == 'collect_exceed_picking') {

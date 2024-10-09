@@ -748,6 +748,9 @@ export default {
       dataForm: {
         exchangeGoodsFlag: false,
         inspectionStatus: '',
+        warehouseId: '',
+        createTime: '',
+        createByName: '',
         // orderCategory: "assembly",
         returnDeliveryType: 'back',
         notificationType: 'procure',
@@ -1501,9 +1504,7 @@ export default {
       }
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
-          // this.dataForm = res.data.notice
-          this.$set(this.dataForm, 'orderNo', res.data.notice.orderNo)
-          this.$set(this.dataForm, 'warehouseId', res.data.notice.warehouseId)
+          this.dataForm = res.data.notice
 
           if (this.btnType == 'copy') {
             this.dataForm.inspectionStatus = ''

@@ -82,7 +82,7 @@
                 </template>
               </el-table-column>
             </JNPF-table>
-            <GridFileList class="table-style" v-else @item-click="listItemClick" @command="allItemCommandHandler"  :list="list" :file-options="allFileOptions"></GridFileList>
+            <GridFileList v-loading="gridFileListLoading" class="table-style" v-else @item-click="listItemClick" @command="allItemCommandHandler"  :list="list" :file-options="allFileOptions"></GridFileList>
           </div>
         </div>
       </el-tab-pane>
@@ -176,7 +176,7 @@
                 </template>
               </el-table-column>
             </JNPF-table>
-            <GridFileList class="table-style" v-else @command="shareToMeItemCommandHandler"  :list="list" :file-options="shareToMeFileOptions"></GridFileList>
+            <GridFileList v-loading="gridFileListLoading" class="table-style" v-else @command="shareToMeItemCommandHandler"  :list="list" :file-options="shareToMeFileOptions"></GridFileList>
           </div>
         </div>
       </el-tab-pane>
@@ -228,7 +228,7 @@
                 </template>
               </el-table-column>
             </JNPF-table>
-            <GridFileList class="table-style" v-else @command="trashItemCommandHandler"  :list="list" :file-options="trashFileOptions"></GridFileList>
+            <GridFileList v-loading="gridFileListLoading" class="table-style" v-else @command="trashItemCommandHandler"  :list="list" :file-options="trashFileOptions"></GridFileList>
           </div>
         </div>
       </el-tab-pane>
@@ -242,7 +242,7 @@
           width="80%">
           <Detail @close="previewVisible = false" style="height: 90vh" ref="detail"></Detail>
       </el-dialog>
-
+      <Preview  class="search-left" :visible.sync="previewVisible" :file="previewFile" />
   </div>
 </template>
 
@@ -261,6 +261,7 @@ import {
     txtSuffix, Type2SuffixArr,
     wordSuffix
 } from "@/views/drawingDocument/document/utils";
+import Preview from "@/components/upload-wj/Preview.vue";
 const ALL_TEXT ='全部'
 
 const fileExtFilterOption =Object.freeze( [
@@ -398,13 +399,20 @@ const FILE_OPERATE ={
 export default {
   name: 'extend-document',
   components: {
+      Preview,
     SearchPlane:()=>import('@/views/drawingDocument/document/SearchPlane.vue'),
     Detail:()=>import('@/views/extend/documentPreview/Detail.vue') ,userBox, folderTree, FileUploader,GridFileList:()=>import('./GridFileList'),
     SwitchListAndFilter:()=>import('./SwitchListAndFilter')
   },
   data() {
     return {
+      gridFileListLoading:false,
       previewVisible:false,
+      previewFile:{
+          name:'',
+          filename:'',
+          url:''
+      },
       userBoxVisible: false,
       folderTreeVisible: false,
       detailVisible: false,
@@ -539,11 +547,10 @@ export default {
        this.listCopy = this.listCopy.filter(item=>!ids.includes(item.id))
    },
    async searchChange(data){
-       if(data.keyword === ''){
-           this.searchList = []
-           return
-       }
-
+        if(data.keyword === ''){
+           return this.searchList = []
+        }
+        this.searchPlaneLoading = true
         const { start,end }= timeOptionHandler(data[TIME_OPTION_FLAG])
         const fileType = fileExtOptionHandler(data[FILE_EXT_OPTION_FLAG])
         const documentType = fileCategoryOptionHandler(data[FILE_CATEGORY_OPTION_FLAG])
@@ -570,7 +577,6 @@ export default {
 
         }
         try {
-           this.searchPlaneLoading = true
            const res = await AllList(params)
            this.searchList = res.data.list.filter(item=>isFile(item))
         }catch (e) {
@@ -581,20 +587,6 @@ export default {
 
     },
     searchItemClick({item,position,hideSearchPanel}){
-        // const item =  {
-        //     "id": "1839570984371814402",
-        //     "fullName": "轴管通-文件管理需求说明.docx",
-        //     "type": 1,
-        //     "creatorTime": "2024-09-27 15:41:14",
-        //     "isShare": 0,
-        //     "fileSize": "1895532",
-        //     "parentId": "1839217958427623425",
-        //     "fileExtension": "docx",
-        //     "canEdit": true,
-        //     "source": "全部文档/465",
-        //     "sourceId": "全部文档/1839217958427623425"
-        // }
-        // console.log(item,position)
         if(position === 'right'){
             const sourceName = item.source.split('/')
             const sourceId = item.sourceId.split('/')
@@ -603,15 +595,9 @@ export default {
                 id:sourceId[id],
                 fullName
             }))
-
             this.parentId = sourceId[sourceId.length-1]
-            // this.levelList = [{
-            //     id: "0",
-            //     fullName: '全部文档'
-            // }]
             hideSearchPanel()
-            this.reset()
-            return
+            return this.reset()
         }
         return this.listItemClick(item)
     },
@@ -619,13 +605,12 @@ export default {
         if(!isFile(item)){
           return this.openFolder(item)
         }
-        this.$message.info("文件预览功能暂未开放,敬请期待")
-       // const res = await DocumentInfo(item.id)
-       //  console.log(res)
-       //  this.previewVisible = true
-       //  this.$nextTick(()=>{
-       //      this.$refs.detail.init(item.id,item.fullName,'yozoOnlinePreview')
-       //  })
+        this.previewFile = {
+            name:item.fullName,
+            filename:item.filePath,
+            url:`/api/file/Image/document/${item.filePath}`
+        }
+        this.previewVisible = true
     },
 
     allItemCommandHandler(command, {id,parentId},index){
@@ -697,38 +682,72 @@ export default {
       })
       this.initData()
     },
-    initData() {
-      this.listLoading = true
-      let data = { keyword: this.keyword }
-      if (this.activeTab === 'allPanel') {
-        data = { ...data, parentId: this.parentId }
-        AllList(data).then(res => {
-          this.list = res.data.list
-          this.listCopy = res.data.list
-          this.listLoading = false
-        })
-      }
-      if (this.activeTab === 'shareoutPanel') {
-        ShareOutList(data).then(res => {
-          this.list = res.data.list
-          this.listCopy = res.data.list
-          this.listLoading = false
-        })
-      }
-      if (this.activeTab === 'sharetomePanel') {
-        ShareTomeList(data).then(res => {
-          this.list = res.data.list
-          this.listCopy = res.data.list
-          this.listLoading = false
-        })
-      }
-      if (this.activeTab === 'trashPanel') {
-        TrashList(data).then(res => {
-          this.list = res.data.list
-          this.listCopy = res.data.list
-          this.listLoading = false
-        })
-      }
+    async initData() {
+      // this.listLoading = true
+      // this.gridFileListLoading = true
+      // let data = { keyword: this.keyword }
+      // if (this.activeTab === 'allPanel') {
+      //   data = { ...data, parentId: this.parentId }
+      //   AllList(data).then(res => {
+      //     this.list = res.data.list
+      //     this.listCopy = res.data.list
+      //     this.listLoading = false
+      //     this.gridFileListLoading = true
+      //   })
+      // }
+      // if (this.activeTab === 'shareoutPanel') {
+      //   ShareOutList(data).then(res => {
+      //     this.list = res.data.list
+      //     this.listCopy = res.data.list
+      //     this.listLoading = false
+      //   })
+      // }
+      // if (this.activeTab === 'sharetomePanel') {
+      //   ShareTomeList(data).then(res => {
+      //     this.list = res.data.list
+      //     this.listCopy = res.data.list
+      //     this.listLoading = false
+      //   })
+      // }
+      // if (this.activeTab === 'trashPanel') {
+      //   TrashList(data).then(res => {
+      //     this.list = res.data.list
+      //     this.listCopy = res.data.list
+      //     this.listLoading = false
+      //   })
+      // }
+        this.listLoading = true
+        this.gridFileListLoading = true
+        let data = { keyword: this.keyword }
+        let api = AllList
+        switch (this.activeTab) {
+            case "allPanel":
+              data.parentId= this.parentId
+              break;
+            case "shareoutPanel":
+                api = ShareOutList
+                break;
+            case "sharetomePanel":
+                api = ShareTomeList
+                break;
+            case "trashPanel":
+                api = TrashList
+                break;
+        }
+        try {
+            const res =await api(data)
+            this.list = res.data.list
+            this.listCopy = res.data.list
+        }catch (e) {
+            console.error(e)
+        }finally {
+            this.listLoading = false
+            this.gridFileListLoading = false
+        }
+
+
+
+
     },
     search() {
       this.initData()

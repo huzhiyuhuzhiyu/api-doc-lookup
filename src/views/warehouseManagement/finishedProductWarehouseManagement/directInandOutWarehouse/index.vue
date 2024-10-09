@@ -96,7 +96,7 @@
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" :key="105"
                         v-if="dataForm.documentType == 'outbound'" />
 
-                      <el-table-column prop="drawingNo" label="品名规格" min-width="160" :key="6"
+                      <el-table-column prop="drawingNo" label="品名规格" min-width="300" :key="6"
                         v-if="dataForm.documentType == 'inbound'"> </el-table-column>
                       <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                       <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"
@@ -146,7 +146,7 @@
                           </el-input>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="taxRate" label="税率(%)" width="120" :key="171">
+                      <el-table-column prop="taxRate" label="税率" width="120" :key="171">
                         <template slot="header">
                           <span class="required">*</span>税率(%)
                         </template>
@@ -696,8 +696,7 @@ export default {
       })
     },
     getProductFun() {
-      console.log(21341234);
-      console.log(this.scanResult);
+       
       if (!this.scanResult) return
       let obj = {
         productName: "",
@@ -718,7 +717,6 @@ export default {
         pageSize: 20,
       }
       getProductList(obj).then(res => {
-        console.log("产品信息", res);
         res.data.records.forEach(item => {
           item.productCode = item.code
           item.productDrawingNo = item.drawingNo
@@ -758,19 +756,17 @@ export default {
     },
     // 所选择的客户数据
     handleSelectCustomer(data) {
-      console.log("客户信息", data);
       this.dataForm['cooperativePartnerId'] = data.id
       this.dataForm['partnerName'] = data.name
       this.customerInfo = data
     },
     changeTaxRate(row, index) {
-      console.log(row, index);
       let productArr = [...this.productData]
       productArr[index].excludingTaxCostPrice = this.jnpf.numberFormat(row.costPrice / (1 + (row.taxRate * 1 / 100)), 4)
-      console.log("productArr[index].excludingTaxCostPrice", productArr[index].excludingTaxCostPrice);
       productArr[index].excludingTaxTotalAmount = this.jnpf.numberFormat((row.excludingTaxCostPrice * row.num), 4)
       productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.costPrice, row.excludingTaxCostPrice]), 6)]), 6)
       this.productData = productArr
+      alert(3)
     },
     // 打开选择批次号弹框
     openSeleceBatchNumberDialog(data, index) {
@@ -783,7 +779,6 @@ export default {
     },
     // 选择批次
     selectBatchNumberFun(data, index) {
-      console.log("批次号数据", data, index);
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
       this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
       this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
@@ -802,7 +797,6 @@ export default {
     },
     // 所选的库位信息
     selectWareHouseFun(data) {
-      console.log("库位信息", data);
       let index = this.currentProductIndex
       this.$set(this.productData[index], 'shelfSpaceName', data.name)
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
@@ -828,7 +822,6 @@ export default {
       if (this.dataForm.documentType == 'outbound') {
         this.orderForm.classAttributeList = this.classAttributeList
         getBatchNumber(this.orderForm).then(res => {
-          console.log("产品", res);
 
           this.productList = res.data.records
           this.productTotal = res.data.total
@@ -847,7 +840,6 @@ export default {
         this.listQuery.classAttributeList = this.classAttributeList
         getProductList(this.listQuery)
           .then((res) => {
-            console.log("res.", res);
             this.productList = res.data.records
             this.productTotal = res.data.total
             this.listLoading = false
@@ -862,7 +854,6 @@ export default {
     },
     // 选择产品 (销售发货——多选)
     handleSelectionChangeAllPruduct(val) {
-      console.log("val", val);
       this.selectSaleProductArr = val
     },
     // 销售发货选择产品——重置
@@ -918,9 +909,7 @@ export default {
     submitAllProduct() {
       if (!this.selectSaleProductArr.length) return this.$message.error("请选择产品！")
       this.productVisible = false
-      console.log("this.selectSaleProductArr", this.selectSaleProductArr);
       let arr = JSON.parse(JSON.stringify(this.selectSaleProductArr))
-      console.log("arr", arr);
       arr.forEach(item => {
 
         item.classAttribute = item.classAttribute
@@ -935,7 +924,7 @@ export default {
         item.ordersLineId = ""
         item.totalAmount = ""
         item.taxAmount = ""
-        item.productCode = item.productCode
+        item.productCode = item.code
         item.taxRate = 13
         if (this.dataForm.documentType == 'inbound') {
           item.productsId = item.id
@@ -943,8 +932,7 @@ export default {
         // item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
 
         this.productData.push(item)
-      });
-      console.log("this.dataFormTwo", this.productData);
+      }); 
     },
     // 产品信息列表多选
     handeleProductInfoData(val) {
@@ -1044,6 +1032,7 @@ export default {
       productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.costPrice, row.excludingTaxCostPrice]), 6)]), 6)
 
       this.productData = productArr
+      alert(2)
     },
 
 
@@ -1122,14 +1111,12 @@ export default {
           row.num = row.num.substring(0, 8);
         }
       }
-      console.log("row.excludingTaxCostPrice", row.excludingTaxCostPrice);
-      console.log("row.costPrice", row.costPrice);
       productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.costPrice]), 6)
 
       productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.costPrice, row.excludingTaxCostPrice]), 6)]), 6)
       productArr[index].excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].taxAmount]), 6)
-      console.log("productArr", productArr);
       this.productData = productArr
+      alert(1)
     },
 
 
@@ -1143,7 +1130,6 @@ export default {
 
     // 选择业务类型
     selectDocutementType(val) {
-      console.log(val);
       // 判断当前所选的业务类型是否与上一次一样 不一样 则清空产品列表数据及客户/供应商信息
 
       if (val == 'outbound_sale_send' || val == 'outbound_purchase' || val == 'outbound_pick_out' || val == 'outbound_external_send' || val == 'outbound_other') {
@@ -1192,7 +1178,6 @@ export default {
           partnerCategoryId: "",
           type: "supplier",
         } // 意向客户列表入参
-        console.log(this.dataRule, 'this.dataRule')
         this.dataRule.cooperativePartnerIdText[0].message = '采购供应商不能为空'
         // this.dataRule
       } else if (val == 'outbound_external_send' || val == 'inbound_external_return') {
@@ -1259,7 +1244,6 @@ export default {
 
 
     changeWarehousex(val, data) {
-      console.log("data", data);
       if (!val && !data.length) {
         this.dataForm.warehouseId = ''
         this.dataForm.warehouseName = ''
@@ -1300,7 +1284,6 @@ export default {
       this.oldId = JSON.parse(JSON.stringify(id)) || ""
       this.oldType = JSON.parse(JSON.stringify(btnType))
       this.btnType = btnType
-      console.log("btnty", btnType);
       // this.refeshDataFormItems()
       if (id) {
         this.title = btnType == 'look' ? '查看出入库单' : '编辑出入库单'
@@ -1410,9 +1393,7 @@ export default {
               spaceLines: this.copyLinesData,
               flowData: this.flowData
             }
-            console.log("this.dataForm", this.dataForm);
 
-            console.log(this.productData);
             formMethod(dataObj).then(res => {
               let msg = res.msg
               if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
@@ -1656,7 +1637,6 @@ export default {
           item.taxRate = item.enCode.replace('%', '') * 1
         })
         this.taxRateList = res.data.list
-        console.log("税率", this.taxRateList);
       })
 
     },

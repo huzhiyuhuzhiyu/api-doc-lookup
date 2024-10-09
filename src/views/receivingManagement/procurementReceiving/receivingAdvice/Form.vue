@@ -794,7 +794,8 @@ export default {
       flowData: {},
       approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime: 0
+      endTime: 0,
+      selectArr: []
     }
   },
   computed: {
@@ -1100,22 +1101,22 @@ export default {
       this.searchProductFun()
     },
     submitAllProduct() {
-      if (!this.selectArr.length) return this.$message.error('请选择产品！')
+      if (this.selectArr.length == 0) return this.$message.error('请选择产品！')
       this.productVisible = false
       this.selectArr.forEach((item) => {
         this.$set(item, 'receivedQuantity', item.waitReceiptNum)
         this.dataFormTwo.productData.push(item)
       })
-      let uniqueArr = []
-      let idSet = new Set()
+      // let uniqueArr = []
+      // let idSet = new Set()
 
-      this.dataFormTwo.productData.forEach((item) => {
-        if (!idSet.has(item.id)) {
-          uniqueArr.push(item)
-          idSet.add(item.id)
-        }
-      })
-      this.dataFormTwo.productData = uniqueArr
+      // this.dataFormTwo.productData.forEach((item) => {
+      //   if (!idSet.has(item.id)) {
+      //     uniqueArr.push(item)
+      //     idSet.add(item.id)
+      //   }
+      // })
+      // this.dataFormTwo.productData = uniqueArr
     },
     // },
     // 获取所有订单列表数据
@@ -1493,26 +1494,17 @@ export default {
       console.log(btnType, 'iiiiii')
       this.approvalFlag = approvalFlag
       console.log(data, 'ddd')
-      if (data) {
+      if (data.length !== 0) {
         this.dataFormTwo.productData = data
         this.dataForm.partnerName = data[0].cooperativePartnerName
         this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
       }
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
-          this.dataForm = res.data.notice
+          // this.dataForm = res.data.notice
+          this.$set(this.dataForm, 'orderNo', res.data.notice.orderNo)
+          this.$set(this.dataForm, 'warehouseId', res.data.notice.warehouseId)
 
-          if (res.data.attachmentList) {
-            res.data.attachmentList.forEach((item) => {
-              this.datafilelist.push({
-                name: item.document.fullName,
-                fileSize: item.document.fileSize,
-                filename: item.document.filePath,
-                id: item.document.id,
-                url: item.url
-              })
-            })
-          }
           if (this.btnType == 'copy') {
             this.dataForm.inspectionStatus = ''
             this.dataForm.id = ''
@@ -1543,17 +1535,30 @@ export default {
 
 
           } else if (this.btnType == 'edit' || this.btnType == 'look') {
-            this.dataFormTwo.productData = res.data.noticeLineList
-            this.dataFormTwo.productData.forEach((item) => {
+            let data = res.data.noticeLineList
+            data.forEach((item) => {
               console.log('ooooooo', item)
               item.drawingNo = item.productDrawingNo
             })
+            this.dataFormTwo.productData = data
+
             if (this.btnType === 'edit') {
               this.getBusInfo()
             } else {
               // 流程信息和流转记录
               if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             }
+          }
+          if (res.data.attachmentList.length !== 0) {
+            res.data.attachmentList.forEach((item) => {
+              this.datafilelist.push({
+                name: item.document.fullName,
+                fileSize: item.document.fileSize,
+                filename: item.document.filePath,
+                id: item.document.id,
+                url: item.url
+              })
+            })
           }
         })
       } else {

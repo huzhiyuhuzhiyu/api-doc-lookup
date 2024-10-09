@@ -66,7 +66,7 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column>
-            <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom">
+            <el-table-column prop="orderNo" label="订单号" width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.purchaseOrderId, 'look')">
                   {{ scope.row.orderNo }}
@@ -78,22 +78,22 @@
             <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
             <!-- <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" /> -->
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" min-width="120" />
-            <el-table-column prop="purchaseQuantity" label="数量" min-width="100" sortable="custom" />
-            <el-table-column prop="waitReceiptNum" label="待收货数量" min-width="130" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" width="60" />
+            <el-table-column prop="purchaseQuantity" label="数量" width="80" sortable="custom" />
+            <el-table-column prop="waitReceiptNum" label="待收货数量" width="130" sortable="custom" />
 
-            <el-table-column prop="deliveryDate" label="交货日期" min-width="140" sortable="custom" />
-            <el-table-column prop="standardValue" label="规值" min-width="180" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" min-width="140" label="打字内容" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" min-width="140" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="140" sortable="custom" />
-            <el-table-column prop="oil" label="油脂" min-width="120" sortable="custom" />
-            <el-table-column prop="oilQuantity" label="油脂量" min-width="140" sortable="custom" />
-            <el-table-column prop="clearance" label="游隙" min-width="120" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" min-width="140" sortable="custom" />
-            <el-table-column prop="remark" label="备注" min-width="120" />
-            <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
+            <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
+            <el-table-column prop="standardValue" label="规值" width="100" sortable="custom" />
+            <el-table-column prop="sealingCoverTyping" width="120" label="打字内容" sortable="custom" />
+            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
+            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
+            <el-table-column prop="oil" label="油脂" width="120" sortable="custom" />
+            <el-table-column prop="oilQuantity" label="油脂量" width="140" sortable="custom" />
+            <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
+            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
+            <el-table-column prop="remark" label="备注" width="120" />
+            <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text"

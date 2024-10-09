@@ -55,8 +55,8 @@
 
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="所属销售" prop="salesName">
-                          <el-select v-model="dataForm.salesName" placeholder="请选择所属销售人员" clearable style="width: 100%;"
+                        <el-form-item label="所属销售" prop="salesId">
+                          <el-select v-model="dataForm.salesId" placeholder="请选择所属销售人员" clearable style="width: 100%;"
                             :disabled="salesFlag" filterable @change="selectsales">
                             <el-option v-for="(item, index) in salesList" :key="index" :label="item.name"
                               :value="item.id"></el-option>
@@ -466,8 +466,8 @@
 
                   </el-col>
                   <el-col :sm="6" :xs="24">
-                    <el-form-item label="所属销售" prop="salesName">
-                      <el-select v-model="dataForm.salesName" placeholder="请选择所属销售人员" clearable style="width: 100%;"
+                    <el-form-item label="所属销售" prop="salesId">
+                      <el-select v-model="dataForm.salesId" placeholder="请选择所属销售人员" clearable style="width: 100%;"
                         :disabled="salesFlag" filterable @change="selectsales">
                         <el-option v-for="(item, index) in salesList" :key="index" :label="item.name"
                           :value="item.id"></el-option>
@@ -1330,7 +1330,7 @@ export default {
           { required: true, message: '部门不能为空', trigger: 'no' }
 
         ],
-        salesName: [
+        salesId: [
           { required: true, message: '所属销售不能为空', trigger: 'change' }
         ],
         orderNo: [{ required: true, message: "请输入订单号", trigger: 'blur' }],
@@ -1919,16 +1919,21 @@ export default {
       }
     },
     selectsales(val) {
-      console.log(val, this.dataForm.salesName);
-      this.dataForm.salesId = val
+      console.log(val);
       // 找到 id 为 222 的数据  
       const data = this.salesList.find(item => item.id === val);
 
       // 如果找到了对应数据，就将 name 赋值给 label  
       if (data) {
         console.log(data.name);
-        this.dataForm.salesName = data.name;
-        this.$set(this.dataForm, 'salesName', data.name)
+        this.dataForm.salesName = data.name
+        this.dataForm.salesId = val
+        console.log("1", this.$refs.dataForm);
+        setTimeout(() => {
+          this.$refs.dataForm.clearValidate('salesId')
+
+        }, 100);
+        this.$forceUpdate()
       }
     },
 
@@ -2847,6 +2852,7 @@ export default {
     },
 
     handleConfirm(value) {
+      console.log(this.dataForm);
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
 

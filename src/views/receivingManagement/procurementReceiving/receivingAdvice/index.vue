@@ -475,7 +475,7 @@ export default {
         console.log(id)
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.Form.init(id, btntype,false)
+          this.$refs.Form.init(id, btntype)
         })
         // }, 600);
       }

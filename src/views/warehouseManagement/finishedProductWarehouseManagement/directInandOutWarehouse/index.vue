@@ -96,7 +96,7 @@
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" :key="105"
                         v-if="dataForm.documentType == 'outbound'" />
 
-                      <el-table-column prop="drawingNo" label="品名规格" min-width="160" :key="6"
+                      <el-table-column prop="drawingNo" label="品名规格" min-width="300" :key="6"
                         v-if="dataForm.documentType == 'inbound'"> </el-table-column>
                       <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                       <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"
@@ -935,7 +935,7 @@ export default {
         item.ordersLineId = ""
         item.totalAmount = ""
         item.taxAmount = ""
-        item.productCode = item.productCode
+        item.productCode = item.code
         item.taxRate = 13
         if (this.dataForm.documentType == 'inbound') {
           item.productsId = item.id

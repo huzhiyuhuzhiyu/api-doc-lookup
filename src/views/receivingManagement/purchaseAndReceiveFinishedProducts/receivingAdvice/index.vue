@@ -63,7 +63,7 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column
-            :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" >
+            :checkSelectable="checkSelectable" @selection-change="handleSelectionChange">
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">
@@ -466,7 +466,7 @@ export default {
       console.log(id, btntype)
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype)
+        this.$refs.Form.init(id, btntype, false, [])
       })
     },
     addOrUpdateHandle(id, btntype) {
@@ -499,7 +499,7 @@ export default {
     handleUserRelation(id, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType)
+        this.$refs.Form.init(id, btnType, false, [])
       })
     },
     //确认收货

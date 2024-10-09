@@ -2,21 +2,35 @@
   <el-dialog :title="dialogTitle" :close-on-click-modal="false" append-to-body :visible.sync="visible"
     class="JNPF-dialog JNPF-dialog_center" lock-scroll width="1000px" @close="$emit('refresh')">
     <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm" v-loading="loading" :btnType="btnType" />
-    <JNPF-col-table v-model="dataFormTwo" ref="tableForm" :tableItems="linesListItems" :openMode="openMode"
-      @addth="addequipment_process_relList" @deleteth="delequipment_process_relList" />
+    <!-- <JNPF-col-table v-model="dataFormTwo" ref="tableForm" :tableItems="linesListItems" :openMode="openMode"
+      @addth="addequipment_process_relList" @deleteth="delequipment_process_relList" /> -->
     <span slot="footer" class="dialog-footer">
       <el-button @click="$emit('refresh')">{{ $t('common.cancelButton') }}</el-button>
       <el-button type="primary" @click="dataFormSubmit()" :loading="btnLoading">
         {{ $t('common.submitButton') }}
       </el-button>
     </span>
+    <icon-box :visible.sync="iconBoxVisible" ref="iconBox" :current="dataForm.icon" @choiceIcon="choiceIcon" />
   </el-dialog>
 </template>
 <script>
+import iconBox from '@/components/JNPF-iconBox'
 import { addAbnoramlTypeData, updateAbnoramlTypeData, detailAbnoramlTypeData, checkAbnoramlTypeCode } from '@/api/abnormalManagement/index.js'
 export default {
+  components: { iconBox },
+  props:{
+    parentId:{
+      type: String,
+      default: '-1'
+    },
+    category:{
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
+      iconBoxVisible:false,
       dialogTitle: '',
       visible: false,
       loading: false,
@@ -31,7 +45,7 @@ export default {
   },
   computed: {
     openMode() {
-      return this.dialogTitle === '新建异常' ? '新建' : this.dialogTitle === '编辑异常' ? '编辑' : '只读'
+      return this.btnType === 'add' ? '新建' : this.btnType === 'edit' ? '编辑' : '只读'
     }
   },
   created() {
@@ -51,7 +65,7 @@ export default {
     setDataFormItems() {
       this.dataFormItems = [
         {
-          prop: "code", label: "类型编码", value: "", type: "input",
+          prop: "code", label: this.category === 'type' ? "类型编码" : '内容编码', value: "", type: "input",
           itemRules: [
             { required: true, trigger: "blur" },
             { validator: this.formValidate('enCode'), trigger: 'blur' },
@@ -62,7 +76,7 @@ export default {
                 else {
                   checkAbnoramlTypeCode(value,(this.dataForm.id || '')).then((res) => {
                     if (!res.data) { callback() }
-                    else { callback(new Error('此类型编码已存在')) }
+                    else { callback(new Error('此编码已存在')) }
                   }).catch((err) => { callback(new Error(" ")) })
                 }
               },
@@ -74,119 +88,127 @@ export default {
         //   sm: 12,itemDisabled:this.btnType === 'look' ? true : false ,
         //   options: [{ label: '质量异常', value: 'quality' },{ label: '物料异常', value: 'material' },{ label: '生产异常', value: 'produce' },{ label: '设备异常', value: 'facility' }]
         // },
-        { prop: "name", label: "类型名称", value: "", type: "input", itemRules: [{ required: true, message: '类型名称不能为空', trigger: "blur" }], 
+        { prop: "name", label: this.category === 'type' ? "类型名称" : '内容名称', value: "", type: "input", itemRules: [{ required: true, message: this.category === 'type' ? "类型名称" : '内容名称' + '不能为空', trigger: "blur" }], 
           sm: 12,itemDisabled:this.btnType === 'look' ? true : false 
         },
+        { prop: "enName", label: "类型英文名称", value: "", type: "input", itemRules: [{ required: true, message: '类型英文名称不能为空', trigger: "blur" }], 
+          sm: 12,itemDisabled:this.btnType === 'look' ? true : false ,render:this.category === 'type' ? true : false
+        },
+        { prop: "icon", label: "类型图标", value: "", type: "input", itemRules: [{ required: true, message: '类型图标不能为空', trigger: "click" }], clearable:false,
+          sm: 12,itemDisabled:this.btnType === 'look' ? true : false ,readonly:true,itemSlot:{position:'append',click:this.openIconBox,content:'选择'},suffixIcon:this.dataForm.icon,
+          render:this.category === 'type' ? true : false
+        },
         { prop: "remark", label: "类型说明", value: "", type: "textarea", itemRules: [{ required: true, message: '类型说明不能为空', trigger: "blur" }],
-          sm: 24 ,itemDisabled:this.btnType === 'look' ? true : false
+          sm: 24 ,itemDisabled:this.btnType === 'look' ? true : false,render:this.category === 'type' ? true : false
         },
       ]
     },
-    setLinesListItems() {
-      this.linesListItems = [
-        {
-          prop: 'code',
-          label: '内容编码',
-          value: '',
-          type: 'input',
-          itemRules: [
-            {
-              validator: this.formValidate({
-                type: 'noEmtry', params: ['', (errMsg, index) => {
-                  this.$message.error(`异常内容第${index + 1}行：内容编码${errMsg}`)
-                  return
-                }
-                ]
-              }),
-              trigger: 'blur'
-            },
-            {
-              validator: (rule, value, callback) => {
-                let temp = rule.field.match(/\d+/)
-                let index = temp ? Number(temp[0]) : undefined
-                let count = 0
-                this.dataFormTwo && this.dataFormTwo.forEach(item => {
-                  if (item.code === value) {
-                    count++
-                  }
-                })
-                if (!value) { callback() }
-                else if (this.dataForm.code === value) {
-                  this.$message.error(`异常内容第${index + 1}行：内容编码已存在`)
-                  callback(new Error(''))
-                } else if (this.dataFormTwo.length > 1 && count > 1) {
-                  this.$message.error(`内容编码不能重复`)
-                  callback(new Error(''))
-                } else {
-                  console.log(this.dataFormTwo[index].id);
+    openIconBox() {
+      this.iconBoxVisible = true
+    },
+    choiceIcon(value) {
+      this.dataForm.icon = value
+      this.setDataFormItems()
+      
+    },
+    // setLinesListItems() {
+    //   this.linesListItems = [
+    //     {
+    //       prop: 'code',
+    //       label: '内容编码',
+    //       value: '',
+    //       type: 'input',
+    //       itemRules: [
+    //         {
+    //           validator: this.formValidate({
+    //             type: 'noEmtry', params: ['', (errMsg, index) => {
+    //               this.$message.error(`异常内容第${index + 1}行：内容编码${errMsg}`)
+    //               return
+    //             }
+    //             ]
+    //           }),
+    //           trigger: 'blur'
+    //         },
+    //         {
+    //           validator: (rule, value, callback) => {
+    //             let temp = rule.field.match(/\d+/)
+    //             let index = temp ? Number(temp[0]) : undefined
+    //             let count = 0
+    //             this.dataFormTwo && this.dataFormTwo.forEach(item => {
+    //               if (item.code === value) {
+    //                 count++
+    //               }
+    //             })
+    //             if (!value) { callback() }
+    //             else if (this.dataForm.code === value) {
+    //               this.$message.error(`异常内容第${index + 1}行：内容编码已存在`)
+    //               callback(new Error(''))
+    //             } else if (this.dataFormTwo.length > 1 && count > 1) {
+    //               this.$message.error(`内容编码不能重复`)
+    //               callback(new Error(''))
+    //             } else {
+    //               console.log(this.dataFormTwo[index].id);
                   
-                  checkAbnoramlTypeCode(value,(this.dataFormTwo[index].id || '')).then((res) => {
-                    if (!res.data) { callback() }
-                    else {
-                      this.$message.error(`异常内容第${index + 1}行：内容编码已存在`)
-                      callback(new Error(''))
-                    }
-                  }).catch((err) => { callback(new Error(" ")) })
-                }
-              },
-              trigger: 'blur'
-            },
-            { required: true, trigger: 'blur' },
-          ],
-          itemDisabled:this.btnType === 'look' ? true : false
-        },
-        {
-          prop: 'name',
-          label: '内容名称',
-          value: '',
-          type: 'input',
-          itemRules: [
-            {
-              validator: this.formValidate({ type: 'noEmtry', params: ['', (errMsg, index) => { this.$message.error(`异常内容第${index + 1}行：内容名称${errMsg}`) }] }),
-              trigger: 'blur'
-            },
-            { required: true, trigger: 'blur' },
-          ],
-          itemDisabled:this.btnType === 'look' ? true : false
-        },
-        {
-          prop: 'remark',
-          label: '内容说明',
-          value: '',
-          type: 'input',
-          itemRules: [],
-          itemDisabled:this.btnType === 'look' ? true : false
-        },
-      ]
-    },
+    //               checkAbnoramlTypeCode(value,(this.dataFormTwo[index].id || '')).then((res) => {
+    //                 if (!res.data) { callback() }
+    //                 else {
+    //                   this.$message.error(`异常内容第${index + 1}行：内容编码已存在`)
+    //                   callback(new Error(''))
+    //                 }
+    //               }).catch((err) => { callback(new Error(" ")) })
+    //             }
+    //           },
+    //           trigger: 'blur'
+    //         },
+    //         { required: true, trigger: 'blur' },
+    //       ],
+    //       itemDisabled:this.btnType === 'look' ? true : false
+    //     },
+    //     {
+    //       prop: 'name',
+    //       label: '内容名称',
+    //       value: '',
+    //       type: 'input',
+    //       itemRules: [
+    //         {
+    //           validator: this.formValidate({ type: 'noEmtry', params: ['', (errMsg, index) => { this.$message.error(`异常内容第${index + 1}行：内容名称${errMsg}`) }] }),
+    //           trigger: 'blur'
+    //         },
+    //         { required: true, trigger: 'blur' },
+    //       ],
+    //       itemDisabled:this.btnType === 'look' ? true : false
+    //     },
+    //   ]
+    // },
     clearData() {
       this.dataForm = {}
-      this.dataFormTwo = [{code:'',name:'',remark:'',category: 'content',id: ''}]
+      // this.dataFormTwo = [{code:'',name:'',remark:'',category: 'content',id: ''}]
     },
     init(id, btntype) {
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = id || ''
       this.visible = true
       this.btnType = btntype
+      let code = this.category === 'type' ? 'ExceptionType' : 'ExceptionContent'
       this.$nextTick(() => {
         this.$refs['dataForm'].$children[0].resetFields()
         if (btntype == 'add') {
-          this.dialogTitle = '新建异常'
+          this.dialogTitle = this.category === 'type' ? '新建异常类型' : '新建异常内容'
           this.clearData()
-          this.fetchData('ExceptionType',true)
+          this.fetchData(code,true)
           // this.setDataFormItems()
-          this.setLinesListItems()
+          // this.setLinesListItems()
           console.log(this.dataForm);
           
         } else {
           detailAbnoramlTypeData(id).then(res => {
-            this.dialogTitle = `编辑异常`
+            this.dialogTitle = this.category === 'type' ? '编辑异常类型' : '编辑异常内容'
             this.dataForm = res.data.type
-            this.dataFormTwo = res.data.contentList
+            // this.dataFormTwo = res.data.contentList
             this.loading = false
             // this.setDataFormItems()
-            this.fetchData('ExceptionType',false)
-            this.setLinesListItems()
+            this.fetchData(code,false)
+            // this.setLinesListItems()
           }).catch(error => { })
         }
 
@@ -216,26 +238,26 @@ export default {
         }
       }
       // 校验表格表单
-      const form_2 = this.$refs['tableForm'].$children[0]
-      let valid_2 = await form_2.validate().catch((err) => false)
-      if (!valid_2 && submitFlag) {
-        let formItems = form_2.fields
-        for (let j = 0; j < formItems.length; j++) {
-          let formItem = formItems[j]
-          if (formItem.validateState === 'error') {
-            submitFlag = false
-            this.jnpf.focusItem(formItem.$children[1].$el)
-            this.$nextTick(() => {
-              this.jnpf.formItemValidate(formItem)
-            })
-            break
-          }
-        }
-      }
+      // const form_2 = this.$refs['tableForm'].$children[0]
+      // let valid_2 = await form_2.validate().catch((err) => false)
+      // if (!valid_2 && submitFlag) {
+      //   let formItems = form_2.fields
+      //   for (let j = 0; j < formItems.length; j++) {
+      //     let formItem = formItems[j]
+      //     if (formItem.validateState === 'error') {
+      //       submitFlag = false
+      //       this.jnpf.focusItem(formItem.$children[1].$el)
+      //       this.$nextTick(() => {
+      //         this.jnpf.formItemValidate(formItem)
+      //       })
+      //       break
+      //     }
+      //   }
+      // }
       if (submitFlag) {
         let _data = {
-          type: JSON.parse(JSON.stringify({ ...this.dataForm, category: 'type' })),
-          contentList: JSON.parse(JSON.stringify(this.dataFormTwo))
+          type: JSON.parse(JSON.stringify({ ...this.dataForm, category: this.category,parentId:this.parentId })),
+          // contentList: JSON.parse(JSON.stringify(this.dataFormTwo))
         }
         console.log(_data)
         let queryMehtod = this.dataForm.id ? updateAbnoramlTypeData : addAbnoramlTypeData
@@ -249,7 +271,7 @@ export default {
                 this.btnLoading = false
               }
             })
-            this.$emit('refresh', true)
+            this.$emit('refresh',true)
           }
         }).catch((err) => { this.btnLoading = false })
       } else {
@@ -257,24 +279,24 @@ export default {
       }
     },
     // 添加项
-    addequipment_process_relList() {
-      let ind = this.dataFormTwo.length
-      let item = {
-        index: ind,
-        name: '',
-        code: '',
-        remark: '',
-        category: 'content',
-        id: ''
-      }
-      this.dataFormTwo.push(item)
+    // addequipment_process_relList() {
+    //   let ind = this.dataFormTwo.length
+    //   let item = {
+    //     index: ind,
+    //     name: '',
+    //     code: '',
+    //     remark: '',
+    //     category: 'content',
+    //     id: ''
+    //   }
+    //   this.dataFormTwo.push(item)
 
-    },
-    // 删除项
-    delequipment_process_relList(scope) {
-      let index = scope.$index
-      this.dataFormTwo.splice(index, 1)
-    }
+    // },
+    // // 删除项
+    // delequipment_process_relList(scope) {
+    //   let index = scope.$index
+    //   this.dataFormTwo.splice(index, 1)
+    // }
   }
 }
 </script>

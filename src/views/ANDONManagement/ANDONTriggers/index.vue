@@ -1,27 +1,29 @@
 <template>
   <transition name="el-zoom-in-center">
-    <div class="JNPF-preview-main org-form" ref="main">
-      <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
-        <div style="font-size: 20px;">异常上报</div>
-        <div class="options">
-          <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">保存并提交</el-button>
+    <div class="JNPF-common-layout">
+      <div class="JNPF-preview-main org-form" ref="main">
+        <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
+          <div style="font-size: 20px;">异常上报</div>
+          <div class="options">
+            <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">保存并提交</el-button>
+          </div>
         </div>
-      </div>
-      <div class="JNPF-common-layout">
-        <div class="JNPF-common-layout-center JNPF-flex-main">
-          <div class="JNPF-common-layout-main JNPF-flex-main" style="padding: 10px 5px;">
-            <el-tabs @tab-click="changeTab" v-model="activeName" type="border-card" tab-position="left"
-              style="height:100%;padding:5px;font-size: 20px;">
-              <el-tab-pane disabled label="异常类型:"></el-tab-pane>
-              <el-tab-pane :label="item.name" :name="item.code" v-for="item in list" :key="item.id">
-                <div
-                  style="height:60px;line-height:60px;font-weight:bold;border-bottom:1px solid #dcdfe6;font-size: 20px;">
-                  异常内容：
-                </div>
-                <div class="card-list" v-loading="listLoading">
-                  <div v-for="line in dataDetail" :key="line.id" @click="handleCard(line)"
-                    @mousemove.native="showRemark(line)">
-                    <el-tooltip class="item" effect="light" :content="line.remark" placement="bottom" :disabled="!line.remark">
+        <div class="JNPF-common-layout">
+          <div class="JNPF-common-layout-center JNPF-flex-main">
+            <div class="JNPF-common-layout-main JNPF-flex-main" style="padding: 10px 5px;">
+              <el-tabs @tab-click="changeTab" v-model="activeName" type="border-card" tab-position="left"
+                style="height:100%;padding:5px;font-size: 20px;">
+                <el-tab-pane disabled label="异常类型:">
+                </el-tab-pane>
+                <el-tab-pane :label="item.name" :name="item.code" v-for="item in list" :key="item.id">
+                  <div
+                    style="height:60px;line-height:60px;font-weight:bold;border-bottom:1px solid #dcdfe6;font-size: 20px;">
+                    异常内容：
+                  </div>
+                  <div class="card-list" v-loading="listLoading">
+                    <div v-for="line in dataDetail" :key="line.id" @click="handleCard(line)"
+                      @mousemove.native="showRemark(line)">
+                      <!-- <el-tooltip class="item" effect="light" :content="line.remark" placement="bottom" :disabled="!line.remark"> -->
                       <el-card :shadow="line.code === currentCard ? 'always' : 'hover'" class="box-card"
                         :class="line.code === currentCard ? 'box-card-active' : ''">
                         <div> {{ line.name }} </div>
@@ -29,40 +31,41 @@
                           <i class="el-icon-check"></i>
                         </div>
                       </el-card>
-                    </el-tooltip>
+                      <!-- </el-tooltip> -->
+                    </div>
                   </div>
-                </div>
-              </el-tab-pane>
-            </el-tabs>
+                </el-tab-pane>
+              </el-tabs>
+            </div>
           </div>
         </div>
+        <el-dialog title="单号" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
+          lock-scroll class="JNPF-dialog JNPF-dialog_center" width="600px">
+          <el-row :gutter="20">
+            <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="120px" label-position="left">
+              <el-col :span="16">
+                <el-form-item label="申请单号：" prop="orderNo">
+                  <el-input v-model="dataForm.orderNo" placeholder="请输入申请单号"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-form>
+          </el-row>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
+            <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="handleSubmit()">
+              确 定</el-button>
+          </span>
+        </el-dialog>
+        <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+          :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
+          <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
+              提交成功啦！</span><span class="import_b">您还可以进行如下操作：</span></div>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="goBack">返回首页</el-button>
+            <el-button type="primary" @click="continueAdd()">继续上报</el-button>
+          </span>
+        </el-dialog>
       </div>
-      <el-dialog title="单号" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
-        lock-scroll class="JNPF-dialog JNPF-dialog_center" width="600px">
-        <el-row :gutter="20">
-          <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="120px" label-position="left">
-            <el-col :span="16">
-              <el-form-item label="申请单号：" prop="orderNo">
-                <el-input v-model="dataForm.orderNo" placeholder="请输入申请单号"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-form>
-        </el-row>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-          <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="handleSubmit()">
-            确 定</el-button>
-        </span>
-      </el-dialog>
-      <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
-        :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
-        <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
-            提交成功啦！</span><span class="import_b">您还可以进行如下操作：</span></div>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="goBack">返回首页</el-button>
-          <el-button type="primary" @click="continueAdd()">继续上报</el-button>
-        </span>
-      </el-dialog>
     </div>
   </transition>
 </template>
@@ -252,6 +255,7 @@ export default {
     margin: 5px 8px 0 0;
     position: relative;
     font-size: 18px;
+    cursor: pointer;
 
     .icon-checked {
       display: block;

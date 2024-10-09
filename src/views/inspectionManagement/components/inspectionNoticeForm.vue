@@ -805,7 +805,7 @@ export default {
         console.log(res, 'res123')
       }
       if (res.data) {
-        if (res.data.attachmentList) {
+        if (res.data.attachmentList.length !== 0) {
           res.data.attachmentList.forEach((item) => {
             this.datafilelist.push({
               name: item.document.fullName,

@@ -24,9 +24,6 @@
             <JNPF-table v-if="tableList.length > 0" ref="tabForm" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;">
               <el-table-column prop="日期" label="日期" min-width="120" />
               <el-table-column v-for="item in tableColumns" :prop="item" :key="item" :label="item" width="135"></el-table-column>
-<!--                -->
-<!--              <el-table-column prop="customerSumNum" label="异常内容1" min-width="120" />-->
-<!--              <el-table-column prop="customerNum" label="异常内容2" min-width="120" />-->
             </JNPF-table>
           </div>
         </div>
@@ -37,10 +34,7 @@
 </template>
 
 <script>
-import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import { mapGetters } from 'vuex'
-import { gettotalCustomerTable, gettotalCustomerStats } from "@/api/CRMmanagement/instrumentPanel/index";
 import selectdate from "@/views/CRMmanagement/reportAnalysis/components/selectdate";
 import {analysisByType, exportAnalysisByContent, exportAnalysisByType} from "@/api/abnormalManagement";
 export default {
@@ -64,9 +58,6 @@ export default {
       option: {},
       tableColumns:[]
     }
-  },
-  computed: {
-    ...mapGetters(['userInfo']),
   },
   created() {
     this.dataForm.userIds = []

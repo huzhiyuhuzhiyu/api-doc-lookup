@@ -19,7 +19,7 @@
             <p class="timeline-cell" v-if="item.handleOpinion">
               审核意见：{{item.handleOpinion}}</p>
             <p class="timeline-cell" v-if="item.processingTime">
-              审核耗时：{{item.processingTime}} 小时</p>
+              审核耗时：<el-tag type="danger">{{item.processingTime}} 小时</el-tag></p>
             <p class="timeline-cell" v-if="item.signImg">
               审核签名：<img :src="item.signImg" class="signImg"></p>
           </el-card>
@@ -41,7 +41,7 @@
             <p class="timeline-cell" v-if="item.handleOpinion">
               审核意见：{{item.handleOpinion}}</p>
             <p class="timeline-cell" v-if="item.processingTime">
-                审核耗时：{{item.processingTime}} 小时</p>
+                审核耗时：<el-tag type="danger">{{item.processingTime}} 小时</el-tag></p>
             <p class="timeline-cell" v-if="item.signImg">
               审核签名：<img :src="item.signImg" class="signImg"></p>
           </el-card>
@@ -58,7 +58,7 @@
             <p class="timeline-cell">撤回节点：{{item.nodeName}}</p>
             <p class="timeline-cell">撤回人员：{{item.userName}}</p>
             <p class="timeline-cell" v-if="item.handleOpinion">撤回原因：{{item.handleOpinion}}</p>
-            <p class="timeline-cell" v-if="item.processingTime">审核耗时：{{item.processingTime}} 小时</p>
+            <p class="timeline-cell" v-if="item.processingTime">审核耗时：<el-tag type="danger">{{item.processingTime}} 小时</el-tag></p>
             <p class="timeline-cell" v-if="item.signImg">
               手写签名：<img :src="item.signImg" class="signImg"></p>
           </el-card>
@@ -79,7 +79,7 @@
             <p class="timeline-cell">执行人员：{{item.userName}}</p>
             <p class="timeline-cell">执行动作：终止</p>
             <p class="timeline-cell" v-if="item.handleOpinion">终止原因：{{item.handleOpinion}}</p>
-            <p class="timeline-cell" v-if="item.processingTime">审核耗时：{{item.processingTime}} 小时</p>
+            <p class="timeline-cell" v-if="item.processingTime">审核耗时：<el-tag type="danger">{{item.processingTime}} 小时</el-tag></p>
             <p class="timeline-cell" v-if="item.signImg">
               手写签名：<img :src="item.signImg" class="signImg"></p>
           </el-card>
@@ -138,7 +138,7 @@
             <p class="timeline-cell">转审人员：{{item.operatorId}}</p>
             <p class="timeline-cell" v-if="item.handleOpinion">
               转审意见：{{item.handleOpinion}}</p>
-            <p class="timeline-cell" v-if="item.processingTime">审核耗时：{{item.processingTime}} 小时</p>
+            <p class="timeline-cell" v-if="item.processingTime">审核耗时：<el-tag type="danger">{{item.processingTime}} 小时</el-tag></p>
             <p class="timeline-cell" v-if="item.signImg">
               手写签名：<img :src="item.signImg" class="signImg"></p>
           </el-card>

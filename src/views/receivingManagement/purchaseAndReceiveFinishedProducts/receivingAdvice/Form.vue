@@ -1505,12 +1505,12 @@ export default {
             this.dataFormTwo.productData.forEach((item) => {
               item.drawingNo = item.productDrawingNo
             })
-            // if (this.btnType === 'edit') {
-            //   this.getBusInfo()
-            // } else {
-            //   // 流程信息和流转记录
-            //   if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
-            // }
+            if (this.btnType === 'edit') {
+              this.getBusInfo()
+            } else {
+              // 流程信息和流转记录
+              if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            }
           }
           if (res.data.attachmentList.length !== 0) {
             res.data.attachmentList.forEach((item) => {

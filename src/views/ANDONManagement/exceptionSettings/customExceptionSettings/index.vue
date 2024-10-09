@@ -27,13 +27,13 @@
                   </div>
                   <div class="card-list" v-loading="listLoading">
                     <div v-for="line in dataDetail" :key="line.id" @click="handleCard(line)">
-                      <el-card :shadow="line.code === currentCard ? 'always' : 'hover'" class="box-card" >
+                      <el-card :shadow="line.code === currentCard ? 'always' : 'hover'" class="box-card">
                         <div> {{ line.name }} </div>
                         <div>
-                          <el-button size="mini" type="text" @click="addOrUpdateHandle(line.id,'edit')">编辑</el-button>
-                          <el-button size="mini" type="text" @click="flowSet(line.id,line.name)">流程设置</el-button>
+                          <el-button size="mini" type="text" @click="addOrUpdateHandle(line.id, 'edit')">编辑</el-button>
+                          <el-button size="mini" type="text" @click="flowSet(line.id, line.name)">流程设置</el-button>
                         </div>
-                      
+
                         <!-- <div class="icon-checked" v-if="line.code === currentCard">
                           <i class="el-icon-check"></i>
                         </div> -->
@@ -43,7 +43,8 @@
                       </el-card>
                     </div>
                     <!-- <div> -->
-                    <el-card class="box-card" style="display:flex;justify-content: center;align-items: center;font-size:22px"
+                    <el-card class="box-card box-card-add"
+                      style="display:flex;justify-content: center;align-items: center;font-size:22px"
                       @click.native="addOrUpdateHandle('', 'add')">
                       <span class="el-icon-plus"></span>
                     </el-card>
@@ -64,16 +65,16 @@
 </template>
 
 <script>
-import { getAbnoramlTypeData, detailAbnoramlTypeData, addAbnoramlData ,deleteAbnoramlTypeData} from '@/api/abnormalManagement/index.js'
+import { getAbnoramlTypeData, detailAbnoramlTypeData, addAbnoramlData, deleteAbnoramlTypeData } from '@/api/abnormalManagement/index.js'
 import TypeIndex from './TypeIndex.vue'
 import JNPFForm from './Form'
 import FlowForm from './FlowForm'
 export default {
   name: 'customExceptionSettings',
-  components: { TypeIndex, JNPFForm,FlowForm },
+  components: { TypeIndex, JNPFForm, FlowForm },
   data() {
     return {
-      flowFormVisible:false,
+      flowFormVisible: false,
       formVisible: false,
       drawer: false,
       btnLoading: false,
@@ -122,10 +123,10 @@ export default {
         this.$refs.JNPFForm.init(id, btnType)
       })
     },
-    flowSet(id,name) {
+    flowSet(id, name) {
       this.flowFormVisible = true
       this.$nextTick(() => {
-        this.$refs.FlowForm.init(id,name)
+        this.$refs.FlowForm.init(id, name)
       })
     },
     handleCard(item) {
@@ -191,6 +192,13 @@ export default {
 .card-list {
   display: flex;
   flex-wrap: wrap;
+
+  .box-card-add {
+    ::v-deep .el-card__body {
+      display: flex;
+      align-items: center;
+    }
+  }
 
   .box-card {
     width: 260px;
@@ -312,5 +320,4 @@ export default {
 
 ::v-deep .JNPF-common-page-header.noButtons {
   padding: 11px 10px;
-}
-</style>
+}</style>

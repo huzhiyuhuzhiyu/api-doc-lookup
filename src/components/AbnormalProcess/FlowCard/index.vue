@@ -126,8 +126,8 @@ function addNodeButton(ctx, data, h, isBranch = false) {
   }
   return (
     <div class="add-node-btn-box flex justify-center">
-      <div class="add-node-btn">
-        <el-popover placement="right" trigger="click" width="200">
+      <div class="add-node-btn" onClick={ctx.eventLauncher.bind(ctx, "addApprovalNode", data, isBranch)}>
+        {/* <el-popover placement="right" trigger="click" width="200">
           <div class="condition-box">
             <div>
               <div class="condition-icon" onClick={ctx.eventLauncher.bind(ctx, "addApprovalNode", data, isBranch)} >
@@ -137,10 +137,10 @@ function addNodeButton(ctx, data, h, isBranch = false) {
             </div>
           </div>
 
+        </el-popover> */}
           <button class="btn" type="button" slot="reference">
             <i class="el-icon-plus icon"></i>
           </button>
-        </el-popover>
       </div>
     </div>
   );
@@ -254,6 +254,7 @@ export default {
      * @param { Object } 包含event（事件名）和args（事件参数）两个参数
      */
     eventLauncher(event, ...args) {
+      if (args && args[0].type === 'start') return
       let list = ['appendBranch', 'appendBranchFlowBranch', 'appendInterflowBranch', 'addTimerNode']
       if (list.includes(event) && args[args.length - 2]) return
       // args.slice(0,-1) vue 会注入MouseEvent到最后一个参数 去除事件对象

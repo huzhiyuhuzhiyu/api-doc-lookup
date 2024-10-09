@@ -67,9 +67,10 @@
           <el-table-column prop="planPersonName" label="计划处理人" min-width="160" sortable="custom" />
           <!-- <el-table-column prop="personId" label="响应人" min-width="160" sortable="custom" />
           <el-table-column prop="processDate" label="响应时间" min-width="160" sortable="custom" /> -->
-          <el-table-column label="操作" width="150" fixed="right">
+          <el-table-column label="操作" width="220" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id)">处理</el-button>
+              <el-button size="mini" type="text" v-if="scope.row.type === 'system'" @click="lookRecardData(scope.row.id)">查看异常数据</el-button>
+              <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id,scope.row.type)">处理</el-button>
               <el-button size="mini" type="text" @click="handleCancel(scope.row.flowTaskOperatorId)">取消</el-button>
             </template>
           </el-table-column>
@@ -79,6 +80,7 @@
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="JNPFForm" @close="refresh" />
+    <ExceptForm v-if="sourceDialog" ref="ExceptForm" @close="refresh" :sourceListData="exceptionData" :tableItems="tableItems" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch"
       @close="superQueryVisible = false" />
@@ -97,16 +99,18 @@
         </el-button>
       </span>
     </el-dialog>
+
   </div>
 </template>
 
 <script>
 import JNPFForm from './Form'
+import ExceptForm from './ExceptForm'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getAbnoramlData } from '@/api/abnormalManagement/index.js'
+import { getAbnoramlData , getRecordData} from '@/api/abnormalManagement/index.js'
 import { Reject, batchReject } from '@/api/workFlow/FlowBefore'
 export default {
-  components: { SuperQuery, JNPFForm },
+  components: { SuperQuery, JNPFForm ,ExceptForm},
   data() {
     return {
       superQueryVisible: false,
@@ -163,6 +167,7 @@ export default {
         },
       ],
       visible: false,
+      sourceDialog:false,
       approvalBtnLoading: false,
       list: [],
       listLoading: true,
@@ -216,7 +221,9 @@ export default {
       dealForm: {
         processDescription: '',
       },
-      batchId: ''
+      batchId: '',
+      exceptionData:[],
+      tableItems: [],
     }
   },
   created() {
@@ -270,10 +277,10 @@ export default {
       }).catch(() => this.listLoading = false)
     },
     // 新增数据
-    addOrUpdateHandle(id) {
+    addOrUpdateHandle(id,type) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.JNPFForm.init(id)
+        this.$refs.JNPFForm.init(id,type)
       })
     },
     search(type) {
@@ -332,6 +339,22 @@ export default {
         this.visible = false
         this.initData()
       }).catch(() => { this.approvalBtnLoading = false })
+    },
+    lookRecardData(id){
+      getRecordData(id).then(res=>{
+        console.log(res);
+        if (res.data.exceptionData){
+          this.exceptionData = JSON.parse(res.data.exceptionData)
+          console.log(this.exceptionData)
+          this.tableItems = Object.keys(this.exceptionData[0])
+          console.log(this.tableItems);
+          this.sourceDialog = true
+          this.$nextTick(() => {
+            this.$refs.ExceptForm.init()
+          })
+        }
+        
+      })
     },
   }
 }

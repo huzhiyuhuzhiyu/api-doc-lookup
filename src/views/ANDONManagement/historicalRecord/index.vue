@@ -18,7 +18,7 @@ export default {
         { prop: 'productDrawingNo', label: '关联产品', minWidth: '160', sortable: 'custom' },
         { prop: 'createByName', label: '发起人', minWidth: '120', sortable: 'custom' },
         { prop: 'createTime', label: '发起时间', minWidth: '180', sortable: 'custom' },
-        { prop: 'personId', label: '响应人', minWidth: '120', sortable: 'custom' },
+        { prop: 'personName', label: '响应人', minWidth: '120', sortable: 'custom' },
         { prop: 'processDate', label: '响应时间', minWidth: '180', sortable: 'custom' }
       ],
       listMethod: getAbnoramlData,

@@ -4,15 +4,18 @@
       <div class="card-list">
         <template v-for="item in cardList">
           <el-card class="card-item" :key="item.value" @click.native="goDeal(item)">
-            <div class="item-left">
-              <i class="iconfont" :class="item.icon"></i>
+            <div class="item-head">
+              <span> {{ (item.enLabel && item.enLabel.toUpperCase()) || '' }} ABNORMAL</span>
             </div>
-            <div class="item-right">
-              <div class="item-head">
-                <span :style="{ color: Number(item.value) ? 'red' : '#fff', fontSize: '1vw' }">{{ Number(item.value) ? item.value : '' }}</span>
-                {{ Number(item.value) ? '条异常' : '无异常' }}
+            <div class="card-body">
+              <div class="body-left">
+                <i :class="item.icon"></i>
               </div>
-              <div class="item-bottom">{{ item.label }}</div>
+              <div class="body-right">
+                <div class="right-top">{{ item.label }}</div>
+                <div class="right-bottom"><span :style="{color:Number(item.num) ? 'red' : '#fff',fontSize:'18px'}">{{ Number(item.num) && Number(item.num) || '' }}</span>{{ Number(item.num) ? '条异常' : '无异常' }}</div>
+              </div>
+              <div style="flex: 1;"></div>
             </div>
           </el-card>
         </template>
@@ -146,13 +149,7 @@ export default {
           valueFormat: "yyyy-MM-dd HH:mm:ss",
         },
       ],
-      cardList: [
-        { label: '质量异常', value: 'quality', count: '', icon: 'icon-icon-qc' },
-        { label: '物料异常', value: 'material', count: '', icon: 'icon-material' },
-        { label: '生产异常', value: 'produce', count: '', icon: 'icon-produce' },
-        { label: '设备异常', value: 'facility', count: '', icon: 'icon-device' },
-        { label: '系统异常', value: 'system', count: '', icon: 'icon-systemAB' },
-      ],
+      cardList: [],
       visible: false,
       approvalBtnLoading: false,
       list: [],
@@ -241,15 +238,12 @@ export default {
       })
       getAbnoramlModule().then(res => {
         if (res.data) {
-          this.cardList = []
-          let keys = Object.keys(res.data)
-          let values = Object.values(res.data)
-          keys.forEach((item, index) => {
-            this.cardList.push({
-              label: item,
-              value: values[index],
-              icon: 'icon-material' // 假设 icon 都为 icon-icon-qc
-            })
+          this.cardList = res.data.map(item=>{
+            return {
+              ...item,
+              enLabel:item.label === '系统异常' ? 'system' : item.enLabel,
+              icon:item.label === '系统异常' ? 'ym-custom ym-custom-alert-octagon' : item.icon
+            }
           })
         }
       })
@@ -323,7 +317,6 @@ export default {
       }).catch(() => { this.approvalBtnLoading = false })
     },
     goDeal(item) {
-      console.log(item)
       this.$router.push({
         path: '/ANDONManagement/processProcessing',
         query: { abnormalType: item.label }
@@ -341,7 +334,7 @@ export default {
 
   .card-item {
     margin: 5px;
-    width: 18%;
+    // flex: 1;
     height: 160px;
     background-color: #3fb9f8;
     color: #fff;
@@ -349,7 +342,56 @@ export default {
 
     ::v-deep .el-card__body {
       display: flex;
+      flex-direction: column;
       height: 100%;
+      min-width: 274px;
+      box-sizing: border-box;
+      .item-head {
+        // font-style: italic;
+        /* 设置斜体 */
+        font-family: 'Times New Roman', Times, serif;
+        /* 使用另一种字体 */
+        text-align: center;
+        height: 40px;
+        line-height: 40px;
+        // font-size: 18px;
+        white-space: nowrap;
+        overflow: hidden;
+        /* 确保超出容器的文本被隐藏 */
+        white-space: nowrap;
+        /* 防止文本换行 */
+        text-overflow: ellipsis;
+        /* 超出部分显示省略号 */
+      }
+
+      .card-body {
+        display: flex;
+
+        .body-left {
+          width: 80px;
+          height: 80px;
+          display: flex;
+          align-items: center;
+          flex: 1;
+          i {
+            display: block;
+            width: 100%;
+            height: 100%;
+            font-size: 64px;
+            line-height: 110px;
+            text-align: center;
+          }
+        }
+
+        .body-right {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          align-items: center;
+
+        }
+      }
 
       .item-left {
         flex: 4;
@@ -374,6 +416,7 @@ export default {
         justify-content: space-between;
         align-items: center;
         font-size: 1vw;
+
         .item-head {
           // font-style: italic;
           /* 设置斜体 */
@@ -391,12 +434,12 @@ export default {
           text-overflow: ellipsis;
           /* 超出部分显示省略号 */
         }
-        .item-bottom{
+
+        .item-bottom {
           font-size: 0.8vw;
         }
       }
     }
   }
-}
-</style>
+}</style>
 <style src="@/assets/scss/index-list.scss" lang="scss" scoped />

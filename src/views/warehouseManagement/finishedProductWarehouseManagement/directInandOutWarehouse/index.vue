@@ -913,18 +913,18 @@ export default {
       arr.forEach(item => {
 
         item.classAttribute = item.classAttribute
-        item.ordersId = ""
-        item.ordersLineId = ""
-        item.noticeId = ""
-        item.num = ''
+        this.$set(item,'num','')
+        this.$set(item,'excludingTaxCostPrice','')
+        this.$set(item,'ordersId','')
+        this.$set(item,'ordersLineId','')
+        this.$set(item,'noticeId','')
+        this.$set(item,'noticeLineId','')
+        this.$set(item,'taxAmount','')
+        this.$set(item,'totalAmount','')
+        this.$set(item,'productCode',item.code)
         item.costPrice = ""
-        item.excludingTaxCostPrice = ""
         item.excludingTaxTotalAmount = ""
-        item.noticeLineId = ""
-        item.ordersLineId = ""
-        item.totalAmount = ""
-        item.taxAmount = ""
-        item.productCode = item.code
+        
         item.taxRate = 13
         if (this.dataForm.documentType == 'inbound') {
           item.productsId = item.id

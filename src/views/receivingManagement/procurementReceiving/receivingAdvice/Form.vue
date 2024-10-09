@@ -794,7 +794,8 @@ export default {
       flowData: {},
       approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime: 0
+      endTime: 0,
+      selectArr: []
     }
   },
   computed: {
@@ -1100,7 +1101,7 @@ export default {
       this.searchProductFun()
     },
     submitAllProduct() {
-      if (!this.selectArr.length) return this.$message.error('请选择产品！')
+      if (this.selectArr.length == 0) return this.$message.error('请选择产品！')
       this.productVisible = false
       this.selectArr.forEach((item) => {
         this.$set(item, 'receivedQuantity', item.waitReceiptNum)
@@ -1115,7 +1116,7 @@ export default {
       //     idSet.add(item.id)
       //   }
       // })
-      this.dataFormTwo.productData = uniqueArr
+      // this.dataFormTwo.productData = uniqueArr
     },
     // },
     // 获取所有订单列表数据
@@ -1502,17 +1503,7 @@ export default {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
 
-          if (res.data.attachmentList) {
-            res.data.attachmentList.forEach((item) => {
-              this.datafilelist.push({
-                name: item.document.fullName,
-                fileSize: item.document.fileSize,
-                filename: item.document.filePath,
-                id: item.document.id,
-                url: item.url
-              })
-            })
-          }
+
           if (this.btnType == 'copy') {
             this.dataForm.inspectionStatus = ''
             this.dataForm.id = ''
@@ -1548,12 +1539,23 @@ export default {
               console.log('ooooooo', item)
               item.drawingNo = item.productDrawingNo
             })
-            if (this.btnType === 'edit') {
-              this.getBusInfo()
-            } else {
-              // 流程信息和流转记录
-              if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
-            }
+            // if (this.btnType === 'edit') {
+            //   this.getBusInfo()
+            // } else {
+            //   // 流程信息和流转记录
+            //   if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            // }
+          }
+          if (res.data.attachmentList.length !== 0) {
+            res.data.attachmentList.forEach((item) => {
+              this.datafilelist.push({
+                name: item.document.fullName,
+                fileSize: item.document.fileSize,
+                filename: item.document.filePath,
+                id: item.document.id,
+                url: item.url
+              })
+            })
           }
         })
       } else {

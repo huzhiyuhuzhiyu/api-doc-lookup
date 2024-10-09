@@ -709,7 +709,7 @@ export default {
         })
       let id = row.id
       this.inspectionType = inspectionType
-      this.getBusInfo()
+      // this.getBusInfo()
       this.businessCode = businessCode
       this.visible = true
       this.formLoading = true

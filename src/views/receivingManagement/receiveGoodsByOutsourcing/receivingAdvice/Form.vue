@@ -978,6 +978,7 @@ export default {
     },
     // 产品组件回调
     addth(id, data) {
+      console.log(data, 'l')
       if (data.length) {
         let selectArr = []
         let list = data.map((item) => item.all)
@@ -1262,18 +1263,11 @@ export default {
       this.approvalFlag = approvalFlag
       this.btnType = btnType
       console.log(this.btnType, 'this.btnType')
-      // if (data) {
-      //   data.forEach(item => {
-      //     item.ordersNo = item.orderNo
-      //   })
-      //   this.dataFormTwo.productData = data
-      //   this.dataForm.partnerName = data[0].cooperativePartnerName
-      //   this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
-      // }
+
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
-          if (res.data.attachmentList) {
+          if (res.data.attachmentList.length !== 0) {
             res.data.attachmentList.forEach((item) => {
               this.datafilelist.push({
                 name: item.document.fullName,
@@ -1321,6 +1315,14 @@ export default {
       } else if (this.btnType == 'add' || this.btnType == 'copy') {
         this.btnText = '继续新增'
 
+      }
+      if (data.length !== 0) {
+        data.forEach(item => {
+          item.ordersNo = item.orderNo
+        })
+        this.dataFormTwo.productData = data
+        this.dataForm.partnerName = data[0].cooperativePartnerName
+        this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
       }
     },
     goBack() {

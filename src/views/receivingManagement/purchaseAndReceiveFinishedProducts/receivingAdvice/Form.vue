@@ -1486,17 +1486,7 @@ export default {
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
-          if (res.data.attachmentList.length !== 0) {
-            res.data.attachmentList.forEach((item) => {
-              this.datafilelist.push({
-                name: item.document.fullName,
-                fileSize: item.document.fileSize,
-                filename: item.document.filePath,
-                id: item.document.id,
-                url: item.url
-              })
-            })
-          }
+
           if (this.btnType == 'copy') {
             this.dataForm.inspectionStatus = ''
             this.dataForm.id = ''
@@ -1515,12 +1505,23 @@ export default {
             this.dataFormTwo.productData.forEach((item) => {
               item.drawingNo = item.productDrawingNo
             })
-            if (this.btnType === 'edit') {
-              this.getBusInfo()
-            } else {
-              // 流程信息和流转记录
-              if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
-            }
+            // if (this.btnType === 'edit') {
+            //   this.getBusInfo()
+            // } else {
+            //   // 流程信息和流转记录
+            //   if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            // }
+          }
+          if (res.data.attachmentList.length !== 0) {
+            res.data.attachmentList.forEach((item) => {
+              this.datafilelist.push({
+                name: item.document.fullName,
+                fileSize: item.document.fileSize,
+                filename: item.document.filePath,
+                id: item.document.id,
+                url: item.url
+              })
+            })
           }
         })
       } else {

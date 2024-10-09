@@ -751,6 +751,7 @@ export default {
         warehouseId: '',
         createTime: '',
         createByName: '',
+        id: '',
         // orderCategory: "assembly",
         returnDeliveryType: 'back',
         notificationType: 'procure',

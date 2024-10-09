@@ -1501,8 +1501,9 @@ export default {
       }
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
-          this.dataForm = res.data.notice
-
+          // this.dataForm = res.data.notice
+          this.$set(this.dataForm, 'orderNo', res.data.notice.orderNo)
+          this.$set(this.dataForm, 'warehouseId', res.data.notice.warehouseId)
 
           if (this.btnType == 'copy') {
             this.dataForm.inspectionStatus = ''
@@ -1534,17 +1535,19 @@ export default {
 
 
           } else if (this.btnType == 'edit' || this.btnType == 'look') {
-            this.dataFormTwo.productData = res.data.noticeLineList
-            this.dataFormTwo.productData.forEach((item) => {
+            let data = res.data.noticeLineList
+            data.forEach((item) => {
               console.log('ooooooo', item)
               item.drawingNo = item.productDrawingNo
             })
-            // if (this.btnType === 'edit') {
-            //   this.getBusInfo()
-            // } else {
-            //   // 流程信息和流转记录
-            //   if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
-            // }
+            this.dataFormTwo.productData = data
+
+            if (this.btnType === 'edit') {
+              this.getBusInfo()
+            } else {
+              // 流程信息和流转记录
+              if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            }
           }
           if (res.data.attachmentList.length !== 0) {
             res.data.attachmentList.forEach((item) => {

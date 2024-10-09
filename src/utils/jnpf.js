@@ -532,5 +532,19 @@ const jnpf = {
       })
     })
   },
+  // 异常处理 小时 天 转分钟
+  timeToMinutes(time, unit) {
+    let planTime = ''
+    switch (unit) {
+      case 'd':
+      return planTime = time * 24 * 60
+
+      case 'h':
+      return planTime =  time * 60
+
+      default:
+        return planTime =  time
+    }
+  },
 }
 export default jnpf

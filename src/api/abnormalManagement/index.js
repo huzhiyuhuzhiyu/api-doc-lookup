@@ -75,6 +75,13 @@ export function  getAbnoramlData(data) {
     data
   })
 }
+// 异常数据-列表
+export function  getRecordData(id) {
+  return request({
+    url: `/api/mes/ab/apply/record/data/${id}`,
+    method: 'get',
+  })
+}
 // 系统异常申请记录-列表
 export function  getSystemAbnoramlData(data) {
   return request({

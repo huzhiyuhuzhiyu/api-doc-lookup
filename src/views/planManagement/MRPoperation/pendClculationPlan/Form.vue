@@ -155,7 +155,7 @@
                     </el-tooltip>
                   </div>
                 </div>
-                <JNPF-table @sort-change="sortChange" :data="assembleData" :setColumnDisplayList="columnList1"
+                <JNPF-table @sort-change="sortChange" :partentOrChild="'assemble'" :data="assembleData" :setColumnDisplayList="columnList1"
                   highlight-current-row :fixedNO="true" class="dataTable" border ref="assembleRef">
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
@@ -217,7 +217,7 @@
                     </el-tooltip>
                   </div>
                 </div>
-                <JNPF-table :partentOrChild="'produce'" @sort-change="sortChange" :data="produceData"
+                <JNPF-table  :partentOrChild="'produce'" @sort-change="sortChange" :data="produceData"
                   :setColumnDisplayList="columnList2" highlight-current-row :fixedNO="true" class="dataTable" border
                   ref="produceRef">
                   <el-table-column prop="productDrawingNo" label="品名规格"  min-width="330" sortable="custom" />
@@ -311,7 +311,7 @@
                     </el-tooltip>
                   </div>
                 </div>
-                <JNPF-table :partentOrChild="'purchase'" @sort-change="sortChange" :data="purchaseData"
+                <JNPF-table  :partentOrChild="'purchase'" @sort-change="sortChange" :data="purchaseData"
                   :setColumnDisplayList="columnList3" highlight-current-row :fixedNO="true" class="dataTable" border
                   ref="purchaseRef">
                   <el-table-column prop="productDrawingNo" label="品名规格"  min-width="330" sortable="custom" />
@@ -396,7 +396,7 @@
                     </el-tooltip>
                   </div>
                 </div>
-                <JNPF-table custom-column  @sort-change="sortChange" :data="outData" highlight-current-row
+                <JNPF-table custom-column  :partentOrChild="'out'" @sort-change="sortChange" :data="outData" highlight-current-row
                   :setColumnDisplayList="columnList4" :fixedNO="true" class="dataTable" border ref="outRef">
                   
                   <el-table-column prop="productDrawingNo" label="品名规格"  min-width="330" sortable="custom" />
@@ -1283,5 +1283,8 @@ export default {
 }
 ::v-deep .el-tabs__item{
   padding: 0 10px;
+}
+.pagination-container{
+  margin-top: 0
 }
 </style>

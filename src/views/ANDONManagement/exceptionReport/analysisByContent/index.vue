@@ -35,16 +35,11 @@
 </template>
 
 <script>
-import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import { mapGetters } from 'vuex'
-import { gettotalCustomerTable, gettotalCustomerStats } from "@/api/CRMmanagement/instrumentPanel/index";
 import selectdate from "@/views/CRMmanagement/reportAnalysis/components/selectdate";
 import {
     analysisByContent,
-    analysisByType,
     exportAnalysisByContent,
-    exportAnalysisByType
 } from "@/api/abnormalManagement";
 export default {
   components: {
@@ -66,9 +61,6 @@ export default {
       chartInstance: null,
       option: {}
     }
-  },
-  computed: {
-    ...mapGetters(['userInfo']),
   },
   created() {
     this.dataForm.userIds = []

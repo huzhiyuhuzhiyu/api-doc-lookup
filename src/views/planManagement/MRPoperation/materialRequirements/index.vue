@@ -535,15 +535,15 @@
     <el-dialog :title="'物料下达'" :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="productVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center wlxd" width="1200px">
 
-      <JNPF-table ref="tableDataAss" v-loading="listLoading" :data="orderDetailData"  
+      <JNPF-table ref="tableDataAss" v-loading="listLoading" :data="orderDetailData"  fixedNO
         height="600">
         <el-table-column prop="productionPlanNo" label="生产计划单号" width="180"
           v-if="activeName != 'purchase' && activeName != 'out' && codeConfig.codeWay != 'auto'"></el-table-column>
-        <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" />
-        <el-table-column prop="productCode" label="产品编码" min-width="120" />
+        <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" />
+        <el-table-column prop="productCode" label="产品编码" min-width="160" />
         <el-table-column prop="outputQuantity" label="组装数量" min-width="120" v-if="activeName == 'assemble'" />
         <el-table-column prop="outputQuantity" label="生产数量" min-width="120" v-if="activeName == 'produce'" />
-        <el-table-column prop="outputQuantity" label="采购数量" min-width="120" v-if="activeName == 'purchase'" />
+        <el-table-column prop="outputQuantity" label="采购数量" min-width="140" v-if="activeName == 'purchase'" />
         <el-table-column prop="outputQuantity" label="外协数量" min-width="120" v-if="activeName == 'out'" />
         <el-table-column prop="planProductionQuantity" label="下达数量" width="120"
           v-if="activeName == 'produce' || activeName == 'assemble'">
@@ -555,7 +555,7 @@
               scope.row.planProductionQuantity }}</el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="planDemandQuantity" label="下达数量" width="120"
+        <el-table-column prop="planDemandQuantity" label="下达数量" width="160"
           v-if="activeName == 'purchase' || activeName == 'out'">
           <template slot="header">
             <span class="required">*</span>下达数量
@@ -590,8 +590,8 @@
             </el-date-picker>
           </template>
         </el-table-column>
-        <el-table-column prop="standardValue" label="规值" width="160" v-if="activeName == 'purchase'" />
-        <el-table-column prop="colour" label="颜色" width="160" v-if="activeName == 'purchase'" />
+        <el-table-column prop="standardValue" label="规值" width="120" v-if="activeName == 'purchase'"  key="standardValue"/>
+        <el-table-column prop="colour" label="颜色" width="120" v-if="activeName == 'purchase'" key="colour"/>
 
         <el-table-column label="操作" width="80" fixed="right">
           <template slot-scope="scope">

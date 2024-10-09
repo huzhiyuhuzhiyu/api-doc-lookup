@@ -3,7 +3,7 @@ const path = require('path')
 const defaultSettings = require('./src/settings.js')
 const define = require('./src/utils/define.js')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
-const TerserPlugin = require('terser-webpack-plugin')
+// const TerserPlugin = require('terser-webpack-plugin')
 const CompressionPlugin = require('compression-webpack-plugin')
 function resolve(dir) {
   return path.join(__dirname, dir)
@@ -69,16 +69,16 @@ module.exports = {
         // available options are documented at https://github.com/Microsoft/monaco-editor-webpack-plugin#options
         languages: ['javascript', 'css', 'html', 'typescript', 'json', 'java', 'sql']
       }),
-      new TerserPlugin({
-        terserOptions: {
-          compress: {
-            drop_console: true,
-            drop_debugger: false,
-            pure_funcs: ['console.log'] // 移除console
-          }
-        },
-        sourceMap: false
-      }),
+      // new TerserPlugin({
+      //   terserOptions: {
+      //     compress: {
+      //       drop_console: true,
+      //       drop_debugger: false,
+      //       pure_funcs: ['console.log'] // 移除console
+      //     }
+      //   },
+      //   sourceMap: false
+      // }),
       new CompressionPlugin({
         algorithm: 'gzip',
         test: /\.(js|css)$/, // 匹配文件名

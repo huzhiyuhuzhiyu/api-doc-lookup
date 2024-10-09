@@ -4,12 +4,12 @@
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add'
-            ? '新建收货单'
-            : btnType == 'edit'
-              ? '编辑收货单'
-              : btnType == 'copy'
-                ? '新建收货单'
-                : '查看收货单'
+          ? '新建收货单'
+          : btnType == 'edit'
+            ? '编辑收货单'
+            : btnType == 'copy'
+              ? '新建收货单'
+              : '查看收货单'
           " />
         <div class="options" v-if="btnType != 'look'">
           <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
@@ -31,10 +31,10 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="单号" prop="orderNo">
                         <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
-                            ? true
-                            : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                              ? false
-                              : true
+                          ? true
+                          : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                            ? false
+                            : true
                           "></el-input>
                       </el-form-item>
                     </el-col>
@@ -187,10 +187,10 @@
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="单号" prop="orderNo">
                     <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
-                        ? true
-                        : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                          ? false
-                          : true
+                      ? true
+                      : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                        ? false
+                        : true
                       "></el-input>
                   </el-form-item>
                 </el-col>
@@ -1478,7 +1478,7 @@ export default {
       this.approvalFlag = approvalFlag
       this.btnType = btnType
 
-      if (data) {
+      if (data.length !== 0) {
         this.dataFormTwo.productData = data
         this.dataForm.partnerName = data[0].cooperativePartnerName
         this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
@@ -1486,7 +1486,7 @@ export default {
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
-          if (res.data.attachmentList) {
+          if (res.data.attachmentList.length !== 0) {
             res.data.attachmentList.forEach((item) => {
               this.datafilelist.push({
                 name: item.document.fullName,

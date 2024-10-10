@@ -13,15 +13,15 @@
       </div>
       <el-steps :active="activeStep" finish-status="success" simple class="steps steps2" v-if="!loading">
         <el-step title="基础设置" @click.native="stepChick(0)" />
-        <el-step title="流程设计" @click.native="stepChick(1)" />
+        <el-step title="异常流程设计" @click.native="stepChick(1)" />
       </el-steps>
       <div class="options" style="width:auto">
         <el-button size="mini" @click="prev" :disabled="activeStep <= 0">{{ $t('common.prev') }}</el-button>
-        <el-button size="mini" @click="next" :disabled="activeStep >= 1 || loading" :loading="nextBtnLoading">
+        <el-button size="mini" @click="next" :disabled="!sqlFlag || activeStep >= 1 || loading" :loading="nextBtnLoading">
           {{ $t('common.next') }}
         </el-button>
-        <el-button v-if="btnType !== 'look'" size="mini" type="primary" @click="dataFormSubmit()" :disabled="activeStep != 1"
-          :loading="btnLoading">{{ $t('common.confirmButton') }}</el-button>
+        <el-button v-if="btnType !== 'look'" size="mini" type="primary" @click="dataFormSubmit()"
+          :disabled="activeStep != 1" :loading="btnLoading">{{ $t('common.confirmButton') }}</el-button>
         <el-button size="mini" @click="closeDialog()">{{ $t('common.cancelButton') }}</el-button>
       </div>
     </div>
@@ -30,6 +30,7 @@
         <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="10" class="basicForm">
           <JNPF-col :label-width="'120px'" :labelPosition="'left'" v-model="dataForm" :tabContent="dataFormItems"
             ref="dataForm" v-loading="loading" :btnType="btnType" />
+          <el-button type="primary" @click="testSql">测试SQL</el-button>
         </el-col>
       </el-row>
       <template v-if="activeStep == 1">
@@ -64,6 +65,7 @@ export default {
       showCrontab: true,
       visible: false,
       loading: false,
+      sqlFlag: false,
       nextBtnLoading: false,
       activeStep: 0,
       dataForm: {
@@ -81,7 +83,7 @@ export default {
       flowTemplateJson: {},
       codeConfig: {},
       orderConfig: {},
-      flowEngine:{}
+      flowEngine: {}
     }
   },
   computed: {
@@ -131,7 +133,7 @@ export default {
         { prop: "cron", label: "执行周期", value: "", type: "input", itemSlot: { position: 'append', content: '执行周期', click: this.showDialog }, sm: 24, itemDisabled: this.btnType === 'look' ? true : false, itemRules: [{ required: true, message: '执行周期不能为空', trigger: 'click' }] },
         { prop: "remark", label: "异常说明", value: "", type: "textarea", sm: 24, rows: '4', itemDisabled: this.btnType === 'look' ? true : false },
         {
-          prop: "executionSql", label: "执行SQL", value: "", type: "textarea", sm: 24, rows: '4', itemDisabled: this.btnType === 'look' ? true : false,
+          prop: "executionSql", label: "执行SQL", value: "", type: "textarea", sm: 24, rows: '6', itemDisabled: this.btnType === 'look' ? true : false,
           itemRules: [
             { required: true, trigger: "blur" },
             {
@@ -153,6 +155,20 @@ export default {
         },
 
       ]
+    },
+    testSql() {
+      if (!this.dataForm.executionSql) return this.$message.warning('请先填写SQL')
+      let data = { executionSql: this.dataForm.executionSql }
+      checkSystemValidSql(data).then((res) => {
+        if (!res.data) { 
+          this.$message.success('此执行SQL合法') 
+          this.sqlFlag = true
+        }
+        else { 
+          this.$message.error('此执行SQL不合法，请检查SQL') 
+          this.sqlFlag = false
+        }
+      }).catch((err) => { this.sqlFlag = false })
     },
     async fetchData(code, flag) {
       try {
@@ -188,7 +204,7 @@ export default {
         this.$refs['dataForm'].$children[0].resetFields()
         if (btnType == 'add') {
           this.dialogTitle = '新建异常'
-          this.fetchData('ExceptionType',true)
+          this.fetchData('ExceptionType', true)
         } else {
           detailSystemAbnoram(id).then(res => {
             this.dialogTitle = `编辑异常`
@@ -197,7 +213,7 @@ export default {
             res.data.flowEngine && (this.flowTemplateJson = JSON.parse(res.data.flowEngine.flowTemplateJson))
             this.flowEngine = res.data.flowEngine
             this.loading = false
-            this.fetchData('ExceptionType',false)
+            this.fetchData('ExceptionType', false)
           }).catch(error => { })
         }
       })
@@ -208,9 +224,9 @@ export default {
         this.flowTemplateJson = JSON.stringify(res.formData)
         let _data = {
           exception: { ...this.dataForm, status: this.dataForm.status ? 'enable' : 'disabled' },
-          flowEngine: this.flowEngine ? {...this.flowEngine,flowTemplateJson: this.flowTemplateJson} :{
-            busCallBack:"AbApplyRecordCallback",
-            category:"exception",
+          flowEngine: this.flowEngine ? { ...this.flowEngine, flowTemplateJson: this.flowTemplateJson } : {
+            busCallBack: "AbApplyRecordCallback",
+            category: "exception",
             flowTemplateJson: this.flowTemplateJson,
             enCode: this.dataForm.code,
             enabledMark: this.dataForm.status,

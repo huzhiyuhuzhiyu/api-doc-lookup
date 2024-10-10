@@ -284,6 +284,7 @@ export default {
      * @param { Object } 包含event（事件名）和args（事件参数）两个参数
      */
     eventLauncher(event, ...args) {
+      if (args && args[0].type === 'start') return
       let list = ['appendBranch', 'appendBranchFlowBranch', 'appendInterflowBranch', 'addTimerNode']
       if (list.includes(event) && args[args.length - 2]) return
       // args.slice(0,-1) vue 会注入MouseEvent到最后一个参数 去除事件对象

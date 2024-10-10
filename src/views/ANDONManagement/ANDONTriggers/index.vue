@@ -125,7 +125,9 @@ export default {
         abnormalContent: '',
         type: 'custom',
         flowData: {},
-        module: ''
+        module: '',
+        planProcessingTime:'',
+        planPersonId:''
       },
       dataRule: {
         orderNo: [{ required: true, message: '请输入申请单号', trigger: 'blur' }]
@@ -227,6 +229,8 @@ export default {
           this.btnLoading = false
           return this.$message.error('请先选择需要上报的异常！')
         }
+        this.dataForm.planPersonId = flowObj.planPersonId
+        this.dataForm.planProcessingTime = flowObj.planProcessingTime
         addAbnoramlData(this.dataForm).then(() => {
           // this.$message({
           //   type: 'success',

@@ -675,6 +675,10 @@ export default {
       dataForm: {
         exchangeGoodsFlag: false,
         inspectionStatus: '',
+        warehouseId: '',
+        createTime: '',
+        createByName: '',
+        id: '',
         // orderCategory: "assembly",
 
         notificationType: 'external',
@@ -1263,7 +1267,14 @@ export default {
       this.approvalFlag = approvalFlag
       this.btnType = btnType
       console.log(this.btnType, 'this.btnType')
-
+      // if (data.length !== 0) {
+      //   data.forEach(item => {
+      //     item.ordersNo = item.orderNo
+      //   })
+      //   this.dataFormTwo.productData = data
+      //   this.dataForm.partnerName = data[0].cooperativePartnerName
+      //   this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
+      // }
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
@@ -1297,12 +1308,12 @@ export default {
               console.log(item, 'item')
               item.drawingNo = item.productDrawingNo
             })
-            // if (this.btnType === 'edit') {
-            //   this.getBusInfo()
-            // } else {
-            //   // 流程信息和流转记录
-            //   if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
-            // }
+            if (this.btnType === 'edit') {
+              this.getBusInfo()
+            } else {
+              // 流程信息和流转记录
+              if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            }
           }
         })
       } else {
@@ -1316,14 +1327,7 @@ export default {
         this.btnText = '继续新增'
 
       }
-      if (data.length !== 0) {
-        data.forEach(item => {
-          item.ordersNo = item.orderNo
-        })
-        this.dataFormTwo.productData = data
-        this.dataForm.partnerName = data[0].cooperativePartnerName
-        this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
-      }
+
     },
     goBack() {
       this.$emit('close', true)

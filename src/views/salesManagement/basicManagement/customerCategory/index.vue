@@ -49,7 +49,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="parentName" label="上级分类" />
-          <el-table-column prop="sortCode" label="排序">
+          <el-table-column prop="sortCode" label="排序" width="80">
             <template slot-scope="scope">
               <el-input @change="switchShow(scope.row)" clearable v-model="scope.row.sortCode" onkeyup="value=value.replace(/[^\d]/g,'')"></el-input>
             </template>

@@ -6,6 +6,8 @@
         <div class="options">
           <el-button type="primary" v-if="dataForm.processStatus === 'processing'" size="mini" :loading="btnLoading" @click="handleConfirm()">
             处理</el-button>
+          <el-button type="primary" v-if="type === 'system'" size="mini" :loading="btnLoading" @click="lookRecardData()">
+            查看异常数据</el-button>
           <el-button @click="$emit('close', true)">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
@@ -34,19 +36,20 @@
           </el-button>
         </span>
       </el-dialog>
-
+      <ExceptForm v-if="sourceDialog" ref="ExceptForm" @close="refresh" :sourceListData="exceptionData" :tableItems="tableItems" />
     </div>
   </transition>
 </template>
 
 <script>
-import { detailAbnoramlData } from '@/api/abnormalManagement/index.js'
+import ExceptForm from './ExceptForm'
+import { detailAbnoramlData , getRecordData } from '@/api/abnormalManagement/index.js'
 import { Audit } from '@/api/workFlow/FlowBefore'
 import { getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/AbnormalProcess/Preview'
 const Base64 = require('js-base64').Base64
 export default {
-  components: { Process },
+  components: { Process ,ExceptForm},
   data() {
     return {
       visible: false,
@@ -62,11 +65,15 @@ export default {
         { prop: "abnormalContent", label: "申请内容", value: "", type: "input", sm: 6, itemDisabled: true },
         { prop: "equipmentName", label: "设备名称", value: "", type: "input", sm: 6, itemDisabled: true },
         { prop: "productionOrderNo", label: "生产单号", value: "", type: "input", sm: 6, itemDisabled: true },
-        { prop: "planHandler", label: "计划处理人", value: "", type: "input", sm: 6, itemDisabled: true },
+        { prop: "planPersonId", label: "计划处理人", value: "", type: "input", sm: 6, itemDisabled: true },
       ],
       dealForm: {
         processDescription: '',
       },
+      type:'',
+      sourceDialog:false,
+      exceptionData:[],
+      tableItems: [],
     }
   },
   computed: {
@@ -75,8 +82,9 @@ export default {
     }
   },
   methods: {
-    init(id) {
+    init(id,type) {
       this.formLoading = true
+      this.type = type
       if (id) {
         detailAbnoramlData(id).then(res => {
           res.data && (this.dataForm = res.data)
@@ -138,6 +146,19 @@ export default {
           }
         }
       }).catch(() => { })
+    },
+    lookRecardData(){
+      getRecordData(this.dataForm.id).then(res=>{
+        if (res.data.exceptionData){
+          this.exceptionData = JSON.parse(res.data.exceptionData)
+          this.tableItems = Object.keys(this.exceptionData[0])
+          this.sourceDialog = true
+          this.$nextTick(() => {
+            this.$refs.ExceptForm.init()
+          })
+        }
+        
+      })
     },
   },
 

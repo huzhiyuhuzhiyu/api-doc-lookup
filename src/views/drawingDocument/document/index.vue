@@ -242,7 +242,7 @@
           width="80%">
           <Detail @close="previewVisible = false" style="height: 90vh" ref="detail"></Detail>
       </el-dialog>
-      <Preview :visible.sync="previewVisible" :file="previewFile" />
+      <Preview  class="search-left" :visible.sync="previewVisible" :file="previewFile" />
   </div>
 </template>
 

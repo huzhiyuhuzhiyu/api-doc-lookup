@@ -5,20 +5,21 @@
         <el-page-header @back="goBack" content="流程设置" />
         <div class="options">
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm()">{{ $t('common.submitButton')
-            }}</el-button>
+          }}</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
       <div class="main" v-loading="formLoading">
-        <AbnormalProcess :key="flowTemplateJson.nodeId" ref="processDesign" :conf="flowTemplateJson"  :flowType="0" v-if="flowTemplateJson.nodeId" />
-        <AbnormalProcess  ref="processDesign" :conf="flowTemplateJson"  :flowType="0" v-else />
+        <AbnormalProcess :key="flowTemplateJson.nodeId" ref="processDesign" :conf="flowTemplateJson" :flowType="0"
+          v-if="flowTemplateJson.nodeId" />
+        <AbnormalProcess ref="processDesign" :conf="flowTemplateJson" :flowType="0" v-else />
       </div>
     </div>
   </transition>
 </template>
 
 <script>
-import {Update, Create } from '@/api/workFlow/FlowEngine'
+import { Update, Create } from '@/api/workFlow/FlowEngine'
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import AbnormalProcess from "@/components/AbnormalProcess"
 let unique = 0
@@ -26,23 +27,25 @@ export default {
   components: { AbnormalProcess },
   data() {
     return {
-      flowTemplateJson:{},
-      dataForm:{
-        businessFlow:'',
-        id:'',
-        flowTemplateJson:'',
-        formType:'4',
-        enCode:'',
-        name:'',
-        category:'',
-        enabledMark:1,
-        busCallBack:'AbApplyRecordCallback'
+      flowTemplateJson: {},
+      dataForm: {
+        businessFlow: '',
+        id: '',
+        flowTemplateJson: '',
+        formType: '4',
+        enCode: '',
+        name: '',
+        category: '',
+        enabledMark: 1,
+        busCallBack: 'AbApplyRecordCallback',
+        planProcessingTime: '',
+        planHandler: ''
       },
     }
   },
   methods: {
 
-    init(id,fullName) {
+    init(id, fullName) {
       this.visible = true
       this.formLoading = true
       this.dataForm.businessFlow = id
@@ -57,26 +60,31 @@ export default {
       unique++
       return random + unique + String(time)
     },
-    getBusInfo(id){
-      getBusinessFlowInfo(id).then(res=>{
-        if (res.data){
-          this.dataForm = {...res.data,formType:'4'}
+    getBusInfo(id) {
+      getBusinessFlowInfo(id).then(res => {
+        if (res.data) {
+          this.dataForm = { ...res.data, formType: '4' }
           this.dataForm.flowTemplateJson && (this.flowTemplateJson = JSON.parse(this.dataForm.flowTemplateJson))
-        }else{
+        } else {
           this.flowTemplateJson = {}
           this.dataForm.flowTemplateJson = {}
         }
         this.formLoading = false
-      }).catch(()=>{})
+      }).catch(() => { })
     },
     goBack() {
       this.$emit('close')
     },
-    handleConfirm(){
+    handleConfirm() {
       this.$refs['processDesign'].getData().then(res => {
         this.btnLoading = true
         this.flowTemplateJson = res.formData
         this.dataForm.flowTemplateJson = JSON.stringify(this.flowTemplateJson)
+        
+        let planTime = res.formData.childNode.properties.planTime
+        let flowUnit = res.formData.childNode.properties.flowUnit
+        this.dataForm.planProcessingTime = this.jnpf.timeToMinutes(planTime,flowUnit)
+        this.dataForm.planPersonId = res.formData.childNode.properties.approvers[0]
         const formMethod = this.dataForm.id ? Update : Create
         formMethod(this.dataForm).then((res) => {
           this.$message({
@@ -102,7 +110,7 @@ export default {
   padding: 10px;
 }
 
-.flow-container{
-    height: calc(100% - 10px);
+.flow-container {
+  height: calc(100% - 10px);
 }
 </style>

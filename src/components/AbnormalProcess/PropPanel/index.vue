@@ -375,7 +375,7 @@
                   <org-select ref="start-user-org" type="user" v-model="initiator" title="添加用户" />
                 </div>
               </el-form-item>
-              <el-form-item label="抄送设置">
+              <!-- <el-form-item label="抄送设置">
                 <div slot="label" class="form-item-label">抄送设置</div>
                 <div class="form-item-content">
                   <org-select ref="start-copy-role-org" type="role"
@@ -400,7 +400,7 @@
                   </el-form-item>
                   <el-checkbox v-model="startForm.isCustomCopy">允许自选抄送人</el-checkbox>
                 </div>
-              </el-form-item>
+              </el-form-item> -->
             </el-form>
           </el-scrollbar>
         </el-tab-pane>
@@ -1157,7 +1157,7 @@
         <el-tabs v-model="activeName" style="height:100%;">
         <el-tab-pane label="基础设置" name="config">
           <el-scrollbar class="config-scrollbar">
-            <el-form label-position="top" :model="approverForm" class="pd-10-20">
+            <el-form label-position="top" :model="approverForm" class="pd-10-20" :rules="approverRule">
               <el-form-item label="处理设置">
                 <div slot="label" class="form-item-label">处理设置</div>
                 <div class="form-item-content">
@@ -1255,18 +1255,38 @@
                   </el-form-item> -->
                 </div>
               </el-form-item>
-              <el-form-item label="处理方式">
+              <!-- <el-form-item label="处理方式">
                 <div slot="label" class="form-item-label">处理方式</div>
                 <div class="form-item-content">
                   <el-radio v-model="approverForm.counterSign" :label="0">
                     或签（一名处理人同意或拒绝即可）</el-radio>
-                  <!-- <el-radio v-model="approverForm.counterSign" :label="1">
-                    会签（无序会签，当处理达到会签比例时，则该处理通过）</el-radio> -->
                   <el-radio v-model="approverForm.counterSign" :label="2">
                     依次处理（按顺序依次处理）</el-radio>
                 </div>
+              </el-form-item> -->
+              <el-form-item label="处理时长">
+                <div slot="label" class="form-item-label"><span style="color: red;margin-right: 4px;">*</span>处理时长</div>
+                <div class="form-item-content">
+                  <!-- <el-radio v-model="approverForm.counterSign" :label="0">
+                    或签（一名处理人同意或拒绝即可）</el-radio>
+                  <el-radio v-model="approverForm.counterSign" :label="2">
+                    依次处理（按顺序依次处理）</el-radio> -->
+                    <el-row :gutter="16">
+                      <el-col :span="8">
+                        <el-input-number v-model="approverForm.planTime" :min="1"
+                          :step="1"></el-input-number>
+                      </el-col>
+                      <el-col :span="6">
+                        <el-select class="form-item-content" v-model="approverForm.flowUnit">
+                          <el-option v-for="item in approverForm.flowUnitList" :key="item.value" :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                      </el-col>
+                    </el-row>
+                </div>
               </el-form-item>
-              <el-form-item label="会签比例" v-if="approverForm.counterSign==1">
+              <!-- <el-form-item label="会签比例" v-if="approverForm.counterSign==1">
                 <div slot="label" class="form-item-label">会签比例
                   <el-tooltip content="会签通过比例" placement="top">
                     <a class="el-icon-warning-outline"></a>
@@ -1277,26 +1297,9 @@
                     :value="item*10">
                   </el-option>
                 </el-select>
-              </el-form-item>
-              <!-- <el-form-item label="驳回设置">
-                <div slot="label" class="form-item-label">驳回设置</div>
-                <el-select class="form-item-content" v-model="approverForm.rejectStep"
-                  placeholder="请选择">
-                  <el-option v-for="item in rejectStepOptions" :key="item.nodeId"
-                    :label="item.properties.title" :value="item.nodeId">
-                  </el-option>
-                </el-select>
               </el-form-item> -->
-              <!-- <el-form-item label="进度设置">
-                <div slot="label" class="form-item-label">进度设置</div>
-                <el-select class="form-item-content" v-model="approverForm.progress"
-                  placeholder="请选择">
-                  <el-option v-for="item in progressOptions" :key="item" :label="item+'%'"
-                    :value="item">
-                  </el-option>
-                </el-select>
-              </el-form-item> -->
-              <el-form-item label="抄送设置">
+             
+              <!-- <el-form-item label="抄送设置">
                 <div slot="label" class="form-item-label">抄送设置</div>
                 <div class="form-item-content">
                   <org-select ref="approver-copy-role-org" type="role"
@@ -1306,23 +1309,8 @@
                     class="mb-5" />
                   <org-select ref="approver-copy-user-org" v-model="approverForm.circulateUser"
                     title="添加用户" class="mb-5" />
-                  <!-- <el-form-item>
-                    <div slot="label">附加条件
-                      <el-tooltip content="抄送人员增加人员选择范围附加条件" placement="top">
-                        <a class="el-icon-warning-outline"></a>
-                      </el-tooltip>
-                    </div>
-                    <el-select v-model="approverForm.extraCopyRule">
-                      <el-option label="无附加条件" :value="1"></el-option>
-                      <el-option label="同一部门" :value="2"></el-option>
-                      <el-option label="同一岗位" :value="3"></el-option>
-                      <el-option label="发起人上级" :value="4"></el-option>
-                      <el-option label="发起人下属" :value="5"></el-option>
-                    </el-select>
-                  </el-form-item> -->
-                  <!-- <el-checkbox v-model="approverForm.isCustomCopy">允许自选抄送人</el-checkbox> -->
                 </div>
-              </el-form-item>
+              </el-form-item> -->
             </el-form>
           </el-scrollbar>
         </el-tab-pane>
@@ -2130,6 +2118,14 @@ const defaultApproverForm = {
   progress: '50',  // 进度
   rejectStep: '0',  // 驳回步骤
   description: '',  // 节点描述
+  planProcessingTime:'',  //计划处理时长（分钟）
+  planTime:'',  //计划处理时长（分钟）
+  flowUnit:'',            // 单位
+  flowUnitList:[
+    {label:'天',value:'d'},
+    {label:'小时',value:'h'},
+    {label:'分钟',value:'m'}
+  ],
   managerLevel: 1,
   departmentLevel: 1,
   countersignRatio: 100,
@@ -2460,7 +2456,11 @@ export default {
       childFieldOptions: [],
       nodeOptions: [],
       formulaVisible: false,
-      activeItem: {}
+      activeItem: {},
+      approverRule:{
+        planTime:[{required: true,message:'处理时长不能为空',trigger:'click'}],
+        flowUnit:[{required: true,message:'处理时长单位不能为空',trigger:'change'}],
+      },
     };
   },
   computed: {
@@ -2768,6 +2768,20 @@ export default {
         })
         return
       }
+      if (!this.approverForm.planTime) {
+        this.$message({
+          message: '请输入处理时长',
+          type: 'error',
+        })
+        return
+      }
+      if (!this.approverForm.flowUnit) {
+        this.$message({
+          message: '请选择处理时长单位',
+          type: 'error',
+        })
+        return
+      }
       const assigneeType = this.approverForm.assigneeType
       let content = ''
       if (assigneeType == 6) {
@@ -2825,6 +2839,9 @@ export default {
       let titleObj = {
         title: this.properties.title
       }
+      this.approverForm.planProcessingTime = this.jnpf.timeToMinutes(this.approverForm.planTime,this.approverForm.flowUnit)
+      console.log(this.jnpf.timeToMinutes(this.approverForm.planTime,this.approverForm.flowUnit));
+      
       Object.assign(this.properties, this.approverForm, titleObj)
       this.$emit("confirm", this.properties, content || '请设置处理人')
       this.visible = false

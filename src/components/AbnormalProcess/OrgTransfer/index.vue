@@ -3,10 +3,10 @@
   <el-dialog :title="title" :close-on-click-modal="false"
     class="JNPF-dialog JNPF-dialog_center transfer-dialog" lock-scroll append-to-body
     v-bind="$attrs" width="800px" :modal-append-to-body="false" v-on="$listeners" @open="onOpen">
-    <userTransfer v-model="selectedData" ref="userTransfer" multiple v-if="type==='user'" />
-    <roleTransfer v-model="selectedData" ref="roleTransfer" multiple v-else-if="type==='role'" />
+    <userTransfer v-model="selectedData" ref="userTransfer"  v-if="type==='user'" />
+    <roleTransfer v-model="selectedData" ref="roleTransfer"  v-else-if="type==='role'" />
     <JNPFTransfer :loading="loading" :treeData="treeData" v-model="selectedData" :type="type"
-      ref="JNPFTransfer" multiple v-else />
+      ref="JNPFTransfer"  v-else />
     <span slot="footer" class="dialog-footer">
       <el-button @click="closeTransfer">{{$t('common.cancelButton')}}</el-button>
       <el-button type="primary" @click="confirm">{{$t('common.confirmButton')}}</el-button>

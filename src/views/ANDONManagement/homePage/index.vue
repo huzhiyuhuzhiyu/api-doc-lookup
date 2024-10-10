@@ -12,7 +12,7 @@
                 <i :class="item.icon"></i>
               </div>
               <div class="body-right">
-                <div class="right-top">{{ item.label }}</div>
+                <div class="right-top" style="font-size:18px">{{ item.label }}</div>
                 <div class="right-bottom"><span :style="{color:Number(item.num) ? 'red' : '#fff',fontSize:'18px'}">{{ Number(item.num) && Number(item.num) || '' }}</span>{{ Number(item.num) ? '条异常' : '无异常' }}</div>
               </div>
               <div style="flex: 1;"></div>
@@ -353,14 +353,14 @@ export default {
       min-width: 274px;
       box-sizing: border-box;
       .item-head {
-        // font-style: italic;
+        font-style: italic;
         /* 设置斜体 */
         font-family: 'Times New Roman', Times, serif;
         /* 使用另一种字体 */
         text-align: center;
         height: 40px;
         line-height: 40px;
-        // font-size: 18px;
+        font-size: 22px;
         white-space: nowrap;
         overflow: hidden;
         /* 确保超出容器的文本被隐藏 */
@@ -390,7 +390,7 @@ export default {
         }
 
         .body-right {
-          flex: 1;
+          flex: 2;
           display: flex;
           flex-direction: column;
           justify-content: space-between;

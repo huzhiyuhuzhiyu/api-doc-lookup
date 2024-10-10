@@ -77,7 +77,7 @@
             <el-table-column prop="recipient" label="收件人" width="140" sortable="custom" />
             <el-table-column prop="phone" label="收件人电话" width="160" sortable="custom" />
             <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
-            <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
+            <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="80" />
             <el-table-column prop="deliveryQuantity" label="发货数量" width="160" sortable="custom" />
@@ -89,7 +89,7 @@
             <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
             <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
             <el-table-column prop="specialRequire" label="特殊要求" width="160" sortable="custom" />
-            <el-table-column prop="ordersNo" label="订单号" width="120" sortable="custom" />
+            <el-table-column prop="ordersNo" label="订单号" width="180" sortable="custom" />
             <el-table-column prop="exchangeGoodsFlag" label="发货标识" width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.exchangeGoodsFlag">
@@ -818,7 +818,9 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName') {
+      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName'
+      ||prop=='ordersNo'||prop=='oilQuantity'||prop=='vibrationLevel'||prop=='accuracyLevel'||prop=='sealingCoverTyping'||
+      prop=='productCode'||prop=='productDrawingNo') {
         if (prop === 'createByName') {
           newProp = 'create_by'
         } else {

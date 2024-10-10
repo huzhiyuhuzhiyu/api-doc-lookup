@@ -86,7 +86,7 @@
       @close="superQueryVisible = false" />
     <el-dialog title="取消" :close-on-click-modal="false" :visible.sync="visible" class="JNPF-dialog JNPF-dialog_center"
       lock-scroll append-to-body width='600px'>
-      <el-form ref="dealForm" :model="dealForm" label-width="120px">
+      <el-form ref="dealForm" :model="dealForm" label-width="120px" label-position="top">
         <el-form-item label="取消描述：" prop="processDescription">
           <el-input v-model="dealForm.processDescription" placeholder="请输入取消描述" type="textarea" :rows="4" />
         </el-form-item>
@@ -110,6 +110,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getAbnoramlData , getRecordData} from '@/api/abnormalManagement/index.js'
 import { Reject, batchReject } from '@/api/workFlow/FlowBefore'
 export default {
+  name:'processProcessing',
   components: { SuperQuery, JNPFForm ,ExceptForm},
   data() {
     return {
@@ -255,8 +256,8 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp = ''
-      if (['equipmentName', 'productDrawingNo', 'createByName'].includes(prop)) {
-        newProp = prop === 'createByName' ? 'create_by' : prop
+      if (['equipmentName', 'productDrawingNo', 'createByName','planPersonName'].includes(prop)) {
+        newProp = prop === 'createByName' ? 'create_by' : prop === 'planPersonName' ? 'plan_person_id' : prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
@@ -342,12 +343,9 @@ export default {
     },
     lookRecardData(id){
       getRecordData(id).then(res=>{
-        console.log(res);
         if (res.data.exceptionData){
           this.exceptionData = JSON.parse(res.data.exceptionData)
-          console.log(this.exceptionData)
           this.tableItems = Object.keys(this.exceptionData[0])
-          console.log(this.tableItems);
           this.sourceDialog = true
           this.$nextTick(() => {
             this.$refs.ExceptForm.init()

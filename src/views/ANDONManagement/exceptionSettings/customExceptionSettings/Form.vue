@@ -10,7 +10,7 @@
         </el-button>
       </span>
     </el-dialog>
-    <el-drawer v-else :title="dialogTitle" :visible.sync="visible" :wrapperClosable="false" ref="drawer" size="40%"
+    <el-drawer v-else :title="dialogTitle" :visible.sync="visible" :wrapperClosable="false" ref="drawer" size="30%"
       :before-close="handleDrawerClose" class="JNPF-common-drawer columnSettings-drawer" append-to-body>
       <div class="JNPF-flex-main">
         <el-scrollbar class="column-list" v-loading="loading">
@@ -101,7 +101,7 @@ export default {
               },
               trigger: 'blur'
             }
-          ], sm: 12, itemDisabled: this.btnType === 'look' ? true : this.codeConfig.codeWay == 'auto' && !this.codeConfig.modifyFlag ? true : false
+          ], sm: this.category === 'type' ? 12 : 24, itemDisabled: this.btnType === 'look' ? true : this.codeConfig.codeWay == 'auto' && !this.codeConfig.modifyFlag ? true : false
         },
         // { prop: "module", label: "异常模块", value: "", type: "select", itemRules: [{ required: true, message: '异常模块不能为空', trigger: "change" }], 
         //   sm: 12,itemDisabled:this.btnType === 'look' ? true : false ,
@@ -109,7 +109,7 @@ export default {
         // },
         {
           prop: "name", label: this.category === 'type' ? "类型名称" : '内容名称', value: "", type: "input", itemRules: [{ required: true, message: this.category === 'type' ? "类型名称" : '内容名称' + '不能为空', trigger: "blur" }],
-          sm: 12, itemDisabled: this.btnType === 'look' ? true : false
+          sm: this.category === 'type' ? 12 : 24, itemDisabled: this.btnType === 'look' ? true : false
         },
         {
           prop: "enName", label: "类型英文名称", value: "", type: "input", itemRules: [{ required: true, message: '类型英文名称不能为空', trigger: "blur" }],
@@ -242,6 +242,9 @@ export default {
       justify-content: flex-end;
     }
   }
+}
+::v-deep .el-scrollbar:hover>.el-scrollbar__bar {
+    opacity: 0;
 }
 </style>
 

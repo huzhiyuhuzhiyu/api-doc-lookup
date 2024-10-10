@@ -1115,7 +1115,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import FHForm from "../../../salesManagement/shippingnotice/saleMetalworking/Form.vue"
 import THForm from "../../../salesManagement/shippingnotice/returnSalesmemo/Form.vue"
 import CGTHREFForm from "../../../purchasingManagement/returnManagement/purchaseReturnNote/Form.vue"
-import CGSHREFForm from "../../../warehouseManagement/finishedProductWarehouseManagement/purchaseReceiveNote/Form.vue"
+import CGSHREFForm from "../../../receivingManagement/procurementReceiving/receivingAdvice/Form.vue"
 import WXSHREFForm from '../../../receivingManagement/receiveGoodsByOutsourcing/receivingAdvice/Form.vue'
 import WXFLREFForm from "../../../outsourcingManagement/externalMaterialIssuance/materialsIssueNotice/Form.vue"
 import PickForm from "@/views/productionManagement/assemblyPick/assemblyPickManagement/Form.vue"
@@ -2438,7 +2438,7 @@ export default {
           console.log(666);
           this.$refs[ref].init(id, btnType, false, 'pick')
         } else {
-          this.$refs[ref].init(id, btnType)
+          this.$refs[ref].init(id, btnType,false, [])
 
         }
       })

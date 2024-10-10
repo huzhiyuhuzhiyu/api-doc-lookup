@@ -151,7 +151,7 @@ export default {
               },
               trigger: 'blur'
             }
-          ],
+          ],resize:"vertical"
         },
 
       ]

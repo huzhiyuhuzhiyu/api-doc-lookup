@@ -23,7 +23,7 @@
       </div>
       <el-dialog title="处理" :close-on-click-modal="false" :visible.sync="visible" class="JNPF-dialog JNPF-dialog_center"
         lock-scroll append-to-body width='600px'>
-        <el-form ref="dealForm" :model="dealForm" label-width="120px">
+        <el-form ref="dealForm" :model="dealForm" label-width="120px" label-position="top">
           <el-form-item label="处理描述：" prop="processDescription">
             <el-input v-model="dealForm.processDescription" placeholder="请输入处理描述" type="textarea" :rows="4" />
           </el-form-item>

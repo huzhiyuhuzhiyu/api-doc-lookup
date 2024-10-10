@@ -419,6 +419,11 @@ export default {
           this.$nextTick(() => {
             this.$refs.outboundSaleSendREFForm.init(id, type, row.businessType, this.classAttributeList)
           })
+        }else{
+          this.formVisible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init(id, type)
+          })
         }
       } else if (row.businessType == 'inbound_sale_return') {
         this.inboundSaleReturnFormVisible = true
@@ -435,6 +440,11 @@ export default {
           this.inboundPurchaseFormVisible = true
           this.$nextTick(() => {
             this.$refs.inboundPurchaseREFForm.init(id, type, row.businessType, this.classAttributeList)
+          })
+        } else {
+          this.formVisible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init(id, type)
           })
         }
 
@@ -454,6 +464,11 @@ export default {
           this.$nextTick(() => {
             this.$refs.outboundExternalSendREFForm.init(id, type, row.businessType, this.classAttributeList)
           })
+        }else{
+          this.formVisible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init(id, type)
+          })
         }
 
 
@@ -470,6 +485,11 @@ export default {
           this.inboundExternalFormVisible = true
           this.$nextTick(() => {
             this.$refs.inboundExternalREFForm.init(id, type, row.businessType, this.classAttributeList)
+          })
+        }else{
+          this.formVisible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init(id, type)
           })
         }
       } else if (row.businessType == 'outbound_pick_out') {
@@ -601,7 +621,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop == 'partnerName'||prop=='createByName'||prop=='partnerCode') {
+      if (prop == 'partnerName' || prop == 'createByName' || prop == 'partnerCode') {
         newProp = prop
       } else {
 

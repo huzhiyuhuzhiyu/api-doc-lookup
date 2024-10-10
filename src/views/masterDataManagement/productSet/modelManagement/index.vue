@@ -69,14 +69,14 @@
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           hasC @selection-change="handleSelectionChange" ref="dataTable" :setColumnDisplayList="columnList">
           <el-table-column prop="model" label="型号" sortable="custom" min-width="110" />
-          <el-table-column prop="innerCircle" label="内圈" sortable="custom" min-width="150" />
-          <el-table-column prop="outerCircle" label="外圈" sortable="custom" min-width="150" />
-          <el-table-column prop="steelBall" label="钢球型号" sortable="custom" min-width="170" />
-          <el-table-column prop="steelBallNum" label="钢球用量(粒)" sortable="custom" width="140" />
-          <el-table-column prop="oilNum" label="油脂用量(毫克)" sortable="custom" width="160" />
-          <el-table-column prop="holderNum" label="保持架用量(个)" sortable="custom" width="160" />
+          <el-table-column prop="innerCircle" label="内圈" min-width="150" />
+          <el-table-column prop="outerCircle" label="外圈" min-width="150" />
+          <el-table-column prop="steelBall" label="钢球型号" min-width="150" />
+          <el-table-column prop="steelBallNum" label="钢球用量(粒)" width="120" />
+          <el-table-column prop="oilNum" label="油脂用量(毫克)" width="140" />
+          <el-table-column prop="holderNum" label="保持架用量(个)" width="140" />
           <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
-          <el-table-column prop="createByName" label="创建人" sortable="custom" width="120" />
+          <el-table-column prop="createByName" label="创建人" width="100" />
 
           <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
@@ -493,7 +493,7 @@ export default {
         })
         .catch(() => { })
     },
- 
+
   }
 }
 </script>

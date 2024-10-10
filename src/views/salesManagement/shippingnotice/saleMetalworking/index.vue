@@ -84,13 +84,13 @@
                 }}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="partnerCode" label="客户编码" width="200" sortable="custom" />
-            <el-table-column prop="partnerName" label="客户名称" width="200" sortable="custom" />
-            <el-table-column prop="deliverDate" label="发货日期" width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="recipient" label="收件人" width="140" sortable="custom" />
-            <el-table-column prop="phone" label="收件人电话" width="160" sortable="custom" />
+            <el-table-column prop="partnerCode" label="客户编码" min-width="200" sortable="custom" />
+            <el-table-column prop="partnerName" label="客户名称" min-width="200" sortable="custom" />
+            <el-table-column prop="deliverDate" label="发货日期" min-width="120" sortable="custom"></el-table-column>
+            <el-table-column prop="recipient" label="收件人" min-width="120" sortable="custom" />
+            <el-table-column prop="phone" label="收件人电话" min-width="140" sortable="custom" />
 
-            <el-table-column prop="delivery" label="发货方式" width="160">
+            <el-table-column prop="delivery" label="发货方式" min-width="120">
               <template slot-scope="scope">
                 <!-- <div v-if="scope.row.delivery == 'deliver_goods'">
                   <span>送货</span>
@@ -111,10 +111,10 @@
                   }}</div>
               </template>
             </el-table-column>
-            <el-table-column prop="countryName" label="国家" width="160" />
-            <el-table-column prop="provinceName" label="省" width="160" />
-            <el-table-column prop="cityName" label="市" width="160" />
-            <el-table-column prop="areaName" label="区" width="160" />
+            <el-table-column prop="countryName" label="国家" min-width="160" />
+            <el-table-column prop="provinceName" label="省" min-width="160" />
+            <el-table-column prop="cityName" label="市" min-width="160" />
+            <el-table-column prop="areaName" label="区" min-width="160" />
             <el-table-column prop="address" label="地址" min-width="300" />
             <el-table-column prop="exchangeGoodsFlag" label="发货标识" width="120" sortable="custom">
               <template slot-scope="scope">
@@ -126,7 +126,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="deliveryStatus" label="发货状态" width="120" sortable="custom" align="center">
+            <el-table-column prop="deliveryStatus" label="发货状态" min-width="120" sortable="custom" align="center">
               <template slot-scope="scope">
                 <div v-if="scope.row.deliveryStatus == 'not_finished'">
                   <el-tag type="primary">未完成</el-tag>
@@ -139,14 +139,14 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
+            <el-table-column prop="documentStatus" label="单据状态" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag> </div>
                 <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
               </template>
             </el-table-column>
-            <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
+            <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true"

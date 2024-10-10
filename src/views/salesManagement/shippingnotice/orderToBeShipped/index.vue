@@ -81,28 +81,28 @@
             <el-table-column prop="cooperativePartnerCode" label="客户编码" width="160" sortable="custom" />
             <el-table-column prop="cooperativePartnerName" label="客户名称" width="160" sortable="custom" />
             <el-table-column prop="departmentName" label="所属部门" width="160"></el-table-column>
-            <el-table-column prop="salesName" label="所属销售" width="160" sortable="custom" />
+            <el-table-column prop="salesName" label="所属销售" width="120" sortable="custom" />
             <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="160" sortable="custom" />
-            <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" width="160" sortable="custom" />
-            <el-table-column prop="num" label="数量" width="160" sortable="custom" />
-            <el-table-column prop="waitDeliverNum" label="待发货数量" width="160" sortable="custom" />
-            <el-table-column prop="deliveryDate" label="交货日期" width="160" sortable="custom" />
+            <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
+            <el-table-column prop="num" label="数量" width="100" sortable="custom" />
+            <el-table-column prop="waitDeliverNum" label="待发货数量" width="140" sortable="custom" />
+            <el-table-column prop="deliveryDate" label="交货日期" width="140" sortable="custom" />
 
-            <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
-            <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
-            <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
-            <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
-            <el-table-column prop="specialRequire" label="特殊要求" width="160" sortable="custom" />
+            <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
+            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
+            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
+            <el-table-column prop="oil" label="油脂" width="120" sortable="custom" />
+            <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" />
+            <el-table-column prop="clearance" label="游隙" width="120" sortable="custom" />
+            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
+            <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" />
             <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
 
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-            <el-table-column label="操作" width="180" fixed="right">
+            <el-table-column label="操作" width="120" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text"
                   @click.native="handleUserRelation(scope.row.ordersId, 'look')">查看详情</el-button>
@@ -776,7 +776,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
+      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus'||prop=='cooperativePartnerName' || prop === 'cooperativePartnerCode'||prop=='salesName'||prop=='waitDeliverNum') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'

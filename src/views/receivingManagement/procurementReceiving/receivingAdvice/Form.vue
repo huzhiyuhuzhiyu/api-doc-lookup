@@ -1111,16 +1111,16 @@ export default {
         this.$set(item, 'receivedQuantity', item.waitReceiptNum)
         this.dataFormTwo.productData.push(item)
       })
-      // let uniqueArr = []
-      // let idSet = new Set()
+      let uniqueArr = []
+      let idSet = new Set()
 
-      // this.dataFormTwo.productData.forEach((item) => {
-      //   if (!idSet.has(item.id)) {
-      //     uniqueArr.push(item)
-      //     idSet.add(item.id)
-      //   }
-      // })
-      // this.dataFormTwo.productData = uniqueArr
+      this.dataFormTwo.productData.forEach((item) => {
+        if (!idSet.has(item.id)) {
+          uniqueArr.push(item)
+          idSet.add(item.id)
+        }
+      })
+      this.dataFormTwo.productData = uniqueArr
     },
     // },
     // 获取所有订单列表数据

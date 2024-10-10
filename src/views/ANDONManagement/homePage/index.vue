@@ -12,7 +12,7 @@
                 <i :class="item.icon"></i>
               </div>
               <div class="body-right">
-                <div class="right-top">{{ item.label }}</div>
+                <div class="right-top" style="font-size:18px">{{ item.label }}</div>
                 <div class="right-bottom"><span :style="{color:Number(item.num) ? 'red' : '#fff',fontSize:'18px'}">{{ Number(item.num) && Number(item.num) || '' }}</span>{{ Number(item.num) ? '条异常' : '无异常' }}</div>
               </div>
               <div style="flex: 1;"></div>
@@ -23,22 +23,6 @@
 
       </div>
       <div class="JNPF-common-layout-main JNPF-flex-main">
-        <!-- <div class="JNPF-common-head">
-          <topOpts :icon="'el-icon-remove-outline'" @add="handleCancel" :addText="'批量取消'"></topOpts>
-          <div></div>
-          <div class="JNPF-common-head-right">
-            <el-tooltip content="高级查询" placement="top" v-if="true">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                @click="superQueryVisible = true" />
-            </el-tooltip>
-            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
-            </el-tooltip>
-            <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
-            </el-tooltip>
-          </div>
-        </div> -->
         <JNPF-table v-loading="listLoading" :data="list" @sort-change="sortChange" class="dataTable" border
           ref="listTable" custom-column>
           <el-table-column prop="orderNo" label="申请单号" min-width="200" sortable="custom" />
@@ -64,9 +48,10 @@
           <el-table-column prop="createTime" label="发起时间" min-width="180" sortable="custom" />
           <!-- <el-table-column prop="personId" label="响应人" min-width="160" sortable="custom" />
           <el-table-column prop="processDate" label="响应时间" min-width="160" sortable="custom" /> -->
-          <el-table-column label="操作" width="150" fixed="right">
+          <el-table-column label="操作" width="220" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id)">处理</el-button>
+              <el-button size="mini" type="text" v-if="scope.row.type === 'system'" @click="lookRecardData(scope.row.id)">查看异常数据</el-button>
+              <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id,scope.row.type)">处理</el-button>
               <el-button size="mini" type="text" @click="handleCancel(scope.row.flowTaskOperatorId)">取消</el-button>
             </template>
           </el-table-column>
@@ -76,6 +61,7 @@
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="JNPFForm" @close="refresh" />
+    <ExceptForm v-if="sourceDialog" ref="ExceptForm" @close="refresh" :sourceListData="exceptionData" :tableItems="tableItems" />
     <el-dialog title="取消" :close-on-click-modal="false" :visible.sync="visible" class="JNPF-dialog JNPF-dialog_center"
       lock-scroll append-to-body width='600px'>
       <el-form ref="dealForm" :model="dealForm" label-width="120px">
@@ -94,11 +80,12 @@
   </div>
 </template>
 <script>
-import { getAbnoramlData, getAbnoramlModule } from '@/api/abnormalManagement/index.js'
+import { getAbnoramlData, getAbnoramlModule ,getRecordData} from '@/api/abnormalManagement/index.js'
 import JNPFForm from '../processProcessing/Form'
+import ExceptForm from '../processProcessing/ExceptForm.vue'
 import { batchReject } from '@/api/workFlow/FlowBefore'
 export default {
-  components: { JNPFForm },
+  components: { JNPFForm ,ExceptForm},
   data() {
     return {
       superQueryVisible: false,
@@ -203,7 +190,10 @@ export default {
       dealForm: {
         processDescription: '',
       },
-      batchId: ''
+      batchId: '',
+      sourceDialog:false,
+      exceptionData:[],
+      tableItems: [],
     }
   },
   created() {
@@ -254,10 +244,10 @@ export default {
       }).catch(() => this.listLoading = false)
     },
     // 新增数据
-    addOrUpdateHandle(id) {
+    addOrUpdateHandle(id,type) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.JNPFForm.init(id)
+        this.$refs.JNPFForm.init(id,type)
       })
     },
     search(type) {
@@ -322,6 +312,22 @@ export default {
         query: { abnormalType: item.label }
       })
     },
+    lookRecardData(id){
+      getRecordData(id).then(res=>{
+        console.log(res);
+        if (res.data.exceptionData){
+          this.exceptionData = JSON.parse(res.data.exceptionData)
+          console.log(this.exceptionData)
+          this.tableItems = Object.keys(this.exceptionData[0])
+          console.log(this.tableItems);
+          this.sourceDialog = true
+          this.$nextTick(() => {
+            this.$refs.ExceptForm.init()
+          })
+        }
+        
+      })
+    },
   }
 }
 </script>
@@ -347,14 +353,14 @@ export default {
       min-width: 274px;
       box-sizing: border-box;
       .item-head {
-        // font-style: italic;
+        font-style: italic;
         /* 设置斜体 */
         font-family: 'Times New Roman', Times, serif;
         /* 使用另一种字体 */
         text-align: center;
         height: 40px;
         line-height: 40px;
-        // font-size: 18px;
+        font-size: 22px;
         white-space: nowrap;
         overflow: hidden;
         /* 确保超出容器的文本被隐藏 */
@@ -384,7 +390,7 @@ export default {
         }
 
         .body-right {
-          flex: 1;
+          flex: 2;
           display: flex;
           flex-direction: column;
           justify-content: space-between;

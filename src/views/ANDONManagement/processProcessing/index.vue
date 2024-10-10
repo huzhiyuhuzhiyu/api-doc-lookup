@@ -86,7 +86,7 @@
       @close="superQueryVisible = false" />
     <el-dialog title="取消" :close-on-click-modal="false" :visible.sync="visible" class="JNPF-dialog JNPF-dialog_center"
       lock-scroll append-to-body width='600px'>
-      <el-form ref="dealForm" :model="dealForm" label-width="120px">
+      <el-form ref="dealForm" :model="dealForm" label-width="120px" label-position="top">
         <el-form-item label="取消描述：" prop="processDescription">
           <el-input v-model="dealForm.processDescription" placeholder="请输入取消描述" type="textarea" :rows="4" />
         </el-form-item>
@@ -110,6 +110,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getAbnoramlData , getRecordData} from '@/api/abnormalManagement/index.js'
 import { Reject, batchReject } from '@/api/workFlow/FlowBefore'
 export default {
+  name:'processProcessing',
   components: { SuperQuery, JNPFForm ,ExceptForm},
   data() {
     return {

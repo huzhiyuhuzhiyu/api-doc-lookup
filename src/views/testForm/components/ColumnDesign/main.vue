@@ -315,7 +315,7 @@
               </div>
               <el-divider>主数据SQL</el-divider>
               <el-form-item style="margin-left:0px" class="noLabel">
-                <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 4 }" v-model="columnData.master.data">
+                <el-input resize="vertical" type="textarea" :autosize="{ minRows: 4, maxRows: 4 }" v-model="columnData.master.data">
                 </el-input>
               </el-form-item>
 
@@ -344,7 +344,7 @@
               </div>
               <el-divider v-if="columnData.type == 5 || columnData.type == 6">子数据SQL</el-divider>
               <el-form-item v-if="columnData.type == 5 || columnData.type == 6">
-                <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 4 }" v-model="columnData.slave.data">
+                <el-input resize="vertical" type="textarea" :autosize="{ minRows: 4, maxRows: 4 }" v-model="columnData.slave.data">
                 </el-input>
               </el-form-item>
               <el-divider>表格配置</el-divider>

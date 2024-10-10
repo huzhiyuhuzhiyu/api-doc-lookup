@@ -90,35 +90,7 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head" style="padding:8px">
-            <div>
-              <el-dropdown style="margin-right:10px;" v-if="configFlag">
-                <el-button size="mini" type="primary" icon="el-icon-plus">
-                  新建
-                  <i class="el-icon-arrow-down el-icon--right"></i>
-                </el-button>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="addOrUpdateHandle('', '', configFlag)">普通新建</el-dropdown-item>
-                  <el-dropdown-item @click.native="aiAdd()">智能新建</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-              <el-dropdown style="margin-right:10px;" v-else>
-                <el-button size="mini" type="primary" icon="el-icon-plus">
-                  新建
-                  <i class="el-icon-arrow-down el-icon--right"></i>
-                </el-button>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="quickAdd()">快速新建</el-dropdown-item>
-                  <el-dropdown-item @click.native="addOrUpdateHandle('', '', configFlag)">普通新建</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-              <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click="aiAdd">智能新建</el-button> -->
-              <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
-              <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
-              <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
-                icon="el-icon-download" @click="exportForm">
-                导出
-              </el-button>
-            </div>
+            <div></div>
 
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -135,20 +107,18 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
-            ref="dataTable" :setColumnDisplayList="columnList">
+          <JNPF-table v-show="dataTableFlag" v-loading="listLoading" :data="tableData" :fixedNO="true"
+            @sort-change="sortChange" custom-column ref="dataTable" :setColumnDisplayList="columnList">
+            <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
             <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
-              <template slot-scope="scope">
+              <!-- <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">
                   {{ scope.row.code }}
                 </el-link>
-              </template>
+              </template> -->
             </el-table-column>
-            <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
-            <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" />
 
             <el-table-column prop="productCategoryName" label="产品分类" width="120" />
-            <el-table-column prop="mainUnit" label="主单位" width="120" />
             <el-table-column prop="productSource" label="产品来源" width="120">
               <template slot-scope="{ row }">
                 <template v-if="row.productSource == 'produce'">
@@ -165,13 +135,35 @@
                 </template>
               </template>
             </el-table-column>
-            <el-table-column prop="productStatus" label="产品状态" width="120" align="center">
+            <el-table-column prop="mainUnit" label="单位" width="120" />
+            <el-table-column prop="purchaseTaxRate" label="采购税率" width="120" align="center">
               <template slot-scope="{ row }">
-                <el-tag type="success" disable-transitions v-if="row.productStatus == 'enable'">启用</el-tag>
-                <el-tag type="danger" disable-transitions v-else-if="row.productStatus == 'disabled'">禁用</el-tag>
+                <el-select v-model="row.purchaseTaxRate" placeholder="请选择" @change="purchaseTaxRateChange(row)">
+                  <el-option v-for="item in taxRateList" :key="item.taxRate" :label="item.fullName"
+                    :value="item.enCode"></el-option>
+                </el-select>
               </template>
             </el-table-column>
-            <el-table-column prop="brand" label="品牌" width="120" />
+            <el-table-column prop="purchasePrice" label="采购单价(含税)" width="150" align="center">
+              <template slot-scope="{ row }">
+                <el-input v-model="row.purchasePrice" placeholder="请输入内容" @blur="purchasePriceChange(row)"></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column prop="purchaseExcludingTaxPrice" label="采购单价(不含税)" width="160" />
+            <el-table-column prop="salesTaxRate" label="销售税率" width="120" align="center">
+              <template slot-scope="{ row }">
+                <el-select v-model="row.salesTaxRate" placeholder="请选择" @change="salesTaxRateChange(row)">
+                  <el-option v-for="item in taxRateList" :key="item.taxRate" :label="item.fullName"
+                    :value="item.enCode"></el-option>
+                </el-select>
+              </template>
+            </el-table-column>
+            <el-table-column prop="salesPrice" label="销售单价(含税)" width="150" align="center">
+              <template slot-scope="{ row }">
+                <el-input v-model="row.salesPrice" placeholder="请输入内容" @blur="salesPriceChange(row)"></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column prop="salesExcludingTaxPrice" label="销售单价(不含税)" width="160" />
             <el-table-column prop="model" label="型号" width="120" />
             <el-table-column prop="sealingCoverStructure" label="密封盖-结构" width="120" />
             <el-table-column prop="sealingCoverTyping" label="密封盖-打字" width="120" />
@@ -189,75 +181,90 @@
             <el-table-column prop="remark" label="备注" width="120" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" />
-            <el-table-column label="操作" width="140" fixed="right">
-              <template slot-scope="scope">
-                <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId, configFlag)"
-                  :hasDel="false">
-                  <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.id, true)">
-                    查看详情
-                  </el-button>
-                  <!-- <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}
-                      <i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true)">
-                      查看详情
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown> -->
-                </tableOpts>
+
+          </JNPF-table>
+          <JNPF-table v-show="!dataTableFlag" v-loading="listLoading" :data="tableData" :fixedNO="true"
+            @sort-change="sortChange" custom-column ref="otherTable" :setColumnDisplayList="columnList">
+            <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
+            <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
+              <!-- <template slot-scope="scope">
+                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">
+                  {{ scope.row.code }}
+                </el-link>
+              </template> -->
+            </el-table-column>
+
+            <el-table-column prop="productCategoryName" label="产品分类" width="120" />
+            <el-table-column prop="productSource" label="产品来源" width="120">
+              <template slot-scope="{ row }">
+                <template v-if="row.productSource == 'produce'">
+                  生产
+                </template>
+                <template v-else-if="row.productSource == 'purchase'">
+                  采购
+                </template>
+                <template v-else-if="row.productSource == 'out'">
+                  外协
+                </template>
+                <template v-else-if="row.productSource == 'assemble'">
+                  组装
+                </template>
               </template>
             </el-table-column>
+            <el-table-column prop="mainUnit" label="单位" width="120" />
+            <el-table-column prop="purchaseTaxRate" label="采购税率" width="120" align="center">
+              <template slot-scope="{ row }">
+                <el-select v-model="row.purchaseTaxRate" placeholder="请选择" @change="purchaseTaxRateChange(row)">
+                  <el-option v-for="item in taxRateList" :key="item.taxRate" :label="item.fullName"
+                    :value="item.enCode"></el-option>
+                </el-select>
+              </template>
+            </el-table-column>
+            <el-table-column prop="purchasePrice" label="采购单价(含税)" width="150" align="center">
+              <template slot-scope="{ row }">
+                <el-input v-model="row.purchasePrice" placeholder="请输入内容" @blur="purchasePriceChange(row)"></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column prop="purchaseExcludingTaxPrice" label="采购单价(不含税)" width="160" />
+            <el-table-column prop="salesTaxRate" label="销售税率" width="120" align="center">
+              <template slot-scope="{ row }">
+                <el-select v-model="row.salesTaxRate" placeholder="请选择" @change="salesTaxRateChange(row)">
+                  <el-option v-for="item in taxRateList" :key="item.taxRate" :label="item.fullName"
+                    :value="item.enCode"></el-option>
+                </el-select>
+              </template>
+            </el-table-column>
+            <el-table-column prop="salesPrice" label="销售单价(含税)" width="150" align="center">
+              <template slot-scope="{ row }">
+                <el-input v-model="row.salesPrice" placeholder="请输入内容" @blur="salesPriceChange(row)"></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column prop="salesExcludingTaxPrice" label="销售单价(不含税)" width="160" />
+
+            <el-table-column prop="remark" label="备注" width="120" />
+            <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人" />
+
           </JNPF-table>
+
           <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
             :limit.sync="listQuery.pageSize" @pagination="initData" />
         </div>
       </div>
     </div>
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
-    <aiForm v-if="aiformVisible" ref="aiForm" @close="closeForm" />
 
-    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-    <!-- 导入产品 -->
-    <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
-      :http-request="UploadProduct" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
-      :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
-      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false" :limit="1"
-        :on-preview="handlePreview" drag :on-remove="handleRemove" :on-change="handleFileChange" ref="uploadRef">
-        <i class="el-icon-upload"></i>
-        <div class="el-upload__text"><em>点击选取文件上传</em></div>
-        <div class="el-upload__tip" slot="tip">
-          只能上传.xls/.xlsx文件
-          <el-button type="text" class="topButton" icon="el-icon-download" @click="downLoadTemplate">
-            下载模板
-          </el-button>
-        </div>
-      </el-upload>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="saveSubmit()">
-          提交
-        </el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-import { excelExport } from '@/api/basicData/index'
 import {
   getProductList,
   deleteProduct,
   uploadCpProductData,
+  updateProductPrice,
   cpAddProduct
 } from '@/api/masterDataManagement/productManage'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
@@ -298,13 +305,7 @@ export default {
         productSource: [{ required: true, message: '请选择产品来源', trigger: 'change' }]
       },
       getcategoryCoop,
-      productSourceOptions: [
-        { label: '组装', value: 'assemble' },
-        { label: '生产', value: 'produce' },
-        { label: '采购', value: 'purchase' },
-        { label: '外协', value: 'out' }
-      ],
-
+      dataTableFlag: true,
       getbimProductsModelList, // 型号管理属性列表
       title: '更多查询',
       background: true, //分页器背景颜色
@@ -320,6 +321,7 @@ export default {
       initListQuery: {
         code: '',
         name: '',
+        productStatus: 'enable',
         orderItems: [
           {
             asc: false,
@@ -404,7 +406,7 @@ export default {
         },
         {
           prop: 'mainUnit',
-          label: '主单位',
+          label: '单位',
           type: 'select'
         },
         {
@@ -545,7 +547,450 @@ export default {
       this.$refs.treeBox.filter(val)
     },
     'listQuery.classAttribute': function (newVal) {
+      if (localStorage.getItem(`${this.listQuery.classAttribute}productPriceSettingFlag`)) {
+        let roleFlag = JSON.parse(localStorage.getItem(`${this.listQuery.classAttribute}productPriceSettingFlag`))
+        console.log(roleFlag, 'fff')
+        this.expands = roleFlag
+        this.toggleExpand(roleFlag)
+      }
+      console.log(newVal, '5')
+      if (!newVal) {
+        this.dataTableFlag = true
+        this.superQueryJson = [
+          {
+            prop: 'code',
+            label: '产品编码',
+            type: 'input'
+          },
+          {
+            prop: 'drawingNo',
+            label: '品名规格',
+            type: 'input'
+          },
+
+          {
+            prop: 'name',
+            label: '产品名称',
+            type: 'input'
+          },
+          {
+            prop: 'productCategoryName',
+            label: '产品分类',
+            type: 'input'
+          },
+          {
+            prop: 'mainUnit',
+            label: '单位',
+            type: 'select'
+          },
+          {
+            prop: 'productSource',
+            label: '产品来源',
+            type: 'select',
+            options: [
+              { label: '生产', value: 'produce' },
+              { label: '采购', value: 'purchase' },
+              { label: '外协', value: 'out' }
+            ]
+          },
+          {
+            prop: 'productStatus',
+            label: '产品状态',
+            type: 'select',
+            options: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }]
+          },
+          {
+            prop: 'brand',
+            label: '品牌',
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'model',
+            label: '型号',
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'sealingCoverStructure',
+            label: '密封盖-结构',
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'sealingCoverTyping',
+            label: '密封盖-打字',
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'structureType',
+            label: '结构类型',
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'clearance',
+            label: '游隙',
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'steelBallManufacturer',
+            label: '钢球厂家',
+            type: 'select',
+            options: []
+          },
+
+          {
+            prop: 'oil',
+            label: '油脂',
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'oilQuantity',
+            label: '油脂量',
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'noise',
+            label: '噪音',
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'holder',
+            label: '保持架',
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'accuracyLevel',
+            label: '精度等级',
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'vibrationLevel',
+            label: '振动等级',
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'colour',
+            label: '颜色',
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'aperture',
+            label: '孔径',
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'createTime',
+            label: '创建时间',
+            type: 'daterange',
+            valueFormat: 'yyyy-MM-dd HH:mm:ss',
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          {
+            prop: 'createByName',
+            label: '创建人',
+            type: 'input'
+          },
+          {
+            prop: 'remark',
+            label: '备注',
+            type: 'input'
+          }
+        ]
+        this.productSourceList = [
+          { label: '组装', value: 'assemble' },
+          { label: '生产', value: 'produce' },
+          { label: '采购', value: 'purchase' },
+          { label: '外协', value: 'out' }
+        ]
+      } else {
+        if (newVal == 'finish_product') {
+          this.dataTableFlag = true
+          this.superQueryJson = [
+            {
+              prop: 'code',
+              label: '产品编码',
+              type: 'input'
+            },
+            {
+              prop: 'drawingNo',
+              label: '品名规格',
+              type: 'input'
+            },
+
+            {
+              prop: 'name',
+              label: '产品名称',
+              type: 'input'
+            },
+            {
+              prop: 'productCategoryName',
+              label: '产品分类',
+              type: 'input'
+            },
+            {
+              prop: 'mainUnit',
+              label: '单位',
+              type: 'select'
+            },
+            {
+              prop: 'productSource',
+              label: '产品来源',
+              type: 'select',
+              options: [
+                { label: '生产', value: 'produce' },
+                { label: '采购', value: 'purchase' },
+                { label: '外协', value: 'out' }
+              ]
+            },
+            {
+              prop: 'productStatus',
+              label: '产品状态',
+              type: 'select',
+              options: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }]
+            },
+            {
+              prop: 'brand',
+              label: '品牌',
+              type: 'select',
+              options: []
+            },
+            {
+              prop: 'model',
+              label: '型号',
+              type: 'select',
+              options: []
+            },
+            {
+              prop: 'sealingCoverStructure',
+              label: '密封盖-结构',
+              type: 'select',
+              options: []
+            },
+            {
+              prop: 'sealingCoverTyping',
+              label: '密封盖-打字',
+              type: 'select',
+              options: []
+            },
+            {
+              prop: 'structureType',
+              label: '结构类型',
+              type: 'select',
+              options: []
+            },
+            {
+              prop: 'clearance',
+              label: '游隙',
+              type: 'select',
+              options: []
+            },
+            {
+              prop: 'steelBallManufacturer',
+              label: '钢球厂家',
+              type: 'select',
+              options: []
+            },
+
+            {
+              prop: 'oil',
+              label: '油脂',
+              type: 'select',
+              options: []
+            },
+            {
+              prop: 'oilQuantity',
+              label: '油脂量',
+              type: 'select',
+              options: []
+            },
+            {
+              prop: 'noise',
+              label: '噪音',
+              type: 'select',
+              options: []
+            },
+            {
+              prop: 'holder',
+              label: '保持架',
+              type: 'select',
+              options: []
+            },
+            {
+              prop: 'accuracyLevel',
+              label: '精度等级',
+              type: 'select',
+              options: []
+            },
+            {
+              prop: 'vibrationLevel',
+              label: '振动等级',
+              type: 'select',
+              options: []
+            },
+            {
+              prop: 'colour',
+              label: '颜色',
+              type: 'select',
+              options: []
+            },
+            {
+              prop: 'aperture',
+              label: '孔径',
+              type: 'select',
+              options: []
+            },
+            {
+              prop: 'createTime',
+              label: '创建时间',
+              type: 'daterange',
+              valueFormat: 'yyyy-MM-dd HH:mm:ss',
+              startPlaceholder: '开始日期',
+              endPlaceholder: '结束日期',
+              pickerOptions: this.global.timePickerOptions
+            },
+            {
+              prop: 'createByName',
+              label: '创建人',
+              type: 'input'
+            },
+            {
+              prop: 'remark',
+              label: '备注',
+              type: 'input'
+            }
+          ]
+          this.productSourceList = [
+            { label: '组装', value: 'assemble' },
+            { label: '生产', value: 'produce' },
+            { label: '采购', value: 'purchase' },
+            { label: '外协', value: 'out' }
+          ]
+        } else {
+          this.dataTableFlag = false
+          this.superQueryJson = [
+            {
+              prop: 'code',
+              label: '产品编码',
+              type: 'input'
+            },
+            {
+              prop: 'drawingNo',
+              label: '品名规格',
+              type: 'input'
+            },
+
+            {
+              prop: 'name',
+              label: '产品名称',
+              type: 'input'
+            },
+            {
+              prop: 'productCategoryName',
+              label: '产品分类',
+              type: 'input'
+            },
+            {
+              prop: 'mainUnit',
+              label: '单位',
+              type: 'select'
+            },
+            {
+              prop: 'productSource',
+              label: '产品来源',
+              type: 'select',
+              options: [
+                { label: '生产', value: 'produce' },
+                { label: '采购', value: 'purchase' },
+                { label: '外协', value: 'out' }
+              ]
+            },
+            {
+              prop: 'productStatus',
+              label: '产品状态',
+              type: 'select',
+              options: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }]
+            },
+            {
+              prop: 'brand',
+              label: '品牌',
+              type: 'select',
+              options: []
+            },
+
+            {
+              prop: 'createTime',
+              label: '创建时间',
+              type: 'daterange',
+              valueFormat: 'yyyy-MM-dd HH:mm:ss',
+              startPlaceholder: '开始日期',
+              endPlaceholder: '结束日期',
+              pickerOptions: this.global.timePickerOptions
+            },
+            {
+              prop: 'createByName',
+              label: '创建人',
+              type: 'input'
+            }
+          ]
+          this.productSourceList = [
+            { label: '生产', value: 'produce' },
+            { label: '采购', value: 'purchase' },
+            { label: '外协', value: 'out' }
+          ]
+        }
+      }
+
+      this.getcategoryTree()
       this.initData()
+    },
+    tableData: {
+      // immediate:true,
+      handler: function (newVal, oldVal) {
+        newVal.forEach((item) => {
+          if ((item.purchasePrice && item.purchaseTaxRate) || (item.purchasePrice && item.purchaseTaxRate == 0)) {
+            item.purchaseExcludingTaxPrice = this.jnpf.numberFormat(
+              item.purchasePrice / (1 + (item.purchaseTaxRate * 1) / 100)
+            )
+            console.log(item.purchaseExcludingTaxPrice, 'l')
+          } else {
+            item.purchaseExcludingTaxPrice = ''
+          }
+          if ((item.salesPrice && item.salesTaxRate) || (item.salesPrice && item.salesTaxRate == 0)) {
+            item.salesExcludingTaxPrice = this.jnpf.numberFormat(item.salesPrice / (1 + (item.salesTaxRate * 1) / 100))
+            console.log(item.salesExcludingTaxPrice, 'l')
+          } else {
+            item.salesExcludingTaxPrice = ''
+          }
+
+          // if (item.purchaseQuantity && item.excludingTaxPrice) {
+          //   item.excludingTaxAmount = this.jnpf.numberFormat(item.purchaseQuantity * item.excludingTaxPrice)
+          // }
+          // if (item.price && item.purchaseQuantity && item.excludingTaxAmount) {
+          //   item.taxAmount = this.jnpf.numberFormat(item.price * item.purchaseQuantity - item.excludingTaxAmount)
+          // }
+          // if (item.excludingTaxAmount && item.taxAmount) {
+          //   item.totalAmount = this.jnpf.numberFormat(item.excludingTaxAmount * 1 + item.taxAmount * 1)
+          // }
+          // if (!item.price) {
+          //   this.$message.error('未找到供应商单价')
+          // }
+        })
+      },
+      deep: true
     }
   },
   mounted() {
@@ -553,8 +998,9 @@ export default {
     this.getclassAttributeList()
   },
   created() {
-    if (localStorage.getItem('finishedFlag')) {
-      let roleFlag = JSON.parse(localStorage.getItem('finishedFlag'))
+    if (localStorage.getItem(`${this.listQuery.classAttribute}productPriceSettingFlag`)) {
+      let roleFlag = JSON.parse(localStorage.getItem(`${this.listQuery.classAttribute}productPriceSettingFlag`))
+      console.log(roleFlag, 'fff')
       this.expands = roleFlag
       this.toggleExpand(roleFlag)
     }
@@ -574,9 +1020,39 @@ export default {
         console.log(this.categoryList, 'list')
       })
     },
-    dataFormatting(res) {
-      return res.data[0].childrenList
+    purchaseTaxRateChange(row) {
+      console.log(row)
+      updateProductPrice(row).then((res) => {
+        console.log(res, 'iiiF')
+      })
+      this.initData()
     },
+    purchasePriceChange(row) {
+      console.log(row, 'h')
+      if (!row.purchasePrice) return this.$message.error('错了哦，这是一条错误消息')
+
+      updateProductPrice(row).then((res) => {
+        console.log(res, 'iiiF')
+      })
+      this.initData()
+    },
+    salesTaxRate(row) {
+      console.log(row)
+      updateProductPrice(row).then((res) => {
+        console.log(res, 'iiiF')
+      })
+      this.initData()
+    },
+    salesPriceChange(row) {
+      console.log(row, 'h')
+      if (!row.salesPrice) return this.$message.error('错了哦，这是一条错误消息')
+
+      updateProductPrice(row).then((res) => {
+        console.log(res, 'iiiF')
+      })
+      this.initData()
+    },
+
     productCategoryChange(val, data) {
       this.quickForm.productCategoryName = data[0].name
       this.quickForm.productCategoryId = data[0].id
@@ -585,46 +1061,7 @@ export default {
       this.quickVisible = false
       this.$refs.quickForm.resetFields()
     },
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          this.quickForm.mainUnit = this.quickForm.unit
-          this.quickForm.deputyUnit = this.quickForm.unit
-          this.quickForm.ratio = 1
-          this.quickForm.calculationDirection = 'multiplication'
-          this.quickForm.classAttribute = 'finish_product'
-          this.quickForm.saleFlag = true
-          this.quickForm.tradeFlag = false
-          this.quickForm.productStatus = 'enable'
 
-          cpAddProduct(this.quickForm).then((res) => {
-            if (res.code == '200') {
-              this.$message({
-                message: '新建成功',
-                type: 'success',
-                duration: 1500,
-                onClose: () => {
-                  this.quickVisible = false
-                  this.$refs.quickForm.resetFields()
-                  this.initData()
-                }
-              })
-            }
-          })
-        } else {
-          return false
-        }
-      })
-    },
-    async fetchData(code) {
-      try {
-        const data = await this.jnpf.getBillRuleConfigFun(code)
-        this.codeConfig = data
-        if (!data.modifyFlag && data.codeWay == 'auto') {
-          this.quickForm.code = data.number
-        }
-      } catch (error) { }
-    },
     getBimBusinessSwitchConfigList() {
       let obj = {
         pageSize: 1, // 1是编码 0是财务
@@ -637,19 +1074,6 @@ export default {
           this.configFlag = false
         }
       })
-    },
-    // 选择型号 带出 密封盖 结构 打字 结构类型 游隙 钢球厂家 油脂 噪音 保持架
-    modelChange(val, data, paramsObj) {
-      this.$nextTick(() => {
-        this.$refs['dataForm'][paramsObj.tabInd].$children[0].validateField(paramsObj.prop)
-      })
-      if (data && data.length) {
-        // 数据有效，进行更新
-        this.dataForm[paramsObj.prop] = data[0].all.model
-      } else {
-        // 不选择任何内容，置空绑定的值
-        this.dataForm[paramsObj.prop] = ''
-      }
     },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
@@ -1168,48 +1592,24 @@ export default {
           item.taxRate = item.enCode.replace('%', '') * 1
         })
         this.taxRateList = res.data.list
+        console.log(this.taxRateList, 'v')
       })
     },
     changeLeft() {
       this.leftFlag = !this.leftFlag
     },
     columnSetFun() {
-      this.$refs.dataTable.showDrawer()
-    },
-    // 导出
-    exportForm() {
-      this.exportFormVisible = true
-      let columnList = this.$refs.dataTable.columnList.filter((item) => !!item.label && !!item.prop)
-      columnList = columnList.map((item) => {
-        return { label: item.label, prop: item.prop }
-      })
-      this.$nextTick(() => {
-        this.$refs.exportForm.init(columnList)
-      })
-    },
-    download(data) {
-      if (data) {
-        this.exportFormVisible = false
-        let includeFieldMap = {}
-        for (let i = 0; i < data.selectKey.length; i++) {
-          includeFieldMap[data.selectKey[i]] = data.selectVal[i]
-        }
-        let _data = {
-          ...this.listQuery,
-          exportType: '1200',
-          exportName: '成品信息',
-          includeFieldMap,
-          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
-        }
-        excelExport(_data)
-          .then((res) => {
-            this.exportFormVisible = false
-            if (!res.data.url) return
-            this.jnpf.downloadFile(res.data.url)
-          })
-          .catch(() => { })
+      console.log(this.dataTableFlag, 'this.dataTableFlag')
+      console.log(this.$refs, 'ff')
+      if (this.dataTableFlag) {
+        console.log(1)
+        this.$refs.dataTable.showDrawer()
+      } else {
+        console.log(3)
+        this.$refs.otherTable.showDrawer()
       }
     },
+
     // 展开或折叠全部
     toggleExpand(expands) {
       this.refreshTree = false
@@ -1227,7 +1627,7 @@ export default {
       this.expands = expands
       this.$nextTick(() => {
         this.refreshTree = true
-        localStorage.setItem('finishedFlag', expands)
+        localStorage.setItem(`${this.listQuery.classAttribute}productPriceSettingFlag`, expands)
       })
     },
     filterNode(value, data) {
@@ -1349,105 +1749,7 @@ export default {
       a.setAttribute('href', location.origin + '/static/成品导入模板.xlsx')
       a.click()
     },
-    // 上传产品
-    UploadProduct(data) {
-      this.loadingText = '正在导入数据'
-      this.formLoading = true
-      var formData = new FormData()
-      formData.append('file', data)
-      formData.append('productCategoryId', this.listQuery.productCategoryId)
-      formData.append('classAttribute', this.listQuery.classAttribute)
-      //调用上传文件接口
-      uploadCpProductData(formData)
-        .then((res) => {
-          if (!res.data) {
-            this.$message.success(`导入成功`)
-            this.uploadVisib = false
-            this.$refs['UploadProduct']
-            this.initData()
-          } else {
-            this.uploadVisib = false
-            this.handleMessage(res.data)
-          }
 
-          this.formLoading = false
-          this.loadingText = ''
-        })
-        .catch((err) => {
-          this.uploadVisib = false
-          this.$message.error(`导入数据超过最大限制：500`)
-          this.formLoading = false
-          this.loadingText = ''
-        })
-    },
-    // 导入产品  下载导入错误数据
-    downNoProduct(res) {
-      this.jnpf.downloadFile(res.url, res.name)
-      this.uploadVisib = false
-      this.$refs['uploadRef'].clearFiles()
-    },
-    cancelFun() {
-      this.uploadVisib = false
-      this.$refs['uploadRef'].clearFiles()
-    },
-    saveSubmit() {
-      this.UploadProduct(this.file)
-    },
-    // 提示
-    handleMessage(data) {
-      const h = this.$createElement
-      this.$message({
-        type: 'error',
-        duration: 0,
-        showClose: true,
-        customClass: 'my-message', // 自定义类名，用于设置样式
-        message: h(
-          'div',
-          {
-            style: 'padding-right:20px;display:flex;align-items:center;color:#f56c6c;'
-          },
-          [
-            h('p', { style: 'font-size:14px;' }, '导入成功，存在成品产品档案错误！'),
-            h(
-              'el-button',
-              {
-                props: {
-                  type: 'text',
-                  size: 'mini',
-                  icon: 'el-icon-download'
-                },
-                on: {
-                  click: () => {
-                    this.downNoProduct(data)
-                  }
-                },
-                style: {
-                  border: 'none',
-                  textAlign: 'center',
-                  // width:"20%",
-                  margin: '0 5px 0 5px '
-                }
-              },
-              '下载导入错误数据'
-            )
-          ]
-        )
-      })
-      return
-    },
-    // 智能新建
-    aiAdd() {
-      this.aiformVisible = true
-      this.$nextTick(() => {
-        this.$refs.aiForm.init()
-      })
-    },
-    quickAdd() {
-      this.quickVisible = true
-
-      this.fetchData('CPBM')
-      this.quickForm.productSource = 'assemble'
-    },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false

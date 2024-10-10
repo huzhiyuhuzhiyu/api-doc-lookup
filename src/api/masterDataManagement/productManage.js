@@ -86,6 +86,15 @@ export function updateProductData(data) {
   })
 }
 
+// 产品价格设置 修改
+export function updateProductPrice(data) {
+  return request({
+    url: `/api/zgt/product/update/price`,
+    method: 'PUT',
+    data
+  })
+}
+
 // 成品 导入 
 export function uploadCpProductData(data) {
   return request({

@@ -27,9 +27,9 @@
                   </div>
                   <div class="card-list" v-loading="listLoading">
                     <div v-for="line in dataDetail" :key="line.id" @click="handleCard(line)">
-                      <el-card :shadow="line.code === currentCard ? 'always' : 'hover'" class="box-card">
+                      <el-card shadow="hover" class="box-card">
                         <div> {{ line.name }} </div>
-                        <div>
+                        <div style="text-align:right">
                           <el-button size="mini" type="text" @click="addOrUpdateHandle(line.id, 'edit')">编辑</el-button>
                           <el-button size="mini" type="text" @click="flowSet(line.id, line.name)">流程设置</el-button>
                         </div>

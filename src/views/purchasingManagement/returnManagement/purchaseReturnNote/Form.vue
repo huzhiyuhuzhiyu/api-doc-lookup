@@ -74,32 +74,6 @@
                           :disabled="btnType == 'look'" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
                       </el-form-item>
                     </el-col>
-
-                    <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                      <el-form-item label="退货状态" prop="deliveryStatus">
-                        <el-select v-model="dataForm.deliveryStatus" placeholder="请选择退货状态" clearable
-                          style="width: 100%;" :disabled="btnType == 'look' ? true : false">
-                          <el-option v-for="(item, index) in deliveryStatusList" :key="index" :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                      <el-form-item label="退货完成时间" prop="deliveryCompletionDate">
-                        <el-date-picker v-model="dataForm.deliveryCompletionDate" type="datetime"
-                          placeholder="请选择退货完成时间" :disabled="btnType == 'look'" style="width: 100%;"
-                          clearable></el-date-picker>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                      <el-form-item label="检验状态" prop="inspectionStatus">
-                        <el-select v-model="dataForm.inspectionStatus" placeholder="请选择检验状态" clearable
-                          style="width: 100%;" :disabled="btnType == 'look' ? true : false">
-                          <el-option v-for="(item, index) in inspectionStatusList" :key="index" :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
                     <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
                       <el-form-item label="创建时间" prop="createTime">
                         <el-date-picker v-model="dataForm.createTime" type="datetime" placeholder="请选择创建时间"

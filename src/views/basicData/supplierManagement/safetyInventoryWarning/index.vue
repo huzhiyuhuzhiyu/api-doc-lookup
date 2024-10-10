@@ -66,15 +66,7 @@
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
             </el-form-item>
           </el-col>
-          <!-- <el-button
-            style="float: right;margin-right: 20px;"
-            size="mini"
-            type="primary"
-            icon="icon-ym icon-ym-report-icon-search-setting"
-            @click="moreQueries()"
-          >
-            更多查询
-          </el-button> -->
+          
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -103,23 +95,16 @@
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" hasC @sort-change="sortChange"
           custom-column ref="dataTable" :setColumnDisplayList="columnList" @selection-change="handeleProductInfoData">
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
-          <!-- <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" /> -->
-          <el-table-column prop="code" label="产品编码" min-width="100"></el-table-column>
+          <el-table-column prop="code" label="产品编码" min-width="120"></el-table-column>
           <el-table-column prop="classAttribute" label="类别属性" width="120" sortable="custom">
             <template slot-scope="scope">
               {{ $getLabel(classAttributeList, scope.row.classAttribute, 'value', 'label') }}
             </template>
           </el-table-column>
           <el-table-column prop="productCategoryName" label="产品分类" width="120" sortable="custom" />
-          <el-table-column prop="mainUnit" label="单位" min-width="120" />
+          <el-table-column prop="mainUnit" label="单位" width="60" />
           <el-table-column prop="safeInventory" label="安全库存" min-width="100" />
           <el-table-column prop="availableQuantity" label="可用库存" min-width="130" sortable="custom" />
-          <!-- <el-table-column prop="inventoryQuantity" label="库存数量(主)" min-width="130" sortable="custom" />
-          <el-table-column prop="occupancyQuantity" label="占用数量(主)" min-width="130" sortable="custom" />
-          <el-table-column prop="deputyUnit" label="副单位" min-width="130" />
-          <el-table-column prop="deputyAvailableQuantity" label="可用库存(副)" min-width="130" sortable="custom" />
-          <el-table-column prop="deputyInventoryQuantity" label="库存数量(副)" min-width="130" sortable="custom" />
-          <el-table-column prop="deputyOccupancyQuantity" label="占用数量(副)" min-width="130" sortable="custom" /> -->
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
           :limit.sync="listQuery.pageSize" @pagination="initData" />

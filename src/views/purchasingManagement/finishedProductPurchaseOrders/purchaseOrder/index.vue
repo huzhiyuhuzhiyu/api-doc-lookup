@@ -63,7 +63,7 @@
           <JNPF-table @selection-change="handeleFinshData" hasC v-if="flag" v-loading="listLoading"
             highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
             custom-column :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
-            <el-table-column prop="orderNo" label="采购单号" min-width="180" sortable="custom">
+            <el-table-column prop="orderNo" label="采购单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                   {{ scope.row.orderNo }}
@@ -76,10 +76,10 @@
             <!-- <el-table-column prop="reasonRejection" label="驳回理由" align="left" min-width="180" />
                 <el-table-column prop="approvalCompletionDate" label="审批完成时间" align="left" min-width="180"
                   sortable="custom" /> -->
-            <el-table-column prop="deliveryDate" label="交货日期" min-width="180" sortable="custom" />
-            <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" min-width="180" sortable="custom" />
-            <el-table-column prop="taxAmount" label="税额" min-width="180" sortable="custom" />
-            <el-table-column prop="totalAmount" label="总金额(含税)" min-width="180" sortable="custom" />
+            <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
+            <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" width="160" sortable="custom" />
+            <el-table-column prop="taxAmount" label="税额" width="100" sortable="custom" />
+            <el-table-column prop="totalAmount" label="总金额(含税)" width="150" sortable="custom" />
             <el-table-column prop="receivingStatus" label="订单状态" align="center" sortable="custom" width="120">
               <template slot-scope="scope">
                 <div v-if="scope.row.receivingStatus == 'not_finished'">

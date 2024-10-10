@@ -86,7 +86,7 @@
           <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="120" sortable="custom" />
           <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="140" sortable="custom" />
           <el-table-column prop="utilizeQuantity" label="利用数量" min-width="140" sortable="custom" />
-          <!-- <el-table-column prop="completedQuantity" label="返工数量" min-width="120" /> -->
+          <el-table-column prop="completedQuantity" label="返工数量" min-width="120" />
           <el-table-column prop="planStartDate" label="计划开始日期" width="180" sortable="custom" />
           <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
           <el-table-column prop="sealingCoverTyping" label="打字内容" width="180" sortable="custom" />
@@ -172,7 +172,6 @@ export default {
         'packagingMethod',
         'createByName'
       ],
-      columnList: [],
       superQueryVisible: false,
       superQueryJson: [
         {
@@ -478,7 +477,7 @@ export default {
       if (readOnly) {
         this.detailFormVisible = true
         this.$nextTick(() => {
-          this.$refs.DetailForm.init(row.id, readOnly,false,[])
+          this.$refs.DetailForm.init(row.id, readOnly, false, [])
         })
       } else {
         this.formVisible = true

@@ -640,9 +640,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp = prop.replace(/_([a-zA-Z])/g, (match, letter) => letter.toUpperCase())
-      if (newProp === 'createTime') {
-        newProp = 'create_time'
-      }
+    
       console.log(newProp)
       this.listQuery.orderItems[0].asc = order !== 'descending'
       this.listQuery.orderItems[0].column = order === null ? '' : newProp

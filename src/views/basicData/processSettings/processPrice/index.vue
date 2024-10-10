@@ -107,7 +107,7 @@
           ref="dataTable" hasC @selection-change="currentChange" :setColumnDisplayList="columnList">
           <el-table-column prop="name" label="工序名称" min-width="180" sortable="custom" />
           <el-table-column prop="code" label="工序编码" min-width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="pricingType" label="计价类型" width="140" sortable="custom">
+          <el-table-column prop="pricingType" label="计价类型" width="120" sortable="custom">
             <template slot-scope="{ row }">
               <template v-if="row.pricingType == 'by_time'">
                 计时
@@ -117,12 +117,12 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column prop="unitPrice" label="计件单价(元)" width="160">
+          <el-table-column prop="unitPrice" label="计件单价(元)" width="110">
             <template slot-scope="scope">
               <div>{{ scope.row.unitPrice ? scope.row.unitPrice : 0 }}</div>
             </template>
           </el-table-column>
-          <el-table-column prop="timePrice" label="计时单价(元)" width="160">
+          <el-table-column prop="timePrice" label="计时单价(元)" width="110">
             <template slot-scope="scope">
               <div>{{ scope.row.timePrice ? scope.row.timePrice : 0 }}</div>
             </template>

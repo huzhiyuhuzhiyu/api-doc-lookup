@@ -980,23 +980,15 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp
-      if (this.activeName === 'dataTable') {
-        if (prop === 'purchaseOrderNo') {
-          newProp = prop
-        } else {
-          newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-        }
-        this.listQuery.orderItems[0].asc = order !== 'descending'
-        this.listQuery.orderItems[0].column = order === null ? '' : newProp
+      
+      if (prop === 'orderNo') {
+        newProp = prop
       } else {
-        if (['orderNo', 'purchaseOrderNo', 'productName', 'productDrawingNo', 'createTime'].includes(prop)) {
-          newProp = prop
-        } else {
-          newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-        }
-        this.linesQuery.orderItems[0].asc = order === 'ascending'
-        this.linesQuery.orderItems[0].column = order === null ? '' : newProp
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
+      this.listQuery.orderItems[0].asc = order !== 'descending'
+      this.listQuery.orderItems[0].column = order === null ? '' : newProp
+
       this.search()
     },
     closeForm(isRefresh) {

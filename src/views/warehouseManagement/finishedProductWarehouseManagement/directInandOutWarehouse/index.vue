@@ -444,7 +444,7 @@
         <el-button type="primary" @click="continueAdd()"> 继续新增</el-button>
       </span>
     </el-dialog>
-    <!-- <el-dialog title="扫码录入" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+    <el-dialog title="扫码录入" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
       :show-close="true" :visible.sync="scanDialog" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px"
       @close="closeScanDiaFun()">
       <div class="scand">
@@ -454,7 +454,7 @@
           <div class="tip">说明：根据产品码自动添加对应的产品</div>
         </div>
       </div>
-    </el-dialog> -->
+    </el-dialog>
     <!-- 选客户 -->
     <CustomerForm v-if="CustomerForm" ref="CustomerForms" @selectCustomer="handleSelectCustomer"></CustomerForm>
     <!-- 选库位 -->
@@ -766,7 +766,6 @@ export default {
       productArr[index].excludingTaxTotalAmount = this.jnpf.numberFormat((row.excludingTaxCostPrice * row.num), 4)
       productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.costPrice, row.excludingTaxCostPrice]), 6)]), 6)
       this.productData = productArr
-      alert(3)
     },
     // 打开选择批次号弹框
     openSeleceBatchNumberDialog(data, index) {
@@ -913,18 +912,18 @@ export default {
       arr.forEach(item => {
 
         item.classAttribute = item.classAttribute
-        this.$set(item,'num','')
-        this.$set(item,'excludingTaxCostPrice','')
-        this.$set(item,'ordersId','')
-        this.$set(item,'ordersLineId','')
-        this.$set(item,'noticeId','')
-        this.$set(item,'noticeLineId','')
-        this.$set(item,'taxAmount','')
-        this.$set(item,'totalAmount','')
-        this.$set(item,'productCode',item.code)
+        item.ordersId = ""
+        item.ordersLineId = ""
+        item.noticeId = ""
+        item.num = ''
         item.costPrice = ""
+        item.excludingTaxCostPrice = ""
         item.excludingTaxTotalAmount = ""
-        
+        item.noticeLineId = ""
+        item.ordersLineId = ""
+        item.totalAmount = ""
+        item.taxAmount = ""
+        item.productCode = item.code
         item.taxRate = 13
         if (this.dataForm.documentType == 'inbound') {
           item.productsId = item.id
@@ -1032,7 +1031,6 @@ export default {
       productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.costPrice, row.excludingTaxCostPrice]), 6)]), 6)
 
       this.productData = productArr
-      alert(2)
     },
 
 
@@ -1116,7 +1114,6 @@ export default {
       productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.costPrice, row.excludingTaxCostPrice]), 6)]), 6)
       productArr[index].excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].taxAmount]), 6)
       this.productData = productArr
-      alert(1)
     },
 
 

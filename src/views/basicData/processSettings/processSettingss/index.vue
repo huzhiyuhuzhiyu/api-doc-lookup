@@ -80,7 +80,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" align="left" min-width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" align="left" min-width="180" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人" align="left" width="100" sortable="custom" />
             <el-table-column prop="remark" label="备注" align="left" min-width="180" />
             <!-- <el-table-column prop="state" label="工艺状态" align="center" sortable="custom" width="120" >
               <template slot-scope="scope">
@@ -585,7 +585,12 @@ export default {
       })
     },
     sortChange({ prop, order }) {
-      const newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+      let newProp;
+      if (prop === 'createByName') {
+        newProp = 'create_by'
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
       this.listQuery.orderItems[0].asc = order === 'ascending'
       this.listQuery.orderItems[0].column = order === null ? '' : newProp
       this.initData()

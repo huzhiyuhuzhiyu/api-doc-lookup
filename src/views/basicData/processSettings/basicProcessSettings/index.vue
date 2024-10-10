@@ -109,19 +109,19 @@
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           :hasNO="true" ref="listTable" :setColumnDisplayList="columnList">
-          <el-table-column prop="code" label="工序编码" width="180" sortable="custom">
+          <el-table-column prop="code" label="工序编码" width="120" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">{{
                 scope.row.code
               }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="name" label="工序名称" min-width="180" sortable="custom" />
-          <el-table-column prop="productCategoryIdText" label="工序分类" min-width="180" sortable="custom" />
-          <el-table-column prop="unitPrice" label="正品单价" min-width="180" />
-          <el-table-column prop="rejectUnitPrice" label="次品单价" min-width="180" />
-          <el-table-column prop="scrapUnitPrice" label="废品单价" min-width="120" />
-          <el-table-column prop="pricingTypeName" label="计价类型" width="180"> </el-table-column>
+          <el-table-column prop="name" label="工序名称" width="100" sortable="custom" />
+          <el-table-column prop="productCategoryIdText" label="工序分类" width="100" sortable="custom" />
+          <el-table-column prop="unitPrice" label="正品单价" width="100" />
+          <el-table-column prop="rejectUnitPrice" label="次品单价" width="100" />
+          <el-table-column prop="scrapUnitPrice" label="废品单价" width="100" />
+          <el-table-column prop="pricingTypeName" label="计价类型" width="100"> </el-table-column>
           <el-table-column prop="timePrice" label="计时单价" min-width="120"></el-table-column>
           <el-table-column prop="processingType" label="加工类型" width="120" sortable="custom">
             <template slot-scope="scope">

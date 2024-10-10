@@ -848,7 +848,6 @@ export default {
     },
     async handleConfirm(submitModel) {
       console.log(this.productData);
-      this.btnLoading = true
       let submitFlag = true // 自动聚焦是否可用
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -913,6 +912,7 @@ export default {
           // 自动聚焦未使用则提交
           if (submitFlag) {
             this.dataForm.documentType = "inbound"
+            this.btnLoading = true
 
             this.dataForm.documentStatus = submitModel
             // const formMethod = this.dataForm.id ? updateInboundOutbound : addInboundOutbound

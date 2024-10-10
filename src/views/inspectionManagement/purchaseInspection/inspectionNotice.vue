@@ -36,10 +36,10 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head" style="padding:10px">
             <div>
-              <!-- <el-button size="mini" type="primary" @click="scanFun">
+              <el-button size="mini" type="primary" @click="scanFun">
                 <i class="iconfont icon-saoma"></i>
                 扫码检验
-              </el-button> -->
+              </el-button>
               <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
                 icon="el-icon-download" @click="exportForm">
                 导出
@@ -335,12 +335,12 @@ export default {
     }
   },
   methods: {
-    // scanFun() {
-    //   this.scanDialog = true
-    //   this.$nextTick(() => {
-    //     this.$refs.inputRef.$refs.input.focus()
-    //   })
-    // },
+    scanFun() {
+      this.scanDialog = true
+      this.$nextTick(() => {
+        this.$refs.inputRef.$refs.input.focus()
+      })
+    },
     closeScanDiaFun() {
       this.scanDialog = false
       this.scanResult = ''
@@ -969,7 +969,7 @@ export default {
       if (readOnly) {
         this.detailFormVisible = true
         this.$nextTick(() => {
-          this.$refs.DetailForm.init(row.purchaseReceiptReturnGoodsId, 'look',false,[])
+          this.$refs.DetailForm.init(row.purchaseReceiptReturnGoodsId, 'look', false, [])
         })
       } else {
         this.formVisible = true
@@ -980,23 +980,15 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp
-      if (this.activeName === 'dataTable') {
-        if (prop === 'purchaseOrderNo') {
-          newProp = prop
-        } else {
-          newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-        }
-        this.listQuery.orderItems[0].asc = order !== 'descending'
-        this.listQuery.orderItems[0].column = order === null ? '' : newProp
+      
+      if (prop === 'orderNo') {
+        newProp = prop
       } else {
-        if (['orderNo', 'purchaseOrderNo', 'productName', 'productDrawingNo', 'createTime'].includes(prop)) {
-          newProp = prop
-        } else {
-          newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-        }
-        this.linesQuery.orderItems[0].asc = order === 'ascending'
-        this.linesQuery.orderItems[0].column = order === null ? '' : newProp
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
+      this.listQuery.orderItems[0].asc = order !== 'descending'
+      this.listQuery.orderItems[0].column = order === null ? '' : newProp
+
       this.search()
     },
     closeForm(isRefresh) {

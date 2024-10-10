@@ -424,7 +424,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'salesName' || prop === 'cooperativePartnerCode' || prop === 'sealingRingName') {
+      if (prop === 'salesName'||prop=='cooperativePartnerName' || prop === 'cooperativePartnerCode' || prop === 'sealingRingName') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());

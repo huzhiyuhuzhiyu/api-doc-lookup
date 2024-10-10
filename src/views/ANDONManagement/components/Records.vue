@@ -213,8 +213,8 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp = ''
-      if (['equipmentName', 'productDrawingNo', 'createByName'].includes(prop)) {
-        newProp = prop === 'createByName' ? 'create_by' : prop
+      if (['equipmentName', 'productDrawingNo', 'createByName','personName'].includes(prop)) {
+        newProp = prop === 'createByName' ? 'create_by' : prop === 'personName' ? 'person_id' : prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }

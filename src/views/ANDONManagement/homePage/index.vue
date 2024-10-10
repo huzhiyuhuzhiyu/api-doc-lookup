@@ -314,12 +314,9 @@ export default {
     },
     lookRecardData(id){
       getRecordData(id).then(res=>{
-        console.log(res);
         if (res.data.exceptionData){
           this.exceptionData = JSON.parse(res.data.exceptionData)
-          console.log(this.exceptionData)
           this.tableItems = Object.keys(this.exceptionData[0])
-          console.log(this.tableItems);
           this.sourceDialog = true
           this.$nextTick(() => {
             this.$refs.ExceptForm.init()

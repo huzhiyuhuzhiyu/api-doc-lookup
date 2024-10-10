@@ -256,8 +256,8 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp = ''
-      if (['equipmentName', 'productDrawingNo', 'createByName'].includes(prop)) {
-        newProp = prop === 'createByName' ? 'create_by' : prop
+      if (['equipmentName', 'productDrawingNo', 'createByName','planPersonName'].includes(prop)) {
+        newProp = prop === 'createByName' ? 'create_by' : prop === 'planPersonName' ? 'plan_person_id' : prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
@@ -343,12 +343,9 @@ export default {
     },
     lookRecardData(id){
       getRecordData(id).then(res=>{
-        console.log(res);
         if (res.data.exceptionData){
           this.exceptionData = JSON.parse(res.data.exceptionData)
-          console.log(this.exceptionData)
           this.tableItems = Object.keys(this.exceptionData[0])
-          console.log(this.tableItems);
           this.sourceDialog = true
           this.$nextTick(() => {
             this.$refs.ExceptForm.init()

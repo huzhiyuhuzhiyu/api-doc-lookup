@@ -107,7 +107,7 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="remark" label="备注"></el-table-column>
-                    <el-table-column prop="createByName" label="创建人" width="180" sortable="custom" />
+                    <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
                     <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
                     <el-table-column label="操作" width="180">
                         <template slot-scope="scope">
@@ -532,7 +532,7 @@ export default {
         sortChange({ prop, order }) {
             let newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
             if (newProp == 'create_by_name') {
-                newProp = 'createBy'
+                newProp = 'create_by'
             }
             this.tableQuery.orderItems[0].asc = order === 'ascending'
             this.tableQuery.orderItems[0].column = order === null ? '' : newProp

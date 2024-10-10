@@ -118,8 +118,8 @@
               </template> -->
             </el-table-column>
 
-            <el-table-column prop="productCategoryName" label="产品分类" width="120" />
-            <el-table-column prop="productSource" label="产品来源" width="120">
+            <el-table-column prop="productCategoryName" label="产品分类" width="120" sortable="custom" />
+            <el-table-column prop="productSource" label="产品来源" width="120" sortable="custom">
               <template slot-scope="{ row }">
                 <template v-if="row.productSource == 'produce'">
                   生产
@@ -164,20 +164,20 @@
               </template>
             </el-table-column>
             <el-table-column prop="salesExcludingTaxPrice" label="销售单价(不含税)" width="160" />
-            <el-table-column prop="model" label="型号" width="120" />
-            <el-table-column prop="sealingCoverStructure" label="密封盖-结构" width="120" />
-            <el-table-column prop="sealingCoverTyping" label="密封盖-打字" width="120" />
-            <el-table-column prop="structureType" label="结构类型" width="120" />
-            <el-table-column prop="clearance" label="游隙" width="120" />
-            <el-table-column prop="steelBallManufacturer" label="钢球厂家" width="120" />
-            <el-table-column prop="oil" label="油脂" width="120" />
-            <el-table-column prop="oilQuantity" label="油脂量" width="120" />
-            <el-table-column prop="noise" label="噪音" width="120" />
-            <el-table-column prop="holder" label="保持架" width="120" />
-            <el-table-column prop="vibrationLevel" label="振动等级" width="120" />
-            <el-table-column prop="accuracyLevel" label="精度等级" width="120" />
-            <el-table-column prop="colour" label="颜色" width="120" />
-            <el-table-column prop="aperture" label="孔径" width="120" />
+            <el-table-column prop="model" label="型号" width="120" sortable="custom" />
+            <el-table-column prop="sealingCoverStructure" label="密封盖-结构" width="140" sortable="custom" />
+            <el-table-column prop="sealingCoverTyping" label="密封盖-打字" width="140" sortable="custom" />
+            <el-table-column prop="structureType" label="结构类型" width="140" sortable="custom" />
+            <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
+
+            <el-table-column prop="oil" label="油脂" width="100" sortable="custom" />
+            <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" />
+            <el-table-column prop="noise" label="噪音" width="100" sortable="custom" />
+            <el-table-column prop="holder" label="保持架" width="100" sortable="custom" />
+            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
+            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
+            <el-table-column prop="colour" label="颜色" width="100" sortable="custom" />
+            <el-table-column prop="aperture" label="孔径" width="100" sortable="custom" />
             <el-table-column prop="remark" label="备注" width="120" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" />
@@ -194,8 +194,8 @@
               </template> -->
             </el-table-column>
 
-            <el-table-column prop="productCategoryName" label="产品分类" width="120" />
-            <el-table-column prop="productSource" label="产品来源" width="120">
+            <el-table-column prop="productCategoryName" label="产品分类" width="120" sortable="custom" />
+            <el-table-column prop="productSource" label="产品来源" width="120" sortable="custom">
               <template slot-scope="{ row }">
                 <template v-if="row.productSource == 'produce'">
                   生产
@@ -324,8 +324,8 @@ export default {
         productStatus: 'enable',
         orderItems: [
           {
-            asc: false,
-            column: ''
+            asc: true,
+            column: 'drawing_no'
           },
           {
             asc: false,
@@ -1663,7 +1663,12 @@ export default {
     },
 
     sortChange({ prop, order }) {
-      const newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+      let newProp;
+      if (prop === 'productCategoryName') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
       this.listQuery.orderItems[0].asc = order === 'ascending'
       this.listQuery.orderItems[0].column = order === null ? '' : newProp
       this.initData()

@@ -313,6 +313,10 @@ export default {
       if (newProp === 'partner_name') {
         newProp = 'partnerName'
       }
+      if (newProp === 'create_time') {
+        newProp = 'createTime'
+      }
+      
       this.listQuery.orderItems[0].asc = order !== 'descending'
       this.listQuery.orderItems[0].column = order === null ? "" : newProp
       this.initData()

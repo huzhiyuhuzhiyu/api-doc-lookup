@@ -49,25 +49,24 @@
           </el-table-column>
           <el-table-column prop="equipmentIdCode" label="设备编码" width="200" fixed="left" sortable="custom" />
           <el-table-column prop="equipmentIdName" label="设备名称" width="200" fixed="left" sortable="custom"></el-table-column>
-          <el-table-column prop="departmentIdName" label="使用车间" width="120" />
-          <el-table-column prop="departmentIdName" label="安装地点" width="120" />
-          <el-table-column prop="departmentIdName" label="故障情况照片" width="120" />
+          <el-table-column prop="factoryFloor" label="使用车间" width="120" />
+          <el-table-column prop="mountedPlaces" label="安装地点" width="120" />
+          <el-table-column prop="frontPicList" label="故障情况照片" width="120" />
           <el-table-column prop="faultStartTime" label="故障开始时间" width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="departmentIdName" label="紧急程度" width="120" />
-          <el-table-column prop="departmentIdName" label="故障类别" width="120" />
+          <el-table-column prop="degree" label="紧急程度" width="120" />
           <el-table-column prop="maintenancePersonnelName" label="维修负责人" width="120"></el-table-column>
           <el-table-column prop="departmentIdName" label="故障响应时长(小时)" width="120" />
           <el-table-column prop="departmentIdName" label="是否进行维修" width="120" />
           <el-table-column prop="departmentIdName" label="作废原因" width="120" />
           <el-table-column prop="departmentIdName" label="是否更换备件" width="120" />
-          <el-table-column prop="departmentIdName" label="故障原因" width="120" />
+          <el-table-column prop="reason" label="故障原因" width="120" />
           <el-table-column prop="solutionMeasures" label="解决措施" min-width="200"></el-table-column>
-          <el-table-column prop="solutionMeasures" label="维修完成拍照" min-width="200"></el-table-column>
+          <el-table-column prop="afterPicList" label="维修完成拍照" min-width="200"></el-table-column>
           <el-table-column prop="startMaintenanceTime" label="开始维修时间" width="180"></el-table-column>
           <el-table-column prop="repairCompletionTime" label="维修完成时间" width="180"></el-table-column>
           <el-table-column prop="maintenanceDuration" label="维修时长" width="200" sortable="custom"></el-table-column>
           <el-table-column prop="solutionMeasures" label="是否修复" min-width="200"></el-table-column>
-          <el-table-column prop="solutionMeasures" label="设备状态" min-width="200"></el-table-column>
+          <el-table-column prop="equipmentState" label="设备状态" min-width="200"></el-table-column>
           <el-table-column prop="departmentIdName" label="申请部门" width="120" />
           <el-table-column prop="applicantIdName" label="申请人" width="120"></el-table-column>
           <el-table-column prop="applicationDate" label="申请日期" width="180" sortable="custom"></el-table-column>

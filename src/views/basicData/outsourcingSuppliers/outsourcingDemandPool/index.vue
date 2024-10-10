@@ -58,9 +58,7 @@
 
         <JNPF-table v-loading="listLoading" @selection-change="handeleProductInfoData" hasC highlight-current-row
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
-          :checkSelectable="checkSelectable">
-
-
+          :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
@@ -83,8 +81,8 @@
           <el-table-column prop="orderedQuantity" label="已下单数量" min-width="140" sortable="custom" />
           <!-- <el-table-column prop="completedQuantity" label="已完成数量" min-width="120" /> -->
 
-          <el-table-column prop="deliveryDate" label="交货日期" min-width="160" sortable="custom" />
-          <el-table-column prop="source" label="来源" min-width="140" sortable="custom">
+          <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
+          <el-table-column prop="source" label="来源" width="120" sortable="custom">
             <template slot-scope="scope">
               <!-- <div v-if="scope.row.source == 'procure'">请购单</div>
               <div v-if="scope.row.source == 'mrp'">MRP下发</div>
@@ -103,7 +101,7 @@
           </el-table-column>
           <!-- <el-table-column prop="sourceOrderNo" label="来源单号" min-width="180" sortable="custom" /> -->
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" min-width="180" sortable="custom" />
+          <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
           <!-- <el-table-column prop="demandStatus" label="需求状态" width="120" align="center" sortable="custom" fixed="right">
             <template slot-scope="scope">
               <div v-if="scope.row.demandStatus == 'not_finish'"><el-tag type="warning">未完成</el-tag></div>
@@ -163,11 +161,7 @@ export default {
   components: { JNPFForm, QuiryForm, fixedForm },
   data() {
     return {
-      columnList: [
-        'productCode',
-        'source',
-        'createByName',
-      ],
+      columnList: ['productCode', 'source', 'createByName'],
       deliveryDateArr: [],
       sourceDialog: false,
       sourceList: [],
@@ -328,12 +322,13 @@ export default {
       this.visible = true
     },
     sortChange({ prop, order }) {
-      let newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      if (newProp === 'product_code') {
-        newProp = 'productCode'
-      }
-      if (newProp === 'product_name') {
-        newProp = 'productName'
+      let newProp
+      if (prop === 'productDrawingNo' || prop === 'productName' || prop === 'productCode') {
+        newProp = prop
+      } else if (prop === 'createByName') {
+        newProp = 'create_by'
+      } else {
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
       this.listQuery.orderItems[0].asc = order !== 'descending'
       this.listQuery.orderItems[0].column = order === null ? '' : newProp
@@ -624,4 +619,3 @@ export default {
   }
 }
 </script>
-

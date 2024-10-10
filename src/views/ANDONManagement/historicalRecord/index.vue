@@ -6,6 +6,7 @@
 import Records from '../components/Records.vue'
 import { getAbnoramlData } from '@/api/abnormalManagement/index.js'
 export default {
+  name:'historicalRecord',
   components: { Records },
   data() {
     return {

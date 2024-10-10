@@ -110,6 +110,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getAbnoramlData , getRecordData} from '@/api/abnormalManagement/index.js'
 import { Reject, batchReject } from '@/api/workFlow/FlowBefore'
 export default {
+  name:'processProcessing',
   components: { SuperQuery, JNPFForm ,ExceptForm},
   data() {
     return {

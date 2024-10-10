@@ -2,7 +2,7 @@ const defaultStartForm = {
   initiator: [],
   initiatePos: [],
   initiateRole: [],
-  title: '流程发起',
+  title: '异常流程发起',
   errorRule: 1, // 异常处理规则
   errorRuleUser: [], // 指定人员处理异常
   // 限时设置

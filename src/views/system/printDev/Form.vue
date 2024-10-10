@@ -98,7 +98,7 @@
               <el-button icon="el-icon-plus" @click="addSql()">新增SQL</el-button>
               <el-row v-for="(item,i) in sqlTemplate" :key="i" class="mt-10">
                 <el-col :span="20">
-                  <el-input v-model="item.sql" placeholder="请输入SQL查询语句&存储过程语句" type="textarea"
+                  <el-input resize="vertical" v-model="item.sql" placeholder="请输入SQL查询语句&存储过程语句" type="textarea"
                     :autosize="{ minRows: 3, maxRows: 10}" />
                 </el-col>
                 <el-col :span="20" style="margin-top:5px">

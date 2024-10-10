@@ -333,7 +333,13 @@ export default {
 
 
     sortChange({ prop, order }) {
-      const newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+      let newProp
+      if(prop=='productDrawingNo'||prop=='productCode'||prop=='warehouseName'){
+        newProp=prop
+      }else{
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+
+      }
       this.tableQuery.orderItems[0].asc = order === 'ascending'
       this.tableQuery.orderItems[0].column = newProp
       this.initData()

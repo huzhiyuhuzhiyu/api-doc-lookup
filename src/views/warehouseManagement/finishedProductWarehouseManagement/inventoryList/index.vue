@@ -107,7 +107,7 @@
           </el-table-column>
           <el-table-column prop="remark" label="备注" min-width="180" />
           <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
-          <el-table-column prop="createByName" label="创建人" width="120" sortable="custom" />
+          <el-table-column prop="createByName" label="创建人" width="120" />
           <el-table-column label="操作" width="200" fixed="right">
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
@@ -621,7 +621,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop == 'partnerName' || prop == 'createByName' || prop == 'partnerCode') {
+      if (prop == 'partnerName'     || prop == 'partnerCode') {
         newProp = prop
       } else {
 

@@ -128,7 +128,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="safeInventory" label="安全库存" width="120" sortable="custom"/>
-          <el-table-column prop="warehouseName" label="仓库名称/货位名称" min-width="180" sortable="custom">
+          <el-table-column prop="warehouseName" label="仓库名称/货位名称" min-width="200" sortable="custom">
             <template slot-scope="scope">
               <div>{{ scope.row.warehouseName+'/'+scope.row.shelfSpaceName }}</div>
             </template>
@@ -445,7 +445,13 @@ export default {
 
 
     sortChange({ prop, order }) {
-      const newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+      let newProp
+      if(prop=='productDrawingNo'||prop=='productCode'||prop=='warehouseName'){
+        newProp=prop
+      }else{
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+
+      }
       this.tableQuery.orderItems[0].asc = order === 'ascending'
       this.tableQuery.orderItems[0].column = newProp
       this.initData()

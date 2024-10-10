@@ -368,6 +368,9 @@ export default {
         this.$forceUpdate()
         this.treeLoading = false
         this.listLoading = false
+      }).catch(error=>{
+        this.treeLoading = false
+        this.listLoading = false
       })
     },
     changeLeft() {
@@ -477,8 +480,8 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp
-      if (prop == 'employeeStatus' || prop == 'resignationDate' || prop == 'employeeType') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-      else newProp = 'f_' + prop.toLowerCase()
+      if (prop == 'safeInventory' || prop == 'maxInventory' || prop == 'drawingNo') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      else newProp =  prop
       this.listQuery.orderItems[0].asc = order === 'ascending'
       this.listQuery.orderItems[0].column = newProp
       this.initData()

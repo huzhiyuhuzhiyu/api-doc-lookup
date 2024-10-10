@@ -361,9 +361,9 @@
           </div>
         </div>
         <!-- 销售发货通知单列表 -->
-        <JNPF-table v-loading="listLoading" :data="fhTableList"
+        <JNPF-table v-loading="listLoading" :data="fhTableList" @sort-change="sortChange"
           v-show="categoryType == 'outbound_sale_send' && !saleFlag" custom-column ref="fhtabForm" :fixedNO="true"
-          :setColumnDisplayList="fhcolumnList">
+          :setColumnDisplayList="fhcolumnList" >
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
@@ -426,7 +426,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 销售发货 订单列表 -->
-        <JNPF-table v-loading="listLoading" :data="saleList" v-show="categoryType == 'outbound_sale_send' && saleFlag"
+        <JNPF-table v-loading="listLoading" :data="saleList" @sort-change="sortChange" v-show="categoryType == 'outbound_sale_send' && saleFlag"
           custom-column ref="fhtabForm" :fixedNO="true" :setColumnDisplayList="salecolumnList" hasC
           @selection-change="handeleselectSale">
           <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom">
@@ -469,7 +469,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 销售退货货通知单列表 -->
-        <JNPF-table v-loading="listLoading" :data="thTableList" v-show="categoryType == 'inbound_sale_return'"
+        <JNPF-table v-loading="listLoading" :data="thTableList" @sort-change="sortChange" v-show="categoryType == 'inbound_sale_return'"
           custom-column ref="thtabForm" :fixedNo="true" :setColumnDisplayList="thcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
@@ -492,7 +492,7 @@
               </div>
             </template>
           </el-table-column>
-
+         
 
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
@@ -517,7 +517,7 @@
         { label: "外协退货", value: "outbound_external" }, -->
 
         <!-- 采购收/退货 通知单-->
-        <JNPF-table v-loading="listLoading" :data="cgTableList"
+        <JNPF-table v-loading="listLoading" @sort-change="sortChange" :data="cgTableList"
           v-show="(categoryType == 'inbound_purchase' && !purchaseFlag) || categoryType == 'outbound_purchase'"
           custom-column ref="cgthtabForm" :fixedNo="true" :setColumnDisplayList="cgthcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
@@ -556,7 +556,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 采购收货 订单 -->
-        <JNPF-table v-loading="listLoading" :data="purchaseList"
+        <JNPF-table v-loading="listLoading" @sort-change="sortChange" :data="purchaseList"
           v-show="categoryType == 'inbound_purchase' && purchaseFlag" custom-column ref="cgthtabForm" :fixedNo="true"
           hasC @selection-change="handeleselectPurchase" :setColumnDisplayList="purchasecolumnList">
           <el-table-column prop="orderNo" label="订单号" width="200" sortable="custom">
@@ -599,7 +599,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 外协收货 -->
-        <JNPF-table v-loading="listLoading" :data="wxshTableList"
+        <JNPF-table v-loading="listLoading" @sort-change="sortChange" :data="wxshTableList"
           v-show="categoryType == 'inbound_external' && !externalFlag" custom-column ref="wxshtabForm" :fixedNo="true"
           :setColumnDisplayList="wxshthcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
@@ -635,7 +635,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 外协收货 订单 -->
-        <JNPF-table v-loading="listLoading" :data="externalList"
+        <JNPF-table v-loading="listLoading" @sort-change="sortChange" :data="externalList"
           v-show="categoryType == 'inbound_external' && externalFlag" hasC custom-column ref="externaltabForm"
           :fixedNO="true" :fixedNo="true" :setColumnDisplayList="externalcolumnList"
           @selection-change="handeleselectExternal">
@@ -668,7 +668,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 外协发料 -->
-        <JNPF-table v-loading="listLoading" :key="3" :data="wxflTableList"
+        <JNPF-table v-loading="listLoading" @sort-change="sortChange" :key="3" :data="wxflTableList"
           v-show="categoryType == 'outbound_external_send' && !externalFlag" custom-column ref="wxfltabForm"
           :fixedNo="true" :setColumnDisplayList="wxflcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
@@ -720,7 +720,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 外协发料 订单-->
-        <JNPF-table v-loading="listLoading" :key="3" :data="exterMaterList"
+        <JNPF-table v-loading="listLoading" @sort-change="sortChange"  :key="3" :data="exterMaterList"
           v-show="categoryType == 'outbound_external_send' && externalFlag" custom-column ref="wxfltabForm" hasC
           @selection-change="handeleselectExternalMter" :fixedNO="true" :fixedNo="true"
           :setColumnDisplayList="wxflcolumnList">
@@ -751,7 +751,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 装配/套圈领料 outbound_pick_out -->
-        <JNPF-table v-loading="listLoading" :data="pickingTableList" v-show="categoryType == 'outbound_pick_out'"
+        <JNPF-table v-loading="listLoading"   @sort-change="sortChange" :data="pickingTableList" v-show="categoryType == 'outbound_pick_out'"
           custom-column ref="picktabForm" :fixedNo="true" :setColumnDisplayList="pickcolumnList">
           <el-table-column prop="orderNo" label="领料单号" min-width="160" sortable="custom">
             <template slot-scope="scope">
@@ -781,7 +781,7 @@
         </JNPF-table>
 
         <!-- 装配/套圈退料 outbound_pick_out -->
-        <JNPF-table v-loading="listLoading" :data="returnMaterTableList"
+        <JNPF-table v-loading="listLoading" @sort-change="sortChange" :data="returnMaterTableList"
           v-show="categoryType == 'inbound_return_materials'" custom-column ref="returnMatertabForm" :fixedNo="true"
           :setColumnDisplayList="returnMatercolumnList">
           <el-table-column prop="orderNo" label="退料单号" min-width="160" sortable="custom">
@@ -1784,6 +1784,25 @@ export default {
 
 
       }
+    },
+    sortChange({ prop, order }) {
+      if(this.categoryType == 'outbound_sale_send'){
+        let newProp
+        if (prop == 'customerProductNo' || prop == 'deliveryDate'|| prop == 'sealingCoverTyping' || prop == 'sealingCoverTyping'||prop=='vibrationLevel'||prop=='oilQuantity'||prop=='packagingMethod'||prop=='accuracyLevel'||prop=='specialRequire') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+        else newProp =  prop
+        this.saleOrderForm.orderItems[0].asc = order === 'ascending'
+        this.saleOrderForm.orderItems[0].column = newProp
+      }
+      if(this.categoryType == 'inbound_sale_return'){
+        console.log(6666);
+        let newProp
+               
+        if (prop == 'orderNo'  || prop == 'deliverDate'||prop=='exchangeGoodsFlag'||prop=='createTime') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+        else newProp =  prop
+        this.fhForm.orderItems[0].asc = order === 'ascending'
+        this.fhForm.orderItems[0].column = newProp
+      }
+      this.getTabdataList()
     },
     // 根据左侧分类  点击不同的分类  请求不同的数据
     getTabdataList() {

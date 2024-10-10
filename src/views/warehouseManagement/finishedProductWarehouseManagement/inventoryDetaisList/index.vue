@@ -1038,7 +1038,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if(prop=='partnerName'||prop=='createTime'){
+      if(prop=='partnerName'||prop=='createTime'||prop=='documentStatus'||prop=='processName'||prop=='oilQuantity'||prop=='excludingTaxAmount'||prop=='productCode'||prop=='partnerCode'){
         newProp=prop
       }else{
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());

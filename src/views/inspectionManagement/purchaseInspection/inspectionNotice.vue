@@ -36,10 +36,10 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head" style="padding:10px">
             <div>
-              <el-button size="mini" type="primary" @click="scanFun">
+              <!-- <el-button size="mini" type="primary" @click="scanFun">
                 <i class="iconfont icon-saoma"></i>
                 扫码检验
-              </el-button>
+              </el-button> -->
               <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
                 icon="el-icon-download" @click="exportForm">
                 导出
@@ -335,12 +335,12 @@ export default {
     }
   },
   methods: {
-    scanFun() {
-      this.scanDialog = true
-      this.$nextTick(() => {
-        this.$refs.inputRef.$refs.input.focus()
-      })
-    },
+    // scanFun() {
+    //   this.scanDialog = true
+    //   this.$nextTick(() => {
+    //     this.$refs.inputRef.$refs.input.focus()
+    //   })
+    // },
     closeScanDiaFun() {
       this.scanDialog = false
       this.scanResult = ''
@@ -969,7 +969,7 @@ export default {
       if (readOnly) {
         this.detailFormVisible = true
         this.$nextTick(() => {
-          this.$refs.DetailForm.init(row.purchaseReceiptReturnGoodsId, 'look')
+          this.$refs.DetailForm.init(row.purchaseReceiptReturnGoodsId, 'look',false,[])
         })
       } else {
         this.formVisible = true

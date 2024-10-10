@@ -478,7 +478,7 @@ export default {
       if (readOnly) {
         this.detailFormVisible = true
         this.$nextTick(() => {
-          this.$refs.DetailForm.init(row.id, readOnly)
+          this.$refs.DetailForm.init(row.id, readOnly,false,[])
         })
       } else {
         this.formVisible = true

@@ -1,28 +1,30 @@
 <template>
   <div class="JNPF-common-layout">
-  
+
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
+          <template v-for="item in searchList">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="search('basic')" />
+
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
           <el-col :span="6">
             <el-form-item>
-              <el-input v-model="tableQuery.productDrawingNo" placeholder="品名规格" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item>
-              <el-input v-model="tableQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item>
-              <el-input v-model="tableQuery.warehouseName" placeholder="仓库名称" clearable @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
+              <el-button type="primary" icon="el-icon-search" @click="search('basic')" class="commonBox">
                 {{ $t('common.search') }}</el-button>
               <el-button icon="el-icon-refresh-right" @click="reset()" class="commonBox">{{ $t('common.reset') }}
               </el-button>
@@ -38,9 +40,9 @@
           </div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
-                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                  @click="superQueryVisible = true" />
-              </el-tooltip>
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -50,46 +52,49 @@
           </div>
         </div>
         <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableData" custom-column row-key="id" :fixedNo="true"
-          @sort-change="sortChange" >
-         
+          @sort-change="sortChange">
 
-          <el-table-column prop="productDrawingNo" label="品名规格" width="200" sortable="custom"/>
-          <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom"/>
+
+          <el-table-column prop="productDrawingNo" label="品名规格" width="200" sortable="custom" />
+          <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
           <el-table-column prop="classAttribute" label="产品分类" width="120" sortable="custom">
             <template slot-scope="scope">
-              <div v-if="scope.row.classAttribute=='finish_product'">成品</div>
-              <div v-if="scope.row.classAttribute=='raw_material'">原材料</div>
-              <div v-if="scope.row.classAttribute=='semi_finished'">半成品</div>
-              <div v-if="scope.row.classAttribute=='accessories'">配件</div>
+              <div v-if="scope.row.classAttribute == 'finish_product'">成品</div>
+              <div v-if="scope.row.classAttribute == 'raw_material'">原材料</div>
+              <div v-if="scope.row.classAttribute == 'semi_finished'">半成品</div>
+              <div v-if="scope.row.classAttribute == 'accessories'">配件</div>
             </template>
           </el-table-column>
           <el-table-column prop="mainUnit" label="单位" min-width="80" />
           <el-table-column prop="inventoryQuantity" label="库存数量" min-width="120" sortable="custom">
             <template slot-scope="scope">
-              <el-link type="primary"  @click.native="viewFun(scope.row.productsId, 'inventoryFlag',scope.row.warehouseId )">
-                {{scope.row.inventoryQuantity}}
+              <el-link type="primary"
+                @click.native="viewFun(scope.row.productsId, 'inventoryFlag', scope.row.warehouseId)">
+                {{ scope.row.inventoryQuantity }}
               </el-link>
             </template>
 
           </el-table-column>
           <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom">
             <template slot-scope="scope">
-              <el-link type="primary"  @click.native="viewFun(scope.row.productsId, 'availableFlag',scope.row.warehouseId )">
-                {{scope.row.availableQuantity}}
+              <el-link type="primary"
+                @click.native="viewFun(scope.row.productsId, 'availableFlag', scope.row.warehouseId)">
+                {{ scope.row.availableQuantity }}
               </el-link>
             </template>
           </el-table-column>
           <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom">
             <template slot-scope="scope">
-              <el-link type="primary"  @click.native="viewFun(scope.row.productsId, 'occupancyFlag',scope.row.warehouseId )">
-                {{scope.row.occupancyQuantity}}
+              <el-link type="primary"
+                @click.native="viewFun(scope.row.productsId, 'occupancyFlag', scope.row.warehouseId)">
+                {{ scope.row.occupancyQuantity }}
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="safeInventory" label="安全库存" width="120" sortable="custom"/>
-          <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom"/>
-          <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" sortable="custom"/>
-          
+          <el-table-column prop="safeInventory" label="安全库存" width="120" sortable="custom" />
+          <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom" />
+          <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" sortable="custom" />
+
         </JNPF-table>
         <pagination :total="total" :page.sync="tableQuery.currentPage" :limit.sync="tableQuery.pageSize"
           @pagination="initData">
@@ -103,8 +108,8 @@
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" />
-     <!-- 高级查询 -->
-   <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
@@ -120,11 +125,19 @@ import Form from './Form'
 
 export default {
   name: 'finshInventory',
-  components: { Form, SuperQuery,ExportForm},
+  components: { Form, SuperQuery, ExportForm },
   data() {
     return {
-      exportFormVisible:false,
-      superQueryVisible:false, 
+      superQuery: {},
+      superForm: {},
+      basicQuery: {},
+      searchList: [
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'warehouseName', fieldValue: '', label: '仓库名称', symbol: 'like', searchType: 1, width: 120 },
+      ],
+      exportFormVisible: false,
+      superQueryVisible: false,
       treeData: [],
       tableData: [],
       treeLoading: false,
@@ -132,7 +145,7 @@ export default {
       authorizeFormVisible: false,
       userRelationListVisible: false,
       organizeIdTree: [],
-     
+
       defaultProps: {
         children: 'childrenList',
         label: 'name'
@@ -151,16 +164,16 @@ export default {
             column: ''
           }
         ],
-        warehouseName:"",
+        warehouseName: "",
         pageNum: 1,
-        pageSize: 20, 
+        pageSize: 20,
         scrapFlag: false,
         virtuallyFlag: false,
         warehouseId: '',
         productDrawingNo: "",
         productCode: "",
-        superQuery:{},
-        classAttribute:"raw_material",
+        superQuery: {},
+        classAttribute: "raw_material",
       },
       selectedNodeKey: "",
       totalData: {},
@@ -174,27 +187,27 @@ export default {
           prop: 'productCode',
           label: "产品编码",
           type: 'input'
-        }, 
-      
+        },
+
         {
           prop: 'classAttribute',
           label: "产品分类",
           type: 'select',
-          options:[{label:"成品",value:"finish_product",},{label:"原材料",value:"raw_material",},{label:"半成品",value:"semi_finished",},{label:"配件",value:"accessories",}]
+          options: [{ label: "成品", value: "finish_product", }, { label: "原材料", value: "raw_material", }, { label: "半成品", value: "semi_finished", }, { label: "配件", value: "accessories", }]
         },
-    
+
         {
           prop: 'mainUnit',
           label: "单位",
           type: 'input'
-        },  
-            
+        },
+
         {
           prop: 'availableQuantity',
           label: "可用数量",
           type: 'input',
-        },  
-           
+        },
+
         {
           prop: 'occupancyQuantity',
           label: "占用数量",
@@ -209,7 +222,7 @@ export default {
           prop: 'warehouseName',
           label: "仓库名称",
           type: 'input'
-           
+
         },
         {
           prop: 'latestStorageTime',
@@ -220,8 +233,8 @@ export default {
           endPlaceholder: '创建结束时间',
           pickerOptions: this.global.timePickerOptions
         },
-         
-    
+
+
       ],
     }
   },
@@ -231,19 +244,20 @@ export default {
     }
   },
   created() {
-    this.initData()
-    
+    this.superForm = this.tableQuery
+    this.search('basic')
+
   },
   methods: {
-       // 导出
+    // 导出
     exportForm(exportTableRef) {
-      console.log("object,",exportTableRef);
+      console.log("object,", exportTableRef);
       this.exportTableRef = exportTableRef
       this.exportFormVisible = true
       console.log(this.$refs[exportTableRef]);
       let columnList = this.$refs[exportTableRef].columnList.filter(item => !!item.label && !!item.prop)
       columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
-      console.log("columnList",columnList);
+      console.log("columnList", columnList);
       this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
     },
     download(data) {
@@ -269,23 +283,23 @@ export default {
     superQuerySearch(query) {
       this.tableQuery.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     // 查看产品明细
-    viewFun(id,type,warehouseId){
+    viewFun(id, type, warehouseId) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id,type,warehouseId)
+        this.$refs.Form.init(id, type, warehouseId)
       })
     },
-    
-    
+
+
     columnSetFun() {
       this.$refs.tabForm.showDrawer()
     },
 
-    
-    
+
+
     initData() {
 
       inventoryWarehouseList(this.tableQuery).then((res) => {
@@ -298,44 +312,67 @@ export default {
         this.listLoading = false
       })
     },
-    search() {
+    search(type) {
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       this.initData()
     },
     reset() {
-      if (this.treeData.length > 1) { 
+      if (this.treeData.length > 1) {
         this.selectedNodeKey = this.tableQuery.warehouseId
         this.$refs.treeBox.setCurrentKey(this.selectedNodeKey)
       }
-      this.tableQuery = {
+      this.superForm = this.tableQuery = {
         orderItems: [
           {
             asc: true,
             column: ''
           }
         ],
-        warehouseName:"",
+        warehouseName: "",
         pageNum: 1,
         pageSize: 20,
-        
+
         scrapFlag: false,
         virtuallyFlag: false,
         warehouseId: '',
         productDrawingNo: "",
         productCode: "",
-        superQuery:{},
-        classAttribute:"raw_material",
+        superQuery: {},
+        classAttribute: "raw_material",
       }
+      this.$refs.SuperQuery.conditionList = []
+      this.searchList = [
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'warehouseName', fieldValue: '', label: '仓库名称', symbol: 'like', searchType: 1, width: 120 },
+      ]
       this.initData()
     },
- 
-    
+
+
 
 
     sortChange({ prop, order }) {
       let newProp
-      if(prop=='productDrawingNo'||prop=='productCode'||prop=='warehouseName'){
-        newProp=prop
-      }else{
+      if (prop == 'productDrawingNo' || prop == 'productCode' || prop == 'warehouseName') {
+        newProp = prop
+      } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
 
       }
@@ -366,10 +403,11 @@ export default {
 }
 
 .JNPF-common-head {
-  padding: 8px!important
+  padding: 8px !important
 }
+
 .JNPF-common-search-box {
   padding: 8px 0 0 0 !important;
-  margin-left: 0!important; 
+  margin-left: 0 !important;
 }
 </style>

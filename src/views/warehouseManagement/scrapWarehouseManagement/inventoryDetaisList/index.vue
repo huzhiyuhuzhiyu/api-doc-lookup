@@ -3,12 +3,26 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
+          <template v-for="item in searchList">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="search('basic')" />
 
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="listQuery.orderNo" @keyup.enter.native="search()" placeholder="单号" clearable />
-            </el-form-item>
-          </el-col>
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
+
+
           <el-col :span="4">
             <el-form-item>
               <el-select v-model="listQuery.businessType" placeholder="业务类型" style="width: 100%;" clearable>
@@ -17,15 +31,9 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="listQuery.productDrawingNo" @keyup.enter.native="search()" placeholder="品名规格"
-                clearable />
-            </el-form-item>
-          </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+              <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
                 {{ $t('common.search') }}</el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
               </el-button>
@@ -54,7 +62,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table hasC @selection-change="handeleInfoData" ref="dataTable" v-loading="listLoading" :data="tableData"
+        <JNPF-table  ref="dataTable" v-loading="listLoading" :data="tableData"
           border :setColumnDisplayList="columnList" :fixedNO="true" @sort-change="sortChange" custom-column>
           <el-table-column prop="orderNo" label="单号" sortable="custom" min-width="180">
             <template slot-scope="scope">
@@ -79,24 +87,24 @@
               <div v-if="scope.row.businessType == 'outbound_other'">直接出库</div>
             </template>
           </el-table-column>
-       
-          <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="120" />
+
+          <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="300" />
           <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
           <el-table-column prop="mainUnit" label="单位" min-width="140" />
-          <el-table-column prop="num" label="数量" sortable="custom" min-width="140" /> 
+          <el-table-column prop="num" label="数量" sortable="custom" min-width="140" />
           <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120" />
           <el-table-column prop="colour" label="颜色" sortable="custom" min-width="120" />
-          <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120"  ></el-table-column>
-          <el-table-column prop="accuracyLevel" label="精度等级" min-width="120"  ></el-table-column>
-          <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" ></el-table-column>
-          <el-table-column prop="oil" label="油脂" min-width="120"  ></el-table-column>
-          <el-table-column prop="oilQuantity" label="油脂量" min-width="120"  > </el-table-column>
-          <el-table-column prop="clearance" label="游隙" min-width="120"  ></el-table-column>
-          <el-table-column prop="aperture" label="孔径" min-width="120" ></el-table-column>
-          <el-table-column prop="packagingMethod" label="包装方式" min-width="120"  ></el-table-column>
-          <el-table-column prop="specialRequire" label="特殊要求" min-width="120"  ></el-table-column>
-          <el-table-column prop="processName" label="工序" min-width="120"  ></el-table-column>
-          <el-table-column prop="documentStatus" label="单据状态" min-width="120"  >
+          <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120"></el-table-column>
+          <el-table-column prop="accuracyLevel" label="精度等级" min-width="120"></el-table-column>
+          <el-table-column prop="vibrationLevel" label="振动等级" min-width="120"></el-table-column>
+          <el-table-column prop="oil" label="油脂" min-width="120"></el-table-column>
+          <el-table-column prop="oilQuantity" label="油脂量" min-width="120"> </el-table-column>
+          <el-table-column prop="clearance" label="游隙" min-width="120"></el-table-column>
+          <el-table-column prop="aperture" label="孔径" min-width="120"></el-table-column>
+          <el-table-column prop="packagingMethod" label="包装方式" min-width="120"></el-table-column>
+          <el-table-column prop="specialRequire" label="特殊要求" min-width="120"></el-table-column>
+          <el-table-column prop="processName" label="工序" min-width="120"></el-table-column>
+          <el-table-column prop="documentStatus" label="单据状态" min-width="120">
             <template slot-scope="scope">
               <el-tag type="warning" v-if="scope.row.documentStatus == 'draft'">草稿</el-tag>
               <el-tag type="success" v-else-if="scope.row.documentStatus == 'submit'">提交</el-tag>
@@ -130,7 +138,7 @@
           @pagination="initData">
           <div class="text">
             <span>合计：</span>
-            <span style="margin-left: 10px">数量:{{ num }}</span> 
+            <span style="margin-left: 10px">数量:{{ num }}</span>
           </div>
         </pagination>
       </div>
@@ -156,12 +164,19 @@ import {
 export default {
   name: 'inventoryDetaisList',
   components: { Form, SuperQuery, ExportForm },
-  props:{
-    classAttribute:"",
+  props: {
+    classAttribute: "",
   },
   data() {
     return {
-      columnList: ["partnerCode", 'productCode', "productName",  "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxAmount", "createByName", "taxAmount"],
+      superQuery: {},
+      superForm: {},
+      basicQuery: {},
+      searchList: [
+        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+      ],
+      columnList: ["partnerCode", 'productCode', "productName", "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxAmount", "createByName", "taxAmount"],
       num: 0,
       superQueryVisible: false,
       taxAmount: 0,
@@ -174,8 +189,8 @@ export default {
       tableData: [],
       listLoading: false,
       list: [
-      { label: "直接入库", value: "inbound_other" },
-      { label: "直接出库", value: "outbound_other" },
+        { label: "直接入库", value: "inbound_other" },
+        { label: "直接出库", value: "outbound_other" },
       ],
 
       initListQuery: {
@@ -191,7 +206,7 @@ export default {
           asc: false,
           column: "createTime"
         }],
-        warehouseType:"scrap",
+        warehouseType: "scrap",
       },
       listQuery: {},
       total: 0,
@@ -208,12 +223,12 @@ export default {
           prop: 'sourceType',
           label: "业务类型",
           type: 'select',
-          options: [ 
-          { label: "直接入库", value: "inbound_other" },
-          { label: "直接出库", value: "outbound_other" },
-        ],
+          options: [
+            { label: "直接入库", value: "inbound_other" },
+            { label: "直接出库", value: "outbound_other" },
+          ],
         },
-         
+
         {
           prop: 'productDrawingNo',
           label: "品名规格",
@@ -235,9 +250,9 @@ export default {
           label: "数量",
           type: 'input'
         },
-        
-    
-         
+
+
+
         {
           prop: 'standardValue',
           label: "规值",
@@ -335,8 +350,8 @@ export default {
   },
   created() {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-
-    this.getInventorySummaryDataFun()
+    this.superForm = this.listQuery
+    this.search('basic')
   },
   mounted() {
     this.getProductClassFun()
@@ -729,7 +744,7 @@ export default {
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     viewFun(id, type) {
       this.formVisible = true
@@ -758,7 +773,7 @@ export default {
       })
       this.totalList = []
       this.listQuery.pageNum = 1
-      this.listQuery.classAttribute=this.classAttribute
+      this.listQuery.classAttribute = this.classAttribute
       getInventorySummaryData(this.listQuery).then(res => {
 
         this.tableData = res.data.page.records
@@ -846,12 +861,34 @@ export default {
         this.initData()
       }
     },
-    search() {
+    search(type) {
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       this.initData()
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.superForm = this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.$refs.SuperQuery.conditionList = []
+      this.searchList = [
+        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+      ]
       this.initData()
     },
 
@@ -903,9 +940,9 @@ export default {
 </script>
 <style src="@/assets/scss/index-list.scss" lang="scss" scoped />
 <style scoped>
- .JNPF-common-search-box { 
-  padding: 8px 0 0 0!important;
-  margin-left: 0!important;
+.JNPF-common-search-box {
+  padding: 8px 0 0 0 !important;
+  margin-left: 0 !important;
 
   margin-bottom: 5px;
 }

@@ -4,11 +4,24 @@
       <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
 
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="listQuery.orderNo" @keyup.enter.native="search()" placeholder="单号" clearable />
-            </el-form-item>
-          </el-col>
+          <template v-for="item in searchList">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="search('basic')" />
+
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
           <el-col :span="4">
             <el-form-item>
               <el-select v-model="listQuery.businessType" placeholder="业务类型" style="width: 100%;">
@@ -20,7 +33,7 @@
         
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+              <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
                 {{ $t('common.search') }}</el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
               </el-button>
@@ -50,7 +63,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table hasC @selection-change="handeleInfoData" ref="dataTable" v-loading="listLoading" :data="tableData"
+        <JNPF-table   ref="dataTable" v-loading="listLoading" :data="tableData"
           border :setColumnDisplayList="columnList" :fixedNO="true" @sort-change="sortChange" custom-column>
           <el-table-column prop="orderNo" label="单号" sortable="custom" min-width="160">
             <template slot-scope="scope">
@@ -137,6 +150,12 @@ export default {
   },
   data() {
     return {
+      superQuery: {},
+      superForm: {},
+      basicQuery: {},
+      searchList: [ 
+        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+      ],
       columnList: ["partnerCode", "documentStatus", "remark", "createByName",],
 
       exportFormVisible: false,
@@ -249,14 +268,14 @@ export default {
   },
   created() {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-
-    this.getInventorySummaryDataFun()
+    this.superForm=this.listQuery
+    this.search('basic')
   },
   methods: {
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     viewFun(id, type) {
       this.formVisible = true
@@ -378,12 +397,35 @@ export default {
         this.initData()
       }
     },
-    search() {
+    search(type) {
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       this.initData()
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.superForm=this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.$refs.SuperQuery.conditionList = []
+      this.searchList = [
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+      ]
       this.initData()
     },
 

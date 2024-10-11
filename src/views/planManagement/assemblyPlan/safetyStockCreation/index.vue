@@ -243,16 +243,15 @@ export default {
 
     // 关闭新建编辑页面
     closeForm(isRefresh) {
-      this.formVisible = false
-      if (isRefresh) {
+      this.formVisible = false 
         this.keyword = ''
-        this.initData()
-      }
+        this.search('basic')
+       
     },
     initData() {
       this.listLoading = true
     
-      getProducts(this.form).then(res => {
+      getProducts(this.superForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false

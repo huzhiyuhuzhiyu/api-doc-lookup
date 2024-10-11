@@ -44,22 +44,31 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
+  
+        
+          <template v-for="item in searchList">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="search('basic')" />
+
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
+
 
           <el-col :span="6">
             <el-form-item>
-              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">{{ $t('common.search')
+              <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">{{ $t('common.search')
                 }}</el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
             </el-form-item>
@@ -153,6 +162,13 @@ export default {
   },
   data() {
     return {
+      superQuery: {},
+      superForm: {},
+      basicQuery: {},
+      searchList: [
+        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'code', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+      ],
       superQueryVisible: false,
       formLoading: false,
       btnLoading: false,
@@ -268,7 +284,7 @@ export default {
   },
   created() {
     this.getcategoryTree()
-    this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+    this.superForm=this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
   },
   methods: {
     safeInventoryFocusFun(row) {
@@ -309,7 +325,7 @@ export default {
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     // 获取指定树状列表
     getcategoryTree() {
@@ -321,7 +337,7 @@ export default {
           this.treeData = res.data.length ? res.data : []
           this.$nextTick(() => {
             this.treeLoading = false
-            this.initData()
+            this.search('basic')
           })
         })
         .catch(() => {
@@ -404,22 +420,43 @@ export default {
       this.$refs.dataTable.showDrawer()
     },
 
-    search() {
+    search(type) {
       this.visible = false
       Object.keys(this.listQuery).forEach(key => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
       this.listQuery.pageNum = 1
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       this.initData()
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.filterText=""
       this.$refs.SuperQuery.conditionList = []
-      this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.superForm=this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.selectedKeys = [];
-      this.search()
+      this.searchList=[
+      { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+      { field: 'code', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+      ],
+      this.initData()
     },
 
     toggleExpand(expands) {

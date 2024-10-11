@@ -45,25 +45,29 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
+       
+       
+          <template v-for="item in searchList">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="search('basic')" />
+
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
           <el-col :span="6">
             <el-form-item>
-              <el-input v-model="tableQuery.productDrawingNo" placeholder="品名规格" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item>
-              <el-input v-model="tableQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item>
-              <el-input v-model="tableQuery.shelfSpaceName" placeholder="货位名称" clearable @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
+              <el-button type="primary" icon="el-icon-search" @click="search('basic')" class="commonBox">
                 {{ $t('common.search') }}</el-button>
               <el-button icon="el-icon-refresh-right" @click="reset()" class="commonBox">{{ $t('common.reset') }}
               </el-button>
@@ -86,7 +90,7 @@
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="search('basic')" />
             </el-tooltip>
           </div>
         </div>
@@ -138,7 +142,7 @@
           
         </JNPF-table>
         <pagination :total="total" :page.sync="tableQuery.currentPage" :limit.sync="tableQuery.pageSize"
-          @pagination="initData">
+          @pagination="search('basic')">
           <div class="text">
             <span>合计：</span>
             <span style="margin-left: 10px">库存数量：{{ totalData.totalInventory }}</span>
@@ -169,6 +173,14 @@ export default {
   components: { Form, SuperQuery,ExportForm},
   data() {
     return {
+      superQuery: {},
+      superForm: {},
+      basicQuery: {},
+      searchList: [
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'shelfSpaceName', fieldValue: '', label: '货位名称', symbol: 'like', searchType: 1, width: 120 },
+      ],
       exportFormVisible:false,
       superQueryVisible:false, 
       treeData: [],
@@ -277,6 +289,7 @@ export default {
     }
   },
   created() {
+    this.superForm = this.tableQuery
     this.getWarehouseTree(true)
     if (localStorage.getItem("locationInventoryFlag")) {
       let locationInventoryFlag = JSON.parse(localStorage.getItem('locationInventoryFlag'))
@@ -321,7 +334,7 @@ export default {
     superQuerySearch(query) {
       this.tableQuery.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     // 查看产品明细
     viewFun(id,type,warehouseId){
@@ -396,7 +409,24 @@ export default {
         this.listLoading = false
       })
     },
-    search() {
+    search(type) {
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       this.initData()
     },
     reset() {
@@ -422,6 +452,13 @@ export default {
         productCode: "",
         superQuery:{},
       }
+      this.superForm = this.form = JSON.parse(JSON.stringify(this.tableQuery))
+      this.$refs.SuperQuery.conditionList = []
+      this. searchList=   [
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'shelfSpaceName', fieldValue: '', label: '货位名称', symbol: 'like', searchType: 1, width: 120 },
+      ],
       this.getWarehouseTree(true)
     },
     handleNodeClick(data, node) {
@@ -430,7 +467,7 @@ export default {
       const nodePath = this.getNodePath(node)
       this.$refs.treeBox.setCurrentKey(this.selectedNodeKey)
       this.organizeIdTree = nodePath.map((o) => o.id)
-      this.search()
+      this.search('basic')
     },
     getNodePath(node) {
       let fullPath = []
@@ -454,7 +491,7 @@ export default {
       }
       this.tableQuery.orderItems[0].asc = order === 'ascending'
       this.tableQuery.orderItems[0].column = newProp
-      this.initData()
+      this.search('basic')
     },
 
 

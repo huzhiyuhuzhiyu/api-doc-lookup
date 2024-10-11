@@ -675,7 +675,7 @@ export default {
     },
     initData() {
       this.listLoading = true
-      getsaleOrderDetailList(this.orderForm).then(res => {
+      getsaleOrderDetailList(this.superForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false

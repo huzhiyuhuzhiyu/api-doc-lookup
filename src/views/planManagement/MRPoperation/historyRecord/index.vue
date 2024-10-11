@@ -1148,7 +1148,7 @@ export default {
       if (type === 'super') {
         this.superForm1.superQuery = this.superQuery1
       }
-      getMaterialDemandReport(this.assembleForm).then(res => {
+      getMaterialDemandReport(this.superForm1).then(res => {
         console.log("组装res", res);
         let totalData = res.data.total
         let tableData = res.data.page.records
@@ -1226,7 +1226,7 @@ export default {
       if (type === 'super') {
         this.superForm2.superQuery = this.superQuery2
       }
-      getMaterialDemandReport(this.produceForm).then(res => {
+      getMaterialDemandReport(this.superForm2).then(res => {
         console.log("生产res", res);
         let totalData = res.data.total
         let tableData = res.data.page.records
@@ -1302,7 +1302,7 @@ export default {
       if (type === 'super') {
         this.superForm3.superQuery = this.superQuery3
       }
-      getMaterialDemandReport(this.purchaseForm).then(res => {
+      getMaterialDemandReport(this.superForm3).then(res => {
         console.log("采购res", res);
         let totalData = res.data.total
         let tableData = res.data.page.records
@@ -1385,7 +1385,7 @@ export default {
       if (type === 'super') {
         this.superForm4.superQuery = this.superQuery4
       }
-      getMaterialDemandReport(this.outForm).then(res => {
+      getMaterialDemandReport(this.superForm4).then(res => {
         console.log("外协res", res);
         let totalData = res.data.total
         let tableData = res.data.page.records

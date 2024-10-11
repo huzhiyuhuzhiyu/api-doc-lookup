@@ -13,6 +13,10 @@ export default {
         switchList:{
             type:Boolean,
             default:false
+        },
+        needFilter:{
+            type:Boolean,
+            default:true
         }
     },
     computed:{
@@ -44,7 +48,7 @@ export default {
                    style="margin-right: 3px" class="pointer zgt-ifont"
                    :class="[cSwitchList ?  'icon-liebiao' : 'icon-pingpu' ]"/>
             </el-tooltip>
-            <el-dropdown @command="$emit('command',$event)">
+            <el-dropdown v-if="needFilter" @command="$emit('command',$event)">
                 <el-link :style="{color: cCurrentExt !== ''? '#3fb9f8':'unset'}" icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"/>
                 <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item

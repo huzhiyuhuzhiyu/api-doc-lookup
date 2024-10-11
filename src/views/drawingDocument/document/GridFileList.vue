@@ -1,9 +1,9 @@
 <script>
-import {ext2Icon} from "@/views/drawingDocument/document/utils";
+import {ext2Icon, isFile} from "@/views/drawingDocument/document/utils";
 
 
 export default {
-    name: "index",
+    name: "GridFileList",
     props:{
         list:{
             type:Array,
@@ -16,7 +16,18 @@ export default {
 
     },
     methods:{
-        ext2Icon
+        ext2Icon,
+        getExt(item){
+            if(!isFile(item)){
+                return ''
+            }
+            if(item.fileExtension){
+                return item.fileExtension
+            }
+            const split = item.fullName.split('.')
+            console.log(split[split.length-1])
+            return split[split.length-1]
+        }
     }
 }
 </script>
@@ -26,48 +37,56 @@ export default {
         <div class="file-list">
             <div @click="$emit('item-click',item)" :class="['doc-item',item.isHover ? 'doc-item-hover' :'']" v-for="(item,index) in list" :key="item.id">
                 <div :class="['item-cover']">
-                    <i :class="[ext2Icon(item.fileExtension || item.fullName.split('.')[1])]" style="font-size: 45px"></i>
+                    <i :class="[ext2Icon(getExt(item))]" style="font-size: 45px"></i>
                 </div>
 <!--                docItemCommandHandler()  listDropDownChange($event,item) $emit('visible-change',$event,item)-->
                 <el-dropdown @command="$emit('command',$event,item,index)" @visible-change="(visible)=>$set(item,'isHover',visible)" class="icon-more">
-                    <span class="el-icon el-icon-more"></span>
-                    <el-dropdown-menu slot="dropdown">
-                        <template
-                            v-for="option in fileOptions"
-                           >
-                            <el-dropdown-item
-                                :key="option.value"
-                                v-if="typeof option.isShow === 'function'
+                    <slot name="dropdown" :item="item">
+                         <span class="el-icon el-icon-more"></span>
+                         <el-dropdown-menu slot="dropdown">
+                            <template
+                                v-for="option in fileOptions"
+                            >
+                                <el-dropdown-item
+                                    :key="option.value"
+                                    v-if="typeof option.isShow === 'function'
                                               ?  option.isShow(item)
                                               : true"
-                                :command="option.value"
-                                :disabled="typeof option.disabled === 'function'
+                                    :command="option.value"
+                                    :disabled="typeof option.disabled === 'function'
                                               ?  option.disabled(item)
                                               : option.disabled"
-                            >
-                                {{option.text}}
-                            </el-dropdown-item>
-                        </template>
+                                >
+                                    {{option.text}}
+                                </el-dropdown-item>
+                            </template>
 
-                    </el-dropdown-menu>
+                        </el-dropdown-menu>
+                    </slot>
+
                 </el-dropdown>
 
                 <el-tooltip effect="dark" placement="top">
                     <div slot="content" style="width: 200px">
-                        <el-row>
-                            <el-col style="text-align: right" :span="8">{{item.type?'文件名':'文件夹名'}}：</el-col>
-                            <el-col :span="16">{{item.fullName}}</el-col>
-                        </el-row>
-                        <el-row>
-                            <el-col style="text-align: right" :span="8">创建日期：</el-col>
-                            <el-col :span="16">{{item.creatorTime}}</el-col>
-                        </el-row>
-                        <el-row v-if="item.type">
-                            <el-col style="text-align: right" :span="8">是否共享：</el-col>
-                            <el-col :span="16">{{item.isShare ? '是':'否'}}</el-col>
-                        </el-row>
+                        <slot name="tooltip" :item="item">
+                            <el-row>
+                                <el-col style="text-align: right" :span="8">{{item.type?'文件名':'文件夹名'}}：</el-col>
+                                <el-col :span="16">{{item.fullName}}</el-col>
+                            </el-row>
+                            <el-row>
+                                <el-col style="text-align: right" :span="8">创建日期：</el-col>
+                                <el-col :span="16">{{item.creatorTime}}</el-col>
+                            </el-row>
+                            <el-row v-if="item.type">
+                                <el-col style="text-align: right" :span="8">是否共享：</el-col>
+                                <el-col :span="16">{{item.isShare ? '是':'否'}}</el-col>
+                            </el-row>
+                        </slot>
                     </div>
-                    <div class="name">  {{item.fullName}} </div>
+
+                    <div class="name">
+                        {{item.fullName}}
+                    </div>
                 </el-tooltip>
             </div>
         </div>

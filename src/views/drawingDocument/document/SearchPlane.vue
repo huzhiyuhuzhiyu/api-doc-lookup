@@ -38,6 +38,10 @@ export default {
         loading:{
             type:Boolean,
             default:false
+        },
+        needBody:{
+            type:Boolean,
+            default:true
         }
     },
     data(){
@@ -139,7 +143,7 @@ export default {
                     </div>
                 </div>
             </div>
-            <div class="panel-body">
+            <div class="panel-body" v-if="needBody">
                 <div class="panel-body-list">
                     <div class="infinite-list">
                         <div class="infinite-list-item" v-for="(item,index) in list" :key="index" @click="$emit('item-click',{item,position:'left',hideSearchPanel})">

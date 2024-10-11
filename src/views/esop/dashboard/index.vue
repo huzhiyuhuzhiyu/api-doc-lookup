@@ -264,6 +264,16 @@ export default {
 </template>
 
 <style scoped lang="scss">
+@media (max-width: 1600px) {
+    .item-text-left{
+        font-size: 28px !important;
+    }
+}
+@media (max-width: 1350px) {
+    .item-text-left{
+        font-size: 24px !important;
+    }
+}
 .wrapper{
 
     .header{

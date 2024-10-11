@@ -319,7 +319,6 @@ export default {
       initListQuery: {
         code: '',
         name: '',
-        productStatus: 'enable',
         orderItems: [
           {
             asc: true,
@@ -336,7 +335,7 @@ export default {
         productSource: '', // 产品来源
         startAndEndTime: [], // 创建时间
         productCategoryId: '', // 类型id
-        productStatus: '', // 产品状态
+        productStatus: 'enable', // 产品状态
         customerQueryFields: [],
         createTimeArr: [],
         classAttribute: ''
@@ -1004,6 +1003,7 @@ export default {
     }
     this.getcategoryTree()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+    console.log(this.listQuery, '1')
     this.getBimBusinessSwitchConfigList()
     this.initData()
   },
@@ -1053,10 +1053,6 @@ export default {
       this.initData()
     },
 
-    productCategoryChange(val, data) {
-      this.quickForm.productCategoryName = data[0].name
-      this.quickForm.productCategoryId = data[0].id
-    },
     handleClose() {
       this.quickVisible = false
       this.$refs.quickForm.resetFields()
@@ -1684,6 +1680,7 @@ export default {
 
     initData() {
       this.listLoading = true
+      console.log(this.listQuery, '2')
       Object.keys(this.listQuery).forEach((key) => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
@@ -1706,6 +1703,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+
       this.$refs.SuperQuery.conditionList = []
       this.filterText = ''
       this.initData()

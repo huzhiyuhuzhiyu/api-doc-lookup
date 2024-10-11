@@ -66,7 +66,7 @@
             <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="60" />
             <el-table-column prop="inventoryQuantity" label="库存数量" width="120" sortable="custom" />
-            <el-table-column prop="latestStorageTime" label="入库日期" width="120" sortable="custom" />
+            <el-table-column prop="latestStorageTime" label="入库日期" width="220" sortable="custom" />
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
             :limit.sync="listQuery.pageSize" @pagination="initData"></pagination>
@@ -215,6 +215,10 @@ export default {
           {
             asc: false,
             column: ''
+          },
+          {
+            asc: false,
+            column: 'latest_storage_time'
           }
         ]
         // receivingStatus: 'receiving'
@@ -381,18 +385,6 @@ export default {
     reset() {
       this.$refs['tableForm'].$refs.JNPFTable.clearSort()
       this.listQuery = {
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
         approvalStatus: '', //审批状态:审批中ing 审批通过ok 审核未通过rebut,可用值:ing,no,ok,rebut,wait
         cooperativePartnerCode: '', //供应商编码
         cooperativePartnerName: '', // 	供应商名称
@@ -403,8 +395,22 @@ export default {
         deliveryDate: '',
         endTime: '',
         orderNo: '', //订单号
-        orderType: 'external', //	订单类型 采购 procure、外协 external
-        startTime: ''
+        // orderType: 'external', //	订单类型 采购 procure、外协 external
+        ringBlankQueryFlag: 1,
+        pageNum: 1,
+        pageSize: 20,
+        startTime: '',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'latest_storage_time'
+          }
+        ]
+        // receivingStatus: 'receiving'
       }
       this.createRequirementDate = []
       this.deliveryDate = []

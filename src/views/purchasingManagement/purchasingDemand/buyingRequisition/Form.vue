@@ -102,7 +102,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="mainUnit" label="单位" min-width="200" show-overflow-tooltip key="mainUnit">
+                      <el-table-column prop="mainUnit" label="单位" min-width="100" show-overflow-tooltip key="mainUnit">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
                             <!-- <el-input v-model="scope.row.mainUnit" :disabled="type === 'look'" readonly maxlength="20"
@@ -685,6 +685,25 @@ export default {
         } else {
           this.loading = true
           if (this.type === 'edit') {
+            getpurProcurementRequireDetail(this.dataForm.id).then((res) => {
+              this.dataForm = res.data
+              if (res.data.attachmentList) {
+                res.data.attachmentList.forEach((item) => {
+                  this.datafilelist.push({
+                    name: item.document.fullName,
+                    fileSize: item.document.fileSize,
+                    filename: item.document.filePath,
+                    id: item.document.id,
+                    url: item.url
+                  })
+                })
+              }
+              purProcurementRequirementsList(this.dataForm.id).then((res) => {
+                this.dataFormTwo.data = res.data
+              })
+              // 流程信息和流转记录
+              if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            })
             this.getBusInfo()
           } else {
             getpurProcurementRequireDetail(this.dataForm.id).then((res) => {

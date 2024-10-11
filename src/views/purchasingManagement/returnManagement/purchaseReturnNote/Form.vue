@@ -132,7 +132,7 @@
                       <template slot-scope="scope">
                         <el-form-item :prop="'productData.' + scope.$index + '.' + 'receivedQuantity'"
                           :rules="productRules.receivedQuantity">
-                          <el-input v-model="scope.row.receivedQuantity" placeholder="请输入收货数量"
+                          <el-input v-model="scope.row.receivedQuantity" placeholder="请输入退货数量"
                             :disabled="btnType == 'look'" maxlength="11" @input="watchnums(scope.row, scope.$index)"
                             style="width: 145px;">
                             {{ scope.row.receivedQuantity }}
@@ -564,6 +564,7 @@ export default {
         orderNo: '',
         orderType: 'procure',
         classAttribute: 'other',
+        returnQueryFlag: 1,
         orderItems: [
           {
             asc: false,

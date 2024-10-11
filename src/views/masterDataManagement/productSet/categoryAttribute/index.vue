@@ -76,8 +76,8 @@
           </el-table-column> -->
           <el-table-column prop="remark" label="备注" width="250" />
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" width="180" />
-          <el-table-column label="操作" width="180" fixed="right" align="center">
+          <el-table-column prop="createByName" label="创建人" width="100" />
+          <el-table-column label="操作" width="110" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
                 <!-- <el-button v-if="scope.row.state == 'disabled'" type="text" size="mini"

@@ -675,14 +675,11 @@ export default {
       this.formVisible = false
       this.orderFormVisible = false
       this.CreateFormVisible = false
-      if (isRefresh) {
-        this.keyword = ''
-        this.initData()
-      }
+        this.search('basic')
     },
     initData() {
       this.listLoading = true
-      getPlanList(this.orderForm).then(res => {
+      getPlanList(this.superForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false

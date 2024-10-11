@@ -181,7 +181,6 @@
             <el-table-column prop="remark" label="备注" width="120" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" />
-
           </JNPF-table>
           <JNPF-table v-show="!dataTableFlag" v-loading="listLoading" :data="tableData" :fixedNO="true"
             @sort-change="sortChange" custom-column ref="otherTable" :setColumnDisplayList="columnList">
@@ -244,7 +243,6 @@
             <el-table-column prop="remark" label="备注" width="120" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" />
-
           </JNPF-table>
 
           <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
@@ -1014,7 +1012,9 @@ export default {
   },
   methods: {
     getclassAttributeList() {
-      let obj = {}
+      let obj = {
+        orderItems: [{ asc: true, column: 'sort' }]
+      }
       getclassAttributeList(obj).then((res) => {
         this.categoryList = res.data.records
         console.log(this.categoryList, 'list')
@@ -1663,11 +1663,11 @@ export default {
     },
 
     sortChange({ prop, order }) {
-      let newProp;
+      let newProp
       if (prop === 'productCategoryName') {
         newProp = prop
       } else {
-        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
       this.listQuery.orderItems[0].asc = order === 'ascending'
       this.listQuery.orderItems[0].column = order === null ? '' : newProp

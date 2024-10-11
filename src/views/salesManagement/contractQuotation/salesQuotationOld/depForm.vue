@@ -1538,18 +1538,7 @@ export default {
     async handleConfirm(value) {
       this.dataForm.documentStatus = value
       let submitFlag = true
-      if(this.dataFormTwo.lines.length){
-        let index = this.dataFormTwo.lines.findIndex(item =>
-          item.customerDrawingNumber === "" &&
-          item.num === "" &&
-          item.unitPrice === "" &&
-          item.productDrawingNo==""
-        )
-        console.log(index);
-        if (index !== -1) {
-          this.dataFormTwo.lines.splice(index, 1);
-        }
-      }
+    
 
       // 校验主表
       const form_1 = this.$refs['dataForm']
@@ -1584,7 +1573,7 @@ export default {
           }
         });
       }
-      
+  
       if (this.dataFormTwo.lines.length) {
         
         for (let index = 0; index < this.dataFormTwo.lines.length; index++) {
@@ -1607,6 +1596,18 @@ export default {
       }
 
       if (submitFlag) {
+        if(this.dataFormTwo.lines.length){
+        let index = this.dataFormTwo.lines.findIndex(item =>
+          item.customerDrawingNumber === "" &&
+          item.num === "" &&
+          item.unitPrice === "" &&
+          item.productDrawingNo==""
+        )
+        console.log(index);
+        if (index !== -1) {
+          this.dataFormTwo.lines.splice(index, 1);
+        }
+      }
       this.btnLoading = true
       this.dataForm.totalAmount = Number(this.dataForm.totalAmount = 0)
         this.dataForm.totalAmount = this.totalPrice

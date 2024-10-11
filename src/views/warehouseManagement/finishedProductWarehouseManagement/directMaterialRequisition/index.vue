@@ -19,6 +19,7 @@
                 </el-date-picker>
               </el-form-item>
             </el-col>
+
             <el-col :span="4">
               <el-form-item>
                 <el-select v-model="form.documentStatus" placeholder="单据状态" clearable style="width: 100%;">
@@ -272,7 +273,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
+      if (prop === 'productName' || prop === 'productCode' ) {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
@@ -339,7 +340,6 @@ export default {
         pickingStartDate: "",
         pickingEndDate: "",
         documentStatus: "",
-        classAttribute:this.classAttributeList,
         transferType:"receive_material",
         pageNum: 1,
         pageSize: 20,

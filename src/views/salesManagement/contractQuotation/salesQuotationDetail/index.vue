@@ -347,9 +347,7 @@ export default {
     // 关闭新建、编辑页面
     closeForm(isRefresh) {
       this.depFormVisible = false
-      if (isRefresh) {
         this.search('basic')
-      }
     },
     initData() {
       this.listLoading = true

@@ -359,6 +359,14 @@ export function getLabel(list, id, value, label) {
   }
 }
 
+/**
+ * 去除左右两边的空格
+ * @param {any} obj
+ * @returns {*}
+ * @example trim('  abc  ') => 'abc'
+ * @example trim({a: '  abc  '}) => {a: 'abc'}
+ * @example trim({a: '  abc  ', b: {c: '  abc  '}, c: [' abc ']}) => {a: 'abc', b: {c: 'abc'}, c: ['abc']}
+ */
 export function trim(obj){
     if(obj === null || obj === undefined) return obj
     const objType =typeof obj
@@ -376,4 +384,28 @@ export function trim(obj){
         }
     }
     return obj
+}
+
+/**
+ * 判断一个值是否为空,如果是对象,对象没有属性也认为是空
+ * @param {any} val
+ * @returns {boolean}
+ * @example isEmpty('') => true
+ * @example isEmpty({}) => true
+ */
+export function isEmpty(val){
+    if(val === null || val === undefined) return true
+    const type =typeof val
+    if(type=== 'string' && val.trim() === '') return true
+    return type === 'object' && Object.keys(val).length === 0;
+}
+
+/**
+ * 判断一个值是否不为空
+ * @param val
+ * @returns {boolean}
+ * @see isEmpty
+ */
+export function notEmpty(val){
+    return !isEmpty(val)
 }

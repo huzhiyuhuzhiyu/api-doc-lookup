@@ -892,7 +892,7 @@ export default {
           return JSON.stringify(item)
             .replace("{", "")
             .replace("}", "")
-        }) : "[]"
+        }) : []
       let obj = {
         equLine: this.dataForms.lines,
         maintenance: this.dataForm,

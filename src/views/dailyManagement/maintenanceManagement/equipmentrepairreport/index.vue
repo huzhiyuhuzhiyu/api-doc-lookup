@@ -58,9 +58,14 @@
                             </el-date-picker>
                           </el-form-item>
                         </el-col>
-                        <el-col :sm="12" :xs="24">
+                        <el-col :sm="6" :xs="24">
                           <el-form-item label="备注" prop="remark">
                             <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" maxlength="200" :rows="2" />
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="24" :xs="24">
+                          <el-form-item label="故障情况照片" prop="frontPicList">
+                            <UploadImg v-model="dataForm.frontPicList"></UploadImg>
                           </el-form-item>
                         </el-col>
                       </el-row>
@@ -134,12 +139,14 @@
 </template>
 
 <script>
+import UploadImg from "@/components/Generator/components/Upload/UploadImg.vue";
 import { addRepairRequest } from '@/api/dailyManagement/Maintenance'
 import { getOrganization } from '@/api/permission/user'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { mapGetters } from 'vuex'
 import { getEquEquipmentList, parametersShelveslist } from '@/api/basicData/index'
 export default {
+  components: { UploadImg },
   data() {
     return {
       btnLoading: false,
@@ -239,6 +246,7 @@ export default {
       activeName: "orderInfo",
       datafilelist: [],
       dataForm: {
+        frontPicList: [],
         factoryFloor: '',
         mountedPlaces: '',
         maintenancePersonnel: '',
@@ -434,6 +442,7 @@ export default {
       this.organizeIdTrees = []
       this.datafilelist = []
       this.dataForm = {
+        frontPicList: [],
         factoryFloor: '',
         mountedPlaces: '',
         maintenancePersonnel: '',
@@ -492,6 +501,12 @@ export default {
         return
       }
       if (submitFlag) {
+        this.dataForm.frontPicList = Array.isArray(this.dataForm.frontPicList) ?
+          this.dataForm.frontPicList.map(item => {
+            return JSON.stringify(item)
+              .replace("{", "")
+              .replace("}", "")
+          }) : "[]"
         let obj = {
           attachmentList: this.datafilelist,
           equLine: [],

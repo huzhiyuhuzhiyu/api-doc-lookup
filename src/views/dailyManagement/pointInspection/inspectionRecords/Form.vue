@@ -719,7 +719,7 @@ export default {
               return JSON.stringify(item)
                 .replace("{", "")
                 .replace("}", "")
-            }) : "[]"
+            }) : []
           let obj = {
             maintenance: this.dataForm,
             lines: this.dataFormTwo.productData

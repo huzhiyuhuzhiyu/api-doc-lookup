@@ -26,7 +26,6 @@
               </el-button>
             </el-form-item>
           </el-col>
-          <el-button style="float: right;margin-right: 10px;" size="mini" type="primary" icon="icon-ym icon-ym-report-icon-search-setting" @click="moreQueries()">更多查询</el-button>
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -38,35 +37,72 @@
             </el-tooltip>
           </div>
         </div>
-
         <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column style="padding-bottom: 50px;">
-          <el-table-column prop="maintenanceNo" label="维修单号" width="200" fixed="left" sortable="custom">
+          <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" fixed="left" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
                                 scope.row.maintenanceNo
                             }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="equipmentIdCode" label="设备编码" width="200" fixed="left" sortable="custom" />
-          <el-table-column prop="equipmentIdName" label="设备名称" width="200" fixed="left" sortable="custom"></el-table-column>
-          <el-table-column prop="departmentIdName" label="使用车间" width="120" />
-          <el-table-column prop="departmentIdName" label="安装地点" width="120" />
-          <el-table-column prop="departmentIdName" label="故障情况照片" width="120" />
+          <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" fixed="left" sortable="custom" />
+          <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" fixed="left" sortable="custom"></el-table-column>
+          <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
+          <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
+          <el-table-column prop="frontPicList" label="故障情况照片" min-width="140">
+            <template slot-scope="scope">
+              <el-image @click="bigimg(define.comUrl+item.url)" style="width: 25px;height: 25px;margin-left: 5px;" v-for="item in scope.row.frontPicList" :key="item.fileId" :src="define.comUrl+item.url" :preview-src-list="srcList"></el-image>
+            </template>
+          </el-table-column>
           <el-table-column prop="faultStartTime" label="故障开始时间" width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="departmentIdName" label="紧急程度" width="120" />
+          <el-table-column prop="reviewComments" label="审核意见" width="120">
+            <template slot-scope="scope">
+              <div v-if="scope.row.reviewComments == 'immediately'"><el-tag type="danger">立即维修</el-tag></div>
+              <div v-else-if="scope.row.reviewComments == 'reject'"><el-tag type="warning">驳回</el-tag></div>
+              <div v-else-if="scope.row.reviewComments == 'outsourcing'"><el-tag>转委外</el-tag></div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="rejectReason" label="驳回理由" min-width="160">
+            <template slot-scope="scope">
+              <div><el-tag type="success" v-if="scope.row.rejectReason">{{scope.row.rejectReason}}</el-tag></div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="degree" label="紧急程度" width="120">
+            <template slot-scope="scope">
+              <div v-if="scope.row.degree == '1'"><el-tag type="danger">特别紧急</el-tag></div>
+              <div v-else-if="scope.row.degree == '2'"><el-tag type="warning">紧急</el-tag></div>
+              <div v-else-if="scope.row.degree == '3'"><el-tag>一般</el-tag></div>
+              <div v-else-if="scope.row.degree == '4'"><el-tag type="success">不急</el-tag></div>
+            </template>
+          </el-table-column>
           <el-table-column prop="maintenancePersonnelName" label="维修负责人" width="120"></el-table-column>
-          <el-table-column prop="departmentIdName" label="故障响应时长(小时)" width="120" />
-          <el-table-column prop="departmentIdName" label="是否进行维修" width="120" />
-          <el-table-column prop="departmentIdName" label="作废原因" width="120" />
-          <el-table-column prop="departmentIdName" label="是否更换备件" width="120" />
-          <el-table-column prop="departmentIdName" label="故障原因" width="120" />
+          <el-table-column prop="waitDuration" label="故障响应时长(小时)" min-width="160" />
+          <el-table-column prop="sparePartsFlag" label="是否更换备件" width="140">
+            <template slot-scope="scope">
+              <div v-if="scope.row.sparePartsFlag == '0'"><el-tag type="warning">否</el-tag></div>
+              <div v-else-if="scope.row.sparePartsFlag == '1'"><el-tag type="success">是</el-tag></div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="reason" label="故障原因" min-width="160" />
           <el-table-column prop="solutionMeasures" label="解决措施" min-width="200"></el-table-column>
-          <el-table-column prop="solutionMeasures" label="维修完成拍照" min-width="200"></el-table-column>
+          <el-table-column prop="afterPicList" label="维修完成拍照" min-width="160">
+            <template slot-scope="scope">
+              <el-image @click="bigimg(define.comUrl+item.url)" style="width: 25px;height: 25px;margin-left: 5px;" v-for="item in scope.row.afterPicList" :key="item.fileId" :src="define.comUrl+item.url" :preview-src-list="srcList"></el-image>
+            </template>
+          </el-table-column>
           <el-table-column prop="startMaintenanceTime" label="开始维修时间" width="180"></el-table-column>
           <el-table-column prop="repairCompletionTime" label="维修完成时间" width="180"></el-table-column>
-          <el-table-column prop="maintenanceDuration" label="维修时长" width="200" sortable="custom"></el-table-column>
-          <el-table-column prop="solutionMeasures" label="设备状态" min-width="200"></el-table-column>
-          <el-table-column prop="departmentIdName" label="申请部门" width="120" />
+          <el-table-column prop="maintenanceDuration" label="维修时长" min-width="160" sortable="custom"></el-table-column>
+          <el-table-column prop="equipmentState" label="设备状态" width="120">
+            <template slot-scope="scope">
+              <div v-if="scope.row.equipmentState == 'normal'"><el-tag type="success">正常</el-tag></div>
+              <div v-else-if="scope.row.equipmentState == 'repair'"><el-tag type="warning">维修</el-tag></div>
+              <div v-else-if="scope.row.equipmentState == 'discard'"><el-tag type="info">报废</el-tag></div>
+              <div v-else-if="scope.row.equipmentState == 'spare'"><el-tag>备用</el-tag></div>
+              <div v-else-if="scope.row.equipmentState == 'stop'"><el-tag type="danger">停用</el-tag></div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="departmentIdName" label="申请部门" min-width="120" />
           <el-table-column prop="applicantIdName" label="申请人" width="120"></el-table-column>
           <el-table-column prop="applicationDate" label="申请日期" width="180" sortable="custom"></el-table-column>
           <el-table-column prop="state" label="状态" sortable="custom" width="120" fixed="right" align="center">
@@ -100,7 +136,9 @@ export default {
   components: { Form, },
   data() {
     return {
-      visible: false,
+      srcList: [
+        'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg'
+      ],
       faultStartTime: [],
       submitDate: [],
       tableData: [],
@@ -143,9 +181,8 @@ export default {
     this.initData()
   },
   methods: {
-    //更多查询
-    moreQueries() {
-      this.visible = true
+    bigimg(url) {
+      this.srcList[0] = url
     },
     sortChange({ prop, order }) {
       let newProp
@@ -210,14 +247,19 @@ export default {
     initData() {
       this.listLoading = true
       RepairRequestList(this.orderForm).then(res => {
-        console.log("res++", res);
-        this.tableData = res.data.records
-        this.tableData.map((item) => {
+        this.tableData = res.data.records.map(item => {
+          if (item.frontPic) {
+            item.frontPicList = item.frontPicList.map(o => { return JSON.parse(`{${o}}`) })
+          }
+          if (item.afterPic) {
+            item.afterPicList = item.afterPicList.map(o => { return JSON.parse(`{${o}}`) })
+          }
+          item.waitDuration = this.getTimes(item.waitDuration)
           item.maintenanceDuration = this.getTimes(item.maintenanceDuration)
+          return item
         })
         this.total = res.data.total
         this.listLoading = false
-        this.visible = false
       }).catch(() => {
         this.listLoading = false
       })

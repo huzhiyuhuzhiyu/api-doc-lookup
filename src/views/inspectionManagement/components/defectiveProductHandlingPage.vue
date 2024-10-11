@@ -68,15 +68,15 @@
             <el-table-column prop="inspectionOrderNo" label="检验单号" min-width="200" sortable="custom" />
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
-            <el-table-column prop="inspectionDate" label="检验日期" min-width="180" sortable="custom" />
-            <el-table-column prop="inspectorName" label="检验人" min-width="180" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" min-width="180" />
-            <el-table-column prop="inspectionQuantity" label="报检数量" min-width="180" sortable="custom" />
-            <el-table-column prop="samplingQuantity" label="检验数量" min-width="180" sortable="custom" />
+            <el-table-column prop="inspectionDate" label="检验日期" width="120" sortable="custom" />
+            <el-table-column prop="inspectorName" label="检验人" width="100" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" width="60" />
+            <el-table-column prop="inspectionQuantity" label="报检数量" width="120" sortable="custom" />
+            <el-table-column prop="samplingQuantity" label="检验数量" width="120" sortable="custom" />
             <el-table-column prop="description" label="处理说明" min-width="180" sortable="custom" />
-            <el-table-column prop="treatmentResults" label="处理结果" min-width="180" sortable="custom" />
-            <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="120" sortable="custom" />
-            <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="180" sortable="custom" />
+            <el-table-column prop="treatmentResults" label="处理结果" width="120" sortable="custom" />
+            <el-table-column prop="qualifiedQuantity" label="合格数量" width="120" sortable="custom" />
+            <el-table-column prop="unqualifiedQuantity" label="不合格数量" width="130" sortable="custom" />
             <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center"
               v-if="showAppCodeFlag">
               <template slot-scope="scope">
@@ -99,7 +99,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
 
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
@@ -391,7 +391,9 @@ export default {
       let newProp
       if (prop === 'inspectorName') {
         newProp = 'inspector_id'
-      } else if ([].includes(prop)) {
+      } else if (prop === 'createByName') {
+        newProp = 'create_by'
+      } else if (['inspectionOrderNo', 'productDrawingNo', 'productCode'].includes(prop)) {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())

@@ -661,7 +661,15 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp
-      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName') {
+      if (
+        prop === 'partnerCode' ||
+        prop === 'partnerName' ||
+        prop === 'shipperName' ||
+        prop === 'createByName' ||
+        prop === 'productDrawingNo' ||
+        prop === 'productCode' ||
+        prop === 'processName'
+      ) {
         if (prop === 'createByName') {
           newProp = 'create_by'
         } else {

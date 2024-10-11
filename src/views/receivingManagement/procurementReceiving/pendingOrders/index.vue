@@ -297,12 +297,7 @@ export default {
     selectCustomerFun(val) {
       this.list = val
     },
-    // 获取合计数据
-    getOrderLineReportFun() {
-      getOrderLineReport(this.orderForm).then((res) => {
-        this.totalNum = res.data.total ? res.data.total.num : 0
-      })
-    },
+
     dateFun(dateStr) {
       const date = new Date(dateStr)
 
@@ -383,7 +378,9 @@ export default {
         prop === 'productCode' ||
         prop === 'documentStatus' ||
         prop === 'cooperativePartnerName' ||
-        prop === 'cooperativePartnerCode'
+        prop === 'cooperativePartnerCode' ||
+        prop === 'waitReceiptNum' ||
+        prop === 'createByName'
       ) {
         newProp = prop
       } else if (prop === 'createTime') {
@@ -391,9 +388,7 @@ export default {
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
-      if (prop == 'createByName') {
-        newProp = 'create_by'
-      }
+     
       this.orderForm.orderItems[0].asc = order === 'ascending'
       this.orderForm.orderItems[0].column = order === null ? '' : newProp
       this.initData()
@@ -425,7 +420,7 @@ export default {
       purchaseOrderReport(this.orderForm)
         .then((res) => {
           this.tableData = res.data.page.records
-          this.getOrderLineReportFun()
+
           this.total = res.data.page.total
           this.listLoading = false
         })

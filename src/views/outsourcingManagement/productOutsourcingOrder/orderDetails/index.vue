@@ -75,16 +75,20 @@
             <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" min-width="140" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" min-width="120" />
+            <el-table-column prop="mainUnit" label="单位" width="60" />
             <el-table-column prop="purchaseQuantity" label="数量" min-width="100" sortable="custom" />
             <el-table-column prop="receiptQuantity" label="已入库数量" min-width="130" sortable="custom" />
             <el-table-column prop="price" label="单价(含税)" min-width="140" sortable="custom" />
-            <el-table-column prop="taxRate" label="税率(%)" min-width="120" sortable="custom" />
+            <el-table-column prop="taxRate" label="税率" width="80" sortable="custom">
+              <template slot-scope="scope">
+                {{ scope.row.taxRate }}%
+              </template>
+            </el-table-column>
             <el-table-column prop="totalAmount" label="总金额(含税)" min-width="140" sortable="custom" />
             <el-table-column prop="excludingTaxPrice" label="单价(不含税)" min-width="120" sortable="custom" />
             <el-table-column prop="taxAmount" label="税额" min-width="80" />
-            <el-table-column prop="excludingTaxAmount" label="总金额(不含税)" min-width="150" sortable="custom" />
-            <el-table-column prop="deliveryDate" label="交货日期" min-width="140" sortable="custom" />
+            <el-table-column prop="excludingTaxAmount" label="总金额(不含税)" width="150" sortable="custom" />
+            <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
             <el-table-column prop="receivingStatus" label="收货状态" align="center" sortable="custom" width="120">
               <template slot-scope="scope">
                 <div v-if="scope.row.receivingStatus == 'receiving' || scope.row.receivingStatus == 'returning'">
@@ -96,18 +100,17 @@
                 <div v-if="scope.row.approvalStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
               </template>
             </el-table-column>
-            <el-table-column prop="standardValue" label="规值" min-width="180" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" min-width="140" label="打字内容" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" min-width="140" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="140" sortable="custom" />
-            <el-table-column prop="oil" label="油脂" min-width="120" sortable="custom" />
-            <el-table-column prop="oilQuantity" label="油脂量" min-width="140" sortable="custom" />
-            <el-table-column prop="clearance" label="游隙" min-width="120" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" min-width="140" sortable="custom" />
-            <el-table-column prop="processName" label="工序" min-width="140" sortable="custom" />
-            <el-table-column prop="remark" label="备注" min-width="120" />
-            <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
+            <el-table-column prop="standardValue" label="规值" width="80" sortable="custom" />
+            <el-table-column prop="sealingCoverTyping" width="120" label="打字内容" sortable="custom" />
+            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
+            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
+            <el-table-column prop="oil" label="油脂" width="100" sortable="custom" />
+            <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom" />
+            <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
+            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
+            <el-table-column prop="remark" label="备注" width="120" />
+            <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人" width="120" sortable="custom" />
             <el-table-column label="操作" width="90" fixed="right">
               <template slot-scope="scope">
                 <el-dropdown hide-on-click>
@@ -133,8 +136,6 @@
     </div>
     <JNPF-Form v-if="formVisible" ref="procureForm" @refresh="refresh" @close="closeForm" />
 
-
-
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
@@ -158,13 +159,10 @@ import moment from 'moment'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 // import withdrawnForm from './withranForm'
 
-
 import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import {
-  getbimProductAttributesList, getbimProductAttributes
-} from "@/api/masterDataManagement/index";
+import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 export default {
   name: 'purchaseOrder',
   components: { JNPFForm, ExportForm, SuperQuery },
@@ -182,7 +180,6 @@ export default {
           label: '供应商编码',
           type: 'input'
         },
-
 
         {
           prop: 'cooperativePartnerName',
@@ -243,12 +240,12 @@ export default {
         {
           prop: 'taxAmount',
           label: '税额',
-          type: 'input',
+          type: 'input'
         },
         {
           prop: 'excludingTaxAmount',
           label: '总金额(不含税)',
-          type: 'input',
+          type: 'input'
         },
         {
           prop: 'deliveryDate',
@@ -266,7 +263,7 @@ export default {
           options: [
             { label: '审批中', value: 'receiving' },
             { label: '已完成', value: 'received' },
-            { label: '已停止', value: 'stopped' },
+            { label: '已停止', value: 'stopped' }
           ]
         },
 
@@ -275,7 +272,6 @@ export default {
           label: '规值',
           type: 'input'
         },
-
 
         {
           prop: 'sealingCoverTyping',
@@ -346,7 +342,7 @@ export default {
           prop: 'remark',
           label: '备注',
           type: 'input'
-        },
+        }
       ],
       printVisible: false,
       exportFormVisible: false,
@@ -506,244 +502,235 @@ export default {
     },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
-
       let obj1 = {
         pageNum: -1,
         pageSize: 20,
-        typeCode: "pa007",
+        typeCode: 'pa007',
         orderItems: [
           {
             asc: false,
-            column: "",
+            column: ''
           },
           {
             asc: false,
-            column: "code",
-          },
-        ],
-      };
+            column: 'code'
+          }
+        ]
+      }
 
-      getbimProductAttributesList(obj1).then(res => {
-
+      getbimProductAttributesList(obj1).then((res) => {
         let arr = []
-        res.data.records.forEach(item => {
+        res.data.records.forEach((item) => {
           let obj = {
             label: item.name,
-            value: item.name,
+            value: item.name
           }
           arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'sealingCoverTyping');
+        })
+        let oilObj = this.superQueryJson.find((item) => item.prop === 'sealingCoverTyping')
 
         if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
+          // 将options赋值为5
+          oilObj.options = arr
         }
       })
       let obj2 = {
         pageNum: -1,
         pageSize: 20,
-        typeCode: "pa006",
+        typeCode: 'pa006',
         orderItems: [
           {
             asc: false,
-            column: "",
+            column: ''
           },
           {
             asc: false,
-            column: "code",
-          },
-        ],
-      };
+            column: 'code'
+          }
+        ]
+      }
 
-
-      getbimProductAttributesList(obj2).then(res => {
+      getbimProductAttributesList(obj2).then((res) => {
         let arr = []
-        res.data.records.forEach(item => {
+        res.data.records.forEach((item) => {
           let obj = {
             label: item.name,
-            value: item.name,
+            value: item.name
           }
           arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'accuracyLevel');
+        })
+        let oilObj = this.superQueryJson.find((item) => item.prop === 'accuracyLevel')
 
         if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
+          // 将options赋值为5
+          oilObj.options = arr
         }
       })
       let obj3 = {
         pageNum: -1,
         pageSize: 20,
-        typeCode: "pa005",
+        typeCode: 'pa005',
         orderItems: [
           {
             asc: false,
-            column: "",
+            column: ''
           },
           {
             asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj3).then(res => {
-
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj3).then((res) => {
         let arr = []
-        res.data.records.forEach(item => {
+        res.data.records.forEach((item) => {
           let obj = {
             label: item.name,
-            value: item.name,
+            value: item.name
           }
           arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'vibrationLevel');
+        })
+        let oilObj = this.superQueryJson.find((item) => item.prop === 'vibrationLevel')
 
         if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
+          // 将options赋值为5
+          oilObj.options = arr
         }
       })
       let obj4 = {
         pageNum: -1,
         pageSize: 20,
-        typeCode: "pa002",
+        typeCode: 'pa002',
         orderItems: [
           {
             asc: false,
-            column: "",
+            column: ''
           },
           {
             asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj4).then(res => {
-
-
-
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj4).then((res) => {
         let arr = []
-        res.data.records.forEach(item => {
+        res.data.records.forEach((item) => {
           let obj = {
             label: item.name,
-            value: item.name,
+            value: item.name
           }
           arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'oil');
+        })
+        let oilObj = this.superQueryJson.find((item) => item.prop === 'oil')
 
         if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
+          // 将options赋值为5
+          oilObj.options = arr
         }
       })
       let obj5 = {
         pageNum: -1,
         pageSize: 20,
-        typeCode: "pa003",
+        typeCode: 'pa003',
         orderItems: [
           {
             asc: false,
-            column: "",
+            column: ''
           },
           {
             asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj5).then(res => {
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj5).then((res) => {
         let arr = []
-        res.data.records.forEach(item => {
+        res.data.records.forEach((item) => {
           let obj = {
             label: item.name,
-            value: item.name,
+            value: item.name
           }
           arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'oilQuantity');
+        })
+        let oilObj = this.superQueryJson.find((item) => item.prop === 'oilQuantity')
 
         if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
+          // 将options赋值为5
+          oilObj.options = arr
         }
       })
       let obj6 = {
         pageNum: -1,
         pageSize: 20,
-        typeCode: "pa001",
+        typeCode: 'pa001',
         orderItems: [
           {
             asc: false,
-            column: "",
+            column: ''
           },
           {
             asc: false,
-            column: "code",
-          },
-        ],
-      };
+            column: 'code'
+          }
+        ]
+      }
 
-      getbimProductAttributesList(obj6).then(res => {
+      getbimProductAttributesList(obj6).then((res) => {
         let arr = []
-        res.data.records.forEach(item => {
+        res.data.records.forEach((item) => {
           let obj = {
             label: item.name,
-            value: item.name,
+            value: item.name
           }
           arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'clearance');
+        })
+        let oilObj = this.superQueryJson.find((item) => item.prop === 'clearance')
 
         if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
+          // 将options赋值为5
+          oilObj.options = arr
         }
       })
       let obj7 = {
         pageNum: -1,
         pageSize: 20,
-        typeCode: "pa015",
+        typeCode: 'pa015',
         orderItems: [
           {
             asc: false,
-            column: "",
+            column: ''
           },
           {
             asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj7).then(res => {
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj7).then((res) => {
         let arr = []
-        res.data.records.forEach(item => {
+        res.data.records.forEach((item) => {
           let obj = {
             label: item.name,
-            value: item.name,
+            value: item.name
           }
           arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'packagingMethod');
+        })
+        let oilObj = this.superQueryJson.find((item) => item.prop === 'packagingMethod')
 
         if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
+          // 将options赋值为5
+          oilObj.options = arr
         }
       })
 
-
       // 获取税率(数据字典)
-      getbimProductAttributes("585438081021126405").then(res => {
-        res.data.list.forEach(item => {
+      getbimProductAttributes('585438081021126405').then((res) => {
+        res.data.list.forEach((item) => {
           item.taxRate = item.enCode.replace('%', '') * 1
         })
         this.taxRateList = res.data.list
-        console.log("税率", this.taxRateList);
+        console.log('税率', this.taxRateList)
       })
-
     },
     checkSelectable(row) {
       return !row.disabled
@@ -842,31 +829,21 @@ export default {
     columnSetFun() {
       this.$refs.detailTableData.showDrawer()
     },
-    sortChange({ prop, order }) {
-      let newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      if (newProp === 'cooperative_partner_code') {
-        newProp = 'cooperativePartnerCode'
-      }
-      if (newProp === 'cooperative_partner_name') {
-        newProp = 'cooperativePartnerName'
-      }
-      this.listQuery.orderItems[0].asc = order !== 'descending'
-      this.listQuery.orderItems[0].column = order === null ? '' : newProp
-      this.initData()
-    },
+
     sortChangeDetail({ prop, order }) {
-      let newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      if (newProp === 'cooperative_partner_code') {
-        newProp = 'cooperativePartnerCode'
-      }
-      if (newProp === 'cooperative_partner_name') {
-        newProp = 'cooperativePartnerName'
-      }
-      if (newProp === 'product_name') {
-        newProp = 'productName'
-      }
-      if (newProp === 'create_time') {
-        newProp = 'createTime'
+      let newProp
+      if (
+        prop === 'processName' ||
+        prop === 'productCode' ||
+        prop === 'productDrawingNo' ||
+        prop === 'cooperativePartnerCode' ||
+        prop == 'cooperativePartnerName'
+      ) {
+        newProp = prop
+      } else if (prop === 'createByName') {
+        newProp = 'create_by'
+      } else {
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
       this.listsQuery.orderItems[0].asc = order !== 'descending'
       this.listsQuery.orderItems[0].column = order === null ? '' : newProp
@@ -944,7 +921,6 @@ export default {
           })
           this.total = res.data.total
           this.listLoading = false
-
         })
         .catch(() => {
           this.listLoading = false
@@ -1045,7 +1021,7 @@ export default {
         this.$refs.procureForm.init(id, type)
       })
     },
- 
+
     withdrawnHandle(formId) {
       let _data = {
         formId
@@ -1067,7 +1043,6 @@ export default {
         })
         .catch(() => { })
     },
- 
 
     // 处理分页
     printPageDataFn(data, pageSize = 20) {

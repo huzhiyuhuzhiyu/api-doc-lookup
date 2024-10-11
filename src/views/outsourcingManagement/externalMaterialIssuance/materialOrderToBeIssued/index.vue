@@ -256,7 +256,27 @@ export default {
     },
     // 获取合计数据
     getOrderLineReportFun() {
-      getOrderLineReport(this.orderForm).then((res) => {
+      let obj = {
+        orderType: 'external',
+        shipmentStatus: 'not_finish',
+        deliveryEndDate: '',
+        deliveryStartTime: '',
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [
+          {
+            asc: true,
+            column: 'order_no'
+          },
+          {
+            asc: false,
+            column: 'delivery_date'
+          }
+        ],
+
+        superQuery: {}
+      }
+      getOrderLineReport(obj).then((res) => {
         this.totalNum = res.data.total ? res.data.total.num : 0
       })
     },
@@ -336,15 +356,20 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp
-      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
+      if (
+        prop === 'processName' ||
+        prop === 'productCode' ||
+        prop === 'productDrawingNo' ||
+        prop === 'cooperativePartnerCode' ||
+
+        prop == 'cooperativePartnerName' ||
+        prop === 'createByName' ||
+        prop === 'createTime' ||
+        prop === 'waitReceiptNum'
+      ) {
         newProp = prop
-      } else if (prop === 'createTime') {
-        newProp = 't1.create_time'
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      }
-      if (prop == 'createByName') {
-        newProp = 'create_by'
       }
       this.orderForm.orderItems[0].asc = order === 'ascending'
       this.orderForm.orderItems[0].column = order === null ? '' : newProp

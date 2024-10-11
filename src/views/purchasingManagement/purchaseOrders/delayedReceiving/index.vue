@@ -66,7 +66,7 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column>
-            <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom">
+            <el-table-column prop="orderNo" label="订单号" width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.purchaseOrderId, 'look')">
                   {{ scope.row.orderNo }}
@@ -82,11 +82,11 @@
             <el-table-column prop="purchaseQuantity" label="数量" width="100" sortable="custom" />
 
             <el-table-column prop="deliveryDate" label="交货日期" width="140" sortable="custom" />
-            <el-table-column prop="standardValue" label="规值" width="180" sortable="custom" />
+            <el-table-column prop="standardValue" label="规值" width="100" sortable="custom" />
             <el-table-column prop="processName" label="工序" width="100" sortable="custom" />
             <el-table-column prop="remark" label="备注" width="120" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" width="120" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text"
@@ -611,15 +611,22 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp
-      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
+      if (
+        prop === 'productName' ||
+        prop === 'productCode' ||
+        prop === 'documentStatus' ||
+        prop === 'cooperativePartnerCode' ||
+        prop === 'cooperativePartnerName' ||
+        prop === 'waitReceiptNum' ||
+        prop === 'processName'
+      ) {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'
+      } else if (prop === 'createByName') {
+        newProp = 't1.create_by'
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      }
-      if (prop == 'createByName') {
-        newProp = 'create_by'
       }
       this.orderForm.orderItems[0].asc = order === 'ascending'
       this.orderForm.orderItems[0].column = order === null ? '' : newProp

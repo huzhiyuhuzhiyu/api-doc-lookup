@@ -348,13 +348,6 @@ export default {
   },
   methods: {
 
-    // 获取合计数据
-    getOrderLineReportFun() {
-      getOrderLineReport(this.orderForm).then((res) => {
-
-        this.totalNum = res.data.total ? res.data.total.num : 0
-      })
-    },
     dateFun(dateStr) {
       const date = new Date(dateStr)
 
@@ -430,15 +423,22 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp
-      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
+      if (
+        prop === 'productName' ||
+        prop === 'productCode' ||
+        prop === 'documentStatus' ||
+        prop === 'cooperativePartnerCode' ||
+        prop === 'cooperativePartnerName' ||
+        prop === 'waitReceiptNum' ||
+        prop === 'processName'
+      ) {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'
+      } else if (prop === 'createByName') {
+        newProp = 't1.create_by'
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      }
-      if (prop == 'createByName') {
-        newProp = 'create_by'
       }
       this.orderForm.orderItems[0].asc = order === 'ascending'
       this.orderForm.orderItems[0].column = order === null ? '' : newProp
@@ -470,7 +470,7 @@ export default {
       purchaseOrderReport(this.orderForm)
         .then((res) => {
           this.tableData = res.data.page.records
-          this.getOrderLineReportFun()
+       
           this.total = res.data.page.total
           this.listLoading = false
         })

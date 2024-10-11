@@ -91,7 +91,11 @@
             <el-table-column prop="productsCode" label="产品编码" width="150" sortable="custom" />
             <el-table-column prop="price" label="协议价(含税)" width="140" sortable="custom" />
             <el-table-column prop="excludingTaxPrice" label="协议价(不含税)" width="160" sortable="custom" />
-            <el-table-column prop="taxRate" label="税率" width="80" sortable="custom" />
+            <el-table-column prop="taxRate" label="税率" width="80" sortable="custom">
+              <template slot-scope="scope">
+                {{ scope.row.taxRate }}%
+              </template>
+            </el-table-column>
             <el-table-column prop="effectiveTimeStart" label="有效时间起" width="150" sortable="custom" />
             <el-table-column prop="effectiveTimeEnd" label="有效时间止" width="150" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" label="打字内容" width="110" sortable="custom" />
@@ -768,12 +772,12 @@ export default {
       }
     },
     sortChange({ prop, order }) {
-      console.log(prop)
+
       let newProp
       if (
         prop === 'cooperativePartnerCode' ||
         prop === 'cooperativePartnerName' ||
-        prop === 'shipperName' ||
+        prop === 'productsCode' ||
         prop === 'createByName' ||
         prop === 'productsName' ||
         prop === 'drawingNo' ||
@@ -784,9 +788,6 @@ export default {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
 
-      if (newProp === 'createTime') {
-        newProp = 'create_time'
-      }
       this.listQuery.orderItems[0].asc = order !== 'descending'
       this.listQuery.orderItems[0].column = order === null ? '' : newProp
 

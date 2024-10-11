@@ -56,7 +56,7 @@
         </div>
 
         <JNPF-table v-loading="listLoading" highlight-current-row ref="tableForm" :data="tableDataList"
-          @sort-change="sortChange" custom-column>
+          @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
           <el-table-column prop="orderNo" label="对账单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
@@ -192,6 +192,7 @@ export default {
   components: { JNPFForm, SuperQuery, withdrawnForm },
   data() {
     return {
+      columnList: ['cooperativePartnerCode', 'createByName'],
       withdrawnVisible: false,
       title: "更多查询",
       background: true,//分页器背景颜色
@@ -332,12 +333,15 @@ export default {
       this.search()
     },
     columnSetFun() {
-      this.$refs.dataTable.showDrawer()
+      this.$refs.tableForm.showDrawer()
     },
     sortChange({ prop, order }) {
       let newProp
-      if (prop === 'cooperativePartnerName') { newProp = prop }
-      else { newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase()); }
+      if (prop === 'cooperativePartnerName') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+      }
       this.listQuery.orderItems[0].asc = order !== 'descending'
       this.listQuery.orderItems[0].column = order === null ? "" : newProp
       this.initData()

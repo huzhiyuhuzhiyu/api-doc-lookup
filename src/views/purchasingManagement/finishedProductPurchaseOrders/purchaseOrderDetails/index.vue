@@ -16,7 +16,7 @@
                   @keyup.enter.native="searchDetail()" />
               </el-form-item>
             </el-col>
-          
+
             <el-col :span="6">
               <el-form-item>
                 <el-button size="mini" type="primary" icon="el-icon-search" @click="searchDetail()">
@@ -58,7 +58,7 @@
           <JNPF-table @selection-change="handeleFinshData" v-loading="listLoading" highlight-current-row :fixedNO="true"
             ref="detailTableData" :data="detailTableData" @sort-change="sortChangeDetail" custom-column
             :checkSelectable="checkSelectable" :partentOrChild="'child'" :setColumnDisplayList="columnList">
-            <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
+            <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.purchaseOrderId, 'look')">
                   {{ scope.row.orderNo }}
@@ -69,17 +69,21 @@
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
             <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
             <!-- <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" /> -->
-            <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" min-width="120" />
-            <el-table-column prop="purchaseQuantity" label="数量" min-width="100" sortable="custom" />
-            <el-table-column prop="receiptQuantity" label="已入库数量" min-width="130" sortable="custom" />
-            <el-table-column prop="price" label="单价(含税)" min-width="140" sortable="custom" />
-            <el-table-column prop="taxRate" label="税率(%)" min-width="120" sortable="custom" />
-            <el-table-column prop="totalAmount" label="总金额(含税)" min-width="140" sortable="custom" />
-            <el-table-column prop="excludingTaxPrice" label="单价(不含税)" min-width="120" sortable="custom" />
-            <el-table-column prop="taxAmount" label="税额" min-width="80" />
-            <el-table-column prop="excludingTaxAmount" label="总金额(不含税)" min-width="150" sortable="custom" />
-            <el-table-column prop="deliveryDate" label="交货日期" min-width="140" sortable="custom" />
+            <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" width="60" />
+            <el-table-column prop="purchaseQuantity" label="数量" width="80" sortable="custom" />
+            <el-table-column prop="receiptQuantity" label="已入库数量" width="130" sortable="custom" />
+            <el-table-column prop="price" label="单价(含税)" width="140" sortable="custom" />
+            <el-table-column prop="taxRate" label="税率" width="80" sortable="custom">
+                  <template slot-scope="scope">
+                    {{ scope.row.taxRate }}%
+                  </template>
+                </el-table-column>
+            <el-table-column prop="totalAmount" label="总金额(含税)" width="140" sortable="custom" />
+            <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150" sortable="custom" />
+            <el-table-column prop="taxAmount" label="税额" width="80" />
+            <el-table-column prop="excludingTaxAmount" label="总金额(不含税)" width="160" sortable="custom" />
+            <el-table-column prop="deliveryDate" label="交货日期" width="140" sortable="custom" />
             <el-table-column prop="receivingStatus" label="收货状态" align="center" sortable="custom" width="120">
               <template slot-scope="scope">
                 <div v-if="scope.row.receivingStatus == 'receiving' || scope.row.receivingStatus == 'returning'">
@@ -91,18 +95,18 @@
                 <div v-if="scope.row.approvalStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
               </template>
             </el-table-column>
-            <el-table-column prop="standardValue" label="规值" min-width="180" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" min-width="140" label="打字内容" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" min-width="140" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="140" sortable="custom" />
-            <el-table-column prop="oil" label="油脂" min-width="120" sortable="custom" />
-            <el-table-column prop="oilQuantity" label="油脂量" min-width="140" sortable="custom" />
-            <el-table-column prop="clearance" label="游隙" min-width="120" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" min-width="140" sortable="custom" />
-            <el-table-column prop="processName" label="工序" min-width="140" sortable="custom" />
-            <el-table-column prop="remark" label="备注" min-width="120" />
-            <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
+            <el-table-column prop="standardValue" label="规值" width="100" sortable="custom" />
+            <el-table-column prop="sealingCoverTyping" width="120" label="打字内容" sortable="custom" />
+            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
+            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
+            <el-table-column prop="oil" label="油脂" width="80" sortable="custom" />
+            <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom" />
+            <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" />
+            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
+            <el-table-column prop="processName" label="工序" width="100" sortable="custom" />
+            <el-table-column prop="remark" label="备注" width="120" />
+            <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
             <el-table-column label="操作" width="90" fixed="right">
               <template slot-scope="scope">
                 <el-dropdown hide-on-click>
@@ -931,18 +935,18 @@ export default {
       this.initData()
     },
     sortChangeDetail({ prop, order }) {
-      let newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      if (newProp === 'cooperative_partner_code') {
-        newProp = 'cooperativePartnerCode'
-      }
-      if (newProp === 'cooperative_partner_name') {
-        newProp = 'cooperativePartnerName'
-      }
-      if (newProp === 'product_name') {
-        newProp = 'productName'
-      }
-      if (newProp === 'create_time') {
-        newProp = 'createTime'
+      let newProp
+      if (
+        prop === 'productCode' ||
+        prop === 'cooperativePartnerCode' ||
+        prop === 'cooperativePartnerName' ||
+        prop === 'processName' ||
+        prop === 'createTime' ||
+        prop === 'createByName'
+      ) {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
       this.listsQuery.orderItems[0].asc = order !== 'descending'
       this.listsQuery.orderItems[0].column = order === null ? '' : newProp

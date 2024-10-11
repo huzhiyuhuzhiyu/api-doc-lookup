@@ -46,7 +46,7 @@
                 创建收货单
               </el-button>
               <!-- <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()">
-                取消退货
+                取消收货
               </el-button> -->
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                 导出
@@ -79,11 +79,11 @@
               </template>
             </el-table-column>
             <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
-            <el-table-column prop="deliverDate" label="退货日期" width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="deliverDate" label="收货日期" width="120" sortable="custom"></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" width="160" />
-            <el-table-column prop="receivedQuantity" label="退货数量" width="160" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" width="60" />
+            <el-table-column prop="receivedQuantity" label="收货数量" width="120" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
             <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
             <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
@@ -91,7 +91,7 @@
             <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" />
             <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
             <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
-            <el-table-column prop="ordersNo" label="订单号" width="120" sortable="custom" />
+            <el-table-column prop="ordersNo" label="订单号" width="190" sortable="custom" />
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
@@ -99,7 +99,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
 
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
@@ -190,7 +190,7 @@ export default {
       activeName: 'orderList',
       salespersonList: [],
       detailFlag: false,
-      exchangeList: [{ label: '退货', value: false }, { label: '换货', value: true }],
+      exchangeList: [{ label: '收货', value: false }, { label: '换货', value: true }],
       shipmentsStateList: [{ label: '待发货', value: 'undelivered' }, { label: '已发货', value: 'delivered' }],
       orderStateList: [{ label: '待检验', value: 'unInspect' }, { label: '已检验', value: 'inspected' }],
       isfullReceiptFlag: [{ label: '是', value: 1 }, { label: '否', value: 0 }],
@@ -288,7 +288,7 @@ export default {
         },
         {
           prop: 'deliverDate',
-          label: '退货日期',
+          label: '收货日期',
           type: 'daterange',
           valueFormat: 'yyyy-MM-dd',
           startPlaceholder: '开始日期',
@@ -313,7 +313,7 @@ export default {
         },
         {
           prop: 'deliveryQuantity',
-          label: '退货数量',
+          label: '收货数量',
           type: 'input'
         },
         {
@@ -430,10 +430,10 @@ export default {
     handleSelectionChange(val) {
       this.selectArr = val
     },
-    //批量取消退货
+    //批量取消收货
     Cancelshipment() {
       if (!this.selectArr.length) return this.$message.error('请先选择数据')
-      this.$confirm('您确认取消选中的退货通知单吗？', this.$t('common.tipTitle'), {
+      this.$confirm('您确认取消选中的收货通知单吗？', this.$t('common.tipTitle'), {
         type: 'warning'
       })
         .then(() => {
@@ -450,12 +450,7 @@ export default {
     handleClick(e) {
       this.activeName = e.name
     },
-    //   sortChange({ prop, order }) {
-    //   const newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-    //   this.listQuery.orderItems[0].asc = order !== 'descending'
-    //   this.listQuery.orderItems[0].column = order === null ? "" : newProp
-    //   this.initData()
-    // },
+  
     //排序
     sortChange({ prop, order }) {
       let newProp
@@ -593,7 +588,7 @@ export default {
       let _data = {
         ...targetListQuery,
         exportType: '1073',
-        exportName: '退货通知单明细',
+        exportName: '收货通知单明细',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }

@@ -46,6 +46,13 @@
           <el-table-column prop="productDrawingNo" label="关联产品" min-width="160" sortable="custom" />
           <el-table-column prop="createByName" label="发起人" min-width="120" sortable="custom" />
           <el-table-column prop="createTime" label="发起时间" min-width="180" sortable="custom" />
+          <el-table-column prop="planPersonName" label="计划处理人" min-width="160" sortable="custom" />
+          <el-table-column prop="extensionTime" label="处理时间" min-width="200">
+            <template slot-scope="scope">
+              <el-tag type="danger" v-if="scope.row.extensionFlag">{{ scope.row.extensionTime }}</el-tag>
+              <el-tag type="" v-else>{{ scope.row.waitTime }}</el-tag>
+            </template>
+          </el-table-column>
           <!-- <el-table-column prop="personId" label="响应人" min-width="160" sortable="custom" />
           <el-table-column prop="processDate" label="响应时间" min-width="160" sortable="custom" /> -->
           <el-table-column label="操作" width="220" fixed="right">

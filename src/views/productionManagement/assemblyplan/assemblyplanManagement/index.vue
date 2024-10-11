@@ -192,7 +192,7 @@ export default {
         },
 
         {
-          prop: 'productDrawingNo',
+          prop: 'productsDrawingNo',
           label: "品名规格",
           type: 'input'
         },
@@ -434,7 +434,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName') {
+      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName'||prop=='productsDrawingNo'||prop=='productsCode'||prop=='availableArrangeQuantity'||prop=='arrangeOrderNum') {
         if (prop === 'createByName') {
           newProp = 'create_by'
         } else {

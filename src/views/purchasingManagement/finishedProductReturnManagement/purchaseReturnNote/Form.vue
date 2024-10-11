@@ -555,6 +555,7 @@ export default {
       datafilelist: [],
       provinces: [],
       orderForm: {
+        returnQueryFlag: 1,
         cooperativePartnerCode: '',
         cooperativePartnerName: '',
         createByName: '',

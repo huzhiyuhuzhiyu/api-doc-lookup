@@ -181,7 +181,6 @@
             <el-table-column prop="remark" label="备注" width="120" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" />
-
           </JNPF-table>
           <JNPF-table v-show="!dataTableFlag" v-loading="listLoading" :data="tableData" :fixedNO="true"
             @sort-change="sortChange" custom-column ref="otherTable" :setColumnDisplayList="columnList">
@@ -244,7 +243,6 @@
             <el-table-column prop="remark" label="备注" width="120" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" />
-
           </JNPF-table>
 
           <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
@@ -321,7 +319,6 @@ export default {
       initListQuery: {
         code: '',
         name: '',
-        productStatus: 'enable',
         orderItems: [
           {
             asc: true,
@@ -338,7 +335,7 @@ export default {
         productSource: '', // 产品来源
         startAndEndTime: [], // 创建时间
         productCategoryId: '', // 类型id
-        productStatus: '', // 产品状态
+        productStatus: 'enable', // 产品状态
         customerQueryFields: [],
         createTimeArr: [],
         classAttribute: ''
@@ -1006,6 +1003,7 @@ export default {
     }
     this.getcategoryTree()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+    console.log(this.listQuery, '1')
     this.getBimBusinessSwitchConfigList()
     this.initData()
   },
@@ -1014,7 +1012,9 @@ export default {
   },
   methods: {
     getclassAttributeList() {
-      let obj = {}
+      let obj = {
+        orderItems: [{ asc: true, column: 'sort' }]
+      }
       getclassAttributeList(obj).then((res) => {
         this.categoryList = res.data.records
         console.log(this.categoryList, 'list')
@@ -1053,10 +1053,6 @@ export default {
       this.initData()
     },
 
-    productCategoryChange(val, data) {
-      this.quickForm.productCategoryName = data[0].name
-      this.quickForm.productCategoryId = data[0].id
-    },
     handleClose() {
       this.quickVisible = false
       this.$refs.quickForm.resetFields()
@@ -1663,11 +1659,11 @@ export default {
     },
 
     sortChange({ prop, order }) {
-      let newProp;
+      let newProp
       if (prop === 'productCategoryName') {
         newProp = prop
       } else {
-        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
       this.listQuery.orderItems[0].asc = order === 'ascending'
       this.listQuery.orderItems[0].column = order === null ? '' : newProp
@@ -1684,6 +1680,7 @@ export default {
 
     initData() {
       this.listLoading = true
+      console.log(this.listQuery, '2')
       Object.keys(this.listQuery).forEach((key) => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
@@ -1706,6 +1703,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+
       this.$refs.SuperQuery.conditionList = []
       this.filterText = ''
       this.initData()

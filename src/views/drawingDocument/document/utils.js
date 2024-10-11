@@ -1,7 +1,7 @@
 import {Message} from "element-ui";
 
 export function isFile(item){
-    return item && item.type === 1
+    return item && item.fileExtension !== null
 }
 export const wordSuffix = ['doc','docx']
 export const excelSuffix = ['xls','xlxs']

@@ -4,20 +4,26 @@
     <!-- <el-tab-pane label="供应商页面" name="supplierPage" style="margin-bottom: 5px;height: 100%;"> -->
     <!-- <div class="JNPF-common-layout"> -->
     <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
-      <div class="JNPF-common-title" v-if="!leftFlag">
-        <h2>外协供应商分类</h2>
-        <span class="options">
-          <el-dropdown>
-            <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
-              <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
-              <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
-              <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
-              <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </span>
+      <div class="JNPF-common-title" style="display: block;padding:0">
+        <div class="title_box">
+          <h2 v-if="!leftFlag">外协供应商分类</h2>
+          <span class="options" v-if="!leftFlag">
+            <el-dropdown>
+              <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
+                <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
+                <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+                <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
+                <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </span>
+        </div>
+        <div v-if="!leftFlag">
+          <el-input placeholder="请输入" v-model="filterText" style="width:200px;margin:10px auto;display:block"
+            suffix-icon="el-icon-search" clearable></el-input>
+        </div>
       </div>
 
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
@@ -42,25 +48,28 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-          <el-col :span="6">
-            <el-form-item>
-              <el-input v-model="form.code" placeholder="外协供应商编码" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="form.name" placeholder="名称" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="form.taxId" placeholder="税号" clearable />
-            </el-form-item>
-          </el-col>
 
+          <template v-for="item in searchList">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="search('basic')" />
+
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
           <el-col :span="6">
             <el-form-item>
-              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
+              <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
                 {{ $t('common.search') }}
               </el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
@@ -97,7 +106,7 @@
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" :fixedNO="true"
           @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
-          <el-table-column prop="code" label="外协供应商编码" width="160" sortable="custom">
+          <el-table-column prop="code" label="编码" width="160" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
                 @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'true')">
@@ -190,6 +199,15 @@ export default {
   components: { Form, UserRelationList, SuperQuery },
   data() {
     return {
+      filterText: '',
+      basicQuery: {},
+      superQuery: {},
+      searchList: [
+        { field: 'code', fieldValue: '', label: '编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'name', fieldValue: '', label: '名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'taxId', fieldValue: '', label: '税号', symbol: 'like', searchType: 1, width: 120 },
+      ],
+      superForm: {},
       columnList: [
         'taxId',
         'regionCodeText',
@@ -436,15 +454,16 @@ export default {
       this.expands = roleFlag
       this.toggleExpand(roleFlag)
     }
+    this.superForm = this.form
     this.getcategoryTree(true)
     this.getDictionaryType()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
     superQuerySearch(query) {
-      this.orderForm.superQuery = query
+      this.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
@@ -462,20 +481,8 @@ export default {
       })
     },
     handleClick() { },
-    moreQueries() {
-      this.visible = true
-    },
-    dataFormSubmit() {
-      this.form.pageNum = 1
-      if (this.form.customerRecognitionTime && this.form.customerRecognitionTime.length > 0) {
-        this.form.customerRecognitionStartTime = this.form.customerRecognitionTime[0]
-        this.form.customerRecognitionEndTime = this.form.customerRecognitionTime[1]
-      } else {
-        this.form.customerRecognitionStartTime = ''
-        this.form.customerRecognitionEndTime = ''
-      }
-      this.initData()
-    },
+
+
     sortChange({ prop, order }) {
       const newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       this.form.orderItems[0].asc = order === 'ascending'
@@ -547,7 +554,7 @@ export default {
     },
     initData() {
       this.listLoading = true
-      getCooperativeData(this.form)
+      getCooperativeData(this.superForm)
         .then((res) => {
           this.tableData = res.data.records
           this.total = res.data.total
@@ -558,12 +565,30 @@ export default {
           this.listLoading = false
         })
     },
-    search() {
+    search(type) {
       if (this.form.customerRecognitionTime && this.form.customerRecognitionTime.length > 0) {
-        this.form.customerRecognitionStartTime = this.form.customerRecognitionTime[0]
-        this.form.customerRecognitionEndTime = this.form.customerRecognitionTime[1]
+        this.superForm.customerRecognitionStartTime = this.form.customerRecognitionTime[0]
+        this.superForm.customerRecognitionEndTime = this.form.customerRecognitionTime[1]
       }
-      this.form.pageNum = 1
+      this.superForm.pageNum = 1
+      // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       this.initData()
     },
     reset() {
@@ -597,14 +622,23 @@ export default {
           }
         ]
       }
+      this.filterText = ''
       this.getcategoryTree(true)
+      this.searchList = [
+        { field: 'code', fieldValue: '', label: '编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'name', fieldValue: '', label: '名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'taxId', fieldValue: '', label: '税号', symbol: 'like', searchType: 1, width: 120 },
+      ]
+      this.superForm = JSON.parse(JSON.stringify(this.form))
+      this.$refs.SuperQuery.conditionList = []
+      this.search('basic')
     },
     handleNodeClick(data, node) {
       if (this.form.partnerCategoryId === data.id) return
       this.form.partnerCategoryId = data.id
       const nodePath = this.getNodePath(node)
       this.organizeIdTree = nodePath.map((o) => o.id)
-      this.search()
+      this.search('basic')
     },
     getNodePath(node) {
       let fullPath = []
@@ -718,5 +752,22 @@ export default {
 
 .el-tabs__nav-scroll {
   padding-left: 0;
+}
+</style>
+<style scoped>
+.title_box {
+  width: 100%;
+  display: flex;
+  border-bottom: 1px solid #ebeef5;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding: 0 10px;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
 }
 </style>

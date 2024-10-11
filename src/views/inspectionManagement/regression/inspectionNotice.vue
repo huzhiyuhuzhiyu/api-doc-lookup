@@ -70,30 +70,18 @@
               </template>
             </el-table-column>
             <el-table-column prop="operationDate" label="退料日期" width="180" sortable="custom" />
-            <el-table-column prop="personName" label="退料人" min-width="200" sortable="custom" />
+            <el-table-column prop="personName" label="退料人" width="100" sortable="custom" />
             <el-table-column prop="productionOrderNo" label="任务单号" min-width="200" sortable="custom" />
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" sortable="custom" />
-            <el-table-column prop="productCode" label="产品编码" min-width="200" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" min-width="70" />
-            <el-table-column prop="num" label="退料数量" min-width="110" sortable="custom" />
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" sortable="custom" />
+            <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" min-width="60" />
+            <el-table-column prop="num" label="退料数量" min-width="120" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人" min-width="100" sortable="custom" />
             <el-table-column label="操作" width="140" fixed="right">
               <template slot-scope="scope">
                 <tableOpts @edit="addOrUpdateHandle(scope.row)" editText="检验" :hasDel="false">
-                  <el-dropdown hide-on-click>
-                    <span class="el-dropdown-link">
-                      <el-button type="text" size="mini">
-                        {{ $t('common.moreBtn') }}
-                        <i class="el-icon-arrow-down el-icon--right"></i>
-                      </el-button>
-                    </span>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item @click.native="addOrUpdateHandle(scope.row, true)">
-                        查看详情
-                      </el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
+
                 </tableOpts>
               </template>
             </el-table-column>
@@ -389,13 +377,11 @@ export default {
       let newProp
       if (
         [
-          'shipperName',
-          'partnerCode',
-          'partnerName',
-          'productName',
+          'personName',
+          'productionOrderNo',
+
           'productDrawingNo',
-          'routingName',
-          'processName',
+          'productCode',
           'createByName'
         ].includes(prop)
       ) {

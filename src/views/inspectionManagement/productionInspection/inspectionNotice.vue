@@ -77,29 +77,29 @@
           </el-table-column> -->
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="120" sortable="custom" />
           <el-table-column prop="processName" label="工序名称" min-width="120" sortable="custom" />
-          <el-table-column prop="mainUnit" label="单位" min-width="120" />
+          <el-table-column prop="mainUnit" label="单位" width="60" />
           <el-table-column prop="productionQuantity" label="生产数量" min-width="120" sortable="custom" />
           <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="120" sortable="custom" />
 
           <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="130" sortable="custom" />
 
           <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="120" sortable="custom" />
-          <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="140" sortable="custom" />
-          <el-table-column prop="utilizeQuantity" label="利用数量" min-width="140" sortable="custom" />
+          <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="120" sortable="custom" />
+          <el-table-column prop="utilizeQuantity" label="利用数量" min-width="120" sortable="custom" />
           <el-table-column prop="completedQuantity" label="返工数量" min-width="120" />
-          <el-table-column prop="planStartDate" label="计划开始日期" width="180" sortable="custom" />
-          <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
-          <el-table-column prop="sealingCoverTyping" label="打字内容" width="180" sortable="custom" />
-          <el-table-column prop="accuracyLevel" label="精度等级" width="180" sortable="custom" />
-          <el-table-column prop="vibrationLevel" label="振动等级" width="180" sortable="custom" />
-          <el-table-column prop="oil" label="油脂" width="180" sortable="custom" />
-          <el-table-column prop="oilQuantity" label="油脂量" width="180" sortable="custom" />
-          <el-table-column prop="clearance" label="游隙" width="180" sortable="custom" />
-          <el-table-column prop="packagingMethod" label="包装方式" width="180" sortable="custom" />
-          <el-table-column prop="workGroupName" label="班组" width="180" sortable="custom" />
-          <el-table-column prop="personName" label="人员" width="180" sortable="custom" />
+          <el-table-column prop="planStartDate" label="计划开始日期" width="150" sortable="custom" />
+          <el-table-column prop="planEndDate" label="计划结束日期" width="150" sortable="custom" />
+          <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
+          <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
+          <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
+          <el-table-column prop="oil" label="油脂" width="100" sortable="custom" />
+          <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom" />
+          <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
+          <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
+          <el-table-column prop="workGroupName" label="班组" width="100" sortable="custom" />
+          <el-table-column prop="personName" label="人员" width="100" sortable="custom" />
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" width="180" sortable="custom" />
+          <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
           <el-table-column label="操作" width="60" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row)" editText="检验" :hasDel="false">
@@ -488,7 +488,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp
-      if (prop === 'productionOrderNo' || prop === 'orderNo') {
+      if (prop === 'productionOrderNo'  ||prop === 'productDrawingNo' || prop === 'processName' ||prop === 'workGroupName' || prop === 'personName') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())

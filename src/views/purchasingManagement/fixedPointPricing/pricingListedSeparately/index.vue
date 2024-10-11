@@ -160,7 +160,7 @@ export default {
         {
           field: 'cooperativePartnerName',
           fieldValue: '',
-          label: '供应商编码',
+          label: '供应商名称',
           symbol: 'like',
           searchType: 1,
           width: 120

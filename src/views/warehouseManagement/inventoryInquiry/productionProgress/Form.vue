@@ -44,12 +44,12 @@
               <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" />
               <el-table-column prop="productCode" label="产品编码" width="120" />
               <el-table-column prop="processName" label="工序名称" width="120" />
-              <el-table-column prop="mainUnit" label="单位" width="80" />
+              <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
               <el-table-column prop="inventoryQuantity" label="库存数量" width="120" sortable="custom" />
               <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
               <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom" />
               <el-table-column prop="safeInventory" label="安全库存" min-width="100" />
-              <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
+              <el-table-column prop="mainUnit" label="单位" width="80" />
               <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" fixed="right"
                 sortable="custom" />
             </JNPF-table>
@@ -167,6 +167,8 @@ export default {
         availableFlag: 0, // 可用数标识（0 否 1是）默认否
         inventoryFlag: 0, // 库存数标识（0 否 1是）默认否
         occupancyFlag: 0, // 占用数标识（0 否 1是）默认否
+        scrapFlag:false,
+        "virtuallyFlag":false,
         lsSd:"",
         lsEd:"",
         orderItems: [{

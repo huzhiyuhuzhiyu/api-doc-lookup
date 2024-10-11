@@ -88,7 +88,7 @@
         </div>
         <JNPF-table v-loading="listLoading" :data="tableDataList" ref="dataTable" @sort-change="sortChange"
           custom-column :fixedNO="true" :setColumnDisplayList="columnList">
-          <el-table-column prop="code" label="项目编码" sortable="custom" min-width="180" fixed="left">
+          <el-table-column prop="code" label="项目编码" sortable="custom" min-width="180" >
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">
                 {{ scope.row.code }}
@@ -96,16 +96,16 @@
             </template>
           </el-table-column>
 
-          <el-table-column prop="name" label="检验项目名称" sortable="custom" width="150" fixed="left" />
+          <el-table-column prop="name" label="检验项目名称" sortable="custom" width="150"  />
           <el-table-column prop="equipmentName" label="检验工具" min-width="140" />
-          <el-table-column prop="inspectionMethod" label="检验方式" sortable="custom" width="140" />
+          <el-table-column prop="inspectionMethod" label="检验方式" sortable="custom" width="120" />
           <el-table-column prop="inspectionBasis" label="检验要求" width="120" />
           <el-table-column prop="normalValue" label="正常值" />
           <el-table-column prop="minimum" label="最低值" />
           <el-table-column prop="maximum" label="最高值" />
           <el-table-column prop="productCategoryIdText" label="所属分类" width="140" />
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-          <el-table-column prop="createBy" label="创建人" width="120" />
+          <el-table-column prop="createBy" label="创建人" width="100" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">

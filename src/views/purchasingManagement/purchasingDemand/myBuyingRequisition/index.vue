@@ -31,18 +31,28 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <!-- <div class="JNPF-common-head">
-                <topOpts @add="addOrUpdateHandle('', 'add')"></topOpts>
-                <div class="JNPF-common-head-right">
-                  <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                    <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                      @click="initData()" />
-                  </el-tooltip>
-                </div>
-              </div> -->
+          <div class="JNPF-common-head">
+
+            <div>
+
+            </div>
+            <div class="JNPF-common-head-right">
+              <el-tooltip content="高级查询" placement="top" v-if="true">
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                  @click="superQueryVisible = true" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                  @click="columnSetFun()" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+              </el-tooltip>
+            </div>
+          </div>
 
           <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="dataTable"
-            :data="tableDataList" @sort-change="sortChange" custom-column>
+            :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="请购单号" min-width="180" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
@@ -118,6 +128,9 @@
     </div>
 
     <JNPF-Form v-if="formVisible" ref="JNPFForm" @refresh="refresh" @close="closeForm" />
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
@@ -130,11 +143,75 @@ import {
 import JNPFForm from '../buyingRequisition/Form.vue'
 import moment from 'moment'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
+import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
   name: 'myPurchaseRequisition',
-  components: { JNPFForm },
+  components: { JNPFForm, SuperQuery },
   data() {
     return {
+      superQueryVisible: false,
+      superQueryJson: [
+        {
+          prop: 'orderNo',
+          label: '品名规格',
+          type: 'input'
+        },
+        {
+          prop: 'applicationReason',
+          label: '产品编码',
+          type: 'input'
+        },
+
+        {
+          prop: 'reasonRejection',
+          label: '驳回理由',
+          type: 'input'
+        },
+
+
+        {
+          prop: 'deliveryDate',
+          label: '审批完成时间',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        },
+        {
+          prop: 'documentStatus',
+          label: '单据状态',
+          type: 'select',
+          options: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }]
+        },
+
+        {
+          prop: 'approvalStatus',
+          label: '审批状态',
+          type: 'select',
+          options: [
+            { label: '审批中', value: 'ing' },
+            { label: '审批通过', value: 'ok' },
+            { label: '审批拒绝', value: 'rebut' },
+            { label: '审批撤回', value: 'withdrawn' }
+          ]
+        }
+      ],
+      columnList: ['createByName', 'mainUnit'],
       title: '更多查询',
       activeName: 'dataTable',
       background: true, //分页器背景颜色
@@ -237,6 +314,9 @@ export default {
     this.initData()
   },
   methods: {
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
+    },
     sortChange({ prop, order }) {
       let newProp
       if (prop === 'productName' || prop === 'productDrawingNo') {

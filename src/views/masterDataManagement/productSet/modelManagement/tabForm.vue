@@ -91,8 +91,7 @@ export default {
           value: '',
           type: 'custom',
           customComponent: 'ComSelect-page',
-          itemRules: [{ required: true, trigger: 'blur' }],
-
+          itemRules: [{ required: true, trigger: 'blur' }]
         },
         {
           prop: 'outerCircle',
@@ -109,7 +108,7 @@ export default {
           type: 'custom',
           customComponent: 'ComSelect-page',
           itemRules: [{ required: true, trigger: 'blur' }],
-          minWidth: 120,
+          minWidth: 120
         },
         {
           prop: 'steelBallNum',
@@ -131,7 +130,7 @@ export default {
               trigger: 'blur'
             }
           ],
-          minWidth: 130,
+          minWidth: 130
         },
         {
           prop: 'oilNum',
@@ -139,7 +138,7 @@ export default {
           value: '',
           type: 'input',
           itemRules: [{ required: true, message: '油脂用量不能为空', trigger: 'blur' }],
-          minWidth: 140,
+          minWidth: 140
         },
         {
           prop: 'holderNum',
@@ -147,7 +146,7 @@ export default {
           value: 0,
           type: 'input',
           itemRules: [{ required: true, message: '保持架用量不能为空', trigger: 'blur' }],
-          minWidth: 150,
+          minWidth: 150
         }
       ],
       visible: false,
@@ -217,7 +216,7 @@ export default {
       },
       ProductTableItems: [
         { prop: 'drawingNo', label: '品名规格', minWidth: 0 },
-        { prop: 'code', label: '产品编码', fixed: 'left' },
+        { prop: 'code', label: '产品编码' },
         // { prop: 'name', label: '产品名称', fixed: 'left' },
         { prop: 'mainUnit', label: '单位', minWidth: 0 }
         // { prop: 'productType', label: '产品类别', minWidth: 0 },
@@ -226,13 +225,23 @@ export default {
       // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
-        { prop: 'productCode', label: '产品编码', type: 'input' },
+        { prop: 'productCode', label: '产品编码', type: 'input' }
       ],
       ProductMethodArr: [
-        { label: '产品分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '' } }
+        {
+          label: '产品分类',
+          classAttribute: '',
+          method: getcategoryTree,
+          requestObj: { classAttribute: '', type: 'material' }
+        }
       ],
       ProductMethodArr1: [
-        { label: '产品分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: 'semi_finished' } }
+        {
+          label: '产品分类',
+          classAttribute: '',
+          method: getcategoryTree,
+          requestObj: { classAttribute: 'semi_finished' }
+        }
       ]
     }
   },
@@ -266,14 +275,13 @@ export default {
           this.$message.error(`第${index + 1}行，型号为空`)
         } else if (item.model) {
           submitFlag = false
-          updataBimProductsModelCheck(item.model, '')
-            .then((res) => {
-              if (!res.data) {
-                submitFlag = true
-              } else {
-                this.$message.error(`第${index + 1}行，型号已存在`)
-              }
-            })
+          updataBimProductsModelCheck(item.model, '').then((res) => {
+            if (!res.data) {
+              submitFlag = true
+            } else {
+              this.$message.error(`第${index + 1}行，型号已存在`)
+            }
+          })
         } else if (!item.innerCircle) {
           submitFlag = false
           this.$message.error(`第${index + 1}行，内圈为空`)
@@ -294,7 +302,6 @@ export default {
           this.$message.error(`第${index + 1}行，保持架用量为空`)
         }
       })
-
 
       // 校验表格表单（套筒属性）
       let sleeveForm = this.$refs['sleeveForm'].$refs.main

@@ -416,6 +416,7 @@ export default {
       classAttributeList: [],
       provinces: [],
       orderForm: {
+        returnQueryFlag: 1,
         cooperativePartnerCode: '',
         cooperativePartnerName: '',
         createByName: '',

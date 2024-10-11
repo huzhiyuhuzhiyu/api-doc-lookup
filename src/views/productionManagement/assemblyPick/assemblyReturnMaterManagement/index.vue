@@ -75,7 +75,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="personName" label="退料人" min-width="80" sortable="custom" />
+            <el-table-column prop="personName" label="退料人" min-width="100" sortable="custom" />
             <el-table-column prop="remark" label="备注" min-width="80" sortable="custom" />
             <el-table-column prop="documentStatus" label="单据状态" min-width="140" sortable="custom"
               :showOverflowTooltip="false" align="center">
@@ -296,7 +296,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName'||prop=='personName') {
+      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName'||prop=='personName'||prop=='productionOrderNo') {
         if (prop === 'createByName') {
           newProp = 'create_by'
         } else {

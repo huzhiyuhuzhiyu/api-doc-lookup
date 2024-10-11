@@ -68,23 +68,23 @@
                 </el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="partnerName" label="客户名称" min-width="120" />
-            <el-table-column prop="partnerCode" label="客户编码" min-width="120" sortable="custom" />
-            <el-table-column prop="deliverDate" label="退货日期" width="180" />
+            <el-table-column prop="partnerName" label="客户名称" min-width="150" />
+            <el-table-column prop="partnerCode" label="客户编码" min-width="140" sortable="custom" />
+            <el-table-column prop="deliverDate" label="退货日期" width="120" />
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="140" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" min-width="140" />
-            <el-table-column prop="deliveryQuantity" label="退货数量" min-width="140" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="140" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" min-width="140" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="140" sortable="custom" />
-            <el-table-column prop="oil" label="油脂" min-width="140" sortable="custom" />
-            <el-table-column prop="oilQuantity" label="油脂量" min-width="140" sortable="custom" />
-            <el-table-column prop="clearance" label="游隙" min-width="140" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" min-width="140" sortable="custom" />
-            <el-table-column prop="ordersNo" label="订单号" min-width="140" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" width="60" />
+            <el-table-column prop="deliveryQuantity" label="退货数量" min-width="120" sortable="custom" />
+            <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
+            <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
+            <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
+            <el-table-column prop="oil" label="油脂" min-width="100" sortable="custom" />
+            <el-table-column prop="oilQuantity" label="油脂量" min-width="100" sortable="custom" />
+            <el-table-column prop="clearance" label="游隙" min-width="100" sortable="custom" />
+            <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
+            <el-table-column prop="ordersNo" label="订单号" min-width="200" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" min-width="120" />
+            <el-table-column prop="createByName" label="创建人" min-width="100" />
             <el-table-column prop="remark" min-width="200" label="备注" />
             <el-table-column label="操作" width="140" fixed="right">
               <template slot-scope="scope">
@@ -977,6 +977,12 @@ export default {
         prop === 'productCode' ||
         prop === 'productName' ||
         prop === 'productDrawingNo' ||
+        prop === 'createByName'||
+        prop === 'sealingCoverTyping' ||
+        prop === 'accuracyLevel' ||
+        prop === 'vibrationLevel' ||
+        prop === 'oilQuantity' ||
+        prop === 'ordersNo' ||
         prop === 'createByName'
       ) {
         newProp = prop

@@ -358,3 +358,22 @@ export function getLabel(list, id, value, label) {
     return id
   }
 }
+
+export function trim(obj){
+    if(obj === null || obj === undefined) return obj
+    const objType =typeof obj
+    if(objType === 'string'){
+        return obj.trim()
+    }
+    if(objType !== 'object') return obj
+    const keys =Object.keys(obj)
+    for (let key of keys) {
+        const type =typeof obj[key]
+        if(type === 'string'){
+            obj[key] = obj[key].trim()
+        }else if(type ==='object'){
+            obj[key] = trim(obj[key])
+        }
+    }
+    return obj
+}

@@ -79,11 +79,11 @@
               </template>
             </el-table-column>
             <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
-            <el-table-column prop="deliverDate" label="收货日期" width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="deliverDate" label="收货日期" width="120" sortable="custom"></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" width="160" />
-            <el-table-column prop="receivedQuantity" label="收货数量" width="160" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" width="60" />
+            <el-table-column prop="receivedQuantity" label="收货数量" width="120" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
             <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
             <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
@@ -91,7 +91,7 @@
             <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" />
             <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
             <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
-            <el-table-column prop="ordersNo" label="订单号" width="120" sortable="custom" />
+            <el-table-column prop="ordersNo" label="订单号" width="190" sortable="custom" />
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
@@ -99,7 +99,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
 
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">

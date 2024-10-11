@@ -76,20 +76,20 @@
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" min-width="140" sortable="custom" />
 
-            <el-table-column prop="mainUnit" label="单位" min-width="120" />
+            <el-table-column prop="mainUnit" label="单位" width="60" />
             <el-table-column prop="purchaseQuantity" label="数量" min-width="100" sortable="custom" />
             <el-table-column prop="receiptQuantity" label="已入库数量" min-width="130" sortable="custom" />
             <el-table-column prop="price" label="单价(含税)" min-width="140" sortable="custom" />
-            <el-table-column prop="taxRate" label="税率" min-width="120" sortable="custom">
+            <el-table-column prop="taxRate" label="税率" width="100" sortable="custom">
               <template slot-scope="scope">
                 {{ scope.row.taxRate }}%
               </template>
             </el-table-column>
-            <el-table-column prop="totalAmount" label="总金额(含税)" min-width="140" sortable="custom" />
-            <el-table-column prop="excludingTaxPrice" label="单价(不含税)" min-width="120" sortable="custom" />
-            <el-table-column prop="taxAmount" label="税额" min-width="80" />
-            <el-table-column prop="excludingTaxAmount" label="总金额(不含税)" min-width="150" sortable="custom" />
-            <el-table-column prop="deliveryDate" label="交货日期" min-width="140" sortable="custom" />
+            <el-table-column prop="totalAmount" label="总金额(含税)" width="140" sortable="custom" />
+            <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140" sortable="custom" />
+            <el-table-column prop="taxAmount" label="税额" width="80" />
+            <el-table-column prop="excludingTaxAmount" label="总金额(不含税)" width="180" sortable="custom" />
+            <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
             <el-table-column prop="receivingStatus" label="收货状态" align="center" sortable="custom" width="120">
               <template slot-scope="scope">
                 <div v-if="scope.row.receivingStatus == 'receiving' || scope.row.receivingStatus == 'returning'">
@@ -102,9 +102,9 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="remark" label="备注" min-width="120" />
-            <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
+            <el-table-column prop="remark" label="备注" width="120" />
+            <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
             <el-table-column label="操作" width="90" fixed="right">
               <template slot-scope="scope">
                 <el-dropdown hide-on-click>
@@ -496,30 +496,37 @@ export default {
       this.$refs.detailTableData.showDrawer()
     },
     sortChange({ prop, order }) {
-      let newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      if (newProp === 'cooperative_partner_code') {
-        newProp = 'cooperativePartnerCode'
-      }
-      if (newProp === 'cooperative_partner_name') {
-        newProp = 'cooperativePartnerName'
+      let newProp
+      if (
+        prop === 'processName' ||
+        prop === 'productCode' ||
+        prop === 'productDrawingNo' ||
+        prop === 'cooperativePartnerCode' ||
+        prop == 'cooperativePartnerName' ||
+        prop === 'createByName'
+      ) {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
       this.listQuery.orderItems[0].asc = order !== 'descending'
       this.listQuery.orderItems[0].column = order === null ? '' : newProp
       this.initData()
     },
     sortChangeDetail({ prop, order }) {
-      let newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      if (newProp === 'cooperative_partner_code') {
-        newProp = 'cooperativePartnerCode'
-      }
-      if (newProp === 'cooperative_partner_name') {
-        newProp = 'cooperativePartnerName'
-      }
-      if (newProp === 'product_name') {
-        newProp = 'productName'
-      }
-      if (newProp === 'create_time') {
-        newProp = 'createTime'
+      let newProp
+      if (
+        prop === 'processName' ||
+        prop === 'productCode' ||
+        prop === 'productDrawingNo' ||
+        prop === 'cooperativePartnerCode' ||
+        prop == 'cooperativePartnerName' ||
+        prop === 'createTime' ||
+        prop === 'createByName'
+      ) {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
       this.listsQuery.orderItems[0].asc = order !== 'descending'
       this.listsQuery.orderItems[0].column = order === null ? '' : newProp

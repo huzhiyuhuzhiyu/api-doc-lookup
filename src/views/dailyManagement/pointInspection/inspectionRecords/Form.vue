@@ -53,8 +53,8 @@
                     </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24">
-                    <el-form-item label="点检拍照" prop="pic">
-                      <UploadImg v-model="dataForm.pic" :disabled="btnType == 'look'"></UploadImg>
+                    <el-form-item label="点检拍照" prop="picList">
+                      <UploadImg v-model="dataForm.picList" :disabled="btnType == 'look'"></UploadImg>
                     </el-form-item>
                   </el-col>
                 </el-row>
@@ -628,6 +628,9 @@ export default {
       if (btnType !== 'maintenance') {
         if (this.dataForm.id) {
           detailequMaintenance(this.dataForm.id).then(res => {
+            res.data.maintenance.picList = res.data.maintenance.picList.map(item => {
+              return JSON.parse(`{${item}}`)
+            })
             this.dataForm = res.data.maintenance
             this.dataFormTwo.productData = res.data.lines
             this.$nextTick(() => {
@@ -711,6 +714,12 @@ export default {
           }
           this.dataForm.documentStatus = value
           this.dataForm.recordType = 'inspection'
+          this.dataForm.picList = Array.isArray(this.dataForm.picList) ?
+            this.dataForm.picList.map(item => {
+              return JSON.stringify(item)
+                .replace("{", "")
+                .replace("}", "")
+            }) : "[]"
           let obj = {
             maintenance: this.dataForm,
             lines: this.dataFormTwo.productData

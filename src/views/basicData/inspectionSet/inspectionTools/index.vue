@@ -83,11 +83,11 @@
           <el-table-column prop="code" label="检验工具编码" min-width="200" sortable />
 
           <el-table-column prop="name" label="检验工具名称" min-width="200" sortable />
-          <el-table-column prop="categoryName" label="所属分类" width="200" sortable />
+          <el-table-column prop="categoryName" label="所属分类" width="140" sortable />
           <el-table-column prop="specModel" label="检验工具规格" min-width="200" sortable />
           <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable />
-          <el-table-column prop="createName" label="创建人" min-width="200" sortable />
-          <el-table-column prop="createTime" label="创建时间" min-width="200" sortable />
+          <el-table-column prop="createByName" label="创建人" width="100" sortable />
+          <el-table-column prop="createTime" label="创建时间" min-width="180" sortable />
           <el-table-column label="操作" width="220" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
@@ -387,9 +387,13 @@ export default {
       this.$refs.dataTable.showDrawer()
     },
     sortChange({ prop, order }) {
-      let newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      if (newProp === 'create_name') {
-        newProp = 'createBy'
+      let newProp;
+      if (prop === 'categoryName') {
+        newProp = prop
+      } else if (prop === 'createByName') {
+        newProp = 'create_by'
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
       }
       this.listQuery.orderItems[0].asc = order === 'ascending'
       this.listQuery.orderItems[0].column = order === null ? '' : newProp

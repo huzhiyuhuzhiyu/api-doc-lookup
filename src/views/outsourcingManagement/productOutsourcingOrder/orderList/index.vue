@@ -66,10 +66,10 @@
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
 
-            <el-table-column prop="deliveryDate" label="交货日期" min-width="180" sortable="custom" />
-            <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" min-width="180" sortable="custom" />
-            <el-table-column prop="taxAmount" label="税额" min-width="180" sortable="custom" />
-            <el-table-column prop="totalAmount" label="总金额(含税)" min-width="180" sortable="custom" />
+            <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
+            <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" width="180" sortable="custom" />
+            <el-table-column prop="taxAmount" label="税额" width="120" sortable="custom" />
+            <el-table-column prop="totalAmount" label="总金额(含税)" width="140" sortable="custom" />
             <el-table-column prop="receivingStatus" label="订单状态" align="center" sortable="custom" width="120">
               <template slot-scope="scope">
                 <div v-if="scope.row.receivingStatus == 'not_finished'">

@@ -51,17 +51,17 @@
           <el-table-column prop="equipmentIdName" label="设备名称" width="200" sortable="custom" />
           <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
           <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
-          <el-table-column prop="maintainerCycle" label="周期" width="90" />
-          <el-table-column prop="maintainerUnit" label="单位" width="90" />
+          <el-table-column prop="cycle" label="周期" width="90" />
+          <el-table-column prop="unit" label="单位" width="90" />
           <el-table-column prop="departmentIdText" label="计划点检部门" width="150" />
           <el-table-column prop="maintainerIdText" label="计划点检人" width="120"></el-table-column>
           <el-table-column prop="planMaintenanceDate" label="计划点检日期" width="180" sortable="custom"></el-table-column>
           <el-table-column prop="actualDepartmentIdText" label="实际点检部门" width="150" />
           <el-table-column prop="actualMaintenanceIdText" label="实际点检人" width="120"></el-table-column>
           <el-table-column prop="actualMaintenanceDate" label="实际点检日期" width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="pic" label="点检拍照" min-width="120">
+          <el-table-column prop="picList" label="点检拍照" min-width="160">
             <template slot-scope="scope">
-              <el-image @click="bigimg(``)" style="width: 25px;height: 25px;margin-left: 5px;" src="https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg" :preview-src-list="srcList"></el-image>
+              <el-image @click="bigimg(define.comUrl+item.url)" style="width: 25px;height: 25px;margin-left: 5px;" v-for="item in scope.row.picList" :key="item.fileId" :src="define.comUrl+item.url" :preview-src-list="srcList"></el-image>
             </template>
           </el-table-column>
           <el-table-column prop="inspectionResults" label="点检结果" width="120" fixed="right" align="center">
@@ -250,6 +250,9 @@ export default {
     this.initData()
   },
   methods: {
+    bigimg(url) {
+      this.srcList[0] = url
+    },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
@@ -279,8 +282,10 @@ export default {
     initData() {
       this.listLoading = true
       equMaintenanceList(this.orderForm).then(res => {
-        console.log("res++", res);
-        this.tableData = res.data.records
+        this.tableData = res.data.records.map(item => {
+          if (item.picList.length) item.picList = item.picList.map(o => { return JSON.parse(`{${o}}`) })
+          return item
+        })
         this.total = res.data.total
         this.listLoading = false
       }).catch(() => {

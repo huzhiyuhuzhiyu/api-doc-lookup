@@ -95,8 +95,8 @@
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="name" label="产品分类" min-width="140" sortable="custom" />
-          <el-table-column prop="mainUnit" label="单位" width="120" />
+          <el-table-column prop="name" label="产品分类" min-width="130" sortable="custom" />
+          <el-table-column prop="mainUnit" label="单位" width="60" />
           <el-table-column prop="inspectionMethod" label="检验方式" width="120">
             <template slot-scope="{ row }">
               <template v-if="row.inspectionMethod == 'exempt'">
@@ -129,7 +129,7 @@
           </el-table-column>
 
           <el-table-column prop="createTime" label="创建日期" width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" min-width="120" />
+          <el-table-column prop="createByName" label="创建人" width="100" />
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
           :limit.sync="listQuery.pageSize" @pagination="initData" />

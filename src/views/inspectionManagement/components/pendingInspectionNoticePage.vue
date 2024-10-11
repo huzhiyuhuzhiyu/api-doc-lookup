@@ -66,7 +66,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="docNo" label="业务单号" min-width="200" sortable="custom" />
-            <el-table-column prop="inspectorName" label="检验人" min-width="120" sortable="custom" />
+            <el-table-column prop="inspectorName" label="检验人" min-width="100" sortable="custom" />
             <el-table-column prop="inspectionDate" label="检验日期" width="120" sortable="custom" />
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
@@ -99,7 +99,7 @@
             <!-- <el-table-column prop="samplingQuantity" label="处理结果" min-width="180" sortable="custom" /> -->
             <el-table-column prop="remark" label="备注" min-width="200" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人" min-width="100" sortable="custom" />
             <el-table-column label="操作" width="280" fixed="right">
               <template slot-scope="scope">
                 <tableOpts @edit="demandProcessing(scope.row, 'add')" editText="直接处理" :hasDel="false">
@@ -402,7 +402,9 @@ export default {
       let newProp
       if (prop === 'inspectorName') {
         newProp = 'inspector_id'
-      } else if ([].includes(prop)) {
+      } else if (prop === 'createByName') {
+        newProp = 'create_by'
+      } else if (['productDrawingNo', 'productCode'].includes(prop)) {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())

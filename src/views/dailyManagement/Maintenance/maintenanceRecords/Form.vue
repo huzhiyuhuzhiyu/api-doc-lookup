@@ -55,8 +55,8 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="24" :xs="24">
-                      <el-form-item label="保养拍照" prop="pic">
-                        <UploadImg v-model="dataForm.pic" :disabled="btnType == 'look'"></UploadImg>
+                      <el-form-item label="保养拍照" prop="picList">
+                        <UploadImg v-model="dataForm.picList" :disabled="btnType == 'look'"></UploadImg>
                       </el-form-item>
                     </el-col>
                   </el-row>
@@ -94,18 +94,18 @@
                 <el-collapse-item title="保养任务" name="byrw">
                   <el-row :gutter="30">
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="计划保养人" prop="maintainerIdName">
-                        <el-input v-model="dataForm.maintainerIdName" placeholder="请输入计划保养人" :disabled="true" />
+                      <el-form-item label="计划保养人" prop="maintainerIdText">
+                        <el-input v-model="dataForm.maintainerIdText" placeholder="请输入计划保养人" :disabled="true" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="计划保养时间" prop="nextMaintenanceTime">
-                        <el-input v-model="dataForm.nextMaintenanceTime" placeholder="请输入计划保养时间" :disabled="true" />
+                      <el-form-item label="计划保养时间" prop="planMaintenanceDate">
+                        <el-input v-model="dataForm.planMaintenanceDate" placeholder="请输入计划保养时间" :disabled="true" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="保养任务名称" prop="name">
-                        <el-input v-model="dataForm.name" placeholder="请输入保养任务名称" :disabled="true" />
+                      <el-form-item label="保养任务名称" prop="maintenanceTaskIdText">
+                        <el-input v-model="dataForm.maintenanceTaskIdText" placeholder="请输入保养任务名称" :disabled="true" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
@@ -380,16 +380,16 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
-        pic: '',
-        name: '',
+        picList: '',
+        maintenanceTaskIdText: '',
         level: '',
         cycle: '',
         unit: '',
-        cycleType:'',
+        cycleType: '',
         factoryFloor: '',
         mountedPlaces: '',
         equipmentIdCode: '',
-        maintainerIdName: '',
+        maintainerIdText: '',
         nextMaintenanceTime: '',
         maintenanceTaskId: '',
         departmentId: '',
@@ -659,9 +659,9 @@ export default {
       }
       checkmaintenanceList(a).then(res => {
         if (!res.data.records.length) return
-        this.dataForm.maintainerIdName = res.data.records[0].maintainerIdName
-        this.dataForm.nextMaintenanceTime = res.data.records[0].nextMaintenanceTime
-        this.dataForm.name = res.data.records[0].name
+        this.dataForm.maintainerIdText = res.data.records[0].maintainerIdName
+        this.dataForm.planMaintenanceDate = res.data.records[0].nextMaintenanceTime
+        this.dataForm.maintenanceTaskIdText = res.data.records[0].name
         this.dataForm.cycleType = res.data.records[0].cycleType
         this.dataForm.level = res.data.records[0].level
         this.dataForm.cycle = res.data.records[0].cycle
@@ -778,8 +778,10 @@ export default {
         if (this.dataForm.id) {
           detailequMaintenance(this.dataForm.id).then(res => {
             this.dataForms.lines = res.data.equLine
+            res.data.maintenance.picList = res.data.maintenance.picList.map(item => {
+              return JSON.parse(`{${item}}`)
+            })
             this.dataForm = res.data.maintenance
-            this.dataForm.name = res.data.maintenance.maintenanceTaskIdText
             this.dataFormTwo.productData = res.data.lines
             this.$nextTick(() => {
               if (this.dataForm.actualDepartmentId) {
@@ -821,6 +823,8 @@ export default {
           this.tasklist = res.data.task
           this.dataForm = res.data.task
           this.dataForm.maintenanceTaskId = id
+          this.dataForm.maintainerIdText = res.data.task.maintainerIdName
+          this.dataForm.maintenanceTaskIdText = res.data.task.name
           this.dataForm.planMaintenanceDate = res.data.task.nextMaintenanceTime
           this.dataForm.actualMaintenanceId = this.userInfo.userId
           this.dataForm.actualMaintenanceIdText = this.userInfo.userName
@@ -883,6 +887,12 @@ export default {
       }
       this.dataForm.documentStatus = value
       this.dataForm.recordType = 'maintenance'
+      this.dataForm.picList = Array.isArray(this.dataForm.picList) ?
+        this.dataForm.picList.map(item => {
+          return JSON.stringify(item)
+            .replace("{", "")
+            .replace("}", "")
+        }) : "[]"
       let obj = {
         equLine: this.dataForms.lines,
         maintenance: this.dataForm,

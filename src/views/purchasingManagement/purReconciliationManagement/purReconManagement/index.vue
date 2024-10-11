@@ -90,7 +90,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" min-width="180" sortable="custom" />
+          <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
           :limit.sync="listQuery.pageSize" @pagination="initData" />
@@ -309,7 +309,13 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp
-      if (prop === 'partnerName') {
+      if (
+        prop === 'partnerName' ||
+        prop === 'partnerCode' ||
+        prop === 'productCode' ||
+        prop === 'createTime' ||
+        prop === 'createByName'
+      ) {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())

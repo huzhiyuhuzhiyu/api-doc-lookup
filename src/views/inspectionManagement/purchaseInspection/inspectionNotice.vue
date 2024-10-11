@@ -69,24 +69,24 @@
               </template>
             </el-table-column>
             <el-table-column prop="partnerName" label="供应商名称" min-width="160" sortable="custom" />
-            <el-table-column prop="partnerCode" label="供应商编码" min-width="120" sortable="custom" />
-            <el-table-column prop="deliverDate" label="收货日期" min-width="140" sortable="custom" />
+            <el-table-column prop="partnerCode" label="供应商编码" min-width="160" sortable="custom" />
+            <el-table-column prop="deliverDate" label="收货日期" min-width="120" sortable="custom" />
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="140" sortable="custom" />
-            <el-table-column prop="warehouseName" label="仓库" min-width="140" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" min-width="140" />
-            <el-table-column prop="receivedQuantity" label="收货数量" min-width="140" sortable="custom" />
-            <el-table-column prop="standardValue" label="规值" min-width="140" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="140" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" min-width="140" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="140" sortable="custom" />
-            <el-table-column prop="oil" label="油脂" min-width="140" sortable="custom" />
-            <el-table-column prop="oilQuantity" label="油脂量" min-width="140" sortable="custom" />
-            <el-table-column prop="clearance" label="游隙" min-width="140" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" min-width="140" sortable="custom" />
-            <el-table-column prop="processName" label="工序" min-width="140" sortable="custom" />
-            <el-table-column prop="ordersNo" label="订单号" min-width="140" sortable="custom" />
+            <el-table-column prop="warehouseName" label="仓库" min-width="120" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" width="60" />
+            <el-table-column prop="receivedQuantity" label="收货数量" width="120" sortable="custom" />
+            <el-table-column prop="standardValue" label="规值" width="100" sortable="custom" />
+            <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
+            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
+            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
+            <el-table-column prop="oil" label="油脂" width="100" sortable="custom" />
+            <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom" />
+            <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
+            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
+            <el-table-column prop="processName" label="工序" width="100" sortable="custom" />
+            <el-table-column prop="ordersNo" label="订单号" width="190" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
             <el-table-column prop="remark" min-width="200" label="备注" />
             <el-table-column label="操作" width="140" fixed="right">
               <template slot-scope="scope">
@@ -980,8 +980,14 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp
-      
-      if (prop === 'orderNo') {
+
+      if (prop === 'orderNo' || prop === 'partnerName' ||
+        prop === 'partnerCode' || prop === 'productDrawingNo' ||
+        prop === 'warehouseName' || prop === 'sealingCoverTyping' ||
+        prop === 'accuracyLevel' || prop === 'vibrationLevel' ||
+        prop === 'oilQuantity' || prop === 'processName' ||
+        prop === 'ordersNo' || prop === 'createTime' ||
+        prop === 'createByName') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())

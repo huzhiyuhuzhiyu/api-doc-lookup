@@ -75,25 +75,25 @@
             </el-table-column>
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
-            <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
-            <!-- <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" /> -->
-            <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" min-width="120" />
-            <el-table-column prop="purchaseQuantity" label="数量" min-width="100" sortable="custom" />
+            <el-table-column prop="drawingNo" label="品名规格" width="200" sortable="custom" />
+            <!-- <el-table-column prop="productName" label="产品名称" width="140" sortable="custom" /> -->
+            <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" width="60" />
+            <el-table-column prop="purchaseQuantity" label="数量" width="100" sortable="custom" />
 
-            <el-table-column prop="deliveryDate" label="交货日期" min-width="140" sortable="custom" />
-            <el-table-column prop="standardValue" label="规值" min-width="180" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" min-width="140" label="打字内容" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" min-width="140" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="140" sortable="custom" />
-            <el-table-column prop="oil" label="油脂" min-width="120" sortable="custom" />
-            <el-table-column prop="oilQuantity" label="油脂量" min-width="140" sortable="custom" />
-            <el-table-column prop="clearance" label="游隙" min-width="120" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" min-width="140" sortable="custom" />
-            <el-table-column prop="processName" label="工序" min-width="140" sortable="custom" />
-            <el-table-column prop="remark" label="备注" min-width="120" />
-            <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
+            <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
+            <el-table-column prop="standardValue" label="规值" width="180" sortable="custom" />
+            <el-table-column prop="sealingCoverTyping" width="120" label="打字内容" sortable="custom" />
+            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
+            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
+            <el-table-column prop="oil" label="油脂" width="80" sortable="custom" />
+            <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom" />
+            <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" />
+            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
+            <el-table-column prop="processName" label="工序" width="80" sortable="custom" />
+            <el-table-column prop="remark" label="备注" width="120" />
+            <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text"
@@ -345,13 +345,7 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
-    // 获取合计数据
-    getOrderLineReportFun() {
-      getOrderLineReport(this.orderForm).then((res) => {
-        console.log('合计', res)
-        this.totalNum = res.data.total ? res.data.total.num : 0
-      })
-    },
+
     dateFun(dateStr) {
       const date = new Date(dateStr)
 
@@ -668,15 +662,22 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp
-      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
+      if (
+        prop === 'productName' ||
+        prop === 'productCode' ||
+        prop === 'documentStatus' ||
+        prop === 'cooperativePartnerCode' ||
+        prop === 'cooperativePartnerName' ||
+        prop === 'waitReceiptNum' ||
+        prop === 'processName'
+      ) {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'
+      } else if (prop === 'createByName') {
+        newProp = 't1.create_by'
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      }
-      if (prop == 'createByName') {
-        newProp = 'create_by'
       }
       this.orderForm.orderItems[0].asc = order === 'ascending'
       this.orderForm.orderItems[0].column = order === null ? '' : newProp
@@ -708,7 +709,7 @@ export default {
       purchaseOrderReport(this.orderForm)
         .then((res) => {
           this.tableData = res.data.page.records
-          this.getOrderLineReportFun()
+
           this.total = res.data.page.total
           this.listLoading = false
         })

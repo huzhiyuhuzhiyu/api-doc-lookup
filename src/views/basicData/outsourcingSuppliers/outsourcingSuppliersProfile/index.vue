@@ -66,7 +66,7 @@
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
             </el-form-item>
           </el-col>
-       
+
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -96,7 +96,7 @@
           </div>
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" :fixedNO="true"
-          @sort-change="sortChange" custom-column>
+          @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
           <el-table-column prop="code" label="外协供应商编码" width="160" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
@@ -114,7 +114,11 @@
           <el-table-column prop="areaText" label="区" min-width="160" />
           <el-table-column prop="address" label="地址" min-width="160" />
           <el-table-column prop="billingTypeText" label="开票类型" min-width="160" />
-          <el-table-column prop="taxRate" label="税率%" min-width="100" sortable="custom" />
+          <el-table-column prop="taxRate" label="税率" width="80" sortable="custom">
+            <template slot-scope="scope">
+              {{ scope.row.taxRate }}%
+            </template>
+          </el-table-column>
           <el-table-column prop="customerRecognitionTime" label="认定日期" min-width="160" sortable="custom" />
           <el-table-column prop="personResponsible" label="负责人" min-width="160" />
           <el-table-column prop="contacts" label="联系人" min-width="160" />
@@ -186,6 +190,25 @@ export default {
   components: { Form, UserRelationList, SuperQuery },
   data() {
     return {
+      columnList: [
+        'taxId',
+        'regionCodeText',
+        'countryText',
+        'provinceText',
+        'cityText',
+        'areaText',
+        'address',
+        'billingTypeText',
+        'taxRate',
+        'personResponsible',
+        'email',
+        'bank',
+        'bankInfo',
+        'gradeText',
+        'reconciliationStartDate',
+        'reconciliationEndDate',
+        'createByName'
+      ],
       superQueryVisible: false,
       superQueryJson: [
         {

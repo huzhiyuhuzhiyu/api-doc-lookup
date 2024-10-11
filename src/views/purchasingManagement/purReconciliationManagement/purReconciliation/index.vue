@@ -49,7 +49,7 @@
         </div>
 
         <JNPF-table v-loading="listLoading" highlight-current-row ref="tableForm" :data="tableDataList"
-          @sort-change="sortChange" custom-column>
+          @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
           <el-table-column prop="orderNo" label="对账单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">
@@ -57,12 +57,12 @@
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="reconciliationDate" label="对账日期" min-width="180" sortable="custom" />
+          <el-table-column prop="reconciliationDate" label="对账日期" width="120" sortable="custom" />
 
           <!-- <el-table-column prop="orderNo" label="对账单号" width="180" sortable="custom" /> -->
           <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="200" sortable="custom" />
           <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="200" />
-          <el-table-column prop="excludingTaxAmount" label="不含税总金额" min-width="180">
+          <el-table-column prop="excludingTaxAmount" label="不含税总金额" width="140">
             <template slot-scope="scope">
               <div :class="scope.row.excludingTaxAmount > 0 ? 'green' : 'red'">
                 {{
@@ -71,14 +71,14 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="taxAmount" label="总税额" min-width="180">
+          <el-table-column prop="taxAmount" label="总税额" width="140">
             <template slot-scope="scope">
               <div :class="scope.row.taxAmount > 0 ? 'green' : 'red'">
                 {{ scope.row.taxAmount > 0 ? '+' + scope.row.taxAmount : scope.row.taxAmount }}
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="includingTaxAmount" label="含税总金额" min-width="180">
+          <el-table-column prop="includingTaxAmount" label="含税总金额" width="140">
             <template slot-scope="scope">
               <div :class="scope.row.includingTaxAmount > 0 ? 'green' : 'red'">
                 {{
@@ -87,7 +87,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="totalReconciliationAmount" label="对账金额" min-width="180">
+          <el-table-column prop="totalReconciliationAmount" label="对账金额" width="140">
             <template slot-scope="scope">
               <div :class="scope.row.totalReconciliationAmount > 0 ? 'green' : 'red'">
                 {{
@@ -98,7 +98,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="totalPaymentAmount" label="已收款金额" min-width="180">
+          <el-table-column prop="totalPaymentAmount" label="已收款金额" width="140">
             <template slot-scope="scope">
               <div :class="scope.row.totalPaymentAmount > 0 ? 'green' : 'red'">
                 {{
@@ -107,7 +107,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="totalInvoicingAmount" label="已开票金额" min-width="180">
+          <el-table-column prop="totalInvoicingAmount" label="已开票金额" width="140">
             <template slot-scope="scope">
               <div :class="scope.row.totalInvoicingAmount > 0 ? 'green' : 'red'">
                 {{
@@ -120,7 +120,7 @@
           </el-table-column>
           <el-table-column prop="remark" label="备注" min-width="180" />
           <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
-          <el-table-column prop="createByName" label="创建人" min-width="180" />
+          <el-table-column prop="createByName" label="创建人" width="80" />
           <el-table-column prop="approvalStatus" label="审批状态" align="center" sortable="custom" min-width="120"
             v-if="showAppCodeFlag">
             <template slot-scope="scope">
@@ -214,6 +214,7 @@ export default {
   components: { JNPFForm, SuperQuery, withdrawnForm },
   data() {
     return {
+      columnList: ['cooperativePartnerCode', 'createByName'],
       withdrawnVisible: false,
       title: '更多查询',
       background: true, //分页器背景颜色

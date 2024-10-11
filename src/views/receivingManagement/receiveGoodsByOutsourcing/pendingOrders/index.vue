@@ -427,16 +427,15 @@ export default {
         prop === 'productCode' ||
         prop === 'documentStatus' ||
         prop === 'cooperativePartnerName' ||
-        prop === 'cooperativePartnerCode'
+        prop === 'cooperativePartnerCode' ||
+        prop === 'waitReceiptNum' ||
+        prop === 'createByName'
       ) {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      }
-      if (prop == 'createByName') {
-        newProp = 'create_by'
       }
       this.orderForm.orderItems[0].asc = order === 'ascending'
       this.orderForm.orderItems[0].column = order === null ? '' : newProp

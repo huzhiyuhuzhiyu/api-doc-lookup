@@ -2,10 +2,8 @@
   <div class="UploadFile-container">
     <template v-if="fileList.length">
       <transition-group class="el-upload-list el-upload-list--picture-card" tag="ul" name="el-list">
-        <li class="el-upload-list__item is-success" v-for="(file,index) in fileList"
-          :key="file.fileId">
-          <el-image :src="define.comUrl+file.url" class="el-upload-list__item-thumbnail"
-            :preview-src-list="getImgList(fileList)" :z-index="10000" :ref="'image'+index">
+        <li class="el-upload-list__item is-success" v-for="(file,index) in fileList" :key="file.fileId">
+          <el-image :src="define.comUrl+file.url" class="el-upload-list__item-thumbnail" :preview-src-list="getImgList(fileList)" :z-index="10000" :ref="'image'+index">
           </el-image>
           <span class="el-upload-list__item-actions">
             <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(index)">
@@ -19,10 +17,7 @@
       </transition-group>
     </template>
     <template v-if="!detailed">
-      <el-upload :action="define.comUploadUrl+'/'+type" :headers="uploadHeaders" ref="elUpload"
-        :on-success="handleSuccess" :multiple="limit!==1" :show-file-list="false" accept="image/*"
-        :before-upload="beforeUpload" :on-exceed="handleExceed" :disabled="disabled"
-        list-type="picture-card" :limit="limit" class="upload-btn">
+      <el-upload :action="define.comUploadUrl+'/'+type" :headers="uploadHeaders" ref="elUpload" :on-success="handleSuccess" :multiple="limit!==1" :show-file-list="false" accept="image/*" :before-upload="beforeUpload" :on-exceed="handleExceed" :disabled="disabled" list-type="picture-card" :limit="limit" class="upload-btn">
         <i class="el-icon-plus"></i>
         <div slot="tip" class="el-upload__tip" v-show="showTip">
           只能上传不超过{{fileSize}}{{sizeUnit}}的{{accept}}图片
@@ -120,6 +115,7 @@ export default {
     },
     handleSuccess(res, file, fileList) {
       if (res.code == 200) {
+        if (!Array.isArray(this.fileList)) this.fileList = []
         this.fileList.push({
           name: file.name,
           fileId: res.data.name,

@@ -75,8 +75,8 @@
               </div>
               <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm"
                 :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="lastColumnList">
-                <el-table-column prop="partnerName" label="供应商名称" min-width="160" sortable="custom" />
-                <el-table-column prop="partnerCode" label="供应商编码" min-width="160" sortable="custom" />
+                <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="160" sortable="custom" />
+                <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="160" sortable="custom" />
                 <el-table-column prop="drawingNo" label="品名规格" min-width="160" />
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
@@ -179,7 +179,7 @@
                 </div>
               </div>
               <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="dataTable"
-                :data="tableDataList" @sort-change="sortChange" custom-column>
+                :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="lastColumnList">
                 <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="150" sortable="custom" />
                 <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="150" sortable="custom" />
                 <el-table-column prop="drawingNo" label="品名规格" width="150" sortable="custom" />
@@ -187,7 +187,11 @@
                 <el-table-column prop="mainUnit" label="单位" width="60" />
                 <el-table-column prop="price" label="协议价(含税)" width="140" sortable="custom" />
                 <el-table-column prop="excludingTaxPrice" label="协议价(不含税)" width="160" sortable="custom" />
-                <el-table-column prop="taxRate" label="税率" width="80" sortable="custom" />
+                <el-table-column prop="taxRate" label="税率" width="80" sortable="custom">
+                  <template slot-scope="scope">
+                    {{ scope.row.taxRate }}%
+                  </template>
+                </el-table-column>
                 <el-table-column prop="effectiveTimeStart" label="有效日期起" width="130" sortable="custom" />
                 <el-table-column prop="effectiveTimeEnd" label="有效日期止" width="130" sortable="custom" />
                 <el-table-column prop="standardValue" label="规值" width="80" sortable="custom" />
@@ -699,7 +703,13 @@ export default {
     // 导出
     exportForm() {
       this.exportFormVisible = true
-      let columnList = this.$refs.tableForm.columnList.filter((item) => !!item.label && !!item.prop)
+      let columnList
+      if (this.activeName == 'latestprice') {
+        columnList = this.$refs.tableForm.columnList.filter((item) => !!item.label && !!item.prop)
+      } else {
+        columnList = this.$refs.dataTable.columnList.filter((item) => !!item.label && !!item.prop)
+      }
+
       columnList = columnList.map((item) => {
         return { label: item.label, prop: item.prop }
       })

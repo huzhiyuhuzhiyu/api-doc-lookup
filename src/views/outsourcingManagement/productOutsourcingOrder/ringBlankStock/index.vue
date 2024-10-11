@@ -60,13 +60,13 @@
             highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
             custom-column :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
             <el-table-column prop="productDrawingNo" label="毛坯规格" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="productCode" label="毛坯编码" min-width="180" sortable="custom" />
+            <el-table-column prop="productCode" label="毛坯编码" width="150" sortable="custom" />
             <!-- <el-table-column prop="productName" label="毛坯名称" min-width="180" sortable="custom" /> -->
-            <el-table-column prop="productCategoryName" label="毛坯分类" min-width="180" sortable="custom" />
+            <el-table-column prop="productCategoryName" label="毛坯分类" width="120" sortable="custom" />
             <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" min-width="180" />
-            <el-table-column prop="inventoryQuantity" label="库存数量" min-width="180" sortable="custom" />
-            <el-table-column prop="latestStorageTime" label="入库日期" min-width="180" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" width="60" />
+            <el-table-column prop="inventoryQuantity" label="库存数量" width="120" sortable="custom" />
+            <el-table-column prop="latestStorageTime" label="入库日期" width="120" sortable="custom" />
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
             :limit.sync="listQuery.pageSize" @pagination="initData"></pagination>
@@ -328,12 +328,11 @@ export default {
       this.$refs.tableForm.showDrawer()
     },
     sortChange({ prop, order }) {
-      let newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      if (newProp === 'cooperative_partner_code') {
-        newProp = 'cooperativePartnerCode'
-      }
-      if (newProp === 'cooperative_partner_name') {
-        newProp = 'cooperativePartnerName'
+      let newProp;
+      if (prop === 'productDrawingNo' || prop === 'productCode' || prop === 'productCategoryName') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
       }
       this.listQuery.orderItems[0].asc = order !== 'descending'
       this.listQuery.orderItems[0].column = order === null ? '' : newProp

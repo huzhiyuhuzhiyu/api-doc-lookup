@@ -60,7 +60,7 @@
 
         <JNPF-table v-loading="listLoading" @selection-change="handeleProductInfoData" hasC highlight-current-row
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
-          :checkSelectable="checkSelectable">
+          :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
           <!-- <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" /> -->
           <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
@@ -87,10 +87,10 @@
           <el-table-column prop="orderedQuantity" label="已下单数量" min-width="140" sortable="custom" />
           <!-- <el-table-column prop="completedQuantity" label="已完成数量" min-width="120" /> -->
 
-          <el-table-column prop="deliveryDate" label="交货日期" min-width="160" sortable="custom" />
-          <el-table-column prop="standardValue" label="规值" min-width="160" sortable="custom" />
-          <el-table-column prop="colour" label="颜色" min-width="160" sortable="custom" />
-          <el-table-column prop="source" label="来源" min-width="140" sortable="custom">
+          <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
+          <el-table-column prop="standardValue" label="规值" width="100" sortable="custom" />
+          <el-table-column prop="colour" label="颜色" width="100" sortable="custom" />
+          <el-table-column prop="source" label="来源" width="100" sortable="custom">
             <template slot-scope="scope">
               <!-- <div v-if="scope.row.source == 'procure'">请购单</div>
               <div v-if="scope.row.source == 'mrp'">MRP下发</div>
@@ -117,7 +117,6 @@
           <!-- <el-table-column prop="sourceOrderNo" label="来源单号" min-width="180" sortable="custom" /> -->
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" min-width="180" sortable="custom" />
-
 
           <!-- <el-table-column label="操作" min-width="180" fixed="right">
             <template slot-scope="scope">
@@ -281,7 +280,7 @@ export default {
           type: 'input'
         }
       ],
-      columnList: ['productCode', 'source', 'createByName'],
+      columnList: ['productCode', 'mainUnit'],
       deliveryDateArr: [],
       sourceDialog: false,
       sourceList: [],
@@ -453,12 +452,14 @@ export default {
       this.visible = true
     },
     sortChange({ prop, order }) {
-      let newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      if (newProp === 'product_code') {
-        newProp = 'productCode'
+      let newProp
+      if (prop === 'productDrawingNo' || prop === 'productCode' || prop === 'sealingRingName') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
-      if (newProp === 'product_name') {
-        newProp = 'productName'
+      if (newProp == 'create_by_name') {
+        newProp = 'create_by'
       }
       this.listQuery.orderItems[0].asc = order !== 'descending'
       this.listQuery.orderItems[0].column = order === null ? '' : newProp

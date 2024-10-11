@@ -65,12 +65,12 @@
               </el-link>
             </template> -->
           </el-table-column>
-          <el-table-column prop="workNo" label="工单单号" width="120" sortable="custom" />
-          <el-table-column prop="orderNo" label="报工单号" width="160" sortable="custom" />
-          <el-table-column prop="productDrawingNo" label="品名规格" min-width="400" sortable="custom" />
+          <el-table-column prop="workNo" label="工单单号" width="200" sortable="custom" />
+          <el-table-column prop="orderNo" label="报工单号" width="200" sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
           <el-table-column prop="processName" label="工序名称" width="120" sortable="custom" />
-          <el-table-column prop="mainUnit" label="单位" width="120" />
+          <el-table-column prop="mainUnit" label="单位" width="60" />
           <el-table-column prop="productionQuantity" label="生产数量" width="120" sortable="custom" />
           <!-- <el-table-column prop="completedQuantity" label="已完成数量" width="120" /> -->
           <el-table-column prop="qualifiedQuantity" label="合格数量" width="120" sortable="custom" />
@@ -79,11 +79,11 @@
           <el-table-column prop="materialWasteQuantity" label="料废数量" width="120" sortable="custom" />
           <el-table-column prop="utilizeQuantity" label="利用数量" width="120" sortable="custom" />
           <el-table-column prop="reworkQuantity" label="返工数量" width="120" sortable="custom" />
-          <el-table-column prop="producerName" label="生产人" width="120" sortable="custom" />
+          <el-table-column prop="producerName" label="生产人" width="100" sortable="custom" />
           <el-table-column prop="reportingTime" label="报工时间" width="120" sortable="custom" />
-          <el-table-column prop="reporterName" label="报工人" width="120" sortable="custom" />
-          <el-table-column prop="planStartDate" label="计划开始日期" width="180" sortable="custom" />
-          <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
+          <el-table-column prop="createByName" label="报工人" width="100" sortable="custom" />
+          <el-table-column prop="planStartDate" label="计划开始日期" width="160" sortable="custom" />
+          <el-table-column prop="planEndDate" label="计划结束日期" width="160" sortable="custom" />
           <el-table-column label="操作" width="60" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row)" editText="检验" :hasDel="false">
@@ -455,8 +455,22 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp
-      if ([].includes(prop)) {
+      if (
+        [
+          'productionOrderNo',
+          'workNo',
+          'productDrawingNo',
+          'productCode',
+          'processName',
+          'productionQuantity',
+          'producerName',
+          'planStartDate',
+          'planEndDate'
+        ].includes(prop)
+      ) {
         newProp = prop
+      } else if (prop === 'createByName') {
+        newProp = 'create_by'
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }

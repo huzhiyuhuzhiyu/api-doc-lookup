@@ -69,16 +69,16 @@
               </template>
             </el-table-column>
             <el-table-column prop="partnerName" label="供应商名称" min-width="160" sortable="custom" />
-            <el-table-column prop="partnerCode" label="供应商编码" min-width="120" sortable="custom" />
-            <el-table-column prop="deliverDate" label="收货日期" width="180" sortable="custom" />
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="120" sortable="custom" />
+            <el-table-column prop="partnerCode" label="供应商编码" min-width="150" sortable="custom" />
+            <el-table-column prop="deliverDate" label="收货日期" width="120" sortable="custom" />
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="140" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" min-width="120" sortable="custom" />
             <el-table-column prop="warehouseName" label="仓库" min-width="120" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" min-width="120" />
-            <el-table-column prop="receivedQuantity" label="收货数量" min-width="120" sortable="custom" />
-            <el-table-column prop="ordersNo" label="订单号" min-width="120" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" width="60" />
+            <el-table-column prop="receivedQuantity" label="收货数量" width="120" sortable="custom" />
+            <el-table-column prop="ordersNo" label="订单号" min-width="200" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人" min-width="100" sortable="custom" />
 
             <el-table-column label="操作" width="140" fixed="right">
               <template slot-scope="scope">
@@ -407,7 +407,7 @@ export default {
 
       if (prop === 'inspectorName') {
         newProp = 'inspector_id'
-      } else if (['purchaseOrderNo'].includes(prop)) {
+      } else if (['orderNo', 'partnerName', 'partnerCode', 'purchaseOrderNo', 'productDrawingNo', 'processName', 'warehouseName', 'ordersNo','createTime','createByName'].includes(prop)) {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())

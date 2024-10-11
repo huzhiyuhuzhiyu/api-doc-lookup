@@ -91,10 +91,10 @@
             <el-table-column prop="oil" label="油脂" min-width="120" sortable="custom" />
             <el-table-column prop="oilQuantity" label="油脂量" min-width="140" sortable="custom" />
             <el-table-column prop="clearance" label="游隙" min-width="120" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" min-width="140" sortable="custom" />
+            <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
             <el-table-column prop="remark" label="备注" min-width="120" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
             <el-table-column label="操作" width="100" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text"
@@ -350,12 +350,7 @@ export default {
     selectCustomerFun(val) {
       this.list = val
     },
-    // 获取合计数据
-    getOrderLineReportFun() {
-      getOrderLineReport(this.orderForm).then((res) => {
-        this.totalNum = res.data.total ? res.data.total.num : 0
-      })
-    },
+
     dateFun(dateStr) {
       const date = new Date(dateStr)
 
@@ -436,7 +431,9 @@ export default {
         prop === 'productCode' ||
         prop === 'documentStatus' ||
         prop === 'cooperativePartnerName' ||
-        prop === 'cooperativePartnerCode'
+        prop === 'cooperativePartnerCode' ||
+        prop === 'waitReceiptNum' ||
+        prop === 'createByName'
       ) {
         newProp = prop
       } else if (prop === 'createTime') {
@@ -478,7 +475,7 @@ export default {
       purchaseOrderReport(this.orderForm)
         .then((res) => {
           this.tableData = res.data.page.records
-          this.getOrderLineReportFun()
+
           this.total = res.data.page.total
           this.listLoading = false
         })

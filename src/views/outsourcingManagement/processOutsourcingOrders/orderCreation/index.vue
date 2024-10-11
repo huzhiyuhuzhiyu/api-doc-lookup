@@ -40,8 +40,8 @@
                               <!-- 供应商选择弹窗  -->
                               <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
                                 v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit"
-                                ref="ComSelect-page" @change="supplierdata" :tableItems="PartnerTableItems"
-                                :placeholder="'请选择供应商名称'" title="选择供应商" treeTitle="供应商分类" :methodArr="PartnerMethodArr"
+                                @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'"
+                                title="选择供应商" treeTitle="供应商分类" :methodArr="PartnerMethodArr"
                                 :listMethod="getCooperativeData" :listRequestObj="PartnerListRequestObj"
                                 :paramsObj="{ oldData }" :searchList="PartnerTableSearchList" />
                             </el-form-item>

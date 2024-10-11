@@ -81,7 +81,7 @@
 
       
 
-            <el-table-column prop="arithmeticNo" label="运算单号" min-width="160" sortable="custom" />
+            <el-table-column prop="arithmeticNo" label="运算单号" min-width="180" sortable="custom" />
             <el-table-column prop="remark" label="备注" min-width="180" sortable="custom"></el-table-column>
 
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
@@ -310,7 +310,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName') {
+      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName'||prop=='productsDrawingNo'||prop=='arrangeOrderNum'||prop=='availableArrangeQuantity') {
         if (prop === 'createByName') {
           newProp = 'create_by'
         } else {

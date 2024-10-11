@@ -284,6 +284,7 @@
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList()">
                 {{ $t('common.search') }}</el-button>
+
               <el-button size="mini" icon="el-icon-refresh-right" @click="resetFun()">{{ $t('common.reset') }}
               </el-button>
             </el-form-item>
@@ -343,16 +344,33 @@
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                v-if="categoryType == 'outbound_sale_send'" @click="columnSetFun('fhtabForm')" />
+                v-if="categoryType == 'outbound_sale_send'&&!saleFlag" @click="columnSetFun('fhtabForm')" />
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                v-if="categoryType == 'outbound_sale_send'&&saleFlag" @click="columnSetFun('salestabForm')" />
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                 v-if="categoryType == 'inbound_sale_return'" @click="columnSetFun('thtabForm')" />
+
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                v-if="categoryType == 'outbound_purchase' "  @click="columnSetFun('cgthtabForm')" />
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                v-if="categoryType == 'inbound_purchase'&& !purchaseFlag"
+                @click="columnSetFun('cgshtabForm')" />
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                v-if="categoryType == 'outbound_purchase' || categoryType == 'inbound_purchase'"
-                @click="columnSetFun('cgthtabForm')" />
+                v-if=" categoryType == 'inbound_purchase'&& purchaseFlag"
+                @click="columnSetFun('purchasetabForm')" />
+
+
+
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                v-if="categoryType == 'inbound_external'" @click="columnSetFun('wxshtabForm')" />
+                v-if="categoryType == 'inbound_external'&&!externalFlag" @click="columnSetFun('wxshtabForm')" />
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                v-if="categoryType == 'inbound_external'&&externalFlag" @click="columnSetFun('externaltabForm')" />
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                 v-if="categoryType == 'outbound_external_send'" @click="columnSetFun('wxfltabForm')" />
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                v-if="categoryType == 'outbound_pick_out'" @click="columnSetFun('picktabForm')" />
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                v-if="categoryType == 'inbound_return_materials'" @click="columnSetFun('returnMatertabForm')" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
@@ -361,9 +379,9 @@
           </div>
         </div>
         <!-- 销售发货通知单列表 -->
-        <JNPF-table v-loading="listLoading" :data="fhTableList"
+        <JNPF-table v-loading="listLoading" :data="fhTableList" @sort-change="sortChange"
           v-show="categoryType == 'outbound_sale_send' && !saleFlag" custom-column ref="fhtabForm" :fixedNO="true"
-          :setColumnDisplayList="fhcolumnList">
+          :setColumnDisplayList="fhcolumnList" >
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
@@ -412,8 +430,7 @@
               </div>
             </template>
           </el-table-column>
-
-
+ 
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
           <el-table-column label="操作" width="180" fixed="right">
@@ -426,8 +443,8 @@
           </el-table-column>
         </JNPF-table>
         <!-- 销售发货 订单列表 -->
-        <JNPF-table v-loading="listLoading" :data="saleList" v-show="categoryType == 'outbound_sale_send' && saleFlag"
-          custom-column ref="fhtabForm" :fixedNO="true" :setColumnDisplayList="salecolumnList" hasC
+        <JNPF-table v-loading="listLoading" :data="saleList" @sort-change="sortChange" v-show="categoryType == 'outbound_sale_send' && saleFlag"
+          custom-column ref="salestabForm" :fixedNO="true" :setColumnDisplayList="salecolumnList" hasC
           @selection-change="handeleselectSale">
           <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom">
             <template slot-scope="scope">
@@ -469,7 +486,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 销售退货货通知单列表 -->
-        <JNPF-table v-loading="listLoading" :data="thTableList" v-show="categoryType == 'inbound_sale_return'"
+        <JNPF-table :partentOrChild="'thtabForm'" v-loading="listLoading" :data="thTableList" @sort-change="sortChange" v-show="categoryType == 'inbound_sale_return'"
           custom-column ref="thtabForm" :fixedNo="true" :setColumnDisplayList="thcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
@@ -492,7 +509,7 @@
               </div>
             </template>
           </el-table-column>
-
+         
 
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
@@ -516,17 +533,46 @@
         { label: "外协收货", value: "inbound_external" },
         { label: "外协退货", value: "outbound_external" }, -->
 
-        <!-- 采购收/退货 通知单-->
-        <JNPF-table v-loading="listLoading" :data="cgTableList"
-          v-show="(categoryType == 'inbound_purchase' && !purchaseFlag) || categoryType == 'outbound_purchase'"
+        <!-- 采购 退货 通知单-->
+        <JNPF-table :partentOrChild="'cgthtabForm'" v-loading="listLoading" @sort-change="sortChange" :data="cgTableList"
+          v-show="categoryType == 'outbound_purchase'"
           custom-column ref="cgthtabForm" :fixedNo="true" :setColumnDisplayList="cgthcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
-              <el-link type="primary" v-if="categoryType == 'outbound_purchase'"
+              <el-link type="primary" 
                 @click.native="viewFun(scope.row.id, 'look', 'CGTHREFForm', cgthFormVisible = true)">{{
                   scope.row.orderNo
                 }}</el-link>
-              <el-link type="primary" v-if="categoryType == 'inbound_purchase'"
+             
+            </template>
+          </el-table-column>
+          <el-table-column prop="partnerName" label="供应商名称" min-width="140" sortable="custom" />
+          <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" />
+          <el-table-column prop="salesman" label="操作员" min-width="140" sortable="custom" />
+          <el-table-column prop="deliverDate" label="退货日期" min-width="140" sortable="custom" ></el-table-column> 
+ 
+          <el-table-column prop="remark" label="备注" width="180"></el-table-column>
+          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
+          <el-table-column prop="createByName" label="创建人" width="140"  />
+          <el-table-column label="操作" width="180" fixed="right">
+            <template slot-scope="scope">
+              <el-button size="mini" type="text" v-if="categoryType == 'outbound_purchase'"
+                @click="incomAndOutInventFun(scope.row, 'add', 'Form', 'outbound_purchase')">出库</el-button>
+   
+              <el-button size="mini" type="text" v-if="categoryType == 'outbound_purchase'"
+                @click="viewFun(scope.row.id, 'look', 'CGTHREFForm', cgthFormVisible = true)">查看详情</el-button>
+           
+            </template>
+          </el-table-column>
+        </JNPF-table>
+        <!-- 采购收货通知单 -->
+        <JNPF-table :partentOrChild="'cgshtabForm'" v-loading="listLoading" @sort-change="sortChange" :data="cgTableList"
+          v-show="categoryType == 'inbound_purchase' && !purchaseFlag"
+          custom-column ref="cgshtabForm" :fixedNo="true" :setColumnDisplayList="cgthcolumnList">
+          <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
+            <template slot-scope="scope">
+           
+              <el-link type="primary" 
                 @click.native="viewFun(scope.row.id, 'look', 'CGSHREFForm', cgshFormVisible = true)">{{
                   scope.row.orderNo
                 }}</el-link>
@@ -534,30 +580,25 @@
           </el-table-column>
           <el-table-column prop="partnerName" label="供应商名称" min-width="140" sortable="custom" />
           <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" />
-          <el-table-column prop="salesman" label="操作员" min-width="140" sortable="custom" />
-          <el-table-column prop="deliverDate" label="退货日期" min-width="140" sortable="custom"
-            v-if="categoryType == 'outbound_purchase'"></el-table-column>
-          <el-table-column prop="deliverDate" label="收货日期" min-width="140" sortable="custom"
-            v-if="categoryType == 'inbound_purchase'"></el-table-column>
+          <el-table-column prop="salesman" label="操作员" min-width="140" sortable="custom" /> 
+          <el-table-column prop="deliverDate" label="收货日期" min-width="140" sortable="custom" ></el-table-column>
           <el-table-column prop="remark" label="备注" width="180"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
+          <el-table-column prop="createByName" label="创建人" width="140"  />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" v-if="categoryType == 'outbound_purchase'"
-                @click="incomAndOutInventFun(scope.row, 'add', 'Form', 'outbound_purchase')">出库</el-button>
+            
               <el-button size="mini" type="text" v-if="categoryType == 'inbound_purchase'"
                 @click="incomAndOutInventFun(scope.row, 'add', 'Form', 'inbound_purchase')">入库</el-button>
-              <el-button size="mini" type="text" v-if="categoryType == 'outbound_purchase'"
-                @click="viewFun(scope.row.id, 'look', 'CGTHREFForm', cgthFormVisible = true)">查看详情</el-button>
+          
               <el-button size="mini" type="text" v-if="categoryType == 'inbound_purchase'"
                 @click="viewFun(scope.row.id, 'look', 'CGSHREFForm', cgshFormVisible = true)">查看详情</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
         <!-- 采购收货 订单 -->
-        <JNPF-table v-loading="listLoading" :data="purchaseList"
-          v-show="categoryType == 'inbound_purchase' && purchaseFlag" custom-column ref="cgthtabForm" :fixedNo="true"
+        <JNPF-table :partentOrChild="'purchasetabForm'"  v-loading="listLoading" @sort-change="sortChange" :data="purchaseList"
+          v-show="categoryType == 'inbound_purchase' && purchaseFlag" custom-column ref="purchasetabForm" :fixedNo="true"
           hasC @selection-change="handeleselectPurchase" :setColumnDisplayList="purchasecolumnList">
           <el-table-column prop="orderNo" label="订单号" width="200" sortable="custom">
             <template slot-scope="scope">
@@ -576,6 +617,7 @@
           <el-table-column prop="waitReceiptNum" label="待收货数量" width="160" sortable="custom" />
           <el-table-column prop="deliveryDate" label="交货日期" width="160" sortable="custom" />
           <el-table-column prop="standardValue" label="规值" width="160" sortable="custom" />
+
           <el-table-column prop="colour" label="颜色" width="160" sortable="custom" />
           <el-table-column prop="processName" label="工序" width="160" sortable="custom" />
           <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
@@ -587,8 +629,8 @@
           <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
           <el-table-column prop="specialRequire" label="特殊要求" width="160" sortable="custom" />
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" width="120" sortable="custom" />
-
+          <el-table-column prop="createByName" label="创建人" width="120"  />
+         
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <el-button size="mini" type="text"
@@ -599,7 +641,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 外协收货 -->
-        <JNPF-table v-loading="listLoading" :data="wxshTableList"
+        <JNPF-table :partentOrChild="'wxshtabForm'" v-loading="listLoading" @sort-change="sortChange" :data="wxshTableList"
           v-show="categoryType == 'inbound_external' && !externalFlag" custom-column ref="wxshtabForm" :fixedNo="true"
           :setColumnDisplayList="wxshthcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
@@ -635,9 +677,9 @@
           </el-table-column>
         </JNPF-table>
         <!-- 外协收货 订单 -->
-        <JNPF-table v-loading="listLoading" :data="externalList"
+        <JNPF-table :partentOrChild="'externaltabForm'" v-loading="listLoading" @sort-change="sortChange" :data="externalList"
           v-show="categoryType == 'inbound_external' && externalFlag" hasC custom-column ref="externaltabForm"
-          :fixedNO="true" :fixedNo="true" :setColumnDisplayList="externalcolumnList"
+          fixedNO :setColumnDisplayList="externalcolumnList"
           @selection-change="handeleselectExternal">
           <el-table-column prop="orderNo" label="订单号" width="200" sortable="custom">
             <template slot-scope="scope">
@@ -668,7 +710,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 外协发料 -->
-        <JNPF-table v-loading="listLoading" :key="3" :data="wxflTableList"
+        <JNPF-table  :partentOrChild="'wxfltabForm'"  v-loading="listLoading" @sort-change="sortChange" :key="3" :data="wxflTableList"
           v-show="categoryType == 'outbound_external_send' && !externalFlag" custom-column ref="wxfltabForm"
           :fixedNo="true" :setColumnDisplayList="wxflcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
@@ -718,11 +760,12 @@
                 @click="viewFun(scope.row.id, 'look', 'WXFLREFForm', wxflFormVisible = true)">查看详情</el-button>
             </template>
           </el-table-column>
-        </JNPF-table>
+        </JNPF-table> 
+        
         <!-- 外协发料 订单-->
-        <JNPF-table v-loading="listLoading" :key="3" :data="exterMaterList"
+        <JNPF-table  :partentOrChild="'wxfltabForm'" v-loading="listLoading" @sort-change="sortChange"  :key="3" :data="exterMaterList"
           v-show="categoryType == 'outbound_external_send' && externalFlag" custom-column ref="wxfltabForm" hasC
-          @selection-change="handeleselectExternalMter" :fixedNO="true" :fixedNo="true"
+          @selection-change="handeleselectExternalMter" fixedNO
           :setColumnDisplayList="wxflcolumnList">
           <el-table-column prop="orderNo" label="订单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
@@ -740,7 +783,7 @@
           <el-table-column prop="processName" label="工序名称" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="mainUnit" label="单位" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="purchaseQuantity" label="订单数量" min-width="140" sortable="custom"></el-table-column>
-
+          
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <el-button size="mini" type="text"
@@ -751,7 +794,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 装配/套圈领料 outbound_pick_out -->
-        <JNPF-table v-loading="listLoading" :data="pickingTableList" v-show="categoryType == 'outbound_pick_out'"
+        <JNPF-table  :partentOrChild="'picktabForm'"  v-loading="listLoading"   @sort-change="sortChange" :data="pickingTableList" v-show="categoryType == 'outbound_pick_out'"
           custom-column ref="picktabForm" :fixedNo="true" :setColumnDisplayList="pickcolumnList">
           <el-table-column prop="orderNo" label="领料单号" min-width="160" sortable="custom">
             <template slot-scope="scope">
@@ -781,7 +824,7 @@
         </JNPF-table>
 
         <!-- 装配/套圈退料 outbound_pick_out -->
-        <JNPF-table v-loading="listLoading" :data="returnMaterTableList"
+        <JNPF-table :partentOrChild="'returnMatertabForm'"  v-loading="listLoading" @sort-change="sortChange" :data="returnMaterTableList"
           v-show="categoryType == 'inbound_return_materials'" custom-column ref="returnMatertabForm" :fixedNo="true"
           :setColumnDisplayList="returnMatercolumnList">
           <el-table-column prop="orderNo" label="退料单号" min-width="160" sortable="custom">
@@ -909,7 +952,7 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table ref="dataTableProductRef" v-loading="listLoading" :data="productData" :fixedNO="true"
+              <JNPF-table :partentOrChild="'dataTableProductRef'"  ref="dataTableProductRef" v-loading="listLoading" :data="productData" :fixedNO="true"
                 custom-column :setColumnDisplayList="productColumns" v-show="categoryType == 'inbound_mock_production'">
                 <el-table-column prop="orderNo" label="任务单号" width="180" />
                 <el-table-column prop="orderType" label="任务类型" width="120">
@@ -1007,7 +1050,7 @@
                   </el-tooltip>
                   <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                     <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                      @click="columnSetFun('dataTableProductRef')" />
+                      @click="columnSetFun('dataTableWorkRef')" />
                   </el-tooltip>
                   <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                     <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
@@ -1015,13 +1058,12 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table ref="dataTableWorkRef" v-loading="listLoading" :data="workData" :fixedNO="true"
-                @sort-change="sortChange" custom-column>
+              <JNPF-table  :partentOrChild="'dataTableWorkRef'"  ref="dataTableWorkRef" v-loading="listLoading" :data="workData" :fixedNO="true"
+                @sort-change="sortChange" custom-column  :setColumnDisplayList="workColumns">
                 <el-table-column prop="productionOrderNo" label="任务单号" width="180" />
                 <el-table-column prop="orderNo" label="工单号" width="180" />
-                <el-table-column prop="productDrawingNo" label="品名规格" width="160" />
-                <el-table-column prop="productName" label="产品编码" width="160" />
-
+                <el-table-column prop="productDrawingNo" label="品名规格" width="300" />
+                <el-table-column prop="productCode" label="产品编码" width="160" />
                 <el-table-column prop="processName" label="工序名称" width="160" />
                 <el-table-column prop="mainUnit" label="单位" width="80" />
                 <el-table-column prop="productionQuantity" label="生产数量" width="120" />
@@ -1286,7 +1328,7 @@ export default {
         pageSize: 20,
       },
 
-      workColumns: [],
+      workColumns:['productCode',],
       workTotal: 0,
       workData: [],
       workForm: {
@@ -1785,10 +1827,129 @@ export default {
 
       }
     },
+    sortChange({ prop, order }) {
+      // 销售发货 排序
+      if(this.categoryType == 'outbound_sale_send'){
+        let newProp
+        if(this.saleFlag){
+          console.log("销售发货订单");
+          if (prop == 'customerProductNo' || prop == 'deliveryDate'|| prop == 'sealingCoverTyping' || prop == 'sealingCoverTyping'||prop=='vibrationLevel'||prop=='oilQuantity'||prop=='packagingMethod'||prop=='accuracyLevel'||prop=='specialRequire') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+          else newProp =  prop
+          this.saleOrderForm.orderItems[0].asc = order === 'ascending'
+          this.saleOrderForm.orderItems[0].column = newProp
+        }else{
+          console.log("销售发货通知单");
+          if (prop == 'orderNo' || prop == 'deliverDate'||prop=='recipient'||prop=='phone'||prop=='exchangeGoodsFlag'||prop=='createTime') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+          else newProp =  prop
+          this.fhForm.orderItems[0].asc = order === 'ascending'
+          this.fhForm.orderItems[0].column = newProp
+        }
+
+      }
+      // 销售退货 排序
+      if(this.categoryType == 'inbound_sale_return'){
+        let newProp
+               
+        if (prop == 'orderNo'  || prop == 'deliverDate'||prop=='exchangeGoodsFlag'||prop=='createTime') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+        else newProp =  prop
+        this.fhForm.orderItems[0].asc = order === 'ascending'
+        this.fhForm.orderItems[0].column = newProp
+      }
+      // 采购收货 排序
+      if(this.categoryType == 'inbound_purchase'){
+        let newProp
+        if(this.purchaseFlag){
+          console.log("采购收货订单");
+                 
+                
+          if (prop == 'orderNo' || prop == 'cooperativePartnerName'|| prop == 'cooperativePartnerCode' || prop == 'drawingNo'||prop=='productCode'||prop=='num'||prop=='waitReceiptNum'
+          ||prop=='deliveryDate'||prop=='standardValue'||prop=='colour'||prop=='processName'||prop=='sealingCoverTyping'||prop=='accuracyLevel'||prop=='vibrationLevel'||prop=='oil'
+          ||prop=='oilQuantity'||prop=='clearance'||prop=='packagingMethod'||prop=='specialRequire'||prop=='createTime'||prop=='createByName') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+          else newProp =  prop
+          this.purchaseForm.orderItems[0].asc = order === 'ascending'
+          this.purchaseForm.orderItems[0].column = newProp
+        }else{
+
+          console.log("采购收货通知单");
+          if (prop == 'orderNo' ||prop=='salesman'||prop=='deliverDate'||prop=='createTime') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+          else newProp =  prop
+          this.cgForm.orderItems[0].asc = order === 'ascending'
+          this.cgForm.orderItems[0].column = newProp
+        }
+
+      }
+  // 采购退货 排序
+  if(this.categoryType == 'outbound_purchase'){
+        let newProp
+               
+        if (prop == 'orderNo' ||prop=='salesman'||prop=='deliverDate'||prop=='createTime') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+        else newProp =  prop
+        this.cgForm.orderItems[0].asc = order === 'ascending'
+        this.cgForm.orderItems[0].column = newProp
+      }
+      // 外协发料 排序
+      if(this.categoryType == 'outbound_external_send'){
+
+        let newProp
+        if(!this.externalFlag){
+          console.log("外协发料通知单");
+          if (prop == 'orderNo'|| prop == 'partnerName'|| prop == 'partnerCode'|| prop == 'deliverDate'  || prop == 'recipient'
+          ||prop=='phone'||prop=='delivery'||prop=='countryName'||prop=='provinceName'||prop=='cityName'||prop=='areaName'||prop=='address'
+          ||prop=='createTime'||prop=='createByName') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+          else newProp =  prop
+          this.wxflForm.orderItems[0].asc = order === 'ascending'
+          this.wxflForm.orderItems[0].column = newProp
+        }else{
+          console.log("外协发料订单");
+          if (prop == 'orderNo'|| prop == 'deliveryDate'  || prop == 'drawingNo' ||prop=='mainUnit'||prop=='purchaseQuantity') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+          else newProp =  prop
+          this.exterMaterForm.orderItems[0].asc = order === 'ascending'
+          this.exterMaterForm.orderItems[0].column = newProp
+        }
+      }
+      // 外协收货 排序
+      if(this.categoryType == 'inbound_external'){
+
+        let newProp
+        if(!this.externalFlag){
+          console.log("外协收货通知单");
+          if (prop == 'orderNo'|| prop == 'partnerName'|| prop == 'partnerCode'|| prop == 'deliverDate'  || prop == 'recipient'
+          ||prop=='phone'||prop=='delivery'||prop=='countryName'||prop=='provinceName'||prop=='cityName'||prop=='areaName'||prop=='address'
+          ||prop=='createTime'||prop=='createByName') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+          else newProp =  prop
+          this.wxflForm.orderItems[0].asc = order === 'ascending'
+          this.wxflForm.orderItems[0].column = newProp
+        }else{
+
+          console.log("外协收货订单");
+          if (prop == 'orderNo'|| prop == 'drawingNo'|| prop == 'mainUnit'  || prop == 'purchaseQuantity' ||prop=='deliveryDate') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+          else newProp =  prop
+          this.externalForm.orderItems[0].asc = order === 'ascending'
+          this.externalForm.orderItems[0].column = newProp
+        }
+      }
+       // 生产领料 排序
+       if(this.categoryType == 'outbound_pick_out'){
+        let newProp
+        if (prop == 'orderNo'  || prop == 'receiveType'||prop=='createTime') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+        else newProp =  prop
+        this.pickForm.orderItems[0].asc = order === 'ascending'
+        this.pickForm.orderItems[0].column = newProp
+      }
+      // 生产退料 排序
+      if(this.categoryType == 'outbound_pick_out'){
+        let newProp
+        if (prop == 'orderNo'  || prop == 'receiveType'||prop=='createTime') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+        else newProp =  prop
+        this.returnMaterForm.orderItems[0].asc = order === 'ascending'
+        this.returnMaterForm.orderItems[0].column = newProp
+      }
+
+      this.getTabdataList()
+    },
     // 根据左侧分类  点击不同的分类  请求不同的数据
     getTabdataList() {
       // 销售发货
-      this.$forceUpdate()
       console.log(this.categoryType);
       if (this.categoryType == 'outbound_sale_send') {
         if (this.saleFlag) {
@@ -1800,10 +1961,14 @@ export default {
             this.saleOrderForm.deliveryEndTime = ""
           }
           this.saleOrderForm.classAttributeList = this.classAttributeList
+          this.listLoading=true
           getsaleOrderDetailList(this.saleOrderForm).then(res => {
-            console.log("销售明细", res);
+          this.listLoading=false
+          console.log("销售明细", res);
             this.saleList = res.data.records
             this.saleTotal = res.data.total
+          }).catch(error=>{
+            this.listLoading=false
           })
         } else {
           this.listLoading = true
@@ -1840,11 +2005,11 @@ export default {
           this.purchaseForm.classAttributeList = this.classAttributeList
           this.purchaseForm.orderType = 'procure'
           if (this.purchaserOrderDateArr.length) {
-            this.saleOrderForm.deliveryStartTime = this.purchaserOrderDateArr[0]
-            this.saleOrderForm.deliveryEndTime = this.purchaserOrderDateArr[1]
+            this.purchaseForm.deliveryStartTime = this.purchaserOrderDateArr[0]
+            this.purchaseForm.deliveryEndTime = this.purchaserOrderDateArr[1]
           } else {
-            this.saleOrderForm.deliveryStartTime = ""
-            this.saleOrderForm.deliveryEndTime = ""
+            this.purchaseForm.deliveryStartTime = ""
+            this.purchaseForm.deliveryEndTime = ""
           }
           detailpurchaseOrderList(this.purchaseForm).then(res => {
             console.log("采购明细", res);

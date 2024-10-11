@@ -53,7 +53,7 @@
                   @click="columnSetFun()" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="search('basic')" />
               </el-tooltip>
             </div>
           </div>
@@ -621,7 +621,7 @@ export default {
     },
     initData() {
       this.listLoading = true
-      getPlanList(this.orderForm).then(res => {
+      getPlanList(this.superForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false

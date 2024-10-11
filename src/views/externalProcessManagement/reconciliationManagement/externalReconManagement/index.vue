@@ -4,18 +4,24 @@
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
 
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.orderNo" placeholder="请输入出入库单号" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.partnerName" placeholder="请输入客户名称" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
+          <template v-for="item in searchList">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="search('basic')" />
+
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
           <el-col :span="5">
             <el-form-item>
               <el-date-picker v-model="createRequirementDate" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
@@ -27,7 +33,7 @@
 
           <el-col :span="6">
             <el-form-item>
-              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
+              <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
                 {{ $t('common.search') }}</el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{
                 $t('common.reset') }}
@@ -38,7 +44,6 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
           <div>
             <el-button size="mini" type="primary" @click="addOrUpdateHandle()">生成外协对账</el-button>
             <el-button v-has="'btn_export'" :disabled="tableDataList.length > 0 ? false : true" size="mini"
@@ -64,8 +69,8 @@
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
           :setColumnDisplayList="columnList" :checkSelectable="checkSelectable">
           <el-table-column prop="orderNo" label="出入库单号" min-width="240" sortable="custom" />
-          <el-table-column prop="partnerName" label="供应商名称" min-width="180" sortable="custom" />
-          <el-table-column prop="partnerCode" label="供应商编码" min-width="180" sortable="custom" />
+          <el-table-column prop="partnerName" label="客户名称" min-width="180" sortable="custom" />
+          <el-table-column prop="partnerCode" label="客户编码" min-width="180" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
           <!-- <el-table-column prop="productName" label="产品名称" min-width="180" sortable="custom" /> -->
           <el-table-column prop="drawingNo" label="品名规格" min-width="180" sortable="custom" />
@@ -122,7 +127,13 @@ export default {
   components: { JNPFForm, ExportForm, SuperQuery },
   data() {
     return {
-
+      basicQuery: {},
+      superQuery: {},
+      searchList: [
+        { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+      ],
+      superForm: {},
       columnList: ["partnerCode", "productCode", "productName", "createByName"],
       superQueryVisible: false,
       title: "更多查询",
@@ -242,13 +253,14 @@ export default {
     }
   },
   created() {
+    this.superForm = this.listQuery
     this.initData()
   },
   methods: {
     superQuerySearch(query) {
-      this.listQuery.superQuery = query
+      this.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     exportType(data, ref) {
       if (data.length) {
@@ -342,14 +354,14 @@ export default {
     initData() {
       this.listLoading = true
       if (this.createRequirementDate && this.createRequirementDate.length > 0) {
-        this.listQuery.startTime = this.createRequirementDate[0] + " 00:00:00"
-        this.listQuery.endTime = this.createRequirementDate[1] + " 23:59:59"
+        this.superForm.startTime = this.createRequirementDate[0] + " 00:00:00"
+        this.superForm.endTime = this.createRequirementDate[1] + " 23:59:59"
       } else {
-        this.listQuery.startTime = ''
-        this.listQuery.endTime = ''
+        this.superForm.startTime = ''
+        this.superForm.endTime = ''
       }
 
-      getsalefinAccountList(this.listQuery).then(res => {
+      getsalefinAccountList(this.superForm).then(res => {
         console.log(res, '采购发/退货列表');
         res.data.records.forEach(item => {
           // if (item.planDemandQuantity * 1 <= item.orderedQuantity * 1) {
@@ -369,12 +381,30 @@ export default {
         this.listLoading = false
       })
     },
-    search() {
+    search(type) {
       Object.keys(this.listQuery).forEach(key => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
       this.listQuery.pageNum = 1
+      // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       this.initData()
     },
     reset() {
@@ -400,14 +430,14 @@ export default {
       this.createRequirementDate = []
       this.deliveryDate = []
       this.$refs.SuperQuery.conditionList = []
-      this.search()
+      this.searchList = [
+        { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+      ]
+      this.superForm = JSON.parse(JSON.stringify(this.listQuery))
+      this.search('basic')
     },
-    // addSupplier(id, type) {
-    //   this.formVisible = true
-    //   this.$nextTick(() => {
-    //     this.$refs.JNPFForm.init(id, type)
-    //   })
-    // },
+
     // 生成采购订单 将选中的数据传递过去
     addOrUpdateHandle() {
       if (this.selectData.length === 0) {

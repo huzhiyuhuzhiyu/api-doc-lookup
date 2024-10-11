@@ -6,8 +6,7 @@
           <el-form @submit.native.prevent>
             <el-col :span="3">
               <el-form-item>
-                <el-input v-model="orderForm.cooperativePartnerName" @keyup.enter.native="search()" placeholder="订单号"
-                  clearable />
+                <el-input v-model="orderForm.orderNo" @keyup.enter.native="search()" placeholder="订单号" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="4">
@@ -18,7 +17,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="orderForm.cooperativePartnerName" @keyup.enter.native="search()" placeholder="品名规格"
+                <el-input v-model="orderForm.productDrawingNo" @keyup.enter.native="search()" placeholder="品名规格"
                   clearable />
               </el-form-item>
             </el-col>
@@ -65,7 +64,7 @@
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" hasC
             @selection-change="selectCustomerFun" :setColumnDisplayList="columnList" @sort-change="sortChange"
             custom-column>
-            <el-table-column prop="orderNo" label="订单号" min-width="180" sortable="custom">
+            <el-table-column prop="orderNo" label="订单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.purchaseOrderId, 'look')">
                   {{ scope.row.orderNo }}

@@ -4,26 +4,8 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <!-- <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="listQuery.orderNo" placeholder="单号" clearable @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="listQuery.cooperativePartnerName" placeholder="供应商名称" clearable
-                  @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="listQuery.cooperativePartnerName" placeholder="品名规格" clearable
-                  @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col> -->
             <template v-for="item in searchList">
-              <el-col :span="item.searchType === 3 ? 6 : 4" :key="item.prop">
+              <el-col :span="item.searchType === 3 ? 6 : 4">
                 <el-form-item>
                   <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
                     @keyup.enter.native="search('basic')" />

@@ -32,17 +32,17 @@
              </div>
           </el-row>
           <div class="height-full">
-            <JNPF-table class="table-style" v-if="allSwitchList" v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini">
+            <JNPF-table  class="table-style" v-if="allSwitchList" v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini">
               <el-table-column prop="fullName" label="文件名" custom-column>
                 <template slot-scope="scope">
-                  <span v-if="scope.row.type">
-                    <i :class='"icon-ym " + toFileExt(scope.row.fileExtension) + " i-default"' />
-                    {{ scope.row.fullName }}
-                  </span>
-                  <span class='cursor-pointer' v-else @click="openFolder(scope.row)">
-                    <i class='icon-ym icon-ym-extend-folder text-warning' />
-                    {{ scope.row.fullName }}
-                  </span>
+                          <span v-if="scope.row.type" class="pointer" @click="listItemClick(scope.row)" >
+                            <i :class='"icon-ym " + toFileExt(scope.row.fileExtension) + " i-default"' />
+                            {{ scope.row.fullName }}
+                          </span>
+                          <span class='cursor-pointer' v-else @click="openFolder(scope.row)">
+                            <i class='icon-ym icon-ym-extend-folder text-warning' />
+                            {{ scope.row.fullName }}
+                          </span>
                 </template>
               </el-table-column>
               <el-table-column prop="isShare" label="共享文件" width="90px">
@@ -108,11 +108,14 @@
               ></SearchPlane>
           </el-row>
           <div class="height-full">
-            <JNPF-table class="table-style" v-if="shareSwitchList"  v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini">
+            <JNPF-table   class="table-style" v-if="shareSwitchList"  v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini">
               <el-table-column prop="fullName" label="文件名">
                 <template slot-scope="scope">
-                  <i :class='"icon-ym " + toFileExt(scope.row.fileExtension) + " i-default"' />
-                  {{ scope.row.fullName }}
+                    <span class="pointer" @click="listItemClick(scope.row)">
+                           <i :class='"icon-ym " + toFileExt(scope.row.fileExtension) + " i-default"' />
+                            {{ scope.row.fullName }}
+                    </span>
+
                 </template>
               </el-table-column>
               <el-table-column prop="fileSize" label="大小" width="90">
@@ -130,7 +133,7 @@
                 </template>
               </el-table-column>
             </JNPF-table>
-            <GridFileList class="table-style" v-else @command="shareItemCommandHandler"  :list="list" :file-options="shareFileOptions"></GridFileList>
+            <GridFileList class="table-style" v-else @command="shareItemCommandHandler" @item-click="listItemClick"  :list="list" :file-options="shareFileOptions"></GridFileList>
 
           </div>
         </div>
@@ -157,11 +160,14 @@
                 ></SearchPlane>
             </el-row>
           <div class="height-full">
-            <JNPF-table class="table-style" v-if="shareToMeSwitchList" v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini" >
+            <JNPF-table  class="table-style" v-if="shareToMeSwitchList" v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini" >
               <el-table-column prop="fullName" label="文件名">
                 <template slot-scope="scope">
-                  <i :class='"icon-ym " + toFileExt(scope.row.fileExtension) + " i-default"' />
+                    <span class="pointer" @click="listItemClick(scope.row)">
+                        <i :class='"icon-ym " + toFileExt(scope.row.fileExtension) + " i-default"' />
                   {{ scope.row.fullName }}
+                    </span>
+
                 </template>
               </el-table-column>
               <el-table-column prop="fileSize" label="大小" width="90">
@@ -176,7 +182,7 @@
                 </template>
               </el-table-column>
             </JNPF-table>
-            <GridFileList v-loading="gridFileListLoading" class="table-style" v-else @command="shareToMeItemCommandHandler"  :list="list" :file-options="shareToMeFileOptions"></GridFileList>
+            <GridFileList v-loading="gridFileListLoading" @item-click="listItemClick" class="table-style" v-else @command="shareToMeItemCommandHandler"  :list="list" :file-options="shareToMeFileOptions"></GridFileList>
           </div>
         </div>
       </el-tab-pane>
@@ -205,7 +211,7 @@
             <JNPF-table  class="table-style" v-if="trashSwitchList"  v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini" >
               <el-table-column prop="fullName" label="文件名">
                 <template slot-scope="scope">
-                  <span v-if="scope.row.type">
+                  <span v-if="scope.row.type"  class="pointer" @click="listItemClick(scope.row)">
                     <i :class='"icon-ym " + toFileExt(scope.row.fileExtension) + " i-default"' />
                     {{ scope.row.fullName }}
                   </span>
@@ -456,7 +462,7 @@ export default {
       otherSearchDropDownList:[
           {
               currentChoose:TIME_OPTION.NO_LIMIT,
-                defaultChoose:TIME_OPTION.NO_LIMIT,
+              defaultChoose:TIME_OPTION.NO_LIMIT,
               option:TIME_OPTION,
               flag:TIME_OPTION_FLAG
           },
@@ -602,6 +608,7 @@ export default {
         return this.listItemClick(item)
     },
     async listItemClick(item){
+        console.log(item)
         if(!isFile(item)){
           return this.openFolder(item)
         }

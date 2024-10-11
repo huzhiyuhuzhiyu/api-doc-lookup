@@ -118,8 +118,8 @@
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'price'" :rules="productRules.price">
-                            <el-input v-model="scope.row.price" @input="priceChange($event, scope)"
-                              :disabled="type === 'look'" maxlength="20" placeholder="请输入协议价">
+                            <el-input v-model="scope.row.price" :disabled="type === 'look'" maxlength="20"
+                              placeholder="请输入协议价">
                               {{ scope.row.price }}
                             </el-input>
                           </el-form-item>
@@ -350,8 +350,8 @@
                     </template>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'price'" :rules="productRules.price">
-                        <el-input v-model="scope.row.price" @input="priceChange($event, scope)"
-                          :disabled="type === 'look'" maxlength="20" placeholder="请输入协议价">
+                        <el-input v-model="scope.row.price" :disabled="type === 'look'" maxlength="20"
+                          placeholder="请输入协议价">
                           {{ scope.row.price }}
                         </el-input>
                       </el-form-item>
@@ -841,15 +841,21 @@ export default {
     ...mapGetters(['userInfo']),
     ...mapState('user', ['token'])
   },
+  watch: {
+    'dataFormTwo.data': {
+      // immediate:true,
+      handler: function (newVal, oldVal) {
+        newVal.forEach((item) => {
+
+          if (item.price && item.taxRate || item.price && item.taxRate == 0) {
+            item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
+          }
+        })
+      },
+      deep: true
+    }
+  },
   methods: {
-    // 谈价更改
-    priceChange(val, scope) {
-      scope.row.excludingTaxPrice = this.jnpf.numberFormat(val / (1 + scope.row.taxRate / 100))
-    },
-    // 税率更改
-    taxRateChange(val, scope) {
-      scope.row.excludingTaxPrice = this.jnpf.numberFormat(scope.row.price / (1 + val / 100))
-    },
     checkDate() {
       return (rule, value, callback) => {
         let index = rule.field.split('.')[1]

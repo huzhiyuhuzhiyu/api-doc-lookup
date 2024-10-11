@@ -3,17 +3,25 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.orderNo" placeholder="出入库单号" clearable @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.partnerName" placeholder="供应商名称" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
+       
+          <template v-for="item in searchList">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="search('basic')" />
+
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
           <el-col :span="5">
             <el-form-item>
               <el-date-picker v-model="createRequirementDate" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
@@ -24,7 +32,7 @@
 
           <el-col :span="6">
             <el-form-item>
-              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
+              <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
                 {{ $t('common.search') }}
               </el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
@@ -118,6 +126,13 @@ export default {
   components: { JNPFForm, ExportForm, SuperQuery },
   data() {
     return {
+      basicQuery: {},
+      superQuery: {},
+      searchList: [
+        { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+      ],
+      superForm: {},
       columnList: ['partnerCode', 'productCode', 'productName', 'createByName'],
       superQueryVisible: false,
       title: '更多查询',
@@ -240,10 +255,11 @@ export default {
     this.initData()
   },
   methods: {
+
     superQuerySearch(query) {
-      this.listQuery.superQuery = query
+      this.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     exportType(data, ref) {
       if (data.length) {
@@ -340,14 +356,14 @@ export default {
     initData() {
       this.listLoading = true
       if (this.createRequirementDate && this.createRequirementDate.length > 0) {
-        this.listQuery.startTime = this.createRequirementDate[0] + ' 00:00:00'
-        this.listQuery.endTime = this.createRequirementDate[1] + ' 23:59:59'
+        this.superForm.startTime = this.createRequirementDate[0] + ' 00:00:00'
+        this.superForm.endTime = this.createRequirementDate[1] + ' 23:59:59'
       } else {
-        this.listQuery.startTime = ''
-        this.listQuery.endTime = ''
+        this.superForm.startTime = ''
+        this.superForm.endTime = ''
       }
 
-      getsalefinAccountList(this.listQuery)
+      getsalefinAccountList(this.superForm)
         .then((res) => {
           console.log(res, '采购发/退货列表')
           res.data.records.forEach((item) => {
@@ -369,12 +385,30 @@ export default {
           this.listLoading = false
         })
     },
-    search() {
+    search(type) {
       Object.keys(this.listQuery).forEach((key) => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
       this.listQuery.pageNum = 1
+      // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       this.initData()
     },
     reset() {
@@ -402,8 +436,13 @@ export default {
       }
       this.createRequirementDate = []
       this.deliveryDate = []
+      this.searchList = [
+        { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+      ]
+      this.superForm = JSON.parse(JSON.stringify(this.listQuery))
       this.$refs.SuperQuery.conditionList = []
-      this.search()
+      this.search('basic')
     },
     // addSupplier(id, type) {
     //   this.formVisible = true

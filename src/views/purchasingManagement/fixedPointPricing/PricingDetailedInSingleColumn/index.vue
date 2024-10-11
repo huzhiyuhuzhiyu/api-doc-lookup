@@ -22,8 +22,8 @@
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col> -->
-            <template v-for="item in searchList">
-              <el-col :span="item.searchType === 3 ? 6 : 4" :key="item.prop">
+            <template v-for="(item) in searchList">
+              <el-col :span="item.searchType === 3 ? 6 : 4">
                 <el-form-item>
                   <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
                     @keyup.enter.native="search('basic')" />

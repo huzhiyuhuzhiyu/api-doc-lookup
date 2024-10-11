@@ -47,6 +47,7 @@
 </template>
 
 <script>
+import { checkSystemCode, checkSystemValidSql, updateSystemData, addSystemAbnoramlData, detailSystemAbnoram } from '@/api/abnormalManagement/index.js'
 import { mapState } from 'vuex'
 import vcrontab from "vcrontab"
 import AbnormalProcess from '@/components/AbnormalProcess'

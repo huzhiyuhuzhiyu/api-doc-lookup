@@ -116,8 +116,8 @@
               }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="name" label="工序名称" width="100" sortable="custom" />
-          <el-table-column prop="productCategoryIdText" label="工序分类" width="100" sortable="custom" />
+          <el-table-column prop="name" label="工序名称" width="140" sortable="custom" />
+          <el-table-column prop="productCategoryIdText" label="工序分类" width="130" sortable="custom" />
           <el-table-column prop="unitPrice" label="正品单价" width="100" />
           <el-table-column prop="rejectUnitPrice" label="次品单价" width="100" />
           <el-table-column prop="scrapUnitPrice" label="废品单价" width="100" />

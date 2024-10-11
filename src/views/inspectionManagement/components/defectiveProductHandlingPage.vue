@@ -4,26 +4,28 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="listQuery.orderNo" placeholder="处理单号" @keyup.enter.native="search()" clearable />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="listQuery.inspectionOrderNo" placeholder="检验单号" @keyup.enter.native="search()"
-                  clearable />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" @keyup.enter.native="search()"
-                  clearable />
-              </el-form-item>
-            </el-col>
+
+            <template v-for="item in searchList">
+              <el-col :span="item.searchType === 3 ? 6 : 4">
+                <el-form-item>
+                  <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                    @keyup.enter.native="search('basic')" />
+
+                  <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                    clearable>
+                    <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                      :value="item2.value"></el-option>
+                  </el-select>
+                  <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                    :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                    :type="item.dateType"
+                    :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                </el-form-item>
+              </el-col>
+            </template>
             <el-col :span="6">
               <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
                   {{ $t('common.search') }}
                 </el-button>
                 <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">
@@ -175,6 +177,14 @@ export default {
   },
   data() {
     return {
+      basicQuery: {},
+      superQuery: {},
+      searchList: [
+        { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+      ],
+      superForm: {},
       superQueryVisible: false,
       superQueryJson: [
         {
@@ -333,22 +343,19 @@ export default {
     }
     this.initData()
   },
-  watch: {
-    activeName() {
-      this.initData()
-    }
-  },
+
   methods: {
     superQuerySearch(query) {
-      this.orderForm.superQuery = query
+      this.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
     initData() {
       this.listLoading = true
+      this.superForm = this.listQuery
       getQcUnqualifiedList(this.listQuery)
         .then((res) => {
           this.tableData = res.data.records
@@ -359,19 +366,41 @@ export default {
           this.listLoading = false
         })
     },
-    search() {
+    search(type) {
       this.visible = false
       Object.keys(this.listQuery).forEach((key) => {
         this.listQuery[key] = typeof this.listQuery[key] === 'string' ? this.listQuery[key].trim() : this.listQuery[key]
       })
       this.listQuery.pageNum = 1
-
+      // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.listQuery.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.listQuery.superQuery = this.superQuery
+      }
       this.initData()
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort()
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-
+      this.searchList = [
+        { field: 'orderNo', fieldValue: '', label: '处理单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'inspectionOrderNo', fieldValue: '', label: '检验单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+      ]
+   
       this.initData()
     },
     addOrUpdateHandle(row, btnType) {
@@ -402,7 +431,7 @@ export default {
       this.listQuery.orderItems[0].column = order === null ? '' : newProp
       this.initData()
 
-      this.initData()
+
     },
     closeForm(isRefresh) {
       this.formVisible = false

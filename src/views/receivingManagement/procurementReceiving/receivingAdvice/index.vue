@@ -57,7 +57,7 @@
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
                 创建收货单
               </el-button>
-            
+
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                 导出
               </el-button>
@@ -161,7 +161,7 @@ import { UserListAll } from '@/api/permission/user'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import Form from './Form'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-
+import { excelExport } from '@/api/basicData/index'
 export default {
   name: 'foreigntradenotice',
   components: { Form, SuperQuery, ExportForm },
@@ -170,8 +170,8 @@ export default {
       basicQuery: {},
       superQuery: {},
       searchList: [
-        { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 }
       ],
       superForm: {},
       superQueryVisible: false,
@@ -200,25 +200,7 @@ export default {
       activeName: 'orderList',
       salespersonList: [],
       detailFlag: false,
-      exchangeList: [{ label: '正常发货', value: false }, { label: '换货发货', value: true }],
-      shipmentsStateList: [{ label: '未完成', value: 'undelivered' }, { label: '已完成', value: 'delivered' }],
-      orderStateList: [{ label: '待检验', value: 'unInspect' }, { label: '已检验', value: 'inspected' }],
-      isfullReceiptFlag: [{ label: '是', value: 1 }, { label: '否', value: 0 }],
-      documentStateList: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }],
 
-      approvalStateList: [
-        { label: '审批中', value: 'ing' },
-        { label: ' 审批通过', value: 'ok' },
-        { label: '审批拒绝', value: 'rebut' }
-      ],
-
-      departMentList: [
-        { label: '送货', value: 'deliver_goods' },
-        { label: '自提', value: 'self_pickup' },
-        { label: '快递', value: 'express_delivery' },
-        { label: '货运', value: 'freight_transport' },
-        { label: '到付', value: 'collect_payment' }
-      ],
       paymentMethodList: [],
       paymentCycleList: [],
       orderForm: {},
@@ -300,7 +282,7 @@ export default {
           type: 'input'
         },
         {
-          prop: 'cooperativePartnerName',
+          prop: 'partnerName',
           label: '供应商名称',
           type: 'input'
         },
@@ -323,11 +305,7 @@ export default {
           label: '单据状态',
           type: 'select',
 
-          options: [
-            { label: '草稿', value: 'draft' },
-            { label: '提交', value: 'submit' },
-
-          ]
+          options: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }]
         },
         {
           prop: 'createTime',
@@ -342,19 +320,19 @@ export default {
           prop: 'createByName',
           label: '创建人',
           type: 'input'
-        },
+        }
       ]
     }
   },
   created() {
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+    this.superForm = this.orderForm
     this.search('basic')
     // this.getAttributeline()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
 
   methods: {
-
     //禁用复选框
     checkSelectable(row) {
       if (row.outboundQuantity > 0 || row.documentStatus == 'draft' || row.deliveryStatus == 'canceled') return false
@@ -364,7 +342,6 @@ export default {
     handleSelectionChange(val) {
       this.selectArr = val
     },
- 
 
     sortChange({ prop, order }) {
       let newProp
@@ -393,8 +370,8 @@ export default {
     },
     initData() {
       this.listLoading = true
-
-      purPurchaseReceiptReturnGoodsList(this.orderForm)
+      this.superForm = this.orderForm
+      purPurchaseReceiptReturnGoodsList(this.superForm)
         .then((res) => {
           this.tableData = res.data.records
           this.total = res.data.total
@@ -451,8 +428,8 @@ export default {
       this.deliveryDateArr = []
       this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
       this.searchList = [
-        { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 }
       ]
       this.superForm = JSON.parse(JSON.stringify(this.orderForm))
       this.search()
@@ -525,7 +502,7 @@ export default {
       for (let i = 0; i < data.selectKey.length; i++) {
         includeFieldMap[data.selectKey[i]] = data.selectVal[i]
       }
-      const targetListQuery = this.orderForm
+      const targetListQuery = this.superForm
       let _data = {
         ...targetListQuery,
         exportType: this.exportTableRef === '1061',

@@ -17,7 +17,7 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="listQuery.originOrderNo" placeholder="品名规格" @keyup.enter.native="search()"
+                <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" @keyup.enter.native="search()"
                   clearable />
               </el-form-item>
             </el-col>

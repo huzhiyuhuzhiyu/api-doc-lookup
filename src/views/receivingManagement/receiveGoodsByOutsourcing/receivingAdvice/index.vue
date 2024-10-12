@@ -4,17 +4,27 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.orderNo" placeholder="单号" clearable @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.partnerName" placeholder="客户名称" clearable @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
+
+            <template v-for="item in searchList">
+              <el-col :span="item.searchType === 3 ? 6 : 4">
+                <el-form-item>
+                  <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                    @keyup.enter.native="search('basic')" />
+
+                  <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                    clearable>
+                    <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                      :value="item2.value"></el-option>
+                  </el-select>
+                  <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                    :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                    :type="item.dateType"
+                    :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                </el-form-item>
+              </el-col>
+            </template>
             <el-col :span="6">
+
               <el-form-item>
                 <el-date-picker v-model="rdeDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
                   start-placeholder="收货开始日期" end-placeholder="收货结束日期" clearable></el-date-picker>
@@ -38,10 +48,7 @@
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
                 创建收货单
               </el-button>
-              <!-- <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"
-                :loading="qxbtnLoading">
-                取消收货
-              </el-button> -->
+
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                 导出
               </el-button>
@@ -128,31 +135,25 @@
 </template>
 
 <script>
-import {
-  purPurchaseReceiptReturnGoodsList,
-  deleteQuotationsendlist,
-  getQuotationdatasenddatalist,
-  Cancelshipmentlist,
-  Cancelshipmentlinelist,
-  mergelist,
-  splitlist
-} from '@/api/purchasingAndOutsourcingOrders'
-import {
-  getpurPurchaseReceiptReturnGoodsdetail,
-  addpurPurchaseReceiptReturnGoods,
-  editpurPurchaseReceiptReturnGoods,
-  deletepurPurchaseReceiptReturnGoods
-} from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
+import { purPurchaseReceiptReturnGoodsList } from '@/api/purchasingAndOutsourcingOrders'
+import { deletepurPurchaseReceiptReturnGoods } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import { UserListAll } from '@/api/permission/user'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import Form from './Form'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-
+import { excelExport } from '@/api/basicData/index'
 export default {
   name: 'outsourceReceivingNote',
   components: { Form, SuperQuery, ExportForm },
   data() {
     return {
+      basicQuery: {},
+      superQuery: {},
+      searchList: [
+        { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+      ],
+      superForm: {},
       superQueryVisible: false,
       columnList: ['partnerCode', 'createByName'],
       rdeDateArr: [],
@@ -302,11 +303,7 @@ export default {
           label: '单据状态',
           type: 'select',
 
-          options: [
-            { label: '草稿', value: 'draft' },
-            { label: '提交', value: 'submit' },
-
-          ]
+          options: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }]
         },
         {
           prop: 'createTime',
@@ -321,35 +318,19 @@ export default {
           prop: 'createByName',
           label: '创建人',
           type: 'input'
-        },
+        }
       ]
     }
   },
   created() {
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-    this.search()
+
+    this.search('basic')
     // this.getAttributeline()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
-  watch: {
-    activeName() {
-      this.search()
-    }
-  },
+
   methods: {
-    //明细列表取消发货
-    Cancelshipmentline(id) {
-      this.$confirm('您确认取消选中的发货通知单吗（已备货商品需手动处理）？', this.$t('common.tipTitle'), {
-        type: 'warning'
-      })
-        .then(() => {
-          Cancelshipmentlinelist(id).then((res) => {
-            this.$message.success('取消成功')
-            this.initData()
-          })
-        })
-        .catch(() => { })
-    },
     //禁用复选框
     checkSelectable(row) {
       if (row.outboundQuantity > 0 || row.documentStatus == 'draft' || row.deliveryStatus == 'canceled') return false
@@ -358,34 +339,6 @@ export default {
     // 选中得数据
     handleSelectionChange(val) {
       this.selectArr = val
-    },
-    //批量取消发货
-    Cancelshipment() {
-      if (!this.selectArr.length) return this.$message.error('请先选择数据')
-      let hasItemList = []
-      this.selectArr.map((i) => {
-        if (i.outboundQuantity > 0) hasItemList.push(i.orderNo)
-      })
-      if (hasItemList.length) return this.$message.error(`已出库的订单：${hasItemList.join('、')}不能取消发货`)
-      this.$confirm('您确认取消选中的发货通知单吗（已备货商品需手动处理）？', this.$t('common.tipTitle'), {
-        type: 'warning'
-      })
-        .then(() => {
-          let a = this.selectArr.map((item) => {
-            return item.id
-          })
-          this.qxbtnLoading = true
-          Cancelshipmentlist(a)
-            .then((res) => {
-              this.qxbtnLoading = false
-              this.$message.success('取消成功')
-              this.initData()
-            })
-            .catch(() => {
-              this.qxbtnLoading = false
-            })
-        })
-        .catch(() => { })
     },
 
     handleClick(e) {
@@ -413,13 +366,13 @@ export default {
       this.formVisible = false
       if (isRefresh) {
         this.keyword = ''
-        this.search()
+        this.search('basic')
       }
     },
     initData() {
       this.listLoading = true
-
-      purPurchaseReceiptReturnGoodsList(this.orderForm)
+      this.superForm = this.orderForm
+      purPurchaseReceiptReturnGoodsList(this.superForm)
         .then((res) => {
           this.tableData = res.data.records
           this.total = res.data.total
@@ -432,9 +385,9 @@ export default {
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
-    search() {
+    search(type) {
       if (this.rdeDateArr.length > 0) {
         this.orderForm.rdsDate = this.rdeDateArr[0]
         this.orderForm.rdeDate = this.rdeDateArr[1]
@@ -449,7 +402,24 @@ export default {
         this.orderForm[key] = typeof item === 'string' ? item.trim() : item
       })
       this.orderForm.pageNum = 1 // 重置页码
-
+      // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.orderForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.orderForm.superQuery = this.superQuery
+      }
       this.initData()
     },
     reset() {
@@ -458,8 +428,12 @@ export default {
       this.orderDateArr = []
       this.deliveryDateArr = []
       this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+      this.searchList = [
+        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 }
+      ]
 
-      this.search()
+      this.search('basic')
     },
     addSupplier(id, btntype) {
       console.log(id, btntype)

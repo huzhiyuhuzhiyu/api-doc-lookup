@@ -395,19 +395,15 @@ export default {
   },
   created() {
     this.orderForm = JSON.parse(JSON.stringify(this.initOrderForm))
-    this.search()
+    this.search('basic')
   },
-  watch: {
-    activeName() {
-      this.search()
-    }
-  },
+
   mounted() {
     this.getProductClassFun()
   },
   methods: {
     superQuerySearch(query) {
-      this.orderForm.superQuery = query
+      this.superQuery = query
       this.superQueryVisible = false
       this.search()
     },
@@ -450,7 +446,7 @@ export default {
     handleClick(e) {
       this.activeName = e.name
     },
-  
+
     //排序
     sortChange({ prop, order }) {
       let newProp
@@ -484,7 +480,8 @@ export default {
     },
     initData() {
       this.listLoading = true
-      purPurchaseReceiptReturnGoodsDetailList(this.orderForm)
+      this.superForm = this.orderForm
+      purPurchaseReceiptReturnGoodsDetailList(this.superForm)
         .then((res) => {
           this.tableData = res.data.records
           this.total = res.data.total

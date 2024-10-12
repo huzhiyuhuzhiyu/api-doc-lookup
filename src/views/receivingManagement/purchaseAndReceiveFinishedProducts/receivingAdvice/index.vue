@@ -4,17 +4,25 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.orderNo" placeholder="请输入单号" clearable @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.partnerName" placeholder="请输入客户名称" clearable
-                  @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
+
+            <template v-for="item in searchList">
+              <el-col :span="item.searchType === 3 ? 6 : 4">
+                <el-form-item>
+                  <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                    @keyup.enter.native="search('basic')" />
+
+                  <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                    clearable>
+                    <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                      :value="item2.value"></el-option>
+                  </el-select>
+                  <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                    :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                    :type="item.dateType"
+                    :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                </el-form-item>
+              </el-col>
+            </template>
             <el-col :span="6">
               <el-form-item>
                 <el-date-picker v-model="rdeDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
@@ -23,7 +31,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
                   {{ $t('common.search') }}
                 </el-button>
                 <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">
@@ -154,6 +162,14 @@ export default {
   components: { Form, SuperQuery, ExportForm },
   data() {
     return {
+      basicQuery: {},
+      superQuery: {},
+      searchList: [
+        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+      ],
+      superForm: {},
       superQueryVisible: false,
       columnList: ['partnerCode', 'createByName'],
       rdeDateArr: [],
@@ -328,15 +344,12 @@ export default {
   },
   created() {
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-    this.search()
+    this.superForm = this.orderForm
+    this.search('basic')
     // this.getAttributeline()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
-  watch: {
-    activeName() {
-      this.search()
-    }
-  },
+
   methods: {
     //明细列表取消发货
     Cancelshipmentline(id) {
@@ -403,8 +416,8 @@ export default {
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
-      this.orderForm.orderItems[0].asc = order !== 'descending'
-      this.orderForm.orderItems[0].column = order === null ? '' : newProp
+      this.superForm.orderItems[0].asc = order !== 'descending'
+      this.superForm.orderItems[0].column = order === null ? '' : newProp
 
       this.initData()
     },
@@ -414,13 +427,13 @@ export default {
       this.formVisible = false
       if (isRefresh) {
         this.keyword = ''
-        this.search()
+        this.search('basic')
       }
     },
     initData() {
       this.listLoading = true
-
-      purPurchaseReceiptReturnGoodsList(this.orderForm)
+      this.superForm = this.orderForm
+      purPurchaseReceiptReturnGoodsList(this.superForm)
         .then((res) => {
           this.tableData = res.data.records
           this.total = res.data.total
@@ -431,26 +444,43 @@ export default {
         })
     },
     superQuerySearch(query) {
-      this.orderForm.superQuery = query
+      this.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
-    search() {
+    search(type) {
       if (this.rdeDateArr.length > 0) {
-        this.orderForm.rdsDate = this.rdeDateArr[0]
-        this.orderForm.rdeDate = this.rdeDateArr[1]
+        this.superForm.rdsDate = this.rdeDateArr[0]
+        this.superForm.rdeDate = this.rdeDateArr[1]
       } else {
-        this.orderForm.rdsDate = ''
-        this.orderForm.rdeDate = ''
+        this.superForm.rdsDate = ''
+        this.superForm.rdeDate = ''
       }
 
-      Object.keys(this.orderForm).forEach((key) => {
+      Object.keys(this.superForm).forEach((key) => {
         // 清除搜索条件两端空格
-        let item = this.orderForm[key]
-        this.orderForm[key] = typeof item === 'string' ? item.trim() : item
+        let item = this.superForm[key]
+        this.superForm[key] = typeof item === 'string' ? item.trim() : item
       })
-      this.orderForm.pageNum = 1 // 重置页码
-
+      this.superForm.pageNum = 1 // 重置页码
+      // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       this.initData()
     },
     reset() {
@@ -459,8 +489,12 @@ export default {
       this.orderDateArr = []
       this.deliveryDateArr = []
       this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-
-      this.search()
+      this.searchList = [
+        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 }
+      ]
+      this.superForm = JSON.parse(JSON.stringify(this.orderForm))
+      this.search('basic')
     },
     addSupplier(id, btntype) {
       console.log(id, btntype)

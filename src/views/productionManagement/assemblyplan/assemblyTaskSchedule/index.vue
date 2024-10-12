@@ -145,7 +145,8 @@
 
               <template slot-scope="scope">
 
-                <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'all')">查看详情</el-button>
+                <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'all')">查看任务详情</el-button>
+                <el-button size="mini" type="text" @click="viewTaskSchedule(scope.row.id)">查看进度详情</el-button>
               </template>
             </el-table-column>
           </JNPF-table>
@@ -156,6 +157,7 @@
 
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
+    <TaskSchedule v-if="taskScheduleVisible" ref="taskScheduleForm" @refreshDataList="initData" @close="closeForm" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -166,16 +168,19 @@
 import { ordershengchanList, addOrderNum } from '@/api/productOrdes/index.js'
 import { prodOrderClose } from '@/api/productOrdes/finishedProductOrders.js'
 import { UserListAll, } from '@/api/permission/user'
-import Form from '../assemblyTaskManagement/Form.vue'
+import Form from '../assemblyTaskManagement/taskFormCopy.vue'
+import TaskSchedule from './taskSchedule.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'assemblyTaskManagement',
-  components: { SuperQuery, Form },
+  components: { SuperQuery, Form,TaskSchedule },
   data() {
     return {
+      taskScheduleVisible:false,
       columnList: ["orderType", "routingCode", "productionPlanNo", "createByName"],
       form: {
         appendQuantity: "",
@@ -394,98 +399,18 @@ export default {
     this.getProductClassFun()
   },
   methods: {
-    // 新建返工
-    addTaskFun(id, type) {
-      this.reworkVisible = true
-      this.$nextTick(() => {
-        this.$refs.reworkForm.init(id, type)
+    viewTaskSchedule(id){
+      this.taskScheduleVisible=true
+      this.$nextTick(()=>{
+        this.$refs.taskScheduleForm.init(id)
       })
     },
-    // 追加
-    addition2() {
-      if (!this.selectArr.length) return this.$message.error("请选择您要追加生产的数据!")
-      if (this.selectArr.length > 1) return this.$message.error("追加生产只支持单条数据操作")
-      if (this.selectArr[0].orderType == 'rework') return this.$message.error("返工任务不可追加生产")
-      this.form = this.selectArr[0]
-      this.addOrderVisible = true
-    },
-    addition1(data) {
-      this.form = data
-      this.addOrderVisible = true
-
-
-
-    },
-    reassignmentFun2() {
-      console.log(this.selectArr);
-      if (!this.selectArr.length) return this.$message.error("请选择您要改派的数据!")
-      if (this.selectArr.length > 1) return this.$message.error("改派只支持单条数据操作")
-      this.reassignmentVisible = true
-      this.$nextTick(() => {
-        this.$refs.reassignmentForm.init(this.selectArr[0].id)
-      })
-    },
-    reassignmentFun1(data) {
-
-      this.reassignmentVisible = true
-      this.$nextTick(() => {
-        this.$refs.reassignmentForm.init(id)
-      })
-    },
-    // 追加生产数量 提交
-    submitFun() {
-      this.$refs['diaForm'].validate((valid) => {
-        if (valid) {
-          console.log(this.form);
-          this.btnLoading = true
-          addOrderNum(this.form).then(res => {
-            this.addOrderVisible = false
-            this.btnLoading = false
-            this.$message.success("追加生产数量成功")
-            this.search()
-          }).catch(error => {
-            this.btnLoading = false
-          })
-        }
-      })
-
-    },
-    // 多选
-    handleSelectionChange(val) {
-      this.selectArr = val
-    },
-    //禁用复选框
-    checkSelectable(row) {
-      if (row.orderStatus !== 'normal' || row.orderStatus == 'suspend' || row.documentStatus == 'draft') {
-        console.log(222);
-        return false
-      } else {
-        console.log(333);
-        return true
-
-      }
-    },
-
-    // 关单
-    Cancelshipment() {
-      if (!this.selectArr.length) return this.$message.error("请选择您要关单的任务")
-      this.$confirm('您确认关闭选中的任务吗？', this.$t('common.tipTitle'), {
-        type: 'warning',
-        customClass: 'custom-confirm',
-      }).then(() => {
-
-        let arr = this.selectArr.map(item => {
-          return item.id
-        })
-        console.log(arr)
-        prodOrderClose(arr).then(res => {
-          console.log(555);
-          this.$message.success("关单成功")
-          this.search()
-        }).catch(() => {
-        })
-      }).catch(() => { })
-    },
+    
+    
+    
+    
+ 
+ 
     // 获取打字内容等
     getProductClassFun() {
       this.requestArr.forEach((item, index) => {
@@ -553,6 +478,7 @@ export default {
     closeForm(isRefresh) {
       this.formVisible = false
       this.reworkVisible = false
+      this.taskScheduleVisible=false
       this.search()
     },
     initData() {

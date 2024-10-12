@@ -1,37 +1,59 @@
-﻿<template>
+<template>
   <div>
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
           <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-          <el-page-header @back="goBack" :content="'任务信息' + '(' + dataForm.orderNo + ')'" />
+          <el-page-header @back="goBack" :content="'计划进度' + '(' + dataForm.productionPlanNo + ')'" />
           <div class="options">
-            <el-button type="primary" size="mini" @click="associationTaskFun">查看关联任务</el-button>
+            <!-- <el-button type="primary" size="mini" @click="associationTaskFun">查看关联任务</el-button> -->
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div>
         </div>
         <div class="main" v-loading="formLoading">
           <el-collapse v-model="activeNames1" class="orderInfo">
-            <el-collapse-item title="任务信息" name="basicInfo">
+            <el-collapse-item title="计划信息" name="basicInfo">
               <div class="stoclInfo">
                 <el-descriptions :column="1" class="box">
-                  <el-descriptions-item label="品名规格" class="drawingNo">{{ dataForm.productDrawingNo
+                  <el-descriptions-item label="品名规格" class="drawingNo">{{ dataForm.productsDrawingNo
                     }} <img v-if="dataForm.urgentFlag" src="@/assets/images/emergency1.png" alt=""
                       style="width: 30px;vertical-align: top;"> </el-descriptions-item>
                 </el-descriptions>
+
+                <!-- <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
+            <el-table-column prop="productsDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
+            <el-table-column prop="productsCode" label="产品编码" min-width="120" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" width="80" />
+            <el-table-column prop="planProductionQuantity" label="计划生产数量" min-width="160" sortable="custom" />
+            <el-table-column prop="availableArrangeQuantity" label="可编排数量" min-width="160" sortable="custom" />
+            <el-table-column prop="arrangeOrderNum" label="已编排单数/数量" min-width="180" sortable="custom" />
+            <el-table-column prop="urgentFlag" label="是否紧急" min-width="120" sortable="custom"
+              :cell-class-name="cellClassName">
+              <template slot-scope="scope">
+                <div :style="scope.row.urgentFlag ? 'color:red' : ''">{{ scope.row.urgentFlag ? '是' : '否' }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="planStartDate" label="计划开始日期" min-width="160" sortable="custom"></el-table-column>
+            <el-table-column prop="planEndDate" label="计划结束日期" min-width="160" sortable="custom"></el-table-column>
+            <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
+            <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
+            <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
+            <el-table-column prop="oil" label="油脂" min-width="100" sortable="custom" />
+            <el-table-column prop="oilQuantity" label="油脂量" min-width="120" sortable="custom" />
+            <el-table-column prop="clearance" label="游隙" min-width="100" sortable="custom" />
+            <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
+            <el-table-column prop="specialRequire" label="特殊要求" min-width="160" sortable="custom" />
+            <el-table-column prop="arithmeticNo" label="运算单号" min-width="160" sortable="custom" />
+            <el-table-column prop="remark" label="备注" min-width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" /> -->
+
                 <el-descriptions class="margin-top" :column="4">
-                  <el-descriptions-item label="任务类型" class="orderNo" v-if="dataForm.orderType == 'normal'">
-                    <el-tag style="vertical-align: super;" effect="dark">正常订单</el-tag> 
-                  </el-descriptions-item>
-                  <el-descriptions-item label="任务类型" class="orderNo" v-if="dataForm.orderType == 'rework'"> 
-                    <el-tag style="vertical-align: super;" type="warning" effect="dark">返工订单</el-tag> 
-                  </el-descriptions-item>
-                  <el-descriptions-item label="产品编码">{{ dataForm.productCode }}</el-descriptions-item>
-                  <el-descriptions-item label="总生产数量">{{ dataForm.productionQuantity }}{{ dataForm.mainUnit
+                  <el-descriptions-item label="产品编码">{{ dataForm.productsCode }}</el-descriptions-item>
+                  <el-descriptions-item label="计划生产数量">{{ dataForm.planProductionQuantity }}{{ dataForm.mainUnit
                     }}</el-descriptions-item>
-                  <el-descriptions-item label="已完成数量">{{ dataForm.completedQuantity }}{{ dataForm.mainUnit
+                  <el-descriptions-item label="已完成数量">{{ dataForm.completedQuantity?dataForm.completedQuantity:'0' }}{{ dataForm.mainUnit
                     }}</el-descriptions-item>
-                  <el-descriptions-item label="工艺路线名称">{{ dataForm.routingName }}</el-descriptions-item>
                   <el-descriptions-item label="打字内容">{{ dataForm.sealingCoverTyping }}</el-descriptions-item>
                   <el-descriptions-item label="精度等级">{{ dataForm.accuracyLevel }}</el-descriptions-item>
                   <el-descriptions-item label="振动等级">{{ dataForm.vibrationLevel }}</el-descriptions-item>
@@ -40,22 +62,15 @@
                   <el-descriptions-item label="游隙">{{ dataForm.clearance }}</el-descriptions-item>
                   <el-descriptions-item label="包装方式">{{ dataForm.packagingMethod }}</el-descriptions-item>
                   <el-descriptions-item label="特殊要求">{{ dataForm.specialRequire }}</el-descriptions-item>
-                  <el-descriptions-item label="计划单号">{{ dataForm.productionPlanNo }}</el-descriptions-item>
-                  <!-- <el-descriptions-item label="状态" v-if="dataForm.orderStatus == 'normal'">进行中</el-descriptions-item>
-                  <el-descriptions-item label="状态" v-if="dataForm.orderStatus == 'closed'">关闭</el-descriptions-item>
-                  <el-descriptions-item label="状态" v-if="dataForm.orderStatus == 'finish'">已完成</el-descriptions-item> -->
                   <el-descriptions-item label="计划日期">{{ dataForm.planStartDate }}至{{ dataForm.planEndDate
                     }}</el-descriptions-item>
                 </el-descriptions>
-                <!-- <img class="JJImg" v-if="dataForm.urgentFlag" src="@/assets/images/emergency.png" alt="" style="bottom: 0;"> -->
-                <img class="JJ" v-if="dataForm.orderStatus == 'closed'" src="@/assets/images/close.png" alt="">
-                <img class="JJ" v-if="dataForm.orderStatus == 'normal'" src="@/assets/images/progressing.png" alt="">
-                <img class="JJ" v-if="dataForm.orderStatus == 'finish'" src="@/assets/images/successing.png" alt="">
+               
               </div>
             </el-collapse-item>
-            <el-collapse-item title="关联信息" name="info">
+            <el-collapse-item title="任务信息" name="info">
 
-              <el-radio-group v-model="categoryType" style="background-color:#fafafa;width:100%;height: 40px;">
+              <!-- <el-radio-group v-model="categoryType" style="background-color:#fafafa;width:100%;height: 40px;">
                 <el-radio-button v-for="item in categoryTypeList"  :key="item.code" style="height: 100%;"
                   :label="item.code">{{
                     item.fullName
@@ -143,7 +158,7 @@
                 <el-table-column prop="reworkQuantity" label="返工数量" min-width="160" />
                 <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" />
                 <el-table-column prop="createTime" label="创建时间" min-width="180"></el-table-column>
-              </JNPF-table>
+              </JNPF-table> -->
             </el-collapse-item>
           </el-collapse>
         </div>
@@ -151,16 +166,13 @@
       
    
     </transition>
-    <RelatedTasksForm v-if="relatedTaskVisible" ref="relatedTaskForms" @selectRelatedTasksFun="selectRelatedTasksFun">
-    </RelatedTasksForm>
+ 
   </div>
 </template>
 <script>
 import { detailordershengchan } from '@/api/productOrdes/index.js'
 import { getWorkReportList } from "@/api/productOrdes/index.js"
-import RelatedTasksForm from "./relatedTaskForm.vue";
 export default {
-  components: { RelatedTasksForm },
   data() {
     return {
       relatedTaskVisible:false,
@@ -222,8 +234,7 @@ export default {
 
       title: "",
 
-      prodOrderId: "",
-
+      prodOrderId: "", 
     }
 
   },
@@ -299,14 +310,10 @@ export default {
         this.$refs.relatedTaskForms.init(this.dataForm.productionPlanNo)
       })
     },
-    init(id) {
-      this.prodOrderId = id
-      detailordershengchan(id).then(res => {
-        console.log("生产任务详情", res);
-        this.dataForm = res.data.prodOrder
-        this.feedData = res.data.materialList
-        this.workOrderData = res.data.workOrderList
-      })
+    init(row) {
+      console.log(row);
+      this.dataForm=row
+     
     },
 
 
@@ -658,21 +665,9 @@ $footerPadding: '10px';
   text-decoration: underline;
 
 }
-
-
-
-
-
-
-
 .personBox p {
-
   text-align: center;
-
 }
-
-
-
 .personBox:nth-child(n + 6) {
 
   margin-top: 12px;
@@ -682,9 +677,7 @@ $footerPadding: '10px';
 
 
 ::v-deep .elbutton span {
-
   font-size: 14px !important;
-
 }
 
 

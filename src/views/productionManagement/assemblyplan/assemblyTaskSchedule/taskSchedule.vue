@@ -1,12 +1,12 @@
-﻿<template>
+<template>
   <div>
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
           <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-          <el-page-header @back="goBack" :content="'任务信息' + '(' + dataForm.orderNo + ')'" />
+          <el-page-header @back="goBack" :content="'任务进度' + '(' + dataForm.orderNo + ')'" />
           <div class="options">
-            <el-button type="primary" size="mini" @click="associationTaskFun">查看关联任务</el-button>
+            <!-- <el-button type="primary" size="mini" @click="associationTaskFun">查看关联任务</el-button> -->
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div>
         </div>
@@ -53,9 +53,9 @@
                 <img class="JJ" v-if="dataForm.orderStatus == 'finish'" src="@/assets/images/successing.png" alt="">
               </div>
             </el-collapse-item>
-            <el-collapse-item title="关联信息" name="info">
+            <el-collapse-item title="工序甘特图" name="info">
 
-              <el-radio-group v-model="categoryType" style="background-color:#fafafa;width:100%;height: 40px;">
+              <!-- <el-radio-group v-model="categoryType" style="background-color:#fafafa;width:100%;height: 40px;">
                 <el-radio-button v-for="item in categoryTypeList"  :key="item.code" style="height: 100%;"
                   :label="item.code">{{
                     item.fullName
@@ -143,7 +143,7 @@
                 <el-table-column prop="reworkQuantity" label="返工数量" min-width="160" />
                 <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" />
                 <el-table-column prop="createTime" label="创建时间" min-width="180"></el-table-column>
-              </JNPF-table>
+              </JNPF-table> -->
             </el-collapse-item>
           </el-collapse>
         </div>
@@ -151,16 +151,13 @@
       
    
     </transition>
-    <RelatedTasksForm v-if="relatedTaskVisible" ref="relatedTaskForms" @selectRelatedTasksFun="selectRelatedTasksFun">
-    </RelatedTasksForm>
+ 
   </div>
 </template>
 <script>
 import { detailordershengchan } from '@/api/productOrdes/index.js'
 import { getWorkReportList } from "@/api/productOrdes/index.js"
-import RelatedTasksForm from "./relatedTaskForm.vue";
 export default {
-  components: { RelatedTasksForm },
   data() {
     return {
       relatedTaskVisible:false,

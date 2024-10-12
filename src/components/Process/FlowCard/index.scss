@@ -280,7 +280,8 @@ $base-size : 12px;
     position: relative;
     padding: 10px;
     box-sizing: border-box;
-
+    display: flex;
+    flex-direction: column;
     .text {
       word-break: break-all;
       margin: 0 ellipsis(4);

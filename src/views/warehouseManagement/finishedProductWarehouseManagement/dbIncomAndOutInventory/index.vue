@@ -56,18 +56,26 @@
         </el-form>
         <!-- 销售发货  订单 -->
         <el-form @submit.native.prevent v-if="categoryType == 'outbound_sale_send' && saleFlag">
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="saleOrderForm.cooperativePartnerName" placeholder="客户名称" clearable
-                @keyup.enter.native="getTabdataList()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="saleOrderForm.customerProductNo" placeholder="客户料号" clearable
-                @keyup.enter.native="getTabdataList()" />
-            </el-form-item>
-          </el-col>
+          
+         
+          <template v-for="item in searchList9">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="getTabdataList('basic')" />
+
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
           <el-col :span="6">
             <el-form-item>
               <el-date-picker v-model="saleOrderDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
@@ -125,18 +133,25 @@
         </el-form>
         <!-- 采购收货  订单 -->
         <el-form @submit.native.prevent v-if="categoryType == 'inbound_purchase' && purchaseFlag">
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="purchaseForm.orderNo" placeholder="单号" clearable
-                @keyup.enter.native="getTabdataList()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="purchaseForm.partnerName" placeholder="供应商名称" clearable
-                @keyup.enter.native="getTabdataList()" />
-            </el-form-item>
-          </el-col>
+          <template v-for="item in searchList10">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="getTabdataList('basic')" />
+
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
+         
           <el-col :span="6">
             <el-form-item>
               <el-date-picker v-model="purchaserOrderDateArr" type="daterange" value-format="yyyy-MM-dd"
@@ -156,17 +171,25 @@
 
         <!-- 外协收货查询条件 -->
         <el-form @submit.native.prevent v-if="categoryType == 'inbound_external' && !externalFlag">
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="wxshForm.orderNo" placeholder="单号" clearable @keyup.enter.native="getTabdataList()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="wxshForm.partnerName" placeholder="供应商名称" clearable
-                @keyup.enter.native="getTabdataList()" />
-            </el-form-item>
-          </el-col>
+         
+          <template v-for="item in searchList4">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="getTabdataList('basic')" />
+
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
           <el-col :span="6">
             <el-form-item>
               <el-date-picker v-model="wxshDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
@@ -176,7 +199,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList()">
+              <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList('basic')">
                 {{ $t('common.search') }}</el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="resetFun()">{{ $t('common.reset') }}
               </el-button>
@@ -185,20 +208,26 @@
         </el-form>
         <!-- 外协收货 订单 -->
         <el-form @submit.native.prevent v-if="categoryType == 'inbound_external' && externalFlag">
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="externalForm.cooperativePartnerName" placeholder="供应商名称" clearable
-                @keyup.enter.native="getTabdataList()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
+          
+          <template v-for="item in searchList11">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="getTabdataList('basic')" />
 
-            <el-form-item>
-              <el-input v-model="externalForm.productDrawingNo" placeholder="品名规格" clearable
-                @keyup.enter.native="getTabdataList()" />
-            </el-form-item>
-          </el-col>
-
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
+     
           <el-col :span="6">
             <el-form-item>
               <el-date-picker v-model="externalDate" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
@@ -246,7 +275,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList()">
+              <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList('basic')">
                 {{ $t('common.search') }}</el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="resetFun()">{{ $t('common.reset') }}
               </el-button>
@@ -255,25 +284,26 @@
         </el-form>
         <!-- 外协发料 订单查询条件 -->
         <el-form @submit.native.prevent v-if="categoryType == 'outbound_external_send' && externalFlag">
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="exterMaterForm.orderNo" placeholder="订单号" clearable
-                @keyup.enter.native="getTabdataList()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="exterMaterForm.partnerName" placeholder="供应商名称" clearable
-                @keyup.enter.native="getTabdataList()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="exterMaterForm.productDrawingNo" placeholder="品名规格" clearable
-                @keyup.enter.native="getTabdataList()" />
-            </el-form-item>
-          </el-col>
+          
+          <template v-for="item in searchList12">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="getTabdataList('basic')" />
 
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
+      
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList()">
@@ -285,25 +315,32 @@
         </el-form>
         <!-- 生产领料 查询 -->
         <el-form @submit.native.prevent v-if="categoryType == 'outbound_pick_out'">
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="pickForm.orderNo" placeholder="领料单号" clearable
-                @keyup.enter.native="getTabdataList()" />
-            </el-form-item>
-          </el-col>
+           
+          <template v-for="item in searchList5">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="getTabdataList('basic')" />
+
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
+        
           <el-col :span="4">
             <el-form-item>
               <el-select v-model="pickForm.receiveType" placeholder="领料类型" style="width: 100%;">
                 <el-option v-for="(item, index) in receiveTypeList" :key="index" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="pickForm.partnerName" placeholder="领料人" clearable
-                @keyup.enter.native="getTabdataList()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -318,25 +355,34 @@
         </el-form>
         <!-- 生产退料 查询 -->
         <el-form @submit.native.prevent v-if="categoryType == 'inbound_return_materials'">
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="returnMaterForm.orderNo" placeholder="退料单号" clearable
-                @keyup.enter.native="getTabdataList()" />
-            </el-form-item>
-          </el-col>
+         
+         
+        
+        
+          <template v-for="item in searchList6">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="getTabdataList('basic')" />
+
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
           <el-col :span="4">
             <el-form-item>
               <el-select v-model="returnMaterForm.receiveType" placeholder="退料类型" style="width: 100%;">
                 <el-option v-for="(item, index) in receiveTypeList" :key="index" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="returnMaterForm.partnerName" placeholder="退料人" clearable
-                @keyup.enter.native="getTabdataList()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -923,12 +969,26 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
               <el-form @submit.native.prevent>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model="productForm.orderNo" @keyup.enter.native="searchProductData()" placeholder="任务单号"
-                      clearable />
-                  </el-form-item>
-                </el-col>
+              
+                
+                <template v-for="item in searchList7">
+                  <el-col :span="item.searchType === 3 ? 6 : 4">
+                    <el-form-item>
+                      <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                        @keyup.enter.native="getTabdataList('basic')" />
+                    
+                      <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                        clearable>
+                        <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                          :value="item2.value"></el-option>
+                      </el-select>
+                      <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                        :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                        :type="item.dateType"
+                        :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                </template>
                 <el-col :span="4">
                   <el-form-item>
                     <el-select v-model="productForm.orderType" placeholder="任务类型" style="width: 100%;">
@@ -937,16 +997,9 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model="productForm.productDrawingNo" @keyup.enter.native="searchProductData()"
-                      placeholder="品名规格" clearable />
-
-                  </el-form-item>
-                </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductData()">
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductData('basic')">
                       {{ $t('common.search') }}</el-button>
                     <el-button size="mini" icon="el-icon-refresh-right" @click="resetFun('product')">{{
                       $t('common.reset') }}
@@ -1027,33 +1080,28 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model="workForm.productionOrderNo" placeholder="任务单号" clearable
-                      @keyup.enter.native="searchWorkDta()" />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model="workForm.orderNo" placeholder="工单号" clearable
-                      @keyup.enter.native="searchWorkDta()" />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model="workForm.productDrawingNo" placeholder="品名规格" clearable
-                      @keyup.enter.native="searchWorkDta()" />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model="workForm.processName" placeholder="工序名称" clearable
-                      @keyup.enter.native="searchWorkDta()" />
-                  </el-form-item>
-                </el-col>
+                <template v-for="item in searchList8">
+                  <el-col :span="item.searchType === 3 ? 6 : 4">
+                    <el-form-item>
+                      <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                        @keyup.enter.native="getTabdataList('basic')" />
+                    
+                      <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                        clearable>
+                        <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                          :value="item2.value"></el-option>
+                      </el-select>
+                      <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                        :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                        :type="item.dateType"
+                        :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                </template>
+                
                 <el-col :span="6">
                   <el-form-item>
-                    <el-button type="primary" size="mini" icon="el-icon-search" @click="searchWorkDta()">
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="searchWorkDta('basic')">
                       {{ $t('common.search') }}</el-button>
                     <el-button size="mini" icon="el-icon-refresh-right" @click="resetFun('work')">{{
                       $t('common.reset')
@@ -1241,7 +1289,48 @@ export default {
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
       ],
-
+      searchList4: [
+        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+      ],
+      searchList5: [
+        { field: 'orderNo', fieldValue: '', label: '领料单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '领料人', symbol: 'like', searchType: 1, width: 120 },
+      ],
+      searchList6: [
+        { field: 'orderNo', fieldValue: '', label: '退料单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '退料人', symbol: 'like', searchType: 1, width: 120 },
+      ],
+      searchList7: [
+        { field: 'orderNo', fieldValue: '', label: '任务单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+      ],
+      searchList8: [
+        { field: 'productionOrderNo', fieldValue: '', label: '任务单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '工单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
+      ],
+      searchList9: [
+        { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
+      ],
+      searchList10: [
+        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+         
+      ],
+      searchList11: [
+        { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+         
+      ],
+      searchList12: [
+        { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+      ],
+     
       externalMaterOutboundFormVisible: false,
       exterMaterList: [],
       exterMaterTotal: 0,
@@ -1602,7 +1691,39 @@ export default {
       this.cgDateArr=[]
       this.cgForm.orderNo=''
       this.cgForm.partnerName=''
+
+      this.wxflDateArr=[]
+     this.wxflForm.orderNo=''
+      this.wxflForm.partnerName=''
+
+      this.wxshDateArr=[]
+     this.wxshForm.orderNo=''
+      this.wxshForm.partnerName=''
+
+
+
+
+
+      this.externalDate=[]
+      this.externalForm.cooperativePartnerName=''
+      this.externalForm.productDrawingNo=''
+
+      this.purchaserOrderDateArr=[]
+      this.purchaseForm.orderNo=''
+      this.purchaseForm.partnerName=''
+
+      this.saleOrderDateArr=[]
+      this.saleOrderForm.cooperativePartnerName=''
+      this.saleOrderForm.customerProductNo=''
+     
+      this.exterMaterForm.orderNo=''
+      this.exterMaterForm.partnerName=''
+      this.exterMaterForm.productDrawingNo=''
+    
+    
+
       this.getTabdataList()
+
     },
   },
   mounted() {
@@ -1634,6 +1755,24 @@ export default {
     // 外协发料 订单
     getexterMaterFUN() {
       this.exterMaterForm.classAttributeList = this.classAttributeList
+      this.superForm=this.exterMaterForm
+          if (type === 'basic') {
+          this.basicQuery = {
+            matchLogic: 'AND',
+            condition: this.searchList12
+              .filter((item) => item.fieldValue)
+              .map((item) => {
+                return {
+                  ...item,
+                  fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+                }
+              })
+          }
+          this.superForm.superQuery = this.basicQuery
+        }
+        if (type === 'super') {
+          this.superForm.superQuery = this.superQuery
+        }
       detailpurchaseOrderList(this.exterMaterForm).then(res => {
         this.exterMaterTotal = res.data.total
         this.exterMaterList = res.data.records
@@ -1660,6 +1799,24 @@ export default {
         this.externalForm.deliveryEndDate = ''
       }
       this.externalForm.classAttributeList = this.classAttributeList
+      this.superForm=this.externalForm
+          if (type === 'basic') {
+          this.basicQuery = {
+            matchLogic: 'AND',
+            condition: this.searchList11
+              .filter((item) => item.fieldValue)
+              .map((item) => {
+                return {
+                  ...item,
+                  fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+                }
+              })
+          }
+          this.superForm.superQuery = this.basicQuery
+        }
+        if (type === 'super') {
+          this.superForm.superQuery = this.superQuery
+        }
       detailpurchaseOrderList(this.externalForm).then(res => {
         this.externalList = res.data.records
         this.externalTotal = res.data.total
@@ -2010,6 +2167,24 @@ export default {
             this.saleOrderForm.deliveryEndTime = ""
           }
           this.saleOrderForm.classAttributeList = this.classAttributeList
+          this.superForm=this.saleOrderForm
+          if (type === 'basic') {
+          this.basicQuery = {
+            matchLogic: 'AND',
+            condition: this.searchList9
+              .filter((item) => item.fieldValue)
+              .map((item) => {
+                return {
+                  ...item,
+                  fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+                }
+              })
+          }
+          this.superForm.superQuery = this.basicQuery
+        }
+        if (type === 'super') {
+          this.superForm.superQuery = this.superQuery
+        }
           this.listLoading=true
           getsaleOrderDetailList(this.saleOrderForm).then(res => {
           this.listLoading=false
@@ -2111,6 +2286,24 @@ export default {
             this.purchaseForm.deliveryStartTime = ""
             this.purchaseForm.deliveryEndTime = ""
           }
+          this.superForm=this.purchaseForm
+          if (type === 'basic') {
+          this.basicQuery = {
+            matchLogic: 'AND',
+            condition: this.searchList10
+              .filter((item) => item.fieldValue)
+              .map((item) => {
+                return {
+                  ...item,
+                  fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+                }
+              })
+          }
+          this.superForm.superQuery = this.basicQuery
+        }
+        if (type === 'super') {
+          this.superForm.superQuery = this.superQuery
+        }
           detailpurchaseOrderList(this.purchaseForm).then(res => {
             console.log("采购明细", res);
             this.purchaseTotal = res.data.total
@@ -2123,7 +2316,7 @@ export default {
           this.cgForm.receiptInboundFlag = true
           if(this.cgDateArr.length){
             this.cgForm.deliverDateStart= this.cgDateArr[0]
-            this.cgForm.deliverDateEnd= this.cgDateArr[0]
+            this.cgForm.deliverDateEnd= this.cgDateArr[1]
           }else{
             this.cgForm.deliverDateStart=""
             this.cgForm.deliverDateEnd= ""
@@ -2163,6 +2356,13 @@ export default {
         this.cgForm.receiptReturnType = 'back'
         this.cgForm.receiptInboundFlag = null
         this.cgForm.classAttributeList = this.classAttributeList
+        if(this.cgDateArr.length){
+            this.cgForm.deliverDateStart= this.cgDateArr[0]
+            this.cgForm.deliverDateEnd= this.cgDateArr[1]
+          }else{
+            this.cgForm.deliverDateStart=""
+            this.cgForm.deliverDateEnd= ""
+          } 
         this.superForm=this.cgForm
           if (type === 'basic') {
           this.basicQuery = {
@@ -2181,13 +2381,7 @@ export default {
         if (type === 'super') {
           this.superForm.superQuery = this.superQuery
         }
-        if(this.cgDateArr.length){
-            this.cgForm.deliverDateStart= this.cgDateArr[0]
-            this.cgForm.deliverDateEnd= this.cgDateArr[0]
-          }else{
-            this.cgForm.deliverDateStart=""
-            this.cgForm.deliverDateEnd= ""
-          } 
+        
           purPurchaseReceiptReturnGoodsList(this.cgForm).then(res => {
           this.cgTableList = res.data.records
           this.cgTotal = res.data.total
@@ -2199,7 +2393,7 @@ export default {
       // 外协发料
       if (this.categoryType == 'outbound_external_send') {
         if (this.externalFlag) {
-          this.getexterMaterFUN()
+          this.getexterMaterFUN(type)
         } else {
           if(this.wxflDateArr.length){
             this.wxflForm.rdeDate=this.wxflDateArr[0]
@@ -2208,8 +2402,26 @@ export default {
             this.wxflForm.rdeDate=""
             this.wxflForm.rdsDate=""
           }
-          this.listLoading = true
           this.wxflForm.classAttributeList = this.classAttributeList
+          this.superForm=this.wxflForm
+          if (type === 'basic') {
+          this.basicQuery = {
+            matchLogic: 'AND',
+            condition: this.searchList3
+              .filter((item) => item.fieldValue)
+              .map((item) => {
+                return {
+                  ...item,
+                  fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+                }
+              })
+          }
+          this.superForm.superQuery = this.basicQuery
+        }
+        if (type === 'super') {
+          this.superForm.superQuery = this.superQuery
+        }
+          this.listLoading = true
           getQuotationdatasendlist(this.wxflForm).then(res => {
             this.wxflTableList = res.data.records
             this.wxflTotal = res.data.total
@@ -2222,13 +2434,36 @@ export default {
       // 外协收货
       if (this.categoryType == 'inbound_external') {
         if (this.externalFlag) {
-          this.getExternalFun()
+          this.getExternalFun(type)
         } else {
 
           this.listLoading = true
           this.$set(this.wxshForm, 'receiptInboundFlag', 1)
-
-
+          if(this.wxshDateArr.length){
+            this.wxshForm.deliverDateStart=this.wxshDateArr[0]
+            this.wxshForm.deliverDateEnd=this.wxshDateArr[1]
+          }else{
+            this.wxshForm.deliverDateStart=""
+            this.wxshForm.deliverDateEnd=""
+          }
+          this.superForm=this.wxshForm
+          if (type === 'basic') {
+          this.basicQuery = {
+            matchLogic: 'AND',
+            condition: this.searchList4
+              .filter((item) => item.fieldValue)
+              .map((item) => {
+                return {
+                  ...item,
+                  fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+                }
+              })
+          }
+          this.superForm.superQuery = this.basicQuery
+        }
+        if (type === 'super') {
+          this.superForm.superQuery = this.superQuery
+        }
           this.wxshForm.classAttributeList = this.classAttributeList
           purPurchaseReceiptReturnGoodsList(this.wxshForm).then(res => {
             this.wxshTableList = res.data.records
@@ -2244,6 +2479,25 @@ export default {
         this.listLoading = true
         console.log(555);
         this.pickForm.productClassAttributeList = this.classAttributeList
+         
+          this.superForm=this.pickForm
+          if (type === 'basic') {
+          this.basicQuery = {
+            matchLogic: 'AND',
+            condition: this.searchList5
+              .filter((item) => item.fieldValue)
+              .map((item) => {
+                return {
+                  ...item,
+                  fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+                }
+              })
+          }
+          this.superForm.superQuery = this.basicQuery
+        }
+        if (type === 'super') {
+          this.superForm.superQuery = this.superQuery
+        }
         WithdrawalList(this.pickForm).then(res => {
           console.log("领料", res);
           this.pickingTableList = res.data.records
@@ -2257,6 +2511,25 @@ export default {
       if (this.categoryType == 'inbound_return_materials') {
         this.listLoading = true
         this.returnMaterForm.productClassAttributeList = this.classAttributeList
+        
+          this.superForm=this.returnMaterForm
+          if (type === 'basic') {
+          this.basicQuery = {
+            matchLogic: 'AND',
+            condition: this.searchList6
+              .filter((item) => item.fieldValue)
+              .map((item) => {
+                return {
+                  ...item,
+                  fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+                }
+              })
+          }
+          this.superForm.superQuery = this.basicQuery
+        }
+        if (type === 'super') {
+          this.superForm.superQuery = this.superQuery
+        }
         WithdrawalList(this.returnMaterForm).then(res => {
           console.log("退料", res);
           this.returnMaterTableList = res.data.records
@@ -2269,16 +2542,34 @@ export default {
       // 生产入库
       if (this.categoryType == 'inbound_mock_production') {
         if (this.activeName == 'product') {
-          this.searchProductData()
+          this.searchProductData(type)
         } else {
-          this.searchWorkDta()
+          this.searchWorkDta(type)
         }
       }
     },
     // 生产产品数据
-    searchProductData() {
+    searchProductData(type) {
       this.listLoading = true
       this.productForm.classAttributeList = this.classAttributeList
+      this.superForm=this.productForm
+          if (type === 'basic') {
+          this.basicQuery = {
+            matchLogic: 'AND',
+            condition: this.searchList7
+              .filter((item) => item.fieldValue)
+              .map((item) => {
+                return {
+                  ...item,
+                  fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+                }
+              })
+          }
+          this.superForm.superQuery = this.basicQuery
+        }
+        if (type === 'super') {
+          this.superForm.superQuery = this.superQuery
+        }
       ordershengchanList(this.productForm).then(res => {
         console.log("生产产品", res);
         this.productData = res.data.records
@@ -2289,9 +2580,27 @@ export default {
       })
     },
     // 生产工单数据
-    searchWorkDta() {
+    searchWorkDta(type) {
       this.listLoading = true
       this.workForm.classAttributeList = this.classAttributeList
+      this.superForm=this.workForm
+          if (type === 'basic') {
+          this.basicQuery = {
+            matchLogic: 'AND',
+            condition: this.searchList8
+              .filter((item) => item.fieldValue)
+              .map((item) => {
+                return {
+                  ...item,
+                  fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+                }
+              })
+          }
+          this.superForm.superQuery = this.basicQuery
+        }
+        if (type === 'super') {
+          this.superForm.superQuery = this.superQuery
+        }
       getWorkPage(this.workForm).then(res => {
         console.log("生产产品", res);
         this.workData = res.data.records
@@ -2506,6 +2815,11 @@ export default {
             pageNum: 1,
             pageSize: 20,
           }
+          this.$refs.SuperQuery.conditionList = []
+          this.searchList9=[
+        { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
+      ]
         } else {
           this.fhDateArr=[]
           this.superForm=this.fhForm = {
@@ -2532,22 +2846,23 @@ export default {
           this.$refs.SuperQuery.conditionList = []
           this.searchList1=[
             { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
-            { field: 'partnerName', fieldValue: '', label: '客户/供应商', symbol: 'like', searchType: 1, width: 120 },
+            { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
           ]
         }
         this.getTabdataList('basic')
       }
       if (this.categoryType == 'inbound_purchase' || this.categoryType == 'outbound_purchase') {
-        if (this.categoryType == 'inbound_purchase' && !this.purchaseFlag) {
 
-          this.cgForm = {
+        if ((this.categoryType == 'inbound_purchase' && !this.purchaseFlag)||this.categoryType == 'outbound_purchase') {
+          this.cgDateArr=[]
+          this.superForm=this.cgForm = {
             documentStatus: "sibmit",
             classAttributeList: this.classAttributeList,
             deliverDateStart: "",
             deliverDateEnd: "",
             notificationType: "procure",
             receivingStatus: "not_finished",
-            receiptReturnType: "",
+            receiptReturnType: "", 
             orderNo: "",
             partnerName: "",
             orderItems: [{
@@ -2559,6 +2874,11 @@ export default {
             }],
             superQuery: {},
           }
+          this.$refs.SuperQuery.conditionList = []
+          this.searchList2=[
+            { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+            { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+          ]
         } else if (this.categoryType == 'inbound_purchase' && this.purchaseFlag) {
           this.purchaserOrderDateArr = []
           this.purchaseForm = {
@@ -2577,14 +2897,21 @@ export default {
             pageNum: 1,
             pageSize: 20,
           }
+          this.$refs.SuperQuery.conditionList = []
+          this.searchList10= [
+        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+         
+      ]
         }
+       
         this.getTabdataList()
       }
 
       if (this.categoryType == 'outbound_external_send') {
         if (!this.externalFlag) {
-
-          this.wxflForm = {
+          this.wxflDateArr=[]
+          this.superForm=this.wxflForm = {
             documentStatus: "sibmit",
             classAttributeList: this.classAttributeList,
 
@@ -2602,8 +2929,14 @@ export default {
               asc: false,
               column: "create_time"
             }],
+
             superQuery: {},
           }
+          this.$refs.SuperQuery.conditionList = []
+          this.searchList3=[
+            { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+            { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+          ]
         } else {
           this.exterMaterForm = {
             orderNo: "",
@@ -2621,6 +2954,13 @@ export default {
               column: "delivery_date"
             }],
           }
+
+          this.$refs.SuperQuery.conditionList = []
+          this.searchList12= [
+        { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+      ]
         }
         this.getTabdataList()
       }
@@ -2644,8 +2984,15 @@ export default {
               column: "delivery_date"
             }],
           }
+          this.$refs.SuperQuery.conditionList = []
+          this.searchList11=[
+        { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+         
+      ]
         } else {
-          this.wxshForm = {
+          this.wxshDateArr=[]
+          this.superForm=this.wxshForm = {
             orderNo: "",
             classAttributeList: this.classAttributeList,
             partnerName: "",
@@ -2666,11 +3013,16 @@ export default {
             }],
             superQuery: {},
           }
+          this.$refs.SuperQuery.conditionList = []
+          this.searchList4=[
+            { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+            { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+          ]
         }
         this.getTabdataList()
       }
       if (this.categoryType == 'outbound_pick_out') {
-        this.pickForm = {
+        this.superForm=this.pickForm = {
           pageNum: 1,
           pageSize: 20,
           productClassAttributeList: this.classAttributeList,
@@ -2687,10 +3039,15 @@ export default {
           }],
           superQuery: {},
         },
+          this.$refs.SuperQuery.conditionList = []
+          this.searchList5=[
+        { field: 'orderNo', fieldValue: '', label: '领料单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '领料人', symbol: 'like', searchType: 1, width: 120 },
+      ]
           this.getTabdataList()
       }
       if (this.categoryType == 'inbound_return_materials') {
-        this.returnMaterForm = {
+        this.superForm=this.returnMaterForm = {
           receiveType: "",
           orderNo: "",
           personName: "",
@@ -2707,6 +3064,11 @@ export default {
           pageNum: 1,
           pageSize: 20,
         }
+          this.$refs.SuperQuery.conditionList = []
+          this.searchList6=[
+        { field: 'orderNo', fieldValue: '', label: '领料单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '领料人', symbol: 'like', searchType: 1, width: 120 },
+      ]
         this.getTabdataList()
       }
       if (this.categoryType == 'inbound_mock_production') {
@@ -2728,6 +3090,12 @@ export default {
             pageNum: 1,
             pageSize: 20,
           }
+          this.$refs.SuperQuery.conditionList = []
+          this.searchList7=[
+        { field: 'orderNo', fieldValue: '', label: '任务单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+      ]
+    
           this.searchProductData()
         } else {
           this.workForm = {
@@ -2748,6 +3116,13 @@ export default {
             pageNum: 1,
             pageSize: 20,
           }
+          this.$refs.SuperQuery.conditionList = []
+          this.searchList8=[
+        { field: 'productionOrderNo', fieldValue: '', label: '任务单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '工单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
+      ]
           this.searchWorkDta()
         }
       }

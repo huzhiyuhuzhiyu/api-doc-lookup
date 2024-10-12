@@ -75,7 +75,7 @@ export default {
         id: '',
         name: "",
         remark: "",
-        status: ""
+        status: "disabled"
       },
       dataFormItems: [],
       btnType: "",
@@ -126,10 +126,10 @@ export default {
           prop: "name", label: "异常名称", value: "", type: "input", itemRules: [{ required: true, message: '异常名称不能为空', trigger: "blur" }],
           sm: 24, itemDisabled: this.btnType === 'look' ? true : false
         },
-        {
-          prop: "status", label: "异常状态", value: 1, type: "switch", activeValue: 1, inactiveValue: 0,
-          sm: 24, itemDisabled: this.btnType === 'look' ? true : false
-        },
+        // {
+        //   prop: "status", label: "异常状态", value: 1, type: "switch", activeValue: 1, inactiveValue: 0,
+        //   sm: 24, itemDisabled: this.btnType === 'look' ? true : false
+        // },
         { prop: "cron", label: "执行周期", value: "", type: "input", itemSlot: { position: 'append', content: '执行周期', click: this.showDialog }, sm: 24, itemDisabled: this.btnType === 'look' ? true : false, itemRules: [{ required: true, message: '执行周期不能为空', trigger: 'click' }] },
         { prop: "remark", label: "异常说明", value: "", type: "textarea", sm: 24, rows: '4', itemDisabled: this.btnType === 'look' ? true : false },
         {

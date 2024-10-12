@@ -6,19 +6,6 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
-                <!-- <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model.trim="lastListQuery.drawingNo" placeholder="品名规格" clearable
-                      @keyup.enter.native="search()" />
-                  </el-form-item>
-                </el-col>
-
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model.trim="lastListQuery.partnerName" placeholder="供应商名称" clearable
-                      @keyup.enter.native="search()" />
-                  </el-form-item>
-                </el-col> -->
                 <template v-for="item in lastSearchList">
                   <el-col :span="item.searchType === 3 ? 6 : 4">
                     <el-form-item>
@@ -75,8 +62,8 @@
               </div>
               <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm"
                 :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="lastColumnList">
-                <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="160" sortable="custom" />
-                <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="160" sortable="custom" />
+                <el-table-column prop="partnerName" label="供应商名称" min-width="160" sortable="custom" />
+                <el-table-column prop="partnerCode" label="供应商编码" min-width="160" sortable="custom" />
                 <el-table-column prop="drawingNo" label="品名规格" min-width="160" />
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
@@ -111,19 +98,6 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
-                <!-- <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model.trim="historyListQuery.drawingNo" placeholder="品名规格" clearable
-                      @keyup.enter.native="search()" />
-                  </el-form-item>
-                </el-col>
-
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model.trim="historyListQuery.partnerName" placeholder="供应商名称" clearable
-                      @keyup.enter.native="search()" />
-                  </el-form-item>
-                </el-col> -->
                 <template v-for="item in historySearchList">
                   <el-col :span="item.searchType === 3 ? 6 : 4">
                     <el-form-item>

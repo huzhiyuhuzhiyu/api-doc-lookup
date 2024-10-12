@@ -30,7 +30,7 @@
                         <el-form-item label="交货日期" prop="deliveryDate">
                           <el-date-picker disabled v-model="dataForm.deliveryDate" type="date" value-format="yyyy-MM-dd"
                             style="width: 100%;" :picker-options="dataPickerOptions2"
-                            placeholder="请选择交货日期" ></el-date-picker>
+                            placeholder="请选择交货日期"></el-date-picker>
                         </el-form-item>
                       </el-col>
                     </el-form>
@@ -61,15 +61,6 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <!-- <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'">
-                            <div class="viewData">
-                              <span>{{ scope.row.productName }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column> -->
 
                       <el-table-column prop="planDemandQuantity" label="计划需求数量" width="120" show-overflow-tooltip>
                         <template slot-scope="scope">
@@ -113,7 +104,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="price" label="含税单价" width="100">
+                      <el-table-column prop="price" label="单价(含税)" width="100">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'price'">
                             <div class="viewData">
@@ -179,7 +170,7 @@
                       总金额：{{ dataForm.excludingTaxTotalAmount }}
                     </span> -->
                     <span style="font-weight:500;margin-right:10px">总税额：{{ computedValue2 }}</span>
-                    <span style="font-weight:500;margin-right:10px">价税合计：{{ computedValue }}</span>
+                    <span style="font-weight:500;margin-right:10px">总金额：{{ computedValue }}</span>
                   </div>
                 </el-collapse-item>
               </el-collapse>
@@ -237,15 +228,6 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <!-- <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'">
-                        <div class="viewData">
-                          <span>{{ scope.row.productName }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column> -->
 
                   <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                     <template slot-scope="scope">
@@ -299,8 +281,7 @@
                     </template>
                   </el-table-column>
 
-
-                  <el-table-column prop="price" label="含税单价" width="100">
+                  <el-table-column prop="price" label="单价(含税)" width="120">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'price'">
                         <div class="viewData">
@@ -361,9 +342,9 @@
               </el-form>
 
               <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
-                <span style="font-weight:500;margin-right:10px">总金额：{{ dataForm.excludingTaxTotalAmount }}</span>
+                <!-- <span style="font-weight:500;margin-right:10px">总金额：{{ dataForm.excludingTaxTotalAmount }}</span> -->
                 <span style="font-weight:500;margin-right:10px">总税额：{{ dataForm.taxAmount }}</span>
-                <span style="font-weight:500;margin-right:10px">价税合计：{{ dataForm.totalAmount }}</span>
+                <span style="font-weight:500;margin-right:10px">总金额：{{ dataForm.totalAmount }}</span>
               </div>
             </el-collapse-item>
           </el-collapse>

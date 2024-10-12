@@ -138,7 +138,7 @@
 
               <template slot-scope="scope">
 
-                <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'all')">{{
+                <el-link type="primary" @click.native="viewDetailFun(scope.row.id)">{{
 
                   scope.row.orderNo
 
@@ -272,15 +272,15 @@
 
                     </el-dropdown-item>
 
-                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'all')">
+                    <!-- <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'all')">
 
-                      查看详情1
+                      查看详情
 
-                    </el-dropdown-item>
+                    </el-dropdown-item> -->
 
                     <el-dropdown-item @click.native="viewDetailFun(scope.row.id)">
 
-                      查看详情2
+                      查看详情
 
                     </el-dropdown-item>
 

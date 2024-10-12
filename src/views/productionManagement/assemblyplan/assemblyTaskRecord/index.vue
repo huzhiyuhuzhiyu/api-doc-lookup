@@ -125,7 +125,7 @@
 
 <script>
 import { ordershengchanList, prodOrderClose } from '@/api/productOrdes/index.js'
-import Form from '../assemblyTaskManagement/Form.vue'
+import Form from '../assemblyTaskManagement/taskFormCopy.vue'
 // import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {

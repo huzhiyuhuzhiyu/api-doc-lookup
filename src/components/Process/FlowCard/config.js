@@ -140,6 +140,7 @@ export default {
   approver: {
     type: "approver",
     content: "请设置审批人",
+    processingTime:'',
     properties: {
       title: '审批节点'
     }

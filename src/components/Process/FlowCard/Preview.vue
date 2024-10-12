@@ -6,6 +6,7 @@ const hasBranch = data => notEmptyArray(data.conditionNodes);
 const stopPro = ev => ev.stopPropagation();
 
 function createNormalCard(ctx, conf, h) {
+  let stateFlag = conf.state === 'state-curr'
   let classList = ['flow-path-card']
   if (conf.state) classList.push(conf.state)
   const afterTrue = (isTrue, name) => (isTrue && classList.push(name), isTrue)
@@ -26,6 +27,9 @@ function createNormalCard(ctx, conf, h) {
       </header>
       <div class="body">
         <span class="text">{conf.content}</span>
+        {(
+           conf.state === 'state-curr' && conf.type === 'approver' ? <div style="font-size:16px">进行中：已耗时 <el-tag>{conf.processingTime}小时</el-tag></div>  : conf.state === 'state-past' && conf.type === 'approver' ? <div style="font-size:16px">已完成：共耗时<el-tag type="success">{conf.processingTime}小时</el-tag></div> : ''
+        )}
       </div>
     </section>
   );

@@ -83,7 +83,7 @@ export default {
       flowTemplateJson: {},
       codeConfig: {},
       orderConfig: {},
-      flowEngine: {}
+      flowEngine: null
     }
   },
   computed: {

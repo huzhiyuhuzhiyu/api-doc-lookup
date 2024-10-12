@@ -132,6 +132,10 @@ export default {
         {
           label: '启用外协供应商附件',
           value: 'fj_wxgysgl'
+        },
+        {
+          label: '启用设备供应商附件',
+          value: 'fj_sbgysgl'
         }
       ],
       descriptionList: [
@@ -190,6 +194,10 @@ export default {
         {
           label: '开启后，在外协供应商附件新建、编辑、查看都会显示附件操作。',
           value: 'fj_wxgysgl'
+        },
+        {
+          label: '开启后，在设备供应商附件新建、编辑、查看都会显示附件操作。',
+          value: 'fj_sbgysgl'
         }
       ]
     }

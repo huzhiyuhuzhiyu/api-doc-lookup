@@ -290,7 +290,7 @@ export default {
       this.listLoading = true
       equMaintenanceList(this.orderForm).then(res => {
         this.tableData = res.data.records.map(item => {
-          if (item.picList.length) item.picList = item.picList.map(o => { return JSON.parse(`{${o}}`) })
+          if (item.picList && item.picList.length) item.picList = item.picList.map(o => { return JSON.parse(`{${o}}`) })
           return item
         })
         this.total = res.data.total

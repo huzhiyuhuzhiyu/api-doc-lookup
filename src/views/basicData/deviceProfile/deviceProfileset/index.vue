@@ -71,6 +71,7 @@
           <div>
             <topOpts @add="addOrUpdateHandle('', false, 'add')">
               <el-button size="mini" type="primary" icon="el-icon-printer" @click="printDevice('p038')">打印设备二维码</el-button>
+              <el-button size="mini" type="primary" icon="el-icon-printer" @click="setrepairUserId">批量设置维修人</el-button>
             </topOpts>
           </div>
           <div class="JNPF-common-head-right">
@@ -155,6 +156,7 @@
           @pagination="initData" />
       </div>
     </div>
+    <share v-if="shareVisible" ref="share" @close="closeForm"></share>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm" ref="printForm" />
   </div>
@@ -164,14 +166,16 @@
 import { getPositionList, deleteEquEquipment } from '@/api/permission/position'
 import { getCategoryTrees, getEquEquipmentList, plmsync } from '@/api/basicData/index'
 import Form from './Form'
+import share from './share'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
 export default {
   name: 'deviceProfileSet',
-  components: { Form ,PrintBrowse},
+  components: { Form, PrintBrowse, share},
   data() {
     return {
+      shareVisible:false,
       treeData: [],
       tableData: [],
       treeLoading: false,
@@ -290,6 +294,7 @@ export default {
     },
     // 关闭新建、编辑页面
     closeForm(isRefresh) {
+      this.shareVisible = false
       this.formVisible = false
       if (isRefresh) {
         this.keyword = ''
@@ -451,6 +456,14 @@ export default {
           })
         })
       }).catch(() => { })
+    },
+    setrepairUserId(){
+      if (!this.selectList.length) return this.$message.error("请选择设备!")
+      let idList = this.selectList.map(item => item.id);
+      this.shareVisible = true
+      this.$nextTick(() => {
+        this.$refs.share.init(idList)
+      })
     },
     printDevice(enCode){
       if (!this.selectList.length) return this.$message.error("请选择您要打印的数据!")

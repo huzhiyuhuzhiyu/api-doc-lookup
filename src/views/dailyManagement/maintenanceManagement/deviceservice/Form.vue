@@ -43,33 +43,43 @@
                         <el-input v-model="dataForm.solutionMeasures" placeholder="请输入解决措施" :disabled="btnType == 'look'" type="textarea" maxlength="200" :rows="2" />
                       </el-form-item>
                     </el-col>
+                    <el-col :sm="24" :xs="24">
+                      <el-form-item label="维修完成照片" prop="afterPicList">
+                        <UploadImg v-model="dataForm.afterPicList" :disabled="btnType == 'look'"></UploadImg>
+                      </el-form-item>
+                    </el-col>
                   </el-row>
                 </el-collapse-item>
-                <el-collapse-item title="审核信息" name="basicInfo">
+                <el-collapse-item title="审核信息" name="basicInfo" v-if="btnType == 'start' || btnType == 'end' || (dataForm.state == 'maintaining' && btnType == 'look') || (dataForm.state == 'maintained' && btnType == 'look')">
                   <el-row :gutter="30" class="custom-row">
-                    <el-col :sm="6" :xs="24" v-if="btnType == 'start' || btnType == 'end' || (dataForm.state == 'maintaining' && btnType == 'look') || (dataForm.state == 'maintained' && btnType == 'look')">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="审核意见" prop="reviewComments">
-                        <el-select v-model="dataForm.reviewComments" placeholder="请选择审核意见" clearable style="width: 100%;" :disabled="btnType == 'look'|| btnType == 'end'">
+                        <el-select v-model="dataForm.reviewComments" placeholder="请选择审核意见" @change="reviewCommentschange" clearable style="width: 100%;" :disabled="btnType == 'look'|| btnType == 'end'">
                           <el-option v-for="(item, index) in reviewCommentsList" :key="index" :label="item.label" :value="item.value"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="btnType == 'start' || btnType == 'end' || (dataForm.state == 'maintaining' && btnType == 'look') || (dataForm.state == 'maintained' && btnType == 'look')">
+                    <el-col :sm="6" :xs="24" v-if="dataForm.reviewComments=='reject'">
+                      <el-form-item label="驳回理由" prop="rejectReason">
+                        <el-select v-model="dataForm.rejectReason" placeholder="请选择驳回理由" clearable style="width: 100%;" :disabled="btnType == 'look'|| btnType == 'end'">
+                          <el-option v-for="(item, index) in rejectReasonList" :key="index" :label="item.label" :value="item.value"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="dataForm.reviewComments!=='reject'">
                       <el-form-item label="紧急程度" prop="degree">
                         <el-select v-model="dataForm.degree" placeholder="请选择紧急程度" clearable style="width: 100%;" :disabled="btnType == 'look'|| btnType == 'end'">
                           <el-option v-for="(item, index) in degreeList" :key="index" :label="item.label" :value="item.value"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="btnType == 'start' || btnType == 'end' || (dataForm.state == 'maintaining' && btnType == 'look') || (dataForm.state == 'maintained' && btnType == 'look')" key="3">
+                    <!-- <el-col :sm="6" :xs="24">
                       <el-form-item label="维修负责人" prop="maintenancePersonnel">
                         <user-select v-model="dataForm.maintenancePersonnel" placeholder="请选择维修负责人" clearable style="width: 100%;" :disabled="btnType == 'look' || btnType == 'end'" @change="hangleSelectSales">
                         </user-select>
-                        <!-- <el-input v-model="dataForm.maintenancePersonnel" placeholder="请输入维修人" :disabled="btnType == 'look'"
-                      maxlength="50" /> -->
                       </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24" v-if="btnType == 'start' || btnType == 'end' || (dataForm.state == 'maintaining' && btnType == 'look') || (dataForm.state == 'maintained' && btnType == 'look')" key="4">
+                    </el-col> -->
+                    <el-col :sm="6" :xs="24" v-if="dataForm.reviewComments!=='reject'">
                       <el-form-item label="派工时间" prop="startMaintenanceTime">
                         <el-date-picker v-model="dataForm.startMaintenanceTime" type="datetime" placeholder="请选择派工时间" :disabled="btnType == 'look' || btnType == 'end'" style="width: 100%;" clearable @change="nextMaintenanceTimeactionwei" :picker-options="{
                         disabledDate(time) {
@@ -79,7 +89,7 @@
                         </el-date-picker>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="12" :xs="24">
+                    <el-col :sm="dataForm.reviewComments=='reject'?12:6" :xs="24">
                       <el-form-item label="备注" prop="remark">
                         <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btnType == 'look'|| btnType == 'end'" type="textarea" maxlength="200" :rows="2" />
                       </el-form-item>
@@ -142,6 +152,11 @@
                         <el-select v-model="dataForm.state" placeholder="请选择状态" clearable style="width: 100%;" :disabled="btnType == 'look'">
                           <el-option v-for="(item, index) in stateList" :key="index" :label="item.label" :value="item.value"></el-option>
                         </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="24" :xs="24">
+                      <el-form-item label="故障情况照片" prop="frontPicList">
+                        <UploadImg v-model="dataForm.frontPicList" :disabled="btnType == 'look' || btnType == 'start' || btnType == 'end'"></UploadImg>
                       </el-form-item>
                     </el-col>
                   </el-row>
@@ -272,6 +287,7 @@
 </template>
     
 <script>
+import UploadImg from "@/components/Generator/components/Upload/UploadImg.vue";
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { addRepairRequest, updateRepairRequest, detailRepairRequest } from '@/api/dailyManagement/Maintenance'
 import { getOrganizeInfo } from '@/api/permission/organize'
@@ -279,13 +295,20 @@ import { getEquEquipmentList, parametersShelveslist } from '@/api/basicData/inde
 import { getOrganization } from '@/api/permission/user'
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
+  components: { UploadImg },
   data() {
     return {
+      rejectReasonList: [
+        { label: '暂不需要维修', value: '暂不需要维修' },
+        { label: '待统一维修', value: '待统一维修' },
+        { label: '操作工自行解决', value: '操作工自行解决' },
+        { label: '其他', value: '其他' }
+      ],
       degreeList: [
         { label: '特别紧急', value: '1' },
         { label: '紧急', value: '2' },
         { label: '一般', value: '3' },
-        { label: '不急', value: '4' },
+        { label: '不急', value: '4' }
       ],
       reviewCommentsList: [
         { label: '立即维修', value: 'immediately' },
@@ -408,6 +431,9 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
+        rejectReason: '',
+        frontPicList: [],
+        afterPicList: [],
         maintenancePersonnel: '',
         startMaintenanceTime: '',
         repairCompletionTime: '',
@@ -430,15 +456,24 @@ export default {
       organizeIdTrees: [],
       productRules: {
         faultLocationName: [
-          { required: true, trigger: 'blur' }
+          { required: true, trigger: 'change' }
         ],
       },
       dataRule: {
-        maintenancePersonnel: [
-          { required: true, message: '维修人不能为空', trigger: 'change' }
+        reason: [
+          { required: true, message: '故障原因不能为空', trigger: 'blur' }
+        ],
+        reviewComments: [
+          { required: true, message: '审核意见不能为空', trigger: 'change' }
+        ],
+        degree: [
+          { required: true, message: '紧急程度不能为空', trigger: 'change' }
         ],
         startMaintenanceTime: [
           { required: true, message: '派工时间不能为空', trigger: 'blur' }
+        ],
+        rejectReason: [
+          { required: true, message: '驳回理由不能为空', trigger: 'change' }
         ],
         repairCompletionTime: [
           { required: true, message: '维修完成时间不能为空', trigger: 'blur' }
@@ -471,6 +506,10 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    reviewCommentschange(e) {
+      if (e == 'reject') return this.dataForm.startMaintenanceTime = ''
+      this.dataForm.startMaintenanceTime = this.jnpf.getToday('YYYY-MM-DD HH:mm:ss')
+    },
     //数量单价不能为0
     calcValidate() {
       return (rule, value, callback) => {
@@ -745,6 +784,12 @@ export default {
       }
       if (this.dataForm.id) {
         detailRepairRequest(this.dataForm.id).then(res => {
+          if (res.data.repair.afterPic) res.data.repair.afterPicList = res.data.repair.afterPicList.map(item => {
+            return JSON.parse(`{${item}}`)
+          })
+          if (res.data.repair.frontPic) res.data.repair.frontPicList = res.data.repair.frontPicList.map(item => {
+            return JSON.parse(`{${item}}`)
+          })
           this.dataForm = res.data.repair
           this.dataForms.lines = res.data.equLine
           this.dataFormTwo.productData = res.data.lines
@@ -850,6 +895,18 @@ export default {
           }
         })
       }
+      this.dataForm.afterPicList = Array.isArray(this.dataForm.afterPicList) ?
+        this.dataForm.afterPicList.map(item => {
+          return JSON.stringify(item)
+            .replace("{", "")
+            .replace("}", "")
+        }) : []
+      this.dataForm.frontPicList = Array.isArray(this.dataForm.frontPicList) ?
+        this.dataForm.frontPicList.map(item => {
+          return JSON.stringify(item)
+            .replace("{", "")
+            .replace("}", "")
+        }) : []
       let obj = {
         attachmentList: this.datafilelist,
         equLine: this.dataForms.lines,

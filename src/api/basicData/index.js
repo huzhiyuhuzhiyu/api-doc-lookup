@@ -1,5 +1,12 @@
 import request from '@/utils/request'
-
+//设备档案-设置维修人
+export const editbatchequEquipment = (data) => {
+  return request({
+    url: `/api/mes/equEquipment/batch/modify`,
+    method: 'put',
+    data: data
+  })
+}
 // 胶管制造费单价设置-设置单价
 export function setManufacturingPrice (data) {
   return request({

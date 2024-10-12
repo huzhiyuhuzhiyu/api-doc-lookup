@@ -91,7 +91,12 @@
                         <ComSelect-list :isdisabled="type === 'look'" v-model="dataForm.partnerName" placeholder="请选择供应商" auth @change="selectPartner" :title="'选择供应商'" :method="getCooperativeData" :requestObj="parentRequsetObj" :paramsObj="{}" />
                       </el-form-item>
                     </el-col>
-
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="维修人" prop="repairUserId">
+                        <user-select v-model="dataForm.repairUserId" placeholder="请选择维修人" clearable style="width: 100%;" :disabled="disabled" @change="hanglerepairUserId">
+                        </user-select>
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="使用人" prop="userId">
                         <user-select v-model="dataForm.userId" placeholder="请选择使用人" style="width: 100%;" :disabled="disabled" @change="hangleSelectSales">
@@ -106,16 +111,16 @@
                     </el-col>
 
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="车间" prop="factoryFloorid">
-                        <el-select v-model="dataForm.factoryFloorid" filterable placeholder="请选择车间" clearable style="width: 100%;" :loading="factorylistLoading">
+                      <el-form-item label="车间" prop="factoryFloorId">
+                        <el-select v-model="dataForm.factoryFloorId" filterable placeholder="请选择车间" :disabled="disabled" clearable style="width: 100%;" :loading="factorylistLoading">
                           <el-option v-for="item in factoryFloorList" :key="item.id" :label="item.name" :value="item.id">
                           </el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="安装地点" prop="mountedPlacesid">
-                        <el-select v-model="dataForm.mountedPlacesid" filterable placeholder="请选择安装地点" clearable style="width: 100%;" :loading="factorylistLoading">
+                      <el-form-item label="安装地点" prop="mountedPlacesId">
+                        <el-select v-model="dataForm.mountedPlacesId" filterable placeholder="请选择安装地点" :disabled="disabled" clearable style="width: 100%;" :loading="factorylistLoading">
                           <el-option v-for="item in mountedPlacesList" :key="item.id" :label="item.name" :value="item.id">
                           </el-option>
                         </el-select>
@@ -297,6 +302,7 @@ export default {
       picArr: [],
       type: '',
       dataForm: {
+        repairUserId:'',
         salespersonId: "",
         purchaseAmount: "",
         id: "",
@@ -309,8 +315,8 @@ export default {
         specModel: null, //规格型号
         userDepartmentId: null, //使用部门
         userDepartmentName: null, //使用部门
-        factoryFloorid: null,
-        mountedPlacesid: null,
+        factoryFloorId: null,
+        mountedPlacesId: null,
         cooperativePartnerId: null, //供应商
         supplier: null, //生产厂家
         serialNo: null, //序列号
@@ -357,6 +363,14 @@ export default {
           value: "discard",
           label: "报废"
         },
+        {
+          value: "spare",
+          label: "备用"
+        },
+        {
+          value: "stop",
+          label: "停用"
+        }
       ],
       categoryIdProps: {
         'label': 'name',
@@ -479,6 +493,9 @@ export default {
         this.dataForm.productCategoryName = data[0].name
         this.dataForm.productCategoryId = data[0].id
       }
+    },
+    hanglerepairUserId(e, r) {
+      this.dataForm.repairUserId = e
     },
     hangleSelectSales(e, r) {
       this.dataForm.userDepartmentId = r.parentId

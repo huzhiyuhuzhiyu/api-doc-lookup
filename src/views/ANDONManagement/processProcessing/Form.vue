@@ -3,7 +3,7 @@
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType ? 'noButtons' : '']">
         <el-page-header @back="$emit('close', true)" content="异常处理" />
-        <div class="options">
+        <div class="options" v-if="btnType !== 'look'">
           <el-button type="primary" v-if="dataForm.processStatus === 'processing'" size="mini" :loading="btnLoading" @click="handleConfirm()">
             处理</el-button>
           <el-button type="primary" v-if="type === 'system'" size="mini" :loading="btnLoading" @click="lookRecardData()">
@@ -65,7 +65,7 @@ export default {
         { prop: "abnormalContent", label: "申请内容", value: "", type: "input", sm: 6, itemDisabled: true },
         { prop: "equipmentName", label: "设备名称", value: "", type: "input", sm: 6, itemDisabled: true },
         { prop: "productionOrderNo", label: "生产单号", value: "", type: "input", sm: 6, itemDisabled: true },
-        { prop: "planPersonId", label: "计划处理人", value: "", type: "input", sm: 6, itemDisabled: true },
+        { prop: "planPersonName", label: "计划处理人", value: "", type: "input", sm: 6, itemDisabled: true },
       ],
       dealForm: {
         processDescription: '',
@@ -82,9 +82,10 @@ export default {
     }
   },
   methods: {
-    init(id,type) {
+    init(id,type,btnType) {
       this.formLoading = true
       this.type = type
+      this.btnType = btnType
       if (id) {
         detailAbnoramlData(id).then(res => {
           res.data && (this.dataForm = res.data)
@@ -223,5 +224,8 @@ export default {
 
 ::v-deep .el-tabs {
   height: 100% !important;
+}
+::v-deep .JNPF-common-page-header.noButtons {
+  padding: 11px 10px;
 }
 </style>

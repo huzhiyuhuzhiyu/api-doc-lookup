@@ -52,6 +52,12 @@
                 <el-tag type='danger' v-else>系统异常</el-tag>
               </template>
             </el-table-column>
+            <el-table-column v-else-if="item.prop == 'orderNo'" :prop="item.prop" :key="item.prop" :label="item.label"
+              :fixed="item.fixed || false" :min-width="item.minWidth || 120">
+              <template slot-scope="scope">
+                <el-link type="primary" @click="addOrUpdateHandle(scope.row.id,scope.row.type)">{{ scope.row.orderNo }}</el-link>
+              </template>
+            </el-table-column>
             <el-table-column v-else-if="item.prop == 'abnormalType'" :prop="item.prop" :key="item.prop" :label="item.label"
               :fixed="item.fixed || false" :min-width="item.minWidth || 120">
               <template slot-scope="scope">
@@ -83,14 +89,16 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch"
       @close="superQueryVisible = false" />
+    <JNPF-Form v-if="formVisible" ref="JNPFForm" @close="closeForm" />
   </div>
 </template>
 
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import JNPFForm from '../processProcessing/Form.vue'
 export default {
   name: 'cancelsAndHistoryRecord',
-  components: { SuperQuery },
+  components: { SuperQuery ,JNPFForm},
   props: {
     tableItems: {
       type: Array,
@@ -272,6 +280,12 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.getData()
+    },
+    addOrUpdateHandle(id,type){
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.JNPFForm.init(id,type,'look')
+      })
     },
   }
 }

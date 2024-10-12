@@ -437,11 +437,6 @@
                     <el-input v-model="orderForm.partnerName" placeholder="请输入客户名称" clearable />
                   </el-form-item>
                 </el-col>
-                <!-- <el-col :span="6">
-                  <el-form-item>
-                    <el-input v-model="orderForm.customerProductDrawingNo" placeholder="请输入客户料号" clearable />
-                  </el-form-item>
-                </el-col> -->
 
                 <el-col :span="6">
                   <el-form-item label="交货日期">
@@ -465,19 +460,13 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="productList" @row-dblclick="seleceCustomer" hasC
                 @selection-change="handleSelectionChangeAllPruduct">
-                <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom"></el-table-column>
-                <!-- <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" /> -->
+                <el-table-column prop="orderNo" label="订单号" width="200" sortable="custom"></el-table-column>
+
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
                 <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
-                <el-table-column prop="mainUnit" label="单位" width="160" />
-                <el-table-column prop="num" label="数量" width="160" sortable="custom" />
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
-                <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
-                <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
-                <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
-                <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
-                <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-                <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
+                <el-table-column prop="mainUnit" label="单位" width="60" />
+                <el-table-column prop="purchaseQuantity" label="数量" width="100" sortable="custom" />
+             
                 <el-table-column prop="remark" label="备注" width="160" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
               </JNPF-table>
@@ -869,7 +858,7 @@ export default {
             flag = true
           }
           if (flag) {
-            this.$message.error(msg)
+            this.$message.error(`第${index + 1}行${msg}`)
             callback(new Error(msg))
           } else {
             callback()
@@ -1561,163 +1550,131 @@ export default {
       this.btnLoading = false
     },
     handleConfirm(value) {
-      this.$refs['productForm'].validate((valid) => {
-        if (!valid) {
-          return
-        }
-      })
+      let submitFlag = true
+
       this.$refs['dataForm'].validate((valid) => {
         this.dataForm.documentStatus = value
-        if (valid) {
-          if (this.datafilelist.length) {
-            this.datafilelist.map((item, index) => {
-              item.bimAttachments = {
-                businessType: '',
-                documentId: item.id,
-                fileFlag: '',
-                sort: index
-              }
-            })
-          }
-          let obj = {
-            attachmentList: this.datafilelist,
-            returnGoods: this.dataForm,
-            lines: [],
-            flowData: this.flowData
-          }
-          if (!this.dataFormTwo.productData.length) {
-            this.$message({
-              message: '请选择产品',
-              type: 'error',
-              duration: 1500
-            })
-            return
-          }
-          this.dataFormTwo.productData.map((item, index) => {
-            console.log(item, 'item123')
-            if (!item.receivedQuantity) {
-              this.iszhi = true
-              this.$message({
-                message: this.dataForm.exchangeGoodsFlag
-                  ? `第${index + 1}行换货数量不能为空`
-                  : `第${index + 1}行退货数量不能为空`,
-                type: 'error',
-                duration: 1500
-              })
-            } else if (
-              item.outboundQuantity &&
-              item.receivedQuantity * 1 > item.outboundQuantity * 1 - item.returnQuantity * 1
-            ) {
-              this.iszhi = true
-              return this.$message({
-                message: this.dataForm.exchangeGoodsFlag ? `换货数量超过最大可换货数量` : `退货数量超过最大可退货数量`,
-                type: 'error',
-                duration: 1500
-              })
-            } else if (item.receivedQuantity == 0) {
-              this.iszhi = true
-              return this.$message({
-                message: this.dataForm.exchangeGoodsFlag
-                  ? `第${index + 1}行换货数量不能为'0'`
-                  : `第${index + 1}行退货数量不能为'0'`,
-                type: 'error',
-                duration: 1500
-              })
-            }
-          })
-          if (this.iszhi) {
-            this.iszhi = false
-            return
-          }
-          this.dataFormTwo.productData.forEach((item, index) => {
-            let dep = {
-              calculationDirection: item.calculationDirection ? item.calculationDirection : '',
-              purchaseQuantity: item.purchaseQuantity ? item.purchaseQuantity : '',
-              receiptQuantity: item.receiptQuantity ? item.receiptQuantity : '',
-              deputyUnit: item.deputyUnit ? item.deputyUnit : '',
-              mainUnit: item.mainUnit ? item.mainUnit : '',
-              ordersId: item.ordersId,
-              notificationType: 'procure',
-              id: item.id ? item.id : '',
-              productsId: item.productsId ? item.productsId : '',
-              classAttribute: item.classAttribute ? item.classAttribute : '',
-              // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-              ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
-              purchaseOrderId: item.purchaseOrderId ? item.purchaseOrderId : '',
-              pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
-              ratio: item.ratio ? item.ratio : '',
-              receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
-              remark: item.remark ? item.remark : '',
-              purchaseReceiptReturnGoodsId: this.dataForm.id ? this.dataForm.id : '',
-              receivingQuantity: item.receivingQuantity ? item.receivingQuantity : ''
-            }
-            let dep1 = {
-              billStatus: item.billStatus ? item.billStatus : '',
-              calculationDirection: item.calculationDirection ? item.calculationDirection : '',
-              purchaseQuantity: item.purchaseQuantity ? item.purchaseQuantity : '',
-              receiptQuantity: item.receiptQuantity ? item.receiptQuantity : '',
-              deputyUnit: item.deputyUnit ? item.deputyUnit : '',
-              mainUnit: item.mainUnit ? item.mainUnit : '',
-              ordersId: item.ordersId,
-              notificationType: 'procure',
-              id: item.id ? item.id : '',
-              productsId: item.productsId ? item.productsId : '',
-              classAttribute: item.classAttribute ? item.classAttribute : '',
-              // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-              ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
-              purchaseOrderId: item.purchaseOrderId ? item.purchaseOrderId : '',
-              pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
-              ratio: item.ratio ? item.ratio : '',
-              receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
-              remark: item.remark ? item.remark : '',
-              purchaseReceiptReturnGoodsId: this.dataForm.id ? this.dataForm.id : '',
-              receivingQuantity: item.receivingQuantity ? item.receivingQuantity : ''
-            }
-            if (this.btnType == 'add' || this.btnType == 'copy') {
-              obj.lines.push(dep)
-            } else {
-              obj.lines.push(dep1)
-            }
-          })
-          this.btnLoading = true
-          let formMethod = null
-          console.log(obj, 'obj')
-          if (this.btnType == 'edit') {
-            formMethod = editpurPurchaseReceiptReturnGoods
-          } else if (this.btnType == 'add' || this.btnType == 'copy') {
-            // obj.notice.deliveryStatus = 'not_returned'
-            formMethod = addpurPurchaseReceiptReturnGoods
-          }
-          // formMethod(obj).then(res => {
-          //   // let msg = "";
-          //   // if (formMethod == addQuotationsendlist) {
-          //   //   msg = "新建成功"
-          //   // } else if (value == 'draft') {
-          //   //   msg = "保存成功"
-          //   // } else if (value == 'submit') {
-          //   //   msg = '提交成功'
-          //   // }
-          //   if (value == 'draft') {
-          //     this.submitmethodsTitle = "保存成功"
-          //   } else if (value == 'submit') {
-          //     this.submitmethodsTitle = "提交成功"
-          //   }
-          //   this.tipsvisible = true
-          //   // this.$message({
-          //   //   message: msg,
-          //   //   type: 'success',
-          //   //   duration: 1500,
-          //   //   onClose: () => {
-          //   //     this.visible = false
-          //   //     this.btnLoading = false
-          //   //     this.$emit('close', true)
-          //   //   }
-          //   // })
-          // }).catch(() => {
-          //   this.btnLoading = false
-          // })
+        submitFlag = false
+      })
+      this.$refs['productForm'].validate((valid) => {
+        if (!valid) {
+          submitFlag = false
         }
       })
+      if (submitFlag) {
+        if (this.datafilelist.length) {
+          this.datafilelist.map((item, index) => {
+            item.bimAttachments = {
+              businessType: '',
+              documentId: item.id,
+              fileFlag: '',
+              sort: index
+            }
+          })
+        }
+        let obj = {
+          attachmentList: this.datafilelist,
+          returnGoods: this.dataForm,
+          lines: [],
+          flowData: this.flowData
+        }
+        if (!this.dataFormTwo.productData.length) {
+          this.$message({
+            message: '请选择产品',
+            type: 'error',
+            duration: 1500
+          })
+          return
+        }
+
+        this.dataFormTwo.productData.forEach((item, index) => {
+          let dep = {
+            calculationDirection: item.calculationDirection ? item.calculationDirection : '',
+            purchaseQuantity: item.purchaseQuantity ? item.purchaseQuantity : '',
+            receiptQuantity: item.receiptQuantity ? item.receiptQuantity : '',
+            deputyUnit: item.deputyUnit ? item.deputyUnit : '',
+            mainUnit: item.mainUnit ? item.mainUnit : '',
+            ordersId: item.ordersId,
+            notificationType: 'procure',
+            id: item.id ? item.id : '',
+            productsId: item.productsId ? item.productsId : '',
+            classAttribute: item.classAttribute ? item.classAttribute : '',
+            // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
+            ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+            purchaseOrderId: item.purchaseOrderId ? item.purchaseOrderId : '',
+            pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
+            ratio: item.ratio ? item.ratio : '',
+            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
+            remark: item.remark ? item.remark : '',
+            purchaseReceiptReturnGoodsId: this.dataForm.id ? this.dataForm.id : '',
+            receivingQuantity: item.receivingQuantity ? item.receivingQuantity : ''
+          }
+          let dep1 = {
+            billStatus: item.billStatus ? item.billStatus : '',
+            calculationDirection: item.calculationDirection ? item.calculationDirection : '',
+            purchaseQuantity: item.purchaseQuantity ? item.purchaseQuantity : '',
+            receiptQuantity: item.receiptQuantity ? item.receiptQuantity : '',
+            deputyUnit: item.deputyUnit ? item.deputyUnit : '',
+            mainUnit: item.mainUnit ? item.mainUnit : '',
+            ordersId: item.ordersId,
+            notificationType: 'procure',
+            id: item.id ? item.id : '',
+            productsId: item.productsId ? item.productsId : '',
+            classAttribute: item.classAttribute ? item.classAttribute : '',
+            // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
+            ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+            purchaseOrderId: item.purchaseOrderId ? item.purchaseOrderId : '',
+            pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
+            ratio: item.ratio ? item.ratio : '',
+            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
+            remark: item.remark ? item.remark : '',
+            purchaseReceiptReturnGoodsId: this.dataForm.id ? this.dataForm.id : '',
+            receivingQuantity: item.receivingQuantity ? item.receivingQuantity : ''
+          }
+          if (this.btnType == 'add' || this.btnType == 'copy') {
+            obj.lines.push(dep)
+          } else {
+            obj.lines.push(dep1)
+          }
+        })
+        this.btnLoading = true
+        let formMethod = null
+        console.log(obj, 'obj')
+        if (this.btnType == 'edit') {
+          formMethod = editpurPurchaseReceiptReturnGoods
+        } else if (this.btnType == 'add' || this.btnType == 'copy') {
+          // obj.notice.deliveryStatus = 'not_returned'
+          formMethod = addpurPurchaseReceiptReturnGoods
+        }
+        formMethod(obj).then(res => {
+          // let msg = "";
+          // if (formMethod == addQuotationsendlist) {
+          //   msg = "新建成功"
+          // } else if (value == 'draft') {
+          //   msg = "保存成功"
+          // } else if (value == 'submit') {
+          //   msg = '提交成功'
+          // }
+          if (value == 'draft') {
+            this.submitmethodsTitle = "保存成功"
+          } else if (value == 'submit') {
+            this.submitmethodsTitle = "提交成功"
+          }
+          this.tipsvisible = true
+          // this.$message({
+          //   message: msg,
+          //   type: 'success',
+          //   duration: 1500,
+          //   onClose: () => {
+          //     this.visible = false
+          //     this.btnLoading = false
+          //     this.$emit('close', true)
+          //   }
+          // })
+        }).catch(() => {
+          this.btnLoading = false
+        })
+      }
     },
     // 测试审批流
     getBusInfo() {

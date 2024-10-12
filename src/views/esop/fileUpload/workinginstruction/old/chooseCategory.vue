@@ -206,25 +206,5 @@ export default {
 </template>
 
 <style scoped lang="scss">
-.square-radio ::v-deep .el-radio__inner {
-    border-radius: 0; /* 将圆角设置为0，实现方框效果 */
-}
 
-.square-radio ::v-deep .el-radio__input.is-checked .el-radio__inner::after {
-    content: "";
-    width: 10px;
-    height: 5px;
-    border: 2px solid white;
-    border-top: transparent;
-    border-right: transparent;
-    text-align: center;
-    display: inline-block;
-    position: absolute;
-    top: 2px;
-    left: 1px;
-    vertical-align: middle;
-    transform: rotate(-45deg);
-    border-radius: 0px;
-    background: none;
-}
 </style>

@@ -353,7 +353,7 @@ export default {
           }
         ].filter((o) => !o.disabled)
       }
-      ; (this.dataFormItems = [
+      this.dataFormItems = [
         {
           prop: 'orderNo',
           label: '处理单号',
@@ -383,7 +383,8 @@ export default {
           type: 'input',
           sm: 6,
           // render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
-          itemDisabled: this.btnType === 'look' ? true : false
+          itemDisabled: this.qualifiedQuantityDisabled || this.btnType === 'look' ? true : false
+
         },
 
         {
@@ -393,7 +394,7 @@ export default {
           type: 'input',
           sm: 6,
           // render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
-          itemDisabled: this.btnType === 'look' ? true : false
+          itemDisabled: this.unqualifiedQuantityDisabled || this.btnType === 'look' ? true : false
         },
         {
           prop: 'scrapQuantity',
@@ -418,119 +419,119 @@ export default {
         { prop: 'description', label: '备注', value: '', type: 'textarea' }
 
         // { prop: "description", label: "处理说明", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 6 },
-      ]),
-        (this.inspectionInfo = [
-          {
-            prop: 'inspectionOrderNo',
-            label: '检验单号',
-            value: '',
-            type: 'input',
-            itemDisabled: true,
-            itemRules: [{ required: true, trigger: 'blur' }],
-            sm: 6
+      ]
+      this.inspectionInfo = [
+        {
+          prop: 'inspectionOrderNo',
+          label: '检验单号',
+          value: '',
+          type: 'input',
+          itemDisabled: true,
+          itemRules: [{ required: true, trigger: 'blur' }],
+          sm: 6
+        },
+        {
+          prop: 'inspectorId',
+          label: '检验人',
+          value: undefined,
+          type: 'custom',
+          customComponent: 'user-select',
+          itemDisabled: true,
+          itemRules: [{ required: true, trigger: 'change' }],
+          change: () => {
+            this.$nextTick(() => {
+              this.$refs.dataForm.$refs.main.validateField('inspectorId')
+            })
           },
-          {
-            prop: 'inspectorId',
-            label: '检验人',
-            value: undefined,
-            type: 'custom',
-            customComponent: 'user-select',
-            itemDisabled: true,
-            itemRules: [{ required: true, trigger: 'change' }],
-            change: () => {
-              this.$nextTick(() => {
-                this.$refs.dataForm.$refs.main.validateField('inspectorId')
-              })
-            },
-            sm: 6
-          },
-          {
-            prop: 'inspectionDate',
-            label: '检验日期',
-            value: undefined,
-            type: 'date',
-            itemDisabled: true,
-            itemRules: [{ required: true, trigger: 'change' }],
-            sm: 6
-          },
+          sm: 6
+        },
+        {
+          prop: 'inspectionDate',
+          label: '检验日期',
+          value: undefined,
+          type: 'date',
+          itemDisabled: true,
+          itemRules: [{ required: true, trigger: 'change' }],
+          sm: 6
+        },
 
-          {
-            prop: 'productDrawingNo',
-            label: '品名规格',
-            value: '',
-            type: 'input',
-            itemRules: [{ required: true, trigger: 'blur' }],
-            sm: 6,
-            itemDisabled: true
-            // render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
-          },
-          {
-            prop: 'mainUnit',
-            label: '单位',
-            value: '',
-            type: 'input',
-            itemRules: [{ required: true, trigger: 'blur' }],
-            sm: 6,
-            itemDisabled: true
-            // render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
-          },
-          {
-            prop: 'inspectionQuantity',
-            label: '报检数量',
-            value: '',
-            type: 'input',
-            sm: 6,
-            itemDisabled: true
-            // render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
-          },
-          {
-            prop: 'inspectionMethod',
-            label: '检验方式',
-            value: '',
-            type: 'select',
-            clearable: false,
-            itemDisabled: true,
-            change: this.inspectionMethodChange,
-            itemRules: [{ required: true, trigger: 'change' }],
-            sm: 6,
-            // itemDisabled: (rowIndex) => this.dataForm.inspectionMethod === 'exempt' || this.openMode === '只读',
-            options: [
-              { label: '免检', value: 'exempt' },
-              { label: '抽检', value: 'spot_check' },
-              { label: '全检', value: 'all' }
-            ]
-          },
-          // { prop: "inspectionMethod", label: "检验方式", value: undefined, type: "select", options: [{ label: '全检', value: 'all' }, { label: '抽检', value: 'spot_check' }], itemRules: [{ required: true, trigger: 'change' }], sm: 6 },
-          {
-            prop: 'samplingQuantity',
-            label: '检验数量',
-            value: '',
-            type: 'input',
-            sm: 6,
-            // render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
-            itemDisabled: this.dataForm.inspectionMethod == 'all' || this.openMode === '只读'
-          },
-          {
-            prop: 'inspectionResults',
-            label: '检验结果',
-            value: undefined,
-            type: 'select',
-            options: [{ label: '合格', value: 'qualified' }, { label: '不合格', value: 'unqualified' }],
-            change: this.inspectionResultsChange,
-            itemRules: [{ required: true, trigger: 'change' }],
-            sm: 6,
-            itemDisabled: true
-          },
-          {
-            prop: 'inspectionUnqualifiedQuantity',
-            label: '检验不合格数量',
-            value: '',
-            type: 'input',
-            sm: 6,
-            // render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
-            itemDisabled: true
-          }
-        ])
+        {
+          prop: 'productDrawingNo',
+          label: '品名规格',
+          value: '',
+          type: 'input',
+          itemRules: [{ required: true, trigger: 'blur' }],
+          sm: 6,
+          itemDisabled: true
+          // render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
+        },
+        {
+          prop: 'mainUnit',
+          label: '单位',
+          value: '',
+          type: 'input',
+          itemRules: [{ required: true, trigger: 'blur' }],
+          sm: 6,
+          itemDisabled: true
+          // render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
+        },
+        {
+          prop: 'inspectionQuantity',
+          label: '报检数量',
+          value: '',
+          type: 'input',
+          sm: 6,
+          itemDisabled: true
+          // render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
+        },
+        {
+          prop: 'inspectionMethod',
+          label: '检验方式',
+          value: '',
+          type: 'select',
+          clearable: false,
+          itemDisabled: true,
+          change: this.inspectionMethodChange,
+          itemRules: [{ required: true, trigger: 'change' }],
+          sm: 6,
+          // itemDisabled: (rowIndex) => this.dataForm.inspectionMethod === 'exempt' || this.openMode === '只读',
+          options: [
+            { label: '免检', value: 'exempt' },
+            { label: '抽检', value: 'spot_check' },
+            { label: '全检', value: 'all' }
+          ]
+        },
+        // { prop: "inspectionMethod", label: "检验方式", value: undefined, type: "select", options: [{ label: '全检', value: 'all' }, { label: '抽检', value: 'spot_check' }], itemRules: [{ required: true, trigger: 'change' }], sm: 6 },
+        {
+          prop: 'samplingQuantity',
+          label: '检验数量',
+          value: '',
+          type: 'input',
+          sm: 6,
+          // render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
+          itemDisabled: this.dataForm.inspectionMethod == 'all' || this.openMode === '只读'
+        },
+        {
+          prop: 'inspectionResults',
+          label: '检验结果',
+          value: undefined,
+          type: 'select',
+          options: [{ label: '合格', value: 'qualified' }, { label: '不合格', value: 'unqualified' }],
+          change: this.inspectionResultsChange,
+          itemRules: [{ required: true, trigger: 'change' }],
+          sm: 6,
+          itemDisabled: true
+        },
+        {
+          prop: 'inspectionUnqualifiedQuantity',
+          label: '检验不合格数量',
+          value: '',
+          type: 'input',
+          sm: 6,
+          // render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
+          itemDisabled: true
+        }
+      ]
     },
     // 刷新子表结构
     refeshLinesListItems() {

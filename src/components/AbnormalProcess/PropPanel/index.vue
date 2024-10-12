@@ -1264,8 +1264,8 @@
                     依次处理（按顺序依次处理）</el-radio>
                 </div>
               </el-form-item> -->
-              <el-form-item label="处理时长">
-                <div slot="label" class="form-item-label"><span style="color: red;margin-right: 4px;">*</span>处理时长</div>
+              <el-form-item label="超时提醒">
+                <div slot="label" class="form-item-label"><span style="color: red;margin-right: 4px;">*</span>超时提醒</div>
                 <div class="form-item-content">
                   <!-- <el-radio v-model="approverForm.counterSign" :label="0">
                     或签（一名处理人同意或拒绝即可）</el-radio>
@@ -2118,8 +2118,8 @@ const defaultApproverForm = {
   progress: '50',  // 进度
   rejectStep: '0',  // 驳回步骤
   description: '',  // 节点描述
-  planProcessingTime:'',  //计划处理时长（分钟）
-  planTime:'',  //计划处理时长（分钟）
+  planProcessingTime:'',  //计划超时提醒（分钟）
+  planTime:'',  //计划超时提醒（分钟）
   flowUnit:'',            // 单位
   flowUnitList:[
     {label:'天',value:'d'},
@@ -2458,8 +2458,8 @@ export default {
       formulaVisible: false,
       activeItem: {},
       approverRule:{
-        planTime:[{required: true,message:'处理时长不能为空',trigger:'click'}],
-        flowUnit:[{required: true,message:'处理时长单位不能为空',trigger:'change'}],
+        planTime:[{required: true,message:'超时提醒不能为空',trigger:'click'}],
+        flowUnit:[{required: true,message:'超时提醒单位不能为空',trigger:'change'}],
       },
     };
   },
@@ -2770,14 +2770,14 @@ export default {
       }
       if (!this.approverForm.planTime) {
         this.$message({
-          message: '请输入处理时长',
+          message: '请输入超时提醒',
           type: 'error',
         })
         return
       }
       if (!this.approverForm.flowUnit) {
         this.$message({
-          message: '请选择处理时长单位',
+          message: '请选择超时提醒单位',
           type: 'error',
         })
         return

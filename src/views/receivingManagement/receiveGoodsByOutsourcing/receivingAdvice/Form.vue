@@ -143,7 +143,7 @@
 
                     <el-table-column prop="standardValue" label="规值" width="100"></el-table-column>
                     <el-table-column prop="processName" label="工序" width="100" />
-                    <el-table-column prop="ordersNo" label="订单号" min-width="200" />
+                    <el-table-column prop="orderNo" label="订单号" min-width="200" />
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.remark" placeholder="请输入备注"
@@ -199,7 +199,6 @@
                 </el-col>
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="供应商名称" prop="partnerName">
-
                     <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
                       v-model="dataForm.partnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
                       @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
@@ -437,21 +436,15 @@ export default {
         receivingStatus: 'receiving'
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
-        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
-        { prop: 'name', label: '产品名称', sortable: 'custom' },
-        { prop: 'productCode', label: '产品编码', sortable: 'custom' },
-        { prop: 'classAttributeText', label: '产品分类', sortable: 'custom' },
+        { prop: 'drawingNo', label: '品名规格', sortable: 'custom', minWidth: 180 },
+        { prop: 'productCode', label: '产品编码', sortable: 'custom', minWidth: 180 },
         { prop: 'mainUnit', label: '单位' },
-        { prop: 'num', label: '数量' },
-        { prop: 'sealingCoverTyping', label: '打字内容' },
-        { prop: 'accuracyLevel', label: '精度等级' },
-        { prop: 'vibrationLevel', label: '振动等级' },
-        { prop: 'oil', label: '油脂' },
-        { prop: 'oilQuantity', label: '油脂量' },
-        { prop: 'clearance', label: '游隙' },
-        { prop: 'packagingMethod', label: '包装方式' },
+        { prop: 'purchaseQuantity', label: '数量' },
+        { prop: 'waitReceiptNum', label: '待收货数量' },
+        { prop: 'deliveryDate', label: '交货日期' },
+        { prop: 'processName', label: '工序' },
         { prop: 'remark', label: '备注' },
-        { prop: 'createTime', label: '创建日期', sortable: 'custom' }
+        { prop: 'createTime', label: '创建日期', sortable: 'custom', minWidth: 180 }
       ], // 产品选择弹出框搜索条件
 
       ProductTableSearchList: [
@@ -559,56 +552,6 @@ export default {
       allProductTotal: 0,
       orderDateArr: [],
       ProductTreeData: [],
-      productRules: {
-        productName: [{ required: true, trigger: ['change'] }],
-        planQuantity: [
-          { required: true, trigger: ['blur'] },
-          {
-            validator: this.formValidate({
-              type: 'decimal',
-              params: [
-                20,
-                4,
-                '',
-                (errMsg) => {
-                  this.$message.error('主数量：' + errMsg)
-                }
-              ]
-            }),
-            trigger: 'blur'
-          },
-          {
-            validator: this.formValidate('positiveNumber', false, (errMsg) => {
-              this.$message.error(`数量(主)：${errMsg}`)
-            }),
-            trigger: 'blur'
-          }
-        ],
-        planQuantity2: [
-          { required: true, trigger: ['blur'] },
-          {
-            validator: this.formValidate({
-              type: 'decimal',
-              params: [
-                20,
-                4,
-                '',
-                (errMsg) => {
-                  this.$message.error('副数量：' + errMsg)
-                }
-              ]
-            }),
-            trigger: 'blur'
-          },
-          {
-            validator: this.formValidate('positiveNumber', false, (errMsg) => {
-              this.$message.error(`数量(副)：${errMsg}`)
-            }),
-            trigger: 'blur'
-          }
-        ],
-        deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
-      },
       productArr: [],
       defaultProps: {
         children: 'children',
@@ -650,11 +593,7 @@ export default {
       paymentCycleList: [],
       activeNameDetail: 'productInfo',
       coverNum: '', //用于计算
-      invoicingStatusList: [
-        { label: '未开票', value: 'not_invoiced' },
-        { label: '部分开票', value: 'partial_invoicing' },
-        { label: '已开票', value: 'invoiced' }
-      ],
+
       btnType: undefined,
       areaList: [],
       provinces: [],
@@ -827,6 +766,7 @@ export default {
     // list 中 a 不能 operator b 的校验规则
     calcValidate() {
       return (rule, value, callback) => {
+        console.log(value, 'ooo')
         let index = Number(rule.field.match(/\d+/)[0])
         let msg = this.dataForm.exchangeGoodsFlag ? `换货数量超过最大可换货数量` : `收货数量超过最大可收货数量`
         if (!value || value == 0) {
@@ -841,7 +781,7 @@ export default {
             flag = true
           }
           if (flag) {
-            this.$message.error(msg)
+            this.$message.error(`第${index + 1}行${msg}`)
             callback(new Error(msg))
           } else {
             callback()
@@ -993,7 +933,7 @@ export default {
             purchaseOrderId: item.purchaseOrderId,
             productsId: item.productsId, // 产品id
             productName: item.name, // 产品名称
-            productCode: item.code, // 产品编码
+            productCode: item.productCode, // 产品编码
             drawingNo: item.drawingNo, // 品名规格
             ratio: item.ratio, // 转换系数
             calculationDirection: item.calculationDirection, // 计算方向
@@ -1325,9 +1265,7 @@ export default {
         this.btnText = '继续修改'
       } else if (this.btnType == 'add' || this.btnType == 'copy') {
         this.btnText = '继续新增'
-
       }
-
     },
     goBack() {
       this.$emit('close', true)
@@ -1371,193 +1309,163 @@ export default {
       this.btnLoading = false
     },
     handleConfirm(value) {
-      this.$refs['productForm'].validate((valid) => {
-        if (!valid) {
-          return
-        }
-      })
+      let submitFlag = true
+
       this.$refs['dataForm'].validate((valid) => {
         this.dataForm.documentStatus = value
-
-        if (valid) {
-          if (this.datafilelist.length) {
-            this.datafilelist.map((item, index) => {
-              item.bimAttachments = {
-                businessType: '',
-                documentId: item.id,
-                fileFlag: '',
-                sort: index
-              }
-            })
-          }
-          // this.dataForm.classAttribute = 'finish_product'
-          this.dataForm.receiptReturnType = 'receipt'
-          let obj = {
-            attachmentList: this.datafilelist,
-            returnGoods: this.dataForm,
-            lines: [],
-            flowData: this.flowData
-          }
-          if (!this.dataFormTwo.productData.length) {
-            this.$message({
-              message: '请选择产品',
-              type: 'error',
-              duration: 1500
-            })
-            return
-          }
-          this.dataFormTwo.productData.forEach((item, index) => {
-            if (!item.receivedQuantity) {
-              this.iszhi = true
-              this.$message({
-                message: this.dataForm.exchangeGoodsFlag
-                  ? `第${index + 1}行换货数量不能为空`
-                  : `第${index + 1}行收货数量不能为空`,
-                type: 'error',
-                duration: 1500
-              })
-            } else if (
-              item.outboundQuantity &&
-              item.receivedQuantity * 1 > item.outboundQuantity * 1 - item.returnQuantity * 1
-            ) {
-              this.iszhi = true
-              this.$message({
-                message: this.dataForm.exchangeGoodsFlag ? `换货数量超过最大可换货数量` : `收货数量超过最大可收货数量`,
-                type: 'error',
-                duration: 1500
-              })
-            } else if (item.receivedQuantity == 0) {
-              this.iszhi = true
-              this.$message({
-                message: this.dataForm.exchangeGoodsFlag
-                  ? `第${index + 1}行换货数量不能为'0'`
-                  : `第${index + 1}行收货数量不能为'0'`,
-                type: 'error',
-                duration: 1500
-              })
-            }
-          })
-          if (this.iszhi) {
-            this.iszhi = false
-            return
-          }
-          this.dataFormTwo.productData.forEach((item, index) => {
-            let dep = {
-              accuracyLevel: item.accuracyLevel,
-              billStatus: item.billStatus,
-              calculationDirection: item.calculationDirection,
-              clearance: item.clearance,
-              customColumn: item.customColumn,
-              deputyUnit: item.deputyUnit,
-              drawingNo: item.drawingNo,
-              // id: 0,
-              notificationType: 'external',
-              inspectionResults: item.inspectionResults,
-              mainUnit: item.mainUnit,
-              // notificationType: item.notificationType,
-              oil: item.oil,
-              oilQuantity: item.oilQuantity,
-
-              packagingMethod: item.packagingMethod,
-              packingQuantity: item.packingQuantity,
-              processId: item.processId,
-              productsId: item.productsId ? item.productsId : '',
-              purchaseOrderId: item.purchaseOrderId,
-              purchaseQuantity: item.purchaseQuantity,
-              purchaseReceiptReturnGoodsId: item.purchaseReceiptReturnGoodsId,
-              qualifiedQuantity: item.qualifiedQuantity,
-              ratio: item.ratio,
-              waitReceiptNum: item.waitReceiptNum,
-              receivedQuantity: item.receivedQuantity,
-              receivingStatus: item.receivingStatus,
-              remark: item.remark,
-              sealingCoverTyping: item.sealingCoverTyping,
-              standardValue: item.standardValue,
-              unqualifiedQuantity: item.unqualifiedQuantity,
-              vibrationLevel: item.vibrationLevel,
-              warehouseId: item.warehouseId,
-              ordersId: item.ordersId,
-              classAttribute: item.classAttribute,
-              id: item.id ? item.id : '',
-              // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-              ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
-              // pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
-              ratio: item.ratio ? item.ratio : '',
-              receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
-              remark: item.remark ? item.remark : '',
-              purchaseReceiptReturnGoodsId: this.dataForm.id ? this.dataForm.id : '',
-              receivingQuantity: item.receivingQuantity ? item.receivingQuantity : ''
-            }
-            let dep1 = {
-              billStatus: item.billStatus ? item.billStatus : '',
-              calculationDirection: item.calculationDirection ? item.calculationDirection : '',
-              receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
-              deputyUnit: item.deputyUnit ? item.deputyUnit : '',
-              drawingNo: item.drawingNo ? item.drawingNo : '',
-              mainUnit: item.mainUnit ? item.mainUnit : '',
-              ordersId: item.ordersId,
-              classAttribute: item.classAttribute,
-              id: item.id ? item.id : '',
-              purchaseOrderId: item.purchaseOrderId,
-              purchaseQuantity: item.purchaseQuantity,
-              productsId: item.productsId ? item.productsId : '',
-              waitReceiptNum: item.waitReceiptNum ? item.waitReceiptNum : '',
-              // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-              ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
-              pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
-              ratio: item.ratio ? item.ratio : '',
-              receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
-              remark: item.remark ? item.remark : '',
-              purchaseReceiptReturnGoodsId: this.dataForm.id ? this.dataForm.id : '',
-              receivingQuantity: item.receivingQuantity ? item.receivingQuantity : ''
-            }
-            if (this.btnType == 'add' || this.btnType == 'copy') {
-              obj.lines.push(dep)
-            } else {
-              obj.lines.push(dep1)
-            }
-          })
-          this.btnLoading = true
-          let formMethod = null
-
-          if (this.btnType == 'edit') {
-            formMethod = editpurPurchaseReceiptReturnGoods
-          } else if (this.btnType == 'add' || this.btnType == 'copy') {
-            formMethod = addpurPurchaseReceiptReturnGoods
-          }
-
-          formMethod(obj)
-            .then((res) => {
-              // let msg = "";
-              // if (formMethod == addpurPurchaseReceiptReturnGoods) {
-              //   msg = "新建成功"
-              // } else if (value == 'draft') {
-              //   msg = "保存成功"
-              // } else if (value == 'submit') {
-              //   msg = '提交成功'
-              // }
-              if (value == 'draft') {
-                this.submitmethodsTitle = '保存成功'
-              } else if (value == 'submit') {
-                this.submitmethodsTitle = '提交成功'
-              }
-              this.tipsvisible = true
-              // this.$message({
-              //   message: msg,
-              //   type: 'success',
-              //   duration: 1500,
-              //   onClose: () => {
-              //     this.visible = false
-              //     this.btnLoading = false
-              //     this.$emit('close', true)
-              //   }
-              // })
-            })
-            .catch(() => {
-              this.btnLoading = false
-            })
+        if (!valid) {
+          submitFlag = false
         }
       })
+      this.$refs['productForm'].validate((valid) => {
+        if (!valid) {
+          submitFlag = false
+        }
+      })
+      if (submitFlag) {
+        if (this.datafilelist.length) {
+          this.datafilelist.map((item, index) => {
+            item.bimAttachments = {
+              businessType: '',
+              documentId: item.id,
+              fileFlag: '',
+              sort: index
+            }
+          })
+        }
+        // this.dataForm.classAttribute = 'finish_product'
+        this.dataForm.receiptReturnType = 'receipt'
+        let obj = {
+          attachmentList: this.datafilelist,
+          returnGoods: this.dataForm,
+          lines: [],
+          flowData: this.flowData
+        }
+        if (!this.dataFormTwo.productData.length) {
+          this.$message({
+            message: '请选择产品',
+            type: 'error',
+            duration: 1500
+          })
+          return
+        }
+
+        this.dataFormTwo.productData.forEach((item, index) => {
+          let dep = {
+            accuracyLevel: item.accuracyLevel,
+            billStatus: item.billStatus,
+            calculationDirection: item.calculationDirection,
+            clearance: item.clearance,
+            customColumn: item.customColumn,
+            deputyUnit: item.deputyUnit,
+            drawingNo: item.drawingNo,
+            // id: 0,
+            notificationType: 'external',
+            inspectionResults: item.inspectionResults,
+            mainUnit: item.mainUnit,
+            // notificationType: item.notificationType,
+            oil: item.oil,
+            oilQuantity: item.oilQuantity,
+
+            packagingMethod: item.packagingMethod,
+            packingQuantity: item.packingQuantity,
+            processId: item.processId,
+            productsId: item.productsId ? item.productsId : '',
+            purchaseOrderId: item.purchaseOrderId,
+            purchaseQuantity: item.purchaseQuantity,
+            purchaseReceiptReturnGoodsId: item.purchaseReceiptReturnGoodsId,
+            qualifiedQuantity: item.qualifiedQuantity,
+            ratio: item.ratio,
+            waitReceiptNum: item.waitReceiptNum,
+            receivedQuantity: item.receivedQuantity,
+            receivingStatus: item.receivingStatus,
+            remark: item.remark,
+            sealingCoverTyping: item.sealingCoverTyping,
+            standardValue: item.standardValue,
+            unqualifiedQuantity: item.unqualifiedQuantity,
+            vibrationLevel: item.vibrationLevel,
+            warehouseId: item.warehouseId,
+            ordersId: item.ordersId,
+            classAttribute: item.classAttribute,
+            id: item.id ? item.id : '',
+            // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
+            ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+            // pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
+            ratio: item.ratio ? item.ratio : '',
+            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
+            remark: item.remark ? item.remark : '',
+            purchaseReceiptReturnGoodsId: this.dataForm.id ? this.dataForm.id : '',
+            receivingQuantity: item.receivingQuantity ? item.receivingQuantity : ''
+          }
+          let dep1 = {
+            billStatus: item.billStatus ? item.billStatus : '',
+            calculationDirection: item.calculationDirection ? item.calculationDirection : '',
+            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
+            deputyUnit: item.deputyUnit ? item.deputyUnit : '',
+            drawingNo: item.drawingNo ? item.drawingNo : '',
+            mainUnit: item.mainUnit ? item.mainUnit : '',
+            ordersId: item.ordersId,
+            classAttribute: item.classAttribute,
+            id: item.id ? item.id : '',
+            purchaseOrderId: item.purchaseOrderId,
+            purchaseQuantity: item.purchaseQuantity,
+            productsId: item.productsId ? item.productsId : '',
+            waitReceiptNum: item.waitReceiptNum ? item.waitReceiptNum : '',
+            // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
+            ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+            pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
+            ratio: item.ratio ? item.ratio : '',
+            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
+            remark: item.remark ? item.remark : '',
+            purchaseReceiptReturnGoodsId: this.dataForm.id ? this.dataForm.id : '',
+            receivingQuantity: item.receivingQuantity ? item.receivingQuantity : ''
+          }
+          if (this.btnType == 'add' || this.btnType == 'copy') {
+            obj.lines.push(dep)
+          } else {
+            obj.lines.push(dep1)
+          }
+        })
+        this.btnLoading = true
+        let formMethod = null
+
+        if (this.btnType == 'edit') {
+          formMethod = editpurPurchaseReceiptReturnGoods
+        } else if (this.btnType == 'add' || this.btnType == 'copy') {
+          formMethod = addpurPurchaseReceiptReturnGoods
+        }
+        console.log(obj, 'ohh')
+        // formMethod(obj)
+        //   .then((res) => {
+        //     // let msg = "";
+        //     // if (formMethod == addpurPurchaseReceiptReturnGoods) {
+        //     //   msg = "新建成功"
+        //     // } else if (value == 'draft') {
+        //     //   msg = "保存成功"
+        //     // } else if (value == 'submit') {
+        //     //   msg = '提交成功'
+        //     // }
+        //     if (value == 'draft') {
+        //       this.submitmethodsTitle = '保存成功'
+        //     } else if (value == 'submit') {
+        //       this.submitmethodsTitle = '提交成功'
+        //     }
+        //     this.tipsvisible = true
+        //     // this.$message({
+        //     //   message: msg,
+        //     //   type: 'success',
+        //     //   duration: 1500,
+        //     //   onClose: () => {
+        //     //     this.visible = false
+        //     //     this.btnLoading = false
+        //     //     this.$emit('close', true)
+        //     //   }
+        //     // })
+        //   })
+        //   .catch(() => {
+        //     this.btnLoading = false
+        //   })
+      }
     },
     // 测试审批流
     getBusInfo() {

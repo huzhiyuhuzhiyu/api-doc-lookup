@@ -30,14 +30,14 @@
 </template>
 
 <script>
-import { distributionCustomer } from '@/api/customerManagement/index'
+import { updatbatchequEquipmentRepair } from '@/api/dailyManagement/Maintenance'
 export default {
   data() {
     return {
       visibleDialog: false,
       btnLoading: false,
       dataForm: {
-        idList: [],
+        repairListId: [],
         reason: '',
         repairCompletionTime: '',
         solutionMeasures: ''
@@ -72,9 +72,9 @@ export default {
       this.btnLoading = true
       this.$refs['elForm'].validate((valid) => {
         if (valid) {
-          distributionCustomer(this.dataForm).then(res => {
+          updatbatchequEquipmentRepair(this.dataForm).then(res => {
             this.$message({
-              message: '移交成功',
+              message: '提交成功',
               type: 'success',
               duration: 1500,
               onClose: () => {

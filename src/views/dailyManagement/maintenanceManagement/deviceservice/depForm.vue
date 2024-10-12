@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import { distributionCustomer } from '@/api/customerManagement/index'
+import { updatbatchequEquipmentRepair } from '@/api/dailyManagement/Maintenance'
 export default {
   data() {
     return {
@@ -70,7 +70,7 @@ export default {
       visibleDialog: false,
       btnLoading: false,
       dataForm: {
-        idList: [],
+        repairListId: [],
         reviewComments: '',
         degree: '',
         startMaintenanceTime: '',
@@ -100,7 +100,7 @@ export default {
     init(idList) {
       this.visibleDialog = true
       this.btnLoading = false
-      this.dataForm.idList = idList
+      this.dataForm.repairListId = idList
       this.$nextTick(() => {
         this.$refs['elForm'].resetFields()
       })
@@ -109,9 +109,9 @@ export default {
       this.btnLoading = true
       this.$refs['elForm'].validate((valid) => {
         if (valid) {
-          distributionCustomer(this.dataForm).then(res => {
+          updatbatchequEquipmentRepair(this.dataForm).then(res => {
             this.$message({
-              message: '移交成功',
+              message: '提交成功',
               type: 'success',
               duration: 1500,
               onClose: () => {

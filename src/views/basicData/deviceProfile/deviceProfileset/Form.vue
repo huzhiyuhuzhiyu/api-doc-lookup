@@ -112,7 +112,7 @@
 
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="车间" prop="factoryFloorId">
-                        <el-select v-model="dataForm.factoryFloorId" filterable placeholder="请选择车间" clearable style="width: 100%;" :loading="factorylistLoading">
+                        <el-select v-model="dataForm.factoryFloorId" filterable placeholder="请选择车间" :disabled="disabled" clearable style="width: 100%;" :loading="factorylistLoading">
                           <el-option v-for="item in factoryFloorList" :key="item.id" :label="item.name" :value="item.id">
                           </el-option>
                         </el-select>
@@ -120,7 +120,7 @@
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="安装地点" prop="mountedPlacesId">
-                        <el-select v-model="dataForm.mountedPlacesId" filterable placeholder="请选择安装地点" clearable style="width: 100%;" :loading="factorylistLoading">
+                        <el-select v-model="dataForm.mountedPlacesId" filterable placeholder="请选择安装地点" :disabled="disabled" clearable style="width: 100%;" :loading="factorylistLoading">
                           <el-option v-for="item in mountedPlacesList" :key="item.id" :label="item.name" :value="item.id">
                           </el-option>
                         </el-select>
@@ -302,7 +302,7 @@ export default {
       picArr: [],
       type: '',
       dataForm: {
-
+        repairUserId:'',
         salespersonId: "",
         purchaseAmount: "",
         id: "",
@@ -363,6 +363,14 @@ export default {
           value: "discard",
           label: "报废"
         },
+        {
+          value: "spare",
+          label: "备用"
+        },
+        {
+          value: "stop",
+          label: "停用"
+        }
       ],
       categoryIdProps: {
         'label': 'name',

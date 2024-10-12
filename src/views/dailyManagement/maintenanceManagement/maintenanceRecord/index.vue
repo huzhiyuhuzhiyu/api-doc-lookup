@@ -150,6 +150,7 @@ export default {
         { label: "已维修", value: "maintained" }
       ],
       orderForm: {
+        state: 'maintained',
         classAttribute: "equipment",
         maintenanceNo: '',
         equipmentIdCode: '',
@@ -160,7 +161,6 @@ export default {
         faultStartTimeStart: '',
         faultStartTimeEnd: '',
         maintenancePersonnel: '',
-        state: '',
         startTime: '',
         endTime: '',
         pageNum: 1,
@@ -270,6 +270,8 @@ export default {
       this.faultStartTime = []
       this.orderDateArr = []
       this.orderForm = {
+        state: 'maintained',
+        classAttribute: "equipment",
         maintenanceNo: '',
         equipmentIdCode: '',
         equipmentIdName: '',
@@ -279,7 +281,6 @@ export default {
         faultStartTimeStart: '',
         faultStartTimeEnd: '',
         maintenancePersonnel: '',
-        state: '',
         startTime: '',
         endTime: '',
         pageNum: 1,

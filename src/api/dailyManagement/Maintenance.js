@@ -130,7 +130,14 @@ export function updateRepairRequest (data) {
     data
   })
 }
-
+// 维修申请单 批量修改
+export function updatbatchequEquipmentRepair (data) {
+  return request({
+    url: `/api/mes/equEquipmentRepair/batch/modify`,
+    method: 'PUT',
+    data
+  })
+}
 // 维修申请单 详情
 export function detailRepairRequest (id) {
   return request({

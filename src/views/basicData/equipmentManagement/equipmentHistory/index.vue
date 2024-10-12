@@ -65,7 +65,7 @@
             <el-table-column prop="createByName" label="创建人" width="120" sortable="custom" />
             <el-table-column label="操作" width="140" fixed="right">
               <template slot-scope="scope">
-                <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
+                <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.equipmentId, 'look')">
                   查看履历
                 </el-button>
               </template>

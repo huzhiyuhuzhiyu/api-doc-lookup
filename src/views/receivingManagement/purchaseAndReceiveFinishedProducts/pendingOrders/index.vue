@@ -165,6 +165,7 @@ export default {
         // approvalStatus: 'ok',
         // documentStatus: 'submit',
         // orderState: 'not_finish',
+        receiptQueryFlag: 1,
         orderType: 'procure',
         deliveryEndDate: '',
         deliveryStartDate: '',

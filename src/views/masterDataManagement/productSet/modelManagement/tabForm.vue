@@ -282,7 +282,8 @@ export default {
               this.$message.error(`第${index + 1}行，型号已存在`)
             }
           })
-        } else if (!item.innerCircle) {
+        }
+        if (!item.innerCircle) {
           submitFlag = false
           this.$message.error(`第${index + 1}行，内圈为空`)
         } else if (!item.outerCircle) {

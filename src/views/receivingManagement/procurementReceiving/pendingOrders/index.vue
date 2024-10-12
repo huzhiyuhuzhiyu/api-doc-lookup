@@ -160,6 +160,7 @@ export default {
         // documentStatus: 'submit',
         // orderState: 'not_finish',
         orderType: 'procure',
+        receiptQueryFlag: 1,
         deliveryEndDate: '',
         deliveryStartDate: '',
         classAttribute: 'other',
@@ -388,7 +389,7 @@ export default {
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
-     
+
       this.orderForm.orderItems[0].asc = order === 'ascending'
       this.orderForm.orderItems[0].column = order === null ? '' : newProp
       this.initData()

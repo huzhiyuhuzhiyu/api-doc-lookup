@@ -110,7 +110,7 @@ export default {
      */
     eventReceiver({ event, args }) {
       if (event === "edit") {
-        this.activeData = args[0]; // 打开属性面板
+        this.activeData = (args && args[0].type === 'start') ? null : args[0]; // 打开属性面板
         return;
       }
       // 本实例只监听了第一层数据（startNode）变动

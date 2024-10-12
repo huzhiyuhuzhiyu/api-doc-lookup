@@ -76,7 +76,16 @@
             <el-table-column prop="inspectionQuantity" label="报检数量" width="120" sortable="custom" />
             <el-table-column prop="samplingQuantity" label="检验数量" width="120" sortable="custom" />
             <el-table-column prop="description" label="处理说明" min-width="180" sortable="custom" />
-            <el-table-column prop="treatmentResults" label="处理结果" width="120" sortable="custom" />
+            <el-table-column prop="treatmentResults" label="处理结果" width="120" sortable="custom">
+              <template slot-scope="scope">
+                <div v-if="scope.row.treatmentResults == 'qualified'">合格</div>
+                <div v-if="scope.row.treatmentResults == 'unqualified'">不合格</div>
+                <div v-if="scope.row.treatmentResults == 'concessive_acceptance'">让步接收</div>
+                <div v-if="scope.row.treatmentResults == 'select'">挑选</div>
+                <div v-if="scope.row.treatmentResults == 'repair'">返工返修</div>
+                <div v-if="scope.row.treatmentResults == 'discard_repair'">报废和返修</div>
+              </template>
+            </el-table-column>
             <el-table-column prop="qualifiedQuantity" label="合格数量" width="120" sortable="custom" />
             <el-table-column prop="unqualifiedQuantity" label="不合格数量" width="130" sortable="custom" />
             <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center"
@@ -400,7 +409,7 @@ export default {
         { field: 'inspectionOrderNo', fieldValue: '', label: '检验单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ]
-   
+
       this.initData()
     },
     addOrUpdateHandle(row, btnType) {

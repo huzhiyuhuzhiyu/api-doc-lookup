@@ -548,7 +548,7 @@ export default {
         createByName: '',
         deliveryEndDate: '',
         deliveryStartDate: '',
-
+        receiptQueryFlag: 1,
         endTime: '',
         orderNo: '',
         orderType: 'procure',
@@ -917,7 +917,7 @@ export default {
             flag = true
           }
           if (flag) {
-            this.$message.error(msg)
+            this.$message.error(`第${index + 1}行${msg}`)
             callback(new Error(msg))
           } else {
             callback()
@@ -1577,190 +1577,160 @@ export default {
       this.btnLoading = false
     },
     handleConfirm(value) {
-      this.$refs['productForm'].validate((valid) => {
-        if (!valid) {
-          return
-        }
-      })
+      let submitFlag = true
+
       this.$refs['dataForm'].validate((valid) => {
         this.dataForm.documentStatus = value
+        if (!valid) {
+          submitFlag = false
+        }
 
-        if (valid) {
-          if (this.datafilelist.length) {
-            this.datafilelist.map((item, index) => {
-              item.bimAttachments = {
-                businessType: '',
-                documentId: item.id,
-                fileFlag: '',
-                sort: index
-              }
-            })
-          }
-          // this.dataForm.classAttribute = 'finish_product'
-          this.dataForm.receiptReturnType = 'receipt'
-          let obj = {
-            attachmentList: this.datafilelist,
-            returnGoods: this.dataForm,
-            lines: [],
-            flowData: this.flowData
-          }
-          if (!this.dataFormTwo.productData.length) {
-            this.$message({
-              message: '请选择产品',
-              type: 'error',
-              duration: 1500
-            })
-            return
-          }
-          this.dataFormTwo.productData.forEach((item, index) => {
-            if (!item.receivedQuantity) {
-              this.iszhi = true
-              this.$message({
-                message: this.dataForm.exchangeGoodsFlag
-                  ? `第${index + 1}行换货数量不能为空`
-                  : `第${index + 1}行收货数量不能为空`,
-                type: 'error',
-                duration: 1500
-              })
-            } else if (
-              item.outboundQuantity &&
-              item.receivedQuantity * 1 > item.outboundQuantity * 1 - item.returnQuantity * 1
-            ) {
-              this.iszhi = true
-              this.$message({
-                message: this.dataForm.exchangeGoodsFlag ? `换货数量超过最大可换货数量` : `收货数量超过最大可收货数量`,
-                type: 'error',
-                duration: 1500
-              })
-            } else if (item.receivedQuantity == 0) {
-              this.iszhi = true
-              this.$message({
-                message: this.dataForm.exchangeGoodsFlag
-                  ? `第${index + 1}行换货数量不能为'0'`
-                  : `第${index + 1}行收货数量不能为'0'`,
-                type: 'error',
-                duration: 1500
-              })
-            }
-          })
-          if (this.iszhi) {
-            this.iszhi = false
-            return
-          }
-          this.dataFormTwo.productData.forEach((item, index) => {
-            let dep = {
-              accuracyLevel: item.accuracyLevel,
-              billStatus: item.billStatus,
-              calculationDirection: item.calculationDirection,
-              clearance: item.clearance,
-              customColumn: item.customColumn,
-              deputyUnit: item.deputyUnit,
-              // id: 0,
-              notificationType: 'procure',
-              inspectionResults: item.inspectionResults,
-              mainUnit: item.mainUnit,
-              // notificationType: item.notificationType,
-              oil: item.oil,
-              oilQuantity: item.oilQuantity,
-              ordersLineId: item.ordersLineId,
-              packagingMethod: item.packagingMethod,
-              packingQuantity: item.packingQuantity,
-              processId: item.processId,
-              productsId: item.productsId ? item.productsId : '',
-              purchaseOrderId: item.purchaseOrderId,
-              purchaseQuantity: item.purchaseQuantity,
-              purchaseReceiptReturnGoodsId: item.purchaseReceiptReturnGoodsId,
-              qualifiedQuantity: item.qualifiedQuantity,
-              ratio: item.ratio,
-              waitReceiptNum: item.waitReceiptNum,
-              receivedQuantity: item.receivedQuantity,
-              receivingStatus: item.receivingStatus,
-              remark: item.remark,
-              sealingCoverTyping: item.sealingCoverTyping,
-              standardValue: item.standardValue,
-              unqualifiedQuantity: item.unqualifiedQuantity,
-              vibrationLevel: item.vibrationLevel,
-              warehouseId: item.warehouseId,
-              ordersId: item.ordersId,
-              classAttribute: item.classAttribute,
-              id: item.id ? item.id : '',
-              // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-              ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
-              // pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
-              ratio: item.ratio ? item.ratio : '',
-              receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
-              remark: item.remark ? item.remark : '',
-              purchaseReceiptReturnGoodsId: this.dataForm.id ? this.dataForm.id : '',
-              receivingQuantity: item.receivingQuantity ? item.receivingQuantity : ''
-            }
-            let dep1 = {
-              billStatus: item.billStatus ? item.billStatus : '',
-              calculationDirection: item.calculationDirection ? item.calculationDirection : '',
-              receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
-              deputyUnit: item.deputyUnit ? item.deputyUnit : '',
-              mainUnit: item.mainUnit ? item.mainUnit : '',
-              ordersId: item.ordersId,
-              classAttribute: item.classAttribute,
-              id: item.id ? item.id : '',
-              purchaseQuantity: item.purchaseQuantity,
-              productsId: item.productsId ? item.productsId : '',
-              waitReceiptNum: item.waitReceiptNum ? item.waitReceiptNum : '',
-              // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-              ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
-              pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
-              ratio: item.ratio ? item.ratio : '',
-              receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
-              remark: item.remark ? item.remark : '',
-              purchaseReceiptReturnGoodsId: this.dataForm.id ? this.dataForm.id : '',
-              receivingQuantity: item.receivingQuantity ? item.receivingQuantity : ''
-            }
-            if (this.btnType == 'add' || this.btnType == 'copy') {
-              obj.lines.push(dep)
-            } else {
-              obj.lines.push(dep1)
-            }
-          })
-          this.btnLoading = true
-          let formMethod = null
-
-          if (this.btnType == 'edit') {
-            formMethod = editpurPurchaseReceiptReturnGoods
-          } else if (this.btnType == 'add' || this.btnType == 'copy') {
-            // obj.notice.deliveryStatus = 'not_returned'
-            formMethod = addpurPurchaseReceiptReturnGoods
-          }
-          formMethod(obj)
-            .then((res) => {
-              // let msg = "";
-              // if (formMethod == addpurPurchaseReceiptReturnGoods) {
-              //   msg = "新建成功"
-              // } else if (value == 'draft') {
-              //   msg = "保存成功"
-              // } else if (value == 'submit') {
-              //   msg = '提交成功'
-              // }
-              if (value == 'draft') {
-                this.submitmethodsTitle = '保存成功'
-              } else if (value == 'submit') {
-                this.submitmethodsTitle = '提交成功'
-              }
-              this.tipsvisible = true
-              // this.$message({
-              //   message: msg,
-              //   type: 'success',
-              //   duration: 1500,
-              //   onClose: () => {
-              //     this.visible = false
-              //     this.btnLoading = false
-              //     this.$emit('close', true)
-              //   }
-              // })
-            })
-            .catch(() => {
-              this.btnLoading = false
-            })
+      })
+      this.$refs['productForm'].validate((valid) => {
+        if (!valid) {
+          submitFlag = false
         }
       })
+      if (submitFlag) {
+        if (this.datafilelist.length) {
+          this.datafilelist.map((item, index) => {
+            item.bimAttachments = {
+              businessType: '',
+              documentId: item.id,
+              fileFlag: '',
+              sort: index
+            }
+          })
+        }
+        // this.dataForm.classAttribute = 'finish_product'
+        this.dataForm.receiptReturnType = 'receipt'
+        let obj = {
+          attachmentList: this.datafilelist,
+          returnGoods: this.dataForm,
+          lines: [],
+          flowData: this.flowData
+        }
+        if (!this.dataFormTwo.productData.length) {
+          this.$message({
+            message: '请选择产品',
+            type: 'error',
+            duration: 1500
+          })
+          return
+        }
+        this.dataFormTwo.productData.forEach((item, index) => {
+          let dep = {
+            accuracyLevel: item.accuracyLevel,
+            billStatus: item.billStatus,
+            calculationDirection: item.calculationDirection,
+            clearance: item.clearance,
+            customColumn: item.customColumn,
+            deputyUnit: item.deputyUnit,
+            // id: 0,
+            notificationType: 'procure',
+            inspectionResults: item.inspectionResults,
+            mainUnit: item.mainUnit,
+            // notificationType: item.notificationType,
+            oil: item.oil,
+            oilQuantity: item.oilQuantity,
+            ordersLineId: item.ordersLineId,
+            packagingMethod: item.packagingMethod,
+            packingQuantity: item.packingQuantity,
+            processId: item.processId,
+            productsId: item.productsId ? item.productsId : '',
+            purchaseOrderId: item.purchaseOrderId,
+            purchaseQuantity: item.purchaseQuantity,
+            purchaseReceiptReturnGoodsId: item.purchaseReceiptReturnGoodsId,
+            qualifiedQuantity: item.qualifiedQuantity,
+            ratio: item.ratio,
+            waitReceiptNum: item.waitReceiptNum,
+            receivedQuantity: item.receivedQuantity,
+            receivingStatus: item.receivingStatus,
+            remark: item.remark,
+            sealingCoverTyping: item.sealingCoverTyping,
+            standardValue: item.standardValue,
+            unqualifiedQuantity: item.unqualifiedQuantity,
+            vibrationLevel: item.vibrationLevel,
+            warehouseId: item.warehouseId,
+            ordersId: item.ordersId,
+            classAttribute: item.classAttribute,
+            id: item.id ? item.id : '',
+            // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
+            ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+            // pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
+            ratio: item.ratio ? item.ratio : '',
+            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
+            remark: item.remark ? item.remark : '',
+            purchaseReceiptReturnGoodsId: this.dataForm.id ? this.dataForm.id : '',
+            receivingQuantity: item.receivingQuantity ? item.receivingQuantity : ''
+          }
+          let dep1 = {
+            billStatus: item.billStatus ? item.billStatus : '',
+            calculationDirection: item.calculationDirection ? item.calculationDirection : '',
+            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
+            deputyUnit: item.deputyUnit ? item.deputyUnit : '',
+            mainUnit: item.mainUnit ? item.mainUnit : '',
+            ordersId: item.ordersId,
+            classAttribute: item.classAttribute,
+            id: item.id ? item.id : '',
+            purchaseQuantity: item.purchaseQuantity,
+            productsId: item.productsId ? item.productsId : '',
+            waitReceiptNum: item.waitReceiptNum ? item.waitReceiptNum : '',
+            // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
+            ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+            pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
+            ratio: item.ratio ? item.ratio : '',
+            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
+            remark: item.remark ? item.remark : '',
+            purchaseReceiptReturnGoodsId: this.dataForm.id ? this.dataForm.id : '',
+            receivingQuantity: item.receivingQuantity ? item.receivingQuantity : ''
+          }
+          if (this.btnType == 'add' || this.btnType == 'copy') {
+            obj.lines.push(dep)
+          } else {
+            obj.lines.push(dep1)
+          }
+        })
+        this.btnLoading = true
+        let formMethod = null
+
+        if (this.btnType == 'edit') {
+          formMethod = editpurPurchaseReceiptReturnGoods
+        } else if (this.btnType == 'add' || this.btnType == 'copy') {
+          // obj.notice.deliveryStatus = 'not_returned'
+          formMethod = addpurPurchaseReceiptReturnGoods
+        }
+        formMethod(obj)
+          .then((res) => {
+            // let msg = "";
+            // if (formMethod == addpurPurchaseReceiptReturnGoods) {
+            //   msg = "新建成功"
+            // } else if (value == 'draft') {
+            //   msg = "保存成功"
+            // } else if (value == 'submit') {
+            //   msg = '提交成功'
+            // }
+            if (value == 'draft') {
+              this.submitmethodsTitle = '保存成功'
+            } else if (value == 'submit') {
+              this.submitmethodsTitle = '提交成功'
+            }
+            this.tipsvisible = true
+            // this.$message({
+            //   message: msg,
+            //   type: 'success',
+            //   duration: 1500,
+            //   onClose: () => {
+            //     this.visible = false
+            //     this.btnLoading = false
+            //     this.$emit('close', true)
+            //   }
+            // })
+          })
+          .catch(() => {
+            this.btnLoading = false
+          })
+      }
     },
     // 测试审批流
     getBusInfo() {

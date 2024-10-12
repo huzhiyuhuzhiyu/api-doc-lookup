@@ -820,6 +820,7 @@ export default {
     searchProductFun() {
       if (this.dataForm.documentType == 'outbound') {
         this.orderForm.classAttributeList = this.classAttributeList
+        this.orderForm.warehouseId=this.dataForm.warehouseId
         getBatchNumber(this.orderForm).then(res => {
 
           this.productList = res.data.records
@@ -861,7 +862,7 @@ export default {
         productDrawingNo: "",        // customerProductNo: "",
         productName: "",
         productCode: "",
-
+        warehouseId:"",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -923,10 +924,10 @@ export default {
         item.ordersLineId = ""
         item.totalAmount = ""
         item.taxAmount = ""
-        item.productCode = item.code
         item.taxRate = 13
         if (this.dataForm.documentType == 'inbound') {
-          item.productsId = item.id
+        item.productCode = item.code
+        item.productsId = item.id
         }
         // item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
 

@@ -143,9 +143,6 @@ export default {
         { prop: 'createByName', label: '创建人', value: '', type: 'input', itemDisabled: true }
       ],
       linesList: [],
-      linesListItems: [
-        /* 通过 this.setLinesListItems() 动态更改 */
-      ],
       spaceLines: [],
       productionLotList: [],
       batchFlag: false, // 是否读取的单据是批量检验单据
@@ -280,16 +277,7 @@ export default {
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
           itemDisabled: true
         },
-        // {
-        //   prop: 'processName',
-        //   label: '工序名称',
-        //   value: '',
-        //   type: 'input',
-        //   itemRules: [{ required: true, trigger: 'blur' }],
-        //   sm: 6,
-        //   render: ['sale_back'].includes(this.inspectionType),
-        //   itemDisabled: true
-        // },
+     
         {
           prop: 'mainUnit',
           label: '单位',
@@ -322,13 +310,9 @@ export default {
           sm: 6,
           // itemDisabled: (rowIndex) => this.dataForm.inspectionMethod === 'exempt' || this.openMode === '只读',
           options: generateInspectionMethodList(this.inspectionType)
-          // options: [
-          //   { label: '免检', value: 'exempt' },
-          //   { label: '抽检', value: 'spot_check' },
-          //   { label: '全检', value: 'all' }
-          // ]
+      
         },
-        // { prop: "inspectionMethod", label: "检验方式", value: undefined, type: "select", options: [{ label: '全检', value: 'all' }, { label: '抽检', value: 'spot_check' }], itemRules: [{ required: true, trigger: 'change' }], sm: 6 },
+ 
         {
           prop: 'samplingQuantity',
           label: '检验数量',
@@ -372,7 +356,7 @@ export default {
           type: 'input',
           sm: 6,
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
-          itemDisabled: this.openMode === '只读',
+          itemDisabled: this.dataForm.inspectionResults == 'qualified' || this.openMode === '只读',
           itemRules: [
             { required: true, trigger: 'blur' },
             {
@@ -398,232 +382,7 @@ export default {
         { prop: 'remark', label: '备注', value: '', type: 'textarea', sm: 12 }
       ]
     },
-    // 设置子表结构
-    setLinesListItems() {
-      this.linesListItems = [
-        {
-          prop: 'orderNo',
-          label: '来源单号',
-          type: 'view',
-          minWidth: 180,
-          render: this.inspectionType.indexOf('_batch') !== -1 || this.batchFlag
-        },
-        { prop: 'productCode', label: '产品编码', value: '', type: 'view', minWidth: 140 },
-        { prop: 'productName', label: '产品名称', value: '', type: 'view', minWidth: 140 },
-        {
-          prop: 'productDrawingNo',
-          label: '产品图号',
-          value: '',
-          type: 'view',
-          minWidth: 140,
-          render: ['procure', 'finished', 'sale_back', 'process', 'back_material', 'produce', 'external'].includes(
-            this.inspectionType
-          )
-        },
-        {
-          prop: 'productSpec',
-          label: '规格型号',
-          value: '',
-          type: 'view',
-          minWidth: 140,
-          render: ['procure', 'finished', 'sale_back', 'external'].includes(this.inspectionType)
-        },
-        {
-          prop: 'productCategoryName',
-          label: '产品分类',
-          value: '',
-          type: 'view',
-          minWidth: 140,
-          render: ['procure', 'finished', 'sale_back', 'process', 'back_material', 'produce', 'external'].includes(
-            this.inspectionType
-          )
-        },
-        {
-          prop: 'routingName',
-          label: '工艺路线名称',
-          value: '',
-          type: 'view',
-          minWidth: 140,
-          render: ['process', 'back_material', 'external', 'produce'].includes(this.inspectionType)
-        },
-        {
-          prop: 'processName',
-          label: '工序名称',
-          value: '',
-          type: 'view',
-          minWidth: 140,
-          render: ['process', 'back_material', 'external', 'produce'].includes(this.inspectionType)
-        },
-        {
-          prop: 'inspectionMethod',
-          label: '检验方式',
-          value: '',
-          type: 'select',
-          clearable: false,
-          change: this.inspectionMethodChange,
-          width: 140,
-          itemRules: [{ required: true, trigger: 'change' }],
-          itemDisabled: (rowIndex) =>
-            this.linesList[rowIndex].inspectionMethod === 'exempt' || this.openMode === '只读',
-          options: [
-            { label: '免检', value: 'exempt' },
-            { label: '抽检', value: 'spot_check' },
-            { label: '全检', value: 'all' }
-          ]
-        },
-        { prop: 'inspectionQuantity', label: '报检数量', value: '', type: 'view', minWidth: 150 },
-        { prop: 'mainUnit', label: '单位', value: '', type: 'view', width: 130 },
-        {
-          // 检验结果
-          prop: 'inspectionResults',
-          label: '检验结果',
-          value: undefined,
-          type: 'select',
-          clearable: false,
-          options: [{ label: '合格', value: 'qualified' }, { label: '不合格', value: 'unqualified' }],
-          itemRules: [{ required: true, trigger: 'change' }],
-          width: 150,
-          change: this.inspectionResultsChange,
-          itemDisabled: (rowIndex) => this.linesList[rowIndex].inspectionMethod === 'exempt' || this.openMode === '只读'
-        },
-        {
-          // 检验数量
-          prop: 'samplingQuantity',
-          label: '检验数量',
-          value: '',
-          type: 'input',
-          itemRules: [
-            {
-              validator: this.formValidate({
-                type: 'noEmtry',
-                params: [
-                  '',
-                  (errMsg, index) => {
-                    this.$message.error(`产品信息第${index + 1}行：检验数量${errMsg}`)
-                  }
-                ]
-              }),
-              trigger: 'blur'
-            },
-            { required: true, trigger: 'blur' },
-            {
-              validator: this.formValidate({
-                type: 'decimal',
-                params: [
-                  20,
-                  4,
-                  '',
-                  (errMsg, index) => {
-                    this.$message.error(`产品信息第${index + 1}行：检验数量${errMsg}`)
-                  }
-                ]
-              }),
-              trigger: 'blur'
-            },
-            {
-              validator: this.formValidate('positiveNumber', false, (errMsg, index) => {
-                this.$message.error(`产品信息第${index + 1}行：检验数量${errMsg}`)
-              }),
-              trigger: 'blur'
-            },
-            {
-              validator: this.formValidate({
-                type: 'calc',
-                params: [
-                  (rowIndex) =>
-                    Number(this.linesList[rowIndex].samplingQuantity) <=
-                    Number(this.linesList[rowIndex].inspectionQuantity),
-                  '不能超过对应报检数量',
-                  (errMsg, index) => {
-                    this.$message.error(`产品信息第${index + 1}行：检验数量${errMsg}`)
-                  }
-                ]
-              }),
-              trigger: 'blur'
-            }
-          ],
-          minWidth: 180,
-          itemDisabled: (rowIndex) =>
-            this.linesList[rowIndex].inspectionMethod === 'all' ||
-            this.linesList[rowIndex].inspectionMethod === 'exempt' ||
-            this.openMode === '只读'
-        },
-        {
-          // 不合格数量
-          prop: 'unqualifiedQuantity',
-          label: '不合格数量',
-          value: '',
-          type: 'input',
-          itemRules: [
-            {
-              validator: this.formValidate({
-                type: 'noEmtry',
-                params: [
-                  '',
-                  (errMsg, index) => {
-                    this.$message.error(`产品信息第${index + 1}行：不合格数量${errMsg}`)
-                  }
-                ]
-              }),
-              trigger: 'blur'
-            },
-            { required: true, trigger: 'blur' },
-            {
-              validator: this.formValidate({
-                type: 'decimal',
-                params: [
-                  20,
-                  4,
-                  '',
-                  (errMsg, index) => {
-                    this.$message.error(`产品信息第${index + 1}行：不合格数量${errMsg}`)
-                  }
-                ]
-              }),
-              trigger: 'blur'
-            },
-            {
-              validator: this.formValidate({
-                type: 'calc',
-                params: [
-                  (rowIndex) => {
-                    let row = this.linesList[rowIndex]
-                    if (row.inspectionResults !== 'unqualified') return true // 检验结果非不合格，忽略校验
-                    return row.unqualifiedQuantity && Number(row.unqualifiedQuantity) > 0
-                  },
-                  '检验结果为不合格时，不合格数量必须大于0',
-                  (errMsg, index) => {
-                    this.$message.error(`产品信息第${index + 1}行：${errMsg}`)
-                  }
-                ]
-              }),
-              trigger: 'blur'
-            },
-            {
-              validator: this.formValidate({
-                type: 'calc',
-                params: [
-                  (rowIndex) =>
-                    Number(this.linesList[rowIndex].unqualifiedQuantity) <=
-                    Number(this.linesList[rowIndex].samplingQuantity),
-                  '不能超过对应检验数量',
-                  (errMsg, index) => {
-                    this.$message.error(`产品信息第${index + 1}行：不合格数量${errMsg}`)
-                  }
-                ]
-              }),
-              trigger: 'blur'
-            }
-          ],
-          minWidth: 180,
-          itemDisabled: (rowIndex) =>
-            this.linesList[rowIndex].inspectionResults === 'qualified' || this.openMode === '只读'
-        }
-      ]
-      this.$nextTick(() => {
-        this.$refs.linesForm.setDefaultValue()
-      })
-    },
+
     async fetchData(code, flag) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code)
@@ -728,42 +487,7 @@ export default {
       }
       if (inspectionType === 'process') {
         // 生产巡检
-        // let rowData = id
-        // this.dataForm = {
-        //   noticeId: rowData.id,
-        //   orderNo: rowData.orderNo,
-        //   originOrderNo: rowData.orderNo,
-        //   inspectionDate: this.jnpf.getToday(),
-        //   notificationType: 'process',
-        //   submitMethod: 'add'
-        // }
-        // let tempLinesList = [
-        //   {
-        //     ordersLineId: rowData.id,
-        //     productsId: rowData.productId,
-        //     productCode: rowData.productCode,
-        //     productName: rowData.productName,
-        //     productDrawingNo: rowData.productDrawingNo,
-        //     productCategoryName: rowData.productCategoryName,
-        //     productSpec: rowData.productSpec,
-        //     inspectionQuantity: rowData.dispatchQuantity,
-        //     inspectionMethod: rowData.productInspectionMethod,
-        //     mainUnit: rowData.mainUnit,
-        //     inspectionResults: '',
-        //     routingId: rowData.routingId,
-        //     routingCode: rowData.routingCode,
-        //     routingName: rowData.routingName,
-        //     processId: rowData.processId,
-        //     processCode: rowData.processCode,
-        //     processName: rowData.processName,
-        //     returnQuantity: 0
-        //     // samplingQuantity: rowData.productInspectionMethod === 'all' || !rowData.productInspectionMethod ? rowData.dispatchQuantity : ''
-        //   }
-        // ]
-        // this.linesListFormat(tempLinesList)
-        // this.linesList = tempLinesList
-        // this.setLinesListItems()
-        // this.formLoading = false
+
         this.dataForm.notificationType = inspectionType
         this.dataForm.submitMethod = 'add'
         this.formLoading = false
@@ -792,7 +516,7 @@ export default {
         })
         this.linesListFormat(tempLinesList)
         this.linesList = tempLinesList
-        this.setLinesListItems()
+
         this.formLoading = false
         return
       }
@@ -823,164 +547,25 @@ export default {
           this.batchFlag = true
           this.setDataFormItems()
         }
-        this.setLinesListItems()
+
         this.formLoading = false
       } else if (inspectionType === 'procure' || inspectionType === 'external') {
         // 采购收货、外协收货
 
-        // getpurPurchaseReceiptReturnGoodsdetail(id).then(res => {
-        //   if (res.data.attachmentList) {
-        //     res.data.attachmentList.forEach((item) => {
-        //       this.datafilelist.push(
-        //         {
-        //           name: item.document.fullName,
-        //           fileSize: item.document.fileSize,
-        //           filename: item.document.filePath,
-        //           id: item.document.id,
-        //           url: item.url
-        //         }
-        //       )
-        //     })
-        //   }
-        //   this.dataForm = {
-        //     ...res.data,
-        //     orderNo: res.data.orderNo,
-        //     inspectionDate: this.jnpf.getToday(),
-        //     noticeId: res.data.id,
-        //     approvalStatus: '',
-        //     originOrderNo: res.data.orderNo,
-        //     id: '',
-        //     submitMethod: 'add',
-        //     notificationType: res.data.notificationType === 'external_process' ? 'external' : res.data.notificationType
-        //   }
-        //   detailpurPurchaseReceiptReturnGoods(id).then(res => {
-        //     if (res.data.attachmentList) {
-        //       res.data.attachmentList.forEach((item) => {
-        //         this.datafilelist.push(
-        //           {
-        //             name: item.document.fullName,
-        //             fileSize: item.document.fileSize,
-        //             filename: item.document.filePath,
-        //             id: item.document.id,
-        //             url: item.url
-        //           }
-        //         )
-        //       })
-        //     }
-        //     let tempLinesList = res.data.filter(line => line.receivingStatus !== 'stopped') // 过滤已停止的明细
-        //     tempLinesList.forEach(line => {
-        //       // line.samplingQuantity = Number(line.qualifiedQuantity) + Number(line.unqualifiedQuantity)
-        //       line.inspectionQuantity = line.receivedQuantity
-        //       line.ordersLineId = line.id
-        //       line.samplingQuantity = ''
-        //       line.unqualifiedQuantity = ''
-        //       line.returnQuantity = 0
-        //       line.routingName = line.lastFlag && (line.reworkType === 'product' || !line.reworkType) ? '' : line.routingIdName || ""
-        //       line.processName = line.lastFlag && (line.reworkType === 'product' || !line.reworkType) ? '' : line.processIdName || ""
-        //       line.routingLineId = line.lastFlag && (line.reworkType === 'product' || !line.reworkType) ? '' : line.routingLineId || ""
-        //     })
-        //     this.linesListFormat(tempLinesList)
-        //     this.linesList = tempLinesList
-        //     this.setLinesListItems()
-        //     this.formLoading = false
-        //   }).catch(err => {
-        //     this.formLoading = false
-        //   })
-        // }).catch(errpr => {
-        //   this.formLoading = false
-        // })
         this.dataForm.notificationType = inspectionType
         this.dataForm.submitMethod = 'add'
         this.formLoading = false
       } else if (inspectionType === 'sale_back' || inspectionType === 'back_material') {
         console.log(inspectionType, 'ppppppp')
         // 销售退货、外协退料
-        // getQuotationsendlist(id).then((res) => {
-        //   if (res.data.attachmentList) {
-        //     res.data.attachmentList.forEach((item) => {
-        //       this.datafilelist.push({
-        //         name: item.document.fullName,
-        //         fileSize: item.document.fileSize,
-        //         filename: item.document.filePath,
-        //         id: item.document.id,
-        //         url: item.url
-        //       })
-        //     })
-        //   }
-        //   this.dataForm = {
-        //     ...res.data.notice,
-        //     orderNo: res.data.notice.orderNo,
-        //     inspectionDate: this.jnpf.getToday(),
-        //     noticeId: res.data.notice.id,
-        //     notificationType: inspectionType,
-        //     approvalStatus: '',
-        //     originOrderNo: res.data.notice.orderNo,
-        //     id: '',
-        //     submitMethod: 'add'
-        //   }
-        //   let tempLinesList = res.data.noticeLineList.map((line) => {
-        //     return {
-        //       ...line,
-        //       ordersLineId: line.id,
-        //       inspectionQuantity: line.deliveryQuantity,
-        //       inspectionResults: '',
-        //       unqualifiedQuantity: '',
-        //       productsId: line.productId,
-        //       returnQuantity: 0
-        //       // samplingQuantity: line.productInspectionMethod === 'all' ? line.deliveryQuantity : ''
-        //     }
-        //   })
-        //   this.linesListFormat(tempLinesList)
-        //   this.linesList = tempLinesList
-        //   this.setLinesListItems()
-        //   this.formLoading = false
-        // })
+
         this.dataForm.notificationType = inspectionType
         this.dataForm.submitMethod = 'add'
         this.formLoading = false
         console.log(this.dataForm, 'form123')
       } else if (inspectionType === 'produce') {
         // 生产退料
-        // detailWithdrawal(id).then((res) => {
-        //   if (res.data.attachmentList) {
-        //     res.data.attachmentList.forEach((item) => {
-        //       this.datafilelist.push({
-        //         name: item.document.fullName,
-        //         fileSize: item.document.fileSize,
-        //         filename: item.document.filePath,
-        //         id: item.document.id,
-        //         url: item.url
-        //       })
-        //     })
-        //   }
-        //   this.dataForm = {
-        //     ...res.data.collect,
-        //     orderNo: res.data.collect.orderNo,
-        //     inspectionDate: this.jnpf.getToday(),
-        //     noticeId: res.data.collect.id,
-        //     notificationType: inspectionType,
-        //     approvalStatus: '',
-        //     originOrderNo: res.data.collect.orderNo,
-        //     id: '',
-        //     submitMethod: 'add'
-        //   }
-        //   let tempLinesList = res.data.collectLineList.map((line) => {
-        //     return {
-        //       ...line,
-        //       ordersLineId: line.id,
-        //       inspectionQuantity: line.num,
-        //       inspectionResults: '',
-        //       unqualifiedQuantity: '',
-        //       productsId: line.productId,
-        //       returnQuantity: 0
-        //       // samplingQuantity: line.productInspectionMethod === 'all' ? line.deliveryQuantity : ''
-        //     }
-        //   })
-        //   this.linesListFormat(tempLinesList)
-        //   this.linesList = tempLinesList
-        //   this.setLinesListItems()
-        //   this.formLoading = false
-        // })
+
         this.dataForm.notificationType = inspectionType
         this.dataForm.submitMethod = 'add'
         this.formLoading = false
@@ -988,72 +573,12 @@ export default {
       } else if (inspectionType === 'finished') {
         // 完工
 
-        // let rowData = id
-        // this.dataForm = {
-        //   noticeId: rowData.id,
-        //   orderNo: rowData.orderNo,
-        //   originOrderNo: rowData.orderNo,
-        //   inspectionDate: this.jnpf.getToday(),
-        //   notificationType: 'finished',
-        //   submitMethod: 'add'
-        // }
-        // let tempLinesList = [
-        //   {
-        //     ordersLineId: rowData.id,
-        //     productsId: rowData.productsId,
-        //     productCode: rowData.productCode,
-        //     productName: rowData.productName,
-        //     productDrawingNo: rowData.productDrawingNo,
-        //     productSpec: rowData.productSpec,
-        //     productCategoryName: rowData.productCategoryName,
-        //     mainUnit: rowData.mainUnit,
-        //     inspectionMethod: rowData.productInspectionMethod,
-        //     routingCode: rowData.routingCode,
-        //     routingName: rowData.routingName,
-        //     routingLineId: rowData.routingLineId,
-        //     inspectionQuantity: this.jnpf.math('subtract', [
-        //       rowData.completedQuantity,
-        //       rowData.qualifiedQuantity,
-        //       rowData.underInspectionQuantity
-        //     ]), // 检验数量 = 生产数量 - 合格数量 - 检验中数量
-        //     inspectionResults: '',
-        //     returnQuantity: 0
-        //     // samplingQuantity: rowData.productInspectionMethod === 'all' || !rowData.productInspectionMethod ?
-        //     //   this.jnpf.math('subtract', [rowData.completedQuantity, rowData.qualifiedQuantity, rowData.underInspectionQuantity]) : ''
-        //   }
-        // ]
-        // this.linesListFormat(tempLinesList)
-        // this.linesList = tempLinesList
-        // this.setLinesListItems()
-        // this.formLoading = false
         this.dataForm.notificationType = inspectionType
         this.dataForm.submitMethod = 'add'
         this.formLoading = false
       }
     },
-    // 子表数据通用处理
-    linesListFormat(linesList) {
-      linesList.forEach((line) => {
-        line.inspectionMethod = line.productInspectionMethod || 'all' // 默认全检
-        if (line.inspectionMethod === 'exempt') {
-          // 免检
-          line.inspectionResults = 'qualified'
-          line.samplingQuantity = line.inspectionQuantity
-          line.unqualifiedQuantity = 0
-        } else if (line.inspectionMethod === 'all') {
-          // 全检
-          line.samplingQuantity = line.inspectionQuantity
-        } else if (line.inspectionMethod === 'spot_check') {
-          // 抽检
-          if (line.spotCheckRatio && line.spotCheckRatio != '0') {
-            // 有抽检比例自动设置检验数量
-            let num = Math.ceil(line.inspectionQuantity * (line.spotCheckRatio / 100))
-            if (num > Number(line.inspectionQuantity)) num = Number(line.inspectionQuantity)
-            line.samplingQuantity = num
-          }
-        }
-      })
-    },
+
     // 提交
     async handleConfirm(submitModel) {
       if (this.nowNum !== 0) return this.$message.error('检验项目不合格数量与总不合格数量不匹配')
@@ -1297,22 +822,7 @@ export default {
         this.dataForm.unqualifiedQuantity = '0'
         !this.dataForm.itemList ? (this.dataForm.itemList = []) : ''
         !this.dataForm.causesList ? (this.dataForm.causesList = []) : ''
-        // if (!this.dataForm.itemList.length) { // 自动设置检验项目
-        //   this.dataForm.loadItemListFlag = true
-        //   getInspectionItem({ id: this.dataForm.productsId, inspectionCategory: this.inspectionType.replace('_batch', '') }).then((res) => {
-        //     const data = res.data
-        //     let tempList = []
-        //     for (let i = 0; i < data.length; i++) {
-        //       let item = data[i];
-        //       if (this.dataForm.unqualifiedQuantity == "0") item.unqualifiedQuantity = 0
-        //       tempList.push(item)
-        //     }
-        //     this.dataForm.itemList = tempList
-        //     this.dataForm.loadItemListFlag = false
-        //   }).catch(err => {
-        //     this.dataForm.loadItemListFlag = false
-        //   })
-        // }
+   
       } else {
         this.dataForm.unqualifiedQuantity = '0'
       }
@@ -1422,10 +932,6 @@ export default {
 
   computed: {
     rowNum() {
-      // this.$nextTick(() => { this.linesListItems = this.initLinesListItems() }) // rowNum发生改变，重新渲染linesListItems
-      // let tempUnqualifiedQuantity = this.$parent.title.includes('检') ? (this.scope.row ? this.scope.row.unqualifiedQuantity : 0) :
-      //   (this.scope.row ? this.scope.row.inspectionUnqualifiedQuantity : 0)
-      // return this.scope.row ? tempUnqualifiedQuantity ? tempUnqualifiedQuantity : 0 : 0
       return this.dataForm.unqualifiedQuantity
     },
     nowNum() {
@@ -1450,9 +956,7 @@ export default {
       return this.jnpf.numberFormat(newNumber, 4)
     },
     openMode() {
-      this.$nextTick(() => {
-        this.setLinesListItems()
-      })
+
       // return this.dataForm.submitFlag === 'add' ? '新建' : this.title.includes('查看') ? '只读' : '编辑'
       if (this.title.includes('生产巡检')) {
         return this.title === '生产巡检' ? '新建' : '只读'

@@ -6,6 +6,8 @@ const hasBranch = data => notEmptyArray(data.conditionNodes);
 const stopPro = ev => ev.stopPropagation();
 
 function createNormalCard(ctx, conf, h) {
+  console.log(conf,'conf');
+  
   const classList = ['flow-path-card']
   const afterTrue = (isTrue, name) => (isTrue && classList.push(name), isTrue)
   const isStartNode = afterTrue(NodeUtils.isStartNode(conf), 'start-node')
@@ -284,7 +286,7 @@ export default {
      * @param { Object } 包含event（事件名）和args（事件参数）两个参数
      */
     eventLauncher(event, ...args) {
-      if (args && args[0].type === 'start') return
+      {/* if (args && args[0].type === 'start') return */}
       let list = ['appendBranch', 'appendBranchFlowBranch', 'appendInterflowBranch', 'addTimerNode']
       if (list.includes(event) && args[args.length - 2]) return
       // args.slice(0,-1) vue 会注入MouseEvent到最后一个参数 去除事件对象

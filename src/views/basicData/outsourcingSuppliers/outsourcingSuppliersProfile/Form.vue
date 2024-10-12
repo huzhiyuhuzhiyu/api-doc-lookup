@@ -509,12 +509,12 @@ import {
   getcategoryTree,
   getCooperativeInfo,
   getCounryData,
-  checkCode,
-  getBimBusinessInfo
+  checkCode
 } from '@/api/basicData/index'
 import formValidate from '@/utils/formValidate'
 import { getProvinceList } from '@/api/system/province'
 import { getbimProductAttributes } from '@/api/masterDataManagement/index'
+import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 export default {
   data() {
     return {
@@ -699,7 +699,7 @@ export default {
     }
   },
   created() {
-    // this.getAttachmentswitch()
+    this.getAttachmentswitch()
     this.getProvinceList()
     this.getDictionaryType()
     // this.getCounryDatas()
@@ -707,8 +707,16 @@ export default {
   },
   methods: {
     getAttachmentswitch() {
-      getBimBusinessInfo('460918390082716396').then((res) => {
-        this.isattachmentswitch = res.data.configValue1
+      let obj = {
+        businessCode: 'attachment',
+        pageSize: -1
+      }
+      getBimBusinessSwitchConfigList(obj).then((res) => {
+        res.data.attachment.forEach(item => {
+          if (item.configKey == 'fj_wxgysgl') {
+            this.isattachmentswitch = item.configValue1
+          }
+        })
       })
     },
     getbimProductAttributes() {

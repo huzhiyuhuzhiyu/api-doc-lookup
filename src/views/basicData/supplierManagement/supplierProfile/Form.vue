@@ -28,7 +28,11 @@
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="编码" prop="code">
-                        <el-input v-model="dataForm.code" placeholder="请输入编码" maxlength="20" :disabled="btnType ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true
+                        <el-input v-model="dataForm.code" placeholder="请输入编码" maxlength="20" :disabled="btnType
+                          ? true
+                          : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                            ? false
+                            : true
                           " />
                       </el-form-item>
                     </el-col>
@@ -201,8 +205,7 @@
                         <el-select v-model="dataForm.taxRate" placeholder="请选择税率" style="width: 100%;"
                           :disabled="btnType ? true : false">
                           <el-option v-for="item in taxRateList" :key="item.id" :label="item.fullName"
-                            :value="item.enCode">
-                          </el-option>
+                            :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
@@ -267,11 +270,8 @@
                     </el-col>
                   </el-row>
                 </el-form>
-
               </el-collapse-item>
-
             </el-collapse>
-
           </el-tab-pane>
           <el-tab-pane label="联系人信息" name="lxr">
             <el-table :data="contactsList" style="width: 100%">
@@ -507,12 +507,12 @@ import {
   getcategoryTree,
   getCooperativeInfo,
   getCounryData,
-  checkCode,
-  getBimBusinessInfo
+  checkCode
 } from '@/api/basicData/index'
 import formValidate from '@/utils/formValidate'
 import { getProvinceList } from '@/api/system/province'
 import { getbimProductAttributes } from '@/api/masterDataManagement/index'
+import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 export default {
   data() {
     return {
@@ -698,15 +698,23 @@ export default {
     }
   },
   created() {
-    // this.getAttachmentswitch()
+    this.getAttachmentswitch()
     this.getProvinceList()
     this.getDictionaryType()
     this.getbimProductAttributes()
   },
   methods: {
     getAttachmentswitch() {
-      getBimBusinessInfo('460918390082716395').then((res) => {
-        this.isattachmentswitch = res.data.configValue1
+      let obj = {
+        businessCode: 'attachment',
+        pageSize: -1
+      }
+      getBimBusinessSwitchConfigList(obj).then((res) => {
+        res.data.attachment.forEach(item => {
+          if (item.configKey == 'fj_cggysgl') {
+            this.isattachmentswitch = item.configValue1
+          }
+        })
       })
     },
     //基础信息点击选择区
@@ -1325,8 +1333,8 @@ export default {
     },
     getbimProductAttributes() {
       // 获取税率(数据字典)
-      getbimProductAttributes("585438081021126405").then(res => {
-        res.data.list.forEach(item => {
+      getbimProductAttributes('585438081021126405').then((res) => {
+        res.data.list.forEach((item) => {
           item.taxRate = item.enCode.replace('%', '') * 1
         })
         this.taxRateList = res.data.list
@@ -1378,11 +1386,10 @@ export default {
   margin-bottom: 0;
   padding: 0 10px 0px;
   border-top: none !important;
-
 }
 
 ::v-deep .el-collapse-item__content {
-  padding-bottom: 0px
+  padding-bottom: 0px;
 }
 
 .JNPF-preview-main .main {
@@ -1390,11 +1397,11 @@ export default {
 }
 
 ::v-deep .el-tabs__item {
-  padding: 0 10px !important
+  padding: 0 10px !important;
 }
 
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
-  padding-left: 0px !important
+  padding-left: 0px !important;
 }
 
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {

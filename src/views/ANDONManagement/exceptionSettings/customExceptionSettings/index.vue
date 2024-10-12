@@ -154,10 +154,10 @@ export default {
         this.list = res.data.records || []
         this.total = res.data.total
         if (this.list.length !== 0) {
-          this.parentId = this.list[0].id
-          detailAbnoramlTypeData(this.list[0].id).then((res) => {
+          this.parentId = this.parentId ? this.parentId : this.list[0].id
+          detailAbnoramlTypeData(this.parentId).then((res) => {
             this.dataDetail = res.data.contentList || []
-            this.activeName = this.list[0].code
+            this.activeName =this.tabCode ? this.tabCode :  this.list[0].code
           })
         }
       })

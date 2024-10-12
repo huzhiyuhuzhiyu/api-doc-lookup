@@ -517,7 +517,7 @@ export default {
                 }
             }
 
-            >>>.el-badge {
+            ::v-deep .el-badge {
                 line-height: 1;
 
                 .el-badge__content {
@@ -618,8 +618,5 @@ export default {
 
 .twinkle {
     animation: blink 0.5s linear infinite;
-}
-::v-deep .el-badge__content.is-fixed{
-    top:20px !important;
 }
 </style>

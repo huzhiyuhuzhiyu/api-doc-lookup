@@ -19,7 +19,7 @@
             <el-col :span="4">
               <el-form-item>
                 <el-date-picker v-model="time" type="daterange" range-separator="至" start-placeholder="开始日期"
-                  end-placeholder="结束日期"></el-date-picker>
+                  end-placeholder="结束日期" format="yyyy-MM-dd" value-format="yyyy-MM-dd"></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -211,6 +211,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         startTime: '',
+        ringBlankQueryFlag: 1,
         orderItems: [
           {
             asc: false,
@@ -345,19 +346,12 @@ export default {
 
     initData() {
       this.listLoading = true
-      if (this.createRequirementDate && this.createRequirementDate.length > 0) {
-        this.listQuery.startTime = this.createRequirementDate[0] + ' 00:00:00'
-        this.listQuery.endTime = this.createRequirementDate[1] + ' 23:59:59'
+      if (this.time && this.time.length > 0) {
+        this.listQuery.startUpdateTime = this.time[0] + ' 00:00:00'
+        this.listQuery.endUpdateTime = this.time[1] + ' 23:59:59'
       } else {
-        this.listQuery.startTime = ''
-        this.listQuery.endTime = ''
-      }
-      if (this.deliveryDate && this.deliveryDate.length > 0) {
-        this.listQuery.deliveryStartDate = this.deliveryDate[0]
-        this.listQuery.deliveryEndDate = this.deliveryDate[1]
-      } else {
-        this.listQuery.deliveryStartDate = ''
-        this.listQuery.deliveryEndDate = ''
+        this.listQuery.startUpdateTime = ''
+        this.listQuery.endUpdateTime = ''
       }
       inventoryList(this.listQuery)
         .then((res) => {
@@ -412,7 +406,7 @@ export default {
         ]
         // receivingStatus: 'receiving'
       }
-      this.createRequirementDate = []
+      this.time = []
       this.deliveryDate = []
       this.$refs.SuperQuery.conditionList = []
       this.search()

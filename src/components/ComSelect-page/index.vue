@@ -108,6 +108,8 @@
                   <el-dropdown-item @click.native="getData()">刷新数据</el-dropdown-item>
                   <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
                   <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+                  <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
+                  <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </span>
@@ -530,6 +532,12 @@ export default {
   },
   created() {
     this.getData()
+    if (localStorage.getItem(`${this.treeName}Flag`)) {
+      let locationInventoryFlag = JSON.parse(localStorage.getItem(`${this.treeName}Flag`))
+      this.expands = locationInventoryFlag
+      console.log(`${this.treeName}Flag`, locationInventoryFlag);
+      this.toggleExpand(locationInventoryFlag)
+    }
   },
   mounted() {
     addResizeListener(this.$el, this.handleResize);
@@ -687,6 +695,17 @@ export default {
         this.$nextTick(() => {
           this.$refs.treeBox.setCurrentKey(this.companyId)
         })
+      })
+    },
+    // 设置默认展开
+    setexpand(expands) {
+      console.log("expands", expands);
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        localStorage.setItem(`${this.treeName}Flag`, expands)
+
       })
     },
     handleNodeClick(data, node) {

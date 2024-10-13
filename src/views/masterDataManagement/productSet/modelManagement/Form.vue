@@ -83,9 +83,8 @@ export default {
     return {
       getProductList,
       ProductTableSearchList: [
-        { prop: "code", label: "产品编码", type: 'input', },
-        { prop: "name", label: "产品名称", type: 'input', },
-        { prop: "drawingNo", label: "品名规格", type: 'input' }
+        { prop: "productCode", label: "产品编码", type: 'input', },
+        { prop: "productDrawingNo", label: "品名规格", type: 'input' }
       ], // 产品选择弹出框搜索条件
       ProductMethodArr: [
         { label: "物料分类", classAttribute: "", method: getcategoryTree, requestObj: { classAttribute: "" } },

@@ -83,11 +83,11 @@
             <el-table-column prop="purchaseQuantity" label="数量" min-width="100" sortable="custom" />
             <el-table-column prop="waitReceiptNum" label="待收货数量" min-width="130" sortable="custom" />
 
-            <el-table-column prop="deliveryDate" label="收货日期" min-width="140" sortable="custom" />
-            <el-table-column prop="standardValue" label="规值" min-width="180" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" min-width="140" label="打字内容" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" min-width="140" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="140" sortable="custom" />
+            <el-table-column prop="deliveryDate" label="收货日期" min-width="120" sortable="custom" />
+            <el-table-column prop="standardValue" label="规值" min-width="100" sortable="custom" />
+            <el-table-column prop="sealingCoverTyping" min-width="120" label="打字内容" sortable="custom" />
+            <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
+            <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
             <el-table-column prop="oil" label="油脂" min-width="120" sortable="custom" />
             <el-table-column prop="oilQuantity" label="油脂量" min-width="140" sortable="custom" />
             <el-table-column prop="clearance" label="游隙" min-width="120" sortable="custom" />
@@ -441,9 +441,6 @@ export default {
         newProp = 't1.create_time'
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      }
-      if (prop == 'createByName') {
-        newProp = 'create_by'
       }
       this.orderForm.orderItems[0].asc = order === 'ascending'
       this.orderForm.orderItems[0].column = order === null ? '' : newProp

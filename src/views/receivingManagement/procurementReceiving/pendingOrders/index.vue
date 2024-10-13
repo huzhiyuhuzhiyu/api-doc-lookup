@@ -83,11 +83,11 @@
             <el-table-column prop="purchaseQuantity" label="数量" min-width="100" sortable="custom" />
             <el-table-column prop="waitReceiptNum" label="待收货数量" min-width="130" sortable="custom" />
 
-            <el-table-column prop="deliveryDate" label="收货日期" min-width="140" sortable="custom" />
+            <el-table-column prop="deliveryDate" label="收货日期" min-width="120" sortable="custom" />
 
             <el-table-column prop="remark" label="备注" min-width="120" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人" min-width="100" sortable="custom" />
             <el-table-column label="操作" width="100" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text"

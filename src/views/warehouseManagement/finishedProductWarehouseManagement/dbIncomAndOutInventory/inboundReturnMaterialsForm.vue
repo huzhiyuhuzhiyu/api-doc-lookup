@@ -206,21 +206,21 @@
               <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
                 @selection-change="handleSelectionChangeAllPruduct" ref="form">
 
-                <el-table-column prop="orderNo" label="退料单号" width="180" sortable="custom"></el-table-column>
+                <el-table-column prop="orderNo" label="退料单号" width="200" sortable="custom"></el-table-column>
                 <el-table-column prop="deliverDate"
                   v-if="dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'"
                   :label="dataForm.businessType == 'outbound_sale_send' ? '发货日期' : dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'inbound_external' ? '收货日期' : dataForm.businessType == 'outbound_purchase' ? '退货日期' : dataForm.businessType == 'outbound_external_send' ? '发料日期' : ''"
-                  width="160" sortable="custom" />
-                <el-table-column prop="operationDate" label="退料日期" width="160" sortable="custom" />
-                <el-table-column prop="ordersNo" label="任务单号" width="160" sortable="custom" />
+                  width="180" sortable="custom" />
+                <el-table-column prop="operationDate" label="退料日期" width="180" sortable="custom" />
+                <el-table-column prop="ordersNo" label="任务单号" width="180" sortable="custom" />
 
                 <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
-                <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-                <el-table-column prop="processName" label="工序" width="160" sortable="custom" />
+                <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
+                <el-table-column prop="processName" label="工序" width="120" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="90" sortable="custom" />
-                <el-table-column prop="num" label="退料数量" width="120" sortable="custom" />
+                <el-table-column prop="num" label="退料数量" width="110" sortable="custom" />
 
-                <el-table-column prop="unReceiveQuantity" label="待退料数量" width="160" sortable="custom" />
+                <el-table-column prop="unReceiveQuantity" label="待退料数量" width="130" sortable="custom" />
 
 
 
@@ -237,7 +237,7 @@
         { label: "外协收货", value: "inbound_external" },
         { label: "外协退货", value: "outbound_external" }, -->
 
-                <el-table-column prop="processName" label="工序" width="160" sortable="custom"
+                <el-table-column prop="processName" label="工序" width="120" sortable="custom"
                   v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'inbound_external'" />
 
 

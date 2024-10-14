@@ -217,27 +217,21 @@
                 @selection-change="handleSelectionChangeAllPruduct" ref="form">
                 <el-table-column prop="orderNo" label="发货单号" width="180" sortable="custom"></el-table-column>
                 <el-table-column prop="deliverDate" label="发货日期" width="160" sortable="custom" />
-                <el-table-column prop="ordersNo" label="订单号" width="160" sortable="custom" />
-
-
+                <el-table-column prop="ordersNo" label="订单号" width="180" sortable="custom" />
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
                 <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
-                <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-                <el-table-column prop="mainUnit" label="单位" width="90" sortable="custom" />
-
-                <el-table-column prop="ordersNum" label="数量" width="120" sortable="custom" />
-                <el-table-column prop="undeliveredQuantity" label="待发货数量" width="160" sortable="custom" />
-
-
-
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
-                <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
-                <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
-                <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
-                <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
-                <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-                <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" ></el-table-column>
-                <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" ></el-table-column>
+                <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
+                <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
+                <el-table-column prop="ordersNum" label="数量" width="80" sortable="custom" />
+                <el-table-column prop="undeliveredQuantity" label="待发货数量" width="130" sortable="custom" />
+                <el-table-column prop="sealingCoverTyping" label="打字内容" width="110" sortable="custom" />
+                <el-table-column prop="accuracyLevel" label="精度等级" width="110" sortable="custom" />
+                <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom" />
+                <el-table-column prop="oil" label="油脂" width="80" sortable="custom" />
+                <el-table-column prop="oilQuantity" label="油脂量" width="110" sortable="custom" />
+                <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" />
+                <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom" ></el-table-column>
+                <el-table-column prop="specialRequire" label="特殊要求" width="110" sortable="custom" ></el-table-column>
                 <!-- { label: "销售发货", value: "outbound_sale_send" },
         { label: "销售退货", value: "inbound_sale_return" },
         { label: "采购收货", value: "inbound_purchase" },
@@ -248,8 +242,6 @@
         { label: "外协退料", value: "inbound_external_return" },
         { label: "外协收货", value: "inbound_external" },
         { label: "外协退货", value: "outbound_external" }, -->
-
-
                 <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"
                   v-if="dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'" />

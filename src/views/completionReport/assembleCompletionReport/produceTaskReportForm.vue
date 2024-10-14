@@ -115,7 +115,7 @@
           </el-collapse-item>
         </el-collapse>
         <div>
-          <div style="margin-top: 10px; border-bottom: 1px solid #EBEEF5;padding: 0 10px;">
+          <div class="process" >
             <div v-for="(item, index) in workList" :key="index" class="workInfo"
               style="text-align: center;display: inline-block;">
               <div class="processInfoBox" style="cursor: pointer;"
@@ -126,7 +126,8 @@
             </div>
           </div>
           <el-col :span="11" class="fixedInfo" ref="fixedInfo" :style="{ height: targetHeight + 'px!important' }"
-            style="width: 48%!important;">
+            style="width: 48%!important;position: relative;">
+            <img src="@/assets/images/extend.png" alt="" v-if="currentProcess.processingType=='external_production'" class="extend">
             <el-row>
               <el-col :sm="24" :xs="24">
 
@@ -229,7 +230,7 @@
           </el-col>
           <el-col :span="12" class="rightInfo" :style="{ height: targetHeight2 + 'px!important' }" ref="mycol"
             v-if="currentProcess.processingType == 'self_produced' && currentProcess.reportFlag == true">
-            <el-form ref="reportRef" :model="currentProcess" :rules="dataRule" label-width="160px"
+            <el-form ref="reportRef" :model="currentProcess" :rules="dataRule" label-width="180px"
               label-position="left">
               <el-row>
                 <div style="margin-bottom: 10px; background: #f2f2f2; padding: 20px 16px;">
@@ -250,37 +251,37 @@
                 <div style="padding: 0 20px;">
 
                   <el-col :sm="24" :xs="24" v-if="!currentProcess.vibrateReportFlag">
-                    <el-form-item label="合格数量" prop="qualifiedQuantity" class="iptLabel">
+                    <el-form-item label="合格数量:" prop="qualifiedQuantity" class="iptLabel">
                       <el-input v-model="currentProcess.qualifiedQuantity" placeholder="合格数量" class="ipt" @blur="handleBlur(item)"/>
                     </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24" v-for="(item, index) in vibrationLevelList" :key="index"
                     v-if="currentProcess.vibrateReportFlag">
-                    <el-form-item :label="item.name + '(合格数量)'" :prop="item.name" class="iptLabel">
+                    <el-form-item :label="item.name + '(合格数量):'" :prop="item.name" class="iptLabel">
                       <el-input v-model="currentProcess.item[item.name]" placeholder="合格数量" @input="forceUpdata"
                         @blur="handleBlur(item, currentProcess.item[item.name])" class="ipt" />
                     </el-form-item>
                   </el-col>
 
                   <el-col :sm="24" :xs="24">
-                    <el-form-item label="责废数量" class="iptLabel">
+                    <el-form-item label="责废数量:" class="iptLabel">
                       <el-input v-model="currentProcess.responsibilityWasteQuantity" placeholder="责废数量"
                         @blur="handleBlur2" class="ipt" />
                     </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24">
-                    <el-form-item label="料废数量" class="iptLabel">
+                    <el-form-item label="料废数量:" class="iptLabel">
                       <el-input v-model="currentProcess.materialWasteQuantity" placeholder="料废数量" @blur="handleBlur3"
                         class="ipt" />
                     </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24">
-                    <el-form-item label="返工数量" class="iptLabel">
+                    <el-form-item label="返工数量:" class="iptLabel">
                       <el-input v-model="currentProcess.reworkQuantity" placeholder="返工数量" class="ipt" />
                     </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24" class="iptLabel">
-                    <el-form-item label="生产人" prop="producerName" v-if="currentProcess.taskMethod != 'not_appoint'">
+                    <el-form-item label="生产人:" prop="producerName" v-if="currentProcess.taskMethod != 'not_appoint'">
                       <el-select v-model="currentProcess.producerName" placeholder="生产人" style="width: 100%;"
                         class="ipt">
                         <el-option v-for="(item, index) in personList" :key="index" :label="item.label"
@@ -289,7 +290,7 @@
 
                       <!-- producerId -->
                     </el-form-item>
-                    <el-form-item label="生产人" prop="producerId" v-if="currentProcess.taskMethod == 'not_appoint'"
+                    <el-form-item label="生产人:" prop="producerId" v-if="currentProcess.taskMethod == 'not_appoint'"
                       class="iptLabel">
                       <user-select v-model="currentProcess.producerId" placeholder="生产人" clearable style="width: 100%;"
                         class="ipt" @change="hangleSelectSales">
@@ -298,7 +299,7 @@
                     </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24">
-                    <el-form-item label="设备" class="iptLabel">
+                    <el-form-item label="设备:" class="iptLabel">
                       <el-select v-model="currentProcess.equipmentName" placeholder="设备" style="width: 100%;"
                         class="ipt">
                         <el-option v-for="(item, index) in equipmentList" :key="index" :label="item.name"
@@ -1213,7 +1214,7 @@ box-card:nth-child(n+3) {
   background: #6ADE7D;
 }
 .info {
-  margin-top: 20px;
+  margin-top: 18px;
 }
 
 .fixedInfo {
@@ -1231,7 +1232,7 @@ box-card:nth-child(n+3) {
 .rightInfo {
   /* border: 1px solid; */
   border-radius: 4px;
-  margin-left: 20px;
+  margin-left: 24px;
   box-shadow: beige;
   box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.20);
 }
@@ -1241,6 +1242,8 @@ box-card:nth-child(n+3) {
   line-height: 50px;
   font-size: 20px !important;
   font-weight: bold;
+  padding-right: 0;
+  border: 0;
 }
 
 .iptLabel ::v-deep.el-form-item__label {
@@ -1248,8 +1251,12 @@ box-card:nth-child(n+3) {
   line-height: 50px;
   font-size: 20px !important;
   font-weight: bold;
+  padding-left: 10px;
+  padding-right: 0;
 }
-
+.rightInfo ::v-deep .el-form-item--small.el-form-item{
+  border: 1px solid #ebeef5;
+}
 .JNPF-common-drawer ::v-deep.el-drawer__body {
   overflow-y: auto;
 }
@@ -1290,5 +1297,22 @@ box-card:nth-child(n+3) {
 .reportBtn_right ::v-deep .el-button span {
   font-size: 18px !important;
   font-weight: bold;
+}
+.process{
+  padding-top: 5px;
+    /* margin-top: 5px; */
+    /* border-bottom: 1px solid rgb(235, 238, 245); */
+    padding: 0px 10px;
+    /* margin-bottom: 5px; */
+    /* border-top: 1px solid rgb(235, 238, 245); */
+    border: 1px solid rgb(235, 238, 245);
+    padding-top: 5px;
+    background: rgb(242, 242, 242);
+}
+.extend{
+  width: 150px;
+    position: absolute;
+    right: 10px;
+    top: 10px;
 }
 </style>

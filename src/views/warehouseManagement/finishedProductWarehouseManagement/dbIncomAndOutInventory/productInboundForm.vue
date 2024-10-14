@@ -280,27 +280,27 @@
                 <el-table-column prop="orderNo" label="任务单号" width="180" />
                 <el-table-column prop="productDrawingNo" label="品名规格" width="300" />
                 <el-table-column v-if="classAttribute == 'finish_product'" prop="productCode" label="产品编码"
-                  width="160" />
+                  width="140" />
                 <el-table-column prop="mainUnit" label="单位" width="80" />
                 <el-table-column prop="productionQuantity" label="生产数量" width="120" />
                 <el-table-column prop="completedQuantity" label="已完成数量" width="130" />
-                <el-table-column prop="waitReceivedQuantity" label="待入库数量" width="160" />
-                <el-table-column v-if="classAttribute == 'semi_finished'" prop="aperture" label="孔径" width="100" />
+                <el-table-column prop="waitReceivedQuantity" label="待入库数量" width="130" />
+                <el-table-column v-if="classAttribute == 'semi_finished'" prop="aperture" label="孔径" width="80" />
                 <el-table-column v-if="classAttribute == 'semi_finished'" prop="productionPlanNo" label="计划单号"
                   width="160" />
                 <el-table-column v-if="classAttribute == 'finish_product'" prop="sealingCoverTyping" label="打字内容"
-                  width="100" />
+                  width="110" />
                 <el-table-column v-if="classAttribute == 'finish_product'" prop="accuracyLevel" label="精度等级"
-                  width="100" />
+                  width="110" />
                 <el-table-column v-if="classAttribute == 'finish_product'" prop="vibrationLevel" label="振动等级"
-                  width="100" />
-                <el-table-column v-if="classAttribute == 'finish_product'" prop="oil" label="油脂" width="100" />
-                <el-table-column v-if="classAttribute == 'finish_product'" prop="oilQuantity" label="油脂量" width="100" />
-                <el-table-column v-if="classAttribute == 'finish_product'" prop="clearance" label="游隙" width="100" />
+                  width="110" />
+                <el-table-column v-if="classAttribute == 'finish_product'" prop="oil" label="油脂" width="80" />
+                <el-table-column v-if="classAttribute == 'finish_product'" prop="oilQuantity" label="油脂量" width="110" />
+                <el-table-column v-if="classAttribute == 'finish_product'" prop="clearance" label="游隙" width="80" />
                 <el-table-column v-if="classAttribute == 'finish_product'" prop="packagingMethod" label="包装方式"
-                  width="100"></el-table-column>
+                  width="110"></el-table-column>
                 <el-table-column v-if="classAttribute == 'finish_product'" prop="specialRequire" label="特殊要求"
-                  width="100"></el-table-column>
+                  width="110"></el-table-column>
                 <el-table-column prop="createTime" label="创建时间" width="180" />
                 <el-table-column prop="createByName" label="创建人" width="180" />
               </JNPF-table>

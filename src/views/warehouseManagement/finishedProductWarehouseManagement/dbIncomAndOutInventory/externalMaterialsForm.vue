@@ -210,20 +210,13 @@
               <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
                 @selection-change="handleSelectionChangeAllPruduct" ref="form">
                 <el-table-column prop="orderNo" label="订单号" min-width="200" sortable="custom"></el-table-column>
-
                 <el-table-column prop="cooperativePartnerName" label="供应商名称" width="140" sortable="custom" />
-
                 <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
-
                 <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
                 <el-table-column prop="processName" label="工序名称" width="120" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="90" sortable="custom" />
-
-
                 <el-table-column prop="waitDeliverNum" label="待发料数量" min-width="140" sortable="custom" />
                 <el-table-column prop="demandQuantity" label="订单数量" min-width="120" sortable="custom" />
-
-
 
 
 

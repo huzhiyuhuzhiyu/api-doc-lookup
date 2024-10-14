@@ -220,29 +220,19 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
                 @selection-change="handleSelectionChangeAllPruduct" ref="form">
-
-                <el-table-column prop="orderNo" label="领料单号" width="180" sortable="custom"></el-table-column>
-
-
-                <el-table-column prop="orderNo" label="退货单号" width="180" sortable="custom"
+                <el-table-column prop="orderNo" label="领料单号" width="190" sortable="custom"></el-table-column>
+                <el-table-column prop="orderNo" label="退货单号" width="190" sortable="custom"
                   v-if="dataForm.businessType == 'inbound_sale_return' || dataForm.businessType == 'outbound_purchase'"></el-table-column>
-
-                <el-table-column prop="operationDate" label="领料日期" width="160" sortable="custom" />
-                <el-table-column prop="ordersNo" label="任务单号" width="160" sortable="custom" />
+                <el-table-column prop="operationDate" label="领料日期" width="180" sortable="custom" />
+                <el-table-column prop="ordersNo" label="任务单号" width="190" sortable="custom" />
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom"
                   v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'" />
                 <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
-                <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-                <el-table-column prop="processName" label="工序" width="160" sortable="custom" />
+                <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
+                <el-table-column prop="processName" label="工序" width="120" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="90" sortable="custom" />
                 <el-table-column prop="num" label="领料数量" width="120" sortable="custom" />
-
-                <el-table-column prop="unReceiveQuantity" label="待领料数量" width="160" sortable="custom" />
-
-
-
-
-
+                <el-table-column prop="unReceiveQuantity" label="待领料数量" width="130" sortable="custom" />
                 <!-- { label: "销售发货", value: "outbound_sale_send" },
         { label: "销售退货", value: "inbound_sale_return" },
         { label: "采购收货", value: "inbound_purchase" },
@@ -253,8 +243,6 @@
         { label: "外协退料", value: "inbound_external_return" },
         { label: "外协收货", value: "inbound_external" },
         { label: "外协退货", value: "outbound_external" }, -->
-
-
               </JNPF-table>
               <pagination :total="productTotal" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
                 @pagination="searchProductFun" />

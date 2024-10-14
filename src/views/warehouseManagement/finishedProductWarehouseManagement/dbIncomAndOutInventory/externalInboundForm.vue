@@ -217,12 +217,12 @@
                 <el-table-column prop="orderNo" label="订单号" width="200" sortable="custom"> </el-table-column>
                 <el-table-column prop="cooperativePartnerName" label="供应商名称" width="160" sortable="custom" />
                 <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
-                <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-                <el-table-column prop="processName" label="工序名称" width="160" sortable="custom" />
+                <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
+                <el-table-column prop="processName" label="工序名称" width="120" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="80" />
-                <el-table-column prop="purchaseQuantity" label="数量" width="100" sortable="custom" />
-                <el-table-column prop="waitReceiptNum" label="待收货数量" width="160" sortable="custom" />
-                <el-table-column prop="deliveryDate" label="交货日期" width="160" sortable="custom" />
+                <el-table-column prop="purchaseQuantity" label="数量" width="80" sortable="custom" />
+                <el-table-column prop="waitReceiptNum" label="待收货数量" width="130" sortable="custom" />
+                <el-table-column prop="deliveryDate" label="交货日期" width="130" sortable="custom" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
               </JNPF-table>
               <pagination :total="productTotal" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"

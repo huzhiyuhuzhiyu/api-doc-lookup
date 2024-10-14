@@ -73,6 +73,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
+            <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" />
             <el-table-column prop="deliverDate" label="退货日期" width="120" sortable="custom"></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
@@ -148,7 +149,7 @@ import {
   Cancelshipmentlinelist
 } from '@/api/salesManagement'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import Form from '../purchaseReturnNote/Form.vue' 
+import Form from '../purchaseReturnNote/Form.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { purPurchaseReceiptReturnGoodsDetailList } from '@/api/purchasingManagement/purchaseInquirySheet'
@@ -280,6 +281,11 @@ export default {
           type: 'input'
         },
         {
+          prop: 'partnerCode',
+          label: '客户编码',
+          type: 'input'
+        },
+        {
           prop: 'deliverDate',
           label: '退货日期',
           type: 'daterange',
@@ -309,49 +315,7 @@ export default {
           label: '退货数量',
           type: 'input'
         },
-        {
-          prop: 'sealingCoverTyping',
-          label: '打字内容',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'accuracyLevel',
-          label: '精度等级',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'vibrationLevel',
-          label: '振动等级',
-          type: 'select',
-          options: []
-        },
-
-        {
-          prop: 'oil',
-          label: '油脂',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'oilQuantity',
-          label: '油脂量',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'clearance',
-          label: '游隙',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'packagingMethod',
-          label: '包装方式',
-          type: 'select',
-          options: []
-        },
+      
         {
           prop: 'ordersNo',
           label: '订单号',

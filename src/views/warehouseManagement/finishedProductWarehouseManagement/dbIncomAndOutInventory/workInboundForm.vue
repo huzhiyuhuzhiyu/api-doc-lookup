@@ -184,7 +184,7 @@
                 @selection-change="handleSelectionChangeAllPruduct" ref="form">
                 <el-table-column prop="productionOrderNo" label="任务单号" width="180" />
                 <el-table-column prop="orderNo" label="工单号" width="180" />
-                <el-table-column prop="productDrawingNo" label="品名规格" width="160" />
+                <el-table-column prop="productDrawingNo" label="品名规格" width="300" />
                 <el-table-column prop="productName" label="产品编码" width="160" />
 
                 <el-table-column prop="processName" label="工序名称" width="160" />

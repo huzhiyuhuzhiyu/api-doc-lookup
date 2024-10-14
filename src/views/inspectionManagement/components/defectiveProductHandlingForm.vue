@@ -401,8 +401,10 @@ export default {
           value: '',
           type: 'input',
           sm: 6,
-          render: !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType)
-          // render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
+          render:
+            this.userInfo.deptType === 'JSB'
+              ? !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType)
+              : false || this.dataForm.approvalStatus === 'ok'
           // itemDisabled: this.unqualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
         },
         {
@@ -411,8 +413,10 @@ export default {
           value: '',
           type: 'input',
           sm: 6,
-          render: !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType)
-          // render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
+          render:
+            this.userInfo.deptType === 'JSB'
+              ? !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType)
+              : false || this.dataForm.approvalStatus === 'ok'
           // itemDisabled: this.unqualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
         },
         {
@@ -1362,6 +1366,7 @@ export default {
                       nodeItem.nodeType === 'subFlow'
                     )
                       data.content = nodeItem.userName
+                    if (nodeItem.nodeType === 'approver') data.processingTime = nodeItem.processingTime
                     return
                   }
                   if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)

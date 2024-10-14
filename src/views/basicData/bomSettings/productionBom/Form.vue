@@ -751,28 +751,28 @@ export default {
       }
     },
     // 测试审批流
-    getBusInfo() {
-      getBusinessFlowInfo('b023').then(res => {
-        if (res.data) {
-          if (res.data.enabledMark) {
+    getBusInfo(){
+      getBusinessFlowInfo('b023').then(res=>{
+        if (res.data){
+          if (res.data.enabledMark){
             this.flowData = res.data
             this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
             this.dataForm.approvalFlag = res.data.enabledMark
-          } else {
+          }else{
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
             this.$message.error('未找到审批流程！')
           }
-        } else {
+        }else{
           this.flowTemplateJson = {}
           this.dataForm.approvalFlag = false
         }
-      }).catch(() => { })
+      }).catch(()=>{})
     },
     // 流程信息 && 流转记录
-    getFlowDetail(id) {
-      getBusinessFlowDetail(id).then(res => {
-        if (res.data) {
+    getFlowDetail(id){
+      getBusinessFlowDetail(id).then(res=>{
+        if (res.data){
           this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson) : null
           this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
           this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
@@ -786,6 +786,7 @@ export default {
                   if (nodeItem.type == 0) data.state = 'state-past'
                   if (nodeItem.type == 1) data.state = 'state-curr'
                   if (nodeItem.nodeType === 'approver' || nodeItem.nodeType === 'start' || nodeItem.nodeType === 'subFlow') data.content = nodeItem.userName
+                  if (nodeItem.nodeType === 'approver') data.processingTime = nodeItem.processingTime
                   return
                 }
                 if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
@@ -795,7 +796,7 @@ export default {
             }
           }
         }
-      }).catch(() => { })
+      }).catch(()=>{})
     },
   }
 }

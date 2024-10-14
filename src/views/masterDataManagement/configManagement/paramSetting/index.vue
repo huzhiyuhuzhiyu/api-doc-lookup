@@ -10,49 +10,51 @@
           <el-radio-button label="attachment">附件开关</el-radio-button>
         </el-radio-group>
       </div>
-      <div class="tag-group JNPF-common-search-box treeBox_bot"
-        style="height: 100vh;padding:5px 10px 5px 10px;margin:0px 0 0px 0">
-        <el-table :data="tableData" stripe style="margin-right: 10px;" :row-style="{ height: '50px' }"
-          :header-cell-style="{ background: '#FAFAFA', color: '#606266', 'text-align': 'center' }">
-          <el-table-column prop="configKey" label="功能" width="180">
-            <template slot-scope="scope">
-              {{ $getLabel(configKeyList, scope.row.configKey, 'value', 'label') }}
-            </template>
-          </el-table-column>
+      <div class="JNPF-common-layout-center JNPF-flex-main" style="background-color: #FFFFFF;">
+        <div style="margin: 10px;overflow: scroll;">
+          <el-table :height="maxHeight" :data="tableData" stripe :row-style="{ height: '50px' }"
+            :header-cell-style="{ background: '#FAFAFA', color: '#606266', 'text-align': 'center' }">
+            <el-table-column prop="configKey" label="功能" width="180">
+              <template slot-scope="scope">
+                {{ $getLabel(configKeyList, scope.row.configKey, 'value', 'label') }}
+              </template>
+            </el-table-column>
 
-          <el-table-column prop="state" label="操作" :width="stateWidth" :align="stateAlign">
-            <template slot-scope="scope">
-              <div v-if="scope.row.businessCode == 'warehouse'">
-                <el-radio-group v-model="scope.row.radio" @input="radioChange(scope.row)">
+            <el-table-column prop="state" label="操作" :width="stateWidth" :align="stateAlign">
+              <template slot-scope="scope">
+                <div v-if="scope.row.businessCode == 'warehouse'">
+                  <el-radio-group v-model="scope.row.radio" @input="radioChange(scope.row)">
 
-                  <el-radio :label="0">
-                    {{ scope.row.radioOff }}
-                  </el-radio>
-                  <el-radio :label="1">
-                    {{ scope.row.radioOn }}
-                  </el-radio>
+                    <el-radio :label="0">
+                      {{ scope.row.radioOff }}
+                    </el-radio>
+                    <el-radio :label="1">
+                      {{ scope.row.radioOn }}
+                    </el-radio>
 
-                </el-radio-group>
-              </div>
-              <div v-else>
-                <el-checkbox v-model="scope.row.state" @change="stateChange(scope.row)"></el-checkbox>
-                <el-input style="width: 150px;margin-left: 10px;" v-if="
-                  (scope.row.state && scope.row.configKey == 'work_exceed_report') ||
-                  (scope.row.state && scope.row.configKey == 'collect_exceed_picking')
-                " v-model="scope.row.configValue2" @change="configValue2Change(scope.row)">
-                  <template slot="append">
-                    %
-                  </template>
-                </el-input>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="description" label="说明">
-            <template slot-scope="scope">
-              {{ $getLabel(descriptionList, scope.row.description, 'value', 'label') }}
-            </template>
-          </el-table-column>
-        </el-table>
+                  </el-radio-group>
+                </div>
+                <div v-else>
+                  <el-checkbox v-model="scope.row.state" @change="stateChange(scope.row)"></el-checkbox>
+                  <el-input style="width: 150px;margin-left: 10px;" v-if="
+                    (scope.row.state && scope.row.configKey == 'work_exceed_report') ||
+                    (scope.row.state && scope.row.configKey == 'collect_exceed_picking')
+                  " v-model="scope.row.configValue2" @change="configValue2Change(scope.row)">
+                    <template slot="append">
+                      %
+                    </template>
+                  </el-input>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="description" label="说明">
+              <template slot-scope="scope">
+                {{ $getLabel(descriptionList, scope.row.description, 'value', 'label') }}
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+
       </div>
     </div>
   </div>
@@ -66,6 +68,7 @@ export default {
   name: 'ParamSetting',
   data() {
     return {
+      maxHeight: null,
       activeName: 'product',
       dataForm: {},
       productForm: {},
@@ -144,6 +147,26 @@ export default {
         {
           label: '启用工艺路线附件',
           value: 'fj_gylx'
+        },
+        {
+          label: '启用定点定价附件',
+          value: 'fj_dddj'
+        },
+        {
+          label: '启用成品定点定价附件',
+          value: 'fj_cpdddj'
+        },
+        {
+          label: '启用采购订单附件',
+          value: 'fj_cgdd'
+        },
+        {
+          label: '启用成品采购退货通知单附件',
+          value: 'fj_cpcgthtzd'
+        },
+        {
+          label: '启用采购退货通知单附件',
+          value: 'fj_cgthtzd'
         }
       ],
       descriptionList: [
@@ -218,7 +241,28 @@ export default {
         {
           label: '开启后，在工艺路线附件新建、编辑、查看都会显示附件操作。',
           value: 'fj_gylx'
-        }
+        },
+        {
+          label: '开启后，在定点定价附件新建、编辑、查看都会显示附件操作。',
+          value: 'fj_dddj'
+        },
+        {
+          label: '开启后，在成品定点定价附件新建、编辑、查看都会显示附件操作。',
+          value: 'fj_cpdddj'
+        },
+        {
+          label: '开启后，在采购订单附件新建、编辑、查看都会显示附件操作。',
+          value: 'fj_cgdd'
+        },
+        {
+          label: '开启后，在成品采购退货通知单附件新建、编辑、查看都会显示附件操作。',
+          value: 'fj_cpcgthtzd'
+        },
+        {
+          label: '开启后，在采购退货通知单附件新建、编辑、查看都会显示附件操作。',
+          value: 'fj_cgthtzd'
+        },
+
       ]
     }
   },

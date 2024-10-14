@@ -1861,6 +1861,7 @@ export default {
                       nodeItem.nodeType === 'subFlow'
                     )
                       data.content = nodeItem.userName
+                    if (nodeItem.nodeType === 'approver') data.processingTime = nodeItem.processingTime
                     return
                   }
                   if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)

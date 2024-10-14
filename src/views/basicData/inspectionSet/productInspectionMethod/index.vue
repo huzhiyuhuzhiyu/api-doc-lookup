@@ -17,34 +17,17 @@
         </span>
       </div>
       <div v-if="!leftFlag">
-        <el-input
-          placeholder="请输入"
-          v-model="filterText"
-          style="width:200px;margin:10px auto;display:block"
-          suffix-icon="el-icon-search"
-          clearable
-        ></el-input>
+        <el-input placeholder="请输入" v-model="filterText" style="width:200px;margin:10px auto;display:block"
+          suffix-icon="el-icon-search" clearable></el-input>
       </div>
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
-        <el-tree
-          ref="treeBox"
-          :data="treeData"
-          :props="defaultProps"
-          :default-expand-all="expands"
-          highlight-current
-          :expand-on-click-node="false"
-          node-key="id"
-          @node-click="handleNodeClick"
-          class="JNPF-common-el-tree"
-          v-if="refreshTree"
-          :filter-node-method="filterNode"
-        >
+        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
+          :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
+          v-if="refreshTree" :filter-node-method="filterNode">
           <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
-            <i
-              :class="[
-                data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm'
-              ]"
-            />
+            <i :class="[
+              data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm'
+            ]" />
             <span class="text" :title="data.name">{{ data.name }}</span>
           </span>
         </el-tree>
@@ -90,11 +73,8 @@
           <el-button size="mini" @click="handleBatch" type="primary">设置检验方式</el-button>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
-              <el-link
-                icon="icon-ym icon-ym-filter JNPF-common-head-icon"
-                :underline="false"
-                @click="superQueryVisible = true"
-              />
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
@@ -104,18 +84,9 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table
-          v-loading="listLoading"
-          :data="tableData"
-          :fixedNO="true"
-          @sort-change="sortChange"
-          custom-column
-          ref="dataTable"
-          hasC
-          @selection-change="currentChange"
-          :checkSelectable="checkSelectable"
-          :setColumnDisplayList="columnList"
-        >
+        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
+          ref="dataTable" hasC @selection-change="currentChange" :checkSelectable="checkSelectable"
+          :setColumnDisplayList="columnList">
           <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
           <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
             <template slot-scope="scope">
@@ -126,16 +97,16 @@
           </el-table-column>
           <el-table-column prop="name" label="产品分类" min-width="130" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" width="60" />
-          <el-table-column prop="inspectionMethod" label="检验方式" width="120">
+          <el-table-column prop="inspectionMethod" label="检验方式" width="100">
             <template slot-scope="{ row }">
               <template v-if="row.inspectionMethod == 'exempt'">
-                免检
+                <el-tag type="success">免检</el-tag>
               </template>
               <template v-else-if="row.inspectionMethod == 'spot_check'">
-                抽检
+                <el-tag type="warning">抽检</el-tag>
               </template>
               <template v-else-if="row.inspectionMethod == 'all'">
-                全检
+                <el-tag>全检</el-tag>
               </template>
               <template v-else>
                 {{ row.inspectionMethod }}
@@ -160,38 +131,19 @@
           <el-table-column prop="createTime" label="创建日期" width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" width="100" />
         </JNPF-table>
-        <pagination
-          :total="total"
-          :page.sync="listQuery.pageNum"
-          :background="background"
-          :limit.sync="listQuery.pageSize"
-          @pagination="initData"
-        />
+        <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
+          :limit.sync="listQuery.pageSize" @pagination="initData" />
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :busSetId="'CPBM'" />
-    <finishedProductForm
-      v-if="finishedProductFormVisible"
-      ref="finishedProductForm"
-      @refreshDataList="initData"
-      @close="closeForm"
-      :busSetId="'CPBM'"
-    />
+    <finishedProductForm v-if="finishedProductFormVisible" ref="finishedProductForm" @refreshDataList="initData"
+      @close="closeForm" :busSetId="'CPBM'" />
     <!-- 高级查询 -->
-    <SuperQuery
-      :show="superQueryVisible"
-      ref="SuperQuery"
-      :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch"
-      @close="superQueryVisible = false"
-    />
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
 
-    <InspectionSettingForm
-      ref="InspectionSettingForm"
-      v-if="batchVisible"
-      @close="closeForm"
-      :selectedData="selectedData"
-    />
+    <InspectionSettingForm ref="InspectionSettingForm" v-if="batchVisible" @close="closeForm"
+      :selectedData="selectedData" />
   </div>
 </template>
 
@@ -634,7 +586,7 @@ export default {
             })
           })
         })
-        .catch(() => {})
+        .catch(() => { })
     },
     // 只保留label
     filterateLabel(row, column, cellValue) {

@@ -96,7 +96,8 @@ export default {
         { label: "维修", value: "repair" },
         { label: "保养", value: "maintenance" },
         { label: "点检", value: "inspection" },
-        { label: "检定", value: "verification" }
+        { label: "检定", value: "verification" },
+        { label: "报废", value: "discard" }
       ],
       formVisible: false,
       listLoading: false,

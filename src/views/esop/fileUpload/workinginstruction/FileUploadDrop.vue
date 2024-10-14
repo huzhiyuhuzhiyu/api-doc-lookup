@@ -105,7 +105,7 @@ import { getDownloadUrl } from '@/api/common'
 import Preview from '@/components/upload-wj/Preview'
 import { uploaderWithCode } from '@/api/equipment'
 import { mapState } from 'vuex'
-import drag, {readFileBlob} from './drag'
+import drag, {readFileBlob} from './utils/drag'
 const units = {
     KB: 1024,
     MB: 1024 * 1024,

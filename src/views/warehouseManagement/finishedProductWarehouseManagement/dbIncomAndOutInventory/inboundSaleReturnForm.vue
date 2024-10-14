@@ -232,27 +232,21 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
                 @selection-change="handleSelectionChangeAllPruduct" ref="form">
-
                 <el-table-column prop="orderNo" label="退货单号" width="180" sortable="custom"></el-table-column>
-
-
-
-                <el-table-column prop="deliverDate" label=" 退货日期" width="160" sortable="custom" />
+                <el-table-column prop="deliverDate" label=" 退货日期" width="130" sortable="custom" />
                 <el-table-column prop="ordersNo" label="订单号" width="160" sortable="custom" />
-
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
                 <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
-                <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-                <el-table-column prop="mainUnit" label="单位" width="90" sortable="custom" />
-                <el-table-column prop="ordersNum" label="数量" width="120" sortable="custom" />
-                <el-table-column prop="undeliveredQuantity" label="待退货数量" width="160" sortable="custom" />
-
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
-                <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
-                <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
-                <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
-                <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
-                <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
+                <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
+                <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
+                <el-table-column prop="ordersNum" label="数量" width="80" sortable="custom" />
+                <el-table-column prop="undeliveredQuantity" label="待退货数量" width="130" sortable="custom" />
+                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
+                <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
+                <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
+                <el-table-column prop="oil" label="油脂" width="80" sortable="custom" />
+                <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom" />
+                <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" />
                 <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"></el-table-column>
                 <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"></el-table-column>
                 <!-- { label: "销售发货", value: "outbound_sale_send" },
@@ -915,7 +909,6 @@ export default {
     },
     async handleConfirm(submitModel) {
       console.log(this.productData);
-      this.btnLoading = true
       let submitFlag = true // 自动聚焦是否可用
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -1011,7 +1004,8 @@ export default {
             //   }
             // }
             console.log("this.productData", this.productData);
-            formMethod(dataObj).then(res => {
+      this.btnLoading = true
+      formMethod(dataObj).then(res => {
               let msg = res.msg
               if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
               if (submitModel == "draft") {
@@ -1027,6 +1021,7 @@ export default {
               }
               this.tipsvisible = true
 
+              this.btnLoading = false
 
             }).catch(() => {
               this.btnLoading = false

@@ -17,12 +17,9 @@
       </div>
 
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
-        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
-          :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
-          v-if="refreshTree" :filter-node-method="filterNode">
+        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNode">
           <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
-            <i
-              :class="[data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
+            <i :class="[data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
             <span class="text" :title="data.name">{{ data.name }}</span>
           </span>
         </el-tree>
@@ -51,8 +48,7 @@
           <el-col :span="4">
             <el-form-item>
               <el-select v-model="form.state" placeholder="请选择设备状态" clearable>
-                <el-option v-for="(item, index) in equipmentStateList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
+                <el-option v-for="(item, index) in equipmentStateList" :key="index" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -75,19 +71,24 @@
             </topOpts>
           </div>
           <div class="JNPF-common-head-right">
+            <el-tooltip content="高级查询" placement="top">
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true"  ref="dataTable"
-          @sort-change="sortChange" custom-column hasC @selection-change="handleSelectionChange">
-          <el-table-column prop="code" label="设备编码" min-width="200" sortable="custom"  />
-          <el-table-column prop="name" label="设备名称" min-width="200" sortable="custom"  />
+        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" ref="dataTable" @sort-change="sortChange" custom-column hasC @selection-change="handleSelectionChange">
+          <el-table-column prop="code" label="设备编码" min-width="200" sortable="custom" />
+          <el-table-column prop="name" label="设备名称" min-width="200" sortable="custom" />
           <el-table-column prop="deviceType" label="设备类型" width="200" sortable="custom">
             <template slot-scope="scope">
               <el-tag type="success" disable-transitions v-if="scope.row.deviceType == 'normal'">正常设备</el-tag>
-              <el-tag  disable-transitions v-if="scope.row.deviceType == 'virtually'">虚拟设备</el-tag>
+              <el-tag disable-transitions v-if="scope.row.deviceType == 'virtually'">虚拟设备</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="factoryFloor" label="车间" min-width="200" sortable="custom" />
@@ -96,7 +97,7 @@
           <el-table-column prop="supplier" label="生产厂家" min-width="200" sortable="custom" />
           <el-table-column prop="serialNo" label="序列号" min-width="200" sortable="custom" />
 
-          <el-table-column prop="scrapDate" label="报废日期" width="180" sortable="custom"/>
+          <el-table-column prop="scrapDate" label="报废日期" width="180" sortable="custom" />
           <el-table-column prop="purchaseDate" label="采购日期" width="180" sortable="custom">
 
           </el-table-column>
@@ -116,13 +117,13 @@
           <el-table-column prop="remark" label="备注" width="200" sortable="custom" />
 
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-          <el-table-column prop="createName" label="创建人" width="200" sortable="custom" />
+          <el-table-column prop="createByName" label="创建人" width="200" sortable="custom" />
 
           <el-table-column prop="state" label="设备状态" width="140" align="center" sortable="custom" fixed="right">
             <template slot-scope="{row}">
               <el-tag type="success" disable-transitions v-if="row.state == 'normal'">正常</el-tag>
               <el-tag type="warning" disable-transitions v-if="row.state == 'repair'">维修</el-tag>
-              <el-tag type="danger"  disable-transitions v-if="row.state == 'discard'">报废</el-tag>
+              <el-tag type="danger" disable-transitions v-if="row.state == 'discard'">报废</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="plmSyncFlag" label="PLM同步状态" align="center" min-width="160" sortable="custom" fixed="right">
@@ -134,8 +135,7 @@
           <el-table-column label="操作" width="260" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, false, 'edit')" @del="handleDel(scope.row.id)">
-                <el-button size="mini" type="text" :disabled="scope.row.plmSyncFlag"
-                  @click="PLMchange(scope.row.id)">同步PLM</el-button>
+                <el-button size="mini" type="text" :disabled="scope.row.plmSyncFlag" @click="PLMchange(scope.row.id)">同步PLM</el-button>
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -152,10 +152,10 @@
             </template>
           </el-table-column>
         </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-          @pagination="initData" />
+        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData" />
       </div>
     </div>
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <share v-if="shareVisible" ref="share" @close="closeForm"></share>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm" ref="printForm" />
@@ -163,6 +163,7 @@
 </template>
 
 <script>
+import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getPositionList, deleteEquEquipment } from '@/api/permission/position'
 import { getCategoryTrees, getEquEquipmentList, plmsync } from '@/api/basicData/index'
 import Form from './Form'
@@ -172,10 +173,176 @@ import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
 export default {
   name: 'deviceProfileSet',
-  components: { Form, PrintBrowse, share},
+  components: { Form, PrintBrowse, share, SuperQuery },
   data() {
     return {
-      shareVisible:false,
+      superQueryJson: [
+        {
+          prop: 'code',
+          label: "设备编码",
+          type: 'input'
+        }, {
+          prop: 'name',
+          label: "设备名称",
+          type: 'input'
+        },
+        { // 下拉选
+          prop: 'deviceType',
+          label: '设备类型',
+          type: 'select',
+          options: [
+            { label: '正常设备', value: 'normal' },
+            { label: '虚拟设备', value: 'virtually' }
+          ]
+        },
+        {
+          prop: 'factoryFloor',
+          label: "车间",
+          type: 'input'
+        },
+        {
+          prop: 'mountedPlaces',
+          label: "安装地点",
+          type: 'input'
+        },
+        {
+          prop: 'partnerName',
+          label: "供应商",
+          type: 'input'
+        },
+        {
+          prop: 'supplier',
+          label: "生产厂家",
+          type: 'input'
+        },
+        {
+          prop: 'serialNo',
+          label: "序列号",
+          type: 'input'
+        },
+        { // 日期选择器（区间）
+          prop: 'scrapDate',
+          label: '报废日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        { // 日期选择器（区间）
+          prop: 'purchaseDate',
+          label: '采购日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        { // 日期选择器（区间）
+          prop: 'productDate',
+          label: '制造日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'weight',
+          label: "重量（KG）",
+          type: 'input'
+        },
+        {
+          prop: 'serviceLife',
+          label: "额定使用年限（年）",
+          type: 'input'
+        },
+        {
+          prop: 'ratedVoltage',
+          label: "额定电压V",
+          type: 'input'
+        },
+        {
+          prop: 'ratedCurrent',
+          label: "额定电流A",
+          type: 'input'
+        },
+        {
+          prop: 'power',
+          label: "额定功率KW",
+          type: 'input'
+        },
+        {
+          prop: 'equLong',
+          label: "长（CM）",
+          type: 'input'
+        },
+        {
+          prop: 'width',
+          label: "宽（cm）",
+          type: 'input'
+        },
+        {
+          prop: 'height',
+          label: "高（CM）",
+          type: 'input'
+        },
+        {
+          prop: 'equipmentValue',
+          label: "设备原值（万元）",
+          type: 'input'
+        },
+        {
+          prop: 'theoryBeat',
+          label: "理论节拍",
+          type: 'input'
+        },
+        {
+          prop: 'usin',
+          label: "用途",
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: "备注",
+          type: 'input'
+        },
+        { // 下拉选
+          prop: 'state',
+          label: '设备状态',
+          type: 'select',
+          options: [
+            { label: '正常', value: 'normal' },
+            { label: '维修', value: 'repair' },
+            { label: '报废', value: 'discard' }
+          ]
+        },
+        { // 下拉选
+          prop: 'plmSyncFlag',
+          label: 'PLM同步状态',
+          type: 'select',
+          options: [
+            { label: '同步失败', value: false },
+            { label: '同步成功', value: true }
+          ]
+        },
+        { // 日期时间选择器（区间）
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'datetimerange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '创建开始时间',
+          endPlaceholder: '创建结束时间',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        }
+      ],
+      superQueryVisible: false,
+      shareVisible: false,
       treeData: [],
       tableData: [],
       treeLoading: false,
@@ -201,7 +368,7 @@ export default {
       },
       typeList: [],
       equipmentStateList: [
-      {
+        {
           value: "normal",
           label: "正常"
         },
@@ -231,8 +398,8 @@ export default {
       expands: true,
       refreshTree: true,
       filterText: '',
-      selectList:[],
-      printBrowseVisible:false,
+      selectList: [],
+      printBrowseVisible: false,
     }
   },
   watch: {
@@ -242,12 +409,20 @@ export default {
   },
   created() {
     console.log(111);
-    
+
     this.getCategoryTrees(true)
     // this.getDictionaryType()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
+    },
+    superQuerySearch(query) {
+      this.listQuery.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
     PLMchange(id) {
       this.listLoading = true
       plmsync(id).then(res => {
@@ -287,7 +462,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-      if (newProp === 'create_name') {newProp = 'create_by'}
+      if (newProp === 'create_name') { newProp = 'create_by' }
       this.listQuery.orderItems[0].asc = order === "ascending"
       this.listQuery.orderItems[0].column = order === null ? "" : newProp
       this.initData()
@@ -457,7 +632,7 @@ export default {
         })
       }).catch(() => { })
     },
-    setrepairUserId(){
+    setrepairUserId() {
       if (!this.selectList.length) return this.$message.error("请选择设备!")
       let idList = this.selectList.map(item => item.id);
       this.shareVisible = true
@@ -465,12 +640,12 @@ export default {
         this.$refs.share.init(idList)
       })
     },
-    printDevice(enCode){
+    printDevice(enCode) {
       if (!this.selectList.length) return this.$message.error("请选择您要打印的数据!")
       getPrintBusInfo(enCode).then(res => {
         if (res.data) {
           this.prindId = res.data.id
-          this.formId = this.selectList.map(item=>item.id).join(',')
+          this.formId = this.selectList.map(item => item.id).join(',')
           this.printBrowseVisible = true
         } else {
           this.$message.warning('未找到相应打印模版')

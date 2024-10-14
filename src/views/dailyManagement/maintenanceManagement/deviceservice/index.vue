@@ -35,6 +35,12 @@
             <el-button size="mini" type="primary" icon="icon-ym icon-ym-system" @click="Batchrepair">批量完成维修</el-button>
           </div>
           <div class="JNPF-common-head-right">
+            <el-tooltip content="高级查询" placement="top">
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
@@ -148,21 +154,198 @@
         <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize" @pagination="initData" />
       </div>
     </div>
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <depForm v-if="shareVisible" ref="depForm" @close="closeForm"></depForm>
     <sucForm v-if="sucFormVisible" ref="sucForm" @close="closeForm"></sucForm>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
   </div>
 </template>
 <script>
+import SuperQuery from '@/components/SuperQuery/index.vue'
 import depForm from './depForm'
 import sucForm from './sucForm'
 import { RepairRequestList, deleteRepairRequest } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
 export default {
   name: 'deviceservice',
-  components: { Form, depForm, sucForm },
+  components: { Form, depForm, sucForm, SuperQuery },
   data() {
     return {
+      superQueryVisible: false,
+      superQueryJson: [
+        {
+          prop: 'maintenanceNo',
+          label: "维修单号",
+          type: 'input'
+        },
+        {
+          prop: 'equipmentIdCode',
+          label: "设备编码",
+          type: 'input'
+        },
+        {
+          prop: 'equipmentIdName',
+          label: "设备名称",
+          type: 'input'
+        },
+        {
+          prop: 'factoryFloor',
+          label: "使用车间",
+          type: 'input'
+        },
+        {
+          prop: 'mountedPlaces',
+          label: "安装地点",
+          type: 'input'
+        },
+        { // 日期时间选择器（区间）
+          prop: 'faultStartTime',
+          label: '故障开始时间',
+          type: 'datetimerange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '开始时间',
+          endPlaceholder: '结束时间',
+          pickerOptions: this.global.timePickerOptions
+        },
+        { // 下拉选
+          prop: 'reviewComments',
+          label: '审核意见',
+          type: 'select',
+          options: [
+            { label: '立即维修', value: 'immediately' },
+            { label: '驳回', value: 'reject' },
+            { label: '转委外', value: 'outsourcing' }
+          ]
+        },
+        {
+          prop: 'rejectReason',
+          label: "驳回理由",
+          type: 'input'
+        },
+        { // 下拉选
+          prop: 'degree',
+          label: '紧急程度',
+          type: 'select',
+          options: [
+            { label: '特别紧急', value: '1' },
+            { label: '紧急', value: '2' },
+            { label: '一般', value: '3' },
+            { label: '不急', value: '4' }
+          ]
+        },
+        {
+          prop: 'maintenancePersonnelName',
+          label: "维修负责人",
+          type: 'input'
+        },
+        {
+          prop: 'waitDuration',
+          label: "故障响应时长(小时)",
+          type: 'input'
+        },
+        { // 下拉选
+          prop: 'sparePartsFlag',
+          label: '是否更换备件',
+          type: 'select',
+          options: [
+            { label: '否', value: 0 },
+            { label: '是', value: 1 }
+          ]
+        },
+        {
+          prop: 'reason',
+          label: "故障原因",
+          type: 'input'
+        },
+        {
+          prop: 'solutionMeasures',
+          label: "解决措施",
+          type: 'input'
+        },
+        { // 日期时间选择器（区间）
+          prop: 'startMaintenanceTime',
+          label: '开始维修时间',
+          type: 'datetimerange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '开始时间',
+          endPlaceholder: '结束时间',
+          pickerOptions: this.global.timePickerOptions
+        },
+        { // 日期时间选择器（区间）
+          prop: 'repairCompletionTime',
+          label: '维修完成时间',
+          type: 'datetimerange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '开始时间',
+          endPlaceholder: '结束时间',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'maintenanceDuration',
+          label: "维修时长",
+          type: 'input'
+        },
+        { // 下拉选
+          prop: 'equipmentState',
+          label: '设备状态',
+          type: 'select',
+          options: [
+            { label: '正常', value: 'normal' },
+            { label: '维修', value: 'repair' },
+            { label: '报废', value: 'discard' },
+            { label: '备用', value: 'spare' },
+            { label: '停用', value: 'stop' }
+          ]
+        },
+        {
+          prop: 'departmentIdName',
+          label: "申请部门",
+          type: 'input'
+        },
+        {
+          prop: 'applicantIdName',
+          label: "申请人",
+          type: 'input'
+        },
+        { // 日期选择器（区间）
+          prop: 'applicationDate',
+          label: '申请日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        { // 下拉选
+          prop: 'state',
+          label: '状态',
+          type: 'select',
+          options: [
+            { label: '待维修', value: 'toBeMaintain' },
+            { label: '正在维修', value: 'maintaining' },
+            { label: '已维修', value: 'maintained' }
+          ]
+        },
+        { // 日期时间选择器（区间）
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'datetimerange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '创建开始时间',
+          endPlaceholder: '创建结束时间',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: "备注",
+          type: 'input'
+        }
+      ],
       shareVisible: false,
       sucFormVisible: false,
       selectData: [],
@@ -211,6 +394,14 @@ export default {
     this.initData()
   },
   methods: {
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
+    },
+    superQuerySearch(query) {
+      this.orderForm.superQuery = query
+      this.superQueryVisible = false
+      this.dataFormSubmit()
+    },
     handleBatchreview() {
       if (!this.selectData.length) return this.$message.error("请先选择你要审核的设备")
       let idList = this.selectData.map(item => item.id);

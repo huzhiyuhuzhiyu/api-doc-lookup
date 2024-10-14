@@ -213,7 +213,7 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane label="维修记录" name="wxjlinfo">
-                  <JNPF-table ref="wxjldataTable" v-loading="wxjllistLoading" @sort-change="sortChange" :data="wxjldataTable" fixedNO custom-column>
+                  <JNPF-table ref="wxjldataTable" v-loading="wxjllistLoading" @sort-change="wxjlsortChange" :data="wxjldataTable" fixedNO custom-column>
                     <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" sortable="custom">
                     </el-table-column>
                     <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" sortable="custom" />
@@ -295,7 +295,7 @@
                   <pagination :total="total" :page.sync="wxjlorderForm.pageNum" :limit.sync="wxjlorderForm.pageSize" @pagination="getwxjlinfo" />
                 </el-tab-pane>
                 <el-tab-pane label="保养任务" name="byrwinfo">
-                  <JNPF-table ref="byrwdataTable" v-loading="byrwlistLoading" :data="byrwdataTable" @sort-change="sortChange" fixedNO custom-column style="padding-bottom: 50px;">
+                  <JNPF-table ref="byrwdataTable" v-loading="byrwlistLoading" :data="byrwdataTable" @sort-change="byrwsortChange" fixedNO custom-column style="padding-bottom: 50px;">
                     <el-table-column prop="name" label="任务名称" min-width="200" fixed="left" sortable="custom">
                     </el-table-column>
                     <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" fixed="left" sortable="custom" />
@@ -332,7 +332,7 @@
                   <pagination :total="total" :page.sync="byrworderForm.pageNum" :limit.sync="byrworderForm.pageSize" @pagination="getbyrwinfo" />
                 </el-tab-pane>
                 <el-tab-pane label="保养记录" name="byjlinfo">
-                  <JNPF-table ref="byjldataTable" v-loading="byjllistLoading" :data="byjldataTable" @sort-change="sortChange" fixedNO custom-column style="padding-bottom: 50px;">
+                  <JNPF-table ref="byjldataTable" v-loading="byjllistLoading" :data="byjldataTable" @sort-change="byjlsortChange" fixedNO custom-column style="padding-bottom: 50px;">
                     <el-table-column prop="maintenanceTaskIdText" label="任务名称" min-width="180" sortable="custom" />
                     <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" sortable="custom" />
                     <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom" />
@@ -372,7 +372,7 @@
                   <pagination :total="total" :page.sync="byjlorderForm.pageNum" :limit.sync="byjlorderForm.pageSize" @pagination="getbyjlinfo" />
                 </el-tab-pane>
                 <el-tab-pane label="点检任务" name="djrwinfo">
-                  <JNPF-table ref="djrwdataTable" v-loading="djrwlistLoading" :data="djrwdataTable" @sort-change="sortChange" fixedNO custom-column style="padding-bottom: 50px;">
+                  <JNPF-table ref="djrwdataTable" v-loading="djrwlistLoading" :data="djrwdataTable" @sort-change="djrwsortChange" fixedNO custom-column style="padding-bottom: 50px;">
                     <el-table-column prop="name" label="任务名称" width="200" sortable="custom">
                     </el-table-column>
                     <el-table-column prop="cycle" label="周期" width="120" sortable="custom"></el-table-column>
@@ -408,7 +408,7 @@
                   <pagination :total="total" :page.sync="djrworderForm.pageNum" :limit.sync="djrworderForm.pageSize" @pagination="getdjrwinfo" />
                 </el-tab-pane>
                 <el-tab-pane label="点检记录" name="djjlinfo">
-                  <JNPF-table ref="djjldataTable" v-loading="djjllistLoading" :data="djjldataTable" @sort-change="sortChange" fixedNO custom-column style="padding-bottom: 50px;">
+                  <JNPF-table ref="djjldataTable" v-loading="djjllistLoading" :data="djjldataTable" @sort-change="djjlsortChange" fixedNO custom-column style="padding-bottom: 50px;">
                     <el-table-column prop="equipmentIdCode" label="设备编码" width="200" sortable="custom" />
                     <el-table-column prop="equipmentIdName" label="设备名称" width="200" sortable="custom" />
                     <el-table-column prop="factoryFloor" label="使用车间" min-width="140" sortable="custom" />
@@ -487,7 +487,7 @@ export default {
           column: ""
         }, {
           asc: false,
-          column: "create_time" /* 使用倒序日期作为默认排序 */
+          column: "application_date" /* 使用倒序日期作为默认排序 */
         }],
       },
       byrworderForm: {
@@ -501,7 +501,7 @@ export default {
           column: ""
         }, {
           asc: false,
-          column: "create_time" /* 使用倒序日期作为默认排序 */
+          column: "next_maintenance_time" /* 使用倒序日期作为默认排序 */
         }],
       },
       byjlorderForm: {
@@ -515,7 +515,7 @@ export default {
           column: ""
         }, {
           asc: false,
-          column: "create_time" /* 使用倒序日期作为默认排序 */
+          column: "actual_maintenance_date" /* 使用倒序日期作为默认排序 */
         }],
       },
       djrworderForm: {
@@ -528,7 +528,7 @@ export default {
           column: ""
         }, {
           asc: false,
-          column: "create_time" /* 使用倒序日期作为默认排序 */
+          column: "next_maintenance_time" /* 使用倒序日期作为默认排序 */
         }],
       },
       djjlorderForm: {
@@ -541,7 +541,7 @@ export default {
           column: ""
         }, {
           asc: false,
-          column: "create_time" /* 使用倒序日期作为默认排序 */
+          column: "actual_maintenance_date" /* 使用倒序日期作为默认排序 */
         }],
       },
       deviceTypeList: [
@@ -719,16 +719,60 @@ export default {
       let s = parseInt(time % 60)
       return d != '0' ? `${d} 天 ${h} 时 ${m} 分 ${s} 秒` : h != '0' ? `${h} 时 ${m} 分 ${s} 秒` : m != '0' ? `${m} 分 ${s} 秒` : `${s} 秒`
     },
-    sortChange({ prop, order }) {
+    wxjlsortChange({ prop, order }) {
       let newProp
-      if (prop === 'equipmentIdName' || prop === 'equipmentIdCode') {
+      if (prop === 'equipmentIdName' || prop === 'createByName' || prop === 'applicantIdName' || prop === 'departmentIdName' || prop === 'equipmentState' || prop === 'equipmentIdCode' || prop === 'factoryFloor' || prop === 'mountedPlaces' || prop === 'maintenancePersonnelName') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
       }
-      this.orderForm.orderItems[0].asc = order !== "descending"
-      this.orderForm.orderItems[0].column = order === null ? "" : newProp
-      this.initData()
+      this.wxjlorderForm.orderItems[0].asc = order !== "descending"
+      this.wxjlorderForm.orderItems[0].column = order === null ? "" : newProp
+      this.getwxjlinfo()
+    },
+    byrwsortChange({ prop, order }) {
+      let newProp
+      if (prop === 'equipmentIdName' || prop === 'equipmentIdCode' || prop === 'departmentIdName' || prop === 'maintainerIdName' || prop === 'createByName') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      this.byrworderForm.orderItems[0].asc = order !== "descending"
+      this.byrworderForm.orderItems[0].column = order === null ? "" : newProp
+      this.getbyrwinfo()
+    },
+    byjlsortChange({ prop, order }) {
+      let newProp
+      if (prop === 'createByName' || prop === 'cycle' || prop === 'unit' || prop === 'equipmentIdName' || prop === 'equipmentIdCode' || prop === 'departmentIdText' || prop === 'maintainerIdText' || prop === 'actualDepartmentIdText' || prop === 'actualMaintenanceIdText' || prop === 'maintenanceTaskIdText' || prop === 'factoryFloor' || prop === 'mountedPlaces') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      this.byjlorderForm.orderItems[0].asc = order !== "descending"
+      this.byjlorderForm.orderItems[0].column = order === null ? "" : newProp
+      this.getbyjlinfo()
+    },
+    djrwsortChange({ prop, order }) {
+      let newProp
+      if (prop === 'equipmentIdName' || prop === 'equipmentIdCode' || prop === 'departmentIdName' || prop === 'maintainerIdName' || prop === 'createByName') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      this.djrworderForm.orderItems[0].asc = order !== "descending"
+      this.djrworderForm.orderItems[0].column = order === null ? "" : newProp
+      this.getdjrwinfo()
+    },
+    djjlsortChange({ prop, order }) {
+      let newProp
+      if (prop === 'createByName' || prop === 'cycle' || prop === 'unit' || prop === 'equipmentIdName' || prop === 'equipmentIdCode' || prop === 'departmentIdText' || prop === 'maintainerIdText' || prop === 'actualDepartmentIdText' || prop === 'actualMaintenanceIdText' || prop === 'maintenanceTaskIdText' || prop === 'factoryFloor' || prop === 'mountedPlaces') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      this.djjlorderForm.orderItems[0].asc = order !== "descending"
+      this.djjlorderForm.orderItems[0].column = order === null ? "" : newProp
+      this.getdjjlinfo()
     },
     goBack() {
       this.$emit('close')
@@ -753,7 +797,7 @@ export default {
     font-size: 24px;
     font-weight: bold;
   }
-  .equipmentstatus{
+  .equipmentstatus {
     width: 120px;
     height: 120px;
     position: absolute;

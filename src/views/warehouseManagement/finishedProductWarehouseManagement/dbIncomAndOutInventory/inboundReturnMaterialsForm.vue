@@ -214,7 +214,7 @@
                 <el-table-column prop="operationDate" label="退料日期" width="160" sortable="custom" />
                 <el-table-column prop="ordersNo" label="任务单号" width="160" sortable="custom" />
 
-                <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
+                <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
                 <el-table-column prop="processName" label="工序" width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="90" sortable="custom" />
@@ -370,7 +370,7 @@ export default {
       },
       inspectionResultsList: [
         { label: "待检验", value: "unInspect" },
-        { label: "检验合格", value: "qualified" },
+        { label: "合格", value: "qualified" },
       ],
       productList: [],
       productTotal: 0,

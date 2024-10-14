@@ -373,53 +373,53 @@
             </el-form>
           </el-row>
           <div class="JNPF-common-layout-main JNPF-flex-main">
-            <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
+            <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true" 
               @selection-change="handleSelectionChangeAllPruduct" @sort-change="sortChange">
               <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
+                v-if="dataForm.documentType == 'outbound'" key="productDrawingNo"/>
               <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom"
-                v-if="dataForm.documentType == 'inbound'" />
+                v-if="dataForm.documentType == 'inbound'"  key="drawingNo"/>
               <!-- <el-table-column prop="productName" label="产品名称" min-width="160" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" /> -->
               <!-- <el-table-column prop="name" label="产品名称" min-width="160" sortable="custom"
                 v-if="dataForm.documentType == 'inbound'" /> -->
               <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
+                v-if="dataForm.documentType == 'outbound'" key="productCode"/>
               <el-table-column prop="code" label="产品编码" min-width="160" sortable="custom"
-                v-if="dataForm.documentType == 'inbound'" />
+                v-if="dataForm.documentType == 'inbound'"  key="code"/>
               <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
+                v-if="dataForm.documentType == 'outbound'"  key="mainUnit"/>
               <el-table-column prop="availableQuantity" label="可用库存数量" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
+                v-if="dataForm.documentType == 'outbound'"  key="availableQuantity"/>
               <el-table-column prop="batchNumber" label="批次号" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
+                v-if="dataForm.documentType == 'outbound'"  key="batchNumber"/>
               <el-table-column prop="standardValue" label="规值" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
+                v-if="dataForm.documentType == 'outbound'"  key="standardValue"/>
               <el-table-column prop="colour" label="颜色" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
+                v-if="dataForm.documentType == 'outbound'"  key="colour"/>
               <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
+                v-if="dataForm.documentType == 'outbound'"  key="sealingCoverTyping"/>
               <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
+                v-if="dataForm.documentType == 'outbound'"  key="accuracyLevel"/>
               <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
+                v-if="dataForm.documentType == 'outbound'"  key="vibrationLevel"/>
               <el-table-column prop="oil" label="油脂" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
+                v-if="dataForm.documentType == 'outbound'"  key="oil"/>
 
               <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
+                v-if="dataForm.documentType == 'outbound'"  key="oilQuantity"/>
               <el-table-column prop="clearance" label="游隙" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
+                v-if="dataForm.documentType == 'outbound'"  key="clearance"/>
               <el-table-column prop="aperture" label="孔径" width="120" :key="102"
-                v-if="dataForm.documentType == 'outbound'"></el-table-column>
+                v-if="dataForm.documentType == 'outbound'"  key="aperture"></el-table-column>
               <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
+                v-if="dataForm.documentType == 'outbound'"  key="packagingMethod"/>
               <el-table-column prop="specialRequire" label="特殊要求" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
+                v-if="dataForm.documentType == 'outbound'"  key="specialRequire"/>
               <el-table-column prop="remark" label="备注" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
+                v-if="dataForm.documentType == 'outbound'"  key="remark"/>
               <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"
-                v-if="dataForm.documentType == 'inbound'" />
+                v-if="dataForm.documentType == 'inbound'"  key="createTime"/>
             </JNPF-table>
             <pagination :total="productTotal"
               :page.sync="dataForm.documentType == 'outbound' ? orderForm.pageNum : listQuery.pageNum"

@@ -2881,6 +2881,7 @@ export default {
             orderLineList: [],
             flowData: this.flowData
           }
+          let filteredArr=[]
           if (this.productData.length < 1) {
             submitFlag = false
             this.$message({
@@ -2898,9 +2899,10 @@ export default {
               item.deliveryDate === ""
             )
             if (index !== -1) {
+              console.log(6666);
               // 删除空行
               this.productData.splice(index, 1);
-            }
+            } 
             for (let index = 0; index < this.productData.length; index++) {
               const item = this.productData[index];
               if (!item.productsId) {
@@ -3043,10 +3045,12 @@ export default {
 
 
             }
-            let filteredArr = this.productData.filter(item => item.productDrawingNo && item.productsId);
-
+            console.log("productData",this.productData);
+              filteredArr = this.productData.filter(item => item.drawingNo && item.productsId);
+              console.log("filteredArr",filteredArr);
             obj.orderLineList = filteredArr
           }
+         setTimeout(() => {
           if (submitFlag === false) return
           this.btnLoading = true
           let formMethod = null;
@@ -3057,6 +3061,7 @@ export default {
             formMethod = addOrders
             this.btnText = "继续新增"
           }
+          console.log("obj",obj);
           formMethod(obj).then(res => {
             let msg = "";
             if (value == "draft") {
@@ -3079,6 +3084,7 @@ export default {
           }).catch(() => {
             this.btnLoading = false
           })
+         }, 100);
 
         } else {
           this.btnLoading = false

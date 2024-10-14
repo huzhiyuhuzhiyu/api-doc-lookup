@@ -51,7 +51,7 @@
             </el-form-item>
           </el-col> -->
           <template v-for="item in searchList">
-            <el-col :span="item.searchType === 3 ? 6 : 4" :key="item.prop">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
               <el-form-item>
                 <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
                   @keyup.enter.native="search('basic')" />
@@ -106,7 +106,7 @@
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           ref="dataTable" hasC @selection-change="currentChange" :setColumnDisplayList="columnList">
           <el-table-column prop="name" label="工序名称" min-width="180" sortable="custom" />
-          <el-table-column prop="code" label="工序编码" min-width="180" sortable="custom"></el-table-column>
+          <el-table-column prop="code" label="工序编码" min-width="160" sortable="custom"></el-table-column>
           <el-table-column prop="pricingType" label="计价类型" width="120" sortable="custom">
             <template slot-scope="{ row }">
               <template v-if="row.pricingType == 'by_time'">
@@ -117,18 +117,18 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column prop="unitPrice" label="计件单价(元)" width="110">
+          <el-table-column prop="unitPrice" label="计件单价(元)" width="130">
             <template slot-scope="scope">
               <div>{{ scope.row.unitPrice ? scope.row.unitPrice : 0 }}</div>
             </template>
           </el-table-column>
-          <el-table-column prop="timePrice" label="计时单价(元)" width="110">
+          <el-table-column prop="timePrice" label="计时单价(元)" width="130">
             <template slot-scope="scope">
               <div>{{ scope.row.timePrice ? scope.row.timePrice : 0 }}</div>
             </template>
           </el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" width="150" />
+          <el-table-column prop="createByName" label="创建人" width="100" />
         </JNPF-table>
         <pagination :total="total" :page.sync="superForm.pageNum" :limit.sync="superForm.pageSize"
           @pagination="initData" />

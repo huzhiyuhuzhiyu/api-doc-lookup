@@ -79,13 +79,13 @@
           <el-col :span="6">
             <el-form-item>
               <el-date-picker v-model="saleOrderDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                start-placeholder="发货开始日期" end-placeholder="发货结束日期'" clearable>
+                start-placeholder="交货开始日期" end-placeholder="交货结束日期'" clearable>
               </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList()">
+              <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList('basic')">
                 {{ $t('common.search') }}</el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="resetFun()">{{ $t('common.reset') }}
               </el-button>
@@ -161,7 +161,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList()">
+              <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList('basic')">
                 {{ $t('common.search') }}</el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="resetFun()">{{ $t('common.reset') }}
               </el-button>
@@ -237,7 +237,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList()">
+              <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList('basic')">
                 {{ $t('common.search') }}</el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="resetFun()">{{ $t('common.reset') }}
               </el-button>
@@ -306,7 +306,7 @@
       
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList()">
+              <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList('basic')">
                 {{ $t('common.search') }}</el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="resetFun()">{{ $t('common.reset') }}
               </el-button>
@@ -345,7 +345,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList()">
+              <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList('basic')">
                 {{ $t('common.search') }}</el-button>
 
               <el-button size="mini" icon="el-icon-refresh-right" @click="resetFun()">{{ $t('common.reset') }}
@@ -387,7 +387,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList()">
+              <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList('basic')">
                 {{ $t('common.search') }}</el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="resetFun()">{{ $t('common.reset') }}
               </el-button>
@@ -1753,7 +1753,7 @@ export default {
       return codes.size > 1; // 如果有多个不同的代码，则返回 true  
     },
     // 外协发料 订单
-    getexterMaterFUN() {
+    getexterMaterFUN(type) {
       this.exterMaterForm.classAttributeList = this.classAttributeList
       this.superForm=this.exterMaterForm
           if (type === 'basic') {
@@ -1789,7 +1789,7 @@ export default {
       })
     },
     // 外协收货  订单 列表数据
-    getExternalFun() {
+    getExternalFun(type) {
       if (this.externalDate.length) {
         this.externalForm.deliveryStartDate = this.externalDate[0]
         this.externalForm.deliveryEndDate = this.externalDate[1]
@@ -2159,6 +2159,7 @@ export default {
       console.log(this.categoryType);
       if (this.categoryType == 'outbound_sale_send') {
         if (this.saleFlag) {
+        console.log(123,type);
           if (this.saleOrderDateArr.length) {
             this.saleOrderForm.deliveryStartTime = this.saleOrderDateArr[0]
             this.saleOrderForm.deliveryEndTime = this.saleOrderDateArr[1]
@@ -2798,7 +2799,7 @@ export default {
       if (this.categoryType == 'outbound_sale_send' || this.categoryType == 'inbound_sale_return') {
         if (this.categoryType == 'outbound_sale_send' && this.saleFlag) {
           this.saleOrderDateArr = []
-          this.saleOrderForm = {
+          this.superForm = this.saleOrderForm = {
             deliverQueryFlag: true,
             deliveryStartTime: "",
             deliveryEndTime: "",
@@ -2881,7 +2882,7 @@ export default {
           ]
         } else if (this.categoryType == 'inbound_purchase' && this.purchaseFlag) {
           this.purchaserOrderDateArr = []
-          this.purchaseForm = {
+          this.superForm = this.purchaseForm = {
             cooperativePartnerName: "",
             productDrawingNo: "",
             deliveryStartDate: "",
@@ -2938,7 +2939,7 @@ export default {
             { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
           ]
         } else {
-          this.exterMaterForm = {
+          this.superForm = this.exterMaterForm = {
             orderNo: "",
             cooperativePartnerName: "",
             productDrawingNo: "",
@@ -2967,7 +2968,7 @@ export default {
       if (this.categoryType == 'inbound_external') {
         if (this.externalFlag) {
           this.externalDate = []
-          this.externalForm = {
+          this.superForm = this.externalForm = {
             receiptQueryFlag: true,
             productDrawingNo: "",
             cooperativePartnerName: "",
@@ -3073,7 +3074,7 @@ export default {
       }
       if (this.categoryType == 'inbound_mock_production') {
         if (type == 'product') {
-          this.productForm = {
+          this.superForm = this.productForm = {
             orderNo: "",
             orderType: "",
             productDrawingNo: "",
@@ -3098,7 +3099,7 @@ export default {
     
           this.searchProductData()
         } else {
-          this.workForm = {
+          this.superForm = this.workForm = {
             productionOrderNo: "",
             orderNo: "",
             processName: "",

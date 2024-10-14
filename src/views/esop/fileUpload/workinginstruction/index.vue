@@ -56,7 +56,7 @@
                     <el-table-column label="操作" width="180" fixed="right">
                         <template slot-scope="scope">
                             <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
-
+                                       :delDisabled="scope.row.documentStatus !== 'draft'"
                                        :editDisabled="scope.row.documentStatus !== 'draft'"
                                        @edit="addOrUpdateHandle(ModelType.EDIT,scope.row.id)" @del="handleDel(scope.row.id)">
                                         <el-dropdown hide-on-click>

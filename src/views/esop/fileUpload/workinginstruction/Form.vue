@@ -4,11 +4,11 @@
         <div class="JNPF-preview-main org-form" ref="main">
 
             <div :class="['JNPF-common-page-header', isView ? 'noButtons' : '']">
-                <el-page-header @back="goBack" :content="title" />
+                <el-page-header @back="goBack('back')" :content="title" />
                 <div class="options" v-if="!isView">
                     <el-button type="success" :loading="btnLoading" @click="handleConfirm(DocumentStatus.DRAFT)">保存草稿</el-button>
                     <el-button type="primary" :loading="btnLoading" @click="handleConfirm(DocumentStatus.SUBMIT)">保存并提交</el-button>
-                    <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
+                    <el-button @click="goBack('cancel')">{{ $t('common.cancelButton') }}</el-button>
                 </div>
             </div>
 
@@ -297,7 +297,7 @@ export default {
                 }
             })
         },
-        goBack(){
+        goBack(type,force =false){
            // if(this.hasModifyNoSave()){
            //      return this.$confirm('您有编辑的内容未保存，是否返回？','提示',{
            //           confirmButtonText:'确定',
@@ -307,7 +307,10 @@ export default {
            //           this.$emit('back')
            //      }).catch(()=>{})
            // }
-            return this.$confirm('您确认要取消吗？','提示',{
+            if(force){
+                return this.$emit('back')
+            }
+            return this.$confirm(`您确认要${type === 'back' ? '返回' :'取消'}吗？`,'提示',{
                 confirmButtonText:'确定',
                 cancelButtonText:'取消',
                 type:'warning'
@@ -332,7 +335,7 @@ export default {
             console.log(data)
             this.hasModify = false
             await this.$message.success('操作成功')
-            isSubmit && this.goBack()
+            isSubmit && this.goBack('',true)
 
         },
         getSaveData(type){

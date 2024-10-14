@@ -38,8 +38,8 @@
         </div>
       </div>
       <div class="JNPF-common-layout-center JNPF-flex-main" style="margin-top: 10px;background-color: #fff;">
-        <el-tabs type="border-card" style="height: 100%;">
-          <el-tab-pane label="设备台账">
+        <el-tabs type="border-card" style="height: 100%;" v-model="activeName" @tab-click="handleClick">
+          <el-tab-pane label="设备台账" name="sbtz">
             <div class="JNPF-common-layout">
               <div class="JNPF-common-layout-center JNPF-flex-main">
                 <el-row class="JNPF-common-search-box" :gutter="16">
@@ -107,7 +107,7 @@
               </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="设备概况">
+          <el-tab-pane label="设备概况" name="sbgk">
             <div class="JNPF-common-layout">
               <div class="JNPF-common-layout-center JNPF-flex-main">
                 <el-row class="JNPF-common-search-box" :gutter="16">
@@ -180,7 +180,7 @@
               </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="点检分布">
+          <el-tab-pane label="点检分布" name="djfb">
             <div class="JNPF-common-layout-main JNPF-flex-main" style="overflow-y: auto;">
               <div class="vux-flexbox container-content vux-flex-row">
                 <div class="left-content-dj">
@@ -269,7 +269,7 @@
               </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="维修分布">
+          <el-tab-pane label="维修分布" name="wxfb">
             <div class="JNPF-common-layout-main JNPF-flex-main" style="overflow-y: auto;">
               <div class="vux-flexbox container-content vux-flex-row">
                 <div class="left-content-dj">
@@ -358,7 +358,7 @@
               </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="保养分布">
+          <el-tab-pane label="保养分布" name="byfb">
             <div class="JNPF-common-layout-main JNPF-flex-main" style="overflow-y: auto;">
               <div class="vux-flexbox container-content vux-flex-row" style="height: 168px;">
                 <div class="react-grid-item-by dash-container has-hover" v-for="item in datalistdj" :key="item.id">
@@ -490,6 +490,7 @@ export default {
   components: { chart },
   data() {
     return {
+      activeName: 'sbtz',
       total: 0,
       listLoading: false,
       tableData: [],
@@ -544,31 +545,40 @@ export default {
     }
   },
   mounted() {
-    this.chartInstance = this.$echarts.init(document.getElementById('equipmentstatus'));
-    this.chartInstance.setOption(this.option);
-    window.onresize = () => {
-      clearTimeout(this.timeout)
-      this.timeout = setTimeout(() => {
-        this.chartInstance.resize()
-      }, 100);
-    }
+
   },
   beforeDestroy() {
     window.onresize = null
   },
   watch: {
-    option: {
+    // option: {
+    //   handler(newOption) {
+    //     if (this.chartInstance) {
+    //       this.chartInstance.setOption(newOption);
+    //     }
+    //   },
+    //   deep: true
+    // },
+    activeName: {
       handler(newOption) {
-        if (this.chartInstance) {
-          this.chartInstance.setOption(newOption);
+        if (newOption == 'sbtz') {
+
+        } else if (newOption == 'sbgk') {
+          this.initData()
+        } else if (newOption == 'djfb') {
+
+        } else if (newOption == 'wxfb') {
+
+        } else {
+
         }
       },
       deep: true
     }
   },
-  created() {
-    this.initData()
-  },
+  // created() {
+  //   this.initData()
+  // },
   methods: {
     focusfactoryFloor() {
       let obj = {
@@ -594,7 +604,16 @@ export default {
     search() {
       this.initData()
     },
-    initData() {
+    async initData() {
+      this.chartInstance = await this.$echarts.init(document.getElementById('equipmentstatus'));
+
+      // window.onresize = () => {
+      //   clearTimeout(this.timeout)
+      //   this.timeout = setTimeout(() => {
+
+      //   }, 100);
+      // }
+      if (!this.chartInstance) return
       this.leftlistLoading = true
       gettotalOverview(this.listQuery).then(res => {
         this.datalist.forEach(item => {
@@ -630,6 +649,8 @@ export default {
             }
           ]
         }
+        this.chartInstance.setOption(this.option);
+        this.chartInstance.resize()
         this.rightlistLoading = false
       }).catch(() => {
         this.rightlistLoading = false

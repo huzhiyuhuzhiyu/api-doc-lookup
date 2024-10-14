@@ -54,8 +54,8 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24" v-if="dataForm.cycleType == 'cycle'" key="369">
-                      <el-form-item label="保养等级" prop="maintenanceLevelId">
-                        <el-cascader v-model="level" ref="mycascader" :props="props" :options="options" @change=changelevel placeholder="请选择保养等级" style="width: 100%;line-height:29px;"></el-cascader>
+                      <el-form-item label="保养等级/频次" prop="maintenanceLevelId">
+                        <el-cascader v-model="level" ref="mycascader" :options="options" @change=changelevel placeholder="请选择保养等级/频次" :disabled="btnType == 'look'" style="width: 100%;line-height:29px;"></el-cascader>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24" v-if="dataForm.cycleType == 'cycle'" key="3">
@@ -71,13 +71,13 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="下次保养时间" prop="nextMaintenanceTime">
-                        <el-date-picker v-model="dataForm.nextMaintenanceTime" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择下次保养时间" :picker-options="pickerOptions" :disabled="btnType == 'look'">
+                      <el-form-item label="初次保养时间" prop="nextMaintenanceTime">
+                        <el-date-picker v-model="dataForm.nextMaintenanceTime" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择初次保养时间" :picker-options="pickerOptions" :disabled="btnType == 'look'">
                         </el-date-picker>
-                        <!-- <el-date-picker v-model="dataForm.nextMaintenanceTime" type="datetime" placeholder="请选择下次保养时间"
+                        <!-- <el-date-picker v-model="dataForm.nextMaintenanceTime" type="datetime" placeholder="请选择初次保养时间"
                       readonly default-time="12:00:00" style="width: 100%;" :disabled="btnType == 'look'">
                     </el-date-picker> -->
-                        <!-- <el-date-picker v-model="dataForm.nextMaintenanceTime" type="datetime" placeholder="请选择下次保养时间"
+                        <!-- <el-date-picker v-model="dataForm.nextMaintenanceTime" type="datetime" placeholder="请选择初次保养时间"
                       :picker-options="pickerOptions" :disabled="btnType == 'look'" style="width: 100%;" clearable
                       @change="nextMaintenanceTimeaction">
                     </el-date-picker> -->
@@ -203,45 +203,14 @@ export default {
     return {
       activeNames: ["basicInfo", "xmxx"],
       level: [],
-      options: [
-        { label: "日常保养", value: "日常保养" },
-        { label: "二级保养", value: "二级保养" },
-        { label: "三级保养", value: "三级保养" },
-        { label: "四级保养", value: "四级保养" },
-        { label: "年度保养", value: "年度保养" }
-      ],
-      props: {
-        lazy: true,
-        lazyLoad(node, resolve) {
-          const { level } = node;
-          setTimeout(() => {
-            const nodes = []
-            let initListQuery = {
-              level: node.value,
-              pageNum: 1,
-              pageSize: -1,
-            }
-            if (level > 1) return
-            getequMaintenanceLevel(initListQuery).then(res => {
-              res.data.records.map(item => {
-                let obj = {
-                  value: item.id,
-                  label: item.cycle + ' ' + item.unit,
-                  leaf: level >= 1
-                }
-                nodes.push(obj)
-              })
-              resolve(nodes);
-            })
-          }, 500);
-        }
-      },
+      options: [],
       datafilelist: [],
       ProductTableSearchLists: [
         { prop: "code", label: "工具编码", type: 'input' },
         { prop: "name", label: "工具名称", type: 'input' },
       ],
       ProductListRequestObjs: {
+        maintenanceFlag: 0,
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -373,12 +342,22 @@ export default {
           { required: true, message: '单位不能为空', trigger: 'change' }
         ],
         nextMaintenanceTime: [
-          { required: true, message: `下次保养时间不能为空`, trigger: 'change' }
+          { required: true, message: `初次保养时间不能为空`, trigger: 'change' }
         ],
       },
       customerData: {},
       treeLoading: false,
       selectRows: []
+    }
+  },
+  watch: {
+    'dataForm.cycleType': {
+      handler(newOption) {
+        if (newOption == 'cycle') {
+          this.geteLevel()
+        }
+      },
+      deep: true
     }
   },
   mounted() {
@@ -387,6 +366,29 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    geteLevel() {
+      getequMaintenanceLevel({ pageNum: 1, pageSize: -1 }).then(res => {
+        this.options = res.data.records.reduce((acc, item) => {
+          // 查找当前 level 在结果中是否存在
+          let levelGroup = acc.find(group => group.value === item.level);
+          // 如果不存在，则创建一个新的
+          if (!levelGroup) {
+            levelGroup = {
+              value: item.level,
+              label: item.level,
+              children: []
+            };
+            acc.push(levelGroup);
+          }
+          // 添加当前 item 到对应的 children 中
+          levelGroup.children.push({
+            value: item.id,
+            label: `${item.cycle} ${item.unit}`
+          });
+          return acc;
+        }, [])
+      })
+    },
     changelevel(e) {
       let a = this.$refs['mycascader'].getCheckedNodes()[0].pathLabels[1].split(' ')
       this.dataForm.maintenanceLevelId = e[1]
@@ -655,6 +657,7 @@ export default {
         detailcheckmaintenance(this.dataForm.id).then(res => {
           this.dataForm = res.data.task
           this.dataFormTwo.productData = res.data.lines
+          if (this.dataForm.level && this.dataForm.maintenanceLevelId) this.level = [this.dataForm.level, this.dataForm.maintenanceLevelId]
           if (res.data.attachmentList) {
             res.data.attachmentList.forEach((item) => {
               this.datafilelist.push(

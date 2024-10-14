@@ -144,7 +144,7 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
-        classAttribute: 'tool',
+        classAttribute:'tool',
         applicantTime: '',
         reasonScrapping: '',
         departmentId: '',
@@ -265,7 +265,6 @@ export default {
     },
     // 单个删除
     handleDel(data) {
-      console.log("1234", data);
       this.dataFormTwo.productData.splice(data.$index, 1)
     },
     //申请时间
@@ -324,6 +323,7 @@ export default {
                 this.salesList = res.data
               })
             } else {
+              console.log("没有bumen");
               this.salesFlag = true
             }
             if (this.btnType == 'edit') {

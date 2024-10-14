@@ -181,7 +181,7 @@
 import {isEmpty, notEmpty, trim} from "@/utils";
 import {detailProcess} from "@/api/basicData/processSettingss";
 import FileUploadDrop from "@/views/esop/fileUpload/workinginstruction/FileUploadDrop.vue";
-import {DocumentStatus, ModelType} from "@/views/esop/fileUpload/workinginstruction/constant";
+import {ApplicationType, DocumentStatus, ModelType} from "@/views/esop/fileUpload/workinginstruction/constant";
 import {getBusinessFlowDetail, getBusinessFlowInfo} from "@/api/workFlow/FlowEngine";
 import ChooseProductDialog from "@/views/esop/fileUpload/workinginstruction/ChooseProductDialog.vue";
 import {addBimFileUpload, detailBimFileUpload, modifyBimFileUpload} from "@/api/esop/fileUpload/workinginstruction";
@@ -564,10 +564,18 @@ export default {
           return this.codeConfig.codeWay === 'auto' && !this.codeConfig.modifyFlag
         },
         title(){
-            if(this.type === ModelType.ADD){
-                return '新增作业指导书'
+            const applicationType = this.applicationType
+            let name =''
+            if(applicationType === ApplicationType.INSPECT){
+                name = '检查指导书'
+            }else{
+                name = '作业指导书'
             }
-            return '查看作业指导书'
+
+            if(this.type === ModelType.ADD){
+                return `新增${name}`
+            }
+            return `查看${name}`
         },
         productId(){
             return this.dataForm.id

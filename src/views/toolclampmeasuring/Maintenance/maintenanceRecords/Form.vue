@@ -16,20 +16,9 @@
         <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
           <el-tab-pane label="保养信息" name="orderInfo">
             <el-collapse v-model="activeNames">
-              <el-collapse-item title="基本信息" name="basicInfo">
-                <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+              <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+                <el-collapse-item title="保养信息" name="basicInfo">
                   <el-row :gutter="30" class="custom-row">
-                    <el-col :sm="6" :xs="24">
-                      <el-form-item label="工具名称" prop="equipmentId">
-                        <!-- <ComSelectListone :requestObj="{ classAttribute: 'equipment' }" :dialogTitle="'请选择工具'"
-                      :disrequestobj="{ state: 'discard', classAttribute: 'equipment' }"
-                      v-model="dataForm.equipmentIdName" :placeholder="'请选择工具名称'"
-                      :isdisabled="btnType === 'look' || btnType == 'maintenance'" :method="editEquEquipmentAll"
-                      @change="changeWarehouse"></ComSelectListone> -->
-                        <el-input v-model="dataForm.equipmentIdName" placeholder="请选择工具名称" readonly @focus="openSeleceProductDialogss" :disabled="btnType !== 'add'">
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="保养日期" prop="actualMaintenanceDate">
                         <el-date-picker v-model="dataForm.actualMaintenanceDate" placeholder="请选择保养日期" type="date" :disabled="btnType == 'look'" value-format="yyyy-MM-dd" style="width: 100%;" @change="cycleaction" :picker-options="{
@@ -60,14 +49,85 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="12" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="备注" prop="remark">
                         <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btnType == 'look'" type="textarea" maxlength="200" :rows="2" />
                       </el-form-item>
                     </el-col>
+                    <el-col :sm="24" :xs="24">
+                      <el-form-item label="保养拍照" prop="picList">
+                        <UploadImg v-model="dataForm.picList" :disabled="btnType == 'look'"></UploadImg>
+                      </el-form-item>
+                    </el-col>
                   </el-row>
-                </el-form>
-              </el-collapse-item>
+                </el-collapse-item>
+                <el-collapse-item title="工具信息" name="sbInfo">
+                  <el-row :gutter="30">
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="工具名称" prop="equipmentId">
+                        <!-- <ComSelectListone :requestObj="{ classAttribute: 'equipment' }" :dialogTitle="'请选择工具'"
+                      :disrequestobj="{ state: 'discard', classAttribute: 'equipment' }"
+                      v-model="dataForm.equipmentIdName" :placeholder="'请选择工具名称'"
+                      :isdisabled="btnType === 'look' || btnType == 'maintenance'" :method="editEquEquipmentAll"
+                      @change="changeWarehouse"></ComSelectListone> -->
+                        <el-input v-model="dataForm.equipmentIdName" placeholder="请选择工具名称" readonly @focus="openSeleceProductDialogss" :disabled="btnType !== 'add'">
+                        </el-input>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="工具编码" prop="equipmentIdCode">
+                        <el-input v-model="dataForm.equipmentIdCode" placeholder="请输入工具编码" :disabled="true" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="用途" prop="usin">
+                        <el-input v-model="dataForm.usin" placeholder="请输入用途" :disabled="true" />
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+                </el-collapse-item>
+                <el-collapse-item title="保养任务" name="byrw">
+                  <el-row :gutter="30">
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="计划保养人" prop="maintainerIdText">
+                        <el-input v-model="dataForm.maintainerIdText" placeholder="请输入计划保养人" :disabled="true" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="计划保养时间" prop="planMaintenanceDate">
+                        <el-input v-model="dataForm.planMaintenanceDate" placeholder="请输入计划保养时间" :disabled="true" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="保养任务名称" prop="maintenanceTaskIdText">
+                        <el-input v-model="dataForm.maintenanceTaskIdText" placeholder="请输入保养任务名称" :disabled="true" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="周期类型" prop="cycleType">
+                        <el-select v-model="dataForm.cycleType" placeholder="请选择周期类型" clearable style="width: 100%;" :disabled="true">
+                          <el-option v-for="(item, index) in cycleTypeStateList" :key="index" :label="item.label" :value="item.value"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="dataForm.cycleType == 'cycle'" key="2">
+                      <el-form-item label="保养等级" prop="level">
+                        <el-input v-model="dataForm.level" placeholder="请输入保养等级" :disabled="true" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="dataForm.cycleType == 'cycle'" key="3">
+                      <el-form-item label="保养周期" prop="cycle">
+                        <el-input v-model="dataForm.cycle" placeholder="请输入保养周期" :disabled="true" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="dataForm.cycleType == 'cycle'" key="1">
+                      <el-form-item label="单位" prop="unit">
+                        <el-input v-model="dataForm.unit" placeholder="请输入单位" :disabled="true" />
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+                </el-collapse-item>
+              </el-form>
               <el-collapse-item title="项目信息" name="xmxx">
                 <div v-if="btnType == 'edit' || btnType == 'add'">
                   <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择项目</el-button>|
@@ -226,17 +286,23 @@
 </template>
     
 <script>
+import UploadImg from "@/components/Generator/components/Upload/UploadImg.vue";
 import { getcategoryTree } from '@/api/basicData/materialSettings'
-import { addequMaintenance, updateequMaintenance, detailequMaintenance, detailcheckmaintenance, equMaintenancemainte } from '@/api/dailyManagement/Maintenance'
+import { addequMaintenance, checkmaintenanceList, updateequMaintenance, detailequMaintenance, detailcheckmaintenance, equMaintenancemainte } from '@/api/dailyManagement/Maintenance'
 import { parametersShelveslist } from '@/api/basicData/index'
 import { getOrganizeInfo } from '@/api/permission/organize'
 import { getEquEquipmentList } from '@/api/basicData/index'
 import { getOrganization } from '@/api/permission/user'
-
+import { mapGetters } from 'vuex'
 export default {
+  components: { UploadImg },
   data() {
     return {
-      activeNames: ["basicInfo", "xmxx"],
+      cycleTypeStateList: [
+        { label: "周期", value: "cycle" },
+        { label: "一次", value: "disposable" },
+      ],
+      activeNames: ["basicInfo", 'byrw', 'sbInfo', "xmxx"],
       ProductTableSearchLists: [
         { prop: "code", label: "工具编码", type: 'input' },
         { prop: "name", label: "工具名称", type: 'input' },
@@ -251,7 +317,7 @@ export default {
           },
           {
             "asc": false,
-            "column": "createTime"
+            "column": "create_time"
           }
         ],
         code: "",
@@ -309,6 +375,16 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
+        picList: '',
+        maintenanceTaskIdText: '',
+        level: '',
+        cycle: '',
+        unit: '',
+        cycleType: '',
+        usin: '',
+        equipmentIdCode: '',
+        maintainerIdText: '',
+        nextMaintenanceTime: '',
         maintenanceTaskId: '',
         departmentId: '',
         maintainerId: '',
@@ -337,14 +413,17 @@ export default {
           { required: true, message: '保养部门不能为空', trigger: 'change' }
         ],
         actualMaintenanceId: [
-          { required: true, message: '保养人不能为空', trigger: 'change' }
+          { required: true, message: '保养人不能为空', trigger: 'blur' }
         ],
         actualMaintenanceDate: [
-          { required: true, message: `保养日期不能为空`, trigger: 'change' }
+          { required: true, message: `保养日期不能为空`, trigger: 'blur' }
         ],
       },
       selectRows: []
     }
+  },
+  computed: {
+    ...mapGetters(['userInfo']),
   },
   mounted() {
     let tBody = document.querySelectorAll('.el-table')[1]
@@ -562,6 +641,25 @@ export default {
       if (!val && !data.length) return
       this.dataForm.equipmentIdName = data[0].name
       this.dataForm.equipmentId = data[0].id
+      this.dataForm.equipmentIdCode = data[0].all.code
+      this.dataForm.usin = data[0].all.usin
+      let a = {
+        classAttribute: "tool",
+        equipmentIdCode: data[0].all.code,
+        taskType: 'maintenance',
+        pageNum: 1,
+        pageSize: 20,
+      }
+      checkmaintenanceList(a).then(res => {
+        if (!res.data.records.length) return
+        this.dataForm.maintainerIdText = res.data.records[0].maintainerIdName
+        this.dataForm.planMaintenanceDate = res.data.records[0].nextMaintenanceTime
+        this.dataForm.maintenanceTaskIdText = res.data.records[0].name
+        this.dataForm.cycleType = res.data.records[0].cycleType
+        this.dataForm.level = res.data.records[0].level
+        this.dataForm.cycle = res.data.records[0].cycle
+        this.dataForm.unit = res.data.records[0].unit
+      })
     },
     dateFormat(dateData) {
       var date = new Date(dateData)
@@ -669,40 +767,72 @@ export default {
     init(id, btnType) {
       this.dataForm.id = id || ''
       this.btnType = btnType
-      if (this.dataForm.id && btnType !== 'maintenance') {
-        detailequMaintenance(this.dataForm.id).then(res => {
-          this.dataForms.lines = res.data.equLine
-          this.dataForm = res.data.maintenance
-          this.dataFormTwo.productData = res.data.lines
-          this.$nextTick(() => {
-            if (this.dataForm.actualDepartmentId) {
-              getOrganizeInfo(this.dataForm.actualDepartmentId).then(sss => {
-                this.organizeIdTrees = sss.data.organizeIdTree || []
-                this.organizeIdTrees.push(this.dataForm.actualDepartmentId)
-              })
-              getOrganization({ keyword: "", organizeId: this.dataForm.actualDepartmentId }).then(res => {
-                if (res.data.length > 0) {
-                  res.data.forEach(item => {
-                    item.name = item.fullName.split('/')[0]
-                  });
-                }
-                this.salesList = res.data
-              })
-            } else {
-              this.salesFlag = true
-            }
+      if (btnType !== 'maintenance') {
+        if (this.dataForm.id) {
+          detailequMaintenance(this.dataForm.id).then(res => {
+            this.dataForms.lines = res.data.equLine
+            res.data.maintenance.picList = res.data.maintenance.picList.map(item => {
+              return JSON.parse(`{${item}}`)
+            })
+            this.dataForm = res.data.maintenance
+            this.dataFormTwo.productData = res.data.lines
+            this.$nextTick(() => {
+              if (this.dataForm.actualDepartmentId) {
+                getOrganizeInfo(this.dataForm.actualDepartmentId).then(sss => {
+                  this.organizeIdTrees = sss.data.organizeIdTree || []
+                  this.organizeIdTrees.push(this.dataForm.actualDepartmentId)
+                })
+                getOrganization({ keyword: "", organizeId: this.dataForm.actualDepartmentId }).then(res => {
+                  if (res.data.length > 0) {
+                    res.data.forEach(item => {
+                      item.name = item.fullName.split('/')[0]
+                    });
+                  }
+                  this.salesList = res.data
+                })
+              } else {
+                this.salesFlag = true
+              }
+            })
           })
-        })
+        } else {
+          this.dataForm.actualMaintenanceId = this.userInfo.userId
+          this.dataForm.actualMaintenanceIdText = this.userInfo.userName
+          this.dataForm.actualMaintenanceDate = this.jnpf.getToday()
+          this.organizeIdTrees.push(this.userInfo.organizeId)
+          this.dataForm.actualDepartmentId = this.userInfo.organizeId
+          getOrganization({ keyword: "", organizeId: this.userInfo.organizeId }).then(res => {
+            if (res.data.length > 0) {
+              res.data.forEach(item => {
+                item.name = item.fullName.split('/')[0]
+              });
+            }
+            this.salesList = res.data
+          })
+        }
       }
       if (this.dataForm.id && btnType == 'maintenance') {
         detailcheckmaintenance(id).then((res) => {
           this.tasklist = res.data.task
+          this.dataForm = res.data.task
           this.dataForm.maintenanceTaskId = id
-          this.dataForm.equipmentId = res.data.task.equipmentId
-          this.dataForm.equipmentIdName = res.data.task.equipmentIdName
-          this.dataForm.departmentId = res.data.task.departmentId
-          this.dataForm.maintainerId = res.data.task.maintainerId
+          this.dataForm.maintainerIdText = res.data.task.maintainerIdName
+          this.dataForm.maintenanceTaskIdText = res.data.task.name
           this.dataForm.planMaintenanceDate = res.data.task.nextMaintenanceTime
+          this.dataForm.actualMaintenanceId = this.userInfo.userId
+          this.dataForm.actualMaintenanceIdText = this.userInfo.userName
+          this.dataForm.actualMaintenanceDate = this.jnpf.getToday()
+          this.cycleaction(this.dataForm.actualMaintenanceDate)
+          this.organizeIdTrees.push(this.userInfo.organizeId)
+          this.dataForm.actualDepartmentId = this.userInfo.organizeId
+          getOrganization({ keyword: "", organizeId: this.userInfo.organizeId }).then(res => {
+            if (res.data.length > 0) {
+              res.data.forEach(item => {
+                item.name = item.fullName.split('/')[0]
+              });
+            }
+            this.salesList = res.data
+          })
           res.data.lines.forEach((item) => {
             item.maintenanceItemName = item.itemName,
               item.maintenanceItemCode = item.itemCode,
@@ -749,6 +879,13 @@ export default {
         return
       }
       this.dataForm.documentStatus = value
+      this.dataForm.recordType = 'maintenance'
+      this.dataForm.picList = Array.isArray(this.dataForm.picList) ?
+        this.dataForm.picList.map(item => {
+          return JSON.stringify(item)
+            .replace("{", "")
+            .replace("}", "")
+        }) : []
       let obj = {
         equLine: this.dataForms.lines,
         maintenance: this.dataForm,

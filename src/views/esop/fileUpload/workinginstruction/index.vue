@@ -111,39 +111,7 @@ import {deleteBimFileUpload, getBimFileUpload} from "@/api/esop/fileUpload/worki
 import moment from "moment";
 import {ApplicationType, ModelType} from "@/views/esop/fileUpload/workinginstruction/constant";
 
-function getOriginListQuery() {
-    return {
-        applicationType: "",
-        approvalStatus: "",
-        createByName: "",
-        documentStatus: "",
-        endTime: "",
-        endUpdateTime: "",
-        keyword: "",
-        orderItems: [
-            {
-                asc: true,
-                column: ""
-            }
-        ],
-        orderNo: "",
-        pageNum: 1,
-        pageSize: 20,
-        startTime: "",
-        startUpdateTime: "",
-        superQuery: {
-            condition: [
-                {
-                    field: "drawingNo",
-                    fieldValue: "",
-                    symbol: "like"
-                }
-            ],
-            matchLogic: ""
-        },
-        totalRowFlag: false
-    }
-}
+
 
 export default {
     components: {EditWorkingInstructionUpload, JNPFForm, ExportForm, TableForm, SuperQuery },
@@ -167,7 +135,7 @@ export default {
             visible: false,
             tableData: [],
             listLoading: false,
-            listQuery: getOriginListQuery(),
+            listQuery: this.getOriginListQuery(),
             formType:ModelType.ADD,
             total: 0,
             formVisible: false,
@@ -223,6 +191,39 @@ export default {
 
     },
     methods: {
+        getOriginListQuery() {
+            return {
+                applicationType:this.applicationType,
+                approvalStatus: "",
+                createByName: "",
+                documentStatus: "",
+                endTime: "",
+                endUpdateTime: "",
+                keyword: "",
+                orderItems: [
+                    {
+                        asc: true,
+                        column: ""
+                    }
+                ],
+                orderNo: "",
+                pageNum: 1,
+                pageSize: 20,
+                startTime: "",
+                startUpdateTime: "",
+                superQuery: {
+                    condition: [
+                        {
+                            field: "drawingNo",
+                            fieldValue: "",
+                            symbol: "like"
+                        }
+                    ],
+                    matchLogic: ""
+                },
+                totalRowFlag: false
+            }
+        },
         editBack(){
             this.formVisible = false
             this.search()
@@ -445,7 +446,7 @@ export default {
         reset() {
             this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
             this.createTimeArr = []
-            this.listQuery = getOriginListQuery()
+            this.listQuery =this.getOriginListQuery()
             this.$refs.SuperQuery.conditionList = []
             this.initData()
         },

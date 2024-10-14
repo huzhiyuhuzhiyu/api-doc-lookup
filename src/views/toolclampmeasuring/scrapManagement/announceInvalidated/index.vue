@@ -274,7 +274,6 @@ export default {
     initData() {
       this.listLoading = true
       ScrapApplicationFormList(this.orderForm).then(res => {
-        console.log("res++", res);
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false

@@ -10,7 +10,7 @@ export const DocumentStatus ={
 }
 /**
  * 申请类型
- * @type {{INSPECT: 检验指导书, IMAGE: 图文档, WORK: 作业指导书}}
+ * @type {{INSPECT: string, IMAGE: string, WORK: string}}
  */
 export const ApplicationType ={
     "WORK":"work",

@@ -887,6 +887,7 @@ export default {
               this.getBusInfo()
             } else {
               // 流程信息和流转记录
+              console.log(this.dataForm.approvalFlag, 'this.dataForm.approvalFlag')
               if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             }
             this.loading = false
@@ -1366,6 +1367,7 @@ export default {
                       nodeItem.nodeType === 'subFlow'
                     )
                       data.content = nodeItem.userName
+                    if (nodeItem.nodeType === 'approver') data.processingTime = nodeItem.processingTime
                     return
                   }
                   if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)

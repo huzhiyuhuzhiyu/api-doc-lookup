@@ -242,7 +242,7 @@
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
-            <el-tab-pane label="附件" name="annex">
+            <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
               <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"></UploadWj>
             </el-tab-pane>
             <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
@@ -507,7 +507,7 @@
   </div>
 </template>
 <script>
-import { getCooperativeData, getcategoryTree } from '@/api/basicData/index' //供应商数据
+import { getCooperativeData, getcategoryTree, getBimBusinessDetail } from '@/api/basicData/index' //供应商数据
 
 import formValidate from '@/utils/formValidate'
 import {
@@ -830,13 +830,17 @@ export default {
       pool: '',
       list0: [],
       classAttributeList: [],
-      uploadVisib: false
+      uploadVisib: false,
+      isattachmentswitch: ''
+
     }
   },
   mounted() {
     this.getclassAttributeList()
   },
-  created() { },
+  created() {
+    this.getBimBusinessDetail()
+  },
   computed: {
     ...mapGetters(['userInfo']),
     ...mapState('user', ['token'])
@@ -856,6 +860,15 @@ export default {
     }
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_dddj'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     checkDate() {
       return (rule, value, callback) => {
         let index = rule.field.split('.')[1]
@@ -1160,6 +1173,7 @@ export default {
                 })
               })
             }
+            console.log(this.dataForm.approvalFlag, 'this.dataForm.approvalFlag')
             // 流程信息和流转记录
             if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
           })
@@ -1847,6 +1861,7 @@ export default {
                       nodeItem.nodeType === 'subFlow'
                     )
                       data.content = nodeItem.userName
+                    if (nodeItem.nodeType === 'approver') data.processingTime = nodeItem.processingTime
                     return
                   }
                   if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)

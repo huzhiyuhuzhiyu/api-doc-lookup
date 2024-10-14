@@ -1526,7 +1526,7 @@ export default {
 
 
           } else if (this.btnType == 'edit' || this.btnType == 'look') {
-            
+
             let data = res.data.noticeLineList
             data.forEach((item) => {
               console.log('ooooooo', item)
@@ -1538,6 +1538,7 @@ export default {
               this.getBusInfo()
             } else {
               // 流程信息和流转记录
+              console.log(this.dataForm.approvalFlag, 'this.dataForm.approvalFlag666')
               if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             }
           }

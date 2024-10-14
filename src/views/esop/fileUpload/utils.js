@@ -21,4 +21,8 @@ export function flatArr(arr,fn,listName='childrenList'){
     }
 }
 
+export function getFilePreviewUrl(filePath){
+    return `/api/file/Image/document/${filePath}`
+}
+
 export const TopParentId = '-1'

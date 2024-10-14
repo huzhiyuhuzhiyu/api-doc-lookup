@@ -268,6 +268,7 @@ import {
     wordSuffix
 } from "@/views/drawingDocument/document/utils";
 import Preview from "@/components/upload-wj/Preview.vue";
+import {getFilePreviewUrl} from "@/views/esop/fileUpload/utils";
 const ALL_TEXT ='全部'
 
 const fileExtFilterOption =Object.freeze( [
@@ -615,7 +616,7 @@ export default {
         this.previewFile = {
             name:item.fullName,
             filename:item.filePath,
-            url:`/api/file/Image/document/${item.filePath}`
+            url: getFilePreviewUrl(item.filePath)
         }
         this.previewVisible = true
     },

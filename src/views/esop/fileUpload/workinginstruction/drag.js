@@ -1,8 +1,9 @@
 import {hasClass} from "@/utils";
 import {Message} from "element-ui";
 
+const SuffixReg = /\.\w+$/
 function isDirectory(file) {
-    return file.type === ''
+    return file.type === '' && !SuffixReg.test(file.name)
 }
 function isFile(file) {
     return !isDirectory(file)
@@ -100,63 +101,95 @@ export function readFileBlob(file){
     })
 }
 
+
+const registerFlag = 'drag-register'
 export default (function(){
     let targetElement = null,timer =null;
     let resultFn = null
     let fileOnly = false
 
+    function addDragEvent(el,{value,fileOnly}){
+        if(el.getAttribute(registerFlag)){
+
+            return
+        }
+        function showDragStyle() {
+            addClass(el, dropStyleClassName);
+        }
+        function hideDragStyle() {
+            removeClass(el, dropStyleClassName);
+        }
+        el.setAttribute(registerFlag,true)
+        const eventHandler={
+            el:null,
+            async ondrop(e,el){
+                e.preventDefault()
+                hideDragStyle(el)
+                // let items = e.dataTransfer.items;
+                let files = Array.from( e.dataTransfer.files);
+                if (fileOnly){
+                    return value && value(fileOnlyHandler(files),files)
+                }
+                return value && value(files)
+            },
+            dragleave(e,el){
+                e.preventDefault()
+                timer = setTimeout(() => {
+                    hideDragStyle(el)
+                }, 200)
+            },
+            dragenter(e,el){
+                e.preventDefault()
+                showDragStyle(el)
+                e.dataTransfer.effectAllowed = 'move';
+            },
+            dragover(e){
+                e.preventDefault()
+                clearTimeout(timer)
+                e.dataTransfer.dropEffect = 'move';
+            },
+        }
+        el.ondragenter = eventHandler.dragenter
+        el.ondragleave = eventHandler.dragleave
+        el.ondragover = eventHandler.dragover
+        el.ondrop = eventHandler.ondrop
+    }
+    function removeDragEvent(el){
+        if(!el.getAttribute(registerFlag)){
+            return
+        }
+        el.removeAttribute(registerFlag)
+        el.ondragenter = null
+        el.ondragleave = null
+        el.ondragover = null
+        el.ondrop = null
+    }
+
+
+
     return {
-        bind(el, {modifiers,value}, vnode, prevVnode) {
-            function showDragStyle(el) {
-                addClass(el, dropStyleClassName);
-            }
-            function hideDragStyle(el) {
-                removeClass(el, dropStyleClassName);
-            }
-            const eventHandler={
-                el:null,
-                async ondrop(e,el){
-                    e.preventDefault()
-                    hideDragStyle(eventHandler.el)
-                    // let items = e.dataTransfer.items;
-                    let files = Array.from( e.dataTransfer.files);
-                    if (fileOnly){
-                        return value && value(fileOnlyHandler(files),files)
-                    }
-                    return value && value(files)
-                },
-                dragleave(e,el){
-                    e.preventDefault()
-                    timer = setTimeout(() => {
-                        hideDragStyle(eventHandler.el)
-                    }, 200)
-                },
-                dragenter(e,el){
-                    e.preventDefault()
-                    showDragStyle(eventHandler.el)
-                    e.dataTransfer.effectAllowed = 'move';
-                },
-                dragover(e){
-                    e.preventDefault()
-                    clearTimeout(timer)
-                    e.dataTransfer.dropEffect = 'move';
-                },
-            }
-            eventHandler.el = el
-            el.setAttribute('draggable', true)
-            el.addEventListener('dragenter', eventHandler.dragenter)
-            el.addEventListener('dragleave', eventHandler.dragleave)
-            el.addEventListener('dragover', eventHandler.dragover)
-            el.addEventListener('drop', eventHandler.ondrop)
+        bind(el, {modifiers,value,arg}, vnode, prevVnode) {
+
             resultFn = value
             fileOnly = modifiers.onlyFile
+            if(!arg){
+                addDragEvent(el,{value,fileOnly})
+            }else{
+                removeDragEvent(el)
+            }
+
+        },
+        update(el, {modifiers,value,arg}, vnode, prevVnode) {
+            resultFn = value
+            fileOnly = modifiers.onlyFile
+            if(!arg){
+                addDragEvent(el,{value,fileOnly})
+            }else{
+                removeDragEvent(el)
+            }
         },
         unbind(el, binding, vnode, prevVnode) {
-            el.removeAttribute('draggable')
-            el.ondragenter = null;
-            el.ondragleave = null;
-            el.ondragover = null;
-            el.ondrop = null;
+               removeDragEvent(el)
         }
 
     }

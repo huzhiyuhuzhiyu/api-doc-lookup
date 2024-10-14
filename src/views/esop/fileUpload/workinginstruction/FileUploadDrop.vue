@@ -1,5 +1,5 @@
 <template>
-    <div v-drag.onlyFile="dragHandler" class="UploadFile-container">
+    <div v-drag:[disabled].onlyFile="dragHandler" class="UploadFile-container">
         <template>
             <div class='UploadFile-container-main noUpload'>
                 <el-upload
@@ -116,14 +116,10 @@ export default {
     directives:{
         drag
     },
-    model:{
-        prop:'valueList',
-        event:'update:valueList'
-    },
     components: {Preview},
     props: {
         // v-model值
-        valueList: {
+        value: {
             type: Array,
             default: () => []
         },
@@ -176,6 +172,7 @@ export default {
             loading: false,
             activeFile: {},
             switchlist: true,
+            fileList: this.value
         }
     },
     watch: {
@@ -227,14 +224,6 @@ export default {
             }
             return txt
         },
-        fileList:{
-            get(){
-                return this.valueList
-            },
-            set(val){
-                this.$emit('update:valueList', val)
-            }
-        }
     },
     created() {
         // console.log('fff', this.fileList)
@@ -242,6 +231,7 @@ export default {
 
     methods: {
        async  dragHandler(filerFiles,files){
+           console.log(filerFiles,files)
             if(filerFiles.length <files.length){
                 this.$message.info('暂不支持文件夹上传，已自动过滤文件夹')
             }
@@ -299,8 +289,9 @@ export default {
                     id: data.id,
                     url: data.url
                 })
+                this.$emit('input', this.fileList)
             }).catch(err => {
-                this.$message.error(`当前文件上传失败`)
+                this.$message.error(err.message || `当前文件上传失败`)
                 this.loading = false
             }).finally(() => {
                 this.loading = false

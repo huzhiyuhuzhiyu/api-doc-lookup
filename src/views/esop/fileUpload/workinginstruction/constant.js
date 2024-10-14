@@ -1,6 +1,12 @@
 export const ModelType ={
     "ADD":'add',
     "EDIT":'edit',
+    "VIEW":'view',
+}
+
+export const DocumentStatus ={
+    draft: 'draft',
+    submit: 'submit',
 }
 /**
  * 申请类型

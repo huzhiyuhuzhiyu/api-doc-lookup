@@ -5,7 +5,7 @@
                 <el-form @submit.native.prevent>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input v-model="listQuery.keyword" placeholder="产品名称" clearable />
+                            <el-input v-model="listQuery.superQuery.condition[0].fieldValue" placeholder="品名规格" clearable />
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
@@ -28,7 +28,7 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
                 <div class="JNPF-common-head" style="padding: 8px;display: -webkit-box">
-                    <el-button type="primary" icon="el-icon-plus" size="mini" @click.native="batchAdd()">
+                    <el-button type="primary" icon="el-icon-plus" size="mini" @click.native="addOrUpdateHandle(ModelType.ADD)">
                         新建
                     </el-button>
                     <div class="JNPF-common-head-right">
@@ -46,16 +46,33 @@
                 </div>
                 <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
                             ref="dataTable" :setColumnDisplayList="columnList">
-                    <el-table-column prop="formCode" label="单号" sortable="custom" min-width="110" />
-                    <el-table-column prop="productName" label="品名规格" min-width="150" />
-                    <el-table-column prop="productCode" label="产品编码" width="120" />
-                    <el-table-column prop="categoryName" label="产品分类" width="140" />
+                    <el-table-column prop="orderNo" label="单号" sortable="custom" min-width="110" />
+                    <el-table-column prop="drawingNo" label="品名规格" min-width="150" />
+                    <el-table-column prop="productsCode" label="产品编码" width="120" />
+                    <el-table-column prop="productsCategoryName" label="产品分类" width="140" />
+                    <el-table-column prop="documentStatus" label="申请单状态" width="140" :formatter="(row, column, cellValue, index)=> cellValue === 'submit' ? '提交':'草稿' "/>
                     <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
                     <el-table-column prop="createByName" label="创建人" width="100" />
-                    <el-table-column label="操作" width="100" fixed="right">
+                    <el-table-column label="操作" width="180" fixed="right">
                         <template slot-scope="scope">
                             <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
-                                       @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)"></tableOpts>
+
+                                       :editDisabled="scope.row.documentStatus !== 'draft'"
+                                       @edit="addOrUpdateHandle(ModelType.EDIT,scope.row.id)" @del="handleDel(scope.row.id)">
+                                        <el-dropdown hide-on-click>
+                                            <span class="el-dropdown-link">
+                                              <el-button type="text" size="mini">
+                                                {{ $t('common.moreBtn') }}
+                                                <i class="el-icon-arrow-down el-icon--right"></i>
+                                              </el-button>
+                                            </span>
+                                            <el-dropdown-menu slot="dropdown">
+                                                <el-dropdown-item @click.native="addOrUpdateHandle(ModelType.VIEW,scope.row.id)">
+                                                    查看详情
+                                                </el-dropdown-item>
+                                            </el-dropdown-menu>
+                                        </el-dropdown>
+                            </tableOpts>
                         </template>
                     </el-table-column>
                 </JNPF-table>
@@ -63,7 +80,7 @@
                             @pagination="initData" />
             </div>
         </div>
-        <EditWorkingInstructionUpload :applicationType="applicationType" @back="formVisible = false" v-if="formVisible"/>
+        <EditWorkingInstructionUpload :type="uploadType" :id="fileUploadId" :applicationType="applicationType" @back="editBack" v-if="formVisible"/>
 
         <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
                     @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -90,7 +107,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import {getUploadList} from "@/views/esop/fileUpload/workinginstruction/mock";
 import EditWorkingInstructionUpload from "@/views/esop/fileUpload/workinginstruction/Form.vue";
-import {getBimFileUpload} from "@/api/esop/fileUpload/workinginstruction";
+import {deleteBimFileUpload, getBimFileUpload} from "@/api/esop/fileUpload/workinginstruction";
 import moment from "moment";
 import {ApplicationType, ModelType} from "@/views/esop/fileUpload/workinginstruction/constant";
 
@@ -117,9 +134,9 @@ function getOriginListQuery() {
         superQuery: {
             condition: [
                 {
-                    field: "",
+                    field: "drawingNo",
                     fieldValue: "",
-                    symbol: ""
+                    symbol: "like"
                 }
             ],
             matchLogic: ""
@@ -139,7 +156,9 @@ export default {
     },
     data() {
         return {
-
+            ModelType,
+            uploadType:ModelType.ADD,
+            fileUploadId:"",
             tableFormVisible: false,
             exportFormVisible: false,
             columnList: ['remark', 'createByName'],
@@ -151,7 +170,7 @@ export default {
             listQuery: getOriginListQuery(),
             formType:ModelType.ADD,
             total: 0,
-            formVisible: true,
+            formVisible: false,
             selectList: [],
             uploadVisib: false,
             superQueryVisible: false,
@@ -204,6 +223,10 @@ export default {
 
     },
     methods: {
+        editBack(){
+            this.formVisible = false
+            this.search()
+        },
         superQuerySearch(query) {
             this.listQuery.superQuery = query
             this.superQueryVisible = false
@@ -394,7 +417,6 @@ export default {
        async initData() {
             this.listLoading = true
            const {data} = await getBimFileUpload(this.listQuery)
-           console.log(data)
            this.tableData = data.records
            this.total = data.total
            this.listLoading = false
@@ -427,16 +449,17 @@ export default {
             this.$refs.SuperQuery.conditionList = []
             this.initData()
         },
-        addOrUpdateHandle(id, type) {
+        addOrUpdateHandle(type,id) {
+            this.fileUploadId = id
+            this.uploadType = type
             this.formVisible = true
-
         },
         handleDel(id) {
             this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
                 type: 'warning'
             })
                 .then(() => {
-                    delBimProductsModel(id).then((res) => {
+                    deleteBimFileUpload(id).then((res) => {
                         if (res.msg === 'Success') {
                             this.initData()
                             this.$message({

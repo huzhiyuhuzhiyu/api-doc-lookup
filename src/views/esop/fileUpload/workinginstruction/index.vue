@@ -56,7 +56,7 @@
                     <el-table-column label="操作" width="180" fixed="right">
                         <template slot-scope="scope">
                             <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
-
+                                       :delDisabled="scope.row.documentStatus !== 'draft'"
                                        :editDisabled="scope.row.documentStatus !== 'draft'"
                                        @edit="addOrUpdateHandle(ModelType.EDIT,scope.row.id)" @del="handleDel(scope.row.id)">
                                         <el-dropdown hide-on-click>
@@ -101,20 +101,17 @@ import {
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import JNPFForm from './Form'
-import TableForm from './tabForm'
 import { mapGetters, mapState } from 'vuex'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
-import {getUploadList} from "@/views/esop/fileUpload/workinginstruction/mock";
 import EditWorkingInstructionUpload from "@/views/esop/fileUpload/workinginstruction/Form.vue";
 import {deleteBimFileUpload, getBimFileUpload} from "@/api/esop/fileUpload/workinginstruction";
 import moment from "moment";
-import {ApplicationType, ModelType} from "@/views/esop/fileUpload/workinginstruction/constant";
+import {ApplicationType, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 
 
 
 export default {
-    components: {EditWorkingInstructionUpload, JNPFForm, ExportForm, TableForm, SuperQuery },
+    components: {EditWorkingInstructionUpload, JNPFForm, ExportForm, SuperQuery },
 
     props:{
         applicationType:{

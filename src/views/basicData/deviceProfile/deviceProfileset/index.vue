@@ -117,7 +117,7 @@
           <el-table-column prop="remark" label="备注" width="200" sortable="custom" />
 
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-          <el-table-column prop="createName" label="创建人" width="200" sortable="custom" />
+          <el-table-column prop="createByName" label="创建人" width="200" sortable="custom" />
 
           <el-table-column prop="state" label="设备状态" width="140" align="center" sortable="custom" fixed="right">
             <template slot-scope="{row}">
@@ -155,7 +155,7 @@
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData" />
       </div>
     </div>
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="getAdvancedQuery" />
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <share v-if="shareVisible" ref="share" @close="closeForm"></share>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm" ref="printForm" />
@@ -163,6 +163,7 @@
 </template>
 
 <script>
+import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getPositionList, deleteEquEquipment } from '@/api/permission/position'
 import { getCategoryTrees, getEquEquipmentList, plmsync } from '@/api/basicData/index'
 import Form from './Form'
@@ -172,7 +173,7 @@ import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
 export default {
   name: 'deviceProfileSet',
-  components: { Form, PrintBrowse, share },
+  components: { Form, PrintBrowse, share, SuperQuery },
   data() {
     return {
       superQueryJson: [
@@ -335,10 +336,10 @@ export default {
           pickerOptions: this.global.timePickerOptions
         },
         {
-          prop: 'createName',
+          prop: 'createByName',
           label: '创建人',
           type: 'input'
-        },
+        }
       ],
       superQueryVisible: false,
       shareVisible: false,

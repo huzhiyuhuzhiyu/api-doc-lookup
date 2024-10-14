@@ -111,11 +111,12 @@
   </div>
 </template>
 <script>
+import SuperQuery from '@/components/SuperQuery/index.vue'
 import { equMaintenanceList, deleteequMaintenance } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
 export default {
   name: 'inspectionRecords',
-  components: { Form, },
+  components: { Form, SuperQuery},
   data() {
     return {
       srcList: [

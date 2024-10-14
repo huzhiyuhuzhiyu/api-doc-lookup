@@ -100,11 +100,12 @@
   </div>
 </template>
 <script>
+import SuperQuery from '@/components/SuperQuery/index.vue'
 import { checkmaintenanceList, deletecheckmaintenance } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
 export default {
   name: 'maintenanceTasks',
-  components: { Form, },
+  components: { Form, SuperQuery },
   data() {
     return {
       superQueryJson: [

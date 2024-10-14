@@ -36,7 +36,7 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <div class="JNPF-common-head">
-                <topOpts @add="handleUserRelation('', 'add')" />
+                <div style="height: 32px;"></div>
                 <div class="JNPF-common-head-right">
                   <el-tooltip content="高级查询" placement="top">
                     <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
@@ -65,7 +65,7 @@
                 <el-table-column prop="maintainerIdName" width="120" label="计划执行人" />
                 <el-table-column prop="cycle" label="周期" width="150" />
                 <el-table-column prop="unit" label="单位" width="120" />
-                <el-table-column prop="nextCalibrationTime" label="下次检定时间" width="180" sortable="custom" />
+                <el-table-column prop="nextCalibrationTime" label="计划检定时间" width="180" sortable="custom" />
                 <el-table-column prop="state" label="状态" sortable="custom" width="120" fixed="right" align="center">
                   <template slot-scope="scope">
                     <div v-if="scope.row.state == 'disabled'"><el-tag type="danger">禁用</el-tag></div>
@@ -84,32 +84,14 @@
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="200" />
                 <el-table-column prop="createByName" label="创建人" width="120" />
                 <el-table-column prop="remark" label="备注" min-width="300" />
-                <el-table-column label="操作" min-width="180" fixed="right" align="center">
+                <el-table-column label="操作" min-width="90" fixed="right" align="center">
                   <template slot-scope="scope">
-                    <tableOpts @edit="handleUserRelation(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
-                      <el-dropdown hide-on-click>
-                        <span class="el-dropdown-link">
-                          <el-button type="text" size="mini">
-                            {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                          </el-button>
-                        </span>
-                        <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item :disabled="scope.row.istime" @click.native="maintenanceaction(scope.row.id, 'maintenance')">
-                            检定
-                          </el-dropdown-item>
-                          <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
-                            查看详情
-                          </el-dropdown-item>
-                        </el-dropdown-menu>
-                      </el-dropdown>
-                    </tableOpts>
-                    <!-- <el-button type="text" :disabled="scope.row.istime" @click="maintenanceaction(scope.row.id, 'maintenance')" size="mini">检定</el-button> -->
+                    <el-button type="text" :disabled="scope.row.istime" @click="maintenanceaction(scope.row.id, 'maintenance')" size="mini">检定</el-button>
                   </template>
                 </el-table-column>
               </JNPF-table>
               <pagination :total="total" :page.sync="listQuery.pageNum" :background="background" :limit.sync="listQuery.pageSize" @pagination="initData" />
             </div>
-            <!-- 高级查询 -->
             <SuperQuery partentOrChild="orderList" :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
           </div>
         </el-tab-pane>
@@ -144,6 +126,7 @@
                     </el-button>
                   </el-form-item>
                 </el-col>
+                <el-button style="float: right;margin-right: 20px;" size="mini" type="primary" icon="icon-ym icon-ym-report-icon-search-setting" @click="detailVisible = true">更多查询</el-button>
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -157,7 +140,7 @@
                     <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun1()" />
                   </el-tooltip>
                   <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                    <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+                    <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="detailData()" />
                   </el-tooltip>
                 </div>
               </div>
@@ -177,7 +160,7 @@
                 <el-table-column prop="maintainerIdName" width="120" label="计划执行人" />
                 <el-table-column prop="cycle" label="周期" width="150" />
                 <el-table-column prop="unit" label="单位" width="120" />
-                <el-table-column prop="nextCalibrationTime" label="下次检定时间" width="180" sortable="custom" />
+                <el-table-column prop="nextCalibrationTime" label="计划检定时间" width="180" sortable="custom" />
                 <el-table-column prop="state" label="状态" sortable="custom" width="120" fixed="right" align="center">
                   <template slot-scope="scope">
                     <div v-if="scope.row.state == 'disabled'"><el-tag type="danger">禁用</el-tag></div>
@@ -197,51 +180,31 @@
                 <el-table-column prop="createByName" label="创建人" width="120" />
                 <el-table-column prop="remark" label="备注" min-width="300" />
 
-                <el-table-column label="操作" width="180" fixed="right" align="center">
+                <el-table-column label="操作" width="90" fixed="right" align="center">
                   <template slot-scope="scope">
-                    <tableOpts @edit="handleUserRelation(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
-                      <el-dropdown hide-on-click>
-                        <span class="el-dropdown-link">
-                          <el-button type="text" size="mini">
-                            {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                          </el-button>
-                        </span>
-                        <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item :disabled="scope.row.istime" @click.native="maintenanceaction(scope.row.id, 'maintenance')">
-                            检定
-                          </el-dropdown-item>
-                          <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
-                            查看详情
-                          </el-dropdown-item>
-                        </el-dropdown-menu>
-                      </el-dropdown>
-                    </tableOpts>
-                    <!-- <el-button type="text" :disabled="scope.row.istime" @click="maintenanceaction(scope.row.id, 'maintenance')" size="mini">检定</el-button> -->
+                    <el-button type="text" :disabled="scope.row.istime" @click="maintenanceaction(scope.row.id, 'maintenance')" size="mini">检定</el-button>
                   </template>
                 </el-table-column>
 
               </JNPF-table>
               <pagination :total="total" :page.sync="listsQuery.pageNum" :background="background" :limit.sync="listsQuery.pageSize" @pagination="detailData" />
             </div>
-            <!-- 高级查询 -->
-            <SuperQuery partentOrChild="detailList" :show="superQueryVisible1" ref="SuperQuery1" :columnOptions="superQueryJson" @superQuery="superQuerySearch1" @close="superQueryVisible1 = false" />
+            <SuperQuery partentOrChild="detailList" :show="superQueryVisible1" ref="SuperQuery1" :columnOptions="superQueryJson1" @superQuery="superQuerySearch1" @close="superQueryVisible1 = false" />
           </div>
         </el-tab-pane>
       </el-tabs>
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
-    <deForm v-if="formVisible1" ref="deForm" @refreshDataList="initData" @close="closeForm" />
   </div>
 </template>
   
 <script>
-import deForm from './Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import Form from '@/views/dailyManagement/verificationManagement/verificationrecords/Form.vue'
-import { verificationList, deleteverification } from '@/api/dailyManagement/Maintenance'
+import Form from '@/views/toolclampmeasuring/verification/inspectionRecords/Form.vue'
+import { verificationList } from '@/api/dailyManagement/Maintenance'
 export default {
   name: 'verificationQuery',
-  components: { Form, deForm, SuperQuery },
+  components: { Form, SuperQuery },
   data() {
     return {
       superQueryJson: [
@@ -260,23 +223,13 @@ export default {
           ]
         },
         {
-          prop: 'equipmentIdCode',
-          label: "设备编码",
-          type: 'input'
-        },
-        {
-          prop: 'equipmentIdName',
-          label: "设备名称",
-          type: 'input'
-        },
-        {
           prop: 'departmentIdName',
-          label: "计划检定部门",
+          label: "计划执行部门",
           type: 'input'
         },
         {
           prop: 'maintainerIdName',
-          label: "计划检定人",
+          label: "计划执行人",
           type: 'input'
         },
         {
@@ -289,13 +242,86 @@ export default {
           label: "单位",
           type: 'input'
         },
+        { // 日期选择器（区间）
+          prop: 'nextCalibrationTime',
+          label: '计划检定时间',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: {}
+        },
         {
-          prop: 'nextMaintenanceTime',
-          label: '下次检定时间',
+          prop: 'state',
+          label: "状态",
+          type: 'select',
+          options: [
+            { label: "禁用", value: "disabled" },
+            { label: "启用", value: "enable" }
+          ]
+        },
+        {
+          prop: 'createTime',
+          label: '创建时间',
           type: 'datetimerange',
           valueFormat: 'yyyy-MM-dd HH:mm:ss',
           startPlaceholder: '开始时间',
           endPlaceholder: '结束时间',
+        },
+        {
+          prop: 'createByName',
+          label: "创建人",
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: "备注",
+          type: 'input'
+        }
+      ],
+      superQueryJson1: [
+        {
+          prop: 'name',
+          label: "任务名称",
+          type: 'input'
+        },
+        {
+          prop: 'cycleType',
+          label: "周期类型",
+          type: 'select',
+          options: [
+            { label: "周期", value: "cycle" },
+            { label: "一次", value: "disposable" }
+          ]
+        },
+        {
+          prop: 'departmentIdName',
+          label: "计划执行部门",
+          type: 'input'
+        },
+        {
+          prop: 'maintainerIdName',
+          label: "计划执行人",
+          type: 'input'
+        },
+        {
+          prop: 'cycle',
+          label: "周期",
+          type: 'input'
+        },
+        {
+          prop: 'unit',
+          label: "单位",
+          type: 'input'
+        },
+        { // 日期选择器（区间）
+          prop: 'nextCalibrationTime',
+          label: '计划检定时间',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: {}
         },
         {
           prop: 'state',
@@ -327,7 +353,6 @@ export default {
       ],
       superQueryVisible: false,
       superQueryVisible1: false,
-      formVisible1: false,
       formVisible: false,
       submitDate: [],
       createRequirementDate: [],
@@ -448,30 +473,9 @@ export default {
     columnSetFun1() {
       this.$refs['detailTableData'].showDrawer()
     },
-    handleDel(id) {
-      this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
-        type: 'warning'
-      }).then(() => {
-        deleteverification(id).then(res => {
-          this.initData()
-          this.$message({
-            type: 'success',
-            message: "删除成功",
-            duration: 1500,
-          })
-        })
-      }).catch(() => { })
-    },
-    handleUserRelation(id, btnType) {
-      this.formVisible1 = true
-      this.$nextTick(() => {
-        this.$refs.deForm.init(id, btnType)
-      })
-    },
     // 关闭新建页面
     closeForm(isRefresh = 'true') {
       this.formVisible = false
-      this.formVisible1 = false
       if (isRefresh && this.activeName == 'orderList') {
         this.initData()
       } else {
@@ -792,9 +796,8 @@ export default {
           asc: true,
           column: "next_calibration_time" /* 使用正序日期作为默认排序 */
         }],
-      }
-      this.submitDate = []
-      this.$refs.SuperQuery.conditionList = []
+      },
+        this.submitDate = []
       this.createRequirementDate = []
       this.search()
     },
@@ -821,9 +824,8 @@ export default {
           asc: true,
           column: "next_calibration_time" /* 使用正序日期作为默认排序 */
         }],
-      }
-      this.submitDate = []
-      this.$refs.SuperQuery1.conditionList = []
+      },
+        this.submitDate = []
       this.createRequirementDate = []
       this.searchDetail()
     },
@@ -838,4 +840,3 @@ export default {
 }
 </script>
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />
-  

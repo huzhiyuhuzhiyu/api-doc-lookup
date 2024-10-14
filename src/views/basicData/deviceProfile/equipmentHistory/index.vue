@@ -6,7 +6,7 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="listQuery.name" placeholder="请输入设备名称" clearable @keydown.enter.native="search()" />
+                <el-input v-model="listQuery.name" placeholder="请输入工具名称" clearable @keydown.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
@@ -49,8 +49,8 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
-            <el-table-column prop="equipmentIdName" label="设备名称" min-width="180" sortable="custom" />
-            <el-table-column prop="equipmentIdCode" label="设备编码" min-width="180" sortable="custom" />
+            <el-table-column prop="equipmentIdName" label="工具名称" min-width="180" sortable="custom" />
+            <el-table-column prop="equipmentIdCode" label="工具编码" min-width="180" sortable="custom" />
             <el-table-column prop="maintenanceType" label="维保类型" min-width="130" sortable="custom">
               <template slot-scope="scope">
                 <div>{{maintenancefunction(scope.row.maintenanceType)}}</div>
@@ -104,7 +104,7 @@ export default {
       tableData: [],
       superQueryVisible: false,
       initListQuery: {
-        classAttribute: "equipment",
+        classAttribute: "tool",
         name: '',
         maintenanceType: '',
         maintenanceDate: '',
@@ -122,12 +122,12 @@ export default {
       superQueryJson: [
         {
           prop: 'name',
-          label: "设备名称",
+          label: "工具名称",
           type: 'input'
         },
         {
           prop: 'code',
-          label: "设备编码",
+          label: "工具编码",
           type: 'input'
         },
         {
@@ -137,7 +137,7 @@ export default {
           options: [
             { label: "维修", value: "repair" },
             { label: "保养", value: "maintenance" },
-            { label: "点检", value: "inspection" },
+            { label: "检定", value: "verification" },
             { label: "报废", value: "discard" }
           ]
         },

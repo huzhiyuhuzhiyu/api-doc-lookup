@@ -5,17 +5,14 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="orderForm.equipmentIdCode" placeholder="请输入工具编码" clearable @keyup.enter.native="search()" />
+              <el-input v-model="orderForm.name" placeholder="请输入任务名称" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="orderForm.equipmentIdName" placeholder="请输入工具名称" clearable @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="orderForm.actualMaintenanceIdText" placeholder="请输入实际保养人" clearable @keyup.enter.native="search()" />
+              <el-select v-model="orderForm.state" placeholder="请选择状态" clearable style="width: 100%;">
+                <el-option v-for="(item, index) in stateList" :key="index" :label="item.label" :value="item.value"></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -26,8 +23,6 @@
               </el-button>
             </el-form-item>
           </el-col>
-          <!-- <el-button style="float: right;margin-right: 10px;" size="mini" type="primary"
-                        icon="icon-ym icon-ym-report-icon-search-setting" @click="moreQueries()">更多查询</el-button> -->
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -47,24 +42,29 @@
         </div>
 
         <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column style="padding-bottom: 50px;">
-          <el-table-column prop="maintenanceTaskIdText" label="任务名称" min-width="180" />
-          <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" />
-          <el-table-column prop="equipmentIdName" label="工具名称" min-width="200" sortable="custom" />
-          <el-table-column prop="usin" label="用途" min-width="140" />
-          <el-table-column prop="level" label="保养等级" width="140" />
-          <el-table-column prop="cycle" label="周期" width="90" />
-          <el-table-column prop="unit" label="单位" width="90" />
-          <el-table-column prop="departmentIdText" label="计划保养部门" min-width="150" />
-          <el-table-column prop="maintainerIdText" label="计划保养人" width="120"></el-table-column>
-          <el-table-column prop="planMaintenanceDate" label="计划保养日期" width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="actualDepartmentIdText" label="实际保养部门" min-width="150" />
-          <el-table-column prop="actualMaintenanceIdText" label="实际保养人" width="120"></el-table-column>
-          <el-table-column prop="actualMaintenanceDate" label="实际保养日期" width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="picList" label="保养拍照" min-width="160">
+          <el-table-column prop="name" label="任务名称" width="200" fixed="left" sortable="custom">
+            <!-- <template slot-scope="scope">
+                            <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
+                                scope.row.orderNo
+                            }}</el-link>
+                        </template> -->
+          </el-table-column>
+          <el-table-column prop="cycle" label="周期" width="120"></el-table-column>
+          <el-table-column prop="unit" label="单位" width="110"></el-table-column>
+          <el-table-column prop="state" label="状态" sortable="custom" width="120" fixed="right" align="center">
             <template slot-scope="scope">
-              <el-image @click="bigimg(define.comUrl+item.url)" style="width: 25px;height: 25px;margin-left: 5px;" v-for="item in scope.row.picList" :key="item.fileId" :src="define.comUrl+item.url" :preview-src-list="srcList"></el-image>
+              <div v-if="scope.row.state == 'disabled'"><el-tag type="danger">禁用</el-tag></div>
+              <div v-else-if="scope.row.state == 'enable'"><el-tag type="success">启用</el-tag></div>
             </template>
           </el-table-column>
+          <!-- <el-table-column prop="executionStatus" label="检定状态" width="120" fixed="right" align="center">
+                        <template slot-scope="scope">
+                            <div v-if="scope.row.executionStatus == 'unexecuted'"><el-tag type="danger">未执行</el-tag></div>
+                            <div v-else-if="scope.row.executionStatus == 'executed'">
+                                <el-tag type="success">已执行</el-tag>
+                            </div>
+                        </template>
+                    </el-table-column> -->
           <el-table-column prop="cycleType" label="周期类型" width="120" sortable="custom" fixed="right" align="center">
             <template slot-scope="scope">
               <div v-if="scope.row.cycleType == 'cycle'"><el-tag type="success">周期</el-tag></div>
@@ -73,9 +73,14 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
+
+          <el-table-column prop="departmentIdName" label="计划执行部门" width="120" />
+          <el-table-column prop="maintainerIdName" label="计划执行人" width="120"></el-table-column>
+
+          <el-table-column prop="nextCalibrationTime" label="计划检定日期" width="180" sortable="custom"></el-table-column>
+          <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
-          <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
+          <el-table-column prop="remark" label="备注" min-width="300"></el-table-column>
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
@@ -98,103 +103,43 @@
         <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize" @pagination="initData" />
       </div>
     </div>
-    <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { equMaintenanceList, deleteequMaintenance } from '@/api/dailyManagement/Maintenance'
+import { verificationList, deleteverification } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
 export default {
-  name: 'maintenanceRecords',
+  name: 'verification',
   components: { Form, SuperQuery },
   data() {
     return {
-      srcList: [
-        'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg'
-      ],
       superQueryJson: [
         {
-          prop: 'maintenanceTaskIdText',
+          prop: 'name',
           label: "任务名称",
           type: 'input'
         },
         {
-          prop: 'equipmentIdCode',
-          label: "工具编码",
-          type: 'input'
-        },
-        {
-          prop: 'equipmentIdName',
-          label: "工具名称",
-          type: 'input'
-        },
-        {
-          prop: 'usin',
-          label: "用途",
-          type: 'input'
-        },
-        { // 下拉选
-          prop: 'maintainerLevel',
-          label: '保养等级',
-          type: 'select',
-          options: [
-            { label: "日常保养", value: "日常保养" },
-            { label: "二级保养", value: "二级保养" },
-            { label: "三级保养", value: "三级保养" },
-            { label: "四级保养", value: "四级保养" },
-            { label: "年度保养", value: "年度保养" }
-          ]
-        },
-        {
-          prop: 'maintainerCycle',
+          prop: 'cycle',
           label: "周期",
           type: 'input'
         },
         {
-          prop: 'maintainerUnit',
+          prop: 'unit',
           label: "单位",
           type: 'input'
         },
-        {
-          prop: 'departmentIdText',
-          label: "计划保养部门",
-          type: 'input'
-        },
-        {
-          prop: 'maintainerIdText',
-          label: "计划保养人",
-          type: 'input'
-        },
-        { // 日期选择器（区间）
-          prop: 'planMaintenanceDate',
-          label: '计划保养日期',
-          type: 'daterange',
-          valueFormat: "yyyy-MM-dd",
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: {}
-        },
-        {
-          prop: 'actualDepartmentIdText',
-          label: "实际保养部门",
-          type: 'input'
-        },
-        {
-          prop: 'actualMaintenanceIdText',
-          label: "实际保养人",
-          type: 'input'
-        },
-        { // 日期选择器（区间）
-          prop: 'actualMaintenanceDate',
-          label: '实际保养日期',
-          type: 'daterange',
-          valueFormat: "yyyy-MM-dd",
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: {}
+        { // 下拉选
+          prop: 'state',
+          label: '状态',
+          type: 'select',
+          options: [
+            { label: '禁用', value: 'disabled' },
+            { label: '启用', value: 'enable' }
+          ]
         },
         { // 下拉选
           prop: 'cycleType',
@@ -204,6 +149,25 @@ export default {
             { label: '周期', value: 'cycle' },
             { label: '一次', value: 'disposable' }
           ]
+        },
+        {
+          prop: 'departmentIdName',
+          label: "计划执行部门",
+          type: 'input'
+        },
+        {
+          prop: 'maintainerIdName',
+          label: "计划执行人",
+          type: 'input'
+        },
+        { // 日期选择器（区间）
+          prop: 'nextMaintenanceTime',
+          label: '计划检定时间',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: {}
         },
         { // 日期时间选择器（区间）
           prop: 'createTime',
@@ -226,14 +190,27 @@ export default {
         }
       ],
       superQueryVisible: false,
+      visible: false,
+      submitDate: [],
       tableData: [],
+      orderDateArr: [],
       listLoading: false,
+      cycleTypeStateList: [
+        { label: "周期", value: "cycle" },
+        { label: "一次", value: "disposable" },
+      ],
+      stateList: [
+        { label: "禁用", value: "disabled" },
+        { label: "启用", value: "enable" }
+      ],
       orderForm: {
-        classAttribute: "tool",
-        recordType: 'maintenance',
-        equipmentIdCode: '',
-        equipmentIdName: '',
-        actualMaintenanceIdText: '',
+        name: "",
+        cycleType: '',
+        nextMaintenanceStartTime: '',
+        nextMaintenanceEndTime: '',
+        startTime: '',
+        endTime: '',
+        state: '',
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -244,6 +221,43 @@ export default {
           column: "create_time" /* 使用倒序日期作为默认排序 */
         }],
       },
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: '当天',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              // end.setTime(end.getTime() )
+              // start.setTime(end.getTime() )
+              picker.$emit('pick', [start, end])
+            }
+          }, {
+            text: '近三天',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 3)
+              picker.$emit('pick', [start, end])
+            }
+          }, {
+            text: '近一周',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          }, {
+            text: '近一个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          }]
+      },
       total: 0,
       formVisible: false,
     }
@@ -252,9 +266,6 @@ export default {
     this.initData()
   },
   methods: {
-    bigimg(url) {
-      this.srcList[0] = url
-    },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
@@ -274,28 +285,21 @@ export default {
       this.orderForm.orderItems[0].column = order === null ? "" : newProp
       this.initData()
     },
-    // 关闭新建编辑页面
-    closeForm(isRefresh) {
-      this.formVisible = false
-      if (isRefresh) {
-        this.initData()
+    dataFormSubmit() {
+      if (this.orderDateArr && this.orderDateArr.length > 0) {
+        this.orderForm.nextMaintenanceStartTime = this.orderDateArr[0]
+        this.orderForm.nextMaintenanceEndTime = this.orderDateArr[1]
+      } else {
+        this.orderForm.nextMaintenanceStartTime = ''
+        this.orderForm.nextMaintenanceEndTime = ''
       }
-    },
-    initData() {
-      this.listLoading = true
-      equMaintenanceList(this.orderForm).then(res => {
-        this.tableData = res.data.records.map(item => {
-          if (item.picList && item.picList.length) item.picList = item.picList.map(o => { return JSON.parse(`{${o}}`) })
-          return item
-        })
-        this.total = res.data.total
-        this.listLoading = false
-      }).catch(() => {
-        this.listLoading = false
-      })
-    },
-
-    search() {
+      if (this.submitDate && this.submitDate.length > 0) {
+        this.orderForm.startTime = this.submitDate[0].replace(/ 0(?!0)/g, " ")
+        this.orderForm.endTime = this.submitDate[1].replace(/ 0(?!0)/g, " ")
+      } else {
+        this.orderForm.startTime = ''
+        this.orderForm.endTime = ''
+      }
       Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
         let item = this.orderForm[key]
         this.orderForm[key] = typeof item === 'string' ? item.trim() : item
@@ -303,14 +307,41 @@ export default {
       this.orderForm.pageNum = 1 // 重置页码
       this.initData()
     },
+    // 关闭新建编辑页面
+    closeForm(isRefresh) {
+      this.formVisible = false
+      if (isRefresh) {
+        this.keyword = ''
+        this.initData()
+      }
+    },
+    initData() {
+      this.listLoading = true
+      verificationList(this.orderForm).then(res => {
+        this.tableData = res.data.records
+        this.total = res.data.total
+        this.listLoading = false
+        this.visible = false
+      }).catch(() => {
+        this.listLoading = false
+      })
+    },
+
+    search() {
+      this.dataFormSubmit()
+    },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+      this.submitDate = []
+      this.orderDateArr = []
       this.orderForm = {
-        classAttribute: "tool",
-        recordType: 'maintenance',
-        equipmentIdCode: '',
-        equipmentIdName: '',
-        actualMaintenanceIdText: '',
+        name: "",
+        cycleType: '',
+        nextMaintenanceStartTime: '',
+        nextMaintenanceEndTime: '',
+        startTime: '',
+        endTime: '',
+        state: '',
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -344,7 +375,7 @@ export default {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
       }).then(() => {
-        deleteequMaintenance(id).then(res => {
+        deleteverification(id).then(res => {
           this.initData()
           this.$message({
             type: 'success',
@@ -364,6 +395,3 @@ export default {
 }
 </script>
 <style src="@/assets/scss/index-list.scss" lang="scss" scoped />
-
-  
-  

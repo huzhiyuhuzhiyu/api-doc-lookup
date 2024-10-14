@@ -228,7 +228,7 @@
 
                 <el-table-column prop="ordersNo" label="订单号" width="160" sortable="custom" />
 
-                <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
+                <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="90" sortable="custom" />
 

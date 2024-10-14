@@ -231,7 +231,7 @@
                 <el-table-column prop="ordersNo" label="任务单号" width="160" sortable="custom" />
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom"
                   v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'" />
-                <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
+                <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
                 <el-table-column prop="processName" label="工序" width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="90" sortable="custom" />

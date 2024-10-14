@@ -142,13 +142,13 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="price" label="单价(含税)" width="120" :key="110"></el-table-column>
-                        <el-table-column prop="taxRate" label="税率(%)" width="100" :key="171"></el-table-column>
+                        <el-table-column prop="taxRates" label="税率" width="100" :key="171"></el-table-column>
                         <el-table-column prop="taxAmount" label="税额" width="100" :key="1721"></el-table-column>
                         <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column>
-                        <el-table-column prop="originalBatchNumber" label="原产品批次号" width="170" :key="1255">
+                        <el-table-column prop="originalBatchNumber" label="原批次号" width="170" :key="1255">
                           <template slot-scope="scope">
                             <el-input :disabled="btnType == 'look'" v-model="scope.row.originalBatchNumber"
-                              placeholder="原产品批次号"></el-input>
+                              placeholder="原批次号"></el-input>
                           </template>
                         </el-table-column>
                         <el-table-column prop="processName" label="工序" width="100" :key="1721"></el-table-column>
@@ -216,7 +216,7 @@
                 @selection-change="handleSelectionChangeAllPruduct" ref="form">
                 <el-table-column prop="orderNo" label="订单号" width="200" sortable="custom"> </el-table-column>
                 <el-table-column prop="cooperativePartnerName" label="供应商名称" width="160" sortable="custom" />
-                <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+                <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
                 <el-table-column prop="processName" label="工序名称" width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="80" />
@@ -355,7 +355,7 @@ export default {
       },
       inspectionResultsList: [
         { label: "待检验", value: "unInspect" },
-        { label: "检验合格", value: "qualified" },
+        { label: "合格", value: "qualified" },
       ],
       productList: [],
       productTotal: 0,
@@ -550,6 +550,7 @@ export default {
         item.noticeId = item.purchaseReceiptReturnGoodsId
         item.noticeLineId = item.id
         item.costPrice = item.price
+        item.taxRates= item.taxRate+"%"
         item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
         item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
         item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
@@ -804,6 +805,7 @@ export default {
             item.processName=""
             item.processCode=""
           }
+          item.taxRates= item.taxRate+"%"
           item.productDrawingNo = item.drawingNo
           item.num = item.waitReceiptNum
           item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)

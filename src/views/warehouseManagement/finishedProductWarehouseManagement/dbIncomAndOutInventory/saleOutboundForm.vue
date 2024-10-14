@@ -125,7 +125,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="price" label="单价(含税)" width="120" :key="110"></el-table-column>
-                        <el-table-column prop="taxRate" label="税率(%)" width="100" :key="171"></el-table-column>
+                        <el-table-column prop="taxRates" label="税率" width="100" :key="171"></el-table-column>
                         <el-table-column prop="taxAmount" label="税额" width="100" :key="1721"></el-table-column>
                         <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column>
 
@@ -219,7 +219,7 @@
                 <el-table-column prop="departmentName" label="所属部门" width="160" sortable="custom"></el-table-column>
                 <el-table-column prop="salesName" label="所属销售" width="160" sortable="custom" />
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
-                <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+                <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="160" />
                 <el-table-column prop="num" label="数量" width="160" sortable="custom" />
@@ -517,7 +517,7 @@ export default {
       arr.forEach(item => {
         item.productDrawingNo = item.drawingNo
         item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
-
+        item.taxRates= item.taxRate+"%"
         item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
         let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
         item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
@@ -753,6 +753,7 @@ export default {
           item.costPrice = item.price
           item.num = item.waitDeliverNum
           item.ordersLineId = item.id
+          item.taxRates= item.taxRate+"%"
           item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
           let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
           item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)

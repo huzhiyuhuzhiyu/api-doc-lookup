@@ -132,10 +132,10 @@
                         <el-table-column prop="taxRate" label="税率" width="100" :key="171"></el-table-column>
                         <el-table-column prop="taxAmount" label="税额" width="100" :key="1721"></el-table-column>
                         <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column>
-                        <el-table-column prop="originalBatchNumber" label="原产品批次号" width="170" :key="1255">
+                        <el-table-column prop="originalBatchNumber" label="原批次号" width="170" :key="1255">
                           <template slot-scope="scope">
                             <el-input :disabled="btnType == 'look'" v-model="scope.row.originalBatchNumber"
-                              placeholder="原产品批次号"></el-input>
+                              placeholder="原批次号"></el-input>
                           </template>
                         </el-table-column>
 
@@ -224,7 +224,7 @@
 
                 <el-table-column prop="deliverDate" label="收货日期" width="160" sortable="custom" />
                 <el-table-column prop="ordersNo" label="订单号" width="160" sortable="custom" />
-                <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
+                <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
 
                 <el-table-column prop="mainUnit" label="单位" width="90" sortable="custom" />

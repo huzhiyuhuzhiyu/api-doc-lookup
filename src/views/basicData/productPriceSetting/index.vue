@@ -380,31 +380,22 @@ export default {
       ],
       superQueryVisible: false,
       superQueryJson: [
-        {
-          prop: 'code',
-          label: '产品编码',
-          type: 'input'
-        },
+
         {
           prop: 'drawingNo',
           label: '品名规格',
           type: 'input'
         },
-
         {
-          prop: 'name',
-          label: '产品名称',
+          prop: 'code',
+          label: '产品编码',
           type: 'input'
         },
+
         {
           prop: 'productCategoryName',
           label: '产品分类',
           type: 'input'
-        },
-        {
-          prop: 'mainUnit',
-          label: '单位',
-          type: 'select'
         },
         {
           prop: 'productSource',
@@ -417,10 +408,46 @@ export default {
           ]
         },
         {
-          prop: 'productStatus',
-          label: '产品状态',
+          prop: 'mainUnit',
+          label: '单位',
+          type: 'select'
+        },
+
+        {
+          prop: 'purchaseTaxRate',
+          label: '采购税率',
           type: 'select',
-          options: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }]
+          options: this.taxRateList
+        },
+        {
+          prop: 'purchasePrice',
+          label: '采购单价(含税)',
+          type: 'select',
+          options: this.taxRateList
+        },
+        {
+          prop: 'purchaseExcludingTaxPrice',
+          label: '采购单价(不含税)',
+          type: 'select',
+          options: this.taxRateList
+        },
+        {
+          prop: 'salesTaxRate',
+          label: '销售税率',
+          type: 'select',
+          options: this.taxRateList
+        },
+        {
+          prop: 'salesPrice',
+          label: '销售单价(含税)',
+          type: 'select',
+          options: this.taxRateList
+        },
+        {
+          prop: 'salesExcludingTaxPrice',
+          label: '销售单价(不含税)',
+          type: 'select',
+          options: this.taxRateList
         },
         {
           prop: 'brand',
@@ -554,31 +581,22 @@ export default {
       if (!newVal) {
         this.dataTableFlag = true
         this.superQueryJson = [
-          {
-            prop: 'code',
-            label: '产品编码',
-            type: 'input'
-          },
+
           {
             prop: 'drawingNo',
             label: '品名规格',
             type: 'input'
           },
-
           {
-            prop: 'name',
-            label: '产品名称',
+            prop: 'code',
+            label: '产品编码',
             type: 'input'
           },
+
           {
             prop: 'productCategoryName',
             label: '产品分类',
             type: 'input'
-          },
-          {
-            prop: 'mainUnit',
-            label: '单位',
-            type: 'select'
           },
           {
             prop: 'productSource',
@@ -591,10 +609,46 @@ export default {
             ]
           },
           {
-            prop: 'productStatus',
-            label: '产品状态',
+            prop: 'mainUnit',
+            label: '单位',
+            type: 'select'
+          },
+
+          {
+            prop: 'purchaseTaxRate',
+            label: '采购税率',
             type: 'select',
-            options: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }]
+            options: this.taxRateList
+          },
+          {
+            prop: 'purchasePrice',
+            label: '采购单价(含税)',
+            type: 'select',
+            options: this.taxRateList
+          },
+          {
+            prop: 'purchaseExcludingTaxPrice',
+            label: '采购单价(不含税)',
+            type: 'select',
+            options: this.taxRateList
+          },
+          {
+            prop: 'salesTaxRate',
+            label: '销售税率',
+            type: 'select',
+            options: this.taxRateList
+          },
+          {
+            prop: 'salesPrice',
+            label: '销售单价(含税)',
+            type: 'select',
+            options: this.taxRateList
+          },
+          {
+            prop: 'salesExcludingTaxPrice',
+            label: '销售单价(不含税)',
+            type: 'select',
+            options: this.taxRateList
           },
           {
             prop: 'brand',
@@ -664,17 +718,18 @@ export default {
             options: []
           },
           {
-            prop: 'accuracyLevel',
-            label: '精度等级',
-            type: 'select',
-            options: []
-          },
-          {
             prop: 'vibrationLevel',
             label: '振动等级',
             type: 'select',
             options: []
           },
+          {
+            prop: 'accuracyLevel',
+            label: '精度等级',
+            type: 'select',
+            options: []
+          },
+
           {
             prop: 'colour',
             label: '颜色',
@@ -686,6 +741,11 @@ export default {
             label: '孔径',
             type: 'select',
             options: []
+          },
+          {
+            prop: 'remark',
+            label: '备注',
+            type: 'input'
           },
           {
             prop: 'createTime',
@@ -701,11 +761,7 @@ export default {
             label: '创建人',
             type: 'input'
           },
-          {
-            prop: 'remark',
-            label: '备注',
-            type: 'input'
-          }
+
         ]
         this.productSourceList = [
           { label: '组装', value: 'assemble' },
@@ -717,31 +773,22 @@ export default {
         if (newVal == 'finish_product') {
           this.dataTableFlag = true
           this.superQueryJson = [
-            {
-              prop: 'code',
-              label: '产品编码',
-              type: 'input'
-            },
+
             {
               prop: 'drawingNo',
               label: '品名规格',
               type: 'input'
             },
-
             {
-              prop: 'name',
-              label: '产品名称',
+              prop: 'code',
+              label: '产品编码',
               type: 'input'
             },
+
             {
               prop: 'productCategoryName',
               label: '产品分类',
               type: 'input'
-            },
-            {
-              prop: 'mainUnit',
-              label: '单位',
-              type: 'select'
             },
             {
               prop: 'productSource',
@@ -754,10 +801,46 @@ export default {
               ]
             },
             {
-              prop: 'productStatus',
-              label: '产品状态',
+              prop: 'mainUnit',
+              label: '单位',
+              type: 'select'
+            },
+
+            {
+              prop: 'purchaseTaxRate',
+              label: '采购税率',
               type: 'select',
-              options: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }]
+              options: this.taxRateList
+            },
+            {
+              prop: 'purchasePrice',
+              label: '采购单价(含税)',
+              type: 'select',
+              options: this.taxRateList
+            },
+            {
+              prop: 'purchaseExcludingTaxPrice',
+              label: '采购单价(不含税)',
+              type: 'select',
+              options: this.taxRateList
+            },
+            {
+              prop: 'salesTaxRate',
+              label: '销售税率',
+              type: 'select',
+              options: this.taxRateList
+            },
+            {
+              prop: 'salesPrice',
+              label: '销售单价(含税)',
+              type: 'select',
+              options: this.taxRateList
+            },
+            {
+              prop: 'salesExcludingTaxPrice',
+              label: '销售单价(不含税)',
+              type: 'select',
+              options: this.taxRateList
             },
             {
               prop: 'brand',
@@ -827,17 +910,18 @@ export default {
               options: []
             },
             {
-              prop: 'accuracyLevel',
-              label: '精度等级',
-              type: 'select',
-              options: []
-            },
-            {
               prop: 'vibrationLevel',
               label: '振动等级',
               type: 'select',
               options: []
             },
+            {
+              prop: 'accuracyLevel',
+              label: '精度等级',
+              type: 'select',
+              options: []
+            },
+
             {
               prop: 'colour',
               label: '颜色',
@@ -851,6 +935,11 @@ export default {
               options: []
             },
             {
+              prop: 'remark',
+              label: '备注',
+              type: 'input'
+            },
+            {
               prop: 'createTime',
               label: '创建时间',
               type: 'daterange',
@@ -864,11 +953,7 @@ export default {
               label: '创建人',
               type: 'input'
             },
-            {
-              prop: 'remark',
-              label: '备注',
-              type: 'input'
-            }
+
           ]
           this.productSourceList = [
             { label: '组装', value: 'assemble' },
@@ -879,31 +964,22 @@ export default {
         } else {
           this.dataTableFlag = false
           this.superQueryJson = [
-            {
-              prop: 'code',
-              label: '产品编码',
-              type: 'input'
-            },
+
             {
               prop: 'drawingNo',
               label: '品名规格',
               type: 'input'
             },
-
             {
-              prop: 'name',
-              label: '产品名称',
+              prop: 'code',
+              label: '产品编码',
               type: 'input'
             },
+
             {
               prop: 'productCategoryName',
               label: '产品分类',
               type: 'input'
-            },
-            {
-              prop: 'mainUnit',
-              label: '单位',
-              type: 'select'
             },
             {
               prop: 'productSource',
@@ -916,18 +992,52 @@ export default {
               ]
             },
             {
-              prop: 'productStatus',
-              label: '产品状态',
-              type: 'select',
-              options: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }]
-            },
-            {
-              prop: 'brand',
-              label: '品牌',
-              type: 'select',
-              options: []
+              prop: 'mainUnit',
+              label: '单位',
+              type: 'select'
             },
 
+            {
+              prop: 'purchaseTaxRate',
+              label: '采购税率',
+              type: 'select',
+              options: this.taxRateList
+            },
+            {
+              prop: 'purchasePrice',
+              label: '采购单价(含税)',
+              type: 'select',
+              options: this.taxRateList
+            },
+            {
+              prop: 'purchaseExcludingTaxPrice',
+              label: '采购单价(不含税)',
+              type: 'select',
+              options: this.taxRateList
+            },
+            {
+              prop: 'salesTaxRate',
+              label: '销售税率',
+              type: 'select',
+              options: this.taxRateList
+            },
+            {
+              prop: 'salesPrice',
+              label: '销售单价(含税)',
+              type: 'select',
+              options: this.taxRateList
+            },
+            {
+              prop: 'salesExcludingTaxPrice',
+              label: '销售单价(不含税)',
+              type: 'select',
+              options: this.taxRateList
+            },
+            {
+              prop: 'remark',
+              label: '备注',
+              type: 'input'
+            },
             {
               prop: 'createTime',
               label: '创建时间',
@@ -941,7 +1051,8 @@ export default {
               prop: 'createByName',
               label: '创建人',
               type: 'input'
-            }
+            },
+
           ]
           this.productSourceList = [
             { label: '生产', value: 'produce' },

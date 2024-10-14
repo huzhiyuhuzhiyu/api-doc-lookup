@@ -451,7 +451,7 @@
           </div>
         </div>
         <!-- 销售发货通知单列表 -->
-        <JNPF-table v-loading="listLoading" :data="fhTableList" @sort-change="sortChange"
+        <JNPF-table  :partentOrChild="'fhtabForm'" v-loading="listLoading" :data="fhTableList" @sort-change="sortChange"
           v-show="categoryType == 'outbound_sale_send' && !saleFlag" custom-column ref="fhtabForm" :fixedNO="true"
           :setColumnDisplayList="fhcolumnList" >
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
@@ -515,7 +515,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 销售发货 订单列表 -->
-        <JNPF-table v-loading="listLoading" :data="saleList" @sort-change="sortChange" v-show="categoryType == 'outbound_sale_send' && saleFlag"
+        <JNPF-table    :key='1' v-loading="listLoading" :data="saleList" @sort-change="sortChange" v-show="categoryType == 'outbound_sale_send' && saleFlag"
           custom-column ref="salestabForm" :fixedNO="true" :setColumnDisplayList="salecolumnList" hasC
           @selection-change="handeleselectSale">
           <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom">
@@ -531,7 +531,7 @@
           <el-table-column prop="departmentName" label="所属部门" width="160" sortable="custom"></el-table-column>
           <el-table-column prop="salesName" label="所属销售" width="160" sortable="custom" />
           <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
-          <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+          <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" width="160" />
           <el-table-column prop="num" label="数量" width="160" sortable="custom" />
@@ -682,7 +682,7 @@
           </el-table-column>
           <el-table-column prop="cooperativePartnerName" label="供应商名称" width="160" sortable="custom" />
           <el-table-column prop="cooperativePartnerCode" label="供应商编码" width="160" sortable="custom" />
-          <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+          <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" width="80" />
           <el-table-column prop="num" label="数量" width="100" sortable="custom" />
@@ -763,7 +763,7 @@
           </el-table-column>
           <el-table-column prop="cooperativePartnerName" label="供应商名称" width="160" sortable="custom" />
           <el-table-column prop="cooperativePartnerCode" label="供应商编码" width="160" sortable="custom" />
-          <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+          <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
           <el-table-column prop="processName" label="工序名称" width="160" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" width="80" />
@@ -850,7 +850,7 @@
           <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="140" sortable="custom" />
           <el-table-column prop="cooperativePartnerCode" label="供应商编码" width="200" sortable="custom" />
           <el-table-column prop="deliveryDate" label="交货日期" min-width="140" sortable="custom"></el-table-column>
-          <el-table-column prop="drawingNo" label="品名规格" min-width="140" sortable="custom"></el-table-column>
+          <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
           <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="processName" label="工序名称" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="mainUnit" label="单位" min-width="140" sortable="custom"></el-table-column>
@@ -1135,7 +1135,7 @@
               <JNPF-table  :partentOrChild="'dataTableWorkRef'"  ref="dataTableWorkRef" v-loading="listLoading" :data="workData" :fixedNO="true"
                 @sort-change="sortChange" custom-column  :setColumnDisplayList="workColumns">
                 <el-table-column prop="productionOrderNo" label="任务单号" width="180" />
-                <el-table-column prop="orderNo" label="工单号" width="180" />
+                <el-table-column prop="orderNo" label="工单号" width="200" />
                 <el-table-column prop="productDrawingNo" label="品名规格" width="300" />
                 <el-table-column prop="productCode" label="产品编码" width="160" />
                 <el-table-column prop="processName" label="工序名称" width="160" />
@@ -1317,18 +1317,18 @@ export default {
       ],
       searchList10: [
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
          
       ],
       searchList11: [
         { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
          
       ],
       searchList12: [
         { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],
      
       externalMaterOutboundFormVisible: false,
@@ -1726,8 +1726,11 @@ export default {
 
     },
   },
-  mounted() {
+  created(){
     this.getPickingConfig()
+
+  },
+  mounted() {
 
   },
   methods: {
@@ -1872,6 +1875,10 @@ export default {
         this.saleFlag = res.data.warehouse[2].configValue1 == '1' ? true : false
         this.purchaseFlag = res.data.warehouse[0].configValue1 == '1' ? true : false
         this.externalFlag = res.data.warehouse[1].configValue1 == '1' ? true : false
+        if(this.saleFlag){
+          console.log(555,this.$refs.salestabForm);
+          this.salecolumnList=["cooperativePartnerCode",]
+        }
         this.getclassAttributeList()
       })
     },
@@ -1954,8 +1961,7 @@ export default {
               this.$refs.outboundSaleSendREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
             })
           }
-        } else
-          if (this.categoryType == 'inbound_sale_return') {
+        } else if (this.categoryType == 'inbound_sale_return') {
             this.inboundSaleReturnFormVisible = true
             this.$nextTick(() => {
               this.$refs.inboundSaleReturnREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
@@ -2901,7 +2907,7 @@ export default {
           this.$refs.SuperQuery.conditionList = []
           this.searchList10= [
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
          
       ]
         }
@@ -2959,8 +2965,8 @@ export default {
           this.$refs.SuperQuery.conditionList = []
           this.searchList12= [
         { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ]
         }
         this.getTabdataList()

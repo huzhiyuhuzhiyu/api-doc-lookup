@@ -86,7 +86,7 @@
             <el-table-column prop="remark" label="备注" width="120" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
-            <el-table-column label="操作" width="180" fixed="right">
+            <el-table-column label="操作" width="100" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text"
                   @click.native="handleUserRelation(scope.row.purchaseOrderId, 'look')">
@@ -219,13 +219,6 @@ export default {
           label: '单位',
           type: 'input'
         },
-
-        {
-          prop: 'deputyUnit',
-          label: '交货日期',
-          type: 'input'
-        },
-
         {
           prop: 'deliveryDate',
           label: '交货日期',

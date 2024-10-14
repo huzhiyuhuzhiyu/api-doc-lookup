@@ -158,28 +158,22 @@ export default {
       superQueryJson: [
         {
           prop: 'orderNo',
-          label: '单号',
+          label: '检验单号',
           type: 'input'
         },
         {
-          prop: 'partnerName',
-          label: '客户名称',
+          prop: 'inspectorName',
+          label: '检验人',
           type: 'input'
         },
         {
-          prop: 'deliverDate',
-          label: '退货日期',
+          prop: 'inspectionDate',
+          label: '检验日期',
           type: 'daterange',
           valueFormat: 'yyyy-MM-dd',
           startPlaceholder: '开始日期',
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
-        },
-
-        {
-          prop: 'customerProductNo',
-          label: '客户料号',
-          type: 'input'
         },
         {
           prop: 'productDrawingNo',
@@ -196,27 +190,38 @@ export default {
           label: '单位',
           type: 'input'
         },
+
         {
-          prop: 'deliveryQuantity',
-          label: '退货数量',
-          type: 'input'
-        },
-        {
-          prop: 'documentStatus',
-          label: '单据状态',
+          prop: 'inspectionMethod',
+          label: '检验方式',
           type: 'select',
-          options: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }]
+          options: [{ label: '免检', value: 'exempt' }, { label: '抽检', value: 'spot_check' }, { label: '全检', value: 'all' }]
         },
         {
-          prop: 'approvalStatus',
-          label: '审批状态',
+          prop: 'inspectionResults',
+          label: '检验结果',
           type: 'select',
           options: [
-            { label: '审批中', value: 'ing' },
-            { label: '审批通过', value: 'ok' },
+            { label: '合格', value: 'qualified' },
+            { label: '不合格', value: 'unqualified' },
             { label: '审批拒绝', value: 'rebut' },
             { label: '审批撤回', value: 'withdrawn' }
           ]
+        },
+        {
+          prop: 'inspectionResults',
+          label: '处理状态',
+          type: 'select',
+          options: [
+            { label: '未处理', value: 'untreated' },
+            { label: '处理中', value: 'processing' },
+            { label: '已处理', value: 'processed' }
+          ]
+        },
+        {
+          prop: 'remark',
+          label: '备注',
+          type: 'input'
         },
         {
           prop: 'createTime',
@@ -232,11 +237,7 @@ export default {
           label: '创建人',
           type: 'input'
         },
-        {
-          prop: 'remark',
-          label: '备注',
-          type: 'input'
-        },
+       
       ],
       columnList: ["remark", "productCode", "processingStatus", "createByName"],
       visible: false,

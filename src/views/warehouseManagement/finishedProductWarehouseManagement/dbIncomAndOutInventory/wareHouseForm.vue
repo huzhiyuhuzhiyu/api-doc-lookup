@@ -29,14 +29,13 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
 
-          <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableDataList" row-key="id" :fixedNO="true"
-            @sort-change="sortChange" custom-column>
+          <JNPF-table :partentOrChild="'thtabForm'"  ref="tabForm" v-loading="listLoading" :data="tableDataList" row-key="id" :fixedNO="true"  custom-column>
             <el-table-column prop="name" label="库位名称" min-width="120">
             </el-table-column>
-            <el-table-column prop="code" label="库位编码" min-width="120" sortable="custom">
+            <el-table-column prop="code" label="库位编码" min-width="120" >
             </el-table-column>
             <el-table-column prop="warehouseName" label="仓库名称" min-width="120" />
-            <el-table-column prop="remark" label="备注" min-width="160" />
+            <el-table-column prop="remark" label="备注" min-width="120" />
             <el-table-column label="操作" width="100">
               <template slot-scope="scope">
                 <el-button type="text" @click="seleceWareHouseFun(scope.row)">选择</el-button>
@@ -97,8 +96,7 @@ export default {
       this.locationVisible = true
       getLocationList(this.tableQuery).then(res => {
         this.tableDataList = res.data.records
-        this.tableDataList.forEach((item) => {
-        })
+        
 
 
 
@@ -120,7 +118,7 @@ export default {
 
 
     search() {
-      this.initData()
+      this.initData(this.cpId)
     },
     reset() {
       this.form = {

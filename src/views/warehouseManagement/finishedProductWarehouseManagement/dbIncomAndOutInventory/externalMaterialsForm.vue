@@ -215,7 +215,7 @@
 
                 <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
 
-                <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+                <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
                 <el-table-column prop="processName" label="工序名称" width="120" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="90" sortable="custom" />
 

@@ -305,7 +305,7 @@
             </el-tab-pane>
             <!-- <el-tab-pane label="审批流程" name="approvalProcess">
             </el-tab-pane> -->
-            <el-tab-pane label="附件" name="annex">
+            <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
               <UploadWj v-model="datafilelist" :disabled="type == 'look'" :detailed="type == 'look'"></UploadWj>
             </el-tab-pane>
             <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag" style="padding:10px 0">
@@ -528,7 +528,7 @@
 import { addProcess, detailProcess, checkBimRoutingCode, updateProcess } from '@/api/basicData/processSettingss'
 import ProcessDialog from './process-dialog.vue'
 import SourceArea from './source.vue'
-import { getCooperativeData } from '@/api/basicData/index'
+import { getCooperativeData, getBimBusinessDetail } from '@/api/basicData/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getBimProcessList, getBimProcessDetail } from '@/api/bimProcess/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
@@ -712,10 +712,13 @@ export default {
       flowData: {},
       approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime: 0
+      endTime: 0,
+      isattachmentswitch: ''
     }
   },
-  created() { },
+  created() {
+    this.getBimBusinessDetail()
+  },
   methods: {
     async fetchData(code, flag) {
       try {
@@ -725,6 +728,15 @@ export default {
           this.dataForm.code = data.number
         }
       } catch (error) { }
+    },
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_gylx'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
     },
     listDataFormatting(res) {
       let treeData = res.data.records.map((item) => {
@@ -878,17 +890,17 @@ export default {
               if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             }
             this.loading = false
-            // if (res.data.attachmentList) {
-            //   res.data.attachmentList.forEach((item) => {
-            //     this.datafilelist.push({
-            //       name: item.document.fullName,
-            //       fileSize: item.document.fileSize,
-            //       filename: item.document.filePath,
-            //       id: item.document.id,
-            //       url: item.url
-            //     })
-            //   })
-            // }
+            if (res.data.attachmentList) {
+              res.data.attachmentList.forEach((item) => {
+                this.datafilelist.push({
+                  name: item.document.fullName,
+                  fileSize: item.document.fileSize,
+                  filename: item.document.filePath,
+                  id: item.document.id,
+                  url: item.url
+                })
+              })
+            }
           })
         }
       })

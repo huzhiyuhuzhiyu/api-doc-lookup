@@ -98,74 +98,43 @@ export default {
       superQueryVisible: false,
       superQueryJson: [
         {
-          prop: 'orderNo',
-          label: '外协单号',
+          prop: 'productDrawingNo',
+          label: '毛坯规格',
           type: 'input'
         },
         {
-          prop: 'cooperativePartnerCode',
-          label: '供应商编码',
+          prop: 'productCode',
+          label: '毛坯编码',
           type: 'input'
         },
 
         {
-          prop: 'cooperativePartnerName',
-          label: '供应商名称',
+          prop: 'productCategoryName',
+          label: '毛坯分类',
+          type: 'input'
+        },
+     
+        {
+          prop: 'batchNumber',
+          label: '批次号',
           type: 'input'
         },
         {
-          prop: 'deliveryDate',
-          label: '交货日期',
-          type: 'daterange',
-          valueFormat: 'yyyy-MM-dd',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'excludingTaxTotalAmount',
-          label: '总金额(不含税)',
+          prop: 'mainUnit',
+          label: '单位',
           type: 'input'
         },
+       
         {
-          prop: 'taxAmount',
-          label: '税额',
-          type: 'input'
-        },
-        {
-          prop: 'totalAmount',
-          label: '总金额(含税)',
-          type: 'input'
-        },
-        {
-          prop: 'receivingStatus',
-          label: '收货状态',
-          type: 'select',
-          options: [
-            { label: '待退货', value: 'receiving' },
-            { label: '已退货', value: 'received' },
-            { label: '已取消', value: 'stopped' }
-          ]
-        },
-        {
-          prop: 'createTime',
-          label: '创建时间',
+          prop: 'latestStorageTime',
+          label: '入库日期',
           type: 'daterange',
           valueFormat: 'yyyy-MM-dd HH:mm:ss',
           startPlaceholder: '开始日期',
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
-        {
-          prop: 'createByName',
-          label: '创建人',
-          type: 'input'
-        },
-        {
-          prop: 'remark',
-          label: '备注',
-          type: 'input'
-        }
+        
       ],
       printVisible: false,
       formVisible: false,
@@ -347,11 +316,11 @@ export default {
     initData() {
       this.listLoading = true
       if (this.time && this.time.length > 0) {
-        this.listQuery.startUpdateTime = this.time[0] + ' 00:00:00'
-        this.listQuery.endUpdateTime = this.time[1] + ' 23:59:59'
+        this.listQuery.lsSd = this.time[0] + ' 00:00:00'
+        this.listQuery.lsEd = this.time[1] + ' 23:59:59'
       } else {
-        this.listQuery.startUpdateTime = ''
-        this.listQuery.endUpdateTime = ''
+        this.listQuery.lsSd = ''
+        this.listQuery.lsEd = ''
       }
       inventoryList(this.listQuery)
         .then((res) => {

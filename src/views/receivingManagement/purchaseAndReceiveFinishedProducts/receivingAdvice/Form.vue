@@ -1496,7 +1496,7 @@ export default {
             this.dataForm.packingStatus = 'unboxed'
             this.dataForm.salesman = this.userInfo.userName
             this.fetchData('CGSH')
-
+            this.getBusInfo()
             res.data.noticeLineList.forEach((item) => {
               item.receivedQuantity = ''
             })
@@ -1527,12 +1527,15 @@ export default {
       } else {
         this.fetchData('CGSH')
         this.dataForm.salesman = this.userInfo.userName
+        this.getBusInfo()
       }
 
       if (this.btnType == 'edit') {
         this.btnText = '继续修改'
+        this.getBusInfo()
       } else if (this.btnType == 'add' || this.btnType == 'copy') {
         this.btnText = '继续新增'
+        this.getBusInfo()
       }
     },
     goBack() {
@@ -1716,16 +1719,16 @@ export default {
               this.submitmethodsTitle = '提交成功'
             }
             this.tipsvisible = true
-            // this.$message({
-            //   message: msg,
-            //   type: 'success',
-            //   duration: 1500,
-            //   onClose: () => {
-            //     this.visible = false
-            //     this.btnLoading = false
-            //     this.$emit('close', true)
-            //   }
-            // })
+            this.$message({
+              message: msg,
+              type: 'success',
+              duration: 1500,
+              onClose: () => {
+                this.visible = false
+                this.btnLoading = false
+                this.$emit('close', true)
+              }
+            })
           })
           .catch(() => {
             this.btnLoading = false

@@ -216,23 +216,23 @@
                 <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom" /> 
                 <el-table-column prop="cooperativePartnerCode" label="客户编码" width="160" sortable="custom" />
                 <el-table-column prop="cooperativePartnerName" label="客户名称" width="160" sortable="custom" />
-                <el-table-column prop="departmentName" label="所属部门" width="160" sortable="custom"></el-table-column>
-                <el-table-column prop="salesName" label="所属销售" width="160" sortable="custom" />
+                <el-table-column prop="departmentName" label="所属部门" width="120" sortable="custom"></el-table-column>
+                <el-table-column prop="salesName" label="所属销售" width="120" sortable="custom" />
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
                 <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
-                <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-                <el-table-column prop="mainUnit" label="单位" width="160" />
-                <el-table-column prop="num" label="数量" width="160" sortable="custom" />
-                <el-table-column prop="waitDeliverNum" label="待发货数量" width="160" sortable="custom" />
-                <el-table-column prop="deliveryDate" label="交货日期" width="160" sortable="custom" />
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
-                <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
-                <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
-                <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
-                <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
-                <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-                <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
-                <el-table-column prop="specialRequire" label="特殊要求" width="160" sortable="custom" />
+                <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
+                <el-table-column prop="mainUnit" label="单位" width="80" />
+                <el-table-column prop="num" label="数量" width="80" sortable="custom" />
+                <el-table-column prop="waitDeliverNum" label="待发货数量" width="130" sortable="custom" />
+                <el-table-column prop="deliveryDate" label="交货日期" width="130" sortable="custom" />
+                <el-table-column prop="sealingCoverTyping" label="打字内容" width="110" sortable="custom" />
+                <el-table-column prop="accuracyLevel" label="精度等级" width="110" sortable="custom" />
+                <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom" />
+                <el-table-column prop="oil" label="油脂" width="80" sortable="custom" />
+                <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom" />
+                <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" />
+                <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom" />
+                <el-table-column prop="specialRequire" label="特殊要求" width="110" sortable="custom" />
                 <el-table-column prop="remark" label="备注" width="160" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
                 <!-- { label: "销售发货", value: "outbound_sale_send" },
@@ -823,7 +823,6 @@ export default {
     },
     async handleConfirm(submitModel) {
       console.log(this.productData);
-      this.btnLoading = true
       let submitFlag = true // 自动聚焦是否可用
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -921,7 +920,8 @@ export default {
             //     return this.btnLoading = false
             //   }
             // }
-            formMethod(dataObj).then(res => {
+      this.btnLoading = true
+      formMethod(dataObj).then(res => {
               let msg = res.msg
               if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
               if (submitModel == "draft") {
@@ -933,6 +933,7 @@ export default {
 
               this.tipsvisible = true
 
+              this.btnLoading = false
 
             }).catch(() => {
               this.btnLoading = false

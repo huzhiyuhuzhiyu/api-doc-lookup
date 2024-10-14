@@ -459,7 +459,7 @@ export default {
         name: 'BOMCreate',
         params: {
           id: item.id,
-          content: '新建',
+          content: '新建BOM',
           name: item.name,
           drawNo: item.drawingNo,
           classAttribute: item.classAttribute,

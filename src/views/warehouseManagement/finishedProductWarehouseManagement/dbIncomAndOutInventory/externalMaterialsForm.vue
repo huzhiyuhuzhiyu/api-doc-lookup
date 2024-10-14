@@ -210,20 +210,13 @@
               <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
                 @selection-change="handleSelectionChangeAllPruduct" ref="form">
                 <el-table-column prop="orderNo" label="订单号" min-width="200" sortable="custom"></el-table-column>
-
                 <el-table-column prop="cooperativePartnerName" label="供应商名称" width="140" sortable="custom" />
-
                 <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
-
                 <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
                 <el-table-column prop="processName" label="工序名称" width="120" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="90" sortable="custom" />
-
-
                 <el-table-column prop="waitDeliverNum" label="待发料数量" min-width="140" sortable="custom" />
                 <el-table-column prop="demandQuantity" label="订单数量" min-width="120" sortable="custom" />
-
-
 
 
 
@@ -752,7 +745,6 @@ export default {
     },
     async handleConfirm(submitModel) {
       console.log(this.productData);
-      this.btnLoading = true
       let submitFlag = true // 自动聚焦是否可用
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -831,7 +823,8 @@ export default {
             //   }
             // }
             console.log("this.productData", this.productData);
-            formMethod(dataObj).then(res => {
+      this.btnLoading = true
+      formMethod(dataObj).then(res => {
               let msg = res.msg
               if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
               if (submitModel == "draft") {
@@ -843,6 +836,7 @@ export default {
 
               this.tipsvisible = true
 
+              this.btnLoading = false
 
             }).catch(() => {
               this.btnLoading = false

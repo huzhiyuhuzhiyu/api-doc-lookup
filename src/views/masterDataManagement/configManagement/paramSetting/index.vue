@@ -136,6 +136,14 @@ export default {
         {
           label: '启用设备供应商附件',
           value: 'fj_sbgysgl'
+        },
+        {
+          label: '启用BOM管理附件',
+          value: 'fj_bomgl'
+        },
+        {
+          label: '启用工艺路线附件',
+          value: 'fj_gylx'
         }
       ],
       descriptionList: [
@@ -198,6 +206,18 @@ export default {
         {
           label: '开启后，在设备供应商附件新建、编辑、查看都会显示附件操作。',
           value: 'fj_sbgysgl'
+        },
+        {
+          label: '开启后，在BOM管理附件新建、编辑、查看都会显示附件操作。',
+          value: 'fj_bomgl'
+        },
+        {
+          label: '开启后，在工艺路线附件新建、编辑、查看都会显示附件操作。',
+          value: 'fj_gylx'
+        },
+        {
+          label: '开启后，在工艺路线附件新建、编辑、查看都会显示附件操作。',
+          value: 'fj_gylx'
         }
       ]
     }
@@ -312,7 +332,7 @@ export default {
           } else if (this.activeName == 'warehouse') {
             this.tableData = res.data.warehouse
           } else if (this.activeName == 'attachment') {
-            this.tableData = res.data.attachment
+            this.tableData = res.data.attachment.filter(item => item.configKey !== '')
           }
 
           this.tableData.forEach((item) => {

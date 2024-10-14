@@ -82,7 +82,7 @@
             </template>
           </el-table-column> -->
         </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
+        <pagination class="pagination" :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
           @pagination="initData" />
       </div>
     </div>
@@ -251,7 +251,7 @@ export default {
       })
       this.listMethod(this.listQuery).then((res) => {
         this.tableData = res.data.records
-        this.total = res.total
+        this.total = res.data.total
         this.listLoading = false
       }).catch(() => {
         this.listLoading = false

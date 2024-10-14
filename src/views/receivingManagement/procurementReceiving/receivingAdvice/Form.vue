@@ -1507,7 +1507,10 @@ export default {
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
-
+          // 重新提交
+          this.$nextTick(() => {
+            this.getBusInfo()
+          }) // 审批
           if (this.btnType == 'copy') {
             this.dataForm.inspectionStatus = ''
             this.dataForm.id = ''
@@ -1517,19 +1520,7 @@ export default {
             this.dataForm.packingStatus = 'unboxed'
             this.dataForm.salesman = this.userInfo.userName
             this.fetchData('CGSH')
-            // getOrderDetail(res.data.notice.ordersId).then(res1 => {
-            //   res1.data.orderLines.map((item) => {
-            //     res.data.lines.map((item1) => {
-            //       if (item.productsId == item1.productId) {
-            //         item1.outboundQuantity = item.outboundQuantity
-            //         item1.returnQuantity = item.returnQuantity
-            //         item1.deliveryQuantity = ''
-
-            //       }
-            //     })
-            //   })
-
-            // })
+            this.getBusInfo()
 
             res.data.noticeLineList.forEach((item) => {
               item.receivedQuantity = ''
@@ -1538,6 +1529,7 @@ export default {
 
 
           } else if (this.btnType == 'edit' || this.btnType == 'look') {
+
             let data = res.data.noticeLineList
             data.forEach((item) => {
               console.log('ooooooo', item)
@@ -1548,6 +1540,11 @@ export default {
             if (this.btnType === 'edit') {
               this.getBusInfo()
             } else {
+              // 重新提交
+              this.$nextTick(() => {
+                this.getBusInfo()
+              }) // 审批
+              console.log(this.dataForm.approvalFlag, 'o')
               // 流程信息和流转记录
               if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             }
@@ -1567,13 +1564,15 @@ export default {
       } else {
         this.dataForm.salesman = this.userInfo.userName
         this.fetchData('CGSH')
+        this.getBusInfo()
       }
       if (this.btnType == 'edit') {
         this.btnText = '继续修改'
+        this.getBusInfo()
       } else if (this.btnType == 'add' || this.btnType == 'copy') {
         this.btnText = '继续新增'
         console.log(6)
-
+        this.getBusInfo()
       }
     },
     goBack() {
@@ -1743,36 +1742,36 @@ export default {
           formMethod = addpurPurchaseReceiptReturnGoods
         }
         console.log(obj, 'obj')
-        // formMethod(obj)
-        //   .then((res) => {
-        //     // let msg = "";
-        //     // if (formMethod == addpurPurchaseReceiptReturnGoods) {
-        //     //   msg = "新建成功"
-        //     // } else if (value == 'draft') {
-        //     //   msg = "保存成功"
-        //     // } else if (value == 'submit') {
-        //     //   msg = '提交成功'
-        //     // }
-        //     if (value == 'draft') {
-        //       this.submitmethodsTitle = '保存成功'
-        //     } else if (value == 'submit') {
-        //       this.submitmethodsTitle = '提交成功'
-        //     }
-        //     this.tipsvisible = true
-        //     // this.$message({
-        //     //   message: msg,
-        //     //   type: 'success',
-        //     //   duration: 1500,
-        //     //   onClose: () => {
-        //     //     this.visible = false
-        //     //     this.btnLoading = false
-        //     //     this.$emit('close', true)
-        //     //   }
-        //     // })
-        //   })
-        //   .catch(() => {
-        //     this.btnLoading = false
-        //   })
+        formMethod(obj)
+          .then((res) => {
+            // let msg = "";
+            // if (formMethod == addpurPurchaseReceiptReturnGoods) {
+            //   msg = "新建成功"
+            // } else if (value == 'draft') {
+            //   msg = "保存成功"
+            // } else if (value == 'submit') {
+            //   msg = '提交成功'
+            // }
+            if (value == 'draft') {
+              this.submitmethodsTitle = '保存成功'
+            } else if (value == 'submit') {
+              this.submitmethodsTitle = '提交成功'
+            }
+            this.tipsvisible = true
+            this.$message({
+              message: msg,
+              type: 'success',
+              duration: 1500,
+              onClose: () => {
+                this.visible = false
+                this.btnLoading = false
+                this.$emit('close', true)
+              }
+            })
+          })
+          .catch(() => {
+            this.btnLoading = false
+          })
       }
     },
     // 测试审批流
@@ -1784,6 +1783,7 @@ export default {
               this.flowData = res.data
               this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
               this.dataForm.approvalFlag = res.data.enabledMark
+              console.log(this.dataForm.approvalFlag, '{{}}')
             } else {
               this.flowTemplateJson = {}
               this.dataForm.approvalFlag = false

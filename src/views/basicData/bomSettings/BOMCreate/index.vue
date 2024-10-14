@@ -307,8 +307,9 @@ export default {
   },
   created() {
     if (this.$route.query.alert) {
-      this.content = '新建'
+      this.content = '新建BOM'
     } else {
+      console.log(this.$route.params, 'this.$route.params')
       if (this.$route.params.content) {
         this.content = this.$route.params.content
       } else {
@@ -325,6 +326,7 @@ export default {
         this.dataForm.productId = ''
       }
       if (this.$route.params.drawNo) {
+        console.log(this.$route.params.drawNo, '-')
         this.dataForm.drawNo = this.$route.params.drawNo
       } else {
         this.dataForm.drawNo = ''
@@ -339,6 +341,7 @@ export default {
       } else {
         this.dataForm.productSource = ''
       }
+      console.log(this.dataForm, 'for')
     }
     this.dataFormItems.forEach((tc) => {
       this.dataForm[tc.prop] = tc.value || '' // 设置默认value
@@ -834,7 +837,7 @@ export default {
         this.$refs['dataForm'].$children[0].validateField(paramsObj.prop)
       })
       if (!data || !data.length) return
-      this.dataForm[paramsObj.prop.slice(0, -4) + 'Id'] = data[0].id
+ 
       this.dataForm[paramsObj.prop] = data[0].name
       this.dataForm.classAttribute = data[0].all.classAttribute
       this.dataForm.drawNo = data[0].all.drawingNo

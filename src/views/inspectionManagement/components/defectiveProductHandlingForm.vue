@@ -18,7 +18,7 @@
             <el-tabs v-model="activeName" v-if="!approvalFlag">
               <el-tab-pane label="基础信息" name="jcInfo">
                 <el-collapse v-model="activeNames">
-                  <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                  <el-collapse-item title="处理信息" name="basicInfo" class="orderInfo">
                     <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm"
                       :btnType="btnType === 'setLoss' ? 'look' : btnType" />
                   </el-collapse-item>
@@ -26,7 +26,7 @@
                     <JNPF-col v-model="dataForm" :tabContent="inspectionInfo" ref="dataForm" :openMode="openMode" />
                   </el-collapse-item>
                   <el-collapse-item title="检验项目" name="inspectionItem">
-                    <el-row :gutter="30" style="padding:10px">
+                    <el-row :gutter="30" style="padding: 0 0 10px 0;">
                       <TableForm-ware :value="inspectionList" @input="contentChanges" ref="linesForm"
                         :tableItems="inspectionItems" :openMode="openMode" @addth="addOrDelInspectionItem"
                         @deleteth="addOrDelInspectionItem" :productsId="scope ? scope.productsId : ''" :num="rowNum"
@@ -34,7 +34,7 @@
                     </el-row>
                   </el-collapse-item>
                   <el-collapse-item title="不良原因" name="adverseCausesInfo">
-                    <el-row :gutter="30" style="padding:10px">
+                    <el-row :gutter="30" style="padding: 0 0 10px 0;">
                       <TableForm-ware-two :value="linesListTwo" @input="contentChangesTwo" ref="linesFormTwo"
                         :tableItems="linesListItemsTwo" :openMode="openMode" @addth="addOrDelLinesItemTwo"
                         @deleteth="addOrDelLinesItemTwo" :productsId="scope ? scope.productsId : ''" :num="rowNum"
@@ -370,7 +370,7 @@ export default {
           type: 'select',
           options: generateTreatmentResultsList(this.inspectionType),
           change: this.treatmentResultsChange,
-          // render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
+          render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
           itemRules: [{ required: true, trigger: 'change' }],
           sm: 6,
           itemDisabled: this.btnType === 'look' ? true : false
@@ -382,9 +382,8 @@ export default {
           value: '',
           type: 'input',
           sm: 6,
-          // render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
+          render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
           itemDisabled: this.qualifiedQuantityDisabled || this.btnType === 'look' ? true : false
-
         },
 
         {
@@ -393,7 +392,7 @@ export default {
           value: '',
           type: 'input',
           sm: 6,
-          // render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
+          render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
           itemDisabled: this.unqualifiedQuantityDisabled || this.btnType === 'look' ? true : false
         },
         {
@@ -416,7 +415,13 @@ export default {
           // render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
           // itemDisabled: this.unqualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
         },
-        { prop: 'description', label: '备注', value: '', type: 'textarea' }
+        {
+          prop: 'description',
+          label: '备注',
+          value: '',
+          type: 'textarea',
+          render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok'
+        }
 
         // { prop: "description", label: "处理说明", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 6 },
       ]

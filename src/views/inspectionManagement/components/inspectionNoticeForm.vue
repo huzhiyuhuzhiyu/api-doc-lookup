@@ -24,7 +24,7 @@
                   </el-collapse-item>
 
                   <el-collapse-item title="检验项目" name="inspectionItem">
-                    <el-row :gutter="30" style="padding-bottom:10px">
+                    <el-row :gutter="30" style="padding: 0 0 10px 0;">
                       <TableForm-ware :value="inspectionList" @input="contentChanges" ref="linesForm"
                         :tableItems="inspectionItems" :openMode="openMode" @addth="addOrDelInspectionItem"
                         @deleteth="addOrDelInspectionItem" :productsId="scope ? scope.productsId : ''" :num="rowNum"
@@ -32,7 +32,7 @@
                     </el-row>
                   </el-collapse-item>
                   <el-collapse-item title="不良原因" name="adverseCausesInfo">
-                    <el-row :gutter="30" style="padding-bottom:10px">
+                    <el-row :gutter="30" style="padding: 0 0 10px 0;">
                       <TableForm-ware-two :value="linesListTwo" @input="contentChangesTwo" ref="linesFormTwo"
                         :tableItems="linesListItemsTwo" :openMode="openMode" @addth="addOrDelLinesItemTwo"
                         @deleteth="addOrDelLinesItemTwo" :productsId="scope ? scope.productsId : ''" :num="rowNum"
@@ -277,7 +277,7 @@ export default {
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
           itemDisabled: true
         },
-     
+
         {
           prop: 'mainUnit',
           label: '单位',
@@ -310,9 +310,9 @@ export default {
           sm: 6,
           // itemDisabled: (rowIndex) => this.dataForm.inspectionMethod === 'exempt' || this.openMode === '只读',
           options: generateInspectionMethodList(this.inspectionType)
-      
+
         },
- 
+
         {
           prop: 'samplingQuantity',
           label: '检验数量',
@@ -822,7 +822,7 @@ export default {
         this.dataForm.unqualifiedQuantity = '0'
         !this.dataForm.itemList ? (this.dataForm.itemList = []) : ''
         !this.dataForm.causesList ? (this.dataForm.causesList = []) : ''
-   
+
       } else {
         this.dataForm.unqualifiedQuantity = '0'
       }

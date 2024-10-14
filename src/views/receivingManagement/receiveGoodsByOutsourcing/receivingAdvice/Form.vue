@@ -1237,6 +1237,7 @@ export default {
             this.dataForm.approvalStatus = ''
             this.dataForm.packingStatus = 'unboxed'
             this.fetchData('WXSH')
+            this.getBusInfo()
             // this.dataForm.salesman = this.userInfo.userName
             res.data.noticeLineList.forEach((item) => {
               item.receivedQuantity = ''
@@ -1259,12 +1260,15 @@ export default {
       } else {
         this.fetchData('WXSH')
         this.dataForm.salesman = this.userInfo.userName
+        this.getBusInfo()
       }
 
       if (this.btnType == 'edit') {
         this.btnText = '继续修改'
+        this.getBusInfo()
       } else if (this.btnType == 'add' || this.btnType == 'copy') {
         this.btnText = '继续新增'
+        this.getBusInfo()
       }
     },
     goBack() {

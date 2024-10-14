@@ -1507,10 +1507,7 @@ export default {
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
-          // 重新提交
-          this.$nextTick(() => {
-            this.getBusInfo()
-          }) // 审批
+
           if (this.btnType == 'copy') {
             this.dataForm.inspectionStatus = ''
             this.dataForm.id = ''
@@ -1529,7 +1526,7 @@ export default {
 
 
           } else if (this.btnType == 'edit' || this.btnType == 'look') {
-
+            
             let data = res.data.noticeLineList
             data.forEach((item) => {
               console.log('ooooooo', item)
@@ -1540,11 +1537,6 @@ export default {
             if (this.btnType === 'edit') {
               this.getBusInfo()
             } else {
-              // 重新提交
-              this.$nextTick(() => {
-                this.getBusInfo()
-              }) // 审批
-              console.log(this.dataForm.approvalFlag, 'o')
               // 流程信息和流转记录
               if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             }
@@ -1783,7 +1775,6 @@ export default {
               this.flowData = res.data
               this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
               this.dataForm.approvalFlag = res.data.enabledMark
-              console.log(this.dataForm.approvalFlag, '{{}}')
             } else {
               this.flowTemplateJson = {}
               this.dataForm.approvalFlag = false

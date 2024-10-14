@@ -199,7 +199,7 @@
             </el-tab-pane>
             <!-- <el-tab-pane label="审批流程" name="approvalProcess">
             </el-tab-pane> -->
-            <el-tab-pane label="附件" name="annex" style="padding:10px 0">
+            <el-tab-pane label="附件" name="annex" style="padding:10px 0" v-if="isattachmentswitch == '1'">
               <UploadWj v-model="datafilelist" :disabled="type == 'look'" :detailed="type == 'look'"></UploadWj>
             </el-tab-pane>
           </el-tabs>
@@ -217,7 +217,7 @@ import { updateApproval } from '@/api/basicData/approvalBusinessConditions'
 import { addProcess, detailProcess, checkBimRoutingCode, updateProcess } from '@/api/basicData/processSettingss'
 import SourceArea from '../processSettingss/source.vue'
 import { getOrganizeInfo, getOrganizeList } from '@/api/permission/organize'
-import { getCooperativeData } from '@/api/basicData/index'
+import { getCooperativeData, getBimBusinessDetail } from '@/api/basicData/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getBimProcessList, getBimProcessDetail } from '@/api/bimProcess/index'
 export default {
@@ -375,11 +375,23 @@ export default {
       types: '',
       sourceData: [],
       processArr: [],
-      responseLoading: false
+      responseLoading: false,
+      isattachmentswitch: ''
     }
   },
-  created() { },
+  created() {
+    this.getBimBusinessDetail()
+  },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_gylx'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     listDataFormatting(res) {
       let treeData = res.data.records.map((item) => {
         if (item.processingType == 'self_produced') {
@@ -483,17 +495,17 @@ export default {
             //   item.index = ind++
             // })
             this.loading = false
-            // if (res.data.attachmentList) {
-            //   res.data.attachmentList.forEach((item) => {
-            //     this.datafilelist.push({
-            //       name: item.document.fullName,
-            //       fileSize: item.document.fileSize,
-            //       filename: item.document.filePath,
-            //       id: item.document.id,
-            //       url: item.url
-            //     })
-            //   })
-            // }
+            if (res.data.attachmentList) {
+              res.data.attachmentList.forEach((item) => {
+                this.datafilelist.push({
+                  name: item.document.fullName,
+                  fileSize: item.document.fileSize,
+                  filename: item.document.filePath,
+                  id: item.document.id,
+                  url: item.url
+                })
+              })
+            }
           })
         }
       })

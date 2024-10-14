@@ -1118,6 +1118,16 @@ export function getBimBusinessSwitchConfigList (data) {
     data
   })
 }
+
+// 业务配置-详情(根据Key)
+export function getBimBusinessDetail (data) {
+  return request({
+    url: `/api/erp/bimBusinessSwitchConfig/detail`,
+    method: 'get',
+    data
+  })
+}
+
 // 开关
 export function editSwitch (id) {
   return request({

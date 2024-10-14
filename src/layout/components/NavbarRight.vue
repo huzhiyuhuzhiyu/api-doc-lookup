@@ -521,7 +521,7 @@ export default {
                 line-height: 1;
 
                 .el-badge__content {
-                    top: -4px;
+                    top: -3px;
                 }
             }
 

@@ -866,7 +866,6 @@ export default {
     },
     async handleConfirm(submitModel) {
       console.log(this.productData);
-      this.btnLoading = true
       let submitFlag = true // 自动聚焦是否可用
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -971,7 +970,8 @@ export default {
             //     return this.btnLoading = false
             //   }
             // }
-            formMethod(dataObj).then(res => {
+      this.btnLoading = true
+      formMethod(dataObj).then(res => {
               let msg = res.msg
               if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
               if (submitModel == "draft") {
@@ -983,6 +983,7 @@ export default {
          
               this.tipsvisible = true
 
+              this.btnLoading = false
 
             }).catch(() => {
               this.btnLoading = false

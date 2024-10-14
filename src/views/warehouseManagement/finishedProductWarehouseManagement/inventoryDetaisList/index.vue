@@ -903,6 +903,11 @@ export default {
           this.$nextTick(() => {
             this.$refs.outboundExternalSendREFForm.init(id, type, row.businessType, this.classAttributeList)
           })
+        }else{
+          this.formVisible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init(id, type)
+          })
         }
 
        
@@ -916,6 +921,11 @@ export default {
           this.inboundPurchaseFormVisible = true
           this.$nextTick(() => {
             this.$refs.inboundPurchaseREFForm.init(id, type, row.businessType, this.classAttributeList)
+          })
+        }else{
+          this.formVisible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init(id, type)
           })
         }
 
@@ -932,6 +942,11 @@ export default {
           this.$nextTick(() => {
             this.$refs.inboundExternalREFForm.init(id, type, row.businessType, this.classAttributeList)
           })
+        }else{
+          this.formVisible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init(id, type)
+          })
         }
       }else if (row.businessType == 'outbound_sale_send') {
         if(row.sourceType=='order'){
@@ -944,7 +959,12 @@ export default {
         this.$nextTick(() => {
           this.$refs.outboundSaleSendREFForm.init(id, type, row.businessType, this.classAttributeList)
         })
-       }
+       }else{
+          this.formVisible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init(id, type)
+          })
+        }
       } else if (row.businessType == 'outbound_pick_out') {
         this.outboundPickOutFormVisible = true
         this.$nextTick(() => {

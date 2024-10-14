@@ -739,12 +739,12 @@ $footerPadding: '10px';
 
 
 ::v-deep .el-descriptions-item__label {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
 }
 
 ::v-deep .el-descriptions-item__content {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   width: 200px;
   white-space: nowrap;

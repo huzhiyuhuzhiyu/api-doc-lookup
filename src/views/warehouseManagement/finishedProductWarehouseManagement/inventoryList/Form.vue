@@ -128,7 +128,7 @@
                               @focus="openSeleceWareDialog(scope.row, scope.$index)" placeholder="库位">
                             </el-input>
                             <div
-                              v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'outbound_purchase'">
+                              v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'outbound_purchase'||dataForm.businessType=='inbound_external_return'">
                               {{ scope.row.shelfSpaceName }}</div>
                           </template>
                         </el-table-column>
@@ -145,7 +145,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="costPrice" label="单价(含税)" width="120" :key="110"></el-table-column>
-                        <el-table-column prop="taxRate" label="税率(%)" width="120" :key="171"></el-table-column>
+                        <el-table-column prop="taxRates" label="税率" width="120" :key="171"></el-table-column>
                         <el-table-column prop="taxAmount" label="税额" width="120" :key="1721"></el-table-column>
                         <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column>
                         <el-table-column prop="originalBatchNumber" label="原产品批次号" width="170" :key="1255"
@@ -540,9 +540,9 @@ export default {
         { label: "生产领料", value: "outbound_pick_out" },
         { label: "生产退料", value: "inbound_return_materials" },
         { label: "外协发料", value: "outbound_external_send" },
-        // { label: "外协退料", value: "inbound_external_return" },
+        { label: "外协退料", value: "inbound_external_return" },
         { label: "外协收货", value: "inbound_external" },
-        // { label: "外协退货", value: "outbound_external" },
+        { label: "外协退货", value: "outbound_external" },
         { label: "直接入库", value: "inbound_other" },
         { label: "直接出库", value: "outbound_other" },
       ],
@@ -1106,6 +1106,9 @@ export default {
           } else {
             this.customerInfo = {}
           }
+          res.data.spaceLines.forEach(item => {
+            item.taxRates=item.taxRate+'%'
+          });
           this.productData = res.data.spaceLines
           this.spaceLines = res.data.spaceLines
           if (this.btnType === 'edit'){

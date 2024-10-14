@@ -1,19 +1,18 @@
 <template>
   <div>
 
-    <div v-if="openMode !== '只读'" style="padding:9px 0;">
+    <div v-if="openMode !== '只读'">
       <!-- <el-button type="text" class="topButton" icon="el-icon-plus" @click="openSeleceWareDialog">选择检验项目</el-button>|
       <el-button type="text" class="topButton" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>| -->
       <span style="margin: 0 8px;font-size: 16px;">总不合格数量：{{ num }}</span>|
       <span style="margin: 0 8px;font-size: 16px;">未分配不合格数量：{{ nowNum }}</span>
     </div>
-    <div v-else style="padding: 9px 0;">
+    <div v-else>
       <span style="margin: 0 8px;font-size: 16px;">总不合格数量：{{ num }}</span>
     </div>
 
     <el-form :model="JNPFColTableData" ref="main">
-      <el-table :data="JNPFColTableData.data" hasNO fixedNO hasC
-        @selection-change="handleSelectionChange">
+      <el-table :data="JNPFColTableData.data" hasNO fixedNO hasC @selection-change="handleSelectionChange">
         <!-- <el-table-column type="selection" width="60" :fixed="hasFixed ? 'left' : false" align="center"
           v-if="openMode !== '只读'" /> -->
         <el-table-column type="index" width="60" label="序号" align="center" :fixed="hasFixed ? 'left' : false" />
@@ -27,7 +26,6 @@
             </template>
             <template slot-scope="scope">
               <FormItem :item="item" :lineItem="JNPFColTableData.data[scope.$index]"
-               
                 :value="JNPFColTableData.data[scope.$index][scope.column.property]"
                 @input="handleInput($event, scope.column.property, scope.$index)" :ref="scope.column.property"
                 :openMode="openMode" :scope="scope" :paramsObj="{ scope }" />
@@ -217,7 +215,7 @@ export default {
   }
 }
 </script>
-<style  scoped>
+<style scoped>
 ::v-deep .el-form-item--small.el-form-item {
   margin-bottom: 0px;
 }

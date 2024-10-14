@@ -32,7 +32,7 @@
                           </el-collapse-item>
                         </el-collapse>
                       </el-tab-pane>
-                      <el-tab-pane label="附件" name="annex">
+                      <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
                         <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'">
                         </UploadWj>
                       </el-tab-pane>
@@ -74,7 +74,8 @@ import {
   checkBomCodeExist,
   getBomByProductId,
   checkLoopBug,
-  getBomTree
+  getBomTree,
+  getBimBusinessDetail
 } from '@/api/basicData/index'
 
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
@@ -296,7 +297,8 @@ export default {
       flowData: {},
       approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime: 0
+      endTime: 0,
+      isattachmentswitch: ''
     }
   },
   computed: {
@@ -307,7 +309,7 @@ export default {
   },
   created() {
     if (this.$route.query.alert) {
-      this.content = '新建'
+      this.content = '新建BOM'
     } else {
       if (this.$route.params.content) {
         this.content = this.$route.params.content
@@ -341,12 +343,11 @@ export default {
       }
     }
     this.dataFormItems.forEach((tc) => {
-      this.dataForm[tc.prop] = tc.value || '' // 设置默认value
       // 添加自定义表单元素方法和参数
       if (tc.type == 'custom') {
         // 若干需要选择的产品
         if (tc.prop === 'drawNo') {
-          tc.dialogTitle = '选择子件'
+          tc.dialogTitle = '选择品名规格'
           tc.placeholder = '请选择产品'
           // tc.treeTitle = '产品分类'
           // tc.methodArr = this.ProductMethodArr
@@ -357,7 +358,7 @@ export default {
           tc.searchList = this.ProductTableSearchList
           tc.listDataFormatting = this.listDataFormatting
           tc.change = this.ProductChange
-          tc.paramsObj = { prop: tc.prop, oldVal: this.dataForm[tc.prop.slice(0, -4) + 'Id'] }
+          tc.paramsObj = { prop: tc.prop, oldVal: this.dataForm.drawNo }
           // if (!tc.itemRules) { line.itemRules = [] }
           // tc.itemRules.push({
           //   validator: (rule, value, callback) => {
@@ -406,6 +407,7 @@ export default {
 
     this.dataForm.approvalFlag = false
     this.getBusInfo()
+    this.getBimBusinessDetail()
   },
   methods: {
     async init(productId, btnType, approvalStatus, nodeData) {
@@ -652,6 +654,15 @@ export default {
         this.getBusInfo()
       }
     },
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_bomgl'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     async handleConfirm(submitModel) {
       this.btnLoading = true
       let submitFlag = true
@@ -834,7 +845,7 @@ export default {
         this.$refs['dataForm'].$children[0].validateField(paramsObj.prop)
       })
       if (!data || !data.length) return
-      this.dataForm[paramsObj.prop.slice(0, -4) + 'Id'] = data[0].id
+
       this.dataForm[paramsObj.prop] = data[0].name
       this.dataForm.classAttribute = data[0].all.classAttribute
       this.dataForm.drawNo = data[0].all.drawingNo

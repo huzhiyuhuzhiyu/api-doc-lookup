@@ -69,23 +69,8 @@
                     </el-table-column>
                 </el-table>
                 <div class="uploadlist" v-else>
-                    <ul class="ul-upload" v-loading="loading">
-<!--                        <li class="li-upload" v-for="(item, index) in fileList" :key="index">-->
-<!--                            <el-dropdown style="margin-left: 72px;opacity: 0;" class="el-droupload" size="mini">-->
-<!--                                <el-link icon="icon-ym el-icon-more" :underline="false" />-->
-<!--                                <el-dropdown-menu slot="dropdown">-->
-<!--                                    <el-dropdown-item @click.native="handlePreview(item)"><i class="el-icon-view"></i>查看</el-dropdown-item>-->
-<!--                                    <el-dropdown-item @click.native="handleClick(item)"><i class="el-icon-download"></i>下载</el-dropdown-item>-->
-<!--                                    <el-dropdown-item @click.native="handleRemove(index)" v-if="!disabled"><i class="el-icon-close"></i>删除</el-dropdown-item>-->
-<!--                                </el-dropdown-menu>-->
-<!--                            </el-dropdown>-->
-<!--                            <i :class="[ext2Icon(getExt(item,'name'))]" style="font-size: 45px"></i>-->
-<!--&lt;!&ndash;                            <img src="@/assets/images/upload1.png" alt="" class="upload_img">&ndash;&gt;-->
-<!--                            <p class="li-upload-p1 name">{{ item.name }}</p>-->
-<!--                            <p class="li-upload-p2">{{ item.fileSize | toFileSize() }}</p>-->
-<!--                        </li>-->
+                    <ul class="ul-upload" :style="{height: gridHeight}" v-loading="loading">
                         <GridFileList empty-description="暂无文件，您可把文件拖拽至此上传" :list="fileList" :file-options="fileOptions" @command="commandHandler" @item-click="itemClickHandler">
-
                             <template v-slot:tooltip="{ item }">
                                 <el-row>
                                     <el-col style="text-align: right" :span="8">{{ item.type ? '文件名' : '文件夹名' }}：</el-col>
@@ -132,6 +117,10 @@ export default {
     },
     components: {SwitchListAndFilter, GridFileList, Preview},
     props: {
+        gridHeight: {
+            type: String,
+            default: '300px'
+        },
         // v-model值
         value: {
             type: Array,
@@ -415,7 +404,6 @@ export default {
         display: flex;
         flex-wrap: wrap;
         margin-top: 10px;
-
         .li-upload {
             &:hover {
                 background-color: #f5f8fb;

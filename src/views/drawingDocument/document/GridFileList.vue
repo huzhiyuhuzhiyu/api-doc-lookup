@@ -95,6 +95,7 @@ export default {
 <style scoped lang="scss">
 .grid-file-list{
     width: 100%;
+    height: 100%;
     .icon-more{
         background: #ebebeb;
         border-radius: 4px;
@@ -136,7 +137,7 @@ export default {
             flex-shrink: 0;
             height: 158px;
             position: relative;
-            width: 136px;
+            width: 135px;
             .item-cover{
                 background-position: 50%;
                 background-size: contain;

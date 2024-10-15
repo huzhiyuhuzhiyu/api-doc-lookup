@@ -24,16 +24,7 @@
                     <p>附件列表</p>
                 </div>
                 <div v-if="uploadlist">
-                    <el-tooltip class="item" content="切换缩略模式" placement="bottom" effect="light" v-if="switchlist">
-                        <div class="getSwitchList-p" @click="getSwitchList()">
-                            <img src="@/assets/images/a1.png" alt="">
-                        </div>
-                    </el-tooltip>
-                    <el-tooltip class="item" content="切换列表模式" placement="bottom" effect="light" v-else>
-                        <div class="getSwitchList-p" @click="getSwitchList()">
-                            <img src="@/assets/images/a2.png" alt="">
-                        </div>
-                    </el-tooltip>
+                    <SwitchListAndFilter :need-filter="false" :switch-list.sync="switchList"></SwitchListAndFilter>
                 </div>
             </div>
         </template>
@@ -54,7 +45,7 @@
                 </li>
             </ul>
             <div v-if="uploadlist">
-                <el-table ref="dataTable" :data="fileList" style="margin-top: 5px;" v-loading="loading" v-if="switchlist" :header-cell-style="{background:'#f5f7fa'}">
+                <el-table ref="dataTable" :data="fileList" style="margin-top: 5px;" v-loading="loading" v-if="switchList" :header-cell-style="{background:'#f5f7fa'}">
                     <el-table-column type="index" width="60" label="序号" align="center">
                     </el-table-column>
                     <el-table-column prop="name" label="文件名">
@@ -79,19 +70,39 @@
                 </el-table>
                 <div class="uploadlist" v-else>
                     <ul class="ul-upload" v-loading="loading">
-                        <li class="li-upload" v-for="(item, index) in fileList" :key="index">
-                            <el-dropdown style="margin-left: 72px;opacity: 0;" class="el-droupload" size="mini">
-                                <el-link icon="icon-ym el-icon-more" :underline="false" />
-                                <el-dropdown-menu slot="dropdown">
-                                    <el-dropdown-item @click.native="handlePreview(item)"><i class="el-icon-view"></i>查看</el-dropdown-item>
-                                    <el-dropdown-item @click.native="handleClick(item)"><i class="el-icon-download"></i>下载</el-dropdown-item>
-                                    <el-dropdown-item @click.native="handleRemove(index)" v-if="!disabled"><i class="el-icon-close"></i>删除</el-dropdown-item>
-                                </el-dropdown-menu>
-                            </el-dropdown>
-                            <img src="@/assets/images/upload1.png" alt="" class="upload_img">
-                            <p class="li-upload-p1">{{ item.name }}</p>
-                            <p class="li-upload-p2">{{ item.fileSize | toFileSize() }}</p>
-                        </li>
+<!--                        <li class="li-upload" v-for="(item, index) in fileList" :key="index">-->
+<!--                            <el-dropdown style="margin-left: 72px;opacity: 0;" class="el-droupload" size="mini">-->
+<!--                                <el-link icon="icon-ym el-icon-more" :underline="false" />-->
+<!--                                <el-dropdown-menu slot="dropdown">-->
+<!--                                    <el-dropdown-item @click.native="handlePreview(item)"><i class="el-icon-view"></i>查看</el-dropdown-item>-->
+<!--                                    <el-dropdown-item @click.native="handleClick(item)"><i class="el-icon-download"></i>下载</el-dropdown-item>-->
+<!--                                    <el-dropdown-item @click.native="handleRemove(index)" v-if="!disabled"><i class="el-icon-close"></i>删除</el-dropdown-item>-->
+<!--                                </el-dropdown-menu>-->
+<!--                            </el-dropdown>-->
+<!--                            <i :class="[ext2Icon(getExt(item,'name'))]" style="font-size: 45px"></i>-->
+<!--&lt;!&ndash;                            <img src="@/assets/images/upload1.png" alt="" class="upload_img">&ndash;&gt;-->
+<!--                            <p class="li-upload-p1 name">{{ item.name }}</p>-->
+<!--                            <p class="li-upload-p2">{{ item.fileSize | toFileSize() }}</p>-->
+<!--                        </li>-->
+                        <GridFileList empty-description="暂无文件，您可把文件拖拽至此上传" :list="fileList" :file-options="fileOptions" @command="commandHandler" @item-click="itemClickHandler">
+
+                            <template v-slot:tooltip="{ item }">
+                                <el-row>
+                                    <el-col style="text-align: right" :span="8">{{ item.type ? '文件名' : '文件夹名' }}：</el-col>
+                                    <el-col :span="16">{{ item.name }}</el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col style="text-align: right" :span="8">文件大小：</el-col>
+                                    <el-col :span="16">{{ item.fileSize | toFileSize() }}</el-col>
+                                </el-row>
+                            </template>
+                            <template v-slot:bottom="{item}">
+                                <div>
+                                    <p class="li-upload-p1 name">{{ item.name }}</p>
+                                    <p class="li-upload-p2 file-size" >{{ item.fileSize | toFileSize() }}</p>
+                                </div>
+                            </template>
+                        </GridFileList>
                     </ul>
                 </div>
             </div>
@@ -106,6 +117,9 @@ import Preview from '@/components/upload-wj/Preview'
 import { uploaderWithCode } from '@/api/equipment'
 import { mapState } from 'vuex'
 import drag, {readFileBlob} from './utils/drag'
+import {ext2Icon, getExt} from "@/views/drawingDocument/document/utils";
+import GridFileList from "@/views/drawingDocument/document/GridFileList.vue";
+import SwitchListAndFilter from "@/views/drawingDocument/document/SwitchListAndFilter.vue";
 const units = {
     KB: 1024,
     MB: 1024 * 1024,
@@ -116,7 +130,7 @@ export default {
     directives:{
         drag
     },
-    components: {Preview},
+    components: {SwitchListAndFilter, GridFileList, Preview},
     props: {
         // v-model值
         value: {
@@ -164,15 +178,30 @@ export default {
         parentId: {
             type: Number,
             default: null
-        }
+        },
     },
     data() {
         return {
+            switchList:false,
             previewVisible: false,
             loading: false,
             activeFile: {},
-            switchlist: true,
-            fileList: this.value
+            fileList: this.value,
+            fileOptions:[
+                {
+                    value:'download',
+                    text:'下载',
+                },
+                {
+                    value:'preview',
+                    text:'查看',
+                },
+                {
+                    value:'delete',
+                    text:'删除',
+                    isShow:()=>!this.disabled
+                }
+            ]
         }
     },
     watch: {
@@ -230,6 +259,24 @@ export default {
     },
 
     methods: {
+        commandHandler(command, item,index) {
+            switch (command) {
+                case 'download':
+                    this.handleClick(item)
+                    break
+                case 'preview':
+                    this.handlePreview(item)
+                    break
+                case 'delete':
+                    this.handleRemove(index)
+                    break
+            }
+        },
+        itemClickHandler(item) {
+            this.handlePreview(item)
+        },
+        getExt,
+        ext2Icon,
        async  dragHandler(filerFiles,files){
            console.log(filerFiles,files)
             if(filerFiles.length <files.length){
@@ -251,7 +298,7 @@ export default {
            console.log(fileArr)
         },
         getSwitchList() {
-            this.switchlist = !this.switchlist
+            this.switchList = !this.switchList
         },
         onProgress() {
         },
@@ -287,7 +334,8 @@ export default {
                     fileSize: file.size,
                     filename: data.filename,
                     id: data.id,
-                    url: data.url
+                    url: data.url,
+                    fullName: data.fullName,
                 })
                 this.$emit('input', this.fileList)
             }).catch(err => {
@@ -329,6 +377,8 @@ export default {
 </script>
 
 <style scoped>
+
+
 /deep/ .maxHidden .el-upload--picture-card {
     display: none;
 }
@@ -338,6 +388,28 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
+.name{
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    color: #222;
+    display: -webkit-box;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 18px;
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+    width: 104px;
+    word-break: break-all;
+}
+.file-size{
+    margin-top: -3px;
+    color: #999;
+    font-size: 12px;
+    text-align: center;
+
+}
 .uploadlist {
     .ul-upload {
         display: flex;

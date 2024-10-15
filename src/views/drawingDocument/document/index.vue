@@ -234,7 +234,7 @@
                 </template>
               </el-table-column>
             </JNPF-table>
-            <GridFileList v-loading="gridFileListLoading" class="table-style" v-else @command="trashItemCommandHandler"  :list="list" :file-options="trashFileOptions"></GridFileList>
+            <GridFileList v-loading="gridFileListLoading" class="table-style" v-else  @item-click="listItemClick" @command="trashItemCommandHandler"  :list="list" :file-options="trashFileOptions"></GridFileList>
           </div>
         </div>
       </el-tab-pane>

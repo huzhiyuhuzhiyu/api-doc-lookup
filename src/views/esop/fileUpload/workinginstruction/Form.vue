@@ -24,8 +24,8 @@
                                                 <el-form label-position="top">
                                                     <el-row :gutter="10">
                                                         <el-col :span="24">
-                                                            <el-form-item label="单号">
-                                                                <el-input v-model="dataForm.orderNo" placeholder="请输入单号" :disabled="orderNoDisabled" />
+                                                            <el-form-item label="上传单编码">
+                                                                <el-input v-model="dataForm.orderNo" placeholder="请输入文件单编码" :disabled="orderNoDisabled" />
                                                             </el-form-item>
                                                         </el-col>
                                                     </el-row>
@@ -45,7 +45,7 @@
                                                     </el-row>
                                                     <el-row :gutter="10">
                                                         <el-col :span="12">
-                                                            <el-form-item v-if="needProcess" label="工艺路线名称">
+                                                            <el-form-item label="工艺路线名称">
                                                                 <el-input readonly v-model="dataForm.routingName"></el-input>
                                                             </el-form-item>
                                                             <div  style="visibility: hidden">
@@ -106,7 +106,7 @@
                                         <el-form label-position="top">
                                             <el-row :gutter="10">
                                                 <el-col :span="24">
-                                                    <el-form-item label="单号">
+                                                    <el-form-item label="上传单编码">
                                                         <el-input v-model="dataForm.orderNo" placeholder="请输入单号" :disabled="orderNoDisabled" />
                                                     </el-form-item>
                                                 </el-col>
@@ -156,7 +156,7 @@
                                 <template v-if="needProcess && routingLineList.length > 0" >
                                     <el-collapse-item v-for="item in routingLineList"  :key="item.processId"  :title="item.processName" :name="item.processId">
                                         <div class="collapse-wrapper">
-                                            <FileUploadDrop :disabled="isView" class="fileUpload" :key="item.processId" v-model="processFileList[item.processId]"></FileUploadDrop>
+                                            <FileUploadDrop  :disabled="isView" class="fileUpload" :key="item.processId" v-model="processFileList[item.processId]"></FileUploadDrop>
                                         </div>
                                     </el-collapse-item>
                                 </template>
@@ -241,7 +241,8 @@ export default {
                 routingName:'',
                 routingId:'',
                 approvalFlag:true,
-                id:null
+                id:null,
+                version:''
             },
             flowTaskOperatorRecordList: [],
             endTime: 0,
@@ -307,17 +308,8 @@ export default {
            //           this.$emit('back')
            //      }).catch(()=>{})
            // }
-            if(force){
-                return this.$emit('back')
-            }
-            return this.$confirm(`您确认要${type === 'back' ? '返回' :'取消'}吗？`,'提示',{
-                confirmButtonText:'确定',
-                cancelButtonText:'取消',
-                type:'warning'
-            }).then(()=>{
-                this.$emit('back')
-            }).catch(()=>{})
-           // this.$emit('back')
+            return this.$emit('back')
+
         },
         async handleConfirm(type){
             if(isEmpty( this.dataForm.productsId)){

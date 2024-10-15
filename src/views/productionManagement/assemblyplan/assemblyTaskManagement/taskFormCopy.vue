@@ -17,7 +17,7 @@
                 <el-descriptions :column="1" class="box">
                   <el-descriptions-item label="品名规格" class="drawingNo">{{ dataForm.productDrawingNo
                     }} <img v-if="dataForm.urgentFlag" src="@/assets/images/emergency1.png" alt=""
-                      style="width: 30px;vertical-align: top;"> </el-descriptions-item>
+                      style="width: 22px;vertical-align: top;"> </el-descriptions-item>
                 </el-descriptions>
                 <el-descriptions class="margin-top" :column="4">
                   <el-descriptions-item label="任务类型" class="orderNo" v-if="dataForm.orderType == 'normal'">

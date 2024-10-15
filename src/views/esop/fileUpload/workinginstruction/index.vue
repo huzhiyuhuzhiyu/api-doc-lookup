@@ -5,7 +5,7 @@
                 <el-form @submit.native.prevent>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input v-model="listQuery.superQuery.condition[0].fieldValue" placeholder="品名规格" clearable />
+                            <el-input  @keyup.enter.native="search" v-model="listQuery.superQuery.condition[0].fieldValue" placeholder="品名规格" clearable />
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
@@ -46,11 +46,19 @@
                 </div>
                 <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
                             ref="dataTable" :setColumnDisplayList="columnList">
-                    <el-table-column prop="orderNo" label="单号" sortable="custom" min-width="110" />
+                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="110" />
                     <el-table-column prop="drawingNo" label="品名规格" min-width="150" />
-                    <el-table-column prop="productsCode" label="产品编码" width="120" />
+
+                    <el-table-column prop="productsCode" label="产品编码" min-width="120" />
                     <el-table-column prop="productsCategoryName" label="产品分类" width="140" />
-                    <el-table-column prop="documentStatus" label="申请单状态" width="140" :formatter="(row, column, cellValue, index)=> cellValue === 'submit' ? '提交':'草稿' "/>
+                    <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center">
+                        <template slot-scope="{row}">
+                            <el-tag type="warning" v-if="row.documentStatus === 'draft'">草稿</el-tag>
+                            <el-tag type="success" v-else-if="row.documentStatus === 'submit'">提交</el-tag>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="version" label="版本号" width="80" />
+                    <el-table-column prop="fileCount" label="文件数量" width="120" />
                     <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
                     <el-table-column prop="createByName" label="创建人" width="100" />
                     <el-table-column label="操作" width="180" fixed="right">
@@ -106,7 +114,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import EditWorkingInstructionUpload from "@/views/esop/fileUpload/workinginstruction/Form.vue";
 import {deleteBimFileUpload, getBimFileUpload} from "@/api/esop/fileUpload/workinginstruction";
 import moment from "moment";
-import {ApplicationType, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
+import {ApplicationType, DocumentStatus, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 
 
 
@@ -141,41 +149,27 @@ export default {
             superQueryVisible: false,
             superQueryJson: [
                 {
-                    prop: 'model',
+                    prop: '上传单编码',
                     label: '型号',
-                    type: 'input'
+                    type: 'orderNo'
                 },
                 {
-                    prop: 'innerCircle',
-                    label: '内圈',
-                    type: 'input'
-                },
-
-                {
-                    prop: 'outerCircle',
-                    label: '外圈',
-                    type: 'input'
-                },
-                {
-                    prop: 'steelBall',
-                    label: '钢球型号',
+                    prop: 'drawingNo',
+                    label: '品名规格',
                     type: 'input'
                 },
 
                 {
-                    prop: 'createTime',
-                    label: '创建时间',
-                    type: 'daterange',
-                    valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                    startPlaceholder: '开始日期',
-                    endPlaceholder: '结束日期',
-                    pickerOptions: this.global.timePickerOptions
+                    prop: 'productsCode',
+                    label: '产品编码',
+                    type: 'input'
                 },
                 {
-                    prop: 'createByName',
-                    label: '创建人',
+                    prop: 'productsCategoryName',
+                    label: '产品分类',
                     type: 'input'
-                }
+                },
+
             ]
         }
     },
@@ -193,7 +187,7 @@ export default {
                 applicationType:this.applicationType,
                 approvalStatus: "",
                 createByName: "",
-                documentStatus: "",
+                documentStatus: DocumentStatus.DRAFT,
                 endTime: "",
                 endUpdateTime: "",
                 keyword: "",

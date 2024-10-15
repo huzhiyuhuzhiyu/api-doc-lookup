@@ -46,7 +46,7 @@
                 </div>
                 <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
                             ref="dataTable" :setColumnDisplayList="columnList">
-                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="110" />
+                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />
                     <el-table-column prop="drawingNo" label="品名规格" min-width="150" />
 
                     <el-table-column prop="productsCode" label="产品编码" min-width="120" />
@@ -88,7 +88,7 @@
                             @pagination="initData" />
             </div>
         </div>
-        <EditWorkingInstructionUpload :type="uploadType" :id="fileUploadId" :applicationType="applicationType" @back="editBack" v-if="formVisible"/>
+        <EditWorkingInstructionUpload :flowCode="flowCode" :type="uploadType" :id="fileUploadId" :applicationType="applicationType" @back="editBack" v-if="formVisible"/>
 
         <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
                     @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -115,6 +115,7 @@ import EditWorkingInstructionUpload from "@/views/esop/fileUpload/workinginstruc
 import {deleteBimFileUpload, getBimFileUpload} from "@/api/esop/fileUpload/workinginstruction";
 import moment from "moment";
 import {ApplicationType, DocumentStatus, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
+import {FlowCode} from "@/views/esop/utils/constants";
 
 
 
@@ -125,7 +126,11 @@ export default {
         applicationType:{
             type:String,
             default:ApplicationType.WORK
-        }
+        },
+        flowCode:{
+            type: String,
+            default: FlowCode.WORK
+        },
     },
     data() {
         return {

@@ -44,7 +44,7 @@ import {
 import { getCooperativeData, getcategoryTree as getcategoryCoop, getByCode } from '@/api/basicData/index'
 import { getcategoryTree, getUnitData, detailUnitData } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getbimProductAttributesList, getbimProductsModelList } from '@/api/masterDataManagement/index'
-
+import checkDrawExist from "@/api/masterDataManagement/productManage";
 import tabs from './params'
 export default {
   data() {
@@ -325,6 +325,37 @@ export default {
                   callback()
                 } else {
                   checkCodeExist({ id: this.dataForm.id || '', code: this.dataForm.code })
+                    .then((res) => {
+                      if (!res.data) {
+                        callback()
+                      } else {
+                        callback(new Error('此产品编码已存在'))
+                      }
+                    })
+                    .catch((err) => {
+                      callback(new Error(' '))
+                    })
+                }
+              },
+              trigger: 'blur'
+            })
+          }
+        }
+        if (tc.prop === 'drawingNo') {
+          if (this.businessType === '1') {
+            tc.render = false
+          } else {
+            if (!tc.itemRules) {
+              tc.itemRules = []
+            }
+            tc.itemRules.push({
+              validator: (rule, value, callback) => {
+                if (!value) {
+                  callback()
+                } else if (this.dataForm.drawingNo === this.autoDrawingNo) {
+                  callback()
+                } else {
+                  checkDrawExist({ id: this.dataForm.id || '', drawingNo: this.dataForm.drawingNo })
                     .then((res) => {
                       if (!res.data) {
                         callback()

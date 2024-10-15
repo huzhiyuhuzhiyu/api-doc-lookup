@@ -7,7 +7,7 @@
  * @Description: 成品的表单字段
  */
 import formValidate from "@/utils/formValidate";
-
+import checkDrawExist from "@/api/masterDataManagement/productManage";
 export default () => [
   {
     tabCode: "basicInfo",
@@ -15,7 +15,9 @@ export default () => [
     tabContent: [
 
       { prop: "code", label: "产品编码", value: "", type: 'input', itemRules: [{ required: true, trigger: "blur" }, { validator: formValidate('enCode'), trigger: 'blur' }], render: true, itemDisabled: false },
-      { prop: "drawingNo", label: "品名规格", value: "", type: "input", maxlength: "1000", itemDisabled: false, itemRules: [{ required: true, trigger: "blur" },] },
+      {
+        prop: "drawingNo", label: "品名规格", value: "", type: "input", maxlength: "1000", itemDisabled: false, itemRules: [{ required: true, trigger: "blur" }]
+      },
       { prop: "name", label: "产品名称", value: "", type: 'input', maxlength: 100, },
       { prop: "productCategoryName", label: "产品分类", value: "", type: 'custom', customComponent: "ComSelect-list", itemRules: [{ required: true, message: "请选择产品分类", trigger: "no" }], itemDisabled: false },
       { prop: "mainUnit", label: "主单位", value: "", type: 'select', itemRules: [{ required: true, trigger: "blur" }], options: [], filterable: true },

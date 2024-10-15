@@ -2,7 +2,9 @@
     <transition name="el-zoom-in-center">
 
         <div class="JNPF-preview-main org-form" ref="main">
-            <div :class="['JNPF-common-page-header', isView ? 'noButtons' : '']">
+            <div
+
+                :class="['JNPF-common-page-header', isView ? 'noButtons' : '']"  v-if="!approvalFlag">
                 <el-page-header @back="goBack('back')" :content="title" />
                 <div class="options" v-if="!isView">
                     <el-button type="success" :loading="btnLoading" @click="handleConfirm(DocumentStatus.DRAFT)">保存草稿</el-button>
@@ -11,7 +13,7 @@
                 </div>
             </div>
 
-            <el-tabs v-if="dataForm.approvalFlag" v-model="activeName"  >
+            <el-tabs v-if="!approvalFlag"  v-model="activeName"  >
                 <el-tab-pane label="基础信息" name="info">
 
                     <div class="contain">
@@ -23,36 +25,22 @@
                                             <el-row>
                                                 <el-form label-position="top">
                                                     <el-row :gutter="10">
-                                                        <el-col :span="24">
+                                                        <el-col :span="6">
                                                             <el-form-item label="上传单编码">
-                                                                <el-input v-model="dataForm.orderNo" placeholder="请输入文件单编码" :disabled="orderNoDisabled" />
+                                                                <el-input v-model="dataForm.orderNo" placeholder="请输入单号" :disabled="orderNoDisabled" />
                                                             </el-form-item>
                                                         </el-col>
-                                                    </el-row>
-                                                    <el-row :gutter="10">
-                                                        <el-col :span="12">
-                                                            <el-form-item label="产品分类">
-                                                                <el-input @click.native="chooseProduct" :value="dataForm.productsCategoryName" placeholder="请选择产品分类" readonly/>
+                                                        <el-col :span="6">
+                                                            <el-form-item label="版本号" >
+                                                                <el-input v-model="dataForm.version" placeholder="请输入版本号"  />
                                                             </el-form-item>
                                                         </el-col>
-                                                        <el-col :span="12">
-                                                            <el-form-item label="产品信息">
-                                                                <el-input @click.native="chooseProduct" placeholder="请选择品名规格" :value="dataForm.drawingNo" style="width: 50%" readonly/>
-                                                                <el-input @click.native="chooseProduct" placeholder="请选择产品编码" :value="dataForm.productsCode"  style="margin-left: 10px;width: calc(50% - 10px)" readonly/>
-                                                            </el-form-item>
-                                                        </el-col>
-
-                                                    </el-row>
-                                                    <el-row :gutter="10">
-                                                        <el-col :span="12">
+                                                        <el-col :span="6">
                                                             <el-form-item label="工艺路线名称">
-                                                                <el-input readonly v-model="dataForm.routingName"></el-input>
+                                                                <el-input readonly :placeholder="dataForm.routingName" v-model="dataForm.routingName"></el-input>
                                                             </el-form-item>
-                                                            <div  style="visibility: hidden">
-                                                                a
-                                                            </div>
                                                         </el-col>
-                                                        <el-col :span="12">
+                                                        <el-col :span="6">
                                                             <el-form-item label="按工序上传">
                                                                 <div style="height: 32px;display: flex;align-items: center">
                                                                     <el-tooltip :content="hasRoutingLine ? '开启后可为每一道工序上传作业指导书':'该产品未设置工艺路线，请设置工艺路线后再开启'" placement="top-start">
@@ -68,19 +56,49 @@
                                                         </el-col>
 
                                                     </el-row>
+                                                    <el-row :gutter="10">
+                                                        <el-col :span="12">
+                                                            <el-form-item label="产品信息" >
+                                                                <div class="width-full flex-row">
+                                                                    <ComSelect-page
+                                                                        style="width: 50%"
+                                                                        ref="ComSelect-page"
+                                                                        v-model="dataForm.drawingNo"
+                                                                        @change="submitCustomerProduct"
+                                                                        :tableItems="ProductTableItems"
+                                                                        dialogTitle="选择产品"
+                                                                        treeTitle="物料分类"
+                                                                        title="选择产品"
+                                                                        :methodArr="ProductMethodArr"
+                                                                        :listMethod="getProductList"
+                                                                        :listRequestObj="ProductListRequestObj"
+                                                                        :searchList="ProductTableSearchList"
+                                                                        :elementShow="true"  />
+                                                                    <el-input @click.native="chooseProduct" placeholder="请选择产品编码" :value="dataForm.productsCode"  style="margin-left: 10px;width: calc(50% - 10px)" readonly/>
+                                                                </div>
+
+                                                            </el-form-item>
+                                                        </el-col>
+                                                        <el-col :span="12">
+                                                            <el-form-item label="产品分类">
+                                                                <el-input @click.native="chooseProduct" :value="dataForm.productsCategoryName" placeholder="请选择产品分类" readonly/>
+                                                            </el-form-item>
+                                                        </el-col>
+                                                    </el-row>
+
                                                 </el-form>
                                             </el-row>
                                         </el-collapse-item>
                                         <template v-if="needProcess && routingLineList.length > 0" >
                                             <el-collapse-item v-for="item in routingLineList"  :key="item.processId"  :title="item.processName" :name="item.processId">
                                                 <div class="collapse-wrapper">
-                                                    <FileUploadDrop class="fileUpload" :key="item.processId" v-model="processFileList[item.processId]"></FileUploadDrop>
+                                                    <FileUploadDrop  :disabled="isView" class="fileUpload" :key="item.processId" v-model="processFileList[item.processId]"></FileUploadDrop>
                                                 </div>
                                             </el-collapse-item>
                                         </template>
                                         <el-collapse-item  v-if="hasProduct && !needProcess"  title="文件上传" name="normalUpload">
                                             <div class="collapse-wrapper">
-                                                <FileUploadDrop class="fileUpload" v-model="normalFileList"></FileUploadDrop>
+                                                <FileUploadDrop :disabled="isView" class="fileUpload" v-model="normalFileList"></FileUploadDrop>
                                             </div>
                                         </el-collapse-item>
                                     </el-collapse>
@@ -96,45 +114,31 @@
                     <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
                 </el-tab-pane>
             </el-tabs>
-            <div v-if="!dataForm.approvalFlag" class="contain">
+            <div v-if="approvalFlag" class="contain">
                 <div class="JNPF-common-layout">
                     <div class="JNPF-common-layout-center JNPF-flex-main" v-loading="formLoading">
                         <div class="JNPF-common-layout-main JNPF-flex-main">
                             <el-collapse v-model="activeNames">
                                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                                     <el-row>
-                                        <el-form label-position="top">
+                                        <el-form label-position="top" :model="dataForm" :disabled="isView" ref="dataForm">
                                             <el-row :gutter="10">
-                                                <el-col :span="24">
+                                                <el-col :span="6">
                                                     <el-form-item label="上传单编码">
                                                         <el-input v-model="dataForm.orderNo" placeholder="请输入单号" :disabled="orderNoDisabled" />
                                                     </el-form-item>
                                                 </el-col>
-                                            </el-row>
-                                            <el-row :gutter="10">
-                                                <el-col :span="12">
-                                                    <el-form-item label="产品分类">
-                                                        <el-input @click.native="chooseProduct" :value="dataForm.productsCategoryName" placeholder="请选择产品分类" readonly/>
+                                                <el-col :span="6">
+                                                    <el-form-item label="版本号" >
+                                                        <el-input    v-model="dataForm.version" placeholder="请输入版本号"  />
                                                     </el-form-item>
                                                 </el-col>
-                                                <el-col :span="12">
-                                                    <el-form-item label="产品信息">
-                                                        <el-input @click.native="chooseProduct" placeholder="请选择品名规格" :value="dataForm.drawingNo" style="width: 50%" readonly/>
-                                                        <el-input @click.native="chooseProduct" placeholder="请选择产品编码" :value="dataForm.productsCode"  style="margin-left: 10px;width: calc(50% - 10px)" readonly/>
+                                                <el-col :span="6">
+                                                    <el-form-item label="工艺路线名称">
+                                                        <el-input readonly :placeholder="dataForm.routingName" v-model="dataForm.routingName"></el-input>
                                                     </el-form-item>
                                                 </el-col>
-
-                                            </el-row>
-                                            <el-row :gutter="10">
-                                                <el-col :span="12">
-                                                    <el-form-item v-if="needProcess" label="工艺路线名称">
-                                                        <el-input readonly v-model="dataForm.routingName"></el-input>
-                                                    </el-form-item>
-                                                    <div  style="visibility: hidden">
-                                                        a
-                                                    </div>
-                                                </el-col>
-                                                <el-col :span="12">
+                                                <el-col :span="6">
                                                     <el-form-item label="按工序上传">
                                                         <div style="height: 32px;display: flex;align-items: center">
                                                             <el-tooltip :content="hasRoutingLine ? '开启后可为每一道工序上传作业指导书':'该产品未设置工艺路线，请设置工艺路线后再开启'" placement="top-start">
@@ -150,6 +154,37 @@
                                                 </el-col>
 
                                             </el-row>
+                                            <el-row :gutter="10">
+                                                <el-col :span="12">
+                                                    <el-form-item label="产品信息" >
+                                                        <div class="width-full flex-row">
+                                                            <ComSelect-page
+                                                                style="width: 50%"
+                                                                ref="ComSelect-page"
+                                                                v-model="dataForm.drawingNo"
+                                                                @change="submitCustomerProduct"
+                                                                :tableItems="ProductTableItems"
+                                                                dialogTitle="选择产品"
+                                                                :disabled="isView"
+                                                                treeTitle="物料分类"
+                                                                title="选择产品"
+                                                                :methodArr="ProductMethodArr"
+                                                                :listMethod="getProductList"
+                                                                :listRequestObj="ProductListRequestObj"
+                                                                :searchList="ProductTableSearchList"
+                                                                :elementShow="true"  />
+                                                            <el-input @click.native="chooseProduct" placeholder="请选择产品编码" :value="dataForm.productsCode"  style="margin-left: 10px;width: calc(50% - 10px)" readonly/>
+                                                        </div>
+
+                                                    </el-form-item>
+                                                </el-col>
+                                                <el-col :span="12">
+                                                    <el-form-item label="产品分类">
+                                                        <el-input @click.native="chooseProduct" :value="dataForm.productsCategoryName" placeholder="请选择产品分类" readonly/>
+                                                    </el-form-item>
+                                                </el-col>
+                                            </el-row>
+
                                         </el-form>
                                     </el-row>
                                 </el-collapse-item>
@@ -170,7 +205,7 @@
                     </div>
                 </div>
             </div>
-            <ChooseProductDialog @submit="chooseProductSubmitHandler" v-if="chooseProductVisible" :visible.sync="chooseProductVisible"></ChooseProductDialog>
+
         </div>
     </transition>
 </template>
@@ -182,19 +217,21 @@ import {detailProcess} from "@/api/basicData/processSettingss";
 import FileUploadDrop from "@/views/esop/fileUpload/workinginstruction/FileUploadDrop.vue";
 import {ApplicationType, DocumentStatus, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 import {getBusinessFlowDetail, getBusinessFlowInfo} from "@/api/workFlow/FlowEngine";
-import ChooseProductDialog from "@/views/esop/fileUpload/workinginstruction/ChooseProductDialog.vue";
 import {addBimFileUpload, detailBimFileUpload, modifyBimFileUpload} from "@/api/esop/fileUpload/workinginstruction";
 import Process from "@/components/Process/Preview.vue";
 import recordList from "@/views/workFlow/components/RecordList.vue";
 import busFlow from "@/mixins/generator/busFlow";
-import {getFilePreviewUrl} from "@/views/esop/fileUpload/utils";
+import {getFilePreviewUrl} from "@/views/esop/utils/utils";
+import {getcooperativeProduct} from "@/api/salesManagement/assemblyOrders";
+import {getcategoryTree, getcategoryTree as productTree} from "@/api/basicData/materialSettings";
+import {getProductList} from "@/api/basicData/materialFiles";
 function getOriginActiveNames(){
     return ['basicInfo']
 }
 
 
 export default {
-    components: {recordList, Process, ChooseProductDialog, FileUploadDrop},
+    components: {recordList, Process, FileUploadDrop},
     props:{
         type:{
             type:String,
@@ -207,10 +244,63 @@ export default {
         applicationType:{
             type:String,
             required:false
-        }
+        },
+        flowCode:{
+            type:String,
+            required:false
+        },
     },
     data() {
         return {
+            ProductListRequestObj: {
+                classAttributeList: ["raw_material", "semi_finished", "finish_product", "accessories"],
+                productCategoryId: "",
+                code: "",
+                name: "",
+                orderItems: [{
+                    "asc": false,
+                    "column": ""
+                }, {
+                    "asc": false,
+                    "column": "create_time"
+                }],
+                productStatus: "enable",
+                pageNum: 1,
+                pageSize: 20,
+            }, // 产品选择弹出框列表请求参数
+
+            ProductTableSearchList: [
+                { prop: "customerProductNo", label: "客户料号", type: 'input' },
+                { prop: "drawingNo", label: "品名规格", type: 'input' },
+                { prop: "productCode", label: "产品编码", type: 'input' },
+            ],
+            ProductListRequestObjs: {
+                contractId: null,
+                customerProductNo: "",
+                productCode: "",
+                productName: "",
+                partnerId: "",
+                productStatus: 'enable',
+                partnerType: "customer",
+                orderItems: [{
+                    "asc": false,
+                    "column": ""
+                }, {
+                    "asc": false,
+                    "column": "create_time"
+                }],
+                pageNum: 1,
+                pageSize: 20,
+            },
+            getcooperativeProduct,
+            ProductTableItems: [
+                { prop: 'code', label: '产品编码', fixed: 'left' },
+                { prop: 'name', label: '产品名称', fixed: 'left' },
+                { prop: 'drawingNo', label: '品名规格' },
+                // { prop: 'spec', label: '规格型号' },
+                { prop: 'productCategoryName', label: '产品分类' }
+            ], // 产品选择弹出框表单展示字段
+            productVisible: false,
             getDetailJSON:'',
             DocumentStatus,
             approvalFlag:false,
@@ -244,49 +334,63 @@ export default {
                 id:null,
                 version:''
             },
+            ProductMethodArr: {
+                method: getcategoryTree,
+                requestObj: { classAttribute: "" }
+            }, // 产品选择弹出框树状列表
             flowTaskOperatorRecordList: [],
             endTime: 0,
             cacheFileUploadList:[],
-            flowData:{}
+            flowData:{},
+            approvalId:'',
+            isApprovalCheck:false,
         }
     },
     mixins: [busFlow],
     created(){
-        if(this.isAdd) {
+        if(this.id) {
             this.dataForm.approvalFlag && this.getFlowDetail(this.id)
-            this.fetchData()
+            this.fetchData(false)
+            this.getDetail(this.id)
         }else{
             this.getBusInfo()
-            this.getDetail()
-            this.fetchData(false)
-
+            this.fetchData()
         }
-
     },
     methods: {
-       async hasModifyNoSave(){
-           if(this.isView){
-                return false
-           }
+        getProductList,
+        submitCustomerProduct(selectedIds, [{all:{id,code,drawingNo,productCategoryId,productCategoryName,routingId,routingName}}]){
+            this.normalFileList = []
+            this.processFileList = {}
+            this.dataForm.productsId = id
+            this.dataForm.productsCode = code
+            this.dataForm.drawingNo = drawingNo
+            this.dataForm.productCategoryId = productCategoryId
+            this.dataForm.productsCategoryName = productCategoryName
+            this.dataForm.routingId = routingId
+            this.changeRoutingName(routingName)
 
-           if(this.isEdit){
-               const { data } = await detailBimFileUpload(this.id)
-               if(JSON.stringify(data) === this.getDetailJSON){
-                   return false
-               }
-           }
-           return false
+       },
+        changeRoutingName(name){
+            this.dataForm.routingName = isEmpty(name)
+                ? (this.hasProduct
+                    ? '暂未设置工艺路线'
+                    : '' )
+                : name
         },
-        async getDetail(){
-            const { data } = await detailBimFileUpload(this.id)
+        async getDetail(id){
+            const { data } = await detailBimFileUpload(id)
             this.getDetailJSON = JSON.stringify(data)
             Object.keys(this.dataForm).forEach(key=>{
                 this.dataForm[key] = data[key]
             })
+            this.changeRoutingName(data.routingName)
+
             if(data.openProcess){
                 this.cacheFileUploadList = data.bimFileUploadLineVOList
                return await this.getProcessByCode(data.bimFileUploadLineVOList)
             }
+            console.log( data.bimFileUploadLineVOList)
             this.normalFileList = data.bimFileUploadLineVOList.map(item=>{
                 return {
                     name: item.documentName,
@@ -298,18 +402,8 @@ export default {
                 }
             })
         },
-        goBack(type,force =false){
-           // if(this.hasModifyNoSave()){
-           //      return this.$confirm('您有编辑的内容未保存，是否返回？','提示',{
-           //           confirmButtonText:'确定',
-           //           cancelButtonText:'取消',
-           //           type:'warning'
-           //      }).then(()=>{
-           //           this.$emit('back')
-           //      }).catch(()=>{})
-           // }
+        goBack(){
             return this.$emit('back')
-
         },
         async handleConfirm(type){
             if(isEmpty( this.dataForm.productsId)){
@@ -324,11 +418,8 @@ export default {
             const params = this.getSaveData(type)
             const fn = this.isAdd ? addBimFileUpload : modifyBimFileUpload
             const { data } = await fn(params)
-            console.log(data)
-            this.hasModify = false
             await this.$message.success('操作成功')
             isSubmit && this.goBack('',true)
-
         },
         getSaveData(type){
             return {
@@ -341,7 +432,8 @@ export default {
                     routingId:this.dataForm.routingId,
                     orderNo:this.dataForm.orderNo,
                     id:this.dataForm.id,
-                    approvalFlag:this.dataForm.approvalFlag
+                    approvalFlag:this.dataForm.approvalFlag,
+                    version:this.dataForm.version
                 },
                 bimFileUploadLineList:this.getUploadDetailList(),
                 flowData:this.flowData
@@ -376,25 +468,6 @@ export default {
                 }
             })
         },
-        chooseProductSubmitHandler({productId, productObj, hideModel}){
-            if(!productId){
-                this.$message.info('请您先选择产品再提交')
-                return
-            }
-
-            this.dataForm.productsCategoryName = productObj.productCategoryName
-            this.dataForm.drawingNo = productObj.drawingNo
-            this.dataForm.productsCode = productObj.code
-            this.dataForm.productsId = productId
-            this.dataForm.productCategoryId = productObj.productCategoryId
-            this.dataForm.routingName =productObj.routingName
-            this.dataForm.routingId = productObj.routingId
-            hideModel()
-        },
-        chooseProduct(){
-            console.log('chooseProduct')
-            this.chooseProductVisible = true
-        },
         toggleProcessHandler(val){
           if(!val){
               return  this.normalUploadShow()
@@ -404,18 +477,20 @@ export default {
         async getProcessByCode(fileUploadList){
             if(isEmpty(this.dataForm.productsId)){
                 this.routingLineList = []
+                this.changeRoutingName()
                 return this.dataForm.routingId = ''
             }
             const { routingId }= this.dataForm
             if(isEmpty(routingId)){
                 this.routingLineList = []
+                this.changeRoutingName()
                 return this.$message.warning('该产品暂未设置工艺路线')
             }
+
             await this.getProcessLine(fileUploadList)
         },
         async getProcessLine(fileUploadList){
             const { data }= await detailProcess(this.dataForm.routingId)
-            this.dataForm.routingName = data.routing.name
             this.routingLineList = data.routingLineList
             const processIdList = []
             if(isEmpty(fileUploadList)){
@@ -465,13 +540,12 @@ export default {
             }
         },
         getBusInfo(){
-            getBusinessFlowInfo('b048').then(res=>{
+            getBusinessFlowInfo(this.flowCode ||'b048').then(res=>{
                 if (res.data){
                     if (res.data.enabledMark){
                         this.flowData = res.data
                         this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
                         this.dataForm.approvalFlag = !!res.data.enabledMark
-                        console.log('approvalFlag',this.dataForm.approvalFlag)
                     }else{
                         this.flowTemplateJson = {}
                         this.dataForm.approvalFlag = false
@@ -513,25 +587,32 @@ export default {
         },
         normalUploadShow(){
             this.activeNames = getOriginActiveNames().concat('normalUpload')
-        }
-
+        },
+        chooseProduct(){
+            this.$refs["ComSelect-page"].openDialog()
+        },
+        init(id, btnType, approvalFlag){
+            console.log(id, btnType, approvalFlag)
+            this.isApprovalCheck = approvalFlag
+            this.approvalFlag = approvalFlag
+            this.getDetail(id)
+        },
     },
     watch:{
-
-
-        "dataForm.productCode"(val){
+        "dataForm.productsCode"(val){
             if(isEmpty(val)){
-                this.needProcess = 0
+                this.dataForm.openProcess = 0
                 this.activeNames = getOriginActiveNames()
                 return
             }
             if(!this.needProcess){
-               return  this.normalUploadShow()
+               return this.normalUploadShow()
             }
             if(!this.hasRoutingLine){
                 this.$message.info('该产品暂未设置工艺路线')
                 this.normalUploadShow()
-                return this.needProcess = 0
+                this.dataForm.openProcess = 0
+                return
             }
             this.getProcessByCode()
         },
@@ -545,7 +626,7 @@ export default {
             return this.normalFileList
         },
         isView(){
-            return this.type === ModelType.VIEW
+            return this.type === ModelType.VIEW || this.isApprovalCheck
         },
         isEdit(){
             return this.type === ModelType.EDIT
@@ -577,11 +658,9 @@ export default {
             return this.dataForm.id
         },
         hasRoutingLine(){
-            console.log(this.dataForm.routingId,this.dataForm)
             return notEmpty(this.dataForm.routingId)
         },
         hasProduct(){
-            console.log(this.dataForm.productsCode,this.dataForm)
             return notEmpty(this.dataForm.productsCode)
         }
     }
@@ -685,5 +764,13 @@ export default {
     padding: 10px;
     max-height: 500px;
     overflow-y: auto;
+    min-height: 280px;
+}
+.left-input{
+    width: 50%;
+}
+.right-input{
+    width: calc(50% - 10px);
+    margin-left: 10px;
 }
 </style>

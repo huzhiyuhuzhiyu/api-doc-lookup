@@ -10,11 +10,11 @@
           <el-radio-button label="attachment">附件开关</el-radio-button>
         </el-radio-group>
       </div>
-      <div class="JNPF-common-layout-center JNPF-flex-main" style="background-color: #FFFFFF;">
-        <div style="margin: 10px;overflow: scroll;">
+      <div class="JNPF-common-layout-center JNPF-flex-main" style="background-color: #FFFFFF;margin-top: 10px">
+        <div style="margin: 10px -6px 0 10px;overflow: scroll;">
           <el-table :height="maxHeight" :data="tableData" stripe :row-style="{ height: '50px' }"
             :header-cell-style="{ background: '#FAFAFA', color: '#606266', 'text-align': 'center' }">
-            <el-table-column prop="configKey" label="功能" width="180">
+            <el-table-column prop="configKey" label="功能" width="230">
               <template slot-scope="scope">
                 {{ $getLabel(configKeyList, scope.row.configKey, 'value', 'label') }}
               </template>
@@ -24,14 +24,12 @@
               <template slot-scope="scope">
                 <div v-if="scope.row.businessCode == 'warehouse'">
                   <el-radio-group v-model="scope.row.radio" @input="radioChange(scope.row)">
-
                     <el-radio :label="0">
                       {{ scope.row.radioOff }}
                     </el-radio>
                     <el-radio :label="1">
                       {{ scope.row.radioOn }}
                     </el-radio>
-
                   </el-radio-group>
                 </div>
                 <div v-else>
@@ -54,7 +52,6 @@
             </el-table-column>
           </el-table>
         </div>
-
       </div>
     </div>
   </div>
@@ -167,6 +164,30 @@ export default {
         {
           label: '启用采购退货通知单附件',
           value: 'fj_cgthtzd'
+        },
+        {
+          label: '启用外协订单附件',
+          value: 'fj_wxdd'
+        },
+        {
+          label: '启用外协发料通知单附件',
+          value: 'fj_wxfltzd'
+        },
+        {
+          label: '启用采购收货单附件',
+          value: 'fj_cgshd'
+        },
+        {
+          label: '启用成品采购收货单附件',
+          value: 'fj_cpcgshd'
+        },
+        {
+          label: '启用外协收货单附件',
+          value: 'fj_wxshd'
+        },
+        {
+          label: '启用采购检验单附件',
+          value: 'fj_procurejyd'
         }
       ],
       descriptionList: [
@@ -262,7 +283,30 @@ export default {
           label: '开启后，在采购退货通知单附件新建、编辑、查看都会显示附件操作。',
           value: 'fj_cgthtzd'
         },
-
+        {
+          label: '开启后，在外协订单附件新建、编辑、查看都会显示附件操作。',
+          value: 'fj_wxdd'
+        },
+        {
+          label: '开启后，在外协发料通知单附件新建、编辑、查看都会显示附件操作。',
+          value: 'fj_wxfltzd'
+        },
+        {
+          label: '开启后，在采购收货单附件新建、编辑、查看都会显示附件操作。',
+          value: 'fj_cgshd'
+        },
+        {
+          label: '开启后，在成品采购收货单附件新建、编辑、查看都会显示附件操作。',
+          value: 'fj_cpcgshd'
+        },
+        {
+          label: '开启后，在外协收货单附件新建、编辑、查看都会显示附件操作。',
+          value: 'fj_wxshd'
+        },
+        {
+          label: '开启后，在采购检验单附件新建、编辑、查看都会显示附件操作。',
+          value: 'fj_procurejyd'
+        }
       ]
     }
   },
@@ -376,7 +420,7 @@ export default {
           } else if (this.activeName == 'warehouse') {
             this.tableData = res.data.warehouse
           } else if (this.activeName == 'attachment') {
-            this.tableData = res.data.attachment.filter(item => item.configKey !== '')
+            this.tableData = res.data.attachment.filter((item) => item.configKey !== '' || item.configKey == 'fj_qzkh')
           }
 
           this.tableData.forEach((item) => {

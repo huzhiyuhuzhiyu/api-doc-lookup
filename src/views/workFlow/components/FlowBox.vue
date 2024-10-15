@@ -302,7 +302,6 @@ export default {
       pageView: {
         'b001': 'salesManagement/contractQuotation/salesQuotationOld/depForm.vue',
         'b002': 'purchasingManagement/fixedPointPricing/pricingListedSeparately/Form.vue',
-        'b048': 'purchasingManagement/fixedPriceOfFinishedProducts/pricingListedSeparately/Form.vue',
         'b012': 'purchasingManagement/purReconciliationManagement/purReconciliation/Form.vue',
         'b013': 'salesManagement/saleReconciliationManagement/salesReconManagement/Form.vue',
         'b014': 'externalProcessManagement/reconciliationManagement/externalReconciliation/Form.vue',
@@ -336,6 +335,9 @@ export default {
         'b044': 'inspectionManagement/components/inspectionFormManagementDetail.vue',
         'b045': 'warehouseManagement/finishedProductWarehouseManagement/inventoryList/Form.vue',
         'b046': 'warehouseManagement/finishedProductWarehouseManagement/inventoryList/Form.vue',
+        'b048': 'esop/fileUpload/workinginstruction/Form.vue',
+        'b049': 'esop/fileUpload/workinginstruction/Form.vue',
+        'b050': 'esop/fileUpload/workinginstruction/Form.vue',
       },
       inspectionTypeList: [
         // 不良品
@@ -346,7 +348,7 @@ export default {
         { label: 'b007', value: 'back_material' },
         { label: 'b005', value: 'process' },
         { label: 'b022', value: 'finished' },
-        // 检验单 
+        // 检验单
         { label: 'b040', value: 'procure' },
         { label: 'b041', value: 'external' },
         { label: 'b042', value: 'process' },
@@ -500,8 +502,8 @@ export default {
           console.log(this.pageView[data.businessFlow]);
           console.log(data);
           let page = this.pageView[data.businessFlow]
-          // this.currentView = (resolve) => require([`@/views/warehouseManagement/finishedProductWarehouseManagement/inventoryList/Form.vue`], resolve) 
-          this.currentView = (resolve) => require([`@/views/${page}`], resolve) 
+          // this.currentView = (resolve) => require([`@/views/warehouseManagement/finishedProductWarehouseManagement/inventoryList/Form.vue`], resolve)
+          this.currentView = (resolve) => require([`@/views/${page}`], resolve)
 
         }
         this.flowTaskNodeList = res.data.flowTaskNodeList

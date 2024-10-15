@@ -17,7 +17,7 @@
                 <el-descriptions :column="1" class="box">
                   <el-descriptions-item label="品名规格" class="drawingNo">{{ dataForm.productDrawingNo
                     }} <img v-if="dataForm.urgentFlag" src="@/assets/images/emergency1.png" alt=""
-                      style="width: 30px;vertical-align: top;"> </el-descriptions-item>
+                      style="width: 22px;vertical-align: top;"> </el-descriptions-item>
                 </el-descriptions>
                 <el-descriptions class="margin-top" :column="4">
                   <el-descriptions-item label="任务类型" class="orderNo" v-if="dataForm.orderType == 'normal'">
@@ -53,9 +53,11 @@
                 <img class="JJ" v-if="dataForm.orderStatus == 'finish'" src="@/assets/images/successing.png" alt="">
               </div>
             </el-collapse-item>
-            <el-collapse-item title="关联信息" name="info">
+            <!-- <el-collapse-item title="" name="info" class="info" :disabled="true"> -->
 
-              <el-radio-group v-model="categoryType" style="background-color:#fafafa;width:100%;height: 40px;">
+              <div >
+                <el-radio-group v-model="categoryType" style="background-color:#fafafa;width:100%;height: 40px;border-left: 1px solid #dcdfe6;
+    border-right: 1px solid #dcdfe6;">
                 <el-radio-button v-for="item in categoryTypeList"  :key="item.code" style="height: 100%;"
                   :label="item.code">{{
                     item.fullName
@@ -75,7 +77,7 @@
                 <el-table-column prop="planStartDate" label="计划开始日期" min-width="150"></el-table-column>
                 <el-table-column prop="planEndDate" label="计划结束日期" min-width="150"></el-table-column>
                 <el-table-column prop="mainUnit" label="单位" min-width="80"></el-table-column>
-                <el-table-column prop="productionQuantity" label="生产数量" min-width="100"></el-table-column>
+                <el-table-column prop="productionQuantity" label="计划数量" min-width="100"></el-table-column>
                 <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="100"></el-table-column>
                 <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="130"></el-table-column>
                 <el-table-column v-if="dataForm.taskMethod != 'not_appoint'" prop="personName" label="人员"
@@ -120,7 +122,7 @@
                 <el-table-column prop="mainUnit" label="单位" />
                 <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
                 <el-table-column prop="materialsUsedQuantity" label="计划用量" />
-                <el-table-column prop="receivedQuantity" label="已领数量" />
+                <el-table-column prop="receivedQuantity" label="已投数量" />
                 <el-table-column prop="inventoryQuantity" label="库存数量">
                   <template slot-scope="scope">
                     <div>{{ scope.row.inventoryQuantity ? scope.row.inventoryQuantity : "0" }}</div>
@@ -144,7 +146,9 @@
                 <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" />
                 <el-table-column prop="createTime" label="创建时间" min-width="180"></el-table-column>
               </JNPF-table>
-            </el-collapse-item>
+              </div>
+              
+            <!-- </el-collapse-item> -->
           </el-collapse>
         </div>
       </div>
@@ -742,12 +746,12 @@ $footerPadding: '10px';
 
 
 ::v-deep .el-descriptions-item__label {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
 }
 
 ::v-deep .el-descriptions-item__content {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   width: 200px;
   white-space: nowrap;
@@ -776,14 +780,17 @@ $footerPadding: '10px';
   padding-top: 0;
 }
 ::v-deep .el-radio-button__inner{
-  padding: 12px 15px;
+  padding: 12px 15px!important;
   background-color: #fafafa;
   border: none;
   border-right: 1px solid #dcdfe6;
-  font-size: 18px;
+  font-size: 18px!important;
   font-weight: bold;
   }
   ::v-deep .el-radio-button:last-child .el-radio-button__inner,::v-deep .el-radio-button:first-child .el-radio-button__inner{
     border-radius: 0;
+  }
+  .indfo ::v-deep .el-collapse-item__header{
+    display: none;
   }
 </style>

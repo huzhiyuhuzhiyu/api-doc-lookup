@@ -120,7 +120,7 @@
               <el-tag type="success" v-else-if="scope.row.documentStatus == 'submit'">提交</el-tag>
             </template>
           </el-table-column>
-          <!-- <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center"
+          <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center"
             v-if="showAppCodeFlag">
             <template slot-scope="scope">
               <el-tag v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus !== 'draft'">审批中</el-tag>
@@ -136,7 +136,7 @@
                 <el-tag type="warning">审批撤回</el-tag>
               </div>
             </template>
-          </el-table-column> -->
+          </el-table-column>
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit', scope.row)" @del="handleDel(scope.row.id)"
@@ -470,7 +470,7 @@ export default {
       this.listLoading = true
       let methodArr = { method: getcategoryTree, requestObj: { classAttribute: '' } }
       getcategoryTree({
-        classAttribute: ''
+        classAttribute: '', type: 'material'
       }).then((res) => {
         this.treeData = res.data
         this.initData()

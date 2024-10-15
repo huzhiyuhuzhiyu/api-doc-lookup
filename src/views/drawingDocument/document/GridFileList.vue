@@ -1,5 +1,5 @@
 <script>
-import {ext2Icon, isFile} from "@/views/drawingDocument/document/utils";
+import {ext2Icon, getExt, isFile} from "@/views/drawingDocument/document/utils";
 
 
 export default {
@@ -12,22 +12,16 @@ export default {
         fileOptions:{
             type:Object,
             default:()=>({})
+        },
+        emptyDescription:{
+            type:String,
+            default:'暂无数据'
         }
 
     },
     methods:{
         ext2Icon,
-        getExt(item){
-            if(!isFile(item)){
-                return ''
-            }
-            if(item.fileExtension){
-                return item.fileExtension
-            }
-            const split = item.fullName.split('.')
-            console.log(split[split.length-1])
-            return split[split.length-1]
-        }
+        getExt
     }
 }
 </script>
@@ -84,18 +78,24 @@ export default {
                         </slot>
                     </div>
 
-                    <div class="name">
-                        {{item.fullName}}
-                    </div>
+                    <slot name="bottom" :item="item">
+                        <div class="name">
+
+                             {{item.fullName}}
+
+                        </div>
+                    </slot>
                 </el-tooltip>
             </div>
         </div>
-        <el-empty v-if="list.length === 0" description="暂无数据"></el-empty>
+        <el-empty v-if="list.length === 0" :description="emptyDescription"></el-empty>
     </div>
 </template>
 
 <style scoped lang="scss">
 .grid-file-list{
+    width: 100%;
+    height: 100%;
     .icon-more{
         background: #ebebeb;
         border-radius: 4px;
@@ -137,7 +137,7 @@ export default {
             flex-shrink: 0;
             height: 158px;
             position: relative;
-            width: 136px;
+            width: 135px;
             .item-cover{
                 background-position: 50%;
                 background-size: contain;

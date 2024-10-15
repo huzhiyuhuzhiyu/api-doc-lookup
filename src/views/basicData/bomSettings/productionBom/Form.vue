@@ -21,6 +21,8 @@
                     <el-dropdown-item @click.native="init(firstId, btnType)">刷新数据</el-dropdown-item>
                     <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
                     <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+                    <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
+                    <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </span>
@@ -31,7 +33,7 @@
                 :expand-on-click-node="false" node-key="productId" @node-click="handleNodeClick"
                 class="JNPF-common-el-tree" v-if="refreshTree">
                 <span
-                  :class="[data.childrenList && data.childrenList.length > 0 ? 'custom-tree-node' : 'disabled-span']"
+                  :class="[data.childrenList && data.childrenList.length > 0 ? 'custom-tree-node' : 'custom-tree-node']"
                   slot-scope="{ data }" :title="data.productDrawingNo">
                   <i :class="[
                     data.childrenList && data.childrenList.length > 0
@@ -309,6 +311,12 @@ export default {
     }
   },
   created() {
+    if (localStorage.getItem("productionBomFormFlag")) {
+      let roleFlag = JSON.parse(localStorage.getItem('productionBomFormFlag'))
+      console.log(roleFlag, 'roleFlag')
+      this.expands = roleFlag
+      this.toggleExpand(roleFlag)
+    }
     this.dataFormItems.forEach((tc) => {
       this.dataForm[tc.prop] = tc.value || '' // 设置默认value
       // 添加自定义表单元素方法和参数
@@ -372,6 +380,15 @@ export default {
     })
   },
   methods: {
+    // // 设置默认展开
+    setexpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        localStorage.setItem("productionBomFormFlag", expands)
+      })
+    },
     async init(id, btnType, approvalFlag, approvalStatus) {
       console.log(approvalStatus, 'approvalStatus')
       this.visible = true
@@ -442,9 +459,7 @@ export default {
               this.formLoading = false
               this.treeLoading = false
             }
-            this.$nextTick(() => {
-              this.toggleExpand(true)
-            })
+
           })
         } else {
           this.formLoading = false
@@ -552,9 +567,7 @@ export default {
               this.formLoading = false
               this.treeLoading = false
             }
-            this.$nextTick(() => {
-              this.toggleExpand(true)
-            })
+
           })
         } else {
           this.formLoading = false
@@ -786,6 +799,7 @@ export default {
                   if (nodeItem.type == 0) data.state = 'state-past'
                   if (nodeItem.type == 1) data.state = 'state-curr'
                   if (nodeItem.nodeType === 'approver' || nodeItem.nodeType === 'start' || nodeItem.nodeType === 'subFlow') data.content = nodeItem.userName
+                  if (nodeItem.nodeType === 'approver') data.processingTime = nodeItem.processingTime
                   return
                 }
                 if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)

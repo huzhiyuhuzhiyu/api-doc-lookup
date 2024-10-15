@@ -170,7 +170,7 @@
               </el-collapse-item>
             </el-collapse>
           </el-tab-pane>
-          <el-tab-pane label="附件" name="annex">
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
             <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
           </el-tab-pane>
           <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
@@ -522,7 +522,7 @@ import {
   editpurPurchaseReceiptReturnGoods,
   getpurPurchaseReceiptReturnGoodsdetail
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
-import { getWarehouseList } from '@/api/basicData/index'
+import { getWarehouseList, getBimBusinessDetail } from '@/api/basicData/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow'
@@ -533,6 +533,7 @@ export default {
   mixins: [busFlow],
   data() {
     return {
+      isattachmentswitch: '',
       scanDialog: false,
       tipsvisible: false,
       submitmethodsTitle: '',
@@ -823,6 +824,7 @@ export default {
     }
   },
   created() {
+    this.getBimBusinessDetail()
     // this.handleChange()
     // this.getProvinceList()
     this.getAttributeline()
@@ -834,6 +836,15 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_cgshd'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     scanFun() {
       if (!this.dataForm.cooperativePartnerId) return this.$message.error('请先选择供应商')
       this.scanDialog = true
@@ -1526,7 +1537,7 @@ export default {
 
 
           } else if (this.btnType == 'edit' || this.btnType == 'look') {
-            
+
             let data = res.data.noticeLineList
             data.forEach((item) => {
               console.log('ooooooo', item)
@@ -1538,6 +1549,7 @@ export default {
               this.getBusInfo()
             } else {
               // 流程信息和流转记录
+              console.log(this.dataForm.approvalFlag, 'this.dataForm.approvalFlag666')
               if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             }
           }

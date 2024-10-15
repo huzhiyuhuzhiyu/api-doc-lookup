@@ -40,6 +40,7 @@ export default {
       handler(newOption) {
         if (this.chartInstance) {
           this.chartInstance.setOption(newOption);
+          this.chartInstance.resize()
         }
       },
       deep: true

@@ -245,27 +245,15 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
                 @selection-change="handleSelectionChangeAllPruduct" ref="form">
-                <el-table-column prop="orderNo" label="收货单号" width="180" sortable="custom"></el-table-column>
-
-
-                <el-table-column prop="deliverDate" label="收货日期" width="160" sortable="custom" />
-
-
+                <el-table-column prop="orderNo" label="收货单号" width="200" sortable="custom"></el-table-column>
+                <el-table-column prop="deliverDate" label="收货日期" width="130" sortable="custom" />
                 <el-table-column prop="ordersNo" label="订单号" width="160" sortable="custom" />
                 <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
-                <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
+                <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
+                <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
+                <el-table-column prop="purchaseQuantity" label="数量" width="80" sortable="custom" />
 
-                <el-table-column prop="mainUnit" label="单位" width="90" sortable="custom" />
-
-
-                <el-table-column prop="purchaseQuantity" label="数量" width="120" sortable="custom" />
-
-
-
-                <el-table-column prop="requiredReceivedQuantity" label="待收货数量" width="160" sortable="custom" />
-
-
-
+                <el-table-column prop="requiredReceivedQuantity" label="待收货数量" width="130" sortable="custom" />
 
                 <!-- { label: "销售发货", value: "outbound_sale_send" },
         { label: "销售退货", value: "inbound_sale_return" },
@@ -278,7 +266,7 @@
         { label: "外协收货", value: "inbound_external" },
         { label: "外协退货", value: "outbound_external" }, -->
 
-                <el-table-column prop="processName" label="工序" width="160" sortable="custom" />
+                <el-table-column prop="processName" label="工序" width="120" sortable="custom" />
 
                 <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
@@ -925,7 +913,6 @@ export default {
     },
     async handleConfirm(submitModel) {
       console.log(this.productData);
-      this.btnLoading = true
       let submitFlag = true // 自动聚焦是否可用
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -1033,7 +1020,8 @@ export default {
             //   }
             // }
             console.log("this.productData", this.productData);
-            formMethod(dataObj).then(res => {
+      this.btnLoading = true
+      formMethod(dataObj).then(res => {
               let msg = res.msg
               if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
               if (submitModel == "draft") {
@@ -1046,6 +1034,7 @@ export default {
               this.tipsvisible = true
 
 
+              this.btnLoading = false
             }).catch(() => {
               this.btnLoading = false
             })

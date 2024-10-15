@@ -204,7 +204,7 @@
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
-            <el-tab-pane label="附件" name="annex">
+            <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
               <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
             </el-tab-pane>
             <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
@@ -429,7 +429,7 @@ import {
   getOrderDetail,
   getsaleOrderDetailList
 } from '@/api/salesManagement/assemblyOrders'
-import { getCooperativeInfo, getCooperativeData, getAddressInfo } from '@/api/basicData/index'
+import { getCooperativeInfo, getCooperativeData, getAddressInfo, getBimBusinessDetail } from '@/api/basicData/index'
 import changeAddress from './changeAddress.vue'
 import { purPurchaseOrderdetail, detailpurchaseOrderList } from '@/api/purchasingAndOutsourcingOrders/index'
 import DkcComSelectPage from './components/ComSelect-page/index.vue'
@@ -447,6 +447,7 @@ export default {
   mixins: [busFlow],
   data() {
     return {
+      isattachmentswitch: '',
       getCooperativeData,
       getcategoryTree,
       getcategoryTrees,
@@ -791,6 +792,7 @@ export default {
     }
   },
   created() {
+    this.getBimBusinessDetail()
     // this.handleChange()
     // this.getProvinceList()
   },
@@ -800,6 +802,15 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_wxfltzd'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     listDataFormatting(res) {
       return res.data.records
     },

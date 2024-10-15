@@ -38,83 +38,98 @@
         </div>
       </div>
       <div class="JNPF-common-layout-center JNPF-flex-main" style="margin-top: 10px;background-color: #fff;">
-        <el-tabs type="border-card" style="height: 100%;">
-          <el-tab-pane label="设备台账">
+        <el-tabs type="border-card" style="height: 100%;" v-model="activeName" @tab-click="handleClick">
+          <el-tab-pane label="设备台账" name="sbtz">
             <div class="JNPF-common-layout">
               <div class="JNPF-common-layout-center JNPF-flex-main">
                 <el-row class="JNPF-common-search-box" :gutter="16">
                   <el-form @submit.native.prevent>
                     <el-col :span="4">
                       <el-form-item>
-                        <el-select v-model="listQuery.factoryFloorid" filterable placeholder="请选择车间" @focus="focusfactoryFloor" clearable :loading="loadingfactoryFloorid">
-                          <el-option v-for="item in factoryFloorList" :key="item.id" :label="item.name" :value="item.id">
-                          </el-option>
-                        </el-select>
+                        <el-input v-model="listQuerysbtz.code" placeholder="请输入设备编码" @keyup.enter.native="searchsbtz()" clearable />
                       </el-form-item>
                     </el-col>
                     <el-col :span="4">
                       <el-form-item>
-                        <el-select v-model="listQuery.mountedPlacesid" filterable placeholder="请选择安装地点" @focus="focusfactoryFloor" clearable :loading="loadingfactoryFloorid">
-                          <el-option v-for="item in mountedPlacesList" :key="item.id" :label="item.name" :value="item.id">
+                        <el-input v-model="listQuerysbtz.name" placeholder="请输入设备名称" @keyup.enter.native="searchsbtz()" clearable />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="4">
+                      <el-form-item>
+                        <el-select v-model="listQuerysbtz.state" filterable placeholder="请选择安装地点" clearable>
+                          <el-option v-for="item in equipmentStateList" :key="item.value" :label="item.label" :value="item.value">
                           </el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
                     <el-col :span="6">
-                      <el-form-item>
-                        <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
-                        </el-date-picker>
-                      </el-form-item>
                     </el-col>
                     <el-col :span="6">
                       <el-form-item>
-                        <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                        <el-button type="primary" size="mini" icon="el-icon-search" @click="searchsbtz()">
                           {{ $t('common.search') }}</el-button>
-                        <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
+                        <el-button size="mini" icon="el-icon-refresh-right" @click="resetsbtz()">{{ $t('common.reset') }}
                         </el-button>
                       </el-form-item>
                     </el-col>
                   </el-form>
                 </el-row>
                 <div class="JNPF-common-layout-main JNPF-flex-main">
-                  <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column>
-                    <el-table-column prop="departmentIdName" label="申请部门" width="120" />
-                    <el-table-column prop="applicantIdName" label="申请人" width="120"></el-table-column>
-                    <el-table-column prop="applicantTime" label="申请日期" width="180" sortable="custom"></el-table-column>
-                    <el-table-column prop="reasonScrapping" label="报废理由" min-width="200"></el-table-column>
-                    <el-table-column prop="approvalStatus" label="审批状态" width="120" fixed="right" align="center">
+                  <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableDatasbtz" @sort-change="sortChangesbtz" fixedNO custom-column>
+                    <el-table-column prop="code" label="设备编码" min-width="200" sortable="custom" />
+                    <el-table-column prop="name" label="设备名称" min-width="200" sortable="custom" />
+                    <el-table-column prop="deviceType" label="设备类型" width="140" sortable="custom">
                       <template slot-scope="scope">
-                        <div v-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus == 'submit'"><el-tag type="success">审批通过</el-tag></div>
-                        <div v-else-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'"><el-tag type="warning">审批中</el-tag></div>
-                        <div v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus == 'submit'"><el-tag type="danger">审批拒绝</el-tag></div>
+                        <el-tag type="success" disable-transitions v-if="scope.row.deviceType == 'normal'">正常设备</el-tag>
+                        <el-tag disable-transitions v-if="scope.row.deviceType == 'virtually'">虚拟设备</el-tag>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="reasonRejection" label="驳回理由" min-width="200"></el-table-column>
-                    <el-table-column prop="approvalCompletionDate" label="审批完成时间" width="180" sortable="custom"></el-table-column>
-                    <el-table-column prop="documentStatus" label="单据状态" width="120" fixed="right" align="center">
-                      <template slot-scope="scope">
-                        <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
-                        <div v-else-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
+                    <el-table-column prop="factoryFloor" label="车间" min-width="200" sortable="custom" />
+                    <el-table-column prop="mountedPlaces" label="安装地点" min-width="200" sortable="custom" />
+                    <el-table-column prop="partnerName" label="供应商" min-width="200" sortable="custom" />
+                    <el-table-column prop="supplier" label="生产厂家" min-width="200" sortable="custom" />
+                    <el-table-column prop="serialNo" label="序列号" min-width="200" sortable="custom" />
+                    <el-table-column prop="scrapDate" label="报废日期" width="180" sortable="custom" />
+                    <el-table-column prop="purchaseDate" label="采购日期" width="180" sortable="custom">
+                    </el-table-column>
+                    <el-table-column prop="productDate" label="制造日期" width="180" sortable="custom" />
+                    <el-table-column prop="weight" label="重量（KG）" width="200" sortable="custom" />
+                    <el-table-column prop="serviceLife" label="额定使用年限（年）" width="200" sortable="custom" />
+                    <el-table-column prop="ratedVoltage" label="额定电压V" width="200" sortable="custom" />
+                    <el-table-column prop="ratedCurrent" label="额定电流A" width="200" sortable="custom" />
+                    <el-table-column prop="power" label="额定功率KW" width="200" sortable="custom" />
+                    <el-table-column prop="equLong" label="长（CM）" width="200" sortable="custom" />
+                    <el-table-column prop="width" label="宽（cm）" width="200" sortable="custom" />
+                    <el-table-column prop="height" label="高（CM）" width="200" sortable="custom" />
+                    <el-table-column prop="equipmentValue" label="设备原值（万元）" width="200" sortable="custom" />
+                    <el-table-column prop="theoryBeat" label="理论节拍" min-width="200" sortable="custom" />
+                    <el-table-column prop="usin" label="用途" min-width="180" sortable="custom" />
+                    <el-table-column prop="remark" label="备注" min-width="200" sortable="custom" />
+                    <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+                    <el-table-column prop="createByName" label="创建人" width="120" sortable="custom" />
+                    <el-table-column prop="state" label="设备状态" width="140" align="center" sortable="custom" fixed="right">
+                      <template slot-scope="{row}">
+                        <el-tag type="success" disable-transitions v-if="row.state == 'normal'">正常</el-tag>
+                        <el-tag type="warning" disable-transitions v-if="row.state == 'repair'">维修</el-tag>
+                        <el-tag type="danger" disable-transitions v-if="row.state == 'discard'">报废</el-tag>
+                        <el-tag disable-transitions v-if="row.state == 'spare'">备用</el-tag>
+                        <el-tag type="info" disable-transitions v-if="row.state == 'stop'">停用</el-tag>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="submitDate" label="提交时间" width="180" sortable="custom"></el-table-column>
-                    <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
-                    <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
-                    <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
                   </JNPF-table>
-                  <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData" />
+                  <pagination :total="total" :page.sync="listQuerysbtz.pageNum" :limit.sync="listQuerysbtz.pageSize" @pagination="initequipmentledger" />
                 </div>
               </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="设备概况">
+          <el-tab-pane label="设备概况" name="sbgk">
             <div class="JNPF-common-layout">
               <div class="JNPF-common-layout-center JNPF-flex-main">
                 <el-row class="JNPF-common-search-box" :gutter="16">
                   <el-form @submit.native.prevent>
                     <el-col :span="4">
                       <el-form-item>
-                        <el-select v-model="listQuery.factoryFloorid" filterable placeholder="请选择车间" @focus="focusfactoryFloor" clearable :loading="loadingfactoryFloorid">
+                        <el-select v-model="listQuerysbgk.factoryFloorId" filterable placeholder="请选择车间" @focus="focusfactoryFloor" clearable :loading="loadingfactoryFloorid">
                           <el-option v-for="item in factoryFloorList" :key="item.id" :label="item.name" :value="item.id">
                           </el-option>
                         </el-select>
@@ -122,7 +137,7 @@
                     </el-col>
                     <el-col :span="4">
                       <el-form-item>
-                        <el-select v-model="listQuery.mountedPlacesid" filterable placeholder="请选择安装地点" @focus="focusfactoryFloor" clearable :loading="loadingfactoryFloorid">
+                        <el-select v-model="listQuerysbgk.mountedPlacesid" filterable placeholder="请选择安装地点" @focus="focusfactoryFloor" clearable :loading="loadingfactoryFloorid">
                           <el-option v-for="item in mountedPlacesList" :key="item.id" :label="item.name" :value="item.id">
                           </el-option>
                         </el-select>
@@ -130,15 +145,9 @@
                     </el-col>
                     <el-col :span="6">
                       <el-form-item>
-                        <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
-                        </el-date-picker>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="6">
-                      <el-form-item>
-                        <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                        <el-button type="primary" size="mini" icon="el-icon-search" @click="searchsbgk()">
                           {{ $t('common.search') }}</el-button>
-                        <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
+                        <el-button size="mini" icon="el-icon-refresh-right" @click="resetsbgk()">{{ $t('common.reset') }}
                         </el-button>
                       </el-form-item>
                     </el-col>
@@ -180,7 +189,7 @@
               </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="点检分布">
+          <el-tab-pane label="点检分布" name="djfb">
             <div class="JNPF-common-layout-main JNPF-flex-main" style="overflow-y: auto;">
               <div class="vux-flexbox container-content vux-flex-row">
                 <div class="left-content-dj">
@@ -195,11 +204,8 @@
                   </div>
                 </div>
                 <div class="right-content-dj JNPF-flex-main dash-container has-hover">
-                  <div class="container-header text">
-                    <div class="header-title">设备状态分布</div>
-                  </div>
                   <div class="new-engine-chart">
-                    <div id="equipmentstatus" :option="option" style="width: 100%; height: 100%;"></div>
+                    <div id="Inspectionfrequency" :option="Inspectionfrequencyoption" style="width: 100%; height: 100%;"></div>
                   </div>
                 </div>
               </div>
@@ -208,7 +214,7 @@
                   <el-form @submit.native.prevent>
                     <el-col :span="4">
                       <el-form-item>
-                        <el-select v-model="listQuery.factoryFloorid" filterable placeholder="请选择车间" @focus="focusfactoryFloor" clearable :loading="loadingfactoryFloorid">
+                        <el-select v-model="listQuerysbgk.factoryFloorId" filterable placeholder="请选择车间" @focus="focusfactoryFloor" clearable :loading="loadingfactoryFloorid">
                           <el-option v-for="item in factoryFloorList" :key="item.id" :label="item.name" :value="item.id">
                           </el-option>
                         </el-select>
@@ -216,7 +222,7 @@
                     </el-col>
                     <el-col :span="4">
                       <el-form-item>
-                        <el-select v-model="listQuery.mountedPlacesid" filterable placeholder="请选择安装地点" @focus="focusfactoryFloor" clearable :loading="loadingfactoryFloorid">
+                        <el-select v-model="listQuerysbgk.mountedPlacesid" filterable placeholder="请选择安装地点" @focus="focusfactoryFloor" clearable :loading="loadingfactoryFloorid">
                           <el-option v-for="item in mountedPlacesList" :key="item.id" :label="item.name" :value="item.id">
                           </el-option>
                         </el-select>
@@ -265,11 +271,11 @@
                   <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
                   <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
                 </JNPF-table>
-                <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData" />
+                <pagination :total="total" :page.sync="listQuery1.pageNum" :limit.sync="listQuery1.pageSize" @pagination="initData" />
               </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="维修分布">
+          <el-tab-pane label="维修分布" name="wxfb">
             <div class="JNPF-common-layout-main JNPF-flex-main" style="overflow-y: auto;">
               <div class="vux-flexbox container-content vux-flex-row">
                 <div class="left-content-dj">
@@ -297,7 +303,7 @@
                   <el-form @submit.native.prevent>
                     <el-col :span="4">
                       <el-form-item>
-                        <el-select v-model="listQuery.factoryFloorid" filterable placeholder="请选择车间" @focus="focusfactoryFloor" clearable :loading="loadingfactoryFloorid">
+                        <el-select v-model="listQuerysbgk.factoryFloorId" filterable placeholder="请选择车间" @focus="focusfactoryFloor" clearable :loading="loadingfactoryFloorid">
                           <el-option v-for="item in factoryFloorList" :key="item.id" :label="item.name" :value="item.id">
                           </el-option>
                         </el-select>
@@ -305,7 +311,7 @@
                     </el-col>
                     <el-col :span="4">
                       <el-form-item>
-                        <el-select v-model="listQuery.mountedPlacesid" filterable placeholder="请选择安装地点" @focus="focusfactoryFloor" clearable :loading="loadingfactoryFloorid">
+                        <el-select v-model="listQuerysbgk.mountedPlacesid" filterable placeholder="请选择安装地点" @focus="focusfactoryFloor" clearable :loading="loadingfactoryFloorid">
                           <el-option v-for="item in mountedPlacesList" :key="item.id" :label="item.name" :value="item.id">
                           </el-option>
                         </el-select>
@@ -354,11 +360,11 @@
                   <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
                   <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
                 </JNPF-table>
-                <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData" />
+                <pagination :total="total" :page.sync="listQuery1.pageNum" :limit.sync="listQuery1.pageSize" @pagination="initData" />
               </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="保养分布">
+          <el-tab-pane label="保养分布" name="byfb">
             <div class="JNPF-common-layout-main JNPF-flex-main" style="overflow-y: auto;">
               <div class="vux-flexbox container-content vux-flex-row" style="height: 168px;">
                 <div class="react-grid-item-by dash-container has-hover" v-for="item in datalistdj" :key="item.id">
@@ -376,7 +382,7 @@
                   <el-form @submit.native.prevent>
                     <el-col :span="4">
                       <el-form-item>
-                        <el-select v-model="listQuery.factoryFloorid" filterable placeholder="请选择车间" @focus="focusfactoryFloor" clearable :loading="loadingfactoryFloorid">
+                        <el-select v-model="listQuerysbgk.factoryFloorId" filterable placeholder="请选择车间" @focus="focusfactoryFloor" clearable :loading="loadingfactoryFloorid">
                           <el-option v-for="item in factoryFloorList" :key="item.id" :label="item.name" :value="item.id">
                           </el-option>
                         </el-select>
@@ -384,7 +390,7 @@
                     </el-col>
                     <el-col :span="4">
                       <el-form-item>
-                        <el-select v-model="listQuery.mountedPlacesid" filterable placeholder="请选择安装地点" @focus="focusfactoryFloor" clearable :loading="loadingfactoryFloorid">
+                        <el-select v-model="listQuerysbgk.mountedPlacesid" filterable placeholder="请选择安装地点" @focus="focusfactoryFloor" clearable :loading="loadingfactoryFloorid">
                           <el-option v-for="item in mountedPlacesList" :key="item.id" :label="item.name" :value="item.id">
                           </el-option>
                         </el-select>
@@ -433,66 +439,67 @@
                   <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
                   <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
                 </JNPF-table>
-                <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData" />
+                <pagination :total="total" :page.sync="listQuery1.pageNum" :limit.sync="listQuery1.pageSize" @pagination="initData" />
               </div>
             </div>
           </el-tab-pane>
         </el-tabs>
       </div>
-      <!--  -->
-      <!-- <div class="JNPF-common-layout-center JNPF-flex-main" style="overflow: auto;margin-top: 10px;">
-        <div class="vux-flexbox section vux-flex-row">
-          <div class="left" v-loading="leftlistLoading">
-            <div class="left-content">
-              <div class="content-item" v-for="item in datalist" :key="item.id">
-                <div class="container-header text">
-                  <div class="header-title">{{item.name}}</div>
-                </div>
-                <div class="show-raw-data">
-                  <div class="content-wrapper">
-                    <span>{{item.value}}</span>
-                    <span>{{item.unit}}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="right" v-loading="rightlistLoading">
-            <div class="right-content">
-              <div class="container-header text">
-                <div class="header-title">设备状态分布</div>
-              </div>
-              <div class="new-engine-chart">
-                <div id="equipmentstatus" :option="option" style="width: 100%; height: 100%;"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="vux-flexbox cssTransforms vux-flex-row" v-loading="chartlistLoading">
-          <div class="dash-container" v-for="item in datasetList" :key="item.id">
-            <div class="container-header text">
-              <div class="header-title">{{item.name}}</div>
-            </div>
-            <div class="new-engine-chart">
-              <chart :id="item.id" :option="item.option"></chart>
-            </div>
-          </div>
-        </div>
-      </div> -->
     </div>
   </div>
 </template>
 
 <script>
+import { getEquEquipmentList } from '@/api/basicData/index'
 import { getequMountedPlaces, gettotalOverview, gettotalEquStats, getequReporttotalNum } from "@/api/basicData/materialSettings";
 import chart from "@/views/dailyManagement/deviceReportanaly/components/chart.vue";
 export default {
   components: { chart },
   data() {
     return {
+      listQuerysbtz: {},
+      listQuery1: {
+        name: '',
+        code: '',
+        state: '',
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+        pageNum: 1,
+        pageSize: 20,
+        classAttribute: "equipment"
+      },
+      equipmentStateList: [
+        {
+          value: "normal",
+          label: "正常"
+        },
+        {
+          value: "repair",
+          label: "维修"
+        },
+        {
+          value: "discard",
+          label: "报废"
+        },
+        {
+          value: "spare",
+          label: "备用"
+        },
+        {
+          value: "stop",
+          label: "停用"
+        }
+      ],
+      activeName: 'sbtz',
       total: 0,
       listLoading: false,
       tableData: [],
+      tableDatasbtz: [],
       flexlist: [
         { label: '设备档案', icon: require('./imgs/shebei.png') },
         { label: '设备点检单', icon: require('./imgs/dianjian.png') },
@@ -526,10 +533,11 @@ export default {
       deliveryDateArr: [],
       mountedPlacesList: [],
       factoryFloorList: [],
-      listQuery: {
+      listQuerysbgk: {},
+      listQuery2: {
         pageNum: 1,
         pageSize: 20,
-        factoryFloorid: '',
+        factoryFloorId: '',
         mountedPlacesid: '',
         maintenanceType: '',
         classAttribute: "equipment"
@@ -541,35 +549,68 @@ export default {
       chartInstance: null,
       timeout: null,
       option: {},
-    }
-  },
-  mounted() {
-    this.chartInstance = this.$echarts.init(document.getElementById('equipmentstatus'));
-    this.chartInstance.setOption(this.option);
-    window.onresize = () => {
-      clearTimeout(this.timeout)
-      this.timeout = setTimeout(() => {
-        this.chartInstance.resize()
-      }, 100);
+      Inspectionfrequencyoption: {}
     }
   },
   beforeDestroy() {
     window.onresize = null
   },
   watch: {
-    option: {
+    activeName: {
       handler(newOption) {
-        if (this.chartInstance) {
-          this.chartInstance.setOption(newOption);
+        if (newOption == 'sbtz') {
+          this.initequipmentledger()
+        } else if (newOption == 'sbgk') {
+          this.initDatasbgk()
+        } else if (newOption == 'djfb') {
+
+        } else if (newOption == 'wxfb') {
+
+        } else {
+
         }
       },
       deep: true
     }
   },
   created() {
-    this.initData()
+    this.listQuerysbtz = JSON.parse(JSON.stringify(this.listQuery1))
+    this.listQuerysbgk = JSON.parse(JSON.stringify(this.listQuery2))
+    this.initequipmentledger()
   },
   methods: {
+    //设备台账
+    initequipmentledger() {
+      this.listLoading = true
+      getEquEquipmentList(this.listQuerysbtz).then(res => {
+        this.tableDatasbtz = res.data.records
+        this.total = res.data.total
+        this.listLoading = false
+      }).catch(() => {
+        this.listLoading = false
+      })
+    },
+    searchsbtz() {
+      Object.keys(this.listQuerysbtz).forEach(key => {
+        let item = this.listQuerysbtz[key]
+        this.listQuerysbtz[key] = typeof item === 'string' ? item.trim() : item
+      })
+      this.listQuerysbtz.pageNum = 1
+      this.initequipmentledger()
+    },
+    resetsbtz() {
+      this.$refs['dataTable'].$refs.JNPFTable.clearSort()
+      this.listQuerysbtz = JSON.parse(JSON.stringify(this.listQuery1))
+      this.searchsbtz()
+    },
+    sortChangesbtz({ prop, order }) {
+      let newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      if (newProp === 'create_name') { newProp = 'create_by' }
+      this.listQuerysbtz.orderItems[0].asc = order === "ascending"
+      this.listQuerysbtz.orderItems[0].column = order === null ? "" : newProp
+      this.initequipmentledger()
+    },
+    //设备概况
     focusfactoryFloor() {
       let obj = {
         pageNum: 1,
@@ -582,21 +623,18 @@ export default {
         this.loadingfactoryFloorid = false
       })
     },
-    reset() {
-      this.listQuery = {
-        factoryFloorid: '',
-        mountedPlacesid: '',
-        maintenanceType: '',
-        classAttribute: "equipment"
-      }
-      this.search()
+    resetsbgk() {
+      this.listQuerysbgk = JSON.parse(JSON.stringify(this.listQuery2))
+      this.searchsbgk()
     },
-    search() {
-      this.initData()
+    searchsbgk() {
+      this.initDatasbgk()
     },
-    initData() {
+    async initDatasbgk() {
+      this.chartInstance = await this.$echarts.init(document.getElementById('equipmentstatus'));
+      if (!this.chartInstance) return
       this.leftlistLoading = true
-      gettotalOverview(this.listQuery).then(res => {
+      gettotalOverview(this.listQuery2).then(res => {
         this.datalist.forEach(item => {
           item.value = res.data[item.id]
         })
@@ -605,7 +643,7 @@ export default {
         this.leftlistLoading = false
       })
       this.rightlistLoading = true
-      gettotalEquStats(this.listQuery).then(res => {
+      gettotalEquStats(this.listQuerysbgk).then(res => {
         this.option = {
           tooltip: {
             trigger: 'item',
@@ -630,6 +668,8 @@ export default {
             }
           ]
         }
+        this.chartInstance.setOption(this.option);
+        this.chartInstance.resize()
         this.rightlistLoading = false
       }).catch(() => {
         this.rightlistLoading = false
@@ -637,15 +677,11 @@ export default {
       this.chartlistLoading = true
       this.datasetList.forEach(item => {
         if (item.id == 'inspectionquipment') {
-          this.listQuery.maintenanceType = 'inspection'
-        } else if (item.id == 'maintenanceequipment') {
-          this.listQuery.maintenanceType = 'repair'
-        } else if (item.id == 'scrapequipment') {
-          this.listQuery.maintenanceType = 'discard'
+          this.listQuerysbgk.maintenanceType = 'normal'
         } else {
-          this.listQuery.maintenanceType = 'maintenance'
+          this.listQuerysbgk.maintenanceType = 'repair'
         }
-        const querylist = { ...this.listQuery }
+        const querylist = { ...this.listQuerysbgk }
         getequReporttotalNum(querylist).then(res => {
           item.option = {
             tooltip: {

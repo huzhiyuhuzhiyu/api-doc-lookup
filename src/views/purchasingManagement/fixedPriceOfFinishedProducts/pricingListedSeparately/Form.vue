@@ -313,10 +313,10 @@
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
-            <el-tab-pane label="附件" name="annex">
+            <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
               <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"></UploadWj>
             </el-tab-pane>
-            <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
+            <el-tab-pane label="流程信息" name="approvalFlow" >
               <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
             </el-tab-pane>
             <el-tab-pane v-if="type == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
@@ -648,7 +648,7 @@
   </div>
 </template>
 <script>
-import { getCooperativeData, getcategoryTree } from '@/api/basicData/index' //供应商数据
+import { getCooperativeData, getcategoryTree, getBimBusinessDetail } from '@/api/basicData/index' //供应商数据
 
 import formValidate from '@/utils/formValidate'
 import {
@@ -966,18 +966,29 @@ export default {
       pool: '',
       list0: [],
       classAttributeList: [],
-      uploadVisib: false
+      uploadVisib: false,
+      isattachmentswitch: ''
     }
   },
   mounted() {
     this.getclassAttributeList()
   },
-  created() { },
+  created() {
+  },
   computed: {
     ...mapGetters(['userInfo']),
     ...mapState('user', ['token'])
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_cpdddj'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     // 谈价更改
     priceChange(val, scope) {
       scope.row.excludingTaxPrice = this.jnpf.numberFormat(val / (1 + scope.row.taxRate / 100))
@@ -1207,6 +1218,7 @@ export default {
 
     init(id, type, approvalFlag, fixedData) {
       // 此处判断用户选择新增还是编辑
+      this.getBimBusinessDetail()
       this.dataForm.id = id || ''
       // this.pool = pool
       this.dialogTitle = !this.dataForm.id ? '新建' : type == 'edit' ? '编辑' : `查看`
@@ -1289,6 +1301,7 @@ export default {
               })
             }
             // 流程信息和流转记录
+            console.log(this.dataForm.approvalFlag, 'this.dataForm.approvalFlag')
             if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
           })
           getSaleBusDetail(this.dataForm.id).then((res) => {
@@ -2033,7 +2046,7 @@ export default {
 
     // 测试审批流
     getBusInfo() {
-      getBusinessFlowInfo('b048')
+      getBusinessFlowInfo('b002')
         .then((res) => {
           if (res.data) {
             if (res.data.enabledMark) {
@@ -2079,6 +2092,7 @@ export default {
                       nodeItem.nodeType === 'subFlow'
                     )
                       data.content = nodeItem.userName
+                    if (nodeItem.nodeType === 'approver') data.processingTime = nodeItem.processingTime
                     return
                   }
                   if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)

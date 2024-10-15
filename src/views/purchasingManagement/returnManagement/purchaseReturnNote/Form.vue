@@ -169,7 +169,7 @@
               </el-collapse-item>
             </el-collapse>
           </el-tab-pane>
-          <el-tab-pane label="附件" name="annex">
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
             <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
           </el-tab-pane>
           <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
@@ -466,7 +466,7 @@
                 <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="60" />
                 <el-table-column prop="purchaseQuantity" label="数量" width="100" sortable="custom" />
-             
+
                 <el-table-column prop="remark" label="备注" width="160" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
               </JNPF-table>
@@ -512,7 +512,7 @@ import {
   getOrderDetail,
   getsaleOrderDetailList
 } from '@/api/salesManagement/assemblyOrders'
-import { getCooperativeInfo, getCooperativeData } from '@/api/basicData/index'
+import { getCooperativeInfo, getCooperativeData, getBimBusinessDetail } from '@/api/basicData/index'
 import { detailpurchaseOrderList } from '@/api/purchasingAndOutsourcingOrders/index'
 import {
   addpurPurchaseReceiptReturnGoods,
@@ -530,6 +530,7 @@ export default {
   mixins: [busFlow],
   data() {
     return {
+      isattachmentswitch: '',
       tipsvisible: false,
       submitmethodsTitle: '',
       btnText: '',
@@ -814,6 +815,7 @@ export default {
   created() {
     // this.handleChange()
     // this.getProvinceList()
+    this.getBimBusinessDetail()
     this.getAttributeline()
     this.getWarehouseList()
   },
@@ -823,6 +825,15 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_cgthtzd'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     getWarehouseList() {
       let obj = {
         type: 'virtually',

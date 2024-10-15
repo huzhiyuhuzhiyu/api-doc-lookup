@@ -211,7 +211,7 @@ export default {
           label: '产品编码',
           type: 'input'
         },
-     
+
 
         {
           prop: 'productName',
@@ -382,6 +382,7 @@ export default {
     },
     getProcessList() {
       let obj = {
+        approvalStatus: 'ok',
         pageNum: 1,
         pageSize: -1
       }
@@ -530,7 +531,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp = prop.replace(/_([a-zA-Z])/g, (match, letter) => letter.toUpperCase())
-     
+
       console.log(newProp)
       this.listQuery.orderItems[0].asc = order !== 'descending'
       this.listQuery.orderItems[0].column = order === null ? '' : newProp
@@ -636,4 +637,3 @@ export default {
   }
 }
 </script>
-

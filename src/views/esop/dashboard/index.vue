@@ -4,6 +4,9 @@ import {debounce} from "throttle-debounce";
 function randomData() {
     return Math.round(Math.random()*1000);
 }
+function getFullPath(pathName){
+    return '/esop/fileManagement/'+pathName
+}
 export default {
     name: "index" ,
     data(){
@@ -18,7 +21,6 @@ export default {
                 {
                     title:'作业指导书',
                     icon:'zgt-ifont zgt-ifont-zuoyezhidaoshu',
-
                     item:[
                         {
                             name:'本日新增',
@@ -33,10 +35,12 @@ export default {
                             value:0
                         },
 
-                    ]
+                    ],
+                    pathName:'workinginstruction'
                 },
                 {
                     title:'检验指导书',
+                    pathName:'checkinstruction',
                     icon:'zgt-ifont zgt-ifont-nianjian',
                     item:[
                         {
@@ -56,6 +60,7 @@ export default {
                 },
                 {
                     title:'图文档',
+                    pathName:'docment',
                     icon:'zgt-ifont zgt-ifont-weibiaoti--copy',
                     item:[
                         {
@@ -75,6 +80,7 @@ export default {
                 },
                 {
                     title:'办公文件',
+                    pathName:'office',
                     icon:'zgt-ifont zgt-ifont-bangongwenjian',
                     item:[
                         {
@@ -94,6 +100,7 @@ export default {
                 },
                 {
                     title:'系统附件',
+                    pathName:'system',
                     icon:'zgt-ifont zgt-ifont-gongdanxitong-fujian',
                     item:[
                         {
@@ -111,9 +118,7 @@ export default {
 
                     ],
                 },
-
             ]
-
         }
     },
     methods:{
@@ -195,6 +200,10 @@ export default {
           this.fileTypeInstance.setOption(fileTypeOption)
           this.fileOperateInstance.setOption(fileOperateOption)
       },
+      blockClick(pathName){
+        const path =  getFullPath(pathName)
+        this.$router.push({path})
+      }
     },
     beforeDestroy() {
       window.onresize = null
@@ -212,7 +221,7 @@ export default {
         <div class="JNPF-common-layout-center  JNPF-flex-main height-full">
            <div class="wrapper height-full">
                <div class="header">
-                   <div class="header-item" v-for="top in topData">
+                   <div class="header-item pointer" @click="blockClick(top.pathName)" v-for="top in topData">
                        <div class="item-title">
                                {{top.title}}
                        </div>
@@ -227,18 +236,9 @@ export default {
                                        <div class="item-text-right">{{item.name}}</div>
                                    </div>
                                </div>
-
-
                            </div>
                        </div>
-
-
-
                    </div>
-
-
-
-
                </div>
                <div class="charts">
                    <el-row :gutter="10" class="height-full">

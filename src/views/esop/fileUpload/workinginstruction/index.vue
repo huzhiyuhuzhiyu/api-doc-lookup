@@ -5,7 +5,7 @@
                 <el-form @submit.native.prevent>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input v-model="listQuery.keyword" placeholder="产品名称" clearable />
+                            <el-input  @keyup.enter.native="search" v-model="listQuery.superQuery.condition[0].fieldValue" placeholder="品名规格" clearable />
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
@@ -28,7 +28,7 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
                 <div class="JNPF-common-head" style="padding: 8px;display: -webkit-box">
-                    <el-button type="primary" icon="el-icon-plus" size="mini" @click.native="batchAdd()">
+                    <el-button type="primary" icon="el-icon-plus" size="mini" @click.native="addOrUpdateHandle(ModelType.ADD)">
                         新建
                     </el-button>
                     <div class="JNPF-common-head-right">
@@ -46,16 +46,41 @@
                 </div>
                 <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
                             ref="dataTable" :setColumnDisplayList="columnList">
-                    <el-table-column prop="formCode" label="单号" sortable="custom" min-width="110" />
-                    <el-table-column prop="productName" label="品名规格" min-width="150" />
-                    <el-table-column prop="productCode" label="产品编码" width="120" />
-                    <el-table-column prop="categoryName" label="产品分类" width="140" />
+                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />
+                    <el-table-column prop="drawingNo" label="品名规格" min-width="150" />
+
+                    <el-table-column prop="productsCode" label="产品编码" min-width="120" />
+                    <el-table-column prop="productsCategoryName" label="产品分类" width="140" />
+                    <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center">
+                        <template slot-scope="{row}">
+                            <el-tag type="warning" v-if="row.documentStatus === 'draft'">草稿</el-tag>
+                            <el-tag type="success" v-else-if="row.documentStatus === 'submit'">提交</el-tag>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="version" label="版本号" width="80" />
+                    <el-table-column prop="fileCount" label="文件数量" width="120" />
                     <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
                     <el-table-column prop="createByName" label="创建人" width="100" />
-                    <el-table-column label="操作" width="100" fixed="right">
+                    <el-table-column label="操作" width="180" fixed="right">
                         <template slot-scope="scope">
                             <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
-                                       @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)"></tableOpts>
+                                       :delDisabled="scope.row.documentStatus !== 'draft'"
+                                       :editDisabled="scope.row.documentStatus !== 'draft'"
+                                       @edit="addOrUpdateHandle(ModelType.EDIT,scope.row.id)" @del="handleDel(scope.row.id)">
+                                        <el-dropdown hide-on-click>
+                                            <span class="el-dropdown-link">
+                                              <el-button type="text" size="mini">
+                                                {{ $t('common.moreBtn') }}
+                                                <i class="el-icon-arrow-down el-icon--right"></i>
+                                              </el-button>
+                                            </span>
+                                            <el-dropdown-menu slot="dropdown">
+                                                <el-dropdown-item @click.native="addOrUpdateHandle(ModelType.VIEW,scope.row.id)">
+                                                    查看详情
+                                                </el-dropdown-item>
+                                            </el-dropdown-menu>
+                                        </el-dropdown>
+                            </tableOpts>
                         </template>
                     </el-table-column>
                 </JNPF-table>
@@ -63,7 +88,7 @@
                             @pagination="initData" />
             </div>
         </div>
-        <EditWorkingInstructionUpload :applicationType="applicationType" @back="formVisible = false" v-if="formVisible"/>
+        <EditWorkingInstructionUpload :flowCode="flowCode" :type="uploadType" :id="fileUploadId" :applicationType="applicationType" @back="editBack" v-if="formVisible"/>
 
         <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
                     @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -84,62 +109,34 @@ import {
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import JNPFForm from './Form'
-import TableForm from './tabForm'
 import { mapGetters, mapState } from 'vuex'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
-import {getUploadList} from "@/views/esop/fileUpload/workinginstruction/mock";
 import EditWorkingInstructionUpload from "@/views/esop/fileUpload/workinginstruction/Form.vue";
-import {getBimFileUpload} from "@/api/esop/fileUpload/workinginstruction";
+import {deleteBimFileUpload, getBimFileUpload} from "@/api/esop/fileUpload/workinginstruction";
 import moment from "moment";
-import {ApplicationType, ModelType} from "@/views/esop/fileUpload/workinginstruction/constant";
+import {ApplicationType, DocumentStatus, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
+import {FlowCode} from "@/views/esop/utils/constants";
 
-function getOriginListQuery() {
-    return {
-        applicationType: "",
-        approvalStatus: "",
-        createByName: "",
-        documentStatus: "",
-        endTime: "",
-        endUpdateTime: "",
-        keyword: "",
-        orderItems: [
-            {
-                asc: true,
-                column: ""
-            }
-        ],
-        orderNo: "",
-        pageNum: 1,
-        pageSize: 20,
-        startTime: "",
-        startUpdateTime: "",
-        superQuery: {
-            condition: [
-                {
-                    field: "",
-                    fieldValue: "",
-                    symbol: ""
-                }
-            ],
-            matchLogic: ""
-        },
-        totalRowFlag: false
-    }
-}
+
 
 export default {
-    components: {EditWorkingInstructionUpload, JNPFForm, ExportForm, TableForm, SuperQuery },
+    components: {EditWorkingInstructionUpload, JNPFForm, ExportForm, SuperQuery },
 
     props:{
         applicationType:{
             type:String,
             default:ApplicationType.WORK
-        }
+        },
+        flowCode:{
+            type: String,
+            default: FlowCode.WORK
+        },
     },
     data() {
         return {
-
+            ModelType,
+            uploadType:ModelType.ADD,
+            fileUploadId:"",
             tableFormVisible: false,
             exportFormVisible: false,
             columnList: ['remark', 'createByName'],
@@ -148,50 +145,36 @@ export default {
             visible: false,
             tableData: [],
             listLoading: false,
-            listQuery: getOriginListQuery(),
+            listQuery: this.getOriginListQuery(),
             formType:ModelType.ADD,
             total: 0,
-            formVisible: true,
+            formVisible: false,
             selectList: [],
             uploadVisib: false,
             superQueryVisible: false,
             superQueryJson: [
                 {
-                    prop: 'model',
+                    prop: '上传单编码',
                     label: '型号',
-                    type: 'input'
+                    type: 'orderNo'
                 },
                 {
-                    prop: 'innerCircle',
-                    label: '内圈',
-                    type: 'input'
-                },
-
-                {
-                    prop: 'outerCircle',
-                    label: '外圈',
-                    type: 'input'
-                },
-                {
-                    prop: 'steelBall',
-                    label: '钢球型号',
+                    prop: 'drawingNo',
+                    label: '品名规格',
                     type: 'input'
                 },
 
                 {
-                    prop: 'createTime',
-                    label: '创建时间',
-                    type: 'daterange',
-                    valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                    startPlaceholder: '开始日期',
-                    endPlaceholder: '结束日期',
-                    pickerOptions: this.global.timePickerOptions
+                    prop: 'productsCode',
+                    label: '产品编码',
+                    type: 'input'
                 },
                 {
-                    prop: 'createByName',
-                    label: '创建人',
+                    prop: 'productsCategoryName',
+                    label: '产品分类',
                     type: 'input'
-                }
+                },
+
             ]
         }
     },
@@ -204,6 +187,43 @@ export default {
 
     },
     methods: {
+        getOriginListQuery() {
+            return {
+                applicationType:this.applicationType,
+                approvalStatus: "",
+                createByName: "",
+                documentStatus: DocumentStatus.DRAFT,
+                endTime: "",
+                endUpdateTime: "",
+                keyword: "",
+                orderItems: [
+                    {
+                        asc: true,
+                        column: ""
+                    }
+                ],
+                orderNo: "",
+                pageNum: 1,
+                pageSize: 20,
+                startTime: "",
+                startUpdateTime: "",
+                superQuery: {
+                    condition: [
+                        {
+                            field: "drawingNo",
+                            fieldValue: "",
+                            symbol: "like"
+                        }
+                    ],
+                    matchLogic: ""
+                },
+                totalRowFlag: false
+            }
+        },
+        editBack(){
+            this.formVisible = false
+            this.search()
+        },
         superQuerySearch(query) {
             this.listQuery.superQuery = query
             this.superQueryVisible = false
@@ -394,7 +414,6 @@ export default {
        async initData() {
             this.listLoading = true
            const {data} = await getBimFileUpload(this.listQuery)
-           console.log(data)
            this.tableData = data.records
            this.total = data.total
            this.listLoading = false
@@ -423,20 +442,21 @@ export default {
         reset() {
             this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
             this.createTimeArr = []
-            this.listQuery = getOriginListQuery()
+            this.listQuery =this.getOriginListQuery()
             this.$refs.SuperQuery.conditionList = []
             this.initData()
         },
-        addOrUpdateHandle(id, type) {
+        addOrUpdateHandle(type,id) {
+            this.fileUploadId = id
+            this.uploadType = type
             this.formVisible = true
-
         },
         handleDel(id) {
             this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
                 type: 'warning'
             })
                 .then(() => {
-                    delBimProductsModel(id).then((res) => {
+                    deleteBimFileUpload(id).then((res) => {
                         if (res.msg === 'Success') {
                             this.initData()
                             this.$message({

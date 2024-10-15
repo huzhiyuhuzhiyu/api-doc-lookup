@@ -295,7 +295,7 @@
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
-            <el-tab-pane label="附件" name="annex">
+            <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
               <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"></UploadWj>
             </el-tab-pane>
             <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
@@ -319,7 +319,7 @@
 <script>
 import sourceForm from './source.vue'
 import { insertPurchaseOrder, partnerProductPrice, priceList } from '@/api/purchasingAndOutsourcingOrders/index'
-import { getCooperativeData, getcategoryTree } from '@/api/basicData/index'
+import { getCooperativeData, getcategoryTree, getBimBusinessDetail } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 import { purProcurementDemandPoolList } from '@/api/purchasingManagement/purchaseInquirySheet'
 import { getProductList } from '@/api/masterDataManagement/productManage'
@@ -642,7 +642,9 @@ export default {
       flowData: {}
     }
   },
-  created() { },
+  created() {
+    this.getBimBusinessDetail()
+  },
   computed: {
     ...mapGetters(['userInfo']),
     computedValue() {
@@ -694,6 +696,15 @@ export default {
     }
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_cgdd'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     listDataFormatting(res) {
       res.data.records.forEach((item, index) => {
         if (item.immediatelyBuyFlag) {

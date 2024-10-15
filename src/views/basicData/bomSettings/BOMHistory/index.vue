@@ -55,7 +55,7 @@
               <el-input v-model="listQuery.productCode" @keyup.enter.native="search()" placeholder="产品编码" clearable />
             </el-form-item>
           </el-col>
-       
+
 
           <el-col :span="6">
             <el-form-item>
@@ -439,7 +439,7 @@ export default {
       this.treeLoading = true
       this.listLoading = true
       let methodArr = { method: getcategoryTree, requestObj: { classAttribute: '' } }
-      getcategoryTree({ classAttribute: '' }).then((res) => {
+      getcategoryTree({ classAttribute: '', type: 'material' }).then((res) => {
         this.treeData = res.data
         this.initData()
       })

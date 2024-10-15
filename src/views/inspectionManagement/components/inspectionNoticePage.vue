@@ -237,7 +237,7 @@ export default {
           label: '创建人',
           type: 'input'
         },
-       
+
       ],
       columnList: ["remark", "productCode", "processingStatus", "createByName"],
       visible: false,
@@ -370,7 +370,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort()
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-
+      this.time = []
       this.initData()
     },
     addOrUpdateHandle(row, btnType) {

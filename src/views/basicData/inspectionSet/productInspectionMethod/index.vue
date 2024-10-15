@@ -97,7 +97,7 @@
           </el-table-column>
           <el-table-column prop="name" label="产品分类" min-width="130" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" width="60" />
-          <el-table-column prop="inspectionMethod" label="检验方式" width="100">
+          <el-table-column prop="inspectionMethod" label="检验方式" width="120" sortable="custom">
             <template slot-scope="{ row }">
               <template v-if="row.inspectionMethod == 'exempt'">
                 <el-tag type="success">免检</el-tag>
@@ -408,7 +408,7 @@ export default {
       this.listLoading = true
       this.treeLoading = true
       this.listQuery.productCategoryId = '' // 重置数据类型id筛选
-      getcategoryTree({ classAttribute: '' })
+      getcategoryTree({ classAttribute: '', type: 'material' })
         .then((res) => {
           this.treeData = res.data.length ? res.data : []
           this.$nextTick(() => {

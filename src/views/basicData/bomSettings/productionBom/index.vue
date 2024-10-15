@@ -470,7 +470,7 @@ export default {
       this.listLoading = true
       let methodArr = { method: getcategoryTree, requestObj: { classAttribute: '' } }
       getcategoryTree({
-        classAttribute: ''
+        classAttribute: '', type: 'material'
       }).then((res) => {
         this.treeData = res.data
         this.initData()

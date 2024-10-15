@@ -234,18 +234,18 @@
               label-position="left">
               <el-row>
                 <div style="margin-bottom: 10px; background: #f2f2f2; padding: 20px 16px;">
-                  <span style="font-size: 18px;font-weight: bold">加工数量：</span><span
-                    style="color: #3fb9f8;font-size: 18px;font-weight: bold">[{{
+                  <span style="font-size: 17px;font-weight: bold">加工数量：</span><span
+                    style="color: #3fb9f8;font-size: 17px;font-weight: bold">[{{
                       currentProcess.productionQuantity }}]</span>
-                  <span style="font-size: 18px;font-weight: bold;margin-left: 10px;">可报工数量：</span><span
-                    style="color: #3fb9f8;font-size: 18px;font-weight: bold">[{{ currentProcess.waitReportNum
+                  <span style="font-size: 17px;font-weight: bold;margin-left: 10px;">可报工数量：</span><span
+                    style="color: #3fb9f8;font-size: 17px;font-weight: bold">[{{ currentProcess.waitReportNum
                     }}]</span>
-                  <span style="font-size: 18px;font-weight: bold;margin-left: 10px;">报工数量：</span><span
-                    style="color: #3fb9f8;font-size: 18px;font-weight: bold">[{{ currentProcess.reportingQuantity
+                  <span style="font-size: 17px;font-weight: bold;margin-left: 10px;">报工数量：</span><span
+                    style="color: #3fb9f8;font-size: 17px;font-weight: bold">[{{ currentProcess.reportingQuantity
                     }}]</span>
                   <span
-                    style="font-size: 18px;font-weight: bold;margin-left: 10px;display: inline-block;">不合格数量：</span><span
-                    style="color: #3fb9f8;font-size: 18px;font-weight: bold">[{{ currentProcess.unqualifiedQuantity
+                    style="font-size: 17px;font-weight: bold;margin-left: 10px;display: inline-block;">不合格数量：</span><span
+                    style="color: #3fb9f8;font-size: 17px;font-weight: bold">[{{ currentProcess.unqualifiedQuantity
                     }}]</span>
                 </div>
                 <div style="padding: 0 20px;">
@@ -1232,7 +1232,8 @@ box-card:nth-child(n+3) {
 .rightInfo {
   /* border: 1px solid; */
   border-radius: 4px;
-  margin-left: 24px;
+  // margin-left: 20px;
+  float: right;
   box-shadow: beige;
   box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.20);
 }

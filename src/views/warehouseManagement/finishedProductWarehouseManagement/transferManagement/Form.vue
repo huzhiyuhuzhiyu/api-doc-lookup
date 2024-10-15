@@ -45,7 +45,7 @@
                   </el-form>
                 </el-collapse-item>
                 <el-collapse-item title="产品信息" name="productInfo">
-                  <div>
+                  <div v-if="btnType!='look'">
                     <el-button type="text" style="margin-right:8px;font-size:14px!important"
                       :disabled="btnType == 'look' ? true : false" @click="scanFun()"><i
                         class="iconfont icon-saoma"></i>扫码录入</el-button>|
@@ -57,7 +57,7 @@
                       @click="batchDelete">批量删除</el-button>
                   </div>
 
-                  <JNPF-table ref="product" :data="productData" :fixedNO="true" hasC
+                  <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType!='look'"
                     @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />

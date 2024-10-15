@@ -66,6 +66,14 @@
                       <el-input v-model="dataForm.email" placeholder="请输入邮箱" :disabled="onlyRead" />
                     </el-form-item>
                   </el-col>
+                  <el-col :sm="8" :xs="24">
+                    <el-form-item label="状态" prop="enabledMark">
+                      <el-select v-model="dataForm.enabledMark" filterable placeholder="请选择状态" :disabled="onlyRead" clearable style="width: 100%;">
+                        <el-option v-for="item in enabledMarkList" :key="item.id" :label="item.label" :value="item.value">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="备注" prop="remark">
                       <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="onlyRead" type="textarea" maxlength="200" :rows="2" />
@@ -91,6 +99,11 @@ import { createUser, updateUser, getUserInfo } from '@/api/permission/user'
 export default {
   data() {
     return {
+      enabledMarkList: [
+        { label: '启用', value: 1 },
+        { label: '锁定', value: 2 },
+        { label: '禁用', value: 0 }
+      ],
       isval: false,
       roleTreeData: [],
       roleId: [],
@@ -134,6 +147,7 @@ export default {
       formLoading: false,
       btnLoading: false,
       dataForm: {
+        enabledMark: 1,
         submitpassword: '',
         roleId: '', //角色id
         id: '',
@@ -166,6 +180,9 @@ export default {
         ],
         roleId: [
           { required: true, message: '请选择角色', trigger: 'blur' },
+        ],
+        enabledMark: [
+          { required: true, message: '请选择状态', trigger: 'blur' },
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },

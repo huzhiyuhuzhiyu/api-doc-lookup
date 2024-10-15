@@ -51,15 +51,19 @@
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="equipmentIdName" label="设备名称" min-width="180" sortable="custom" />
             <el-table-column prop="equipmentIdCode" label="设备编码" min-width="180" sortable="custom" />
-            <el-table-column prop="maintenanceType" label="维保类型" min-width="130" sortable="custom">
-              <template slot-scope="scope">
-                <div>{{maintenancefunction(scope.row.maintenanceType)}}</div>
+            <el-table-column prop="factoryFloor" label="车间" min-width="200" sortable="custom" />
+            <el-table-column prop="mountedPlaces" label="安装地点" min-width="200" sortable="custom" />
+            <el-table-column prop="partnerName" label="供应商" min-width="200" sortable="custom" />
+            <el-table-column prop="supplier" label="生产厂家" min-width="200" sortable="custom" />
+            <el-table-column prop="state" label="设备状态" width="140" align="center" sortable="custom" fixed="right">
+              <template slot-scope="{row}">
+                <el-tag type="success" disable-transitions v-if="row.state == 'normal'">正常</el-tag>
+                <el-tag type="warning" disable-transitions v-if="row.state == 'repair'">维修</el-tag>
+                <el-tag type="danger" disable-transitions v-if="row.state == 'discard'">报废</el-tag>
+                <el-tag disable-transitions v-if="row.state == 'spare'">备用</el-tag>
+                <el-tag type="info" disable-transitions v-if="row.state == 'stop'">停用</el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="maintenanceDate" label="维保日期" width="160" sortable="custom" />
-            <el-table-column prop="contentRecord" label="维保内容记录" min-width="180" />
-            <el-table-column prop="partsReplacementRecord" label="零件更新记录" min-width="180" />
-            <el-table-column prop="maintenancePersonnelName" label="处理人" width="120" />
             <el-table-column prop="remark" label="备注" min-width="180" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" width="120" sortable="custom" />

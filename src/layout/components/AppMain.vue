@@ -36,8 +36,8 @@ export default {
   padding: 10px;
   margin-bottom: 20px;
   box-sizing: border-box;
-  background: url('../../assets/images/loading-iframe.png') no-repeat center
-    center #ebeef5;
+  // background: url('../../assets/images/loading-iframe.png') no-repeat center
+  //   center #ebeef5;
   background-size: 100%;
   &::before {
     content: attr(copyright);

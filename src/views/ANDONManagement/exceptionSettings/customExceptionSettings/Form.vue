@@ -112,6 +112,10 @@ export default {
           sm: this.category === 'type' ? 12 : 24, itemDisabled: this.btnType === 'look' ? true : false
         },
         {
+          prop: "planPersonId", label: "处理人", value: '', type: "custom", customComponent:'UserSelect',itemRules:[{ required: true, message: '处理人不能为空', trigger: 'blur' }],
+          sm: 24, itemDisabled: this.btnType === 'look' ? true : false,clearable:false,change:this.selectPlanPerson, render: this.category === 'type' ? false : true
+        },
+        {
           prop: "enName", label: "类型英文名称", value: "", type: "input", itemRules: [{ required: true, message: '类型英文名称不能为空', trigger: "blur" }],
           sm: 12, itemDisabled: this.btnType === 'look' ? true : false, render: this.category === 'type' ? true : false
         },
@@ -125,6 +129,11 @@ export default {
           sm: 24, itemDisabled: this.btnType === 'look' ? true : false, render: this.category === 'type' ? true : false
         },
       ]
+    },
+    selectPlanPerson(id,data){
+      this.$nextTick(() => this.$refs['dataForm'].$children[0].validateField('planPersonId'))
+      this.dataForm.planPersonId = data.id
+      this.dataForm.planPersonName = data.fullName
     },
     openIconBox() {
       this.iconBoxVisible = true

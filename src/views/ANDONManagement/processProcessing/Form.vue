@@ -136,8 +136,8 @@ export default {
                 if (data.nodeId === nodeItem.nodeCode) {
                   if (nodeItem.type == 0) data.state = 'state-past'
                   if (nodeItem.type == 1) data.state = 'state-curr'
-                  if (nodeItem.nodeType === 'approver' || nodeItem.nodeType === 'start' || nodeItem.nodeType === 'subFlow') data.content = nodeItem.userName
-                  if (nodeItem.nodeType === 'approver') data.processingTime = nodeItem.processingTime
+                  if (nodeItem.nodeType === 'start' || nodeItem.nodeType === 'subFlow') data.content = nodeItem.userName
+                  if (nodeItem.nodeType === 'approver') data.content = nodeItem.cirName
                   return
                 }
                 if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)

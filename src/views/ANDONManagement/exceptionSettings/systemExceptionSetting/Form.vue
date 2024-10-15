@@ -13,11 +13,11 @@
       </div>
       <el-steps :active="activeStep" finish-status="success" simple class="steps steps2" v-if="!loading">
         <el-step title="基础设置" @click.native="stepChick(0)" />
-        <el-step title="异常流程设计" @click.native="stepChick(1)" />
+        <el-step title="异常提醒设置" @click.native="stepChick(1)" />
       </el-steps>
       <div class="options" style="width:auto">
         <el-button size="mini" @click="prev" :disabled="activeStep <= 0">{{ $t('common.prev') }}</el-button>
-        <el-button size="mini" @click="next" :disabled="!sqlFlag || activeStep >= 1 || loading" :loading="nextBtnLoading">
+        <el-button size="mini" @click="next" :disabled="activeStep >= 1 || loading" :loading="nextBtnLoading">
           {{ $t('common.next') }}
         </el-button>
         <el-button v-if="btnType !== 'look'" size="mini" type="primary" @click="dataFormSubmit()"
@@ -34,7 +34,7 @@
         </el-col>
       </el-row>
       <template v-if="activeStep == 1">
-        <AbnormalProcess ref="processDesign" :conf="flowTemplateJson" :flowType="0" />
+        <AbnormalProcess ref="processDesign" :conf="flowTemplateJson" :flowType="0" :planPersonId="dataForm.planPersonId" :planPersonName="dataForm.planPersonName" />
       </template>
     </div>
     <el-dialog title="Cron表达式" :visible.sync="showCron" :close-on-click-modal="false"
@@ -58,7 +58,7 @@ import { mapState } from 'vuex'
 import vcrontab from "vcrontab"
 import AbnormalProcess from '@/components/AbnormalProcess'
 export default {
-  components: { vcrontab, AbnormalProcess },
+  components: { vcrontab, AbnormalProcess},
   data() {
     return {
       showCron: false,
@@ -75,7 +75,8 @@ export default {
         id: '',
         name: "",
         remark: "",
-        status: "disabled"
+        planPersonId:'',
+        planPersonName:'',
       },
       dataFormItems: [],
       btnType: "",
@@ -126,10 +127,10 @@ export default {
           prop: "name", label: "异常名称", value: "", type: "input", itemRules: [{ required: true, message: '异常名称不能为空', trigger: "blur" }],
           sm: 24, itemDisabled: this.btnType === 'look' ? true : false
         },
-        // {
-        //   prop: "status", label: "异常状态", value: 1, type: "switch", activeValue: 1, inactiveValue: 0,
-        //   sm: 24, itemDisabled: this.btnType === 'look' ? true : false
-        // },
+        {
+          prop: "planPersonId", label: "处理人", value: '', type: "custom", customComponent:'UserSelect',itemRules:[{ required: true, message: '处理人不能为空', trigger: 'blur' }],
+          sm: 24, itemDisabled: this.btnType === 'look' ? true : false,clearable:false,change:this.selectPlanPerson
+        },
         { prop: "cron", label: "执行周期", value: "", type: "input", itemSlot: { position: 'append', content: '执行周期', click: this.showDialog }, sm: 24, itemDisabled: this.btnType === 'look' ? true : false, itemRules: [{ required: true, message: '执行周期不能为空', trigger: 'click' }] },
         { prop: "remark", label: "异常说明", value: "", type: "textarea", sm: 24, rows: '4', itemDisabled: this.btnType === 'look' ? true : false },
         {
@@ -155,6 +156,11 @@ export default {
         },
 
       ]
+    },
+    selectPlanPerson(id,data){
+      this.$nextTick(() => this.$refs['dataForm'].$children[0].validateField('planPersonId'))
+      this.dataForm.planPersonId = data.id
+      this.dataForm.planPersonName = data.fullName
     },
     testSql() {
       if (!this.dataForm.executionSql) return this.$message.warning('请先填写SQL')
@@ -209,7 +215,6 @@ export default {
           detailSystemAbnoram(id).then(res => {
             this.dialogTitle = `编辑异常`
             this.dataForm = res.data.exception
-            this.dataForm.status = this.dataForm.status === 'enable' ? 1 : 0
             res.data.flowEngine && (this.flowTemplateJson = JSON.parse(res.data.flowEngine.flowTemplateJson))
             this.flowEngine = res.data.flowEngine
             this.loading = false
@@ -223,13 +228,12 @@ export default {
         this.btnLoading = true
         this.flowTemplateJson = JSON.stringify(res.formData)
         let _data = {
-          exception: { ...this.dataForm, status: this.dataForm.status ? 'enable' : 'disabled' },
+          exception: this.dataForm,
           flowEngine: this.flowEngine ? { ...this.flowEngine, flowTemplateJson: this.flowTemplateJson } : {
             busCallBack: "AbApplyRecordCallback",
             category: "exception",
             flowTemplateJson: this.flowTemplateJson,
             enCode: this.dataForm.code,
-            enabledMark: this.dataForm.status,
             formType: 5,
             fullName: this.dataForm.name,
           }
@@ -252,8 +256,15 @@ export default {
     },
     next() {
       if (this.activeStep < 1) {
-        this.activeStep += 1
-        this.nextBtnLoading = false
+        this.$refs['dataForm'].$children[0].validate((valid)=>{
+          if (valid){
+            this.activeStep += 1
+            this.nextBtnLoading = false
+          }else{
+            this.nextBtnLoading = false
+          }
+        })
+    
       }
     },
     closeDialog(isRefresh) {

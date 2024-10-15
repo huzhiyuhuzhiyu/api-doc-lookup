@@ -13,7 +13,7 @@
               </div>
               <div class="body-right">
                 <div class="right-top" style="font-size:18px">{{ item.label }}</div>
-                <div class="right-bottom"><span :style="{color:Number(item.num) ? 'red' : '#fff',fontSize:'18px'}">{{ Number(item.num) && Number(item.num) || '' }}</span>{{ Number(item.num) ? '条异常' : '无异常' }}</div>
+                <div class="right-bottom"><span :style="{color:Number(item.num) ? 'red' : '#fff',fontSize:'18px',marginRight:'3px'}">{{ Number(item.num) && Number(item.num) || '' }}</span>{{ Number(item.num) ? '条异常' : '无异常' }}</div>
               </div>
               <div style="flex: 1;"></div>
             </div>
@@ -46,7 +46,7 @@
           <el-table-column prop="productDrawingNo" label="关联产品" min-width="160" sortable="custom" />
           <el-table-column prop="createByName" label="发起人" min-width="120" sortable="custom" />
           <el-table-column prop="createTime" label="发起时间" min-width="180" sortable="custom" />
-          <el-table-column prop="planPersonName" label="计划处理人" min-width="160" sortable="custom" />
+          <el-table-column prop="planPersonName" label="处理人" min-width="160" sortable="custom" />
           <el-table-column prop="extensionTime" label="处理时间" min-width="200">
             <template slot-scope="scope">
               <el-tag type="danger" v-if="scope.row.extensionFlag">{{ scope.row.extensionTime }}</el-tag>
@@ -278,6 +278,7 @@ export default {
     },
     refresh(isrRefresh) {
       this.formVisible = false
+      this.sourceDialog = false
       if (isrRefresh) this.reset()
     },
     reset() {
@@ -343,7 +344,7 @@ export default {
   background-color: #fff;
 
   .card-item {
-    margin: 5px;
+    margin: 2px;
     // flex: 1;
     height: 160px;
     background-color: #3fb9f8;
@@ -354,7 +355,7 @@ export default {
       display: flex;
       flex-direction: column;
       height: 100%;
-      min-width: 274px;
+      min-width: 271px;
       box-sizing: border-box;
       .item-head {
         font-style: italic;

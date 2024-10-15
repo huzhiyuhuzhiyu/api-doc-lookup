@@ -343,6 +343,7 @@ export default {
     refresh() {
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.categoryIndex = -1
+      this.getCount()
       this.initData()
     }
   }

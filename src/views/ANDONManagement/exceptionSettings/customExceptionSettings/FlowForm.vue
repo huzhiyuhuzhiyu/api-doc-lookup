@@ -12,7 +12,7 @@
       <div class="main" v-loading="formLoading">
         <AbnormalProcess :key="flowTemplateJson.nodeId" ref="processDesign" :conf="flowTemplateJson" :flowType="0"
           v-if="flowTemplateJson.nodeId" />
-        <AbnormalProcess ref="processDesign" :conf="flowTemplateJson" :flowType="0" v-else />
+        <AbnormalProcess ref="processDesign" :conf="flowTemplateJson" :flowType="0" v-else :planPersonId="planPersonId" :planPersonName="planPersonName"/>
       </div>
     </div>
   </transition>
@@ -39,16 +39,20 @@ export default {
         enabledMark: 1,
         busCallBack: 'AbApplyRecordCallback',
         planProcessingTime: '',
-        planHandler: ''
+        planHandler: '',
+        planPersonId:'',
+        planPersonName:'',
       },
     }
   },
   methods: {
 
-    init(id, fullName) {
+    init(id, fullName,planPersonId,planPersonName) {
       this.visible = true
       this.formLoading = true
       this.dataForm.businessFlow = id
+      this.planPersonId = planPersonId
+      this.planPersonName = planPersonName
       this.dataForm.enCode = this.uuid()
       this.dataForm.fullName = fullName
       this.dataForm.category = 'exception'

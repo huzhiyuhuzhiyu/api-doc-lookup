@@ -10,7 +10,7 @@
 export const ModelType ={
     "ADD":'add',
     "EDIT":'edit',
-    "VIEW":'view',
+    "VIEW":'look',
 }
 /**
  * 文件分类类型

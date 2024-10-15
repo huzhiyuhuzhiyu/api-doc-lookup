@@ -785,9 +785,12 @@ export default {
 }
 </script>
 <style scoped lang="scss">
+::v-deep .el-tabs--card>.el-tabs__header .el-tabs__item.is-active{
+  background-color: #3fb9f8;
+  color: #fff;
+}
 ::v-deep .el-tabs--card > .el-tabs__header .el-tabs__nav {
-  border-radius: 0 4px 0 0;
-  border-left: none;
+  margin-left: 10px;
 }
 ::v-deep .el-tabs__content {
   padding: 0 10px;

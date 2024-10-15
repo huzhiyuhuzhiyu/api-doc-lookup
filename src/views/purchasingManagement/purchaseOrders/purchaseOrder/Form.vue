@@ -355,7 +355,7 @@
 </template>
 <script>
 import { insertPurchaseOrder, purPurchaseOrderdetail, orderSchedule } from '@/api/purchasingAndOutsourcingOrders/index'
-import { excelExport } from '@/api/basicData/index'
+import { excelExport, getBimBusinessDetail } from '@/api/basicData/index'
 import workFlow from '@/components/WorkFlow/settingBus.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'

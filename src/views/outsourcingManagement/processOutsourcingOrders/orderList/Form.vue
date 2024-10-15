@@ -483,6 +483,7 @@ import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getShipmentList } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import SourceArea from '../orderCreation/source.vue'
+import { getBimBusinessDetail } from '@/api/basicData/index'
 export default {
   components: { Process, recordList, SourceArea },
   mixins: [busFlow],

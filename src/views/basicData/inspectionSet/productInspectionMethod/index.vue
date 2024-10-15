@@ -88,16 +88,16 @@
           ref="dataTable" hasC @selection-change="currentChange" :checkSelectable="checkSelectable"
           :setColumnDisplayList="columnList">
           <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
-          <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
+          <el-table-column prop="code" label="产品编码" width="140" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row, true)">
                 {{ scope.row.code }}
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="name" label="产品分类" min-width="130" sortable="custom" />
+          <el-table-column prop="name" label="产品分类" width="130" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" width="60" />
-          <el-table-column prop="inspectionMethod" label="检验方式" width="120" sortable="custom">
+          <el-table-column prop="inspectionMethod" label="检验方式" width="110" sortable="custom" align="center">
             <template slot-scope="{ row }">
               <template v-if="row.inspectionMethod == 'exempt'">
                 <el-tag type="success">免检</el-tag>
@@ -114,7 +114,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column prop="productSource" label="产品来源" width="120" sortable="custom">
+          <el-table-column prop="productSource" label="产品来源" width="110" sortable="custom">
             <template slot-scope="{ row }">
               <template v-if="row.productSource == 'produce'">
                 自制

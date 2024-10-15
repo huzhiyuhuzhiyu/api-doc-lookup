@@ -94,21 +94,36 @@
                 <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
               </template>
             </el-table-column>
-            <el-table-column prop="approvalStatus" label="审批状态" align="center" sortable="custom" width="120"
+            <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center"
               v-if="showAppCodeFlag">
               <template slot-scope="scope">
-                <div v-if="scope.row.approvalStatus == 'ing'"><el-tag type="warning">审批中</el-tag></div>
-                <div v-if="scope.row.approvalStatus == 'ok'"><el-tag type="success">审批通过</el-tag></div>
-                <div v-if="scope.row.approvalStatus == 'rebut'"><el-tag type="danger">审批拒绝</el-tag></div>
+                <el-tag disable-transitions
+                  v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus !== 'draft'">
+                  审批中
+                </el-tag>
+                <el-tag type="success" disable-transitions
+                  v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus !== 'draft'">
+                  审批通过
+                </el-tag>
+                <el-tag type="danger" disable-transitions
+                  v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus !== 'draft'">
+                  审批拒绝
+                </el-tag>
+                <el-tag type="warning" disable-transitions
+                  v-else-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus !== 'draft'">
+                  审批撤回
+                </el-tag>
               </template>
             </el-table-column>
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <!-- <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : scope.row.approvalStatus == 'ok'" -->
-                <el-button size="mini" type="text" @click="updateHandle(scope.row.id, 'edit')">编辑</el-button>
+                <el-button size="mini" type="text" :disabled="scope.row.documentStatus !== 'draft'"
+                  @click="updateHandle(scope.row.id, 'edit')">
+                  编辑
+                </el-button>
                 <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                  :disabled="scope.row.documentStatus == 'draft' ? false : scope.row.approvalStatus == 'ok'"
-                  @click="handleDel(scope.$index, scope.row.id)">
+                  :disabled="scope.row.documentStatus !== 'draft'" @click="handleDel(scope.$index, scope.row.id)">
                   删除
                 </el-button>
                 <el-dropdown hide-on-click>
@@ -119,6 +134,10 @@
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item v-if="scope.row.approvalStatus === 'ing' && showAppCodeFlag"
+                      @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
+                      审批撤回
+                    </el-dropdown-item>
                     <el-dropdown-item @click.native="updateHandle(scope.row.id, 'look')">
                       查看详情
                     </el-dropdown-item>
@@ -148,6 +167,7 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import { withdrawn } from '@/api/basicData/approvalAdministrator'
 export default {
   components: { JNPFForm, ExportForm, SuperQuery },
   data() {
@@ -318,6 +338,27 @@ export default {
     this.initData()
   },
   methods: {
+    withdrawnHandle(formId) {
+      let _data = {
+        formId
+      }
+      this.$confirm('此操作将撤回审批单，是否继续？', this.$t('common.tipTitle'), {
+        type: 'warning'
+      })
+        .then(() => {
+          withdrawn(_data).then((res) => {
+            this.$message({
+              type: 'success',
+              message: '撤回成功',
+              duration: 1500,
+              onClose: () => {
+                this.initData()
+              }
+            })
+          })
+        })
+        .catch(() => { })
+    },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false
@@ -585,11 +626,11 @@ export default {
       })
     },
     sortChange({ prop, order }) {
-      let newProp;
+      let newProp
       if (prop === 'createByName') {
         newProp = 'create_by'
       } else {
-        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
       this.listQuery.orderItems[0].asc = order === 'ascending'
       this.listQuery.orderItems[0].column = order === null ? '' : newProp

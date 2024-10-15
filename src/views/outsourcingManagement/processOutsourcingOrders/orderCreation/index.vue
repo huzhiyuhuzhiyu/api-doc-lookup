@@ -259,7 +259,7 @@
                     </el-collapse-item>
                   </el-collapse>
                 </el-tab-pane>
-                <el-tab-pane label="附件" name="annex">
+                <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
                   <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"></UploadWj>
                 </el-tab-pane>
                 <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
@@ -574,7 +574,7 @@ import {
   purProcurementRequirementsList
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import { insertOutOrder } from '@/api/purchasingAndOutsourcingOrders/index'
-import { getCooperativeData } from '@/api/basicData/index'
+import { getCooperativeData, getBimBusinessDetail } from '@/api/basicData/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
 import {
   getcategoryTrees,
@@ -593,6 +593,7 @@ export default {
   },
   data() {
     return {
+      isattachmentswitch: '',
       datafilelist: [],
       activeName: 'jcInfo',
       activeNames: ['productInfo', 'basicInfo'],
@@ -985,6 +986,7 @@ export default {
     this.getProductClassFun()
   },
   created() {
+    this.getBimBusinessDetail()
     console.log(this.$route.query.alert, 'this.$route.query.alert')
     if (this.$route.query.alert) {
       this.dialogTitle = '新建'
@@ -993,6 +995,15 @@ export default {
     this.getBusInfo()
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_wxdd'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     deliveryDateChange(e) {
       console.log(e, 'e')
     },

@@ -241,7 +241,7 @@
                     </el-collapse-item>
                   </el-collapse>
                 </el-tab-pane>
-                <el-tab-pane label="附件" name="annex">
+                <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
                   <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"></UploadWj>
                 </el-tab-pane>
                 <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
@@ -278,7 +278,7 @@ import {
   approvalTransferList
 } from '@/api/basicData/approvalAdministrator'
 import { insertOutOrder } from '@/api/purchasingAndOutsourcingOrders/index'
-import { getCooperativeData } from '@/api/basicData/index'
+import { getCooperativeData, getBimBusinessDetail } from '@/api/basicData/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
 import { getbimProductAttributes } from '@/api/masterDataManagement/index'
@@ -291,6 +291,7 @@ export default {
   },
   data() {
     return {
+      isattachmentswitch: '',
       datafilelist: [],
       activeName: 'jcInfo',
       activeNames: ['productInfo', 'basicInfo'],
@@ -656,6 +657,7 @@ export default {
   },
   mounted() { },
   created() {
+    this.getBimBusinessDetail()
     this.fetchData('WXDH')
     if (this.$route.query.alert) {
       this.dialogTitle = '新建'
@@ -697,6 +699,15 @@ export default {
     this.getBusInfo()
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_wxdd'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
       // 获取税率(数据字典)

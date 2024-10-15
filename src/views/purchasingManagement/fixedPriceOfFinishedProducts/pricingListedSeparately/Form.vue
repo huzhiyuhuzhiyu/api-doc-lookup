@@ -2046,7 +2046,7 @@ export default {
 
     // 测试审批流
     getBusInfo() {
-      getBusinessFlowInfo('b048')
+      getBusinessFlowInfo('b002')
         .then((res) => {
           if (res.data) {
             if (res.data.enabledMark) {

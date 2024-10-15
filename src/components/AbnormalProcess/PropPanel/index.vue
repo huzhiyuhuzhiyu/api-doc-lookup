@@ -12,347 +12,6 @@
     </header>
     <header slot="title" class="header" v-else>{{properties.title}}</header>
 
-    <!-- 条件  -->
-    <section class="condition-pane pd-10" v-if="value && isConditionNode()">
-      <el-row class="condition-list condition-list-header">
-        <el-col :span="8" class="label">条件字段</el-col>
-        <el-col :span="4">比较</el-col>
-        <el-col :span="8">数据值</el-col>
-        <el-col :span="3">逻辑</el-col>
-        <el-col :span="1"></el-col>
-      </el-row>
-      <template v-for="(item, index) in pconditions">
-        <el-row class="condition-list" :key="index">
-          <el-col :span="8" class="label">
-            <el-select v-model="item.fieldType" placeholder="请选择"
-              class="condition-select condition-type-select" @change="fieldTypeChange(item)">
-              <el-option v-for="item in conditionTypeOptions" :key="item.value" :label="item.label"
-                :value="item.value" />
-            </el-select>
-            <el-button size="mini" v-if="item.fieldType===3" class="edit-script-btn"
-              @click="editFormula(item)">公式编辑
-            </el-button>
-            <el-select v-model="item.field" placeholder="请选择"
-              @change="fieldNameChange($event,item,index)" v-else>
-              <el-option v-for="item in usedFormItems" :key="item.__vModel__"
-                :label="item.__config__.label" :value="item.__vModel__">
-              </el-option>
-            </el-select>
-          </el-col>
-          <el-col :span="4">
-            <el-select v-model="item.symbol" placeholder="请选择" class="condition-select"
-              @change="symbolChange($event,item)">
-              <el-option v-for="item in symbolOptions" :key="item.value" :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </el-col>
-          <el-col :span="8" class="fieldValue">
-            <el-select v-model="item.fieldValueType" placeholder="请选择"
-              class="condition-select condition-type-select" @change="fieldValueTypeChange(item)">
-              <el-option v-for="item in conditionTypeOptions1" :key="item.value" :label="item.label"
-                :value="item.value" />
-            </el-select>
-            <div v-if="item.fieldValueType===2">
-              <template v-if="item.jnpfKey==='numInput'">
-                <el-input-number v-model="item.fieldValue" placeholder="请输入"
-                  :precision="item.precision" controls-position="right" />
-              </template>
-              <template v-else-if="item.jnpfKey==='calculate'">
-                <el-input-number v-model="item.fieldValue" placeholder="请输入" :precision="2"
-                  controls-position="right" />
-              </template>
-              <template v-else-if="['rate','slider'].includes(item.jnpfKey)">
-                <el-input-number v-model="item.fieldValue" placeholder="请输入"
-                  controls-position="right" />
-              </template>
-              <template v-else-if="item.jnpfKey==='switch'">
-                <el-switch v-model="item.fieldValue" :active-value="1" :inactive-value="0" />
-              </template>
-              <template v-else-if="item.jnpfKey==='time'">
-                <el-time-picker v-model="item.fieldValue" :picker-options="item['picker-options']"
-                  placeholder="请选择" clearable :value-format="item['value-format']"
-                  :format="item.format">
-                </el-time-picker>
-              </template>
-              <template v-else-if="['date','createTime', 'modifyTime'].includes(item.jnpfKey)">
-                <el-date-picker v-model="item.fieldValue" clearable placeholder="请选择"
-                  :type="item.jnpfKey==='date'&& item.type?item.type:'datetime'"
-                  value-format="timestamp" @change="onConditionDateChange($event,item)"
-                  :format="item.format||'yyyy-MM-dd HH:mm:ss'">
-                </el-date-picker>
-              </template>
-              <template v-else-if="['comSelect','currOrganize'].includes(item.jnpfKey)">
-                <comSelect v-model="item.fieldValue" placeholder="请选择" clearable
-                  @change="onConditionListChange(arguments,item)" />
-              </template>
-              <template v-else-if="['depSelect'].includes(item.jnpfKey)">
-                <depSelect v-model="item.fieldValue" placeholder="请选择" clearable
-                  @change="onConditionObjChange(arguments,item)" />
-              </template>
-              <template v-else-if="['userSelect','createUser','modifyUser'].includes(item.jnpfKey)">
-                <userSelect v-model="item.fieldValue" placeholder="请选择" hasSys clearable
-                  @change="onConditionObjChange(arguments,item)" />
-              </template>
-              <template v-else-if="['posSelect','currPosition'].includes(item.jnpfKey)">
-                <posSelect v-model="item.fieldValue" placeholder="请选择" clearable
-                  @change="onConditionObjChange(arguments,item)" />
-              </template>
-              <template v-else-if="item.jnpfKey==='address'">
-                <JNPFAddress v-model="item.fieldValue" placeholder="请选择" :level="item.level"
-                  clearable @change="onConditionListChange(arguments,item)" />
-              </template>
-              <template v-else-if="item.jnpfKey==='groupSelect'">
-                <groupSelect v-model="item.fieldValue" placeholder="请选择" clearable
-                  @change="onConditionObjChange(arguments,item)" />
-              </template>
-              <template v-else-if="item.jnpfKey==='roleSelect'">
-                <roleSelect v-model="item.fieldValue" placeholder="请选择" clearable
-                  @change="onConditionObjChange(arguments,item)" />
-              </template>
-              <template v-else>
-                <el-input v-model="item.fieldValue" placeholder="请输入"></el-input>
-              </template>
-            </div>
-            <el-select v-model="item.fieldValue" placeholder="请选择" v-if="item.fieldValueType===1"
-              @change="fieldValueChange($event,item)">
-              <el-option v-for="item in usedFormItems" :key="item.__vModel__"
-                :label="item.__config__.label" :value="item.__vModel__">
-              </el-option>
-            </el-select>
-          </el-col>
-          <el-col :span="3">
-            <el-select v-model="item.logic" placeholder="请选择" class="condition-select"
-              @change="logicChange($event,item)">
-              <el-option v-for="item in logicOptions" :key="item.value" :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </el-col>
-          <el-col :span="1">
-            <i class="el-icon-delete" @click="onDelCondition(index)"></i>
-          </el-col>
-        </el-row>
-      </template>
-      <div style="padding-left:4px;margin-top:10px;">
-        <el-button size="small" icon="el-icon-plus" @click="addCondition()">添加条件</el-button>
-      </div>
-    </section>
-
-    <!-- 定时器  -->
-    <section class="condition-pane pd-10-20" v-if="value && isTimerNode()">
-      <el-row>
-        <el-alert title="添加定时器后，处理节点将根据设置的时间流转" type="warning" :closable="false" show-icon />
-        <el-col :span="24">
-          <el-form class="mt-10" label-position="top">
-            <el-form-item label="时间设置">
-              <div slot="label" class="form-item-label">时间设置</div>
-              <div class="form-item-content">
-                <div class="mb-10">
-                  <el-input-number :min="0" v-model="properties.day" :precision="0"
-                    controls-position="right" />
-                  <span class="ml-8">天</span>
-                </div>
-                <div class="mb-10">
-                  <el-input-number :min="0" v-model="properties.hour" :precision="0"
-                    controls-position="right" />
-                  <span class="ml-8">小时</span>
-                </div>
-                <div class="mb-10">
-                  <el-input-number :min="0" v-model="properties.minute" :precision="0"
-                    controls-position="right" />
-                  <span class="ml-8">分钟</span>
-                </div>
-                <div>
-                  <el-input-number :min="0" v-model="properties.second" :precision="0"
-                    controls-position="right" />
-                  <span class="ml-8">秒</span>
-                </div>
-              </div>
-            </el-form-item>
-          </el-form>
-        </el-col>
-      </el-row>
-    </section>
-
-    <!-- 子流程  -->
-    <section class="approver-pane" v-if="value && isSubFlowNode()">
-      <el-tabs style="height:100%;">
-        <el-tab-pane label="基础设置">
-          <el-scrollbar class="config-scrollbar">
-            <el-form label-position="top" :model="subFlowForm" class="pd-10-20">
-              <el-form-item label="发起设置">
-                <div slot="label" class="form-item-label">发起设置</div>
-                <div class="form-item-content">
-                  <el-radio-group v-model="subFlowForm.initiateType">
-                    <el-radio v-for="item in initiateTypeOptions" :label="item.value"
-                      :key="item.value" :disabled="item.disabled" class="radio-item">{{item.label}}
-                    </el-radio>
-                  </el-radio-group>
-                  <div v-if="subFlowForm.initiateType === 1" class="option-box-tip">
-                    发起者的主管将作为子流程发起人</div>
-                  <div v-if="subFlowForm.initiateType === 2" class="option-box-tip">
-                    发起者的部门主管将作为子流程发起人</div>
-                  <div v-if="subFlowForm.initiateType === 3" class="option-box-tip">
-                    发起者自己将作为子流程发起人</div>
-                  <div v-if="subFlowForm.initiateType === 4" class="option-box-tip">
-                    选择表单字段的值作为子流程发起人</div>
-                  <div v-if="subFlowForm.initiateType === 5" class="option-box-tip">
-                    设置处理流程中某个环节的处理人作为子流程发起人</div>
-                  <div v-if="subFlowForm.initiateType === 6" class="option-box-tip">
-                    所指定的成员将作为子流程发起人，多人时，发起多个子流程</div>
-                  <div v-if="subFlowForm.initiateType === 9" class="option-box-tip">
-                    通过第三方调用从目标服务中获取子流程发起人</div>
-                  <el-form-item label="发起者的" style="margin-bottom:0!important;"
-                    v-if="subFlowForm.initiateType === 1">
-                    <el-select v-model="subFlowForm.managerLevel">
-                      <el-option v-for="item in 10" :key="item"
-                        :label="item===1?'直接主管':'第'+item+'级主管'" :value="item">
-                      </el-option>
-                    </el-select>
-                  </el-form-item>
-                  <el-form-item label="发起者的" style="margin-bottom:0!important;"
-                    v-if="subFlowForm.initiateType === 2">
-                    <el-select v-model="subFlowForm.departmentLevel">
-                      <el-option v-for="item in 10" :key="item" :label="'第'+item+'级部门主管'"
-                        :value="item">
-                      </el-option>
-                    </el-select>
-                  </el-form-item>
-                  <el-form-item label="表单字段" style="margin-bottom:0!important;"
-                    v-if="subFlowForm.initiateType === 4">
-                    <el-radio-group v-model="subFlowForm.formFieldType">
-                      <el-radio :label="1">用户</el-radio>
-                      <el-radio :label="2">部门</el-radio>
-                    </el-radio-group>
-                    <el-select v-model="subFlowForm.formField" placeholder="请选择字段">
-                      <el-option v-for="item in usedFormItems" :key="item.__vModel__"
-                        :label="item.__config__.label" :value="item.__vModel__">
-                      </el-option>
-                    </el-select>
-                  </el-form-item>
-                  <el-form-item label="处理节点" style="margin-bottom:0!important;"
-                    v-if="subFlowForm.initiateType === 5">
-                    <el-select v-model="subFlowForm.nodeId" placeholder="请选择节点">
-                      <el-option v-for="item in nodeOptions" :key="item.nodeId"
-                        :label="item.properties.title" :value="item.nodeId">
-                      </el-option>
-                    </el-select>
-                  </el-form-item>
-                  <el-form-item style="margin-bottom:0!important;"
-                    v-if="subFlowForm.initiateType === 9">
-                    <div slot="label">请求路径
-                      <el-tooltip content="自带参数：taskId、taskNodeId" placement="top">
-                        <a class="el-icon-warning-outline"></a>
-                      </el-tooltip>
-                    </div>
-                    <el-input v-model="subFlowForm.getUserUrl" placeholder="请输入http或https接口地址">
-                      <template slot="prepend">GET</template>
-                    </el-input>
-                  </el-form-item>
-                  <el-form-item style="margin-bottom:0!important;"
-                    v-if="subFlowForm.initiateType === 6">
-                    <org-select ref="subFlow-role-org" type="role"
-                      v-model="subFlowForm.initiateRole" title="添加角色" class="mb-5" />
-                    <org-select ref="subFlow-position-org" v-model="subFlowForm.initiatePos"
-                      title="添加岗位" type="position" class="mb-5" />
-                    <org-select ref="subFlow-user-org" v-model="subFlowForm.initiator"
-                      title="添加用户" />
-                  </el-form-item>
-                </div>
-              </el-form-item>
-              <el-form-item label="子流程类型">
-                <div slot="label" class="form-item-label">子流程类型</div>
-                <el-radio-group class="form-item-content" v-model="subFlowForm.isAsync">
-                  <el-radio :label="false">同步</el-radio>
-                  <el-radio :label="true">异步</el-radio>
-                </el-radio-group>
-              </el-form-item>
-              <el-form-item label="子流程表单">
-                <div slot="label" class="form-item-label">子流程表单</div>
-                <flow-dialog class="form-item-content" :value="subFlowForm.flowId"
-                  :title="subFlowForm.flowName" @change="onSubFlowIdChange" />
-              </el-form-item>
-              <el-form-item label="子流程传递">
-                <div slot="label" class="form-item-label">子流程传递</div>
-                <div class="form-item-content hand" @click="openRuleBox">
-                  <el-input class="hand" :value="subFlowForm.assignList.length?'已设置':''"
-                    placeholder="请设置子流程传递规则" suffix-icon="el-icon-arrow-down" readonly />
-                </div>
-              </el-form-item>
-              <el-form-item>
-                <div slot="label" class="form-item-label">异常处理
-                  <el-tooltip content="子流程发起节点人员异常时遵循该规则" placement="top">
-                    <a class="el-icon-warning-outline"></a>
-                  </el-tooltip>
-                </div>
-                <div class="form-item-content">
-                  <el-select v-model="subFlowForm.errorRule" class="mb-10"
-                    @change="subFlowForm.errorRuleUser=[]">
-                    <el-option label="超级管理员" :value="1"></el-option>
-                    <el-option label="指定人员" :value="2"></el-option>
-                    <el-option label="发起者本人" :value="6"></el-option>
-                  </el-select>
-                  <org-select type="user" v-model="subFlowForm.errorRuleUser" title="选择用户"
-                    buttonType="button" v-if="subFlowForm.errorRule===2" />
-                </div>
-              </el-form-item>
-            </el-form>
-          </el-scrollbar>
-        </el-tab-pane>
-        <el-tab-pane label="节点通知">
-          <el-scrollbar class="config-scrollbar">
-            <el-form :model="subFlowForm" label-position="top" class="pd-10-20">
-              <el-alert title="该通知设置配置外部第三方消息提醒，站内信系统默认发送" type="warning" :closable="false"
-                show-icon />
-              <el-form-item class="mt-10">
-                <div slot="label" class="form-item-label">子流程发起
-                  <el-tooltip content="该子流程被发起的时候" placement="top">
-                    <a class="el-icon-warning-outline"></a>
-                  </el-tooltip>
-                </div>
-                <el-select class="form-item-content" v-model="subFlowForm.launchMsgConfig.on"
-                  placeholder="请选择">
-                  <el-option v-for="item in noticeOptions" :key="item.value" :label="item.label"
-                    :value="item.value" />
-                </el-select>
-              </el-form-item>
-              <template v-if="subFlowForm.launchMsgConfig.on===1">
-                <div class="form-item-content">
-                  <el-form-item label="消息模板">
-                    <msg-dialog :value="subFlowForm.launchMsgConfig.msgId"
-                      :title="subFlowForm.launchMsgConfig.msgName"
-                      @change="onMsgChange('subFlowForm','launchMsgConfig',arguments)" />
-                  </el-form-item>
-                  <el-form-item label="参数设置" style="margin-bottom: 0!important;"></el-form-item>
-                  <div>
-                    <el-table :data="subFlowForm.launchMsgConfig.templateJson">
-                      <el-table-column type="index" width="60" label="序号" align="center" />
-                      <el-table-column prop="field" label="参数名称" width="200">
-                        <template slot-scope="scope">
-                          {{scope.row.fieldName?scope.row.field+'('+scope.row.fieldName+')':scope.row.field}}
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="value" label="表单字段">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.relationField" placeholder="请选择表单字段"
-                            clearable filterable>
-                            <el-option v-for="item in funcOptions" :key="item.__vModel__"
-                              :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
-                              :value="item.__vModel__">
-                            </el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                    </el-table>
-                  </div>
-                </div>
-              </template>
-            </el-form>
-          </el-scrollbar>
-        </el-tab-pane>
-      </el-tabs>
-    </section>
 
     <!-- 发起人 -->
     <section class="approver-pane" v-if="value && isStartNode()">
@@ -458,8 +117,8 @@
                 </div>
               </el-form-item>
               <el-form-item>
-                <div slot="label" class="form-item-label">异常处理
-                  <el-tooltip content="处理节点内设置的处理人员异常时遵循该规则" placement="top">
+                <div slot="label" class="form-item-label">异常提醒
+                  <el-tooltip content="提醒节点内设置的提醒人员异常时遵循该规则" placement="top">
                     <a class="el-icon-warning-outline"></a>
                   </el-tooltip>
                 </div>
@@ -467,8 +126,8 @@
                   <el-select v-model="startForm.errorRule" @change="startForm.errorRuleUser=[]">
                     <el-option label="超级管理员" :value="1"></el-option>
                     <el-option label="指定人员" :value="2"></el-option>
-                    <el-option label="上一节点处理人指定" :value="3"></el-option>
-                    <el-option label="默认处理通过" :value="4"></el-option>
+                    <el-option label="上一节点提醒人指定" :value="3"></el-option>
+                    <el-option label="默认提醒通过" :value="4"></el-option>
                     <el-option label="无法提交" :value="5"></el-option>
                   </el-select>
                   <org-select type="user" class="mt-10" v-model="startForm.errorRuleUser"
@@ -517,9 +176,9 @@
                 </div>
                 <el-switch v-model="startForm.isComment" />
               </el-form-item>
-              <el-form-item label="批量处理">
-                <div slot="label" class="form-item-label">批量处理
-                  <el-tooltip content="流程待处理工单可进行批量操作" placement="top">
+              <el-form-item label="批量提醒">
+                <div slot="label" class="form-item-label">批量提醒
+                  <el-tooltip content="流程待提醒工单可进行批量操作" placement="top">
                     <a class="el-icon-warning-outline"></a>
                   </el-tooltip>
                 </div>
@@ -1023,7 +682,7 @@
                   </el-select>
                 </el-form-item>
                 <el-row :gutter="20">
-                  <el-col :span="8">节点处理限定时长(时)</el-col>
+                  <el-col :span="8">节点提醒限定时长(时)</el-col>
                   <el-col :span="16">
                     <el-input-number v-model="startForm.timeLimitConfig.duringDeal" :min="1"
                       :step="1"></el-input-number>
@@ -1032,7 +691,7 @@
               </div>
               <el-form-item class="mt-10">
                 <div slot="label" class="form-item-label">超时设置
-                  <el-tooltip content="超过设置的节点处理限定时间即为超时" placement="top">
+                  <el-tooltip content="超过设置的节点提醒限定时间即为超时" placement="top">
                     <a class="el-icon-warning-outline"></a>
                   </el-tooltip>
                 </div>
@@ -1066,8 +725,8 @@
                   </el-checkbox>
                 </el-row>
                 <el-row>
-                  <el-checkbox v-model="startForm.overTimeConfig.overAutoApprove">超时自动处理
-                    <el-tooltip content="当前处理节点表单必填字段为空会使工单流转失败，下一处理节点设置候选人员、选择分支时当前处理节点规则失效"
+                  <el-checkbox v-model="startForm.overTimeConfig.overAutoApprove">超时自动提醒
+                    <el-tooltip content="当前提醒节点表单必填字段为空会使工单流转失败，下一提醒节点设置候选人员、选择分支时当前提醒节点规则失效"
                       placement="top">
                       <a class="el-icon-warning-outline"></a>
                     </el-tooltip>
@@ -1097,7 +756,7 @@
               </div>
               <el-form-item class="mt-10">
                 <div slot="label" class="form-item-label">提醒设置
-                  <el-tooltip content="还未到达设置的节点处理限定时间即为提醒" placement="top">
+                  <el-tooltip content="还未到达设置的节点提醒限定时间即为提醒" placement="top">
                     <a class="el-icon-warning-outline"></a>
                   </el-tooltip>
                 </div>
@@ -1151,15 +810,33 @@
       </el-tabs>
     </el-scrollbar>
     </section>
-    <!-- 处理人 -->
+    <!-- 提醒人 -->
     <section class="approver-pane" v-if="value && isApproverNode()">
       <el-scrollbar class="config-scrollbar" style="height:100%">
-        <el-tabs v-model="activeName" style="height:100%;">
-        <el-tab-pane label="基础设置" name="config">
+        <!-- <el-tabs v-model="activeName" style="height:100%;"> -->
+        <!-- <el-tab-pane label="基础设置" name="config"> -->
           <el-scrollbar class="config-scrollbar">
             <el-form label-position="top" :model="approverForm" class="pd-10-20" :rules="approverRule">
-              <el-form-item label="处理设置">
-                <div slot="label" class="form-item-label">处理设置</div>
+              <el-form-item label="超时提醒">
+                <div slot="label" class="form-item-label"><span style="color: red;margin-right: 4px;">*</span>超时提醒</div>
+                <div class="form-item-content">
+                    <el-row :gutter="16">
+                      <el-col :span="8">
+                        <el-input-number v-model="approverForm.planTime" :min="1"
+                          :step="1"></el-input-number>
+                      </el-col>
+                      <el-col :span="6">
+                        <el-select class="form-item-content" v-model="approverForm.flowUnit">
+                          <el-option v-for="item in approverForm.flowUnitList" :key="item.value" :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                      </el-col>
+                    </el-row>
+                </div>
+              </el-form-item>
+              <el-form-item label="提醒设置">
+                <div slot="label" class="form-item-label">提醒设置</div>
                 <div class="form-item-content">
                   <el-radio-group v-model="approverForm.assigneeType" @change="resetOrgColl">
                     <el-radio v-for="item in assigneeTypeOptions" :label="item.value"
@@ -1167,21 +844,21 @@
                     </el-radio>
                   </el-radio-group>
                   <div v-if="approverForm.assigneeType === 1" class="option-box-tip">
-                    发起者主管将作为处理人</div>
+                    发起者主管将作为提醒人</div>
                   <div v-if="approverForm.assigneeType === 2" class="option-box-tip">
-                    发起者的部门主管将作为处理人</div>
+                    发起者的部门主管将作为提醒人</div>
                   <div v-if="approverForm.assigneeType === 3" class="option-box-tip">
-                    发起者自己将作为处理人</div>
+                    发起者自己将作为提醒人</div>
                   <div v-if="approverForm.assigneeType === 4" class="option-box-tip">
-                    选择流程表单字段的值作为处理人</div>
+                    选择流程表单字段的值作为提醒人</div>
                   <div v-if="approverForm.assigneeType === 5" class="option-box-tip">
-                    设置处理人为处理流程中某个环节的处理人</div>
+                    设置提醒人为提醒流程中某个环节的提醒人</div>
                   <div v-if="approverForm.assigneeType === 6" class="option-box-tip">
-                    指定处理人处理</div>
+                    指定提醒人提醒</div>
                   <div v-if="approverForm.assigneeType === 7" class="option-box-tip">
-                    指定可供选择的候选人处理</div>
+                    指定可供选择的候选人提醒</div>
                   <div v-if="approverForm.assigneeType === 9" class="option-box-tip">
-                    通过第三方调用从目标服务中获取处理人</div>
+                    通过第三方调用从目标服务中获取提醒人</div>
                   <el-form-item label="发起者的" style="margin-bottom:0!important"
                     v-if="approverForm.assigneeType === 1">
                     <el-select v-model="approverForm.managerLevel">
@@ -1210,7 +887,7 @@
                       </el-option>
                     </el-select>
                   </el-form-item>
-                  <el-form-item label="处理节点" style="margin-bottom:0!important"
+                  <el-form-item label="提醒节点" style="margin-bottom:0!important"
                     v-if="approverForm.assigneeType === 5">
                     <el-select v-model="approverForm.nodeId" placeholder="请选择节点">
                       <el-option v-for="item in nodeOptions" :key="item.nodeId"
@@ -1231,12 +908,12 @@
                   </el-form-item>
                   <el-form-item style="margin-bottom:0!important"
                     v-if="approverForm.assigneeType === 6||approverForm.assigneeType === 7">
-                    <org-select ref="approver-role-org" type="role" title="添加角色"
+                    <!-- <org-select ref="approver-role-org" type="role" title="添加角色"
                       v-model="approverForm.approverRole" class="mb-5" />
                     <org-select ref="approver-position-org" v-model="approverForm.approverPos"
-                      title="添加岗位" type="position" class="mb-5" />
+                      title="添加岗位" type="position" class="mb-5" /> -->
                     <org-select ref="approver-user-org" title="添加用户"
-                      v-model="approverForm.approvers" />
+                      v-model="approverForm.circulateUser" />
                   </el-form-item>
                   <!-- <el-form-item style="margin-bottom:0!important"
                     v-if="approverForm.assigneeType === 6">
@@ -1255,37 +932,16 @@
                   </el-form-item> -->
                 </div>
               </el-form-item>
-              <!-- <el-form-item label="处理方式">
-                <div slot="label" class="form-item-label">处理方式</div>
+              <!-- <el-form-item label="提醒方式">
+                <div slot="label" class="form-item-label">提醒方式</div>
                 <div class="form-item-content">
                   <el-radio v-model="approverForm.counterSign" :label="0">
-                    或签（一名处理人同意或拒绝即可）</el-radio>
+                    或签（一名提醒人同意或拒绝即可）</el-radio>
                   <el-radio v-model="approverForm.counterSign" :label="2">
-                    依次处理（按顺序依次处理）</el-radio>
+                    依次提醒（按顺序依次提醒）</el-radio>
                 </div>
               </el-form-item> -->
-              <el-form-item label="超时提醒">
-                <div slot="label" class="form-item-label"><span style="color: red;margin-right: 4px;">*</span>超时提醒</div>
-                <div class="form-item-content">
-                  <!-- <el-radio v-model="approverForm.counterSign" :label="0">
-                    或签（一名处理人同意或拒绝即可）</el-radio>
-                  <el-radio v-model="approverForm.counterSign" :label="2">
-                    依次处理（按顺序依次处理）</el-radio> -->
-                    <el-row :gutter="16">
-                      <el-col :span="8">
-                        <el-input-number v-model="approverForm.planTime" :min="1"
-                          :step="1"></el-input-number>
-                      </el-col>
-                      <el-col :span="6">
-                        <el-select class="form-item-content" v-model="approverForm.flowUnit">
-                          <el-option v-for="item in approverForm.flowUnitList" :key="item.value" :label="item.label"
-                            :value="item.value">
-                          </el-option>
-                        </el-select>
-                      </el-col>
-                    </el-row>
-                </div>
-              </el-form-item>
+
               <!-- <el-form-item label="会签比例" v-if="approverForm.counterSign==1">
                 <div slot="label" class="form-item-label">会签比例
                   <el-tooltip content="会签通过比例" placement="top">
@@ -1313,7 +969,7 @@
               </el-form-item> -->
             </el-form>
           </el-scrollbar>
-        </el-tab-pane>
+        <!-- </el-tab-pane> -->
         <!-- <el-tab-pane label="高级设置" name="senior">
           <el-scrollbar class="config-scrollbar">
             <el-form label-position="top" class="pd-10-20">
@@ -1353,16 +1009,16 @@
               </el-form-item>
               <el-form-item label="自动同意">
                 <div slot="label" class="form-item-label">自动同意
-                  <el-tooltip content="当前处理节点表单必填字段为空工单流转时不做校验，下一处理节点设置候选人员、选择分支、异常节点时当前处理节点规则失效"
+                  <el-tooltip content="当前提醒节点表单必填字段为空工单流转时不做校验，下一提醒节点设置候选人员、选择分支、异常节点时当前提醒节点规则失效"
                     placement="top">
                     <a class="el-icon-warning-outline"></a>
                   </el-tooltip>
                 </div>
                 <el-select class="form-item-content" v-model="approverForm.agreeRule">
                   <el-option label="关闭" :value="1"></el-option>
-                  <el-option label="处理人为发起人" :value="2"></el-option>
-                  <el-option label="处理人与上一处理节点处理人相同" :value="3"></el-option>
-                  <el-option label="处理人处理过" :value="4"></el-option>
+                  <el-option label="提醒人为发起人" :value="2"></el-option>
+                  <el-option label="提醒人与上一提醒节点提醒人相同" :value="3"></el-option>
+                  <el-option label="提醒人提醒过" :value="4"></el-option>
                 </el-select>
               </el-form-item>
             </el-form>
@@ -1370,7 +1026,7 @@
               label-position="left">
               <el-form-item>
                 <div slot="label" class="form-item-label">意见填写
-                  <el-tooltip content="处理人在进行处理操作需填写处理意见" placement="top">
+                  <el-tooltip content="提醒人在进行提醒操作需填写提醒意见" placement="top">
                     <a class="el-icon-warning-outline"></a>
                   </el-tooltip>
                 </div>
@@ -1882,7 +1538,7 @@
                   </el-select>
                 </el-form-item>
                 <el-row :gutter="20">
-                  <el-col :span="8">节点处理限定时长(时)</el-col>
+                  <el-col :span="8">节点提醒限定时长(时)</el-col>
                   <el-col :span="16">
                     <el-input-number v-model="approverForm.timeLimitConfig.duringDeal" :min="1"
                       :step="1"></el-input-number>
@@ -1891,7 +1547,7 @@
               </div>
               <el-form-item class="mt-10">
                 <div slot="label" class="form-item-label">超时设置
-                  <el-tooltip content="超过设置的节点处理限定时间即为超时" placement="top">
+                  <el-tooltip content="超过设置的节点提醒限定时间即为超时" placement="top">
                     <a class="el-icon-warning-outline"></a>
                   </el-tooltip>
                 </div>
@@ -1925,8 +1581,8 @@
                   </el-checkbox>
                 </el-row>
                 <el-row>
-                  <el-checkbox v-model="approverForm.overTimeConfig.overAutoApprove">超时自动处理
-                    <el-tooltip content="当前处理节点表单必填字段为空工单流转时不做校验，下一处理节点设置候选人员、选择分支、异常节点时当前处理节点规则失效"
+                  <el-checkbox v-model="approverForm.overTimeConfig.overAutoApprove">超时自动提醒
+                    <el-tooltip content="当前提醒节点表单必填字段为空工单流转时不做校验，下一提醒节点设置候选人员、选择分支、异常节点时当前提醒节点规则失效"
                       placement="top">
                       <a class="el-icon-warning-outline"></a>
                     </el-tooltip>
@@ -1956,7 +1612,7 @@
               </div>
               <el-form-item class="mt-10">
                 <div slot="label" class="form-item-label">提醒设置
-                  <el-tooltip content="还未到达设置的节点处理限定时间即为提醒" placement="top">
+                  <el-tooltip content="还未到达设置的节点提醒限定时间即为提醒" placement="top">
                     <a class="el-icon-warning-outline"></a>
                   </el-tooltip>
                 </div>
@@ -2007,7 +1663,7 @@
             </el-form>
           </el-scrollbar>
         </el-tab-pane> -->
-        </el-tabs>
+        <!-- </el-tabs> -->
       </el-scrollbar>
 
     </section>
@@ -2077,8 +1733,8 @@ const getDataType = (data) => {
   return ''
 }
 const defaultSubFlowForm = {
-  errorRule: 1, // 异常处理规则
-  errorRuleUser: [], // 指定人员处理异常
+  errorRule: 1, // 异常提醒规则
+  errorRuleUser: [], // 指定人员提醒异常
   formFieldType: 1,// 表单字段审核方式的类型(1-用户 2-部门)
   initiateType: 6,
   managerLevel: 1,
@@ -2105,10 +1761,10 @@ const defaultApproverForm = {
   extraCopyRule: 1, // 抄送附加条件,默认无附加条件
   agreeRule: 1, // 自动同意规则,默认不启用
   formFieldType: 1,// 表单字段审核方式的类型(1-用户 2-部门)
-  approvers: [], // 处理人集合
-  approverPos: [], // 处理岗位集合
-  approverRole: [], // 处理角色集合
-  assigneeType: 6, // 指定处理人
+  approvers: [], // 提醒人集合
+  approverPos: [], // 提醒岗位集合
+  approverRole: [], // 提醒角色集合
+  assigneeType: 6, // 指定提醒人
   userType: 'role', //role,position,user
   formOperates: [], // 表单权限集合
   circulateRole: [],   // 抄送角色集合
@@ -2153,7 +1809,7 @@ const defaultApproverForm = {
   timeLimitConfig: {
     on: 2,  // 开启
     nodeLimit: 0, // 节点限定时长起始值类型
-    duringDeal: 24, // 节点处理限定时长(时)
+    duringDeal: 24, // 节点提醒限定时长(时)
     formField: '',  // 请选择字段
   },
   overTimeConfig: {
@@ -2161,8 +1817,8 @@ const defaultApproverForm = {
     firstOver: 0, // 第一次超时时间(时)
     overTimeDuring: 2, // 超时间隔(时)
     overNotice: false, // 超时事务-超时通知
-    overAutoApprove: false, // 超时事务-超时自动处理
-    overAutoApproveTime: 5, // 自动处理超时次数(次)
+    overAutoApprove: false, // 超时事务-超时自动提醒
+    overAutoApproveTime: 5, // 自动提醒超时次数(次)
     overEvent: false, // 超时事件
     overEventTime: 5, // 超时事件超时次数(次)
   },
@@ -2238,7 +1894,7 @@ const defaultApproverForm = {
 }
 const defaultStep = [{
   nodeId: '1',
-  properties: { title: '上级处理节点' }
+  properties: { title: '上级提醒节点' }
 }, {
   nodeId: '0',
   properties: { title: '流程发起' }
@@ -2248,18 +1904,18 @@ const typeOptions = [
     label: '指定成员',
     value: 6
   },
-  {
-    label: '发起者本人',
-    value: 3
-  },
-  {
-    label: '发起者主管',
-    value: 1
-  },
-  {
-    label: '部门主管',
-    value: 2
-  },
+  // {
+  //   label: '发起者本人',
+  //   value: 3
+  // },
+  // {
+  //   label: '发起者主管',
+  //   value: 1
+  // },
+  // {
+  //   label: '部门主管',
+  //   value: 2
+  // },
   // {
   //   label: '表单变量',
   //   value: 4
@@ -2362,7 +2018,7 @@ const systemFieldOptions = [{
   __vModel__: '@flowOperatorUserName',
 }]
 export default {
-  props: [/*当前节点数据*/"value", /*整个节点数据*/"processData", "flowType"],
+  props: [/*当前节点数据*/"value", /*整个节点数据*/"processData", "flowType",'planPersonId','planPersonName'],
   components: { OrgSelect, MsgDialog, InterfaceDialog, FormulaDialog, FlowDialog },
   data() {
     return {
@@ -2383,7 +2039,7 @@ export default {
       startForm: JSON.parse(JSON.stringify(nodeConfig.defaultStartForm)),
       ruleVisible: false,
       subFlowForm: JSON.parse(JSON.stringify(defaultSubFlowForm)),
-      approverForm: JSON.parse(JSON.stringify(defaultApproverForm)),
+      approverForm: JSON.parse(JSON.stringify({...defaultApproverForm,approvers:[this.planPersonId]})),
       initiateTypeOptions: typeOptions,
       assigneeTypeOptions: assigneeTypeOptions,
       noticeOptions,
@@ -2462,6 +2118,9 @@ export default {
         flowUnit:[{required: true,message:'超时提醒单位不能为空',trigger:'change'}],
       },
     };
+  },
+  created(){
+    this.approverForm.circulateUser = [this.planPersonId]
   },
   computed: {
     // 未使用的条件个数
@@ -2646,7 +2305,7 @@ export default {
     startNodeConfirm() {
       if (this.startForm.errorRule == 2 && !this.startForm.errorRuleUser.length) {
         this.$message({
-          message: '请选择异常处理人',
+          message: '请选择异常提醒人',
           type: 'error',
         })
         return
@@ -2745,7 +2404,7 @@ export default {
       }
       if (this.subFlowForm.errorRule == 2 && !this.subFlowForm.errorRuleUser.length) {
         this.$message({
-          message: '请选择异常处理人',
+          message: '请选择异常提醒人',
           type: 'error',
         })
         return
@@ -2758,7 +2417,7 @@ export default {
       this.visible = false;
     },
     /**
-     * 处理节点确认保存
+     * 提醒节点确认保存
      */
     approverNodeConfirm() {
       if (!this.properties.title) {
@@ -2785,19 +2444,15 @@ export default {
       const assigneeType = this.approverForm.assigneeType
       let content = ''
       if (assigneeType == 6) {
-        if (!this.approverForm.approvers.length && !this.approverForm.approverPos.length && !this.approverForm.approverRole.length) {
+        if (!this.approverForm.circulateUser.length && !this.approverForm.approverPos.length && !this.approverForm.approverRole.length) {
           this.$message({
-            message: '请设置处理人',
+            message: '请设置提醒人',
             type: 'error',
           })
           return
         }
         // approver
-        let approverText = this.getOrgSelectLabel('approver-user'),
-          approverPosText = this.getOrgSelectLabel('approver-position'),
-          approverRoleText = this.getOrgSelectLabel('approver-role')
-        content += approverRoleText
-        content += (content && approverPosText ? ',' : '') + approverPosText
+        let approverText = this.getOrgSelectLabel('approver-user')
         content += (content && approverText ? ',' : '') + approverText
       } else {
         content = this.assigneeTypeOptions.find(t => t.value === assigneeType).label
@@ -2816,7 +2471,7 @@ export default {
         })
         return
       }
-      if (assigneeType == 7 && !this.approverForm.approvers.length && !this.approverForm.approverPos.length && !this.approverForm.approverRole.length) {
+      if (assigneeType == 7 && !this.approverForm.circulateUser.length && !this.approverForm.approverPos.length && !this.approverForm.approverRole.length) {
         this.$message({
           message: '请设置候选人员',
           type: 'error',
@@ -2835,15 +2490,15 @@ export default {
       // if (this.approverForm.circulatePosition.length || this.approverForm.circulateUser.length) {
       //   copyContent = '抄送:' + copyPosText + (copyText && copyPosText ? ',' : '') + copyText
       // }
-      // let totalContent = '处理：' + content + copyContent
+      // let totalContent = '提醒：' + content + copyContent
       let titleObj = {
         title: this.properties.title
       }
       this.approverForm.planProcessingTime = this.jnpf.timeToMinutes(this.approverForm.planTime,this.approverForm.flowUnit)
       console.log(this.jnpf.timeToMinutes(this.approverForm.planTime,this.approverForm.flowUnit));
-      
+      this.approverForm.approvers = [this.planPersonId]
       Object.assign(this.properties, this.approverForm, titleObj)
-      this.$emit("confirm", this.properties, content || '请设置处理人')
+      this.$emit("confirm", this.properties, content || '请设置提醒人')
       this.visible = false
 
     },
@@ -2881,7 +2536,7 @@ export default {
     isConditionNode() {
       return this.value ? NodeUtils.isConditionNode(this.value) : false;
     },
-    /** 判断是否是处理节点*/
+    /** 判断是否是提醒节点*/
     isApproverNode() {
       return this.value ? NodeUtils.isApproverNode(this.value) : false;
     },
@@ -2906,7 +2561,7 @@ export default {
       Object.assign(this.startForm, this.value.properties)
     },
     /**
-    * 初始化处理节点所需数据
+    * 初始化提醒节点所需数据
     */
     initApproverNodeData() {
       this.activeName = 'config'

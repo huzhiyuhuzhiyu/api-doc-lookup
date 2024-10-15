@@ -9,6 +9,7 @@
                     :show-file-list="false"
                     v-if="!detailed"
                     :on-change="onChange"
+                    :disabled="disabled"
                     :auto-upload="false"
                     multiple
                     :on-progress="onProgress"
@@ -17,7 +18,7 @@
                         'token': `${token}`
                     }">
                     <el-button size="small" type="primary" icon="el-icon-upload" v-if="!disabled">点击上传</el-button>
-                    <el-button size="small" slot="tip" type="primary" icon="el-icon-upload" style="margin-top:10px" disabled v-else>点击上传</el-button>
+                    <el-button size="small" slot="tip" type="primary" icon="el-icon-upload" style="margin-top:10px" :disabled="true" v-else>点击上传</el-button>
                     <div slot="tip" class="el-upload__tip">只能上传不超过{{ fileSize }}{{ sizeUnit }}的{{ acceptText }}文件，您也可把文件拖拽至此以上传</div>
                 </el-upload>
                 <div v-else class="upload-list" style="padding-top: 0;">

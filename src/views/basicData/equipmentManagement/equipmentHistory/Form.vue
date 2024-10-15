@@ -7,11 +7,10 @@
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
-      <div class="main" v-loading="formLoading">
-        <!-- <el-tabs v-model="activeName" class=".el-table"> -->
+      <div class="main" ref="main" v-loading="formLoading">
         <el-collapse v-model="activeNames">
           <el-collapse-item title="设备信息" name="basicInfo">
-            <div class="stoclInfo">
+            <div class="stoclInfo" ref="stoclInfo">
               <div class="maintenancetitle">{{dataForm.name}}</div>
               <el-descriptions :column="1" label-class-name="maintenancelabel" content-class-name="maintenancelabel">
                 <el-descriptions-item label="创建时间">{{dataForm.createTime}}</el-descriptions-item>
@@ -21,10 +20,19 @@
               <img class="equipmentstatus" v-if="dataForm.state=='repair'" src="@/assets/images/weixiuzhong.png" alt="">
               <img class="equipmentstatus" v-if="dataForm.state=='discard'" src="@/assets/images/baofei.png" alt="">
             </div>
-            <!-- </el-collapse-item>
-            <el-collapse-item title="基本信息" name="wbjl"> -->
-            <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-              <el-tab-pane label="设备信息" name="sbxxinfo">
+            <!-- <el-tabs v-model="activeName" type="card" @tab-click="handleClick"> -->
+            <div style="padding-left: 5px;border-bottom: 1px solid #dcdfe6;" ref="radio">
+              <el-radio-group v-model="activeName">
+                <el-radio-button label="sbxxinfo">设备信息</el-radio-button>
+                <el-radio-button label="wxjlinfo">维修记录</el-radio-button>
+                <el-radio-button label="byrwinfo">保养任务</el-radio-button>
+                <el-radio-button label="byjlinfo">保养记录</el-radio-button>
+                <el-radio-button label="djrwinfo">点检任务</el-radio-button>
+                <el-radio-button label="djjlinfo">点检记录</el-radio-button>
+              </el-radio-group>
+            </div>
+            <div style="padding: 5px;">
+              <div v-if="activeName=='sbxxinfo'">
                 <el-form ref="dataForm" :model="dataForm" label-width="160px" label-position="top" v-loading="dataFormLoading">
                   <el-row :gutter="20" class="custom-row">
                     <el-col :sm="8" :xs="24">
@@ -211,9 +219,9 @@
                     </el-col>
                   </el-row>
                 </el-form>
-              </el-tab-pane>
-              <el-tab-pane label="维修记录" name="wxjlinfo">
-                <JNPF-table ref="wxjldataTable" v-loading="wxjllistLoading" @sort-change="wxjlsortChange" :data="wxjldataTable" fixedNO custom-column>
+              </div>
+              <div v-if="activeName=='wxjlinfo'">
+                <JNPF-table ref="wxjldataTable" v-loading="wxjllistLoading" @sort-change="wxjlsortChange" :data="wxjldataTable" fixedNO custom-column :height=height>
                   <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" sortable="custom">
                   </el-table-column>
                   <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" sortable="custom" />
@@ -293,9 +301,9 @@
                   </el-table-column>
                 </JNPF-table>
                 <pagination :total="total" :page.sync="wxjlorderForm.pageNum" :limit.sync="wxjlorderForm.pageSize" @pagination="getwxjlinfo" />
-              </el-tab-pane>
-              <el-tab-pane label="保养任务" name="byrwinfo">
-                <JNPF-table ref="byrwdataTable" v-loading="byrwlistLoading" :data="byrwdataTable" @sort-change="byrwsortChange" fixedNO custom-column style="padding-bottom: 50px;">
+              </div>
+              <div v-if="activeName=='byrwinfo'">
+                <JNPF-table ref="byrwdataTable" v-loading="byrwlistLoading" :data="byrwdataTable" @sort-change="byrwsortChange" fixedNO custom-column>
                   <el-table-column prop="name" label="任务名称" min-width="200" fixed="left" sortable="custom">
                   </el-table-column>
                   <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" fixed="left" sortable="custom" />
@@ -330,9 +338,9 @@
                   </el-table-column>
                 </JNPF-table>
                 <pagination :total="total" :page.sync="byrworderForm.pageNum" :limit.sync="byrworderForm.pageSize" @pagination="getbyrwinfo" />
-              </el-tab-pane>
-              <el-tab-pane label="保养记录" name="byjlinfo">
-                <JNPF-table ref="byjldataTable" v-loading="byjllistLoading" :data="byjldataTable" @sort-change="byjlsortChange" fixedNO custom-column style="padding-bottom: 50px;">
+              </div>
+              <div v-if="activeName=='byjlinfo'">
+                <JNPF-table ref="byjldataTable" v-loading="byjllistLoading" :data="byjldataTable" @sort-change="byjlsortChange" fixedNO custom-column>
                   <el-table-column prop="maintenanceTaskIdText" label="任务名称" min-width="180" sortable="custom" />
                   <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" sortable="custom" />
                   <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom" />
@@ -370,9 +378,9 @@
                   </el-table-column>
                 </JNPF-table>
                 <pagination :total="total" :page.sync="byjlorderForm.pageNum" :limit.sync="byjlorderForm.pageSize" @pagination="getbyjlinfo" />
-              </el-tab-pane>
-              <el-tab-pane label="点检任务" name="djrwinfo">
-                <JNPF-table ref="djrwdataTable" v-loading="djrwlistLoading" :data="djrwdataTable" @sort-change="djrwsortChange" fixedNO custom-column style="padding-bottom: 50px;">
+              </div>
+              <div v-if="activeName=='djrwinfo'">
+                <JNPF-table ref="djrwdataTable" v-loading="djrwlistLoading" :data="djrwdataTable" @sort-change="djrwsortChange" fixedNO custom-column>
                   <el-table-column prop="name" label="任务名称" width="200" sortable="custom">
                   </el-table-column>
                   <el-table-column prop="cycle" label="周期" width="120" sortable="custom"></el-table-column>
@@ -406,9 +414,9 @@
                   </el-table-column>
                 </JNPF-table>
                 <pagination :total="total" :page.sync="djrworderForm.pageNum" :limit.sync="djrworderForm.pageSize" @pagination="getdjrwinfo" />
-              </el-tab-pane>
-              <el-tab-pane label="点检记录" name="djjlinfo">
-                <JNPF-table ref="djjldataTable" v-loading="djjllistLoading" :data="djjldataTable" @sort-change="djjlsortChange" fixedNO custom-column style="padding-bottom: 50px;">
+              </div>
+              <div v-if="activeName=='djjlinfo'">
+                <JNPF-table ref="djjldataTable" v-loading="djjllistLoading" :data="djjldataTable" @sort-change="djjlsortChange" fixedNO custom-column>
                   <el-table-column prop="equipmentIdCode" label="设备编码" width="200" sortable="custom" />
                   <el-table-column prop="equipmentIdName" label="设备名称" width="200" sortable="custom" />
                   <el-table-column prop="factoryFloor" label="使用车间" min-width="140" sortable="custom" />
@@ -452,11 +460,11 @@
                   </el-table-column>
                 </JNPF-table>
                 <pagination :total="djjltotal" :page.sync="djjlorderForm.pageNum" :limit.sync="djjlorderForm.pageSize" @pagination="getdjjlinfo" />
-              </el-tab-pane>
-            </el-tabs>
+              </div>
+            </div>
+            <!-- </el-tabs> -->
           </el-collapse-item>
         </el-collapse>
-        <!-- </el-tabs> -->
       </div>
     </div>
   </transition>
@@ -468,6 +476,7 @@ import { getEquEquipmentInfo } from '@/api/basicData/index'
 export default {
   data() {
     return {
+      height: 0,
       srcList: [
         'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg'
       ],
@@ -615,11 +624,24 @@ export default {
     }
   },
   mounted() {
-    let tBody = document.querySelectorAll('.el-table')[1]
-    tBody.style.height = 'auto'
-    tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
+    this.switchStyle()
   },
   methods: {
+    //自适应窗口
+    async switchStyle() {
+      await this.$nextTick();
+      let allHeight = this.$refs.main.clientHeight
+      let HeightstoclInfo = this.$refs.stoclInfo.clientHeight
+      let Heightradio = this.$refs.radio.clientHeight
+      this.height = (allHeight - HeightstoclInfo - Heightradio - 166) + 'px'
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyle()
+        }, 100);
+      };
+    },
     bigimg(url) {
       this.srcList[0] = url
     },
@@ -785,15 +807,17 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-::v-deep .el-tabs--card>.el-tabs__header .el-tabs__item.is-active{
-  background-color: #3fb9f8;
-  color: #fff;
+::v-deep .el-radio-button--small .el-radio-button__inner {
+  border-bottom: none;
 }
-::v-deep .el-tabs--card > .el-tabs__header .el-tabs__nav {
-  margin-left: 10px;
+::v-deep .el-radio-button:last-child .el-radio-button__inner {
+  border-radius: 0 4px 0 0;
+}
+::v-deep .el-radio-button:first-child .el-radio-button__inner {
+  border-radius: 4px 0 0 0;
 }
 ::v-deep .el-tabs__content {
-  padding: 0 10px;
+  padding: 0 5px;
 }
 ::v-deep .maintenancelabel {
   margin-top: 6px;
@@ -802,7 +826,7 @@ export default {
 }
 .stoclInfo {
   position: relative;
-  padding: 5px 10px;
+  padding: 5px;
   .maintenancetitle {
     font-size: 24px;
     font-weight: bold;

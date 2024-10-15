@@ -688,6 +688,7 @@ export default {
   created() {
     // this.handleChange()
     // this.getProvinceList()
+    this.getBimBusinessDetail()
     this.getAttributeline()
     this.getClassAttribute()
     this.getWarehouseList()

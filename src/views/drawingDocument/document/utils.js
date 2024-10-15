@@ -4,11 +4,11 @@ import {isEmpty} from "@/utils";
 export function isFile(item){
     return item && item.fileExtension !== null
 }
-export const wordSuffix = ['doc','docx']
-export const excelSuffix = ['xls','xlxs']
-export const pptSuffix = ['ppt','pptx']
-export const pdfSuffix = ['pdf']
-export const imgSuffix = ['jpg','jpeg','png','gif','bmp']
+export const wordSuffix = ['doc','docx','docm']
+export const excelSuffix = ['xls','xlsx','xlsm']
+export const pptSuffix = ['ppt','pptx','pptm']
+export const pdfSuffix = ['pdf','pdfx']
+export const imgSuffix = ['jpg','jpeg','png','gif','bmp',]
 export const mindSuffix = ['mind']
 export const txtSuffix = ['txt']
 export const unknownSuffix = ['unknown']

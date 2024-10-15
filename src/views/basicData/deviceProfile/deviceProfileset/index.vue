@@ -85,7 +85,7 @@
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" ref="dataTable" @sort-change="sortChange" custom-column hasC @selection-change="handleSelectionChange">
           <el-table-column prop="code" label="设备编码" min-width="200" sortable="custom" />
           <el-table-column prop="name" label="设备名称" min-width="200" sortable="custom" />
-          <el-table-column prop="deviceType" label="设备类型" width="200" sortable="custom">
+          <el-table-column prop="deviceType" label="设备类型" width="140" sortable="custom">
             <template slot-scope="scope">
               <el-tag type="success" disable-transitions v-if="scope.row.deviceType == 'normal'">正常设备</el-tag>
               <el-tag disable-transitions v-if="scope.row.deviceType == 'virtually'">虚拟设备</el-tag>
@@ -96,12 +96,9 @@
           <el-table-column prop="partnerName" label="供应商" min-width="200" sortable="custom" />
           <el-table-column prop="supplier" label="生产厂家" min-width="200" sortable="custom" />
           <el-table-column prop="serialNo" label="序列号" min-width="200" sortable="custom" />
-
           <el-table-column prop="scrapDate" label="报废日期" width="180" sortable="custom" />
           <el-table-column prop="purchaseDate" label="采购日期" width="180" sortable="custom">
-
           </el-table-column>
-
           <el-table-column prop="productDate" label="制造日期" width="180" sortable="custom" />
           <el-table-column prop="weight" label="重量（KG）" width="200" sortable="custom" />
           <el-table-column prop="serviceLife" label="额定使用年限（年）" width="200" sortable="custom" />
@@ -112,30 +109,23 @@
           <el-table-column prop="width" label="宽（cm）" width="200" sortable="custom" />
           <el-table-column prop="height" label="高（CM）" width="200" sortable="custom" />
           <el-table-column prop="equipmentValue" label="设备原值（万元）" width="200" sortable="custom" />
-          <el-table-column prop="theoryBeat" label="理论节拍" width="200" sortable="custom" />
-          <el-table-column prop="usin" label="用途" width="200" sortable="custom" />
-          <el-table-column prop="remark" label="备注" width="200" sortable="custom" />
-
+          <el-table-column prop="theoryBeat" label="理论节拍" min-width="200" sortable="custom" />
+          <el-table-column prop="usin" label="用途" min-width="180" sortable="custom" />
+          <el-table-column prop="remark" label="备注" min-width="200" sortable="custom" />
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" width="200" sortable="custom" />
-
+          <el-table-column prop="createByName" label="创建人" width="120" sortable="custom" />
           <el-table-column prop="state" label="设备状态" width="140" align="center" sortable="custom" fixed="right">
             <template slot-scope="{row}">
               <el-tag type="success" disable-transitions v-if="row.state == 'normal'">正常</el-tag>
               <el-tag type="warning" disable-transitions v-if="row.state == 'repair'">维修</el-tag>
               <el-tag type="danger" disable-transitions v-if="row.state == 'discard'">报废</el-tag>
+              <el-tag disable-transitions v-if="row.state == 'spare'">备用</el-tag>
+              <el-tag type="info" disable-transitions v-if="row.state == 'stop'">停用</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="plmSyncFlag" label="PLM同步状态" align="center" min-width="160" sortable="custom" fixed="right">
-            <template slot-scope="scope">
-              <el-tag type="danger" v-if="!scope.row.plmSyncFlag">同步失败</el-tag>
-              <el-tag type="success" v-else>同步成功</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" width="260" fixed="right">
+          <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, false, 'edit')" @del="handleDel(scope.row.id)">
-                <el-button size="mini" type="text" :disabled="scope.row.plmSyncFlag" @click="PLMchange(scope.row.id)">同步PLM</el-button>
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -314,16 +304,15 @@ export default {
           options: [
             { label: '正常', value: 'normal' },
             { label: '维修', value: 'repair' },
-            { label: '报废', value: 'discard' }
-          ]
-        },
-        { // 下拉选
-          prop: 'plmSyncFlag',
-          label: 'PLM同步状态',
-          type: 'select',
-          options: [
-            { label: '同步失败', value: false },
-            { label: '同步成功', value: true }
+            { label: '报废', value: 'discard' },
+            {
+              value: "spare",
+              label: "备用"
+            },
+            {
+              value: "stop",
+              label: "停用"
+            }
           ]
         },
         { // 日期时间选择器（区间）
@@ -380,6 +369,14 @@ export default {
           value: "discard",
           label: "报废"
         },
+        {
+          value: "spare",
+          label: "备用"
+        },
+        {
+          value: "stop",
+          label: "停用"
+        }
       ],
       pickerOptions: {
         disabledDate(time) {
@@ -408,8 +405,6 @@ export default {
     }
   },
   created() {
-    console.log(111);
-
     this.getCategoryTrees(true)
     // this.getDictionaryType()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
@@ -422,17 +417,6 @@ export default {
       this.listQuery.superQuery = query
       this.superQueryVisible = false
       this.search()
-    },
-    PLMchange(id) {
-      this.listLoading = true
-      plmsync(id).then(res => {
-        console.log(res, 'tongbu');
-        if (res.msg === 'Success') {
-          this.initData()
-        } else {
-          this.listLoading = false
-        }
-      }).catch(() => { this.listLoading = false })
     },
     // 获取数据字典——等级
     getDictionaryType() {

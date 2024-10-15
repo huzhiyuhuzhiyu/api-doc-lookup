@@ -1,6 +1,6 @@
 <template>
-  <div style="height: 99%;">
-    <div style="height: 7%;">
+  <div style="height: 100%;margin-top: -8px;">
+    <div style="height: 57px;">
       <div class="tag-group JNPF-common-search-box treeBox_bot"
         style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:5px 0 0px 0">
         <el-radio-group v-model="listQuery.classAttribute" style="background-color:#fff;">
@@ -12,7 +12,7 @@
         </el-radio-group>
       </div>
     </div>
-    <div class="JNPF-common-layout" style="height: 92%;">
+    <div class="JNPF-common-layout" style="height: calc(99% - 50px);">
       <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
         <div class="JNPF-common-title">
           <h2 v-if="!leftFlag">产品分类</h2>
@@ -135,7 +135,7 @@
                 </template>
               </template>
             </el-table-column>
-            <el-table-column prop="mainUnit" label="单位" width="120" />
+            <el-table-column prop="mainUnit" label="单位" width="60" />
             <el-table-column prop="purchaseTaxRate" label="采购税率" width="120" align="center">
               <template slot-scope="{ row }">
                 <el-select v-model="row.purchaseTaxRate" placeholder="请选择" @change="purchaseTaxRateChange(row)">

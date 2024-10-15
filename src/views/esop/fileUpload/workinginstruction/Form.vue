@@ -2,7 +2,6 @@
     <transition name="el-zoom-in-center">
 
         <div class="JNPF-preview-main org-form" ref="main">
-
             <div :class="['JNPF-common-page-header', isView ? 'noButtons' : '']">
                 <el-page-header @back="goBack('back')" :content="title" />
                 <div class="options" v-if="!isView">
@@ -241,21 +240,22 @@ export default {
                 openProcess:0,
                 routingName:'',
                 routingId:'',
-                approvalFlag:false,
+                approvalFlag:true,
                 id:null
             },
             flowTaskOperatorRecordList: [],
             endTime: 0,
             cacheFileUploadList:[],
+            flowData:{}
         }
     },
     mixins: [busFlow],
     created(){
         if(this.isAdd) {
-            // this.dataForm.approvalFlag && this.getFlowDetail(this.id)
+            this.dataForm.approvalFlag && this.getFlowDetail(this.id)
             this.fetchData()
         }else{
-            // this.getBusInfo()
+            this.getBusInfo()
             this.getDetail()
             this.fetchData(false)
 
@@ -348,10 +348,11 @@ export default {
                     productsId:this.dataForm.productsId,
                     routingId:this.dataForm.routingId,
                     orderNo:this.dataForm.orderNo,
-                    id:this.dataForm.id
+                    id:this.dataForm.id,
+                    approvalFlag:this.dataForm.approvalFlag
                 },
                 bimFileUploadLineList:this.getUploadDetailList(),
-                approvalFlag:this.dataForm.approvalFlag
+                flowData:this.flowData
             }
         },
         async fetchData(flag=true,code="WJSCSQ") {

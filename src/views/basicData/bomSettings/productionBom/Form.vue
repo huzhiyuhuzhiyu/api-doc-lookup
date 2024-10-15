@@ -31,7 +31,7 @@
                 :expand-on-click-node="false" node-key="productId" @node-click="handleNodeClick"
                 class="JNPF-common-el-tree" v-if="refreshTree">
                 <span
-                  :class="[data.childrenList && data.childrenList.length > 0 ? 'custom-tree-node' : 'disabled-span']"
+                  :class="[data.childrenList && data.childrenList.length > 0 ? 'custom-tree-node' : 'custom-tree-node']"
                   slot-scope="{ data }" :title="data.productDrawingNo">
                   <i :class="[
                     data.childrenList && data.childrenList.length > 0

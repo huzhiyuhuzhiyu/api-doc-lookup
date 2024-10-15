@@ -258,7 +258,7 @@
               </el-collapse>
             </el-tab-pane>
 
-            <el-tab-pane label="附件" name="annex">
+            <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
               <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"></UploadWj>
             </el-tab-pane>
             <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
@@ -370,7 +370,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-          
+
 
                   <el-table-column prop="price" label="含税单价" min-width="120">
                     <template slot-scope="scope">
@@ -488,6 +488,7 @@ export default {
   mixins: [busFlow],
   data() {
     return {
+      isattachmentswitch: '',
       title: '',
       datafilelist: [],
       activeName: 'jcInfo',
@@ -554,9 +555,20 @@ export default {
       endTime: 0
     }
   },
-  created() { },
+  created() {
+    this.getBimBusinessDetail()
+  },
 
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_wxdd'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     // 抽屉提交
     handlerConfirm(data) {
 

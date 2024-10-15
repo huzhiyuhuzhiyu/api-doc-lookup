@@ -46,7 +46,7 @@
                 </div>
                 <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
                             ref="dataTable" :setColumnDisplayList="columnList">
-                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="110" />
+                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />
                     <el-table-column prop="drawingNo" label="品名规格" min-width="150" />
 
                     <el-table-column prop="productsCode" label="产品编码" min-width="120" />

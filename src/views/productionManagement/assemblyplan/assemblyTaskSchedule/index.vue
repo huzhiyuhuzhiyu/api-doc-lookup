@@ -57,7 +57,7 @@
             </div>
           </div>
           <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" v-loading="listLoading" :data="tableData"
-            :fixedNO="true" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+            :fixedNO="true" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList" v-if="showFlag">
             <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'all')">{{
@@ -66,7 +66,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="processSchedule" label="工单进度条" min-width="980">
+            <el-table-column prop="processSchedule" label="工单进度条" :width="maxWidth">
               <template slot-scope="scope">
                 <div v-for="(item, index) in scope.row.processInfoList" :key="index" style="width:100px;display: inline-block;text-align: center;position: relative;">
                   <el-progress type="circle" width="60" :percentage="item.value" :status="item.value==100?'success':''"></el-progress>
@@ -144,12 +144,12 @@
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" />
-            <el-table-column label="操作" width="120" fixed="right">
+            <el-table-column label="操作" width="180" fixed="right">
 
               <template slot-scope="scope">
 
-                <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'all')">查看任务详情</el-button>
-                <el-button size="mini" type="text" @click="viewTaskSchedule(scope.row.id)">查看进度详情</el-button>
+                <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'all')">任务详情</el-button>
+                <el-button size="mini" type="text" @click="viewTaskSchedule(scope.row.id)">进度详情</el-button>
               </template>
             </el-table-column>
           </JNPF-table>
@@ -183,6 +183,7 @@ export default {
   components: { SuperQuery, Form,TaskSchedule },
   data() {
     return {
+      showFlag:false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -397,6 +398,7 @@ export default {
           { validator: this.formValidate('positiveNumber', '请输入大于0的正整数',), trigger: 'blur' }
         ],
       },
+      maxWidth:""
     }
   },
   created() {
@@ -492,7 +494,7 @@ export default {
     },
     initData() {
       this.listLoading = true
- 
+      this.showFlag=false
       ordershengchanList(this.orderForm).then(res => {
         res.data.records.forEach(item => {
           // 初始化 processInfoList 为一个空数组  
@@ -518,6 +520,11 @@ export default {
           }
         });
         console.log("表格数据", res);
+        let longestProcessInfo = res.data.records.reduce((longest, current) => {
+          return current.processInfoList.length > longest.processInfoList.length ? current : longest;
+        },  res.data.records[0]);
+        this.maxWidth=longestProcessInfo.processInfoList.length*100+50
+        this.showFlag=true
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
@@ -627,7 +634,6 @@ export default {
 }
 
 .ProcessName { 
-  width: 70%;
   font-size: 12px !important;
   overflow: hidden;
   /*超出的部分隐藏起来。*/

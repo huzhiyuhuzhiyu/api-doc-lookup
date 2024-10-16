@@ -87,7 +87,7 @@
         </el-tab-pane>
         <el-tab-pane label="流转记录" v-if="setting.opType != '-1'" v-loading="loading">
           <div class="mb-20" v-if="flowTaskInfo.status === 2">
-              <el-alert  :title="'共耗时'+(flowTaskInfo.processingTime || '')+'小时,'+ '超过'+(flowTaskInfo.timeFastRatio || '')+'%的同类申请快'" type="success" show-icon
+              <el-alert  :title="'共耗时'+(flowTaskInfo.processingTime || '')+'小时,'+ '超过'+(flowTaskInfo.timeFastRatio || '')+'%的同类申请'" type="success" show-icon
                 :closable="false"></el-alert>
           </div>
           <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />

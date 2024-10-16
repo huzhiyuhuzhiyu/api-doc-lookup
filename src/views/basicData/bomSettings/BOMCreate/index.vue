@@ -9,7 +9,8 @@
               <div style="font-size: 20px;" v-else>BOM创建</div>
               <div class="options" v-if="btnType !== 'look'">
                 <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">保存草稿</el-button>
-                <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">保存并提交</el-button>
+                <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')"
+                  :disabled="btnDisabled">保存并提交</el-button>
                 <el-button @click="goBack" v-if="content">{{ $t('common.cancelButton') }}</el-button>
               </div>
             </div>
@@ -101,6 +102,7 @@ export default {
   components: { TableFormProduct, Process },
   data() {
     return {
+      btnDisabled: false,
       activeNames: ['productInfo', 'basicInfo'],
       datafilelist: [],
       activeName: 'jcInfo',
@@ -410,6 +412,7 @@ export default {
     this.getBimBusinessDetail()
   },
   methods: {
+
     async init(productId, btnType, approvalStatus, nodeData) {
       this.visible = true
       this.formLoading = true
@@ -666,7 +669,7 @@ export default {
     async handleConfirm(submitModel) {
       this.btnLoading = true
       let submitFlag = true
-
+      this.btnDisabled = true;
       // 校验表单
       let form_1 = this.$refs['dataForm'].$refs.main
       let valid_1 = await form_1.validate().catch(() => false)
@@ -674,6 +677,7 @@ export default {
         submitFlag = false
         this.jnpf.focusErrValidItem(form_1.fields)
         this.btnLoading = false
+        this.btnDisabled = false;
       }
 
       // 校验表单表格（子数据列表）
@@ -683,6 +687,7 @@ export default {
         submitFlag = false
         this.jnpf.focusErrValidItem(form_2.fields)
         this.btnLoading = false
+        this.btnDisabled = false;
       }
 
       // 判断是否有子件
@@ -697,6 +702,7 @@ export default {
         if (this.linesList.length > 1)
           return this.$message.error('半成品产品来源是外协时，创建BOM的子件，只能选择一个子件')
         this.btnLoading = false
+        this.btnDisabled = false;
       }
       if (submitFlag) {
         let index = this.linesList.findIndex((line) => line.productId === this.dataForm.productId)
@@ -735,6 +741,7 @@ export default {
         let loopBugRes = await checkLoopBug(dataObj).catch((err) => { })
         if (!loopBugRes) {
           this.btnLoading = false
+          this.btnDisabled = false;
         } else if (loopBugRes.data.length) {
           let loopArr = []
           loopBugRes.data.forEach((item) => {
@@ -743,8 +750,10 @@ export default {
             temp ? loopArr.push(temp.name) : ''
           })
           this.$message.error('子件与BOM树产生冲突：' + loopArr.join('、'))
+          this.btnDisabled = false;
           this.btnLoading = false
         } else {
+          console.log(dataObj, 'dataObj')
           formMethod(dataObj)
             .then((res) => {
               let msg = res.msg
@@ -768,13 +777,16 @@ export default {
                 this.submitmethodsTitle = '提交成功'
               }
               this.tipsvisible = true
+              this.btnDisabled = false;
             })
             .catch(() => {
               this.btnLoading = false
+              this.btnDisabled = false;
             })
         }
       } else {
         this.btnLoading = false
+
       }
       this.btnLoading = false
     },

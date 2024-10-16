@@ -23,7 +23,7 @@
                   <el-collapse v-model="activeNames">
                     <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                       <el-row :gutter="15" class="">
-                        <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
+                        <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                           label-position="top">
                           <!-- <el-col :sm="6" :xs="24">
                         <el-form-item label="单号" prop="orderNo">
@@ -367,7 +367,7 @@ export default {
           },
           {
             validator: this.formValidate('positiveNumber', false, (errMsg) => {
-              this.$message.error(`数量(主)：${errMsg}`)
+              this.$message.error(`数量：${errMsg}`)
             }),
             trigger: 'blur'
           }
@@ -395,7 +395,20 @@ export default {
             trigger: 'blur'
           }
         ],
-        deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
+        deliveryDate: [
+          {
+            validator: this.formValidate({
+              type: 'noEmtry',
+              params: [
+                '',
+                (errMsg, index) => {
+                  this.$message.error(`产品信息第${index + 1}行：交货日期${errMsg}`)
+                }
+              ]
+            }),
+            trigger: ['blur']
+          }
+        ]
       },
       productArr: [],
       defaultProps: {
@@ -635,7 +648,7 @@ export default {
       // immediate:true,
       handler: function (newVal, oldVal) {
         newVal.forEach((item) => {
-          if (item.price && item.taxRate) {
+          if (item.price && item.taxRate || item.price && item.taxRate == 0) {
             item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
           }
           if (item.purchaseQuantity && item.excludingTaxPrice) {
@@ -704,7 +717,7 @@ export default {
         businessCode: 'attachment',
         configKey: 'fj_wxdd'
       }
-      getBimBusinessDetail(obj).then(res => {
+      getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
       })
     },
@@ -855,7 +868,7 @@ export default {
     },
     supplierdata(id, data) {
       this.$nextTick(() => {
-        this.$refs['elForm'].validateField('cooperativePartnerName')
+        this.$refs['dataForm'].validateField('cooperativePartnerName')
       })
       if (data.length === 0) {
         this.dataForm.cooperativePartnerName = ''
@@ -1013,7 +1026,7 @@ export default {
       this.dialogTitle = type == 'add' ? '新建' : type == 'edit' ? '编辑' : `查看`
       this.type = type
       this.$nextTick(() => {
-        this.$refs['elForm'].resetFields()
+        this.$refs['dataForm'].resetFields()
         if (!this.dataForm.id) {
           this.clearData()
         } else if (this.dataForm.id && this.type == 'add') {
@@ -1125,7 +1138,7 @@ export default {
       let form_2 = this.$refs['productForm']
       let valid_2 = await form_2.validate().catch((err) => false)
       if (hasCostPrice) {
-        this.$refs['elForm'].validate((valid) => {
+        this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             if (this.dataFormTwo.data.length === 0) {
               this.btnLoading = false
@@ -1188,7 +1201,7 @@ export default {
                 return
               } else {
                 this.btnLoading = true
-
+                console.log(_data, '_data')
                 if (this.type === 'add') {
                   insertOutOrder(_data)
                     .then((res) => {

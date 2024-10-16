@@ -64,13 +64,13 @@
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
           <!-- <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" /> -->
           <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
-          <el-table-column prop="classAttribute" label="类别属性" min-width="120" sortable="custom">
+          <el-table-column prop="classAttribute" label="类别属性" min-width="110" sortable="custom">
             <template slot-scope="scope">
               {{ $getLabel(classAttributeList, scope.row.classAttribute, 'value', 'label') }}
             </template>
           </el-table-column>
 
-          <el-table-column prop="immediatelyBuyFlag" label="立即采购" min-width="120" sortable="custom">
+          <el-table-column prop="immediatelyBuyFlag" label="立即采购" min-width="110" sortable="custom">
             <template slot-scope="scope">
               <div style="color:red;" v-if="scope.row.immediatelyBuyFlag">是</div>
               <div v-else>否</div>

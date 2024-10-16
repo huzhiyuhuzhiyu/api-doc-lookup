@@ -21,7 +21,7 @@
               <el-collapse v-model="activeNames" style="margin-top: 5px;">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                   <el-row :gutter="15" class="" style="margin: 0 0;">
-                    <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
+                    <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="单号" prop="orderNo">
@@ -178,7 +178,7 @@
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
-            <el-tab-pane label="附件" name="annex">
+            <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
               <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"
                 style="margin-top: 5px;">
               </UploadWj>
@@ -190,10 +190,10 @@
               <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
             </el-tab-pane>
           </el-tabs>
-          <el-collapse v-model="activeNames" v-else>
+          <el-collapse v-model="activeNames" style="margin-top: 5px;" v-else>
             <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-              <el-row :gutter="15" class="">
-                <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
+              <el-row :gutter="15" class="" style="margin: 0 0;">
+                <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                   label-position="top">
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="单号" prop="orderNo">
@@ -205,7 +205,7 @@
                         "></el-input>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="24">
+                  <el-col :span="12">
                     <el-form-item label="申请理由" prop="applicationReason" ref="applicationReason">
                       <el-input type="textarea" :row="3" v-model="dataForm.applicationReason" placeholder="请输入申请理由"
                         maxlength="200" :disabled="type == 'look' ? true : false"></el-input>
@@ -239,6 +239,7 @@
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
                         :rules="productRules.productDrawingNo">
+
                         <div class="viewData">
                           <span>{{ scope.row.productDrawingNo }}</span>
                         </div>
@@ -257,55 +258,59 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="planQuantity" label="数量(主)" min-width="200" key="planQuantity">
+                  <el-table-column prop="planQuantity" label="数量" min-width="200" key="planQuantity">
                     <template slot="header">
                       <span class="required">*</span>
-                      数量(主)
+                      数量
                     </template>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'planQuantity'"
                         :rules="productRules.planQuantity">
                         <el-input v-model="scope.row.planQuantity" clearable
                           @input="changePlanQuantity(scope.$index, scope.row.planQuantity)" :disabled="type === 'look'"
-                          maxlength="20" placeholder="请输入主数量">
+                          maxlength="20" placeholder="请输入数量">
                           {{ scope.row.planQuantity }}
                         </el-input>
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="mainUnit" label="单位(主)" min-width="200" show-overflow-tooltip key="mainUnit">
+                  <el-table-column prop="mainUnit" label="单位" min-width="100" show-overflow-tooltip key="mainUnit">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
+                        <!-- <el-input v-model="scope.row.mainUnit" :disabled="type === 'look'" readonly maxlength="20"
+                              placeholder="请输入主单位">{{
+                                scope.row.mainUnit }}
+                            </el-input> -->
                         <div class="viewData">
                           <span>{{ scope.row.mainUnit }}</span>
                         </div>
                       </el-form-item>
                     </template>
                   </el-table-column>
+                  <!-- 
+                      <el-table-column prop="planQuantity2" label="数量(副)" min-width="200" key="planQuantity2">
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'planQuantity2'"
+                            :rules="productRules.planQuantity2">
+                            <el-input @input="changePlanQuantity2(scope.$index, scope.row.planQuantity2)"
+                              v-model="scope.row.planQuantity2" :disabled="type === 'look'" clearable maxlength="20"
+                              placeholder="请输入数量(副)">
+                              {{ scope.row.planQuantity2 }}
+                            </el-input>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
 
-                  <el-table-column prop="planQuantity2" label="数量(副)" min-width="200" key="planQuantity2">
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'planQuantity2'"
-                        :rules="productRules.planQuantity2">
-                        <el-input @input="changePlanQuantity2(scope.$index, scope.row.planQuantity2)"
-                          v-model="scope.row.planQuantity2" :disabled="type === 'look'" clearable maxlength="20"
-                          placeholder="请输入数量(副)">
-                          {{ scope.row.planQuantity2 }}
-                        </el-input>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
-
-                  <el-table-column prop="deputyUnit" label="单位(副)" min-width="200" show-overflow-tooltip
-                    key="deputyUnit">
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
-                        <div class="viewData">
-                          <span>{{ scope.row.deputyUnit }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
+                      <el-table-column prop="deputyUnit" label="单位(副)" min-width="200" show-overflow-tooltip
+                        key="deputyUnit">
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
+                            <div class="viewData">
+                              <span>{{ scope.row.deputyUnit }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column> -->
 
                   <el-table-column prop="deliveryDate" label="交货日期" min-width="240" key="deliveryDate">
                     <template slot="header">
@@ -365,11 +370,13 @@ import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowE
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
+import { getBimBusinessDetail } from '@/api/basicData/index'
 export default {
   components: { Process, recordList },
   mixins: [busFlow],
   data() {
     return {
+      isattachmentswitch: '',
       datafilelist: [],
       activeName: 'jcInfo',
       activeNames: ['productInfo', 'basicInfo'],
@@ -402,7 +409,18 @@ export default {
       productRules: {
         productName: [{ required: true, trigger: ['change'] }],
         planQuantity: [
-          { required: true, trigger: ['blur'] },
+          {
+            validator: this.formValidate({
+              type: 'noEmtry',
+              params: [
+                '',
+                (errMsg, index) => {
+                  this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`)
+                }
+              ]
+            }),
+            trigger: ['blur']
+          },
           {
             validator: this.formValidate({
               type: 'decimal',
@@ -447,7 +465,18 @@ export default {
             trigger: 'blur'
           }
         ],
-        deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
+        deliveryDate: [{
+          validator: this.formValidate({
+            type: 'noEmtry',
+            params: [
+              '',
+              (errMsg, index) => {
+                this.$message.error(`产品信息第${index + 1}行：交货日期${errMsg}`)
+              }
+            ]
+          }),
+          trigger: ['blur']
+        },]
       },
       productArr: [],
       defaultProps: {
@@ -503,9 +532,19 @@ export default {
   },
   created() {
     this.fetchData('QGD')
+    this.getBimBusinessDetail()
     if (this.type === 'add') this.getBusInfo()
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_qgd'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code)
@@ -647,7 +686,7 @@ export default {
       this.dialogTitle = type == 'add' ? '新建' : type == 'edit' ? '编辑' : `查看`
       this.type = type
       this.$nextTick(() => {
-        this.$refs['elForm'].resetFields()
+        this.$refs['dataForm'].resetFields()
         if (!this.dataForm.id) {
           this.clearData()
           this.getBusInfo()
@@ -765,7 +804,7 @@ export default {
       let form_2 = this.$refs['productForm']
       let valid_2 = await form_2.validate().catch((err) => false)
       if (hasCostPrice) {
-        this.$refs['elForm'].validate((valid) => {
+        this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             if (this.dataFormTwo.data.length === 0) {
               this.btnLoading = false

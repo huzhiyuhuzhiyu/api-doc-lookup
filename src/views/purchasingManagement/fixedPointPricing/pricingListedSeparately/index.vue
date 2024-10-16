@@ -472,9 +472,10 @@ export default {
     },
 
     addOrUpdateHandle(id, type) {
+      console.log(this.superForm.classAttribute, 'this.listQuery.classAttribute')
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.JNPFForm.init(id, type)
+        this.$refs.JNPFForm.init(id, type, false, 'other')
       })
     },
     handleDel(id) {

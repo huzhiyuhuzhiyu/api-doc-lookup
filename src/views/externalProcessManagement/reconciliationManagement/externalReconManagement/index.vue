@@ -354,13 +354,13 @@ export default {
     initData() {
       this.listLoading = true
       if (this.createRequirementDate && this.createRequirementDate.length > 0) {
-        this.superForm.startTime = this.createRequirementDate[0] + " 00:00:00"
-        this.superForm.endTime = this.createRequirementDate[1] + " 23:59:59"
+        this.listQuery.startTime = this.createRequirementDate[0] + " 00:00:00"
+        this.listQuery.endTime = this.createRequirementDate[1] + " 23:59:59"
       } else {
-        this.superForm.startTime = ''
-        this.superForm.endTime = ''
+        this.listQuery.startTime = ''
+        this.listQuery.endTime = ''
       }
-
+      this.superForm = this.listQuery
       getsalefinAccountList(this.superForm).then(res => {
         console.log(res, '采购发/退货列表');
         res.data.records.forEach(item => {

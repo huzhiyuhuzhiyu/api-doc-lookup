@@ -1,4 +1,5 @@
 import {isEmpty, notEmpty} from "@/utils";
+import {ApplicationType, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 
 export function deleteLastChildList(category){
     if(isEmpty(category)) return
@@ -27,3 +28,28 @@ export function getFilePreviewUrl(filePath){
 
 
 export const TopParentId = '-1'
+
+
+export function downloadFile(filePath ='/static/销售订单导入模板.xlsx'){
+    const a = document.createElement('a')
+    a.setAttribute('download', '')
+    a.setAttribute('href', location.origin + filePath)
+    a.click()
+}
+
+export function getTitleForType(applicationType,pageType){
+
+    let name =''
+    if(applicationType === ApplicationType.INSPECT){
+        name = '检查指导书'
+    }else if(applicationType === ApplicationType.WORK){
+        name = '作业指导书'
+    }else if(applicationType === ApplicationType.IMAGE) {
+        name = '图文档'
+    }
+
+    if(pageType === ModelType.ADD){
+        return `新增${name}`
+    }
+    return `编辑${name}`
+}

@@ -253,7 +253,6 @@
                       </el-form>
                       <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
                         <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ computedValue3 }}</span>
-                        <span style="font-weight:500;margin-right:10px">总金额(不含税)：{{ computedValue }}</span>
                         <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue2 }}</span>
                       </div>
                     </el-collapse-item>
@@ -285,10 +284,10 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="type == 'look'
-                            ? true
-                            : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                              ? false
-                              : true
+                              ? true
+                              : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                                ? false
+                                : true
                             "></el-input>
                         </el-form-item>
                       </el-col>
@@ -298,7 +297,7 @@
                       </el-input> -->
                           <!-- 供应商选择弹窗  -->
                           <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
-                            v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
+                            v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit"
                             @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'"
                             title="选择供应商" treeTitle="供应商分类" :methodArr="PartnerMethodArr"
                             :listMethod="getCooperativeData" :listRequestObj="PartnerListRequestObj"
@@ -541,11 +540,11 @@
                           </el-button>
                         </template>
                       </el-table-column>
-                    </jnpf-table>
+                    </JNPF-table>
                   </el-form>
                   <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
                     <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ computedValue3 }}</span>
-                    <span style="font-weight:500;margin-right:10px">总金额(不含税)：{{ computedValue }}</span>
+                    <!-- <span style="font-weight:500;margin-right:10px">总金额(不含税)：{{ computedValue }}</span> -->
                     <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue2 }}</span>
                   </div>
                 </el-collapse-item>
@@ -939,10 +938,16 @@ export default {
     computedValue3() {
       // 在这里计算第三个输入框的值
       let count = 0
+      let count1 = 0
+
       this.dataFormTwo.data.forEach((item) => {
         count += item.totalAmount * 1
+        count1 += item.excludingTaxAmount * 1
       })
+
       this.dataForm.totalAmount = this.jnpf.numberFormat(count)
+
+      this.dataForm.excludingTaxTotalAmount = this.jnpf.numberFormat(count1)
 
       return this.dataForm.totalAmount
     },
@@ -1000,7 +1005,7 @@ export default {
         businessCode: 'attachment',
         configKey: 'fj_wxdd'
       }
-      getBimBusinessDetail(obj).then(res => {
+      getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
       })
     },

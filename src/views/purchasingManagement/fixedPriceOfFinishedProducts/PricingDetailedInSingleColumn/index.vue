@@ -154,7 +154,7 @@ import {
   deletebuyFixedPointPricing,
   linesbuyFixedPointPricing
 } from '@/api/purchasingManagement/purchaseInquirySheet'
-import JNPFForm from '../pricingListedSeparately/Form.vue'
+import JNPFForm from '../../fixedPointPricing/pricingListedSeparately/Form.vue'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import moment from 'moment'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -868,7 +868,7 @@ export default {
     addOrUpdateHandle(id, type) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.JNPFForm.init(id, type)
+        this.$refs.JNPFForm.init(id, type, false, 'finish_product')
       })
     },
     handleDel(id) {

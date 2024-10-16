@@ -547,6 +547,7 @@ import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowE
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
+import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 export default {
   components: {
     workFlow,
@@ -628,6 +629,7 @@ export default {
   },
   created() {
     this.getBimBusinessDetail()
+
   },
   computed: {
     computedValue() {
@@ -681,6 +683,7 @@ export default {
     }
   },
   methods: {
+
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -688,6 +691,218 @@ export default {
       }
       getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
+      })
+    },
+    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
+    getProductClassFun() {
+      let obj0 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: 'pa008',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj0).then((res) => {
+        this.list0 = res.data.records
+      })
+
+      let obj1 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: 'pa007',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj1).then((res) => {
+        this.list1 = res.data.records
+      })
+      let obj2 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: 'pa006',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj2).then((res) => {
+        this.list2 = res.data.records
+      })
+      let obj3 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: 'pa005',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj3).then((res) => {
+        this.list3 = res.data.records
+      })
+      let obj4 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: 'pa002',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj4).then((res) => {
+        this.list4 = res.data.records
+      })
+      let obj5 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: 'pa003',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj5).then((res) => {
+        this.list5 = res.data.records
+      })
+      let obj6 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: 'pa001',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'code'
+          }
+        ]
+      }
+
+      getbimProductAttributesList(obj6).then((res) => {
+        this.list6 = res.data.records
+      })
+      let obj7 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: 'pa015',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj7).then((res) => {
+        this.list7 = res.data.records
+      })
+
+      let obj8 = {
+        pageNum: -1,
+        pageSize: 20,
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'code'
+          }
+        ]
+      }
+      getBimProcessList(obj8).then((res) => {
+        this.list8 = res.data.records
+      })
+
+      let obj9 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: 'pa010',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj9).then((res) => {
+        this.list9 = res.data.records
+      })
+      let obj10 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: 'pa016',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj10).then((res) => {
+        this.list10 = res.data.records
+      })
+
+      // 获取税率(数据字典)
+      getbimProductAttributes('585438081021126405').then((res) => {
+        res.data.list.forEach((item) => {
+          item.taxRate = item.enCode.replace('%', '') * 1
+        })
+        this.taxRateList = res.data.list
       })
     },
     disabledDate(time) {
@@ -747,6 +962,7 @@ export default {
       this.$emit('close')
     },
     init(id, type, approvalFlag) {
+      this.getProductClassFun()
       console.log(id, type)
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = id || ''
@@ -779,9 +995,10 @@ export default {
         }
       })
     },
+
     // 测试审批流
     getBusInfo() {
-      getBusinessFlowInfo('b009')
+      getBusinessFlowInfo('b028')
         .then((res) => {
           if (res.data) {
             if (res.data.enabledMark) {

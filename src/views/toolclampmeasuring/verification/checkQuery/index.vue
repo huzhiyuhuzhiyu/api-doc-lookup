@@ -50,7 +50,7 @@
                 </div>
               </div>
               <JNPF-table v-if="flag" v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column>
-                <el-table-column prop="name" label="任务名称" width="200" sortable="custom" fixed="left">
+                <el-table-column prop="name" label="任务名称" width="200" sortable="custom">
                 </el-table-column>
                 <el-table-column prop="cycleType" label="周期类型" width="120" fixed="right" align="center" sortable="custom">
                   <template slot-scope="scope">
@@ -146,7 +146,7 @@
               </div>
               <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="detailTableData" :data="detailTableData" @sort-change="sortChangeDetail" custom-column>
 
-                <el-table-column prop="name" label="任务名称" width="200" sortable="custom" fixed="left">
+                <el-table-column prop="name" label="任务名称" width="200" sortable="custom">
                 </el-table-column>
                 <el-table-column prop="cycleType" label="周期类型" width="120" fixed="right" align="center" sortable="custom">
                   <template slot-scope="scope">

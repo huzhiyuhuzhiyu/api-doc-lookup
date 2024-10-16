@@ -54,7 +54,7 @@
                 </div>
               </div>
               <JNPF-table v-if="flag" v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column>
-                <el-table-column prop="name" label="任务名称" min-width="200" sortable="custom" fixed="left">
+                <el-table-column prop="name" label="任务名称" min-width="200" sortable="custom">
                 </el-table-column>
                 <el-table-column prop="cycleType" label="周期类型" min-width="120" fixed="right" align="center" sortable="custom">
                   <template slot-scope="scope">
@@ -65,8 +65,8 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="usin" label="用途" min-width="140" />
-                <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" fixed="left" />
-                <el-table-column prop="equipmentIdName" label="工具名称" min-width="200" sortable="custom" fixed="left" />
+                <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" />
+                <el-table-column prop="equipmentIdName" label="工具名称" min-width="200" sortable="custom" />
                 <el-table-column prop="departmentIdName" label="计划保养部门" min-width="150" />
                 <el-table-column prop="maintainerIdName" min-width="120" label="计划保养人" />
                 <el-table-column prop="level" label="保养等级" min-width="140" />
@@ -142,7 +142,7 @@
                 </div>
               </div>
               <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="detailTableData" :data="detailTableData" @sort-change="sortChangeDetail" custom-column>
-                <el-table-column prop="name" label="任务名称" min-width="200" sortable="custom" fixed="left">
+                <el-table-column prop="name" label="任务名称" min-width="200" sortable="custom">
                 </el-table-column>
                 <el-table-column prop="cycleType" label="周期类型" min-width="120" fixed="right" align="center" sortable="custom">
                   <template slot-scope="scope">
@@ -153,8 +153,8 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="usin" label="用途" min-width="140" />
-                <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" fixed="left" />
-                <el-table-column prop="equipmentIdName" label="工具名称" min-width="200" sortable="custom" fixed="left" />
+                <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" />
+                <el-table-column prop="equipmentIdName" label="工具名称" min-width="200" sortable="custom" />
                 <el-table-column prop="departmentIdName" label="计划保养部门" min-width="150" />
                 <el-table-column prop="maintainerIdName" width="120" label="计划保养人" />
                 <el-table-column prop="level" label="保养等级" min-width="140" />

@@ -3,8 +3,8 @@
     <div class="JNPF-preview-main org-form">
       <div class="JNPF-common-page-header">
         <el-page-header @back="goBack" :content="!dataForm.id ? `新建设备` : disabled ? '查看设备' : '编辑设备'" />
-        <div class="options" v-if="!disabled">
-          <el-button type="primary" :loading="btnLoading" @click="handleConfirm()">
+        <div class="options">
+          <el-button type="primary"  v-if="!disabled" :loading="btnLoading" @click="handleConfirm()">
             提交</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>

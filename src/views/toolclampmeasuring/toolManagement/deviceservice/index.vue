@@ -32,7 +32,7 @@
         <div class="JNPF-common-head">
           <div>
             <el-button size="mini" type="success" icon="el-icon-s-claim" @click="handleBatchreview">批量审核派工</el-button>
-            <el-button size="mini" type="primary" icon="icon-ym icon-ym-system" @click="Batchrepair">批量完成维修</el-button>
+            <!-- <el-button size="mini" type="primary" icon="icon-ym icon-ym-system" @click="Batchrepair">批量完成维修</el-button> -->
           </div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top">
@@ -48,15 +48,15 @@
         </div>
 
         <JNPF-table ref="dataTable" hasC @selection-change="handeleInfoData" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column style="padding-bottom: 50px;">
-          <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" fixed="left" sortable="custom">
+          <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
                                 scope.row.maintenanceNo
                             }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" fixed="left" sortable="custom" />
-          <el-table-column prop="equipmentIdName" label="工具名称" min-width="200" fixed="left" sortable="custom"></el-table-column>
+          <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" sortable="custom" />
+          <el-table-column prop="equipmentIdName" label="工具名称" min-width="200" sortable="custom"></el-table-column>
           <el-table-column prop="usin" label="用途" min-width="140" />
           <el-table-column prop="frontPicList" label="故障情况照片" min-width="140">
             <template slot-scope="scope">

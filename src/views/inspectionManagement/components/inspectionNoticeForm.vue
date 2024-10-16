@@ -198,7 +198,6 @@ export default {
         businessCode: 'attachment',
         configKey: `fj_${inspectionType}jyd`
       }
-      console.log(obj, 'obj')
       getBimBusinessDetail(obj).then(res => {
         this.isattachmentswitch = res.data.configValue1
       })

@@ -56,7 +56,7 @@
                 <JNPF-col-table v-model="productList" ref="sleeveForm" :tableItems="ProductTableItemss"
                   :openMode="openMode" />
               </el-tab-pane>
-              <el-tab-pane label="附件" name="annex">
+              <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
                 <UploadWj v-model="datafilelist" :disabled="btnType === 'look' || btnType === 'setLoss'"
                   :detailed="btnType === 'look' || btnType === 'setLoss'"></UploadWj>
               </el-tab-pane>
@@ -119,7 +119,7 @@
 
 <script>
 import { getDownloadUrl } from '@/api/common'
-import { getbimDrawingData } from "@/api/basicData/index";
+import { getbimDrawingData, getBimBusinessDetail } from "@/api/basicData/index";
 import Preview from "@/components/upload-wj/Preview.vue";
 import { addQcUnqualifiedData, updateQcUnqualifiedData, detailQcUnqualifiedData, detailInspectionData, lossQcUnqualifiedData } from '@/api/inspectionManagement/index' // 产品检验项目列表
 import { inspectionTypeList, inspectionResultsList, inspectionMethodList } from '../data.js'
@@ -137,6 +137,7 @@ export default {
   mixins: [busFlow],
   data() {
     return {
+      isattachmentswitch: '',
       datafilelist: [],
       activeName: "jcInfo",
       activeNames: ['inspectionItem', 'basicInfo', 'inspectionInfo', 'adverseCausesInfo'],
@@ -228,6 +229,16 @@ export default {
     ]
   },
   methods: {
+    getBimBusinessDetail(inspectionType) {
+      console.log(inspectionType, 'businessCode')
+      let obj = {
+        businessCode: 'attachment',
+        configKey: `fj_${inspectionType}jyd`
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     async fetchData(code, flag) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code)
@@ -504,6 +515,7 @@ export default {
     },
     // 初始化
     async init(id, btnType, approvalFlag, inspectionType, businessCode) {
+      this.getBimBusinessDetail(inspectionType)
       this.inspectionOrderNoChange(id)
       this.visible = true
       this.formLoading = true

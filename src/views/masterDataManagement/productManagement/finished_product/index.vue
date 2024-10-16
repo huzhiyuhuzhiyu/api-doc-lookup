@@ -98,7 +98,7 @@
             </el-dropdown>
             <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click="aiAdd">智能新建</el-button> -->
             <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
-            <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm"> 导入</el-button>
+            <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
             <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
               icon="el-icon-download" @click="exportForm">
               导出
@@ -238,7 +238,8 @@
         hide-required-asterisk="fasle">
         <el-form-item label="产品编码" prop="code">
           <template slot="label">
-            产品编码<span class="required">*</span>
+            产品编码
+            <span class="required">*</span>
           </template>
           <el-input v-model="quickForm.code" placeholder="请输入产品编码"
             :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true"></el-input>
@@ -246,14 +247,16 @@
 
         <el-form-item label="品名规格" prop="drawingNo">
           <template slot="label">
-            品名规格<span class="required">*</span>
+            品名规格
+            <span class="required">*</span>
           </template>
           <el-input v-model="quickForm.drawingNo" placeholder="请输入品名规格"></el-input>
         </el-form-item>
 
         <el-form-item label="产品分类" prop="productCategoryName">
           <template slot="label">
-            产品分类<span class="required">*</span>
+            产品分类
+            <span class="required">*</span>
           </template>
           <ComSelect-list v-model="quickForm.productCategoryName" placeholder="请选择产品分类" auth
             @change="productCategoryChange" :title="'选择产品分类'" :method="getcategoryCoop" :requestObj="quickRequestObj"
@@ -261,7 +264,8 @@
         </el-form-item>
         <el-form-item label="单位" prop="unit">
           <template slot="label">
-            单位<span class="required">*</span>
+            单位
+            <span class="required">*</span>
           </template>
           <el-select v-model="quickForm.unit" placeholder="请选择单位" style="width: 100%;" filterable>
             <el-option v-for="item in unitOptions" :key="item.value" :label="item.label"
@@ -270,7 +274,8 @@
         </el-form-item>
         <el-form-item label="产品来源" prop="productSource">
           <template slot="label">
-            产品来源<span class="required">*</span>
+            产品来源
+            <span class="required">*</span>
           </template>
           <el-select v-model="quickForm.productSource" placeholder="请选择产品来源" style="width: 100%;">
             <el-option v-for="item in productSourceOptions" :key="item.value" :label="item.label"
@@ -293,7 +298,9 @@ import {
   getProductList,
   deleteProduct,
   uploadCpProductData,
-  cpAddProduct
+  cpAddProduct,
+  checkCodeExist,
+  checkDrawExist
 } from '@/api/masterDataManagement/productManage'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getcategoryTree as getcategoryCoop } from '@/api/basicData/materialSettings'
@@ -326,8 +333,61 @@ export default {
       },
       codeConfig: {},
       quickRules: {
-        code: [{ required: true, message: '请输入活动名称', trigger: 'blur' }],
-        drawingNo: [{ required: true, message: '请输入品名规格', trigger: 'blur' }],
+        code: [{ required: true, message: '请输入产品编码', trigger: 'blur' }, {
+          validator: (rule, value, callback) => {
+            if (!value) {
+              callback()
+            } else if (this.quickForm.code === this.autoDrawingNo) {
+              callback()
+            } else {
+              // this.jnpf.specialCodeUrl 对浏览器无法解析的url字符进行手动转码
+              checkCodeExist({
+                id: this.quickForm.id || '',
+                code: this.jnpf.specialCodeUrl(this.quickForm.code)
+              })
+                .then((res) => {
+                  if (!res.data) {
+                    callback()
+                  } else {
+                    callback(new Error('此产品编码已存在'))
+                  }
+                })
+                .catch((err) => {
+                  callback(new Error(' '))
+                })
+            }
+          },
+          trigger: 'blur'
+        }],
+        drawingNo: [
+          { required: true, message: '请输入品名规格', trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              if (!value) {
+                callback()
+              } else if (this.quickForm.drawingNo === this.autoDrawingNo) {
+                callback()
+              } else {
+                // this.jnpf.specialCodeUrl 对浏览器无法解析的url字符进行手动转码
+                checkDrawExist({
+                  id: this.quickForm.id || '',
+                  drawingNo: this.jnpf.specialCodeUrl(this.quickForm.drawingNo)
+                })
+                  .then((res) => {
+                    if (!res.data) {
+                      callback()
+                    } else {
+                      callback(new Error('此品名规格已存在'))
+                    }
+                  })
+                  .catch((err) => {
+                    callback(new Error(' '))
+                  })
+              }
+            },
+            trigger: 'blur'
+          }
+        ],
         unit: [{ required: true, message: '请输入单位', trigger: 'blur' }],
         productCategoryName: [{ required: true, message: '请选择产品分类', trigger: 'change' }],
         productSource: [{ required: true, message: '请选择产品来源', trigger: 'change' }]
@@ -380,7 +440,7 @@ export default {
       listQuery: {},
       productStatusList: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }], // 产品状态
       productSourceList: [
-        { label: "组装", value: "assemble" },
+        { label: '组装', value: 'assemble' },
         { label: '生产', value: 'produce' },
         { label: '采购', value: 'purchase' },
         { label: '外协', value: 'out' }
@@ -632,7 +692,6 @@ export default {
                   this.quickVisible = false
                   this.$refs.quickForm.resetFields()
                   this.initData()
-                  
                 }
               })
             }
@@ -642,11 +701,11 @@ export default {
         }
       })
     },
-    async fetchData(code) {
+    async fetchData(code, flag) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code)
         this.codeConfig = data
-        if (!data.modifyFlag && data.codeWay == 'auto') {
+        if (flag) {
           this.quickForm.code = data.number
         }
       } catch (error) { }
@@ -1468,7 +1527,7 @@ export default {
     quickAdd() {
       this.quickVisible = true
 
-      this.fetchData('CPBM')
+      this.fetchData('CPBM', true)
       this.quickForm.productSource = 'assemble'
     },
     superQuerySearch(query) {

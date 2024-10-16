@@ -82,7 +82,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="maintenancePersonnelName" label="维修负责人" width="120"></el-table-column>
-          <el-table-column prop="waitDuration" label="故障响应时长(小时)" min-width="160" />
+          <el-table-column prop="waitDuration" label="故障响应时长(小时)" min-width="180" />
           <el-table-column prop="sparePartsFlag" label="是否更换备件" width="140">
             <template slot-scope="scope">
               <div v-if="scope.row.sparePartsFlag == '0'"><el-tag type="warning">否</el-tag></div>

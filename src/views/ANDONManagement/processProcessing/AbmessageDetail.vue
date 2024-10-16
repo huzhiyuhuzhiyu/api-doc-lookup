@@ -2,7 +2,7 @@
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center">
       <div class="JNPF-common-layout-main JNPF-flex-main">
-        <Form v-if="formVisible" ref="Form" @close="closeForm" />
+        <Form v-if="formVisible" ref="Form" @close="closeForm" :flowType="flowType" />
         <el-empty description="暂无数据" :image-size="120" v-else></el-empty>
       </div>
     </div>
@@ -17,7 +17,8 @@ export default {
   components: { Form },
   data() {
     return {
-      formVisible: false
+      formVisible: false,
+      flowType:2
     }
   },
   created() {
@@ -46,6 +47,7 @@ export default {
       // type 1-我发起的 2-待办 3-抄送
       if (!this.config) return this.formVisible = false
       let item = JSON.parse(Base64.decode(this.config))
+      this.flowType = item.type 
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.Form.init(item.businessId)

@@ -4,7 +4,7 @@
       <div :class="['JNPF-common-page-header', btnType ? 'noButtons' : '']">
         <el-page-header @back="$emit('close', true)" content="异常处理" />
         <div class="options" v-if="btnType !== 'look'">
-          <el-button type="primary" v-if="dataForm.processStatus === 'processing'" size="mini" :loading="btnLoading" @click="handleConfirm()">
+          <el-button type="primary" v-if="dataForm.processStatus === 'processing' && flowType === 2" size="mini" :loading="btnLoading" @click="handleConfirm()">
             处理</el-button>
           <el-button type="primary" v-if="type === 'system'" size="mini" :loading="btnLoading" @click="lookRecardData()">
             查看异常数据</el-button>
@@ -50,6 +50,7 @@ import Process from '@/components/AbnormalProcess/Preview'
 const Base64 = require('js-base64').Base64
 export default {
   components: { Process ,ExceptForm},
+  props:['flowType'],
   data() {
     return {
       visible: false,

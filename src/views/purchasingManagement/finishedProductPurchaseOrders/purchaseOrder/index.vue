@@ -6,19 +6,19 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listQuery.orderNo" placeholder="请输入采购单号" clearable
+                <el-input v-model.trim="listQuery.orderNo" placeholder="采购单号" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listQuery.cooperativePartnerCode" placeholder="请输入供应商编码" clearable
+                <el-input v-model.trim="listQuery.cooperativePartnerCode" placeholder="供应商编码" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listQuery.cooperativePartnerName" placeholder="请输入供应商名称" clearable
+                <el-input v-model.trim="listQuery.cooperativePartnerName" placeholder="供应商名称" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
@@ -32,13 +32,10 @@
                 </el-button>
               </el-form-item>
             </el-col>
-            <!-- <el-button style="float: right;margin-right: 20px;" size="mini" type="primary"
-                  icon="icon-ym icon-ym-report-icon-search-setting" @click="moreQueries()">更多查询</el-button> -->
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
-            <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
             <div>
               <el-button :loading="btnLoading" size="mini" type="success" @click="handleBatch()">批量完成</el-button>
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('tableForm')">
@@ -219,7 +216,7 @@ import {
   purPurchaseBatch,
   purPurchaseBatchLine
 } from '@/api/purchasingAndOutsourcingOrders/index'
-import JNPFForm from '../../purchaseOrders/purchaseOrder/Form.vue'
+import JNPFForm from './Form.vue'
 import moment from 'moment'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 // import withdrawnForm from './withranForm'

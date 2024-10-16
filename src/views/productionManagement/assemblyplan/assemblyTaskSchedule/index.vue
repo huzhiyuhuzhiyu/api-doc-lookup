@@ -37,7 +37,7 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading" >
           <div class="JNPF-common-head">
             <div>
             </div>
@@ -56,8 +56,8 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" v-loading="listLoading" :data="tableData"
-            :fixedNO="true" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList" v-if="showFlag">
+          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData"  
+            :fixedNO="true" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList"  v-if="showFlag">
             <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'all')">{{
@@ -183,7 +183,7 @@ export default {
   components: { SuperQuery, Form,TaskSchedule },
   data() {
     return {
-      showFlag:false,
+      showFlag:true,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -207,7 +207,7 @@ export default {
       btnLoading: false,
       title: "更多查询",
       tableData: [],
-      listLoading: false,
+      listLoading: true,
       detailFlag: false,
       orderForm: {},
       orderFormlist: {
@@ -493,8 +493,8 @@ export default {
       this.search('basic')
     },
     initData() {
-      this.listLoading = true
-      this.showFlag=false
+          this.listLoading = true
+          this.showFlag=false
       ordershengchanList(this.orderForm).then(res => {
         res.data.records.forEach(item => {
           // 初始化 processInfoList 为一个空数组  
@@ -525,9 +525,12 @@ export default {
         },  res.data.records[0]);
         this.maxWidth=longestProcessInfo.processInfoList.length*100+50
         this.showFlag=true
+        setTimeout(() => {
+          this.listLoading = false
+        }, 500);
         this.tableData = res.data.records
         this.total = res.data.total
-        this.listLoading = false
+        // this.listLoading = false
       }).catch(() => {
         this.listLoading = false
       })

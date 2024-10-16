@@ -4,7 +4,7 @@
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
           <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-          <el-page-header @back="goBack" :content="'任务信息' + '(' + dataForm.orderNo + ')'" />
+          <el-page-header @back="goBack" :content="'任务信息'" />
           <div class="options">
             <el-button type="primary" size="mini" @click="associationTaskFun">查看关联任务</el-button>
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
@@ -14,7 +14,13 @@
           <el-collapse v-model="activeNames1" class="orderInfo">
             <el-collapse-item title="任务信息" name="basicInfo">
               <div class="stoclInfo">
+                <el-descriptions :column="1" class="orderNo">
+                  <el-descriptions-item label="任务单号"  >{{ dataForm.orderNo
+                    }}</el-descriptions-item>
+                 
+                </el-descriptions>
                 <el-descriptions :column="1" class="box">
+                
                   <el-descriptions-item label="品名规格" class="drawingNo">{{ dataForm.productDrawingNo
                     }} <img v-if="dataForm.urgentFlag" src="@/assets/images/emergency1.png" alt=""
                       style="width: 22px;vertical-align: top;"> </el-descriptions-item>
@@ -747,17 +753,15 @@ $footerPadding: '10px';
 
 ::v-deep .el-descriptions-item__label {
   font-size: 16px;
-  font-weight: bold;
 }
 
 ::v-deep .el-descriptions-item__content {
-  font-size: 16px;
-  font-weight: bold;
   width: 200px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   display: inline-block !important;
+  font-size: 16px;
 }
 
 .tableContainer {
@@ -780,17 +784,22 @@ $footerPadding: '10px';
   padding-top: 0;
 }
 ::v-deep .el-radio-button__inner{
-  padding: 12px 15px!important;
+  padding: 11.5px 15px!important;
   background-color: #fafafa;
   border: none;
   border-right: 1px solid #dcdfe6;
-  font-size: 18px!important;
-  font-weight: bold;
+  // font-size: 18px!important;
+  // font-weight: bold;
+  border-bottom: 1px solid #dcdfe6;
   }
   ::v-deep .el-radio-button:last-child .el-radio-button__inner,::v-deep .el-radio-button:first-child .el-radio-button__inner{
     border-radius: 0;
   }
   .indfo ::v-deep .el-collapse-item__header{
     display: none;
+  }
+  .orderNo ::v-deep .el-descriptions-item__label,.orderNo ::v-deep .el-descriptions-item__content{
+    font-size: 20px;
+    font-weight: bold;
   }
 </style>

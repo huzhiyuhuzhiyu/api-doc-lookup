@@ -1221,21 +1221,22 @@ box-card:nth-child(n+3) {
   background: linear-gradient(0deg, #11B481 0.00%, #6ADE7D 100.00%);
   padding: 20px;
   color: #fff;
-  border-radius: 4px;
   padding: 20px;
   color: #fff;
-  border-radius: 4px;
-  box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.20);
   padding-top: 0;
+  border-bottom: 1px solid #ebeef5;
+  border-left: 1px solid #ebeef5;
 }
 
 .rightInfo {
+  width: 52%;
   /* border: 1px solid; */
   border-radius: 4px;
   // margin-left: 20px;
   float: right;
   box-shadow: beige;
-  box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.20);
+  border-bottom: 1px solid #ebeef5;
+  border-right: 1px solid #ebeef5;
 }
 
 .ipt ::v-deep.el-input__inner {
@@ -1301,14 +1302,10 @@ box-card:nth-child(n+3) {
 }
 .process{
   padding-top: 5px;
-    /* margin-top: 5px; */
-    /* border-bottom: 1px solid rgb(235, 238, 245); */
     padding: 0px 10px;
-    /* margin-bottom: 5px; */
-    /* border-top: 1px solid rgb(235, 238, 245); */
-    border: 1px solid rgb(235, 238, 245);
+    border: 1px solid #dcdfe6;
     padding-top: 5px;
-    background: rgb(242, 242, 242);
+    background: #f2f2f2;
 }
 .extend{
   width: 150px;

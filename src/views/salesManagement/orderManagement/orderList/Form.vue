@@ -56,7 +56,7 @@
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="所属销售" prop="salesId">
-                          <el-select v-model="dataForm.salesId" placeholder="请选择所属销售人员" clearable style="width: 100%;"
+                          <el-select v-model="dataForm.salesId" placeholder="请选择所属销售人员" style="width: 100%;"
                             :disabled="salesFlag" filterable @change="selectsales">
                             <el-option v-for="(item, index) in salesList" :key="index" :label="item.name"
                               :value="item.id"></el-option>
@@ -467,7 +467,7 @@
                   </el-col>
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="所属销售" prop="salesId">
-                      <el-select v-model="dataForm.salesId" placeholder="请选择所属销售人员" clearable style="width: 100%;"
+                      <el-select v-model="dataForm.salesId" placeholder="请选择所属销售人员" style="width: 100%;"
                         :disabled="salesFlag" filterable @change="selectsales">
                         <el-option v-for="(item, index) in salesList" :key="index" :label="item.name"
                           :value="item.id"></el-option>
@@ -1333,6 +1333,7 @@ export default {
         salesId: [
           { required: true, message: '所属销售不能为空', trigger: 'change' }
         ],
+
         orderNo: [{ required: true, message: "请输入订单号", trigger: 'blur' }],
         orderDate: [{ required: true, message: '订单日期不能为空', trigger: 'change' }],
         deliveryDate: [{ required: true, message: '交货日期不能为空', trigger: 'change' }],
@@ -1419,7 +1420,18 @@ export default {
         this.organizeIdTrees.shift()
       }
     })
-    this.getProductClassFun()
+    getOrganization({ keyword: "", organizeId: this.dataForm.departmentId }).then(res => {
+      console.log(66666);
+      if (res.data.length > 0) {
+        res.data.forEach(item => {
+          this.$set(item, 'name', item.fullName.split('/')[0])
+        });
+      }
+      console.log(res.data);
+      this.salesList = res.data
+
+    })
+
   },
   beforeDestroy() {
   },
@@ -1919,22 +1931,19 @@ export default {
       }
     },
     selectsales(val) {
-      console.log(val);
-      // 找到 id 为 222 的数据  
+      console.log(111, val);
+      this.$nextTick(() => {
+        this.$refs['dataForm'].validateField('salesId')
+
+      })
       const data = this.salesList.find(item => item.id === val);
+      console.log(data);
+      this.dataForm.salesName = data.name
+      this.dataForm.salesId = data.id
 
-      // 如果找到了对应数据，就将 name 赋值给 label  
-      if (data) {
-        console.log(data.name);
-        this.dataForm.salesName = data.name
-        this.dataForm.salesId = val
-        console.log("1", this.$refs.dataForm);
-        setTimeout(() => {
-          this.$refs.dataForm.clearValidate('salesId')
+      // this.$forceUpdate()
 
-        }, 100);
-        this.$forceUpdate()
-      }
+
     },
 
 
@@ -1942,7 +1951,7 @@ export default {
       this.$nextTick(() => { this.$refs['dataForm'].validateField('departmentId') })
       this.dataForm.salesName = ""
       this.dataForm.salesId = ""
-      this.$forceUpdate()
+      // this.$forceUpdate()
       if (!val || !val.length) return this.dataForm.departmentId = ''
       this.dataForm.departmentId = val[val.length - 1]
       this.salesFlag = false
@@ -2368,67 +2377,85 @@ export default {
     },
     // 选择客户
     seleceCustomer(e) {
-      console.log("e====>", e);
-      // if (this.productData.length > 0) {
-      //   this.$confirm('此操作将清空产品数据, 是否继续?', '提示', {
-      //     confirmButtonText: '确定',
-      //     cancelButtonText: '取消',
-      //     type: 'warning'
-      //   }).then(() => {
-      // this.productData = []
-      getCooperativeInfo(e.id).then(res => {
-        let addressInfo = {}
-        if (res.data.deliveryAddressList.length > 0) {
-          res.data.deliveryAddressList.forEach((item, index) => {
-            if (item.defaultFlag) {
-              addressInfo = item
-              this.dataForm.recipient = addressInfo.recipient
-              this.dataForm.phone = addressInfo.phone
-              this.dataForm.country = addressInfo.country === '中国' ? 'CN' : addressInfo.country
-              if (this.dataForm.country === 'CN') {
+      console.log("e====>", e,this.productData);
+      let arr = JSON.parse(JSON.stringify(this.productData))
+      let index = arr.findIndex(item =>
+        item.drawingNo === "" &&
+        item.productsId === "" &&
+        item.num === "" &&
+        item.price === "" &&
+        item.deliveryDate === ""
+      )
+      if (index !== -1) {
+        console.log(6666);
+        // 删除空行
+        arr.splice(index, 1);
+      }
+      if (arr.length > 0) {
+        this.$confirm('此操作将清空产品数据, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.productData = []
+          let obj = JSON.parse(JSON.stringify(this.createdData))
+      this.productData.push(obj)
+          getCooperativeInfo(e.id).then(res => {
+            let addressInfo = {}
+            if (res.data.deliveryAddressList.length > 0) {
+              res.data.deliveryAddressList.forEach((item, index) => {
+                if (item.defaultFlag) {
+                  addressInfo = item
+                  this.dataForm.recipient = addressInfo.recipient
+                  this.dataForm.phone = addressInfo.phone
+                  this.dataForm.country = addressInfo.country === '中国' ? 'CN' : addressInfo.country
+                  if (this.dataForm.country === 'CN') {
 
-                this.dataForm.province = addressInfo.province
-                this.dataForm.city = addressInfo.city
-                this.dataForm.area = addressInfo.area
-                this.dataForm.address = addressInfo.address
-                this.defaultAddress = addressInfo.countryText + addressInfo.provinceText + addressInfo.cityText + addressInfo.areaText + addressInfo.address
-              } else {
-                this.dataForm.province = ''
-                this.dataForm.city = ''
-                this.dataForm.area = ''
-                this.defaultAddress = (addressInfo.countryText ? addressInfo.countryText : '') + addressInfo.address
-              }
+                    this.dataForm.province = addressInfo.province
+                    this.dataForm.city = addressInfo.city
+                    this.dataForm.area = addressInfo.area
+                    this.dataForm.address = addressInfo.address
+                    this.defaultAddress = addressInfo.countryText + addressInfo.provinceText + addressInfo.cityText + addressInfo.areaText + addressInfo.address
+                  } else {
+                    this.dataForm.province = ''
+                    this.dataForm.city = ''
+                    this.dataForm.area = ''
+                    this.defaultAddress = (addressInfo.countryText ? addressInfo.countryText : '') + addressInfo.address
+                  }
+                } else {
+                  this.dataForm.recipient = res.data.deliveryAddressList[0].recipient
+                  this.dataForm.phone = res.data.deliveryAddressList[0].phone
+                  this.dataForm.country = res.data.deliveryAddressList[0].country === '中国' ? 'CN' : res.data.deliveryAddressList[0].country
+                  if (this.dataForm.country === 'CN') {
+
+                    this.dataForm.province = res.data.deliveryAddressList[0].province
+                    this.dataForm.city = res.data.deliveryAddressList[0].city
+                    this.dataForm.area = res.data.deliveryAddressList[0].area
+                    this.dataForm.address = res.data.deliveryAddressList[0].address
+                    this.defaultAddress = (res.data.deliveryAddressList[0].countryText ? res.data.deliveryAddressList[0].countryText : '') + res.data.deliveryAddressList[0].provinceText + res.data.deliveryAddressList[0].cityText + res.data.deliveryAddressList[0].areaText + res.data.deliveryAddressList[0].address
+                  } else {
+                    this.dataForm.province = ''
+                    this.dataForm.city = ''
+                    this.dataForm.area = ''
+                    this.defaultAddress = (res.data.deliveryAddressList[0].countryText ? res.data.deliveryAddressList[0].countryText : '') + res.data.deliveryAddressList[0].address
+                  }
+                }
+              });
             } else {
-              this.dataForm.recipient = res.data.deliveryAddressList[0].recipient
-              this.dataForm.phone = res.data.deliveryAddressList[0].phone
-              this.dataForm.country = res.data.deliveryAddressList[0].country === '中国' ? 'CN' : res.data.deliveryAddressList[0].country
-              if (this.dataForm.country === 'CN') {
-
-                this.dataForm.province = res.data.deliveryAddressList[0].province
-                this.dataForm.city = res.data.deliveryAddressList[0].city
-                this.dataForm.area = res.data.deliveryAddressList[0].area
-                this.dataForm.address = res.data.deliveryAddressList[0].address
-                this.defaultAddress = (res.data.deliveryAddressList[0].countryText ? res.data.deliveryAddressList[0].countryText : '') + res.data.deliveryAddressList[0].provinceText + res.data.deliveryAddressList[0].cityText + res.data.deliveryAddressList[0].areaText + res.data.deliveryAddressList[0].address
-              } else {
-                this.dataForm.province = ''
-                this.dataForm.city = ''
-                this.dataForm.area = ''
-                this.defaultAddress = (res.data.deliveryAddressList[0].countryText ? res.data.deliveryAddressList[0].countryText : '') + res.data.deliveryAddressList[0].address
-              }
+              this.dataForm.recipient = ""
+              this.dataForm.phone = ""
+              this.dataForm.country = ""
+              this.dataForm.province = ""
+              this.dataForm.city = ""
+              this.dataForm.area = ""
+              this.dataForm.address = ""
+              this.defaultAddress = ""
             }
-          });
-        } else {
-          this.dataForm.recipient = ""
-          this.dataForm.phone = ""
-          this.dataForm.country = ""
-          this.dataForm.province = ""
-          this.dataForm.city = ""
-          this.dataForm.area = ""
-          this.dataForm.address = ""
-          this.defaultAddress = ""
-        }
 
-      })
+          })
+
+        })
+      }
       this.customerData = e
       this.dataForm.cooperativePartnerId = e.id
       console.log(56565656);
@@ -2441,7 +2468,6 @@ export default {
       this.customerVisible = false
 
 
-      // }
       if (this.dataForm.orderType != 'normal' && this.dataForm.orderType != 'urgent') {
         this.contractFlag = true
       } else {
@@ -2676,11 +2702,7 @@ export default {
                 })
                 getOrganization({ keyword: "", organizeId: this.dataForm.departmentId }).then(res => {
                   console.log(9834, res);
-                  if (res.data.length > 0) {
-                    res.data.forEach(item => {
-                      item.name = item.fullName.split('/')[0]
-                    });
-                  }
+
                   this.salesList = res.data
                 })
               } else {
@@ -2789,6 +2811,9 @@ export default {
           departmentName: "",
           cooperativePartnerCode: "",
           approvalFlag: false,
+          departmentId: "",
+          salesName: "",
+          salesId: "",
         },
           this.dataForm.departmentId = this.userInfo.departmentId
         this.dataForm.salesName = this.userInfo.userName
@@ -2824,7 +2849,7 @@ export default {
       if (btnType != 'look') {
         let obj = JSON.parse(JSON.stringify(this.createdData))
         this.productData.push(obj)
-
+        this.getProductClassFun()
       }
 
 
@@ -2881,7 +2906,7 @@ export default {
             orderLineList: [],
             flowData: this.flowData
           }
-          let filteredArr=[]
+          let filteredArr = []
           if (this.productData.length < 1) {
             submitFlag = false
             this.$message({
@@ -2902,7 +2927,7 @@ export default {
               console.log(6666);
               // 删除空行
               this.productData.splice(index, 1);
-            } 
+            }
             for (let index = 0; index < this.productData.length; index++) {
               const item = this.productData[index];
               if (!item.productsId) {
@@ -3045,46 +3070,46 @@ export default {
 
 
             }
-            console.log("productData",this.productData);
-              filteredArr = this.productData.filter(item => item.drawingNo && item.productsId);
-              console.log("filteredArr",filteredArr);
+            console.log("productData", this.productData);
+            filteredArr = this.productData.filter(item => item.drawingNo && item.productsId);
+            console.log("filteredArr", filteredArr);
             obj.orderLineList = filteredArr
           }
-         setTimeout(() => {
-          if (submitFlag === false) return
-          this.btnLoading = true
-          let formMethod = null;
-          if (this.btnType == 'edit') {
-            formMethod = editOrders
-            this.btnText = "继续修改"
-          } else if (this.btnType == 'add' || this.btnType == 'copy') {
-            formMethod = addOrders
-            this.btnText = "继续新增"
-          }
-          console.log("obj",obj);
-          formMethod(obj).then(res => {
-            let msg = "";
-            if (value == "draft") {
-              this.submitmethodsTitle = "保存成功"
-            } else {
-              this.submitmethodsTitle = "提交成功"
-
+          setTimeout(() => {
+            if (submitFlag === false) return
+            this.btnLoading = true
+            let formMethod = null;
+            if (this.btnType == 'edit') {
+              formMethod = editOrders
+              this.btnText = "继续修改"
+            } else if (this.btnType == 'add' || this.btnType == 'copy') {
+              formMethod = addOrders
+              this.btnText = "继续新增"
             }
-            this.tipsvisible = true
-            // this.$message({
-            //   message: msg,
-            //   type: 'success',
-            //   duration: 1500,
-            //   onClose: () => {
-            //     this.visible = false
-            //     this.btnLoading = false
-            //     this.$emit('close', true)
-            //   }
-            // })
-          }).catch(() => {
-            this.btnLoading = false
-          })
-         }, 100);
+            console.log("obj", obj);
+            formMethod(obj).then(res => {
+              let msg = "";
+              if (value == "draft") {
+                this.submitmethodsTitle = "保存成功"
+              } else {
+                this.submitmethodsTitle = "提交成功"
+
+              }
+              this.tipsvisible = true
+              // this.$message({
+              //   message: msg,
+              //   type: 'success',
+              //   duration: 1500,
+              //   onClose: () => {
+              //     this.visible = false
+              //     this.btnLoading = false
+              //     this.$emit('close', true)
+              //   }
+              // })
+            }).catch(() => {
+              this.btnLoading = false
+            })
+          }, 100);
 
         } else {
           this.btnLoading = false

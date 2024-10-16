@@ -743,14 +743,15 @@ export default {
     totalNum: function () {
       var totalNum = 0;
       for (var i = 0; i < this.dataFormTwo.lines.length; i++) {
-        totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.lines[i].num])
+        totalNum =  this.jnpf.numberFormat(this.jnpf.math('add', [totalNum, this.dataFormTwo.lines[i].num]), 2) 
       }
       return totalNum
     },
     totalAmount: function () {
+      console.log(5555);
       var totalAmount = 0;
       for (var i = 0; i < this.dataFormTwo.lines.length; i++) {
-        totalAmount = this.jnpf.math('add', [totalAmount, this.dataFormTwo.lines[i].amounts])
+        totalAmount =  this.jnpf.numberFormat(this.jnpf.math('add', [totalAmount, this.dataFormTwo.lines[i].amounts]), 2)  
       }
       return totalAmount
     },
@@ -886,10 +887,14 @@ export default {
     },
     handleSelect(row, index, item) {
       //返回的意见点击选择触发事件
-      console.log("产品数据", index, this.dataFormTwo.lines[index]);
-      let customerDrawingNumber=JSON.parse(JSON.stringify(this.dataFormTwo.lines[index].customerDrawingNumber))
+      console.log("产品数据", index, this.dataFormTwo.lines[index], item);
+      let customerDrawingNumber
+      let obj = JSON.parse(JSON.stringify(this.createdData))
+      obj.taxRate = this.taxRate * 1
+
+      if (this.dataFormTwo.lines[index].customerDrawingNumber) customerDrawingNumber = JSON.parse(JSON.stringify(this.dataFormTwo.lines[index].customerDrawingNumber))
       if (item.value) {
-        let obj = {
+        let objs = {
           productDrawingNo: item.value,
           customerDrawingNumber: "",
           cooperativePartnerId: this.dataForm.cooperativePartnerId,
@@ -900,34 +905,38 @@ export default {
             column: "quotationTime"
           }],
         }
-        getQuotationmxLists(obj).then(res => {
+        getQuotationmxLists(objs).then(res => {
           console.log("产品信息", res);
           if (res.data.records.length) {
-            res.data.records[0].customerProductDrawingNo=customerDrawingNumber?customerDrawingNumber: res.data.records[0].customerProductDrawingNo
-            this.dataFormTwo.lines[index]=res.data.records[0]
+            // res.data.records[0].customerProductDrawingNo = customerDrawingNumber ? customerDrawingNumber : res.data.records[0].customerProductDrawingNo
+            res.data.records[0].taxRate = res.data.records[0].taxRate * 1
+            this.dataFormTwo.lines[index] = res.data.records[0]
             // this.$set(this.dataFormTwo.lines, index, res.data.records[0])
             console.log(this.dataFormTwo.lines);
-            let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.taxRate));
-            if (!exists && res.data.taxRate) {
+            let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.records[0].taxRate));
+            if (!exists && res.data.records[0].taxRate) {
               let obj = {
-                taxRate: res.data.taxRate * 1,
-                fullName: res.data.taxRate + '%',
-                enCode: res.data.taxRate + '%',
+                taxRate: res.data.records[0].taxRate * 1,
+                fullName: res.data.records[0].taxRate + '%',
+                enCode: res.data.records[0].taxRate + '%',
               }
               this.taxRateList.push(obj)
             }
           } else {
-            console.log("index", index, this.dataFormTwo.lines);
+            console.log("index1", index, this.dataFormTwo.lines);
+
             item.data.taxRate = this.taxRate * 1
             this.$set(item.data, 'productDrawingNo', item.value)
+            this.$set(item.data, 'unitPrice', "")
             this.$set(item.data, 'customerProductDrawingNo', customerDrawingNumber)
             item.data.productsId = item.data.id
-            console.log("item.da",item.data);
-            this.dataFormTwo.lines[index]=item.data
-            // this.$set(this.dataFormTwo.lines, index, item.data)
+            console.log("item.da", item.data);
             console.log("this.dataFormTwo.lines", this.dataFormTwo.lines);
-            this.watchPrice(row, index)
+            this.$set(this.dataFormTwo.lines, index, item.data)
+            // this.$set(this.dataFormTwo.lines, index, item.data)
+            this.watchPrice(this.dataFormTwo.lines[index], index)
           }
+          this.dataFormTwo.lines.push(obj)
         })
       }
     },
@@ -1134,7 +1143,7 @@ export default {
           }
           this.taxRate = partnerInfo.taxRate || ""
           this.dataFormTwo.lines.forEach(row => {
-            row.taxRate = this.taxRate*1
+            row.taxRate = this.taxRate * 1
           })
         }
       } else { // 不选择任何内容，置空绑定的值
@@ -1181,6 +1190,8 @@ export default {
     },
     // 监听单价(含税)输入
     watchPrice(row, index) {
+      let productArr = [...this.dataFormTwo.lines]
+      
       row.unitPrice = row.unitPrice ? row.unitPrice.replace(/[^\d.]/g, '') : ''
       // 单价处理
       if (row.unitPrice.length == 1 && row.unitPrice == '.') {
@@ -1222,45 +1233,33 @@ export default {
         }
       }
       if (row.unitPrice && row.unitPrice != '0') {
-        let b = this.jnpf.numberFormat((row.unitPrice / (1 + row.taxRate / 100)), 2)
+        let b = this.jnpf.numberFormat(this.jnpf.math('divide', [row.unitPrice, 1 + row.taxRate / 100]), 2)
         row.excludingTaxUnitPrice = b ? b : 0
+        productArr[index].excludingTaxUnitPrice = b ? b : 0
       } else {
         row.excludingTaxUnitPrice = ''
       }
 
-      if (!row.num || !row.unitPrice) {
-        row.amounts = ''
-        row.totalTaxAmount = ''
-        this.dataForm.totalAmount = 0
-      } else {
-        let a = this.jnpf.numberFormat((row.unitPrice * row.num), 2)
+    
+        let a = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.unitPrice, row.num]), 2)
         console.log("aaa", a);
-        row.amounts = a ? a : '' // 含税金额
-        console.log("row.amounts", row.amounts);
-        console.log("this.s", this.dataFormTwo.lines);
-      }
-      var totalPrice = 0;
-      for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
-        let item = this.dataFormTwo.lines[a]
-        console.log("item", item.amounts);
+        row.amounts = a ? a : '' // 含税金额 
+        productArr[index].amounts = a ? a : 0
+        console.log(this.dataFormTwo.lines);
 
-        totalPrice = this.jnpf.math('add', [totalPrice, item.amounts])
-      }
-      this.totalAmount = totalPrice
-
-      if (this.dataFormTwo.lines.length == 1 && (!row.num || !row.unitPrice)) {
-        console.log("进来了");
-      }
       if (row.excludingTaxUnitPrice && row.num) {
-        let c = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 2)
+        let c = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.excludingTaxUnitPrice, row.num]), 2)
         row.excludingTaxAmounts = c ? c : ''
+        productArr[index].excludingTaxAmounts = c ? c : 0
       } else {
         row.excludingTaxAmounts = ''
       }
       if (row.excludingTaxAmounts && row.amounts) { // 税额计算
-        let d = this.jnpf.numberFormat((row.amounts * 1 - row.excludingTaxAmounts * 1), 2)
+        let d = this.jnpf.numberFormat(this.jnpf.math('subtract', [row.amounts, row.excludingTaxAmounts]), 2)
         row.totalTaxAmount = d ? d : 0
+        productArr[index].totalTaxAmount = d ? d : 0
       }
+      this.dataFormTwo.lines = productArr
     },
     // 监听主数量输入
     watchnums(row, index) {
@@ -1538,7 +1537,7 @@ export default {
     async handleConfirm(value) {
       this.dataForm.documentStatus = value
       let submitFlag = true
-    
+
 
       // 校验主表
       const form_1 = this.$refs['dataForm']
@@ -1573,9 +1572,9 @@ export default {
           }
         });
       }
-  
+
       if (this.dataFormTwo.lines.length) {
-        
+
         for (let index = 0; index < this.dataFormTwo.lines.length; index++) {
           const item = this.dataFormTwo.lines[index];
           if (!item.productDrawingNo) {
@@ -1596,20 +1595,20 @@ export default {
       }
 
       if (submitFlag) {
-        if(this.dataFormTwo.lines.length){
-        let index = this.dataFormTwo.lines.findIndex(item =>
-          item.customerDrawingNumber === "" &&
-          item.num === "" &&
-          item.unitPrice === "" &&
-          item.productDrawingNo==""
-        )
-        console.log(index);
-        if (index !== -1) {
-          this.dataFormTwo.lines.splice(index, 1);
+        if (this.dataFormTwo.lines.length) {
+          let index = this.dataFormTwo.lines.findIndex(item =>
+            item.customerDrawingNumber === "" &&
+            item.num === "" &&
+            item.unitPrice === "" &&
+            item.productDrawingNo == ""
+          )
+          console.log(index);
+          if (index !== -1) {
+            this.dataFormTwo.lines.splice(index, 1);
+          }
         }
-      }
-      this.btnLoading = true
-      this.dataForm.totalAmount = Number(this.dataForm.totalAmount = 0)
+        this.btnLoading = true
+        this.dataForm.totalAmount = Number(this.dataForm.totalAmount = 0)
         this.dataForm.totalAmount = this.totalPrice
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
@@ -1621,7 +1620,7 @@ export default {
             }
           })
         }
-        let filteredArr = this.dataFormTwo.lines.filter(item => item.productDrawingNo && item.productsId);  
+        let filteredArr = this.dataFormTwo.lines.filter(item => item.productDrawingNo && item.productsId);
         let obj = {
           attachmentList: this.datafilelist,
           sale: this.dataForm,

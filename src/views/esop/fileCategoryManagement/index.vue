@@ -109,7 +109,7 @@ export default {
       categoryList:FileCategoryTypeList,
       listQuery: {
         keyword: '',
-        type: FileCategoryTypeList[0].enCode
+        type: FileCategoryTypeList[2].enCode
       },
       treeList: [],
       expands: true,

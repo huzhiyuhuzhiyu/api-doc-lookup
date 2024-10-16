@@ -31,10 +31,14 @@ export const DocumentStatus ={
  * @property {string} WORK - 作业指导书
  * @property {string} INSPECT - 检验指导书
  * @property {string} IMAGE - 图文档
+ * @property {string} OFFICE - 办公文件
+ * @property {string} SYSTEM - 系统附件
  */
-export const ApplicationType ={
+export const ApplicationType = {
     "WORK":"work",
     "INSPECT":"inspect",
     "IMAGE":"image",
+    "OFFICE":"office",
+    "SYSTEM":"system"
 
 }

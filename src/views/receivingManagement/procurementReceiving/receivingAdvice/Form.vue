@@ -119,11 +119,11 @@
                     <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
                     <!-- </el-table-column> -->
                     <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
-                    <el-table-column prop="mainUnit" label="单位" width="160" />
-                    <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
+                    <el-table-column prop="mainUnit" label="单位" width="60" />
+                    <el-table-column prop="purchaseQuantity" label="订单数量" width="120" sortable="custom" />
                     <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
                       sortable="custom" />
-                    <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
+                    <el-table-column prop="receivedQuantity" label="收货数量" width="120" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
                         <span class="required">*</span>
@@ -146,15 +146,15 @@
                           :disabled="btnType == 'look' ? true : false" maxlength="200" show-overflow-tooltip />
                       </template>
                     </el-table-column>
-                    <el-table-column prop="standardValue" label="规值" min-width="200"></el-table-column>
-                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
-                    <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
-                    <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
-                    <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
-                    <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
-                    <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-                    <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
-                    <el-table-column prop="processName" label="工序" width="160" />
+                    <el-table-column prop="standardValue" label="规值" min-width="100"></el-table-column>
+                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="110" sortable="custom" />
+                    <el-table-column prop="accuracyLevel" label="精度等级" width="110" sortable="custom" />
+                    <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom" />
+                    <el-table-column prop="oil" label="油脂" width="100" sortable="custom" />
+                    <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom" />
+                    <el-table-column prop="clearance" label="游隙" width="110" sortable="custom" />
+                    <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom" />
+                    <el-table-column prop="processName" label="工序" width="110" />
                     <el-table-column prop="orderNo" label="订单号" width="200" sortable="custom" />
 
                     <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
@@ -274,11 +274,11 @@
                 <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
                 <!-- </el-table-column> -->
                 <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
-                <el-table-column prop="mainUnit" label="单位" width="160" />
-                <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
-                <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
+                <el-table-column prop="mainUnit" label="单位" width="60" />
+                <el-table-column prop="purchaseQuantity" label="订单数量" width="110" sortable="custom" />
+                <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="120"
                   sortable="custom" />
-                <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
+                <el-table-column prop="receivedQuantity" label="收货数量" width="130" v-if="!dataForm.exchangeGoodsFlag"
                   key="789">
                   <template slot="header">
                     <span class="required">*</span>
@@ -300,15 +300,15 @@
                       :disabled="btnType == 'look' ? true : false" maxlength="200" show-overflow-tooltip />
                   </template>
                 </el-table-column>
-                <el-table-column prop="standardValue" label="规值" min-width="200"></el-table-column>
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
-                <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
-                <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
-                <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
-                <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
-                <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-                <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
-                <el-table-column prop="processName" label="工序" width="160" />
+                <el-table-column prop="standardValue" label="规值" min-width="100"></el-table-column>
+                <el-table-column prop="sealingCoverTyping" label="打字内容" width="110" sortable="custom" />
+                <el-table-column prop="accuracyLevel" label="精度等级" width="110" sortable="custom" />
+                <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom" />
+                <el-table-column prop="oil" label="油脂" width="110" sortable="custom" />
+                <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom" />
+                <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
+                <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom" />
+                <el-table-column prop="processName" label="工序" width="110" />
                 <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom" />
 
                 <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
@@ -612,7 +612,18 @@ export default {
       ],
       productRules: {
         receivedQuantity: [
-          { required: true, trigger: 'blur' },
+          {
+            validator: this.formValidate({
+              type: 'noEmtry',
+              params: [
+                '',
+                (errMsg, index) => {
+                  this.$message.error(`产品信息第${index + 1}行：收货数量${errMsg}`)
+                }
+              ]
+            }),
+            trigger: ['blur']
+          },
           { validator: this.calcValidate(), trigger: 'blur' },
           { validator: this.calcValidatenum(), trigger: 'blur' }
         ]
@@ -909,8 +920,12 @@ export default {
     //发货数量不能为0
     calcValidatenum() {
       return (rule, value, callback) => {
+        console.log(value, 'oo999')
         let msg = `收货数量不能为'0'`
         if (value == 0) {
+          callback(new Error(msg)), this.$message.error(msg)
+        }
+        if (!value) {
           callback(new Error(msg)), this.$message.error(msg)
         }
       }

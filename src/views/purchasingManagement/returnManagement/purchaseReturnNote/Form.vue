@@ -566,10 +566,7 @@ export default {
 
         receivingStatus: 'received'
       },
-      // orderList: [
-      //   { label: "外协通知", value: "external" },
-      //   { label: "采购通知", value: "sale" },
-      // ],
+
       inspectionStatusList: [
         { label: '待检验', value: 'unInspect' },
         { label: '已检验', value: 'inspected' },
@@ -592,23 +589,22 @@ export default {
         { label: '内销', value: 'domestic_market' },
         { label: '总成', value: 'assembly' }
       ],
-      orderListfhfs: [
-        { label: '送货', value: 'deliver_goods' },
-        { label: '自提', value: 'self_pickup' },
-        { label: '快递', value: 'express_delivery' },
-        { label: '货运', value: 'freight_transport' },
-        { label: '到付', value: 'collect_payment' }
-      ],
-      orderList: [
-        { label: '正常订单', value: 'normal' },
-        { label: '预测订单', value: 'prediction' },
-        { label: '样品订单', value: 'sample' },
-        { label: '备货订单', value: 'stock_up' },
-        { label: '急件订单', value: 'urgent' }
-      ],
+
+
       productRules: {
         receivedQuantity: [
-          { required: true, trigger: 'blur' },
+          {
+            validator: this.formValidate({
+              type: 'noEmtry',
+              params: [
+                '',
+                (errMsg, index) => {
+                  this.$message.error(`产品信息第${index + 1}行：退货数量${errMsg}`)
+                }
+              ]
+            }),
+            trigger: ['blur']
+          },
           { validator: this.calcValidate(), trigger: 'blur' },
           { validator: this.calcValidatenum(), trigger: 'blur' }
         ]

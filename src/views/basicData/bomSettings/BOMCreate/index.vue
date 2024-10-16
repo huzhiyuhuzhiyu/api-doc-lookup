@@ -738,6 +738,7 @@ export default {
         } else if (loopBugRes.data.length) {
           let loopArr = []
           loopBugRes.data.forEach((item) => {
+            console.log(item, 'iiii')
             let temp = this.linesList.find((o) => o.productId === item)
             temp ? loopArr.push(temp.name) : ''
           })

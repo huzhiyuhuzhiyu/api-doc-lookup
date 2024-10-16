@@ -22,7 +22,7 @@
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                   <el-row :gutter="15" class="">
-                    <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
+                    <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
                       <el-col :span="6" v-if="type === 'look'">
                         <el-form-item label="外协单号" prop="orderNo" ref="orderNo">
@@ -316,7 +316,7 @@
           <el-collapse v-model="activeNames" v-else>
             <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
               <el-row :gutter="15" class="">
-                <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
+                <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                   label-position="top">
                   <el-col :span="6" v-if="type === 'look'">
                     <el-form-item label="外协单号" prop="orderNo" ref="orderNo">
@@ -718,7 +718,7 @@ export default {
       // immediate:true,
       handler: function (newVal, oldVal) {
         newVal.forEach((item) => {
-          if (item.price && item.taxRate) {
+          if (item.price && item.taxRate || item.price && item.taxRate == 0) {
             item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
           }
           if (item.purchaseQuantity && item.excludingTaxPrice) {
@@ -786,7 +786,7 @@ export default {
     supplierdata(id, data) {
       console.log(data, 'd')
       this.$nextTick(() => {
-        this.$refs['elForm'].validateField('cooperativePartnerName')
+        this.$refs['dataForm'].validateField('cooperativePartnerName')
       })
       if (data.length === 0) {
         this.dataForm.cooperativePartnerName = ''
@@ -1051,7 +1051,7 @@ export default {
         this.getBusInfo()
       }
       this.$nextTick(() => {
-        this.$refs['elForm'].resetFields()
+        this.$refs['dataForm'].resetFields()
         if (!this.dataForm.id) {
           this.clearData()
         } else {
@@ -1147,7 +1147,7 @@ export default {
       let form_2 = this.$refs['productForm']
       let valid_2 = await form_2.validate().catch((err) => false)
       if (hasCostPrice) {
-        this.$refs['elForm'].validate((valid) => {
+        this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             if (this.dataFormTwo.data.length === 0) {
               this.btnLoading = false

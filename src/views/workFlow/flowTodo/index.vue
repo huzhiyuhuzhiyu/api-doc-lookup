@@ -354,6 +354,7 @@ export default {
 ::v-deep .el-badge__content.is-fixed {
   top: 3px !important;
   right: 27px;
+  z-index: 999;
 }
 ::v-deep .el-badge__content {
   line-height: 16px !important;

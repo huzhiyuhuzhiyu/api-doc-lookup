@@ -894,7 +894,7 @@ export default {
       if (!this.list.length) return this.$message.error("请选择您要发货的产品")
       let flag = this.hasDifferentCooperativePartnerCode(this.list)
       if (flag) return this.$message.error("只能选择相同客户的明细订单")
-      console.log(this.list);
+      console.log(111,this.list);
       this.addFormVisible = true
       this.$nextTick(() => {
         this.$refs.addForm.init("", btntype,false, this.list)

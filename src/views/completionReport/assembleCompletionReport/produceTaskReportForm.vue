@@ -234,18 +234,18 @@
               label-position="left">
               <el-row>
                 <div style="margin-bottom: 10px; background: #f2f2f2; padding: 20px 16px;">
-                  <span style="font-size: 18px;font-weight: bold">加工数量：</span><span
-                    style="color: #3fb9f8;font-size: 18px;font-weight: bold">[{{
+                  <span style="font-size: 17px;font-weight: bold">加工数量：</span><span
+                    style="color: #3fb9f8;font-size: 17px;font-weight: bold">[{{
                       currentProcess.productionQuantity }}]</span>
-                  <span style="font-size: 18px;font-weight: bold;margin-left: 10px;">可报工数量：</span><span
-                    style="color: #3fb9f8;font-size: 18px;font-weight: bold">[{{ currentProcess.waitReportNum
+                  <span style="font-size: 17px;font-weight: bold;margin-left: 10px;">可报工数量：</span><span
+                    style="color: #3fb9f8;font-size: 17px;font-weight: bold">[{{ currentProcess.waitReportNum
                     }}]</span>
-                  <span style="font-size: 18px;font-weight: bold;margin-left: 10px;">报工数量：</span><span
-                    style="color: #3fb9f8;font-size: 18px;font-weight: bold">[{{ currentProcess.reportingQuantity
+                  <span style="font-size: 17px;font-weight: bold;margin-left: 10px;">报工数量：</span><span
+                    style="color: #3fb9f8;font-size: 17px;font-weight: bold">[{{ currentProcess.reportingQuantity
                     }}]</span>
                   <span
-                    style="font-size: 18px;font-weight: bold;margin-left: 10px;display: inline-block;">不合格数量：</span><span
-                    style="color: #3fb9f8;font-size: 18px;font-weight: bold">[{{ currentProcess.unqualifiedQuantity
+                    style="font-size: 17px;font-weight: bold;margin-left: 10px;display: inline-block;">不合格数量：</span><span
+                    style="color: #3fb9f8;font-size: 17px;font-weight: bold">[{{ currentProcess.unqualifiedQuantity
                     }}]</span>
                 </div>
                 <div style="padding: 0 20px;">
@@ -1221,20 +1221,22 @@ box-card:nth-child(n+3) {
   background: linear-gradient(0deg, #11B481 0.00%, #6ADE7D 100.00%);
   padding: 20px;
   color: #fff;
-  border-radius: 4px;
   padding: 20px;
   color: #fff;
-  border-radius: 4px;
-  box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.20);
   padding-top: 0;
+  border-bottom: 1px solid #ebeef5;
+  border-left: 1px solid #ebeef5;
 }
 
 .rightInfo {
+  width: 52%;
   /* border: 1px solid; */
   border-radius: 4px;
-  margin-left: 24px;
+  // margin-left: 20px;
+  float: right;
   box-shadow: beige;
-  box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.20);
+  border-bottom: 1px solid #ebeef5;
+  border-right: 1px solid #ebeef5;
 }
 
 .ipt ::v-deep.el-input__inner {
@@ -1300,14 +1302,10 @@ box-card:nth-child(n+3) {
 }
 .process{
   padding-top: 5px;
-    /* margin-top: 5px; */
-    /* border-bottom: 1px solid rgb(235, 238, 245); */
     padding: 0px 10px;
-    /* margin-bottom: 5px; */
-    /* border-top: 1px solid rgb(235, 238, 245); */
-    border: 1px solid rgb(235, 238, 245);
+    border: 1px solid #dcdfe6;
     padding-top: 5px;
-    background: rgb(242, 242, 242);
+    background: #f2f2f2;
 }
 .extend{
   width: 150px;

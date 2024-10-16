@@ -10,6 +10,13 @@
                 <el-input v-model="orderNoS" placeholder="领料单号" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
+            
+            <el-col :span="4">
+              <el-form-item>
+                <el-input v-model="personNameS" placeholder="领料人" clearable @keyup.enter.native="search()" />
+              </el-form-item>
+            </el-col>
+            
             <el-col :span="4">
               <el-form-item>
                 <el-select v-model="orderForm.receiveType" placeholder="领料类型" style="width: 100%;">
@@ -18,16 +25,10 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="personNameS" placeholder="领料人" clearable @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-
 
             <el-col :span="6">
               <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
                   {{ $t('common.search') }}</el-button>
                 <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
                 </el-button>
@@ -137,6 +138,13 @@ export default {
   components: { SuperQuery, ExportForm,Form },
   data() {
     return {
+      superQuery: {},
+      superForm: {},
+      basicQuery: {},
+      searchList: [
+        { field: 'orderNo', fieldValue: '', label: '领料单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'personName', fieldValue: '', label: '领料人', symbol: 'like', searchType: 1, width: 120 },
+      ],
       formVisible:false,
       columnList: ["productionOrderNo", "createByName"],
       receiveTypeList: [
@@ -245,8 +253,8 @@ export default {
     }
   },
   created() {
-    this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-    this.search()
+    this.superForm=this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+    this.search('basic')
   },
    
   mounted() {
@@ -277,7 +285,7 @@ export default {
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     // 删除
     handleDel(id) {
@@ -314,7 +322,7 @@ export default {
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
-      this.search()
+      this.search('basic')
     },
     initData() {
       this.listLoading = true
@@ -322,35 +330,7 @@ export default {
 
 
 
-      if (this.orderNoS) {
-
-        if (this.orderForm.superQuery.condition.length) {
-          let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("orderNo"));
-          filteredData.push({ "field": "orderNo", "fieldValue": this.orderNoS, "symbol": "like" })
-          this.orderForm.superQuery.condition = filteredData
-        } else {
-          this.orderForm.superQuery.condition.push(
-            { "field": "orderNo", "fieldValue": this.orderNoS, "symbol": "like" }
-          )
-        }
-      }
-      if (this.personNameS) {
-        // this.orderForm.superQuery.condition.push(
-        //   { "field": "productDrawingNo", "fieldValue": this.productDrawingNo, "symbol": "like" }
-        // )
-        if (this.orderForm.superQuery.condition.length) {
-          let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("personName"));
-          filteredData.push({ "field": "personName", "fieldValue": this.personNameS, "symbol": "like" })
-          this.orderForm.superQuery.condition = filteredData
-        } else {
-          this.orderForm.superQuery.condition.push(
-            { "field": "personName", "fieldValue": this.personNameS, "symbol": "like" }
-          )
-        }
-      }
-      if (this.orderNoS || this.personNameS) {
-        this.$set(this.orderForm.superQuery, 'matchLogic', 'AND')
-      }
+    
       WithdrawalList(this.orderForm).then(res => {
         res.data.records.forEach(item => {
           item.selectFlag = false
@@ -363,25 +343,44 @@ export default {
       })
 
     },
-    search() {
+    search(type) {
 
       Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
         let item = this.orderForm[key]
         this.orderForm[key] = typeof item === 'string' ? item.trim() : item
       })
       this.orderForm.pageNum = 1 // 重置页码
-
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       this.initData()
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
 
-      this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+    this.superForm=  this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
 
-      this.orderNoS = ""
-      this.personNameS = ""
+     
       this.$refs.SuperQuery.conditionList = []
-      this.search()
+      this.searchList= [
+        { field: 'orderNo', fieldValue: '', label: '领料单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'personName', fieldValue: '', label: '领料人', symbol: 'like', searchType: 1, width: 120 },
+      ],
+      this.search('basic')
     },
 
 

@@ -1304,6 +1304,7 @@ export default {
       this.btnType = btnType
       if (this.dataForm.id) {
         getQuotationsendlist(this.dataForm.id).then(res => {
+          console.log("res===>",res);
           this.dataForm = res.data.notice
           if (res.data.attachmentList) {
             res.data.attachmentList.forEach((item) => {

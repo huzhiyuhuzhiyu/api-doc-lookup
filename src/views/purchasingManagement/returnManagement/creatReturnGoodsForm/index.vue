@@ -484,7 +484,18 @@ export default {
       ],
       productRules: {
         receivedQuantity: [
-          { required: true, trigger: 'blur' },
+          {
+            validator: this.formValidate({
+              type: 'noEmtry',
+              params: [
+                '',
+                (errMsg, index) => {
+                  this.$message.error(`产品信息第${index + 1}行：退货数量${errMsg}`)
+                }
+              ]
+            }),
+            trigger: ['blur']
+          },
           { validator: this.calcValidate(), trigger: 'blur' },
           { validator: this.calcValidatenum(), trigger: 'blur' }
         ]
@@ -688,6 +699,7 @@ export default {
   created() {
     // this.handleChange()
     // this.getProvinceList()
+    this.getBimBusinessDetail()
     this.getAttributeline()
     this.getClassAttribute()
     this.getWarehouseList()

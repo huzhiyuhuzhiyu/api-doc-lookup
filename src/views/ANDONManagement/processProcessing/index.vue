@@ -64,7 +64,7 @@
           <el-table-column prop="productDrawingNo" label="关联产品" min-width="160" sortable="custom" />
           <el-table-column prop="createByName" label="发起人" min-width="120" sortable="custom" />
           <el-table-column prop="createTime" label="发起时间" min-width="180" sortable="custom" />
-          <el-table-column prop="planPersonName" label="计划处理人" min-width="160" sortable="custom" />
+          <el-table-column prop="planPersonName" label="处理人" min-width="160" sortable="custom" />
           <el-table-column prop="extensionTime" label="处理时间" min-width="200">
             <template slot-scope="scope">
               <el-tag type="danger" v-if="scope.row.extensionFlag">{{ scope.row.extensionTime }}</el-tag>
@@ -311,6 +311,7 @@ export default {
     },
     refresh(isrRefresh) {
       this.formVisible = false
+      this.sourceDialog = false
       if (isrRefresh) this.reset()
     },
     reset() {

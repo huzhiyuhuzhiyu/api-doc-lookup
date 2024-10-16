@@ -22,7 +22,7 @@
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="工艺信息" name="modelInfo" class="orderInfo">
                   <el-row :gutter="15" class="">
-                    <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
+                    <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
                       <template v-if="!loading">
                         <el-col :span="12">
@@ -318,7 +318,7 @@
           <el-collapse v-model="activeNames" v-else>
             <el-collapse-item title="工艺信息" name="modelInfo" class="orderInfo">
               <el-row :gutter="15" class="">
-                <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
+                <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                   label-position="top">
                   <template v-if="!loading">
                     <el-col :span="12">
@@ -849,7 +849,7 @@ export default {
       this.dialogTitle = !this.dataForm.id ? '新建' : type == 'edit' ? '编辑' : `查看`
       this.type = type
       this.$nextTick(() => {
-        this.$refs['elForm'].resetFields()
+        this.$refs['dataForm'].resetFields()
 
         if (!this.dataForm.id) {
           this.clearData()
@@ -917,7 +917,7 @@ export default {
 
       // 校验dataForm
       let checkDataForm = () => {
-        this.$refs['elForm'].validate((valid) => {
+        this.$refs['dataForm'].validate((valid) => {
           let focusFirstChild = (el) => {
             if (el && el.nodeType === 1) {
               if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
@@ -1104,7 +1104,7 @@ export default {
         msgs = '提交成功'
       }
       if (flag) {
-        this.$refs['elForm'].validate((valid) => {
+        this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             if (this.dataFormTwo.length === 0) {
               this.$message.error('请至少选择一条工序')

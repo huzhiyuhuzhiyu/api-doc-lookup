@@ -88,7 +88,9 @@
                             @pagination="initData" />
             </div>
         </div>
-        <EditWorkingInstructionUpload :type="uploadType" :id="fileUploadId" :applicationType="applicationType" @back="editBack" v-if="formVisible"/>
+        <slot name="editForm" :data="this">
+            <EditWorkingInstructionUpload :flowCode="flowCode" :type="uploadType" :id="fileUploadId" :applicationType="applicationType" @back="editBack" v-if="formVisible"/>
+        </slot>
 
         <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
                     @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -115,6 +117,7 @@ import EditWorkingInstructionUpload from "@/views/esop/fileUpload/workinginstruc
 import {deleteBimFileUpload, getBimFileUpload} from "@/api/esop/fileUpload/workinginstruction";
 import moment from "moment";
 import {ApplicationType, DocumentStatus, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
+import {FlowCode} from "@/views/esop/utils/constants";
 
 
 
@@ -125,7 +128,11 @@ export default {
         applicationType:{
             type:String,
             default:ApplicationType.WORK
-        }
+        },
+        flowCode:{
+            type: String,
+            default: FlowCode.WORK
+        },
     },
     data() {
         return {
@@ -408,7 +415,9 @@ export default {
         },
        async initData() {
             this.listLoading = true
-           const {data} = await getBimFileUpload(this.listQuery)
+           const params ={...this.listQuery}
+           params.superQuery.condition[0].fieldValue === '' && delete params.superQuery
+           const {data} = await getBimFileUpload(params)
            this.tableData = data.records
            this.total = data.total
            this.listLoading = false
@@ -426,6 +435,7 @@ export default {
                 let item = this.listQuery[key]
                 this.listQuery[key] = typeof item === 'string' ? item.trim() : item
             })
+
             this.listQuery.pageNum = 1
             this.initData()
         },

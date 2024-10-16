@@ -275,32 +275,37 @@ export default {
           this.$message.error(`第${index + 1}行，型号为空`)
         } else if (item.model) {
           submitFlag = false
-          updataBimProductsModelCheck(item.model, '').then((res) => {
-            if (!res.data) {
-              submitFlag = true
-            } else {
-              this.$message.error(`第${index + 1}行，型号已存在`)
-            }
-          })
+          if (this.btnType == 'add') {
+            updataBimProductsModelCheck(item.model, item.id).then((res) => {
+              if (!res.data) {
+                submitFlag = true
+              } else {
+                this.$message.error(`第${index + 1}行型号已存在`)
+              }
+            })
+          } else {
+            submitFlag = true
+          }
+
         }
         if (!item.innerCircle) {
           submitFlag = false
-          this.$message.error(`第${index + 1}行，内圈为空`)
+          this.$message.error(`第${index + 1}行内圈为空`)
         } else if (!item.outerCircle) {
           submitFlag = false
-          this.$message.error(`第${index + 1}行，外圈为空`)
+          this.$message.error(`第${index + 1}行外圈为空`)
         } else if (!item.steelBall) {
           submitFlag = false
-          this.$message.error(`第${index + 1}行，钢球型号为空`)
+          this.$message.error(`第${index + 1}行钢球型号为空`)
         } else if (!item.steelBallNum) {
           submitFlag = false
-          this.$message.error(`第${index + 1}行，钢球用量为空`)
+          this.$message.error(`第${index + 1}行钢球用量为空`)
         } else if (!item.oilNum) {
           submitFlag = false
-          this.$message.error(`第${index + 1}行，油脂用量为空`)
+          this.$message.error(`第${index + 1}行油脂用量为空`)
         } else if (!item.holderNum) {
           submitFlag = false
-          this.$message.error(`第${index + 1}行，保持架用量为空`)
+          this.$message.error(`第${index + 1}行保持架用量为空`)
         }
       })
 
@@ -410,6 +415,7 @@ export default {
           innerCircle: ''
         })
       }
+      console.log(this.sleeveItems, 'this.sleeveItems')
       this.sleeveItems.forEach((tc) => {
         // 添加自定义表单元素方法和参数
         // 若干需要选择的产品
@@ -444,7 +450,8 @@ export default {
           tc.change = this.sleeveNameChange3
           // tc.paramsObj = { row: scope.row, oldVal: { code: scope.row.code || '', name: scope.row.name || '' } }
         } else {
-          console.warn(tc.prop + '不在判断条件内')
+          console.log(666)
+          // console.warn(tc.prop + '不在判断条件内')
         }
       })
     }

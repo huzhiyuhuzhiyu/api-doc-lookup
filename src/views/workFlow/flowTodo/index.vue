@@ -343,6 +343,7 @@ export default {
     refresh() {
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.categoryIndex = -1
+      this.getCount()
       this.initData()
     }
   }
@@ -353,6 +354,7 @@ export default {
 ::v-deep .el-badge__content.is-fixed {
   top: 3px !important;
   right: 27px;
+  z-index: 1;
 }
 ::v-deep .el-badge__content {
   line-height: 16px !important;

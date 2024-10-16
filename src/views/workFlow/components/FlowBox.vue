@@ -87,7 +87,7 @@
         </el-tab-pane>
         <el-tab-pane label="流转记录" v-if="setting.opType != '-1'" v-loading="loading">
           <div class="mb-20" v-if="flowTaskInfo.status === 2">
-              <el-alert  :title="'共耗时'+(flowTaskInfo.processingTime || '')+'小时,'+ '超过'+(flowTaskInfo.timeFastRatio || '')+'%的同类申请快'" type="success" show-icon
+              <el-alert  :title="'共耗时'+(flowTaskInfo.processingTime || '')+'小时,'+ '超过'+(flowTaskInfo.timeFastRatio || '')+'%的同类申请'" type="success" show-icon
                 :closable="false"></el-alert>
           </div>
           <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
@@ -302,7 +302,6 @@ export default {
       pageView: {
         'b001': 'salesManagement/contractQuotation/salesQuotationOld/depForm.vue',
         'b002': 'purchasingManagement/fixedPointPricing/pricingListedSeparately/Form.vue',
-        'b048': 'purchasingManagement/fixedPriceOfFinishedProducts/pricingListedSeparately/Form.vue',
         'b012': 'purchasingManagement/purReconciliationManagement/purReconciliation/Form.vue',
         'b013': 'salesManagement/saleReconciliationManagement/salesReconManagement/Form.vue',
         'b014': 'externalProcessManagement/reconciliationManagement/externalReconciliation/Form.vue',
@@ -315,7 +314,7 @@ export default {
         'b026': 'salesManagement/shippingnotice/saleMetalworking/Form.vue',
         'b027': 'salesManagement/shippingnotice/returnSalesmemo/Form.vue',
         'b009': 'purchasingManagement/purchaseOrders/purchaseOrder/Form.vue',
-        'b028': 'purchasingManagement/purchaseOrders/purchaseOrder/Form.vue',
+        'b028': 'purchasingManagement/finishedProductPurchaseOrders/purchaseOrder/Form.vue',
         'b029': 'purchasingManagement/returnManagement/purchaseReturnNote/Form.vue',
         'b030': 'purchasingManagement/finishedProductReturnManagement/purchaseReturnNote/Form.vue',
         'b010': 'outsourcingManagement/productOutsourcingOrder/orderList/Form.vue',
@@ -336,6 +335,10 @@ export default {
         'b044': 'inspectionManagement/components/inspectionFormManagementDetail.vue',
         'b045': 'warehouseManagement/finishedProductWarehouseManagement/inventoryList/Form.vue',
         'b046': 'warehouseManagement/finishedProductWarehouseManagement/inventoryList/Form.vue',
+        'b048': 'esop/fileUpload/workinginstruction/Form.vue',
+        'b049': 'esop/fileUpload/workinginstruction/Form.vue',
+        'b050': 'esop/fileUpload/workinginstruction/Form.vue',
+        'b051': 'warehouseManagement/finishedProductWarehouseManagement/transferManagement/Form.vue',
       },
       inspectionTypeList: [
         // 不良品
@@ -346,7 +349,7 @@ export default {
         { label: 'b007', value: 'back_material' },
         { label: 'b005', value: 'process' },
         { label: 'b022', value: 'finished' },
-        // 检验单 
+        // 检验单
         { label: 'b040', value: 'procure' },
         { label: 'b041', value: 'external' },
         { label: 'b042', value: 'process' },
@@ -500,8 +503,8 @@ export default {
           console.log(this.pageView[data.businessFlow]);
           console.log(data);
           let page = this.pageView[data.businessFlow]
-          // this.currentView = (resolve) => require([`@/views/warehouseManagement/finishedProductWarehouseManagement/inventoryList/Form.vue`], resolve) 
-          this.currentView = (resolve) => require([`@/views/${page}`], resolve) 
+          // this.currentView = (resolve) => require([`@/views/warehouseManagement/finishedProductWarehouseManagement/inventoryList/Form.vue`], resolve)
+          this.currentView = (resolve) => require([`@/views/${page}`], resolve)
 
         }
         this.flowTaskNodeList = res.data.flowTaskNodeList
@@ -540,7 +543,7 @@ export default {
                 if (nodeItem.type == 0) data.state = 'state-past'
                 if (nodeItem.type == 1) data.state = 'state-curr'
                 if (nodeItem.nodeType === 'approver' || nodeItem.nodeType === 'start' || nodeItem.nodeType === 'subFlow') data.content = nodeItem.userName
-                if (nodeItem.nodeType === 'approver') data.processingTime = nodeItem.processingTime
+                // if (nodeItem.nodeType === 'approver') data.processingTime = nodeItem.processingTime
                 return
               }
               if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)

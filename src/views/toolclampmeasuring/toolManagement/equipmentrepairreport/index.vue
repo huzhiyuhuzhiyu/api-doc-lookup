@@ -19,6 +19,11 @@
                     <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                       <el-row :gutter="30" class="custom-row">
                         <el-col :sm="6" :xs="24">
+                          <el-form-item label="维修单号" prop="maintenanceNo">
+                            <el-input v-model="dataForm.maintenanceNo" placeholder="请输入维修单号" :disabled="codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24">
                           <el-form-item label="工具名称" prop="equipmentId">
                             <el-input v-model="dataForm.equipmentIdName" placeholder="请选择工具名称" readonly @focus="openSeleceProductDialogss">
                             </el-input>
@@ -144,6 +149,7 @@ export default {
   components: { UploadImg },
   data() {
     return {
+      codeConfig:{},
       btnLoading: false,
       salesList: [],
       ProductTableSearchLists: [
@@ -241,6 +247,7 @@ export default {
       activeName: "orderInfo",
       datafilelist: [],
       dataForm: {
+        maintenanceNo:'',
         frontPicList: [],
         usin: '',
         maintenancePersonnel: '',
@@ -274,6 +281,9 @@ export default {
         ],
       },
       dataRule: {
+        maintenanceNo: [
+          { required: true, message: '请输入维修单号', trigger: 'blur' },
+        ],
         equipmentId: [
           { required: true, message: '工具不能为空', trigger: 'change' }
         ],
@@ -300,6 +310,14 @@ export default {
     this.init()
   },
   methods: {
+    async fetchData(code) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code);
+        this.codeConfig = data
+        this.dataForm.maintenanceNo = data.number
+      } catch (error) {
+      }
+    },
     handeleProductInfoData(val) {
       this.selectRows = val
     },
@@ -327,6 +345,7 @@ export default {
       this.dataFormTwo.productData.splice(data.$index, 1)
     },
     init() {
+      this.fetchData('SBWXDH')
       this.dataForm.applicantId = this.userInfo.userId
       this.dataForm.applicantIdName = this.userInfo.userName
       this.dataForm.applicationDate = this.jnpf.getToday()
@@ -429,6 +448,7 @@ export default {
     },
     // 继续新增
     continueAdd() {
+      this.fetchData('SBWXDH')
       this.tipsvisible = false
       this.btnLoading = false
       this.organizeIdTrees = []

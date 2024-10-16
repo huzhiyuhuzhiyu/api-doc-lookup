@@ -253,13 +253,12 @@
                       </el-form>
                       <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
                         <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ computedValue3 }}</span>
-                        <span style="font-weight:500;margin-right:10px">总金额(不含税)：{{ computedValue }}</span>
                         <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue2 }}</span>
                       </div>
                     </el-collapse-item>
                   </el-collapse>
                 </el-tab-pane>
-                <el-tab-pane label="附件" name="annex">
+                <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
                   <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"></UploadWj>
                 </el-tab-pane>
                 <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
@@ -285,10 +284,10 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="type == 'look'
-                            ? true
-                            : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                              ? false
-                              : true
+                              ? true
+                              : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                                ? false
+                                : true
                             "></el-input>
                         </el-form-item>
                       </el-col>
@@ -298,7 +297,7 @@
                       </el-input> -->
                           <!-- 供应商选择弹窗  -->
                           <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
-                            v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
+                            v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit"
                             @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'"
                             title="选择供应商" treeTitle="供应商分类" :methodArr="PartnerMethodArr"
                             :listMethod="getCooperativeData" :listRequestObj="PartnerListRequestObj"
@@ -541,11 +540,11 @@
                           </el-button>
                         </template>
                       </el-table-column>
-                    </jnpf-table>
+                    </JNPF-table>
                   </el-form>
                   <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
                     <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ computedValue3 }}</span>
-                    <span style="font-weight:500;margin-right:10px">总金额(不含税)：{{ computedValue }}</span>
+                    <!-- <span style="font-weight:500;margin-right:10px">总金额(不含税)：{{ computedValue }}</span> -->
                     <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue2 }}</span>
                   </div>
                 </el-collapse-item>
@@ -574,7 +573,7 @@ import {
   purProcurementRequirementsList
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import { insertOutOrder } from '@/api/purchasingAndOutsourcingOrders/index'
-import { getCooperativeData } from '@/api/basicData/index'
+import { getCooperativeData, getBimBusinessDetail } from '@/api/basicData/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
 import {
   getcategoryTrees,
@@ -593,6 +592,7 @@ export default {
   },
   data() {
     return {
+      isattachmentswitch: '',
       datafilelist: [],
       activeName: 'jcInfo',
       activeNames: ['productInfo', 'basicInfo'],
@@ -938,10 +938,16 @@ export default {
     computedValue3() {
       // 在这里计算第三个输入框的值
       let count = 0
+      let count1 = 0
+
       this.dataFormTwo.data.forEach((item) => {
         count += item.totalAmount * 1
+        count1 += item.excludingTaxAmount * 1
       })
+
       this.dataForm.totalAmount = this.jnpf.numberFormat(count)
+
+      this.dataForm.excludingTaxTotalAmount = this.jnpf.numberFormat(count1)
 
       return this.dataForm.totalAmount
     },
@@ -985,6 +991,7 @@ export default {
     this.getProductClassFun()
   },
   created() {
+    this.getBimBusinessDetail()
     console.log(this.$route.query.alert, 'this.$route.query.alert')
     if (this.$route.query.alert) {
       this.dialogTitle = '新建'
@@ -993,6 +1000,15 @@ export default {
     this.getBusInfo()
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_wxdd'
+      }
+      getBimBusinessDetail(obj).then((res) => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     deliveryDateChange(e) {
       console.log(e, 'e')
     },

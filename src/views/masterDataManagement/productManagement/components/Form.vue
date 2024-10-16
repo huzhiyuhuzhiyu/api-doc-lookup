@@ -18,10 +18,7 @@
             <!-- <el-tab-pane :label="item.tabName" :name="item.tabCode" :key="item.tabCode"> -->
             <el-collapse v-model="activeNames">
               <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                <!-- <div
-                      style="line-height:33px;font-size:18px;border-top:1px solid #dcdfe6;background: #fafafa;padding-left:5px">
-                      <h5>基本信息</h5>
-                    </div> -->
+
                 <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
               </el-collapse-item>
               <el-collapse-item title="其他信息" name="otherInfo">
@@ -189,7 +186,7 @@ export default {
                 callback()
               } else {
                 // this.jnpf.specialCodeUrl 对浏览器无法解析的url字符进行手动转码
-                checkDrawExist({ id: this.dataForm.id, drawingNo: this.jnpf.specialCodeUrl(this.dataForm.drawingNo) })
+                checkDrawExist({ id: this.dataForm.id || '', drawingNo: this.jnpf.specialCodeUrl(this.dataForm.drawingNo) })
                   .then((res) => {
                     if (!res.data) {
                       callback()
@@ -342,16 +339,17 @@ export default {
     }
   },
   methods: {
-    async fetchData(code) {
+    async fetchData(code, flag) {
       try {
-        const data = await this.jnpf.getBillRuleConfigFun(code)
+        const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        if (!data.modifyFlag && data.codeWay == 'auto') {
+        if (flag) {
           this.dataForm.code = data.number
           let target = this.tabs[0].tabContent.find((tc) => tc.prop === 'code')
-          target.itemDisabled = true
+          target.itemDisabled = !this.codeConfig.modifyFlag
         }
-      } catch (error) { }
+      } catch (error) {
+      }
     },
     init(id, btnType = false) {
       this.visible = true
@@ -393,16 +391,12 @@ export default {
               tc.itemDisabled = true
             }
           })
-          this.jnpf.getBillRuleConfigFun(this.busSetId).then((res) => {
-            if (!res.modifyFlag) {
-              let target = this.tabs[0].tabContent.find((tc) => tc.prop === 'code')
-              target.itemDisabled = true
-            }
-          })
+
+          this.fetchData(this.busSetId, false)
         })
       } else {
         this.title = `新建${this.productName}档案`
-        this.fetchData(this.busSetId)
+        this.fetchData(this.busSetId, true)
       }
       this.formLoading = false
     },

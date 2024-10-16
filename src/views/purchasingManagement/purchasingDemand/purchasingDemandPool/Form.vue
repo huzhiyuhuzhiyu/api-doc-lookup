@@ -182,7 +182,8 @@
                           </template>
                         </el-table-column>
 
-                        <el-table-column prop="standardValue" label="规值" width="120" :key="211">
+                        <el-table-column prop="standardValue" label="规值" width="120" :key="211"
+                          v-if="this.dataForm.classAttribute !== 'finish_product'">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable
                               style="width: 100%;">
@@ -191,7 +192,24 @@
                             </el-select>
                           </template>
                         </el-table-column>
-
+                        <el-table-column prop="colour" label="颜色" width="120" :key="211"
+                          v-if="this.dataForm.classAttribute !== 'finish_product'">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;">
+                              <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
+                                :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="processId" label="工序" width="120" :key="102"
+                          v-if="this.dataForm.classAttribute !== 'finish_product'">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.processId" placeholder="请选择" clearable style="width: 100%;">
+                              <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
+                                :value="item.id"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
                         <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'"
                           prop="sealingCoverTyping" label="打字内容" width="120" :key="212">
                           <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
@@ -259,10 +277,12 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="processId" label="工序" width="120" :key="102">
+                        <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="102"
+                          v-if="this.dataForm.classAttribute == 'finish_product'">
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.processId" placeholder="请选择" clearable style="width: 100%;">
-                              <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
+                            <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
+                              style="width: 100%;">
+                              <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
                                 :value="item.id"></el-option>
                             </el-select>
                           </template>
@@ -701,7 +721,7 @@ export default {
         businessCode: 'attachment',
         configKey: 'fj_cgdd'
       }
-      getBimBusinessDetail(obj).then(res => {
+      getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
       })
     },
@@ -882,6 +902,43 @@ export default {
         this.list8 = res.data.records
       })
 
+      let obj9 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: 'pa010',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj9).then((res) => {
+        this.list9 = res.data.records
+      })
+      let obj10 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: 'pa016',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj10).then((res) => {
+        this.list10 = res.data.records
+      })
+
       // 获取税率(数据字典)
       getbimProductAttributes('585438081021126405').then((res) => {
         res.data.list.forEach((item) => {
@@ -902,7 +959,6 @@ export default {
         const item = i.all
         console.log(item, 'oooo')
         if (this.purchasingType == 'pool') {
-
         } else {
           item.productDrawingNo = item.drawingNo
         }
@@ -1116,7 +1172,7 @@ export default {
       console.log(data, 'uuuu')
       console.log(classAttributeFlag, 'classAttributeFlag')
       this.purchasingType = type
-      data.forEach(item => {
+      data.forEach((item) => {
         if (item.productDrawingNo) {
           item.productDrawingNo = item.productDrawingNo
         } else {
@@ -1244,7 +1300,12 @@ export default {
         this.btnLoading = true
         let dataTwo = []
         dataTwo = this.dataFormTwo.data.map((obj) => {
-          return { ...obj, procurementDemandPoolId: obj.id, productsId: obj.productsId ? obj.productsId : obj.id, id: null }
+          return {
+            ...obj,
+            procurementDemandPoolId: obj.id,
+            productsId: obj.productsId ? obj.productsId : obj.id,
+            id: null
+          }
         })
         this.dataForm.attachmentList = this.datafilelist
         this.dataForm.purchaseOrderLines = dataTwo

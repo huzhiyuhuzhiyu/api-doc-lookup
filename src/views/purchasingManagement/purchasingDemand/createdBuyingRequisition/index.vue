@@ -92,7 +92,7 @@
                             </template>
                           </el-table-column>
 
-                          <el-table-column prop="planQuantity" label="数量" min-width="200" key="planQuantity">
+                          <el-table-column prop="planQuantity" label="数量" min-width="100" key="planQuantity">
                             <template slot="header">
                               <span class="required">*</span>
                               数量
@@ -108,44 +108,16 @@
                               </el-form-item>
                             </template>
                           </el-table-column>
-                          <el-table-column prop="mainUnit" label="单位" min-width="200" show-overflow-tooltip
-                            key="mainUnit">
+                          <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip key="mainUnit">
                             <template slot-scope="scope">
                               <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
-                                <!-- <el-input v-model="scope.row.mainUnit" :disabled="type === 'look'" readonly maxlength="20"
-                              placeholder="请输入主单位">{{
-                                scope.row.mainUnit }}
-                            </el-input> -->
+
                                 <div class="viewData">
                                   <span>{{ scope.row.mainUnit }}</span>
                                 </div>
                               </el-form-item>
                             </template>
                           </el-table-column>
-                          <!-- 
-                      <el-table-column prop="planQuantity2" label="数量(副)" min-width="200" key="planQuantity2">
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'planQuantity2'"
-                            :rules="productRules.planQuantity2">
-                            <el-input @input="changePlanQuantity2(scope.$index, scope.row.planQuantity2)"
-                              v-model="scope.row.planQuantity2" :disabled="type === 'look'" clearable maxlength="20"
-                              placeholder="请输入数量(副)">
-                              {{ scope.row.planQuantity2 }}
-                            </el-input>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
-
-                      <el-table-column prop="deputyUnit" label="单位(副)" min-width="200" show-overflow-tooltip
-                        key="deputyUnit">
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
-                            <div class="viewData">
-                              <span>{{ scope.row.deputyUnit }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column> -->
 
                           <el-table-column prop="deliveryDate" label="交货日期" min-width="240" key="deliveryDate">
                             <template slot="header">
@@ -185,7 +157,7 @@
                     </el-collapse-item>
                   </el-collapse>
                 </el-tab-pane>
-                <el-tab-pane label="附件" name="annex">
+                <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
                   <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"
                     style="margin-top: 5px;">
                   </UploadWj>
@@ -264,17 +236,17 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="planQuantity" label="数量(主)" min-width="200" key="planQuantity">
+                      <el-table-column prop="planQuantity" label="数量" min-width="200" key="planQuantity">
                         <template slot="header">
                           <span class="required">*</span>
-                          数量(主)
+                          数量
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'planQuantity'"
                             :rules="productRules.planQuantity">
                             <el-input v-model="scope.row.planQuantity" clearable
                               @input="changePlanQuantity(scope.$index, scope.row.planQuantity)"
-                              :disabled="type === 'look'" maxlength="20" placeholder="请输入主数量">
+                              :disabled="type === 'look'" maxlength="20" placeholder="请输入数量">
                               {{ scope.row.planQuantity }}
                             </el-input>
                           </el-form-item>
@@ -377,11 +349,13 @@ import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowE
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
+import { getBimBusinessDetail } from '@/api/basicData/index'
 export default {
   components: { Process, recordList },
   mixins: [busFlow],
   data() {
     return {
+      isattachmentswitch: '',
       datafilelist: [],
       activeName: 'jcInfo',
       activeNames: ['productInfo', 'basicInfo'],
@@ -414,7 +388,18 @@ export default {
       productRules: {
         productName: [{ required: true, trigger: ['change'] }],
         planQuantity: [
-          { required: true, trigger: ['blur'] },
+          {
+            validator: this.formValidate({
+              type: 'noEmtry',
+              params: [
+                '',
+                (errMsg, index) => {
+                  this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`)
+                }
+              ]
+            }),
+            trigger: ['blur']
+          },
           {
             validator: this.formValidate({
               type: 'decimal',
@@ -459,7 +444,18 @@ export default {
             trigger: 'blur'
           }
         ],
-        deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
+        deliveryDate: [{
+          validator: this.formValidate({
+            type: 'noEmtry',
+            params: [
+              '',
+              (errMsg, index) => {
+                this.$message.error(`产品信息第${index + 1}行：交货日期${errMsg}`)
+              }
+            ]
+          }),
+          trigger: ['blur']
+        },]
       },
       productArr: [],
       defaultProps: {
@@ -515,9 +511,19 @@ export default {
   },
   created() {
     this.fetchData('QGD')
+    this.getBimBusinessDetail()
     if (this.type === 'add') this.getBusInfo()
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_qgd'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code)

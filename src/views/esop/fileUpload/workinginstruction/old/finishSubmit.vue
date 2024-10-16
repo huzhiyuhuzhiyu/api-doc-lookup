@@ -1,6 +1,6 @@
 <script>
 export default {
-    name: "finishSubmit",
+    name: "FinishSubmit",
     data(){
         return{
             reCreateShow: false
@@ -27,7 +27,11 @@ export default {
             <transition  name="el-zoom-in-center">
                 <div v-if="reCreateShow" class="flex-column justify-center align-center">
                     <i class="el-icon el-icon-circle-check" style="font-size: 47px;color: #0eac5c"></i>
-                    <el-button type="primary" style="margin-top: 10px" @click="$emit('recreate')"  >再传一个</el-button>
+                    <div  style="margin-top: 10px">
+                        <el-button type="primary" @click="$emit('recreate')"  >再传一个</el-button>
+                        <el-button type="success" style="margin-left: 10px" @click="$emit('goEdit')"  >前往编辑</el-button>
+                    </div>
+
                 </div>
 
             </transition>

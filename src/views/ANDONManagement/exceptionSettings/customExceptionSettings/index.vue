@@ -31,7 +31,7 @@
                         <div> {{ line.name }} </div>
                         <div style="text-align:right">
                           <el-button size="mini" type="text" @click="addOrUpdateHandle(line.id, 'edit')">编辑</el-button>
-                          <el-button size="mini" type="text" @click="flowSet(line.id, line.name)">流程设置</el-button>
+                          <el-button size="mini" type="text" @click="flowSet(line.id, line.name,line.planPersonId,line.planPersonName)">提醒设置</el-button>
                         </div>
 
                         <!-- <div class="icon-checked" v-if="line.code === currentCard">
@@ -123,10 +123,10 @@ export default {
         this.$refs.JNPFForm.init(id, btnType)
       })
     },
-    flowSet(id, name) {
+    flowSet(id, name,planPersonId,planPersonName) {
       this.flowFormVisible = true
       this.$nextTick(() => {
-        this.$refs.FlowForm.init(id, name)
+        this.$refs.FlowForm.init(id, name,planPersonId,planPersonName)
       })
     },
     handleCard(item) {

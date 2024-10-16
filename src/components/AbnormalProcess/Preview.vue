@@ -9,6 +9,7 @@ export default {
     let data = {}
     if (typeof this.conf === 'object' && this.conf !== null && JSON.stringify(this.conf) !== '{}') {
       data = Object.assign(NodeUtils.createNode('start'), this.conf)
+      
     } else {
       data = getMockData()
     }

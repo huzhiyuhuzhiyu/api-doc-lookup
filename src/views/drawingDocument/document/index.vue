@@ -268,7 +268,7 @@ import {
     wordSuffix
 } from "@/views/drawingDocument/document/utils";
 import Preview from "@/components/upload-wj/Preview.vue";
-import {getFilePreviewUrl} from "@/views/esop/fileUpload/utils";
+import {getFilePreviewUrl} from "@/views/esop/utils/utils";
 const ALL_TEXT ='全部'
 
 const fileExtFilterOption =Object.freeze( [

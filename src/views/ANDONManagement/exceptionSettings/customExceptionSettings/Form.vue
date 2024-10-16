@@ -101,7 +101,8 @@ export default {
               },
               trigger: 'blur'
             }
-          ], sm: this.category === 'type' ? 12 : 24, itemDisabled: this.btnType === 'look' ? true : this.codeConfig.codeWay == 'auto' && !this.codeConfig.modifyFlag ? true : false
+          ], sm: this.category === 'type' ? 12 : 24, itemDisabled: this.btnType === 'look' ? true : this.codeConfig.codeWay == 'auto' && !this.codeConfig.modifyFlag ? true : false,
+             mb:this.category === 'type' ? 0 : '15px'
         },
         // { prop: "module", label: "异常模块", value: "", type: "select", itemRules: [{ required: true, message: '异常模块不能为空', trigger: "change" }], 
         //   sm: 12,itemDisabled:this.btnType === 'look' ? true : false ,
@@ -109,7 +110,11 @@ export default {
         // },
         {
           prop: "name", label: this.category === 'type' ? "类型名称" : '内容名称', value: "", type: "input", itemRules: [{ required: true, message: this.category === 'type' ? "类型名称" : '内容名称' + '不能为空', trigger: "blur" }],
-          sm: this.category === 'type' ? 12 : 24, itemDisabled: this.btnType === 'look' ? true : false
+          sm: this.category === 'type' ? 12 : 24, itemDisabled: this.btnType === 'look' ? true : false,mb:this.category === 'type' ? 0 : '15px'
+        },
+        {
+          prop: "planPersonId", label: "处理人", value: '', type: "custom", customComponent:'UserSelect',itemRules:[{ required: true, message: '处理人不能为空', trigger: 'blur' }],
+          sm: 24, itemDisabled: this.btnType === 'look' ? true : false,clearable:false,change:this.selectPlanPerson, render: this.category === 'type' ? false : true
         },
         {
           prop: "enName", label: "类型英文名称", value: "", type: "input", itemRules: [{ required: true, message: '类型英文名称不能为空', trigger: "blur" }],
@@ -125,6 +130,11 @@ export default {
           sm: 24, itemDisabled: this.btnType === 'look' ? true : false, render: this.category === 'type' ? true : false
         },
       ]
+    },
+    selectPlanPerson(id,data){
+      this.$nextTick(() => this.$refs['dataForm'].$children[0].validateField('planPersonId'))
+      this.dataForm.planPersonId = data.id
+      this.dataForm.planPersonName = data.fullName
     },
     openIconBox() {
       this.iconBoxVisible = true

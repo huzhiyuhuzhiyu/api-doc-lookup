@@ -568,9 +568,10 @@ import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowE
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
+import flowMixin from '@/mixins/generator/flowMixin'
 export default {
   components: { ExportForm, Process, recordList },
-  mixins: [busFlow],
+  mixins: [busFlow,flowMixin],
   data() {
     return {
       exportFormVisible: false,
@@ -1427,7 +1428,7 @@ export default {
             this.fetchData("XSBJ", true)
             // 审批
             this.$nextTick(() => {
-              this.getBusInfo()
+              this.getBusInfo('b001')
             })//暂时注释
             this.formLoading = false
             // })
@@ -1436,7 +1437,7 @@ export default {
           })
         } else {
           this.fetchData("XSBJ", true)
-          this.getBusInfo()
+          this.getBusInfo('b001')
 
         }
       }
@@ -1486,7 +1487,7 @@ export default {
           this.fetchData("XSBJ", true)
           // 审批
           this.$nextTick(() => {
-            this.getBusInfo()
+            this.getBusInfo('b001')
           })//暂时注释
           this.formLoading = false
           // })
@@ -1522,7 +1523,7 @@ export default {
             }
             this.formLoading = false
             if (this.btnType === 'edit') {
-              this.getBusInfo()
+              this.getBusInfo('b001')
             } else {
               // 流程信息和流转记录
               if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
@@ -1750,52 +1751,52 @@ export default {
       return
     },
     // 测试审批流
-    getBusInfo() {
-      getBusinessFlowInfo('b001').then(res => {
-        if (res.data) {
-          if (res.data.enabledMark) {
-            this.flowData = res.data
-            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
-            this.dataForm.approvalFlag = res.data.enabledMark
-          } else {
-            this.flowTemplateJson = {}
-            this.dataForm.approvalFlag = false
-            this.$message.error('未找到审批流程！')
-          }
-        } else {
-          this.flowTemplateJson = {}
-          this.dataForm.approvalFlag = false
-        }
-      }).catch(() => { })
-    },
-    // 流程信息 && 流转记录
-    getFlowDetail(id) {
-      getBusinessFlowDetail(id).then(res => {
-        if (res.data) {
-          this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson) : null
-          this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
-          this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
-          let flowTaskNodeList = res.data.flowTaskNodeList
-          if (flowTaskNodeList.length) {
-            for (let i = 0; i < flowTaskNodeList.length; i++) {
-              const nodeItem = flowTaskNodeList[i]
-              const loop = data => {
-                if (Array.isArray(data)) data.forEach(d => loop(d))
-                if (data.nodeId === nodeItem.nodeCode) {
-                  if (nodeItem.type == 0) data.state = 'state-past'
-                  if (nodeItem.type == 1) data.state = 'state-curr'
-                  if (nodeItem.nodeType === 'approver' || nodeItem.nodeType === 'start' || nodeItem.nodeType === 'subFlow') data.content = nodeItem.userName
-                  return
-                }
-                if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
-                if (data.childNode) loop(data.childNode)
-              }
-              loop(this.flowTemplateJson)
-            }
-          }
-        }
-      }).catch(() => { })
-    },
+    // getBusInfo() {
+    //   getBusinessFlowInfo('b001').then(res => {
+    //     if (res.data) {
+    //       if (res.data.enabledMark) {
+    //         this.flowData = res.data
+    //         this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+    //         this.dataForm.approvalFlag = res.data.enabledMark
+    //       } else {
+    //         this.flowTemplateJson = {}
+    //         this.dataForm.approvalFlag = false
+    //         this.$message.error('未找到审批流程！')
+    //       }
+    //     } else {
+    //       this.flowTemplateJson = {}
+    //       this.dataForm.approvalFlag = false
+    //     }
+    //   }).catch(() => { })
+    // },
+    // // 流程信息 && 流转记录
+    // getFlowDetail(id) {
+    //   getBusinessFlowDetail(id).then(res => {
+    //     if (res.data) {
+    //       this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson) : null
+    //       this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
+    //       this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
+    //       let flowTaskNodeList = res.data.flowTaskNodeList
+    //       if (flowTaskNodeList.length) {
+    //         for (let i = 0; i < flowTaskNodeList.length; i++) {
+    //           const nodeItem = flowTaskNodeList[i]
+    //           const loop = data => {
+    //             if (Array.isArray(data)) data.forEach(d => loop(d))
+    //             if (data.nodeId === nodeItem.nodeCode) {
+    //               if (nodeItem.type == 0) data.state = 'state-past'
+    //               if (nodeItem.type == 1) data.state = 'state-curr'
+    //               if (nodeItem.nodeType === 'approver' || nodeItem.nodeType === 'start' || nodeItem.nodeType === 'subFlow') data.content = nodeItem.userName
+    //               return
+    //             }
+    //             if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
+    //             if (data.childNode) loop(data.childNode)
+    //           }
+    //           loop(this.flowTemplateJson)
+    //         }
+    //       }
+    //     }
+    //   }).catch(() => { })
+    // },
   }
 }
 </script>

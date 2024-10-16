@@ -48,7 +48,7 @@
               <el-tab-pane label="流程卡" name="flowcard" v-if="typeflag">
                 <JNPF-col v-model="flowCard" :tabContent="flowCardItems" ref="flowCardForm" />
               </el-tab-pane>
-              <el-tab-pane label="附件" name="annex">
+              <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
                 <UploadWj v-model="datafilelist" :disabled="readOnly" :detailed="readOnly"></UploadWj>
               </el-tab-pane>
               <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
@@ -79,7 +79,7 @@ import TableFormWare from './TableForm-ware.vue'
 import TableFormWareTwo from './TableForm-ware-two.vue'
 import { getInspectionItem, getSamplingQuantityByProductId } from '@/api/inspectionManagement/index' // 产品检验项目列表
 import WareSide from './WareSide.vue'
-import { getbimDrawingData } from '@/api/basicData/index'
+import { getbimDrawingData, getBimBusinessDetail } from '@/api/basicData/index'
 import Preview from '@/components/upload-wj/Preview.vue'
 import { getDownloadUrl } from '@/api/common'
 import { mapGetters } from 'vuex'
@@ -89,6 +89,7 @@ export default {
   components: { TableFormProduct, WareSide, Preview, TableFormWare, TableFormWareTwo, Process },
   data() {
     return {
+      isattachmentswitch: '',
       activeFile: {},
       previewVisible: false,
       ProductListRequestObjs: {},
@@ -191,6 +192,16 @@ export default {
     }
   },
   methods: {
+    getBimBusinessDetail(inspectionType) {
+      console.log(inspectionType, 'businessCode')
+      let obj = {
+        businessCode: 'attachment',
+        configKey: `fj_${inspectionType}jyd`
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     currentChangelook(data) {
       this.activeFile = {
         filename: data.filepath,
@@ -395,6 +406,7 @@ export default {
     },
     // 初始化
     async init(row, readOnly, inspectionType, type, businessCode) {
+      this.getBimBusinessDetail(inspectionType)
       console.log(row, 'row123')
       this.scope = { ...row }
 

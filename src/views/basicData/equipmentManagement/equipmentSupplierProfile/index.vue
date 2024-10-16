@@ -103,7 +103,7 @@
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" :fixedNO="true"
           @sort-change="sortChange" custom-column>
-          <el-table-column prop="code" label="编码" width="140" fixed="left" sortable="custom">
+          <el-table-column prop="code" label="编码" width="140" sortable="custom">
             <template slot-scope="scope">
 
               <el-link type="primary"
@@ -113,7 +113,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="taxId" label="税号" width="200" />
-          <el-table-column prop="name" label="名称" width="120" fixed="left" sortable="custom" />
+          <el-table-column prop="name" label="名称" width="120" sortable="custom" />
           <el-table-column prop="regionCodeText" label="地区" width="100" />
           <el-table-column prop="countryText" label="国家" min-width="150" />
           <el-table-column prop="provinceText" label="省" width="160" />

@@ -25,10 +25,10 @@ function createNormalCard(ctx, conf, h) {
         )}
       </header>
       <div class="body">
-        <span class="text">{conf.content}</span>
         {(
-           conf.state === 'state-curr' && conf.type === 'approver' && conf.processingTime ? <div style="font-size:16px">进行中：已耗时 <el-tag>{conf.processingTime}小时</el-tag></div>  : conf.state === 'state-past' && conf.type === 'approver' && conf.processingTime ? <div style="font-size:16px">已完成：共耗时<el-tag type="success">{conf.processingTime}小时</el-tag></div> : ''
+           conf.state === 'state-curr' && conf.type === 'approver' && conf.processingTime ? <div style="font-size:16px;margin-bottom:5px"><el-tag>{conf.processingTime}后提醒</el-tag></div>  : conf.state === 'state-past' && conf.type === 'approver' && conf.processingTime ? <div style="font-size:16px"></div> : ''
         )}
+        <span class="text">{conf.content}</span>
       </div>
     </section>
   );

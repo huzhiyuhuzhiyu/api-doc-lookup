@@ -21,7 +21,7 @@ const getDataType = (data) => {
 
 export default {
   name: 'Process',
-  props: ['tabName', 'conf', 'flowType'],
+  props: ['tabName', 'conf', 'flowType','planPersonId','planPersonName'],
   data() {
     let data = {}
     if (typeof this.conf === 'object' && this.conf !== null && JSON.stringify(this.conf) !== '{}') {
@@ -30,6 +30,7 @@ export default {
       data = getMockData()
     }
     this.updateFiled(data)
+    data.childNode && ((data.childNode.content && data.childNode.content !== '请设置处理人') ? data.childNode.content = data.childNode.content : data.childNode.content = this.planPersonName)
     this.$store.dispatch('base/getPositionList')
     this.$store.dispatch('base/getRoleList')
     this.$store.dispatch('generator/getDepTree')
@@ -140,7 +141,9 @@ export default {
      * @param { Object } value - 被编辑的节点的properties属性对象
      */
     onPropEditConfirm(value, content) {
+      
       this.activeData.content = content || '请设置条件'
+      this.activeData.processingTime = value.planTime + (value.flowUnit && (value.flowUnit === 'd' ? '天' : value.flowUnit === 'h' ? '小时' : '分钟'))
       let oldProp = this.activeData.properties;
       this.activeData.properties = value;
       // 修改优先级
@@ -206,6 +209,8 @@ export default {
           value={this.activeData}
           flowType={this.flowType || 0}
           processData={this.data}
+          planPersonId={this.planPersonId}
+          planPersonName={this.planPersonName}
           onConfirm={this.onPropEditConfirm}
           onCancel={this.onClosePanel}
         />

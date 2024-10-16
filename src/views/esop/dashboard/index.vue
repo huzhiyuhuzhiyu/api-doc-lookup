@@ -1,6 +1,9 @@
 <script>
 
 import {debounce} from "throttle-debounce";
+import {fileTypeStatistic, increaseStatistic, uploadStatistic} from "@/api/esop/dashborad";
+import {ApplicationType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
+import {notEmpty} from "@/utils";
 function randomData() {
     return Math.round(Math.random()*1000);
 }
@@ -36,7 +39,8 @@ export default {
                         },
 
                     ],
-                    pathName:'workinginstruction'
+                    pathName:'workinginstruction',
+                    type:ApplicationType.WORK
                 },
                 {
                     title:'检验指导书',
@@ -56,7 +60,8 @@ export default {
                             value:randomData()
                         },
 
-                    ]
+                    ],
+                    type:ApplicationType.INSPECT
                 },
                 {
                     title:'图文档',
@@ -76,7 +81,8 @@ export default {
                             value:randomData()
                         },
 
-                    ]
+                    ],
+                    type: ApplicationType.IMAGE
                 },
                 {
                     title:'办公文件',
@@ -96,7 +102,8 @@ export default {
                             value:randomData()
                         },
 
-                    ]
+                    ],
+                    type: ApplicationType.OFFICE
                 },
                 {
                     title:'系统附件',
@@ -117,8 +124,13 @@ export default {
                         },
 
                     ],
+                    type: ApplicationType.SYSTEM
                 },
-            ]
+            ],
+            topDataMap:new Map(),
+            topLoading:false,
+            leftBottomLoading:false,
+            rightBottomLoading:false,
         }
     },
     methods:{
@@ -130,75 +142,134 @@ export default {
            this.fileOperateInstance.resize()
         })
       },
-      loadData(){
-         const fileTypeOption = {
-              xAxis: {
-                  type: 'category',
-                  data: new Array(30).fill(0).map((item,index)=>'10-'+(index+1))
-              },
-              yAxis: {
-                  type: 'value'
-              },
-              series: [
-                  {
-                      data:  new Array(30).fill(0).map((item,index)=>randomData()),
-                      type: 'line',
-                      name:'文档数量'
-                  }
-              ],
-             legend: {
-                 // data: ['文档数量'],
-                 // top: 10,
-                 // isShow:true
-                 bottom: 10
-             },
-             title: {
-                 left: 'center',
-                 text: '文件上传统计',
-                 top: 20
-             },
-             tooltip: {
-                 trigger: 'axis',
-                 axisPointer: {
-                     type: 'shadow'
-                 }
-             },
-             color: ['#4a657a', '#308e92', '#b1cfa5', '#f5d69f', '#f5898b', '#ef5055'],
-          };
+      async loadUploadType(){
+          this.rightBottomLoading = true
+          try {
+              const {data} =  await fileTypeStatistic()
+              console.log('loadUploadType',data)
+              const x=[]
+              const y=[]
+              data.forEach(({fileType,count})=>{
+                  if(!fileType) return
+                  x.push(fileType)
+                  y.push(count)
+              })
+              const fileOperateOption ={
+                  xAxis: {
+                      type: 'category',
+                      data: x
+                  },
+                  yAxis: {
+                      type: 'value'
+                  },
+                  series: [
+                      {
+                          data: y,
+                          type: 'bar',
+                          name:'文档数量'
+                      },
+                  ],
+                  legend: {
+                      bottom: 10
+                  },
+                  tooltip: {
+                      trigger: 'axis',
+                      axisPointer: {
+                          type: 'shadow'
+                      }
+                  },
+                  title: {
+                      left: 'center',
+                      text: '文件类型统计',
+                      top: 20
+                  },
+                  color: [ '#00b8d9', '#36b37e'],
+              }
+              this.fileOperateInstance.setOption(fileOperateOption)
+          }catch (e) {
 
-         const fileOperateOption ={
-             xAxis: {
-                 type: 'category',
-                 data: ['pdf','xlsx','xls','doc','txt','xmind','png','jpeg']
-             },
-             yAxis: {
-                 type: 'value'
-             },
-             series: [
-                 {
-                     data:  new Array(8).fill(0).map((item,index)=>randomData()),
-                     type: 'bar',
-                     name:'文档数量'
-                 },
-             ],
-             legend: {
-                 bottom: 10
-             },
-             tooltip: {
-                 trigger: 'axis',
-                 axisPointer: {
-                     type: 'shadow'
-                 }
-             },
-             title: {
-                 left: 'center',
-                 text: '文件类型统计',
-                 top: 20
-             },
-             color: [ '#00b8d9', '#36b37e'],
-         }
-          this.fileTypeInstance.setOption(fileTypeOption)
-          this.fileOperateInstance.setOption(fileOperateOption)
+          }finally {
+              this.rightBottomLoading = false
+          }
+
+      },
+      async loadUploadNum(){
+          this.leftBottomLoading = true
+          try {
+              const {data} =   await increaseStatistic()
+              console.log('loadUploadNum',data)
+              data.filter(notEmpty).forEach(item=>{
+                  const obj = this.topDataMap.get(item.type)
+                  if(obj){
+                      obj.item[0].value = item.dailyCount
+                      obj.item[1].value = item.weeklyCount
+                      obj.item[2].value = item.monthlyCount || 0
+                  }
+              })
+          }catch (e) {
+
+          }finally {
+              this.leftBottomLoading = false
+          }
+
+
+      },
+      async loadUploadNumByDay(){
+          this.topLoading = true
+          try {
+              const {data} = await uploadStatistic()
+              const x=[]
+              const y=[]
+              data.forEach(({count,date})=>{
+                  x.push(date)
+                  y.push(count)
+              })
+              const fileTypeOption = {
+                  xAxis: {
+                      type: 'category',
+                      data: x
+                  },
+                  yAxis: {
+                      type: 'value'
+                  },
+                  series: [
+                      {
+                          data:  y,
+                          type: 'line',
+                          name:'文档数量'
+                      }
+                  ],
+                  legend: {
+                      // data: ['文档数量'],
+                      // top: 10,
+                      // isShow:true
+                      bottom: 10
+                  },
+                  title: {
+                      left: 'center',
+                      text: '文件上传统计',
+                      top: 20
+                  },
+                  tooltip: {
+                      trigger: 'axis',
+                      axisPointer: {
+                          type: 'shadow'
+                      }
+                  },
+                  color: ['#4a657a', '#308e92', '#b1cfa5', '#f5d69f', '#f5898b', '#ef5055'],
+              };
+              this.fileTypeInstance.setOption(fileTypeOption)
+          }catch (e) {
+
+          }finally {
+                this.topLoading = false
+          }
+
+      },
+      async loadData(){
+            this.loadUploadType()
+            this.loadUploadNum()
+            this.loadUploadNumByDay()
       },
       blockClick(pathName){
         const path =  getFullPath(pathName)
@@ -209,8 +280,10 @@ export default {
       window.onresize = null
     },
     mounted() {
+        this.topData.forEach(item=>this.topDataMap.set(item.type,item))
         this.initCharts()
         this.loadData()
+
     },
 
 }
@@ -220,7 +293,7 @@ export default {
     <div class="JNPF-common-layout">
         <div class="JNPF-common-layout-center  JNPF-flex-main height-full">
            <div class="wrapper height-full">
-               <div class="header">
+               <div class="header" v-loading="topLoading">
                    <div class="header-item pointer" @click="blockClick(top.pathName)" v-for="top in topData">
                        <div class="item-title">
                                {{top.title}}
@@ -242,14 +315,14 @@ export default {
                </div>
                <div class="charts">
                    <el-row :gutter="10" class="height-full">
-                       <el-col :span="12" class="height-full">
+                       <el-col :span="12" class="height-full" v-loading="leftBottomLoading">
                            <div class="charts-item left height-full">
                                <div id="fileType" class="height-full"></div>
                            </div>
 
                        </el-col>
                        <el-col :span="12" class="height-full">
-                           <div class="charts-item right height-full">
+                           <div class="charts-item right height-full" v-loading="rightBottomLoading">
                                <div id="fileOperate" class="height-full"></div>
                            </div>
                        </el-col>
@@ -305,6 +378,8 @@ export default {
                     color: #ff0000;
                     font-size: 32px;
                     width:42%;
+                    text-align: right;
+                    padding-right: 10px;
                 }
                 .item-text-right {
                     width: 58%;

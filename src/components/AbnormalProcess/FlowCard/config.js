@@ -3,13 +3,13 @@ const defaultStartForm = {
   initiatePos: [],
   initiateRole: [],
   title: '异常流程发起',
-  errorRule: 1, // 异常处理规则
-  errorRuleUser: [], // 指定人员处理异常
+  errorRule: 1, // 异常提醒规则
+  errorRuleUser: [], // 指定人员提醒异常
   // 限时设置
   timeLimitConfig: {
     on: 0,  // 开启
     nodeLimit: 0, // 节点限定时长起始值类型
-    duringDeal: 24, // 节点处理限定时长(时)
+    duringDeal: 24, // 节点提醒限定时长(时)
     formField: '',  // 请选择字段
   },
   overTimeConfig: {
@@ -139,10 +139,10 @@ export default {
   },
   approver: {
     type: "approver",
-    content: "请设置处理人",
+    content: "请设置提醒人",
     processingTime:'',
     properties: {
-      title: '处理节点'
+      title: '提醒节点'
     }
   },
   copy: {

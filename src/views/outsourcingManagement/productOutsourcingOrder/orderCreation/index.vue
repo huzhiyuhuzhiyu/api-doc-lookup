@@ -23,7 +23,7 @@
                   <el-collapse v-model="activeNames">
                     <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                       <el-row :gutter="15" class="">
-                        <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
+                        <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                           label-position="top">
                           <!-- <el-col :sm="6" :xs="24">
                         <el-form-item label="单号" prop="orderNo">
@@ -236,12 +236,11 @@
                       <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
                         <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue2 }}</span>
                         <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ computedValue3 }}</span>
-                        <!-- <span style="font-weight:500;margin-right:10px">总金额(不含税)：{{ computedValue }}</span> -->
                       </div>
                     </el-collapse-item>
                   </el-collapse>
                 </el-tab-pane>
-                <el-tab-pane label="附件" name="annex">
+                <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
                   <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"></UploadWj>
                 </el-tab-pane>
                 <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
@@ -278,7 +277,7 @@ import {
   approvalTransferList
 } from '@/api/basicData/approvalAdministrator'
 import { insertOutOrder } from '@/api/purchasingAndOutsourcingOrders/index'
-import { getCooperativeData } from '@/api/basicData/index'
+import { getCooperativeData, getBimBusinessDetail } from '@/api/basicData/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
 import { getbimProductAttributes } from '@/api/masterDataManagement/index'
@@ -291,6 +290,7 @@ export default {
   },
   data() {
     return {
+      isattachmentswitch: '',
       datafilelist: [],
       activeName: 'jcInfo',
       activeNames: ['productInfo', 'basicInfo'],
@@ -366,7 +366,7 @@ export default {
           },
           {
             validator: this.formValidate('positiveNumber', false, (errMsg) => {
-              this.$message.error(`数量(主)：${errMsg}`)
+              this.$message.error(`数量：${errMsg}`)
             }),
             trigger: 'blur'
           }
@@ -394,7 +394,20 @@ export default {
             trigger: 'blur'
           }
         ],
-        deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
+        deliveryDate: [
+          {
+            validator: this.formValidate({
+              type: 'noEmtry',
+              params: [
+                '',
+                (errMsg, index) => {
+                  this.$message.error(`产品信息第${index + 1}行：交货日期${errMsg}`)
+                }
+              ]
+            }),
+            trigger: ['blur']
+          }
+        ]
       },
       productArr: [],
       defaultProps: {
@@ -611,10 +624,16 @@ export default {
     computedValue3() {
       // 在这里计算第三个输入框的值
       let count = 0
+      let count1 = 0
+
       this.dataFormTwo.data.forEach((item) => {
         count += item.totalAmount * 1
+        count1 += item.excludingTaxAmount * 1
       })
+
       this.dataForm.totalAmount = this.jnpf.numberFormat(count)
+
+      this.dataForm.excludingTaxTotalAmount = this.jnpf.numberFormat(count1)
 
       return this.dataForm.totalAmount
     },
@@ -634,7 +653,7 @@ export default {
       // immediate:true,
       handler: function (newVal, oldVal) {
         newVal.forEach((item) => {
-          if (item.price && item.taxRate) {
+          if (item.price && item.taxRate || item.price && item.taxRate == 0) {
             item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
           }
           if (item.purchaseQuantity && item.excludingTaxPrice) {
@@ -656,6 +675,7 @@ export default {
   },
   mounted() { },
   created() {
+    this.getBimBusinessDetail()
     this.fetchData('WXDH')
     if (this.$route.query.alert) {
       this.dialogTitle = '新建'
@@ -697,6 +717,15 @@ export default {
     this.getBusInfo()
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_wxdd'
+      }
+      getBimBusinessDetail(obj).then((res) => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
       // 获取税率(数据字典)
@@ -844,7 +873,7 @@ export default {
     },
     supplierdata(id, data) {
       this.$nextTick(() => {
-        this.$refs['elForm'].validateField('cooperativePartnerName')
+        this.$refs['dataForm'].validateField('cooperativePartnerName')
       })
       if (data.length === 0) {
         this.dataForm.cooperativePartnerName = ''
@@ -1002,7 +1031,7 @@ export default {
       this.dialogTitle = type == 'add' ? '新建' : type == 'edit' ? '编辑' : `查看`
       this.type = type
       this.$nextTick(() => {
-        this.$refs['elForm'].resetFields()
+        this.$refs['dataForm'].resetFields()
         if (!this.dataForm.id) {
           this.clearData()
         } else if (this.dataForm.id && this.type == 'add') {
@@ -1114,7 +1143,7 @@ export default {
       let form_2 = this.$refs['productForm']
       let valid_2 = await form_2.validate().catch((err) => false)
       if (hasCostPrice) {
-        this.$refs['elForm'].validate((valid) => {
+        this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             if (this.dataFormTwo.data.length === 0) {
               this.btnLoading = false
@@ -1177,7 +1206,7 @@ export default {
                 return
               } else {
                 this.btnLoading = true
-
+                console.log(_data, '_data')
                 if (this.type === 'add') {
                   insertOutOrder(_data)
                     .then((res) => {

@@ -442,9 +442,11 @@ export default {
       this.initData()
     },
     refresh(isrRefresh) {
+      console.log(isrRefresh, 'is')
       this.formVisible = false
       this.tableFormVisible = false
       if (isrRefresh) this.reset()
+      this.initData()
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮

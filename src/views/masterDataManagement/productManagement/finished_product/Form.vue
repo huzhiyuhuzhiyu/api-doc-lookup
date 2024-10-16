@@ -39,12 +39,12 @@ import {
   cpAddProduct,
   updateProductData,
   checkCodeExist,
-  checkModelExist
+  checkModelExist,
+  checkDrawExist
 } from '@/api/masterDataManagement/productManage'
 import { getCooperativeData, getcategoryTree as getcategoryCoop, getByCode } from '@/api/basicData/index'
 import { getcategoryTree, getUnitData, detailUnitData } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getbimProductAttributesList, getbimProductsModelList } from '@/api/masterDataManagement/index'
-
 import tabs from './params'
 export default {
   data() {
@@ -341,6 +341,39 @@ export default {
             })
           }
         }
+        if (tc.prop === 'drawingNo') {
+          if (this.businessType === '1') {
+            tc.render = false
+          } else {
+            if (!tc.itemRules) {
+              tc.itemRules = []
+            }
+            tc.itemRules.push({
+              validator: (rule, value, callback) => {
+                if (!value) {
+                  callback()
+                } else if (this.dataForm.drawingNo === this.autoDrawingNo) {
+                  callback()
+                } else {
+                  console.log(this.dataForm.drawingNo, 'this.dataForm.drawingNo')
+                  checkDrawExist({ id: this.dataForm.id || '', drawingNo: this.dataForm.drawingNo })
+                    .then((res) => {
+                      console.log(res, 'res')
+                      if (!res.data) {
+                        callback()
+                      } else {
+                        callback(new Error('此品名规格已存在'))
+                      }
+                    })
+                    .catch((err) => {
+                      callback(new Error(' '))
+                    })
+                }
+              },
+              trigger: 'blur'
+            })
+          }
+        }
         if (tc.prop === 'productSource') {
           tc.change = (val) => {
             if (val == 'assemble') {
@@ -613,16 +646,17 @@ export default {
         this.dataForm[paramsObj.prop] = ''
       }
     },
-    async fetchData(code) {
+    async fetchData(code, flag) {
       try {
-        const data = await this.jnpf.getBillRuleConfigFun(code)
+        const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        if (!data.modifyFlag && data.codeWay == 'auto') {
+        if (flag) {
           this.dataForm.code = data.number
           let target = this.tabs[0].tabContent.find((tc) => tc.prop === 'code')
-          target.itemDisabled = true
+          target.itemDisabled = !this.codeConfig.modifyFlag
         }
-      } catch (error) { }
+      } catch (error) {
+      }
     },
     async init(id, btnType = false, flag) {
       this.visible = true
@@ -749,11 +783,7 @@ export default {
               ) {
                 tc.itemDisabled = true
               }
-              this.jnpf.getBillRuleConfigFun('CPBM').then((res) => {
-                if (!res.modifyFlag) {
-                  if (tc.prop === 'code') tc.itemDisabled = true
-                }
-              })
+              this.fetchData('CPBM', false)
             })
           } else {
             // 编辑时，如果已经品名规格那些，不允许修改
@@ -778,11 +808,7 @@ export default {
                 tc.itemDisabled = true
               }
 
-              this.jnpf.getBillRuleConfigFun('CPBM').then((res) => {
-                if (!res.modifyFlag) {
-                  if (tc.prop === 'code') tc.itemDisabled = true
-                }
-              })
+              this.fetchData('CPBM', false)
             })
           }
 
@@ -818,7 +844,7 @@ export default {
       } else {
         this.title = '新建成品档案'
 
-        this.fetchData('CPBM')
+        this.fetchData('CPBM', true)
         this.formLoading = false
       }
     },

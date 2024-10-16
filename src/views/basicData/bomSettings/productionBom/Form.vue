@@ -21,6 +21,8 @@
                     <el-dropdown-item @click.native="init(firstId, btnType)">刷新数据</el-dropdown-item>
                     <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
                     <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+                    <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
+                    <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </span>
@@ -309,6 +311,12 @@ export default {
     }
   },
   created() {
+    if (localStorage.getItem("productionBomFormFlag")) {
+      let roleFlag = JSON.parse(localStorage.getItem('productionBomFormFlag'))
+      console.log(roleFlag, 'roleFlag')
+      this.expands = roleFlag
+      this.toggleExpand(roleFlag)
+    }
     this.dataFormItems.forEach((tc) => {
       this.dataForm[tc.prop] = tc.value || '' // 设置默认value
       // 添加自定义表单元素方法和参数
@@ -372,6 +380,15 @@ export default {
     })
   },
   methods: {
+    // // 设置默认展开
+    setexpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        localStorage.setItem("productionBomFormFlag", expands)
+      })
+    },
     async init(id, btnType, approvalFlag, approvalStatus) {
       console.log(approvalStatus, 'approvalStatus')
       this.visible = true
@@ -442,9 +459,7 @@ export default {
               this.formLoading = false
               this.treeLoading = false
             }
-            this.$nextTick(() => {
-              this.toggleExpand(true)
-            })
+
           })
         } else {
           this.formLoading = false
@@ -552,9 +567,7 @@ export default {
               this.formLoading = false
               this.treeLoading = false
             }
-            this.$nextTick(() => {
-              this.toggleExpand(true)
-            })
+
           })
         } else {
           this.formLoading = false
@@ -669,6 +682,7 @@ export default {
       }
     },
     async handleNodeClick(nodeData, node) {
+      console.log(this.approvalFlag, 'fl')
       console.log(nodeData, 'nodeData')
       let bomId = ''
       if (nodeData.childrenList.length !== 0) {
@@ -689,7 +703,7 @@ export default {
         msgArr.push('点击的节点没有BOM')
         this.$refs.treeBox.setCurrentKey(this.selectedNodeKey)
       }
-      this.approvalFlag = false
+      // this.approvalFlag = false
       // console.log(msgArr.join(' - '));
     },
     // 展开或折叠全部
@@ -751,28 +765,28 @@ export default {
       }
     },
     // 测试审批流
-    getBusInfo(){
-      getBusinessFlowInfo('b023').then(res=>{
-        if (res.data){
-          if (res.data.enabledMark){
+    getBusInfo() {
+      getBusinessFlowInfo('b023').then(res => {
+        if (res.data) {
+          if (res.data.enabledMark) {
             this.flowData = res.data
             this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
             this.dataForm.approvalFlag = res.data.enabledMark
-          }else{
+          } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
             this.$message.error('未找到审批流程！')
           }
-        }else{
+        } else {
           this.flowTemplateJson = {}
           this.dataForm.approvalFlag = false
         }
-      }).catch(()=>{})
+      }).catch(() => { })
     },
     // 流程信息 && 流转记录
-    getFlowDetail(id){
-      getBusinessFlowDetail(id).then(res=>{
-        if (res.data){
+    getFlowDetail(id) {
+      getBusinessFlowDetail(id).then(res => {
+        if (res.data) {
           this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson) : null
           this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
           this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
@@ -796,7 +810,7 @@ export default {
             }
           }
         }
-      }).catch(()=>{})
+      }).catch(() => { })
     },
   }
 }

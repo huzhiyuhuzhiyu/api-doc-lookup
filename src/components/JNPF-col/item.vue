@@ -1,6 +1,6 @@
 <template>
   <el-col :sm="item.sm ? item.sm : item.type === 'textarea' || item.jnpfKey === 'groupTitle' ? 24 : 8" :xs="24"
-    v-if="item.hasOwnProperty('render') ? item.render : true" :style="{paddingLeft:item.jnpfKey === 'groupTitle' ? '0px' : '15px'}">
+    v-if="item.hasOwnProperty('render') ? item.render : true" :style="{paddingLeft:item.jnpfKey === 'groupTitle' ? '0px' : '15px',marginBottom:item.mb ? item.mb : 0}">
     <el-form-item :rules="Rules" :label="item.jnpfKey === 'groupTitle' ? '' : item.label" :prop="item.prop">
 
       <!-- 输入框 -->

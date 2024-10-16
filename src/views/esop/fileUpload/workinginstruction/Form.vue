@@ -221,9 +221,9 @@ import {addBimFileUpload, detailBimFileUpload, modifyBimFileUpload} from "@/api/
 import Process from "@/components/Process/Preview.vue";
 import recordList from "@/views/workFlow/components/RecordList.vue";
 import busFlow from "@/mixins/generator/busFlow";
-import {getFilePreviewUrl} from "@/views/esop/utils/utils";
+import {getFilePreviewUrl, getTitleForApplicationType, getTitleForType} from "@/views/esop/utils/utils";
 import {getcooperativeProduct} from "@/api/salesManagement/assemblyOrders";
-import {getcategoryTree, getcategoryTree as productTree} from "@/api/basicData/materialSettings";
+import {getcategoryTree} from "@/api/basicData/materialSettings";
 import {getProductList} from "@/api/basicData/materialFiles";
 function getOriginActiveNames(){
     return ['basicInfo']
@@ -641,18 +641,7 @@ export default {
           return this.codeConfig.codeWay === 'auto' && !this.codeConfig.modifyFlag
         },
         title(){
-            const applicationType = this.applicationType
-            let name =''
-            if(applicationType === ApplicationType.INSPECT){
-                name = '检查指导书'
-            }else{
-                name = '作业指导书'
-            }
-
-            if(this.type === ModelType.ADD){
-                return `新增${name}`
-            }
-            return `查看${name}`
+            return getTitleForType(this.applicationType,this.type)
         },
         productId(){
             return this.dataForm.id

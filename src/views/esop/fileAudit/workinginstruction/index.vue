@@ -1,109 +1,69 @@
 <template>
     <div class="JNPF-common-layout">
         <div class="JNPF-common-layout-center JNPF-flex-main">
-            <div class="JNPF-common-layout-center JNPF-flex-main">
-                <el-row class="JNPF-common-search-box" :gutter="16">
+
+            <div class="JNPF-common-layout-center" v-show="activeName">
+
+                <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16" style="margin-top:5px">
                     <el-form @submit.native.prevent>
-                        <el-col :span="4">
-                            <el-form-item>
-                                <el-input v-model="listQuery.orderNo" placeholder="请输入审批单号" clearable />
-                            </el-form-item>
-                        </el-col>
                         <el-col :span="6">
                             <el-form-item>
-                                <el-date-picker v-model="listQuery.submitDate" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
-                                                style="width: 100%;" start-placeholder="审批开始时间" end-placeholder="审批结束时间"
-                                                :default-time="['00:00:00', '23:59:59']"></el-date-picker>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="4">
-                            <el-form-item>
-                                <el-input v-model="listQuery.businessName" placeholder="请输入所属业务" clearable />
+                                <el-date-picker v-model="listQuery.pickerVal" type="daterange" start-placeholder="流程开始日期"
+                                                end-placeholder="流程结束日期" :picker-options="pickerOptions" value-format="yyyy-MM-dd" clearable
+                                                :editable="false">
+                                </el-date-picker>
                             </el-form-item>
                         </el-col>
                         <el-col :span="6">
                             <el-form-item>
                                 <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
-                                    {{ $t('common.search') }}
-                                </el-button>
-                                <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">
-                                    {{ $t('common.reset') }}
+                                    {{ $t('common.search') }}</el-button>
+                                <el-button size="mini" icon="el-icon-refresh-right" @click="refresh()">{{ $t('common.reset') }}
                                 </el-button>
                             </el-form-item>
                         </el-col>
-
-                    </el-form>
-                </el-row>
-
-                <div class="JNPF-common-layout-main JNPF-flex-main">
-                    <div class="JNPF-common-head" style="padding: 8px">
-                        <div></div>
-                        <div class="JNPF-common-head-right">
-                            <el-tooltip content="高级查询" placement="top" v-if="true">
-                                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                        <el-col :span="8" class="JNPF-common-head-right" style="display:flex;justify-content:flex-end;align-items:center;float: right;line-height: 34px;">
+                            <el-tooltip content="高级查询" placement="top">
+                                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" style="margin-left:12px"
                                          @click="superQueryVisible = true" />
                             </el-tooltip>
                             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-                                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                                         @click="columnSetFun()" />
+                                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" style="margin-left:12px" :underline="false" @click="columnSetFun()" />
                             </el-tooltip>
                             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+                                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" style="margin-left:12px" :underline="false" @click="initData()" />
                             </el-tooltip>
-                        </div>
-                    </div>
-                    <JNPF-table v-loading="listLoading" :data="tableData" @sort-change="sortChange" ref="dataTable" custom-column>
-                        <el-table-column prop="orderNo" label="审批单号" min-width="180">
+                        </el-col>
+                    </el-form>
+                </el-row>
+                <div class="JNPF-common-layout-main JNPF-flex-main">
+
+                    <JNPF-table v-loading="listLoading" :data="list" custom-column ref="dataTable">
+                        <el-table-column prop="fullName" label="流程标题" show-overflow-tooltip min-width="150" />
+                        <el-table-column prop="startTime" label="发起时间" min-width="150" :formatter="jnpf.tableDateFormat" />
+                        <el-table-column prop="userName" label="发起人员" min-width="130" />
+                        <el-table-column prop="flowUrgent" label="紧急程度" min-width="100" align="center">
                             <template slot-scope="scope">
-                                <el-link type="primary"
-                                         @click.native="addOrUpdateHandle(scope.row, 'look', 'disabled', scope.row.approvalBusinessCode)">
-                                    {{ scope.row.orderNo }}
-                                </el-link>
+                                {{ scope.row.flowUrgent | urgentText() }}
                             </template>
                         </el-table-column>
-                        <el-table-column prop="documentNo" label="业务单号" min-width="180" />
-                        <el-table-column prop="businessName" label="流程标题" min-width="180">
+                        <el-table-column prop="status" label="流程状态" min-width="130" align="center">
                             <template slot-scope="scope">
-                                <div>{{ scope.row.createByName }} {{ scope.row.businessName }}</div>
+                                <el-tag type="success" v-if="scope.row.status == 2">审核通过</el-tag>
+                                <el-tag type="danger" v-else-if="scope.row.status == 3">审核驳回</el-tag>
+                                <el-tag type="info" v-else-if="scope.row.status == 4">流程撤回</el-tag>
+                                <el-tag type="info" v-else-if="scope.row.status == 5">审核终止</el-tag>
+                                <el-tag type="primary" v-else>等待审核</el-tag>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="businessName" label="所属业务" min-width="160" />
-                        <el-table-column prop="createByName" label="发起人" min-width="160" />
-                        <el-table-column prop="submitDate" label="发起时间" min-width="180" />
-                        <!-- <el-table-column prop="finishTime" label="完成时间"min-width="180" />
-                            <el-table-column prop="approvalFormStatus" label="流程状态" align="center" min-width="120">
-                              <template slot-scope="scope">
-                                <div v-if="scope.row.approvalFormStatus == 'ing'">
-                                  <el-tag>审批中</el-tag>
-                                </div>
-                                <div v-else-if="scope.row.approvalFormStatus == 'ok'">
-                                  <el-tag type="success">审批通过</el-tag>
-                                </div>
-                                <div v-else-if="scope.row.approvalFormStatus == 'rebut'">
-                                  <el-tag type="danger">审批拒绝</el-tag>
-                                </div>
-                              </template>
-                            </el-table-column> -->
-                        <el-table-column label="操作" min-width="140">
+                        <el-table-column prop="creatorTime" label="接收时间" min-width="150">
                             <template slot-scope="scope">
-                                <el-button size="mini" type="text"
-                                           @click="addOrUpdateHandle(scope.row, 'look', '', scope.row.approvalBusinessCode)">
-                                    审批
-                                </el-button>
-                                <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}
-                      <i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                                    <el-dropdown-menu slot="dropdown">
-                                        <el-dropdown-item
-                                            @click.native="addOrUpdateHandle(scope.row, 'look', 'disabled', scope.row.approvalBusinessCode)">
-                                            查看详情
-                                        </el-dropdown-item>
-                                    </el-dropdown-menu>
-                                </el-dropdown>
+                                {{ scope.row.creatorTime | toDate() }}
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="操作" min-width="60" fixed="right">
+                            <template slot-scope="scope">
+                                <el-button size="mini" type="text" @click="toDetail(scope.row)">审批</el-button>
                             </template>
                         </el-table-column>
                     </JNPF-table>
@@ -112,201 +72,291 @@
                 </div>
             </div>
         </div>
-
-
-        <component :is="listPageComponent" v-if="depFormVisible" ref="depForm" @close="close" />
+        <FlowBox v-if="formVisible" ref="FlowBox" @close="closeForm" />
+        <BatchList v-if="batchListVisible" :categoryList="categoryList" ref="BatchList" @close="batchListVisible = false" />
         <!-- 高级查询 -->
-        <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-                    @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+        <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch"
+                    @close="superQueryVisible = false" />
     </div>
 </template>
 
 <script>
-import { approvalCenterList, transfer } from '@/api/basicData/approvalAdministrator'
-
-import purReconciliationForm from '@/views/financialManagement/paymentManagement/components/purReconciliationForm.vue'
-import moment from 'moment'
-import findPage from '@/views/financialManagement/paymentManagement/findPage.js'
+import { FlowBeforeList, getFlowBeforeList, getFlowBeforeCount } from '@/api/workFlow/FlowBefore'
+import { FlowEngineListAll } from '@/api/workFlow/FlowEngine'
+import FlowBox from '@/views/workFlow/components/FlowBox'
+import BatchList from './BatchList'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import {
-    getbimProductAttributesList, getbimProductAttributes
-} from "@/api/masterDataManagement/index";
+import {FlowId} from "@/views/esop/utils/constants";
 export default {
-    name: 'quality',
-    components: {
-        purReconciliationForm, SuperQuery
-    },
+    name: 'workFlow-flowTodo',
+    components: { FlowBox, BatchList, SuperQuery },
     data() {
         return {
+            list: [],
+            total: 0,
+            listLoading: true,
+            listQuery: {},
+            initListQuery: {
+                flowCategory: 'fileManage',
+                businessFlag: true,    // 1 是 3  0 是 1和2
+                createByName: "",
+                creatorUserId: "",
+                endTime: "",
+                endUpdateTime: "",
+                flowId: "",
+                orderItems: [{
+                    asc: false,
+                    column: "F_CreatorTime"
+                }],
+                keyword: "",
+                nodeCode: "",
+                pageNum: 1,
+                pageSize: 20,
+                startTime: "",
+                startUpdateTime: "",
+                totalRowFlag: false,
+                pickerVal: []
+            },
+            statusList: [{
+                id: 1,
+                fullName: '等待审核'
+            }, {
+                id: 2,
+                fullName: '审核通过'
+            }, {
+                id: 3,
+                fullName: '审核驳回'
+            }, {
+                id: 4,
+                fullName: '流程撤回'
+            }, {
+                id: 5,
+                fullName: '审核终止'
+            }],
+            urgentList: [
+                {
+                    id: 1,
+                    fullName: '普通'
+                }, {
+                    id: 2,
+                    fullName: '重要'
+                }, {
+                    id: 3,
+                    fullName: '紧急'
+                }
+            ],
+            formVisible: false,
+            batchListVisible: false,
+            pickerOptions: {
+                shortcuts: [{
+                    text: '最近一周',
+                    onClick(picker) {
+                        const end = new Date();
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                        picker.$emit('pick', [start, end]);
+                    }
+                }, {
+                    text: '最近一个月',
+                    onClick(picker) {
+                        const end = new Date();
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                        picker.$emit('pick', [start, end]);
+                    }
+                }, {
+                    text: '最近三个月',
+                    onClick(picker) {
+                        const end = new Date();
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                        picker.$emit('pick', [start, end]);
+                    }
+                }]
+            },
+            categoryList: [],
+            flowEngineList: [],
+            categoryIndex: -1,
+            activeName: 'system',
             superQueryVisible: false,
             superQueryJson: [
                 {
-                    prop: 'orderNo',
-                    label: '审批单号',
+                    prop: 'fullName',
+                    label: "流程标题",
                     type: 'input'
                 },
                 {
-                    prop: 'documentNo',
-                    label: '业务单号',
-                    type: 'input'
-                },
-
-                {
-                    prop: 'businessName',
-                    label: '流程标题',
+                    prop: 'flowName',
+                    label: "所属流程",
                     type: 'input'
                 },
                 {
-                    prop: 'businessName',
-                    label: '所属业务',
-                    type: 'input'
+                    prop: 'status',
+                    label: "流程状态",
+                    type: 'select',
+                    options: [{
+                        value: 1,
+                        label: '等待审核'
+                    }, {
+                        value: 2,
+                        label: '审核通过'
+                    }, {
+                        value: 3,
+                        label: '审核驳回'
+                    }, {
+                        value: 4,
+                        label: '流程撤回'
+                    }, {
+                        value: 5,
+                        label: '审核终止'
+                    }],
                 },
                 {
-                    prop: 'createByName',
-                    label: '创建人',
-                    type: 'input'
+                    prop: 'creatorUserId',
+                    label: "发起人员",
+                    type: 'custom',
+                    component: 'user-select',
                 },
                 {
-                    prop: 'submitDate',
-                    label: '发起时间',
+                    prop: 'creatorTime',
+                    label: "接收时间",
                     type: 'daterange',
-                    valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                    startPlaceholder: '开始日期',
-                    endPlaceholder: '结束日期',
-                    pickerOptions: this.global.timePickerOptions
+                    valueFormat: "yyyy-MM-dd",
                 },
-
             ],
-            activeName: 'dont',
-            depFormVisible: false,
-            background: true, //分页器背景颜色
-            visible: false,
-            tableData: [],
-            listLoading: false,
-            listQuery: {},
-            initListQuery: {
-                createByName: '',
-                endTime: '',
-                keyword: '',
-                label: 'dont', // 待处理
-                businessCode: 'b048',
-                orderNo: '',
-                orderItems: [
-                    {
-                        asc: true,
-                        column: ''
-                    },
-                    {
-                        asc: false,
-                        column: 'create_time' /* 使用倒序日期作为默认排序 */
-                    }
-                ],
-                pageNum: 1,
-                pageSize: 20,
-                startTime: '',
-                approvalFormStatus: '',
-                submitStartDate: '',
-                submitEndDate: '',
-                submitDate: [],
-                finishStartDate: '',
-                finishEndDate: '',
-                finishDate: []
-            },
-            total: 0,
-            formVisible: false,
-            statusList: [
-                {
-                    label: '审批中',
-                    value: 'ing'
-                },
-                {
-                    label: '审批通过',
-                    value: 'ok'
-                },
-                {
-                    label: '审批拒绝',
-                    value: 'rebut'
-                }
-            ],
-            findPageList: findPage.approvalList,
-            listPageComponent: ''
+            countItems: [],
+            flowType:'businessType',
+            allTotal:0
         }
     },
-    watch: {},
+    filters: {
+        getCategoryText(id, categoryList) {
+            let item = categoryList.filter(o => o.enCode == id)[0]
+            return item && item.fullName ? item.fullName : ''
+        }
+    },
+    props:{
+        flowId:{
+            type:String,
+            default:FlowId.WORK
+        }
+    },
     created() {
+        this.getDictionaryData()
+        // this.getFlowEngineList()
+        this.initListQuery.flowId = this.flowId
         this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+
+        this.getCount()
         this.initData()
     },
+    watch: {
+        activeName() {
+            this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+            this.categoryIndex = -1
+            this.getCount()
+            this.initData()
+        },
+        'listQuery.flowCategory':function(newVal){
+            this.initData()
+        },
+    },
     methods: {
+        getCount() {
+            getFlowBeforeCount(this.listQuery).then(res => {
+                this.countItems = res.data.result
+                this.allTotal = this.countItems.reduce((acc,item)=>acc+=item.num*1,0)
+            })
+        },
+        changeCategory(item, index) {
+            this.listQuery.flowCategory = item.enCode
+            this.categoryIndex = index
+            this.initData()
+        },
         superQuerySearch(query) {
-            this.orderForm.superQuery = query
+            this.listQuery.superQuery = query
             this.superQueryVisible = false
             this.search()
         },
         columnSetFun() {
             this.$refs.dataTable.showDrawer()
         },
-        sortChange({ prop, order }) {
-            const newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-            this.listQuery.orderItems[0].asc = order !== 'descending'
-            this.listQuery.orderItems[0].column = order === null ? '' : newProp
+        search() {
             this.initData()
         },
-        // 关闭新建、编辑页面
-        close(isRefresh) {
-            this.depFormVisible = false
-            if (isRefresh) {
-                this.initData()
-            }
+        getFlowEngineList() {
+            FlowEngineListAll().then((res) => {
+                this.flowEngineList = res.data.list
+            })
+        },
+        getDictionaryData() {
+            this.$store.dispatch('base/getDictionaryData', { sort: 'WorkFlowCategory' }).then((res) => {
+                this.categoryList = res
+            })
         },
         initData() {
             this.listLoading = true
-            this.visible = false
-            this.jnpf.searchTimeFormat(this.listQuery, 'submitDate', 'submitStartDate', 'submitEndDate')
-            this.jnpf.searchTimeFormat(this.listQuery, 'finishDate', 'finishStartDate', 'finishEndDate')
-            approvalCenterList(this.listQuery)
-                .then((res) => {
-                    console.log('货位表格', res)
-                    this.tableData = res.data.records
-                    this.total = res.data.total
-                    this.listLoading = false
-                })
-                .catch(() => {
-                    this.listLoading = false
-                })
-        },
-        search() {
-            // if (this.activeName === 'dont') {
-            Object.keys(this.listQuery).forEach((key) => {
+            this.listQuery.businessFlag = this.activeName === 'system' ? true : false
+            Object.keys(this.listQuery).forEach(key => {
                 let item = this.listQuery[key]
                 this.listQuery[key] = typeof item === 'string' ? item.trim() : item
             })
-            this.listQuery.pageNum = 1
-            // }
-            //  else {
-            //   Object.keys(this.linesQuery).forEach(key => {
-            //     let item = this.linesQuery[key]
-            //     this.linesQuery[key] = typeof item === 'string' ? item.trim() : item
-            //   })
-            //   this.linesQuery.pageNum = 1
-            // }
-            this.initData()
+            this.jnpf.searchTimeFormat(this.listQuery, 'pickerVal', 'startTime', 'endTime')
+            getFlowBeforeList(1, this.listQuery).then(res => {
+                this.list = res.data.records
+                this.total = res.data.total
+                this.listLoading = false
+            }).catch(() => this.listLoading = false)
         },
-        reset() {
-            this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-            this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-            this.initData()
-        },
-        addOrUpdateHandle(id, type, btnType, pageType) {
-            let targetPage = this.findPageList.find((item) => item.label === pageType)
-            this.listPageComponent = targetPage.value
-            this.depFormVisible = true
+        toDetail(item) {
+            let data = {
+                id: item.processId,
+                enCode: item.flowCode,
+                flowId: item.flowId,
+                formType: item.formType,
+                opType: 1,
+                taskNodeId: item.thisStepId,
+                taskId: item.id,
+                businessId: item.businessId,
+                businessFlow: item.businessFlow,
+            }
+            this.formVisible = true
             this.$nextTick(() => {
-                this.$refs.depForm.init(id, type, btnType, targetPage.label)
+                this.$refs.FlowBox.init(data)
             })
+        },
+        goBatch() {
+            this.batchListVisible = true
+            this.$nextTick(() => {
+                this.$refs.BatchList.init()
+            })
+        },
+        closeForm(isRefresh) {
+            this.formVisible = false
+            if (isRefresh) this.refresh()
+        },
+        refresh() {
+            this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+            this.categoryIndex = -1
+            this.getCount()
+            this.initData()
         }
     }
 }
 </script>
-
-<style src="@/assets/scss/index-list.scss" lang="scss" scoped />
+<style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />
+<style lang="scss" scoped>
+::v-deep .el-badge__content.is-fixed {
+    top: 3px !important;
+    right: 27px;
+}
+::v-deep .el-badge__content {
+    line-height: 16px !important;
+}
+::v-deep .el-radio-button__inner{
+    border-radius:0px !important;
+}
+::v-deep .el-radio-button__inner{
+    border-left: 1px solid #DCDFE6
+}
+</style>

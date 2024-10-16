@@ -1,24 +1,17 @@
 <template>
-  <WorkingInstruction :title="'检查指导书上传'" :applicationType="ApplicationType.INSPECT"></WorkingInstruction>
+    <WorkingInstructionAudit :flow-id="FlowId.INSPECT"></WorkingInstructionAudit>
 </template>
-
 <script>
-
-import WorkingInstruction from "@/views/esop/fileUpload/workinginstruction/index.vue";
-import {ApplicationType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
+import {FlowId} from "@/views/esop/utils/constants";
 
 export default {
-  name: 'supplierProfile',
-  components: {WorkingInstruction,  },
-    data(){
-      return {
-          ApplicationType
-      }
-
+    computed: {
+        FlowId() {
+            return FlowId
+        }
+    },
+    components:{
+        WorkingInstructionAudit: ()=>import("@/views/esop/fileAudit/workinginstruction/index.vue")
     }
-
 }
 </script>
-<style scoped>
-
-</style>

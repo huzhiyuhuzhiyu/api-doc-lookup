@@ -11,16 +11,10 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-select v-model="listQuery.maintenanceType" placeholder="请选择维保类型" clearable>
+                <el-select v-model="listQuery.state" placeholder="请选择设备状态" clearable>
                   <el-option v-for="item in maintenanceTypeList" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-date-picker v-model="listQuery.maintenanceDate" type="date" value-format="yyyy-MM-dd" placeholder="请选择维保日期">
-                </el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -48,7 +42,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="equipmentIdName" label="设备名称" min-width="180" sortable="custom" />
             <el-table-column prop="equipmentIdCode" label="设备编码" min-width="180" sortable="custom" />
             <el-table-column prop="factoryFloor" label="车间" min-width="200" sortable="custom" />
@@ -97,11 +91,11 @@ export default {
     return {
       columnList: ["code", "partsReplacementRecord", "createByName"],
       maintenanceTypeList: [
+        { label: "正常", value: "normal" },
         { label: "维修", value: "repair" },
-        { label: "保养", value: "maintenance" },
-        { label: "点检", value: "inspection" },
-        { label: "检定", value: "verification" },
-        { label: "报废", value: "discard" }
+        { label: "报废", value: "discard" },
+        { label: "备用", value: "spare" },
+        { label: "停用", value: "stop" }
       ],
       formVisible: false,
       listLoading: false,
@@ -110,7 +104,7 @@ export default {
       initListQuery: {
         classAttribute: "equipment",
         name: '',
-        maintenanceType: '',
+        state: '',
         maintenanceDate: '',
         pageNum: 1,
         pageSize: 20,
@@ -125,49 +119,46 @@ export default {
       listQuery: {},
       superQueryJson: [
         {
-          prop: 'name',
+          prop: 'equipmentIdName',
           label: "设备名称",
           type: 'input'
         },
         {
-          prop: 'code',
+          prop: 'equipmentIdCode',
           label: "设备编码",
           type: 'input'
         },
         {
-          prop: 'maintenanceType',
-          label: "维保类型",
+          prop: 'factoryFloor',
+          label: "车间",
+          type: 'input'
+        },
+        {
+          prop: 'mountedPlaces',
+          label: "安装地点",
+          type: 'input'
+        },
+        {
+          prop: 'partnerName',
+          label: "供应商",
+          type: 'input'
+        },
+        {
+          prop: 'supplier',
+          label: "生产厂家",
+          type: 'input'
+        },
+        {
+          prop: 'state',
+          label: "设备状态",
           type: 'select',
           options: [
+            { label: "正常", value: "normal" },
             { label: "维修", value: "repair" },
-            { label: "保养", value: "maintenance" },
-            { label: "点检", value: "inspection" },
-            { label: "报废", value: "discard" }
+            { label: "报废", value: "discard" },
+            { label: "备用", value: "spare" },
+            { label: "停用", value: "stop" }
           ]
-        },
-        { // 日期选择器（区间）
-          prop: 'maintenanceDate',
-          label: '维保日期',
-          type: 'daterange',
-          valueFormat: "yyyy-MM-dd",
-          startPlaceholder: '维保开始日期',
-          endPlaceholder: '维保结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'contentRecord',
-          label: "维保内容记录",
-          type: 'input'
-        },
-        {
-          prop: 'partsReplacementRecord',
-          label: "零件更新记录",
-          type: 'input'
-        },
-        {
-          prop: 'maintenancePersonnel',
-          label: "处理人",
-          type: 'input'
         },
         {
           prop: 'remark',

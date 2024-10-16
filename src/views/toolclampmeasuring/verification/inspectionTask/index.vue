@@ -41,8 +41,8 @@
           </div>
         </div>
 
-        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column style="padding-bottom: 50px;">
-          <el-table-column prop="name" label="任务名称" width="200" fixed="left" sortable="custom">
+        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column>
+          <el-table-column prop="name" label="任务名称" width="200" sortable="custom">
             <!-- <template slot-scope="scope">
                             <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
                                 scope.row.orderNo

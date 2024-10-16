@@ -15,13 +15,13 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <!-- <el-col :span="4">
             <el-form-item>
               <el-select v-model="orderForm.approvalStatus" placeholder="请选择审批状态" clearable style="width: 100%;">
                 <el-option v-for="(item, index) in documentStatusList" :key="index" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="dataFormSubmit()">
@@ -72,14 +72,14 @@
             </template>
           </el-table-column>
           <el-table-column prop="reasonRejection" label="驳回理由" min-width="200"></el-table-column>
-          <el-table-column prop="approvalCompletionDate" label="审批完成时间" width="180" sortable="custom"></el-table-column>
+          <!-- <el-table-column prop="approvalCompletionDate" label="审批完成时间" width="180" sortable="custom"></el-table-column> -->
           <el-table-column prop="documentStatus" label="单据状态" width="120" fixed="right" align="center">
             <template slot-scope="scope">
               <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
               <div v-else-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
             </template>
           </el-table-column>
-          <el-table-column prop="submitDate" label="提交时间" width="180" sortable="custom"></el-table-column>
+          <!-- <el-table-column prop="submitDate" label="提交时间" width="180" sortable="custom"></el-table-column> -->
           <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
           <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
@@ -174,30 +174,30 @@ export default {
           label: "报废理由",
           type: 'input'
         },
-        { // 下拉选
-          prop: 'approvalStatus',
-          label: '审批状态',
-          type: 'select',
-          options: [
-            { label: '审批拒绝', value: 'rebut' },
-            { label: '审批中', value: 'ing' },
-            { label: '审批通过', value: 'ok' }
-          ]
-        },
+        // { // 下拉选
+        //   prop: 'approvalStatus',
+        //   label: '审批状态',
+        //   type: 'select',
+        //   options: [
+        //     { label: '审批拒绝', value: 'rebut' },
+        //     { label: '审批中', value: 'ing' },
+        //     { label: '审批通过', value: 'ok' }
+        //   ]
+        // },
         {
           prop: 'reasonRejection',
           label: "驳回理由",
           type: 'input'
         },
-        { // 日期时间选择器（区间）
-          prop: 'approvalCompletionDate',
-          label: '审批完成时间',
-          type: 'datetimerange',
-          valueFormat: "yyyy-MM-dd HH:mm:ss",
-          startPlaceholder: '审批完成开始时间',
-          endPlaceholder: '审批完成结束时间',
-          pickerOptions: this.global.timePickerOptions
-        },
+        // { // 日期时间选择器（区间）
+        //   prop: 'approvalCompletionDate',
+        //   label: '审批完成时间',
+        //   type: 'datetimerange',
+        //   valueFormat: "yyyy-MM-dd HH:mm:ss",
+        //   startPlaceholder: '审批完成开始时间',
+        //   endPlaceholder: '审批完成结束时间',
+        //   pickerOptions: this.global.timePickerOptions
+        // },
         { // 下拉选
           prop: 'documentStatus',
           label: '单据状态',
@@ -207,15 +207,15 @@ export default {
             { label: '草稿', value: 'draft' }
           ]
         },
-        { // 日期时间选择器（区间）
-          prop: 'submitDate',
-          label: '提交时间',
-          type: 'datetimerange',
-          valueFormat: "yyyy-MM-dd HH:mm:ss",
-          startPlaceholder: '提交开始时间',
-          endPlaceholder: '提交结束时间',
-          pickerOptions: this.global.timePickerOptions
-        },
+        // { // 日期时间选择器（区间）
+        //   prop: 'submitDate',
+        //   label: '提交时间',
+        //   type: 'datetimerange',
+        //   valueFormat: "yyyy-MM-dd HH:mm:ss",
+        //   startPlaceholder: '提交开始时间',
+        //   endPlaceholder: '提交结束时间',
+        //   pickerOptions: this.global.timePickerOptions
+        // },
         { // 日期时间选择器（区间）
           prop: 'createTime',
           label: '创建时间',

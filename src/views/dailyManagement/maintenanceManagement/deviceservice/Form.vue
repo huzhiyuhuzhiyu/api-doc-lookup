@@ -124,6 +124,11 @@
                 <el-collapse-item title="报修信息" name="bxInfo">
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="6" :xs="24">
+                      <el-form-item label="维修单号" prop="maintenanceNo">
+                        <el-input v-model="dataForm.maintenanceNo" placeholder="请输入维修单号" :disabled="(btnType === 'look' || btnType == 'start' || btnType == 'end')?true:codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="申请部门" prop="departmentId">
                         <ComSelect v-model="organizeIdTrees" :disabled="btnType === 'look' || btnType == 'start' || btnType == 'end'" placeholder="请选择申请部门" auth :dialogTitle="'请选择申请部门'" @change="changedepartment" :currOrgId="dataForm.departmentId || '0'" />
                       </el-form-item>
@@ -298,6 +303,7 @@ export default {
   components: { UploadImg },
   data() {
     return {
+      codeConfig: {},//单据规则配置
       rejectReasonList: [
         { label: '暂不需要维修', value: '暂不需要维修' },
         { label: '待统一维修', value: '待统一维修' },
@@ -431,6 +437,7 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
+        maintenanceNo:'',
         rejectReason: '',
         frontPicList: [],
         afterPicList: [],
@@ -464,10 +471,10 @@ export default {
           { required: true, message: '故障原因不能为空', trigger: 'blur' }
         ],
         reviewComments: [
-          { required: true, message: '审核意见不能为空', trigger: 'change' }
+          { required: true, message: '审核意见不能为空', trigger: 'blur' }
         ],
         degree: [
-          { required: true, message: '紧急程度不能为空', trigger: 'change' }
+          { required: true, message: '紧急程度不能为空', trigger: 'blur' }
         ],
         startMaintenanceTime: [
           { required: true, message: '派工时间不能为空', trigger: 'blur' }
@@ -483,6 +490,9 @@ export default {
         ],
         equipmentId: [
           { required: true, message: '设备不能为空', trigger: 'change' }
+        ],
+        maintenanceNo: [
+          { required: true, message: '维修单号不能为空', trigger: 'change' }
         ],
         departmentId: [
           { required: true, message: '申请部门不能为空', trigger: 'change' }
@@ -506,6 +516,13 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    async fetchData(code) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code);
+        this.codeConfig = data
+      } catch (error) {
+      }
+    },
     reviewCommentschange(e) {
       if (e == 'reject') return this.dataForm.startMaintenanceTime = ''
       this.dataForm.startMaintenanceTime = this.jnpf.getToday('YYYY-MM-DD HH:mm:ss')
@@ -775,6 +792,7 @@ export default {
       this.dataForm.id = id || ''
       this.btnType = btnType
       this.formLoading = true
+      this.fetchData('SBWXDH')
       if (this.btnType == 'add') {
         const end = new Date();//获取当前的日期
         end.setTime(end.getTime())

@@ -2495,7 +2495,6 @@ export default {
         title: this.properties.title
       }
       this.approverForm.planProcessingTime = this.jnpf.timeToMinutes(this.approverForm.planTime,this.approverForm.flowUnit)
-      console.log(this.jnpf.timeToMinutes(this.approverForm.planTime,this.approverForm.flowUnit));
       this.approverForm.approvers = [this.planPersonId]
       Object.assign(this.properties, this.approverForm, titleObj)
       this.$emit("confirm", this.properties, content || '请设置提醒人')

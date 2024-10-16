@@ -30,7 +30,6 @@ export default {
       data = getMockData()
     }
     this.updateFiled(data)
-    console.log(data,'流程图数据');
     data.childNode && ((data.childNode.content && data.childNode.content !== '请设置处理人') ? data.childNode.content = data.childNode.content : data.childNode.content = this.planPersonName)
     this.$store.dispatch('base/getPositionList')
     this.$store.dispatch('base/getRoleList')
@@ -142,9 +141,6 @@ export default {
      * @param { Object } value - 被编辑的节点的properties属性对象
      */
     onPropEditConfirm(value, content) {
-      console.log(value);
-      console.log(content);
-      console.log(this.activeData,'activeData');
       
       this.activeData.content = content || '请设置条件'
       this.activeData.processingTime = value.planTime + (value.flowUnit && (value.flowUnit === 'd' ? '天' : value.flowUnit === 'h' ? '小时' : '分钟'))

@@ -54,7 +54,7 @@
                 </div>
               </div>
               <JNPF-table v-if="flag" v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column>
-                <el-table-column prop="name" label="任务名称" min-width="200" sortable="custom" fixed="left">
+                <el-table-column prop="name" label="任务名称" min-width="200" sortable="custom">
                 </el-table-column>
                 <el-table-column prop="cycleType" label="周期类型" min-width="120" fixed="right" align="center" sortable="custom">
                   <template slot-scope="scope">
@@ -64,8 +64,8 @@
                     </div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" fixed="left" />
-                <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom" fixed="left" />
+                <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" />
+                <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom" />
                 <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
                 <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
                 <el-table-column prop="departmentIdName" label="计划点检部门" min-width="150" />
@@ -142,7 +142,7 @@
                 </div>
               </div>
               <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="detailTableData" :data="detailTableData" @sort-change="sortChangeDetail" custom-column>
-                <el-table-column prop="name" label="任务名称" min-width="200" sortable="custom" fixed="left">
+                <el-table-column prop="name" label="任务名称" min-width="200" sortable="custom">
                 </el-table-column>
                 <el-table-column prop="cycleType" label="周期类型" min-width="120" fixed="right" align="center" sortable="custom">
                   <template slot-scope="scope">
@@ -152,8 +152,8 @@
                     </div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" fixed="left" />
-                <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom" fixed="left" />
+                <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" />
+                <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom" />
                 <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
                 <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
                 <el-table-column prop="departmentIdName" label="计划点检部门" min-width="150" />
@@ -161,6 +161,7 @@
                 <el-table-column prop="cycle" label="周期" min-width="150" />
                 <el-table-column prop="unit" label="单位" width="120" />
                 <el-table-column prop="nextMaintenanceTime" label="计划点检时间" min-width="180" sortable="custom" />
+                <el-table-column prop="overdueTime" label="超期时间" min-width="160" />
                 <el-table-column prop="state" label="状态" sortable="custom" width="120" fixed="right" align="center">
                   <template slot-scope="scope">
                     <div v-if="scope.row.state == 'disabled'"><el-tag type="danger">禁用</el-tag></div>

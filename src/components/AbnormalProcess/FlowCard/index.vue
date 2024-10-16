@@ -30,6 +30,9 @@ function createNormalCard(ctx, conf, h) {
         )}
       </header>
       <div class="body">
+        {(
+           conf.state === 'state-curr' && conf.type === 'approver' && conf.processingTime ? <div style="font-size:16px"><el-tag>{conf.processingTime}后提醒</el-tag></div>  : conf.state === 'state-past' && conf.type === 'approver' && conf.processingTime ? <div style="font-size:16px"></div> : ''
+        )}
         <span class="text">{conf.content}</span>
         {
           //  <div class="icon-wrapper right">

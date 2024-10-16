@@ -186,8 +186,32 @@ export default {
           value: 'fj_wxshd'
         },
         {
-          label: '启用采购检验单附件',
+          label: '启用采购检验附件',
           value: 'fj_procurejyd'
+        },
+        {
+          label: '启用外协检验附件',
+          value: 'fj_externaljyd'
+        },
+        {
+          label: '启用退货检验附件',
+          value: 'fj_sale_backjyd'
+        },
+        {
+          label: '启用生产巡检附件',
+          value: 'fj_processjyd'
+        },
+        {
+          label: '启用完工检验附件',
+          value: 'fj_finishedjyd'
+        },
+        {
+          label: '启用退料检验附件',
+          value: 'fj_producejyd'
+        },
+        {
+          label: '启用请购单附件',
+          value: 'fj_qgd'
         }
       ],
       descriptionList: [
@@ -304,8 +328,32 @@ export default {
           value: 'fj_wxshd'
         },
         {
-          label: '开启后，在采购检验单附件新建、编辑、查看都会显示附件操作。',
+          label: '开启后，在采购检验附件新建、编辑、查看都会显示附件操作。',
           value: 'fj_procurejyd'
+        },
+        {
+          label: '开启后，在外协检验附件新建、编辑、查看都会显示附件操作。',
+          value: 'fj_externaljyd'
+        },
+        {
+          label: '开启后，在退货检验附件新建、编辑、查看都会显示附件操作。',
+          value: 'fj_sale_backjyd'
+        },
+        {
+          label: '开启后，在生产巡检附件新建、编辑、查看都会显示附件操作。',
+          value: 'fj_processjyd'
+        },
+        {
+          label: '开启后，在完工检验附件新建、编辑、查看都会显示附件操作。',
+          value: 'fj_finishedjyd'
+        },
+        {
+          label: '开启后，在退料检验附件新建、编辑、查看都会显示附件操作。',
+          value: 'fj_producejyd'
+        },
+        {
+          label: '开启后，在请购单附件新建、编辑、查看都会显示附件操作。',
+          value: 'fj_qgd'
         }
       ]
     }

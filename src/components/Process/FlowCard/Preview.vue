@@ -27,9 +27,9 @@ function createNormalCard(ctx, conf, h) {
       </header>
       <div class="body">
         <span class="text">{conf.content}</span>
-        {(
+        {/* {(
            conf.state === 'state-curr' && conf.type === 'approver' ? <div style="font-size:16px">进行中：已耗时 <el-tag>{conf.processingTime}小时</el-tag></div>  : conf.state === 'state-past' && conf.type === 'approver' ? <div style="font-size:16px">已完成：共耗时<el-tag type="success">{conf.processingTime}小时</el-tag></div> : ''
-        )}
+        )} */}
       </div>
     </section>
   );

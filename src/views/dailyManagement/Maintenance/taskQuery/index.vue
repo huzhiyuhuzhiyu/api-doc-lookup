@@ -54,7 +54,7 @@
                 </div>
               </div>
               <JNPF-table v-if="flag" v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column>
-                <el-table-column prop="name" label="任务名称" min-width="200" sortable="custom" fixed="left">
+                <el-table-column prop="name" label="任务名称" min-width="200" sortable="custom">
                 </el-table-column>
                 <el-table-column prop="cycleType" label="周期类型" min-width="120" fixed="right" align="center" sortable="custom">
                   <template slot-scope="scope">
@@ -66,14 +66,14 @@
                 </el-table-column>
                 <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
                 <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
-                <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" fixed="left" />
-                <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom" fixed="left" />
+                <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" />
+                <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom" />
                 <el-table-column prop="departmentIdName" label="计划保养部门" min-width="150" />
                 <el-table-column prop="maintainerIdName" min-width="120" label="计划保养人" />
                 <el-table-column prop="level" label="保养等级" min-width="140" />
                 <el-table-column prop="cycle" label="周期" width="90" />
                 <el-table-column prop="unit" label="单位" width="90" />
-                <el-table-column prop="nextMaintenanceTime" label="本次保养日期" width="180" sortable="custom" />
+                <el-table-column prop="nextMaintenanceTime" label="计划保养日期" width="180" sortable="custom" />
                 <el-table-column prop="state" label="状态" sortable="custom" width="120" fixed="right" align="center">
                   <template slot-scope="scope">
                     <div v-if="scope.row.state == 'disabled'"><el-tag type="danger">禁用</el-tag></div>
@@ -143,7 +143,7 @@
                 </div>
               </div>
               <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="detailTableData" :data="detailTableData" @sort-change="sortChangeDetail" custom-column>
-                <el-table-column prop="name" label="任务名称" min-width="200" sortable="custom" fixed="left">
+                <el-table-column prop="name" label="任务名称" min-width="200" sortable="custom">
                 </el-table-column>
                 <el-table-column prop="cycleType" label="周期类型" min-width="120" fixed="right" align="center" sortable="custom">
                   <template slot-scope="scope">
@@ -155,14 +155,14 @@
                 </el-table-column>
                 <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
                 <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
-                <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" fixed="left" />
-                <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom" fixed="left" />
+                <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" />
+                <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom" />
                 <el-table-column prop="departmentIdName" label="计划保养部门" min-width="150" />
                 <el-table-column prop="maintainerIdName" width="120" label="计划保养人" />
                 <el-table-column prop="level" label="保养等级" min-width="140" />
                 <el-table-column prop="cycle" label="周期" width="90" />
                 <el-table-column prop="unit" label="单位" width="90" />
-                <el-table-column prop="nextMaintenanceTime" label="本次保养日期" width="180" sortable="custom" />
+                <el-table-column prop="nextMaintenanceTime" label="计划保养日期" width="180" sortable="custom" />
                 <el-table-column prop="state" label="状态" sortable="custom" width="120" fixed="right" align="center">
                   <template slot-scope="scope">
                     <div v-if="scope.row.state == 'disabled'"><el-tag type="danger">禁用</el-tag></div>
@@ -170,6 +170,7 @@
                     </div>
                   </template>
                 </el-table-column>
+                <el-table-column prop="overdueTime" label="超期时间" min-width="160" />
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
                 <el-table-column prop="createByName" label="创建人" width="120" />
                 <el-table-column prop="remark" label="备注" min-width="200" />
@@ -178,7 +179,6 @@
                     <el-button type="text" :disabled="scope.row.istime" @click="maintenanceaction(scope.row.id, 'maintenance')" size="mini">保养</el-button>
                   </template>
                 </el-table-column>
-
               </JNPF-table>
               <pagination :total="total" :page.sync="listsQuery.pageNum" :background="background" :limit.sync="listsQuery.pageSize" @pagination="detailData" />
             </div>
@@ -189,10 +189,8 @@
       </el-tabs>
     </div>
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
-
   </div>
 </template>
-    
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import Form from '@/views/dailyManagement/Maintenance/maintenanceRecords/Form.vue'

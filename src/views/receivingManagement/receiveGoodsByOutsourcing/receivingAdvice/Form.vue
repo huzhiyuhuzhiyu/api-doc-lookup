@@ -463,50 +463,20 @@ export default {
       codeConfig: {},
       datafilelist: [],
       provinces: [],
-
-      // orderList: [
-      //   { label: "外协通知", value: "external" },
-      //   { label: "采购通知", value: "sale" },
-      // ],
-      inspectionStatusList: [
-        { label: '待检验', value: 'unInspect' },
-        { label: '已检验', value: 'inspected' },
-        { label: '检验中', value: 'inspecting' }
-      ],
-      deliveryStatusList: [
-        { label: '未完成', value: 'not_returned' },
-        { label: '已完成', value: 'returned' },
-        { label: '已取消', value: 'canceled' }
-      ],
-      documentStatusList: [{ label: '收货', value: false }, { label: '换货', value: true }],
-      approvalStatusList: [
-        { label: '审批中', value: 'ing' },
-        { label: '审批通过', value: 'ok' },
-        { label: '审批拒绝', value: 'rebut' }
-      ],
-      orderListtf: [{ label: '收货', value: 'back' }, { label: '发货', value: 'delivery' }],
-      orderListdd: [
-        { label: '外贸', value: 'foreign_trade' },
-        { label: '内销', value: 'domestic_market' },
-        { label: '总成', value: 'assembly' }
-      ],
-      orderListfhfs: [
-        { label: '送货', value: 'deliver_goods' },
-        { label: '自提', value: 'self_pickup' },
-        { label: '快递', value: 'express_delivery' },
-        { label: '货运', value: 'freight_transport' },
-        { label: '到付', value: 'collect_payment' }
-      ],
-      orderList: [
-        { label: '正常订单', value: 'normal' },
-        { label: '预测订单', value: 'prediction' },
-        { label: '样品订单', value: 'sample' },
-        { label: '备货订单', value: 'stock_up' },
-        { label: '急件订单', value: 'urgent' }
-      ],
       productRules: {
         receivedQuantity: [
-          { required: true, trigger: 'blur' },
+          {
+            validator: this.formValidate({
+              type: 'noEmtry',
+              params: [
+                '',
+                (errMsg, index) => {
+                  this.$message.error(`产品信息第${index + 1}行：收货数量${errMsg}`)
+                }
+              ]
+            }),
+            trigger: ['blur']
+          },
           { validator: this.calcValidate(), trigger: 'blur' },
           { validator: this.calcValidatenum(), trigger: 'blur' }
         ]

@@ -48,7 +48,7 @@
                 <JNPF-col-table v-model="productList" ref="sleeveForm" :tableItems="ProductTableItemss"
                   :openMode="openMode" />
               </el-tab-pane>
-              <el-tab-pane label="附件" name="annex">
+              <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
                 <UploadWj v-model="datafilelist" :disabled="btnType === 'look' || btnType === 'setLoss'"
                   :detailed="btnType === 'look' || btnType === 'setLoss'"></UploadWj>
               </el-tab-pane>
@@ -108,7 +108,7 @@
 
 <script>
 import { getDownloadUrl } from '@/api/common'
-import { getbimDrawingData } from '@/api/basicData/index'
+import { getbimDrawingData, getBimBusinessDetail } from '@/api/basicData/index'
 import Preview from '@/components/upload-wj/Preview.vue'
 import {
   addQcUnqualifiedData,
@@ -134,6 +134,7 @@ export default {
   mixins: [busFlow],
   data() {
     return {
+      isattachmentswitch: '',
       datafilelist: [],
       activeName: 'jcInfo',
       activeNames: ['basicInfo', 'inspectionInfo'],
@@ -276,6 +277,16 @@ export default {
     ]
   },
   methods: {
+    getBimBusinessDetail(inspectionType) {
+      console.log(inspectionType, 'businessCode')
+      let obj = {
+        businessCode: 'attachment',
+        configKey: `fj_${inspectionType}jyd`
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     async fetchData(code, flag) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code)
@@ -885,6 +896,7 @@ export default {
     },
     // 初始化
     init(id, btnType, approvalFlag, inspectionType) {
+      this.getBimBusinessDetail(inspectionType)
       // let id = row.id
 
       // this.dataForm = row
@@ -1260,7 +1272,20 @@ export default {
       this.formLoading = true
       detailInspectionData(id)
         .then((res) => {
-          console.log(res.data, 'jjj')
+
+          if (res.data.attachmentList) {
+            res.data.attachmentList.forEach((item) => {
+              this.datafilelist.push(
+                {
+                  name: item.document.fullName,
+                  fileSize: item.document.fileSize,
+                  filename: item.document.filePath,
+                  id: item.document.id,
+                  url: item.url
+                }
+              )
+            })
+          }
           let oldObj = { ...res.data.inspection, approvalFlag: false }
           delete oldObj.treatmentResults
           this.dataForm = oldObj

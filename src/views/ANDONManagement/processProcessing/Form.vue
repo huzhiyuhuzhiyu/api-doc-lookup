@@ -4,7 +4,7 @@
       <div :class="['JNPF-common-page-header', btnType ? 'noButtons' : '']">
         <el-page-header @back="$emit('close', true)" content="异常处理" />
         <div class="options" v-if="btnType !== 'look'">
-          <el-button type="primary" v-if="dataForm.processStatus === 'processing'" size="mini" :loading="btnLoading" @click="handleConfirm()">
+          <el-button type="primary" v-if="dataForm.processStatus === 'processing' && flowType === 2" size="mini" :loading="btnLoading" @click="handleConfirm()">
             处理</el-button>
           <el-button type="primary" v-if="type === 'system'" size="mini" :loading="btnLoading" @click="lookRecardData()">
             查看异常数据</el-button>
@@ -50,6 +50,7 @@ import Process from '@/components/AbnormalProcess/Preview'
 const Base64 = require('js-base64').Base64
 export default {
   components: { Process ,ExceptForm},
+  props:['flowType'],
   data() {
     return {
       visible: false,
@@ -136,8 +137,8 @@ export default {
                 if (data.nodeId === nodeItem.nodeCode) {
                   if (nodeItem.type == 0) data.state = 'state-past'
                   if (nodeItem.type == 1) data.state = 'state-curr'
-                  if (nodeItem.nodeType === 'approver' || nodeItem.nodeType === 'start' || nodeItem.nodeType === 'subFlow') data.content = nodeItem.userName
-                  if (nodeItem.nodeType === 'approver') data.processingTime = nodeItem.processingTime
+                  if (nodeItem.nodeType === 'start' || nodeItem.nodeType === 'subFlow') data.content = nodeItem.userName
+                  if (nodeItem.nodeType === 'approver') data.content = nodeItem.cirName
                   return
                 }
                 if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)

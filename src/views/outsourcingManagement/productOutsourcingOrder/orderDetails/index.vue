@@ -85,9 +85,9 @@
               </template>
             </el-table-column>
             <el-table-column prop="totalAmount" label="总金额(含税)" min-width="140" sortable="custom" />
-            <el-table-column prop="excludingTaxPrice" label="单价(不含税)" min-width="120" sortable="custom" />
+            <el-table-column prop="excludingTaxPrice" label="单价(不含税)" min-width="160" sortable="custom" />
             <el-table-column prop="taxAmount" label="税额" min-width="80" />
-            <el-table-column prop="excludingTaxAmount" label="总金额(不含税)" width="150" sortable="custom" />
+            <el-table-column prop="excludingTaxAmount" label="总金额(不含税)" width="160" sortable="custom" />
             <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
             <el-table-column prop="receivingStatus" label="收货状态" align="center" sortable="custom" width="120">
               <template slot-scope="scope">

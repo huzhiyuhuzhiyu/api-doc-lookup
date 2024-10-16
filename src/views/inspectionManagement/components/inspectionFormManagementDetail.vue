@@ -56,7 +56,7 @@
                 <JNPF-col-table v-model="productList" ref="sleeveForm" :tableItems="ProductTableItemss"
                   :openMode="openMode" />
               </el-tab-pane>
-              <el-tab-pane label="附件" name="annex">
+              <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
                 <UploadWj v-model="datafilelist" :disabled="btnType === 'look' || btnType === 'setLoss'"
                   :detailed="btnType === 'look' || btnType === 'setLoss'"></UploadWj>
               </el-tab-pane>
@@ -119,7 +119,7 @@
 
 <script>
 import { getDownloadUrl } from '@/api/common'
-import { getbimDrawingData } from "@/api/basicData/index";
+import { getbimDrawingData, getBimBusinessDetail } from "@/api/basicData/index";
 import Preview from "@/components/upload-wj/Preview.vue";
 import { addQcUnqualifiedData, updateQcUnqualifiedData, detailQcUnqualifiedData, detailInspectionData, lossQcUnqualifiedData } from '@/api/inspectionManagement/index' // 产品检验项目列表
 import { inspectionTypeList, inspectionResultsList, inspectionMethodList } from '../data.js'
@@ -137,6 +137,7 @@ export default {
   mixins: [busFlow],
   data() {
     return {
+      isattachmentswitch: '',
       datafilelist: [],
       activeName: "jcInfo",
       activeNames: ['inspectionItem', 'basicInfo', 'inspectionInfo', 'adverseCausesInfo'],
@@ -228,6 +229,16 @@ export default {
     ]
   },
   methods: {
+    getBimBusinessDetail(inspectionType) {
+      console.log(inspectionType, 'businessCode')
+      let obj = {
+        businessCode: 'attachment',
+        configKey: `fj_${inspectionType}jyd`
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     async fetchData(code, flag) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code)
@@ -504,6 +515,7 @@ export default {
     },
     // 初始化
     async init(id, btnType, approvalFlag, inspectionType, businessCode) {
+      this.getBimBusinessDetail(inspectionType)
       this.inspectionOrderNoChange(id)
       this.visible = true
       this.formLoading = true
@@ -545,75 +557,7 @@ export default {
         } else if (btnType === 'setLoss') {
           this.title = '损失上报'
         }
-        // // 获取详情
-        // detailQcUnqualifiedData(id).then(async res => {
-        //   console.log(res, 'res1998')
-        //   if (res.data.attachmentList) {
-        //     res.data.attachmentList.forEach((item) => {
-        //       this.datafilelist.push(
-        //         {
-        //           name: item.document.fullName,
-        //           fileSize: item.document.fileSize,
-        //           filename: item.document.filePath,
-        //           id: item.document.id,
-        //           url: item.url
-        //         }
-        //       )
-        //     })
-        //   }
-
-        //   this.dataForm = res.data.unqualified
-        //   this.inspectionList = res.data.itemList
-        //   this.linesListTwo = res.data.causesList
-        //   let tempLinesList = res.data.lines
-
-        //   tempLinesList.forEach(line => {
-        //     if (line.treatmentResults === 'qualified' || line.treatmentResults === 'concessive_acceptance' || line.treatmentResults === 'unqualified') {
-        //       line.qualifiedQuantityDisabled = true
-        //       line.unqualifiedQuantityDisabled = true
-        //     }
-
-        //     // 损失相关处理
-        //     if (this.inspectionType !== 'process') {
-        //       line.lossAmount = this.jnpf.numberFormat(line.lossUnitPrice * line.unqualifiedQuantity, 6)
-        //     } else {
-        //       line.lossUnitPrice = 0
-        //       line.lossAmount = 0
-        //     }
-        //     if (line.treatmentResults === 'qualified' || line.treatmentResults === 'concessive_acceptance') {
-        //       line.otherLossAmount = 0
-        //       line.claimAmount = 0
-        //     } else {
-        //       if (btnType === 'setLoss') {
-        //         line.otherLossAmount = '' // 设置损失时，其他损失金额默认空，需要手动输入
-        //       }
-        //     }
-        //   })
-
-
-        //   if (btnType === 'look') {
-        //     if (!this.dataForm.lossFlag) { // 没有设置过损失，查看时损失相关显示为空内容
-        //       tempLinesList.forEach(line => {
-        //         line.lossUnitPrice = ' '
-        //         line.lossAmount = ' '
-        //         line.otherLossAmount = ' '
-        //         line.totalLossAmount = ' '
-        //         line.claimAmount = ' '
-        //       })
-        //     }
-        //   } else if (btnType === 'anew') { // 重新提交
-        //     this.$nextTick(() => { this.getApproverData() }) // 审批
-        //   }
-
-        //   this.linesList = tempLinesList
-        //   this.refeshDataFormItems()
-        //   this.refeshLinesListItems()
-        //   this.formLoading = false
-        // }).catch(err => {
-        //   this.formLoading = false
-        // })
-
-
+      
       } else {
         this.fetchData('UQDH', true)
         this.refeshDataFormItems()
@@ -748,6 +692,19 @@ export default {
       this.formLoading = true
       detailInspectionData(id).then(res => {
         console.log(res, 'res123')
+        if (res.data.attachmentList) {
+          res.data.attachmentList.forEach((item) => {
+            this.datafilelist.push(
+              {
+                name: item.document.fullName,
+                fileSize: item.document.fileSize,
+                filename: item.document.filePath,
+                id: item.document.id,
+                url: item.url
+              }
+            )
+          })
+        }
         this.inspectionList = res.data.itemList
         this.linesListTwo = res.data.causesList
         this.dataForm = res.data.inspection

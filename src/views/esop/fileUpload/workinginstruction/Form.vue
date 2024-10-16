@@ -23,7 +23,7 @@
                                     <el-collapse v-model="activeNames">
                                         <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                                             <el-row>
-                                                <el-form label-position="top">
+                                                <el-form label-position="top"  ref="dataForm" :model="dataForm" :rules="dataRule">
                                                     <el-row :gutter="10">
                                                         <el-col :span="6">
                                                             <el-form-item label="上传单编码">
@@ -31,7 +31,7 @@
                                                             </el-form-item>
                                                         </el-col>
                                                         <el-col :span="6">
-                                                            <el-form-item label="版本号" >
+                                                            <el-form-item label="版本号" prop="version">
                                                                 <el-input v-model="dataForm.version" placeholder="请输入版本号"  />
                                                             </el-form-item>
                                                         </el-col>
@@ -58,7 +58,7 @@
                                                     </el-row>
                                                     <el-row :gutter="10">
                                                         <el-col :span="12">
-                                                            <el-form-item label="产品信息" >
+                                                            <el-form-item label="产品信息" prop="drawingNo">
                                                                 <div class="width-full flex-row">
                                                                     <ComSelect-page
                                                                         style="width: 50%"
@@ -221,9 +221,9 @@ import {addBimFileUpload, detailBimFileUpload, modifyBimFileUpload} from "@/api/
 import Process from "@/components/Process/Preview.vue";
 import recordList from "@/views/workFlow/components/RecordList.vue";
 import busFlow from "@/mixins/generator/busFlow";
-import {getFilePreviewUrl} from "@/views/esop/utils/utils";
+import {getFilePreviewUrl, getTitleForApplicationType, getTitleForType} from "@/views/esop/utils/utils";
 import {getcooperativeProduct} from "@/api/salesManagement/assemblyOrders";
-import {getcategoryTree, getcategoryTree as productTree} from "@/api/basicData/materialSettings";
+import {getcategoryTree} from "@/api/basicData/materialSettings";
 import {getProductList} from "@/api/basicData/materialFiles";
 function getOriginActiveNames(){
     return ['basicInfo']
@@ -252,6 +252,14 @@ export default {
     },
     data() {
         return {
+            dataRule: {
+                version: [
+                    { required: true, message: '请输入版本号', trigger: 'change' }
+                ],
+                drawingNo: [
+                    { required: true, message: '请选择产品信息', trigger: 'change' },
+                ],
+            },
             ProductListRequestObj: {
                 classAttributeList: ["raw_material", "semi_finished", "finish_product", "accessories"],
                 productCategoryId: "",
@@ -406,11 +414,13 @@ export default {
             return this.$emit('back')
         },
         async handleConfirm(type){
-            if(isEmpty( this.dataForm.productsId)){
-                return this.$message.warning('请选择产品')
+            const valid = await this.$refs.dataForm.validate()
+            if(!valid){
+                return
             }
             const isSubmit = type === DocumentStatus.SUBMIT
             if(isSubmit){
+
                 if(this.currentFileList.length === 0){
                     return this.$message.warning('请上传文件，或先保存为草稿')
                 }
@@ -641,18 +651,7 @@ export default {
           return this.codeConfig.codeWay === 'auto' && !this.codeConfig.modifyFlag
         },
         title(){
-            const applicationType = this.applicationType
-            let name =''
-            if(applicationType === ApplicationType.INSPECT){
-                name = '检查指导书'
-            }else{
-                name = '作业指导书'
-            }
-
-            if(this.type === ModelType.ADD){
-                return `新增${name}`
-            }
-            return `查看${name}`
+            return getTitleForType(this.applicationType,this.type)
         },
         productId(){
             return this.dataForm.id

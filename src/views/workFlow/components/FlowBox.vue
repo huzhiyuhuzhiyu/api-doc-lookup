@@ -338,6 +338,7 @@ export default {
         'b048': 'esop/fileUpload/workinginstruction/Form.vue',
         'b049': 'esop/fileUpload/workinginstruction/Form.vue',
         'b050': 'esop/fileUpload/workinginstruction/Form.vue',
+        'b051': 'warehouseManagement/finishedProductWarehouseManagement/transferManagement/Form.vue',
       },
       inspectionTypeList: [
         // 不良品

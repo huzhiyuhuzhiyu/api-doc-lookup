@@ -31,7 +31,7 @@
                         <div> {{ line.name }} </div>
                         <div style="text-align:right">
                           <el-button size="mini" type="text" @click="addOrUpdateHandle(line.id, 'edit')">编辑</el-button>
-                          <el-button size="mini" type="text" @click="flowSet(line.id, line.name,line.planPersonId,line.planPersonName)">流程设置</el-button>
+                          <el-button size="mini" type="text" @click="flowSet(line.id, line.name,line.planPersonId,line.planPersonName)">提醒设置</el-button>
                         </div>
 
                         <!-- <div class="icon-checked" v-if="line.code === currentCard">

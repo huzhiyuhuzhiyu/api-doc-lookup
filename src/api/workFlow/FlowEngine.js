@@ -32,7 +32,6 @@ export function FlowEngineInfo(id) {
 }
 // 通过businessFlow获取流程引擎信息
 export function getBusinessFlowInfo(businessFlow) {
-    console.log(businessFlow)
   return request({
     url: `/api/workflow/Engine/FlowEngine/infoByBusinessFlow/${businessFlow}`,
     method: 'get'

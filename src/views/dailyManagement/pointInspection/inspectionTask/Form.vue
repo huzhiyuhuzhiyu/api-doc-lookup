@@ -25,7 +25,7 @@
                         <el-input v-model="dataForm.name" placeholder="请输入任务名称" :disabled="btnType == 'look'" maxlength="20" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24">
+                    <el-col :sm="6" :xs="24" v-if="btnType!=='add'">
                       <el-form-item label="设备名称" prop="equipmentId">
                         <el-input v-model="dataForm.equipmentIdName" placeholder="请选择设备名称" readonly @focus="openSeleceProductDialogss" :disabled="btnType !== 'add'">
                         </el-input>
@@ -68,20 +68,44 @@
                         </el-date-picker>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24">
+                    <!-- <el-col :sm="6" :xs="24">
                       <el-form-item label="状态" prop="state">
-                        <!-- <el-input v-model="dataForm.state" placeholder="请选择状态" :disabled="btnType == 'look'" maxlength="50" /> -->
                         <el-select v-model="dataForm.state" placeholder="请选择状态" clearable style="width: 100%;" :disabled="btnType == 'look'">
                           <el-option v-for="(item, index) in stateList" :key="index" :label="item.label" :value="item.value"></el-option>
                         </el-select>
                       </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <el-col :sm="12" :xs="24">
                       <el-form-item label="备注" prop="remark">
                         <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btnType == 'look'" type="textarea" maxlength="200" :rows="2" />
                       </el-form-item>
                     </el-col>
                   </el-row>
+                </el-form>
+              </el-collapse-item>
+              <el-collapse-item title="设备信息" name="sbxx" v-if="btnType=='add'">
+                <div>
+                  <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialogsb()">选择设备</el-button>|
+                  <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDeletesb">批量删除</el-button>|
+                </div>
+                <el-form :model="dataFormOne" v-bind="dataFormOne" ref="productForm" class="data-form">
+                  <el-table ref="product" :data="dataFormOne.productData" v-bind="dataFormOne.data" fixedNO @selection-change="handeleProductInfoDatasb">
+                    <el-table-column type="selection" width="60" fixed='left' align="center" />
+                    <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
+                    <el-table-column prop="code" label="设备编码" width="200" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="name" label="设备名称" width="200" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="factoryFloor" label="车间" min-width="200" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="mountedPlaces" label="安装地点" min-width="200" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column label="操作" width="120" fixed="right">
+                      <template slot-scope="scope">
+                        <el-button type="text" @click="handleDelsb(scope)" style="color: #ff3a3a">删除</el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
                 </el-form>
               </el-collapse-item>
               <el-collapse-item title="项目信息" name="xmxx">
@@ -172,6 +196,7 @@
         </span>
       </el-dialog>
       <ComSelect-page ref="ComSelect-pagesb" @change="changeWarehouse" :tableItems="ProductTableItemss" title="选择设备" treeTitle="设备分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'equipment' } }" :listMethod="getEquEquipmentList" :listRequestObj="ProductListRequestObjs" :searchList="ProductTableSearchLists" :elementShow="false" />
+      <ComSelect-page ref="ComSelect-page" @change="changeWarehousesb" :tableItems="ProductTableItemss" title="选择设备" treeTitle="设备分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'equipment' } }" :listMethod="getEquEquipmentList" :listRequestObj="ProductListRequestObjs" :searchList="ProductTableSearchLists" multiple :elementShow="false" />
     </div>
   </transition>
 </template>
@@ -188,7 +213,7 @@ import { getOrganization } from '@/api/permission/user'
 export default {
   data() {
     return {
-      activeNames: ["basicInfo", "xmxx"],
+      activeNames: ["basicInfo", "sbxx", "xmxx"],
       level: [],
       options: [
         { label: "日常保养", value: "日常保养" },
@@ -295,6 +320,9 @@ export default {
       code: '',
       iszt: false,
       iszhi: false,
+      dataFormOne: {
+        productData: [],
+      },
       dataFormTwo: {
         productData: [],
       },
@@ -369,7 +397,8 @@ export default {
       },
       customerData: {},
       treeLoading: false,
-      selectRows: []
+      selectRows: [],
+      selectRowssb: []
     }
   },
   mounted() {
@@ -400,6 +429,9 @@ export default {
     openSeleceProductDialog() {
       this.productVisible = true
       this.getcooperativeProduct()
+    },
+    openSeleceProductDialogsb() {
+      this.$refs['ComSelect-page'].openDialog()
     },
     getcooperativeProduct() {
       this.listLoading = true
@@ -552,26 +584,45 @@ export default {
         this.$refs.dataForm.validateField('equipmentId')
       })
       if (!val && !data.length) return
-      console.log(data, '设备数据');
       this.dataForm.equipmentIdName = data[0].name
       this.dataForm.equipmentId = data[0].id
     },
-    dateFormat(dateData) {
-      var date = new Date(dateData)
-      var y = date.getFullYear()
-      var m = date.getMonth() + 1
-      m = m < 10 ? ('0' + m) : m
-      var d = date.getDate()
-      d = d < 10 ? ('0' + d) : d
-      var h = date.getHours()
-      h = h < 10 ? ('0' + h) : h
-      var min = date.getMinutes()
-      min = min < 10 ? ('0' + min) : min
-      // var s = date.getSeconds()
-      // s = s < 10 ? ('0' + s) : s
-      const time = y + '-' + m + '-' + d + ' ' + h + ':' + min + ':' + '00'
-      return time
+    changeWarehousesb(val, data) {
+      data.map(item => {
+        this.dataFormOne.productData.map((item1) => {
+          if (item.all.code == item1.code) {
+            item.all.isrepeat = true
+          }
+        })
+      });
+      data.map(item => {
+        if (!item.all.isrepeat) {
+          this.dataFormOne.productData.push(item.all)
+        } else {
+          this.$message({
+            message: "所选设备重复",
+            type: 'error',
+            duration: 1500,
+          })
+        }
+      })
     },
+    // dateFormat(dateData) {
+    //   var date = new Date(dateData)
+    //   var y = date.getFullYear()
+    //   var m = date.getMonth() + 1
+    //   m = m < 10 ? ('0' + m) : m
+    //   var d = date.getDate()
+    //   d = d < 10 ? ('0' + d) : d
+    //   var h = date.getHours()
+    //   h = h < 10 ? ('0' + h) : h
+    //   var min = date.getMinutes()
+    //   min = min < 10 ? ('0' + min) : min
+    //   // var s = date.getSeconds()
+    //   // s = s < 10 ? ('0' + s) : s
+    //   const time = y + '-' + m + '-' + d + ' ' + h + ':' + min + ':' + '00'
+    //   return time
+    // },
     // 重置项目搜索条件
     resetcusProduct() {
       this.productForm = {
@@ -600,8 +651,10 @@ export default {
     },
     // 产品列表选中 
     handeleProductInfoData(val) {
-      console.log(val);
       this.selectRows = val
+    },
+    handeleProductInfoDatasb(val) {
+      this.selectRowssb = val
     },
     // 批量删除
     batchDelete() {
@@ -622,12 +675,32 @@ export default {
       }
       this.selectRows = []; // 清空选中的行的数据
     },
+    // 批量删除设备
+    batchDeletesb() {
+      // 遍历选中的行的数据
+      if (!this.selectRowssb.length) {
+        this.$message({
+          message: '请选择要删除的设备',
+          type: 'error',
+          duration: 1500,
+        })
+      }
+      for (let i = 0; i < this.selectRowssb.length; i++) {
+        const row = this.selectRowssb[i];
+        const index = this.dataFormOne.productData.indexOf(row);
+        if (index > -1) {
+          this.dataFormOne.productData.splice(index, 1); // 从tableData中删除选中的行
+        }
+      }
+      this.selectRowssb = []; // 清空选中的行的数据
+    },
     // 单个删除
     handleDel(data) {
-      console.log("1234", data);
       this.dataFormTwo.productData.splice(data.$index, 1)
     },
-
+    handleDelsb(data) {
+      this.dataFormOne.productData.splice(data.$index, 1)
+    },
     // 监听主数量输入
     watchnums(row, index) {
       console.log("主数量", row, index);
@@ -799,20 +872,26 @@ export default {
             })
           }
           this.dataForm.documentStatus = value
-          let obj = {
-            attachmentList: this.datafilelist,
-            task: this.dataForm,
-            lines: this.dataFormTwo.productData
-          }
+          let obj = {}
           this.btnLoading = true
           let formMethod = null;
           if (this.btnType == 'edit') {
+            obj = {
+              attachmentList: this.datafilelist,
+              task: this.dataForm,
+              lines: this.dataFormTwo.productData
+            }
             formMethod = updatecheckmaintenance
           } else if (this.btnType == 'add' || this.btnType == 'copy') {
+            obj = {
+              attachmentList: this.datafilelist,
+              task: this.dataForm,
+              equipmentIdList: this.dataFormOne.productData.map(item => item.id),
+              lines: this.dataFormTwo.productData
+            }
             formMethod = addcheckmaintenance
           }
           formMethod(obj).then(res => {
-            console.log(res);
             let msg = "";
             if (formMethod == addcheckmaintenance) {
               msg = "新建成功"

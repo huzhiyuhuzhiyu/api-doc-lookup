@@ -62,8 +62,8 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="下次检定时间" prop="nextCalibrationTime">
-                        <el-date-picker v-model="dataForm.nextCalibrationTime" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择下次检定时间" :picker-options="pickerOptions" :disabled="btnType == 'look'">
+                      <el-form-item label="初次检定时间" prop="nextCalibrationTime">
+                        <el-date-picker v-model="dataForm.nextCalibrationTime" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择初次检定时间" :picker-options="pickerOptions" :disabled="btnType == 'look'">
                         </el-date-picker>
                       </el-form-item>
                     </el-col>

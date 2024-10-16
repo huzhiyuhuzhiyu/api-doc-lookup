@@ -46,7 +46,7 @@
           </div>
         </div>
 
-        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column style="padding-bottom: 50px;">
+        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column>
           <el-table-column prop="maintenanceTaskIdText" label="任务名称" min-width="180" />
           <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" />
           <el-table-column prop="equipmentIdName" label="工具名称" min-width="200" sortable="custom" />

@@ -21,6 +21,11 @@
                 <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="6" :xs="24">
+                      <el-form-item label="报废单号" prop="orderNo">
+                        <el-input v-model="dataForm.orderNo" placeholder="请输入报废单号" :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="申请部门" prop="departmentId">
                         <ComSelect v-model="organizeIdTrees" :disabled="btnType === 'look'" placeholder="请选择申请部门" auth :dialogTitle="'请选择申请部门'" @change="changedepartment" :currOrgId="dataForm.departmentId || '0'" />
                       </el-form-item>
@@ -101,6 +106,7 @@ import { getOrganization } from '@/api/permission/user'
 export default {
   data() {
     return {
+      codeConfig:{},
       activeNames: ["basicInfo", "sbxx"],
       datafilelist: [],
       getcategoryTree,
@@ -144,6 +150,7 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
+        orderNo:'',
         classAttribute:'tool',
         applicantTime: '',
         reasonScrapping: '',
@@ -161,6 +168,9 @@ export default {
       organizeIdTrees: [],
 
       dataRule: {
+        orderNo: [
+          { required: true, message: '报废单号不能为空', trigger: 'blur' }
+        ],
         departmentId: [
           { required: true, message: '申请部门不能为空', trigger: 'change' }
         ],
@@ -183,6 +193,16 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    async fetchData(code) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code);
+        this.codeConfig = data
+        if (this.btnType == 'add') {
+          this.dataForm.orderNo = data.number
+        }
+      } catch (error) {
+      }
+    },
     //工具选择
     submitCustomerProduct(selectedIds, selectedList) {
       selectedList.map(item => {
@@ -286,6 +306,7 @@ export default {
     init(id, btnType) {
       this.dataForm.id = id || ''
       this.btnType = btnType
+      if (this.btnType === 'add' || this.btnType === 'edit') this.fetchData('BFDH')
       if (this.btnType == 'add') {
         const end = new Date();//获取当前的日期
         end.setTime(end.getTime())

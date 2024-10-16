@@ -44,15 +44,15 @@
           </div>
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column style="padding-bottom: 50px;">
-          <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" fixed="left" sortable="custom">
+          <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
                                 scope.row.maintenanceNo
                             }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" fixed="left" sortable="custom" />
-          <el-table-column prop="equipmentIdName" label="工具名称" min-width="200" fixed="left" sortable="custom"></el-table-column>
+          <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" sortable="custom" />
+          <el-table-column prop="equipmentIdName" label="工具名称" min-width="200" sortable="custom"></el-table-column>
           <el-table-column prop="usin" label="用途" min-width="140" />
           <el-table-column prop="frontPicList" label="故障情况照片" min-width="140">
             <template slot-scope="scope">

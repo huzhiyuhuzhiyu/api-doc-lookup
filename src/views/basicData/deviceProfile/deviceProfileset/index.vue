@@ -82,7 +82,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" ref="dataTable" @sort-change="sortChange" custom-column hasC @selection-change="handleSelectionChange">
+        <JNPF-table v-loading="listLoading" :data="tableData" ref="dataTable" @sort-change="sortChange" custom-column hasC @selection-change="handleSelectionChange">
           <el-table-column prop="code" label="设备编码" min-width="200" sortable="custom" />
           <el-table-column prop="name" label="设备名称" min-width="200" sortable="custom" />
           <el-table-column prop="deviceType" label="设备类型" width="140" sortable="custom">

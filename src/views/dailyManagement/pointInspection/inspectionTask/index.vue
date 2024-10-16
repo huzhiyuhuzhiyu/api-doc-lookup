@@ -44,8 +44,8 @@
           </div>
         </div>
 
-        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column style="padding-bottom: 50px;">
-          <el-table-column prop="name" label="任务名称" width="200" fixed="left" sortable="custom">
+        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column>
+          <el-table-column prop="name" label="任务名称" width="200" sortable="custom">
             <!-- <template slot-scope="scope">
                           <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
                               scope.row.orderNo
@@ -54,8 +54,8 @@
           </el-table-column>
           <el-table-column prop="cycle" label="周期" width="120"></el-table-column>
           <el-table-column prop="unit" label="单位" width="110"></el-table-column>
-          <el-table-column prop="equipmentIdCode" label="设备编码" width="200" fixed="left" />
-          <el-table-column prop="equipmentIdName" label="设备名称" width="200" fixed="left" sortable="custom"></el-table-column>
+          <el-table-column prop="equipmentIdCode" label="设备编码" width="200" />
+          <el-table-column prop="equipmentIdName" label="设备名称" width="200" sortable="custom"></el-table-column>
           <el-table-column prop="state" label="状态" sortable="custom" width="120" fixed="right" align="center">
             <template slot-scope="scope">
               <div v-if="scope.row.state == 'disabled'"><el-tag type="danger">禁用</el-tag></div>

@@ -682,6 +682,7 @@ export default {
       }
     },
     async handleNodeClick(nodeData, node) {
+      console.log(this.approvalFlag, 'fl')
       console.log(nodeData, 'nodeData')
       let bomId = ''
       if (nodeData.childrenList.length !== 0) {
@@ -702,7 +703,7 @@ export default {
         msgArr.push('点击的节点没有BOM')
         this.$refs.treeBox.setCurrentKey(this.selectedNodeKey)
       }
-      this.approvalFlag = false
+      // this.approvalFlag = false
       // console.log(msgArr.join(' - '));
     },
     // 展开或折叠全部

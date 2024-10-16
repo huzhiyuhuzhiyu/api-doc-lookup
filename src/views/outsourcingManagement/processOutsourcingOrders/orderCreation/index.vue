@@ -253,7 +253,6 @@
                       </el-form>
                       <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
                         <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ computedValue3 }}</span>
-                        <span style="font-weight:500;margin-right:10px">总金额(不含税)：{{ computedValue }}</span>
                         <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue2 }}</span>
                       </div>
                     </el-collapse-item>
@@ -545,7 +544,7 @@
                   </el-form>
                   <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
                     <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ computedValue3 }}</span>
-                    <span style="font-weight:500;margin-right:10px">总金额(不含税)：{{ computedValue }}</span>
+                    <!-- <span style="font-weight:500;margin-right:10px">总金额(不含税)：{{ computedValue }}</span> -->
                     <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue2 }}</span>
                   </div>
                 </el-collapse-item>
@@ -939,10 +938,16 @@ export default {
     computedValue3() {
       // 在这里计算第三个输入框的值
       let count = 0
+      let count1 = 0
+
       this.dataFormTwo.data.forEach((item) => {
         count += item.totalAmount * 1
+        count1 += item.excludingTaxAmount * 1
       })
+
       this.dataForm.totalAmount = this.jnpf.numberFormat(count)
+
+      this.dataForm.excludingTaxTotalAmount = this.jnpf.numberFormat(count1)
 
       return this.dataForm.totalAmount
     },

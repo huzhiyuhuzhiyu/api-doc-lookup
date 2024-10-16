@@ -26,7 +26,7 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="工具名称" prop="equipmentId">
+                      <el-form-item label="工具名称" prop="equipmentId" v-if="btnType!=='add'">
                         <el-input v-model="dataForm.equipmentIdName" placeholder="请选择工具名称" readonly @focus="openSeleceProductDialogss" :disabled="btnType !== 'add'"></el-input>
                       </el-form-item>
                     </el-col>
@@ -83,20 +83,44 @@
                     </el-date-picker> -->
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24">
+                    <!-- <el-col :sm="6" :xs="24">
                       <el-form-item label="状态" prop="state">
-                        <!-- <el-input v-model="dataForm.state" placeholder="请选择状态" :disabled="btnType == 'look'" maxlength="50" /> -->
                         <el-select v-model="dataForm.state" placeholder="请选择状态" clearable style="width: 100%;" :disabled="btnType == 'look'">
                           <el-option v-for="(item, index) in stateList" :key="index" :label="item.label" :value="item.value"></el-option>
                         </el-select>
                       </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="备注" prop="remark">
                         <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btnType == 'look'" type="textarea" maxlength="200" :rows="2" />
                       </el-form-item>
                     </el-col>
                   </el-row>
+                </el-form>
+              </el-collapse-item>
+              <el-collapse-item title="工具信息" name="sbxx" v-if="btnType=='add'">
+                <div>
+                  <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialogsb()">选择工具</el-button>|
+                  <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDeletesb">批量删除</el-button>|
+                </div>
+                <el-form :model="dataFormOne" v-bind="dataFormOne" ref="productForm" class="data-form">
+                  <el-table ref="product" :data="dataFormOne.productData" v-bind="dataFormOne.data" fixedNO @selection-change="handeleProductInfoDatasb">
+                    <el-table-column type="selection" width="60" fixed='left' align="center" />
+                    <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
+                    <el-table-column prop="code" label="工具编码" width="200" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="name" label="工具名称" width="200" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="categoryName" label="分类名称" min-width="200" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="specModel" label="工具规格" min-width="200" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column label="操作" width="120" fixed="right">
+                      <template slot-scope="scope">
+                        <el-button type="text" @click="handleDelsb(scope)" style="color: #ff3a3a">删除</el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
                 </el-form>
               </el-collapse-item>
               <el-collapse-item title="项目信息" name="xmxx">
@@ -184,6 +208,7 @@
         </span>
       </el-dialog>
       <ComSelect-page ref="ComSelect-pagesb" @change="changeWarehouse" :tableItems="ProductTableItemss" title="选择工具" treeTitle="工具分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'tool' } }" :listMethod="getEquEquipmentList" :listRequestObj="ProductListRequestObjs" :searchList="ProductTableSearchLists" :elementShow="false" />
+      <ComSelect-page ref="ComSelect-page" @change="changeWarehousesb" :tableItems="ProductTableItemss" title="选择工具" treeTitle="工具分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'tool' } }" :listMethod="getEquEquipmentList" :listRequestObj="ProductListRequestObjs" :searchList="ProductTableSearchLists" multiple :elementShow="false" />
     </div>
   </transition>
 </template>
@@ -201,7 +226,7 @@ import { log } from 'mathjs'
 export default {
   data() {
     return {
-      activeNames: ["basicInfo", "xmxx"],
+      activeNames: ["basicInfo", "sbxx", "xmxx"],
       level: [],
       options: [],
       datafilelist: [],
@@ -277,6 +302,9 @@ export default {
       code: '',
       iszt: false,
       iszhi: false,
+      dataFormOne: {
+        productData: [],
+      },
       dataFormTwo: {
         productData: [],
       },
@@ -347,7 +375,8 @@ export default {
       },
       customerData: {},
       treeLoading: false,
-      selectRows: []
+      selectRows: [],
+      selectRowssb: []
     }
   },
   watch: {
@@ -423,6 +452,9 @@ export default {
     openSeleceProductDialog() {
       this.productVisible = true
       this.getcooperativeProduct()
+    },
+    openSeleceProductDialogsb() {
+      this.$refs['ComSelect-page'].openDialog()
     },
     getcooperativeProduct() {
       this.listLoading = true
@@ -574,6 +606,26 @@ export default {
       this.dataForm.equipmentIdName = data[0].name
       this.dataForm.equipmentId = data[0].id
     },
+    changeWarehousesb(val, data) {
+      data.map(item => {
+        this.dataFormOne.productData.map((item1) => {
+          if (item.all.code == item1.code) {
+            item.all.isrepeat = true
+          }
+        })
+      });
+      data.map(item => {
+        if (!item.all.isrepeat) {
+          this.dataFormOne.productData.push(item.all)
+        } else {
+          this.$message({
+            message: "所选工具重复",
+            type: 'error',
+            duration: 1500,
+          })
+        }
+      })
+    },
     // dateFormat(dateData) {
     //   var date = new Date(dateData)
     //   var y = date.getFullYear()
@@ -620,6 +672,9 @@ export default {
     handeleProductInfoData(val) {
       this.selectRows = val
     },
+    handeleProductInfoDatasb(val) {
+      this.selectRowssb = val
+    },
     // 批量删除
     batchDelete() {
       // 遍历选中的行的数据
@@ -639,9 +694,31 @@ export default {
       }
       this.selectRows = []; // 清空选中的行的数据
     },
+    // 批量删除工具
+    batchDeletesb() {
+      // 遍历选中的行的数据
+      if (!this.selectRowssb.length) {
+        this.$message({
+          message: '请选择要删除的工具',
+          type: 'error',
+          duration: 1500,
+        })
+      }
+      for (let i = 0; i < this.selectRowssb.length; i++) {
+        const row = this.selectRowssb[i];
+        const index = this.dataFormOne.productData.indexOf(row);
+        if (index > -1) {
+          this.dataFormOne.productData.splice(index, 1); // 从tableData中删除选中的行
+        }
+      }
+      this.selectRowssb = []; // 清空选中的行的数据
+    },
     // 单个删除
     handleDel(data) {
       this.dataFormTwo.productData.splice(data.$index, 1)
+    },
+    handleDelsb(data) {
+      this.dataFormOne.productData.splice(data.$index, 1)
     },
     // 切换table
     handleClick(tab, event) {
@@ -718,20 +795,26 @@ export default {
               }
             })
           }
-          let obj = {
-            attachmentList: this.datafilelist,
-            task: this.dataForm,
-            lines: this.dataFormTwo.productData
-          }
+          let obj = {}
           this.btnLoading = true
           let formMethod = null;
           if (this.btnType == 'edit') {
+            obj = {
+              attachmentList: this.datafilelist,
+              task: this.dataForm,
+              lines: this.dataFormTwo.productData
+            }
             formMethod = updatecheckmaintenance
           } else if (this.btnType == 'add' || this.btnType == 'copy') {
+            obj = {
+              attachmentList: this.datafilelist,
+              task: this.dataForm,
+              equipmentIdList: this.dataFormOne.productData.map(item => item.id),
+              lines: this.dataFormTwo.productData
+            }
             formMethod = addcheckmaintenance
           }
           formMethod(obj).then(res => {
-            console.log(res);
             let msg = "";
             if (formMethod == addcheckmaintenance) {
               msg = "新建成功"

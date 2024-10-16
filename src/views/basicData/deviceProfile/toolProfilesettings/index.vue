@@ -17,12 +17,9 @@
       </div>
 
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
-        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
-          :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
-          v-if="refreshTree" :filter-node-method="filterNode">
+        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNode">
           <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
-            <i
-              :class="[data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
+            <i :class="[data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
             <span class="text" :title="data.name">{{ data.name }}</span>
           </span>
         </el-tree>
@@ -43,9 +40,8 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.state" placeholder="请选择工具状态"  clearable>
-                <el-option v-for="(item, index) in equipmentStateList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
+              <el-select v-model="listQuery.state" placeholder="请选择工具状态" clearable>
+                <el-option v-for="(item, index) in equipmentStateList" :key="index" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -67,41 +63,36 @@
             </topOpts>
           </div>
           <div class="JNPF-common-head-right">
+            <el-tooltip content="高级查询" placement="top">
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" :customColumn="true" ref="dataTable"
-          @sort-change="sortChange" custom-column hasC @selection-change="handleSelectionChange">
-          <el-table-column prop="code" label="工具编码" min-width="200" sortable="custom"  />
-
-          <el-table-column prop="name" label="工具名称" min-width="200" sortable="custom"  />
+        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" :customColumn="true" ref="dataTable" @sort-change="sortChange" custom-column hasC @selection-change="handleSelectionChange">
+          <el-table-column prop="code" label="工具编码" min-width="200" sortable="custom" />
+          <el-table-column prop="name" label="工具名称" min-width="200" sortable="custom" />
           <el-table-column prop="state" label="工具状态" min-width="200" sortable="custom">
             <template slot-scope="{row}">
               <el-tag type="success" disable-transitions v-if="row.state == 'normal'">正常</el-tag>
-              <el-tag  type="warning" disable-transitions v-if="row.state == 'verification'">检定</el-tag>
-              <el-tag  disable-transitions v-if="row.state == 'use'">领用</el-tag>
-              <el-tag type="danger"  disable-transitions v-if="row.state == 'discard'">报废</el-tag>
+              <el-tag type="warning" disable-transitions v-if="row.state == 'verification'">检定</el-tag>
+              <el-tag disable-transitions v-if="row.state == 'use'">领用</el-tag>
+              <el-tag type="danger" disable-transitions v-if="row.state == 'discard'">报废</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="categoryName" label="分类名称" width="200" sortable="custom" />
           <el-table-column prop="specModel" label="工具规格" min-width="200" sortable="custom" />
           <el-table-column prop="drawingNo" label="图号" min-width="200" sortable="custom" />
-          <el-table-column prop="createName" label="创建人" min-width="200" sortable="custom" />
+          <el-table-column prop="createByName" label="创建人" min-width="200" sortable="custom" />
           <el-table-column prop="createTime" label="创建时间" min-width="200" sortable="custom" />
-          <el-table-column prop="plmSyncFlag" label="PLM同步状态" min-width="160" sortable="custom" fixed="right" align="center">
-            <template slot-scope="scope">
-              <el-tag type="danger" v-if="!scope.row.plmSyncFlag">同步失败</el-tag>
-              <el-tag type="success" v-else>同步成功</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" width="260" fixed="right">
+          <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, false,'edit')" @del="handleDel(scope.row.id)">
-                <el-button size="mini" type="text" 
-                      :disabled="scope.row.plmSyncFlag"
-                      @click="PLMchange(scope.row.id)">同步PLM</el-button>
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -118,10 +109,10 @@
             </template>
           </el-table-column>
         </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-          @pagination="initData" />
+        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData" />
       </div>
     </div>
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
     <Diagram v-if="diagramVisible" ref="Diagram" @close="diagramVisible = false" />
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm" ref="printForm" />
@@ -129,17 +120,70 @@
 </template>
 
 <script>
+import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getPositionList, deleteEquEquipment } from '@/api/permission/position'
-import { getCategoryTrees, getEquEquipmentList,plmsync } from '@/api/basicData/index'
+import { getCategoryTrees, getEquEquipmentList, plmsync } from '@/api/basicData/index'
 import Form from './Form'
 import Diagram from '@/views/permission/user/Diagram'
 import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
 export default {
   name: 'toolProfilesettings',
-  components: { Form, Diagram ,PrintBrowse},
+  components: { Form, Diagram, PrintBrowse, SuperQuery },
   data() {
     return {
+      superQueryJson: [
+        {
+          prop: 'code',
+          label: "工具编码",
+          type: 'input'
+        },
+        {
+          prop: 'name',
+          label: "工具名称",
+          type: 'input'
+        },
+        {
+          prop: 'state',
+          label: "工具状态",
+          type: 'select',
+          options: [
+            { label: "正常", value: "normal" },
+            { label: "检定", value: "verification" },
+            { label: "领用", value: "use" },
+            { label: "报废", value: "discard" }
+          ]
+        },
+        {
+          prop: 'categoryName',
+          label: "分类名称",
+          type: 'input'
+        },
+        {
+          prop: 'specModel',
+          label: "工具规格",
+          type: 'input'
+        },
+        {
+          prop: 'drawingNo',
+          label: "图号",
+          type: 'input'
+        },
+        {
+          prop: 'createByName',
+          label: "创建人",
+          type: 'input'
+        },
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'datetimerange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始时间',
+          endPlaceholder: '结束时间',
+        }
+      ],
+      superQueryVisible: false,
       treeData: [],
       tableData: [],
       treeLoading: false,
@@ -160,12 +204,12 @@ export default {
         pageSize: 20,
         classAttribute: "tool",
         productCategoryId: "",
-        state:'',
+        state: '',
       },
 
       typeList: [],
       equipmentStateList: [
-      {
+        {
           value: "normal",
           label: "正常"
         },
@@ -199,8 +243,8 @@ export default {
       expands: true,
       refreshTree: true,
       filterText: '',
-      selectList:[],
-      printBrowseVisible:false,
+      selectList: [],
+      printBrowseVisible: false,
     }
   },
   watch: {
@@ -212,20 +256,17 @@ export default {
     this.getCategoryTree(true)
   },
   methods: {
-    PLMchange(id){
-      this.listLoading = true
-      plmsync(id).then(res=>{
-        console.log(res,'tongbu');
-        if (res.msg === 'Success') {
-          this.initData()
-        }else{
-          this.listLoading = false
-        }
-      }).catch(() => {this.listLoading = false })
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
+    },
+    superQuerySearch(query) {
+      this.listQuery.superQuery = query
+      this.superQueryVisible = false
+      this.search()
     },
     sortChange({ prop, order }) {
       let newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-      if (newProp === 'create_name') {newProp = 'create_by'}
+      if (newProp === 'create_name') { newProp = 'create_by' }
       this.listQuery.orderItems[0].asc = order === "ascending"
       this.listQuery.orderItems[0].column = order === null ? "" : newProp
       this.initData()
@@ -308,7 +349,7 @@ export default {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
-      this.listQuery.pageNum=1
+      this.listQuery.pageNum = 1
       this.initData()
     },
     reset() {
@@ -325,8 +366,8 @@ export default {
         pageNum: 1,
         pageSize: 20,
         classAttribute: "tool",
-        productCategoryId:"",
-        state:'',
+        productCategoryId: "",
+        state: '',
       }
       this.getCategoryTree(true)
       this.search()
@@ -384,12 +425,12 @@ export default {
         })
       }).catch(() => { })
     },
-    printTool(enCode){
+    printTool(enCode) {
       if (!this.selectList.length) return this.$message.error("请选择您要打印的数据!")
       getPrintBusInfo(enCode).then(res => {
         if (res.data) {
           this.prindId = res.data.id
-          this.formId = this.selectList.map(item=>item.id).join(',')
+          this.formId = this.selectList.map(item => item.id).join(',')
           this.printBrowseVisible = true
         } else {
           this.$message.warning('未找到相应打印模版')
@@ -400,48 +441,9 @@ export default {
     },
     handleSelectionChange(val) {
       this.selectList = val
-    },    
+    },
   }
 }
 </script>
-<style>
-::v-deep .el-tabs__header {
-  margin-bottom: 5px;
-  padding: 0 10px;
-}
+<style src="@/assets/scss/index-list.scss" lang="scss" scoped />
 
-.JNPF-common-search-box {
-  padding: 8px 0 0 0;
-  margin-left: 0 !important;
-  margin-bottom: 5px;
-}
-
-.JNPF-common-search-box .el-form-item {
-  margin-bottom: 8px !important;
-}
-
-.pagination-container {
-  background-color: #f5f7fa !important;
-  margin-top: 0px;
-  padding-right: 10px;
-  padding-top: 2px;
-  padding-bottom: 2px;
-}
-
-.JNPF-common-layout-center .JNPF-common-layout-main {
-  padding: 0;
-}
-
-::v-deep.el-tree-node__content {
-  height: 30px;
-  line-height: 30px;
-}
-
-.JNPF-common-el-tree {
-  margin: 5px 0;
-}
-
-.el-tabs__nav-scroll {
-  padding-left: 0;
-}
-</style>

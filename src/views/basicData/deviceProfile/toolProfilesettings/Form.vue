@@ -3,8 +3,8 @@
     <div class="JNPF-preview-main org-form">
       <div class="JNPF-common-page-header">
         <el-page-header @back="goBack" :content="!dataForm.id ? `新建工具档案` : disabled ? '查看工具档案' : '编辑工具档案'" />
-        <div class="options" v-if="!disabled">
-          <el-button type="primary" :loading="btnLoading" @click="handleConfirm()">
+        <div class="options">
+          <el-button  v-if="!disabled" type="primary" :loading="btnLoading" @click="handleConfirm()">
             提交</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
@@ -12,69 +12,69 @@
       <div class="main" v-loading="formLoading">
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="基础信息" name="jcInfo">
-            <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="140px" label-position="top">
-              <el-row :gutter="20" class="custom-row">
-                <el-col :sm="12" :xs="24">
-                  <el-form-item label="工具类型" prop="categoryName" ref="comList1">
-                    <!-- <JNPFTreeSelect v-model="dataForm.productCategoryId" placeholder="请选择工具类型" clearable
+            <el-collapse v-model="activeNames">
+              <el-collapse-item title="基本信息" name="basicInfo">
+                <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="140px" label-position="top">
+                  <el-row :gutter="20" class="custom-row">
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="工具类型" prop="categoryName" ref="comList1">
+                        <!-- <JNPFTreeSelect v-model="dataForm.productCategoryId" placeholder="请选择工具类型" clearable
                   :options="categoryIdOptions" :props="categoryIdProps" :disabled="disabled">
                 </JNPFTreeSelect> -->
 
-                    <ComSelect-list :isdisabled="disabled" v-model="dataForm.categoryName" placeholder="请选择工具类型" auth
-                      @change="onOrganizeChangeTwo" :title="'选择工具类型'" :method="getCategoryTrees" :requestObj="requestObj"
-                      :paramsObj="{}" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="12" :xs="24">
-                  <el-form-item label="工具名称" prop="name">
-                    <el-input v-model="dataForm.name" placeholder="请输入工具名称" maxlength="20" :disabled="disabled" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="12" :xs="24">
-                  <el-form-item label="工具编码" prop="code">
-                    <el-input v-model="dataForm.code" placeholder="请输入工具编码" maxlength="20" :disabled="disabled" />
-                  </el-form-item>
-                </el-col>
+                        <ComSelect-list :isdisabled="disabled" v-model="dataForm.categoryName" placeholder="请选择工具类型" auth @change="onOrganizeChangeTwo" :title="'选择工具类型'" :method="getCategoryTrees" :requestObj="requestObj" :paramsObj="{}" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="工具名称" prop="name">
+                        <el-input v-model="dataForm.name" placeholder="请输入工具名称" maxlength="20" :disabled="disabled" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="工具编码" prop="code">
+                        <el-input v-model="dataForm.code" placeholder="请输入工具编码" maxlength="20" :disabled="disabled" />
+                      </el-form-item>
+                    </el-col>
 
-                <el-col :sm="12" :xs="24">
-                  <el-form-item label="工具规格" prop="specModel">
-                    <el-input maxlength="50" v-model="dataForm.specModel" placeholder="请输入工具规格" :disabled="disabled" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="12" :xs="24">
-                  <el-form-item label="图号" prop="drawingNo">
-                    <el-input v-model="dataForm.drawingNo" placeholder="请输入图号" maxlength="50" :disabled="disabled">
-                      <!-- <template slot="append">KG</template> -->
-                    </el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="12" :xs="24">
-                  <el-form-item label="长" prop="equLong">
-                    <el-input v-model="dataForm.equLong" placeholder="请输入长" :disabled="disabled">
-                      <template #append>（cm）</template>
-                    </el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="12" :xs="24">
-                  <el-form-item label="宽" prop="width">
-                    <el-input v-model="dataForm.width" placeholder="请输入宽" :disabled="disabled">
-                      <template #append>（cm）</template>
-                    </el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="12" :xs="24">
-                  <el-form-item label="高" prop="height">
-                    <el-input v-model="dataForm.height" placeholder="请输入高" :disabled="disabled">
-                      <template #append>（cm）</template>
-                    </el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="12" :xs="24">
-                  <el-form-item label="体积" prop="unitVolume">
-                    <el-input v-model="dataForm.unitVolume" placeholder="请输入体积" :disabled="disabled" />
-                  </el-form-item>
-                </el-col>
-                <!-- <el-col :sm="12" :xs="24">
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="工具规格" prop="specModel">
+                        <el-input maxlength="50" v-model="dataForm.specModel" placeholder="请输入工具规格" :disabled="disabled" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="图号" prop="drawingNo">
+                        <el-input v-model="dataForm.drawingNo" placeholder="请输入图号" maxlength="50" :disabled="disabled">
+                          <!-- <template slot="append">KG</template> -->
+                        </el-input>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="长" prop="equLong">
+                        <el-input v-model="dataForm.equLong" placeholder="请输入长" :disabled="disabled">
+                          <template #append>（cm）</template>
+                        </el-input>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="宽" prop="width">
+                        <el-input v-model="dataForm.width" placeholder="请输入宽" :disabled="disabled">
+                          <template #append>（cm）</template>
+                        </el-input>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="高" prop="height">
+                        <el-input v-model="dataForm.height" placeholder="请输入高" :disabled="disabled">
+                          <template #append>（cm）</template>
+                        </el-input>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="体积" prop="unitVolume">
+                        <el-input v-model="dataForm.unitVolume" placeholder="请输入体积" :disabled="disabled" />
+                      </el-form-item>
+                    </el-col>
+                    <!-- <el-col :sm="12" :xs="24">
               <el-form-item label="使用人" prop="userId">
                 <el-select v-model="dataForm.userId" :disabled="disabled" filterable style="width: 100%;">
                   <el-option v-for="item in userList" :key="item.id" :label="item.realName" :value="item.id">
@@ -88,12 +88,12 @@
                   auth @change="onOrganizeChangeHandle" :disabled="disabled" />
               </el-form-item>
             </el-col> -->
-                <el-col :sm="12" :xs="24">
-                  <el-form-item label="用途" prop="usin">
-                    <el-input maxlength="200" v-model="dataForm.usin" placeholder="请输入用途" :disabled="disabled" />
-                  </el-form-item>
-                </el-col>
-                <!-- <el-col :sm="12" :xs="24">
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="用途" prop="usin">
+                        <el-input maxlength="200" v-model="dataForm.usin" placeholder="请输入用途" :disabled="disabled" />
+                      </el-form-item>
+                    </el-col>
+                    <!-- <el-col :sm="12" :xs="24">
               <el-form-item label="使用人" prop="userId">
                 <user-select v-model="dataForm.userId" placeholder="请选择使用人" style="width: 100%;" :disabled="disabled"
                   @change="hangleSelectSales">
@@ -105,36 +105,34 @@
                 <el-input v-model="dataForm.departmentName" readonly placeholder="请输入使用部门" :disabled="disabled" />
               </el-form-item>
             </el-col> -->
-                <el-col :sm="12" :xs="24">
-                  <el-form-item label="使用人" prop="userId">
-                    <user-select v-model="dataForm.userId" placeholder="请选择所属人员" clearable style="width: 100%;"
-                      :disabled="disabled" @change="getuserDepartment">
-                    </user-select>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="使用人" prop="userId">
+                        <user-select v-model="dataForm.userId" placeholder="请选择所属人员" clearable style="width: 100%;" :disabled="disabled" @change="getuserDepartment">
+                        </user-select>
 
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="12" :xs="8">
-                  <el-form-item label="使用部门" prop="userDepartmentName">
-                    <el-input v-model="dataForm.userDepartmentName" readonly placeholder="请输入使用部门" :disabled="disabled" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="12" :xs="24" v-if="type !== 'add'">
-                  <el-form-item label="工具状态" prop="state">
-                    <el-select v-model="dataForm.state" placeholder="请选择工具状态" clearable :disabled="type !== 'add'"
-                      style="width: 100%;">
-                      <el-option v-for="( item, index ) in  equipmentStatusList " :key="index" :label="item.label"
-                        :value="item.value"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="12" :xs="24">
-                  <el-form-item label="备注" prop="remark">
-                    <el-input maxlength="200" class="shuru" v-model="dataForm.remark" placeholder="请输入备注" type="textarea"
-                      :rows="2" :disabled="disabled" style="width: 100%;" />
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-form>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="8">
+                      <el-form-item label="使用部门" prop="userDepartmentName">
+                        <el-input v-model="dataForm.userDepartmentName" readonly placeholder="请输入使用部门" :disabled="disabled" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24" v-if="type !== 'add'">
+                      <el-form-item label="工具状态" prop="state">
+                        <el-select v-model="dataForm.state" placeholder="请选择工具状态" clearable :disabled="type !== 'add'" style="width: 100%;">
+                          <el-option v-for="( item, index ) in  equipmentStatusList " :key="index" :label="item.label" :value="item.value"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="备注" prop="remark">
+                        <el-input maxlength="200" class="shuru" v-model="dataForm.remark" placeholder="请输入备注" type="textarea" :rows="2" :disabled="disabled" style="width: 100%;" />
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+                </el-form>
+              </el-collapse-item>
+            </el-collapse>
           </el-tab-pane>
           <el-tab-pane label="附件" name="annex">
             <UploadWj v-model="datafilelist" :disabled="type=='look'" :detailed="type=='look'"></UploadWj>
@@ -169,7 +167,8 @@ export default {
   },
   data() {
     return {
-      datafilelist:[],
+      activeNames:["basicInfo"],
+      datafilelist: [],
       activeName: "jcInfo",
       getCategoryTrees,
       areaList: [],
@@ -319,7 +318,7 @@ export default {
     this.getUserList()
   },
   methods: {
-    handleClick(){},
+    handleClick() { },
     onOrganizeChangeTwo(val, data, param) {
       if (!val && data.length) return
       if (!data) return
@@ -585,7 +584,7 @@ export default {
               }
             })
           }
-          this.dataForm.attachmentList=this.datafilelist
+          this.dataForm.attachmentList = this.datafilelist
           const formMethod = this.dataForm.id ? editEquEquipment : saveEquEquipment
           formMethod(this.dataForm).then(res => {
             let msg = "";
@@ -614,28 +613,58 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-.main {
-  padding: 10px 30px 0;
+<style scoped lang="scss">
+.JNPF-preview-main .main {
+  padding-top: 0;
+  .information-img {
+    width: 148px;
+    height: 148px;
+    border: 1px solid #c0ccda;
+    border-radius: 6px;
+    box-sizing: border-box;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .information-img + .information-img {
+    margin-left: 10px;
+  }
+}
+::v-deep .el-tabs--top .el-tabs__item.is-top:last-child {
+  padding-right: 0 !important;
+}
+::v-deep .el-tabs__item {
+  padding: 0 10px !important;
 }
 
-.el-button--small {
-  // padding: 1;
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important;
+}
+::v-deep .el-collapse-item__header {
+  line-height: 33px;
+  font-size: 18px;
+  border-top: 1px solid rgb(220, 223, 230);
+  background: rgb(250, 250, 250);
+  padding-left: 5px;
+  font-weight: 700;
+  border-right: 1px solid #dcdfe6;
+  border-left: 1px solid #dcdfe6;
 }
 
-
-.shuru {
-  width: 66.3%;
-  height: 100px;
-
+::v-deep .el-collapse-item__wrap {
+  border: 1px solid #dcdfe6 !important;
+  border-top: none;
+  margin-bottom: 0;
+  padding: 0 10px 0px;
+  border-top: none !important;
 }
 
-.qin {
-  position: relative;
+::v-deep .el-collapse-item__content {
+  padding-bottom: 0px;
 }
-
-.qinq {
-  position: absolute;
-
+::v-deep .el-form-item__content p {
+  border: none;
+}
+::v-deep .JNPF-common-page-header {
+  padding: 5px 10px !important;
 }
 </style>

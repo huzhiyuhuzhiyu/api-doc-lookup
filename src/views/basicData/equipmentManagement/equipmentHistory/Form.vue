@@ -303,7 +303,7 @@
                 <pagination :total="total" :page.sync="wxjlorderForm.pageNum" :limit.sync="wxjlorderForm.pageSize" @pagination="getwxjlinfo" />
               </div>
               <div v-if="activeName=='byrwinfo'">
-                <JNPF-table ref="byrwdataTable" v-loading="byrwlistLoading" :data="byrwdataTable" @sort-change="byrwsortChange" fixedNO custom-column>
+                <JNPF-table ref="byrwdataTable" v-loading="byrwlistLoading" :data="byrwdataTable" @sort-change="byrwsortChange" fixedNO custom-column :height=height>
                   <el-table-column prop="name" label="任务名称" min-width="200" fixed="left" sortable="custom">
                   </el-table-column>
                   <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" fixed="left" sortable="custom" />
@@ -340,7 +340,7 @@
                 <pagination :total="total" :page.sync="byrworderForm.pageNum" :limit.sync="byrworderForm.pageSize" @pagination="getbyrwinfo" />
               </div>
               <div v-if="activeName=='byjlinfo'">
-                <JNPF-table ref="byjldataTable" v-loading="byjllistLoading" :data="byjldataTable" @sort-change="byjlsortChange" fixedNO custom-column>
+                <JNPF-table ref="byjldataTable" v-loading="byjllistLoading" :data="byjldataTable" @sort-change="byjlsortChange" fixedNO custom-column :height=height>
                   <el-table-column prop="maintenanceTaskIdText" label="任务名称" min-width="180" sortable="custom" />
                   <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" sortable="custom" />
                   <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom" />
@@ -380,7 +380,7 @@
                 <pagination :total="total" :page.sync="byjlorderForm.pageNum" :limit.sync="byjlorderForm.pageSize" @pagination="getbyjlinfo" />
               </div>
               <div v-if="activeName=='djrwinfo'">
-                <JNPF-table ref="djrwdataTable" v-loading="djrwlistLoading" :data="djrwdataTable" @sort-change="djrwsortChange" fixedNO custom-column>
+                <JNPF-table ref="djrwdataTable" v-loading="djrwlistLoading" :data="djrwdataTable" @sort-change="djrwsortChange" fixedNO custom-column :height=height>
                   <el-table-column prop="name" label="任务名称" width="200" sortable="custom">
                   </el-table-column>
                   <el-table-column prop="cycle" label="周期" width="120" sortable="custom"></el-table-column>
@@ -416,7 +416,7 @@
                 <pagination :total="total" :page.sync="djrworderForm.pageNum" :limit.sync="djrworderForm.pageSize" @pagination="getdjrwinfo" />
               </div>
               <div v-if="activeName=='djjlinfo'">
-                <JNPF-table ref="djjldataTable" v-loading="djjllistLoading" :data="djjldataTable" @sort-change="djjlsortChange" fixedNO custom-column>
+                <JNPF-table ref="djjldataTable" v-loading="djjllistLoading" :data="djjldataTable" @sort-change="djjlsortChange" fixedNO custom-column :height=height>
                   <el-table-column prop="equipmentIdCode" label="设备编码" width="200" sortable="custom" />
                   <el-table-column prop="equipmentIdName" label="设备名称" width="200" sortable="custom" />
                   <el-table-column prop="factoryFloor" label="使用车间" min-width="140" sortable="custom" />

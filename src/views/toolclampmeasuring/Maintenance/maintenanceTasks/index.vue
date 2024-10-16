@@ -44,14 +44,14 @@
           </div>
         </div>
 
-        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column style="padding-bottom: 50px;">
-          <el-table-column prop="name" label="任务名称" min-width="200" fixed="left" sortable="custom">
+        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column>
+          <el-table-column prop="name" label="任务名称" min-width="200" sortable="custom">
           </el-table-column>
           <el-table-column prop="level" label="保养等级" min-width="140"></el-table-column>
           <el-table-column prop="cycle" label="周期" width="90"></el-table-column>
           <el-table-column prop="unit" label="单位" width="90"></el-table-column>
-          <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" fixed="left" />
-          <el-table-column prop="equipmentIdName" label="工具名称" min-width="200" fixed="left" sortable="custom"></el-table-column>
+          <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" />
+          <el-table-column prop="equipmentIdName" label="工具名称" min-width="200" sortable="custom"></el-table-column>
           <el-table-column prop="state" label="状态" sortable="custom" width="120" fixed="right" align="center">
             <template slot-scope="scope">
               <div v-if="scope.row.state == 'disabled'"><el-tag type="danger">禁用</el-tag></div>

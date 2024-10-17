@@ -56,10 +56,24 @@ export function synAllOrganizeSysToDing(type) {
     method: 'GET'
   })
 }
+// 钉钉同步到所有组织信息(包含公司和部门)
+export function synAllOrganizeDingToSys(type) {
+  return request({
+    url: '/api/system/SynThirdInfo/synAllOrganizeDingToSys?type=' + type,
+    method: 'GET'
+  })
+}
 // 本地所有用户信息同步到钉钉
 export function synAllUserSysToDing(type) {
   return request({
     url: '/api/system/SynThirdInfo/synAllUserSysToDing?type=' + type,
+    method: 'GET'
+  })
+}
+// 钉钉同步到所有用户信息
+export function synAllUserDingToSys(type) {
+  return request({
+    url: '/api/system/SynThirdInfo/synAllUserDingToSys?type=' + type,
     method: 'GET'
   })
 }
@@ -70,10 +84,24 @@ export function synAllOrganizeSysToQy(type) {
     method: 'GET'
   })
 }
+// 同步到企业微信 本地所有组织信息(包含公司和部门)
+export function synAllOrganizeQyToSys(type) {
+  return request({
+    url: '/api/system/SynThirdInfo/synAllOrganizeQyToSys?type=' + type,
+    method: 'GET'
+  })
+}
 // 本地所有用户信息同步到企业微信
 export function synAllUserSysToQy(type) {
   return request({
     url: '/api/system/SynThirdInfo/synAllUserSysToQy?type=' + type,
+    method: 'GET'
+  })
+}
+// 企业微信 本地所有用户信息同步到
+export function synAllUserQyToSys(type) {
+  return request({
+    url: '/api/system/SynThirdInfo/synAllUserQyToSys?type=' + type,
     method: 'GET'
   })
 }

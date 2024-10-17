@@ -513,7 +513,7 @@ export default {
   watch: {
     thirdTab(val) {
       if (val == 3 || val == 4) {
-        const type = val == 3 ? 1 : 2
+        const type = val == 3 ? 11 : 22
         this.getSynThirdTotal(type)
       }
     },

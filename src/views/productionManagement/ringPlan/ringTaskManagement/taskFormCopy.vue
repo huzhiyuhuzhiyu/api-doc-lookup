@@ -325,7 +325,7 @@ export default {
         // 报工
         let obj = {
           productionOrderNo: this.prodOrderId,
-          classAttribute: "finish_product",
+          classAttribute: "semi_finished",
           processId: "",
           "orderItems": [
             {

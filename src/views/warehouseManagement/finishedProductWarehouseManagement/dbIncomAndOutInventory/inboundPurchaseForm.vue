@@ -129,7 +129,7 @@
                         </el-table-column>
 
                         <el-table-column prop="price" label="单价(含税)" width="120" :key="110"></el-table-column>
-                        <el-table-column prop="taxRate" label="税率" width="100" :key="171"></el-table-column>
+                        <el-table-column prop="taxRates" label="税率" width="100" :key="171"></el-table-column>
                         <el-table-column prop="taxAmount" label="税额" width="100" :key="1721"></el-table-column>
                         <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column>
                         <el-table-column prop="originalBatchNumber" label="原批次号" width="170" :key="1255">
@@ -529,6 +529,7 @@ export default {
         item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
         item.costPrice = item.price
         item.num = item.requiredReceivedQuantity
+        item.taxRates= item.taxRate+"%"
 
 
 
@@ -756,6 +757,10 @@ export default {
             this.$set(item, 'productDrawingNo', item.drawingNo)
             this.$set(item, 'price', item.costPrice)
           });
+          res.data.spaceLines.forEach(item => {
+            item.taxRates= item.taxRate+"%"
+            
+          });
           this.dataForm = res.data.stockMove
           this.productData = res.data.spaceLines
         })
@@ -781,6 +786,8 @@ export default {
               item.ordersId = item.purchaseOrderId
               item.noticeId = item.purchaseReceiptReturnGoodsId
               item.noticeLineId = item.id
+              item.taxRates= item.taxRate+"%"
+
               item.costPrice = item.price
               item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
               let taxrate = 1 * 1 + (item.taxRate) / 100 * 1

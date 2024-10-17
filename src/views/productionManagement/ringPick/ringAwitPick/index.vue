@@ -109,7 +109,7 @@
 <script>
 import { ordershengchanList, addOrderNum } from '@/api/productOrdes/index.js'
 import { UserListAll, } from '@/api/permission/user'
-import Form from '@/views/productionManagement/ringPlan/ringTaskManagement/Form.vue'
+import Form from '@/views/productionManagement/ringPlan/ringTaskManagement/taskFormCopy.vue'
 import PickForm from '../ringPickManagement/Form.vue'
 import { getProductionPlanList } from '@/api/productionManagement/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'

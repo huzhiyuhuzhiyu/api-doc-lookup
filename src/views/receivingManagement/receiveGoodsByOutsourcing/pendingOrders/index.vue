@@ -166,7 +166,7 @@ export default {
         orderItems: [
           {
             asc: false,
-            column: ''
+            column: 't1.create_time'
           }
         ],
 

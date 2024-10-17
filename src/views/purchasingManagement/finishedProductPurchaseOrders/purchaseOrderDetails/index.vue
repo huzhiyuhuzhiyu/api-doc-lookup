@@ -217,14 +217,13 @@
 // import { purchaseOrderList } from '@/api/purchasingManagement/purchaseInquirySheet'
 import {
   purchaseOrderList,
-  purchaseOrderReport,
   detailpurchaseOrderList,
   purPurchaseOrderExport,
   purPurchaseOrderdetail,
   purPurchaseBatch,
   purPurchaseBatchLine
 } from '@/api/purchasingAndOutsourcingOrders/index'
-import JNPFForm from '../../purchaseOrders/purchaseOrder/Form.vue'
+import JNPFForm from '../purchaseOrder/Form.vue'
 import moment from 'moment'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 // import withdrawnForm from './withranForm'

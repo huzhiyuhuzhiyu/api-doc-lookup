@@ -801,8 +801,8 @@ export default {
         prop === 'productCode' ||
         prop === 'cooperativePartnerCode' ||
         prop === 'cooperativePartnerName' ||
-        prop === 'processName'||
-        prop === 'createTime'||
+        prop === 'processName' ||
+        prop === 'createTime' ||
         prop === 'createByName'
       ) {
         newProp = prop

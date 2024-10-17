@@ -201,7 +201,7 @@
                       <el-table-column prop="clearance" label="游隙" width="160" />
                       <el-table-column prop="packagingMethod" label="包装方式" width="160" />
                       <el-table-column prop="specialRequire" label="特殊要求" width="160" />
-                      <el-table-column prop="orderNo" label="订单号" width="160" />
+                      <el-table-column prop="ordersNo" label="订单号" width="160" />
                       <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
                         <template slot-scope="scope">
                           <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
@@ -411,7 +411,7 @@
                       <el-table-column prop="clearance" label="游隙" width="160" />
                       <el-table-column prop="packagingMethod" label="包装方式" width="160" />
                       <el-table-column prop="specialRequire" label="特殊要求" width="160" />
-                      <el-table-column prop="orderNo" label="订单号" width="160" />
+                      <el-table-column prop="ordersNo" label="订单号" width="160" />
                       <el-table-column prop="workOrderNo" label="工作令号" width="160" />
                       <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
                         <template slot-scope="scope">

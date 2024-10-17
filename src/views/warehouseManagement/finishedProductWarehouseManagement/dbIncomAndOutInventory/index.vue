@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
 
-    <div class="JNPF-common-layout-center JNPF-flex-main">
+    <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!visibleForm">
       <div class="tag-group JNPF-common-search-box treeBox_bot"
         style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:0px 0 0px 0">
         <el-radio-group v-model="categoryType" style="background-color:#fff;">
@@ -1274,6 +1274,7 @@ export default {
   },
   data() {
     return {
+      visibleForm:false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -1947,6 +1948,7 @@ export default {
     // 点击出库/入库按钮
     incomAndOutInventFun(data, btnType, ref) {
       if (this.categoryType) {
+        this.visibleForm=true
         if (this.categoryType == 'outbound_sale_send') {
           if (this.saleFlag) {
             // 销售发货订单
@@ -3166,6 +3168,8 @@ export default {
     },
     // 关闭新建编辑页面
     closeForm(isRefresh) {
+        this.visibleForm=false
+        
       this.fhFormVisible = false
       this.thFormVisible = false
       this.formVisible = false

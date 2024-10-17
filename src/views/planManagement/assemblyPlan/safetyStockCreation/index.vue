@@ -1,6 +1,6 @@
 <template>
   <!-- 销售订单创建 -->
-  <div class="JNPF-common-layout">
+  <div class="JNPF-common-layout"  v-if="!formVisible">
 
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <div class="JNPF-common-layout-center JNPF-flex-main">

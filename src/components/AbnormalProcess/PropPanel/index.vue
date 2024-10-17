@@ -658,8 +658,8 @@
                 show-icon />
     
               <el-form-item>
-                <div slot="label" class="form-item-label">节点抄送
-                  <el-tooltip content="当前节点抄送的时候" placement="top">
+                <div slot="label" class="form-item-label">节点提醒
+                  <el-tooltip content="当前节点提醒的时候" placement="top">
                     <a class="el-icon-warning-outline"></a>
                   </el-tooltip>
                 </div>
@@ -693,11 +693,11 @@
                             :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
                             :value="item.__vModel__" />
                         </el-option-group>
-                        <el-option-group>
+                        <!-- <el-option-group>
                           <el-option v-for="item in formFieldsOptions" :key="item.__vModel__"
                             :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
                             :value="item.__vModel__" />
-                        </el-option-group>
+                        </el-option-group> -->
                       </el-select>
                     </template>
                   </el-table-column>
@@ -1753,7 +1753,15 @@ const systemFieldOptions = [{
     required: true
   },
   __vModel__: '@flowOperatorUserName',
-}]
+},
+{
+  __config__: {
+    label: '当前时间',
+    required: true
+  },
+  __vModel__: '@currentTime',
+},
+]
 export default {
   props: [/*当前节点数据*/"value", /*整个节点数据*/"processData", "flowType",'planPersonId','planPersonName'],
   components: { OrgSelect, MsgDialog, InterfaceDialog, FormulaDialog, FlowDialog },
@@ -1903,7 +1911,6 @@ export default {
     funcOptions() {
       let options = [
         ...systemFieldOptions,
-        ...this.formFieldsOptions
       ]
       return options
     },

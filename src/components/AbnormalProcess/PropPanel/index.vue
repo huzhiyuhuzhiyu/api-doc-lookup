@@ -1513,7 +1513,7 @@ const defaultApproverForm = {
   description: '',  // 节点描述
   planProcessingTime:'',  //计划超时提醒（分钟）
   planTime:'',  //计划超时提醒（分钟）
-  flowUnit:'',            // 单位
+  flowUnit:'d',            // 单位
   flowUnitList:[
     {label:'天',value:'d'},
     {label:'小时',value:'h'},

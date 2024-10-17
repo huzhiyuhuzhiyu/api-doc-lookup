@@ -53,7 +53,7 @@ export default {
   props:{
     flowType:{
       type: 'String',
-      default:'2'
+      default:2
     }
   },
   data() {

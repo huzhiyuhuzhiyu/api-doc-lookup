@@ -30,7 +30,8 @@ export default {
       data = getMockData()
     }
     this.updateFiled(data)
-    data.childNode && ((data.childNode.content && data.childNode.content !== '请设置处理人') ? data.childNode.content = data.childNode.content : data.childNode.content = this.planPersonName)
+    
+    data.childNode && ((data.childNode.content && data.childNode.content !== '请设置提醒人') ? (data.childNode.content = data.childNode.content) : (data.childNode.content = this.planPersonName))
     this.$store.dispatch('base/getPositionList')
     this.$store.dispatch('base/getRoleList')
     this.$store.dispatch('generator/getDepTree')

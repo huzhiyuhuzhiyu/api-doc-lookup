@@ -3,22 +3,22 @@
     <!--左侧插槽-->
     <slot name="left" />
     <template v-if="isJudgePer">
-      <el-button size="mini" type="text" @click="edit()" v-if="hasEdit" :disabled="editDisabled"
+      <el-button size="mini" type="text" @click="edit" v-if="hasEdit" :disabled="editDisabled"
         v-has="editPerCode">{{ editText === '编辑' ? $t(`common.editBtn`) : editText }}</el-button>
     </template>
     <template v-else>
-      <el-button size="mini" type="text" @click="edit()" v-if="hasEdit" :disabled="editDisabled">
+      <el-button size="mini" type="text" @click="edit" v-if="hasEdit" :disabled="editDisabled">
         {{ editText === '编辑' ? $t(`common.editBtn`) : editText }}</el-button>
     </template>
     <!-- 中间插槽 -->
     <slot name="center" />
     <template v-if="isJudgePer">
-      <el-button size="mini" type="text" class="JNPF-table-delBtn" @click="del()" v-if="hasDel"
+      <el-button size="mini" type="text" class="JNPF-table-delBtn" @click="del" v-if="hasDel"
         :disabled="delDisabled" v-has="delPerCode">
         {{ delText === '删除' ? $t(`common.delBtn`) : delText }}</el-button>
     </template>
     <template v-else>
-      <el-button size="mini" type="text" class="JNPF-table-delBtn" @click="del()" v-if="hasDel"
+      <el-button size="mini" type="text" class="JNPF-table-delBtn" @click="del" v-if="hasDel"
         :disabled="delDisabled">{{ delText === '删除' ? $t(`common.delBtn`) : delText }}</el-button>
     </template>
     <!-- 默认右侧插槽 -->
@@ -74,10 +74,12 @@ export default {
     return {}
   },
   methods: {
-    del() {
+    del(event) {
+      event.target.blur();
       this.$emit('del')
     },
-    edit() {
+    edit(event) {
+      event.target.blur();
       this.$emit('edit')
     }
   }

@@ -1,7 +1,7 @@
 <template>
     <transition name="el-zoom-in-center">
-
-        <div class="JNPF-preview-main org-form" ref="main">
+        <template v-if="!isFinish">
+            <div class="JNPF-preview-main org-form" ref="main" v-loading="pageLoading">
             <div
 
                 :class="['JNPF-common-page-header', isView ? 'noButtons' : '']"  v-if="!approvalFlag">
@@ -23,7 +23,7 @@
                                     <el-collapse v-model="activeNames">
                                         <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                                             <el-row>
-                                                <el-form label-position="top" :model="dataForm" ref="dataForm"  :rules="dataRule">
+                                                <el-form label-position="top" :model="dataForm" ref="dataForm" :disabled="isView"  :rules="dataRule">
                                                     <el-row :gutter="10">
                                                         <el-col :span="6">
                                                             <el-form-item label="上传单编码">
@@ -122,7 +122,7 @@
                             <el-collapse v-model="activeNames">
                                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                                     <el-row>
-                                        <el-form label-position="top" :model="dataForm" ref="dataForm">
+                                        <el-form label-position="top" :model="dataForm" ref="dataForm"  :rules="dataRule" :disabled="isView">
                                             <el-row :gutter="10">
                                                 <el-col :span="6">
                                                     <el-form-item label="上传单编码">
@@ -131,7 +131,7 @@
 
                                                 </el-col>
                                                 <el-col :span="6">
-                                                    <el-form-item label="图文档分类" prop="partnerCategoryIdText">
+                                                    <el-form-item label="图文档分类" prop="categoryName">
                                                         <ComSelect-list
                                                             :isdisabled="btnType === 'look'"
                                                             v-model="dataForm.categoryName"
@@ -144,7 +144,7 @@
                                                     </el-form-item>
                                                 </el-col>
                                                 <el-col :span="6">
-                                                    <el-form-item label="版本号" >
+                                                    <el-form-item label="版本号" prop="version">
                                                         <el-input v-model="dataForm.version" placeholder="请输入版本号"  />
                                                     </el-form-item>
                                                 </el-col>
@@ -152,8 +152,8 @@
 
                                             </el-row>
                                             <el-row :gutter="10">
-                                                <el-col :span="24" style="margin-top: -19px">
-                                                    <div v-if="!isView">
+                                                <el-col :span="24">
+                                                    <div v-if="!isView"  style="margin-top: -19px">
                                                         <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                                                                    icon="el-icon-plus" :disabled="isView"
                                                                    @click="chooseProduct">选择产品</el-button>|
@@ -242,6 +242,13 @@
                 :params-obj="{}"
                 :elementShow="false"  />
         </div>
+        </template>
+        <FinishSubmit v-else
+                      :left-btn-text="'再建一个'"
+                      :right-btn-text="'返回列表'"
+                      @left-btn-click="recreate"
+                      @right-btn-click="goBack"
+        ></FinishSubmit>
     </transition>
 </template>
 
@@ -265,9 +272,12 @@ function getOriginActiveNames(){
 }
 import { getcategoryTree } from '@/api/basicData/index'
 import {getcategoryTree as getProductCategoryTree} from "@/api/basicData/materialSettings";
+import FlowMixin from "@/mixins/generator/flowMixin";
+import {FlowCode} from "@/views/esop/utils/constants";
+import FinishSubmit from "@/views/esop/fileUpload/workinginstruction/old/finishSubmit.vue";
 
 export default {
-    components: { recordList, Process, FileUploadDrop },
+    components: {FinishSubmit, recordList, Process, FileUploadDrop },
     props:{
         type:{
             type:String,
@@ -283,11 +293,13 @@ export default {
         },
         flowCode:{
             type:String,
-            required:false
+            default: FlowCode.IMAGE
         },
     },
     data() {
         return {
+            isFinish: false,
+            pageLoading:false,
             selectRows:[],
             productsIdsMap: new Map(),
             file: null,
@@ -380,7 +392,8 @@ export default {
                 routingId:'',
                 approvalFlag:true,
                 id:null,
-                version:''
+                version:'',
+                documentStatus:'',
             },
             ProductMethodArr: {
                 method: getProductCategoryTree,
@@ -399,18 +412,49 @@ export default {
             getProductList,
         }
     },
-    mixins: [busFlow],
-    created(){
-        if(this.id) {
-            this.dataForm.approvalFlag && this.getFlowDetail(this.id)
-            this.fetchData(false)
-            this.getDetail(this.id)
-        }else{
-            this.getBusInfo()
-            this.fetchData()
-        }
+    mixins: [busFlow,FlowMixin],
+    async created(){
+       this.initPage()
     },
     methods: {
+        async initPage(){
+            if(!this.id) {
+                this.getBusInfo(this.flowCode)
+                return this.fetchData()
+            }
+            this.fetchData(false)
+            await this.getDetail(this.id)
+            const isDraft = this.dataForm.documentStatus === DocumentStatus.DRAFT
+            if(isDraft){
+                this.getBusInfo(this.flowCode)
+            }else{
+                this.dataForm.approvalFlag && this.getFlowDetail(this.id)
+            }
+        },
+        recreate(){
+            this.dataForm = {
+                categoryName:'',
+                categoryId:'',
+                orderNo:'',
+                productsCategoryName:'',
+                productCategoryId:'',
+                productsId:'',
+                drawingNo:'',
+                productsCode:'',
+                openProcess:0,
+                routingName:'',
+                routingId:'',
+                approvalFlag:true,
+                id:null,
+                version:'',
+                documentStatus:'',
+            }
+            this.normalFileList = []
+            this.productData = []
+            this.activeNames = getOriginActiveNames()
+            this.initPage()
+            this.isFinish = false
+        },
         handeleProductInfoData(val) {
             this.selectRows = val
         },
@@ -477,22 +521,34 @@ export default {
             flag && this.$message.info('您选择的产品中有已经选择的产品，已为您自动过滤')
         },
         async getDetail(id){
-            const { data } = await detailBimFileUpload(id)
-            this.getDetailJSON = JSON.stringify(data)
-            Object.keys(this.dataForm).forEach(key=>{
-                this.dataForm[key] = data[key]
-            })
-            console.log( data.bimFileUploadLineVOList)
-            this.normalFileList = data.bimFileUploadLineVOList.map(item=>{
-                return {
-                    name: item.documentName,
-                    fileSize: item.fileSize,
-                    filename: item.documentName,
-                    id: item.documentId,
-                    url: getFilePreviewUrl(item.filePath),
-                    processUploadId: item.id,
-                }
-            })
+
+            this.pageLoading = true
+
+            try {
+                const { data } = await detailBimFileUpload(id)
+                this.getDetailJSON = JSON.stringify(data)
+                Object.keys(this.dataForm).forEach(key=>{
+                    this.dataForm[key] = data[key]
+                })
+                console.log( data.bimFileUploadLineVOList)
+                this.normalFileList = data.bimFileUploadLineVOList.map(item=>{
+                    return {
+                        name: item.documentName,
+                        fileSize: item.fileSize,
+                        filename: item.documentName,
+                        id: item.documentId,
+                        url: getFilePreviewUrl(item.filePath),
+                        processUploadId: item.id,
+                    }
+                })
+
+                this.productData = data.products || []
+            }catch (e) {
+
+            }finally {
+                this.pageLoading = false
+            }
+
         },
         goBack(){
             return this.$emit('back')
@@ -512,7 +568,7 @@ export default {
             const fn = this.isAdd ? addBimFileUpload : modifyBimFileUpload
             const { data } = await fn(params)
             await this.$message.success('操作成功')
-            isSubmit && this.goBack('',true)
+            this.isFinish = true
         },
         getSaveData(type){
             return {
@@ -528,7 +584,11 @@ export default {
                     version:this.dataForm.version
                 },
                 bimFileUploadLineList:this.getUploadDetailList(),
-                flowData:this.flowData
+                flowData:this.flowData,
+                products: this.productData.map(item=>({
+                    fileUploadId: this.dataForm.id,
+                    productsId:  item.id
+                }))
             }
         },
         async fetchData(flag=true,code="WJSCSQ") {
@@ -550,52 +610,6 @@ export default {
                 }
             })
         },
-        getBusInfo(){
-            getBusinessFlowInfo(this.flowCode ||'b048').then(res=>{
-                if (res.data){
-                    if (res.data.enabledMark){
-                        this.flowData = res.data
-                        this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
-                        this.dataForm.approvalFlag = !!res.data.enabledMark
-                    }else{
-                        this.flowTemplateJson = {}
-                        this.dataForm.approvalFlag = false
-                        this.$message.error('未找到审批流程！')
-                    }
-                }else{
-                    this.flowTemplateJson = {}
-                    this.dataForm.approvalFlag = false
-                }
-            }).catch(()=>{})
-        },
-        // 流程信息 && 流转记录
-        getFlowDetail(id){
-            getBusinessFlowDetail(id).then(res=>{
-                if (res.data){
-                    this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson) : null
-                    this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
-                    this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
-                    let flowTaskNodeList = res.data.flowTaskNodeList
-                    if (flowTaskNodeList.length) {
-                        for (let i = 0; i < flowTaskNodeList.length; i++) {
-                            const nodeItem = flowTaskNodeList[i]
-                            const loop = data => {
-                                if (Array.isArray(data)) data.forEach(d => loop(d))
-                                if (data.nodeId === nodeItem.nodeCode) {
-                                    if (nodeItem.type == 0) data.state = 'state-past'
-                                    if (nodeItem.type == 1) data.state = 'state-curr'
-                                    if (nodeItem.nodeType === 'approver' || nodeItem.nodeType === 'start' || nodeItem.nodeType === 'subFlow') data.content = nodeItem.userName
-                                    return
-                                }
-                                if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
-                                if (data.childNode) loop(data.childNode)
-                            }
-                            loop(this.flowTemplateJson)
-                        }
-                    }
-                }
-            }).catch(()=>{})
-        },
         normalUploadShow(){
             this.activeNames = getOriginActiveNames().concat('normalUpload')
         },
@@ -609,11 +623,14 @@ export default {
             console.log(id, btnType, approvalFlag)
             this.isApprovalCheck = approvalFlag
             this.approvalFlag = approvalFlag
+            this.normalUploadShow()
+            console.log(this.activeNames)
             this.getDetail(id)
         },
     },
     watch:{
-        "dataForm.productsCode"(val){
+        "dataForm.categoryId"(val,val2){
+            console.log("dataForm.categoryId",val,val2)
             if(isEmpty(val)){
                 this.dataForm.openProcess = 0
                 this.activeNames = getOriginActiveNames()
@@ -705,6 +722,9 @@ export default {
     min-height: 1045px !important;
     background-color: #f5f5f7 !important;
     color: #576a95;
+}
+.JNPF-preview-main{
+    overflow: hidden !important;
 }
 
 ::v-deep .el-collapse-item__header {

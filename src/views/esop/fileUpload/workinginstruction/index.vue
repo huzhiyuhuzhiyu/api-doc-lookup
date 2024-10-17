@@ -28,9 +28,11 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
                 <div class="JNPF-common-head" style="padding: 8px;display: -webkit-box">
-                    <el-button type="primary" icon="el-icon-plus" size="mini" @click.native="addOrUpdateHandle(ModelType.ADD)">
-                        新建
-                    </el-button>
+<!--                    <el-button type="primary" icon="el-icon-plus" size="mini" @click.native="">-->
+<!--                        新建-->
+<!--                    </el-button>-->
+                    <topOpts @add="addOrUpdateHandle(ModelType.ADD)">
+                    </topOpts>
                     <div class="JNPF-common-head-right">
                         <el-tooltip content="高级查询" placement="top" v-if="true">
                             <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -67,19 +69,24 @@
                                        :delDisabled="scope.row.documentStatus !== 'draft'"
                                        :editDisabled="scope.row.documentStatus !== 'draft'"
                                        @edit="addOrUpdateHandle(ModelType.EDIT,scope.row.id)" @del="handleDel(scope.row.id)">
-                                        <el-dropdown hide-on-click>
-                                            <span class="el-dropdown-link">
-                                              <el-button type="text" size="mini">
-                                                {{ $t('common.moreBtn') }}
-                                                <i class="el-icon-arrow-down el-icon--right"></i>
-                                              </el-button>
-                                            </span>
-                                            <el-dropdown-menu slot="dropdown">
-                                                <el-dropdown-item @click.native="addOrUpdateHandle(ModelType.VIEW,scope.row.id)">
-                                                    查看详情
-                                                </el-dropdown-item>
-                                            </el-dropdown-menu>
-                                        </el-dropdown>
+<!--                                        <el-dropdown hide-on-click>-->
+<!--                                            <span class="el-dropdown-link">-->
+<!--                                              <el-button type="text" size="mini">-->
+<!--                                                {{ $t('common.moreBtn') }}-->
+<!--                                                <i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>-->
+<!--                                              </el-button>-->
+<!--                                            </span>-->
+<!--                                            <el-dropdown-menu slot="dropdown">-->
+<!--                                                <el-dropdown-item @click.native="addOrUpdateHandle(ModelType.VIEW,scope.row.id)">-->
+<!--                                                    查看详情-->
+<!--                                                </el-dropdown-item>-->
+<!--                                            </el-dropdown-menu>-->
+<!--                                        </el-dropdown>-->
+                                        <template v-if="isFileManagementWork || isFileManagementInspect">
+                                            <el-button type="text" size="mini" @click="addOrUpdateHandle(ModelType.VIEW,scope.row.id)">
+                                                查看详情
+                                            </el-button>
+                                        </template>
                             </tableOpts>
                         </template>
                     </el-table-column>
@@ -100,12 +107,6 @@
 
 <script>
 import {
-    updataBimProductsModelCheck,
-    getbimProductsModelInfo,
-    updataBimProductsModel,
-    delBimProductsModel,
-    getbimProductsModelList,
-    addBimProductsModel,
     uploadDimProductsModel
 } from '@/api/masterDataManagement/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -116,15 +117,25 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import EditWorkingInstructionUpload from "@/views/esop/fileUpload/workinginstruction/Form.vue";
 import {deleteBimFileUpload, getBimFileUpload} from "@/api/esop/fileUpload/workinginstruction";
 import moment from "moment";
-import {ApplicationType, DocumentStatus, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
+import {
+    ApplicationType,
+    DocumentStatus,
+    ModelType,
+    PageType
+} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 import {FlowCode} from "@/views/esop/utils/constants";
+import {trim} from "@/utils";
 
 
 
 export default {
     components: {EditWorkingInstructionUpload, JNPFForm, ExportForm, SuperQuery },
-
+    name:"FileUploadWorkingInstruction",
     props:{
+        pageType:{
+            type:String,
+            default:PageType.FileUploadWork
+        },
         applicationType:{
             type:String,
             default:ApplicationType.WORK
@@ -133,6 +144,14 @@ export default {
             type: String,
             default: FlowCode.WORK
         },
+        documentStatus:{
+            type:String,
+            default:DocumentStatus.DRAFT
+        },
+        approvalStatus:{
+            type:String,
+            default:""
+        }
     },
     data() {
         return {
@@ -182,7 +201,13 @@ export default {
     },
     computed: {
         ...mapGetters(['userInfo']),
-        ...mapState('user', ['token'])
+        ...mapState('user', ['token']),
+        isFileManagementWork(){
+            return this.pageType === PageType.FileManagementWork
+        },
+        isFileManagementInspect(){
+            return this.pageType === PageType.FileManagementInspect
+        }
     },
     async created() {
         this.initData()
@@ -192,9 +217,9 @@ export default {
         getOriginListQuery() {
             return {
                 applicationType:this.applicationType,
-                approvalStatus: "",
+                approvalStatus: this.approvalStatus,
                 createByName: "",
-                documentStatus: DocumentStatus.DRAFT,
+                documentStatus: this.documentStatus,
                 endTime: "",
                 endUpdateTime: "",
                 keyword: "",
@@ -312,92 +337,8 @@ export default {
             if (!this.selectArr.length) return this.$message.error('请先选择要分配的数据')
             this.customerVisi = true
         },
-        // 下载模板
-        downLoadTemplate() {
-            const a = document.createElement('a')
-            a.setAttribute('download', '')
-            a.setAttribute('href', location.origin + '/static/型号导入模板.xlsx')
-            a.click()
-        },
-        importFun() {
-            // this.$refs.UploadProduct.$el.querySelector('input').click()
-            this.uploadVisib = true
-        },
-        // 上传产品
-        UploadProduct(data) {
-            console.log('data', data)
-            this.loadingText = '正在导入数据'
-            this.formLoading = true
-            var formData = new FormData()
-            formData.append('file', data)
-            //调用上传文件接口
-            uploadDimProductsModel(formData)
-                .then((res) => {
-                    if (!res.data) {
-                        this.$message.success(`导入成功`)
-                        this.initData()
-                        this.formLoading = false
-                        this.loadingText = ''
-                    } else {
-                        this.handleMessage(res.data)
-                    }
-                })
-                .catch((err) => {
-                    this.$message.error(`文件上传失败`)
-                    this.formLoading = false
-                    this.loadingText = ''
-                })
-        },
-        // 提示
-        handleMessage(data) {
-            const h = this.$createElement
-            this.$message({
-                type: 'error',
-                duration: 0,
-                showClose: true,
-                customClass: 'my-message', // 自定义类名，用于设置样式
-                message: h(
-                    'div',
-                    {
-                        style: 'padding-right:20px;display:flex;align-items:center;color:#f56c6c;'
-                    },
-                    [
-                        h('p', { style: 'font-size:14px;' }, '导入成功，存在型号相关信息错误！'),
-                        h(
-                            'el-button',
-                            {
-                                props: {
-                                    type: 'text',
-                                    size: 'mini',
-                                    icon: 'el-icon-download'
-                                },
-                                on: {
-                                    click: () => {
-                                        this.downNoProduct(data)
-                                    }
-                                },
-                                style: {
-                                    border: 'none',
-                                    textAlign: 'center',
-                                    // width:"20%",
-                                    margin: '0 5px 0 5px '
-                                }
-                            },
-                            '下载导入错误数据'
-                        )
-                    ]
-                )
-            })
-            return
-        },
-        cancelFun() {
-            this.uploadVisib = false
-            this.$refs['uploadRef'].clearFiles()
-        },
-        // 导入产品  下载导入错误数据
-        downNoProduct(res) {
-            this.jnpf.downloadFile(res.url, res.name)
-        },
+
+
         columnSetFun() {
             console.log('this.$refs.dataTable', this.$refs.dataTable)
             this.$refs.dataTable.showDrawer()
@@ -431,11 +372,7 @@ export default {
                 this.listQuery.startTime = ''
                 this.listQuery.endTime = ''
             }
-            Object.keys(this.listQuery).forEach((key) => {
-                let item = this.listQuery[key]
-                this.listQuery[key] = typeof item === 'string' ? item.trim() : item
-            })
-
+            trim(this.listQuery)
             this.listQuery.pageNum = 1
             this.initData()
         },

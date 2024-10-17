@@ -39,8 +39,6 @@ export default {
   },
   methods: {
     initData() {
-      console.log(111);
-      
       this.toDetail()
     },
     toDetail() {

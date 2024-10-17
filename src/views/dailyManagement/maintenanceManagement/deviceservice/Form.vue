@@ -40,6 +40,11 @@
                     </el-col>
                     <el-col :sm="12" :xs="24">
                       <el-form-item label="解决措施" prop="solutionMeasures">
+                        <template slot="label">
+                          <span>解决措施</span>
+                          <span>>></span>
+                          <el-button type="text" @click="devicesolutionMeasures">查看本设备维修记录</el-button>
+                        </template>
                         <el-input v-model="dataForm.solutionMeasures" placeholder="请输入解决措施" :disabled="btnType == 'look'" type="textarea" maxlength="200" :rows="2" />
                       </el-form-item>
                     </el-col>
@@ -201,9 +206,15 @@
                         <el-input v-model="scope.row.faultDescription" placeholder="请输入故障描述" :disabled="btnType == 'look' || btnType == 'start' || btnType == 'end'" maxlength="200" />
                       </template>
                     </el-table-column>
-                    <el-table-column label="操作" width="120" v-if="btnType == 'edit' || btnType == 'add'" key="30">
+                    <el-table-column prop="faultDescription" label="是否完成" width="90" v-if="btnType == 'end'||btnType == 'look'">
                       <template slot-scope="scope">
-                        <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
+                        <el-checkbox v-model="scope.row.repairResult" true-label="finished" false-label="not_finished" :disabled="btnType == 'look'"></el-checkbox>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="操作" width="120" v-if="btnType == 'edit' || btnType == 'add'||btnType == 'end'" key="30">
+                      <template slot-scope="scope">
+                        <el-button type="text" @click="handleDel(scope)" v-if="btnType == 'edit' || btnType == 'add'" style="color: #ff3a3a">删除</el-button>
+                        <el-button type="text" @click="solutionMeasuresfun(scope.row,scope.$index)" v-if="btnType == 'end'||(btnType == 'look'&&dataForm.solutionMeasures)">解决措施</el-button>
                       </template>
                     </el-table-column>
                   </el-table>
@@ -284,6 +295,120 @@
           </el-tab-pane>
         </el-tabs>
       </div>
+      <!-- 本设备维修记录 -->
+      <el-dialog title="本设备维修记录" :visible.sync="dialogTableVisible" :append-to-body="true" :close-on-click-modal="false">
+        <JNPF-table v-loading="TablelistLoading" :data="tableDatalist" custom-column>
+          <el-table-column prop="maintenanceNo" label="维修单号" min-width="200">
+          </el-table-column>
+          <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" />
+          <el-table-column prop="equipmentIdName" label="设备名称" min-width="200"></el-table-column>
+          <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
+          <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
+          <el-table-column prop="frontPicList" label="故障情况照片" min-width="140">
+            <template slot-scope="scope">
+              <el-image @click="bigimg(define.comUrl+item.url)" style="width: 25px;height: 25px;margin-left: 5px;" v-for="item in scope.row.frontPicList" :key="item.fileId" :src="define.comUrl+item.url" :preview-src-list="srcList"></el-image>
+            </template>
+          </el-table-column>
+          <el-table-column prop="faultStartTime" label="故障开始时间" width="180"></el-table-column>
+          <el-table-column prop="reviewComments" label="审核意见" width="120">
+            <template slot-scope="scope">
+              <div v-if="scope.row.reviewComments == 'immediately'"><el-tag type="danger">立即维修</el-tag></div>
+              <div v-else-if="scope.row.reviewComments == 'reject'"><el-tag type="warning">驳回</el-tag></div>
+              <div v-else-if="scope.row.reviewComments == 'outsourcing'"><el-tag>转委外</el-tag></div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="rejectReason" label="驳回理由" min-width="160">
+            <template slot-scope="scope">
+              <div><el-tag type="success" v-if="scope.row.rejectReason">{{scope.row.rejectReason}}</el-tag></div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="degree" label="紧急程度" width="120">
+            <template slot-scope="scope">
+              <div v-if="scope.row.degree == '1'"><el-tag type="danger">特别紧急</el-tag></div>
+              <div v-else-if="scope.row.degree == '2'"><el-tag type="warning">紧急</el-tag></div>
+              <div v-else-if="scope.row.degree == '3'"><el-tag>一般</el-tag></div>
+              <div v-else-if="scope.row.degree == '4'"><el-tag type="success">不急</el-tag></div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="maintenancePersonnelName" label="维修负责人" width="120"></el-table-column>
+          <el-table-column prop="waitDuration" label="故障响应时长(小时)" min-width="180" />
+          <el-table-column prop="sparePartsFlag" label="是否更换备件" width="140">
+            <template slot-scope="scope">
+              <div v-if="scope.row.sparePartsFlag == '0'"><el-tag type="warning">否</el-tag></div>
+              <div v-else-if="scope.row.sparePartsFlag == '1'"><el-tag type="success">是</el-tag></div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="reason" label="故障原因" min-width="160" />
+          <el-table-column prop="solutionMeasures" label="解决措施" min-width="200"></el-table-column>
+          <el-table-column prop="afterPicList" label="维修完成拍照" min-width="160">
+            <template slot-scope="scope">
+              <el-image @click="bigimg(define.comUrl+item.url)" style="width: 25px;height: 25px;margin-left: 5px;" v-for="item in scope.row.afterPicList" :key="item.fileId" :src="define.comUrl+item.url" :preview-src-list="srcList"></el-image>
+            </template>
+          </el-table-column>
+          <el-table-column prop="startMaintenanceTime" label="开始维修时间" width="180"></el-table-column>
+          <el-table-column prop="repairCompletionTime" label="维修完成时间" width="180"></el-table-column>
+          <el-table-column prop="maintenanceDuration" label="维修时长" min-width="160"></el-table-column>
+          <el-table-column prop="equipmentState" label="设备状态" width="120">
+            <template slot-scope="scope">
+              <div v-if="scope.row.equipmentState == 'normal'"><el-tag type="success">正常</el-tag></div>
+              <div v-else-if="scope.row.equipmentState == 'repair'"><el-tag type="warning">维修</el-tag></div>
+              <div v-else-if="scope.row.equipmentState == 'discard'"><el-tag type="info">报废</el-tag></div>
+              <div v-else-if="scope.row.equipmentState == 'spare'"><el-tag>备用</el-tag></div>
+              <div v-else-if="scope.row.equipmentState == 'stop'"><el-tag type="danger">停用</el-tag></div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="departmentIdName" label="申请部门" min-width="120" />
+          <el-table-column prop="applicantIdName" label="申请人" width="120"></el-table-column>
+          <el-table-column prop="applicationDate" label="申请日期" width="180"></el-table-column>
+          <el-table-column prop="state" label="状态" width="120" fixed="right" align="center">
+            <template slot-scope="scope">
+              <div v-if="scope.row.state == 'toBeMaintain'"><el-tag type="danger">待维修</el-tag></div>
+              <div v-else-if="scope.row.state == 'maintaining'"><el-tag type="warning">正在维修</el-tag></div>
+              <div v-else-if="scope.row.state == 'maintained'"><el-tag type="success">已维修</el-tag></div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="createTime" label="创建时间" width="200"></el-table-column>
+          <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
+          <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
+        </JNPF-table>
+      </el-dialog>
+      <el-dialog title="解决措施" :visible.sync="outerVisible" :append-to-body="true" :close-on-click-modal="false">
+        <el-form :model="dataFormline" ref="dataFormline" :rules="dataRuleline" label-width="160px" label-position="top">
+          <el-col :sm="24" :xs="24">
+            <el-form-item label="解决措施" prop="solutionMeasures">
+              <el-input v-model="dataFormline.solutionMeasures" type="textarea" :rows="3"></el-input>
+            </el-form-item>
+            <el-button style="position: absolute;top:82px;right: 30px;" type="text" @click="usedsolutionMeasures">查看历史解决措施</el-button>
+          </el-col>
+          <el-checkbox v-model="dataFormline.knowledgeFlag">保存为知识库</el-checkbox>
+        </el-form>
+        <el-dialog width="60%" title="历史解决措施" :visible.sync="innerVisible" append-to-body>
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" custom-column :height=500>
+            <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" />
+            <el-table-column prop="equipmentIdName" label="设备名称" min-width="200"></el-table-column>
+            <el-table-column prop="faultTypeName" label="故障类型名称" min-width="160" />
+            <el-table-column prop="faultLocationName" label="故障部位名称" min-width="160" />
+            <el-table-column prop="frontPicList" label="故障情况照片" min-width="140">
+              <template slot-scope="scope">
+                <el-image @click="bigimg(define.comUrl+item.url)" style="width: 25px;height: 25px;margin-left: 5px;" v-for="item in scope.row.frontPicList" :key="item.fileId" :src="define.comUrl+item.url" :preview-src-list="srcList"></el-image>
+              </template>
+            </el-table-column>
+            <el-table-column prop="faultDescription" label="故障描述" min-width="160" />
+            <el-table-column prop="solutionMeasures" label="解决措施" min-width="200"></el-table-column>
+            <el-table-column prop="afterPicList" label="维修完成拍照" min-width="160">
+              <template slot-scope="scope">
+                <el-image @click="bigimg(define.comUrl+item.url)" style="width: 25px;height: 25px;margin-left: 5px;" v-for="item in scope.row.afterPicList" :key="item.fileId" :src="define.comUrl+item.url" :preview-src-list="srcList"></el-image>
+              </template>
+            </el-table-column>
+            <el-table-column prop="createTime" label="创建时间" width="200"></el-table-column>
+            <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
+          </JNPF-table>
+        </el-dialog>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="outerVisible = false">取 消</el-button>
+          <el-button type="primary" @click="confirmsolut">提交</el-button>
+        </div>
+      </el-dialog>
       <ComSelect-page ref="ComSelect-pages" @change="submitfaultLocationName" :tableItems="faultLocationNameItems" title="故障部位" placeholder="请选择故障部位名称" :renderTree="false" :listMethod="parametersShelveslist" :paramsObj="{ index }" :listRequestObj="faultLocationNameRequestObj" :searchList="ProductfaultLocationName" :elementShow="false" />
       <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" title="故障类型" placeholder="请选择故障类型名称" :renderTree="false" :listMethod="parametersShelveslist" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple />
       <ComSelect-page ref="ComSelect-pagesb" @change="changeWarehouse" :tableItems="ProductTableItemss" title="选择设备" treeTitle="设备分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'equipment' } }" :listMethod="getEquEquipmentList" :listRequestObj="ProductListRequestObjs" :searchList="ProductTableSearchLists" :elementShow="false" />
@@ -294,7 +419,7 @@
 <script>
 import UploadImg from "@/components/Generator/components/Upload/UploadImg.vue";
 import { getcategoryTree } from '@/api/basicData/materialSettings'
-import { addRepairRequest, updateRepairRequest, detailRepairRequest } from '@/api/dailyManagement/Maintenance'
+import { addRepairRequest, updateRepairRequest, detailRepairRequest, equEquipmentRepairKnowledgeList, RepairRequestList } from '@/api/dailyManagement/Maintenance'
 import { getOrganizeInfo } from '@/api/permission/organize'
 import { getEquEquipmentList, parametersShelveslist } from '@/api/basicData/index'
 import { getOrganization } from '@/api/permission/user'
@@ -303,6 +428,20 @@ export default {
   components: { UploadImg },
   data() {
     return {
+      dialogTableVisible: false,
+      srcList: [
+        'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg'
+      ],
+      TablelistLoading: false,
+      tableData: [],
+      tableDatalist: [],
+      listLoading: false,
+      dataFormline: {
+        solutionMeasures: '',
+        knowledgeFlag: false
+      },
+      outerVisible: false,
+      innerVisible: false,
       codeConfig: {},//单据规则配置
       rejectReasonList: [
         { label: '暂不需要维修', value: '暂不需要维修' },
@@ -437,7 +576,7 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
-        maintenanceNo:'',
+        maintenanceNo: '',
         rejectReason: '',
         frontPicList: [],
         afterPicList: [],
@@ -465,6 +604,11 @@ export default {
         faultLocationName: [
           { required: true, trigger: 'change' }
         ],
+      },
+      dataRuleline: {
+        solutionMeasures: [
+          { required: true, message: '解决措施不能为空', trigger: 'blur' }
+        ]
       },
       dataRule: {
         reason: [
@@ -507,7 +651,9 @@ export default {
           { required: true, message: '故障开始时间不能为空', trigger: 'change' }
         ],
       },
-      selectRows: []
+      selectRows: [],
+      inforow: {},
+      _index: ''
     }
   },
   mounted() {
@@ -516,6 +662,87 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    getTimes(time) {
+      let d = parseInt(time / 60 / 60 / 24)
+      let h = parseInt(time / 60 / 60 % 24)
+      let m = parseInt(time / 60 % 60)
+      let s = parseInt(time % 60)
+      return d != '0' ? `${d} 天 ${h} 时 ${m} 分 ${s} 秒` : h != '0' ? `${h} 时 ${m} 分 ${s} 秒` : m != '0' ? `${m} 分 ${s} 秒` : `${s} 秒`
+    },
+    //查看本设备维修记录
+    devicesolutionMeasures() {
+      let obj = {
+        state: 'maintained',
+        classAttribute: "equipment",
+        equipmentId: this.dataForm.equipmentId,
+        pageNum: 1,
+        pageSize: -1,
+      }
+      this.dialogTableVisible = true
+      this.TablelistLoading = true
+      RepairRequestList(obj).then(res => {
+        this.tableDatalist = res.data.records.map(item => {
+          if (item.frontPic) {
+            item.frontPicList = item.frontPicList.map(o => { return JSON.parse(`{${o}}`) })
+          }
+          if (item.afterPic) {
+            item.afterPicList = item.afterPicList.map(o => { return JSON.parse(`{${o}}`) })
+          }
+          item.waitDuration = this.getTimes(item.waitDuration)
+          item.maintenanceDuration = this.getTimes(item.maintenanceDuration)
+          return item
+        })
+        this.TablelistLoading = false
+      }).catch(() => {
+        this.TablelistLoading = false
+      })
+    },
+    confirmsolut() {
+      this.$refs['dataFormline'].validate((valid) => {
+        if (valid) {
+          this.$set(this.dataFormTwo.productData[this._index], 'solutionMeasures', this.dataFormline.solutionMeasures)
+          this.$set(this.dataFormTwo.productData[this._index], 'knowledgeFlag', this.dataFormline.knowledgeFlag)
+          this.outerVisible = false
+          this.$message.success('保存成功')
+        }
+      })
+    },
+    bigimg(url) {
+      this.srcList[0] = url
+    },
+    solutionMeasuresfun(row, index) {
+      this.inforow = row
+      this._index = index
+      this.dataFormline.solutionMeasures = this.inforow.solutionMeasures
+      this.dataFormline.knowledgeFlag = this.inforow.knowledgeFlag
+      this.outerVisible = true
+    },
+    //历史解决措施
+    usedsolutionMeasures() {
+      let obj = {
+        equipmentId: this.dataForm.equipmentId,
+        faultTypeCode: this.inforow.faultTypeCode,
+        faultLocationCode: this.inforow.faultLocationCode,
+        pageNum: 1,
+        pageSize: -1,
+      }
+      this.listLoading = true
+      equEquipmentRepairKnowledgeList(obj).then(res => {
+        this.tableData = res.data.records.map(item => {
+          if (item.frontPic) {
+            item.frontPicList = item.frontPicList.map(o => { return JSON.parse(`{${o}}`) })
+          }
+          if (item.afterPic) {
+            item.afterPicList = item.afterPicList.map(o => { return JSON.parse(`{${o}}`) })
+          }
+          return item
+        })
+        this.listLoading = false
+      }).catch(() => {
+        this.listLoading = false
+      })
+      this.innerVisible = true
+    },
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
@@ -802,12 +1029,20 @@ export default {
       }
       if (this.dataForm.id) {
         detailRepairRequest(this.dataForm.id).then(res => {
-          if (res.data.repair.afterPic) res.data.repair.afterPicList = res.data.repair.afterPicList.map(item => {
-            return JSON.parse(`{${item}}`)
-          })
-          if (res.data.repair.frontPic) res.data.repair.frontPicList = res.data.repair.frontPicList.map(item => {
-            return JSON.parse(`{${item}}`)
-          })
+          if (res.data.repair.afterPic) {
+            res.data.repair.afterPicList = res.data.repair.afterPicList.map(item => {
+              return JSON.parse(`{${item}}`)
+            })
+          } else {
+            res.data.repair.afterPicList = []
+          }
+          if (res.data.repair.frontPic) {
+            res.data.repair.frontPicList = res.data.repair.frontPicList.map(item => {
+              return JSON.parse(`{${item}}`)
+            })
+          } else {
+            res.data.repair.afterPicList = []
+          }
           this.dataForm = res.data.repair
           this.dataForms.lines = res.data.equLine
           this.dataFormTwo.productData = res.data.lines

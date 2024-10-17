@@ -648,15 +648,14 @@ export default {
     },
     async fetchData(code, flag) {
       try {
-        const data = await this.jnpf.getBillRuleConfigFun(code);
+        const data = await this.jnpf.getBillRuleConfigFun(code)
         this.codeConfig = data
         if (flag) {
           this.dataForm.code = data.number
           let target = this.tabs[0].tabContent.find((tc) => tc.prop === 'code')
           target.itemDisabled = !this.codeConfig.modifyFlag
         }
-      } catch (error) {
-      }
+      } catch (error) { }
     },
     async init(id, btnType = false, flag) {
       this.visible = true
@@ -783,7 +782,6 @@ export default {
               ) {
                 tc.itemDisabled = true
               }
-              this.fetchData('CPBM', false)
             })
           } else {
             // 编辑时，如果已经品名规格那些，不允许修改
@@ -807,8 +805,6 @@ export default {
               ) {
                 tc.itemDisabled = true
               }
-
-              this.fetchData('CPBM', false)
             })
           }
 

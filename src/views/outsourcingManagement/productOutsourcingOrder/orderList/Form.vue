@@ -326,8 +326,14 @@
                   </el-col>
                   <el-col :span="6">
                     <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
-                      <el-input :disabled="type == 'look'" v-model="dataForm.cooperativePartnerName"
-                        placeholder="请选择供应商名称" @focus="openDialog"></el-input>
+                      <!-- <el-input :disabled="type == 'look'" v-model="dataForm.cooperativePartnerName"
+                        placeholder="请选择供应商名称" @focus="openDialog"></el-input> -->
+                      <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
+                        v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
+                        @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
+                        treeTitle="供应商分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
+                        :listRequestObj="PartnerListRequestObj" :paramsObj="{ oldData }"
+                        :searchList="PartnerTableSearchList" />
                     </el-form-item>
                   </el-col>
                   <el-col :span="6">
@@ -577,7 +583,12 @@ export default {
       getcategoryTree,
       getProductList, // 产品选择弹出框树状列表请求api
       ProductMethodArr: [
-        { label: '产品分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '' } }
+        {
+          label: '产品分类',
+          classAttribute: '',
+          method: getcategoryTree,
+          requestObj: { classAttribute: '', type: 'material' }
+        }
         // { label: "其他分类", classAttribute: "other", method: getcategoryTree, requestObj: { classAttribute: "other" } }
       ], // 产品选择弹出框树状列表
       ProductListRequestObj: {
@@ -718,7 +729,7 @@ export default {
       // immediate:true,
       handler: function (newVal, oldVal) {
         newVal.forEach((item) => {
-          if (item.price && item.taxRate || item.price && item.taxRate == 0) {
+          if ((item.price && item.taxRate) || (item.price && item.taxRate == 0)) {
             item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
           }
           if (item.purchaseQuantity && item.excludingTaxPrice) {
@@ -744,7 +755,7 @@ export default {
         businessCode: 'attachment',
         configKey: 'fj_wxdd'
       }
-      getBimBusinessDetail(obj).then(res => {
+      getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
       })
     },
@@ -1096,6 +1107,8 @@ export default {
             if (this.type === 'edit') {
               this.getBusInfo()
             } else {
+              console.log(5555)
+              console.log(this.dataForm.approvalFlag, 'this.dataForm.approvalFlag')
               // 流程信息和流转记录
               if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             }
@@ -1276,8 +1289,10 @@ export default {
     },
     // 流程信息 && 流转记录
     getFlowDetail(id) {
+      console.log(id, 'oo')
       getBusinessFlowDetail(id)
         .then((res) => {
+          console.log(res, 'oujjjj')
           if (res.data) {
             this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson
               ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson)

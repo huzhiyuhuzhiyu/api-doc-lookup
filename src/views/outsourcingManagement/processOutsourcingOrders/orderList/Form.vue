@@ -32,8 +32,14 @@
                       </el-col>
                       <el-col :span="6">
                         <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
-                          <el-input :disabled="type == 'look'" v-model="dataForm.cooperativePartnerName"
-                            placeholder="请选择供应商名称" @focus="openDialog"></el-input>
+                          <!-- <el-input :disabled="type == 'look'" v-model="dataForm.cooperativePartnerName"
+                            placeholder="请选择供应商名称" @focus="openDialog"></el-input> -->
+                          <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
+                            v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
+                            @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'"
+                            title="选择供应商" treeTitle="供应商分类" :methodArr="PartnerMethodArr"
+                            :listMethod="getCooperativeData" :listRequestObj="PartnerListRequestObj"
+                            :paramsObj="{ oldData }" :searchList="PartnerTableSearchList" />
                         </el-form-item>
                       </el-col>
                       <el-col :span="6">
@@ -281,8 +287,14 @@
                   </el-col>
                   <el-col :span="6">
                     <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
-                      <el-input :disabled="type == 'look'" v-model="dataForm.cooperativePartnerName"
-                        placeholder="请选择供应商名称" @focus="openDialog"></el-input>
+                      <!-- <el-input :disabled="type == 'look'" v-model="dataForm.cooperativePartnerName"
+                        placeholder="请选择供应商名称" @focus="openDialog"></el-input> -->
+                      <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
+                        v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
+                        @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
+                        treeTitle="供应商分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
+                        :listRequestObj="PartnerListRequestObj" :paramsObj="{ oldData }"
+                        :searchList="PartnerTableSearchList" />
                     </el-form-item>
                   </el-col>
                   <el-col :span="6">
@@ -370,7 +382,6 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-
 
                   <el-table-column prop="price" label="含税单价" min-width="120">
                     <template slot-scope="scope">
@@ -483,12 +494,39 @@ import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getShipmentList } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import SourceArea from '../orderCreation/source.vue'
-import { getBimBusinessDetail } from '@/api/basicData/index'
+import { getCooperativeData, getBimBusinessDetail } from '@/api/basicData/index'
+import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
 export default {
   components: { Process, recordList, SourceArea },
   mixins: [busFlow],
   data() {
     return {
+      //  供应商 树请求
+      getCooperativeData,
+      PartnerMethodArr: { method: getcategoryTrees, requestObj: { type: 'outsourcing_suppliers' } },
+      // 供应商 列表
+      PartnerTableItems: [
+        { prop: 'code', label: '供应商编码' },
+        { prop: 'name', label: '供应商名称' },
+        { prop: 'nameEn', label: '英文名称' },
+        { prop: 'taxId', label: '税号' }
+      ],
+      // 供应商搜索条件
+      PartnerTableSearchList: [
+        { prop: 'code', label: '供应商编码', type: 'input' },
+        { prop: 'name', label: '供应商名称', type: 'input' }
+      ],
+      // 供应商请求参数
+      PartnerListRequestObj: {
+        code: '',
+        name: '',
+        taxId: '',
+        pageNum: 1,
+        pageSize: 20,
+        partnerCategoryId: '',
+        type: 'outsourcing_suppliers'
+      },
+      oldData: [],
       isattachmentswitch: '',
       title: '',
       datafilelist: [],
@@ -566,13 +604,12 @@ export default {
         businessCode: 'attachment',
         configKey: 'fj_wxdd'
       }
-      getBimBusinessDetail(obj).then(res => {
+      getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
       })
     },
     // 抽屉提交
     handlerConfirm(data) {
-
       console.log(data, '资源资源数据')
       this.dataFormTwo.data[this.index].outShipmentList = data
     },
@@ -593,14 +630,29 @@ export default {
     openDialog() {
       this.$refs['SupplierRef'].openDialog()
     },
-    supplierdata(data) {
+    supplierdata(id, data) {
+      console.log(data, 'd')
+      this.$nextTick(() => {
+        this.$refs['dataForm'].validateField('cooperativePartnerName')
+      })
       if (data.length === 0) {
-        this.$refs['elForm'].validateField('cooperativePartnerName')
+        this.dataForm.cooperativePartnerName = ''
+        this.dataForm.cooperativePartnerCode = ''
+        this.dataForm.cooperativePartnerId = ''
+        this.oldData = []
       } else {
-        this.$refs['elForm'].fields[0].resetField()
-        this.dataForm.cooperativePartnerName = data.name
-        this.dataForm.cooperativePartnerCode = data.code
-        this.dataForm.cooperativePartnerId = data.id
+        if (this.oldData.length) {
+        } else {
+          this.oldData.push(data)
+        }
+        this.dataForm.cooperativePartnerName = data[0].all.name
+        this.dataForm.cooperativePartnerCode = data[0].all.code
+        this.dataForm.cooperativePartnerId = data[0].all.id
+        console.log(this.dataForm, 'fo')
+        let productIdList = []
+        this.dataFormTwo.data.forEach((item) => {
+          productIdList.push(item.productsId)
+        })
       }
     },
 
@@ -630,7 +682,6 @@ export default {
       this.$emit('close')
     },
     init(id, type, approvalFlag) {
-
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = id || ''
       this.type = type
@@ -734,7 +785,6 @@ export default {
               this.$message.error('请至少选择一项产品')
             } else {
               if (!valid_2) {
-
                 this.btnLoading = false
                 for (let i = 0; i < this.dataFormTwo.data.length; i++) {
                   const item = this.dataFormTwo.data[i]

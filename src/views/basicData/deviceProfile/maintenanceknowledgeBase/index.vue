@@ -57,10 +57,22 @@
           </el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
-          <el-table-column label="操作" width="140" fixed="right">
+          <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" class="JNPF-table-delBtn" @click="handleDel(scope.row.id)">删除</el-button>
-              <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'look')">查看详情</el-button>
+              <tableOpts @edit="addOrUpdateHandle(scope.row.id,'edit')" @del="handleDel(scope.row.id)">
+                <el-dropdown hide-on-click>
+                  <span class="el-dropdown-link">
+                    <el-button type="text" size="mini">
+                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
+                      查看详情
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </tableOpts>
             </template>
           </el-table-column>
         </JNPF-table>

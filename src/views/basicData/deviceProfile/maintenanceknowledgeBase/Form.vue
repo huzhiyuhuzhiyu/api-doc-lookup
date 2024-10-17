@@ -40,7 +40,7 @@
                     </el-col>
                     <el-col :sm="24" :xs="24">
                       <el-form-item label="故障情况照片" prop="frontPicList">
-                        <UploadImg v-model="dataForm.frontPicList"></UploadImg>
+                        <UploadImg v-model="dataForm.frontPicList" :disabled="btnType == 'look'"></UploadImg>
                       </el-form-item>
                     </el-col>
                   </el-row>
@@ -49,12 +49,12 @@
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="解决措施" prop="solutionMeasures">
-                        <el-input v-model="dataForm.faultLocationName" placeholder="请输入解决措施" :disabled="btnType=='look'" type="textarea" :rows="2" />
+                        <el-input v-model="dataForm.solutionMeasures" placeholder="请输入解决措施" :disabled="btnType=='look'" type="textarea" :rows="2" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="24" :xs="24">
                       <el-form-item label="维修完成照片" prop="afterPicList">
-                        <UploadImg v-model="dataForm.afterPicList"></UploadImg>
+                        <UploadImg v-model="dataForm.afterPicList" :disabled="btnType == 'look'"></UploadImg>
                       </el-form-item>
                     </el-col>
                   </el-row>
@@ -63,34 +63,27 @@
             </el-collapse>
           </el-tab-pane>
           <el-tab-pane label="附件" name="annex">
-            <UploadWj v-model="datafilelist">
+            <UploadWj v-model="datafilelist" :disabled="btnType == 'look'" :detailed="btnType == 'look'">
             </UploadWj>
           </el-tab-pane>
         </el-tabs>
       </div>
       <ComSelect-page ref="ComSelect-pages" @change="submitfaultLocationName" :tableItems="faultLocationNameItems" title="故障部位" placeholder="请选择故障部位名称" :renderTree="false" :listMethod="parametersShelveslist" :paramsObj="{ index }" :listRequestObj="faultLocationNameRequestObj" :searchList="ProductfaultLocationName" :elementShow="false" />
-      <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" title="故障类型" placeholder="请选择故障类型名称" :renderTree="false" :listMethod="parametersShelveslist" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple />
+      <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" title="故障类型" placeholder="请选择故障类型名称" :renderTree="false" :listMethod="parametersShelveslist" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" />
       <ComSelect-page ref="ComSelect-pagesb" @change="changeWarehouse" :tableItems="ProductTableItemss" title="选择设备" treeTitle="设备分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'equipment' } }" :listMethod="getEquEquipmentList" :listRequestObj="ProductListRequestObjs" :searchList="ProductTableSearchLists" :elementShow="false" />
     </div>
   </transition>
 </template>
 <script>
 import UploadImg from "@/components/Generator/components/Upload/UploadImg.vue";
-import { addRepairRequest } from '@/api/dailyManagement/Maintenance'
-import { getOrganization } from '@/api/permission/user'
+import { addequEquipmentRepairKnowledge, updateequEquipmentRepairKnowledge, detailequEquipmentRepairKnowledge } from '@/api/dailyManagement/Maintenance'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
-import { mapGetters } from 'vuex'
 import { getEquEquipmentList, parametersShelveslist } from '@/api/basicData/index'
 export default {
   components: { UploadImg },
   data() {
     return {
       formLoading: false,
-      sparePartsFlagList: [
-        { label: '是', value: 1 },
-        { label: '否', value: 0 }
-      ],
-      codeConfig: {},//单据规则配置
       btnLoading: false,
       ProductTableSearchLists: [
         { prop: "code", label: "设备编码", type: 'input' },
@@ -226,22 +219,33 @@ export default {
       tipsvisible: false
     }
   },
-  computed: {
-    ...mapGetters(['userInfo'])
-  },
   methods: {
     init(id, type) {
       this.dataForm.id = id || ''
       this.btnType = type
       if (id) {
         this.formLoading = true
-        if (res.data.repair.afterPic) res.data.repair.afterPicList = res.data.repair.afterPicList.map(item => {
-          return JSON.parse(`{${item}}`)
+        detailequEquipmentRepairKnowledge(id).then(res => {
+          if (res.data.afterPic) res.data.afterPicList = res.data.afterPicList.map(item => {
+            return JSON.parse(`{${item}}`)
+          })
+          if (res.data.frontPic) res.data.frontPicList = res.data.frontPicList.map(item => {
+            return JSON.parse(`{${item}}`)
+          })
+          if (res.data.attachmentList) {
+            res.data.attachmentList.forEach((item) => {
+              this.datafilelist.push({
+                name: item.document.fullName,
+                fileSize: item.document.fileSize,
+                filename: item.document.filePath,
+                id: item.document.id,
+                url: item.url
+              })
+            })
+          }
+          this.dataForm = res.data
+          this.formLoading = false
         })
-        if (res.data.repair.frontPic) res.data.repair.frontPicList = res.data.repair.frontPicList.map(item => {
-          return JSON.parse(`{${item}}`)
-        })
-        this.dataForm = res.data.repair
       }
     },
     //选择设备
@@ -260,11 +264,14 @@ export default {
     submitfaultLocationName(selectedIds, selectedList) {
       this.dataForm.faultLocationId = selectedList[0].all.id
       this.dataForm.faultLocationName = selectedList[0].all.name
+      this.$nextTick(() => { this.$refs['dataForm'].validateField('faultLocationId') })
     },
     //故障类型选择
     submitCustomerProduct(selectedIds, selectedList) {
       this.dataForm.faultTypeId = selectedList[0].all.id
       this.dataForm.faultTypeName = selectedList[0].all.name
+      this.$nextTick(() => { this.$refs['dataForm'].validateField('faultTypeId') })
+
     },
     // 打开故障部位
     openSeleceProductDialogs() {
@@ -310,10 +317,11 @@ export default {
           }) : []
         let obj = {
           attachmentList: this.datafilelist,
-          repair: this.dataForm
+          ...this.dataForm
         }
         this.btnLoading = true;
-        addRepairRequest(obj).then(res => {
+        const formMethod = this.dataForm.id ? updateequEquipmentRepairKnowledge : addequEquipmentRepairKnowledge
+        formMethod(obj).then(res => {
           this.$message({
             message: '新建成功',
             type: 'success',

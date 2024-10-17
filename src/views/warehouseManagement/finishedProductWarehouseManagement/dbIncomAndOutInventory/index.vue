@@ -6,7 +6,7 @@
         style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:0px 0 0px 0">
         <el-radio-group v-model="categoryType" style="background-color:#fff;">
 
-          <el-badge :value="item.num ? item.num : item.todoNum" :max="99" v-for="item in treeData" :key="item.id">
+          <el-badge :value="item.num!=null||item.num!=undefined ? item.num : item.todoNum" :max="99" v-for="item in treeData" :key="item.id">
             <el-radio-button style="margin:2px 0;" :key="item.businessType" :label="item.businessType">{{ item.fullName
               }}</el-radio-button>
           </el-badge>
@@ -1758,6 +1758,7 @@ export default {
     // 外协发料 订单
     getexterMaterFUN(type) {
       this.exterMaterForm.classAttributeList = this.classAttributeList
+          this.exterMaterForm.approvalStatus='ok'
       this.superForm=this.exterMaterForm
           if (type === 'basic') {
           this.basicQuery = {
@@ -1802,7 +1803,8 @@ export default {
         this.externalForm.deliveryEndDate = ''
       }
       this.externalForm.classAttributeList = this.classAttributeList
-      this.superForm=this.externalForm
+          this.externalForm.approvalStatus='ok'
+          this.superForm=this.externalForm
           if (type === 'basic') {
           this.basicQuery = {
             matchLogic: 'AND',
@@ -1897,6 +1899,7 @@ export default {
           res.data.forEach(item => {
             if (item.businessType == 'outbound_sale_send') {
               if (this.saleFlag) item.num = item.orderTodoNum
+              console.log("item====>",item);
               this.$set(item, 'fullName', '销售发货')
             }
             if (item.businessType == 'inbound_sale_return') {
@@ -1922,8 +1925,7 @@ export default {
               item.fullName = '生产领料'
 
             }
-            if (item.businessType == 'inbound_return_materials') {
-              if (this.externalFlag) item.num = item.orderTodoNum
+            if (item.businessType == 'inbound_return_materials') { 
               item.fullName = '生产退料'
 
             }
@@ -2164,8 +2166,7 @@ export default {
       // 销售发货
       console.log(this.categoryType);
       if (this.categoryType == 'outbound_sale_send') {
-        if (this.saleFlag) {
-        console.log(123,type);
+        if (this.saleFlag) { 
           if (this.saleOrderDateArr.length) {
             this.saleOrderForm.deliveryStartTime = this.saleOrderDateArr[0]
             this.saleOrderForm.deliveryEndTime = this.saleOrderDateArr[1]
@@ -2174,6 +2175,7 @@ export default {
             this.saleOrderForm.deliveryEndTime = ""
           }
           this.saleOrderForm.classAttributeList = this.classAttributeList
+          this.saleOrderForm.approvalStatus='ok'
           this.superForm=this.saleOrderForm
           if (type === 'basic') {
           this.basicQuery = {
@@ -2212,6 +2214,7 @@ export default {
             this.fhForm.rdeDate=""
           }
           this.fhForm.classAttributeList = this.classAttributeList
+          this.fhForm.approvalStatus='ok'
           this.superForm=this.fhForm
           if (type === 'basic') {
           this.basicQuery = {
@@ -2253,7 +2256,8 @@ export default {
             this.fhForm.rdeDate=""
           }
         this.fhForm.classAttributeList = this.classAttributeList
-        this.superForm=this.fhForm
+          this.fhForm.approvalStatus='ok'
+          this.superForm=this.fhForm
         if (type === 'basic') {
           this.basicQuery = {
             matchLogic: 'AND',
@@ -2293,6 +2297,7 @@ export default {
             this.purchaseForm.deliveryStartTime = ""
             this.purchaseForm.deliveryEndTime = ""
           }
+          this.purchaseForm.approvalStatus='ok'
           this.superForm=this.purchaseForm
           if (type === 'basic') {
           this.basicQuery = {
@@ -2328,6 +2333,7 @@ export default {
             this.cgForm.deliverDateStart=""
             this.cgForm.deliverDateEnd= ""
           }
+          this.cgForm.approvalStatus='ok'
           this.superForm=this.cgForm
           if (type === 'basic') {
           this.basicQuery = {
@@ -2370,7 +2376,8 @@ export default {
             this.cgForm.deliverDateStart=""
             this.cgForm.deliverDateEnd= ""
           } 
-        this.superForm=this.cgForm
+          this.cgForm.approvalStatus='ok'
+          this.superForm=this.cgForm
           if (type === 'basic') {
           this.basicQuery = {
             matchLogic: 'AND',
@@ -2410,6 +2417,7 @@ export default {
             this.wxflForm.rdsDate=""
           }
           this.wxflForm.classAttributeList = this.classAttributeList
+          this.wxflForm.approvalStatus='ok'
           this.superForm=this.wxflForm
           if (type === 'basic') {
           this.basicQuery = {
@@ -2453,6 +2461,7 @@ export default {
             this.wxshForm.deliverDateStart=""
             this.wxshForm.deliverDateEnd=""
           }
+          this.wxshForm.approvalStatus='ok'
           this.superForm=this.wxshForm
           if (type === 'basic') {
           this.basicQuery = {
@@ -2486,6 +2495,7 @@ export default {
         this.listLoading = true
         console.log(555);
         this.pickForm.productClassAttributeList = this.classAttributeList
+        this.pickForm.approvalStatus='ok'
          
           this.superForm=this.pickForm
           if (type === 'basic') {
@@ -2518,6 +2528,7 @@ export default {
       if (this.categoryType == 'inbound_return_materials') {
         this.listLoading = true
         this.returnMaterForm.productClassAttributeList = this.classAttributeList
+        this.returnMaterForm.approvalStatus='ok'
         
           this.superForm=this.returnMaterForm
           if (type === 'basic') {
@@ -2559,7 +2570,8 @@ export default {
     searchProductData(type) {
       this.listLoading = true
       this.productForm.classAttributeList = this.classAttributeList
-      this.superForm=this.productForm
+        this.productForm.approvalStatus='ok'
+        this.superForm=this.productForm
           if (type === 'basic') {
           this.basicQuery = {
             matchLogic: 'AND',
@@ -2590,7 +2602,8 @@ export default {
     searchWorkDta(type) {
       this.listLoading = true
       this.workForm.classAttributeList = this.classAttributeList
-      this.superForm=this.workForm
+        this.workForm.approvalStatus='ok'
+        this.superForm=this.workForm
           if (type === 'basic') {
           this.basicQuery = {
             matchLogic: 'AND',

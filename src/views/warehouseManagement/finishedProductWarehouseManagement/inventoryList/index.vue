@@ -559,7 +559,7 @@ export default {
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
       this.listQuery.classAttributeList = this.classAttributeList
-
+      this.listQuery.approvalStatus='ok'
       getWarehouseList(this.listQuery).then(res => {
 
         this.tableData = res.data.records ? res.data.records : []

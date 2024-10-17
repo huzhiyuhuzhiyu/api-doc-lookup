@@ -1000,6 +1000,7 @@ export default {
       this.totalList = []
       this.listQuery.pageNum = 1
       this.listQuery.classAttributeList = this.classAttributeList
+      this.listQuery.approvalStatus='ok'
       getInventorySummaryData(this.listQuery).then(res => {
 
         this.tableData = res.data.page.records

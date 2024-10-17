@@ -159,6 +159,11 @@
                         <el-input v-model="scope.row.description" placeholder="请输入说明" :disabled="btnType == 'look' ? true : false" maxlength="200" />
                       </template>
                     </el-table-column>
+                    <el-table-column prop="faultDescription" label="是否完成" width="90">
+                      <template slot-scope="scope">
+                        <el-checkbox v-model="scope.row.repairResult" true-label="finished" false-label="not_finished" :disabled="btnType == 'look'"></el-checkbox>
+                      </template>
+                    </el-table-column>
                     <el-table-column label="操作" width="120" v-if="btnType == 'edit' || btnType == 'add'" key="30">
                       <template slot-scope="scope">
                         <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>

@@ -273,6 +273,7 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.formVisible = false
       Object.keys(this.listQuery).forEach((key) => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
@@ -312,7 +313,7 @@ export default {
     refresh(isrRefresh) {
       this.formVisible = false
       this.sourceDialog = false
-      if (isrRefresh) this.reset()
+      if (isrRefresh) this.initData()
     },
     reset() {
       this.$refs['listTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮

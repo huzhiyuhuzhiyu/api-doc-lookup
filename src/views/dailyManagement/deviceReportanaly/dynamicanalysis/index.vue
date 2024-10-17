@@ -214,31 +214,24 @@
                   <el-form @submit.native.prevent>
                     <el-col :span="4">
                       <el-form-item>
-                        <el-select v-model="listQuerysbgk.factoryFloorId" filterable placeholder="请选择车间" @focus="focusfactoryFloor" clearable :loading="loadingfactoryFloorid">
-                          <el-option v-for="item in factoryFloorList" :key="item.id" :label="item.name" :value="item.id">
-                          </el-option>
-                        </el-select>
+                        <el-input v-model="listQuerydjfb.equipmentIdCode" placeholder="请输入设备编码" clearable @keyup.enter.native="searchdjfb()" />
                       </el-form-item>
                     </el-col>
                     <el-col :span="4">
                       <el-form-item>
-                        <el-select v-model="listQuerysbgk.mountedPlacesid" filterable placeholder="请选择安装地点" @focus="focusfactoryFloor" clearable :loading="loadingfactoryFloorid">
-                          <el-option v-for="item in mountedPlacesList" :key="item.id" :label="item.name" :value="item.id">
-                          </el-option>
-                        </el-select>
+                        <el-input v-model="listQuerydjfb.equipmentIdName" placeholder="请输入设备名称" clearable @keyup.enter.native="searchdjfb()" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="4">
+                      <el-form-item>
+                        <el-input v-model="listQuerydjfb.actualMaintenanceIdText" placeholder="请输入实际点检人" clearable @keyup.enter.native="searchdjfb()" />
                       </el-form-item>
                     </el-col>
                     <el-col :span="6">
                       <el-form-item>
-                        <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
-                        </el-date-picker>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="6">
-                      <el-form-item>
-                        <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                        <el-button type="primary" size="mini" icon="el-icon-search" @click="searchdjfb()">
                           {{ $t('common.search') }}</el-button>
-                        <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
+                        <el-button size="mini" icon="el-icon-refresh-right" @click="resetdjfb()">{{ $t('common.reset') }}
                         </el-button>
                       </el-form-item>
                     </el-col>
@@ -246,32 +239,45 @@
                 </el-row>
               </div>
               <div style="height: 364px;">
-                <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column>
-                  <el-table-column prop="departmentIdName" label="申请部门" width="120" />
-                  <el-table-column prop="applicantIdName" label="申请人" width="120"></el-table-column>
-                  <el-table-column prop="applicantTime" label="申请日期" width="180" sortable="custom"></el-table-column>
-                  <el-table-column prop="reasonScrapping" label="报废理由" min-width="200"></el-table-column>
-                  <el-table-column prop="approvalStatus" label="审批状态" width="120" fixed="right" align="center">
+                <JNPF-table ref="dataTabledjfb" v-loading="listLoadingdjfb" :data="tableDatadjfb" @sort-change="sortChangedjfb" fixedNO custom-column>
+                  <el-table-column prop="equipmentIdCode" label="设备编码" width="200" />
+                  <el-table-column prop="equipmentIdName" label="设备名称" width="200" sortable="custom" />
+                  <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
+                  <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
+                  <el-table-column prop="cycle" label="周期" width="90" />
+                  <el-table-column prop="unit" label="单位" width="90" />
+                  <el-table-column prop="departmentIdText" label="计划点检部门" width="150" />
+                  <el-table-column prop="maintainerIdText" label="计划点检人" width="120"></el-table-column>
+                  <el-table-column prop="planMaintenanceDate" label="计划点检日期" width="180" sortable="custom"></el-table-column>
+                  <el-table-column prop="actualDepartmentIdText" label="实际点检部门" width="150" />
+                  <el-table-column prop="actualMaintenanceIdText" label="实际点检人" width="120"></el-table-column>
+                  <el-table-column prop="actualMaintenanceDate" label="实际点检日期" width="180" sortable="custom"></el-table-column>
+                  <el-table-column prop="picList" label="点检拍照" min-width="160">
                     <template slot-scope="scope">
-                      <div v-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus == 'submit'"><el-tag type="success">审批通过</el-tag></div>
-                      <div v-else-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'"><el-tag type="warning">审批中</el-tag></div>
-                      <div v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus == 'submit'"><el-tag type="danger">审批拒绝</el-tag></div>
+                      <el-image @click="bigimg(define.comUrl+item.url)" style="width: 25px;height: 25px;margin-left: 5px;" v-for="item in scope.row.picList" :key="item.fileId" :src="define.comUrl+item.url" :preview-src-list="srcList"></el-image>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="reasonRejection" label="驳回理由" min-width="200"></el-table-column>
-                  <el-table-column prop="approvalCompletionDate" label="审批完成时间" width="180" sortable="custom"></el-table-column>
-                  <el-table-column prop="documentStatus" label="单据状态" width="120" fixed="right" align="center">
+                  <el-table-column prop="inspectionResults" label="点检结果" width="120" fixed="right" align="center">
                     <template slot-scope="scope">
-                      <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
-                      <div v-else-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
+                      <div v-if="scope.row.inspectionResults == 'normal'"><el-tag type="success">正常</el-tag></div>
+                      <div v-else-if="scope.row.inspectionResults == 'abnormal'">
+                        <el-tag type="danger">异常</el-tag>
+                      </div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="submitDate" label="提交时间" width="180" sortable="custom"></el-table-column>
+                  <el-table-column prop="cycleType" label="周期类型" width="120" sortable="custom" fixed="right" align="center">
+                    <template slot-scope="scope">
+                      <div v-if="scope.row.cycleType == 'cycle'"><el-tag type="success">周期</el-tag></div>
+                      <div v-else-if="scope.row.cycleType == 'disposable'">
+                        <el-tag type="success">一次</el-tag>
+                      </div>
+                    </template>
+                  </el-table-column>
                   <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
                   <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
                   <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
                 </JNPF-table>
-                <pagination :total="total" :page.sync="listQuery1.pageNum" :limit.sync="listQuery1.pageSize" @pagination="initData" />
+                <pagination :total="totaldjfb" :page.sync="listQuerydjfb.pageNum" :limit.sync="listQuerydjfb.pageSize" @pagination="initDatadjfb" />
               </div>
             </div>
           </el-tab-pane>
@@ -303,31 +309,24 @@
                   <el-form @submit.native.prevent>
                     <el-col :span="4">
                       <el-form-item>
-                        <el-select v-model="listQuerysbgk.factoryFloorId" filterable placeholder="请选择车间" @focus="focusfactoryFloor" clearable :loading="loadingfactoryFloorid">
-                          <el-option v-for="item in factoryFloorList" :key="item.id" :label="item.name" :value="item.id">
-                          </el-option>
-                        </el-select>
+                        <el-input v-model="listQuerywxfb.maintenanceNo" placeholder="请输入维修单号" clearable @keydown.enter.native="searchwxfb()" />
                       </el-form-item>
                     </el-col>
                     <el-col :span="4">
                       <el-form-item>
-                        <el-select v-model="listQuerysbgk.mountedPlacesid" filterable placeholder="请选择安装地点" @focus="focusfactoryFloor" clearable :loading="loadingfactoryFloorid">
-                          <el-option v-for="item in mountedPlacesList" :key="item.id" :label="item.name" :value="item.id">
-                          </el-option>
-                        </el-select>
+                        <el-input v-model="listQuerywxfb.equipmentIdCode" placeholder="请输入设备编码" clearable @keydown.enter.native="searchwxfb()" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="4">
+                      <el-form-item>
+                        <el-input v-model="listQuerywxfb.equipmentIdName" placeholder="请输入设备名称" clearable @keydown.enter.native="searchwxfb()" />
                       </el-form-item>
                     </el-col>
                     <el-col :span="6">
                       <el-form-item>
-                        <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
-                        </el-date-picker>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="6">
-                      <el-form-item>
-                        <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                        <el-button type="primary" size="mini" icon="el-icon-search" @click="searchwxfb()">
                           {{ $t('common.search') }}</el-button>
-                        <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
+                        <el-button size="mini" icon="el-icon-refresh-right" @click="resetwxfb()">{{ $t('common.reset') }}
                         </el-button>
                       </el-form-item>
                     </el-col>
@@ -335,32 +334,81 @@
                 </el-row>
               </div>
               <div style="height: 364px;">
-                <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column>
-                  <el-table-column prop="departmentIdName" label="申请部门" width="120" />
+                <JNPF-table ref="dataTablewxfb" v-loading="listLoadingwxfb" :data="tableDatawxfb" @sort-change="sortChangewxfb" fixedNO custom-column>
+                  <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" sortable="custom">
+                  </el-table-column>
+                  <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" sortable="custom" />
+                  <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom"></el-table-column>
+                  <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
+                  <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
+                  <el-table-column prop="frontPicList" label="故障情况照片" min-width="140">
+                    <template slot-scope="scope">
+                      <el-image @click="bigimg(define.comUrl+item.url)" style="width: 25px;height: 25px;margin-left: 5px;" v-for="item in scope.row.frontPicList" :key="item.fileId" :src="define.comUrl+item.url" :preview-src-list="srcList"></el-image>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="faultStartTime" label="故障开始时间" width="180" sortable="custom"></el-table-column>
+                  <el-table-column prop="reviewComments" label="审核意见" width="120">
+                    <template slot-scope="scope">
+                      <div v-if="scope.row.reviewComments == 'immediately'"><el-tag type="danger">立即维修</el-tag></div>
+                      <div v-else-if="scope.row.reviewComments == 'reject'"><el-tag type="warning">驳回</el-tag></div>
+                      <div v-else-if="scope.row.reviewComments == 'outsourcing'"><el-tag>转委外</el-tag></div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="rejectReason" label="驳回理由" min-width="160">
+                    <template slot-scope="scope">
+                      <div><el-tag type="success" v-if="scope.row.rejectReason">{{scope.row.rejectReason}}</el-tag></div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="degree" label="紧急程度" width="120">
+                    <template slot-scope="scope">
+                      <div v-if="scope.row.degree == '1'"><el-tag type="danger">特别紧急</el-tag></div>
+                      <div v-else-if="scope.row.degree == '2'"><el-tag type="warning">紧急</el-tag></div>
+                      <div v-else-if="scope.row.degree == '3'"><el-tag>一般</el-tag></div>
+                      <div v-else-if="scope.row.degree == '4'"><el-tag type="success">不急</el-tag></div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="maintenancePersonnelName" label="维修负责人" width="120"></el-table-column>
+                  <el-table-column prop="waitDuration" label="故障响应时长(小时)" min-width="180" />
+                  <el-table-column prop="sparePartsFlag" label="是否更换备件" width="140">
+                    <template slot-scope="scope">
+                      <div v-if="scope.row.sparePartsFlag == '0'"><el-tag type="warning">否</el-tag></div>
+                      <div v-else-if="scope.row.sparePartsFlag == '1'"><el-tag type="success">是</el-tag></div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="reason" label="故障原因" min-width="160" />
+                  <el-table-column prop="solutionMeasures" label="解决措施" min-width="200"></el-table-column>
+                  <el-table-column prop="afterPicList" label="维修完成拍照" min-width="160">
+                    <template slot-scope="scope">
+                      <el-image @click="bigimg(define.comUrl+item.url)" style="width: 25px;height: 25px;margin-left: 5px;" v-for="item in scope.row.afterPicList" :key="item.fileId" :src="define.comUrl+item.url" :preview-src-list="srcList"></el-image>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="startMaintenanceTime" label="开始维修时间" width="180"></el-table-column>
+                  <el-table-column prop="repairCompletionTime" label="维修完成时间" width="180"></el-table-column>
+                  <el-table-column prop="maintenanceDuration" label="维修时长" min-width="160" sortable="custom"></el-table-column>
+                  <el-table-column prop="equipmentState" label="设备状态" width="120">
+                    <template slot-scope="scope">
+                      <div v-if="scope.row.equipmentState == 'normal'"><el-tag type="success">正常</el-tag></div>
+                      <div v-else-if="scope.row.equipmentState == 'repair'"><el-tag type="warning">维修</el-tag></div>
+                      <div v-else-if="scope.row.equipmentState == 'discard'"><el-tag type="info">报废</el-tag></div>
+                      <div v-else-if="scope.row.equipmentState == 'spare'"><el-tag>备用</el-tag></div>
+                      <div v-else-if="scope.row.equipmentState == 'stop'"><el-tag type="danger">停用</el-tag></div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="departmentIdName" label="申请部门" min-width="120" />
                   <el-table-column prop="applicantIdName" label="申请人" width="120"></el-table-column>
-                  <el-table-column prop="applicantTime" label="申请日期" width="180" sortable="custom"></el-table-column>
-                  <el-table-column prop="reasonScrapping" label="报废理由" min-width="200"></el-table-column>
-                  <el-table-column prop="approvalStatus" label="审批状态" width="120" fixed="right" align="center">
+                  <el-table-column prop="applicationDate" label="申请日期" width="180" sortable="custom"></el-table-column>
+                  <el-table-column prop="state" label="状态" sortable="custom" width="120" fixed="right" align="center">
                     <template slot-scope="scope">
-                      <div v-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus == 'submit'"><el-tag type="success">审批通过</el-tag></div>
-                      <div v-else-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'"><el-tag type="warning">审批中</el-tag></div>
-                      <div v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus == 'submit'"><el-tag type="danger">审批拒绝</el-tag></div>
+                      <div v-if="scope.row.state == 'toBeMaintain'"><el-tag type="danger">待维修</el-tag></div>
+                      <div v-else-if="scope.row.state == 'maintaining'"><el-tag type="warning">正在维修</el-tag></div>
+                      <div v-else-if="scope.row.state == 'maintained'"><el-tag type="success">已维修</el-tag></div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="reasonRejection" label="驳回理由" min-width="200"></el-table-column>
-                  <el-table-column prop="approvalCompletionDate" label="审批完成时间" width="180" sortable="custom"></el-table-column>
-                  <el-table-column prop="documentStatus" label="单据状态" width="120" fixed="right" align="center">
-                    <template slot-scope="scope">
-                      <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
-                      <div v-else-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="submitDate" label="提交时间" width="180" sortable="custom"></el-table-column>
                   <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
                   <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
                   <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
                 </JNPF-table>
-                <pagination :total="total" :page.sync="listQuery1.pageNum" :limit.sync="listQuery1.pageSize" @pagination="initData" />
+                <pagination :total="totalwxfb" :page.sync="listQuerywxfb.pageNum" :limit.sync="listQuerywxfb.pageSize" @pagination="initDatawxfb" />
               </div>
             </div>
           </el-tab-pane>
@@ -382,31 +430,24 @@
                   <el-form @submit.native.prevent>
                     <el-col :span="4">
                       <el-form-item>
-                        <el-select v-model="listQuerysbgk.factoryFloorId" filterable placeholder="请选择车间" @focus="focusfactoryFloor" clearable :loading="loadingfactoryFloorid">
-                          <el-option v-for="item in factoryFloorList" :key="item.id" :label="item.name" :value="item.id">
-                          </el-option>
-                        </el-select>
+                        <el-input v-model="listQuerybyfb.equipmentIdCode" placeholder="请输入设备编码" clearable @keyup.enter.native="searchbyfb()" />
                       </el-form-item>
                     </el-col>
                     <el-col :span="4">
                       <el-form-item>
-                        <el-select v-model="listQuerysbgk.mountedPlacesid" filterable placeholder="请选择安装地点" @focus="focusfactoryFloor" clearable :loading="loadingfactoryFloorid">
-                          <el-option v-for="item in mountedPlacesList" :key="item.id" :label="item.name" :value="item.id">
-                          </el-option>
-                        </el-select>
+                        <el-input v-model="listQuerybyfb.equipmentIdName" placeholder="请输入设备名称" clearable @keyup.enter.native="searchbyfb()" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="4">
+                      <el-form-item>
+                        <el-input v-model="listQuerybyfb.actualMaintenanceIdText" placeholder="请输入实际保养人" clearable @keyup.enter.native="searchbyfb()" />
                       </el-form-item>
                     </el-col>
                     <el-col :span="6">
                       <el-form-item>
-                        <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
-                        </el-date-picker>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="6">
-                      <el-form-item>
-                        <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                        <el-button type="primary" size="mini" icon="el-icon-search" @click="searchbyfb()">
                           {{ $t('common.search') }}</el-button>
-                        <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
+                        <el-button size="mini" icon="el-icon-refresh-right" @click="resetbyfb()">{{ $t('common.reset') }}
                         </el-button>
                       </el-form-item>
                     </el-col>
@@ -414,32 +455,39 @@
                 </el-row>
               </div>
               <div style="height: 516px;">
-                <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column>
-                  <el-table-column prop="departmentIdName" label="申请部门" width="120" />
-                  <el-table-column prop="applicantIdName" label="申请人" width="120"></el-table-column>
-                  <el-table-column prop="applicantTime" label="申请日期" width="180" sortable="custom"></el-table-column>
-                  <el-table-column prop="reasonScrapping" label="报废理由" min-width="200"></el-table-column>
-                  <el-table-column prop="approvalStatus" label="审批状态" width="120" fixed="right" align="center">
+                <JNPF-table ref="dataTablebyfb" v-loading="listLoadingbyfb" :data="tableDatabyfb" @sort-change="sortChangebyfb" fixedNO custom-column>
+                  <el-table-column prop="maintenanceTaskIdText" label="任务名称" min-width="180" />
+                  <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" />
+                  <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom" />
+                  <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
+                  <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
+                  <el-table-column prop="level" label="保养等级" width="140" />
+                  <el-table-column prop="cycle" label="周期" width="90" />
+                  <el-table-column prop="unit" label="单位" width="90" />
+                  <el-table-column prop="departmentIdText" label="计划保养部门" min-width="150" />
+                  <el-table-column prop="maintainerIdText" label="计划保养人" width="120"></el-table-column>
+                  <el-table-column prop="planMaintenanceDate" label="计划保养日期" width="180" sortable="custom"></el-table-column>
+                  <el-table-column prop="actualDepartmentIdText" label="实际保养部门" min-width="150" />
+                  <el-table-column prop="actualMaintenanceIdText" label="实际保养人" width="120"></el-table-column>
+                  <el-table-column prop="actualMaintenanceDate" label="实际保养日期" width="180" sortable="custom"></el-table-column>
+                  <el-table-column prop="picList" label="保养拍照" min-width="160">
                     <template slot-scope="scope">
-                      <div v-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus == 'submit'"><el-tag type="success">审批通过</el-tag></div>
-                      <div v-else-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'"><el-tag type="warning">审批中</el-tag></div>
-                      <div v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus == 'submit'"><el-tag type="danger">审批拒绝</el-tag></div>
+                      <el-image @click="bigimg(define.comUrl+item.url)" style="width: 25px;height: 25px;margin-left: 5px;" v-for="item in scope.row.picList" :key="item.fileId" :src="define.comUrl+item.url" :preview-src-list="srcList"></el-image>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="reasonRejection" label="驳回理由" min-width="200"></el-table-column>
-                  <el-table-column prop="approvalCompletionDate" label="审批完成时间" width="180" sortable="custom"></el-table-column>
-                  <el-table-column prop="documentStatus" label="单据状态" width="120" fixed="right" align="center">
+                  <el-table-column prop="cycleType" label="周期类型" width="120" sortable="custom" fixed="right" align="center">
                     <template slot-scope="scope">
-                      <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
-                      <div v-else-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
+                      <div v-if="scope.row.cycleType == 'cycle'"><el-tag type="success">周期</el-tag></div>
+                      <div v-else-if="scope.row.cycleType == 'disposable'">
+                        <el-tag type="success">一次</el-tag>
+                      </div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="submitDate" label="提交时间" width="180" sortable="custom"></el-table-column>
-                  <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
+                  <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
                   <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
                   <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
                 </JNPF-table>
-                <pagination :total="total" :page.sync="listQuery1.pageNum" :limit.sync="listQuery1.pageSize" @pagination="initData" />
+                <pagination :total="totalbyfb" :page.sync="listQuerybyfb.pageNum" :limit.sync="listQuerybyfb.pageSize" @pagination="initDatabyfb" />
               </div>
             </div>
           </el-tab-pane>
@@ -450,6 +498,7 @@
 </template>
 
 <script>
+import { equMaintenanceList, RepairRequestList } from '@/api/dailyManagement/Maintenance'
 import { getEquEquipmentList } from '@/api/basicData/index'
 import { getequMountedPlaces, gettotalOverview, gettotalEquStats, getequReporttotalNum } from "@/api/basicData/materialSettings";
 import chart from "@/views/dailyManagement/deviceReportanaly/components/chart.vue";
@@ -457,6 +506,76 @@ export default {
   components: { chart },
   data() {
     return {
+      srcList: [
+        'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg'
+      ],
+      totalbyfb: 0,
+      listLoadingbyfb: false,
+      tableDatabyfb: [],
+      listQuerybyfb: {},
+      listQuery5: {
+        classAttribute: "equipment",
+        recordType: 'maintenance',
+        equipmentIdCode: '',
+        equipmentIdName: '',
+        actualMaintenanceIdText: '',
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time" /* 使用倒序日期作为默认排序 */
+        }],
+      },
+      totalwxfb: 0,
+      listLoadingwxfb: false,
+      tableDatawxfb: [],
+      listQuerywxfb: {},
+      listQuery4: {
+        state: 'maintained',
+        classAttribute: "equipment",
+        maintenanceNo: '',
+        equipmentIdCode: '',
+        equipmentIdName: '',
+        applicantIdName: '',
+        applicationStartDate: '',
+        applicationEndDate: '',
+        faultStartTimeStart: '',
+        faultStartTimeEnd: '',
+        maintenancePersonnel: '',
+        startTime: '',
+        endTime: '',
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time" /* 使用倒序日期作为默认排序 */
+        }],
+      },
+      totaldjfb: 0,
+      listLoadingdjfb: false,
+      tableDatadjfb: [],
+      listQuerydjfb: {},
+      listQuery3: {
+        recordType: 'inspection',
+        equipmentIdCode: '',
+        equipmentIdName: '',
+        actualMaintenanceIdText: '',
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time" /* 使用倒序日期作为默认排序 */
+        }],
+      },
       listQuerysbtz: {},
       listQuery1: {
         name: '',
@@ -563,11 +682,11 @@ export default {
         } else if (newOption == 'sbgk') {
           this.initDatasbgk()
         } else if (newOption == 'djfb') {
-
+          this.initDatadjfb()
         } else if (newOption == 'wxfb') {
-
+          this.initDatawxfb()
         } else {
-
+          this.initDatabyfb()
         }
       },
       deep: true
@@ -576,6 +695,9 @@ export default {
   created() {
     this.listQuerysbtz = JSON.parse(JSON.stringify(this.listQuery1))
     this.listQuerysbgk = JSON.parse(JSON.stringify(this.listQuery2))
+    this.listQuerydjfb = JSON.parse(JSON.stringify(this.listQuery3))
+    this.listQuerywxfb = JSON.parse(JSON.stringify(this.listQuery4))
+    this.listQuerybyfb = JSON.parse(JSON.stringify(this.listQuery5))
     this.initequipmentledger()
   },
   methods: {
@@ -738,7 +860,155 @@ export default {
           this.chartlistLoading = false
         })
       })
-    }
+    },
+
+    //点检分布
+    async initDatadjfb() {
+      let obj = {
+        maintenanceType: 'inspection',
+        classAttribute: "equipment"
+      }
+      gettotalOverview(obj).then(res => {
+        console.log(res, '66666');
+      })
+      this.getlistdatadjfb()
+    },
+    resetdjfb() {
+      this.$refs['dataTabledjfb'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+      this.searchdjfb()
+    },
+    searchdjfb() {
+      Object.keys(this.listQuerydjfb).forEach(key => { // 清除搜索条件两端空格
+        let item = this.listQuerydjfb[key]
+        this.listQuerydjfb[key] = typeof item === 'string' ? item.trim() : item
+      })
+      this.listQuerydjfb.pageNum = 1 // 重置页码
+      this.getlistdatadjfb()
+    },
+    sortChangedjfb({ prop, order }) {
+      let newProp
+      if (prop === 'equipmentIdName') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      this.listQuerydjfb.orderItems[0].asc = order !== "descending"
+      this.listQuerydjfb.orderItems[0].column = order === null ? "" : newProp
+      this.getlistdatadjfb()
+    },
+    getlistdatadjfb() {
+      this.listLoadingdjfb = true
+      equMaintenanceList(this.listQuerydjfb).then(res => {
+        this.tableDatadjfb = res.data.records.map(item => {
+          if (item.picList && item.picList.length) item.picList = item.picList.map(o => { return JSON.parse(`{${o}}`) })
+          return item
+        })
+        this.totaldjfb = res.data.total
+        this.listLoadingdjfb = false
+      }).catch(() => {
+        this.listLoadingdjfb = false
+      })
+    },
+    bigimg(url) {
+      this.srcList[0] = url
+    },
+    //维修分布
+    async initDatawxfb() {
+      this.getlistdatawxfb()
+    },
+    getlistdatawxfb() {
+      this.listLoadingwxfb = true
+      RepairRequestList(this.listQuerywxfb).then(res => {
+        this.tableDatawxfb = res.data.records.map(item => {
+          if (item.frontPic) {
+            item.frontPicList = item.frontPicList.map(o => { return JSON.parse(`{${o}}`) })
+          }
+          if (item.afterPic) {
+            item.afterPicList = item.afterPicList.map(o => { return JSON.parse(`{${o}}`) })
+          }
+          item.waitDuration = this.getTimes(item.waitDuration)
+          item.maintenanceDuration = this.getTimes(item.maintenanceDuration)
+          return item
+        })
+        this.totalwxfb = res.data.total
+        this.listLoadingwxfb = false
+      }).catch(() => {
+        this.listLoadingwxfb = false
+      })
+    },
+    searchwxfb() {
+      Object.keys(this.listQuerywxfb).forEach(key => { // 清除搜索条件两端空格
+        let item = this.listQuerywxfb[key]
+        this.listQuerywxfb[key] = typeof item === 'string' ? item.trim() : item
+      })
+      this.listQuerywxfb.pageNum = 1 // 重置页码
+      this.getlistdatawxfb()
+    },
+    sortChangewxfb({ prop, order }) {
+      let newProp
+      if (prop === 'equipmentIdName' || prop === 'equipmentIdCode') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      this.listQuerywxfb.orderItems[0].asc = order !== "descending"
+      this.listQuerywxfb.orderItems[0].column = order === null ? "" : newProp
+      this.getlistdatawxfb()
+    },
+    resetwxfb() {
+      this.$refs['dataTablewxfb'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+      this.listQuerywxfb = JSON.parse(JSON.stringify(this.listQuery4))
+      this.getlistdatawxfb()
+    },
+    getTimes(time) {
+      // 转换为式分秒
+      let d = parseInt(time / 60 / 60 / 24)
+      let h = parseInt(time / 60 / 60 % 24)
+      let m = parseInt(time / 60 % 60)
+      let s = parseInt(time % 60)
+      return d != '0' ? `${d} 天 ${h} 时 ${m} 分 ${s} 秒` : h != '0' ? `${h} 时 ${m} 分 ${s} 秒` : m != '0' ? `${m} 分 ${s} 秒` : `${s} 秒`
+    },
+    //保养分布
+    async initDatabyfb() {
+      this.getlistdatabyfb()
+    },
+    getlistdatabyfb() {
+      this.listLoadingbyfb = true
+      equMaintenanceList(this.listQuerybyfb).then(res => {
+        this.tableDatabyfb = res.data.records.map(item => {
+          if (item.picList && item.picList.length) item.picList = item.picList.map(o => { return JSON.parse(`{${o}}`) })
+          return item
+        })
+        this.totalbyfb = res.data.total
+        this.listLoadingbyfb = false
+      }).catch(() => {
+        this.listLoadingbyfb = false
+      })
+    },
+    searchbyfb() {
+      Object.keys(this.listQuerybyfb).forEach(key => { // 清除搜索条件两端空格
+        let item = this.listQuerybyfb[key]
+        this.listQuerybyfb[key] = typeof item === 'string' ? item.trim() : item
+      })
+      this.listQuerybyfb.pageNum = 1 // 重置页码
+      this.getlistdatabyfb()
+    },
+    sortChangebyfb({ prop, order }) {
+      let newProp
+      if (prop === 'equipmentIdName') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      this.listQuerybyfb.orderItems[0].asc = order !== "descending"
+      this.listQuerybyfb.orderItems[0].column = order === null ? "" : newProp
+      this.getlistdatabyfb()
+    },
+    resetbyfb() {
+      this.$refs['dataTablebyfb'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+      this.listQuerybyfb = JSON.parse(JSON.stringify(this.listQuery4))
+      this.getlistdatabyfb()
+    },
   }
 }
 </script>

@@ -11,8 +11,8 @@
       </div>
       <div class="main" v-loading="formLoading">
         <AbnormalProcess :key="flowTemplateJson.nodeId" ref="processDesign" :conf="flowTemplateJson" :flowType="0"
-          v-if="flowTemplateJson.nodeId" :planPersonId="planPersonId" :planPersonName="planPersonName" />
-        <AbnormalProcess ref="processDesign" :conf="flowTemplateJson" :flowType="0" v-else :planPersonId="planPersonId" :planPersonName="planPersonName"/>
+          v-if="flowTemplateJson.nodeId && flowFlag" :planPersonId="planPersonId" :planPersonName="planPersonName" />
+        <AbnormalProcess v-if="!flowTemplateJson.nodeId && flowFlag" key="processDesign" ref="processDesign" :conf="flowTemplateJson" :flowType="0" :planPersonId="planPersonId" :planPersonName="planPersonName"/>
       </div>
     </div>
   </transition>
@@ -28,6 +28,7 @@ export default {
   data() {
     return {
       flowTemplateJson: {},
+      flowFlag:false,
       dataForm: {
         businessFlow: '',
         id: '',
@@ -50,6 +51,7 @@ export default {
     init(id, fullName,planPersonId,planPersonName) {
       this.visible = true
       this.formLoading = true
+      this.flowFlag = false
       this.dataForm.businessFlow = id
       this.planPersonId = planPersonId
       this.planPersonName = planPersonName
@@ -74,6 +76,7 @@ export default {
           this.dataForm.flowTemplateJson = {}
         }
         this.formLoading = false
+        this.flowFlag = true
       }).catch(() => { })
     },
     goBack() {
@@ -88,7 +91,8 @@ export default {
         let planTime = res.formData.childNode.properties.planTime
         let flowUnit = res.formData.childNode.properties.flowUnit
         this.dataForm.planProcessingTime = this.jnpf.timeToMinutes(planTime,flowUnit)
-        this.dataForm.planPersonId = this.dataForm.planPersonId ? this.dataForm.planPersonId : res.formData.childNode.properties.approvers[0]
+        this.dataForm.planPersonId = this.planPersonId
+        this.dataForm.planPersonName = this.planPersonName
         const formMethod = this.dataForm.id ? Update : Create
         formMethod(this.dataForm).then((res) => {
           this.$message({

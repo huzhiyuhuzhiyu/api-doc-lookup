@@ -5,7 +5,7 @@
         <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
           <div style="font-size: 20px;">异常上报</div>
           <div class="options">
-            <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">保存并提交</el-button>
+            <el-button type="primary" :loading="btnLoading" @click="handleConfirm">保存并提交</el-button>
           </div>
         </div>
         <div class="JNPF-common-layout">
@@ -210,11 +210,12 @@ export default {
       this.$refs.dataForm.validate((valid) => {
         if (valid) {
           this.visible = false
-          this.handleConfirm()
+          this.handleConfirm(event)
         }
       })
     },
-    handleConfirm() {
+    handleConfirm(event) {
+      event.target.blur()
       this.btnLoading = true
       if (this.codeConfig.codeWay !== 'auto') {
         this.visible = true

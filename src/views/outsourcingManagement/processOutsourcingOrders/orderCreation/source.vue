@@ -2,8 +2,8 @@
   <div>
     <el-drawer title="发料清单" :visible.sync="drawer" :direction="direction" :wrapperClosable="false" append-to-body
       :before-close="handleClose" size="40%" columnSettings-drawer class="JNPF-common-drawer">
-      <div class="JNPF-flex-main">
-        <el-scrollbar class="column-list">
+      <div>
+        <el-scrollbar class="column-list" style="margin-bottom: 16px;">
           <!-- 人员配置 -->
           <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
             <el-table hasNO fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" size="mini" id="table"

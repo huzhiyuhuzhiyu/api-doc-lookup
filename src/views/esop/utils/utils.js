@@ -51,5 +51,8 @@ export function getTitleForType(applicationType,pageType){
     if(pageType === ModelType.ADD){
         return `新增${name}`
     }
+    if(pageType === ModelType.VIEW){
+        return `查看${name}`
+    }
     return `编辑${name}`
 }

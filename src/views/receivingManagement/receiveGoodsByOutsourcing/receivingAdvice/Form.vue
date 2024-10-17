@@ -123,7 +123,7 @@
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="60" />
                     <el-table-column prop="purchaseQuantity" label="订单数量" width="100" />
-                    <el-table-column prop="receivedQuantity" label="收货数量" width="150" v-if="!dataForm.exchangeGoodsFlag"
+                    <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
                         <span class="required">*</span>
@@ -275,7 +275,7 @@
                 <el-table-column prop="purchaseQuantity" label="订单数量" width="140" />
                 <!-- <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
                   sortable="custom" /> -->
-                <el-table-column prop="receivedQuantity" label="收货数量" width="140" v-if="!dataForm.exchangeGoodsFlag"
+                <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                   key="789">
                   <template slot="header">
                     <span class="required">*</span>
@@ -292,7 +292,7 @@
                   </template>
                 </el-table-column>
 
-                <el-table-column prop="standardValue" label="规值" min-width="200"></el-table-column>
+                <el-table-column prop="standardValue" label="规值" min-width="120"></el-table-column>
                 <el-table-column prop="processName" label="工序" width="160" />
                 <el-table-column prop="ordersNo" label="订单号" width="180" />
                 <el-table-column prop="remark" label="备注" min-width="200">

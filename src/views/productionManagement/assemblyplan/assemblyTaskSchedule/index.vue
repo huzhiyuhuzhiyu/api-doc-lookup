@@ -5,8 +5,8 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-           
-            
+
+
             <template v-for="item in searchList">
               <el-col :span="item.searchType === 3 ? 6 : 4">
                 <el-form-item>
@@ -37,7 +37,7 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading" >
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
             </div>
@@ -56,8 +56,8 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData"  
-            :fixedNO="true" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList"  v-if="showFlag">
+          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData" :fixedNO="true"
+            @sort-change="sortChange" custom-column :setColumnDisplayList="columnList" v-if="showFlag">
             <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'all')">{{
@@ -68,8 +68,10 @@
 
             <el-table-column prop="processSchedule" label="工单进度条" :width="maxWidth">
               <template slot-scope="scope">
-                <div v-for="(item, index) in scope.row.processInfoList" :key="index" style="width:100px;display: inline-block;text-align: center;position: relative;">
-                  <el-progress type="circle" width="60" :percentage="item.value" :status="item.value==100?'success':''"></el-progress>
+                <div v-for="(item, index) in scope.row.processInfoList" :key="index"
+                  style="width:100px;display: inline-block;text-align: center;position: relative;">
+                  <el-progress type="circle" width="60" :percentage="item.value"
+                    :status="item.value == 100 ? 'success' : ''"></el-progress>
                   <el-tooltip class="item" effect="dark" :content="item.name" placement="top-start">
                     <p class="ProcessName">{{ item.name }}</p>
                   </el-tooltip>
@@ -180,10 +182,10 @@ import {
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'assemblyTaskManagement',
-  components: { SuperQuery, Form,TaskSchedule },
+  components: { SuperQuery, Form, TaskSchedule },
   data() {
     return {
-      showFlag:true,
+      showFlag: true,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -192,7 +194,7 @@ export default {
         { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],
-      taskScheduleVisible:false,
+      taskScheduleVisible: false,
       columnList: ["orderType", "routingCode", "productionPlanNo", "createByName"],
       form: {
         appendQuantity: "",
@@ -202,7 +204,7 @@ export default {
       reworkVisible: false,
       addOrderVisible: false,
       columnList: ["productCode", "routingCode", "planStartDate", "planEndDate", "createByName",],
-   
+
       superQueryVisible: false,
       btnLoading: false,
       title: "更多查询",
@@ -398,11 +400,11 @@ export default {
           { validator: this.formValidate('positiveNumber', '请输入大于0的正整数',), trigger: 'blur' }
         ],
       },
-      maxWidth:""
+      maxWidth: ""
     }
   },
   created() {
-    this.superForm=this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+    this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search('basic')
   },
 
@@ -410,18 +412,18 @@ export default {
     this.getProductClassFun()
   },
   methods: {
-    viewTaskSchedule(id){
-      this.taskScheduleVisible=true
-      this.$nextTick(()=>{
+    viewTaskSchedule(id) {
+      this.taskScheduleVisible = true
+      this.$nextTick(() => {
         this.$refs.taskScheduleForm.init(id)
       })
     },
-    
-    
-    
-    
- 
- 
+
+
+
+
+
+
     // 获取打字内容等
     getProductClassFun() {
       this.requestArr.forEach((item, index) => {
@@ -470,7 +472,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName'||prop=='productDrawingNo'||prop=='productCode'||prop=='routingName'||prop=='routingCode') {
+      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'productDrawingNo' || prop == 'productCode' || prop == 'routingName' || prop == 'routingCode') {
         if (prop === 'createByName') {
           newProp = 'create_by'
         } else {
@@ -489,12 +491,12 @@ export default {
     closeForm(isRefresh) {
       this.formVisible = false
       this.reworkVisible = false
-      this.taskScheduleVisible=false
+      this.taskScheduleVisible = false
       this.search('basic')
     },
     initData() {
-          this.listLoading = true
-          this.showFlag=false
+      this.listLoading = true
+      this.showFlag = false
       ordershengchanList(this.orderForm).then(res => {
         res.data.records.forEach(item => {
           // 初始化 processInfoList 为一个空数组  
@@ -522,9 +524,9 @@ export default {
         console.log("表格数据", res);
         let longestProcessInfo = res.data.records.reduce((longest, current) => {
           return current.processInfoList.length > longest.processInfoList.length ? current : longest;
-        },  res.data.records[0]);
-        this.maxWidth=longestProcessInfo.processInfoList.length*100+50
-        this.showFlag=true
+        }, res.data.records[0]);
+        this.maxWidth = longestProcessInfo.processInfoList.length * 100 + 50
+        this.showFlag = true
         setTimeout(() => {
           this.listLoading = false
         }, 500);
@@ -566,16 +568,16 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
 
-      this.superForm=this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+      this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
 
-     
+
       this.$refs.SuperQuery.conditionList = []
-      this.searchList= [
+      this.searchList = [
         { field: 'productionPlanNo', fieldValue: '', label: '生产计划单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],
-      this.search('basic')
+        this.search('basic')
     },
 
     handleDel(id) {
@@ -636,7 +638,7 @@ export default {
   border-color: #67c23A
 }
 
-.ProcessName { 
+.ProcessName {
   font-size: 12px !important;
   overflow: hidden;
   /*超出的部分隐藏起来。*/

@@ -82,19 +82,11 @@
             <el-table-column prop="purchaseQuantity" label="数量" width="80" sortable="custom" />
 
             <el-table-column prop="deliveryDate" label="交货日期" min-width="120" sortable="custom" />
-            <el-table-column prop="standardValue" label="规值" width="100" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" min-width="120" label="打字内容" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
-            <el-table-column prop="oil" label="油脂" min-width="100" sortable="custom" />
-            <el-table-column prop="oilQuantity" label="油脂量" min-width="100" sortable="custom" />
-            <el-table-column prop="clearance" label="游隙" min-width="120" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
             <el-table-column prop="processName" label="工序" min-width="120" sortable="custom" />
             <el-table-column prop="remark" label="备注" min-width="120" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="100" sortable="custom" />
-            <el-table-column label="操作" width="180" fixed="right">
+            <el-table-column label="操作" width="100" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text"
                   @click.native="handleUserRelation(scope.row.purchaseOrderId, 'look')">
@@ -159,7 +151,7 @@ export default {
       detailFlag: false,
 
       orderForm: {
-
+        receiptQueryFlag: 1,
         orderType: 'external',
         deliveryEndDate: '',
         deliveryStartDate: '',

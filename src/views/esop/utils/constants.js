@@ -4,7 +4,7 @@
  * @enum {string}
  * @property {string} WORK - 作业指导书
  * @property {string} INSPECT - 检验指导书
- * @property {string} IMAGE_DOCUMENT - 图文档
+ * @property {string} IMAGE - 图文档
  */
 export const FlowCode={
     "WORK":'b048',

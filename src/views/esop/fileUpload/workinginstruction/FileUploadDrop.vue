@@ -17,7 +17,7 @@
                     :headers="{
                         'token': `${token}`
                     }">
-                    <el-button size="small" type="primary" icon="el-icon-upload" v-if="!disabled">点击上传</el-button>
+                    <el-button ref="clickUploadBtn" size="small" type="primary" icon="el-icon-upload" v-if="!disabled">点击上传</el-button>
                     <el-button size="small" slot="tip" type="primary" icon="el-icon-upload" style="margin-top:10px" :disabled="true" v-else>点击上传</el-button>
                     <div slot="tip" class="el-upload__tip">只能上传不超过{{ fileSize }}{{ sizeUnit }}的{{ acceptText }}文件，您也可把文件拖拽至此以上传</div>
                 </el-upload>
@@ -71,7 +71,7 @@
                 </el-table>
                 <div class="uploadlist" v-else>
                     <ul class="ul-upload" :style="{height: gridHeight}" v-loading="loading">
-                        <GridFileList empty-description="暂无文件，您可把文件拖拽至此上传" :list="fileList" :file-options="fileOptions" @command="commandHandler" @item-click="itemClickHandler">
+                        <GridFileList @empty-lick="emptyUpload" :empty-description="disabled ? '当前状态不可上传文件': '暂无文件，您可点击或把文件拖拽至此上传'" :list="fileList" :file-options="fileOptions" @command="commandHandler" @item-click="itemClickHandler">
                             <template v-slot:tooltip="{ item }">
                                 <el-row>
                                     <el-col style="text-align: right" :span="8">{{ item.type ? '文件名' : '文件夹名' }}：</el-col>
@@ -249,6 +249,10 @@ export default {
     },
 
     methods: {
+        emptyUpload() {
+            if(this.disabled) return this.$message.info('当前状态不可上传文件')
+            this.$refs.clickUploadBtn.$el.click()
+        },
         commandHandler(command, item,index) {
             switch (command) {
                 case 'download':

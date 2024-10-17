@@ -385,7 +385,7 @@
                 v-if="dataForm.documentType == 'inbound'" /> -->
               <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="productCode"/>
-              <el-table-column prop="code" label="产品编码" min-width="120" sortable="custom"
+              <el-table-column prop="code" label="产品编码" min-width="130" sortable="custom"
                 v-if="dataForm.documentType == 'inbound'"  key="code"/>
               <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'"  key="mainUnit"/>

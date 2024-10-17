@@ -1339,7 +1339,15 @@ export default {
             this.defaultAddress = dfaddress[0].countryText + dfaddress[0].address
           }
         }else{
-          this.deletedata()
+          this.dataForm.recipient = ""
+          this.dataForm.phone = ""
+          this.dataForm.country = ""
+          this.dataForm.province = ""
+          this.dataForm.city = ""
+          this.dataForm.area = ""
+          this.dataForm.address = ""
+          this.defaultAddress=""
+          // this.deletedata()
           
         }
       })

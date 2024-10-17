@@ -579,7 +579,7 @@
         <el-table-column prop="clearance" label="游隙" min-width="100" v-if="activeName == 'assemble'" />
         <el-table-column prop="packagingMethod" label="包装方式" min-width="120" v-if="activeName == 'assemble'" />
         <el-table-column prop="specialRequire" label="特殊要求" min-width="120" v-if="activeName == 'assemble'" />
-        <el-table-column prop="deliveryDate" label="交货日期" width="180"
+        <el-table-column prop="deliveryDate" label="交货日期" width="180" key="deliveryDate"
           v-if="activeName == 'purchase' || activeName == 'out'">
           <template slot="header">
             <span class="required">*</span>交货日期
@@ -1548,7 +1548,7 @@ export default {
       this.getpurchaseData('basic')
     },
     // 外协列表数据
-    getouteData() {
+    getouteData(type) {
       if (this.planDateArr.length) {
         this.outForm.planSsd = this.planDateArr[0]
         this.outForm.planSed = this.planDateArr[1]

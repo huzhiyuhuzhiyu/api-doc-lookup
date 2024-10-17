@@ -585,8 +585,7 @@ export default {
         if (id) {
           this.getDetailWithdrawal(id)
         }
-      }
-      if (sourceType == 'awit') {
+      }else if(sourceType == 'awit') {
         let data = id
         console.log("传递数据", id);
         console.log(data);
@@ -598,7 +597,8 @@ export default {
         this.getCollectFun(this.dataForm.productionOrderId)
       })
         console.log(666);
-
+      }else{
+        this.getDetailWithdrawal(id)
       }
       // let num=JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
       // this.$set(this.dataForm,'productionQuantity',num)

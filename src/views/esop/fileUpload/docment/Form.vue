@@ -23,7 +23,7 @@
                                     <el-collapse v-model="activeNames">
                                         <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                                             <el-row>
-                                                <el-form label-position="top" :model="dataForm" ref="dataForm">
+                                                <el-form label-position="top" :model="dataForm" ref="dataForm"  :rules="dataRule">
                                                     <el-row :gutter="10">
                                                         <el-col :span="6">
                                                             <el-form-item label="上传单编码">
@@ -32,7 +32,7 @@
 
                                                         </el-col>
                                                         <el-col :span="6">
-                                                            <el-form-item label="图文档分类" prop="partnerCategoryIdText">
+                                                            <el-form-item label="图文档分类" prop="categoryName">
                                                                 <ComSelect-list
                                                                     :isdisabled="btnType === 'look'"
                                                                     v-model="dataForm.categoryName"
@@ -45,7 +45,7 @@
                                                             </el-form-item>
                                                         </el-col>
                                                         <el-col :span="6">
-                                                            <el-form-item label="版本号" >
+                                                            <el-form-item label="版本号" prop="version">
                                                                 <el-input v-model="dataForm.version" placeholder="请输入版本号"  />
                                                             </el-form-item>
                                                         </el-col>
@@ -358,6 +358,14 @@ export default {
             codeConfig:{},
             orderNo:'',
             flowTemplateJson: {},
+            dataRule: {
+                categoryName: [
+                    { required: true, message: '请选择图文档分类', trigger: 'change' }
+                ],
+                version: [
+                    { required: true, message: '请输入版本号', trigger: 'change' },
+                ],
+            },
             dataForm:{
                 categoryName:'',
                 categoryId:'',
@@ -490,8 +498,9 @@ export default {
             return this.$emit('back')
         },
         async handleConfirm(type){
-            if(!this.hasFileCategory){
-                return this.$message.warning('请选择分类')
+            const valid = await this.$refs.dataForm.validate()
+            if(!valid){
+                return
             }
             const isSubmit = type === DocumentStatus.SUBMIT
             // if(isSubmit){

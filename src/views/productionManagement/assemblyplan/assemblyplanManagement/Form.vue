@@ -81,7 +81,7 @@
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="产线" prop="productionLineId">
-                          <el-select v-model="dataForm.productionLineId" placeholder="产线" clearable
+                          <el-select v-model="dataForm.productionLineId" placeholder="产线" clearable  style="width: 100%;"
                             @change="selectLine">
                             <el-option v-for="(item, index) in productionLineList" :key="index" :label="item.name"
                               :value="item.id"></el-option>

@@ -378,6 +378,8 @@ export default {
                     color: #ff0000;
                     font-size: 32px;
                     width:42%;
+                    text-align: right;
+                    padding-right: 10px;
                 }
                 .item-text-right {
                     width: 58%;

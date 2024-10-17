@@ -1,7 +1,7 @@
 <template>
     <transition name="el-zoom-in-center">
 
-        <div class="JNPF-preview-main org-form" ref="main">
+        <div v-if="inEdit" class="JNPF-preview-main org-form" ref="main">
             <div
 
                 :class="['JNPF-common-page-header', isView ? 'noButtons' : '']"  v-if="!approvalFlag">
@@ -19,10 +19,10 @@
                             <el-collapse v-model="activeNames">
                                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                                     <el-row>
-                                        <el-form label-position="top" :model="dataForm" ref="dataForm">
+                                        <el-form label-position="top" :rules="dataRule" :model="dataForm" ref="dataForm">
                                             <el-row :gutter="10">
                                                 <el-col :span="6">
-                                                    <el-form-item label="图文档分类" prop="partnerCategoryIdText">
+                                                    <el-form-item label="图文档分类" prop="categoryName">
                                                         <ComSelect-list
                                                             :isdisabled="btnType === 'look'"
                                                             v-model="dataForm.categoryName"
@@ -34,11 +34,11 @@
                                                             :paramsObj="{}" />
                                                     </el-form-item>
                                                 </el-col>
-                                                <el-col :span="6">
-                                                    <el-form-item label="版本号" >
-                                                        <el-input v-model="dataForm.version" placeholder="请输入版本号"  />
-                                                    </el-form-item>
-                                                </el-col>
+<!--                                                <el-col :span="6">-->
+<!--                                                    <el-form-item label="版本号" prop="version" >-->
+<!--                                                        <el-input v-model="dataForm.version" placeholder="请输入版本号"  />-->
+<!--                                                    </el-form-item>-->
+<!--                                                </el-col>-->
                                             </el-row>
                                         </el-form>
                                     </el-row>
@@ -54,6 +54,7 @@
                 </div>
             </div>
         </div>
+        <FinishSubmit style="background: #fff" @recreate="recreate" v-if="!inEdit"></FinishSubmit>
     </transition>
 </template>
 
@@ -76,9 +77,11 @@ function getOriginActiveNames(){
     return ['basicInfo']
 }
 import { getcategoryTree } from '@/api/basicData/index'
+import {attachmentsInsert} from "@/api/esop/fileUpload/office";
+import FinishSubmit from "@/views/esop/fileUpload/workinginstruction/old/finishSubmit.vue";
 
 export default {
-    components: { recordList, Process, FileUploadDrop },
+    components: {FinishSubmit, recordList, Process, FileUploadDrop },
     props:{
         type:{
             type:String,
@@ -99,6 +102,7 @@ export default {
     },
     data() {
         return {
+            inEdit:true,
             selectRows:[],
             productsIdsMap: new Map(),
             file: null,
@@ -136,7 +140,14 @@ export default {
                 id:null,
                 version:''
             },
-
+            dataRule: {
+                // version: [
+                //     { required: true, message: '请输入版本号', trigger: 'change' }
+                // ],
+                categoryName: [
+                    { required: true, message: '请选择选择图文档分类', trigger: 'change' },
+                ],
+            },
             endTime: 0,
             flowData:{},
             approvalId:'',
@@ -184,38 +195,36 @@ export default {
                 }
             })
         },
-
+         recreate(){
+            this.inEdit = true
+            this.dataForm.id = null
+            this.dataForm.orderNo = ''
+            this.dataForm.categoryId = ''
+            this.dataForm.categoryName = ''
+            this.dataForm.version = ''
+            this.normalFileList = []
+        },
         async handleConfirm(type){
-            if(!this.hasFileCategory){
-                return this.$message.warning('请选择分类')
-            }
-            return this.$message.info('暂未开放')
-            const isSubmit = type === DocumentStatus.SUBMIT
-            if(isSubmit){
-                if(this.normalFileList.length === 0){
-                    return this.$message.warning('请上传文件，或先保存为草稿')
-                }
+            const valid = await this.$refs.dataForm.validate()
+            if(!valid){
+                return
             }
             const params = this.getSaveData(type)
-            const fn = this.isAdd ? addBimFileUpload : modifyBimFileUpload
+            const fn = attachmentsInsert
             const { data } = await fn(params)
+            this.inEdit = false
             await this.$message.success('操作成功')
         },
         getSaveData(type){
-            return {
-                bimFileUpload:{
-                    applicationType:this.applicationType,
+            const attachmentsList = this.normalFileList.map(item=>{
+                return {
+                    documentId:item.id,
                     categoryId:this.dataForm.categoryId,
-                    documentStatus:type,
-                    productsId:this.dataForm.productsId,
-                    routingId:this.dataForm.routingId,
-                    orderNo:this.dataForm.orderNo,
-                    id:this.dataForm.id,
-                    approvalFlag:this.dataForm.approvalFlag,
-                    version:this.dataForm.version
-                },
-                bimFileUploadLineList:this.getUploadDetailList(),
-                flowData:this.flowData
+                    businessType: FileCategoryType.OFFICE_DOCUMENT
+                }
+            })
+            return {
+                attachmentsList
             }
         },
         async fetchData(flag=true,code="WJSCSQ") {

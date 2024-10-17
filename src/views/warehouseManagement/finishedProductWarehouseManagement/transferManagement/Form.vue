@@ -846,7 +846,6 @@ export default {
 
           // 自动聚焦未使用则提交
           if (submitFlag) {
-            this.dataForm.classAttributeList = this.classAttributeList
             this.dataForm.documentStatus = submitModel
             this.dataForm.transferType = 'allocate_transfer'
 

@@ -6,7 +6,7 @@
         style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:0px 0 0px 0">
         <el-radio-group v-model="categoryType" style="background-color:#fff;">
 
-          <el-badge :value="item.num ? item.num : item.todoNum" :max="99" v-for="item in treeData" :key="item.id">
+          <el-badge :value="item.num!=null||item.num!=undefined ? item.num : item.todoNum" :max="99" v-for="item in treeData" :key="item.id">
             <el-radio-button style="margin:2px 0;" :key="item.businessType" :label="item.businessType">{{ item.fullName
               }}</el-radio-button>
           </el-badge>
@@ -518,7 +518,7 @@
         <JNPF-table    :key='1' v-loading="listLoading" :data="saleList" @sort-change="sortChange" v-show="categoryType == 'outbound_sale_send' && saleFlag"
           custom-column ref="salestabForm" :fixedNO="true" :setColumnDisplayList="salecolumnList" hasC
           @selection-change="handeleselectSale">
-          <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom">
+          <el-table-column prop="orderNo" label="订单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
                 @click.native="viewFun(scope.row.ordersId, 'look', 'saleREFForm', saleFormVisible = true)">{{
@@ -526,27 +526,27 @@
                 }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="cooperativePartnerCode" label="客户编码" width="160" sortable="custom" />
-          <el-table-column prop="cooperativePartnerName" label="客户名称" width="160" sortable="custom" />
-          <el-table-column prop="departmentName" label="所属部门" width="160" sortable="custom"></el-table-column>
-          <el-table-column prop="salesName" label="所属销售" width="160" sortable="custom" />
-          <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
-          <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
-          <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-          <el-table-column prop="mainUnit" label="单位" width="160" />
-          <el-table-column prop="num" label="数量" width="160" sortable="custom" />
-          <el-table-column prop="waitDeliverNum" label="待发货数量" width="160" sortable="custom" />
-          <el-table-column prop="deliveryDate" label="交货日期" width="160" sortable="custom" />
-          <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
-          <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
-          <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
-          <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
-          <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
-          <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-          <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
-          <el-table-column prop="specialRequire" label="特殊要求" width="160" sortable="custom" />
-          <el-table-column prop="remark" label="备注" width="160" />
-          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+          <el-table-column prop="cooperativePartnerCode" label="客户编码" min-width="160" sortable="custom" />
+          <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="160" sortable="custom" />
+          <el-table-column prop="departmentName" label="所属部门" min-width="160" sortable="custom"></el-table-column>
+          <el-table-column prop="salesName" label="所属销售" min-width="160" sortable="custom" />
+          <el-table-column prop="customerProductNo" label="客户料号" min-width="160" sortable="custom" />
+          <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
+          <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
+          <el-table-column prop="mainUnit" label="单位" min-width="160" />
+          <el-table-column prop="num" label="数量" min-width="160" sortable="custom" />
+          <el-table-column prop="waitDeliverNum" label="待发货数量" min-width="160" sortable="custom" />
+          <el-table-column prop="deliveryDate" label="交货日期" min-width="160" sortable="custom" />
+          <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="160" sortable="custom" />
+          <el-table-column prop="accuracyLevel" label="精度等级" min-width="160" sortable="custom" />
+          <el-table-column prop="vibrationLevel" label="振动等级" min-width="160" sortable="custom" />
+          <el-table-column prop="oil" label="油脂" min-width="160" sortable="custom" />
+          <el-table-column prop="oilQuantity" label="油脂量" min-width="160" sortable="custom" />
+          <el-table-column prop="clearance" label="游隙" min-width="160" sortable="custom" />
+          <el-table-column prop="packagingMethod" label="包装方式" min-width="160" sortable="custom" />
+          <el-table-column prop="specialRequire" label="特殊要求" min-width="160" sortable="custom" />
+          <el-table-column prop="remark" label="备注" min-width="160" />
+          <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
 
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
@@ -672,7 +672,7 @@
         <JNPF-table :partentOrChild="'purchasetabForm'"  v-loading="listLoading" @sort-change="sortChange" :data="purchaseList"
           v-show="categoryType == 'inbound_purchase' && purchaseFlag" custom-column ref="purchasetabForm" :fixedNo="true"
           hasC @selection-change="handeleselectPurchase" :setColumnDisplayList="purchasecolumnList">
-          <el-table-column prop="orderNo" label="订单号" width="200" sortable="custom">
+          <el-table-column prop="orderNo" label="订单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
                 @click.native="viewFun(scope.row.purchaseOrderId, 'look', 'purchaseREFForm', purchaseFormVisible = true)">{{
@@ -680,28 +680,28 @@
                 }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="cooperativePartnerName" label="供应商名称" width="160" sortable="custom" />
-          <el-table-column prop="cooperativePartnerCode" label="供应商编码" width="160" sortable="custom" />
-          <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
-          <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-          <el-table-column prop="mainUnit" label="单位" width="80" />
-          <el-table-column prop="num" label="数量" width="100" sortable="custom" />
-          <el-table-column prop="waitReceiptNum" label="待收货数量" width="160" sortable="custom" />
-          <el-table-column prop="deliveryDate" label="交货日期" width="160" sortable="custom" />
-          <el-table-column prop="standardValue" label="规值" width="160" sortable="custom" />
+          <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="160" sortable="custom" />
+          <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="160" sortable="custom" />
+          <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
+          <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
+          <el-table-column prop="mainUnit" label="单位" min-width="80" />
+          <el-table-column prop="num" label="数量" min-width="100" sortable="custom" />
+          <el-table-column prop="waitReceiptNum" label="待收货数量" min-width="160" sortable="custom" />
+          <el-table-column prop="deliveryDate" label="交货日期" min-width="160" sortable="custom" />
+          <el-table-column prop="standardValue" label="规值" min-width="160" sortable="custom" />
 
-          <el-table-column prop="colour" label="颜色" width="160" sortable="custom" />
-          <el-table-column prop="processName" label="工序" width="160" sortable="custom" />
-          <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
-          <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
-          <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
-          <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
-          <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
-          <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-          <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
-          <el-table-column prop="specialRequire" label="特殊要求" width="160" sortable="custom" />
-          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" width="120"  />
+          <el-table-column prop="colour" label="颜色" min-width="160" sortable="custom" />
+          <el-table-column prop="processName" label="工序" min-width="160" sortable="custom" />
+          <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="160" sortable="custom" />
+          <el-table-column prop="accuracyLevel" label="精度等级" min-width="160" sortable="custom" />
+          <el-table-column prop="vibrationLevel" label="振动等级" min-width="160" sortable="custom" />
+          <el-table-column prop="oil" label="油脂" min-width="160" sortable="custom" />
+          <el-table-column prop="oilQuantity" label="油脂量" min-width="160" sortable="custom" />
+          <el-table-column prop="clearance" label="游隙" min-width="160" sortable="custom" />
+          <el-table-column prop="packagingMethod" label="包装方式" min-width="160" sortable="custom" />
+          <el-table-column prop="specialRequire" label="特殊要求" min-width="160" sortable="custom" />
+          <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
+          <el-table-column prop="createByName" label="创建人" min-width="120"  />
          
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
@@ -753,7 +753,7 @@
           v-show="categoryType == 'inbound_external' && externalFlag" hasC custom-column ref="externaltabForm"
           fixedNO :setColumnDisplayList="externalcolumnList"
           @selection-change="handeleselectExternal">
-          <el-table-column prop="orderNo" label="订单号" width="200" sortable="custom">
+          <el-table-column prop="orderNo" label="订单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
                 @click.native="viewFun(scope.row.purchaseOrderId, 'look', 'productExternalREFForm', productExternalVisible = true)">{{
@@ -761,17 +761,17 @@
                 }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="cooperativePartnerName" label="供应商名称" width="160" sortable="custom" />
-          <el-table-column prop="cooperativePartnerCode" label="供应商编码" width="160" sortable="custom" />
-          <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
-          <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-          <el-table-column prop="processName" label="工序名称" width="160" sortable="custom" />
-          <el-table-column prop="mainUnit" label="单位" width="80" />
-          <el-table-column prop="purchaseQuantity" label="数量" width="100" sortable="custom" />
-          <el-table-column prop="waitReceiptNum" label="待收货数量" width="160" sortable="custom" />
-          <el-table-column prop="deliveryDate" label="交货日期" width="160" sortable="custom" />
-          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" width="120" sortable="custom" />
+          <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="160" sortable="custom" />
+          <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="160" sortable="custom" />
+          <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
+          <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
+          <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom" />
+          <el-table-column prop="mainUnit" label="单位" min-width="80" />
+          <el-table-column prop="purchaseQuantity" label="数量" min-width="100" sortable="custom" />
+          <el-table-column prop="waitReceiptNum" label="待收货数量" min-width="160" sortable="custom" />
+          <el-table-column prop="deliveryDate" label="交货日期" min-width="160" sortable="custom" />
+          <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
+          <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <el-button size="mini" type="text"
@@ -1134,17 +1134,17 @@
               </div>
               <JNPF-table  :partentOrChild="'dataTableWorkRef'"  ref="dataTableWorkRef" v-loading="listLoading" :data="workData" :fixedNO="true"
                 @sort-change="sortChange" custom-column  :setColumnDisplayList="workColumns">
-                <el-table-column prop="productionOrderNo" label="任务单号" width="180" />
+                <el-table-column prop="productionOrderNo" label="任务单号" min-width="180" />
                 <el-table-column prop="orderNo" label="工单号" width="200" />
-                <el-table-column prop="productDrawingNo" label="品名规格" width="300" />
-                <el-table-column prop="productCode" label="产品编码" width="160" />
-                <el-table-column prop="processName" label="工序名称" width="160" />
-                <el-table-column prop="mainUnit" label="单位" width="80" />
-                <el-table-column prop="productionQuantity" label="生产数量" width="120" />
-                <el-table-column prop="qualifiedQuantity" label="已完成数量" width="120" />
-                <el-table-column prop="waitReceivedQuantity" label="待入库数量" width="120" />
+                <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" />
+                <el-table-column prop="productCode" label="产品编码" min-width="160" />
+                <el-table-column prop="processName" label="工序名称" min-width="160" />
+                <el-table-column prop="mainUnit" label="单位" min-width="80" />
+                <el-table-column prop="productionQuantity" label="生产数量" min-width="120" />
+                <el-table-column prop="qualifiedQuantity" label="已完成数量" min-width="120" />
+                <el-table-column prop="waitReceivedQuantity" label="待入库数量" min-width="120" />
 
-                <el-table-column prop="createTime" label="创建时间" width="180" />
+                <el-table-column prop="createTime" label="创建时间" min-width="180" />
                 <el-table-column label="操作" width="100" fixed="right">
                   <template slot-scope="scope">
                     <el-button size="mini" type="text" @click="workInbound(scope.row)">入库</el-button>
@@ -1758,6 +1758,7 @@ export default {
     // 外协发料 订单
     getexterMaterFUN(type) {
       this.exterMaterForm.classAttributeList = this.classAttributeList
+          this.exterMaterForm.approvalStatus='ok'
       this.superForm=this.exterMaterForm
           if (type === 'basic') {
           this.basicQuery = {
@@ -1802,7 +1803,8 @@ export default {
         this.externalForm.deliveryEndDate = ''
       }
       this.externalForm.classAttributeList = this.classAttributeList
-      this.superForm=this.externalForm
+          this.externalForm.approvalStatus='ok'
+          this.superForm=this.externalForm
           if (type === 'basic') {
           this.basicQuery = {
             matchLogic: 'AND',
@@ -1897,6 +1899,7 @@ export default {
           res.data.forEach(item => {
             if (item.businessType == 'outbound_sale_send') {
               if (this.saleFlag) item.num = item.orderTodoNum
+              console.log("item====>",item);
               this.$set(item, 'fullName', '销售发货')
             }
             if (item.businessType == 'inbound_sale_return') {
@@ -1922,8 +1925,7 @@ export default {
               item.fullName = '生产领料'
 
             }
-            if (item.businessType == 'inbound_return_materials') {
-              if (this.externalFlag) item.num = item.orderTodoNum
+            if (item.businessType == 'inbound_return_materials') { 
               item.fullName = '生产退料'
 
             }
@@ -2164,8 +2166,7 @@ export default {
       // 销售发货
       console.log(this.categoryType);
       if (this.categoryType == 'outbound_sale_send') {
-        if (this.saleFlag) {
-        console.log(123,type);
+        if (this.saleFlag) { 
           if (this.saleOrderDateArr.length) {
             this.saleOrderForm.deliveryStartTime = this.saleOrderDateArr[0]
             this.saleOrderForm.deliveryEndTime = this.saleOrderDateArr[1]
@@ -2174,6 +2175,7 @@ export default {
             this.saleOrderForm.deliveryEndTime = ""
           }
           this.saleOrderForm.classAttributeList = this.classAttributeList
+          this.saleOrderForm.approvalStatus='ok'
           this.superForm=this.saleOrderForm
           if (type === 'basic') {
           this.basicQuery = {
@@ -2212,6 +2214,7 @@ export default {
             this.fhForm.rdeDate=""
           }
           this.fhForm.classAttributeList = this.classAttributeList
+          this.fhForm.approvalStatus='ok'
           this.superForm=this.fhForm
           if (type === 'basic') {
           this.basicQuery = {
@@ -2253,7 +2256,8 @@ export default {
             this.fhForm.rdeDate=""
           }
         this.fhForm.classAttributeList = this.classAttributeList
-        this.superForm=this.fhForm
+          this.fhForm.approvalStatus='ok'
+          this.superForm=this.fhForm
         if (type === 'basic') {
           this.basicQuery = {
             matchLogic: 'AND',
@@ -2293,6 +2297,7 @@ export default {
             this.purchaseForm.deliveryStartTime = ""
             this.purchaseForm.deliveryEndTime = ""
           }
+          this.purchaseForm.approvalStatus='ok'
           this.superForm=this.purchaseForm
           if (type === 'basic') {
           this.basicQuery = {
@@ -2328,6 +2333,7 @@ export default {
             this.cgForm.deliverDateStart=""
             this.cgForm.deliverDateEnd= ""
           }
+          this.cgForm.approvalStatus='ok'
           this.superForm=this.cgForm
           if (type === 'basic') {
           this.basicQuery = {
@@ -2370,7 +2376,8 @@ export default {
             this.cgForm.deliverDateStart=""
             this.cgForm.deliverDateEnd= ""
           } 
-        this.superForm=this.cgForm
+          this.cgForm.approvalStatus='ok'
+          this.superForm=this.cgForm
           if (type === 'basic') {
           this.basicQuery = {
             matchLogic: 'AND',
@@ -2410,6 +2417,7 @@ export default {
             this.wxflForm.rdsDate=""
           }
           this.wxflForm.classAttributeList = this.classAttributeList
+          this.wxflForm.approvalStatus='ok'
           this.superForm=this.wxflForm
           if (type === 'basic') {
           this.basicQuery = {
@@ -2453,6 +2461,7 @@ export default {
             this.wxshForm.deliverDateStart=""
             this.wxshForm.deliverDateEnd=""
           }
+          this.wxshForm.approvalStatus='ok'
           this.superForm=this.wxshForm
           if (type === 'basic') {
           this.basicQuery = {
@@ -2486,6 +2495,7 @@ export default {
         this.listLoading = true
         console.log(555);
         this.pickForm.productClassAttributeList = this.classAttributeList
+        this.pickForm.approvalStatus='ok'
          
           this.superForm=this.pickForm
           if (type === 'basic') {
@@ -2518,6 +2528,7 @@ export default {
       if (this.categoryType == 'inbound_return_materials') {
         this.listLoading = true
         this.returnMaterForm.productClassAttributeList = this.classAttributeList
+        this.returnMaterForm.approvalStatus='ok'
         
           this.superForm=this.returnMaterForm
           if (type === 'basic') {
@@ -2559,7 +2570,8 @@ export default {
     searchProductData(type) {
       this.listLoading = true
       this.productForm.classAttributeList = this.classAttributeList
-      this.superForm=this.productForm
+        this.productForm.approvalStatus='ok'
+        this.superForm=this.productForm
           if (type === 'basic') {
           this.basicQuery = {
             matchLogic: 'AND',
@@ -2590,7 +2602,8 @@ export default {
     searchWorkDta(type) {
       this.listLoading = true
       this.workForm.classAttributeList = this.classAttributeList
-      this.superForm=this.workForm
+        this.workForm.approvalStatus='ok'
+        this.superForm=this.workForm
           if (type === 'basic') {
           this.basicQuery = {
             matchLogic: 'AND',

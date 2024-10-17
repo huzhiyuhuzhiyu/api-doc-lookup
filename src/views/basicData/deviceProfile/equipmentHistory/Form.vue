@@ -515,9 +515,9 @@ export default {
     async switchStyle() {
       await this.$nextTick();
       let allHeight = this.$refs.main.clientHeight
-      let HeightstoclInfo = this.$refs.stoclInfo.clientHeight
-      let Heightradio = this.$refs.radio.clientHeight
-      this.height = (allHeight - HeightstoclInfo - Heightradio - 166) + 'px'
+      // let HeightstoclInfo = this.$refs.stoclInfo.clientHeight
+      // let Heightradio = this.$refs.radio.clientHeight
+      this.height = (allHeight - 298) < 500 ? 500 : (allHeight - 298)
       // 附带防抖的监听适配模式屏幕缩放
       window.onresize = () => {
         clearTimeout(this.timeout)

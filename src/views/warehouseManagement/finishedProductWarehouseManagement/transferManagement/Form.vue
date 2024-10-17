@@ -712,6 +712,7 @@ export default {
       })
     },
     init(id, btnType,approvalFlag, warehouseCode) {
+      console.log(warehouseCode);
       // this.visible = true
       this.formLoading = true
       this.approvalFlag = approvalFlag

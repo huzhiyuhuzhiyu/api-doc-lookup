@@ -2,7 +2,7 @@
   <div class="JNPF-common-layout">
 
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <div class="JNPF-common-layout-center JNPF-flex-main">
+      <div class="JNPF-common-layout-center JNPF-flex-main"  v-if="!formVisible">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
             <template v-for="item in searchList">

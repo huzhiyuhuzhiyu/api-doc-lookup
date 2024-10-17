@@ -87,7 +87,7 @@
             <el-table-column prop="remark" label="备注" min-width="120" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
-            <el-table-column label="操作" width="180" fixed="right">
+            <el-table-column label="操作" width="100" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text"
                   @click.native="handleUserRelation(scope.row.purchaseOrderId, 'look')">
@@ -154,6 +154,7 @@ export default {
 
       orderForm: {
         orderType: 'external_process',
+        receiptQueryFlag: 1,
         deliveryEndDate: '',
         deliveryStartDate: '',
         pageNum: 1,
@@ -362,7 +363,7 @@ export default {
         prop == 'cooperativePartnerName' ||
         prop === 'createTime' ||
         prop === 'createByName' ||
-        prop === 'waitReceiptNum' 
+        prop === 'waitReceiptNum'
       ) {
         newProp = prop
       } else {

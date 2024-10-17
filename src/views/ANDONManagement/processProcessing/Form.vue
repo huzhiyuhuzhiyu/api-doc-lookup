@@ -50,7 +50,12 @@ import Process from '@/components/AbnormalProcess/Preview'
 const Base64 = require('js-base64').Base64
 export default {
   components: { Process ,ExceptForm},
-  props:['flowType'],
+  props:{
+    flowType:{
+      type: 'String',
+      default:'2'
+    }
+  },
   data() {
     return {
       visible: false,

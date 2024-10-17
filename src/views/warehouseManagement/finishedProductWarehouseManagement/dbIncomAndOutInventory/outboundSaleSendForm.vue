@@ -128,7 +128,7 @@
                         </el-table-column>
                         <el-table-column prop="price" label="单价(含税)" width="120" :key="110"></el-table-column>
                         <el-table-column prop="taxRates" label="税率" width="100" :key="171"></el-table-column>
-                        <el-table-column prop="taxAmount" label="税额" width="100" :key="1721"></el-table-column>
+                        <el-table-column prop="taxAmount" label="税额" width="120" :key="1721"></el-table-column>
                         <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column>
 
 
@@ -764,7 +764,9 @@ export default {
           res.data.spaceLines.forEach(item => {
             this.$set(item, 'productDrawingNo', item.drawingNo)
             this.$set(item, 'price', item.costPrice)
+            item.taxRates= item.taxRate+"%"
           });
+          
           this.dataForm = res.data.stockMove
           this.productData = res.data.spaceLines
         })

@@ -123,7 +123,7 @@
                     <el-table-column prop="purchaseQuantity" label="订单数量" width="120" sortable="custom" />
                     <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
                       sortable="custom" />
-                    <el-table-column prop="receivedQuantity" label="收货数量" width="120" v-if="!dataForm.exchangeGoodsFlag"
+                    <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
                         <span class="required">*</span>

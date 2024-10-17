@@ -1,6 +1,6 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-center JNPF-flex-main">
+    <div class="JNPF-common-layout-center JNPF-flex-main"  v-if="!formVisible">
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="组装需求" name="assemble">
           <div class="JNPF-common-layout-center JNPF-flex-main">

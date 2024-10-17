@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
 
-    <div class="JNPF-common-layout-center JNPF-flex-main">
+    <div class="JNPF-common-layout-center JNPF-flex-main"  v-if="!formVisible">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
@@ -109,7 +109,7 @@
 <script>
 import { ordershengchanList, addOrderNum } from '@/api/productOrdes/index.js'
 import { UserListAll, } from '@/api/permission/user'
-import Form from '@/views/productionManagement/ringPlan/ringTaskManagement/Form.vue'
+import Form from '@/views/productionManagement/ringPlan/ringTaskManagement/taskFormCopy.vue'
 import PickForm from '../ringPickManagement/Form.vue'
 import { getProductionPlanList } from '@/api/productionManagement/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'

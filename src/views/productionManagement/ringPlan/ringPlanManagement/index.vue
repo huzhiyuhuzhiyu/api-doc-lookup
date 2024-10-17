@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
 
-    <div class="JNPF-common-layout-center JNPF-flex-main">
+    <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
@@ -96,11 +96,12 @@
 
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" />
-            <el-table-column label="操作" width="100" fixed="right">
+            <el-table-column label="操作" width="140" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text" :disabled="scope.row.orderType == 'rework'"
                   @click="addition(scope.row)">编排</el-button>
-
+                  <el-button size="mini" type="text" :disabled="scope.row.orderType == 'rework'"
+                  @click="planSchedule(scope.row)">计划进度</el-button>
               </template>
             </el-table-column>
           </JNPF-table>
@@ -116,6 +117,7 @@
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <PlanSchedule v-if="planScheduleVisible" ref="planScheduleForm" @refreshDataList="initData" @close="closeForm" />
   </div>
 </template>
 
@@ -126,14 +128,16 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import { getProductionPlanList } from '@/api/productionManagement/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { excelExport } from '@/api/basicData/index'
+import PlanSchedule from './planSchedule.vue'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'assemblyplanManagement',
-  components: { Form, SuperQuery, ExportForm },
+  components: { Form, SuperQuery, ExportForm,PlanSchedule },
   data() {
     return {
+      planScheduleVisible:false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -268,6 +272,12 @@ export default {
   mounted() { 
   },
   methods: {
+    planSchedule(row){
+      this.planScheduleVisible=true
+      this.$nextTick(()=>{
+        this.$refs.planScheduleForm.init(row)
+      })
+    },
     dispurchaseData(row) {
       return !row.selectFlag;
     },
@@ -340,6 +350,7 @@ export default {
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
+      this.planScheduleVisible=false
       this.selectArr = []
       this.search('super')        
 

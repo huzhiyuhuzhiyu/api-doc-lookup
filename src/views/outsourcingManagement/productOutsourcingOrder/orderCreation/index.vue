@@ -253,6 +253,21 @@
               :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false"
               multiple />
             <source-area v-if="sourceVisibled" ref="sourceRef" @confirm="handlerConfirm"></source-area>
+            <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+              :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center"
+              width="500px">
+              <div>
+                <img src="@/assets/images/importSuccess.gif" alt="" style="width:100px" />
+                <span class="import_t">{{ submitmethodsTitle }}啦！</span>
+                <span class="import_b">您还可以进行如下操作：</span>
+              </div>
+
+              <span slot="footer" class="dialog-footer">
+                <el-button @click="goBom">返回列表</el-button>
+                <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()">{{ btnText }}</el-button>
+                <el-button v-else type="primary" @click="continueAdd()">{{ btnText }}</el-button>
+              </span>
+            </el-dialog>
           </div>
         </div>
       </div>
@@ -416,7 +431,15 @@ export default {
       },
       getProductList, // 产品选择弹出框树状列表请求api
       ProductMethodArr: [
-        { label: '产品分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '' } }
+        {
+          label: '产品分类',
+          classAttribute: '',
+          method: getcategoryTree,
+          requestObj: {
+            classAttribute: '',
+            type: 'material'
+          }
+        }
         // { label: "其他分类", classAttribute: "other", method: getcategoryTree, requestObj: { classAttribute: "other" } }
       ], // 产品选择弹出框树状列表
       ProductListRequestObj: {
@@ -607,7 +630,9 @@ export default {
       flowData: {},
       approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime: 0
+      endTime: 0,
+      tipsvisible: false,
+      btnText: '继续新建'
     }
   },
   computed: {
@@ -653,7 +678,7 @@ export default {
       // immediate:true,
       handler: function (newVal, oldVal) {
         newVal.forEach((item) => {
-          if (item.price && item.taxRate || item.price && item.taxRate == 0) {
+          if ((item.price && item.taxRate) || (item.price && item.taxRate == 0)) {
             item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
           }
           if (item.purchaseQuantity && item.excludingTaxPrice) {
@@ -698,7 +723,7 @@ export default {
           item.purchaseQuantity = item.inventoryQuantity // 数量
           item.price = item.price // 含税单价
           item.totalAmount = item.totalAmount // 金额(含税)
-          item.taxRate = item.taxRate // 税率
+          item.taxRate = Number(item.taxRate)  // 税率
           item.excludingTaxPrice = item.excludingTaxPrice // 不含税单价
           item.taxAmount = item.taxAmount // 税额
           item.excludingTaxAmount = item.excludingTaxAmount // 金额(不含税)
@@ -743,6 +768,24 @@ export default {
         this.dataForm.orderNo = data.number
         this.$set(this.dataForm, 'orderNo', data.number)
       } catch (error) { }
+    },
+    // 继续修改
+    continueEdit() {
+      this.init(this.oldId, this.oldType)
+    },
+    // 继续新增
+    continueAdd() {
+      this.init('', 'add')
+      this.dataForm = {}
+      this.linesList = []
+      this.datafilelist = []
+      this.tipsvisible = false
+      this.btnLoading = false
+    },
+    goBom() {
+      this.$router.push({
+        path: '/outsourcingManagement/productOutsourcingOrder/orderList'
+      })
     },
     // 产品组件回调
     addth(id, data) {
@@ -1211,39 +1254,7 @@ export default {
                   insertOutOrder(_data)
                     .then((res) => {
                       if (res.msg === 'Success') res.msg = '新建成功'
-                      if (!this.dialogTitle) {
-                        this.$message({
-                          message: msg,
-                          type: 'success',
-                          duration: 1000,
-                          onClose: () => {
-                            this.btnLoading = false
-                            this.datafilelist = []
-                            this.dataFormTwo.data = []
-                            this.dataForm = {
-                              applicationReason: '',
-                              approvalCompletionDate: '',
-                              // approvalStatus: "",
-                              documentStatus: '',
-                              id: '',
-                              orderNo: '',
-                              reasonRejection: '',
-                              submitDate: ''
-                            }
-                            this.workVisible = false
-                          }
-                        })
-                        return
-                      }
-                      this.$message({
-                        message: msg,
-                        type: 'success',
-                        duration: 1000,
-                        onClose: () => {
-                          this.btnLoading = false
-                          this.$emit('close', true)
-                        }
-                      })
+                      this.tipsvisible = true
                     })
                     .catch(() => {
                       this.btnLoading = false
@@ -1401,5 +1412,22 @@ export default {
 
 ::v-deep .el-tabs__header {
   margin-bottom: 5px;
+}
+
+.import_t {
+  font-size: 22px;
+  color: rgb(103, 194, 58);
+  vertical-align: top;
+  margin-top: 40px;
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.import_b {
+  font-size: 18px;
+  /* color: #67c23a; */
+  vertical-align: top;
+  margin-top: 43px;
+  display: inline-block;
 }
 </style>

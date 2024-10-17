@@ -38,7 +38,7 @@
                         v-model="chooseIdObj.chooseProcessId"
                         v-if="activeStep === 2"/>
                     <SubmitFile :type="type" @close="submitFileClose" ref="submitFile" :choose-obj="chooseRowObj" v-if="activeStep === 3" />
-                    <FinishSubmit @recreate="recreateHandler" v-if="activeStep === 4" />
+                    <FinishSubmit @left-btn-click="recreateHandler" v-if="activeStep === 4" />
                 </el-col>
             </el-row>
 

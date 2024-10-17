@@ -88,7 +88,7 @@ export default {
                 </el-tooltip>
             </div>
         </div>
-        <el-empty v-if="list.length === 0" :description="emptyDescription"></el-empty>
+        <el-empty class="pointer" @click.native="$emit('empty-lick')" v-if="list.length === 0" :description="emptyDescription"></el-empty>
     </div>
 </template>
 

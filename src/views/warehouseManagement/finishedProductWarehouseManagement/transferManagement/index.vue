@@ -2,7 +2,7 @@
   <!-- 销售订单创建 -->
   <div class="JNPF-common-layout">
 
-    <div class="JNPF-common-layout-center JNPF-flex-main">
+    <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
@@ -74,6 +74,23 @@
               <template slot-scope="scope">
                 <el-tag type="warning" v-if="scope.row.documentStatus == 'draft'">草稿</el-tag>
                 <el-tag type="success" v-else-if="scope.row.documentStatus == 'submit'">提交</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center"
+              v-if="showAppCodeFlag">
+              <template slot-scope="scope">
+                <div v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'">
+                  <el-tag>审批中</el-tag>
+                </div>
+                <div v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus == 'submit'">
+                  <el-tag type="success">审批通过</el-tag>
+                </div>
+                <div v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus == 'submit'">
+                  <el-tag type="danger">审批拒绝</el-tag>
+                </div>
+                <div v-else-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus == 'submit'">
+                  <el-tag type="warning">审批撤回</el-tag>
+                </div>
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
@@ -224,8 +241,14 @@ export default {
 
 
 
-  created() {
+ async created() {
    this.getclassAttributeList()
+   const res = await this.jnpf.getBusInfo('b001')
+    if (res) {
+      this.showAppCodeFlag = res.enabledMark
+    } else {
+      this.showAppCodeFlag = false
+    }
   },
   methods: {
     getclassAttributeList() {
@@ -314,6 +337,8 @@ export default {
     initData() {
       this.listLoading = true
       this.form.classAttributeList=this.classAttributeList
+      this.form.approvalStatus='ok'
+
       getTransferList(this.form).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total

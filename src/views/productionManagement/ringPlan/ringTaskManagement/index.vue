@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
 
-    <div class="JNPF-common-layout-center JNPF-flex-main">
+    <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
@@ -70,7 +70,7 @@
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'all')">{{
+                <el-link type="primary" @click.native="viewDetailFun(scope.row.id)">{{
                   scope.row.orderNo
                 }}</el-link>
               </template>
@@ -135,10 +135,12 @@
                     <el-dropdown-item @click.native="updataDispatch(scope.row.id)" v-if="scope.row.taskMethod!='not_appoint'">
                       改派
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'all')">
+                    <!-- <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'all')">
+                      查看详情
+                    </el-dropdown-item> -->
+                    <el-dropdown-item @click.native="viewDetailFun(scope.row.id)">
                       查看详情
                     </el-dropdown-item>
-
                   </el-dropdown-menu>
                 </el-dropdown>
               </template>
@@ -186,6 +188,7 @@
     <ReworkForm v-if="reworkVisible" ref="reworkForm" @refreshDataList="initData" @close="closeForm"></ReworkForm>
     <BatchDispatchForm  v-if="BatchDispatchVisible" ref="BatchDispatchForm" @refreshDataList="initData" @close="closeForm"></BatchDispatchForm>
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm" ref="printForm" :fullName="fullName" />
+    <TaskForm v-if="taskFormVisible" ref="taskForm" @refreshDataList="initData" @close="closeForm"></TaskForm>
     <!-- 打印流转卡弹窗选择工单数据 -->
     <el-dialog title="工单信息" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="workOrderVisible"
       lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
@@ -233,6 +236,7 @@ import Form from './Form'
 import BatchDispatchForm from './batchDispatchForm.vue'
 import ReworkForm from './reworkForm.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import TaskForm from './taskFormCopy.vue'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
@@ -241,9 +245,10 @@ import PrintBrowse from '@/components/PrintBrowse'
 import { getPrintList } from '@/api/system/printDev'
 export default {
   name: 'assemblyTaskManagement',
-  components: { SuperQuery, Form, ReworkForm,BatchDispatchForm ,PrintBrowse},
+  components: { SuperQuery, Form, ReworkForm,BatchDispatchForm ,PrintBrowse,TaskForm},
   data() {
     return {
+      taskFormVisible: false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -487,6 +492,12 @@ export default {
     this.getProductClassFun()
   },
   methods: {
+    viewDetailFun(id) {
+      this.taskFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.taskForm.init(id)
+      })
+    },
     // 新建返工
     addTaskFun(id, type) {
       this.reworkVisible = true
@@ -648,6 +659,7 @@ export default {
       this.formVisible = false
       this.reworkVisible = false
       this.BatchDispatchVisible=false
+      this.taskFormVisible = false
       this.search('basic')
     },
     initData() {

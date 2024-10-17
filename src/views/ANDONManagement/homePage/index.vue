@@ -1,6 +1,6 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-center">
+    <div v-if="!formVisible" class="JNPF-common-layout-center">
       <div class="card-list">
         <template v-for="item in cardList">
           <el-card class="card-item" :key="item.value" @click.native="goDeal(item)">
@@ -71,7 +71,7 @@
     <ExceptForm v-if="sourceDialog" ref="ExceptForm" @close="refresh" :sourceListData="exceptionData" :tableItems="tableItems" />
     <el-dialog title="取消" :close-on-click-modal="false" :visible.sync="visible" class="JNPF-dialog JNPF-dialog_center"
       lock-scroll append-to-body width='600px'>
-      <el-form ref="dealForm" :model="dealForm" label-width="120px">
+      <el-form ref="dealForm" :model="dealForm" label-width="120px" label-position="top">
         <el-form-item label="取消描述：" prop="processDescription">
           <el-input v-model="dealForm.processDescription" placeholder="请输入取消描述" type="textarea" :rows="4" />
         </el-form-item>
@@ -338,9 +338,11 @@ export default {
 </script>
 <style lang="scss" scoped>
 .card-list {
-  display: flex;
-  flex-wrap: wrap;
-  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  padding: 5px;
+  grid-gap: 2px;
+  overflow-x: auto;
   background-color: #fff;
 
   .card-item {
@@ -355,7 +357,7 @@ export default {
       display: flex;
       flex-direction: column;
       height: 100%;
-      min-width: 271px;
+      min-width: 260px;
       box-sizing: border-box;
       .item-head {
         font-style: italic;

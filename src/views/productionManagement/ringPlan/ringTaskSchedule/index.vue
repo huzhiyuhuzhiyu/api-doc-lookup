@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
 
-    <div class="JNPF-common-layout-center JNPF-flex-main">
+    <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
@@ -36,7 +36,7 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main"  v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
             </div>
@@ -55,7 +55,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" v-loading="listLoading" :data="tableData"
+          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable"   :data="tableData"  v-if="showFlag"
             :fixedNO="true" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="任务单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
@@ -64,7 +64,7 @@
                 }}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="processSchedule" label="工单进度条" min-width="980">
+            <el-table-column prop="processSchedule" label="工单进度条"   :width="maxWidth">
               <template slot-scope="scope">
                 <div v-for="(item, index) in scope.row.processInfoList" :key="index"
                   style="width:100px;display: inline-block;">
@@ -123,11 +123,12 @@
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" />
-            <el-table-column label="操作" width="120" fixed="right">
+            <el-table-column label="操作" width="180" fixed="right">
 
               <template slot-scope="scope">
-
-                <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'all')">查看详情</el-button>
+ 
+                <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'all')">任务详情</el-button>
+                <el-button size="mini" type="text" @click="viewTaskSchedule(scope.row.id)">进度详情</el-button>
               </template>
             </el-table-column>
           </JNPF-table>
@@ -139,6 +140,7 @@
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
     <!-- 高级查询 -->
+    <TaskSchedule v-if="taskScheduleVisible" ref="taskScheduleForm" @refreshDataList="initData" @close="closeForm" />
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
@@ -148,16 +150,21 @@
 import { ordershengchanList, addOrderNum } from '@/api/productOrdes/index.js'
 import { prodOrderClose } from '@/api/productOrdes/finishedProductOrders.js'
 import { UserListAll, } from '@/api/permission/user'
-import Form from '../ringTaskManagement/Form.vue'
+import Form from '../ringTaskManagement/taskFormCopy.vue' 
+
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
+import TaskSchedule from './taskSchedule.vue'
 export default {
   name: 'assemblyTaskManagement',
-  components: { SuperQuery, Form },
+  components: { SuperQuery, Form,TaskSchedule },
   data() {
     return {
+      taskScheduleVisible:false,
+      maxWidth: "",
+      showFlag:false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -181,7 +188,7 @@ export default {
       btnLoading: false,
       title: "更多查询",
       tableData: [],
-      listLoading: false,
+      listLoading: true, 
       detailFlag: false,
       orderForm: {},
       orderFormlist: {
@@ -383,6 +390,12 @@ export default {
     this.getProductClassFun()
   },
   methods: {
+    viewTaskSchedule(id) {
+      this.taskScheduleVisible = true
+      this.$nextTick(() => {
+        this.$refs.taskScheduleForm.init(id)
+      })
+    },
     // 新建返工
     addTaskFun(id, type) {
       this.reworkVisible = true
@@ -541,11 +554,13 @@ export default {
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
+      this.taskScheduleVisible = false
       this.reworkVisible = false
       this.search('basic')
     },
     initData() {
       this.listLoading = true
+      this.showFlag = false
 
    
       ordershengchanList(this.orderForm).then(res => {
@@ -573,6 +588,14 @@ export default {
           }
         });
         console.log("表格数据", res);
+        let longestProcessInfo = res.data.records.reduce((longest, current) => {
+          return current.processInfoList.length > longest.processInfoList.length ? current : longest;
+        }, res.data.records[0]);
+        this.maxWidth = longestProcessInfo.processInfoList.length * 100 + 50
+        this.showFlag = true
+        setTimeout(() => {
+          this.listLoading = false
+        }, 500);
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false

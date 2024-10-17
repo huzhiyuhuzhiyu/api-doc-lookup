@@ -10,12 +10,27 @@ export default {
         setTimeout(() => {
             this.reCreateShow = true
         }, 2000)
+    },
+    props:{
+        leftBtnText:{
+            type: String,
+            default: '再传一个'
+        },
+        rightBtnText:{
+            type: String,
+            default: '前往编辑'
+        },
+        background:{
+            type: String,
+            default: '#fff'
+        }
+
     }
 }
 </script>
 
 <template>
-    <div class="height-full width-full flex-row justify-center align-center">
+    <div class="height-full width-full flex-row justify-center align-center" :style="{background:background} ">
         <div class="background">
             <input checked type="checkbox" id="button">
             <!--        <label for="button" class="button">-->
@@ -28,8 +43,8 @@ export default {
                 <div v-if="reCreateShow" class="flex-column justify-center align-center">
                     <i class="el-icon el-icon-circle-check" style="font-size: 47px;color: #0eac5c"></i>
                     <div  style="margin-top: 10px">
-                        <el-button type="primary" @click="$emit('recreate')"  >再传一个</el-button>
-                        <el-button type="success" style="margin-left: 10px" @click="$emit('goEdit')"  >前往编辑</el-button>
+                        <el-button type="primary" @click="$emit('left-btn-click')">{{ leftBtnText }}</el-button>
+                        <el-button type="success" style="margin-left: 10px" @click="$emit('right-btn-click')">{{ rightBtnText }}</el-button>
                     </div>
 
                 </div>

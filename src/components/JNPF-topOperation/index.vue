@@ -59,7 +59,8 @@ export default {
     refresh() {
       this.$emit('refresh')
     },
-    add() {
+    add(event) {
+      event.target.blur();
       this.$emit('add')
     }
   }

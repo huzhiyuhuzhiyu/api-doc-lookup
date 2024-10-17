@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
 
-    <div class="JNPF-common-layout-center JNPF-flex-main">
+    <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
@@ -120,7 +120,7 @@
 
 <script>
 import { ordershengchanList, prodOrderClose } from '@/api/productOrdes/index.js'
-import Form from '../ringTaskManagement/Form.vue'
+import Form from '../ringTaskManagement/taskFormCopy.vue'
 // import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {

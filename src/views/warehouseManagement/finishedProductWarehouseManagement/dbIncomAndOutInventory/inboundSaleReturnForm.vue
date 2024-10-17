@@ -827,7 +827,9 @@ export default {
           res.data.spaceLines.forEach(item => {
             this.$set(item, 'productDrawingNo', item.drawingNo)
             this.$set(item, 'price', item.costPrice)
+            item.taxRates= item.taxRate+"%"
           });
+           
           this.dataForm = res.data.stockMove
           this.productData = res.data.spaceLines
         })

@@ -2,7 +2,7 @@
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
 
-      <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']">
+      <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']"  v-if="!approvalFlag">
         <el-page-header @back="goBack" :content="title" />
         <div class="options">
           <el-button v-if="btnType !== 'look'" type="success" :loading="btnLoading"
@@ -17,113 +17,226 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="formLoading" ref="main"
               :element-loading-text="loadingText">
-              <el-collapse v-model="activeNames">
-                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                  <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
-                    <el-row :gutter="30" class="custom-row">
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="单号" prop="orderNo">
-                          <el-input v-model="dataForm.orderNo" placeholder="请输入单号"
-                            :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false"
-                            maxlength="300" />
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="调拨日期" prop="pickingDate">
-                          <el-date-picker v-model="dataForm.pickingDate" type="date" value-format="yyyy-MM-dd"
-                            style="width: 100%;" placeholder="请选择调拨日期" :disabled="btnType == 'look' ? true : false">
-                          </el-date-picker>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="12" :xs="24">
-                        <el-form-item label="备注" prop="remark">
-                          <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" :rows="2"
-                            maxlength="200" />
-                        </el-form-item>
-                      </el-col>
-                    </el-row>
-                  </el-form>
-                </el-collapse-item>
-                <el-collapse-item title="产品信息" name="productInfo">
-                  <div>
-                    <el-button type="text" style="margin-right:8px;font-size:14px!important"
-                      :disabled="btnType == 'look' ? true : false" @click="scanFun()"><i
-                        class="iconfont icon-saoma"></i>扫码录入</el-button>|
-                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                      icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
-                      @click="openSeleceProductDialog()">选择产品</el-button>|
-                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                      :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
-                      @click="batchDelete">批量删除</el-button>
-                  </div>
+              <el-tabs v-model="activeName" v-if="!approvalFlag && dataForm.approvalFlag" class="JNPF-el_tabs">
+                <el-tab-pane label="基础信息" name="orderInfo" class="orderInfo">
+                  <el-collapse v-model="activeNames">
+                    <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                      <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+                        <el-row :gutter="30" class="custom-row">
+                          <el-col :sm="6" :xs="24">
+                            <el-form-item label="单号" prop="orderNo">
+                              <el-input v-model="dataForm.orderNo" placeholder="请输入单号"
+                                :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false"
+                                maxlength="300" />
+                            </el-form-item>
+                          </el-col>
+                          <el-col :sm="6" :xs="24">
+                            <el-form-item label="调拨日期" prop="pickingDate">
+                              <el-date-picker v-model="dataForm.pickingDate" type="date" value-format="yyyy-MM-dd"
+                                style="width: 100%;" placeholder="请选择调拨日期" :disabled="btnType == 'look' ? true : false">
+                              </el-date-picker>
+                            </el-form-item>
+                          </el-col>
+                          <el-col :sm="12" :xs="24">
+                            <el-form-item label="备注" prop="remark">
+                              <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" :rows="2"
+                                maxlength="200" />
+                            </el-form-item>
+                          </el-col>
+                        </el-row>
+                      </el-form>
+                    </el-collapse-item>
+                    <el-collapse-item title="产品信息" name="productInfo">
+                      <div>
+                        <el-button type="text" style="margin-right:8px;font-size:14px!important"
+                          :disabled="btnType == 'look' ? true : false" @click="scanFun()"><i
+                            class="iconfont icon-saoma"></i>扫码录入</el-button>|
+                        <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                          icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
+                          @click="openSeleceProductDialog()">选择产品</el-button>|
+                        <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                          :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
+                          @click="batchDelete">批量删除</el-button>
+                      </div>
 
-                  <JNPF-table ref="product" :data="productData" :fixedNO="true" hasC
-                    @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
-                    <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
-                    <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
-                    <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"></el-table-column>
-                    <el-table-column prop="mainUnit" label="单位" width="80" :key="88" />
-                    <el-table-column prop="inventoryQuantity" label="批次库存数量" width="180" :key="8"
-                      v-if="btnType != 'look'" />
-                    <el-table-column prop="num" label="调拨数量" width="140" :key="8088">
-                      <template slot="header">
-                        <span class="required">*</span>调拨数量
-                      </template>
-                      <template slot-scope="scope">
-                        <el-input v-model="scope.row.num" placeholder="调拨数量" :disabled="btnType == 'look'"
-                          oninput="value=value.replace(/^(0+)|[^\d]+/g,'')">
-                        </el-input>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="inWarehouseName" label="目标仓库" width="160" :key="1888">
-                      <template slot="header">
-                        <span class="required">*</span>目标仓库
-                      </template>
-                      <template slot-scope="scope">
-                        <ComSelect-list :requestObj="{ type: 'normal' }" :dialogTitle="'选择仓库'"
-                          :isdisabled="btnType == 'look'" v-model="scope.row.inWarehouseName" :method="getWarehouseList"
-                          placeholder="请选择仓库" :paramsObj="{ index: scope.$index }"
-                          @change="changeWarehousex"></ComSelect-list>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="inShelfSpaceName" label="目标库位" width="160" :key="10112"
-                      v-if="allocationFlag">
-                      <template slot="header">
-                        <span class="required">*</span>目标库位
-                      </template>
-                      <template slot-scope="scope">
-                        <el-input v-model="scope.row.inShelfSpaceName" readonly :disabled="btnType == 'look'"
-                          @focus="openSeleceWareDialog(scope.row, scope.$index)" placeholder="库位">
-                        </el-input>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="warehouseName" label="原仓库" width="160" :key="889"></el-table-column>
-                    <el-table-column prop="shelfSpaceName" label="原库位" width="160" :key="888"></el-table-column>
-                    <el-table-column prop="standardValue" label="规值" width="120" :key="211"> </el-table-column>
-                    <el-table-column prop="colour" label="颜色" width="120" :key="216"> </el-table-column>
-                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="2111"></el-table-column>
-                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123"></el-table-column>
-                    <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"></el-table-column>
-                    <el-table-column prop="oil" label="油脂" width="120" :key="61"></el-table-column>
-                    <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"></el-table-column>
-                    <el-table-column prop="clearance" label="游隙" width="120" :key="100"></el-table-column>
-                    <el-table-column prop="aperture" label="孔径" width="120" :key="200"></el-table-column>
-                    <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="900"></el-table-column>
-                    <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="101"></el-table-column>
-                    <el-table-column prop="processName" label="工序" width="120" :key="105"></el-table-column>
+                      <JNPF-table ref="product" :data="productData" :fixedNO="true" hasC
+                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
+                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
+                        <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
+                        <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"></el-table-column>
+                        <el-table-column prop="mainUnit" label="单位" width="80" :key="88" />
+                        <el-table-column prop="inventoryQuantity" label="批次库存数量" width="180" :key="8"
+                          v-if="btnType != 'look'" />
+                        <el-table-column prop="num" label="调拨数量" width="140" :key="8088">
+                          <template slot="header">
+                            <span class="required">*</span>调拨数量
+                          </template>
+                          <template slot-scope="scope">
+                            <el-input v-model="scope.row.num" placeholder="调拨数量" :disabled="btnType == 'look'"
+                              oninput="value=value.replace(/^(0+)|[^\d]+/g,'')">
+                            </el-input>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="inWarehouseName" label="目标仓库" width="160" :key="1888">
+                          <template slot="header">
+                            <span class="required">*</span>目标仓库
+                          </template>
+                          <template slot-scope="scope">
+                            <ComSelect-list :requestObj="{ type: 'normal' }" :dialogTitle="'选择仓库'"
+                              :isdisabled="btnType == 'look'" v-model="scope.row.inWarehouseName" :method="getWarehouseList"
+                              placeholder="请选择仓库" :paramsObj="{ index: scope.$index }"
+                              @change="changeWarehousex"></ComSelect-list>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="inShelfSpaceName" label="目标库位" width="160" :key="10112"
+                          v-if="allocationFlag">
+                          <template slot="header">
+                            <span class="required">*</span>目标库位
+                          </template>
+                          <template slot-scope="scope">
+                            <el-input v-model="scope.row.inShelfSpaceName" readonly :disabled="btnType == 'look'"
+                              @focus="openSeleceWareDialog(scope.row, scope.$index)" placeholder="库位">
+                            </el-input>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="warehouseName" label="原仓库" width="160" :key="889"></el-table-column>
+                        <el-table-column prop="shelfSpaceName" label="原库位" width="160" :key="888"></el-table-column>
+                        <el-table-column prop="standardValue" label="规值" width="120" :key="211"> </el-table-column>
+                        <el-table-column prop="colour" label="颜色" width="120" :key="216"> </el-table-column>
+                        <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="2111"></el-table-column>
+                        <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123"></el-table-column>
+                        <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"></el-table-column>
+                        <el-table-column prop="oil" label="油脂" width="120" :key="61"></el-table-column>
+                        <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"></el-table-column>
+                        <el-table-column prop="clearance" label="游隙" width="120" :key="100"></el-table-column>
+                        <el-table-column prop="aperture" label="孔径" width="120" :key="200"></el-table-column>
+                        <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="900"></el-table-column>
+                        <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="101"></el-table-column>
+                        <el-table-column prop="processName" label="工序" width="120" :key="105"></el-table-column>
 
-                    <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
-                    <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'">
-                      <template slot-scope="scope">
-                        <el-button type="text" @click="copyFun(scope.row, scope.$index)" size="mini">复制</el-button>
-                      </template>
-                    </el-table-column>
-                  </JNPF-table>
+                        <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
+                        <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'">
+                          <template slot-scope="scope">
+                            <el-button type="text" @click="copyFun(scope.row, scope.$index)" size="mini">复制</el-button>
+                          </template>
+                        </el-table-column>
+                      </JNPF-table>
 
-                </el-collapse-item>
+                    </el-collapse-item>                  
+                  </el-collapse>
+                </el-tab-pane>
+                <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
+                  <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
+                </el-tab-pane>
+                <el-tab-pane v-if="btnType == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
+                  <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
+                </el-tab-pane>
+              </el-tabs>
+              <el-collapse v-model="activeNames" v-else>
+                    <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                      <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+                        <el-row :gutter="30" class="custom-row">
+                          <el-col :sm="6" :xs="24">
+                            <el-form-item label="单号" prop="orderNo">
+                              <el-input v-model="dataForm.orderNo" placeholder="请输入单号"
+                                :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false"
+                                maxlength="300" />
+                            </el-form-item>
+                          </el-col>
+                          <el-col :sm="6" :xs="24">
+                            <el-form-item label="调拨日期" prop="pickingDate">
+                              <el-date-picker v-model="dataForm.pickingDate" type="date" value-format="yyyy-MM-dd"
+                                style="width: 100%;" placeholder="请选择调拨日期" :disabled="btnType == 'look' ? true : false">
+                              </el-date-picker>
+                            </el-form-item>
+                          </el-col>
+                          <el-col :sm="12" :xs="24">
+                            <el-form-item label="备注" prop="remark">
+                              <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" :rows="2"
+                                maxlength="200" />
+                            </el-form-item>
+                          </el-col>
+                        </el-row>
+                      </el-form>
+                    </el-collapse-item>
+                    <el-collapse-item title="产品信息" name="productInfo">
+                      <div>
+                        <el-button type="text" style="margin-right:8px;font-size:14px!important"
+                          :disabled="btnType == 'look' ? true : false" @click="scanFun()"><i
+                            class="iconfont icon-saoma"></i>扫码录入</el-button>|
+                        <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                          icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
+                          @click="openSeleceProductDialog()">选择产品</el-button>|
+                        <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                          :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
+                          @click="batchDelete">批量删除</el-button>
+                      </div>
 
-              </el-collapse>
+                      <JNPF-table ref="product" :data="productData" :fixedNO="true" hasC
+                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
+                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
+                        <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
+                        <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"></el-table-column>
+                        <el-table-column prop="mainUnit" label="单位" width="80" :key="88" />
+                        <el-table-column prop="inventoryQuantity" label="批次库存数量" width="180" :key="8"
+                          v-if="btnType != 'look'" />
+                        <el-table-column prop="num" label="调拨数量" width="140" :key="8088">
+                          <template slot="header">
+                            <span class="required">*</span>调拨数量
+                          </template>
+                          <template slot-scope="scope">
+                            <el-input v-model="scope.row.num" placeholder="调拨数量" :disabled="btnType == 'look'"
+                              oninput="value=value.replace(/^(0+)|[^\d]+/g,'')">
+                            </el-input>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="inWarehouseName" label="目标仓库" width="160" :key="1888">
+                          <template slot="header">
+                            <span class="required">*</span>目标仓库
+                          </template>
+                          <template slot-scope="scope">
+                            <ComSelect-list :requestObj="{ type: 'normal' }" :dialogTitle="'选择仓库'"
+                              :isdisabled="btnType == 'look'" v-model="scope.row.inWarehouseName" :method="getWarehouseList"
+                              placeholder="请选择仓库" :paramsObj="{ index: scope.$index }"
+                              @change="changeWarehousex"></ComSelect-list>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="inShelfSpaceName" label="目标库位" width="160" :key="10112"
+                          v-if="allocationFlag">
+                          <template slot="header">
+                            <span class="required">*</span>目标库位
+                          </template>
+                          <template slot-scope="scope">
+                            <el-input v-model="scope.row.inShelfSpaceName" readonly :disabled="btnType == 'look'"
+                              @focus="openSeleceWareDialog(scope.row, scope.$index)" placeholder="库位">
+                            </el-input>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="warehouseName" label="原仓库" width="160" :key="889"></el-table-column>
+                        <el-table-column prop="shelfSpaceName" label="原库位" width="160" :key="888"></el-table-column>
+                        <el-table-column prop="standardValue" label="规值" width="120" :key="211"> </el-table-column>
+                        <el-table-column prop="colour" label="颜色" width="120" :key="216"> </el-table-column>
+                        <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="2111"></el-table-column>
+                        <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123"></el-table-column>
+                        <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"></el-table-column>
+                        <el-table-column prop="oil" label="油脂" width="120" :key="61"></el-table-column>
+                        <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"></el-table-column>
+                        <el-table-column prop="clearance" label="游隙" width="120" :key="100"></el-table-column>
+                        <el-table-column prop="aperture" label="孔径" width="120" :key="200"></el-table-column>
+                        <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="900"></el-table-column>
+                        <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="101"></el-table-column>
+                        <el-table-column prop="processName" label="工序" width="120" :key="105"></el-table-column>
 
+                        <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
+                        <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'">
+                          <template slot-scope="scope">
+                            <el-button type="text" @click="copyFun(scope.row, scope.$index)" size="mini">复制</el-button>
+                          </template>
+                        </el-table-column>
+                      </JNPF-table>
+
+                    </el-collapse-item>                  
+                  </el-collapse>
             </div>
           </div>
         </div>
@@ -260,25 +373,19 @@
 </template>
 
 <script>
-import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
 import { getWarehouseList,getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
-import { getCooperativeData, deleteCooperative, excelExport } from '@/api/basicData/index'
-import { getcategoryTrees, getcooperativeProduct, getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
-import { getcategoryTree as productTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getProductList } from '@/api/masterDataManagement/productManage'
 import { addTransferData, updateTransferData, detailTransferData, TransferBarCode } from '@/api/warehouseManagement/transferManagement'
 import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
 
-import {
-  getbimProductAttributesList, getbimProductAttributes
-} from "@/api/masterDataManagement/index";
-import { detailByBarCodes } from '@/api/warehouseManagement/packingList'
-// import { addInboundOutbound} from '@/api/warehouseManagement/inboundAndOutbounds.js'
-import { getLocationList } from '@/api/warehouseManagement/inventory' // 库位分类和列表 
+import Process from '@/components/Process/Preview'
+import busFlow from '@/mixins/generator/busFlow';
+import recordList from '@/views/workFlow/components/RecordList.vue'
+import flowMixin from '@/mixins/generator/flowMixin'
 import WareHouseForm from './wareHouseForm.vue'
 export default {
-  components: { WareHouseForm },
-
+  components: { WareHouseForm , Process, recordList },
+  mixins: [flowMixin,busFlow],
   data() {
     return {
       scanDialog: false,
@@ -289,14 +396,15 @@ export default {
         children: 'childrenList',
         label: 'name'
       },
-
+      activeName:'orderInfo',
       dataForm: {
         orderNo: "",
         pickingDate: "",
         remark: "",
         id: "",
         documentStatus: "",
-        classAttribute: ""
+        classAttribute: "",
+        approvalFlag:false
       },
       // 选择全部产品参数
       allProVisible: false,
@@ -352,9 +460,17 @@ export default {
       warehouseCode:"",
       classAttributeList:[],
       wareHouseInfo:{},
+      flowTemplateJson: {},
+      flowData: {},
+      approvalFlag: false,   // 待办事宜等页面 需要
+      flowTaskOperatorRecordList: [],
+      endTime: 0
     }
   },
   created() { 
+    // console.log(flowMixin);
+    console.log(this);
+    
   },
 
   methods: {
@@ -595,9 +711,10 @@ export default {
         })
       })
     },
-    init(id, btnType, warehouseCode) {
+    init(id, btnType,approvalFlag, warehouseCode) {
       // this.visible = true
       this.formLoading = true
+      this.approvalFlag = approvalFlag
       this.oldId = JSON.parse(JSON.stringify(id)) || ""
       this.oldType = JSON.parse(JSON.stringify(btnType))
       this.dataForm.id = id
@@ -621,7 +738,7 @@ export default {
             item.shelfSpaceName = item.outShelfSpaceName
           });
           this.productData = res.data.lines
-
+          if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
         }).catch(() => { this.formLoading = false })
       } else {
         // 获取当前日期
@@ -642,7 +759,7 @@ export default {
         this.title = '新建调拨单'
         this.formLoading = false
         this.fetchData("DBDH", true)
-
+        this.getBusInfo('b051')
 
 
       }
@@ -681,6 +798,7 @@ export default {
         remark: "",
       }
       this.fetchData("DBDH")
+      this.getBusInfo('b051')
       this.productData = []
       this.$refs.dataForm.resetFields()
     },
@@ -728,13 +846,13 @@ export default {
 
           // 自动聚焦未使用则提交
           if (submitFlag) {
-            this.dataForm.classAttributeList = this.classAttributeList
             this.dataForm.documentStatus = submitModel
             this.dataForm.transferType = 'allocate_transfer'
 
             let obj = {
               picking: this.dataForm,
-              lines: []
+              lines: [],
+              flowData: this.flowData
             }
             let arr = []
             this.productData.forEach(item => {
@@ -946,5 +1064,19 @@ export default {
 .scand .tip {
   margin-top: 10px;
   font-size: 18px;
+}
+::v-deep .el-tabs__header {
+  padding: 0 !important;
+  margin-bottom: 5px !important;
+}
+::v-deep .el-tabs {
+  height: 100% !important;
+}
+
+::v-deep .el-tabs__content {
+  /* height: auto !important; */
+  height: calc(100% - 47px) !important;
+  overflow: auto !important;
+  padding: 0;
 }
 </style>

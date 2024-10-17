@@ -1339,7 +1339,7 @@ export default {
             this.defaultAddress = dfaddress[0].countryText + dfaddress[0].address
           }
         }else{
-          this.deletedata()
+          // this.deletedata()
           
         }
       })

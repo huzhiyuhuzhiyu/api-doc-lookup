@@ -314,7 +314,7 @@ export default {
         'b026': 'salesManagement/shippingnotice/saleMetalworking/Form.vue',
         'b027': 'salesManagement/shippingnotice/returnSalesmemo/Form.vue',
         'b009': 'purchasingManagement/purchaseOrders/purchaseOrder/Form.vue',
-        'b028': 'purchasingManagement/purchaseOrders/purchaseOrder/Form.vue',
+        'b028': 'purchasingManagement/finishedProductPurchaseOrders/purchaseOrder/Form.vue',
         'b029': 'purchasingManagement/returnManagement/purchaseReturnNote/Form.vue',
         'b030': 'purchasingManagement/finishedProductReturnManagement/purchaseReturnNote/Form.vue',
         'b010': 'outsourcingManagement/productOutsourcingOrder/orderList/Form.vue',
@@ -338,6 +338,7 @@ export default {
         'b048': 'esop/fileUpload/workinginstruction/Form.vue',
         'b049': 'esop/fileUpload/workinginstruction/Form.vue',
         'b050': 'esop/fileUpload/workinginstruction/Form.vue',
+        'b051': 'warehouseManagement/finishedProductWarehouseManagement/transferManagement/Form.vue',
       },
       inspectionTypeList: [
         // 不良品

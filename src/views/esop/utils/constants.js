@@ -9,5 +9,11 @@
 export const FlowCode={
     "WORK":'b048',
     "INSPECT":'b049',
-    "IMAGE_DOCUMENT":'b050',
+    "IMAGE":'b050',
+}
+
+export const FlowId={
+    "WORK":'614838882801931013',
+    "INSPECT":'615901895025876485',
+    "IMAGE":'615902865885617669',
 }

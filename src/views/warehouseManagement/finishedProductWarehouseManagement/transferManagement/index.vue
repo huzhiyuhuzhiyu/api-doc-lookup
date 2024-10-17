@@ -238,7 +238,7 @@ export default {
     viewFun(id,btnType){
       this.formVisible=true
       this.$nextTick(()=>{
-          this.$refs.Form.init(id,btnType)
+          this.$refs.Form.init(id,btnType,this.warehouseCode)
       })
     },
     editFun(id,btnType){
@@ -358,7 +358,7 @@ export default {
     addSupplier() {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init('', 'add',this.warehouseCode)
+        this.$refs.Form.init('', 'add',false,this.warehouseCode)
       })
 
     },

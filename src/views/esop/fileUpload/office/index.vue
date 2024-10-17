@@ -1,397 +1,404 @@
 <template>
-  <div class="JNPF-common-layout">
-    <!-- <el-tabs v-model="activeName" @tab-click="handleClick" style="width: 100%;background-color: #fff;">
-        <el-tab-pane label="供应商页面" name="supplierPage" style="margin-bottom: 5px;height: 100%;">
-          <div class="JNPF-common-layout"> -->
-    <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
-      <div class="JNPF-common-title" style="display: block;padding:0">
-        <div class="title_box">
-          <h2 v-if="!leftFlag">产品属性分类</h2>
-          <span class="options" v-if="!leftFlag">
-            <el-dropdown>
-              <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="getbimProductAttributesFun()">刷新数据</el-dropdown-item>
-                <!-- <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
-                <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
-                <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
-                <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>  -->
-              </el-dropdown-menu>
-            </el-dropdown>
-          </span>
-        </div>
-        <div v-if="!leftFlag">
-          <el-input placeholder="请输入" v-model="filterText" style="width:200px;margin:10px auto;display:block"
-            suffix-icon="el-icon-search" clearable></el-input>
-        </div>
-      </div>
+    <transition name="el-zoom-in-center">
 
-      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
-        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
-          :expand-on-click-node="false" node-key="enCode" @node-click="handleNodeClick" class="JNPF-common-el-tree"
-          v-if="refreshTree" :filter-node-method="filterNode">
-          <span class="custom-tree-node" slot-scope="{ data }" :title="data.fullName">
-            <span class="text" :title="data.fullName">{{ data.fullName }}</span>
-          </span>
-        </el-tree>
-      </el-scrollbar>
-      <div v-if="!leftFlag" class="retract" style="position: absolute">
-        <el-button icon="el-icon-arrow-left" type="text" @click.native="changeLeft()"></el-button>
-      </div>
-      <div v-if="leftFlag" class="expand" style="position: absolute">
-        <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>
-      </div>
-    </div>
-    <div class="JNPF-common-layout-center JNPF-flex-main">
-      <el-row class="JNPF-common-search-box" :gutter="16">
-        <el-form @submit.native.prevent :rules="rules">
-          <!-- <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="form.code" placeholder="请输入编码" clearable />
-            </el-form-item>
-          </el-col> -->
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="form.name" placeholder="名称" clearable />
-            </el-form-item>
-          </el-col>
+        <div v-if="inEdit" class="JNPF-preview-main org-form" ref="main">
+            <div
 
-          <el-col :span="6">
-            <el-form-item>
-              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
-                {{ $t('common.search') }}
-              </el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head" style="padding: 8px">
-          <topOpts @add="addSupplier()" :isJudgePer="true" :addPerCode="'btn_add'" />
+                :class="['JNPF-common-page-header', isView ? 'noButtons' : '']"  v-if="!approvalFlag">
+                <el-page-header style="visibility: hidden" content="123" />
+                <div class="options"  >
+                    <el-button type="primary" :loading="btnLoading" @click="handleConfirm(DocumentStatus.SUBMIT)">提交</el-button>
+<!--                    <el-button @click="goBack('cancel')">{{ $t('common.cancelButton') }}</el-button>-->
+                </div>
+            </div>
 
-          <div class="JNPF-common-head-right">
-            <el-tooltip content="高级查询" placement="top" v-if="true">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                @click="superQueryVisible = true" />
-            </el-tooltip>
-            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
-            </el-tooltip>
-            <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
-            </el-tooltip>
-          </div>
+            <div   class="contain">
+                <div class="JNPF-common-layout">
+                    <div class="JNPF-common-layout-center JNPF-flex-main" v-loading="formLoading">
+                        <div class="JNPF-common-layout-main JNPF-flex-main">
+                            <el-collapse v-model="activeNames">
+                                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                                    <el-row>
+                                        <el-form label-position="top" :rules="dataRule" :model="dataForm" ref="dataForm">
+                                            <el-row :gutter="10">
+                                                <el-col :span="6">
+                                                    <el-form-item label="图文档分类" prop="categoryName">
+                                                        <ComSelect-list
+                                                            :isdisabled="btnType === 'look'"
+                                                            v-model="dataForm.categoryName"
+                                                            placeholder="请选择图文档分类" auth
+                                                            @change="onOrganizeChange"
+                                                            :title="'选择分类'"
+                                                            :method="getcategoryTree"
+                                                            :requestObj="{  keyword: '', type: FileCategoryType.IMAGE_DOCUMENT }"
+                                                            :paramsObj="{}" />
+                                                    </el-form-item>
+                                                </el-col>
+<!--                                                <el-col :span="6">-->
+<!--                                                    <el-form-item label="版本号" prop="version" >-->
+<!--                                                        <el-input v-model="dataForm.version" placeholder="请输入版本号"  />-->
+<!--                                                    </el-form-item>-->
+<!--                                                </el-col>-->
+                                            </el-row>
+                                        </el-form>
+                                    </el-row>
+                                </el-collapse-item>
+                                <el-collapse-item  v-if="hasFileCategory"  title="文件上传" name="normalUpload">
+                                    <div class="collapse-wrapper">
+                                        <FileUploadDrop :disabled="isView" :grid-height="'484px'" class="fileUpload" v-model="normalFileList"></FileUploadDrop>
+                                    </div>
+                                </el-collapse-item>
+                            </el-collapse>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" custom-column>
-          <el-table-column prop="name" label="名称" />
-          <!-- <el-table-column prop="code" label="编码"> </el-table-column> -->
-          <el-table-column prop="remark" label="备注" />
-          <el-table-column label="操作" width="100" fixed="right">
-            <template slot-scope="scope">
-              <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
-                @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
-                <!-- <el-button type="text" size="mini" @click.native="copyHandle(scope.row.id, true)">
-                复制
-              </el-button> -->
-              </tableOpts>
-            </template>
-          </el-table-column>
-        </JNPF-table>
-        <pagination :total="total" :page.sync="form.pageNum" :background="background" :limit.sync="form.pageSize"
-          @pagination="initData" />
-      </div>
-    </div>
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
-    <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-  </div>
+        <FinishSubmit style="background: #fff" @recreate="recreate" v-if="!inEdit"></FinishSubmit>
+    </transition>
 </template>
 
 <script>
-import {
-  getBimProductAttributesInfo,
-  updataBimProductAttributes,
-  delBimProductAttributes,
-  addBimProductAttributes,
-  getbimProductAttributesList,
-  getbimProductAttributes
-} from '@/api/masterDataManagement/index'
-import Form from './Form'
-import moment from 'moment'
-import SuperQuery from '@/components/SuperQuery/index.vue'
+
+import {isEmpty, notEmpty, trim} from "@/utils";
+import {detailProcess} from "@/api/basicData/processSettingss";
+import FileUploadDrop from "@/views/esop/fileUpload/workinginstruction/FileUploadDrop.vue";
+import {ApplicationType, DocumentStatus, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
+import {getBusinessFlowDetail, getBusinessFlowInfo} from "@/api/workFlow/FlowEngine";
+import {addBimFileUpload, detailBimFileUpload, modifyBimFileUpload} from "@/api/esop/fileUpload/workinginstruction";
+import Process from "@/components/Process/Preview.vue";
+import recordList from "@/views/workFlow/components/RecordList.vue";
+import busFlow from "@/mixins/generator/busFlow";
+import {downloadFile, getFilePreviewUrl, getTitleForApplicationType, getTitleForType} from "@/views/esop/utils/utils";
+import {getcooperativeProduct} from "@/api/salesManagement/assemblyOrders";
+import {getProductList} from "@/api/basicData/materialFiles";
+import {FileCategoryType} from "@/views/esop/fileCategoryManagement/constants";
+function getOriginActiveNames(){
+    return ['basicInfo']
+}
+import { getcategoryTree } from '@/api/basicData/index'
+import {attachmentsInsert} from "@/api/esop/fileUpload/office";
+import FinishSubmit from "@/views/esop/fileUpload/workinginstruction/old/finishSubmit.vue";
 
 export default {
-  name: 'supplierProfile',
-  components: { Form, SuperQuery },
-  data() {
-    return {
-      superQueryVisible: false,
-      superQueryJson: [
-        {
-          prop: 'name',
-          label: '名称',
-          type: 'input'
+    components: {FinishSubmit, recordList, Process, FileUploadDrop },
+    props:{
+        type:{
+            type:String,
+            required:true
         },
-        {
-          prop: 'remark',
-          label: '备注',
-          type: 'input'
+        id:{
+            type:String,
+            default:''
+        },
+        applicationType:{
+            type:String,
+            required:false
+        },
+        flowCode:{
+            type:String,
+            required:false
+        },
+    },
+    data() {
+        return {
+            inEdit:true,
+            selectRows:[],
+            productsIdsMap: new Map(),
+            file: null,
+            productVisible: false,
+            getDetailJSON:'',
+            DocumentStatus,
+            approvalFlag:false,
+            processUploadVOMap:new Map(),
+            processUploadProcessId2ItemsMap:new Map(),
+            activeNames:['basicInfo','normalUpload'],
+            activeName: 'info',
+            btnType: 'add',
+            btnLoading: false,
+            formLoading: false,
+            routingName:'',
+            routingLineList:[],
+            productObj:{},
+            normalFileList:[],
+            processFileList:{},
+            codeConfig:{},
+            orderNo:'',
+            dataForm:{
+                categoryName:'',
+                categoryId:'',
+                orderNo:'',
+                productsCategoryName:'',
+                productCategoryId:'',
+                productsId:'',
+                drawingNo:'',
+                productsCode:'',
+                openProcess:0,
+                routingName:'',
+                routingId:'',
+                approvalFlag:true,
+                id:null,
+                version:''
+            },
+            dataRule: {
+                // version: [
+                //     { required: true, message: '请输入版本号', trigger: 'change' }
+                // ],
+                categoryName: [
+                    { required: true, message: '请选择选择图文档分类', trigger: 'change' },
+                ],
+            },
+            endTime: 0,
+            flowData:{},
+            approvalId:'',
+            isApprovalCheck:false,
+            FileCategoryType,
+            productData:[],
+            uploadVisib:false,
+            getcategoryTree,
+            getProductList,
         }
-      ],
-      title: '更多查询',
-      background: true, //分页器背景颜色
-      activeName: 'supplierPage',
-      visible: false,
-      treeData: [],
-      leftFlag: false,
-      tableData: [],
-      treeLoading: false,
-      listLoading: false,
-      authorizeFormVisible: false,
-      userRelationListVisible: false,
-      organizeIdTree: [],
-      form: {
-        code: '',
-        name: '',
-        pageNum: 1,
-        pageSize: 20,
-        typeCode: '',
-        orderItems: [
-          {
-            asc: true,
-            column: 'name'
-          }
-        ]
-      },
+    },
+    mixins: [busFlow],
+    created(){
+        // if(this.id) {
+        //     this.dataForm.approvalFlag && this.getFlowDetail(this.id)
+        //     this.fetchData(false)
+        //     this.getDetail(this.id)
+        // }else{
+        //     this.getBusInfo()
+        //     this.fetchData()
+        // }
+    },
+    methods: {
 
-      gradeList: [],
-      defaultProps: {
-        children: 'childrenList',
-        label: 'fullName'
-      },
-      rules: {
-        code: [{}]
-      },
-      total: 0,
-      diagramVisible: false,
-      formVisible: false,
-      expands: true,
-      refreshTree: true,
-      filterText: ''
-    }
-  },
-  watch: {
-    filterText(val) {
-      this.$refs.treeBox.filter(val)
-    }
-  },
-  created() {
-    this.getbimProductAttributesFun()
-    // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
-  },
-  methods: {
-    superQuerySearch(query) {
-      this.form.superQuery = query
-      this.superQueryVisible = false
-      this.search()
-    },
-    changeLeft() {
-      this.leftFlag = !this.leftFlag
-    },
-    columnSetFun() {
-      console.log('this.$refs.dataTable', this.$refs.dataTable)
-      this.$refs.dataTable.showDrawer()
-    },
-    // 获取左侧属性分类
-    getbimProductAttributesFun() {
-      getbimProductAttributes('575966014227880773').then((res) => {
-        console.log(res, 'iii')
-        this.treeData = res.data.list
-        this.$nextTick(() => {
-          this.$refs.treeBox.setCurrentKey(this.treeData[0].enCode) // 默认选中节点第一个
-          this.form.typeCode = this.treeData[0].enCode
-          this.initData()
-        })
-      })
-    },
+        onOrganizeChange(cid,[{name,id}]){
+            this.dataForm.categoryName = name
+            this.dataForm.categoryId = id
+        },
 
-    // 关闭新建、编辑页面
-    closeForm(isRefresh) {
-      this.formVisible = false
-      if (isRefresh) {
-        this.keyword = ''
-        this.initData()
-      }
-    },
-
-    filterNode(value, data) {
-      if (!value) return true
-      return data.fullName.indexOf(value) !== -1
-    },
-
-    initData() {
-      console.log(this.form)
-      this.listLoading = true
-      getbimProductAttributesList(this.form)
-        .then((res) => {
-          console.log('res++', res)
-          this.tableData = res.data.records
-          this.total = res.data.total
-          this.listLoading = false
-          this.visible = false
-        })
-        .catch(() => {
-          this.listLoading = false
-        })
-    },
-    search() {
-      this.form.pageNum = 1
-      this.initData()
-    },
-    reset() {
-      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-
-      this.form = {
-        code: '',
-        name: '',
-        typeCode: this.treeData[0].enCode,
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [
-          {
-            asc: false,
-            column: 'name'
-          }
-        ]
-      }
-      this.$refs.SuperQuery.conditionList = []
-      this.filterText = ''
-
-      this.search()
-    },
-    handleNodeClick(data, node) {
-      console.log('请选择节点', node)
-      this.form.typeCode = node.data.enCode
-      this.search()
-    },
-
-    addSupplier() {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(this.form.typeCode, 'add')
-      })
-    },
-    addOrUpdateHandle(id) {
-      this.formVisible = true
-      if (id) {
-        // setTimeout(() => {
-        this.$nextTick(() => {
-          this.$refs.Form.init(id, 'edit')
-        })
-        // }, 600);
-      }
-    },
-    copyHandle(id) {
-      this.formVisible = true
-      if (id) {
-        // setTimeout(() => {
-        this.$nextTick(() => {
-          this.$refs.Form.init(id, 'copy')
-        })
-        // }, 600);
-      }
-    },
-    handleDel(id) {
-      this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
-        type: 'warning'
-      })
-        .then(() => {
-          delBimProductAttributes(id).then((res) => {
-            this.initData()
-            this.$message({
-              type: 'success',
-              message: '删除成功',
-              duration: 1500
+        async getDetail(id){
+            const { data } = await detailBimFileUpload(id)
+            this.getDetailJSON = JSON.stringify(data)
+            Object.keys(this.dataForm).forEach(key=>{
+                this.dataForm[key] = data[key]
             })
-          })
-        })
-        .catch(() => { })
+            console.log( data.bimFileUploadLineVOList)
+            this.normalFileList = data.bimFileUploadLineVOList.map(item=>{
+                return {
+                    name: item.documentName,
+                    fileSize: item.fileSize,
+                    filename: item.documentName,
+                    id: item.documentId,
+                    url: getFilePreviewUrl(item.filePath),
+                    processUploadId: item.id,
+                }
+            })
+        },
+         recreate(){
+            this.inEdit = true
+            this.dataForm.id = null
+            this.dataForm.orderNo = ''
+            this.dataForm.categoryId = ''
+            this.dataForm.categoryName = ''
+            this.dataForm.version = ''
+            this.normalFileList = []
+        },
+        async handleConfirm(type){
+            const valid = await this.$refs.dataForm.validate()
+            if(!valid){
+                return
+            }
+            const params = this.getSaveData(type)
+            const fn = attachmentsInsert
+            const { data } = await fn(params)
+            this.inEdit = false
+            await this.$message.success('操作成功')
+        },
+        getSaveData(type){
+            const attachmentsList = this.normalFileList.map(item=>{
+                return {
+                    documentId:item.id,
+                    categoryId:this.dataForm.categoryId,
+                    businessType: FileCategoryType.OFFICE_DOCUMENT
+                }
+            })
+            return {
+                attachmentsList
+            }
+        },
+        async fetchData(flag=true,code="WJSCSQ") {
+            try {
+                const data = await this.jnpf.getBillRuleConfigFun(code);
+                this.codeConfig = data
+                if (flag) {
+                    this.dataForm.orderNo = data.number
+                }
+            } catch (error) {
+            }
+        },
+        getUploadDetailList(){
+            return this.normalFileList.map(item=>{
+                return {
+                    documentId:item.id,
+                    id : item.processUploadId,
+                    fileUploadId:this.dataForm.id
+                }
+            })
+        },
+        normalUploadShow(){
+            this.activeNames = getOriginActiveNames().concat('normalUpload')
+        },
+        init(id, btnType, approvalFlag){
+            console.log(id, btnType, approvalFlag)
+            this.isApprovalCheck = approvalFlag
+            this.approvalFlag = approvalFlag
+            this.getDetail(id)
+        },
     },
-    handleUserRelation(id, parentId, btnType) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, parentId, btnType)
-      })
+    watch:{
+        "dataForm.categoryId"(val){
+            if(isEmpty(val)){
+                this.dataForm.openProcess = 0
+                this.activeNames = getOriginActiveNames()
+                return
+            }
+            return this.normalUploadShow()
+        },
+
+    },
+    computed:{
+        hasFileCategory(){
+            return notEmpty(this.dataForm.categoryId)
+        },
+        isView(){
+            return this.type === ModelType.VIEW || this.isApprovalCheck
+        },
+        isAdd(){
+            return this.type === ModelType.ADD
+        },
+        orderNoDisabled(){
+            return this.codeConfig.codeWay === 'auto' && !this.codeConfig.modifyFlag
+        },
+        title(){
+            return getTitleForType(this.applicationType,this.type)
+        },
     }
-  }
 }
 </script>
-<style scoped>
-.JNPF-common-layout-left {
-  /* margin-right: 0; */
-  /* border-right: 1px solid #cacaca; */
+<style lang="scss" scoped>
+.fileUpload{
+
+}
+.contain {
+    position: relative;
+    height: calc(100% - 47px);
+    overflow-y: auto;
+}
+
+::v-deep .JNPF-common-layout-main.JNPF-flex-main {
+    //padding: 0 10px 10px;
+}
+
+::v-deep .JNPF-common-layout-main.JNPF-flex-main {
+    overflow: auto;
+}
+
+::v-deep .JNPF-common-page-header {
+    padding: 5px 10px;
+}
+
+::v-deep .JNPF-common-page-header.noButtons {
+    padding: 11px 10px;
+}
+
+::v-deep .el-tabs {
+    height: 100% !important;
 }
 
 ::v-deep .el-tabs__content {
-  height: calc(100vh - 163px);
+    height: calc(100% - 47px) !important;
+    overflow: auto !important;
 }
 
-::v-deep .el-tabs__header {
-  margin-bottom: 5px;
-  padding: 0 10px;
+.required {
+    color: red;
+    margin-right: 4px;
 }
 
-.JNPF-common-search-box {
-  padding: 8px 0 0 0;
-  margin-left: 0 !important;
-  margin-bottom: 5px;
+.disabled-span {
+    pointer-events: none;
+    color: #999;
+    /* 添加其他禁用样式 */
 }
 
-.JNPF-common-search-box .el-form-item {
-  margin-bottom: 8px !important;
+::v-deep .workNode {
+    background-color: #f5f5f7 !important;
 }
 
-.pagination-container {
-  background-color: #f5f7fa;
-  margin-top: 0px;
-  padding-right: 10px;
-  padding-top: 2px;
-  padding-bottom: 2px;
+.noDataTip {
+    text-align: center;
+    padding: 20%;
+    font-size: 16px;
+    min-height: 1045px !important;
+    background-color: #f5f5f7 !important;
+    color: #576a95;
 }
 
-.JNPF-common-layout-center .JNPF-common-layout-main {
-  padding: 0;
+::v-deep .el-collapse-item__header {
+    line-height: 33px;
+    font-size: 18px;
+    border-top: 1px solid rgb(220, 223, 230);
+    background: rgb(250, 250, 250);
+    padding-left: 5px;
+    font-weight: 700;
+    border-right: 1px solid #dcdfe6;
+    border-left: 1px solid #dcdfe6;
 }
 
-::v-deep.el-tree-node__content {
-  height: 40px !important;
-  line-height: 40px;
+::v-deep .el-collapse-item__wrap {
+    border: 1px solid #dcdfe6 !important;
+    border-top: none;
+    margin-bottom: 0;
+    padding: 0 10px 0px;
+    border-top: none !important;
+
+}
+::v-deep .el-tabs__header{
+    margin-bottom: 0;
+}
+::v-deep .el-tabs__content {
+    height: calc(100% - 39px) !important;
+    overflow: auto !important;
 }
 
-.JNPF-common-el-tree {
-  margin: 5px 0;
+::v-deep .el-collapse-item__content {
+    padding-bottom: 0px
+}
+.JNPF-preview-main{
+    overflow: hidden;
+}
+.JNPF-preview-main .main {
+    padding-top: 0;
 }
 
-.el-tabs__nav-scroll {
-  padding-left: 0;
+::v-deep .el-tabs__item {
+    padding: 0 10px !important
 }
-</style>
-<style scoped>
-.title_box {
-  width: 100%;
-  display: flex;
-  border-bottom: 1px solid #ebeef5;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: justify;
-  -ms-flex-pack: justify;
-  justify-content: space-between;
-  padding: 0 10px;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+    padding-left: 0px !important
+}
+.collapse-wrapper{
+    padding: 10px;
+    overflow-y: auto;
+    min-height: 280px;
+}
+.left-input{
+    width: 50%;
+}
+.right-input{
+    width: calc(50% - 10px);
+    margin-left: 10px;
 }
 </style>

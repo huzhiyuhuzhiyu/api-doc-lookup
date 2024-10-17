@@ -88,7 +88,9 @@
                             @pagination="initData" />
             </div>
         </div>
-        <EditWorkingInstructionUpload :flowCode="flowCode" :type="uploadType" :id="fileUploadId" :applicationType="applicationType" @back="editBack" v-if="formVisible"/>
+        <slot name="editForm" :data="this">
+            <EditWorkingInstructionUpload :flowCode="flowCode" :type="uploadType" :id="fileUploadId" :applicationType="applicationType" @back="editBack" v-if="formVisible"/>
+        </slot>
 
         <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
                     @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -413,7 +415,9 @@ export default {
         },
        async initData() {
             this.listLoading = true
-           const {data} = await getBimFileUpload(this.listQuery)
+           const params ={...this.listQuery}
+           params.superQuery.condition[0].fieldValue === '' && delete params.superQuery
+           const {data} = await getBimFileUpload(params)
            this.tableData = data.records
            this.total = data.total
            this.listLoading = false
@@ -431,6 +435,7 @@ export default {
                 let item = this.listQuery[key]
                 this.listQuery[key] = typeof item === 'string' ? item.trim() : item
             })
+
             this.listQuery.pageNum = 1
             this.initData()
         },

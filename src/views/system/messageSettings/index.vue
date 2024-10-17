@@ -196,7 +196,7 @@
                     </el-input>
                   </el-form-item>
                 </el-col>
-                <el-col>
+                <!-- <el-col>
                   <el-form-item label="触发事件">
                     <el-table :data="wxEvents" border>
                       <el-table-column prop="select" label="" width="50" align="center">
@@ -208,16 +208,16 @@
                       <el-table-column prop="desc" label="描述" />
                     </el-table>
                   </el-form-item>
-                </el-col>
+                </el-col> -->
                 <el-col>
                   <el-form-item label="同步反馈">
                     <el-table :data="wxResults" border>
-                      <el-table-column prop="synType" label="同步类型" />
-                      <el-table-column prop="recordTotal" label="总数" />
-                      <el-table-column prop="synSuccessCount" label="同步成功数" />
-                      <el-table-column prop="synFailCount" label="同步失败数" />
-                      <el-table-column prop="unSynCount" label="未同步数" />
-                      <el-table-column prop="synDate" label="同步时间" :formatter="jnpf.tableDateFormat" width="150" />
+                      <el-table-column prop="synType" label="同步类型" key="synType" />
+                      <el-table-column prop="recordTotal" label="总数" key="recordTotal" />
+                      <el-table-column prop="synSuccessCount" label="同步成功数" key="synSuccessCount" />
+                      <el-table-column prop="synFailCount" label="同步失败数" key="synFailCount" />
+                      <el-table-column prop="unSynCount" label="未同步数" key="unSynCount" />
+                      <el-table-column prop="synDate" label="同步时间" key="synDate" :formatter="jnpf.tableDateFormat" width="150" />
                       <el-table-column label="操作" width="70">
                         <template slot-scope="scope">
                           <el-button size="mini" type="text" @click="syncWechat(scope.row)"
@@ -255,7 +255,7 @@
                     </el-input>
                   </el-form-item>
                 </el-col>
-                <el-col>
+                <!-- <el-col>
                   <el-form-item label="触发事件">
                     <el-table :data="ddEvents" border>
                       <el-table-column prop="select" label="" width="50" align="center">
@@ -267,16 +267,16 @@
                       <el-table-column prop="desc" label="描述" />
                     </el-table>
                   </el-form-item>
-                </el-col>
+                </el-col> -->
                 <el-col>
                   <el-form-item label="同步反馈">
                     <el-table :data="ddResults" border>
-                      <el-table-column prop="synType" label="同步类型" />
-                      <el-table-column prop="recordTotal" label="总数" />
-                      <el-table-column prop="synSuccessCount" label="同步成功数" />
-                      <el-table-column prop="synFailCount" label="同步失败数" />
-                      <el-table-column prop="unSynCount" label="未同步数" />
-                      <el-table-column prop="synDate" label="同步时间" :formatter="jnpf.tableDateFormat" width="150" />
+                      <el-table-column prop="synType" label="同步类型" key="synType"/>
+                      <el-table-column prop="recordTotal" label="总数" key="recordTotal"/>
+                      <el-table-column prop="synSuccessCount" label="同步成功数" key="synSuccessCount" />
+                      <el-table-column prop="synFailCount" label="同步失败数" key="synFailCount" />
+                      <el-table-column prop="unSynCount" label="未同步数" key="unSynCount" />
+                      <el-table-column prop="synDate" label="同步时间" key="synDate" :formatter="jnpf.tableDateFormat" width="150" />
                       <el-table-column label="操作" width="70">
                         <template slot-scope="scope">
                           <el-button size="mini" type="text" @click="syncDingVisible(scope.row)">同步
@@ -316,7 +316,7 @@
     </el-form>
     <el-dialog title="数据同步" :visible.sync="visible" class="JNPF-dialog JNPF-dialog_center sync-dialog" lock-scroll
       width="450px">
-      <div class="add-main">
+      <!-- <div class="add-main">
         <div class="add-item add-item-sys">
           <i class="add-icon icon-ym icon-ym-upload"></i>
           <div class="add-txt">
@@ -329,7 +329,7 @@
               同步</el-button>
           </div>
         </div>
-      </div>
+      </div> -->
       <div class="add-main">
         <div class="add-item add-item-sys">
           <i class="add-icons icon-ym icon-ym-download"></i>
@@ -357,9 +357,13 @@ import {
   testDing,
   getSynThirdTotal,
   synAllOrganizeSysToDing,
+  synAllOrganizeDingToSys,
+  synAllUserDingToSys,
   synAllUserSysToDing,
   synAllOrganizeSysToQy,
+  synAllOrganizeQyToSys,
   synAllUserSysToQy,
+  synAllUserQyToSys,
   getAdminList,
   setAdminList
 } from '@/api/system/sysConfig'
@@ -632,7 +636,7 @@ export default {
         type: 'warning'
       }).then(() => {
         type == 0 ? this.wechatLoading = true : this.dingLoading = true
-        const method = this.row.synType == '组织' ? synAllOrganizeSysToQy : synAllUserSysToQy
+        const method = this.row.synType == '组织' ? synAllOrganizeQyToSys : synAllUserQyToSys
         method(type).then(res => {
           type == 0 ? this.wechatLoading = false : this.dingLoading = false
           this.visible = false
@@ -663,7 +667,7 @@ export default {
         type: 'warning'
       }).then(() => {
         type == 0 ? this.wechatLoading = true : this.dingLoading = true
-        const method = this.row.synType == '组织' ? synAllOrganizeSysToDing : synAllUserSysToDing
+        const method = this.row.synType == '组织' ? synAllOrganizeDingToSys : synAllUserDingToSys
         method(type).then(res => {
           type == 0 ? this.wechatLoading = false : this.dingLoading = false
           this.visible = false

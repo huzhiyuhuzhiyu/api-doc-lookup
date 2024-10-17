@@ -78,7 +78,7 @@
             <el-table-column prop="num" label="退料数量" min-width="120" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="100" sortable="custom" />
-            <el-table-column label="操作" width="140" fixed="right">
+            <el-table-column label="操作" width="60" fixed="right">
               <template slot-scope="scope">
                 <tableOpts @edit="addOrUpdateHandle(scope.row)" editText="检验" :hasDel="false">
 

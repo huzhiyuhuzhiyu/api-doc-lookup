@@ -11,7 +11,7 @@
       </div>
       <div class="main" v-loading="formLoading">
         <AbnormalProcess :key="flowTemplateJson.nodeId" ref="processDesign" :conf="flowTemplateJson" :flowType="0"
-          v-if="flowTemplateJson.nodeId" />
+          v-if="flowTemplateJson.nodeId" :planPersonId="planPersonId" :planPersonName="planPersonName" />
         <AbnormalProcess ref="processDesign" :conf="flowTemplateJson" :flowType="0" v-else :planPersonId="planPersonId" :planPersonName="planPersonName"/>
       </div>
     </div>
@@ -88,7 +88,7 @@ export default {
         let planTime = res.formData.childNode.properties.planTime
         let flowUnit = res.formData.childNode.properties.flowUnit
         this.dataForm.planProcessingTime = this.jnpf.timeToMinutes(planTime,flowUnit)
-        this.dataForm.planPersonId = res.formData.childNode.properties.approvers[0]
+        this.dataForm.planPersonId = this.dataForm.planPersonId ? this.dataForm.planPersonId : res.formData.childNode.properties.approvers[0]
         const formMethod = this.dataForm.id ? Update : Create
         formMethod(this.dataForm).then((res) => {
           this.$message({

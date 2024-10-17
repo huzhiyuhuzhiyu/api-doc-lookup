@@ -326,7 +326,7 @@ export default {
         cooperativePartnerCode: '', //	供应商编码
         cooperativePartnerId: '', // 供应商id
         cooperativePartnerName: '', // 	供应商名称
-
+        classAttribute: 'other',
         documentStatus: '', // 单据状态:草稿 draft、提交 submit,可用值:draft,normal,submit
         startAndEndTime: '',
         listPriceFlag: '', // 是否设置牌价:0否1是

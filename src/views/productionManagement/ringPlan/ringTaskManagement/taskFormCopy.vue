@@ -83,6 +83,12 @@
                   <el-table-column prop="productionQuantity" label="计划数量" min-width="100"></el-table-column>
                   <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="100"></el-table-column>
                   <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="130"></el-table-column>
+                  <el-table-column prop="schedule" label="完成进度" min-width="130">
+                    <template slot-scope="scope">
+
+                      <el-progress :percentage="scope.row.schedule"></el-progress>
+                    </template>
+                  </el-table-column>
                   <el-table-column v-if="dataForm.taskMethod != 'not_appoint'" prop="personName" label="人员"
                     min-width="120">
                   </el-table-column>
@@ -379,6 +385,11 @@ export default {
         console.log("生产任务详情", res);
         this.dataForm = res.data.prodOrder
         this.feedData = res.data.materialList
+        res.data.workOrderList.forEach(item => {
+          let schedule = this.jnpf.numberFormat(this.jnpf.math('divide', [item.qualifiedQuantity, item.productionQuantity]), 2)
+          this.$set(item, 'schedule', schedule)
+
+        });
         this.workOrderData = res.data.workOrderList
       })
     },

@@ -83,18 +83,10 @@
             <el-table-column prop="waitReceiptNum" label="待收货数量" width="130" sortable="custom" />
 
             <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
-            <el-table-column prop="standardValue" label="规值" width="100" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" width="120" label="打字内容" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
-            <el-table-column prop="oil" label="油脂" width="100" sortable="custom" />
-            <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom" />
-            <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
             <el-table-column prop="remark" label="备注" width="120" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
-            <el-table-column label="操作" width="180" fixed="right">
+            <el-table-column label="操作" width="100" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text"
                   @click.native="handleUserRelation(scope.row.purchaseOrderId, 'look')">
@@ -161,6 +153,7 @@ export default {
 
       orderForm: {
         orderType: 'external',
+        receiptQueryFlag: 1,
         deliveryEndDate: '',
         deliveryStartDate: '',
         pageNum: 1,

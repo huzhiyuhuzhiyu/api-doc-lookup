@@ -215,4 +215,8 @@ export default {
   bottom: 10px;
   right: 10px;
 }
+.JNPF-preview-main{
+    overflow: hidden !important;
+}
+
 </style>

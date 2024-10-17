@@ -42,3 +42,36 @@ export const ApplicationType = {
     "SYSTEM":"system"
 
 }
+/**
+ *  审批状态
+ *  @readonly
+ *  @enum {string}
+ *  @property {string} ING - 审批中
+ *  @property {string} NO - 不通过
+ *  @property {string} OK - 通过
+ *  @property {string} REBUT - 驳回
+ *  @property {string} TRANSFERRED - 转交
+ *  @property {string} WAIT - 待审批
+ *  @property {string} WITHDRAWN - 已撤回
+ */
+export const ApprovalStatus ={
+    ING: 'ing',
+    NO: 'no',
+    OK: 'ok',
+    REBUT: 'rebut',
+    TRANSFERRED: 'transferred',
+    WAIT: 'wait',
+    WITHDRAWN: 'withdrawn',
+}
+/**
+ * 文件管理作业页面类型
+ * @readonly
+ * @enum {string}
+ * @property {string} FileManagementWork - 文件管理作业指导书
+ * @property {string} FileUploadWork - 文件上传作业指导书
+ */
+export const PageType ={
+    FileManagementWork:'FileManagementWork',
+    FileManagementInspect:'FileManagementInspect',
+    FileUploadWork:'FileUploadWork',
+}

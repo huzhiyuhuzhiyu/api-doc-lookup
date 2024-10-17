@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-drawer title="发料清单" :visible.sync="drawer" :direction="direction" :wrapperClosable="false"
-      :before-close="handleClose" size="45%" class="JNPF-common-drawer columnSettings-drawer">
+      :before-close="handleClose" size="45%" class="JNPF-common-drawer columnSettings-drawer" append-to-body>
       <div class="JNPF-flex-main">
         <el-scrollbar class="column-list">
           <!-- 人员配置 -->

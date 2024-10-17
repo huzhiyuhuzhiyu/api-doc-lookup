@@ -54,7 +54,7 @@
                 </div>
             </div>
         </div>
-        <FinishSubmit style="background: #fff" @recreate="recreate" v-if="!inEdit"></FinishSubmit>
+        <FinishSubmit style="background: #fff" @left-btn-click="recreate" v-if="!inEdit"></FinishSubmit>
     </transition>
 </template>
 

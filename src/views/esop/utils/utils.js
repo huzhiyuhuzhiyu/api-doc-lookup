@@ -108,11 +108,11 @@ export async function setAllBtnAuth(moduleName="ESOP管理",btns=normalBtn){
 
     const promiseObj ={}
      if(!module.hasChildren){
-         promiseObj[module.fullName](addBtnFn(btns,module.id))
+         promiseObj[module.fullName] = (addBtnFn(btns,module.id))
     }else{
         flatArr(module.children,(item)=>{
             if(!item.hasChildren){
-                promiseObj[item.fullName](addBtnFn(btns,item.id,item.fullName))
+                promiseObj[item.fullName] = (addBtnFn(btns,item.id,item.fullName))
             }
         },'children')
     }
@@ -136,4 +136,4 @@ function addBtnFn(btns,moduleId,fullName){
     return {fullName:promiseArr}
 }
 
-// window.setAllBtnAuth = setAllBtnAuth
+window.setAllBtnAuth = setAllBtnAuth

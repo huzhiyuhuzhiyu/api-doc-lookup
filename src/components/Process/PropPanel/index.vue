@@ -2115,13 +2115,13 @@ const defaultApproverForm = {
   hasSign: false,
   hasOpinion: true,
   timeLimitConfig: {
-    on: 2,  // 开启
+    on: 0,  // 开启
     nodeLimit: 0, // 节点限定时长起始值类型
     duringDeal: 24, // 节点处理限定时长(时)
     formField: '',  // 请选择字段
   },
   overTimeConfig: {
-    on: 2, // 开启
+    on: 0, // 开启
     firstOver: 0, // 第一次超时时间(时)
     overTimeDuring: 2, // 超时间隔(时)
     overNotice: false, // 超时事务-超时通知
@@ -2131,7 +2131,7 @@ const defaultApproverForm = {
     overEventTime: 5, // 超时事件超时次数(次)
   },
   noticeConfig: {
-    on: 2, // 开启
+    on: 0, // 开启
     firstOver: 1, // 第一次提醒时间(时)
     overTimeDuring: 2, // 提醒间隔(时)
     overNotice: false, // 提醒事务-提醒通知
@@ -2152,31 +2152,31 @@ const defaultApproverForm = {
     templateJson: [] // 模块json
   },
   overTimeMsgConfig: {
-    on: 2,
+    on: 0,
     msgId: '',
     msgName: '',
     templateJson: []
   },
   noticeMsgConfig: {
-    on: 2,
+    on: 0,
     msgId: '',
     msgName: '',
     templateJson: []
   },
   approveMsgConfig: {
-    on: 2,
+    on: 0,
     msgId: '',
     msgName: '',
     templateJson: []
   },
   rejectMsgConfig: {
-    on: 2,
+    on: 0,
     msgId: '',
     msgName: '',
     templateJson: []
   },
   copyMsgConfig: {
-    on: 2,
+    on: 0,
     msgId: '',
     msgName: '',
     templateJson: []

@@ -1,6 +1,12 @@
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 export default {
   methods: {
+    // 出入库专用
+    flowInit(id, btnType, approvalFlag) {
+      this.btnType = btnType
+      this.approvalFlag = approvalFlag
+      this.init(id, btnType)
+    },
     // 测试审批流
     getBusInfo(flowCode) {
       getBusinessFlowInfo(flowCode).then(res => {

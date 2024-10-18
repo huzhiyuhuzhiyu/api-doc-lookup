@@ -16,6 +16,14 @@ export function  addAbnoramlTypeData(data) {
     data
   })
 }
+// 异常类型-排序
+export function  updateSortBatch(data) {
+  return request({
+    url: '/api/mes/ab/abnormal/type/update/sort/batch',
+    method: 'PUT',
+    data
+  })
+}
 // 异常类型-修改
 export function  updateAbnoramlTypeData(data) {
   return request({

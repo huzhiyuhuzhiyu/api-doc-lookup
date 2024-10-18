@@ -12,7 +12,7 @@
           </el-tooltip>
         </div>
       </div>
-      <JNPF-table v-loading="listLoading" :data="tableData" @sort-change="sortChange">
+      <JNPF-table v-loading="listLoading" :data="tableData" @sort-change="sortChange" row-key="id" hasMove @changeMove="changeMove">
 
         <el-table-column prop="code" label="类型编码" min-width="120" sortable="custom" />
         <el-table-column prop="name" label="类型名称" min-width="120" sortable="custom" />
@@ -30,7 +30,7 @@
   </el-drawer>
 </template>
 <script>
-import { getAbnoramlTypeData, deleteAbnoramlTypeData, detailAbnoramlTypeData } from '@/api/abnormalManagement/index.js'
+import { getAbnoramlTypeData, deleteAbnoramlTypeData, detailAbnoramlTypeData ,updateSortBatch} from '@/api/abnormalManagement/index.js'
 import JNPFForm from './Form'
 export default {
   components: { JNPFForm },
@@ -48,8 +48,8 @@ export default {
           asc: false,
           column: ""
         }, {
-          asc: false,
-          column: "create_time"
+          asc: true,
+          column: "sort"
         }],
         pageNum: 1,
         pageSize: 20,
@@ -72,6 +72,15 @@ export default {
       this.drawer = true
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.$nextTick(() => {
+        this.initData()
+      })
+    },
+    changeMove(data) {
+      data.forEach(item => {
+        item.sort = item.sortCode
+      })
+      updateSortBatch(data).then(res => {
+        this.$message.success("排序修改成功")
         this.initData()
       })
     },

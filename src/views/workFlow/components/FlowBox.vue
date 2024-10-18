@@ -337,8 +337,8 @@ export default {
         'b046': 'warehouseManagement/finishedProductWarehouseManagement/inventoryList/Form.vue',
         'b048': 'esop/fileUpload/workinginstruction/Form.vue',
         'b049': 'esop/fileUpload/workinginstruction/Form.vue',
-        'b050': 'esop/fileUpload/docment/Form.vue',
-        'b052': 'esop/fileUpload/docment/Form.vue',
+        'b050': 'esop/fileUpload/workinginstruction/Form.vue',
+        'b052': 'esop/fileUpload/workinginstruction/Form.vue',
         'b051': 'warehouseManagement/finishedProductWarehouseManagement/transferManagement/Form.vue',
       },
       inspectionTypeList: [

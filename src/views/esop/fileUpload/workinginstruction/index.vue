@@ -229,8 +229,8 @@ export default {
                 keyword: "",
                 orderItems: [
                     {
-                        asc: true,
-                        column: ""
+                        asc: false,
+                        column: "create_time"
                     }
                 ],
                 orderNo: "",

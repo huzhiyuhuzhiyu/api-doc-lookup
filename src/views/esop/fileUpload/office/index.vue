@@ -62,7 +62,7 @@
 
 import {isEmpty, notEmpty, trim} from "@/utils";
 import {detailProcess} from "@/api/basicData/processSettingss";
-import FileUploadDrop from "@/views/esop/fileUpload/workinginstruction/FileUploadDrop.vue";
+import FileUploadDrop from "@/views/esop/fileUpload/workinginstruction/component/FileUploadDrop.vue";
 import {ApplicationType, DocumentStatus, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 import {getBusinessFlowDetail, getBusinessFlowInfo} from "@/api/workFlow/FlowEngine";
 import {addBimFileUpload, detailBimFileUpload, modifyBimFileUpload} from "@/api/esop/fileUpload/workinginstruction";

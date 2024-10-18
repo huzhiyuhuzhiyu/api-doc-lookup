@@ -1,39 +1,42 @@
 <template>
     <transition name="el-zoom-in-center">
-
         <template v-if="!isFinish">
             <div class="JNPF-preview-main org-form" ref="main" v-loading="pageLoading">
-                <div
-                    :class="['JNPF-common-page-header', isView ? 'noButtons' : '']"  v-if="!approvalFlag">
-                    <el-page-header @back="goBack('back')" :content="title" />
-                    <div class="options" v-if="!isView">
-                        <el-button type="success" :loading="btnLoading" @click="handleConfirm(DocumentStatus.DRAFT)">保存草稿</el-button>
-                        <el-button type="primary" :loading="btnLoading" @click="handleConfirm(DocumentStatus.SUBMIT)">保存并提交</el-button>
-                        <el-button @click="goBack('cancel')">{{ $t('common.cancelButton') }}</el-button>
+                <template v-if="!approvalFlag">
+                    <div :class="['JNPF-common-page-header', isView ? 'noButtons' : '']" >
+                        <el-page-header @back="goBack('back')" :content="title" />
+                        <div class="options" v-if="!isView">
+                            <el-button type="success" :loading="btnLoading" @click="handleConfirm(DocumentStatus.DRAFT)">保存草稿</el-button>
+                            <el-button type="primary" :loading="btnLoading" @click="handleConfirm(DocumentStatus.SUBMIT)">保存并提交</el-button>
+                            <el-button @click="goBack('cancel')">{{ $t('common.cancelButton') }}</el-button>
+                        </div>
                     </div>
-                </div>
-
-                <el-tabs v-if="!approvalFlag"  v-model="activeName">
-                    <el-tab-pane label="基础信息" name="info">
-                        <WorkFormBasicInfo  :is-add="isAdd"
-                                            :is-edit="isEdit"
-                                            :is-view="isView"
-                                            :type="type" ref="basicInfo" />
-
-                    </el-tab-pane>
-                    <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
-                        <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
-                    </el-tab-pane>
-                    <el-tab-pane v-if="isView" label="流转记录" name="transferList">
-                        <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
-                    </el-tab-pane>
-                </el-tabs>
-                <WorkFormBasicInfo
+                    <el-tabs   v-model="activeName">
+                        <el-tab-pane label="基础信息" name="info">
+                            <component
+                                :is="basicInfoComName"
+                                :is-add="isAdd"
+                                :is-edit="isEdit"
+                                :is-view="isView"
+                                :type="type"
+                                ref="basicInfo" />
+                        </el-tab-pane>
+                        <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
+                            <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
+                        </el-tab-pane>
+                        <el-tab-pane v-if="isView" label="流转记录" name="transferList">
+                            <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
+                        </el-tab-pane>
+                    </el-tabs>
+                </template>
+                <component
+                    v-if="approvalFlag"
+                    :is="basicInfoComName"
                     :is-add="isAdd"
                     :is-edit="isEdit"
                     :is-view="isView"
                     :type="type"
-                    v-if="approvalFlag"  ref="dataForm" />
+                    ref="dataForm" />
             </div>
         </template>
         <FinishSubmit v-else
@@ -47,21 +50,22 @@
 
 <script>
 
-import {isEmpty} from "@/utils";
-import FileUploadDrop from "@/views/esop/fileUpload/workinginstruction/FileUploadDrop.vue";
+import {isEmpty, notEmpty} from "@/utils";
+import FileUploadDrop from "@/views/esop/fileUpload/workinginstruction/component/FileUploadDrop.vue";
 import {DocumentStatus, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
-import {addBimFileUpload, modifyBimFileUpload} from "@/api/esop/fileUpload/workinginstruction";
+import {addBimFileUpload, detailBimFileUpload, modifyBimFileUpload} from "@/api/esop/fileUpload/workinginstruction";
 import Process from "@/components/Process/Preview.vue";
 import recordList from "@/views/workFlow/components/RecordList.vue";
 import busFlow from "@/mixins/generator/busFlow";
-import { getTitleForType} from "@/views/esop/utils/utils";
+import {getTitleForType, isHasProcessApplicationType} from "@/views/esop/utils/utils";
 import FlowMixin from "@/mixins/generator/flowMixin";
 import FinishSubmit from "@/views/esop/fileUpload/workinginstruction/old/finishSubmit.vue";
-import WorkFormBasicInfo from "@/views/esop/fileUpload/workinginstruction/basicInfo.vue";
+import HasProcessBasicInfo from "@/views/esop/fileUpload/workinginstruction/component/HasProcessBasicInfo.vue";
+import NoProcessBasicInfo from "@/views/esop/fileUpload/workinginstruction/component/NoProcessBasicInfo.vue";
 
 
 export default {
-    components: {WorkFormBasicInfo, FinishSubmit, recordList, Process, FileUploadDrop},
+    components: {NoProcessBasicInfo, HasProcessBasicInfo, FinishSubmit, recordList, Process, FileUploadDrop},
     props:{
         type:{
             type:String,
@@ -86,21 +90,20 @@ export default {
             pageLoading: false,
             DocumentStatus,
             approvalFlag:false,
-
             activeName: 'info',
             btnLoading: false,
             dataForm:{
-                approvalFlag:false
+                approvalFlag:false,
+                documentStatus:DocumentStatus.DRAFT
             },
-
             orderNo:'',
             flowTemplateJson: {},
-
             flowTaskOperatorRecordList: [],
             endTime: 0,
             cacheFileUploadList:[],
             flowData:{},
             approvalId:'',
+            detailApplicationType:'',
 
         }
     },
@@ -113,16 +116,12 @@ export default {
             this.$emit('recreate')
         },
         async initPage(){
-            if(!this.id) {
-                this.getBusInfo(this.flowCode)
-            }
+            const hasId = notEmpty(this.id)
             await this.basicInit(this.id, this.type, this.approvalFlag)
-            const isDraft = this.dataForm.documentStatus === DocumentStatus.DRAFT
-            if(isDraft){
-                this.getBusInfo(this.flowCode)
-            }else{
-                this.dataForm.approvalFlag && this.getFlowDetail(this.id)
+            if(hasId && this.dataForm.approvalFlag && this.dataForm.documentStatus !== DocumentStatus.DRAFT){
+               return  this.getFlowDetail(this.id)
             }
+            this.getBusInfo(this.flowCode)
         },
         goBack(){
             return this.$emit('back')
@@ -155,7 +154,9 @@ export default {
                 id,
                 approvalFlag,
                 version,
-                bimFileUploadLineList
+                bimFileUploadLineList,
+                categoryId,
+                categoryName
           } =  this.basicInfoRef.getSaveData()
             return {
                 bimFileUpload:{
@@ -167,7 +168,9 @@ export default {
                     orderNo,
                     id,
                     approvalFlag,
-                    version
+                    version,
+                    categoryId,
+                    categoryName
                 },
                 bimFileUploadLineList,
                 flowData:this.flowData,
@@ -184,14 +187,34 @@ export default {
             this.basicInit(id,btnType, approvalFlag,true)
         },
         async basicInit(id, btnType, approvalFlag,isAudit = false){
+            const hasId = notEmpty(id)
             await this.$nextTick()
-
             const fn = isAudit ?  this.$refs.dataForm.init  : this.basicInfoRef.init
-            return  fn(id, btnType, approvalFlag)
+            if(hasId){
+                this.pageLoading = true
+                try {
+                    const { data } =   await detailBimFileUpload(id)
+                    this.detailApplicationType = data.applicationType
+                    this.dataForm.approvalFlag = data.approvalFlag
+                    Object.keys(this.dataForm).forEach(key=>this.dataForm[key] = data[key])
+                    return  fn(id, btnType, approvalFlag,data)
+                }catch (e) {
+                    return this.$message.error(e)
+                }finally {
+                    this.pageLoading = false
+                }
+            }
+            return fn(id, btnType, approvalFlag)
+
+
+
         }
     },
 
     computed:{
+        basicInfoComName(){
+            return isHasProcessApplicationType(this.applicationType || this.detailApplicationType)  ? 'HasProcessBasicInfo' : 'NoProcessBasicInfo'
+        },
         basicInfoRef(){
             return this.$refs.basicInfo
         },

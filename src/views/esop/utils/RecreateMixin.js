@@ -5,11 +5,10 @@ export default {
         }
     },
     methods:{
-        recreate(){
+       async recreate(){
             this.recreateFlag = false
-            this.$nextTick(() => {
-                this.recreateFlag = true
-            })
+            await this.$nextTick()
+            this.recreateFlag = true
         },
     }
 }

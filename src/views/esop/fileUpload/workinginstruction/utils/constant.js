@@ -40,7 +40,6 @@ export const ApplicationType = {
     "IMAGE":"image",
     "OFFICE":"office",
     "SYSTEM":"system"
-
 }
 /**
  *  审批状态

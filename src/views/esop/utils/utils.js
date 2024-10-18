@@ -56,3 +56,7 @@ export function getTitleForType(applicationType,pageType){
     }
     return `编辑${name}`
 }
+
+export function isHasProcessApplicationType(applicationType){
+    return [ApplicationType.INSPECT,ApplicationType.WORK].includes(applicationType)
+}

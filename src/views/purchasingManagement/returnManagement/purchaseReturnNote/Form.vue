@@ -1556,12 +1556,54 @@ export default {
       this.tipsvisible = false
       this.btnLoading = false
     },
+    // 继续修改
+    continueEdit() {
+      this.init(this.oldId, this.oldType)
+      this.tipsvisible = false
+      this.btnLoading = false
+    },
+    // 继续新增
+    continueAdd() {
+      this.dataFormTwo.productData = []
+      this.dataForm = {
+        exchangeGoodsFlag: false,
+        inspectionStatus: '',
+        // orderCategory: "assembly",
+        salesman: '',
+        receiptReturnType: 'back',
+        notificationType: 'procure',
+        // notifyType: 'sale',
+        logisticsCompany: '',
+        ordersId: '',
+        deliverDate: '',
+        partnerName: '',
+        orderNo: '',
+        logisticsNumber: '',
+        //   phone: '',
+        //   country: '',
+        //   province: '',
+        //   city: '',
+        //   area: '',
+        //   address: '',
+        //   delivery: '',
+        //   shipperId: '',
+        cooperativePartnerId: '',
+        remark: '',
+        approvalFlag: false
+      }
+      this.$refs.dataForm.resetFields()
+      this.init('', 'add')
+      this.tipsvisible = false
+      this.btnLoading = false
+    },
     handleConfirm(value) {
       let submitFlag = true
 
       this.$refs['dataForm'].validate((valid) => {
         this.dataForm.documentStatus = value
-        submitFlag = false
+        if (!valid) {
+          submitFlag = false
+        }
       })
       this.$refs['productForm'].validate((valid) => {
         if (!valid) {

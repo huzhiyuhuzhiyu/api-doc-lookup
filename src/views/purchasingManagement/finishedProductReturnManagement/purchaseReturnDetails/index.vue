@@ -218,7 +218,7 @@ export default {
         endUpdateTime: '',
         inspectionStatus: '',
         keyword: '',
-        classAttribute: 'other',
+        classAttribute: 'finish_product',
         notificationType: 'procure',
         notificationTypeList: [],
         orderItems: [

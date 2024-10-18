@@ -32,8 +32,6 @@
                       </el-col>
                       <el-col :span="6">
                         <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
-                          <!-- <el-input :disabled="type == 'look'" v-model="dataForm.cooperativePartnerName"
-                            placeholder="请选择供应商名称" @focus="openDialog"></el-input> -->
                           <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
                             v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
                             @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'"

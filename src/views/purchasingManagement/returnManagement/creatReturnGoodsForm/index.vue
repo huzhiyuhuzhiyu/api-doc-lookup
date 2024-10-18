@@ -358,19 +358,19 @@
                   </el-button>
                 </span>
               </el-dialog>
-              <!-- <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
-        :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center"
-        width="500px">
-        <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
-            {{ submitmethodsTitle }}啦！</span><span class="import_b">您还可以进行如下操作：</span></div>
+              <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+                :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center"
+                width="500px">
+                <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
+                    {{ submitmethodsTitle }}啦！</span><span class="import_b">您还可以进行如下操作：</span></div>
 
 
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="goBack">返回列表</el-button>
-          <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()"> {{ btnText }}</el-button>
-          <el-button v-else type="primary" @click="continueAdd()"> {{ btnText }}</el-button>
-        </span>
-      </el-dialog> -->
+                <span slot="footer" class="dialog-footer">
+                  <el-button @click="goBack">返回列表</el-button>
+                  <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()"> {{ btnText }}</el-button>
+                  <el-button v-else type="primary" @click="continueAdd()"> {{ btnText }}</el-button>
+                </span>
+              </el-dialog>
             </div>
           </div>
         </div>
@@ -408,7 +408,7 @@ export default {
     return {
       // tipsvisible: false,
       submitmethodsTitle: '',
-      btnText: '',
+      btnText: '继续新增',
       productList: [],
       deliveryDateArr: [],
       activeNames: ['productInfo', 'basicInfo'],
@@ -1275,7 +1275,46 @@ export default {
     goBack() {
       this.$emit('close', true)
     },
-
+    // 继续修改
+    continueEdit() {
+      this.init(this.oldId, this.oldType)
+      this.tipsvisible = false
+      this.btnLoading = false
+    },
+    // 继续新增
+    continueAdd() {
+      this.dataFormTwo.productData = []
+      this.dataForm = {
+        exchangeGoodsFlag: false,
+        inspectionStatus: '',
+        // orderCategory: "assembly",
+        salesman: '',
+        receiptReturnType: 'back',
+        notificationType: 'procure',
+        // notifyType: 'sale',
+        logisticsCompany: '',
+        ordersId: '',
+        deliverDate: '',
+        partnerName: '',
+        orderNo: '',
+        logisticsNumber: '',
+        //   phone: '',
+        //   country: '',
+        //   province: '',
+        //   city: '',
+        //   area: '',
+        //   address: '',
+        //   delivery: '',
+        //   shipperId: '',
+        cooperativePartnerId: '',
+        remark: '',
+        approvalFlag: false
+      }
+      this.$refs.dataForm.resetFields()
+      this.init('', 'add')
+      this.tipsvisible = false
+      this.btnLoading = false
+    },
     handleConfirm(value) {
       let submitFlag = true
       this.$refs['productForm'].validate((valid) => {
@@ -1285,7 +1324,9 @@ export default {
       })
       this.$refs['dataForm'].validate((valid) => {
         this.dataForm.documentStatus = value
-        submitFlag = false
+        if (!valid) {
+          submitFlag = false
+        }
       })
       if (submitFlag) {
         if (this.datafilelist.length) {

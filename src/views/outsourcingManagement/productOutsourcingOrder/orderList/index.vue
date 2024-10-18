@@ -82,25 +82,14 @@
             <el-table-column prop="remark" min-width="140" label="备注" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" />
-            <el-table-column label="操作" min-width="180" fixed="right">
+            <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)"
                   :editDisabled="scope.row.documentStatus !== 'draft'"
                   :delDisabled="scope.row.documentStatus !== 'draft'">
-                  <el-dropdown hide-on-click>
-                    <span class="el-dropdown-link">
-                      <el-button type="text" size="mini">
-                        {{ $t('common.moreBtn') }}
-                        <i class="el-icon-arrow-down el-icon--right"></i>
-                      </el-button>
-                    </span>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
-                        查看详情
-                      </el-dropdown-item>
-
-                    </el-dropdown-menu>
-                  </el-dropdown>
+                  <el-button size="mini" type="text" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
+                    查看详情
+                  </el-button>
                 </tableOpts>
               </template>
             </el-table-column>

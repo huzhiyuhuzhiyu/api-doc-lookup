@@ -331,7 +331,7 @@ export default {
           type: 'input',
           sm: 6,
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
-          itemDisabled: this.dataForm.inspectionMethod == 'all' || this.openMode === '只读',
+          itemDisabled: this.dataForm.inspectionMethod == 'all' || this.dataForm.inspectionMethod == 'exempt' || this.openMode === '只读',
           itemRules: [
             { required: true, trigger: 'blur' },
             {
@@ -356,6 +356,7 @@ export default {
           value: undefined,
           type: 'select',
           options: [{ label: '合格', value: 'qualified' }, { label: '不合格', value: 'unqualified' }],
+          itemDisabled: this.dataForm.inspectionMethod == 'exempt' || this.openMode === '只读',
           change: this.inspectionResultsChange,
           itemRules: [{ required: true, trigger: 'change' }],
           sm: 6

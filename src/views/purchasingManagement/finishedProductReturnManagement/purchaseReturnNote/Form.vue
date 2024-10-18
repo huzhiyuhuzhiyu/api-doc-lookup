@@ -508,7 +508,6 @@
 </template>
 
 <script>
-
 import { getsaleOrderList } from '@/api/salesManagement/assemblyOrders'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import {
@@ -846,7 +845,7 @@ export default {
         businessCode: 'attachment',
         configKey: 'fj_cpcgthtzd'
       }
-      getBimBusinessDetail(obj).then(res => {
+      getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
       })
     },
@@ -904,7 +903,6 @@ export default {
       const time = y + '-' + m + '-' + d
       return time
     },
-
 
     // 产品列表选中
     handeleProductInfoData(val) {
@@ -1435,6 +1433,7 @@ export default {
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
+          this.dataFormTwo.productData = res.data.noticeLineList
           if (res.data.attachmentList) {
             res.data.attachmentList.forEach((item) => {
               this.datafilelist.push({
@@ -1470,9 +1469,11 @@ export default {
               item.receivedQuantity = ''
             })
           } else if (this.btnType == 'edit' || this.btnType == 'look') {
+
             this.dataFormTwo.productData.forEach((item) => {
               item.drawingNo = item.productDrawingNo
             })
+            console.log(this.dataFormTwo, 'this.dataFormTwo')
             if (this.btnType === 'edit') {
               this.getBusInfo()
             } else {
@@ -1480,7 +1481,7 @@ export default {
               if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             }
           }
-          this.dataFormTwo.productData = res.data.noticeLineList
+
         })
 
         console.log(this.dataFormTwo.productData, 'data')
@@ -1517,8 +1518,11 @@ export default {
         exchangeGoodsFlag: false,
         inspectionStatus: '',
         // orderCategory: "assembly",
+        salesman: '',
         receiptReturnType: 'back',
+        classAttribute: 'finish_product',
         notificationType: 'procure',
+        // notifyType: 'sale',
         logisticsCompany: '',
         ordersId: '',
         deliverDate: '',
@@ -1547,7 +1551,9 @@ export default {
 
       this.$refs['dataForm'].validate((valid) => {
         this.dataForm.documentStatus = value
-        submitFlag = false
+        if (!valid) {
+          submitFlag = false
+        }
       })
       this.$refs['productForm'].validate((valid) => {
         if (!valid) {

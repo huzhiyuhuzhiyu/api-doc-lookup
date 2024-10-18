@@ -1,5 +1,7 @@
 import {isEmpty, notEmpty} from "@/utils";
 import {ApplicationType, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
+import {getMenuList} from "@/api/system/menu";
+import {createButton} from "@/api/system/buttonAuthorize";
 
 export function deleteLastChildList(category){
     if(isEmpty(category)) return
@@ -56,3 +58,82 @@ export function getTitleForType(applicationType,pageType){
     }
     return `编辑${name}`
 }
+
+export function isHasProcessApplicationType(applicationType){
+    return [ApplicationType.INSPECT,ApplicationType.WORK].includes(applicationType)
+}
+
+
+
+const BtnType={
+    add:{
+        fullName: '新增', enCode: 'btn_add'
+    },
+    edit:{
+        fullName: '编辑', enCode: 'btn_edit'
+    },
+    detail:{
+        fullName: '详情', enCode: 'btn_detail'
+    },
+    remove:{
+        fullName: '删除', enCode: 'btn_remove'
+    },
+    batchRemove:{
+        fullName: '批量删除', enCode: 'btn_batch_remove'
+    },
+    copy:{
+        fullName: '复制', enCode: 'btn_copy'
+    },
+    import:{
+        fullName: '导入', enCode: 'btn_import'
+    },
+    export:{
+        fullName: '导出', enCode: 'btn_export'
+    },
+    issue:{
+        fullName: '下达', enCode: 'btn_issue'
+    },
+}
+const normalBtn = [BtnType.add,BtnType.edit,BtnType.detail,BtnType.remove,BtnType.batchRemove,BtnType.copy]
+
+export async function setAllBtnAuth(moduleName="ESOP管理",btns=normalBtn){
+    const map = new Map()
+    const {data:{list}} = await getMenuList('309228585019769285',{keyword:'',category:"Web"})
+
+    flatArr(list,(item)=>{
+        map.set(item.fullName,item)
+    },'children')
+    const module = map.get(moduleName)
+    if(isEmpty(module)) return console.log('未找到模块')
+
+    const promiseObj ={}
+     if(!module.hasChildren){
+         promiseObj[module.fullName] = (addBtnFn(btns,module.id))
+    }else{
+        flatArr(module.children,(item)=>{
+            if(!item.hasChildren){
+                promiseObj[item.fullName] = (addBtnFn(btns,item.id,item.fullName))
+            }
+        },'children')
+    }
+    console.log(promiseObj)
+}
+function addBtnFn(btns,moduleId,fullName){
+    const promiseArr =[]
+    btns.forEach(item=>{
+        let query = {
+            parentId: '-1',
+            moduleId: moduleId,
+            fullName: item.fullName,
+            enCode: item.enCode,
+            sortCode: 0,
+            icon: '',
+            enabledMark: 1,
+            description: ''
+        }
+        promiseArr.push(createButton(query))
+    })
+    return {fullName:promiseArr}
+}
+
+window.setAllBtnAuth = setAllBtnAuth

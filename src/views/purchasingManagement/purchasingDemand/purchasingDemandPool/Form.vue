@@ -1419,7 +1419,7 @@ export default {
 
 .required {
   color: red;
-  margin-right: 4px;
+  /* margin-right: 4px; */
 }
 
 ::v-deep .JNPF-common-page-header {

@@ -1605,7 +1605,7 @@ const defaultApproverForm = {
     templateJson: []
   },
   copyMsgConfig: {
-    on: 2,
+    on: 0,
     msgId: '',
     msgName: '',
     templateJson: []

@@ -29,10 +29,10 @@
                           <el-form-item label="工艺路线编码" prop="code" ref="code">
                             <el-input v-model="dataForm.code" placeholder="请输入工艺路线编码" clearable
                               :style="{ width: '100%' }" maxlength="20" :disabled="type == 'look'
-                                ? true
-                                : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag
                                   ? true
-                                  : false
+                                  : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag
+                                    ? true
+                                    : false
                                 "></el-input>
                           </el-form-item>
                         </el-col>
@@ -98,12 +98,10 @@
                     </el-col> -->
                       </template>
                     </el-form>
-
                   </el-row>
                 </el-collapse-item>
                 <el-collapse-item title="工序信息" name="processInfo">
                   <el-col :span="24">
-
                     <div v-if="type !== 'look'">
                       <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                         icon="el-icon-plus" :disabled="type == 'look' ? true : false"
@@ -130,33 +128,35 @@
                           工序名称
                         </template>
                         <template slot-scope="scope">
-                          <!-- <el-input v-model="scope.row.name" readonly maxlength="20" placeholder="请输入"
-                              :disabled="type == 'look'">{{
-                                scope.row.name }}
-                            </el-input> -->
-                          <div class="viewData">
-                            <span>{{ scope.row.name }}</span>
-                          </div>
+                          {{ scope.row.name }}
                         </template>
                       </el-table-column>
                       <el-table-column prop="code" label="工序编码" min-width="140" />
 
                       <el-table-column prop="processType" label="工序类型" width="180">
                         <template slot-scope="scope">
-                          <div class="viewData">
-                            <div class="viewData" v-if="scope.row.processType == 'normal'">正常工序</div>
-                            <div class="viewData" v-if="scope.row.processType == 'wait_assemble'">待装配工序</div>
-                            <div class="viewData" v-if="scope.row.processType == 'vibrate'">测振工序</div>
-                            <div class="viewData" v-if="scope.row.processType == 'heat_treatment'">热处理工序</div>
-                          </div>
+                          <template v-if="scope.row.processType == 'normal'">
+                            正常工序
+                          </template>
+                          <template v-if="scope.row.processType == 'wait_assemble'">
+                            待装配工序
+                          </template>
+                          <template v-if="scope.row.processType == 'vibrate'">
+                            测振工序
+                          </template>
+                          <template v-if="scope.row.processType == 'heat_treatment'">
+                            热处理工序
+                          </template>
                         </template>
                       </el-table-column>
                       <el-table-column prop="processingType" label="加工类型" width="180">
                         <template slot-scope="scope">
-                          <div class="viewData">
-                            <span v-if="scope.row.processingType === 'self_produced'">自制</span>
-                            <span v-if="scope.row.processingType === 'external_production'">外协</span>
-                          </div>
+                          <template v-if="scope.row.processingType === 'self_produced'">
+                            自制
+                          </template>
+                          <template v-if="scope.row.processingType === 'external_production'">
+                            外协
+                          </template>
                         </template>
                       </el-table-column>
 
@@ -188,10 +188,6 @@
                         <template slot-scope="scope">
                           <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row">
                             <el-form-item prop="firstFlag" ref="firstFlag">
-                              <!-- <el-radio-group v-model="scope.row.firstFlag">
-                                    <el-radio :label="true" :disabled="type == 'look' || scope.$index != 0">{{
-                                      scope.row.firstFlag ? '是' : '否' }}</el-radio>
-                                  </el-radio-group> -->
                               <el-checkbox :label="true" v-model="scope.row.firstFlag" :true-label="1" disabled>
                                 {{ scope.row.firstFlag ? '是' : '否' }}
                               </el-checkbox>
@@ -303,8 +299,7 @@
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
-            <!-- <el-tab-pane label="审批流程" name="approvalProcess">
-            </el-tab-pane> -->
+        
             <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
               <UploadWj v-model="datafilelist" :disabled="type == 'look'" :detailed="type == 'look'"></UploadWj>
             </el-tab-pane>
@@ -325,10 +320,10 @@
                       <el-form-item label="工艺路线编码" prop="code" ref="code">
                         <el-input v-model="dataForm.code" placeholder="请输入工艺路线编码" clearable :style="{ width: '100%' }"
                           maxlength="20" :disabled="type == 'look'
-                            ? true
-                            : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag
                               ? true
-                              : false
+                              : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag
+                                ? true
+                                : false
                             "></el-input>
                       </el-form-item>
                     </el-col>
@@ -372,7 +367,7 @@
                     选择工序
                   </el-button>
                   |
-                  <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
+                
                   <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                     :disabled="type == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
                     批量删除
@@ -391,29 +386,35 @@
                       工序名称
                     </template>
                     <template slot-scope="scope">
-                      <div class="viewData">
-                        <span>{{ scope.row.name }}</span>
-                      </div>
+                      {{ scope.row.name }}
                     </template>
                   </el-table-column>
                   <el-table-column prop="code" label="工序编码" min-width="140" />
 
                   <el-table-column prop="processType" label="工序类型" width="180">
                     <template slot-scope="scope">
-                      <div class="viewData">
-                        <div class="viewData" v-if="scope.row.processType == 'normal'">正常工序</div>
-                        <div class="viewData" v-if="scope.row.processType == 'wait_assemble'">待装配工序</div>
-                        <div class="viewData" v-if="scope.row.processType == 'vibrate'">测振工序</div>
-                        <div class="viewData" v-if="scope.row.processType == 'heat_treatment'">热处理工序</div>
-                      </div>
+                      <template v-if="scope.row.processType == 'normal'">
+                        正常工序
+                      </template>
+                      <template v-if="scope.row.processType == 'wait_assemble'">
+                        待装配工序
+                      </template>
+                      <template v-if="scope.row.processType == 'vibrate'">
+                        测振工序
+                      </template>
+                      <template v-if="scope.row.processType == 'heat_treatment'">
+                        热处理工序
+                      </template>
                     </template>
                   </el-table-column>
                   <el-table-column prop="processingType" label="加工类型" width="180">
                     <template slot-scope="scope">
-                      <div class="viewData">
-                        <span v-if="scope.row.processingType === 'self_produced'">自制</span>
-                        <span v-if="scope.row.processingType === 'external_production'">外协</span>
-                      </div>
+                      <template v-if="scope.row.processingType === 'self_produced'">
+                        自制
+                      </template>
+                      <template v-if="scope.row.processingType === 'external_production'">
+                        外协
+                      </template>
                     </template>
                   </el-table-column>
                   <el-table-column prop="firstFlag" label="是否首道工序" min-width="140">
@@ -734,7 +735,7 @@ export default {
         businessCode: 'attachment',
         configKey: 'fj_gylx'
       }
-      getBimBusinessDetail(obj).then(res => {
+      getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
       })
     },
@@ -1464,11 +1465,10 @@ export default {
   margin-bottom: 0;
   padding: 0 10px 0px;
   border-top: none !important;
-
 }
 
 ::v-deep .el-collapse-item__content {
-  padding-bottom: 0px
+  padding-bottom: 0px;
 }
 
 .JNPF-preview-main .main {
@@ -1476,11 +1476,11 @@ export default {
 }
 
 ::v-deep .el-tabs__item {
-  padding: 0 10px !important
+  padding: 0 10px !important;
 }
 
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
-  padding-left: 0px !important
+  padding-left: 0px !important;
 }
 
 ::v-deep .JNPF-common-page-header {

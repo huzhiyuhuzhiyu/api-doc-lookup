@@ -63,26 +63,20 @@
                     <el-table-column prop="fileCount" label="文件数量" width="120" />
                     <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
                     <el-table-column prop="createByName" label="创建人" width="100" />
+                    <el-table-column prop="status" label="启用状态" width="120" align="center" v-if="isFileManagementPage">
+                        <template slot-scope="scope">
+                            <el-switch @change="changeState(scope.row)" v-model="scope.row.enabledMark"
+                                       :active-value="1" :inactive-value="0">
+                            </el-switch>
+                        </template>
+                    </el-table-column>
                     <el-table-column label="操作" width="180" fixed="right">
                         <template slot-scope="scope">
                             <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
                                        :delDisabled="scope.row.documentStatus !== 'draft'"
                                        :editDisabled="scope.row.documentStatus !== 'draft'"
                                        @edit="addOrUpdateHandle(ModelType.EDIT,scope.row.id)" @del="handleDel(scope.row.id)">
-<!--                                        <el-dropdown hide-on-click>-->
-<!--                                            <span class="el-dropdown-link">-->
-<!--                                              <el-button type="text" size="mini">-->
-<!--                                                {{ $t('common.moreBtn') }}-->
-<!--                                                <i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>-->
-<!--                                              </el-button>-->
-<!--                                            </span>-->
-<!--                                            <el-dropdown-menu slot="dropdown">-->
-<!--                                                <el-dropdown-item @click.native="addOrUpdateHandle(ModelType.VIEW,scope.row.id)">-->
-<!--                                                    查看详情-->
-<!--                                                </el-dropdown-item>-->
-<!--                                            </el-dropdown-menu>-->
-<!--                                        </el-dropdown>-->
-                                        <template v-if="isFileManagementWork || isFileManagementInspect">
+                                        <template v-if="isFileManagementPage">
                                             <el-button type="text" size="mini" @click="addOrUpdateHandle(ModelType.VIEW,scope.row.id)">
                                                 查看详情
                                             </el-button>
@@ -96,7 +90,7 @@
             </div>
         </div>
         <slot name="editForm" :data="this">
-            <EditWorkingInstructionUpload :flowCode="flowCode" :type="uploadType" :id="fileUploadId" :applicationType="applicationType" @back="editBack" v-if="formVisible"/>
+            <EditWorkingInstructionUpload v-if="formVisible && recreateFlag" @recreate="recreate"  :flowCode="flowCode" :type="uploadType" :id="fileUploadId" :applicationType="applicationType" @back="editBack" />
         </slot>
 
         <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
@@ -119,12 +113,13 @@ import {deleteBimFileUpload, getBimFileUpload} from "@/api/esop/fileUpload/worki
 import moment from "moment";
 import {
     ApplicationType,
-    DocumentStatus,
+    DocumentStatus, FileManagePageSet,
     ModelType,
     PageType
 } from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 import {FlowCode} from "@/views/esop/utils/constants";
-import {trim} from "@/utils";
+import {mapIfNonePutArr, trim} from "@/utils";
+import RecreateMixin from "@/views/esop/utils/RecreateMixin";
 
 
 
@@ -153,8 +148,10 @@ export default {
             default:""
         }
     },
+    mixins:[RecreateMixin],
     data() {
         return {
+            recreateFlag: true,
             ModelType,
             uploadType:ModelType.ADD,
             fileUploadId:"",
@@ -196,24 +193,31 @@ export default {
                     type: 'input'
                 },
 
-            ]
+            ],
+            productId2ItemMap:new Map()
         }
     },
     computed: {
         ...mapGetters(['userInfo']),
         ...mapState('user', ['token']),
-        isFileManagementWork(){
-            return this.pageType === PageType.FileManagementWork
+        isFileManagementPage(){
+            return  FileManagePageSet.has(this.pageType)
         },
-        isFileManagementInspect(){
-            return this.pageType === PageType.FileManagementInspect
-        }
     },
     async created() {
         this.initData()
 
     },
     methods: {
+        async changeState({productsCode,id,enabledMark}) {
+            const {data} = await {data:{}}
+            this.productId2ItemMap.get(productsCode)
+                .forEach((item)=>
+                    item.productsCode !== productsCode
+                    && (item.enabledMark = 0)
+                )
+            this.$message.success('操作成功')
+        },
         getOriginListQuery() {
             return {
                 applicationType:this.applicationType,
@@ -225,8 +229,8 @@ export default {
                 keyword: "",
                 orderItems: [
                     {
-                        asc: true,
-                        column: ""
+                        asc: false,
+                        column: "create_time"
                     }
                 ],
                 orderNo: "",
@@ -355,14 +359,20 @@ export default {
             this.initData()
         },
        async initData() {
-            this.listLoading = true
+
+           this.listLoading = true
            const params ={...this.listQuery}
            params.superQuery.condition[0].fieldValue === '' && delete params.superQuery
            const {data} = await getBimFileUpload(params)
+           this.isFileManagementPage && this.fileManageInit(data)
            this.tableData = data.records
            this.total = data.total
            this.listLoading = false
 
+        },
+        fileManageInit(data){
+            this.productId2ItemMap.clear()
+            data.records.forEach(item=>mapIfNonePutArr(this.productId2ItemMap,item.productsCode,item))
         },
         search() {
             if (this.createTimeArr && this.createTimeArr.length > 0) {

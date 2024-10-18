@@ -33,12 +33,12 @@
           <template v-if="setting.opType == '-1'">
             <el-button type="primary" @click="eventLauncher('submit')" :loading="candidateLoading"
               :disabled="allBtnDisabled">{{ properties.submitBtnText || '提 交' }}</el-button>
-            <el-button type="warning" @click="eventLauncher('save')" :loading="btnLoading"
-              :disabled="allBtnDisabled">{{ properties.saveBtnText || '暂 存' }}</el-button>
+            <el-button type="warning" @click="eventLauncher('save')" :loading="btnLoading" :disabled="allBtnDisabled">{{
+              properties.saveBtnText || '暂 存' }}</el-button>
           </template>
           <template v-if="setting.opType == 1">
-            <el-button type="warning" @click="openUserBox('transfer')"
-              v-if="properties.hasTransferBtn && !messageFlag">{{ properties.transferBtnText || '转 审' }}</el-button>
+            <el-button type="warning" @click="openUserBox('transfer')" v-if="properties.hasTransferBtn && !messageFlag">{{
+              properties.transferBtnText || '转 审' }}</el-button>
             <el-button type="primary" @click="eventLauncher('audit')" :loading="candidateLoading"
               v-if="properties.hasAuditBtn && !messageFlag">{{ properties.auditBtnText || '通 过' }}</el-button>
             <el-button type="warning" @click="eventLauncher('saveAudit')" v-if="properties.hasSaveBtn && !messageFlag"
@@ -56,8 +56,8 @@
               {{ properties.revokeBtnText || '撤 回' }}</el-button>
           </template>
           <el-button type="danger"
-            v-if="setting.opType == 2 && properties.hasRevokeBtn && flowTaskInfo.completion !== 100"
-            @click="recall()">{{ properties.revokeBtnText || '撤 回' }}</el-button>
+            v-if="setting.opType == 2 && properties.hasRevokeBtn && flowTaskInfo.completion !== 100" @click="recall()">{{
+              properties.revokeBtnText || '撤 回' }}</el-button>
           <template v-if="setting.opType == 4">
             <!-- 判断流程复活按钮和节点变更 -->
             <!-- <el-button type="primary" @click="flowResurgence" v-if="flowTaskInfo.completion==100">
@@ -87,8 +87,9 @@
         </el-tab-pane>
         <el-tab-pane label="流转记录" v-if="setting.opType != '-1'" v-loading="loading">
           <div class="mb-20" v-if="flowTaskInfo.status === 2">
-              <el-alert  :title="'共耗时'+(flowTaskInfo.processingTime || '')+'小时,'+ '超过'+(flowTaskInfo.timeFastRatio || '')+'%的同类申请'" type="success" show-icon
-                :closable="false"></el-alert>
+            <el-alert
+              :title="'共耗时' + (flowTaskInfo.processingTime || '') + '小时,' + '超过' + (flowTaskInfo.timeFastRatio || '') + '%的同类申请'"
+              type="success" show-icon :closable="false"></el-alert>
           </div>
           <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
         </el-tab-pane>
@@ -174,7 +175,8 @@
         :visible.sync="resurgenceVisible" class="JNPF-dialog JNPF-dialog_center" lock-scroll append-to-body width='600px'>
         <el-form label-width="90px" :model="resurgenceForm" :rules="resurgenceRules" ref="resurgenceForm">
           <el-form-item :label="flowTaskInfo.completion == 100 ? '复活节点' : '变更节点'" prop="nodeCode">
-            <el-select v-model="resurgenceForm.nodeCode" :placeholder="flowTaskInfo.completion == 100 ? '请选择复活节点' : '请选择变更节点'">
+            <el-select v-model="resurgenceForm.nodeCode"
+              :placeholder="flowTaskInfo.completion == 100 ? '请选择复活节点' : '请选择变更节点'">
               <el-option v-for="item in resurgenceNodeList" :key="item.id" :label="item.nodeName" :value="item.id" />
             </el-select>
           </el-form-item>
@@ -215,7 +217,9 @@ import Process from '@/components/Process/Preview'
 import PrintBrowse from '@/components/PrintBrowse'
 import vueEsign from 'vue-esign'
 import ActionDialog from '@/views/workFlow/components/ActionDialog'
-
+import { indAndoutTypeList } from './indAndout'
+import { detailWarehouseData } from "@/api/warehouseManagement/inboundAndOutbound"
+import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 export default {
   components: {
     recordList, Process, vueEsign, PrintBrowse, Comment, RecordSummary, CandidateForm, CandidateUserSelect, ErrorForm, ActionDialog,
@@ -333,11 +337,12 @@ export default {
         'b042': 'inspectionManagement/components/inspectionFormManagementDetail.vue',
         'b043': 'inspectionManagement/components/inspectionFormManagementDetail.vue',
         'b044': 'inspectionManagement/components/inspectionFormManagementDetail.vue',
-        'b045': 'warehouseManagement/finishedProductWarehouseManagement/inventoryList/Form.vue',
+        'b045': '',   // 出入库单独处理
         'b046': 'warehouseManagement/finishedProductWarehouseManagement/inventoryList/Form.vue',
         'b048': 'esop/fileUpload/workinginstruction/Form.vue',
         'b049': 'esop/fileUpload/workinginstruction/Form.vue',
-        'b050': 'esop/fileUpload/docment/Form.vue',
+        'b050': 'esop/fileUpload/workinginstruction/Form.vue',
+        'b052': 'esop/fileUpload/workinginstruction/Form.vue',
         'b051': 'warehouseManagement/finishedProductWarehouseManagement/transferManagement/Form.vue',
       },
       inspectionTypeList: [
@@ -355,9 +360,12 @@ export default {
         { label: 'b042', value: 'process' },
         { label: 'b043', value: 'finished' },
       ],
-      inspectionType:'',
-      businessFlow:'',
-      messageFlag: false
+      inspectionType: '',
+      businessFlow: '',
+      messageFlag: false,
+      saleFlag: false,
+      purchaseFlag: false,
+      externalFlag: false,
     }
   },
   computed: {
@@ -480,8 +488,22 @@ export default {
         }, 500)
       }).catch(() => { this.loading = false })
     },
+    // 获取是按销售通知单还是发货通知单
+    async getPickingConfig() {
+      let obj = { "pageSize": -1, "businessCode": "warehouse" }
+      const res = await getBimBusinessSwitchConfigList(obj)
+      try {
+        this.saleFlag = res.data.warehouse[2].configValue1 == '1' ? true : false
+        this.purchaseFlag = res.data.warehouse[0].configValue1 == '1' ? true : false
+        this.externalFlag = res.data.warehouse[1].configValue1 == '1' ? true : false
+      } catch (error) {
+        this.saleFlag = false
+        this.purchaseFlag = false
+        this.externalFlag = false
+      }
+    },
     getBeforeInfo(data) {
-      FlowBeforeInfo(data.id, { taskNodeId: data.taskNodeId, taskOperatorId: data.taskId }).then(res => {
+      FlowBeforeInfo(data.id, { taskNodeId: data.taskNodeId, taskOperatorId: data.taskId }).then(async res => {
         this.flowFormInfo = res.data.flowFormInfo
         this.flowTaskInfo = res.data.flowTaskInfo
         data.fullName = this.flowTaskInfo.fullName
@@ -504,8 +526,28 @@ export default {
           console.log(data);
           let page = this.pageView[data.businessFlow]
           // this.currentView = (resolve) => require([`@/views/warehouseManagement/finishedProductWarehouseManagement/inventoryList/Form.vue`], resolve)
+          if (data.businessFlow === 'b045') {
+            try {
+              this.getPickingConfig()
+              const res = await detailWarehouseData(data.businessId)
+              let orderOrNotice = indAndoutTypeList.find(item => item.label === res.data.stockMove.businessType)
+              console.log(orderOrNotice);
+              if (['outbound_sale_send', 'inbound_purchase', 'outbound_sale_send', 'inbound_external'].includes(res.data.stockMove.businessType)) {
+                if (this.saleFlag || this.purchaseFlag || this.externalFlag ) {
+                  page = orderOrNotice.value
+                }
+              } else {
+                page = orderOrNotice.value2
+              }
+              if ((this.saleFlag && res.data.businessType === 'outbound_sale_send') || (this.purchaseFlag && res.data.businessType === 'inbound_purchase') || (this.externalFlag && res.data.businessType === 'outbound_sale_send')) {
+                page = orderOrNotice.value
+              } else {
+                page = orderOrNotice.value2
+              }
+            } catch (error) {
+            }
+          }
           this.currentView = (resolve) => require([`@/views/${page}`], resolve)
-
         }
         this.flowTaskNodeList = res.data.flowTaskNodeList
         this.flowTemplateJson = this.flowTaskInfo.flowTemplateJson ? JSON.parse(this.flowTaskInfo.flowTemplateJson) : null
@@ -558,9 +600,13 @@ export default {
             if (data.formType === 3) {
               console.log(data, 'data');
               console.log(this.$refs.form, 'this.$refs.form');
-              let targetPage =  this.inspectionTypeList.find(item=>item.label === data.businessFlow)
+              let targetPage = this.inspectionTypeList.find(item => item.label === data.businessFlow)
               this.inspectionType = targetPage ? targetPage.value : ''
-              this.$refs.form && this.$refs.form.init(data.businessId, 'look', true,this.inspectionType)
+              if (data.businessFlow === 'b045') {
+                this.$refs.form && this.$refs.form.flowInit(data.businessId, 'look', true)
+              } else {
+                this.$refs.form && this.$refs.form.init(data.businessId, 'look', true, this.inspectionType)
+              }
               this.loading = false
             } else {
               this.$refs.form && this.$refs.form.init(data)
@@ -570,7 +616,7 @@ export default {
       }).catch(() => { this.loading = false })
     },
     eventLauncher(eventType) {
-      this.$refs.form && this.$refs.form.dataFormSubmit(eventType, this.flowUrgent,this.inspectionType,this.$refs.form,this.businessFlow)
+      this.$refs.form && this.$refs.form.dataFormSubmit(eventType, this.flowUrgent, this.inspectionType, this.$refs.form, this.businessFlow)
     },
     eventReceiver(formData, eventType) {
       this.formData = formData

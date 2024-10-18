@@ -110,11 +110,6 @@
             </el-collapse-item>
             <el-collapse-item title="工序信息" name="processInfo">
               <el-col :span="24">
-                <!-- <div
-                            style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px"
-                          >
-                            <h5>工序信息</h5>
-                          </div> -->
                 <div v-if="type !== 'look'">
                   <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                     icon="el-icon-plus" :disabled="type == 'look' ? true : false"
@@ -122,48 +117,47 @@
                     选择工序
                   </el-button>
                   |
-                  <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
+
                   <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                     :disabled="type == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
                     批量删除
                   </el-button>
                   |
                 </div>
-                <!-- <el-form-item label-width="0" ref="tableForm">  -->
                 <el-table hasC hasNO fixedNO style="border: 1px solid #e3e7ee;margin: 0 0;" ref="processRef"
                   v-loading="responseLoading" @selection-change="handeleProductInfoData" :data="dataFormTwo" size="mini"
-                  id="table"  :header-cell-style="{background:'#F5F7FA',color:'#606266'}">
+                  id="table" :header-cell-style="{ background: '#F5F7FA', color: '#606266' }">
                   <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
                   <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                  <el-table-column prop="name" label="工序名称" width="180" show-overflow-tooltip>
+                  <el-table-column prop="name" label="工序名称" width="180">
                     <template slot="header">
                       <span class="required">*</span>
                       工序名称
                     </template>
                     <template slot-scope="scope">
-                      <div class="viewData">
-                        <span>{{ scope.row.name }}</span>
-                      </div>
+
+                      {{ scope.row.name }}
+
                     </template>
                   </el-table-column>
                   <el-table-column prop="code" label="工序编码" min-width="140" />
 
                   <el-table-column prop="processType" label="工序类型" width="180">
                     <template slot-scope="scope">
-                      <div class="viewData">
-                        <div class="viewData" v-if="scope.row.processType == 'normal'">正常工序</div>
-                        <div class="viewData" v-if="scope.row.processType == 'wait_assemble'">待装配工序</div>
-                        <div class="viewData" v-if="scope.row.processType == 'vibrate'">测振工序</div>
-                        <div class="viewData" v-if="scope.row.processType == 'heat_treatment'">热处理工序</div>
-                      </div>
+
+                      <template v-if="scope.row.processType == 'normal'">正常工序</template>
+                      <template v-if="scope.row.processType == 'wait_assemble'">待装配工序</template>
+                      <template v-if="scope.row.processType == 'vibrate'">测振工序</template>
+                      <template v-if="scope.row.processType == 'heat_treatment'">热处理工序</template>
+
                     </template>
                   </el-table-column>
                   <el-table-column prop="processingType" label="加工类型" width="180">
                     <template slot-scope="scope">
-                      <div class="viewData">
-                        <span v-if="scope.row.processingType === 'self_produced'">自制</span>
-                        <span v-if="scope.row.processingType === 'external_production'">外协</span>
-                      </div>
+
+                      <template v-if="scope.row.processingType === 'self_produced'">自制</template>
+                      <template v-if="scope.row.processingType === 'external_production'">外协</template>
+
                     </template>
                   </el-table-column>
 

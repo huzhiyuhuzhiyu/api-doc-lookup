@@ -32,8 +32,6 @@
                       </el-col>
                       <el-col :span="6">
                         <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
-                          <!-- <el-input :disabled="type == 'look'" v-model="dataForm.cooperativePartnerName"
-                            placeholder="请选择供应商名称" @focus="openDialog"></el-input> -->
                           <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
                             v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
                             @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'"
@@ -77,7 +75,7 @@
                   </div>
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
                     <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="dataFormTwo.data"
-                      :data="dataFormTwo.data" id="table">
+                      :data="dataFormTwo.data" id="table" @row-click="openDetails">
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
@@ -95,7 +93,8 @@
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
                             :rules="productRules.productDrawingNo">
-                            <el-input v-model="scope.row.productDrawingNo" placeholder="请输入品名规格" />
+                            <el-input v-model="scope.row.productDrawingNo" :disabled="type == 'look' ? true : false"
+                              placeholder="请输入品名规格" />
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -109,7 +108,7 @@
                             :rules="productRules.processName">
                             <!-- <el-input v-model="scope.row.productName" placeholder="请输入产品名称" /> -->
                             <!-- 工序选择弹窗  -->
-                            <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
+                            <ComSelect-page :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
                               v-model="scope.row.processName" @change="onOrganizeChangeTwo"
                               :tableItems="ProcessTableItems" :placeholder="'请选择工序名称'" title="选择工序" treeTitle="工序分类"
                               :methodArr="ProcessMethodArr" :listMethod="getBimProcessList"
@@ -128,7 +127,8 @@
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'deliveryDate'"
                             :rules="productRules.deliveryDate">
                             <el-date-picker v-model="scope.row.deliveryDate" type="date" value-format="yyyy-MM-dd"
-                              style="width: 100%;" placeholder="请选择交货日期"></el-date-picker>
+                              :disabled="type == 'look' ? true : false" style="width: 100%;"
+                              placeholder="请选择交货日期"></el-date-picker>
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -150,7 +150,7 @@
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity'"
                             :rules="productRules.purchaseQuantity">
-                            <el-input v-model="scope.row.purchaseQuantity"
+                            <el-input v-model="scope.row.purchaseQuantity" :disabled="type == 'look' ? true : false"
                               @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)" maxlength="20"
                               placeholder="请输入主数量"></el-input>
                           </el-form-item>
@@ -164,7 +164,8 @@
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'price'" :rules="productRules.price">
-                            <el-input v-model="scope.row.price" placeholder="请输入含税单价" />
+                            <el-input v-model="scope.row.price" placeholder="请输入含税单价"
+                              :disabled="type == 'look' ? true : false" />
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -190,7 +191,8 @@
                           <el-form-item :rules="productRules.taxRate">
                             <!-- <el-input oninput="value = value.replace(/\D/g,'')" maxlength="2"
                                 v-model="scope.row.taxRate" placeholder="请输入税率"></el-input> -->
-                            <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;">
+                            <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;"
+                              :disabled="type == 'look' ? true : false">
                               <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                                 :value="item.taxRate"></el-option>
                             </el-select>
@@ -255,7 +257,7 @@
                       <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-input :title="scope.row.remark" v-model="scope.row.remark" maxlength="20"
-                            placeholder="请输入备注">
+                            :disabled="type == 'look' ? true : false" placeholder="请输入备注">
                             {{ scope.row.remark }}
                           </el-input>
                         </template>
@@ -365,7 +367,7 @@
               </div>
               <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
                 <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="dataFormTwo.data"
-                  :data="dataFormTwo.data" id="table">
+                  :data="dataFormTwo.data" id="table" @row-click="openDetails">
                   <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
                   <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                   <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
@@ -743,6 +745,25 @@ export default {
         // 审批
         // this.$nextTick(() => { this.getApproverData() })
       }
+    },
+    openDetails(row) {
+      console.log(this.approvalFlag, '555555')
+      console.log(row, 'ppop66666666666')
+      this.autoId = row.id
+      console.log(this.autoId, 'oiGGG')
+      this.linesList = []
+      let obj = {
+        productsId: row.productsId,
+        purchaseQuantity: row.purchaseQuantity
+      }
+      // 通过需求池id 获取明细的数据
+      getShipmentList(obj).then((res) => {
+        this.linesList.push(...res.data)
+      })
+      // purPurchaseOrderdetail(row.purchaseOrderId).then((res) => {
+      //   console.log(res, 'iiii')
+      //   this.linesList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
+      // })
     },
     disabledDate(time) {
       // 将输入的日期字符串转换为日期对象

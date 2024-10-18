@@ -390,6 +390,7 @@ export default {
       })
     },
     async init(id, btnType, approvalFlag, approvalStatus) {
+      console.log(approvalFlag, 'p')
       console.log(approvalStatus, 'approvalStatus')
       this.visible = true
       this.formLoading = true
@@ -698,13 +699,11 @@ export default {
         console.log('[[]]')
         msgArr.push('切换节点')
         this.selectedNodeKey = bomId
-        this.init(bomId, this.btnType, nodeData)
+        this.init(bomId, this.btnType, this.approvalFlag)
       } else {
         msgArr.push('点击的节点没有BOM')
         this.$refs.treeBox.setCurrentKey(this.selectedNodeKey)
       }
-      // this.approvalFlag = false
-      // console.log(msgArr.join(' - '));
     },
     // 展开或折叠全部
     toggleExpand(expands) {

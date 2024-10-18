@@ -482,8 +482,10 @@ import Process from '@/components/Process/Preview'
 import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
 import { getCooperativeData } from '@/api/basicData/index'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
+import flowMixin from '@/mixins/generator/flowMixin'
 export default {
   components: { WareHouseForm, BatchNumberForm, CustomerForm, Process },
+  mixins: [flowMixin],
   props: {
     warehouseCode: "",
   },
@@ -678,7 +680,7 @@ export default {
     this.getWarehouseListFun()
     this.getProductClassFun()
     this.getprocessList()
-    this.getBusInfo()
+    this.getBusInfo('b046')
     this.getclassAttributeList()
   },
   watch: {
@@ -1211,7 +1213,7 @@ export default {
           }
         });
       }
-      this.getBusInfo()
+      this.getBusInfo('b046')
       this.orderForm = { //获取产品数据
         cooperativePartnerId: "",
         productDrawingNo: "",        // customerProductNo: "",
@@ -1637,26 +1639,6 @@ export default {
         this.taxRateList = res.data.list
       })
 
-    },
-    // 测试审批流
-    getBusInfo() {
-      let code = this.dataForm.documentType === 'inbound' ? 'b046' : 'b045'
-      getBusinessFlowInfo(code).then(res => {
-        if (res.data) {
-          if (res.data.enabledMark) {
-            this.flowData = res.data
-            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
-            this.dataForm.approvalFlag = res.data.enabledMark
-          } else {
-            this.flowTemplateJson = {}
-            this.dataForm.approvalFlag = false
-            this.$message.error('未找到审批流程！')
-          }
-        } else {
-          this.flowTemplateJson = {}
-          this.dataForm.approvalFlag = false
-        }
-      }).catch(() => { })
     },
     // 意向客户分类节点点击
     yxPartnerTreeNodeClick(data, node, listQuery) {

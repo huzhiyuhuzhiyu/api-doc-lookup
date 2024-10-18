@@ -3,7 +3,7 @@
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
 
-      <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']"   v-if="!approvalFlag">
+      <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <el-page-header @back="goBack" :content="title" />
         <div class="options">
           <!-- <el-button v-if="btnType !== 'look'" type="success" :loading="btnLoading"
@@ -18,7 +18,7 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="formLoading" ref="main"
               :element-loading-text="loadingText">
-              <el-tabs v-model="activeName"  v-if="!approvalFlag && dataForm.approvalFlag">
+              <el-tabs v-model="activeName" v-if="!approvalFlag && dataForm.approvalFlag">
                 <el-tab-pane label="基础信息" name="orderInfo" class="orderInfo">
                   <el-collapse v-model="activeNames">
                     <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
@@ -32,7 +32,7 @@
                                 maxlength="300" />
                             </el-form-item>
                           </el-col>
-                  
+
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="业务类型" prop="businessType">
                               <el-select v-model="dataForm.businessType" placeholder="请选择业务类型" style="width: 100%;"
@@ -55,10 +55,10 @@
                               <ComSelect-list :requestObj="warehouseRequestObj" :dialogTitle="'选择仓库'"
                                 :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName"
                                 :method="getWarehouseList" placeholder="请选择仓库"
-                                @change="changeWarehousex"></ComSelect-list> 
+                                @change="changeWarehousex"></ComSelect-list>
                             </el-form-item>
                           </el-col>
-                          <el-col :sm="6" :xs="24" v-if="allocationFlag&&btnType!='look'">
+                          <el-col :sm="6" :xs="24" v-if="allocationFlag && btnType != 'look'">
                             <el-form-item label="库位" prop="shelfSpaceName">
                               <el-input v-model="shelfSpaceName" placeholder="库位" readonly
                                 @focus="openSeleceWareDialog">
@@ -67,8 +67,8 @@
                           </el-col>
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="检验结果" prop="inspectionResults">
-                              <el-select v-model="dataForm.inspectionResults" placeholder="请选择检验结果" :disabled="btnType=='look'"
-                                style="width: 100%;">
+                              <el-select v-model="dataForm.inspectionResults" placeholder="请选择检验结果"
+                                :disabled="btnType == 'look'" style="width: 100%;">
                                 <el-option v-for="(item, index) in inspectionResultsList" :key="index"
                                   :label="item.label" :value="item.value"></el-option>
                               </el-select>
@@ -101,9 +101,9 @@
 
                       </div>
 
-                      <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType!='look'"
+                      <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
                         @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
-                     
+
                         <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                         </el-table-column>
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
@@ -118,7 +118,7 @@
                           </template>
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.shelfSpaceName" readonly :disabled="btnType == 'look'"
-                              @focus="openSeleceWareDialog(scope.row, scope.$index,'table')" placeholder="库位">
+                              @focus="openSeleceWareDialog(scope.row, scope.$index, 'table')" placeholder="库位">
                             </el-input>
 
                           </template>
@@ -128,7 +128,8 @@
 
 
 
-                        <el-table-column prop="waitReceiptNum" label="待收货数量" width="140" :key="777" v-if="btnType!='look'">
+                        <el-table-column prop="waitReceiptNum" label="待收货数量" width="140" :key="777"
+                          v-if="btnType != 'look'">
                         </el-table-column>
 
 
@@ -175,158 +176,155 @@
                 <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
                   <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
                 </el-tab-pane>
+                <el-tab-pane v-if="btnType == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
+                  <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
+                </el-tab-pane>
               </el-tabs>
-              <el-collapse v-model="activeNames"  v-else>
-                    <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                      <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px"
-                        label-position="top">
-                        <el-row :gutter="30" class="custom-row">
-                          <el-col :sm="6" :xs="24">
-                            <el-form-item label="单号" prop="orderNo">
-                              <el-input v-model="dataForm.orderNo" placeholder="请输入单号"
-                                :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false"
-                                maxlength="300" />
-                            </el-form-item>
-                          </el-col>
-                  
-                          <el-col :sm="6" :xs="24">
-                            <el-form-item label="业务类型" prop="businessType">
-                              <el-select v-model="dataForm.businessType" placeholder="请选择业务类型" style="width: 100%;"
-                                @change="selectSourceTypeFun" disabled>
-                                <el-option v-for="(item, index) in sourceTypeList" :key="index" :label="item.label"
-                                  :value="item.value"></el-option>
-                              </el-select>
-                            </el-form-item>
-                          </el-col>
+              <el-collapse v-model="activeNames" v-else>
+                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                  <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+                    <el-row :gutter="30" class="custom-row">
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="单号" prop="orderNo">
+                          <el-input v-model="dataForm.orderNo" placeholder="请输入单号"
+                            :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false"
+                            maxlength="300" />
+                        </el-form-item>
+                      </el-col>
 
-                          <el-col :sm="6" :xs="24">
-                            <el-form-item label="供应商" prop="cooperativePartnerId">
-                              <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
-                                disabled>
-                              </el-input>
-                            </el-form-item>
-                          </el-col>
-                          <el-col :sm="6" :xs="24">
-                            <el-form-item label="仓库" prop="warehouseName">
-                              <ComSelect-list :requestObj="warehouseRequestObj" :dialogTitle="'选择仓库'"
-                                :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName"
-                                :method="getWarehouseList" placeholder="请选择仓库"
-                                @change="changeWarehousex"></ComSelect-list> 
-                            </el-form-item>
-                          </el-col>
-                          <el-col :sm="6" :xs="24" v-if="allocationFlag&&btnType!='look'">
-                            <el-form-item label="库位" prop="shelfSpaceName">
-                              <el-input v-model="shelfSpaceName" placeholder="库位" readonly
-                                @focus="openSeleceWareDialog">
-                              </el-input>
-                            </el-form-item>
-                          </el-col>
-                          <el-col :sm="6" :xs="24">
-                            <el-form-item label="检验结果" prop="inspectionResults">
-                              <el-select v-model="dataForm.inspectionResults" placeholder="请选择检验结果" :disabled="btnType=='look'"
-                                style="width: 100%;">
-                                <el-option v-for="(item, index) in inspectionResultsList" :key="index"
-                                  :label="item.label" :value="item.value"></el-option>
-                              </el-select>
-                            </el-form-item>
-                          </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="业务类型" prop="businessType">
+                          <el-select v-model="dataForm.businessType" placeholder="请选择业务类型" style="width: 100%;"
+                            @change="selectSourceTypeFun" disabled>
+                            <el-option v-for="(item, index) in sourceTypeList" :key="index" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
 
-                          <el-col :sm="12" :xs="24">
-                            <el-form-item label="备注" prop="remark">
-                              <el-input v-model="dataForm.remark" placeholder="请输入备注"
-                                :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2"
-                                maxlength="200" />
-                            </el-form-item>
-                          </el-col>
-                        </el-row>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="供应商" prop="cooperativePartnerId">
+                          <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
+                            disabled>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="仓库" prop="warehouseName">
+                          <ComSelect-list :requestObj="warehouseRequestObj" :dialogTitle="'选择仓库'"
+                            :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName" :method="getWarehouseList"
+                            placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24" v-if="allocationFlag && btnType != 'look'">
+                        <el-form-item label="库位" prop="shelfSpaceName">
+                          <el-input v-model="shelfSpaceName" placeholder="库位" readonly @focus="openSeleceWareDialog">
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="检验结果" prop="inspectionResults">
+                          <el-select v-model="dataForm.inspectionResults" placeholder="请选择检验结果"
+                            :disabled="btnType == 'look'" style="width: 100%;">
+                            <el-option v-for="(item, index) in inspectionResultsList" :key="index" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+
+                      <el-col :sm="12" :xs="24">
+                        <el-form-item label="备注" prop="remark">
+                          <el-input v-model="dataForm.remark" placeholder="请输入备注"
+                            :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2" maxlength="200" />
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
 
 
-                      </el-form>
-                    </el-collapse-item>
+                  </el-form>
+                </el-collapse-item>
 
 
 
-                    <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
-                      <div v-if="btnType !== 'look'">
-                        <el-button type="text" style="margin-right:8px; font-size:14px!important" icon="el-icon-plus"
-                          :disabled="btnType == 'look' ? true : false"
-                          @click="openSeleceProductDialog()">选择产品</el-button>|
-                        <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                          :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
-                          @click="batchDelete">批量删除</el-button>
+                <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
+                  <div v-if="btnType !== 'look'">
+                    <el-button type="text" style="margin-right:8px; font-size:14px!important" icon="el-icon-plus"
+                      :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择产品</el-button>|
+                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                      :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
+                      @click="batchDelete">批量删除</el-button>
 
-                      </div>
+                  </div>
 
-                      <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType!='look'"
-                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
-                     
-                        <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
-                        </el-table-column>
-                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
-                          show-overflow-tooltip> </el-table-column>
-                        <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
+                  <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
+                    @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
+
+                    <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
+                    </el-table-column>
+                    <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
+                      show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
 
 
-                        <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112"
-                          v-if="allocationFlag">
-                          <template slot="header">
-                            <span class="required">*</span>库位
-                          </template>
-                          <template slot-scope="scope">
-                            <el-input v-model="scope.row.shelfSpaceName" readonly :disabled="btnType == 'look'"
-                              @focus="openSeleceWareDialog(scope.row, scope.$index,'table')" placeholder="库位">
-                            </el-input>
+                    <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112" v-if="allocationFlag">
+                      <template slot="header">
+                        <span class="required">*</span>库位
+                      </template>
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.shelfSpaceName" readonly :disabled="btnType == 'look'"
+                          @focus="openSeleceWareDialog(scope.row, scope.$index, 'table')" placeholder="库位">
+                        </el-input>
 
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
 
 
 
 
-                        <el-table-column prop="waitReceiptNum" label="待收货数量" width="140" :key="777" v-if="btnType!='look'">
-                        </el-table-column>
+                    <el-table-column prop="waitReceiptNum" label="待收货数量" width="140" :key="777" v-if="btnType != 'look'">
+                    </el-table-column>
 
 
-                        <el-table-column prop="num" label="收货数量" width="140" :key="77">
-                          <template slot="header">
-                            <span class="required">*</span>收货数量
-                          </template>
-                          <template slot-scope="scope">
-                            <el-input :disabled="btnType == 'look'" @input="watchNum(scope.row, scope.$index)"
-                              v-model="scope.row.num" placeholder="收货数量"></el-input>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="price" label="单价(含税)" width="120" :key="110"></el-table-column>
-                        <el-table-column prop="taxRates" label="税率" width="100" :key="171"></el-table-column>
-                        <el-table-column prop="taxAmount" label="税额" width="100" :key="1721"></el-table-column>
-                        <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column>
-                        <el-table-column prop="originalBatchNumber" label="原批次号" width="170" :key="1255">
-                          <template slot-scope="scope">
-                            <el-input :disabled="btnType == 'look'" v-model="scope.row.originalBatchNumber"
-                              placeholder="原批次号"></el-input>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="processName" label="工序" width="100" :key="1721"></el-table-column>
-                        <el-table-column prop="remark" label="备注" width="200" :key="128">
-                          <template slot-scope="scope">
-                            <el-input v-model="scope.row.remark" :disabled="btnType == 'look'"
-                              placeholder="备注"></el-input>
-                          </template>
-                        </el-table-column>
-                        <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'"
-                          fixed="right">
-                          <template slot-scope="scope">
-                            <el-button type="text" @click="copyFun(scope.row, scope.$index)" size="mini">复制</el-button>
-                          </template>
-                        </el-table-column>
-                      </JNPF-table>
+                    <el-table-column prop="num" label="收货数量" width="140" :key="77">
+                      <template slot="header">
+                        <span class="required">*</span>收货数量
+                      </template>
+                      <template slot-scope="scope">
+                        <el-input :disabled="btnType == 'look'" @input="watchNum(scope.row, scope.$index)"
+                          v-model="scope.row.num" placeholder="收货数量"></el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="price" label="单价(含税)" width="120" :key="110"></el-table-column>
+                    <el-table-column prop="taxRates" label="税率" width="100" :key="171"></el-table-column>
+                    <el-table-column prop="taxAmount" label="税额" width="100" :key="1721"></el-table-column>
+                    <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column>
+                    <el-table-column prop="originalBatchNumber" label="原批次号" width="170" :key="1255">
+                      <template slot-scope="scope">
+                        <el-input :disabled="btnType == 'look'" v-model="scope.row.originalBatchNumber"
+                          placeholder="原批次号"></el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="processName" label="工序" width="100" :key="1721"></el-table-column>
+                    <el-table-column prop="remark" label="备注" width="200" :key="128">
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.remark" :disabled="btnType == 'look'" placeholder="备注"></el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'"
+                      fixed="right">
+                      <template slot-scope="scope">
+                        <el-button type="text" @click="copyFun(scope.row, scope.$index)" size="mini">复制</el-button>
+                      </template>
+                    </el-table-column>
+                  </JNPF-table>
 
 
 
-                    </el-collapse-item>
+                </el-collapse-item>
 
-                  </el-collapse>
+              </el-collapse>
             </div>
           </div>
         </div>
@@ -340,7 +338,7 @@
 
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
-             
+
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
@@ -413,7 +411,7 @@
 <script>
 import { getQuotationdatasenddatalist } from '@/api/salesManagement'
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
-import { getWarehouseList,getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
+import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
 import { getQuotationsendlist } from "@/api/salesManagement/index";
 import { purPurchaseReceiptReturnGoodsList, detailpurchaseOrderList } from "@/api/purchasingAndOutsourcingOrders/index"
 
@@ -426,12 +424,11 @@ import BatchNumberForm from './batchNumberForm.vue'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import flowMixin from '@/mixins/generator/flowMixin'
+import recordList from '@/views/workFlow/components/RecordList.vue'
 import busFlow from '@/mixins/generator/busFlow';
-
 export default {
-  components: { CustomerForm, WareHouseForm, BatchNumberForm, Process },
-  mixins: [flowMixin,busFlow],
-
+  components: { CustomerForm, WareHouseForm, BatchNumberForm, Process, recordList },
+  mixins: [flowMixin, busFlow],
   data() {
     return {
       shelfSpaceName: "",
@@ -475,7 +472,7 @@ export default {
         id: "",
         warehouseType: "",
         approvalFlag: false,
-        inspectionResults:'',
+        inspectionResults: '',
       },
       approvalFlag: false,   // 待办事宜等页面 需要
       customerInfo: {},//所选客户信息
@@ -547,11 +544,14 @@ export default {
       orderForm: {},
       classAttribute: "",
       activeName: "orderInfo",
+      wareHouseInfo: {},
+      classAttributeList: [],
+      warehouseCode: "",
       flowTemplateJson: {},
       flowData: {},
-      wareHouseInfo:{},
-      classAttributeList:[],
-      warehouseCode:"",
+      approvalFlag: false,   // 待办事宜等页面 需要
+      flowTaskOperatorRecordList: [],
+      endTime: 0
     }
   },
   created() {
@@ -585,23 +585,23 @@ export default {
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
     },
     // 打开选择库位弹框
-    openSeleceWareDialog(row, index,type) {
+    openSeleceWareDialog(row, index, type) {
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库!")
       this.wareHouseVisible = true
       this.$nextTick(() => {
-        this.$refs.WareHouseForms.initData(this.dataForm.warehouseId,type)
+        this.$refs.WareHouseForms.initData(this.dataForm.warehouseId, type)
       })
-      if (index) this.currentProductIndex = index 
+      if (index) this.currentProductIndex = index
     },
     // 所选的库位信息
-    selectWareHouseFun(data,type) {
+    selectWareHouseFun(data, type) {
       console.log("库位信息", data);
       let index = this.currentProductIndex
-      if(!type){
+      if (!type) {
         this.shelfSpaceId = data.id
-      this.shelfSpaceName = data.name
+        this.shelfSpaceName = data.name
       }
-      
+
       if (this.productData.length) {
         this.productData.forEach(item => {
           if (!item.shelfSpaceId) {
@@ -616,7 +616,7 @@ export default {
           this.$set(this.productData[index], 'shelfSpaceId', data.id)
         }
       }
-      this.index=""
+      this.index = ""
     },
 
 
@@ -646,12 +646,12 @@ export default {
         deliverDateEnd: "",
         deliverDateStart: "",
         classAttributeList: this.classAttributeList,
-        externalFlag:true,
+        externalFlag: true,
         pageNum: 1,
         pageSize: 20,
         orderNo: this.dataForm.sourceNo,
         receivingStatus: "not_finished",
-        receiptQueryFlag:true,
+        receiptQueryFlag: true,
         orderItems: [{
           asc: false,
           column: ""
@@ -696,17 +696,17 @@ export default {
       arr.forEach(item => {
         let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
         item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
-        if(item.orderType=="external"){
-            item.processId=""
-            item.processName=""
-            item.processCode=""
-          }
+        if (item.orderType == "external") {
+          item.processId = ""
+          item.processName = ""
+          item.processCode = ""
+        }
         item.num = item.requiredReceivedQuantity
         item.ordersId = item.purchaseOrderId
         item.noticeId = item.purchaseReceiptReturnGoodsId
         item.noticeLineId = item.id
         item.costPrice = item.price
-        item.taxRates= item.taxRate+"%"
+        item.taxRates = item.taxRate + "%"
         item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
         item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
         item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
@@ -718,12 +718,12 @@ export default {
         this.productData.push(item)
       });
       this.productData.forEach(item => {
-          if (!item.shelfSpaceId) {
-            this.$set(item, 'shelfSpaceName', this.shelfSpaceName)
-            this.$set(item, 'warehouseId', this.dataForm.warehouseId)
-            this.$set(item, 'shelfSpaceId', this.shelfSpaceId)
-          }
-        });
+        if (!item.shelfSpaceId) {
+          this.$set(item, 'shelfSpaceName', this.shelfSpaceName)
+          this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+          this.$set(item, 'shelfSpaceId', this.shelfSpaceId)
+        }
+      });
       console.log("this.dataFormTwo", this.productData);
     },
     // 产品信息列表多选
@@ -841,7 +841,7 @@ export default {
 
 
 
-  
+
     // 选择业务类型
     selectSourceTypeFun(val) {
       console.log(val);
@@ -887,7 +887,7 @@ export default {
         this.dataForm.warehouseType = ""
         return
       }
-      this.allocationFlag=data[0].all.locationStatus=='disabled'?false:true
+      this.allocationFlag = data[0].all.locationStatus == 'disabled' ? false : true
 
       this.dataForm.warehouseId = data[0].id
       this.dataForm.warehouseName = data[0].name
@@ -896,8 +896,8 @@ export default {
     goBack() {
       this.$emit('close', true)
     },
-  // 获取仓库id
-  getWarehouseListFun() {
+    // 获取仓库id
+    getWarehouseListFun() {
       getWarehouseList({ code: this.warehouseCode }).then(res => {
         this.dataForm.warehouseName = res.data[0].name
         this.dataForm.warehouseId = res.data[0].id
@@ -922,7 +922,7 @@ export default {
     // { label: "外协退料", value: "inbound_external_return" },
     // { label: "外协收货", value: "inbound_external" },
     // { label: "外协退货", value: "outbound_external" },
-    init(data, btnType, businessType, classAttributeList, warehouseCode,approvalFlag) {
+    init(data, btnType, businessType, classAttributeList, warehouseCode, approvalFlag) {
       console.log("11", data, btnType, businessType, warehouseCode);
       this.dataForm.businessType = businessType
       this.classAttributeList = classAttributeList
@@ -932,7 +932,6 @@ export default {
       this.$set(this.orderForm, 'receivingStatus', 'not_finished')
       this.selectcustomerObj.type = 'supplier'
       this.btnType = btnType
-      this.getBusInfo()
       // this.refeshDataFormItems()
       if (btnType == 'look') {
         this.title = '查看入库单'
@@ -940,16 +939,18 @@ export default {
           res.data.spaceLines.forEach(item => {
             this.$set(item, 'productDrawingNo', item.drawingNo)
             this.$set(item, 'price', item.costPrice)
-            item.taxRates= item.taxRate+"%"
+            item.taxRates = item.taxRate + "%"
           });
           this.dataForm = res.data.stockMove
           if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
           this.productData = res.data.spaceLines
+          // 流程信息和流转记录
+          if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
         })
       } else {
-        
+      this.getBusInfo('b045')
 
-        
+
 
 
 
@@ -959,12 +960,12 @@ export default {
         this.dataForm.partnerName = data[0].cooperativePartnerName
         // this.refeshDataFormItems()
         data.forEach((item, index) => {
-          if(item.orderType=="external"){
-            item.processId=""
-            item.processName=""
-            item.processCode=""
+          if (item.orderType == "external") {
+            item.processId = ""
+            item.processName = ""
+            item.processCode = ""
           }
-          item.taxRates= item.taxRate+"%"
+          item.taxRates = item.taxRate + "%"
           item.productDrawingNo = item.drawingNo
           item.num = item.waitReceiptNum
           item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
@@ -1133,8 +1134,8 @@ export default {
             //   }
             // }
             console.log("this.productData", this.productData);
-      this.btnLoading = true
-      formMethod(dataObj).then(res => {
+            this.btnLoading = true
+            formMethod(dataObj).then(res => {
               let msg = res.msg
               if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
               if (submitModel == "draft") {
@@ -1143,7 +1144,7 @@ export default {
                 this.submitmethodsTitle = "提交成功"
 
               }
-             
+
               this.tipsvisible = true
 
 
@@ -1157,31 +1158,6 @@ export default {
         }
       })
 
-    },
-    // 测试审批流
-    getBusInfo() {
-      let code = ''
-      if (['outbound_external_send', 'outbound_pick_out', 'outbound_purchase', 'outbound_sale_send'].includes(this.dataForm.businessType)) {
-        code = 'b045'
-      } else {
-        code = 'b046'
-      }
-      getBusinessFlowInfo(code).then(res => {
-        if (res.data) {
-          if (res.data.enabledMark) {
-            this.flowData = res.data
-            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
-            this.dataForm.approvalFlag = res.data.enabledMark
-          } else {
-            this.flowTemplateJson = {}
-            this.dataForm.approvalFlag = false
-            this.$message.error('未找到审批流程！')
-          }
-        } else {
-          this.flowTemplateJson = {}
-          this.dataForm.approvalFlag = false
-        }
-      }).catch(() => { })
     },
 
   },
@@ -1300,6 +1276,7 @@ export default {
 ::v-deep .el-tabs__header {
   margin-bottom: 5px !important;
 }
+
 .productInfo ::v-deep.el-collapse-item__wrap {
   padding: 0;
 }

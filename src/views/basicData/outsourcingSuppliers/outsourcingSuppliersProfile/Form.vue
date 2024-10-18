@@ -169,7 +169,8 @@
                       <el-form-item label="对账结束日期" prop="reconciliationEndDate">
                         <el-date-picker v-model="dataForm.reconciliationEndDate" type="date" format="yyyy-MM-dd"
                           style="width: 100%;" value-format="yyyy-MM-dd" placeholder="请选择对账结束日期"
-                          :disabled="btnType ? true : false"></el-date-picker>
+                          :disabled="btnType ? true : false"
+                          :picker-options="reconciliationEndDatePickerOptions"></el-date-picker>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
@@ -270,11 +271,8 @@
                     </el-col>
                   </el-row>
                 </el-form>
-
               </el-collapse-item>
-
             </el-collapse>
-
           </el-tab-pane>
           <el-tab-pane label="联系人信息" name="lxr">
             <el-table :data="contactsList" style="width: 100%">
@@ -517,6 +515,16 @@ import { getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 export default {
   data() {
+    var checkReconciliationEndDate = (rule, value, callback) => {
+      if (!this.dataForm.reconciliationStartDate) {
+        this.dataForm.reconciliationEndDate = ''
+        return callback(new Error('请先选择对账开始日期'))
+      } else {
+        if (!value) {
+          return callback(new Error('对账结束日期不能为空'))
+        }
+      }
+    }
     return {
       getcategoryTree,
       requestObjTwo: {
@@ -693,7 +701,7 @@ export default {
         paymentMethod: [{ required: true, message: '请选择付款方式', trigger: 'change' }],
         paymentCycle: [{ required: true, message: '请选择付款周期', trigger: 'change' }],
         reconciliationStartDate: [{ required: true, message: '请选择对账开始日期', trigger: 'change' }],
-        reconciliationEndDate: [{ required: true, message: '请选择对账结束日期', trigger: 'change' }]
+        reconciliationEndDate: [{ required: true, validator: checkReconciliationEndDate, trigger: 'change' }]
       },
       isattachmentswitch: ''
     }
@@ -705,6 +713,16 @@ export default {
     // this.getCounryDatas()
     this.getbimProductAttributes()
   },
+  computed: {
+    reconciliationEndDatePickerOptions() {
+      return {
+        disabledDate: (date) => {
+          // 禁用早于第一个时间的日期
+          return date < new Date(this.dataForm.reconciliationStartDate) - 8.64e7
+        }
+      }
+    }
+  },
   methods: {
     getAttachmentswitch() {
       let obj = {
@@ -712,7 +730,7 @@ export default {
         pageSize: -1
       }
       getBimBusinessSwitchConfigList(obj).then((res) => {
-        res.data.attachment.forEach(item => {
+        res.data.attachment.forEach((item) => {
           if (item.configKey == 'fj_wxgysgl') {
             this.isattachmentswitch = item.configValue1
           }
@@ -1397,11 +1415,10 @@ export default {
   margin-bottom: 0;
   padding: 0 10px 0px;
   border-top: none !important;
-
 }
 
 ::v-deep .el-collapse-item__content {
-  padding-bottom: 0px
+  padding-bottom: 0px;
 }
 
 .JNPF-preview-main .main {
@@ -1409,10 +1426,10 @@ export default {
 }
 
 ::v-deep .el-tabs__item {
-  padding: 0 10px !important
+  padding: 0 10px !important;
 }
 
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
-  padding-left: 0px !important
+  padding-left: 0px !important;
 }
 </style>

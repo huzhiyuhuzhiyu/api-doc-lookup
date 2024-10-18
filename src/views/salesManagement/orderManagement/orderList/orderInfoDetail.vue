@@ -60,7 +60,7 @@
             </el-collapse-item>
             <!-- <el-collapse-item title="" name="info" class="info" :disabled="true"> -->
             <el-collapse-item title="订单产品" name="product">
-              <JNPF-table ref="work" :data="productData" fixedNO height="450" v-loading="tableloading">
+              <JNPF-table ref="work" :data="productData" fixedNO  v-loading="tableloading">
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                 </el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
@@ -162,6 +162,11 @@
                 <el-table-column prop="arithmeticNo" label="运算单号" min-width="200" show-overflow-tooltip />
                 <el-table-column prop="remark" label="备注" min-width="180" ></el-table-column>
                 <el-table-column prop="createTime" label="创建时间" min-width="180" ></el-table-column>
+                <el-table-column label="操作" width="100" fixed="right">
+                  <template slot-scope="scope">
+                    <el-button size="mini" type="text" @click="scheduleFun(scope.row.id, 'edit')">计划进度</el-button>
+                  </template>
+                </el-table-column>
               </JNPF-table>
             </el-collapse-item>
             <el-collapse-item title="计划甘特图" name="planGantt">
@@ -254,6 +259,9 @@ export default {
     this.switchStyle()
   },
   methods: {
+    scheduleFun(id){
+
+    },
     viewFun(id){
       // 详情
       this.orderLinesId=id

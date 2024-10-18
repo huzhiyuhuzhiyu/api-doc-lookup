@@ -1355,6 +1355,9 @@ export default {
           } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
+            if (!this.dataForm.orderNo) {
+              this.fetchData('UQDH', true)
+            }
           }
         })
         .catch(() => { })

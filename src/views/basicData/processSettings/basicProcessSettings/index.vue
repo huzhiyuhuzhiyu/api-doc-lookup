@@ -1,6 +1,6 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
+    <div class="JNPF-common-layout-left treeBox" v-if="!formVisible" :style="leftFlag ? 'width:15px;background:#fff' : ''">
       <div class="JNPF-common-title" v-if="!leftFlag">
         <h2>工序分类</h2>
         <span class="options">
@@ -36,7 +36,7 @@
         <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>
       </div>
     </div>
-    <div class="JNPF-common-layout-center JNPF-flex-main">
+    <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
           <!-- <el-col :span="4">

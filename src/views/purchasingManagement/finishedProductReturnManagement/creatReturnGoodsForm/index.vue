@@ -355,7 +355,7 @@
           </el-button>
         </span>
       </el-dialog>
-      <!-- <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+      <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
         :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center"
         width="500px">
         <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
@@ -367,7 +367,7 @@
           <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()"> {{ btnText }}</el-button>
           <el-button v-else type="primary" @click="continueAdd()"> {{ btnText }}</el-button>
         </span>
-      </el-dialog> -->
+      </el-dialog>
     </div>
   </transition>
 </template>
@@ -400,10 +400,10 @@ export default {
   components: { Process },
   data() {
     return {
-      // tipsvisible: false,
+      tipsvisible: false,
       isattachmentswitch: '',
       submitmethodsTitle: '',
-      btnText: '',
+      btnText: '继续新增',
       productList: [],
       deliveryDateArr: [],
       activeNames: ['productInfo', 'basicInfo'],
@@ -479,7 +479,7 @@ export default {
       ],
       productRules: {
         receivedQuantity: [
-        {
+          {
             validator: this.formValidate({
               type: 'noEmtry',
               params: [
@@ -1314,7 +1314,47 @@ export default {
     goBack() {
       this.$emit('close', true)
     },
-
+    // 继续修改
+    continueEdit() {
+      this.init(this.oldId, this.oldType)
+      this.tipsvisible = false
+      this.btnLoading = false
+    },
+    // 继续新增
+    continueAdd() {
+      this.dataFormTwo.productData = []
+      this.dataForm = {
+        exchangeGoodsFlag: false,
+        inspectionStatus: '',
+        // orderCategory: "assembly",
+        salesman: '',
+        receiptReturnType: 'back',
+        classAttribute: 'finish_product',
+        notificationType: 'procure',
+        // notifyType: 'sale',
+        logisticsCompany: '',
+        ordersId: '',
+        deliverDate: '',
+        partnerName: '',
+        orderNo: '',
+        logisticsNumber: '',
+        //   phone: '',
+        //   country: '',
+        //   province: '',
+        //   city: '',
+        //   area: '',
+        //   address: '',
+        //   delivery: '',
+        //   shipperId: '',
+        cooperativePartnerId: '',
+        remark: '',
+        approvalFlag: false
+      }
+      this.$refs.dataForm.resetFields()
+      this.init('', 'add')
+      this.tipsvisible = false
+      this.btnLoading = false
+    },
     handleConfirm(value) {
       let submitFlag = true
       this.$refs['productForm'].validate((valid) => {
@@ -1324,8 +1364,11 @@ export default {
       })
       this.$refs['dataForm'].validate((valid) => {
         this.dataForm.documentStatus = value
-        submitFlag = false
+        if (!valid) {
+          submitFlag = false
+        }
       })
+      console.log(submitFlag, 'sun')
       if (submitFlag) {
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
@@ -1407,7 +1450,7 @@ export default {
         let formMethod = null
 
         // obj.returnGoods.deliveryStatus = 'not_returned'
-
+        console.log(obj, 'ob')
         addpurPurchaseReceiptReturnGoods(obj)
           .then((res) => {
             let msg = ''
@@ -1416,35 +1459,35 @@ export default {
             } else if (value == 'submit') {
               msg = '提交成功'
             }
+            this.tipsvisible = true
+            // this.$message({
+            //   message: msg,
+            //   type: 'success',
+            //   duration: 1500,
+            //   onClose: () => {
+            //     // this.visible = false
+            //     this.btnLoading = false
+            //     this.dataFormTwo.productData = []
+            //     this.dataForm = {
+            //       exchangeGoodsFlag: false,
+            //       inspectionStatus: '',
+            //       receiptReturnType: 'back',
+            //       notificationType: 'procure',
+            //       notifyType: 'sale',
+            //       logisticsCompany: '',
+            //       ordersId: '',
+            //       deliverDate: '',
+            //       partnerName: '',
+            //       orderNo: '',
+            //       logisticsNumber: '',
 
-            this.$message({
-              message: msg,
-              type: 'success',
-              duration: 1500,
-              onClose: () => {
-                // this.visible = false
-                this.btnLoading = false
-                this.dataFormTwo.productData = []
-                this.dataForm = {
-                  exchangeGoodsFlag: false,
-                  inspectionStatus: '',
-                  receiptReturnType: 'back',
-                  notificationType: 'procure',
-                  notifyType: 'sale',
-                  logisticsCompany: '',
-                  ordersId: '',
-                  deliverDate: '',
-                  partnerName: '',
-                  orderNo: '',
-                  logisticsNumber: '',
-
-                  cooperativePartnerId: '',
-                  remark: ''
-                }
-                this.$refs.dataForm.resetFields()
-                this.init()
-              }
-            })
+            //       cooperativePartnerId: '',
+            //       remark: ''
+            //     }
+            //     this.$refs.dataForm.resetFields()
+            //     this.init()
+            //   }
+            // })
           })
           .catch(() => {
             this.btnLoading = false
@@ -1485,7 +1528,7 @@ export default {
 
 .required {
   color: red;
-  margin-right: 4px;
+  // margin-right: 4px;
 }
 </style>
 <style scoped>
@@ -1503,10 +1546,6 @@ export default {
 }
 </style>
 <style scoped>
-.required {
-  color: red;
-  margin-right: 4px;
-}
 
 .el-dialog .el-dialog__body {
   padding: 20px 0px 2px !important;

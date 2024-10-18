@@ -102,7 +102,7 @@ import { getDownloadUrl } from '@/api/common'
 import Preview from '@/components/upload-wj/Preview'
 import { uploaderWithCode } from '@/api/equipment'
 import { mapState } from 'vuex'
-import drag, {readFileBlob} from './utils/drag'
+import drag, {readFileBlob} from '@/views/esop/fileUpload/workinginstruction/utils/drag'
 import {ext2Icon, getExt} from "@/views/drawingDocument/document/utils";
 import GridFileList from "@/views/drawingDocument/document/GridFileList.vue";
 import SwitchListAndFilter from "@/views/drawingDocument/document/SwitchListAndFilter.vue";

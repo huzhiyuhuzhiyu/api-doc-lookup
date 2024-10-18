@@ -1326,7 +1326,7 @@
             </el-form>
           </el-scrollbar>
         </el-tab-pane>
-        <el-tab-pane label="高级设置" name="senior">
+        <!-- <el-tab-pane label="高级设置" name="senior">
           <el-scrollbar class="config-scrollbar">
             <el-form label-position="top" class="pd-10-20">
               <el-form-item label="操作设置">
@@ -1380,14 +1380,6 @@
             </el-form>
             <el-form class="pd-10-20" style="margin-top:-20px" label-width="90px"
               label-position="left">
-              <!-- <el-form-item>
-                <div slot="label" class="form-item-label">手写签名
-                  <el-tooltip content="审批人在进行审批操作时需手写签名" placement="top">
-                    <a class="el-icon-warning-outline"></a>
-                  </el-tooltip>
-                </div>
-                <el-switch v-model="approverForm.hasSign" />
-              </el-form-item> -->
               <el-form-item>
                 <div slot="label" class="form-item-label">意见填写
                   <el-tooltip content="审批人在进行审批操作需填写审批意见" placement="top">
@@ -1396,21 +1388,13 @@
                 </div>
                 <el-switch v-model="approverForm.hasOpinion" />
               </el-form-item>
-              <!-- <el-form-item>
-                <div slot="label" class="form-item-label">允许加签
-                  <el-tooltip content="允许在审批单中增加临时审批人" placement="top">
-                    <a class="el-icon-warning-outline"></a>
-                  </el-tooltip>
-                </div>
-                <el-switch v-model="approverForm.hasFreeApprover" />
-              </el-form-item> -->
               <el-form-item label="说明">
                 <div slot="label" class="form-item-label">说明</div>
                 <el-input v-model="approverForm.description" type="textarea" :rows="3"></el-input>
               </el-form-item>
             </el-form>
           </el-scrollbar>
-        </el-tab-pane>
+        </el-tab-pane> -->
         <!-- <el-tab-pane label="表单权限" name="formAuth">
           <div class="form-auth-table">
             <el-table :data="getFormOperates()" class="JNPF-common-table" size="mini" height="100%">
@@ -1658,7 +1642,7 @@
             </el-form>
           </el-scrollbar>
         </el-tab-pane> -->
-        <!-- <el-tab-pane label="节点通知">
+        <el-tab-pane label="节点通知">
           <el-scrollbar class="config-scrollbar">
             <el-form :model="approverForm" class="pd-10-20" label-position="top">
               <el-alert title="该通知设置配置外部第三方消息提醒，站内信系统默认发送" type="warning" :closable="false"
@@ -1802,46 +1786,6 @@
                 </el-table>
               </div>
               <el-form-item>
-                <div slot="label" class="form-item-label">节点超时
-                  <el-tooltip content="当前节点超时的时候" placement="top">
-                    <a class="el-icon-warning-outline"></a>
-                  </el-tooltip>
-                </div>
-                <el-select class="form-item-content" v-model="approverForm.overTimeMsgConfig.on"
-                  placeholder="请选择">
-                  <el-option v-for="item in nodeNoticeOptions" :key="item.value" :label="item.label"
-                    :value="item.value" />
-                </el-select>
-              </el-form-item>
-              <div style="margin-bottom: 18px;" class="form-item-content"
-                v-if="approverForm.overTimeMsgConfig.on===1">
-                <el-form-item label="消息模板">
-                  <msg-dialog :value="approverForm.overTimeMsgConfig.msgId"
-                    :title="approverForm.overTimeMsgConfig.msgName"
-                    @change="onMsgChange('approverForm','overTimeMsgConfig',arguments)" />
-                </el-form-item>
-                <div class="form-sub-title">参数设置</div>
-                <el-table :data="approverForm.overTimeMsgConfig.templateJson">
-                  <el-table-column type="index" width="60" label="序号" align="center" />
-                  <el-table-column prop="field" label="参数名称" width="200">
-                    <template slot-scope="scope">
-                      {{scope.row.fieldName?scope.row.field+'('+scope.row.fieldName+')':scope.row.field}}
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="value" label="表单字段">
-                    <template slot-scope="scope">
-                      <el-select v-model="scope.row.relationField" placeholder="请选择表单字段" clearable
-                        filterable>
-                        <el-option v-for="item in funcOptions" :key="item.__vModel__"
-                          :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
-                          :value="item.__vModel__">
-                        </el-option>
-                      </el-select>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </div>
-              <el-form-item>
                 <div slot="label" class="form-item-label">节点提醒
                   <el-tooltip content="当前节点提醒的时候" placement="top">
                     <a class="el-icon-warning-outline"></a>
@@ -1883,7 +1827,7 @@
               </div>
             </el-form>
           </el-scrollbar>
-        </el-tab-pane> -->
+        </el-tab-pane>
         <!-- <el-tab-pane label="超时提醒">
           <el-scrollbar class="config-scrollbar">
             <el-form :model="approverForm" class="pd-10-20" label-position="top">
@@ -2171,13 +2115,13 @@ const defaultApproverForm = {
   hasSign: false,
   hasOpinion: true,
   timeLimitConfig: {
-    on: 2,  // 开启
+    on: 0,  // 开启
     nodeLimit: 0, // 节点限定时长起始值类型
     duringDeal: 24, // 节点处理限定时长(时)
     formField: '',  // 请选择字段
   },
   overTimeConfig: {
-    on: 2, // 开启
+    on: 0, // 开启
     firstOver: 0, // 第一次超时时间(时)
     overTimeDuring: 2, // 超时间隔(时)
     overNotice: false, // 超时事务-超时通知
@@ -2187,7 +2131,7 @@ const defaultApproverForm = {
     overEventTime: 5, // 超时事件超时次数(次)
   },
   noticeConfig: {
-    on: 2, // 开启
+    on: 0, // 开启
     firstOver: 1, // 第一次提醒时间(时)
     overTimeDuring: 2, // 提醒间隔(时)
     overNotice: false, // 提醒事务-提醒通知
@@ -2208,31 +2152,31 @@ const defaultApproverForm = {
     templateJson: [] // 模块json
   },
   overTimeMsgConfig: {
-    on: 2,
+    on: 0,
     msgId: '',
     msgName: '',
     templateJson: []
   },
   noticeMsgConfig: {
-    on: 2,
+    on: 0,
     msgId: '',
     msgName: '',
     templateJson: []
   },
   approveMsgConfig: {
-    on: 2,
+    on: 0,
     msgId: '',
     msgName: '',
     templateJson: []
   },
   rejectMsgConfig: {
-    on: 2,
+    on: 0,
     msgId: '',
     msgName: '',
     templateJson: []
   },
   copyMsgConfig: {
-    on: 2,
+    on: 0,
     msgId: '',
     msgName: '',
     templateJson: []

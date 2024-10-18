@@ -188,10 +188,6 @@
                         <template slot-scope="scope">
                           <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row">
                             <el-form-item prop="firstFlag" ref="firstFlag">
-                              <!-- <el-radio-group v-model="scope.row.firstFlag">
-                                    <el-radio :label="true" :disabled="type == 'look' || scope.$index != 0">{{
-                                      scope.row.firstFlag ? '是' : '否' }}</el-radio>
-                                  </el-radio-group> -->
                               <el-checkbox :label="true" v-model="scope.row.firstFlag" :true-label="1" disabled>
                                 {{ scope.row.firstFlag ? '是' : '否' }}
                               </el-checkbox>
@@ -303,8 +299,7 @@
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
-            <!-- <el-tab-pane label="审批流程" name="approvalProcess">
-            </el-tab-pane> -->
+        
             <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
               <UploadWj v-model="datafilelist" :disabled="type == 'look'" :detailed="type == 'look'"></UploadWj>
             </el-tab-pane>
@@ -372,7 +367,7 @@
                     选择工序
                   </el-button>
                   |
-                  <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
+                
                   <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                     :disabled="type == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
                     批量删除

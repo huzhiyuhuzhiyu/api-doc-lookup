@@ -1486,7 +1486,7 @@ export default {
 
 .required {
   color: red;
-  margin-right: 4px;
+  // margin-right: 4px;
 }
 </style>
 <style scoped>
@@ -1504,10 +1504,6 @@ export default {
 }
 </style>
 <style scoped>
-.required {
-  color: red;
-  margin-right: 4px;
-}
 
 .el-dialog .el-dialog__body {
   padding: 20px 0px 2px !important;

@@ -169,7 +169,8 @@
                       <el-form-item label="对账结束日期" prop="reconciliationEndDate">
                         <el-date-picker v-model="dataForm.reconciliationEndDate" type="date" format="yyyy-MM-dd"
                           style="width: 100%;" value-format="yyyy-MM-dd" placeholder="请选择对账结束日期"
-                          :disabled="btnType ? true : false"></el-date-picker>
+                          :disabled="btnType ? true : false"
+                          :picker-options="reconciliationEndDatePickerOptions"></el-date-picker>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
@@ -515,6 +516,16 @@ import { getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 export default {
   data() {
+    var checkReconciliationEndDate = (rule, value, callback) => {
+      if (!this.dataForm.reconciliationStartDate) {
+        this.dataForm.reconciliationEndDate = ''
+        return callback(new Error('请先选择对账开始日期'))
+      } else {
+        if (!value) {
+          return callback(new Error('对账结束日期不能为空'))
+        }
+      }
+    }
     return {
       getcategoryTree,
       requestObjTwo: {
@@ -550,6 +561,7 @@ export default {
       activeNames: ['productInfo', 'basicInfo'],
       nodeId: -1,
       isdisabled: false,
+
       defaultFlagList: [
         {
           value: true,
@@ -692,7 +704,7 @@ export default {
         paymentMethod: [{ required: true, message: '请选择付款方式', trigger: 'change' }],
         paymentCycle: [{ required: true, message: '请选择付款周期', trigger: 'change' }],
         reconciliationStartDate: [{ required: true, message: '请选择对账开始日期', trigger: 'change' }],
-        reconciliationEndDate: [{ required: true, message: '请选择对账结束日期', trigger: 'change' }]
+        reconciliationEndDate: [{ required: true, validator: checkReconciliationEndDate, trigger: 'change' }]
       },
       isattachmentswitch: ''
     }
@@ -703,6 +715,16 @@ export default {
     this.getDictionaryType()
     this.getbimProductAttributes()
   },
+  computed: {
+    reconciliationEndDatePickerOptions() {
+      return {
+        disabledDate: (date) => {
+          // 禁用早于第一个时间的日期
+          return date < new Date(this.dataForm.reconciliationStartDate) - 8.64e7
+        }
+      }
+    }
+  },
   methods: {
     getAttachmentswitch() {
       let obj = {
@@ -710,7 +732,7 @@ export default {
         pageSize: -1
       }
       getBimBusinessSwitchConfigList(obj).then((res) => {
-        res.data.attachment.forEach(item => {
+        res.data.attachment.forEach((item) => {
           if (item.configKey == 'fj_cggysgl') {
             this.isattachmentswitch = item.configValue1
           }

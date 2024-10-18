@@ -55,8 +55,8 @@
 
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="所属销售" prop="salesId">
-                          <el-select v-model="dataForm.salesId" placeholder="请选择所属销售人员" style="width: 100%;"
+                        <el-form-item label="所属销售" prop="salesName">
+                          <el-select v-model="dataForm.salesName" placeholder="请选择所属销售人员" style="width: 100%;"
                             :disabled="salesFlag" filterable @change="selectsales">
                             <el-option v-for="(item, index) in salesList" :key="index" :label="item.name"
                               :value="item.id"></el-option>
@@ -147,22 +147,14 @@
 
                       <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
                       <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
-
-
                       </el-table-column>
-
                       <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
-
                       </el-table-column>
                       <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                       <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-
-
                       <el-table-column prop="num" label="数量" width="100" :key="7">
-
                       </el-table-column>
                       <el-table-column prop="price" label="单价(含税)" width="120" :key="11">
-
                       </el-table-column>
                       <el-table-column prop="taxRate" label="税率" width="120" :key="171">
                         <template slot-scope="scope">
@@ -170,7 +162,6 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
-
                       <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column>
                       <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126">
                         <template slot-scope="scope">
@@ -179,29 +170,20 @@
                       </el-table-column>
                       <el-table-column prop="deliveryDate" label="交货日期" width="180" :key="131"></el-table-column>
                       <el-table-column prop="contractNo" label="合同号" width="180" :key="132"></el-table-column>
-
                       <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211">
-
                       </el-table-column>
                       <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123">
-
                       </el-table-column>
-
                       <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
-
                       </el-table-column>
                       <el-table-column prop="oil" label="油脂" width="120" :key="61">
-
                       </el-table-column>
                       <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51">
-
                       </el-table-column>
                       <el-table-column prop="clearance" label="游隙" width="120" :key="100">
-
                       </el-table-column>
                       <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101"> </el-table-column>
                       <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"></el-table-column>
-
                       <el-table-column prop="remark" label="备注" width="200" :key="128">
 
                       </el-table-column>
@@ -466,8 +448,8 @@
 
                   </el-col>
                   <el-col :sm="6" :xs="24">
-                    <el-form-item label="所属销售" prop="salesId">
-                      <el-select v-model="dataForm.salesId" placeholder="请选择所属销售人员" style="width: 100%;"
+                    <el-form-item label="所属销售" prop="salesName">
+                      <el-select v-model="dataForm.salesName" placeholder="请选择所属销售人员" style="width: 100%;"
                         :disabled="salesFlag" filterable @change="selectsales">
                         <el-option v-for="(item, index) in salesList" :key="index" :label="item.name"
                           :value="item.id"></el-option>
@@ -1330,7 +1312,7 @@ export default {
           { required: true, message: '部门不能为空', trigger: 'no' }
 
         ],
-        salesId: [
+        salesName: [
           { required: true, message: '所属销售不能为空', trigger: 'change' }
         ],
 
@@ -1933,7 +1915,7 @@ export default {
     selectsales(val) {
       console.log(111, val);
       this.$nextTick(() => {
-        this.$refs['dataForm'].validateField('salesId')
+        this.$refs['dataForm'].validateField('salesName')
 
       })
       const data = this.salesList.find(item => item.id === val);
@@ -2395,7 +2377,9 @@ export default {
         this.$confirm('此操作将清空产品数据, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          type: 'warning'
+          closeOnClickModal: false, // 防止点击遮罩层关闭
+          closeOnPressEscape: false,// 防止按下Esc键关闭
+          type: 'warning',
         }).then(() => {
           this.productData = []
           let obj = JSON.parse(JSON.stringify(this.createdData))

@@ -261,13 +261,13 @@ export default {
     viewFun(id,btnType){
       this.formVisible=true
       this.$nextTick(()=>{
-          this.$refs.Form.init(id,btnType,this.warehouseCode)
+          this.$refs.Form.init(id,btnType,false,this.warehouseCode)
       })
     },
     editFun(id,btnType){
       this.formVisible=true
       this.$nextTick(()=>{
-          this.$refs.Form.init(id,btnType,this.warehouseCode)
+          this.$refs.Form.init(id,btnType,false,this.warehouseCode)
       })
     },
 

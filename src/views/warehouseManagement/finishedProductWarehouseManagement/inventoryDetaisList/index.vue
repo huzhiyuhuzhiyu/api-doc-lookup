@@ -934,7 +934,7 @@ export default {
         if (row.sourceType == 'order') {
           this.externalInboundFormVisible = true
           this.$nextTick(() => {
-            this.$refs.externalInboundREFForm.init(id, type, row.businessType, this.classAttributeList, this.warehouseCode)
+            this.$refs.externalInboundREFForm.init(id, type, row.businessType, this.classAttributeList, this.warehouseCode,false)
           })
         } else if (row.sourceType == 'notice') {
 

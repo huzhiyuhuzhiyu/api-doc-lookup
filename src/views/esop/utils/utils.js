@@ -107,6 +107,7 @@ export async function setAllBtnAuth(moduleName="ESOP管理",btns=normalBtn){
     if(isEmpty(module)) return console.log('未找到模块')
 
     const promiseObj ={}
+    const resObj ={}
      if(!module.hasChildren){
          promiseObj[module.fullName] = (addBtnFn(btns,module.id))
     }else{
@@ -116,7 +117,19 @@ export async function setAllBtnAuth(moduleName="ESOP管理",btns=normalBtn){
             }
         },'children')
     }
-    console.log(promiseObj)
+     const msg = []
+     for (const key of Object.keys(promiseObj)) {
+         resObj[key] = []
+         const res = await Promise.allSettled(promiseObj[key].fullName)
+         res.forEach((item,index)=> {
+             if (item.status === 'fulfilled') {
+                 resObj[key].push(item.value)
+             } else {
+                 const str = key +  `按钮${btns[index].fullName}添加失败`
+                 msg.push(str)
+             }
+         })
+     }
 }
 function addBtnFn(btns,moduleId,fullName){
     const promiseArr =[]
@@ -136,4 +149,4 @@ function addBtnFn(btns,moduleId,fullName){
     return {fullName:promiseArr}
 }
 
-window.setAllBtnAuth = setAllBtnAuth
+// window.setAllBtnAuth = setAllBtnAuth

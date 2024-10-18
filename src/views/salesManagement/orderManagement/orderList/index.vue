@@ -126,6 +126,9 @@
                     <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
                       查看详情
                     </el-dropdown-item>
+                    <el-dropdown-item @click.native="viewScheduleFun(scope.row.id)">
+                      查看进度
+                    </el-dropdown-item>
                     <el-dropdown-item @click.native="getCopyOrders(scope.row.id, 'copy')">
                       复制订单
                     </el-dropdown-item>
@@ -151,6 +154,7 @@
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <OrderFollow v-if="orderFollowVisible" ref="orderFollow" @refreshDataList="initData" @close="closeForm" />
+    <OrderInfoDetail  v-if="OrderInfoDetailVisible" ref="OrderInfoDetailForm" @refreshDataList="initData" @close="closeForm" ></OrderInfoDetail>
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -160,6 +164,7 @@
 <script>
 import { UserListAll, } from '@/api/permission/user'
 import { excelExport } from '@/api/basicData/index'
+import OrderInfoDetail from './orderInfoDetail.vue'
 import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal } from '@/api/salesManagement/assemblyOrders'
 import Form from './Form'
 import OrderFollow from './orderFollow'
@@ -170,10 +175,10 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
   name: 'carrierProfile',
-  components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery },
+  components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery,OrderInfoDetail },
   data() {
     return {
-
+      OrderInfoDetailVisible:false,
 
       superQuery: {},
       superForm: {},
@@ -408,7 +413,12 @@ export default {
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
-
+    viewScheduleFun(id){
+      this.OrderInfoDetailVisible=true
+      this.$nextTick(()=>{
+        this.$refs.OrderInfoDetailForm.init(id)
+      })
+    },
 
 
     filterateLabel(row, column, cellValue) {
@@ -453,6 +463,7 @@ export default {
     closeForm(isRefresh) {
       this.formVisible = false
       this.orderFollowVisible = false
+      this.OrderInfoDetailVisible=false
       if (isRefresh) {
         this.keyword = ''
         this.initData()

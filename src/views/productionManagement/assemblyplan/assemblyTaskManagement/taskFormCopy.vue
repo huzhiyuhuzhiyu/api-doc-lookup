@@ -85,8 +85,8 @@
                   <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="130"></el-table-column>
                   <el-table-column prop="schedule" label="完成进度" min-width="130">
                     <template slot-scope="scope">
-
-                      <el-progress :percentage="scope.row.schedule"></el-progress>
+                      <el-progress
+                        :percentage="Number((scope.row.qualifiedQuantity / scope.row.productionQuantity * 100).toFixed(2)) || 0"></el-progress>
                     </template>
                   </el-table-column>
 
@@ -141,11 +141,11 @@
                 </JNPF-table>
                 <JNPF-table ref="report" v-if="categoryType == 'report'" :data="recoredsData" fixedNO :height="height"
                   v-loading="tableloading" :key="Math.random()">
-                  <el-table-column prop="workNo" label="工单号" min-width="180"></el-table-column>
+                  <el-table-column prop="workNo" label="工单号" min-width="200"></el-table-column>
                   <el-table-column prop="orderNo" label="报工单号" min-width="180"></el-table-column>
-                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="180"></el-table-column>
+                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="300"></el-table-column>
                   <el-table-column prop="processName" label="工序名称" width="160" />
-                  <el-table-column prop="reportingTime" label="报工时间" min-width="160" />
+                  <el-table-column prop="reportingTime" label="报工时间" min-width="180" />
                   <el-table-column prop="producerName" label="生产人" min-width="160" />
                   <el-table-column prop="mainUnit" label="单位" min-width="160" />
                   <el-table-column prop="reportingQuantity" label="报工数量" min-width="160" />

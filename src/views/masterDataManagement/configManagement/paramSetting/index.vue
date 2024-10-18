@@ -10,7 +10,7 @@
           <el-radio-button label="attachment">附件开关</el-radio-button>
         </el-radio-group>
       </div>
-      <div class="JNPF-common-layout-center JNPF-flex-main" style="background-color: #FFFFFF;margin-top: 10px">
+      <div class="JNPF-common-layout-center JNPF-flex-main" style="background-color: #FFFFFF;margin-top: 5px">
         <div style="margin: 10px -6px 0 10px;overflow: scroll;">
           <el-table :height="maxHeight" :data="tableData" stripe :row-style="{ height: '50px' }"
             :header-cell-style="{ background: '#FAFAFA', color: '#606266', 'text-align': 'center' }">

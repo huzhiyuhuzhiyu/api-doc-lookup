@@ -62,15 +62,30 @@ export const ApprovalStatus ={
     WAIT: 'wait',
     WITHDRAWN: 'withdrawn',
 }
+
+
 /**
  * 文件管理作业页面类型
  * @readonly
  * @enum {string}
- * @property {string} FileManagementWork - 文件管理作业指导书
+ * @property {string} FileManagementWork - 文件管理 作业指导书
  * @property {string} FileUploadWork - 文件上传作业指导书
+ * @property {string} FileManagementImage - 文件管理 图文档
+ * @property {string} FileManagementImage - 文件管理 图文档
+ * @property {string} FileManagementInspect - 文件管理 检验指导书
  */
 export const PageType ={
     FileManagementWork:'FileManagementWork',
+    FileManagementDocument:'FileManagementDocument',
+    FileManagementImage:'FileManagementImage',
+    FileManagementOffice:'FileManagementOffice',
     FileManagementInspect:'FileManagementInspect',
     FileUploadWork:'FileUploadWork',
 }
+export const FileManagePageSet = new Set([
+    PageType.FileManagementOffice,
+    PageType.FileManagementWork,
+    PageType.FileManagementDocument,
+    PageType.FileManagementImage,
+    PageType.FileManagementInspect,
+])

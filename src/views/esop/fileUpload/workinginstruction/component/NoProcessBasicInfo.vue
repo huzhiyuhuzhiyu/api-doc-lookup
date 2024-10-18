@@ -1,6 +1,6 @@
 <script>
 import FileUploadDrop from "@/views/esop/fileUpload/workinginstruction/component/FileUploadDrop.vue";
-import {ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
+import {ApplicationType, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 import {isEmpty, notEmpty} from "@/utils";
 import {detailProcess} from "@/api/basicData/processSettingss";
 import {getFilePreviewUrl} from "@/views/esop/utils/utils";
@@ -30,6 +30,7 @@ export default {
                 id:null,
                 version:'',
                 documentStatus:'',
+                applicationType:''
             },
             dataRule:Object.freeze({
                 version: [
@@ -55,6 +56,9 @@ export default {
             console.log(this.codeConfig)
             return this.codeConfig.codeWay === 'auto' && !this.codeConfig.modifyFlag
         },
+        isImage(){
+            return this.dataForm.applicationType === ApplicationType.IMAGE
+        }
     },
     methods:{
         validate(...args){
@@ -168,7 +172,6 @@ export default {
                                             <el-input v-model="dataForm.orderNo" placeholder="请输入单号" :disabled="orderNoDisabled" />
                                         </el-form-item>
                                     </el-col>
-
                                     <el-col :span="6">
                                         <el-form-item label="图文档分类" prop="categoryName">
                                             <ComSelect-list
@@ -188,7 +191,7 @@ export default {
                                         </el-form-item>
                                     </el-col>
                                 </el-row>
-                                <el-row :gutter="10">
+                                <el-row v-if="isImage" :gutter="10">
                                     <el-col :span="12">
                                         <el-form-item label="产品信息" prop="drawingNo">
                                             <div class="width-full flex-row">

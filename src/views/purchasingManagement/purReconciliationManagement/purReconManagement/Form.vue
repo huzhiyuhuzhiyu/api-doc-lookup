@@ -24,7 +24,8 @@
                       label-position="top">
                       <el-col :span="6">
                         <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
-                          <el-input disabled v-model="dataForm.cooperativePartnerName" placeholder="请选择供应商名称"></el-input>
+                          <el-input disabled v-model="dataForm.cooperativePartnerName"
+                            placeholder="请选择供应商名称"></el-input>
                         </el-form-item>
                       </el-col>
                       <el-col :span="6">
@@ -98,36 +99,34 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="receiptReturnType" label="收/退货类型" min-width="200" show-overflow-tooltip>
+                      <el-table-column prop="receiptReturnType" label="收/退货类型" width="130" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'receiptReturnType'">
                             <div class="viewData">
                               <span>
                                 {{
                                   scope.row.receiptReturnType === 'outbound_purchase'
-                                  ? '退货'
-                                  : scope.row.receiptReturnType === 'inbound_purchase'
-                                    ? '收货'
-                                    : ''
+                                    ? '退货'
+                                    : scope.row.receiptReturnType === 'inbound_purchase'
+                                      ? '收货'
+                                      : ''
                                 }}
                               </span>
                             </div>
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="mainUnit" label="单位" min-width="200" show-overflow-tooltip>
+                      <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
-                            <!-- <el-input v-model="scope.row.mainUnit" readonly maxlength="20" placeholder="请输入主单位">{{
-                              scope.row.mainUnit }}
-                            </el-input> -->
+
                             <div class="viewData">
                               <span>{{ scope.row.mainUnit }}</span>
                             </div>
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="reconciliationUnitPrice" label="数量" min-width="200">
+                      <el-table-column prop="reconciliationUnitPrice" label="数量" width="100">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'reconciliationUnitPrice'">
                             <div class="viewData">
@@ -137,56 +136,11 @@
                         </template>
                       </el-table-column>
 
-                      <!-- 
-                  <el-table-column prop="deputyUnit" label="单位(副)" min-width="200" show-overflow-tooltip>
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
-              
-                        <div class="viewData">
-                          <span>{{ scope.row.deputyUnit }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column> -->
-
-                      <!-- <el-table-column prop="price" label="单价" min-width="180">
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'price'">
-
-                        <div class="viewData">
-                          <span>{{ scope.row.price }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column> -->
-
-                      <!-- <el-table-column prop="taxRate" label="税率%" min-width="160">
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'taxRate'">
-
-                        <div class="viewData">
-                          <span>{{ scope.row.taxRate }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column> -->
-
-                      <!-- <el-table-column prop="excludingTaxPrice" label="不含税单价" min-width="160">
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxPrice'">
-                        <div class="viewData">
-                          <span>{{ scope.row.excludingTaxPrice }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column> -->
 
                       <el-table-column prop="excludingTaxAmount" label="不含税总金额" min-width="140">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'"
                             :rules="productFormRules.excludingTaxAmount">
-                            <!-- <el-input v-model="scope.row.excludingTaxAmount" maxlength="20" placeholder="请输入不含税总金额">
-                        </el-input> -->
                             <div :class="[
                               'viewData',
                               scope.row.receiptReturnType === 'outbound_purchase' ? 'green' : 'red'
@@ -319,7 +273,7 @@ import { addfinAccount } from '@/api/ReconciliaRePayments/index'
 import { mapGetters, mapState } from 'vuex'
 import Process from '@/components/Process/Preview'
 import recordList from '@/views/workFlow/components/RecordList.vue'
-import { getBusinessFlowInfo  } from '@/api/workFlow/FlowEngine'
+import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 export default {
   components: {
     Process, recordList
@@ -354,7 +308,7 @@ export default {
         backAmount: '', // 退货总金额
         receiptAmount: '', // 收货总金额
         brTotalAmount: '', // 收/退货总金额
-        approvalFlag:false, 
+        approvalFlag: false,
       },
       newArr: [],
       type: '',
@@ -404,7 +358,7 @@ export default {
         label: 'fullName'
       },
       includingTaxAmount: 0,
-      flowData:{},
+      flowData: {},
       formLoading: false,
       flowTemplateJson: {},
       approvalFlag: false,   // 待办事宜等页面 需要
@@ -649,7 +603,7 @@ export default {
     async request() {
       // this.btnLoading = true
       let submitFlag = true
-     
+
       let form_2 = this.$refs['productForm']
       let valid_2 = await form_2.validate().catch((err) => false)
       console.log(this.dataForm, '参数')
@@ -684,7 +638,7 @@ export default {
             let _data = {
               reconciliation: JSON.parse(JSON.stringify(this.dataForm)),
               reconciliationLine: JSON.parse(JSON.stringify(this.dataFormTwo.data)),
-              flowData:this.flowData
+              flowData: this.flowData
             }
             _data.reconciliation.includingTaxAmount = this.includingTaxAmount
 
@@ -736,7 +690,7 @@ export default {
             this.flowData = res.data
             this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
             this.dataForm.approvalFlag = res.data.enabledMark
-          }else{
+          } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
             this.$message.error('未找到审批流程！')

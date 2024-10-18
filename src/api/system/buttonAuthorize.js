@@ -19,11 +19,14 @@ export function getButtonAuthorizeSelector(moduleId) {
 
 // 添加按钮
 export function createButton(data) {
-  return request({
-    url: `/api/system/ModuleButton`,
-    method: 'POST',
-    data
-  })
+  // return request({
+  //   url: `/api/system/ModuleButton`,
+  //   method: 'POST',
+  //   data
+  // })
+    return {
+        data
+    }
 }
 
 // 更新按钮

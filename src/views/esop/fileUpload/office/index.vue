@@ -297,7 +297,7 @@ export default {
 }
 
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
-    //padding: 0 10px 10px;
+    padding: 0 10px 10px;
 }
 
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
@@ -364,9 +364,7 @@ export default {
     border-top: none !important;
 
 }
-::v-deep .el-tabs__header{
-    margin-bottom: 0;
-}
+
 ::v-deep .el-tabs__content {
     height: calc(100% - 39px) !important;
     overflow: auto !important;

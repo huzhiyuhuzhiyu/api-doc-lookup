@@ -238,7 +238,7 @@
                             </template>
                           </el-table-column>
 
-                          <el-table-column label="操作" width="180" fixed="right">
+                          <el-table-column label="操作" width="120" fixed="right">
                             <template slot-scope="scope">
                               <el-button size="mini" type="text" @click="handlerOpenSource(scope.$index, 'source')">
                                 配置发料清单
@@ -284,10 +284,10 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="type == 'look'
-                            ? true
-                            : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                              ? false
-                              : true
+                              ? true
+                              : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                                ? false
+                                : true
                             "></el-input>
                         </el-form-item>
                       </el-col>

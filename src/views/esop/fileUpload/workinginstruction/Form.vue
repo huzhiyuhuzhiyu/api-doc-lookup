@@ -682,7 +682,7 @@ export default {
 }
 
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
-    //padding: 0 10px 10px;
+    padding: 0 10px 10px;
 }
 
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {

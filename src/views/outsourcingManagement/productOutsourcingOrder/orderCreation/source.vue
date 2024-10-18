@@ -259,9 +259,12 @@ export default {
   }
 
   .footer {
-    margin: 4px 20px 20px;
-    display: flex;
-    justify-content: flex-end;
+    /* margin: 20px 20px 20px;
+  display: flex;
+  justify-content: flex-end; */
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
   }
 
   .topButton {
@@ -295,11 +298,7 @@ export default {
   font-size: 16px;
 }
 
-.footer {
-  margin: 20px 20px 20px;
-  display: flex;
-  justify-content: flex-end;
-}
+
 
 ::v-deep .is-stretch {
   display: block !important;

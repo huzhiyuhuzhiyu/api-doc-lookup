@@ -409,3 +409,18 @@ export function isEmpty(val){
 export function notEmpty(val){
     return !isEmpty(val)
 }
+
+/**
+ * map中如果有值则插入值的数组中，没有则插入一个数组 包含值
+ * @param { Map } map
+ * @param  { String } key
+ * @param { any } value
+ * @returns {*}
+ */
+export function mapIfNonePutArr(map, key, value) {
+    const has = map.has(key)
+    if (has) {
+      return map.get(key).push(value)
+    }
+    return map.set(key, [value])
+}

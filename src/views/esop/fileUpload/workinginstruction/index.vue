@@ -96,7 +96,7 @@
             </div>
         </div>
         <slot name="editForm" :data="this">
-            <EditWorkingInstructionUpload :flowCode="flowCode" :type="uploadType" :id="fileUploadId" :applicationType="applicationType" @back="editBack" v-if="formVisible"/>
+            <EditWorkingInstructionUpload v-if="formVisible && recreateFlag" @recreate="recreate"  :flowCode="flowCode" :type="uploadType" :id="fileUploadId" :applicationType="applicationType" @back="editBack" />
         </slot>
 
         <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
@@ -125,6 +125,7 @@ import {
 } from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 import {FlowCode} from "@/views/esop/utils/constants";
 import {trim} from "@/utils";
+import RecreateMixin from "@/views/esop/utils/RecreateMixin";
 
 
 
@@ -153,8 +154,10 @@ export default {
             default:""
         }
     },
+    mixins:[RecreateMixin],
     data() {
         return {
+            recreateFlag: true,
             ModelType,
             uploadType:ModelType.ADD,
             fileUploadId:"",
@@ -214,6 +217,7 @@ export default {
 
     },
     methods: {
+
         getOriginListQuery() {
             return {
                 applicationType:this.applicationType,

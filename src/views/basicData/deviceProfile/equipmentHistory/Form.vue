@@ -124,6 +124,9 @@
                 </div>
                 <div v-if="activeName=='lyghinfo'">领用归还信息</div>
                 <div v-if="activeName=='wxjlinfo'">
+                  <div class="axis-content">
+                    <div class="content-title">维修记录：<span>{{wxjldataTable.length}}</span>条</div>
+                  </div>
                   <JNPF-table ref="wxjldataTable" v-loading="wxjllistLoading" @sort-change="wxjlsortChange" :data="wxjldataTable" fixedNO custom-column :height=height>
                     <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" sortable="custom">
                     </el-table-column>
@@ -206,6 +209,9 @@
                   <pagination :total="total" :page.sync="wxjlorderForm.pageNum" :limit.sync="wxjlorderForm.pageSize" @pagination="getwxjlinfo" />
                 </div>
                 <div v-if="activeName=='byrwinfo'">
+                  <div class="axis-content">
+                    <div class="content-title">保养任务：<span>{{byrwdataTable.length}}</span>条</div>
+                  </div>
                   <JNPF-table ref="byrwdataTable" v-loading="byrwlistLoading" :data="byrwdataTable" @sort-change="byrwsortChange" fixedNO custom-column :height=height>
                     <el-table-column prop="name" label="任务名称" min-width="200" fixed="left" sortable="custom">
                     </el-table-column>
@@ -243,6 +249,9 @@
                   <pagination :total="total" :page.sync="byrworderForm.pageNum" :limit.sync="byrworderForm.pageSize" @pagination="getbyrwinfo" />
                 </div>
                 <div v-if="activeName=='byjlinfo'">
+                  <div class="axis-content">
+                    <div class="content-title">保养记录：<span>{{byjldataTable.length}}</span>条</div>
+                  </div>
                   <JNPF-table ref="byjldataTable" v-loading="byjllistLoading" :data="byjldataTable" @sort-change="byjlsortChange" fixedNO custom-column :height=height>
                     <el-table-column prop="maintenanceTaskIdText" label="任务名称" min-width="180" sortable="custom" />
                     <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" sortable="custom" />
@@ -283,6 +292,9 @@
                   <pagination :total="total" :page.sync="byjlorderForm.pageNum" :limit.sync="byjlorderForm.pageSize" @pagination="getbyjlinfo" />
                 </div>
                 <div v-if="activeName=='djrwinfo'">
+                  <div class="axis-content">
+                    <div class="content-title">点检任务：<span>{{djrwdataTable.length}}</span>条</div>
+                  </div>
                   <JNPF-table ref="djrwdataTable" v-loading="djrwlistLoading" :data="djrwdataTable" @sort-change="djrwsortChange" fixedNO custom-column :height=height>
                     <el-table-column prop="name" label="任务名称" width="200" fixed="left" sortable="custom">
                     </el-table-column>
@@ -321,6 +333,9 @@
                   <pagination :total="total" :page.sync="djrworderForm.pageNum" :limit.sync="djrworderForm.pageSize" @pagination="getdjrwinfo" />
                 </div>
                 <div v-if="activeName=='djjlinfo'">
+                  <div class="axis-content">
+                    <div class="content-title">点检记录：<span>{{djjldataTable.length}}</span>条</div>
+                  </div>
                   <JNPF-table ref="djjldataTable" v-loading="djjllistLoading" :data="djjldataTable" @sort-change="djjlsortChange" fixedNO custom-column :height=height>
                     <el-table-column prop="verificationAgency" label="检定机构" width="200" sortable="custom" />
                     <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" sortable="custom" />
@@ -484,7 +499,8 @@ export default {
       btnType: undefined,
       activeName: "sbxxinfo",
       formLoading: false,
-      title: ''
+      title: '',
+      timeout: null
     }
   },
   watch: {
@@ -517,7 +533,7 @@ export default {
       let allHeight = this.$refs.main.clientHeight
       // let HeightstoclInfo = this.$refs.stoclInfo.clientHeight
       // let Heightradio = this.$refs.radio.clientHeight
-      this.height = (allHeight - 298) < 500 ? 500 : (allHeight - 298)
+      this.height = (allHeight - 342) < 500 ? 500 : (allHeight - 342)
       // 附带防抖的监听适配模式屏幕缩放
       window.onresize = () => {
         clearTimeout(this.timeout)
@@ -691,6 +707,16 @@ export default {
 }
 </script>
 <style scoped lang="scss">
+.axis-content {
+  .content-title {
+    padding: 8px;
+    font-size: 16px;
+    span {
+      margin-right: 3px;
+      font-weight: 700;
+    }
+  }
+}
 ::v-deep .el-radio-button--small .el-radio-button__inner {
   border-bottom: none;
 }

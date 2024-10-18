@@ -4,7 +4,7 @@
       <div class="group-container-body section has-hover">
         <div style="height: 65px;width: 100%;padding: 10px;">
           <div class="dash-rich-text">
-            <div class="rich-text-content">设备动态看板</div>
+            <div class="rich-text-content">点检统计分析</div>
           </div>
         </div>
       </div>
@@ -28,6 +28,7 @@ export default {
   border-radius: 3px;
 }
 .group-container-body {
+  background-color: #fafafa;
   .dash-rich-text {
     width: 100%;
     height: 100%;
@@ -42,7 +43,7 @@ export default {
       font-weight: bold;
       line-height: 1.6;
       font-size: 28px;
-      color: rgb(237, 237, 239);
+      color: #000;
     }
   }
 }

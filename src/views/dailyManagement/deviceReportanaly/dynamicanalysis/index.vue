@@ -500,7 +500,7 @@
 <script>
 import { equMaintenanceList, RepairRequestList } from '@/api/dailyManagement/Maintenance'
 import { getEquEquipmentList } from '@/api/basicData/index'
-import { getequMountedPlaces, gettotalOverview, gettotalEquStats, getequReporttotalNum } from "@/api/basicData/materialSettings";
+import { getequMountedPlaces, gettotalOverview, gettotalEquStats, getequReporttotalNum, getdailyInspectionNum,getdailyInspectionMonthTotal } from "@/api/basicData/materialSettings";
 import chart from "@/views/dailyManagement/deviceReportanaly/components/chart.vue";
 export default {
   components: { chart },
@@ -865,11 +865,19 @@ export default {
     //点检分布
     async initDatadjfb() {
       let obj = {
-        maintenanceType: 'inspection',
         classAttribute: "equipment"
       }
-      gettotalOverview(obj).then(res => {
-        console.log(res, '66666');
+      getdailyInspectionNum(obj).then(res => {
+        res.data.forEach(item => {
+          if (item.totalName == 'unexecuted') {
+            this.$set(this.datalistdj[0], 'value', item.totalNum)
+          } else {
+            this.$set(this.datalistdj[1], 'value', item.totalNum)
+          }
+        })
+      })
+      getdailyInspectionMonthTotal(obj).then(res=>{
+        console.log(res,'===>');
       })
       this.getlistdatadjfb()
     },
@@ -1029,6 +1037,7 @@ export default {
     width: 100%;
     height: 100%;
     padding: 10px 0 10px 10px;
+    background-color: #fafafa;
     .rich-text-content {
       word-wrap: break-word;
       background: 0 0;
@@ -1040,7 +1049,7 @@ export default {
       line-height: 1.5;
       font-weight: bold;
       font-size: 28px;
-      color: rgb(237, 237, 239);
+      color: #000;
     }
   }
   .speedy-entry-wrapper {

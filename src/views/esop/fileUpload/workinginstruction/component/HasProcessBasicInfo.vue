@@ -65,7 +65,6 @@ export default {
             return this.dataForm.openProcess
         },
         orderNoDisabled(){
-            console.log(this.codeConfig)
             return this.codeConfig.codeWay === 'auto' && !this.codeConfig.modifyFlag
         },
     },
@@ -98,7 +97,6 @@ export default {
             await this.getProcessLine(fileUploadList)
         },
         changeRoutingName(name){
-            console.log('changeRoutingName', name)
             this.dataForm.routingName = isEmpty(name)
                 ? (this.hasProduct
                     ? '暂未设置工艺路线'
@@ -184,11 +182,9 @@ export default {
             try {
                 const data = await this.jnpf.getBillRuleConfigFun(code);
                 this.codeConfig = data
-                console.log('codeConfig',this.codeConfig)
                 if (flag) {
                     this.dataForm.orderNo = data.number
                 }
-                console.log(this.dataForm.orderNo)
             } catch (error) {
             }
         },

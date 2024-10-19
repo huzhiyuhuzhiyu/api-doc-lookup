@@ -23,30 +23,35 @@
                             <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
                         </el-form-item>
                     </el-col>
-                    <!-- <el-button style="float: right;margin-right: 20px;" size="mini" type="primary" icon="el-icon-search" @click="moreQueries()">更多查询</el-button> -->
+                    <el-col v-if="!hasTableTopOpts" :span="6" class="JNPF-common-head-right" style="display:flex;justify-content:flex-end;align-items:center;float: right;line-height: 34px;padding-right: 16px !important;">
+                        <el-tooltip content="高级查询" placement="top">
+                            <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" style="margin-left:12px" @click="superQueryVisibleShow" />
+                        </el-tooltip>
+                        <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                            <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" style="margin-left:12px" :underline="false" @click="columnSetFun()" />
+                        </el-tooltip>
+                        <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                            <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" style="margin-left:12px" :underline="false" @click="initData()" />
+                        </el-tooltip>
+                    </el-col>
                 </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
-                <div class="JNPF-common-head" style="padding: 8px;display: -webkit-box">
-<!--                    <el-button type="primary" icon="el-icon-plus" size="mini" @click.native="">-->
-<!--                        新建-->
-<!--                    </el-button>-->
+                <div class="JNPF-common-head" style="padding: 8px;display: -webkit-box" v-if="hasTableTopOpts">
                     <topOpts @add="addOrUpdateHandle(ModelType.ADD)">
                         <template v-slot:left>
                             <el-button  type="danger" size="mini" v-has="BtnType.batchRemove.enCode" class="topButton" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
-
                         </template>
                     </topOpts>
                     <div class="JNPF-common-head-right">
                         <el-tooltip content="高级查询" placement="top" v-if="true">
-                            <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                                     @click="superQueryVisible = true" />
+                            <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisibleShow" />
                         </el-tooltip>
                         <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-                            <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+                            <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun" />
                         </el-tooltip>
                         <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                            <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+                            <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData" />
                         </el-tooltip>
                     </div>
                 </div>
@@ -57,7 +62,7 @@
                     @sort-change="sortChange"
                     custom-column
                     enabled-checkbox-plus
-                    hasC
+                    :hasC="hasTableTopOpts"
                             ref="dataTable" :setColumnDisplayList="columnList">
                     <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />
                     <el-table-column prop="drawingNo" label="品名规格" min-width="150" />
@@ -108,7 +113,13 @@
             </div>
         </div>
         <slot name="editForm" :data="this">
-            <EditWorkingInstructionUpload v-if="formVisible && recreateFlag" @recreate="recreate"  :flowCode="flowCode" :type="uploadType" :id="fileUploadId" :applicationType="applicationType" @back="editBack" />
+            <EditWorkingInstructionUpload
+                v-if="formVisible && recreateFlag" @recreate="recreate"
+                :flowCode="flowCode"
+                :type="uploadType"
+                :id="fileUploadId"
+                :applicationType="applicationType"
+                @back="editBack" />
         </slot>
 
         <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
@@ -135,7 +146,7 @@ import {
 import moment from "moment";
 import {
     ApplicationType,
-    DocumentStatus, FileManagePageSet,
+    DocumentStatus, FileManagePageSet, FileTrashPageSet,
     ModelType,
     PageType
 } from "@/views/esop/fileUpload/workinginstruction/utils/constant";
@@ -228,12 +239,24 @@ export default {
         isFileManagementPage(){
             return  FileManagePageSet.has(this.pageType)
         },
+        isFileTrashPage(){
+            return FileTrashPageSet.has(this.pageType)
+        },
+        isFileUpload(){
+            return !this.isFileManagementPage && !this.isFileTrashPage
+        },
+        hasTableTopOpts(){
+            return this.isFileUpload
+        }
     },
     async created() {
         this.initData()
 
     },
     methods: {
+        superQueryVisibleShow(){
+          this.superQueryVisible = true
+        },
         async changeState({productsCode,id,enabledMark}) {
             const {data} = await switchEnableMark(id)
             this.$message.success('操作成功')

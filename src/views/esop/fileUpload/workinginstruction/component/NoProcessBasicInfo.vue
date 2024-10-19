@@ -53,7 +53,6 @@ export default {
             return notEmpty(this.dataForm.categoryId)
         },
         orderNoDisabled(){
-            console.log(this.codeConfig)
             return this.codeConfig.codeWay === 'auto' && !this.codeConfig.modifyFlag
         },
         isImage(){
@@ -90,11 +89,9 @@ export default {
             try {
                 const data = await this.jnpf.getBillRuleConfigFun(code);
                 this.codeConfig = data
-                console.log('codeConfig',this.codeConfig)
                 if (flag) {
                     this.dataForm.orderNo = data.number
                 }
-                console.log(this.dataForm.orderNo)
             } catch (error) {
             }
         },

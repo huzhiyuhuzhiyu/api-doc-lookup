@@ -273,8 +273,7 @@ export default {
                const map = array2Map(res.data.records,'businessId')
                const fileUploadRes = await getFileUploadByIds(Array.from(map.keys()))
                this.total = res.data.total
-               this.list = fileUploadRes.data.map(item=>({ ...map.get(item.id), ...item }))
-
+               this.list = fileUploadRes.data.map(item=> Object.assign(item, map.get(item.id)))
            }catch (e) {
 
            }finally {

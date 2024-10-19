@@ -109,6 +109,9 @@ export default {
     },
     mixins: [busFlow,FlowMixin],
     async mounted(){
+        if( isEmpty(this.applicationType)){
+            return
+        }
       this.initPage()
     },
     methods: {
@@ -186,10 +189,12 @@ export default {
             this.approvalFlag = approvalFlag
             this.basicInit(id,btnType, approvalFlag,true)
         },
+        getInitFn(isAudit){
+            return isAudit ? this.$refs.dataForm.init : this.basicInfoRef.init
+        },
         async basicInit(id, btnType, approvalFlag,isAudit = false){
             const hasId = notEmpty(id)
             await this.$nextTick()
-            const fn = isAudit ?  this.$refs.dataForm.init  : this.basicInfoRef.init
             if(hasId){
                 this.pageLoading = true
                 try {
@@ -197,17 +202,15 @@ export default {
                     this.detailApplicationType = data.applicationType
                     this.dataForm.approvalFlag = data.approvalFlag
                     Object.keys(this.dataForm).forEach(key=>this.dataForm[key] = data[key])
-                    return  fn(id, btnType, approvalFlag,data)
+                    await this.$nextTick()
+                    return  this.getInitFn(isAudit)(id, btnType, approvalFlag,data)
                 }catch (e) {
                     return this.$message.error(e)
                 }finally {
                     this.pageLoading = false
                 }
             }
-            return fn(id, btnType, approvalFlag)
-
-
-
+            return this.getInitFn(isAudit)(id, btnType, approvalFlag)
         }
     },
 

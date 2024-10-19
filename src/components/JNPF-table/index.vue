@@ -1,7 +1,10 @@
 <template>
   <div class="tableContainer" v-if="!refreshTable">
     <el-table :data="data" ref="JNPFTable" class="JNPF-common-table" :height="height"
-      :element-loading-text="$t('common.loadingText')" v-bind="$attrs" v-on="$listeners" :border="border"
+      :element-loading-text="$t('common.loadingText')" v-bind="$attrs"
+
+              v-on="$listeners"
+              :border="border"
       :header-cell-style="headerCellStyle" @header-dragend="handleHeaderDragEnd">
       <el-table-column prop="selection" type="selection" width="45" key="selection" :fixed="fixedSelect" v-if="hasC"
         align="center" :selectable="checkSelectable" />
@@ -35,6 +38,7 @@
 import JnpfTableColumn from './Column'
 import ColumnSettings from './ColumnSettings'
 import Sortable from 'sortablejs'
+import {deepClone} from "@/utils";
 export default {
   name: 'JNPF-table',
   components: { JnpfTableColumn, ColumnSettings },
@@ -125,7 +129,14 @@ export default {
   computed: {
     menuId() {
       return this.$route.meta.modelId || ''
+    },
+    tableRef(){
+        return this.$refs.JNPFTable
+    },
+    selection(){
+        return this.tableRef.selection
     }
+
   },
   mounted() {
     this.getColumns()
@@ -141,6 +152,54 @@ export default {
     if (this.refreshTable) this.refreshTable = false
   },
   methods: {
+
+
+  /**
+   * 以下为复选框增强方法
+   * ------start-----
+   */
+  /**
+   * 获取当前选择的行
+   * @returns {[]|{}}
+   */
+    getCurrentSelection(){
+        return deepClone(this.selection)
+    },
+      /**
+       * 切换所有行的状态
+       * @returns {*|void}
+       */
+    toggleAllSelection(){
+        return this.tableRef.toggleAllSelection()
+    },
+      /**
+       * 全选
+       * @returns {Promise<void>}
+       */
+    async allRowCheck(){
+        this.tableRef.clearSelection()
+        await this.$nextTick()
+        this.toggleAllSelection()
+    },
+      /**
+       * 取消全选
+       */
+    allRowCancelCheck(){
+        this.tableRef.clearSelection()
+    },
+      /**
+       * 当前是否有被选中的
+       * @returns {boolean}
+       */
+    hasSelection(){
+      return this.selection.length > 0
+    },
+  /**
+   *
+   * ------end-----
+   */
+
+
     // 当列宽拖动结束时调用
     handleHeaderDragEnd(val, oldVal, initiator, column) {
       this.$nextTick(() => { this.doLayout()})
@@ -181,7 +240,7 @@ export default {
       this.$nextTick(() => {
         this.columns = this.$slots.default // 代码传入的列
         let defaultColumns = this.columns.map(o => o.componentOptions && o.componentOptions.propsData).filter(item => item)
-        this.defaultColumns = JSON.parse(JSON.stringify(defaultColumns.filter(o => o.prop))) // 
+        this.defaultColumns = JSON.parse(JSON.stringify(defaultColumns.filter(o => o.prop))) //
         let list = JSON.parse(JSON.stringify(this.defaultColumns))
         const cacheList = this.jnpf.storageGet(this.menuId + this.partentOrChild)
 

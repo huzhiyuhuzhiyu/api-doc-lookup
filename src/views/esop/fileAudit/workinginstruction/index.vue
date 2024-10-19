@@ -2,7 +2,7 @@
     <div class="JNPF-common-layout">
         <div class="JNPF-common-layout-center JNPF-flex-main">
 
-            <div class="JNPF-common-layout-center" v-show="activeName">
+            <div class="JNPF-common-layout-center">
 
                 <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16" style="margin-top:5px">
                     <el-form @submit.native.prevent>
@@ -40,6 +40,11 @@
 
                     <JNPF-table v-loading="listLoading" :data="list" custom-column ref="dataTable">
                         <el-table-column prop="fullName" label="流程标题" show-overflow-tooltip min-width="150" />
+                        <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />
+                        <template v-if="!noProductCol">
+                            <el-table-column prop="drawingNo" label="品名规格" min-width="150" />
+                            <el-table-column prop="productsCode" label="产品编码" min-width="120" />
+                        </template>
                         <el-table-column prop="startTime" label="发起时间" min-width="150" :formatter="jnpf.tableDateFormat" />
                         <el-table-column prop="userName" label="发起人员" min-width="130" />
                         <el-table-column prop="flowUrgent" label="紧急程度" min-width="100" align="center">
@@ -48,12 +53,8 @@
                             </template>
                         </el-table-column>
                         <el-table-column prop="status" label="流程状态" min-width="130" align="center">
-                            <template slot-scope="scope">
-                                <el-tag type="success" v-if="scope.row.status == 2">审核通过</el-tag>
-                                <el-tag type="danger" v-else-if="scope.row.status == 3">审核驳回</el-tag>
-                                <el-tag type="info" v-else-if="scope.row.status == 4">流程撤回</el-tag>
-                                <el-tag type="info" v-else-if="scope.row.status == 5">审核终止</el-tag>
-                                <el-tag type="primary" v-else>等待审核</el-tag>
+                            <template slot-scope="{row:{status}}">
+                                <el-tag :type="getStatusTagType(status)">{{ getStatusChinese(status) }}</el-tag>
                             </template>
                         </el-table-column>
                         <el-table-column prop="creatorTime" label="接收时间" min-width="150">
@@ -87,6 +88,9 @@ import FlowBox from '@/views/workFlow/components/FlowBox'
 import BatchList from './BatchList'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {FlowId} from "@/views/esop/utils/constants";
+import {getFileUploadByAuditId, getFileUploadByIds} from "@/api/esop/fileUpload/workinginstruction";
+import {array2Map, trim} from "@/utils";
+import {executeQueryTime, getStatusChinese, getStatusTagType} from "@/views/esop/utils/utils";
 export default {
     name: 'workFlow-flowTodo',
     components: { FlowBox, BatchList, SuperQuery },
@@ -231,7 +235,7 @@ export default {
     },
     filters: {
         getCategoryText(id, categoryList) {
-            let item = categoryList.filter(o => o.enCode == id)[0]
+            let item = categoryList.filter(o => o.enCode === id)[0]
             return item && item.fullName ? item.fullName : ''
         }
     },
@@ -242,37 +246,13 @@ export default {
         }
     },
     created() {
-        this.getDictionaryData()
-        // this.getFlowEngineList()
         this.initListQuery.flowId = this.flowId
         this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-
-        this.getCount()
         this.initData()
     },
-    watch: {
-        activeName() {
-            this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-            this.categoryIndex = -1
-            this.getCount()
-            this.initData()
-        },
-        'listQuery.flowCategory':function(newVal){
-            this.initData()
-        },
-    },
     methods: {
-        getCount() {
-            getFlowBeforeCount(this.listQuery).then(res => {
-                this.countItems = res.data.result
-                this.allTotal = this.countItems.reduce((acc,item)=>acc+=item.num*1,0)
-            })
-        },
-        changeCategory(item, index) {
-            this.listQuery.flowCategory = item.enCode
-            this.categoryIndex = index
-            this.initData()
-        },
+        getStatusTagType,
+        getStatusChinese,
         superQuerySearch(query) {
             this.listQuery.superQuery = query
             this.superQueryVisible = false
@@ -284,29 +264,21 @@ export default {
         search() {
             this.initData()
         },
-        getFlowEngineList() {
-            FlowEngineListAll().then((res) => {
-                this.flowEngineList = res.data.list
-            })
-        },
-        getDictionaryData() {
-            this.$store.dispatch('base/getDictionaryData', { sort: 'WorkFlowCategory' }).then((res) => {
-                this.categoryList = res
-            })
-        },
-        initData() {
+       async initData() {
             this.listLoading = true
-            this.listQuery.businessFlag = this.activeName === 'system' ? true : false
-            Object.keys(this.listQuery).forEach(key => {
-                let item = this.listQuery[key]
-                this.listQuery[key] = typeof item === 'string' ? item.trim() : item
-            })
-            this.jnpf.searchTimeFormat(this.listQuery, 'pickerVal', 'startTime', 'endTime')
-            getFlowBeforeList(1, this.listQuery).then(res => {
-                this.list = res.data.records
-                this.total = res.data.total
-                this.listLoading = false
-            }).catch(() => this.listLoading = false)
+            this.listQuery.businessFlag = this.activeName === 'system'
+            trim(executeQueryTime(this.listQuery,this.listQuery.pickerVal))
+           try {
+               const res =  await getFlowBeforeList(1, this.listQuery)
+               const map = array2Map(res.data.records,'businessId')
+               const fileUploadRes = await getFileUploadByIds(Array.from(map.keys()))
+               this.total = res.data.total
+               this.list = fileUploadRes.data.map(item=> Object.assign(item, map.get(item.id)))
+           }catch (e) {
+
+           }finally {
+               this.listLoading = false
+           }
         },
         toDetail(item) {
             let data = {
@@ -325,12 +297,6 @@ export default {
                 this.$refs.FlowBox.init(data)
             })
         },
-        goBatch() {
-            this.batchListVisible = true
-            this.$nextTick(() => {
-                this.$refs.BatchList.init()
-            })
-        },
         closeForm(isRefresh) {
             this.formVisible = false
             if (isRefresh) this.refresh()
@@ -340,6 +306,11 @@ export default {
             this.categoryIndex = -1
             this.getCount()
             this.initData()
+        }
+    },
+    computed:{
+        noProductCol(){
+            return this.flowId === FlowId.OFFICE
         }
     }
 }

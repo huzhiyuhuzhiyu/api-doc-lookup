@@ -119,6 +119,9 @@
                 :type="uploadType"
                 :id="fileUploadId"
                 :applicationType="applicationType"
+                :isFileManagementPage="isFileManagementPage"
+                :isFileTrashPage="isFileTrashPage"
+                :isFileUpload="isFileUpload"
                 @back="editBack" />
         </slot>
 

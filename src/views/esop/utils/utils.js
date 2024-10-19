@@ -96,12 +96,12 @@ const BtnType={
 }
 const normalBtn = [BtnType.add,BtnType.edit,BtnType.detail,BtnType.remove,BtnType.batchRemove,BtnType.copy]
 
-export async function setAllBtnAuth(moduleName="ESOP管理",btns=normalBtn){
+export async function setAllBtnAuth(moduleName="ESOP管理",btns=normalBtn,findField='fullName'){
     const map = new Map()
     const {data:{list}} = await getMenuList('309228585019769285',{keyword:'',category:"Web"})
 
     flatArr(list,(item)=>{
-        map.set(item.fullName,item)
+        map.set(item[findField],item)
     },'children')
     const module = map.get(moduleName)
     if(isEmpty(module)) return console.log('未找到模块')

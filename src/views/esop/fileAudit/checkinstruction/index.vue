@@ -1,17 +1,10 @@
 <template>
-    <WorkingInstructionAudit :flow-id="FlowId.INSPECT"></WorkingInstructionAudit>
+    <FileAuditWorkingInstruction :flow-id="FlowId.INSPECT"/>
 </template>
 <script>
-import {FlowId} from "@/views/esop/utils/constants";
+import ESOPConstantsMixin from "@/views/esop/utils/ESOPConstantsMixin";
 
 export default {
-    computed: {
-        FlowId() {
-            return FlowId
-        }
-    },
-    components:{
-        WorkingInstructionAudit: ()=>import("@/views/esop/fileAudit/workinginstruction/index.vue")
-    }
+    mixins:[ESOPConstantsMixin]
 }
 </script>

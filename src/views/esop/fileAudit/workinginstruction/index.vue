@@ -87,6 +87,7 @@ import FlowBox from '@/views/workFlow/components/FlowBox'
 import BatchList from './BatchList'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {FlowId} from "@/views/esop/utils/constants";
+import {getFileUploadByAuditId} from "@/api/esop/fileUpload/workinginstruction";
 export default {
     name: 'workFlow-flowTodo',
     components: { FlowBox, BatchList, SuperQuery },
@@ -302,11 +303,14 @@ export default {
                 this.listQuery[key] = typeof item === 'string' ? item.trim() : item
             })
             this.jnpf.searchTimeFormat(this.listQuery, 'pickerVal', 'startTime', 'endTime')
-            getFlowBeforeList(1, this.listQuery).then(res => {
+            getFlowBeforeList(1, this.listQuery).then(async res => {
                 this.list = res.data.records
                 this.total = res.data.total
                 this.listLoading = false
+                const aaa = await getFileUploadByAuditId(this.list.map(o=>o.businessId))
+                console.log(aaa)
             }).catch(() => this.listLoading = false)
+            console.log()
         },
         toDetail(item) {
             let data = {

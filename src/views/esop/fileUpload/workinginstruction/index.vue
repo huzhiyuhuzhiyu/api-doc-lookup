@@ -372,6 +372,7 @@ export default {
         },
         fileManageInit(data){
             this.productId2ItemMap.clear()
+
             data.records.forEach(item=>mapIfNonePutArr(this.productId2ItemMap,item.productsCode,item))
         },
         search() {

@@ -63,3 +63,12 @@ export function deleteBimFileUpload(id) {
         method: 'delete',
     })
 }
+
+
+export function getFileUploadByAuditId(data) {
+    return request({
+        url: `/api/zgt/bimFileUpload/listByBusinessIds`,
+        method: 'post',
+        data
+    })
+}

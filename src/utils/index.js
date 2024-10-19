@@ -1,3 +1,6 @@
+import moment from "moment";
+import {deleteBimFileUpload} from "@/api/esop/fileUpload/workinginstruction";
+
 /**
  * Parse the time to string
  * @param {(Object|string|number)} time
@@ -392,6 +395,7 @@ export function trim(obj){
  * @returns {boolean}
  * @example isEmpty('') => true
  * @example isEmpty({}) => true
+ * @example isEmpty([]) => true
  */
 export function isEmpty(val){
     if(val === null || val === undefined) return true
@@ -423,4 +427,37 @@ export function mapIfNonePutArr(map, key, value) {
       return map.get(key).push(value)
     }
     return map.set(key, [value])
+}
+
+/**
+ * 格式化时间
+ * @param time
+ * @param format
+ * @returns {string}
+ */
+export function formatDate(time=new Date(), format ="YYYY-MM-DD hh:mm:ss") {
+  return moment(Number(time)).format(format)
+}
+
+/**
+ * 获取删除提示框
+ * @param { Vue } vm
+ * @returns {Promise<MessageBoxData>}
+ */
+export function getDelConfirm(vm){
+    return vm.$confirm(vm.$t('common.delTip'), vm.$t('common.tipTitle'), {
+            type: 'warning'
+    })
+}
+
+/**
+ * 数组转换为Map
+ * @param {any[]} arr 数组
+ * @param key 键名
+ * @returns {Map<any, any>}
+ */
+export function array2Map(arr,key){
+    const map = new Map()
+    arr.forEach(item=> map.set(item[key],item))
+    return map
 }

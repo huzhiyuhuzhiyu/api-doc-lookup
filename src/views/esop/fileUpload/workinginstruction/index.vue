@@ -39,9 +39,7 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
                 <div class="JNPF-common-head" style="padding: 8px;display: -webkit-box" v-if="hasTableTopOpts">
                     <topOpts @add="addOrUpdateHandle(ModelType.ADD)">
-                        <template v-slot:left>
                             <el-button  type="danger" size="mini" v-has="BtnType.batchRemove.enCode" class="topButton" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
-                        </template>
                     </topOpts>
                     <div class="JNPF-common-head-right">
                         <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -90,6 +88,7 @@
 <!--                            :delDisabled="scope.row.documentStatus !== 'draft'"-->
 <!--                            :editDisabled="scope.row.documentStatus !== 'draft'"-->
                             <tableOpts :isJudgePer="true"
+                                       :del-text="isFileTrashPage?'还原':undefined"
                                        @edit="addOrUpdateHandle(ModelType.EDIT,scope.row.id)"
                                        @del="handleDel(scope.row.id)">
                                         <el-dropdown hide-on-click v-if="isFileManagementPage">
@@ -154,9 +153,10 @@ import {
     PageType
 } from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 import {FlowCode} from "@/views/esop/utils/constants";
-import {getDelConfirm, isEmpty, mapIfNonePutArr, trim} from "@/utils";
+import {getQueryConfirm, getSuccessInfo, isEmpty, mapIfNonePutArr, trim} from "@/utils";
 import RecreateMixin from "@/views/esop/utils/RecreateMixin";
 import {BtnType, executeQueryTime} from "@/views/esop/utils/utils";
+import {getBimRecycleBin, revertBimRecycleBin} from "@/api/esop/fileTrash";
 
 
 
@@ -234,6 +234,12 @@ export default {
         }
     },
     computed: {
+        getListFn(){
+            if(this.isFileTrashPage){
+                return getBimRecycleBin
+            }
+            return getBimFileUpload
+        },
         BtnType() {
             return BtnType
         },
@@ -333,7 +339,7 @@ export default {
            this.listLoading = true
            const params ={...this.listQuery}
            params.superQuery.condition[0].fieldValue === '' && delete params.superQuery
-           const {data} = await getBimFileUpload(params)
+           const {data} = await this.getListFn(params)
            this.tableData = data.records
            this.total = data.total
            this.listLoading = false
@@ -362,9 +368,23 @@ export default {
             this.uploadType = type
             this.formVisible = true
         },
-        async handleDel(id) {
+        async revertBimRecycle(id){
             try {
-                await getDelConfirm(this)
+                await getQueryConfirm(this,'是否要还原此记录？')
+                const res = revertBimRecycleBin(id)
+                getSuccessInfo()
+                this.initData()
+            }catch (e) {
+
+            }
+        },
+
+        async handleDel(id) {
+            if(this.isFileTrashPage){
+                return this.revertBimRecycle(id)
+            }
+            try {
+                await getQueryConfirm(this)
                 const {msg} = await deleteBimFileUpload(id)
                 if (msg === 'Success') {
                     this.initData()
@@ -384,7 +404,7 @@ export default {
                  return this.$message.info('请选择要删除的数据')
              }
             try {
-                await getDelConfirm(this)
+                await getQueryConfirm(this)
                 const {msg} = await batchDeleteBimFileUpload(arr.map(({id})=>id))
                 if (msg === 'Success') {
                     this.initData()

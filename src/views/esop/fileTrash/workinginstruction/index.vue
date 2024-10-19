@@ -10,7 +10,6 @@
 <script>
 import ESOPConstantsMixin from '@/views/esop/utils/ESOPConstantsMixin'
 export default {
-    name: 'FileManagementWorkingInstruction',
     mixins: [ESOPConstantsMixin]
 }
 </script>

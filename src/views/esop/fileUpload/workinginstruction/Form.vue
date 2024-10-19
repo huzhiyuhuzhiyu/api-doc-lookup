@@ -14,7 +14,7 @@
                                 <el-button type="danger" :loading="btnLoading" @click="delFileUpload">删除</el-button>
                             </template>
                             <template v-else-if="isFileTrashPage">
-                                <el-button type="success" :loading="btnLoading" @click="handleConfirm(DocumentStatus.DRAFT)">还原</el-button>
+                                <el-button type="success" :loading="btnLoading" @click="handleRestore">还原</el-button>
                             </template>
 
                             <el-button @click="goBack('cancel')">{{ $t('common.cancelButton') }}</el-button>
@@ -54,10 +54,15 @@
 
 <script>
 
-import {isEmpty, notEmpty} from "@/utils";
+import {getQueryConfirm, getSuccessInfo, isEmpty, notEmpty} from "@/utils";
 import FileUploadDrop from "@/views/esop/fileUpload/workinginstruction/component/FileUploadDrop.vue";
 import {DocumentStatus, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
-import {addBimFileUpload, detailBimFileUpload, modifyBimFileUpload} from "@/api/esop/fileUpload/workinginstruction";
+import {
+    addBimFileUpload,
+    deleteBimFileUpload,
+    detailBimFileUpload,
+    modifyBimFileUpload
+} from "@/api/esop/fileUpload/workinginstruction";
 import Process from "@/components/Process/Preview.vue";
 import recordList from "@/views/workFlow/components/RecordList.vue";
 import busFlow from "@/mixins/generator/busFlow";
@@ -66,7 +71,7 @@ import FlowMixin from "@/mixins/generator/flowMixin";
 import FinishSubmit from "@/views/esop/fileUpload/workinginstruction/old/finishSubmit.vue";
 import HasProcessBasicInfo from "@/views/esop/fileUpload/workinginstruction/component/HasProcessBasicInfo.vue";
 import NoProcessBasicInfo from "@/views/esop/fileUpload/workinginstruction/component/NoProcessBasicInfo.vue";
-import fileManageMethods from "@/views/esop/fileUpload/workinginstruction/utils/fileManageMethods";
+import {detailBimRecycleBin, getBimRecycleBin, revertBimRecycleBin} from "@/api/esop/fileTrash";
 
 
 export default {
@@ -132,7 +137,34 @@ export default {
       this.initPage()
     },
     methods: {
-        ...fileManageMethods(),
+        async delFileUpload(){
+            try {
+                this.btnLoading = true
+                await getQueryConfirm(this)
+                await deleteBimFileUpload(this.id)
+                getSuccessInfo()
+                this.goBack()
+            }catch (e) {
+
+            }finally {
+                this.btnLoading = false
+            }
+
+        },
+        async handleRestore(){
+            try {
+                this.btnLoading = true
+                await getQueryConfirm(this,"是否要还原此记录")
+                await revertBimRecycleBin(this.id)
+                getSuccessInfo()
+                this.goBack()
+            }catch (e) {
+
+            }finally {
+                this.btnLoading = false
+            }
+
+        },
         recreate(){
             this.$emit('recreate')
         },
@@ -223,14 +255,21 @@ export default {
             if(hasId){
                 this.pageLoading = true
                 try {
-                    const { data } =   await detailBimFileUpload(id)
+                    const res =   await this.getDetailFn(id)
+                    console.log(res)
+                    const  { data,code,msg } =res
+                    if(code !== 200){
+                        return this.$message.error(msg)
+                    }
                     this.detailApplicationType = data.applicationType
                     this.dataForm.approvalFlag = data.approvalFlag
                     Object.keys(this.dataForm).forEach(key=>this.dataForm[key] = data[key])
                     await this.$nextTick()
                     return  this.getInitFn(isAudit)(id, btnType, approvalFlag,data)
                 }catch (e) {
-                    return this.$message.error(e)
+                    console.dir(e)
+                     this.$message.error(e.message)
+                    return this.goBack()
                 }finally {
                     this.pageLoading = false
                 }
@@ -240,6 +279,12 @@ export default {
     },
 
     computed:{
+        getDetailFn(){
+            if(this.isFileTrashPage){
+                return detailBimRecycleBin
+            }
+            return detailBimFileUpload
+        },
         childBindData(){
             return {
                 isAdd: this.isAdd,

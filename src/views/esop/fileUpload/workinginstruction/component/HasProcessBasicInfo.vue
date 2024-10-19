@@ -71,7 +71,7 @@ export default {
             return this.codeConfig.codeWay === 'auto' && !this.codeConfig.modifyFlag
         },
         hasEnableMark(){
-          return this.dataForm.approvalStatus === ApprovalStatus.OK
+          return this.dataForm.approvalStatus === ApprovalStatus.OK && !this.isFileTrashPage
         },
     },
     methods:{
@@ -391,13 +391,26 @@ export default {
                     <template v-if="needProcess && routingLineList.length > 0" >
                         <el-collapse-item v-for="item in routingLineList"  :key="item.processId"  :title="item.processName" :name="item.processId">
                             <div class="collapse-wrapper">
-                                <FileUploadDrop  :disabled="isView" class="fileUpload" :key="item.processId" v-model="processFileList[item.processId]"></FileUploadDrop>
+                                <FileUploadDrop
+                                    :isFileTrashPage="isFileTrashPage"
+                                    :isFileManagementPage="isFileManagementPage"
+                                    :isFileUpload="isFileUpload"
+                                    :disabled="isView"
+                                    class="fileUpload"
+                                    :key="item.processId"
+                                    v-model="processFileList[item.processId]"></FileUploadDrop>
                             </div>
                         </el-collapse-item>
                     </template>
                     <el-collapse-item  v-if="hasProduct && !needProcess"  title="文件上传" name="normalUpload">
                         <div class="collapse-wrapper">
-                            <FileUploadDrop :disabled="isView" class="fileUpload" v-model="normalFileList"></FileUploadDrop>
+                            <FileUploadDrop
+                                :isFileTrashPage="isFileTrashPage"
+                                :isFileManagementPage="isFileManagementPage"
+                                :isFileUpload="isFileUpload"
+                                :disabled="isView"
+                                class="fileUpload"
+                                v-model="normalFileList"></FileUploadDrop>
                         </div>
                     </el-collapse-item>
                 </el-collapse>

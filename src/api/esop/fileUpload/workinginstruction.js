@@ -75,7 +75,7 @@ export function deleteBimFileUploadDetailById(id) {
 }
 
 /**
- * 删除文件上传申请单单个明细
+ * 批量删除文件上传申请个明细
  * @param data  id数组
  * @returns {*}
  */

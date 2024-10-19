@@ -1,5 +1,6 @@
 import moment from "moment";
 import {deleteBimFileUpload} from "@/api/esop/fileUpload/workinginstruction";
+import {Message, MessageBox} from "element-ui";
 
 /**
  * Parse the time to string
@@ -440,14 +441,19 @@ export function formatDate(time=new Date(), format ="YYYY-MM-DD hh:mm:ss") {
 }
 
 /**
- * 获取删除提示框
+ * 获取询问提示框
  * @param { Vue } vm
+ * @param tip
  * @returns {Promise<MessageBoxData>}
  */
-export function getDelConfirm(vm){
-    return vm.$confirm(vm.$t('common.delTip'), vm.$t('common.tipTitle'), {
+export function getQueryConfirm(vm,tip=""){
+    return vm.$confirm( tip || vm.$t('common.delTip'), vm.$t('common.tipTitle'), {
             type: 'warning'
     })
+}
+
+export function getSuccessInfo(tip="操作成功"){
+    return  Message.success(tip)
 }
 
 /**

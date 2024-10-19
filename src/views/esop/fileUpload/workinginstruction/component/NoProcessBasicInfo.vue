@@ -62,7 +62,7 @@ export default {
             return applicationType === ApplicationType.IMAGE
         },
         hasEnableMark(){
-            return this.dataForm.approvalStatus === ApprovalStatus.OK
+            return this.dataForm.approvalStatus === ApprovalStatus.OK && !this.isFileTrashPage
         },
     },
     methods:{
@@ -262,7 +262,12 @@ export default {
                     </el-collapse-item>
                     <el-collapse-item  v-if="hasCategory"  title="文件上传" name="normalUpload">
                         <div class="collapse-wrapper">
-                            <FileUploadDrop :disabled="isView" class="fileUpload" v-model="normalFileList"></FileUploadDrop>
+                            <FileUploadDrop
+                                :isFileTrashPage="isFileTrashPage"
+                                :isFileManagementPage="isFileManagementPage"
+                                :isFileUpload="isFileUpload"
+
+                                :disabled="isView" class="fileUpload" v-model="normalFileList"></FileUploadDrop>
                         </div>
                     </el-collapse-item>
                 </el-collapse>

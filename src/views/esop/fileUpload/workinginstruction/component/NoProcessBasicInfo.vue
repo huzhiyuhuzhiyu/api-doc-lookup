@@ -92,6 +92,7 @@ export default {
                         filename: item.documentName,
                         id: item.documentId,
                         url: getFilePreviewUrl(item.filePath),
+                        filePath: item.filePath,
                         processUploadId: item.id,
                     }
         })

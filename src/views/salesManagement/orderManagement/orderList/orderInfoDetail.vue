@@ -60,7 +60,7 @@
             </el-collapse-item>
             <!-- <el-collapse-item title="" name="info" class="info" :disabled="true"> -->
             <el-collapse-item title="订单产品" name="product">
-              <JNPF-table ref="work" :data="productData" fixedNO  v-loading="tableloading">
+              <JNPF-table ref="work" :data="productData" fixedNO  v-loading="tableloading" class="productTable">
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                 </el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
@@ -780,5 +780,8 @@ $footerPadding: '10px';
 
 ::v-deep .el-collapse-item {
   border-bottom: 1px solid rgb(220, 223, 230)
+}
+.productTable ::v-deep .el-table__body-wrapper{
+  height: auto!important;
 }
 </style>

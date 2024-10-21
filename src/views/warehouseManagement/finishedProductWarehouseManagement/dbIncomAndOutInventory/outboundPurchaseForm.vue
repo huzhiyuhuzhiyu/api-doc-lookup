@@ -127,7 +127,7 @@
                           :key="7"></el-table-column>
 
 
-                        <el-table-column prop="requiredReceivedQuantity" label="待退货数量" width="140"
+                        <el-table-column prop="receivedQuantity" label="待退货数量" width="140"
                           v-if="btnType != 'look'" :key="777">
                         </el-table-column>
 
@@ -296,7 +296,7 @@
                           :key="7"></el-table-column>
 
 
-                        <el-table-column prop="requiredReceivedQuantity" label="待退货数量" width="140"
+                        <el-table-column prop="receivedQuantity" label="待退货数量" width="140"
                           v-if="btnType != 'look'" :key="777">
                         </el-table-column>
 
@@ -398,7 +398,7 @@
                 <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
                 <el-table-column prop="purchaseQuantity" label="数量" width="80" sortable="custom" />
-                <el-table-column prop="requiredReceivedQuantity" label="待退货数量" width="130" sortable="custom" />
+                <el-table-column prop="receivedQuantity" label="待退货数量" width="130" sortable="custom" />
                 <el-table-column prop="standardValue" label="规值" width="80" sortable="custom" />
                 <el-table-column prop="colour" label="颜色" width="80" sortable="custom" />
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="110" sortable="custom" />
@@ -712,7 +712,7 @@ export default {
         let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
         item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
         item.taxRates= item.taxRate+"%"
-        item.num = item.requiredReceivedQuantity
+        item.num = item.receivedQuantity
         item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
         item.costPrice = item.price
         item.ordersId = item.purchaseOrderId
@@ -970,7 +970,7 @@ export default {
               item.taxRates= item.taxRate+"%"
               item.sourceNo = this.dataForm.sourceNo
               item.moveId = this.dataForm.id
-              item.num = item.requiredReceivedQuantity
+              item.num = item.receivedQuantity
               item.ordersId = item.purchaseOrderId
               item.noticeId = item.purchaseReceiptReturnGoodsId
               item.noticeLineId = item.id

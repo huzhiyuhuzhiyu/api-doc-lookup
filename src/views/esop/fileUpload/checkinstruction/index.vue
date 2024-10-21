@@ -1,5 +1,10 @@
 <template>
-  <FileUploadWorkingInstruction :title="'检查指导书上传'" :flow-code="FlowCode.INSPECT" :applicationType="ApplicationType.INSPECT"></FileUploadWorkingInstruction>
+  <FileUploadWorkingInstruction
+      :title="'检查指导书上传'"
+      :flow-code="FlowCode.INSPECT"
+      :applicationType="ApplicationType.INSPECT"
+      :page-type="PageType.FileUploadInspect"
+  ></FileUploadWorkingInstruction>
 </template>
 
 <script>

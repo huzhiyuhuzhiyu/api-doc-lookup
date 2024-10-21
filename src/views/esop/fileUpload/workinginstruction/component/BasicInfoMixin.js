@@ -28,7 +28,11 @@ export default {
             type:Boolean,
             required:false,
         },
-        isFileUpload:{
+        isFileUploadPage:{
+            type:Boolean,
+            required:false,
+        },
+        isFileCheckPage:{
             type:Boolean,
             required:false,
         },
@@ -76,7 +80,7 @@ export default {
             return this.codeConfig.codeWay === 'auto' && !this.codeConfig.modifyFlag
         },
         hasEnableMark(){
-            return this.dataForm.approvalStatus === ApprovalStatus.OK && this.isFileManagementPage
+            return this.dataForm.approvalStatus === ApprovalStatus.OK && (this.isFileManagementPage || this.isFileCheckPage)
         },
     }
 }

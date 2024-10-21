@@ -1,19 +1,17 @@
 <template>
     <FileUploadWorkingInstruction
-        :page-type="PageType.FileManagementImage"
-        :application-type="ApplicationType.IMAGE"
-        :flow-code="FlowCode.IMAGE"
+        :page-type="PageType.FileCheckInspect"
+        :application-type="ApplicationType.INSPECT"
+        :flow-code="FlowCode.INSPECT"
         :approval-status="ApprovalStatus.OK"
         :document-status="DocumentStatus.SUBMIT"/>
 </template>
 
 <script>
 import ESOPConstantsMixin from "@/views/esop/utils/ESOPConstantsMixin";
-
 export default {
-    name: 'FileManagementDocument',
+    name: 'FileManagementCheckInstruction',
     mixins: [ESOPConstantsMixin]
-
 }
 </script>
 <style scoped>

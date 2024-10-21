@@ -33,10 +33,10 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="list" custom-column ref="tabForm">
-          <el-table-column prop="fullName" label="模板名称" show-overflow-tooltip />
-          <el-table-column prop="enCode" label="模板编码" />
-          <el-table-column prop="company" label="短信厂家" width="200" align="center" />
-          <el-table-column prop="enabledMark" label="状态" width="70" align="center">
+          <el-table-column prop="fullName" label="模板名称" min-width="120" show-overflow-tooltip />
+          <el-table-column prop="enCode" label="模板编码" min-width="120" />
+          <el-table-column prop="company" label="短信厂家" min-width="200" align="center" />
+          <el-table-column prop="enabledMark" label="状态" min-width="70" align="center">
             <template slot-scope="scope">
               <el-tag :type="scope.row.enabledMark == 1 ? 'success' : 'danger'" disable-transitions>
                 {{scope.row.enabledMark==1?'启用':'禁用'}}</el-tag>

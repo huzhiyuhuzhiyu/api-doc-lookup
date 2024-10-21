@@ -74,12 +74,26 @@ export default {
     return {}
   },
   methods: {
-    del(event) {
-      event.target.blur();
+    del(e) {
+      let target = e.target
+      // 根据button组件内容 里面包括一个span标签，如果设置icon，则还包括一个i标签，其他情况请自行观察。
+      // 所以，在我们点击到button组件上的文字也就是span标签上时，直接执行e.target.blur()不会生效，所以要加一层判断。
+      if (target.nodeName === 'SPAN' || target.nodeName === 'I') {
+        target = e.target.parentNode
+      }
+     // 让其失去焦点
+      target.blur()
       this.$emit('del')
     },
-    edit(event) {
-      event.target.blur();
+    edit(e) {
+      let target = e.target
+      // 根据button组件内容 里面包括一个span标签，如果设置icon，则还包括一个i标签，其他情况请自行观察。
+      // 所以，在我们点击到button组件上的文字也就是span标签上时，直接执行e.target.blur()不会生效，所以要加一层判断。
+      if (target.nodeName === 'SPAN' || target.nodeName === 'I') {
+        target = e.target.parentNode
+      }
+     // 让其失去焦点
+      target.blur()
       this.$emit('edit')
     }
   }

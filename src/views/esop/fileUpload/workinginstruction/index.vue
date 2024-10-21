@@ -76,7 +76,7 @@
                     <el-table-column prop="fileCount" label="文件数量" width="120" />
                     <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
                     <el-table-column prop="createByName" label="创建人" width="100" />
-                    <el-table-column prop="status" label="启用状态" width="120" align="center" v-if="isFileManagementPage">
+                    <el-table-column prop="status" label="启用状态" width="120" align="center" v-if="isFileManagementPage || isFileCheckPage">
                         <template slot-scope="scope">
                             <el-switch @change="changeState(scope.row)" v-model="scope.row.enabledMark"
                                        :active-value="true" :inactive-value="false">
@@ -85,29 +85,33 @@
                     </el-table-column>
                     <el-table-column label="操作" width="180" fixed="right">
                         <template slot-scope="scope">
-<!--                            :delDisabled="scope.row.documentStatus !== 'draft'"-->
-<!--                            :editDisabled="scope.row.documentStatus !== 'draft'"-->
-                            <tableOpts :isJudgePer="true"
-                                       :del-text="tableOptsDelText"
-                                       :edit-text="tableOptsEditText"
-                                       @edit="addOrUpdateHandle(ModelType.EDIT,scope.row.id)"
-                                       @del="handleDel(scope.row.id)">
-                                        <el-dropdown hide-on-click v-if="isFileManagementPage">
-                                              <span class="el-dropdown-link">
-                                                <el-button type="text" size="mini">
-                                                  {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                                                </el-button>
-                                              </span>
-                                            <el-dropdown-menu slot="dropdown">
-                                                <el-dropdown-item @click.native="addOrUpdateHandle(ModelType.VIEW,scope.row.id)">
-                                                    查看详情
-                                                </el-dropdown-item>
-<!--                                                <el-dropdown-item @click.native="addOrUpdateHandle(ModelType.VIEW,scope.row.id)">-->
-<!--                                                    查看详情-->
-<!--                                                </el-dropdown-item>-->
-                                            </el-dropdown-menu>
-                                        </el-dropdown>
-                            </tableOpts>
+                                <tableOpts
+                                            v-if="!isFileCheckPage"
+                                            :isJudgePer="true"
+                                           :del-disabled="isFileManagementPage && scope.row.enabledMark"
+                                           :edit-text="tableOptsEditText"
+                                           :del-text="tableOptsDelText"
+                                           :has-del="tableOptsDelShow"
+                                           @edit="tableOptsEditHandle(ModelType.EDIT,scope.row.id)"
+                                           @del="handleDel(scope.row.id)">
+                                            <el-dropdown hide-on-click>
+                                                  <span class="el-dropdown-link">
+                                                    <el-button type="text" size="mini">
+                                                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                                                    </el-button>
+                                                  </span>
+                                                    <el-dropdown-menu slot="dropdown">
+                                                        <el-dropdown-item v-if="isFileManagementPage" @click.native="copy2FileUpload(scope.row.id)">
+                                                            复制
+                                                        </el-dropdown-item>
+                                                        <el-dropdown-item @click.native="addOrUpdateHandle(ModelType.VIEW,scope.row.id)">
+                                                            查看详情
+                                                        </el-dropdown-item>
+
+                                                    </el-dropdown-menu>
+                                            </el-dropdown>
+                                </tableOpts>
+                                <el-button v-if="isFileCheckPage" type="text" size="mini" @click="addOrUpdateHandle(ModelType.VIEW,scope.row.id)">查看详情</el-button>
                         </template>
                     </el-table-column>
                 </JNPF-table>
@@ -124,7 +128,8 @@
                 :applicationType="applicationType"
                 :isFileManagementPage="isFileManagementPage"
                 :isFileTrashPage="isFileTrashPage"
-                :isFileUpload="isFileUpload"
+                :isFileUploadPage="isFileUploadPage"
+                :isFileCheckPage="isFileCheckPage"
                 @back="editBack" />
         </slot>
 
@@ -152,7 +157,7 @@ import {
 import moment from "moment";
 import {
     ApplicationType,
-    DocumentStatus, FileManagePageSet, FileTrashPageSet,
+    DocumentStatus, FileCheckPageSet, FileManagePageSet, FileTrashPageSet, FileUploadPageSet,
     ModelType,
     PageType
 } from "@/views/esop/fileUpload/workinginstruction/utils/constant";
@@ -208,7 +213,7 @@ export default {
             formType:ModelType.ADD,
             total: 0,
             formVisible: false,
-            selectList: [],
+
             uploadVisib: false,
             superQueryVisible: false,
             superQueryJson: [
@@ -255,24 +260,51 @@ export default {
         isFileTrashPage(){
             return FileTrashPageSet.has(this.pageType)
         },
-        isFileUpload(){
-            return !this.isFileManagementPage && !this.isFileTrashPage
+        isFileUploadPage(){
+            return FileUploadPageSet.has(this.pageType)
+        },
+        isFileCheckPage(){
+          return FileCheckPageSet.has(this.pageType)
         },
         hasTableTopOpts(){
-            return this.isFileUpload
+            return this.isFileUploadPage
         },
         tableOptsDelText(){
-            return this.isFileTrashPage ?'还原':'删除'
+            return this.isFileTrashPage ? '还原' : '删除'
+        },
+        tableOptsDelShow(){
+             return !this.isFileTrashPage
         },
         tableOptsEditText(){
-            return this.isFileManagementPage ?'退回' : '编辑'
-        }
+            if(this.isFileManagementPage){
+                return '退回'
+            }
+            if(this.isFileTrashPage){
+                return '还原'
+            }
+            return '编辑'
+        },
+        tableOptsEditHandle(){
+            if(this.isFileManagementPage){
+                return this.backFileUpload
+            }
+            if(this.isFileTrashPage){
+                return this.revertBimRecycle
+            }
+            return this.addOrUpdateHandle
+        },
     },
     async created() {
         this.initData()
 
     },
     methods: {
+        copy2FileUpload(id){
+            console.log("copy2FileUpload",id)
+        },
+        backFileUpload(type,id){
+            console.log("backFileUpload",id)
+        },
         superQueryVisibleShow(){
           this.superQueryVisible = true
         },
@@ -307,7 +339,7 @@ export default {
                             field: "drawingNo",
                             fieldValue: "",
                             symbol: "like"
-                        }
+                        },
                     ],
                     matchLogic: ""
                 },
@@ -324,9 +356,6 @@ export default {
             this.search()
         },
 
-        handleSelectionChange(val) {
-            this.selectList = val
-        },
 
 
         columnSetFun() {
@@ -344,16 +373,21 @@ export default {
             this.listQuery.orderItems[0].column = order === null ? '' : newProp
             this.initData()
         },
+        executeUploadPageParams(params){
+            if(this.isFileUploadPage){
+                params.uploadListFlag = 1
+                delete params.documentStatus
+            }
+        },
        async initData() {
-
            this.listLoading = true
            const params ={...this.listQuery}
            params.superQuery.condition[0].fieldValue === '' && delete params.superQuery
+           this.executeUploadPageParams(params)
            const {data} = await this.getListFn(params)
            this.tableData = data.records
            this.total = data.total
            this.listLoading = false
-
         },
 
         search() {
@@ -378,7 +412,13 @@ export default {
             this.uploadType = type
             this.formVisible = true
         },
-        async revertBimRecycle(id){
+        /**
+         * 此处的type 无意义 仅为参数归一化
+         * @param type
+         * @param id
+         * @returns {Promise<void>}
+         */
+        async revertBimRecycle(type,id){
             try {
                 await getQueryConfirm(this,'是否要还原此记录？')
                 const res = revertBimRecycleBin(id)
@@ -390,9 +430,6 @@ export default {
         },
 
         async handleDel(id) {
-            if(this.isFileTrashPage){
-                return this.revertBimRecycle(id)
-            }
             try {
                 await getQueryConfirm(this)
                 const {msg} = await deleteBimFileUpload(id)

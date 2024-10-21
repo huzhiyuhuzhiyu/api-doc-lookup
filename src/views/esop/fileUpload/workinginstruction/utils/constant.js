@@ -19,10 +19,13 @@ export const ModelType ={
  * @enum {string}
  * @property {string} DRAFT - 草稿
  * @property {string} SUBMIT - 提交
+ * @property {string} BACK - 退回
  */
 export const DocumentStatus ={
     DRAFT: 'draft',
     SUBMIT: 'submit',
+    BACK:'back',
+
 }
 /**
  * 申请类型
@@ -65,20 +68,29 @@ export const ApprovalStatus ={
 
 export const FileManagementPageType={
     FileManagementWork:'FileManagementWork',
-    FileManagementDocument:'FileManagementDocument',
     FileManagementImage:'FileManagementImage',
     FileManagementOffice:'FileManagementOffice',
     FileManagementInspect:'FileManagementInspect',
 }
 export const FileTrashPageType={
     FileTrashWork:'FileTrashWork',
-    FileTrashDocument:'FileTrashDocument',
     FileTrashImage:'FileTrashImage',
     FileTrashOffice:'FileTrashOffice',
     FileTrashInspect:'FileTrashInspect',
 }
+export const FileCheckPageType={
+    FileCheckWork:'FileCheckWork',
+    FileCheckImage:'FileCheckImage',
+    FileCheckOffice:'FileCheckOffice',
+    FileCheckInspect:'FileCheckInspect',
+}
 
-
+export const FileUploadPageType={
+    FileUploadWork:'FileUploadWork',
+    FileUploadImage:'FileUploadImage',
+    FileUploadOffice:'FileUploadOffice',
+    FileUploadInspect:'FileUploadInspect',
+}
 /**
  * 文件管理作业页面类型
  * @readonly
@@ -92,7 +104,10 @@ export const FileTrashPageType={
 export const PageType ={
     ...FileManagementPageType,
     ...FileTrashPageType,
-    FileUploadWork:'FileUploadWork',
+    ...FileCheckPageType,
+    ...FileUploadPageType,
 }
 export const FileManagePageSet = new Set(Object.values(FileManagementPageType))
 export const FileTrashPageSet = new Set(Object.values(FileTrashPageType))
+export const FileCheckPageSet = new Set(Object.values(FileCheckPageType))
+export const FileUploadPageSet = new Set(Object.values(FileUploadPageType))

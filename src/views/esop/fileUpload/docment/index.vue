@@ -1,5 +1,11 @@
 <template>
-    <FileUploadWorkingInstruction :title="'图文档上传'" :flow-code="FlowCode.IMAGE" :applicationType="ApplicationType.IMAGE"/>
+    <FileUploadWorkingInstruction
+        :title="'图文档上传'"
+        :flow-code="FlowCode.IMAGE"
+        :applicationType="ApplicationType.IMAGE"
+        :page-type="PageType.FileUploadImage"
+
+    />
 
 </template>
 

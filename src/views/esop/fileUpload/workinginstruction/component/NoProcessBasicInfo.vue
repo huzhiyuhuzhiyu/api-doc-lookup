@@ -120,7 +120,7 @@ export default {
                 <el-collapse v-model="activeNames">
                     <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                         <el-row>
-                            <el-form label-position="top"  ref="dataForm" :model="dataForm" :rules="dataRule" :disabled="isView || !isFileUpload">
+                            <el-form label-position="top"  ref="dataForm" :model="dataForm" :rules="dataRule" :disabled="isView || !isFileUploadPage">
                                 <el-row :gutter="10">
                                     <el-col :span="6">
                                         <el-form-item label="上传单编码">
@@ -197,7 +197,7 @@ export default {
                             <FileUploadDrop
                                 :isFileTrashPage="isFileTrashPage"
                                 :isFileManagementPage="isFileManagementPage"
-                                :isFileUpload="isFileUpload"
+                                :isFileUploadPage="isFileUploadPage"
 
                                 :disabled="isView" class="fileUpload" v-model="normalFileList"></FileUploadDrop>
                         </div>

@@ -425,9 +425,9 @@ export default {
       if (prop == "createByName") {
         newProp = "create_by"
       }
-      this.dataForm.orderItems[0].asc = order === "ascending"
-      this.dataForm.orderItems[0].column = order === null ? "" : newProp
-      this.initData()
+      this.ProductListRequestObj.orderItems[0].asc = order === "ascending"
+      this.ProductListRequestObj.orderItems[0].column = order === null ? "" : newProp
+      this.initData2()
     },
     // 产品列表选中 
     handeleProductInfoData(val) {

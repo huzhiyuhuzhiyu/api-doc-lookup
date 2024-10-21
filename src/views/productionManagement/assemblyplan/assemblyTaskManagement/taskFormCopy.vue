@@ -200,10 +200,10 @@
                 <JNPF-table ref="guidebook" v-if="categoryType == 'guidebook'" :data="guidebookData" fixedNO
                   :height="height" v-loading="tableloading" :key="Math.random()">
 
-                  <el-table-column prop="orderNo" label="上传单编码" min-width="150" />
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="150" />
+                  <el-table-column prop="orderNo" label="上传单编码" min-width="180" />
+                  <el-table-column prop="drawingNo" label="品名规格" min-width="300"  show-overflow-tooltip/>
 
-                  <el-table-column prop="productsCode" label="产品编码" min-width="120" />
+                  <el-table-column prop="productsCode" label="产品编码" min-width="160" />
                   <el-table-column prop="productsCategoryName" label="产品分类" width="140" />
                   <el-table-column prop="documentStatus" label="单据状态" width="120" align="center">
                     <template slot-scope="{row}">
@@ -218,7 +218,34 @@
 
                   <el-table-column label="操作" width="180" fixed="right">
                     <template slot-scope="scope">
-                      <el-button type="text" size="mini" @click="previewFun(scope.row.id, 'look')">
+                      <el-button type="text" size="mini" @click="previewFun(scope.row.id, 'look',ApplicationType.WORK)">
+                        查看详情
+                      </el-button>
+                    </template>
+                  </el-table-column>
+                </JNPF-table>
+                <JNPF-table ref="inspectionManual" v-if="categoryType == 'inspectionManual'" :data="inspectionManualData" fixedNO
+                  :height="height" v-loading="tableloading" :key="Math.random()">
+
+                  <el-table-column prop="orderNo" label="上传单编码" min-width="180" />
+                  <el-table-column prop="drawingNo" label="品名规格" min-width="300"  show-overflow-tooltip/>
+
+                  <el-table-column prop="productsCode" label="产品编码" min-width="160" />
+                  <el-table-column prop="productsCategoryName" label="产品分类" width="140" />
+                  <el-table-column prop="documentStatus" label="单据状态" width="120" align="center">
+                    <template slot-scope="{row}">
+                      <el-tag type="warning" v-if="row.documentStatus === 'draft'">草稿</el-tag>
+                      <el-tag type="success" v-else-if="row.documentStatus === 'submit'">提交</el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="version" label="版本号" width="80" />
+                  <el-table-column prop="fileCount" label="文件数量" width="120" />
+                  <el-table-column prop="createTime" label="创建时间" width="180" />
+                  <el-table-column prop="createByName" label="创建人" width="100" />
+
+                  <el-table-column label="操作" width="180" fixed="right">
+                    <template slot-scope="scope">
+                      <el-button type="text" size="mini" @click="previewFun(scope.row.id, 'look',ApplicationType.INSPECT)">
                         查看详情
                       </el-button>
                     </template>
@@ -239,7 +266,9 @@
     </transition>
     <RelatedTasksForm v-if="relatedTaskVisible" ref="relatedTaskForms" @selectRelatedTasksFun="selectRelatedTasksFun">
     </RelatedTasksForm>
-    <Guidebook v-if="guidebookVisible" ref="guidebookForms" @back="closeFun"></Guidebook>
+    <Guidebook  v-if="guidebookVisible" ref="guidebookForms" @back="closeFun" :type="'look'"
+                :id="fileUploadId"
+                :applicationType="applicationType"></Guidebook>
 
   </div>
 </template>
@@ -250,10 +279,20 @@ import RelatedTasksForm from "./relatedTaskForm.vue";
 import { getInspectionList, deleteInspectionData, getInspectionLinesList } from '@/api/inspectionManagement/index' // 检验单
 import Guidebook from '@/views/esop/fileUpload/workinginstruction/Form.vue'
 import { deleteBimFileUpload, getBimFileUpload } from "@/api/esop/fileUpload/workinginstruction";
+import {
+    ApplicationType,
+    DocumentStatus, FileManagePageSet, FileTrashPageSet,
+    ModelType,
+    PageType
+} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 export default {
   components: { RelatedTasksForm,Guidebook },
   data() {
     return {
+      ApplicationType,
+      fileUploadId:"",
+      applicationType:"",
+      inspectionManualData:[],
       guidebookVisible: false,
       height: 0,
       relatedTaskVisible: false,
@@ -338,11 +377,11 @@ export default {
       this.guidebookVisible=false
     },
     // 预览作业指导书
-    previewFun(id, type) {
+    previewFun(id, type,applicationType) {
       this.guidebookVisible = true
-      this.$nextTick(() => {
-        this.$refs.guidebookForms.init(id, type, false)
-      })
+      this.fileUploadId=id
+      this.applicationType=applicationType
+     
     },
     //自适应窗口
     async switchStyle() {
@@ -408,7 +447,7 @@ export default {
       } else if (this.categoryType == 'guidebook') {
         console.log("dataForm", this.dataForm);
         let obj = {
-          applicationType: "work",
+          applicationType: this.ApplicationType.WORK,
           approvalStatus: "ok",
           documentStatus: "submit",
           superQuery: {
@@ -426,6 +465,22 @@ export default {
         // 作业指导书
       } else if (this.categoryType == 'inspectionManual') {
         // 检验指导书
+        let obj = {
+          applicationType: this.ApplicationType.INSPECT,
+          approvalStatus: "ok",
+          documentStatus: "submit",
+          superQuery: {
+            condition: [
+              {field: "drawingNo",
+              fieldValue: this.dataForm.productDrawingNo,
+              symbol: "like"}
+            ]
+          }
+        }
+        getBimFileUpload(obj).then(res => {
+          console.log("指导书", res);
+          this.inspectionManualData=res.data.records
+        })
       } else if (this.categoryType == 'tool') {
         // 工装模具
       }

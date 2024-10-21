@@ -6,7 +6,8 @@
                     <div :class="['JNPF-common-page-header', isView ? 'noButtons' : '']" >
                         <el-page-header @back="goBack('back')" :content="title" />
                         <div class="options" >
-                            <template v-if="!isView && isFileUpload">
+
+                            <template v-if="!isView && isFileUploadPage">
                                 <el-button type="success" :loading="btnLoading" @click="handleConfirm(DocumentStatus.DRAFT)">保存草稿</el-button>
                                 <el-button type="primary" :loading="btnLoading" @click="handleConfirm(DocumentStatus.SUBMIT)">保存并提交</el-button>
                             </template>
@@ -102,7 +103,11 @@ export default {
             type:Boolean,
             required:false,
         },
-        isFileUpload:{
+        isFileUploadPage:{
+            type:Boolean,
+            required:false,
+        },
+        isFileCheckPage:{
             type:Boolean,
             required:false,
         },
@@ -275,7 +280,7 @@ export default {
                     this.pageLoading = false
                 }
             }
-            return this.getInitFn(isAudit)(id, btnType, approvalFlag)
+            return this.getInitFn(approvalFlag)(id, btnType, approvalFlag)
         }
     },
 
@@ -294,7 +299,8 @@ export default {
                 type: this.type,
                 isFileManagementPage: this.isFileManagementPage,
                 isFileTrashPage: this.isFileTrashPage,
-                isFileUpload: this.isFileUpload,
+                isFileUploadPage: this.isFileUploadPage,
+                isFileCheckPage: this.isFileCheckPage,
                 applicationType: this.applicationType,
             }
         },

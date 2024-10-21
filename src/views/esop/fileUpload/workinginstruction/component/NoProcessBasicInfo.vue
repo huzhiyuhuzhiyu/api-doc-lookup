@@ -9,6 +9,7 @@ import chooseProductParams from "@/views/esop/fileUpload/workinginstruction/util
 
 import { getcategoryTree as getFileCategoryTree } from '@/api/basicData/index'
 import {FileCategoryType} from "@/views/esop/fileCategoryManagement/constants";
+import BasicInfoMixin from "@/views/esop/fileUpload/workinginstruction/component/BasicInfoMixin";
 export default {
     name: "NoProcessBasicInfo" ,
     components: {FileUploadDrop},
@@ -54,32 +55,18 @@ export default {
         hasCategory(){
             return notEmpty(this.dataForm.categoryId)
         },
-        orderNoDisabled(){
-            return this.codeConfig.codeWay === 'auto' && !this.codeConfig.modifyFlag
-        },
         isImage(){
             const applicationType = this.type === ModelType.ADD ? this.applicationType : this.dataForm.applicationType
             return applicationType === ApplicationType.IMAGE
         },
-        hasEnableMark(){
-            return this.dataForm.approvalStatus === ApprovalStatus.OK && !this.isFileTrashPage
-        },
     },
+    mixins:[BasicInfoMixin],
     methods:{
-        async toggleEnableMarkHandler(){
-            await switchEnableMark(this.dataForm.id)
-            this.$message.success("操作成功")
 
-        },
-        validate(...args){
-            return this.$refs.dataForm.validate(...args)
-        },
+
         onOrganizeChange(cid,[{name,id}]){
             this.dataForm.categoryName = name
             this.dataForm.categoryId = id
-        },
-        chooseProduct(){
-            this.$refs["ComSelect-page"].openDialog()
         },
         async getDetail(data){
             Object.keys(this.dataForm).forEach(key=>{
@@ -92,19 +79,10 @@ export default {
                         filename: item.documentName,
                         id: item.documentId,
                         url: getFilePreviewUrl(item.filePath),
+                        filePath: item.filePath,
                         processUploadId: item.id,
                     }
         })
-        },
-        async fetchData(flag=true,code="WJSCSQ") {
-            try {
-                const data = await this.jnpf.getBillRuleConfigFun(code);
-                this.codeConfig = data
-                if (flag) {
-                    this.dataForm.orderNo = data.number
-                }
-            } catch (error) {
-            }
         },
         getUploadDetailList(){
             return this.normalFileList.map(item=>{
@@ -116,18 +94,6 @@ export default {
             })
         },
 
-        init(id, btnType, approvalFlag,data){
-            btnType &&  (this.type = btnType)
-            const flag = notEmpty(id)
-            this.fetchData(!flag)
-            flag &&  this.getDetail(data)
-        },
-        getSaveData(){
-            return {
-                ...this.dataForm,
-                bimFileUploadLineList: this.getUploadDetailList()
-            }
-        },
         getCurrentFileList(){
             if(this.needProcess){
                 return Object.keys(this.processFileList).map(key=>this.processFileList[key]).flat(Infinity)
@@ -143,40 +109,6 @@ export default {
             this.dataForm.productsCode = code
         },
     },
-    props:{
-        type:{
-            type:String,
-            default:ModelType.ADD
-        },
-        isView:{
-            type:Boolean,
-            default:false
-        },
-        isAdd:{
-            type:Boolean,
-            default:false
-        },
-        isEdit:{
-            type:Boolean,
-            default:false
-        },
-        isFileManagementPage:{
-            type:Boolean,
-            required:false,
-        },
-        isFileTrashPage:{
-            type:Boolean,
-            required:false,
-        },
-        isFileUpload:{
-            type:Boolean,
-            required:false,
-        },
-        applicationType:{
-            type:String,
-            required:'',
-        },
-    }
 }
 </script>
 

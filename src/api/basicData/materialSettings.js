@@ -376,3 +376,19 @@ export function getequReporttotalNum(data) {
     data
   })
 }
+// 日常点检次数
+export function getdailyInspectionNum(data) {
+  return request({
+    url: `/api/mes/equReport/dailyInspectionNum`,
+    method: 'POST',
+    data
+  })
+}
+// 月点检次数
+export function getdailyInspectionMonthTotal(data) {
+  return request({
+    url: `/api/mes/equReport/dailyInspectionMonthTotal`,
+    method: 'POST',
+    data
+  })
+}

@@ -32,7 +32,7 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <el-button size="mini" type="primary" icon="el-icon-plus" @click="addSupplier('', 'add')">领用</el-button>
+          <div></div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
@@ -66,22 +66,9 @@
           <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
           <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
-          <el-table-column label="操作" width="180" fixed="right">
+          <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
-              <el-button type="text" @click="returngongju(scope.row.id)" size="mini" :disabled="scope.row.returnFlag==1">归还</el-button>
-              <el-button type="text" @click="handleDel(scope.row.id,)" class="JNPF-table-delBtn" :disabled="scope.row.returnFlag==0" size="mini">删除</el-button>
-              <el-dropdown hide-on-click>
-                <span class="el-dropdown-link">
-                  <el-button type="text" size="mini">
-                    {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                  </el-button>
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
-                    查看详情
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
+              <el-button type="text" @click="handleUserRelation(scope.row.id,'look')" size="mini">查看详情</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -90,26 +77,12 @@
     </div>
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
-    <el-dialog title="归还" :visible.sync="dialogFormVisible" width="400px" top="40vh" :close-on-click-modal="false">
-      <el-form :model="form">
-        <el-form-item label="归还日期" label-width="100px">
-          <el-date-picker v-model="form.returnTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" :picker-options="{disabledDate (time) {
-          return time.getTime() > Date.now()
-        }}">
-          </el-date-picker>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogreturn" :loading="btnLoading">确 定</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { CollectionandreturnList, deleteCollectionandreturn, guihuanCollectionandreturn } from '@/api/dailyManagement/Maintenance'
-import Form from './Form'
+import Form from '../circulate/Form.vue'
 export default {
   name: 'circulate',
   components: { Form, SuperQuery },
@@ -187,7 +160,6 @@ export default {
       form: {
         returnTime: ''
       },
-      dialogFormVisible: false,
       tableData: [],
       listLoading: false,
       collectionList: [
@@ -280,63 +252,20 @@ export default {
       }
       this.dataFormSubmit()
     },
-
-    addSupplier(id, btntype) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype)
-      })
-    },
-    returngongju(id) {
-      // this.$confirm('此操作将归还工具，是否继续！', '提示', {
-      //   confirmButtonText: '确定',
-      //   cancelButtonText: '取消',
-      //   type: 'warning'
-      // }).then(() => {
-      //   guihuanCollectionandreturn(id).then(res => {
-      //     this.initData()
-      //     this.$message({
-      //       type: 'success',
-      //       message: "归还成功",
-      //       duration: 1500,
-      //     })
-      //   })
-      // }).catch(() => { })
-      this.dialogFormVisible = true
-      this.orderFormreturn.id = id
-      this.form.returnTime = this.jnpf.getToday()
-    },
-    dialogreturn() {
-      this.btnLoading = true
-      this.orderFormreturn.returnTime = this.form.returnTime
-      guihuanCollectionandreturn(this.orderFormreturn).then(res => {
-        this.btnLoading = false
-        this.dialogFormVisible = false
-        this.initData()
-        this.$message({
-          type: 'success',
-          message: "归还成功",
-          duration: 1500,
-        })
-      }).catch(() => {
-        this.dialogFormVisible = false
-        this.btnLoading = false
-      })
-    },
-    handleDel(id) {
-      this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
-        type: 'warning'
-      }).then(() => {
-        deleteCollectionandreturn(id).then(res => {
-          this.initData()
-          this.$message({
-            type: 'success',
-            message: "删除成功",
-            duration: 1500,
-          })
-        })
-      }).catch(() => { })
-    },
+    // handleDel(id) {
+    //   this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
+    //     type: 'warning'
+    //   }).then(() => {
+    //     deleteCollectionandreturn(id).then(res => {
+    //       this.initData()
+    //       this.$message({
+    //         type: 'success',
+    //         message: "删除成功",
+    //         duration: 1500,
+    //       })
+    //     })
+    //   }).catch(() => { })
+    // },
     handleUserRelation(id, btnType) {
       this.formVisible = true
       this.$nextTick(() => {

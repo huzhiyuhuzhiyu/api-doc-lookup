@@ -2158,9 +2158,9 @@ export default {
       let allArray = data.map(item => item.all);
       console.log("all", allArray);
       allArray.forEach(item => {
-
-        if (item.taxRate) {
-          item.taxRate = item.taxRate * 1
+        item.price=item.salesPrice
+        item.taxRate=item.taxRate*1
+        if (item.taxRate) {  
           item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.price) / (1 + (Number(item.taxRate)) / 100), 2)
 
         } else {
@@ -2314,12 +2314,13 @@ export default {
         item.productName = item.name
         item.productCode = item.code
         item.productsId = item.id
-
+        item.price=item.salesPrice
+        item.taxRate=item.taxRate*1
         if (item.taxRate) {
-          item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.purchasePrice) / (1 + (Number(item.taxRate)) / 100), 6)
+          item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.salesPrice) / (1 + (Number(item.taxRate)) / 100), 2)
 
         } else {
-          item.excludingTaxPrice = item.purchasePrice
+          item.excludingTaxPrice = item.salesPrice
         }
       });
       if (this.productData.length) {

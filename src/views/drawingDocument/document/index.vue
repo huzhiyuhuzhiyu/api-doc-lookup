@@ -609,7 +609,6 @@ export default {
         return this.listItemClick(item)
     },
     async listItemClick(item){
-        console.log(item)
         if(!isFile(item)){
           return this.openFolder(item)
         }

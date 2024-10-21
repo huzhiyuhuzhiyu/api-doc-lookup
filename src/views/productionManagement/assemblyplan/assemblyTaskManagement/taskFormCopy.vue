@@ -197,6 +197,33 @@
                   <el-table-column prop="createTime" label="创建时间" width="180" />
                   <el-table-column prop="createByName" label="创建人" width="100" />
                 </JNPF-table>
+                <JNPF-table ref="guidebook" v-if="categoryType == 'guidebook'" :data="guidebookData" fixedNO
+                  :height="height" v-loading="tableloading" :key="Math.random()">
+
+                  <el-table-column prop="orderNo" label="上传单编码" min-width="150" />
+                  <el-table-column prop="drawingNo" label="品名规格" min-width="150" />
+
+                  <el-table-column prop="productsCode" label="产品编码" min-width="120" />
+                  <el-table-column prop="productsCategoryName" label="产品分类" width="140" />
+                  <el-table-column prop="documentStatus" label="单据状态" width="120" align="center">
+                    <template slot-scope="{row}">
+                      <el-tag type="warning" v-if="row.documentStatus === 'draft'">草稿</el-tag>
+                      <el-tag type="success" v-else-if="row.documentStatus === 'submit'">提交</el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="version" label="版本号" width="80" />
+                  <el-table-column prop="fileCount" label="文件数量" width="120" />
+                  <el-table-column prop="createTime" label="创建时间" width="180" />
+                  <el-table-column prop="createByName" label="创建人" width="100" />
+
+                  <el-table-column label="操作" width="180" fixed="right">
+                    <template slot-scope="scope">
+                      <el-button type="text" size="mini" @click="previewFun(scope.row.id, 'look')">
+                        查看详情
+                      </el-button>
+                    </template>
+                  </el-table-column>
+                </JNPF-table>
               </div>
             </el-collapse-item>
             <!-- <el-collapse-item title="" name="info" class="info" :disabled="true"> -->
@@ -212,6 +239,8 @@
     </transition>
     <RelatedTasksForm v-if="relatedTaskVisible" ref="relatedTaskForms" @selectRelatedTasksFun="selectRelatedTasksFun">
     </RelatedTasksForm>
+    <Guidebook v-if="guidebookVisible" ref="guidebookForms" @back="closeFun"></Guidebook>
+
   </div>
 </template>
 <script>
@@ -219,12 +248,17 @@ import { detailordershengchan } from '@/api/productOrdes/index.js'
 import { getWorkReportList } from "@/api/productOrdes/index.js"
 import RelatedTasksForm from "./relatedTaskForm.vue";
 import { getInspectionList, deleteInspectionData, getInspectionLinesList } from '@/api/inspectionManagement/index' // 检验单
+import Guidebook from '@/views/esop/fileUpload/workinginstruction/Form.vue'
+import { deleteBimFileUpload, getBimFileUpload } from "@/api/esop/fileUpload/workinginstruction";
 export default {
-  components: { RelatedTasksForm },
+  components: { RelatedTasksForm,Guidebook },
   data() {
     return {
+      guidebookVisible: false,
       height: 0,
       relatedTaskVisible: false,
+      previewFile: "",
+      previewVisible: false,
       categoryTypeList: [
         { code: "workOrder", fullName: "工单", },
         { code: "feed", fullName: "投料", },
@@ -258,7 +292,7 @@ export default {
         { label: "否", value: false, },
 
       ],
-
+      guidebookData: [],
       recoredsData: [],
 
       activeNames1: ["basicInfo", 'info'],
@@ -300,6 +334,16 @@ export default {
     this.switchStyle()
   },
   methods: {
+    closeFun(){
+      this.guidebookVisible=false
+    },
+    // 预览作业指导书
+    previewFun(id, type) {
+      this.guidebookVisible = true
+      this.$nextTick(() => {
+        this.$refs.guidebookForms.init(id, type, false)
+      })
+    },
     //自适应窗口
     async switchStyle() {
       await this.$nextTick();
@@ -362,6 +406,23 @@ export default {
           this.inspectData = res.data.records
         })
       } else if (this.categoryType == 'guidebook') {
+        console.log("dataForm", this.dataForm);
+        let obj = {
+          applicationType: "work",
+          approvalStatus: "ok",
+          documentStatus: "submit",
+          superQuery: {
+            condition: [
+              {field: "drawingNo",
+              fieldValue: this.dataForm.productDrawingNo,
+              symbol: "like"}
+            ]
+          }
+        }
+        getBimFileUpload(obj).then(res => {
+          console.log("指导书", res);
+          this.guidebookData=res.data.records
+        })
         // 作业指导书
       } else if (this.categoryType == 'inspectionManual') {
         // 检验指导书
@@ -443,15 +504,7 @@ export default {
 
 
 
-::v-deep .el-tabs__header {
-
-  padding: 0 !important;
-
-  padding-bottom: 0px !important;
-
-  margin-bottom: 0;
-
-}
+ 
 </style>
 
 <style scoped>
@@ -836,4 +889,5 @@ $footerPadding: '10px';
 ::v-deep .el-collapse-item {
   border-bottom: 1px solid rgb(220, 223, 230)
 }
+ 
 </style>

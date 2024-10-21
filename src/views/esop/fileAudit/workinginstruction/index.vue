@@ -273,7 +273,12 @@ export default {
                const map = array2Map(res.data.records,'businessId')
                const fileUploadRes = await getFileUploadByIds(Array.from(map.keys()))
                this.total = res.data.total
-               this.list = fileUploadRes.data.map(item=> Object.assign(item, map.get(item.id)))
+               this.list = fileUploadRes.data.map(item=> ({
+                   ...map.get(item.id),
+                   orderNo: item.orderNo,
+                   drawingNo: item.drawingNo,
+                   productsCode: item.productsCode
+               })).sort((a,b)=>b.creatorTime - a.creatorTime)
            }catch (e) {
 
            }finally {
@@ -304,7 +309,6 @@ export default {
         refresh() {
             this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
             this.categoryIndex = -1
-            this.getCount()
             this.initData()
         }
     },

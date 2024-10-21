@@ -238,7 +238,7 @@ export default {
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.dataFormSubmit()
     },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()

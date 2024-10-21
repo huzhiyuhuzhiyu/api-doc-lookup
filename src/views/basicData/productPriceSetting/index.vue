@@ -1190,7 +1190,7 @@ export default {
       })
       this.initData()
     },
-    salesTaxRate(row) {
+    salesTaxRateChange(row) {
       console.log(row)
       updateProductPrice(row).then((res) => {
         console.log(res, 'iiiF')

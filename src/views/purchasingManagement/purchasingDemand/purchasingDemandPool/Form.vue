@@ -406,8 +406,8 @@ export default {
         { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
         { prop: 'immediatelyBuyFlag', label: '立即采购', sortable: 'custom' },
         { prop: 'mainUnit', label: '单位' },
-        { prop: 'planDemandQuantity', label: '计划需求数', sortable: 'custom' },
-        { prop: 'orderedQuantity', label: '已下单数量', sortable: 'custom' },
+        { prop: 'planDemandQuantity', label: '计划需求数', sortable: 'custom', width: 150 },
+        { prop: 'orderedQuantity', label: '已下单数量', sortable: 'custom', width: 150 },
         { prop: 'deliveryDate', label: '交货日期', sortable: 'custom' },
         { prop: 'createTime', label: '创建日期', sortable: 'custom' }
       ],
@@ -415,8 +415,8 @@ export default {
         { prop: 'productDrawingNo', label: '品名规格', sortable: 'custom' },
         { prop: 'immediatelyBuyFlag', label: '立即采购', sortable: 'custom' },
         { prop: 'mainUnit', label: '单位' },
-        { prop: 'planDemandQuantity', label: '计划需求数', sortable: 'custom' },
-        { prop: 'orderedQuantity', label: '已下单数量', sortable: 'custom' },
+        { prop: 'planDemandQuantity', label: '计划需求数', sortable: 'custom', width: 150 },
+        { prop: 'orderedQuantity', label: '已下单数量', sortable: 'custom', width: 150 },
         { prop: 'deliveryDate', label: '交货日期', sortable: 'custom' },
         { prop: 'createTime', label: '创建日期', sortable: 'custom' }
       ],
@@ -1052,7 +1052,7 @@ export default {
     async beforeSubmit(data, paramsObj) {
       let flag = true
       if (paramsObj.oldData.length) {
-        flag = await this.$confirm('切换供应商将清空产品信息，是否继续？', '提示', {
+        flag = await this.$confirm('切换供应商将修改产品信息的含税单价和税率，是否继续？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -1101,6 +1101,7 @@ export default {
           productIdList
         }
         partnerProductPrice(_data).then((res) => {
+          console.log(res, 'df')
           if (res.data.length === 0) {
             this.dataFormTwo.data.forEach((item) => {
               item.price = ''
@@ -1181,6 +1182,40 @@ export default {
       })
 
       this.dataForm.classAttribute = classAttributeFlag
+      this.ProductListRequestObjs = {
+        classAttribute: this.dataForm.classAttribute,
+        productSource: 'purchase', // 产品来源
+        safeInventoryWarnFlag: 1,
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        pageNum: 1,
+        pageSize: 20
+      }
+      this.ProductPoolListRequestObjs = {
+        classAttribute: this.dataForm.classAttribute,
+        demandStatus: 'not_finish', //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
+        poolType: 'procure', //采购池类型  采购 procure、外协 external,可用值:external,procure
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        pageNum: 1,
+        pageSize: 20
+      }
       this.getProductClassFun()
 
       // if (!demandDelivery) { // 没有日期，代表从重新提交中进来的
@@ -1203,9 +1238,9 @@ export default {
         this.$set(this.dataFormTwo.data[i], 'excludingTaxAmount', '') // 总金额(不含税)
         // this.$set(this.dataFormTwo.data[i], 'excludingTaxPrice', '')    // 	不含税单价
         this.$set(this.dataFormTwo.data[i], 'fixedPrice', '') //  	定价
-        this.$set(this.dataFormTwo.data[i], 'price', '') //  	含税单价
+        this.$set(this.dataFormTwo.data[i], 'price', this.dataFormTwo.data[i].price) //  	含税单价
         this.$set(this.dataFormTwo.data[i], 'taxAmount', '') // 税额
-        this.$set(this.dataFormTwo.data[i], 'taxRate', '13') // taxRate
+        this.$set(this.dataFormTwo.data[i], 'taxRate', this.dataFormTwo.data[i].taxRate) // taxRate
         this.$set(this.dataFormTwo.data[i], 'totalAmount', '') // 	价税合计
         this.$set(
           this.dataFormTwo.data[i],

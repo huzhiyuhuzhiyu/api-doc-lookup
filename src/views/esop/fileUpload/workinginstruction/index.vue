@@ -124,7 +124,7 @@
                 v-if="formVisible && recreateFlag" @recreate="recreate"
                 :flowCode="flowCode"
                 :type="uploadType"
-                :id="fileUploadId"
+                :id.sync="fileUploadId"
                 :applicationType="applicationType"
                 :isFileManagementPage="isFileManagementPage"
                 :isFileTrashPage="isFileTrashPage"
@@ -157,9 +157,16 @@ import {
 import moment from "moment";
 import {
     ApplicationType,
-    DocumentStatus, FileCheckPageSet, FileManagePageSet, FileTrashPageSet, FileUploadPageSet,
+    DocumentStatus,
+    FileCheckPageSet,
+    FileManagementPageType2FileUploadUrl,
+    FileManagePageSet,
+    FileTrashPageSet,
+    FileUploadPageSet,
+    FileUploadPageType2Url,
     ModelType,
-    PageType
+    PageType,
+    PathQueryType
 } from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 import {FlowCode} from "@/views/esop/utils/constants";
 import {getQueryConfirm, getSuccessInfo, isEmpty, mapIfNonePutArr, trim} from "@/utils";
@@ -193,6 +200,16 @@ export default {
             type:String,
             default:""
         }
+    },
+    watch:{
+      "$route.query.id"(val){
+          if(!this.isFileUploadPage){
+              return
+          }
+          if( this.$route.query.type === PathQueryType.COPY){
+            this.addOrUpdateHandle(ModelType.COPY,val)
+          }
+      }
     },
     mixins:[RecreateMixin],
     data() {
@@ -301,6 +318,15 @@ export default {
     methods: {
         copy2FileUpload(id){
             console.log("copy2FileUpload",id)
+            console.log(this.pageType)
+            console.log(FileManagementPageType2FileUploadUrl[this.pageType])
+            this.$router.replace({
+                path: FileManagementPageType2FileUploadUrl[this.pageType],
+                query:{
+                    id,
+                    type:PathQueryType.COPY
+                }
+            })
         },
         backFileUpload(type,id){
             console.log("backFileUpload",id)

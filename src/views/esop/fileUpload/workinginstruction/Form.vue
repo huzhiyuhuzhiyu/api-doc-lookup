@@ -319,6 +319,9 @@ export default {
         isAdd(){
             return this.type === ModelType.ADD
         },
+        isCopy(){
+            return this.type === ModelType.COPY
+        },
         title(){
             return getTitleForType(this.applicationType,this.type)
         },

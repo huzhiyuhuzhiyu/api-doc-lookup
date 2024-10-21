@@ -11,6 +11,7 @@ export const ModelType ={
     "ADD":'add',
     "EDIT":'edit',
     "VIEW":'look',
+    "COPY":'copy',
 }
 /**
  * 文件分类类型
@@ -25,8 +26,19 @@ export const DocumentStatus ={
     DRAFT: 'draft',
     SUBMIT: 'submit',
     BACK:'back',
-
 }
+/**
+ * 路径跳转类型
+ * @type {{COPY: string}}
+ * @readonly
+ * @enum {string}
+ * @property {string} COPY - 复制
+ */
+export const PathQueryType ={
+    COPY:"copy",
+}
+
+
 /**
  * 申请类型
  * @readonly
@@ -90,6 +102,16 @@ export const FileUploadPageType={
     FileUploadImage:'FileUploadImage',
     FileUploadOffice:'FileUploadOffice',
     FileUploadInspect:'FileUploadInspect',
+}
+function getESOPUploadPath(type){
+     return `/esop/fileUpload/${type}`
+}
+
+export const FileManagementPageType2FileUploadUrl={
+    [FileManagementPageType.FileManagementWork]:getESOPUploadPath('workinginstruction'),
+    [FileManagementPageType.FileManagementImage]:getESOPUploadPath('docment'),
+    [FileManagementPageType.FileManagementOffice]:getESOPUploadPath('office'),
+    [FileManagementPageType.FileManagementInspect]:getESOPUploadPath('checkinstruction'),
 }
 /**
  * 文件管理作业页面类型

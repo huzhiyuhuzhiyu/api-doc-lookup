@@ -88,8 +88,8 @@
 <!--                            :delDisabled="scope.row.documentStatus !== 'draft'"-->
 <!--                            :editDisabled="scope.row.documentStatus !== 'draft'"-->
                             <tableOpts :isJudgePer="true"
-                                       :del-text="isFileTrashPage?'还原':undefined"
-                                       :hasDel="!isFileManagementPage"
+                                       :del-text="tableOptsDelText"
+                                       :edit-text="tableOptsEditText"
                                        @edit="addOrUpdateHandle(ModelType.EDIT,scope.row.id)"
                                        @del="handleDel(scope.row.id)">
                                         <el-dropdown hide-on-click v-if="isFileManagementPage">
@@ -260,6 +260,12 @@ export default {
         },
         hasTableTopOpts(){
             return this.isFileUpload
+        },
+        tableOptsDelText(){
+            return this.isFileTrashPage ?'还原':'删除'
+        },
+        tableOptsEditText(){
+            return this.isFileManagementPage ?'退回' : '编辑'
         }
     },
     async created() {

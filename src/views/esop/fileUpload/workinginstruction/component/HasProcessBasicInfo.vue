@@ -6,6 +6,7 @@ import {detailProcess} from "@/api/basicData/processSettingss";
 import {getFilePreviewUrl} from "@/views/esop/utils/utils";
 import {detailBimFileUpload, switchEnableMark} from "@/api/esop/fileUpload/workinginstruction";
 import chooseProductParams from "@/views/esop/fileUpload/workinginstruction/utils/chooseProductParams";
+import BasicInfoMixin from "@/views/esop/fileUpload/workinginstruction/component/BasicInfoMixin";
 
 
 function getOriginActiveNames(){
@@ -67,22 +68,10 @@ export default {
         needProcess(){
             return this.dataForm.openProcess
         },
-        orderNoDisabled(){
-            return this.codeConfig.codeWay === 'auto' && !this.codeConfig.modifyFlag
-        },
-        hasEnableMark(){
-          return this.dataForm.approvalStatus === ApprovalStatus.OK && !this.isFileTrashPage
-        },
-    },
-    methods:{
-       async toggleEnableMarkHandler(){
-           await switchEnableMark(this.dataForm.id)
-           this.$message.success("操作成功")
 
-        },
-        validate(...args){
-            return this.$refs.dataForm.validate(...args)
-        },
+    },
+    mixins:[BasicInfoMixin],
+    methods:{
         toggleProcessHandler(val){
             if(!val){
                 return  this.normalUploadShow()
@@ -164,9 +153,6 @@ export default {
                 this.activeNames = getOriginActiveNames().concat(processIdList)
             }
         },
-        chooseProduct(){
-            this.$refs["ComSelect-page"].openDialog()
-        },
         async getDetail(data){
                 Object.keys(this.dataForm).forEach(key=>{
                     this.dataForm[key] = data[key]
@@ -188,16 +174,6 @@ export default {
                         processUploadId: item.id,
                     }
                 })
-        },
-        async fetchData(flag=true,code="WJSCSQ") {
-            try {
-                const data = await this.jnpf.getBillRuleConfigFun(code);
-                this.codeConfig = data
-                if (flag) {
-                    this.dataForm.orderNo = data.number
-                }
-            } catch (error) {
-            }
         },
         getUploadDetailList(){
             if(this.needProcess){
@@ -236,18 +212,6 @@ export default {
             }
             this.getProcessByCode()
         },
-        init(id, btnType, approvalFlag,detail){
-            btnType &&  (this.type = btnType)
-            const flag = notEmpty(id)
-            this.fetchData(!flag)
-            flag &&  this.getDetail(detail)
-        },
-        getSaveData(){
-            return {
-                ...this.dataForm,
-                bimFileUploadLineList: this.getUploadDetailList()
-            }
-        },
         getCurrentFileList(){
             if(this.needProcess){
                 return Object.keys(this.processFileList).map(key=>this.processFileList[key]).flat(Infinity)
@@ -266,36 +230,7 @@ export default {
             this.changeProductsCode(code)
         },
     },
-    props:{
-        type:{
-            type:String,
-            default:ModelType.ADD
-        },
-        isView:{
-            type:Boolean,
-            default:false
-        },
-        isAdd:{
-            type:Boolean,
-            default:false
-        },
-        isEdit:{
-            type:Boolean,
-            default:false
-        },
-        isFileManagementPage:{
-            type:Boolean,
-            required:false,
-        },
-        isFileTrashPage:{
-            type:Boolean,
-            required:false,
-        },
-        isFileUpload:{
-            type:Boolean,
-            required:false,
-        },
-    }
+
 }
 </script>
 

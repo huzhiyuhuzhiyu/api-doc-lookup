@@ -11,6 +11,7 @@
                                 <el-button type="primary" :loading="btnLoading" @click="handleConfirm(DocumentStatus.SUBMIT)">保存并提交</el-button>
                             </template>
                             <template v-else-if="isFileManagementPage">
+                                <el-button type="primary" :loading="btnLoading" @click="delFileUpload">退回</el-button>
                                 <el-button type="danger" :loading="btnLoading" @click="delFileUpload">删除</el-button>
                             </template>
                             <template v-else-if="isFileTrashPage">

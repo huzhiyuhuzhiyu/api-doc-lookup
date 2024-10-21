@@ -8,8 +8,8 @@
             <div class="scanCodeTent">
               <div class="searchregion">
                 <!-- <el-input v-model="scanResult" placeholder="您可以扫描生产任务码、工单码、工序码、产线码、班组码、员工码、设备码" @keyup.enter.native="searchResult()" -->
-                <el-input v-model="scanResult" placeholder="您可以扫描生产任务码、工序码" @keyup.enter.native="searchResult()"
-                class="scanResultIpt"></el-input>
+                <el-input v-model="scanResult" placeholder="您可以扫描生产任务码、工序码 " @keyup.enter.native="searchResult()"
+                  class="scanResultIpt"></el-input>
                 <div style="background: #55d47e;margin-top: 10px">
                   <img src="../../../assets/images/erwmbai.gif" alt="" class="scanImg">
                 </div>

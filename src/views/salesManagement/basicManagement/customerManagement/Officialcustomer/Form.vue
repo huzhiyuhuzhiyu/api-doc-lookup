@@ -393,7 +393,6 @@
                   <span class="required">*</span>国家
                 </template>
                 <template slot-scope="scope">
-
                   <el-select clearable v-model="scope.row.country" placeholder="请选择国家" filterable style="width: 100%;" :disabled="btnType=='look' ? true : false">
                     <el-option v-for="(item, index) in countryList1" :key="index" :label="item.name" @click.native="changeCountry(item, scope.$index)" :value="item.code">{{ item.name }}</el-option>
                   </el-select>
@@ -884,13 +883,27 @@ export default {
     // 切换table
     handleClick(tab, event) {
       if (tab.label == '收货信息') {
-        // 国内
-        this.countryList1 = [{
-          code: "CN",
-          id: "1663107232693223475",
-          name: "中国",
-          nameEn: "China",
-        }]
+        let obj = {
+          "keyword": "",
+          "orderItems": [
+            {
+              "asc": true,
+              "column": ""
+            }
+          ],
+          "pageNum": 1,
+          "pageSize": -1
+        }
+        getCounryData(obj).then(res => {
+          let a = res.data.records.filter((item) => {
+            return item.name !== '中国'
+          })
+          let b = res.data.records.filter((item) => {
+            return item.name == '中国'
+          })
+          a.unshift(b[0])
+          this.countryList1 = a
+        })
       }
     },
     // 联系人信息新增行
@@ -1266,7 +1279,6 @@ export default {
       let flag = null;
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-
           this.contactsList.forEach((item, index) => {
             item.id = ""
             if (!item.name) {
@@ -1315,7 +1327,7 @@ export default {
                   type: 'error',
                   duration: 1500,
                 })
-              } else if (!item.province) {
+              } else if (!item.province && item.country == 'CN') {
                 this.activeName = "second"
                 flag = false
                 return this.$message({
@@ -1323,7 +1335,7 @@ export default {
                   type: 'error',
                   duration: 1500,
                 })
-              } else if (!item.city) {
+              } else if (!item.city && item.country == 'CN') {
                 this.activeName = "second"
                 flag = false
                 return this.$message({
@@ -1331,7 +1343,7 @@ export default {
                   type: 'error',
                   duration: 1500,
                 })
-              } else if (!item.area) {
+              } else if (!item.area && item.country == 'CN') {
                 this.activeName = "second"
                 flag = false
                 return this.$message({
@@ -1407,6 +1419,9 @@ export default {
             contactsList: this.contactsList
           }
           if (flag === false) return
+          let start = Date.parse(this.dataForm.reconciliationStartDate)
+          let end = Date.parse(this.dataForm.reconciliationEndDate)
+          if (start > end) return this.$message.error('对账结束日期不能小于对账开始日期')
           this.btnLoading = true
           const formMethod = this.dataForm.id ? updatePartner : addPartner
           formMethod(obj).then(res => {

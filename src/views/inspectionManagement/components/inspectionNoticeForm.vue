@@ -836,8 +836,67 @@ export default {
         !this.dataForm.itemList ? (this.dataForm.itemList = []) : ''
         !this.dataForm.causesList ? (this.dataForm.causesList = []) : ''
 
+        this.initLinesListItems = () => [
+          { prop: 'name', label: '检验项目', value: '', type: 'view', minWidth: 120 },
+          {
+            prop: 'unqualifiedQuantity',
+            label: '不合格数量',
+            value: '0',
+            type: 'input',
+            itemDisabled: true,
+            itemRules: [
+              { required: true, trigger: 'blur' },
+              {
+                validator: this.formValidate({
+                  type: 'decimal',
+                  params: [
+                    20,
+                    4,
+                    '',
+                    (errMsg) => {
+                      this.$message.error('不合格数量：' + errMsg)
+                    }
+                  ]
+                }),
+                trigger: 'blur'
+              }
+            ],
+            minWidth: 180
+          },
+          { prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120 }
+        ]
+        console.log(this.inspectionItems)
       } else {
         this.dataForm.unqualifiedQuantity = '0'
+        this.initLinesListItems = () => [
+          { prop: 'name', label: '检验项目', value: '', type: 'view', minWidth: 120 },
+          {
+            prop: 'unqualifiedQuantity',
+            label: '不合格数量',
+            value: '0',
+            type: 'input',
+            itemDisabled: false,
+            itemRules: [
+              { required: true, trigger: 'blur' },
+              {
+                validator: this.formValidate({
+                  type: 'decimal',
+                  params: [
+                    20,
+                    4,
+                    '',
+                    (errMsg) => {
+                      this.$message.error('不合格数量：' + errMsg)
+                    }
+                  ]
+                }),
+                trigger: 'blur'
+              }
+            ],
+            minWidth: 180
+          },
+          { prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120 }
+        ]
       }
       this.setDataFormItems()
     },
@@ -920,6 +979,7 @@ export default {
         label: '不合格数量',
         value: '0',
         type: 'input',
+        itemDisabled: false,
         itemRules: [
           { required: true, trigger: 'blur' },
           {

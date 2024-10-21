@@ -3,17 +3,14 @@
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-        <el-page-header @back="goBack" :content="btnType == 'add' ? '新建报废申请单' : btnType == 'edit' ? '编辑报废申请单' : '查看报废申请单'" />
-        <div class="options" v-if="btnType != 'look'">
-          <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
-            保存草稿</el-button>
-          <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">
-            保存并提交</el-button>
+        <el-page-header @back="goBack" :content="btnType == 'add' ? '新建备件领用' : btnType == 'edit' ? '编辑备件领用' : '查看备件领用'" />
+        <div class="options">
+          <el-button type="primary" v-if="btnType != 'look'" :loading="btnLoading" @click="handleConfirm('submit')">
+            提交</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
       <div class="main" v-loading="formLoading">
-
         <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
           <el-tab-pane label="报废信息" name="orderInfo">
             <el-collapse v-model="activeNames">
@@ -21,60 +18,70 @@
                 <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="报废单号" prop="orderNo">
-                        <el-input v-model="dataForm.orderNo" placeholder="请输入报废单号" :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
+                      <el-form-item label="出库仓库" prop="orderNo">
+                        <el-input v-model="dataForm.orderNo" placeholder="请输入出库仓库" :disabled="btnType == 'look'" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="申请部门" prop="departmentId">
-                        <ComSelect v-model="organizeIdTrees" :disabled="btnType === 'look'" placeholder="请选择申请部门" auth :dialogTitle="'请选择申请部门'" @change="changedepartment" :currOrgId="dataForm.departmentId || '0'" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24">
-                      <el-form-item label="申请人" prop="applicantId">
-                        <el-select v-model="dataForm.applicantIdName" placeholder="请选择申请人" clearable style="width: 100%;" :disabled="btnType === 'look'" filterable @change="selectsales">
-                          <el-option v-for="(item, index) in salesList" :key="index" :label="item.name" :disabled="btnType == 'look'" :value="item.id"></el-option>
+                      <el-form-item label="领用目的" prop="remark3">
+                        <el-select v-model="dataForm.remark3" placeholder="请选择领用目的" style="width: 100%;">
+                          <el-option v-for="(item, index) in [{label:'设备保养',value:'submit'},{label:'设备维修',value:'draft'}]" :key="index" :label="item.label" :value="item.value"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
+                    <el-col :sm="6" :xs="24" v-if="dataForm.remark3=='submit'">
+                      <el-form-item label="设备保养单号" prop="orderNo">
+                        <el-input v-model="dataForm.orderNo" placeholder="请输入设备保养单号" :disabled="btnType == 'look'" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="dataForm.remark3=='draft'">
+                      <el-form-item label="设备维修单号" prop="orderNo">
+                        <el-input v-model="dataForm.orderNo" placeholder="请输入设备维修单号" :disabled="btnType == 'look'" />
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="申请日期" prop="applicantTime">
-                        <el-date-picker v-model="dataForm.applicantTime" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择申请日期" :disabled="btnType == 'look'">
+                      <el-form-item label="设备名称" prop="orderNo">
+                        <el-input v-model="dataForm.orderNo" placeholder="请输入设备名称" :disabled="true" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="领用日期" prop="applicantTime">
+                        <el-date-picker v-model="dataForm.applicantTime" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择领用日期" :disabled="btnType == 'look'">
                         </el-date-picker>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="12" :xs="24">
-                      <el-form-item label="报废理由" prop="reasonScrapping">
-                        <el-input v-model="dataForm.reasonScrapping" placeholder="请输入报废理由" :disabled="btnType == 'look'" type="textarea" maxlength="200" :rows="2" />
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="领用部门" prop="departmentId">
+                        <ComSelect v-model="organizeIdTrees" :disabled="btnType === 'look'" placeholder="请选择领用部门" auth :dialogTitle="'请选择申请部门'" @change="changedepartment" :currOrgId="dataForm.departmentId || '0'" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="12" :xs="24">
-                      <el-form-item label="备注" prop="remark">
-                        <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btnType == 'look'" type="textarea" maxlength="200" :rows="2" />
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="领用人" prop="applicantId">
+                        <el-select v-model="dataForm.applicantIdName" placeholder="请选择领用人" clearable style="width: 100%;" :disabled="btnType === 'look'" filterable @change="selectsales">
+                          <el-option v-for="(item, index) in salesList" :key="index" :label="item.name" :disabled="btnType == 'look'" :value="item.id"></el-option>
+                        </el-select>
                       </el-form-item>
                     </el-col>
                   </el-row>
                 </el-form>
               </el-collapse-item>
-              <el-collapse-item title="设备信息" name="sbxx">
+              <el-collapse-item title="备件信息" name="sbxx">
                 <div v-if="btnType !== 'look'">
-                  <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择设备</el-button>|
+                  <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择备件</el-button>|
                   <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                  <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" @selection-change="handeleProductInfoData">
+                  <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO @selection-change="handeleProductInfoData">
                     <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType !== 'look'" key="1" />
-                    <el-table-column type="index" width="60" label="序号" align="center" fixed='left' key="11"/>
-                    <el-table-column prop="equipmentIdCode" label="设备编码" min-width="120" show-overflow-tooltip>
+                    <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
+                    <el-table-column prop="equipmentIdCode" label="备件编码" min-width="120" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="equipmentIdName" label="设备名称" min-width="120" show-overflow-tooltip>
+                    <el-table-column prop="equipmentIdName" label="备件名称" min-width="120" show-overflow-tooltip>
                       <template slot="header">
-                        <span class="required">*</span>设备名称
+                        <span class="required">*</span>备件名称
                       </template>
                     </el-table-column>
-                    <el-table-column prop="categoryName" label="设备分类" min-width="120" show-overflow-tooltip>
-                    </el-table-column>
-                    <el-table-column prop="specModel" label="设备规格" min-width="120" show-overflow-tooltip>
+                    <el-table-column prop="specModel" label="备件规格" min-width="120" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="30">
                       <template slot-scope="scope">
@@ -91,7 +98,7 @@
           </el-tab-pane>
         </el-tabs>
       </div>
-      <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" title="选择设备" treeTitle="设备分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'equipment' } }" :listMethod="getEquEquipmentList" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple />
+      <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" title="选择备件" treeTitle="备件分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'equipment' } }" :listMethod="getEquEquipmentList" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple />
     </div>
   </transition>
 </template>
@@ -106,7 +113,6 @@ import { getOrganization } from '@/api/permission/user'
 export default {
   data() {
     return {
-      codeConfig: {},//单据规则配置
       activeNames: ["basicInfo", "sbxx"],
       datafilelist: [],
       getcategoryTree,
@@ -132,14 +138,14 @@ export default {
       },
       index: '',
       ProductTableSearchList: [
-        { prop: "code", label: "设备编码", type: 'input' },
-        { prop: "name", label: "设备名称", type: 'input' },
+        { prop: "code", label: "备件编码", type: 'input' },
+        { prop: "name", label: "备件名称", type: 'input' },
       ],
       ProductTableItems: [
-        { prop: 'code', label: '设备编码', fixed: 'left' },
-        { prop: 'name', label: '设备名称', fixed: 'left' },
-        { prop: 'categoryName', label: '设备分类' },
-        { prop: 'specModel', label: '设备规格' },
+        { prop: 'code', label: '备件编码', fixed: 'left' },
+        { prop: 'name', label: '备件名称', fixed: 'left' },
+        { prop: 'categoryName', label: '备件分类' },
+        { prop: 'specModel', label: '备件规格' },
       ],
       salesList: [],
       dataFormTwo: {
@@ -150,8 +156,8 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
-        orderNo:'',
-        classAttribute:'equipment',
+        orderNo: '',
+        classAttribute: 'equipment',
         applicantTime: '',
         reasonScrapping: '',
         departmentId: '',
@@ -160,11 +166,6 @@ export default {
         applicantIdName: '',
         remark: ''
       },
-      // pickerOptions: {
-      //   disabledDate(time) {
-      //     return time.getTime() < Date.now() - 1000 * 3600 * 24;
-      //   }
-      // },
       organizeIdTrees: [],
 
       dataRule: {
@@ -187,23 +188,8 @@ export default {
       selectRows: []
     }
   },
-  mounted() {
-    let tBody = document.querySelectorAll('.el-table')[1]
-    tBody.style.height = 'auto'
-    tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
-  },
   methods: {
-    async fetchData(code) {
-      try {
-        const data = await this.jnpf.getBillRuleConfigFun(code);
-        this.codeConfig = data
-        if (this.btnType == 'add') {
-          this.dataForm.orderNo = data.number
-        }
-      } catch (error) {
-      }
-    },
-    //设备选择
+    //备件选择
     submitCustomerProduct(selectedIds, selectedList) {
       selectedList.map(item => {
         this.dataFormTwo.productData.map((item1) => {
@@ -223,14 +209,14 @@ export default {
           })
         } else {
           this.$message({
-            message: "所选设备重复",
+            message: "所选备件重复",
             type: 'error',
             duration: 1500,
           })
         }
       })
     },
-    // 打开设备
+    // 打开备件
     openSeleceProductDialog() {
       this.$refs['ComSelect-page'].openDialog()
     },
@@ -287,17 +273,6 @@ export default {
     handleDel(data) {
       this.dataFormTwo.productData.splice(data.$index, 1)
     },
-    //申请时间
-    dateFormattime(dateData) {
-      var date = new Date(dateData)
-      var y = date.getFullYear()
-      var m = date.getMonth() + 1
-      m = m < 10 ? ('0' + m) : m
-      var d = date.getDate()
-      d = d < 10 ? ('0' + d) : d
-      const time = y + '-' + m + '-' + d
-      return time
-    },
     // 切换table
     handleClick(tab, event) {
       console.log(tab, event);
@@ -305,11 +280,8 @@ export default {
     init(id, btnType) {
       this.dataForm.id = id || ''
       this.btnType = btnType
-      if (this.btnType === 'add' || this.btnType === 'edit') this.fetchData('BFDH')
       if (this.btnType == 'add') {
-        const end = new Date();//获取当前的日期
-        end.setTime(end.getTime())
-        this.dataForm.applicantTime = this.dateFormattime(end)
+        this.dataForm.applicantTime = this.jnpf.getToday()
       }
       if (this.dataForm.id) {
         detailScrapApplicationForm(this.dataForm.id).then(res => {
@@ -344,58 +316,23 @@ export default {
                 this.salesList = res.data
               })
             } else {
-              console.log("没有bumen");
               this.salesFlag = true
-            }
-            if (this.btnType == 'edit') {
-              let a = []
-              res.data.lines.map((item) => {
-                if (item.equipmentState != 'normal') {
-                  a.push(item.equipmentIdName)
-                  this.$message({
-                    message: `${a.join(',')} 设备未处于闲置状态`,
-                    type: 'error',
-                    duration: 1500,
-                  })
-                }
-              })
             }
           })
         })
       }
     },
     handleConfirm(value) {
-      this.$refs['dataForm'].validate((valid) => {
-        if (!valid) {
-          return
-        }
         this.$refs['productForm'].validate((valid) => {
           if (valid) {
             if (!this.dataFormTwo.productData.length) {
               this.$message({
-                message: '请添加设备',
+                message: '请添加备件',
                 type: 'error',
                 duration: 1500,
               })
               return
             }
-            // let isequipment = false
-            // if (this.btnType == 'edit') {
-            //   let a = []
-            //   this.dataFormTwo.productData.map((item) => {
-            //     if (item.equipmentState != 'normal') {
-            //       a.push(item.equipmentIdName)
-            //       this.$message({
-            //         message: `${a.join(',')} 设备未处于闲置状态`,
-            //         type: 'error',
-            //         duration: 1500,
-            //       })
-            //       return isequipment = true
-            //     }
-            //   })
-            // }
-            // if (isequipment) return
-            this.dataForm.documentStatus = value
             if (this.datafilelist.length) {
               this.datafilelist.map((item, index) => {
                 item.bimAttachments = {
@@ -443,14 +380,13 @@ export default {
 
           }
         })
-      })
     }
   }
 }
 </script>
 <style scoped lang="scss">
 ::v-deep .el-tabs__header {
-  margin-bottom: 5px
+  margin-bottom: 5px;
 }
 .required {
   color: red;

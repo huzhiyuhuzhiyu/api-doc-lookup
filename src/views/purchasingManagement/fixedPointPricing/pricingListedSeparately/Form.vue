@@ -739,6 +739,7 @@ export default {
       ], // 产品选择弹出框树状列表
       ProductListRequestObj: {
         classAttribute: 'other',
+        productSource: 'purchase',
         productCategoryId: '',
         code: '',
         name: '',
@@ -1255,6 +1256,7 @@ export default {
       if (this.dataForm.classAttribute == 'finish_product') {
         this.ProductListRequestObj = {
           classAttribute: 'finish_product',
+          productSource: 'purchase',
           productCategoryId: '',
           code: '',
           name: '',
@@ -1284,6 +1286,7 @@ export default {
       } else {
         this.ProductListRequestObj = {
           classAttribute: 'other',
+          productSource: 'purchase',
           productCategoryId: '',
           code: '',
           name: '',

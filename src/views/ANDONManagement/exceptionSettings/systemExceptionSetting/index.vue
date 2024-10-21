@@ -48,7 +48,7 @@
           <el-table-column prop="cron" label="执行周期" min-width="120" sortable="custom" />
           <el-table-column prop="remark" label="说明" min-width="160" sortable="custom" />
 
-          <el-table-column prop="status" label="启用状态" min-width="80" align="center">
+          <el-table-column prop="status" label="启用状态" min-width="120" align="center">
               <template slot-scope="scope">
                 <el-switch @change="changeState(scope.row)" v-model="scope.row.status"
                 active-value="enable" inactive-value="disabled">
@@ -231,7 +231,7 @@ export default {
     },
     refresh(isrRefresh) {
       this.formVisible = false
-      if (isrRefresh) this.reset()
+      if (isrRefresh) this.initData()
     },
     reset() {
       this.$refs['listTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮

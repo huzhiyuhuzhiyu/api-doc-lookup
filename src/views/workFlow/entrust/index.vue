@@ -146,13 +146,13 @@ export default {
   created() {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.getDictionaryData(this.flowType)
-    this.initData()
+    // this.initData()
   },
   watch: {
     activeName() {
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.categoryIndex = -1
-      this.initData()
+      // this.initData()
       this.getDictionaryData(this.flowType)
     },
     'listQuery.flowCategory':function(newVal){

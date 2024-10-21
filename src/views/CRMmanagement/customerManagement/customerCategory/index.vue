@@ -51,7 +51,7 @@
           <el-table-column prop="parentName" label="上级分类" />
           <el-table-column prop="sortCode" label="排序">
             <template slot-scope="scope">
-              <el-input @blur="switchShow(scope.row)" clearable v-model="scope.row.sortCode"></el-input>
+              <el-input @change="switchShow(scope.row)" clearable v-model="scope.row.sortCode"></el-input>
             </template>
           </el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="180"></el-table-column>

@@ -3,10 +3,10 @@
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
         <el-page-header @back="goBack" :content="btnType == 'add' ? '新建保养记录' : btnType == 'edit' ? '编辑保养记录' : btnType == 'maintenance' ? '设备保养' : '查看保养记录'" />
-        <div class="options" v-if="btnType != 'look'">
+        <div class="options">
           <!-- <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
             保存草稿</el-button> -->
-          <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">
+          <el-button type="primary" v-if="btnType != 'look'" :loading="btnLoading" @click="handleConfirm('submit')">
             保存并提交</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>

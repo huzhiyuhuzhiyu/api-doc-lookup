@@ -2,12 +2,12 @@
   <!-- 检验单详情 -->
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
-
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <el-page-header @back="$emit('close')" :content="title" />
         <div class="options" v-if="btnType !== 'look'">
-          <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')"
-            v-if="btnType !== 'setLoss'">保存草稿</el-button>
+          <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')" v-if="btnType !== 'setLoss'">
+            保存草稿
+          </el-button>
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">
             {{ btnType === 'setLoss' ? $t('common.submitButton') : '保存并提交' }}
           </el-button>
@@ -21,7 +21,6 @@
               <el-tab-pane label="基础信息" name="jcInfo">
                 <el-collapse v-model="activeNames">
                   <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-
                     <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm"
                       :btnType="btnType === 'setLoss' ? 'look' : btnType" />
                   </el-collapse-item>
@@ -36,7 +35,6 @@
                         @deleteth="addOrDelInspectionItem" :productsId="scope ? scope.productsId : ''" :num="rowNum"
                         :nowNum="nowNum" />
                     </el-row>
-
                   </el-collapse-item>
                   <el-collapse-item title="不良原因" name="adverseCausesInfo">
                     <el-row :gutter="30" style="margin-bottom: 15px;">
@@ -45,12 +43,8 @@
                         @deleteth="addOrDelLinesItemTwo" :productsId="scope ? scope.productsId : ''" :num="rowNum"
                         :nowNum="nowNumTwo" />
                     </el-row>
-
                   </el-collapse-item>
                 </el-collapse>
-
-
-
               </el-tab-pane>
               <el-tab-pane label="图纸信息" name="drawingcard">
                 <JNPF-col-table v-model="productList" ref="sleeveForm" :tableItems="ProductTableItemss"
@@ -64,12 +58,11 @@
                 <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
               </el-tab-pane>
               <el-tab-pane v-if="btnType == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
-                <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
+                <recordList :list="flowTaskOperatorRecordList" :endTime="endTime" />
               </el-tab-pane>
             </el-tabs>
             <el-collapse v-model="activeNames" v-else>
               <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-
                 <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm"
                   :btnType="btnType === 'setLoss' ? 'look' : btnType" />
               </el-collapse-item>
@@ -84,7 +77,6 @@
                     @deleteth="addOrDelInspectionItem" :productsId="scope ? scope.productsId : ''" :num="rowNum"
                     :nowNum="nowNum" />
                 </el-row>
-
               </el-collapse-item>
               <el-collapse-item title="不良原因" name="adverseCausesInfo">
                 <el-row :gutter="30" style="padding-bottom:10px">
@@ -93,7 +85,6 @@
                     @deleteth="addOrDelLinesItemTwo" :productsId="scope ? scope.productsId : ''" :num="rowNum"
                     :nowNum="nowNumTwo" />
                 </el-row>
-
               </el-collapse-item>
             </el-collapse>
           </div>
@@ -119,18 +110,24 @@
 
 <script>
 import { getDownloadUrl } from '@/api/common'
-import { getbimDrawingData, getBimBusinessDetail } from "@/api/basicData/index";
-import Preview from "@/components/upload-wj/Preview.vue";
-import { addQcUnqualifiedData, updateQcUnqualifiedData, detailQcUnqualifiedData, detailInspectionData, lossQcUnqualifiedData } from '@/api/inspectionManagement/index' // 产品检验项目列表
+import { getbimDrawingData, getBimBusinessDetail } from '@/api/basicData/index'
+import Preview from '@/components/upload-wj/Preview.vue'
+import {
+  addQcUnqualifiedData,
+  updateQcUnqualifiedData,
+  detailQcUnqualifiedData,
+  detailInspectionData,
+  lossQcUnqualifiedData
+} from '@/api/inspectionManagement/index' // 产品检验项目列表
 import { inspectionTypeList, inspectionResultsList, inspectionMethodList } from '../data.js'
-import TableFormProduct from "./TableForm-product.vue"
-import TableFormWare from "./TableForm-ware.vue"
-import TableFormWareTwo from "./TableForm-ware-two.vue"
+import TableFormProduct from './TableForm-product.vue'
+import TableFormWare from './TableForm-ware.vue'
+import TableFormWareTwo from './TableForm-ware-two.vue'
 import { mapGetters, mapState } from 'vuex'
 import WareSide from './WareSide.vue'
 import { getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
-import busFlow from '@/mixins/generator/busFlow';
+import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 export default {
   components: { TableFormProduct, WareSide, Preview, TableFormWare, TableFormWareTwo, Process, recordList },
@@ -139,9 +136,9 @@ export default {
     return {
       isattachmentswitch: '',
       datafilelist: [],
-      activeName: "jcInfo",
+      activeName: 'jcInfo',
       activeNames: ['inspectionItem', 'basicInfo', 'inspectionInfo', 'adverseCausesInfo'],
-      title: "查看检验单",
+      title: '查看检验单',
       inspectionTypeList,
       inspectionResultsList,
       inspectionMethodList,
@@ -149,33 +146,38 @@ export default {
       btnLoading: false,
       btnType: '',
       formLoading: true,
-      documentStatus: "",
+      documentStatus: '',
       dataForm: {},
       dataFormItems: [],
       inspectionInfo: [],
       linesList: [],
-      linesListItems: [/* 通过 this.refeshLinesListItems() 动态更改 */],
+      linesListItems: [
+        /* 通过 this.refeshLinesListItems() 动态更改 */
+      ],
       dialogRequestObj: {
         inspectStatus: 'unInspect', // 排除已经生成检验单的检验单
         handleFlag: false,
         unqualifiedFlag: true,
-        approvalStatus: "ok",
-        createByName: "",
-        documentStatus: "submit",
+        approvalStatus: 'ok',
+        createByName: '',
+        documentStatus: 'submit',
         notificationType: null,
-        inspectionMethod: "",
-        inspectorId: "",
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time"
-        }],
-        orderNo: "",
-        originOrderNo: "",
+        inspectionMethod: '',
+        inspectorId: '',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        orderNo: '',
+        originOrderNo: '',
         pageNum: 1,
-        pageSize: 20,
+        pageSize: 20
       },
       spaceLines: [],
       productionLotList: [],
@@ -197,35 +199,76 @@ export default {
       inspectionList: [],
       linesListTwo: [],
       linesListItemsTwo: [
-        { prop: "name", label: "不良原因名称", value: "", type: 'view', minWidth: 180 },
+        { prop: 'name', label: '不良原因名称', value: '', type: 'view', minWidth: 180 },
         {
-          prop: "unqualifiedQuantity", label: "不良品数量", value: "", type: "input", itemRules: [
-            { required: true, trigger: "blur" },
-            { validator: this.formValidate('positiveNumber', false, (errMsg) => { this.$message.error(`不良品数量：${errMsg}`) }), trigger: 'blur' },
-            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg) => { this.$message.error('不良品数量：' + errMsg) }] }), trigger: 'blur' }
-          ], minWidth: 180
+          prop: 'unqualifiedQuantity',
+          label: '不良品数量',
+          value: '',
+          type: 'input',
+          itemRules: [
+            { required: true, trigger: 'blur' },
+            {
+              validator: this.formValidate('positiveNumber', false, (errMsg) => {
+                this.$message.error(`不良品数量：${errMsg}`)
+              }),
+              trigger: 'blur'
+            },
+            {
+              validator: this.formValidate({
+                type: 'decimal',
+                params: [
+                  20,
+                  4,
+                  '',
+                  (errMsg) => {
+                    this.$message.error('不良品数量：' + errMsg)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            }
+          ],
+          minWidth: 180
         },
-        { prop: "remark", label: "备注", value: "", type: 'input', minWidth: 120 },
+        { prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120 }
       ],
       productList: [],
       codeConfig: {},
       flowTemplateJson: {},
       flowData: {},
-      approvalFlag: false,   // 待办事宜等页面 需要
+      approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
       endTime: 0
     }
   },
   beforeCreate() {
     this.initLinesListItems = () => [
-      { prop: "name", label: "检验项目", value: "", type: 'view', minWidth: 120 },
+      { prop: 'name', label: '检验项目', value: '', type: 'view', minWidth: 120 },
       {
-        prop: "unqualifiedQuantity", label: "不合格数量", value: "0", type: "input", itemRules: [
-          { required: true, trigger: "blur" },
-          { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg) => { this.$message.error('不合格数量：' + errMsg) }] }), trigger: 'blur' }
-        ], minWidth: 180
+        prop: 'unqualifiedQuantity',
+        label: '不合格数量',
+        value: '0',
+        type: 'input',
+        itemRules: [
+          { required: true, trigger: 'blur' },
+          {
+            validator: this.formValidate({
+              type: 'decimal',
+              params: [
+                20,
+                4,
+                '',
+                (errMsg) => {
+                  this.$message.error('不合格数量：' + errMsg)
+                }
+              ]
+            }),
+            trigger: 'blur'
+          }
+        ],
+        minWidth: 180
       },
-      { prop: "remark", label: "备注", value: "", type: 'input', minWidth: 120 },
+      { prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120 }
     ]
   },
   methods: {
@@ -235,7 +278,7 @@ export default {
         businessCode: 'attachment',
         configKey: `fj_${inspectionType}jyd`
       }
-      getBimBusinessDetail(obj).then(res => {
+      getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
       })
     },
@@ -260,7 +303,7 @@ export default {
     },
     downloadtuzhi(row) {
       if (!row.filepath) return
-      getDownloadUrl('document', row.filepath).then(res => {
+      getDownloadUrl('document', row.filepath).then((res) => {
         this.jnpf.downloadFile(res.data.url, row.filename)
       })
     },
@@ -268,18 +311,57 @@ export default {
     viewdrawings({ row }) {
       this.ProductListRequestObjs = {
         code: row.productCode,
-        drawingNo: "",
+        drawingNo: '',
         name: row.productName,
-        orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }],
+        orderItems: [{ asc: false, column: '' }, { asc: false, column: 'create_time' }],
         pageNum: 1,
-        pageSize: 20,
+        pageSize: 20
       }
       this.$refs['ComSelect-page'].openDialog()
     },
     // 刷新主表结构
     refeshDataFormItems() {
+      function generateTreatmentResultsList(inspectionType) {
+        // 动态生成处理结果
+        // 采购收货、外协收货、外协退料、生产退料 不良处理结果：合格、不合格、让步接收、挑选
+        // 销售退货、生产巡检、生产完工检验 不良处理结果：合格、报废、返工返修、报废和返修
+        return [
+          {
+            label: '合格',
+            value: 'qualified',
+            disabled: !['procure', 'external', 'back_material', 'produce', 'process', 'finished'].includes(
+              inspectionType
+            )
+          },
+          {
+            label: '不合格',
+            value: 'unqualified',
+            disabled: !['procure', 'external', 'back_material', 'produce'].includes(inspectionType)
+          },
+          {
+            label: '让步接收',
+            value: 'concessive_acceptance',
+            disabled: !['procure', 'external', 'back_material', 'produce'].includes(inspectionType)
+          },
+          { label: '报废', value: 'discard', disabled: !['sale_back', 'process', 'finished'].includes(inspectionType) },
+          {
+            label: '挑选',
+            value: 'select',
+            disabled: !['procure', 'external', 'back_material', 'produce'].includes(inspectionType)
+          },
+          {
+            label: '返工返修',
+            value: 'repair',
+            disabled: !['sale_back', 'process', 'finished'].includes(inspectionType)
+          },
+          {
+            label: '报废和返修',
+            value: 'discard_repair',
+            disabled: !['sale_back', 'process', 'finished'].includes(inspectionType)
+          }
+        ].filter((o) => !o.disabled)
+      }
       this.dataFormItems = [
-
         {
           prop: 'inspectionOrderNo',
           label: '单号',
@@ -338,176 +420,464 @@ export default {
           sm: 6,
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
         },
+        {
+          prop: 'treatmentResults',
+          label: '处理结果',
+          value: '',
+          type: 'select',
+          options: generateTreatmentResultsList(this.inspectionType),
+          change: this.treatmentResultsChange,
+          render: this.dataForm.processingStatus === 'processed',
+          itemRules: [{ required: true, trigger: 'change' }],
+          sm: 6
+          // itemDisabled: this.dataForm.approvalStatus === 'ok' ? true : false
+        },
+        // { prop: 'description', label: '备注', value: '', type: 'textarea', sm: 12, },
+        {
+          prop: 'treatmentQualifiedQuantity',
+          label: '合格数量',
+          value: '',
+          type: 'input',
+          sm: 6,
+          render: this.dataForm.processingStatus === 'processed',
+          itemDisabled: this.qualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
+        },
+        {
+          prop: 'treatmentUnqualifiedQuantity',
+          label: '不合格数量',
+          value: '',
+          type: 'input',
+          sm: 6,
+          render: this.dataForm.processingStatus === 'processed'
+          // itemDisabled: this.unqualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
+        },
+        {
+          prop: 'treatmentScrapQuantity',
+          label: '报废数量',
+          value: '',
+          type: 'input',
+          sm: 6,
+          render:
+            !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType) &&
+            this.dataForm.processingStatus === 'processed'
 
-      ],
-        this.inspectionInfo = [
-          {
-            prop: 'inspectionMethod',
-            label: '检验方式',
-            value: '',
-            type: 'select',
-            clearable: false,
-            change: this.inspectionMethodChange,
-            itemRules: [{ required: true, trigger: 'change' }],
-            sm: 6,
-            // itemDisabled: (rowIndex) => this.dataForm.inspectionMethod === 'exempt' || this.openMode === '只读',
-            options: [
-              { label: '免检', value: 'exempt' },
-              { label: '抽检', value: 'spot_check' },
-              { label: '全检', value: 'all' }
-            ]
-          },
-          // { prop: "inspectionMethod", label: "检验方式", value: undefined, type: "select", options: [{ label: '全检', value: 'all' }, { label: '抽检', value: 'spot_check' }], itemRules: [{ required: true, trigger: 'change' }], sm: 6 },
-          {
-            prop: 'samplingQuantity',
-            label: '检验数量',
-            value: '',
-            type: 'input',
-            sm: 6,
-            render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
-            itemDisabled: this.dataForm.inspectionMethod == 'all' || this.openMode === '只读'
-          },
-          {
-            prop: 'inspectionResults',
-            label: '检验结果',
-            value: undefined,
-            type: 'select',
-            options: [{ label: '合格', value: 'qualified' }, { label: '不合格', value: 'unqualified' }],
-            change: this.inspectionResultsChange,
-            itemRules: [{ required: true, trigger: 'change' }],
-            sm: 6
-          },
-          {
-            prop: 'unqualifiedQuantity',
-            label: '不合格数量',
-            value: '',
-            type: 'input',
-            sm: 6,
-            render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
-            itemDisabled: this.dataForm.unqualifiedQuantity == '0' || this.openMode === '只读'
-          },
-          // { prop: "description", label: "处理说明", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 6 },
-          { prop: "remark", label: "备注", value: "", type: "textarea", sm: 12, }
-        ]
+          // itemDisabled: this.unqualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
+        },
+        {
+          prop: 'treatmentRepairQuantity',
+          label: '返修数量',
+          value: '',
+          type: 'input',
+          sm: 6,
+          render:
+            !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType) &&
+            this.dataForm.processingStatus === 'processed'
+
+          // itemDisabled: this.unqualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
+        },
+
+        {
+          prop: 'treatmentDescription',
+          label: '备注',
+          value: '',
+          type: 'textarea',
+          itemRules: [{ required: true, trigger: 'blur' }],
+          sm: 12,
+          render: this.dataForm.processingStatus === 'processed'
+        }
+      ]
+      this.inspectionInfo = [
+        {
+          prop: 'inspectionMethod',
+          label: '检验方式',
+          value: '',
+          type: 'select',
+          clearable: false,
+          change: this.inspectionMethodChange,
+          itemRules: [{ required: true, trigger: 'change' }],
+          sm: 6,
+          // itemDisabled: (rowIndex) => this.dataForm.inspectionMethod === 'exempt' || this.openMode === '只读',
+          options: [
+            { label: '免检', value: 'exempt' },
+            { label: '抽检', value: 'spot_check' },
+            { label: '全检', value: 'all' }
+          ]
+        },
+        // { prop: "inspectionMethod", label: "检验方式", value: undefined, type: "select", options: [{ label: '全检', value: 'all' }, { label: '抽检', value: 'spot_check' }], itemRules: [{ required: true, trigger: 'change' }], sm: 6 },
+        {
+          prop: 'samplingQuantity',
+          label: '检验数量',
+          value: '',
+          type: 'input',
+          sm: 6,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
+          itemDisabled: this.dataForm.inspectionMethod == 'all' || this.openMode === '只读'
+        },
+        {
+          prop: 'inspectionResults',
+          label: '检验结果',
+          value: undefined,
+          type: 'select',
+          options: [{ label: '合格', value: 'qualified' }, { label: '不合格', value: 'unqualified' }],
+          change: this.inspectionResultsChange,
+          itemRules: [{ required: true, trigger: 'change' }],
+          sm: 6
+        },
+        {
+          prop: 'unqualifiedQuantity',
+          label: '不合格数量',
+          value: '',
+          type: 'input',
+          sm: 6,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
+          itemDisabled: this.dataForm.unqualifiedQuantity == '0' || this.openMode === '只读'
+        },
+        // { prop: "description", label: "处理说明", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 6 },
+        { prop: 'remark', label: '备注', value: '', type: 'textarea', sm: 12 }
+      ]
     },
     // 刷新子表结构
     refeshLinesListItems() {
       this.linesListItems = [
-        { prop: "productCode", label: "产品编码", value: "", type: 'view', minWidth: 140 },
-        { prop: "productName", label: "产品名称", value: "", type: 'view', minWidth: 140 },
-        { prop: "productDrawingNo", label: "产品图号", value: "", type: 'view', minWidth: 300 },
+        { prop: 'productCode', label: '产品编码', value: '', type: 'view', minWidth: 140 },
+        { prop: 'productName', label: '产品名称', value: '', type: 'view', minWidth: 140 },
+        { prop: 'productDrawingNo', label: '产品图号', value: '', type: 'view', minWidth: 300 },
         // { prop: "productInspectionMethod", label: "检验方式", value: "", type: 'select', options: [{ label: "免检", value: "exempt" }, { label: "抽检", value: "spot_check" }, { label: "全检", value: "all" }], minWidth: 120, itemDisabled: true },
-        { prop: "routingName", label: "工艺路线名称", value: "", type: 'view', minWidth: 140, render: ['process', 'back_material', 'external', 'produce'].includes(this.inspectionType) },
-        { prop: "processName", label: "工序名称", value: "", type: 'view', minWidth: 140, render: ['process', 'back_material', 'external', 'produce'].includes(this.inspectionType) },
-        { prop: "inspectionQuantity", label: "报检数量", value: "", type: 'view', minWidth: 120 },
-        { prop: "inspectionUnqualifiedQuantity", label: "检验不合格数量", value: "", type: 'view', minWidth: 150 },
-        { prop: "mainUnit", label: "单位", value: "", type: "view", minWidth: 100 },
-        { // 处理结果
-          prop: "treatmentResults", label: "处理结果", value: "", type: "select", options: this.inspectionResultsList,
-          itemRules: [{ required: true, trigger: 'blur' }], minWidth: 180, itemDisabled: true, render: this.dataForm.approvalStatus === 'ok'
+        {
+          prop: 'routingName',
+          label: '工艺路线名称',
+          value: '',
+          type: 'view',
+          minWidth: 140,
+          render: ['process', 'back_material', 'external', 'produce'].includes(this.inspectionType)
         },
-        { // 合格数量
-          prop: "qualifiedQuantity", label: "合格数量", value: "", type: "input",
+        {
+          prop: 'processName',
+          label: '工序名称',
+          value: '',
+          type: 'view',
+          minWidth: 140,
+          render: ['process', 'back_material', 'external', 'produce'].includes(this.inspectionType)
+        },
+        { prop: 'inspectionQuantity', label: '报检数量', value: '', type: 'view', minWidth: 120 },
+        { prop: 'inspectionUnqualifiedQuantity', label: '检验不合格数量', value: '', type: 'view', minWidth: 150 },
+        { prop: 'mainUnit', label: '单位', value: '', type: 'view', minWidth: 100 },
+        {
+          // 处理结果
+          prop: 'treatmentResults',
+          label: '处理结果',
+          value: '',
+          type: 'select',
+          options: this.inspectionResultsList,
+          itemRules: [{ required: true, trigger: 'blur' }],
+          minWidth: 180,
+          itemDisabled: true,
+          render: this.dataForm.approvalStatus === 'ok'
+        },
+        {
+          // 合格数量
+          prop: 'qualifiedQuantity',
+          label: '合格数量',
+          value: '',
+          type: 'input',
           itemRules: [
-            { validator: this.formValidate({ type: 'noEmtry', params: ["", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：合格数量${errMsg}`) }] }), trigger: 'blur' },
-            { required: true, trigger: 'blur' },
-            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：合格数量${errMsg}`) }] }), trigger: 'blur' },
             {
               validator: this.formValidate({
-                type: 'calc', params: [
-                  (rowIndex) => this.jnpf.math('add', [this.linesList[rowIndex].qualifiedQuantity, this.linesList[rowIndex].unqualifiedQuantity]) === Number(this.linesList[rowIndex].inspectionUnqualifiedQuantity),
-                  "合格数量+不合格数量要等于对应检验不合格数量",
-                  (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }]
-              }), trigger: 'no'
+                type: 'noEmtry',
+                params: [
+                  '',
+                  (errMsg, index) => {
+                    this.$message.error(`产品信息第${index + 1}行：合格数量${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            },
+            { required: true, trigger: 'blur' },
+            {
+              validator: this.formValidate({
+                type: 'decimal',
+                params: [
+                  20,
+                  4,
+                  '',
+                  (errMsg, index) => {
+                    this.$message.error(`产品信息第${index + 1}行：合格数量${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'blur'
             },
             {
               validator: this.formValidate({
-                type: 'calc', params: [
-                  (rowIndex) => !(this.linesList[rowIndex].treatmentResults === 'select' && this.linesList[rowIndex].qualifiedQuantity == 0),
-                  "处理结果为挑选时合格数量不能等于0",
-                  (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }]
-              }), trigger: 'no'
+                type: 'calc',
+                params: [
+                  (rowIndex) =>
+                    this.jnpf.math('add', [
+                      this.linesList[rowIndex].qualifiedQuantity,
+                      this.linesList[rowIndex].unqualifiedQuantity
+                    ]) === Number(this.linesList[rowIndex].inspectionUnqualifiedQuantity),
+                  '合格数量+不合格数量要等于对应检验不合格数量',
+                  (errMsg, index) => {
+                    this.$message.error(`产品信息第${index + 1}行：${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'no'
+            },
+            {
+              validator: this.formValidate({
+                type: 'calc',
+                params: [
+                  (rowIndex) =>
+                    !(
+                      this.linesList[rowIndex].treatmentResults === 'select' &&
+                      this.linesList[rowIndex].qualifiedQuantity == 0
+                    ),
+                  '处理结果为挑选时合格数量不能等于0',
+                  (errMsg, index) => {
+                    this.$message.error(`产品信息第${index + 1}行：${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'no'
             }
-          ], minWidth: 180,
+          ],
+          minWidth: 180,
           itemDisabled: (rowIndex) => this.linesList[rowIndex].treatmentResults !== 'select' || this.btnType === 'look',
           render: this.dataForm.approvalStatus === 'ok'
         },
-        { // 不合格数量
-          prop: "unqualifiedQuantity", label: "不合格数量", value: "", type: "input",
+        {
+          // 不合格数量
+          prop: 'unqualifiedQuantity',
+          label: '不合格数量',
+          value: '',
+          type: 'input',
           itemRules: [
-            { validator: this.formValidate({ type: 'noEmtry', params: ["", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：不合格数量${errMsg}`) }] }), trigger: 'blur' },
+            {
+              validator: this.formValidate({
+                type: 'noEmtry',
+                params: [
+                  '',
+                  (errMsg, index) => {
+                    this.$message.error(`产品信息第${index + 1}行：不合格数量${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            },
             { required: true, trigger: 'blur' },
-            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：不合格数量${errMsg}`) }] }), trigger: 'blur' },
             {
               validator: this.formValidate({
-                type: 'calc', params: [
-                  (rowIndex) => this.jnpf.math('add', [this.linesList[rowIndex].qualifiedQuantity, this.linesList[rowIndex].unqualifiedQuantity]) === Number(this.linesList[rowIndex].inspectionUnqualifiedQuantity),
-                  "合格数量+不合格数量要等于对应检验不合格数量",
-                  (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }]
-              }), trigger: 'no'
+                type: 'decimal',
+                params: [
+                  20,
+                  4,
+                  '',
+                  (errMsg, index) => {
+                    this.$message.error(`产品信息第${index + 1}行：不合格数量${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'blur'
             },
             {
               validator: this.formValidate({
-                type: 'calc', params: [
-                  (rowIndex) => !(this.linesList[rowIndex].treatmentResults === 'select' && this.linesList[rowIndex].unqualifiedQuantity == 0),
-                  "处理结果为挑选时不合格数量不能等于0",
-                  (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }]
-              }), trigger: 'no'
+                type: 'calc',
+                params: [
+                  (rowIndex) =>
+                    this.jnpf.math('add', [
+                      this.linesList[rowIndex].qualifiedQuantity,
+                      this.linesList[rowIndex].unqualifiedQuantity
+                    ]) === Number(this.linesList[rowIndex].inspectionUnqualifiedQuantity),
+                  '合格数量+不合格数量要等于对应检验不合格数量',
+                  (errMsg, index) => {
+                    this.$message.error(`产品信息第${index + 1}行：${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'no'
             },
-          ], minWidth: 180, input: this.calcLossPrice,
+            {
+              validator: this.formValidate({
+                type: 'calc',
+                params: [
+                  (rowIndex) =>
+                    !(
+                      this.linesList[rowIndex].treatmentResults === 'select' &&
+                      this.linesList[rowIndex].unqualifiedQuantity == 0
+                    ),
+                  '处理结果为挑选时不合格数量不能等于0',
+                  (errMsg, index) => {
+                    this.$message.error(`产品信息第${index + 1}行：${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'no'
+            }
+          ],
+          minWidth: 180,
+          input: this.calcLossPrice,
           itemDisabled: (rowIndex) => this.linesList[rowIndex].treatmentResults !== 'select' || this.btnType === 'look',
           render: this.dataForm.approvalStatus === 'ok'
         },
-        { // 报废数量
-          prop: "scrapQuantity", label: "报废数量", value: "", type: "input", minWidth: 180, itemDisabled: true,
-          render: !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType) && this.dataForm.approvalStatus === 'ok'
+        {
+          // 报废数量
+          prop: 'scrapQuantity',
+          label: '报废数量',
+          value: '',
+          type: 'input',
+          minWidth: 180,
+          itemDisabled: true,
+          render:
+            !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType) &&
+            this.dataForm.approvalStatus === 'ok'
         },
-        { // 返工返修数量
-          prop: "repairQuantity", label: "返工返修数量", value: "", type: "input", minWidth: 180, itemDisabled: true,
-          render: !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType) && this.dataForm.approvalStatus === 'ok'
+        {
+          // 返工返修数量
+          prop: 'repairQuantity',
+          label: '返工返修数量',
+          value: '',
+          type: 'input',
+          minWidth: 180,
+          itemDisabled: true,
+          render:
+            !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType) &&
+            this.dataForm.approvalStatus === 'ok'
         },
-        { // 损失单价
-          prop: "lossUnitPrice", label: "损失单价", value: "", type: "view", minWidth: 180,
-          itemDisabled: (rowIndex) => this.btnType === 'look' || ['qualified', 'concessive_acceptance'].includes(this.linesList[rowIndex].treatmentResults),
+        {
+          // 损失单价
+          prop: 'lossUnitPrice',
+          label: '损失单价',
+          value: '',
+          type: 'view',
+          minWidth: 180,
+          itemDisabled: (rowIndex) =>
+            this.btnType === 'look' ||
+            ['qualified', 'concessive_acceptance'].includes(this.linesList[rowIndex].treatmentResults),
           render: this.inspectionType !== 'process' && this.dataForm.approvalStatus === 'ok'
         },
-        { // 损失金额
-          prop: "lossAmount", label: "损失金额", value: "",
-          type: this.btnType === 'setLoss' || (this.btnType === 'look' && this.dataForm.lossFlag) ? this.inspectionType === 'process' ? 'input' : "view" : 'view',
-          minWidth: 180, itemRules: [
-            { validator: this.formValidate({ type: 'decimal', params: [20, 6, "", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：损失金额${errMsg}`) }] }), trigger: 'blur' },
-          ], input: this.calcLossPrice,
-          itemDisabled: (rowIndex) => this.btnType === 'look' || ['qualified', 'concessive_acceptance'].includes(this.linesList[rowIndex].treatmentResults),
-          render: this.dataForm.approvalStatus === 'ok'
-        },
-        { // 其他损失金额
-          prop: "otherLossAmount", label: "其他损失金额", value: "", type: this.btnType === 'setLoss' || (this.btnType === 'look' && this.dataForm.lossFlag) ? "input" : 'view',
+        {
+          // 损失金额
+          prop: 'lossAmount',
+          label: '损失金额',
+          value: '',
+          type:
+            this.btnType === 'setLoss' || (this.btnType === 'look' && this.dataForm.lossFlag)
+              ? this.inspectionType === 'process'
+                ? 'input'
+                : 'view'
+              : 'view',
+          minWidth: 180,
           itemRules: [
-            { validator: this.formValidate({ type: 'noEmtry', params: ["", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：其他损失金额${errMsg}`) }] }), trigger: 'blur' },
-            { required: true, trigger: 'blur' },
-            { validator: this.formValidate({ type: 'decimal', params: [20, 6, "", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：其他损失金额${errMsg}`) }] }), trigger: 'blur' },
-          ], minWidth: 180,
+            {
+              validator: this.formValidate({
+                type: 'decimal',
+                params: [
+                  20,
+                  6,
+                  '',
+                  (errMsg, index) => {
+                    this.$message.error(`产品信息第${index + 1}行：损失金额${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            }
+          ],
           input: this.calcLossPrice,
-          itemDisabled: (rowIndex) => this.btnType === 'look' || ['qualified', 'concessive_acceptance'].includes(this.linesList[rowIndex].treatmentResults),
+          itemDisabled: (rowIndex) =>
+            this.btnType === 'look' ||
+            ['qualified', 'concessive_acceptance'].includes(this.linesList[rowIndex].treatmentResults),
           render: this.dataForm.approvalStatus === 'ok'
         },
-        { // 损失总金额
-          prop: "totalLossAmount", label: "损失总金额", value: "0", type: "view", minWidth: 180, render: this.dataForm.approvalStatus === 'ok'
-        },
-        { // 索赔金额
-          prop: "claimAmount", label: "索赔金额", value: "", type: this.btnType === 'setLoss' || (this.btnType === 'look' && this.dataForm.lossFlag) ? "input" : 'view',
+        {
+          // 其他损失金额
+          prop: 'otherLossAmount',
+          label: '其他损失金额',
+          value: '',
+          type: this.btnType === 'setLoss' || (this.btnType === 'look' && this.dataForm.lossFlag) ? 'input' : 'view',
           itemRules: [
-            { validator: this.formValidate({ type: 'decimal', params: [20, 6, "", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：索赔金额${errMsg}`) }] }), trigger: 'blur' }
-          ], minWidth: 180,
-          itemDisabled: (rowIndex) => this.btnType === 'look' || ['qualified', 'concessive_acceptance'].includes(this.linesList[rowIndex].treatmentResults),
+            {
+              validator: this.formValidate({
+                type: 'noEmtry',
+                params: [
+                  '',
+                  (errMsg, index) => {
+                    this.$message.error(`产品信息第${index + 1}行：其他损失金额${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            },
+            { required: true, trigger: 'blur' },
+            {
+              validator: this.formValidate({
+                type: 'decimal',
+                params: [
+                  20,
+                  6,
+                  '',
+                  (errMsg, index) => {
+                    this.$message.error(`产品信息第${index + 1}行：其他损失金额${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            }
+          ],
+          minWidth: 180,
+          input: this.calcLossPrice,
+          itemDisabled: (rowIndex) =>
+            this.btnType === 'look' ||
+            ['qualified', 'concessive_acceptance'].includes(this.linesList[rowIndex].treatmentResults),
           render: this.dataForm.approvalStatus === 'ok'
         },
+        {
+          // 损失总金额
+          prop: 'totalLossAmount',
+          label: '损失总金额',
+          value: '0',
+          type: 'view',
+          minWidth: 180,
+          render: this.dataForm.approvalStatus === 'ok'
+        },
+        {
+          // 索赔金额
+          prop: 'claimAmount',
+          label: '索赔金额',
+          value: '',
+          type: this.btnType === 'setLoss' || (this.btnType === 'look' && this.dataForm.lossFlag) ? 'input' : 'view',
+          itemRules: [
+            {
+              validator: this.formValidate({
+                type: 'decimal',
+                params: [
+                  20,
+                  6,
+                  '',
+                  (errMsg, index) => {
+                    this.$message.error(`产品信息第${index + 1}行：索赔金额${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            }
+          ],
+          minWidth: 180,
+          itemDisabled: (rowIndex) =>
+            this.btnType === 'look' ||
+            ['qualified', 'concessive_acceptance'].includes(this.linesList[rowIndex].treatmentResults),
+          render: this.dataForm.approvalStatus === 'ok'
+        }
       ]
-      this.$nextTick(() => { this.$refs.linesForm.setDefaultValue() })
+      this.$nextTick(() => {
+        this.$refs.linesForm.setDefaultValue()
+      })
     },
     // 计算损失金额与损失总金额
     async calcLossPrice(val, scope) {
-      await this.$nextTick();
+      await this.$nextTick()
       if (this.inspectionType !== 'process') {
         scope.row.lossAmount = this.jnpf.numberFormat(scope.row.unqualifiedQuantity * scope.row.lossUnitPrice, 6)
       }
@@ -521,7 +891,7 @@ export default {
       this.formLoading = true
       this.btnType = btnType
       this.approvalFlag = approvalFlag
-      let option = this.inspectionTypeList.find(o => o.value === inspectionType)
+      let option = this.inspectionTypeList.find((o) => o.value === inspectionType)
       this.inspectionType = inspectionType
       this.businessCode = businessCode
       this.dialogRequestObj = { ...this.dialogRequestObj, notificationType: option.value, businessCode }
@@ -548,7 +918,8 @@ export default {
       this.title = '查看检验单'
       this.formLoading = false
       if (id) {
-        if (btnType === 'anew') { // 重新提交
+        if (btnType === 'anew') {
+          // 重新提交
           this.title = '新建检验单'
         } else if (btnType === 'edit') {
           this.title = '编辑检验单'
@@ -557,7 +928,6 @@ export default {
         } else if (btnType === 'setLoss') {
           this.title = '损失上报'
         }
-      
       } else {
         this.fetchData('UQDH', true)
         this.refeshDataFormItems()
@@ -585,7 +955,9 @@ export default {
               this.activeName = 'jcInfo'
               submitFlag = false
               this.jnpf.focusItem(formItem.$children[1].$el)
-              this.$nextTick(() => { this.jnpf.formItemValidate(formItem) });
+              this.$nextTick(() => {
+                this.jnpf.formItemValidate(formItem)
+              })
               break
             }
           }
@@ -594,18 +966,20 @@ export default {
 
       // 校验表单表格（子数据列表）
       let form_2 = this.$refs['linesForm'].$children[0]
-      let valid_2 = await form_2.validate().catch(err => false)
+      let valid_2 = await form_2.validate().catch((err) => false)
       if (!valid_2 && submitFlag) {
         let formItems = form_2.fields
-        formItems.some(formItem => {
+        formItems.some((formItem) => {
           if (formItem.validateState === 'error') {
             this.activeName = 'jcInfo'
             submitFlag = false
             this.jnpf.focusItem(formItem.$children[1].$el)
-            this.$nextTick(() => { this.jnpf.formItemValidate(formItem) });
+            this.$nextTick(() => {
+              this.jnpf.formItemValidate(formItem)
+            })
             return true
           }
-        });
+        })
       }
 
       // // 判断子表是否有效
@@ -621,7 +995,7 @@ export default {
           this.$message.error('未找到匹配的审批流程，请联系管理员！')
         }
         if (formNodeList.length) {
-          formNodeList.forEach(item => {
+          formNodeList.forEach((item) => {
             if (item.approvalType === 'option') {
               if (!item.designatedMembersId) {
                 this.activeName = 'approvalFlow'
@@ -654,90 +1028,94 @@ export default {
           formMethod = addQcUnqualifiedData
         } else if (this.btnType === 'edit') {
           formMethod = updateQcUnqualifiedData
-        } else if (this.btnType === 'setLoss') { // 损失上报
+        } else if (this.btnType === 'setLoss') {
+          // 损失上报
           formMethod = lossQcUnqualifiedData
         }
         let dataObj = {
           attachmentList: this.datafilelist,
-          unqualified: this.dataForm,
+          unqualified: this.dataForm
           // lines: this.linesList,
         }
 
-
-        formMethod(dataObj).then(res => {
-          let msg = res.msg
-          if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
-          this.$message({
-            message: msg,
-            type: 'success',
-            duration: 1500,
-            onClose: () => {
-              this.visible = false
-              this.btnLoading = false
-              this.$emit('close', true)
+        formMethod(dataObj)
+          .then((res) => {
+            let msg = res.msg
+            if (res.msg === 'Success') {
+              msg = submitModel == 'submit' ? '提交成功' : '保存成功'
             }
+            this.$message({
+              message: msg,
+              type: 'success',
+              duration: 1500,
+              onClose: () => {
+                this.visible = false
+                this.btnLoading = false
+                this.$emit('close', true)
+              }
+            })
           })
-        }).catch(() => {
-          this.btnLoading = false
-        })
+          .catch(() => {
+            this.btnLoading = false
+          })
       } else {
         this.btnLoading = false
       }
-
     },
 
     // 检验单更改
     inspectionOrderNoChange(id) {
-
       this.formLoading = true
-      detailInspectionData(id).then(res => {
-        console.log(res, 'res123')
-        if (res.data.attachmentList) {
-          res.data.attachmentList.forEach((item) => {
-            this.datafilelist.push(
-              {
+      detailInspectionData(id)
+        .then((res) => {
+          console.log(res, 'res123')
+          if (res.data.attachmentList) {
+            res.data.attachmentList.forEach((item) => {
+              this.datafilelist.push({
                 name: item.document.fullName,
                 fileSize: item.document.fileSize,
                 filename: item.document.filePath,
                 id: item.document.id,
                 url: item.url
-              }
-            )
-          })
-        }
-        this.inspectionList = res.data.itemList
-        this.linesListTwo = res.data.causesList
-        this.dataForm = res.data.inspection
-        console.log(this.dataForm, 'oooooo')
-        this.dataForm.inspectionOrderNo = this.dataForm.orderNo
-        // 流程信息和流转记录
-        if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
-        let tempLinesList = res.data.lines.filter(line => line.unqualifiedQuantity != '0')
-        tempLinesList.forEach(line => {
-          line.inspectionUnqualifiedQuantity = line.unqualifiedQuantity
-          line.qualifiedQuantity = ''
-          line.unqualifiedQuantity = ''
-          line.scrapQuantity = ''
-          line.repairQuantity = ''
-          line.inspectionLineId = line.id
-          line.id = ''
+              })
+            })
+          }
+          this.inspectionList = res.data.itemList
+          this.linesListTwo = res.data.causesList
+          this.dataForm = res.data.inspection
+          console.log(this.dataForm, 'oooooo')
+          this.dataForm.inspectionOrderNo = this.dataForm.orderNo
+          this.refeshDataFormItems()
+          // 流程信息和流转记录
+          if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+          let tempLinesList = res.data.lines.filter((line) => line.unqualifiedQuantity != '0')
+          tempLinesList.forEach((line) => {
+            line.inspectionUnqualifiedQuantity = line.unqualifiedQuantity
+            line.qualifiedQuantity = ''
+            line.unqualifiedQuantity = ''
+            line.scrapQuantity = ''
+            line.repairQuantity = ''
+            line.inspectionLineId = line.id
+            line.id = ''
 
-          line.scrapQuantityDisabled = true
-          line.repairQuantityDisabled = true
+            line.scrapQuantityDisabled = true
+            line.repairQuantityDisabled = true
+          })
+
+          if (['sale_back', 'process', 'finished'].includes(this.inspectionType.replace('_batch', ''))) {
+            tempLinesList.forEach((line) => {
+              line.unqualifiedQuantity = line.inspectionUnqualifiedQuantity
+              line.qualifiedQuantity = this.jnpf.math('subtract', [line.inspectionQuantity, line.unqualifiedQuantity])
+            })
+          }
+
+          this.linesList = tempLinesList
+          this.formLoading = false
         })
-
-        if (['sale_back', 'process', 'finished'].includes(this.inspectionType.replace('_batch', ''))) {
-          tempLinesList.forEach(line => {
-            line.unqualifiedQuantity = line.inspectionUnqualifiedQuantity
-            line.qualifiedQuantity = this.jnpf.math('subtract', [line.inspectionQuantity, line.unqualifiedQuantity])
-          })
-        }
-
-        this.linesList = tempLinesList
-        this.formLoading = false
-      }).catch(err => { this.formLoading = false })
+        .catch((err) => {
+          this.formLoading = false
+        })
     },
-
 
     // 打开抽屉
     openSide(scope) {
@@ -748,32 +1126,41 @@ export default {
     },
     // 流程信息 && 流转记录
     getFlowDetail(id) {
-      getBusinessFlowDetail(id).then(res => {
-        if (res.data) {
-          this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson) : null
-          this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
-          this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
-          let flowTaskNodeList = res.data.flowTaskNodeList
-          if (flowTaskNodeList.length) {
-            for (let i = 0; i < flowTaskNodeList.length; i++) {
-              const nodeItem = flowTaskNodeList[i]
-              const loop = data => {
-                if (Array.isArray(data)) data.forEach(d => loop(d))
-                if (data.nodeId === nodeItem.nodeCode) {
-                  if (nodeItem.type == 0) data.state = 'state-past'
-                  if (nodeItem.type == 1) data.state = 'state-curr'
-                  if (nodeItem.nodeType === 'approver' || nodeItem.nodeType === 'start' || nodeItem.nodeType === 'subFlow') data.content = nodeItem.userName
-                  return
+      getBusinessFlowDetail(id)
+        .then((res) => {
+          if (res.data) {
+            this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson
+              ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson)
+              : null
+            this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
+            this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
+            let flowTaskNodeList = res.data.flowTaskNodeList
+            if (flowTaskNodeList.length) {
+              for (let i = 0; i < flowTaskNodeList.length; i++) {
+                const nodeItem = flowTaskNodeList[i]
+                const loop = (data) => {
+                  if (Array.isArray(data)) data.forEach((d) => loop(d))
+                  if (data.nodeId === nodeItem.nodeCode) {
+                    if (nodeItem.type == 0) data.state = 'state-past'
+                    if (nodeItem.type == 1) data.state = 'state-curr'
+                    if (
+                      nodeItem.nodeType === 'approver' ||
+                      nodeItem.nodeType === 'start' ||
+                      nodeItem.nodeType === 'subFlow'
+                    )
+                      data.content = nodeItem.userName
+                    return
+                  }
+                  if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
+                  if (data.childNode) loop(data.childNode)
                 }
-                if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
-                if (data.childNode) loop(data.childNode)
+                loop(this.flowTemplateJson)
               }
-              loop(this.flowTemplateJson)
             }
           }
-        }
-      }).catch(() => { })
-    },
+        })
+        .catch(() => { })
+    }
   },
   computed: {
     openMode() {
@@ -786,7 +1173,6 @@ export default {
       return this.title.substr(0, 2) == '检验' ? '新建' : '只读'
     },
     rowNum() {
-
       return this.dataForm.unqualifiedQuantity
     },
     nowNum() {
@@ -810,8 +1196,8 @@ export default {
       let newNumber = this.scope ? this.jnpf.math('subtract', [tempUnqualifiedQuantity, tempNum]) : 0
       return this.jnpf.numberFormat(newNumber, 4)
     },
-    ...mapGetters(['userInfo']),
-  },
+    ...mapGetters(['userInfo'])
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -892,11 +1278,10 @@ export default {
   margin-bottom: 0;
   padding: 0px 14px 0 14px;
   border-top: none !important;
-
 }
 
 ::v-deep .el-collapse-item__content {
-  padding-bottom: 0px
+  padding-bottom: 0px;
 }
 
 .JNPF-preview-main .main {
@@ -904,11 +1289,11 @@ export default {
 }
 
 ::v-deep .el-tabs__item {
-  padding: 0 10px !important
+  padding: 0 10px !important;
 }
 
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
-  padding-left: 0px !important
+  padding-left: 0px !important;
 }
 
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {

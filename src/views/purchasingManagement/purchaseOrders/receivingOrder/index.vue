@@ -278,12 +278,7 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
-    // 获取合计数据
-    getOrderLineReportFun() {
-      getOrderLineReport(this.orderForm).then((res) => {
-        this.totalNum = res.data.total ? res.data.total.num : 0
-      })
-    },
+  
     dateFun(dateStr) {
       const date = new Date(dateStr)
 
@@ -406,7 +401,7 @@ export default {
       purchaseOrderReport(this.orderForm)
         .then((res) => {
           this.tableData = res.data.page.records
-          this.getOrderLineReportFun()
+    
           this.total = res.data.page.total
           this.listLoading = false
         })

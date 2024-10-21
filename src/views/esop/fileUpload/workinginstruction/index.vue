@@ -89,6 +89,7 @@
 <!--                            :editDisabled="scope.row.documentStatus !== 'draft'"-->
                             <tableOpts :isJudgePer="true"
                                        :del-text="isFileTrashPage?'还原':undefined"
+                                       :hasDel="!isFileManagementPage"
                                        @edit="addOrUpdateHandle(ModelType.EDIT,scope.row.id)"
                                        @del="handleDel(scope.row.id)">
                                         <el-dropdown hide-on-click v-if="isFileManagementPage">
@@ -101,6 +102,9 @@
                                                 <el-dropdown-item @click.native="addOrUpdateHandle(ModelType.VIEW,scope.row.id)">
                                                     查看详情
                                                 </el-dropdown-item>
+<!--                                                <el-dropdown-item @click.native="addOrUpdateHandle(ModelType.VIEW,scope.row.id)">-->
+<!--                                                    查看详情-->
+<!--                                                </el-dropdown-item>-->
                                             </el-dropdown-menu>
                                         </el-dropdown>
                             </tableOpts>

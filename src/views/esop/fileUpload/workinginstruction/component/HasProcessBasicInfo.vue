@@ -153,6 +153,7 @@ export default {
                                 id: documentId,
                                 url: getFilePreviewUrl(filePath),
                                 processUploadId: id,
+                                filePath,
                             })
                         })
                     }
@@ -187,8 +188,6 @@ export default {
                         processUploadId: item.id,
                     }
                 })
-
-
         },
         async fetchData(flag=true,code="WJSCSQ") {
             try {

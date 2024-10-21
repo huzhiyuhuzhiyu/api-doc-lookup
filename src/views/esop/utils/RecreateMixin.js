@@ -1,3 +1,5 @@
+import {ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
+
 export default {
     data(){
         return {
@@ -9,6 +11,7 @@ export default {
             this.recreateFlag = false
             await this.$nextTick()
             this.recreateFlag = true
+            this.addOrUpdateHandle(ModelType.ADD)
         },
     }
 }

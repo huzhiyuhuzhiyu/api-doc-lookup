@@ -438,7 +438,7 @@
 <script>
 import { prodOrderClose } from '@/api/productOrdes/finishedProductOrders.js'
 import { ordershengchanList, addOrderNum, getscanResultData } from '@/api/productOrdes/index.js'
-import taskForm from '@/views/productionManagement/assemblyplan/assemblyTaskManagement/Form.vue'
+import taskForm from '@/views/productionManagement/ringPlan/ringTaskManagement/taskFormCopy.vue'
 import Diagram from '@/views/permission/user/Diagram.vue' // 树状列表-组织机构
 import { getGroupList, getEquEquipmentList, getProductionLineList } from '@/api/basicData/index.js'
 import { getProcessList, detailProcess } from '@/api/basicData/processSettingss.js'

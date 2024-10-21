@@ -1,10 +1,10 @@
 <script>
 import FileUploadDrop from "@/views/esop/fileUpload/workinginstruction/component/FileUploadDrop.vue";
-import {ApplicationType, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
+import {ApplicationType, ApprovalStatus, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 import {isEmpty, notEmpty} from "@/utils";
 import {detailProcess} from "@/api/basicData/processSettingss";
 import {getFilePreviewUrl} from "@/views/esop/utils/utils";
-import {detailBimFileUpload} from "@/api/esop/fileUpload/workinginstruction";
+import {detailBimFileUpload, switchEnableMark} from "@/api/esop/fileUpload/workinginstruction";
 import chooseProductParams from "@/views/esop/fileUpload/workinginstruction/utils/chooseProductParams";
 
 import { getcategoryTree as getFileCategoryTree } from '@/api/basicData/index'
@@ -21,6 +21,8 @@ export default {
                 orderNo:'',
                 categoryName:'',
                 categoryId:'',
+                enabledMark:false,
+                approvalStatus:'',
                 productsCategoryName:'',
                 productCategoryId:'',
                 productsId:'',
@@ -53,14 +55,22 @@ export default {
             return notEmpty(this.dataForm.categoryId)
         },
         orderNoDisabled(){
-            console.log(this.codeConfig)
             return this.codeConfig.codeWay === 'auto' && !this.codeConfig.modifyFlag
         },
         isImage(){
-            return this.dataForm.applicationType === ApplicationType.IMAGE
-        }
+            const applicationType = this.type === ModelType.ADD ? this.applicationType : this.dataForm.applicationType
+            return applicationType === ApplicationType.IMAGE
+        },
+        hasEnableMark(){
+            return this.dataForm.approvalStatus === ApprovalStatus.OK && !this.isFileTrashPage
+        },
     },
     methods:{
+        async toggleEnableMarkHandler(){
+            await switchEnableMark(this.dataForm.id)
+            this.$message.success("操作成功")
+
+        },
         validate(...args){
             return this.$refs.dataForm.validate(...args)
         },
@@ -90,11 +100,9 @@ export default {
             try {
                 const data = await this.jnpf.getBillRuleConfigFun(code);
                 this.codeConfig = data
-                console.log('codeConfig',this.codeConfig)
                 if (flag) {
                     this.dataForm.orderNo = data.number
                 }
-                console.log(this.dataForm.orderNo)
             } catch (error) {
             }
         },
@@ -152,7 +160,22 @@ export default {
             type:Boolean,
             default:false
         },
-
+        isFileManagementPage:{
+            type:Boolean,
+            required:false,
+        },
+        isFileTrashPage:{
+            type:Boolean,
+            required:false,
+        },
+        isFileUpload:{
+            type:Boolean,
+            required:false,
+        },
+        applicationType:{
+            type:String,
+            required:'',
+        },
     }
 }
 </script>
@@ -165,7 +188,7 @@ export default {
                 <el-collapse v-model="activeNames">
                     <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                         <el-row>
-                            <el-form label-position="top"  ref="dataForm" :model="dataForm" :rules="dataRule" :disabled="isView">
+                            <el-form label-position="top"  ref="dataForm" :model="dataForm" :rules="dataRule" :disabled="isView || !isFileUpload">
                                 <el-row :gutter="10">
                                     <el-col :span="6">
                                         <el-form-item label="上传单编码">
@@ -189,6 +212,19 @@ export default {
                                         <el-form-item label="版本号" prop="version">
                                             <el-input v-model="dataForm.version" placeholder="请输入版本号"  />
                                         </el-form-item>
+                                    </el-col>
+                                    <el-col v-if="hasEnableMark" :span="6">
+                                        <el-form @submit.prevent :disabled="isView">
+                                            <el-form-item label="是否启用">
+                                                <div style="height: 32px;display: flex;align-items: center">
+                                                    <el-switch
+                                                        :active-value="true"
+                                                        :inactive-value="false"
+                                                        @change="toggleEnableMarkHandler"
+                                                        v-model="dataForm.enabledMark"/>
+                                                </div>
+                                            </el-form-item>
+                                        </el-form>
                                     </el-col>
                                 </el-row>
                                 <el-row v-if="isImage" :gutter="10">
@@ -226,7 +262,12 @@ export default {
                     </el-collapse-item>
                     <el-collapse-item  v-if="hasCategory"  title="文件上传" name="normalUpload">
                         <div class="collapse-wrapper">
-                            <FileUploadDrop :disabled="isView" class="fileUpload" v-model="normalFileList"></FileUploadDrop>
+                            <FileUploadDrop
+                                :isFileTrashPage="isFileTrashPage"
+                                :isFileManagementPage="isFileManagementPage"
+                                :isFileUpload="isFileUpload"
+
+                                :disabled="isView" class="fileUpload" v-model="normalFileList"></FileUploadDrop>
                         </div>
                     </el-collapse-item>
                 </el-collapse>

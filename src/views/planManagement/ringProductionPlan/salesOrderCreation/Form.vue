@@ -161,7 +161,7 @@
                       <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
                       <el-table-column prop="ordersNo" label="订单号" width="160" :key="1212"
                         v-if="planForm.planType == 'order_plan'"></el-table-column>
-                      <el-table-column prop="cooperativePartnerName" label="客户名称" width="160"
+                      <el-table-column prop="cooperativePartnerName" label="客户名称" show-overflow-tooltip min-width="160"
                         v-if="planForm.planType == 'order_plan'" :key="6">
                       </el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="360" :key="4"

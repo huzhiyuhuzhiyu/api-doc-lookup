@@ -223,19 +223,29 @@ export default {
                     text:'查看',
                 },
             ]
-            if(this.isFileTrashPage){
+            if(this.isFileUpload){
                 origin.push({
-                    value:'restore',
-                    text:'还原',
+                    value:'delete',
+                    text:'删除',
+                    isShow:()=>!this.disabled
                 })
                 return origin
             }
 
-            origin.push({
-                value:'fileManageDelete',
-                text:'删除',
-                isShow:()=>!this.disabled
-            })
+            // 不可以还原和删除明细
+            // if(this.isFileTrashPage){
+            //     origin.push({
+            //         value:'restore',
+            //         text:'还原',
+            //     })
+            //     return origin
+            // }
+            //
+            // origin.push({
+            //     value:'fileManageDelete',
+            //     text:'删除',
+            //     isShow:()=>!this.disabled
+            // })
             return origin
         },
         acceptText() {

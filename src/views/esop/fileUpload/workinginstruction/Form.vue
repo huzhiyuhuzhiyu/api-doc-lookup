@@ -6,6 +6,7 @@
                     <div :class="['JNPF-common-page-header', isView ? 'noButtons' : '']" >
                         <el-page-header @back="goBack('back')" :content="title" />
                         <div class="options" >
+
                             <template v-if="!isView && isFileUpload">
                                 <el-button type="success" :loading="btnLoading" @click="handleConfirm(DocumentStatus.DRAFT)">保存草稿</el-button>
                                 <el-button type="primary" :loading="btnLoading" @click="handleConfirm(DocumentStatus.SUBMIT)">保存并提交</el-button>

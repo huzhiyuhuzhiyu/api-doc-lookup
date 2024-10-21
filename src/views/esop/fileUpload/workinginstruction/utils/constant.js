@@ -25,7 +25,7 @@ export const DocumentStatus ={
     DRAFT: 'draft',
     SUBMIT: 'submit',
     BACK:'back',
-    
+
 }
 /**
  * 申请类型

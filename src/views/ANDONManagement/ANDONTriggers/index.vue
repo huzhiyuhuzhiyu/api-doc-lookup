@@ -90,8 +90,8 @@ export default {
           asc: false,
           column: ""
         }, {
-          asc: false,
-          column: "create_time"
+          asc: true,
+          column: "sort"
         }],
         pageNum: 1,
         pageSize: -1,

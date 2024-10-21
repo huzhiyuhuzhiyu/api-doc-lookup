@@ -285,7 +285,7 @@
             <div class="JNPF-common-layout-main JNPF-flex-main" style="overflow-y: auto;">
               <div class="vux-flexbox container-content vux-flex-row">
                 <div class="left-content-dj">
-                  <div class="react-grid-item-dj dash-container has-hover" v-for="item in datalistdj" :key="item.id">
+                  <div class="react-grid-item-dj dash-container has-hover" v-for="(item,index) in datalistwx" :key="index">
                     <div class="container-header-l">{{item.name}}</div>
                     <div class="metric-view">
                       <div class="text-line">
@@ -297,10 +297,84 @@
                 </div>
                 <div class="right-content-dj JNPF-flex-main dash-container has-hover">
                   <div class="container-header text">
-                    <div class="header-title">设备状态分布</div>
+                    <div class="header-title">处理中工单明细</div>
                   </div>
-                  <div class="new-engine-chart">
-                    <div id="equipmentstatus" :option="option" style="width: 100%; height: 100%;"></div>
+                  <div style="height: 320px;padding: 0 10px 10px 10px;" class="JNPF-flex-main">
+                    <JNPF-table v-loading="listLoadingwxfbcl" :data="tableDatawxfbcl" @sort-change="sortChangewxfbcl" fixedNO custom-column>
+                      <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" sortable="custom">
+                      </el-table-column>
+                      <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" sortable="custom" />
+                      <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom"></el-table-column>
+                      <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
+                      <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
+                      <el-table-column prop="frontPicList" label="故障情况照片" min-width="140">
+                        <template slot-scope="scope">
+                          <el-image @click="bigimg(define.comUrl+item.url)" style="width: 25px;height: 25px;margin-left: 5px;" v-for="item in scope.row.frontPicList" :key="item.fileId" :src="define.comUrl+item.url" :preview-src-list="srcList"></el-image>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="faultStartTime" label="故障开始时间" width="180" sortable="custom"></el-table-column>
+                      <el-table-column prop="reviewComments" label="审核意见" width="120">
+                        <template slot-scope="scope">
+                          <div v-if="scope.row.reviewComments == 'immediately'"><el-tag type="danger">立即维修</el-tag></div>
+                          <div v-else-if="scope.row.reviewComments == 'reject'"><el-tag type="warning">驳回</el-tag></div>
+                          <div v-else-if="scope.row.reviewComments == 'outsourcing'"><el-tag>转委外</el-tag></div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="rejectReason" label="驳回理由" min-width="160">
+                        <template slot-scope="scope">
+                          <div><el-tag type="success" v-if="scope.row.rejectReason">{{scope.row.rejectReason}}</el-tag></div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="degree" label="紧急程度" width="120">
+                        <template slot-scope="scope">
+                          <div v-if="scope.row.degree == '1'"><el-tag type="danger">特别紧急</el-tag></div>
+                          <div v-else-if="scope.row.degree == '2'"><el-tag type="warning">紧急</el-tag></div>
+                          <div v-else-if="scope.row.degree == '3'"><el-tag>一般</el-tag></div>
+                          <div v-else-if="scope.row.degree == '4'"><el-tag type="success">不急</el-tag></div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="maintenancePersonnelName" label="维修负责人" width="120"></el-table-column>
+                      <el-table-column prop="waitDuration" label="故障响应时长(小时)" min-width="180" />
+                      <el-table-column prop="sparePartsFlag" label="是否更换备件" width="140">
+                        <template slot-scope="scope">
+                          <div v-if="scope.row.sparePartsFlag == '0'"><el-tag type="warning">否</el-tag></div>
+                          <div v-else-if="scope.row.sparePartsFlag == '1'"><el-tag type="success">是</el-tag></div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="reason" label="故障原因" min-width="160" />
+                      <el-table-column prop="solutionMeasures" label="解决措施" min-width="200"></el-table-column>
+                      <el-table-column prop="afterPicList" label="维修完成拍照" min-width="160">
+                        <template slot-scope="scope">
+                          <el-image @click="bigimg(define.comUrl+item.url)" style="width: 25px;height: 25px;margin-left: 5px;" v-for="item in scope.row.afterPicList" :key="item.fileId" :src="define.comUrl+item.url" :preview-src-list="srcList"></el-image>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="startMaintenanceTime" label="开始维修时间" width="180"></el-table-column>
+                      <el-table-column prop="repairCompletionTime" label="维修完成时间" width="180"></el-table-column>
+                      <el-table-column prop="maintenanceDuration" label="维修时长" min-width="160" sortable="custom"></el-table-column>
+                      <el-table-column prop="equipmentState" label="设备状态" width="120">
+                        <template slot-scope="scope">
+                          <div v-if="scope.row.equipmentState == 'normal'"><el-tag type="success">正常</el-tag></div>
+                          <div v-else-if="scope.row.equipmentState == 'repair'"><el-tag type="warning">维修</el-tag></div>
+                          <div v-else-if="scope.row.equipmentState == 'discard'"><el-tag type="info">报废</el-tag></div>
+                          <div v-else-if="scope.row.equipmentState == 'spare'"><el-tag>备用</el-tag></div>
+                          <div v-else-if="scope.row.equipmentState == 'stop'"><el-tag type="danger">停用</el-tag></div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="departmentIdName" label="申请部门" min-width="120" />
+                      <el-table-column prop="applicantIdName" label="申请人" width="120"></el-table-column>
+                      <el-table-column prop="applicationDate" label="申请日期" width="180" sortable="custom"></el-table-column>
+                      <el-table-column prop="state" label="状态" sortable="custom" width="120" fixed="right" align="center">
+                        <template slot-scope="scope">
+                          <div v-if="scope.row.state == 'toBeMaintain'"><el-tag type="danger">待维修</el-tag></div>
+                          <div v-else-if="scope.row.state == 'maintaining'"><el-tag type="warning">正在维修</el-tag></div>
+                          <div v-else-if="scope.row.state == 'maintained'"><el-tag type="success">已维修</el-tag></div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
+                      <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
+                      <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
+                    </JNPF-table>
+                    <pagination :total="totalwxfb" :page.sync="listQuerywxfb.pageNum" :limit.sync="listQuerywxfb.pageSize" @pagination="initDatawxfb" />
                   </div>
                 </div>
               </div>
@@ -415,7 +489,7 @@
           <el-tab-pane label="保养分布" name="byfb">
             <div class="JNPF-common-layout-main JNPF-flex-main" style="overflow-y: auto;">
               <div class="vux-flexbox container-content vux-flex-row" style="height: 168px;">
-                <div class="react-grid-item-by dash-container has-hover" v-for="item in datalistdj" :key="item.id">
+                <div class="react-grid-item-by dash-container has-hover" v-for="item in datalistby" :key="item.id">
                   <div class="container-header-l">{{item.name}}</div>
                   <div class="metric-view">
                     <div class="text-line">
@@ -500,12 +574,14 @@
 <script>
 import { equMaintenanceList, RepairRequestList } from '@/api/dailyManagement/Maintenance'
 import { getEquEquipmentList } from '@/api/basicData/index'
-import { getequMountedPlaces, gettotalOverview, gettotalEquStats, getequReporttotalNum, getdailyInspectionNum,getdailyInspectionMonthTotal } from "@/api/basicData/materialSettings";
+import { getequMountedPlaces, gettotalOverview, gettotalEquStats, getequReporttotalNum, getdailyInspectionNum, getdailyInspectionMonthTotal } from "@/api/basicData/materialSettings";
 import chart from "@/views/dailyManagement/deviceReportanaly/components/chart.vue";
 export default {
   components: { chart },
   data() {
     return {
+      tableDatawxfbcl: [],
+      listLoadingwxfbcl: false,
       srcList: [
         'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg'
       ],
@@ -532,6 +608,19 @@ export default {
       totalwxfb: 0,
       listLoadingwxfb: false,
       tableDatawxfb: [],
+      listQuerywxfbcl: {
+        state: 'maintaining',
+        classAttribute: "equipment",
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time" /* 使用倒序日期作为默认排序 */
+        }],
+      },
       listQuerywxfb: {},
       listQuery4: {
         state: 'maintained',
@@ -644,6 +733,16 @@ export default {
       datalistdj: [
         { name: '今日未点检', unit: '次', id: 'inspectionNum', value: '0' },
         { name: '今日已点检', unit: '次', id: 'scrappingNum', value: '0' },
+      ],
+      datalistwx: [
+        { name: '已完成维修数', unit: '单', value: '0' },
+        { name: '处理中工单数', unit: '单', value: '0' },
+      ],
+      datalistby: [
+        { name: '今日待完成保养任务', unit: '次', id: 'Tobecompletedtoday', value: '0' },
+        { name: '今日已完成保养任务', unit: '次', id: 'Completedtoday', value: '0' },
+        { name: '本月已完成保养任务', unit: '次', id: 'Completedmonth', value: '0' },
+        { name: '本月待完成保养任务', unit: '次', id: 'Tobecompletedmonth', value: '0' },
       ],
       loadingfactoryFloorid: false,
       chartlistLoading: false,
@@ -876,8 +975,75 @@ export default {
           }
         })
       })
-      getdailyInspectionMonthTotal(obj).then(res=>{
-        console.log(res,'===>');
+      this.Inspectionfrequency = await this.$echarts.init(document.getElementById('Inspectionfrequency'));
+      if (!this.Inspectionfrequency) return
+      getdailyInspectionMonthTotal(obj).then(res => {
+        this.Inspectionfrequencyoption = {
+          title: {
+            text: '点检次数趋势',
+            textStyle: {
+              fontWeight: 'bold'
+            },
+            top: 12
+          },
+          tooltip: {
+            trigger: 'axis'
+          },
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
+          xAxis: [
+            {
+              type: 'category',
+              boundaryGap: false,
+              data: res.data.map(item => item.totalName)
+            }
+          ],
+          yAxis: [
+            {
+              type: 'value',
+              minInterval: 1,
+              axisTick: {
+                show: false
+              },
+              axisLine: {
+                show: false
+              }
+            }
+          ],
+          color: ['#307deb'],
+          series: [
+            {
+              name: '点检次数',
+              type: 'line',
+              areaStyle: {
+                color: {
+                  type: 'linear',
+                  x: 0,
+                  y: 0,
+                  x2: 0,
+                  y2: 1,
+                  colorStops: [{
+                    offset: 0, color: '#3883ec' // 0% 处的颜色
+                  }, {
+                    offset: 1, color: '#fff' // 100% 处的颜色
+                  }],
+                  global: false // 缺省为 false
+                }
+              },
+              emphasis: {
+                focus: 'series'
+              },
+              smooth: true,
+              data: res.data.map(item => item.totalNum)
+            }
+          ]
+        };
+        this.Inspectionfrequency.setOption(this.Inspectionfrequencyoption)
+        this.Inspectionfrequency.resize()
       })
       this.getlistdatadjfb()
     },
@@ -922,7 +1088,40 @@ export default {
     },
     //维修分布
     async initDatawxfb() {
+      this.getlistdatawxfbcl()
       this.getlistdatawxfb()
+    },
+    getlistdatawxfbcl() {
+      this.listLoadingwxfbcl = true
+      RepairRequestList(this.listQuerywxfbcl).then(res => {
+        this.tableDatawxfbcl = res.data.records.map(item => {
+          if (item.frontPic) {
+            item.frontPicList = item.frontPicList.map(o => { return JSON.parse(`{${o}}`) })
+          }
+          if (item.afterPic) {
+            item.afterPicList = item.afterPicList.map(o => { return JSON.parse(`{${o}}`) })
+          }
+          item.waitDuration = this.getTimes(item.waitDuration)
+          item.maintenanceDuration = this.getTimes(item.maintenanceDuration)
+          return item
+        })
+        this.totalwxfbcl = res.data.total
+        this.$set(this.datalistwx[1], 'value', res.data.total)
+        this.listLoadingwxfbcl = false
+      }).catch(() => {
+        this.listLoadingwxfbcl = false
+      })
+    },
+    sortChangewxfbcl({ prop, order }) {
+      let newProp
+      if (prop === 'equipmentIdName' || prop === 'equipmentIdCode') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      this.listQuerywxfbcl.orderItems[0].asc = order !== "descending"
+      this.listQuerywxfbcl.orderItems[0].column = order === null ? "" : newProp
+      this.getlistdatawxfbcl()
     },
     getlistdatawxfb() {
       this.listLoadingwxfb = true
@@ -939,6 +1138,7 @@ export default {
           return item
         })
         this.totalwxfb = res.data.total
+        this.$set(this.datalistwx[0], 'value', res.data.total)
         this.listLoadingwxfb = false
       }).catch(() => {
         this.listLoadingwxfb = false

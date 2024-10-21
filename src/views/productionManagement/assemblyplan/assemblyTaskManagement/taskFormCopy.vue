@@ -201,7 +201,7 @@
                   :height="height" v-loading="tableloading" :key="Math.random()">
 
                   <el-table-column prop="orderNo" label="上传单编码" min-width="180" />
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="300" />
+                  <el-table-column prop="drawingNo" label="品名规格" min-width="300"  show-overflow-tooltip/>
 
                   <el-table-column prop="productsCode" label="产品编码" min-width="160" />
                   <el-table-column prop="productsCategoryName" label="产品分类" width="140" />
@@ -228,7 +228,7 @@
                   :height="height" v-loading="tableloading" :key="Math.random()">
 
                   <el-table-column prop="orderNo" label="上传单编码" min-width="180" />
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="300" />
+                  <el-table-column prop="drawingNo" label="品名规格" min-width="300"  show-overflow-tooltip/>
 
                   <el-table-column prop="productsCode" label="产品编码" min-width="160" />
                   <el-table-column prop="productsCategoryName" label="产品分类" width="140" />

@@ -200,10 +200,10 @@
                 <JNPF-table ref="guidebook" v-if="categoryType == 'guidebook'" :data="guidebookData" fixedNO
                   :height="height" v-loading="tableloading" :key="Math.random()">
 
-                  <el-table-column prop="orderNo" label="上传单编码" min-width="150" />
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="150" />
+                  <el-table-column prop="orderNo" label="上传单编码" min-width="180" />
+                  <el-table-column prop="drawingNo" label="品名规格" min-width="300" />
 
-                  <el-table-column prop="productsCode" label="产品编码" min-width="120" />
+                  <el-table-column prop="productsCode" label="产品编码" min-width="160" />
                   <el-table-column prop="productsCategoryName" label="产品分类" width="140" />
                   <el-table-column prop="documentStatus" label="单据状态" width="120" align="center">
                     <template slot-scope="{row}">
@@ -218,7 +218,7 @@
 
                   <el-table-column label="操作" width="180" fixed="right">
                     <template slot-scope="scope">
-                      <el-button type="text" size="mini" @click="previewFun(scope.row.id, 'look')">
+                      <el-button type="text" size="mini" @click="previewFun(scope.row.id, 'look',ApplicationType.WORK)">
                         查看详情
                       </el-button>
                     </template>
@@ -239,7 +239,9 @@
     </transition>
     <RelatedTasksForm v-if="relatedTaskVisible" ref="relatedTaskForms" @selectRelatedTasksFun="selectRelatedTasksFun">
     </RelatedTasksForm>
-    <Guidebook v-if="guidebookVisible" ref="guidebookForms" @back="closeFun"></Guidebook>
+    <Guidebook  v-if="guidebookVisible" ref="guidebookForms" @back="closeFun" :type="'look'"
+                :id="fileUploadId"
+                :applicationType="applicationType"></Guidebook>
 
   </div>
 </template>
@@ -250,10 +252,19 @@ import RelatedTasksForm from "./relatedTaskForm.vue";
 import { getInspectionList, deleteInspectionData, getInspectionLinesList } from '@/api/inspectionManagement/index' // 检验单
 import Guidebook from '@/views/esop/fileUpload/workinginstruction/Form.vue'
 import { deleteBimFileUpload, getBimFileUpload } from "@/api/esop/fileUpload/workinginstruction";
+import {
+    ApplicationType,
+    DocumentStatus, FileManagePageSet, FileTrashPageSet,
+    ModelType,
+    PageType
+} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 export default {
   components: { RelatedTasksForm,Guidebook },
   data() {
     return {
+      ApplicationType,
+      fileUploadId:"",
+      applicationType:"",
       guidebookVisible: false,
       height: 0,
       relatedTaskVisible: false,
@@ -338,11 +349,11 @@ export default {
       this.guidebookVisible=false
     },
     // 预览作业指导书
-    previewFun(id, type) {
+    previewFun(id, type,applicationType) {
       this.guidebookVisible = true
-      this.$nextTick(() => {
-        this.$refs.guidebookForms.init(id, type, false)
-      })
+      this.fileUploadId=id
+      this.applicationType=applicationType
+     
     },
     //自适应窗口
     async switchStyle() {

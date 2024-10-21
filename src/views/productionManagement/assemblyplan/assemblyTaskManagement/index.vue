@@ -1269,4 +1269,11 @@ export default {
   margin-bottom: 5px;
 }
 </style>
+
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />
+<style scoped>
+::v-deep .el-tabs__header {
+    margin-bottom: 5px!important;
+    padding: 0 10px!important;
+}
+</style>

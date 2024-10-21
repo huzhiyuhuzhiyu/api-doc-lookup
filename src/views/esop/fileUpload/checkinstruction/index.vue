@@ -1,24 +1,15 @@
 <template>
-  <WorkingInstruction :title="'检查指导书上传'" :flow-code="FlowCode.INSPECT" :applicationType="ApplicationType.INSPECT"></WorkingInstruction>
+  <FileUploadWorkingInstruction :title="'检查指导书上传'" :flow-code="FlowCode.INSPECT" :applicationType="ApplicationType.INSPECT"></FileUploadWorkingInstruction>
 </template>
 
 <script>
 
-import WorkingInstruction from "@/views/esop/fileUpload/workinginstruction/index.vue";
-import {ApplicationType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
-import {FlowCode} from "@/views/esop/utils/constants";
+
+import ESOPConstantsMixin from "@/views/esop/utils/ESOPConstantsMixin";
 
 export default {
-  name: 'supplierProfile',
-
-  components: {WorkingInstruction },
-    data(){
-      return {
-          ApplicationType,
-          FlowCode
-      }
-
-    }
+  name: 'FileUploadCheckInstruction',
+    mixins: [ESOPConstantsMixin]
 
 }
 </script>

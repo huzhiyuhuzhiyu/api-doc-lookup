@@ -239,7 +239,7 @@
     </transition>
     <RelatedTasksForm v-if="relatedTaskVisible" ref="relatedTaskForms" @selectRelatedTasksFun="selectRelatedTasksFun">
     </RelatedTasksForm>
-    <Guidebook v-if="guidebookVisible" ref="guidebookForms"></Guidebook>
+    <Guidebook v-if="guidebookVisible" ref="guidebookForms" @back="closeFun"></Guidebook>
 
   </div>
 </template>
@@ -334,6 +334,9 @@ export default {
     this.switchStyle()
   },
   methods: {
+    closeFun(){
+      this.guidebookVisible=false
+    },
     // 预览作业指导书
     previewFun(id, type) {
       this.guidebookVisible = true
@@ -501,15 +504,7 @@ export default {
 
 
 
-::v-deep .el-tabs__header {
-
-  padding: 0 !important;
-
-  padding-bottom: 0px !important;
-
-  margin-bottom: 0;
-
-}
+ 
 </style>
 
 <style scoped>
@@ -894,4 +889,5 @@ $footerPadding: '10px';
 ::v-deep .el-collapse-item {
   border-bottom: 1px solid rgb(220, 223, 230)
 }
+ 
 </style>

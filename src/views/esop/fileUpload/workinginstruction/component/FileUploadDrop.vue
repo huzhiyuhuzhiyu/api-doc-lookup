@@ -106,6 +106,10 @@ import drag, {readFileBlob} from '@/views/esop/fileUpload/workinginstruction/uti
 import {ext2Icon, getExt} from "@/views/drawingDocument/document/utils";
 import GridFileList from "@/views/drawingDocument/document/GridFileList.vue";
 import SwitchListAndFilter from "@/views/drawingDocument/document/SwitchListAndFilter.vue";
+import {deleteBimFileUploadDetailById} from "@/api/esop/fileUpload/workinginstruction";
+import {getQueryConfirm, getSuccessInfo} from "@/utils";
+import {revertBimRecycleBin, revertDetailBimRecycleBin} from "@/api/esop/fileTrash";
+import {getFilePreviewUrl} from "@/views/esop/utils/utils";
 const units = {
     KB: 1024,
     MB: 1024 * 1024,
@@ -118,6 +122,18 @@ export default {
     },
     components: {SwitchListAndFilter, GridFileList, Preview},
     props: {
+        isFileTrashPage:{
+            type:Boolean,
+            default:false
+        },
+        isFileManagementPage:{
+            type:Boolean,
+            default:false
+        },
+        isFileUpload:{
+            type:Boolean,
+            default:false
+        },
         gridHeight: {
             type: String,
             default: '300px'
@@ -177,21 +193,7 @@ export default {
             loading: false,
             activeFile: {},
             fileList: this.value,
-            fileOptions:[
-                {
-                    value:'download',
-                    text:'下载',
-                },
-                {
-                    value:'preview',
-                    text:'查看',
-                },
-                {
-                    value:'delete',
-                    text:'删除',
-                    isShow:()=>!this.disabled
-                }
-            ]
+
         }
     },
     watch: {
@@ -210,6 +212,32 @@ export default {
     },
     computed: {
         ...mapState('user', ['token']),
+        fileOptions(){
+            const origin=[
+                {
+                    value:'download',
+                    text:'下载',
+                },
+                {
+                    value:'preview',
+                    text:'查看',
+                },
+            ]
+            if(this.isFileTrashPage){
+                origin.push({
+                    value:'restore',
+                    text:'还原',
+                })
+                return origin
+            }
+
+            origin.push({
+                value:'fileManageDelete',
+                text:'删除',
+                isShow:()=>!this.disabled
+            })
+            return origin
+        },
         acceptText() {
             let txt = ''
             switch (this.accept) {
@@ -253,7 +281,28 @@ export default {
             if(this.disabled) return this.$message.info('当前状态不可上传文件')
             this.$refs.clickUploadBtn.$el.click()
         },
+        async fileManageDelete(index, {processUploadId}){
+            try {
+                await getQueryConfirm(this)
+                await deleteBimFileUploadDetailById(processUploadId)
+                getSuccessInfo()
+                this.handleRemove(index)
+            }catch (e) {
+
+            }
+        },
+        async handleRestore(index, {processUploadId}){
+            try {
+                await getQueryConfirm(this,"是否要还原此记录")
+                await revertDetailBimRecycleBin(processUploadId)
+                getSuccessInfo()
+                this.handleRemove(index)
+            }catch (e) {
+
+            }
+        },
         commandHandler(command, item,index) {
+            console.log(item)
             switch (command) {
                 case 'download':
                     this.handleClick(item)
@@ -263,6 +312,12 @@ export default {
                     break
                 case 'delete':
                     this.handleRemove(index)
+                    break
+                case 'fileManageDelete':
+                    this.fileManageDelete(index,item)
+                    break
+                case 'restore':
+                    this.handleRestore(index,item)
                     break
             }
         },
@@ -296,9 +351,13 @@ export default {
         },
         onProgress() {
         },
-        handlePreview(file) {
-            if (file.filename.split('.')[1].toUpperCase() == 'MPF') return this.$message.error('该文件格式不支持预览')
-            this.activeFile = file
+        handlePreview(item) {
+            if (item.filename.split('.')[1].toUpperCase() == 'MPF') return this.$message.error('该文件格式不支持预览')
+            this.activeFile = {
+                name:item.filename,
+                filename:item.filePath,
+                url: getFilePreviewUrl(item.filePath)
+            }
             this.previewVisible = true
         },
         handleClick(file) {

@@ -493,11 +493,7 @@ export default {
   margin-right: 4px;
 }
 
-::v-deep .el-tabs__header {
-  padding: 0 !important;
-  padding-bottom: 0px !important;
-  margin-bottom: 0;
-}
+ 
 </style>
 <style scoped>
 ::v-deep .el-tabs__content {

@@ -244,12 +244,12 @@ export default {
         },
         init(id, btnType, approvalFlag){
             this.approvalFlag = approvalFlag
-            this.basicInit(id,btnType, approvalFlag,true)
+            this.basicInit(id,btnType, approvalFlag)
         },
         getInitFn(isAudit){
             return isAudit ? this.$refs.dataForm.init : this.basicInfoRef.init
         },
-        async basicInit(id, btnType, approvalFlag,isAudit = false){
+        async basicInit(id, btnType, approvalFlag){
             const hasId = notEmpty(id)
             await this.$nextTick()
             if(hasId){
@@ -265,7 +265,7 @@ export default {
                     this.dataForm.approvalFlag = data.approvalFlag
                     Object.keys(this.dataForm).forEach(key=>this.dataForm[key] = data[key])
                     await this.$nextTick()
-                    return  this.getInitFn(isAudit)(id, btnType, approvalFlag,data)
+                    return  this.getInitFn(approvalFlag)(id, btnType, approvalFlag,data)
                 }catch (e) {
                     console.dir(e)
                      this.$message.error(e.message)

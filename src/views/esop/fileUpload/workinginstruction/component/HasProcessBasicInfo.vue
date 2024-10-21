@@ -1,10 +1,10 @@
 <script>
 import FileUploadDrop from "@/views/esop/fileUpload/workinginstruction/component/FileUploadDrop.vue";
-import {ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
+import {ApprovalStatus, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 import {isEmpty, notEmpty} from "@/utils";
 import {detailProcess} from "@/api/basicData/processSettingss";
 import {getFilePreviewUrl} from "@/views/esop/utils/utils";
-import {detailBimFileUpload} from "@/api/esop/fileUpload/workinginstruction";
+import {detailBimFileUpload, switchEnableMark} from "@/api/esop/fileUpload/workinginstruction";
 import chooseProductParams from "@/views/esop/fileUpload/workinginstruction/utils/chooseProductParams";
 
 
@@ -21,6 +21,8 @@ export default {
             activeNames:['basicInfo','normalUpload'],
             dataForm:{
                 applicationType:'',
+                approvalStatus:'',
+                enabledMark:false,
                 orderNo:'',
                 productsCategoryName:'',
                 productCategoryId:'',
@@ -34,6 +36,7 @@ export default {
                 id:null,
                 version:'',
                 documentStatus:'',
+                enableMark:false
             },
             dataRule:Object.freeze({
                 version: [
@@ -65,11 +68,18 @@ export default {
             return this.dataForm.openProcess
         },
         orderNoDisabled(){
-            console.log(this.codeConfig)
             return this.codeConfig.codeWay === 'auto' && !this.codeConfig.modifyFlag
+        },
+        hasEnableMark(){
+          return this.dataForm.approvalStatus === ApprovalStatus.OK && !this.isFileTrashPage
         },
     },
     methods:{
+       async toggleEnableMarkHandler(){
+           await switchEnableMark(this.dataForm.id)
+           this.$message.success("操作成功")
+
+        },
         validate(...args){
             return this.$refs.dataForm.validate(...args)
         },
@@ -98,7 +108,6 @@ export default {
             await this.getProcessLine(fileUploadList)
         },
         changeRoutingName(name){
-            console.log('changeRoutingName', name)
             this.dataForm.routingName = isEmpty(name)
                 ? (this.hasProduct
                     ? '暂未设置工艺路线'
@@ -184,11 +193,9 @@ export default {
             try {
                 const data = await this.jnpf.getBillRuleConfigFun(code);
                 this.codeConfig = data
-                console.log('codeConfig',this.codeConfig)
                 if (flag) {
                     this.dataForm.orderNo = data.number
                 }
-                console.log(this.dataForm.orderNo)
             } catch (error) {
             }
         },
@@ -276,7 +283,18 @@ export default {
             type:Boolean,
             default:false
         },
-
+        isFileManagementPage:{
+            type:Boolean,
+            required:false,
+        },
+        isFileTrashPage:{
+            type:Boolean,
+            required:false,
+        },
+        isFileUpload:{
+            type:Boolean,
+            required:false,
+        },
     }
 }
 </script>
@@ -289,7 +307,7 @@ export default {
                 <el-collapse v-model="activeNames">
                     <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                         <el-row>
-                            <el-form label-position="top"  ref="dataForm" :model="dataForm" :rules="dataRule" :disabled="isView">
+                            <el-form label-position="top"  ref="dataForm" :model="dataForm" :rules="dataRule" :disabled="isView || !isFileUpload">
                                 <el-row :gutter="10">
                                     <el-col :span="6">
                                         <el-form-item label="上传单编码">
@@ -306,7 +324,7 @@ export default {
                                             <el-input readonly :placeholder="dataForm.routingName" v-model="dataForm.routingName"></el-input>
                                         </el-form-item>
                                     </el-col>
-                                    <el-col :span="6">
+                                    <el-col :span="hasEnableMark ?3 : 6">
                                         <el-form-item label="按工序上传">
                                             <div style="height: 32px;display: flex;align-items: center">
                                                 <el-tooltip :content="hasRoutingLine ? '开启后可为每一道工序上传作业指导书':'该产品未设置工艺路线，请设置工艺路线后再开启'" placement="top-start">
@@ -319,6 +337,21 @@ export default {
                                                 </el-tooltip>
                                             </div>
                                         </el-form-item>
+                                    </el-col>
+                                    <el-col :span="3" v-if="hasEnableMark">
+                                        <el-form @submit.prevent :disabled="isView">
+                                            <el-form-item label="是否启用">
+                                                <div style="height: 32px;display: flex;align-items: center">
+                                                    <el-switch
+                                                        :active-value="true"
+                                                        :inactive-value="false"
+                                                        :disabled="false"
+                                                        @change="toggleEnableMarkHandler"
+                                                        v-model="dataForm.enabledMark"/>
+                                                </div>
+                                            </el-form-item>
+                                        </el-form>
+
                                     </el-col>
 
                                 </el-row>
@@ -358,13 +391,26 @@ export default {
                     <template v-if="needProcess && routingLineList.length > 0" >
                         <el-collapse-item v-for="item in routingLineList"  :key="item.processId"  :title="item.processName" :name="item.processId">
                             <div class="collapse-wrapper">
-                                <FileUploadDrop  :disabled="isView" class="fileUpload" :key="item.processId" v-model="processFileList[item.processId]"></FileUploadDrop>
+                                <FileUploadDrop
+                                    :isFileTrashPage="isFileTrashPage"
+                                    :isFileManagementPage="isFileManagementPage"
+                                    :isFileUpload="isFileUpload"
+                                    :disabled="isView"
+                                    class="fileUpload"
+                                    :key="item.processId"
+                                    v-model="processFileList[item.processId]"></FileUploadDrop>
                             </div>
                         </el-collapse-item>
                     </template>
                     <el-collapse-item  v-if="hasProduct && !needProcess"  title="文件上传" name="normalUpload">
                         <div class="collapse-wrapper">
-                            <FileUploadDrop :disabled="isView" class="fileUpload" v-model="normalFileList"></FileUploadDrop>
+                            <FileUploadDrop
+                                :isFileTrashPage="isFileTrashPage"
+                                :isFileManagementPage="isFileManagementPage"
+                                :isFileUpload="isFileUpload"
+                                :disabled="isView"
+                                class="fileUpload"
+                                v-model="normalFileList"></FileUploadDrop>
                         </div>
                     </el-collapse-item>
                 </el-collapse>

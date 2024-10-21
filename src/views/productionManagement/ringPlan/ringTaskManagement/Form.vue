@@ -356,11 +356,11 @@
           <el-collapse v-model="activeNames4" v-if="btnType == 'report'" class="orderInfo">
             <el-collapse-item title="报工记录" name="record" class="feedInfoForm">
               <JNPF-table ref="feed" :data="recoredsData" fixedNo v-loading="tableloading" :key="Math.random()">
-                <el-table-column prop="workNo" label="工单号" min-width="180"></el-table-column>
+                <el-table-column prop="workNo" label="工单号" min-width="200"></el-table-column>
                 <el-table-column prop="orderNo" label="报工单号" min-width="180"></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="180"></el-table-column>
                 <el-table-column prop="processName" label="工序名称" width="160" />
-                <el-table-column prop="reportingTime" label="报工时间" min-width="160" />
+                <el-table-column prop="reportingTime" label="报工时间" min-width="180" />
                 <el-table-column prop="producerName" label="生产人" min-width="160" />
                 <el-table-column prop="mainUnit" label="单位" min-width="160" />
                 <el-table-column prop="reportingQuantity" label="报工数量" min-width="160" />

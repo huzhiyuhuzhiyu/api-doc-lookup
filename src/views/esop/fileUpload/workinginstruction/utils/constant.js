@@ -63,6 +63,21 @@ export const ApprovalStatus ={
     WITHDRAWN: 'withdrawn',
 }
 
+export const FileManagementPageType={
+    FileManagementWork:'FileManagementWork',
+    FileManagementDocument:'FileManagementDocument',
+    FileManagementImage:'FileManagementImage',
+    FileManagementOffice:'FileManagementOffice',
+    FileManagementInspect:'FileManagementInspect',
+}
+export const FileTrashPageType={
+    FileTrashWork:'FileTrashWork',
+    FileTrashDocument:'FileTrashDocument',
+    FileTrashImage:'FileTrashImage',
+    FileTrashOffice:'FileTrashOffice',
+    FileTrashInspect:'FileTrashInspect',
+}
+
 
 /**
  * 文件管理作业页面类型
@@ -75,17 +90,9 @@ export const ApprovalStatus ={
  * @property {string} FileManagementInspect - 文件管理 检验指导书
  */
 export const PageType ={
-    FileManagementWork:'FileManagementWork',
-    FileManagementDocument:'FileManagementDocument',
-    FileManagementImage:'FileManagementImage',
-    FileManagementOffice:'FileManagementOffice',
-    FileManagementInspect:'FileManagementInspect',
+    ...FileManagementPageType,
+    ...FileTrashPageType,
     FileUploadWork:'FileUploadWork',
 }
-export const FileManagePageSet = new Set([
-    PageType.FileManagementOffice,
-    PageType.FileManagementWork,
-    PageType.FileManagementDocument,
-    PageType.FileManagementImage,
-    PageType.FileManagementInspect,
-])
+export const FileManagePageSet = new Set(Object.values(FileManagementPageType))
+export const FileTrashPageSet = new Set(Object.values(FileTrashPageType))

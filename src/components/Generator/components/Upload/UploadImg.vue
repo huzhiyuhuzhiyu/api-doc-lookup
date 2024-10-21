@@ -116,10 +116,17 @@ export default {
     handleSuccess(res, file, fileList) {
       if (res.code == 200) {
         if (!Array.isArray(this.fileList)) this.fileList = []
-        this.fileList.push({
-          name: file.name,
-          fileId: res.data.name,
-          url: res.data.url
+        // this.fileList.push({
+        //   name: file.name,
+        //   fileId: res.data.name,
+        //   url: res.data.url
+        // })
+        fileList.map(item => {
+          this.fileList.push({
+            name: item.name,
+            fileId: item.response.data.name,
+            url: item.response.data.url
+          })
         })
         this.$emit('input', this.fileList)
         this.$emit('change', this.fileList)

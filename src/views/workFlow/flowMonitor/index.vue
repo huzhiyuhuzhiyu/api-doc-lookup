@@ -260,7 +260,7 @@ export default {
     activeName() {
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.categoryIndex = -1
-      this.initData()
+      // this.initData()
       this.getDictionaryData(this.flowType)
     },
     'listQuery.flowCategory':function(newVal){

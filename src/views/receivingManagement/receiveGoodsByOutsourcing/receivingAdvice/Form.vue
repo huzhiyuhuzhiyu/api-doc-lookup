@@ -1420,36 +1420,36 @@ export default {
           formMethod = addpurPurchaseReceiptReturnGoods
         }
         console.log(obj, 'ohh')
-        // formMethod(obj)
-        //   .then((res) => {
-        //     // let msg = "";
-        //     // if (formMethod == addpurPurchaseReceiptReturnGoods) {
-        //     //   msg = "新建成功"
-        //     // } else if (value == 'draft') {
-        //     //   msg = "保存成功"
-        //     // } else if (value == 'submit') {
-        //     //   msg = '提交成功'
-        //     // }
-        //     if (value == 'draft') {
-        //       this.submitmethodsTitle = '保存成功'
-        //     } else if (value == 'submit') {
-        //       this.submitmethodsTitle = '提交成功'
-        //     }
-        //     this.tipsvisible = true
-        //     // this.$message({
-        //     //   message: msg,
-        //     //   type: 'success',
-        //     //   duration: 1500,
-        //     //   onClose: () => {
-        //     //     this.visible = false
-        //     //     this.btnLoading = false
-        //     //     this.$emit('close', true)
-        //     //   }
-        //     // })
-        //   })
-        //   .catch(() => {
-        //     this.btnLoading = false
-        //   })
+        formMethod(obj)
+          .then((res) => {
+            // let msg = "";
+            // if (formMethod == addpurPurchaseReceiptReturnGoods) {
+            //   msg = "新建成功"
+            // } else if (value == 'draft') {
+            //   msg = "保存成功"
+            // } else if (value == 'submit') {
+            //   msg = '提交成功'
+            // }
+            if (value == 'draft') {
+              this.submitmethodsTitle = '保存成功'
+            } else if (value == 'submit') {
+              this.submitmethodsTitle = '提交成功'
+            }
+            this.tipsvisible = true
+            // this.$message({
+            //   message: msg,
+            //   type: 'success',
+            //   duration: 1500,
+            //   onClose: () => {
+            //     this.visible = false
+            //     this.btnLoading = false
+            //     this.$emit('close', true)
+            //   }
+            // })
+          })
+          .catch(() => {
+            this.btnLoading = false
+          })
       }
     },
     // 测试审批流

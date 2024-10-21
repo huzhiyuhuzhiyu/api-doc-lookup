@@ -538,6 +538,20 @@
     <ComSelect-page ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" title="选择产品" treeTitle="产品分类"
       :methodArr="ProductMethodArr" :listMethod="getProductList" :listRequestObj="ProductListRequestObj"
       :searchList="ProductTableSearchList" :elementShow="false" multiple />
+    <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+      :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
+      <div>
+        <img src="@/assets/images/importSuccess.gif" alt="" style="width:100px" />
+        <span class="import_t">{{ submitmethodsTitle }}啦！</span>
+        <span class="import_b">您还可以进行如下操作：</span>
+      </div>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="goBom">返回列表</el-button>
+        <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()">{{ btnText }}</el-button>
+        <el-button v-else type="primary" @click="continueAdd()">{{ btnText }}</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -645,7 +659,9 @@ export default {
       flowData: {},
       approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime: 0
+      endTime: 0,
+      tipsvisible: false,
+      btnText: '继续新建'
     }
   },
   created() {
@@ -693,6 +709,24 @@ export default {
         }
       }
       this.productArr = [] // 清空选中的行的数据
+    },
+    // 继续修改
+    continueEdit() {
+      this.init(this.oldId, this.oldType)
+    },
+    // 继续新增
+    continueAdd() {
+      this.init('', 'add')
+      this.dataForm = {}
+      this.linesList = []
+      this.datafilelist = []
+      this.tipsvisible = false
+      this.btnLoading = false
+    },
+    goBom() {
+      this.$router.push({
+        path: '/outsourcingManagement/processOutsourcingOrders/orderList'
+      })
     },
     // 产品组件回调
     addth(id, data) {
@@ -897,7 +931,10 @@ export default {
               // 通过需求池id 获取明细的数据
               getShipmentList(obj).then((res) => {
                 this.dataFormTwo.data[index].outShipmentList = res.data
-                this.linesList.push(...res.data)
+                if (res.data.length !== 0) {
+                  this.linesList.push(res.data)
+                }
+
                 console.log(this.linesList, 'this.linesList')
               })
             })
@@ -925,46 +962,64 @@ export default {
       this.sourceVisibled = true
       this.index = index
       console.log(this.dataFormTwo.data[index], 'this.dataFormTwo.data[index].id')
-      let obj = {
-        productsId: this.dataFormTwo.data[index].productsId,
-        purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
+      // let obj = {
+      //   productsId: this.dataFormTwo.data[index].productsId,
+      //   purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
+      // }
+      // // 通过需求池id 获取明细的数据
+      // getShipmentList(obj).then((res) => {
+      //   console.log(res, '清单数据')
+      //   this.sourceData = res.data
+      //   this.dataFormTwo.data[this.index].outShipmentList = res.data
+      //   if (this.dataFormTwo.data[this.index].outShipmentList.length !== 0) {
+      //     this.sourceData = this.dataFormTwo.data[this.index].outShipmentList
+
+      //     // this.dataFormTwo.data[this.index].outShipmentList.forEach((item, ind) => {
+      //     //   console.log(item, 'p{{}}')
+      //     //   console.log(this.sourceData[ind], 'this.sourceData[ind]')
+      //     //   this.sourceData[ind].demandQuantity1 = item.demandQuantity1 ? item.demandQuantity1 : item.demandQuantity
+      //     //   this.sourceData[ind].processId = item.processId
+      //     //   this.sourceData[ind].processName = item.processName
+      //     // })
+      //   } else {
+      //     this.sourceData.forEach((item, index) => {
+      //       this.$set(this.sourceData[index], 'demandQuantity1', item.demandQuantity)
+      //     })
+      //   }
+      //   console.log(this.sourceData, '1111')
+
+      //   if (this.sourceData.length === 0) {
+      //     this.sourceDisabled = true
+      //   } else {
+      //     this.sourceDisabled = false
+      //   }
+      //   console.log(this.dataFormTwo.data, 'daaaa')
+      //   this.$nextTick(() => {
+      //     this.$refs['sourceRef'].init(
+      //       this.sourceData,
+      //       '',
+      //       this.dataFormTwo.data[this.index].productsId,
+      //       this.dataFormTwo.data[this.index].purchaseQuantity
+      //     )
+      //   })
+      // })
+      this.sourceData = this.dataFormTwo.data[index].outShipmentList
+      console.log(this.sourceData, '1111')
+
+      if (this.sourceData.length === 0) {
+        this.sourceDisabled = true
+      } else {
+        this.sourceDisabled = false
       }
-      // 通过需求池id 获取明细的数据
-      getShipmentList(obj).then((res) => {
-        console.log(res, '清单数据')
-        this.sourceData = res.data
-        this.dataFormTwo.data[this.index].outShipmentList = res.data
-        if (this.dataFormTwo.data[this.index].outShipmentList.length !== 0) {
-          this.sourceData = this.dataFormTwo.data[this.index].outShipmentList
-
-          // this.dataFormTwo.data[this.index].outShipmentList.forEach((item, ind) => {
-          //   console.log(item, 'p{{}}')
-          //   console.log(this.sourceData[ind], 'this.sourceData[ind]')
-          //   this.sourceData[ind].demandQuantity1 = item.demandQuantity1 ? item.demandQuantity1 : item.demandQuantity
-          //   this.sourceData[ind].processId = item.processId
-          //   this.sourceData[ind].processName = item.processName
-          // })
-        } else {
-          this.sourceData.forEach((item, index) => {
-            this.$set(this.sourceData[index], 'demandQuantity1', item.demandQuantity)
-          })
-        }
-        console.log(this.sourceData, '1111')
-
-        if (this.sourceData.length === 0) {
-          this.sourceDisabled = true
-        } else {
-          this.sourceDisabled = false
-        }
-        console.log(this.dataFormTwo.data, 'daaaa')
-        this.$nextTick(() => {
-          this.$refs['sourceRef'].init(
-            this.sourceData,
-            '',
-            this.dataFormTwo.data[this.index].productsId,
-            this.dataFormTwo.data[this.index].purchaseQuantity
-          )
-        })
+      console.log(this.dataFormTwo.data, 'daaaa')
+      console.log(this.sourceData, 'this.sourceData******')
+      this.$nextTick(() => {
+        this.$refs['sourceRef'].init(
+          this.sourceData,
+          '',
+          this.dataFormTwo.data[this.index].productsId,
+          this.dataFormTwo.data[this.index].purchaseQuantity
+        )
       })
     },
     async request(type) {
@@ -1058,15 +1113,12 @@ export default {
                   editOutOrder(_data)
                     .then((res) => {
                       if (res.msg === 'Success') res.msg = '修改成功'
-                      this.$message({
-                        message: msg,
-                        type: 'success',
-                        duration: 1000,
-                        onClose: () => {
-                          this.btnLoading = false
-                          this.$emit('close', true)
-                        }
-                      })
+                      if (this.dataForm.documentStatus == 'draft') {
+                        this.submitmethodsTitle = '保存成功'
+                      } else if (this.dataForm.documentStatus == 'submit') {
+                        this.submitmethodsTitle = '提交成功'
+                      }
+                      this.tipsvisible = true
                     })
                     .catch(() => {
                       this.btnLoading = false
@@ -1298,5 +1350,22 @@ export default {
 
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
   padding-left: 0px !important;
+}
+
+.import_t {
+  font-size: 22px;
+  color: rgb(103, 194, 58);
+  vertical-align: top;
+  margin-top: 40px;
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.import_b {
+  font-size: 18px;
+  /* color: #67c23a; */
+  vertical-align: top;
+  margin-top: 43px;
+  display: inline-block;
 }
 </style>

@@ -284,10 +284,10 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="type == 'look'
-                              ? true
-                              : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                                ? false
-                                : true
+                            ? true
+                            : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                              ? false
+                              : true
                             "></el-input>
                         </el-form-item>
                       </el-col>
@@ -1548,6 +1548,11 @@ export default {
                   insertOutOrder(_data)
                     .then((res) => {
                       if (res.msg === 'Success') res.msg = '新建成功'
+                      if (value == 'draft') {
+                        this.submitmethodsTitle = '保存成功'
+                      } else if (value == 'submit') {
+                        this.submitmethodsTitle = '提交成功'
+                      }
                       this.tipsvisible = true
                     })
                     .catch(() => {

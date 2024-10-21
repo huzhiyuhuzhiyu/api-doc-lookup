@@ -77,11 +77,11 @@
                     |
                   </div>
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                    <el-table style="border: 1px solid #e3e7ee;" :fixedNO="true"
+                    <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true" :hasC="type !== 'look'"
                       @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
                       id="table" border height="460" @row-click="openDetails" :row-style="rowStyle">
-                      <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column>
-                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                      <!-- <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column> -->
+                      <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                         <!-- <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'">
@@ -279,7 +279,7 @@
                           </el-button>
                         </template>
                       </el-table-column>
-                    </el-table>
+                    </JNPF-table>
                   </el-form>
                   <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
                     <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue2 }}</span>
@@ -295,7 +295,7 @@
                     <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
                     <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
                     <el-table-column prop="mainUnit" label="单位" min-width="140"></el-table-column>
-                    <el-table-column prop="purchaseQuantity" label="基本数量" min-width="140"></el-table-column>
+                    <el-table-column prop="qty" label="基本数量" min-width="140"></el-table-column>
                     <el-table-column prop="demandQuantity" label="发料数量" min-width="140"></el-table-column>
                     <el-table-column prop="undeliveredQuantity" label="待出库数量" min-width="140"></el-table-column>
                   </el-table>
@@ -513,7 +513,7 @@
                 <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
                 <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
                 <el-table-column prop="mainUnit" label="单位" min-width="140"></el-table-column>
-                <el-table-column prop="purchaseQuantity" label="基本数量" min-width="140"></el-table-column>
+                <el-table-column prop="qty" label="基本数量" min-width="140"></el-table-column>
                 <el-table-column prop="demandQuantity" label="发料数量" min-width="140"></el-table-column>
                 <el-table-column prop="undeliveredQuantity" label="待出库数量" min-width="140"></el-table-column>
               </el-table>
@@ -526,6 +526,20 @@
       :methodArr="ProductMethodArr" :listMethod="getProductList" :listRequestObj="ProductListRequestObj"
       :searchList="ProductTableSearchList" :elementShow="false" multiple />
     <source-area v-if="sourceVisibled" ref="sourceRef" @confirm="handlerConfirm"></source-area>
+    <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+      :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
+      <div>
+        <img src="@/assets/images/importSuccess.gif" alt="" style="width:100px" />
+        <span class="import_t">{{ submitmethodsTitle }}啦！</span>
+        <span class="import_b">您还可以进行如下操作：</span>
+      </div>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="goBom">返回列表</el-button>
+        <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()">{{ btnText }}</el-button>
+        <el-button v-else type="primary" @click="continueAdd()">{{ btnText }}</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -551,6 +565,8 @@ export default {
   mixins: [busFlow],
   data() {
     return {
+      tipsvisible: false,
+      btnText: '继续新建',
       isattachmentswitch: '',
       //  供应商 树请求
       getCooperativeData,
@@ -826,6 +842,24 @@ export default {
       // this.$nextTick(() => {
       //   this.$refs.productRef.initData2()
       // })
+    },
+    // 继续修改
+    continueEdit() {
+      this.init(this.oldId, this.oldType)
+    },
+    // 继续新增
+    continueAdd() {
+      this.init('', 'add')
+      this.dataForm = {}
+      this.linesList = []
+      this.datafilelist = []
+      this.tipsvisible = false
+      this.btnLoading = false
+    },
+    goBom() {
+      this.$router.push({
+        path: '/outsourcingManagement/productOutsourcingOrder/orderList'
+      })
     },
     // 批量删除
     batchDelete() {
@@ -1236,16 +1270,14 @@ export default {
                 } else {
                   editOutOrder(_data)
                     .then((res) => {
+                      console.log(99999)
                       if (res.msg === 'Success') res.msg = '修改成功'
-                      this.$message({
-                        message: msg,
-                        type: 'success',
-                        duration: 1000,
-                        onClose: () => {
-                          this.btnLoading = false
-                          this.$emit('close', true)
-                        }
-                      })
+                      if (this.dataForm.documentStatus == 'draft') {
+                        this.submitmethodsTitle = '保存成功'
+                      } else if (this.dataForm.documentStatus == 'submit') {
+                        this.submitmethodsTitle = '提交成功'
+                      }
+                      this.tipsvisible = true
                     })
                     .catch(() => {
                       this.btnLoading = false
@@ -1487,5 +1519,22 @@ export default {
 
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
   padding-left: 0px !important;
+}
+
+.import_t {
+  font-size: 22px;
+  color: rgb(103, 194, 58);
+  vertical-align: top;
+  margin-top: 40px;
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.import_b {
+  font-size: 18px;
+  /* color: #67c23a; */
+  vertical-align: top;
+  margin-top: 43px;
+  display: inline-block;
 }
 </style>

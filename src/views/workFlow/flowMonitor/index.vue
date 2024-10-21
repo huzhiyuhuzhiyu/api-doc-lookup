@@ -271,7 +271,7 @@ export default {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.getDictionaryData(this.flowType)
     // this.getFlowEngineList()
-    this.initData()
+    // this.initData()
   },
   methods: {
     changeCategory(item, index) {

@@ -1,5 +1,10 @@
 <template>
-    <FileUploadWorkingInstruction :title="'办公文件上传'" :flow-code="FlowCode.OFFICE" :applicationType="ApplicationType.OFFICE"/>
+    <FileUploadWorkingInstruction
+        :title="'办公文件上传'"
+        :flow-code="FlowCode.OFFICE"
+        :applicationType="ApplicationType.OFFICE"
+        :page-type="PageType.FileUploadOffice"
+    />
 
 </template>
 

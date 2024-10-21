@@ -109,6 +109,7 @@ import SwitchListAndFilter from "@/views/drawingDocument/document/SwitchListAndF
 import {deleteBimFileUploadDetailById} from "@/api/esop/fileUpload/workinginstruction";
 import {getQueryConfirm, getSuccessInfo} from "@/utils";
 import {revertBimRecycleBin, revertDetailBimRecycleBin} from "@/api/esop/fileTrash";
+import {getFilePreviewUrl} from "@/views/esop/utils/utils";
 const units = {
     KB: 1024,
     MB: 1024 * 1024,
@@ -350,9 +351,13 @@ export default {
         },
         onProgress() {
         },
-        handlePreview(file) {
-            if (file.filename.split('.')[1].toUpperCase() == 'MPF') return this.$message.error('该文件格式不支持预览')
-            this.activeFile = file
+        handlePreview(item) {
+            if (item.filename.split('.')[1].toUpperCase() == 'MPF') return this.$message.error('该文件格式不支持预览')
+            this.activeFile = {
+                name:item.filename,
+                filename:item.filePath,
+                url: getFilePreviewUrl(item.filePath)
+            }
             this.previewVisible = true
         },
         handleClick(file) {

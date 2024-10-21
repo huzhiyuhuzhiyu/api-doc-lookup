@@ -1,11 +1,23 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <div class="group-container-body section has-hover">
-        <div style="height: 65px;width: 100%;padding: 10px;">
-          <div class="dash-rich-text">
-            <div class="rich-text-content">点检统计分析</div>
+      <div style="overflow: auto;">
+        <div class="group-container-body section has-hover">
+          <div style="height: 65px;width: 100%;padding: 10px;">
+            <div class="dash-rich-text">
+              <div class="rich-text-content">点检统计分析</div>
+            </div>
           </div>
+        </div>
+        <div style="margin-top: 10px;">
+          <el-tabs type="border-card" style="height: 100%;" v-model="activeName" @tab-click="handleClick">
+            <el-tab-pane label="点检概况" name="djgk">
+              <div class="">
+                <card></card>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane label="点检次数分析" name="djcsfx"></el-tab-pane>
+          </el-tabs>
         </div>
       </div>
     </div>
@@ -13,8 +25,14 @@
 </template>
 
 <script>
+import card from "@/views/dailyManagement/deviceReportanaly/components/card.vue";
 export default {
-
+  components: { card },
+  data() {
+    return {
+      activeName: 'djgk'
+    }
+  }
 }
 </script>
 

@@ -19,10 +19,13 @@ export const ModelType ={
  * @enum {string}
  * @property {string} DRAFT - 草稿
  * @property {string} SUBMIT - 提交
+ * @property {string} BACK - 退回
  */
 export const DocumentStatus ={
     DRAFT: 'draft',
     SUBMIT: 'submit',
+    BACK:'back',
+    
 }
 /**
  * 申请类型

@@ -26,9 +26,9 @@ export default function (){
             pageSize: 20,
         }),
         searchList: Object.freeze([
-            { prop: 'code', label: '产品编码' },
-            { prop: 'name', label: '产品名称' },
-            { prop: 'drawingNo', label: '品名规格' },
+            { prop: 'code', label: '产品编码',type: 'input' },
+            { prop: 'name', label: '产品名称' ,type: 'input'},
+            { prop: 'drawingNo', label: '品名规格',type: 'input' },
         ]),
         getcategoryTree,
         listMethod:getProductList,

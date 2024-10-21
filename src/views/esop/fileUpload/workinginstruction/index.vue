@@ -307,7 +307,7 @@ export default {
                             field: "drawingNo",
                             fieldValue: "",
                             symbol: "like"
-                        }
+                        },
                     ],
                     matchLogic: ""
                 },

@@ -275,7 +275,7 @@ export default {
                     this.pageLoading = false
                 }
             }
-            return this.getInitFn(isAudit)(id, btnType, approvalFlag)
+            return this.getInitFn(approvalFlag)(id, btnType, approvalFlag)
         }
     },
 

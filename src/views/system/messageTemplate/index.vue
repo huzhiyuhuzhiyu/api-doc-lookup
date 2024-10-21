@@ -33,15 +33,15 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="list" custom-column ref="tabForm">
-          <el-table-column prop="fullName" label="模板名称" show-overflow-tooltip min-width="200" />
-          <el-table-column prop="enCode" label="模板编码" width="200" />
-          <el-table-column prop="noticeMethod" label="通知方式" width="240" />
-          <el-table-column prop="creatorUser" label="创建人" width="120" />
+          <el-table-column prop="fullName" label="模板名称"  min-width="120" />
+          <el-table-column prop="enCode" label="模板编码" min-width="120" />
+          <el-table-column prop="noticeMethod" label="通知方式" min-width="120" />
+          <el-table-column prop="creatorUser" label="创建人" min-width="120" />
           <el-table-column prop="creatorTime" label="创建时间" :formatter="jnpf.tableDateFormat"
-            width="120" />
+          min-width="180" />
           <el-table-column prop="lastModifyTime" label="最后修改时间" :formatter="jnpf.tableDateFormat"
             width="120" />
-          <el-table-column prop="enabledMark" label="状态" width="70" align="center">
+          <el-table-column prop="enabledMark" label="状态" min-width="70" align="center">
             <template slot-scope="scope">
               <el-tag :type="scope.row.enabledMark == 1 ? 'success' : 'danger'" disable-transitions>
                 {{scope.row.enabledMark==1?'启用':'禁用'}}</el-tag>

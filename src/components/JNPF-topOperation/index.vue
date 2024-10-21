@@ -1,3 +1,11 @@
+<!--
+ * @Author: DESKTOP-5E76NPE\tiger 1909446527@qq.com
+ * @Date: 2024-06-05 15:44:04
+ * @LastEditors: DESKTOP-5E76NPE\tiger 1909446527@qq.com
+ * @LastEditTime: 2024-10-21 15:20:50
+ * @FilePath: \os-web-zgt4.0\src\components\JNPF-topOperation\index.vue
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
 <template>
   <div class="jnpf-opts">
     <!--左侧插槽-->
@@ -59,8 +67,15 @@ export default {
     refresh() {
       this.$emit('refresh')
     },
-    add(event) {
-      event.target.blur();
+    add(e) {
+      let target = e.target
+      // 根据button组件内容 里面包括一个span标签，如果设置icon，则还包括一个i标签，其他情况请自行观察。
+      // 所以，在我们点击到button组件上的文字也就是span标签上时，直接执行e.target.blur()不会生效，所以要加一层判断。
+      if (target.nodeName === 'SPAN' || target.nodeName === 'I') {
+        target = e.target.parentNode
+      }
+     // 让其失去焦点
+      target.blur()
       this.$emit('add')
     }
   }

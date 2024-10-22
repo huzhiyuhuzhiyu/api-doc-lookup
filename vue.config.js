@@ -26,7 +26,6 @@ const plugins = [
     languages: ['javascript', 'css', 'html', 'typescript', 'json', 'java', 'sql']
   })
 ]
-console.log(process.env.NODE_ENV, isDev)
 if (!isDev) {
   plugins.push(new TerserPlugin({
     terserOptions: {
@@ -45,7 +44,6 @@ if (!isDev) {
     minRatio: 0.8 // 压缩比
   }))
 }
-console.log(plugins)
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
   /**
@@ -92,8 +90,8 @@ module.exports = {
         'static': resolve('static') // 增加这一行代码
       }
     },
-    plugins,
-    devtool: process.env.NODE_ENV !== 'production' ? 'source-map' : undefined
+    plugins
+    // devtool: process.env.NODE_ENV !== 'production' ? 'source-map' : undefined
   },
   css: {
     sourceMap: isDev
@@ -145,11 +143,11 @@ module.exports = {
       })
       .end()
 
-    // config
-    //   // https://webpack.js.org/configuration/devtool/#development
-    //   .when(process.env.NODE_ENV === 'development',
-    //     config => config.devtool('cheap-source-map')
-    //   )
+    config
+      // https://webpack.js.org/configuration/devtool/#development
+      .when(process.env.NODE_ENV === 'development',
+        config => config.devtool('cheap-source-map')
+      )
 
     config
       .when(process.env.NODE_ENV !== 'development',

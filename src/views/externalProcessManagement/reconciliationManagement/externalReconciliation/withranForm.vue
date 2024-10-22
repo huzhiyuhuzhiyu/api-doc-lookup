@@ -719,6 +719,7 @@ export default {
       // 避免传递过来的数据 输入框设置默认值后无法修改 因为内存地址的问题 指向了同一个
       let _data = JSON.parse(JSON.stringify(data))
       this.dataForm = JSON.parse(JSON.stringify(row))
+      this.includingTaxAmount = row.includingTaxAmount
       console.log(_data, '数据数据')
       let excludingTaxAmount, includingTaxAmount
       _data.forEach((item) => {
@@ -778,10 +779,10 @@ export default {
       this.dataFormTwo.data.forEach((item, index) => {
         if (item.receiptReturnType === 'outbound_external') {
           item.includingTaxAmount = this.jnpf.numberFormat(item.reconciliationUnitPrice * item.price)
-          this.includingTaxAmount += this.jnpf.numberFormat(item.reconciliationUnitPrice * item.price)
+          // this.includingTaxAmount += this.jnpf.numberFormat(item.reconciliationUnitPrice * item.price)
         } else {
           item.includingTaxAmount = -this.jnpf.numberFormat(item.reconciliationUnitPrice * item.price)
-          this.includingTaxAmount += this.jnpf.numberFormat(item.excludingTaxAmount + item.taxAmount)
+          // this.includingTaxAmount += this.jnpf.numberFormat(item.excludingTaxAmount + item.taxAmount)
         }
       })
       console.log('object', this.includingTaxAmount)

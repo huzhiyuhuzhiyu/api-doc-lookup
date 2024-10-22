@@ -587,6 +587,7 @@ export default {
       let _data = JSON.parse(JSON.stringify(data))
 
       this.dataForm = row
+      this.includingTaxAmount = row.includingTaxAmount
       this.fetchData('DZDH')
       let excludingTaxAmount, includingTaxAmount
       _data.forEach((item) => {
@@ -641,13 +642,13 @@ export default {
 
       this.listLoading = false
 
-      this.dataFormTwo.data.forEach((item, index) => {
-        if (item.receiptReturnType === 'receipt') {
-          this.includingTaxAmount += this.jnpf.numberFormat(item.excludingTaxAmount + item.taxAmount)
-        } else {
-          this.includingTaxAmount += -this.jnpf.numberFormat(item.reconciliationUnitPrice * item.price)
-        }
-      })
+      // this.dataFormTwo.data.forEach((item, index) => {
+      //   if (item.receiptReturnType === 'receipt') {
+      //     this.includingTaxAmount += this.jnpf.numberFormat(item.excludingTaxAmount + item.taxAmount)
+      //   } else {
+      //     this.includingTaxAmount += -this.jnpf.numberFormat(item.reconciliationUnitPrice * item.price)
+      //   }
+      // })
 
       // 获取当前日期
       const currentDate = new Date()

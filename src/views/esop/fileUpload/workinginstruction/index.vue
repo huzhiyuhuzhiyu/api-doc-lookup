@@ -62,7 +62,7 @@
                     enabled-checkbox-plus
                     :hasC="hasTableTopOpts"
                             ref="dataTable" :setColumnDisplayList="columnList">
-                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />
+<!--                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />-->
                     <el-table-column prop="drawingNo" label="品名规格" min-width="305" />
                     <el-table-column prop="productsCode" label="产品编码" min-width="120" />
                     <el-table-column prop="productsCategoryName" label="产品分类" width="140" />
@@ -74,6 +74,11 @@
                     </el-table-column>
                     <el-table-column prop="version" label="版本号" width="80" />
                     <el-table-column prop="fileCount" label="文件数量" width="120" />
+                    <el-table-column prop="versionCount" label="关联版本" width="120"  v-if="isFileManagementPage || isFileCheckPage">
+                        <template slot-scope="scope">
+                            <el-link :underline="false" type="primary" @click="searchVersion(scope.row.drawingNo)">{{scope.row.versionCount}}</el-link>
+                        </template>
+                    </el-table-column>
                     <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
                     <el-table-column prop="createByName" label="创建人" width="100" />
                     <el-table-column prop="status" label="启用状态" width="120" align="center" v-if="isFileManagementPage || isFileCheckPage">
@@ -465,7 +470,11 @@ export default {
            this.total = data.total
            this.listLoading = false
         },
-
+        searchVersion(drawingNo){
+            this.createTimeArr =[]
+            this.listQuery.superQuery.condition[0].fieldValue = drawingNo
+            this.search()
+        },
         search() {
             trim(executeQueryTime(this.listQuery,this.createTimeArr))
             this.listQuery.pageNum = 1

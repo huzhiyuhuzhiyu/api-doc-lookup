@@ -36,95 +36,66 @@
                 <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>
             </div>
         </div>
-        <div class="JNPF-common-layout-center JNPF-flex-main">
-            <div class="JNPF-common-layout-center JNPF-flex-main">
-                <div class="treeBox_bot gjsearch" ref="fangan">
-                    <div style="width: 200px;">
-                        <el-input v-model="listQuery.name" placeholder="请输入客户名称" clearable @keyup.enter.native="search()" />
-                    </div>
-                    <div style="min-width: 190px;margin-left: 10px;">
-                        <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
-                            {{$t('common.search')}}</el-button>
-                        <el-button icon="el-icon-refresh-right" @click="reset()" class="commonBox">{{$t('common.reset')}}
-                        </el-button>
-                    </div>
-                    <div ref="programmes" style="flex:1;overflow: auto;white-space: nowrap;">
-                        <div v-if="programmelist.length">
-                            <span class="text">方案：</span>
-                            <el-button :class="[programmetitle==item.fullName?'is-reverse':'']" size="mini" v-for="item in programmelist" :key="item.id" @click="actionreverse(item)">{{item.fullName}}</el-button>
-                            <el-popover placement="bottom-end" trigger="click" v-if="programmelist1.length" style="margin-left: 10px;">
-                                <el-button slot="reference" icon="el-icon-arrow-down" size="mini"></el-button>
-                                <div :class="['plan-list-item',programmetitle==o.fullName?'is-reverse':'']" v-for="(o, i) in programmelist1" :key="i" @click="actionreverse(o)">
-                                    <el-link class="plan-list-name" :underline="false">{{ o.fullName }}
-                                    </el-link>
-                                </div>
-                            </el-popover>
-                        </div>
-                    </div>
-                    <!-- <div style="width: 82px;">
-                      <el-button style="border:none;padding: 7px 8px;" size="mini" icon="icon-ym icon-ym-filter" @click="superQueryVisible = true">高级查询</el-button>
-                    </div> -->
-                </div>
-                <div class="JNPF-common-layout-main JNPF-flex-main">
-                    <div class="JNPF-common-head">
-                        <topOpts @add="addOrUpdateHandle('', 'add')">
-                            <el-button type="primary" icon="el-icon-bangzhu" size="mini" @click="releaseFun">释放</el-button>
-                            <el-button type="primary" icon="el-icon-set-up" size="mini" @click="shareFun()">移交</el-button>
-                        </topOpts>
-                        <div class="JNPF-common-head-right">
-                            <el-tooltip content="高级查询" placement="top">
-                                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
-                            </el-tooltip>
-                            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-                                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
-                            </el-tooltip>
-                            <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
-                            </el-tooltip>
-                        </div>
-                    </div>
-                    <JNPF-table hasC @selection-change="handeleInfoData" ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
-                        <el-table-column prop="name" label="客户名称" sortable="custom" min-width="180">
-                            <template slot-scope="scope">
-                                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id,'look')">{{
-                                        scope.row.name
-                                    }}</el-link>
-                            </template>
-                        </el-table-column>
-                        <el-table-column prop="code" label="客户编码" sortable="custom" min-width="160" />
+        <div class="JNPF-common-layout-center JNPF-flex-main" style="background: #fff;padding: 10px;">
+            <div class="main JNPF-flex-main height-full">
+                <div class="JNPF-common-search-box searchWrapper" style="width: 100%;display: flex;align-items: center;height: 57px">
 
-                        <el-table-column prop="lxr" label="联系人" sortable="custom" width="120" />
-                        <el-table-column prop="tel" label="电话" sortable="custom" width="140" />
-                        <el-table-column prop="phone" label="手机" sortable="custom" width="140" />
-                        <el-table-column prop="dealStatus" label="成交状态" width="120">
+                        <SearchPlane
+                            :loading.sync="searchPlaneLoading"
+                            class="search-com"
+                            :searchDropDownList="allSearchDropDownList"
+                            @search-change="searchChange"
+                            @item-click="searchItemClick"
+                            :list="searchList"
+                            :keyword.sync="keyword"
+                            style="width: calc(100% - 39px)"
+                        ></SearchPlane>
+
+                        <SwitchListAndFilter style="width: 39px" @command="filterExtHandler" :switch-list.sync="allSwitchList" :current-ext.sync="currentExt" :file-ext-filter-option="fileExtFilterOption"/>
+
+                </div>
+                <div style="height: calc(100% - 57px)">
+                    <JNPF-table  class="table-style" v-if="allSwitchList" v-loading="listLoading" :data="fileList" empty-text="暂无文件" size="mini">
+                        <el-table-column prop="fullName" label="文件名" custom-column>
                             <template slot-scope="scope">
-                                <div v-if="scope.row.dealStatus=='0'"><el-tag type="danger">未成交</el-tag></div>
-                                <div v-else-if="scope.row.dealStatus=='1'"><el-tag type="success">成交</el-tag></div>
+                          <span v-if="scope.row.type" class="pointer" @click="listItemClick(scope.row)" >
+                            {{ scope.row.fullName }}
+                          </span>
+                                <span class='cursor-pointer' v-else @click="openFolder(scope.row)">
+                            <i class='icon-ym icon-ym-extend-folder text-warning' />
+                            {{ scope.row.fullName }}
+                          </span>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
-                        <el-table-column prop="createByName" label="创建人" width="120" />
-                        <el-table-column label="操作" width="120" fixed="right">
+                        <!--              <el-table-column prop="fileSize" label="大小">-->
+                        <!--                <template slot-scope="scope">{{ scope.row.fileSize | toFileSize() }}</template>-->
+                        <!--              </el-table-column>-->
+                        <el-table-column prop="creatorTime" label="创建日期" width="200"/>
+                        <el-table-column label="操作" fixed="right" width="200">
                             <template slot-scope="scope">
-                                <!-- <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id,'edit')">转正式</el-button> -->
-                                <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id, 'look')">查看详情</el-button>
-                                <!-- <el-dropdown hide-on-click>
-                                  <span class="el-dropdown-link">
-                                    <el-button type="text" size="mini">
-                                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                                <el-button size="mini" type="text" @click="handleDownLoad(scope.row.id)"
+                                           :disabled="!scope.row.type">下载</el-button>
+                                <el-button size="mini" type="text" class="JNPF-table-delBtn"
+                                           @click="handleDel(scope.$index, scope.row.id)" v-if="scope.row.canEdit">删除</el-button>
+                                <el-dropdown v-if="scope.row.canEdit">
+                                    <el-button type=" text" size="mini">
+                                        {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
                                     </el-button>
-                                  </span>
-                                  <el-dropdown-menu slot="dropdown">
-                                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
-                                      查看详情
-                                    </el-dropdown-item>
-                                  </el-dropdown-menu>
-                                </el-dropdown> -->
+                                    <el-dropdown-menu slot="dropdown">
+                                        <el-dropdown-item @click.native="shareFolder(scope.row.id)" v-if="scope.row.type">
+                                            共享
+                                        </el-dropdown-item>
+                                        <el-dropdown-item @click.native="getFolder(scope.row.id)">重命名
+                                        </el-dropdown-item>
+                                        <el-dropdown-item @click.native="moveTo(scope.row.id, scope.row.parentId)">
+                                            移动到
+                                        </el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </el-dropdown>
                             </template>
                         </el-table-column>
                     </JNPF-table>
-                    <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData">
-                    </pagination>
+                    <GridFileList v-loading="gridFileListLoading" class="table-style" style="border: 1px solid #ebeef5 !important;" v-else @item-click="listItemClick" @command="allItemCommandHandler"  :list="fileList" :file-options="allFileOptions"></GridFileList>
                 </div>
             </div>
         </div>
@@ -140,12 +111,244 @@ import { getPartnerList, releasePartner } from '@/api/customerManagement/index'
 
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {FileCategoryType} from "@/views/esop/fileCategoryManagement/constants";
+import FileUploadDrop from "@/views/esop/fileUpload/workinginstruction/component/FileUploadDrop.vue";
+import GridFileList from "@/views/drawingDocument/document/GridFileList.vue";
+import {AllList} from "@/api/extend/document";
+import {isFile, Type2SuffixArr} from "@/views/drawingDocument/document/utils";
+import SearchPlane from "@/views/drawingDocument/document/SearchPlane.vue";
+import SwitchListAndFilter from "@/views/drawingDocument/document/SwitchListAndFilter.vue";
 
 export default {
     name: 'myCustomer',
-    components: { SuperQuery, },
+    components: {SwitchListAndFilter, SearchPlane, GridFileList, FileUploadDrop, SuperQuery, },
     data() {
         return {
+            allFileOptions:[
+
+            ],
+            searchPlaneLoading:false,
+            currentExt:'',
+            fileExtFilterOption:Object.freeze( [
+                {
+                    text:'全部',
+                    icon:'zgt-ifont-quanbu'
+                },
+                {
+                    text:'txt',
+                    icon:'zgt-ifont-txt'
+                },
+                {
+                    text:'pdf',
+                    icon:'zgt-ifont-pdf'
+                },
+                {
+                    text:'word',
+                    icon:'zgt-ifont-doc'
+                },
+                {
+                    text:'excel',
+                    icon:'zgt-ifont-excel'
+                },
+                {
+                    text:'ppt',
+                    icon:'zgt-ifont-ppt'
+                },
+                {
+                    text:'图片',
+                    icon:'zgt-ifont-tupian'
+                }, {
+                    text:'思维导图',
+                    icon:'zgt-ifont-suolvetu-siweidaotu'
+                },
+            ]),
+            keyword:"",
+            allSearchDropDownList:[
+            ],
+            fileList:[
+                {
+                    "id": "1839210682899824642",
+                    "fullName": "123",
+                    "type": 0,
+                    "creatorTime": "2024-09-26 15:49:32",
+                    "isShare": 0,
+                    "fileSize": "",
+                    "parentId": "0",
+                    "fileExtension": null,
+                    "canEdit": true,
+                    "source": "全部文档",
+                    "sourceId": "0",
+                    "filePath": null
+                },
+                {
+                    "id": "1839217958427623425",
+                    "fullName": "465",
+                    "type": 0,
+                    "creatorTime": "2024-09-26 16:18:26",
+                    "isShare": 0,
+                    "fileSize": "",
+                    "parentId": "0",
+                    "fileExtension": null,
+                    "canEdit": true,
+                    "source": "全部文档",
+                    "sourceId": "0",
+                    "filePath": null
+                },
+                {
+                    "id": "1839217877028765697",
+                    "fullName": "轴管通-文件管理需求说明.docx",
+                    "type": 1,
+                    "creatorTime": "2024-09-26 16:18:07",
+                    "isShare": 1,
+                    "fileSize": "1895532",
+                    "parentId": "0",
+                    "fileExtension": "docx",
+                    "canEdit": true,
+                    "source": "全部文档",
+                    "sourceId": "0",
+                    "filePath": "609022527074832069.docx"
+                },
+                {
+                    "id": "1839217895550812162",
+                    "fullName": "2024-09-26 16:18:11-71D2CAC6-1A30-4e9e-8B93-E3AF26CB38E3.png",
+                    "type": 1,
+                    "creatorTime": "2024-09-26 16:18:11",
+                    "isShare": 0,
+                    "fileSize": "85890",
+                    "parentId": "0",
+                    "fileExtension": "png",
+                    "canEdit": true,
+                    "source": "全部文档",
+                    "sourceId": "0",
+                    "filePath": "609022545613655749.png"
+                },
+                {
+                    "id": "1839217895995408385",
+                    "fullName": "2024-09-26 16:18:12-轴管通-ESOP需求说明.docx",
+                    "type": 1,
+                    "creatorTime": "2024-09-26 16:18:12",
+                    "isShare": 0,
+                    "fileSize": "1516573",
+                    "parentId": "0",
+                    "fileExtension": "docx",
+                    "canEdit": true,
+                    "source": "全部文档",
+                    "sourceId": "0",
+                    "filePath": "609022546041474757.docx"
+                },
+                {
+                    "id": "1839217897970925570",
+                    "fullName": "2024-09-26 16:18:12-轴管通-文件管理需求说明.docx",
+                    "type": 1,
+                    "creatorTime": "2024-09-26 16:18:12",
+                    "isShare": 0,
+                    "fileSize": "1895532",
+                    "parentId": "0",
+                    "fileExtension": "docx",
+                    "canEdit": true,
+                    "source": "全部文档",
+                    "sourceId": "0",
+                    "filePath": "609022548004409029.docx"
+                },
+                {
+                    "id": "1840325452336005121",
+                    "fullName": "2024-09-29 17:39:14-轴管通-文件管理需求说明.docx",
+                    "type": 1,
+                    "creatorTime": "2024-09-29 17:39:14",
+                    "isShare": 0,
+                    "fileSize": "1895532",
+                    "parentId": "0",
+                    "fileExtension": "docx",
+                    "canEdit": true,
+                    "source": "全部文档",
+                    "sourceId": "0",
+                    "filePath": "610130102386272261.docx"
+                },
+                {
+                    "id": "1840638406629588993",
+                    "fullName": "新建文本文档.txt",
+                    "type": 1,
+                    "creatorTime": "2024-09-30 14:22:48",
+                    "isShare": 0,
+                    "fileSize": "0",
+                    "parentId": "0",
+                    "fileExtension": "txt",
+                    "canEdit": true,
+                    "source": "全部文档",
+                    "sourceId": "0",
+                    "filePath": "610443056692439045.txt"
+                },
+                {
+                    "id": "1843489641489563650",
+                    "fullName": "2024-10-08 11:12:35-新建文本文档.txt",
+                    "type": 1,
+                    "creatorTime": "2024-10-08 11:12:35",
+                    "isShare": 0,
+                    "fileSize": "0",
+                    "parentId": "0",
+                    "fileExtension": "txt",
+                    "canEdit": true,
+                    "source": "全部文档",
+                    "sourceId": "0",
+                    "filePath": "613294291544027973.txt"
+                },
+                {
+                    "id": "1843822085140971521",
+                    "fullName": "starry.jpg",
+                    "type": 1,
+                    "creatorTime": "2024-10-09 09:13:36",
+                    "isShare": 0,
+                    "fileSize": "479622",
+                    "parentId": "0",
+                    "fileExtension": "jpg",
+                    "canEdit": true,
+                    "source": "全部文档",
+                    "sourceId": "0",
+                    "filePath": "613626735124134789.jpg"
+                },
+                {
+                    "id": "1843824293521719298",
+                    "fullName": "轴管通-异常管理需求说明.docx",
+                    "type": 1,
+                    "creatorTime": "2024-10-09 09:22:22",
+                    "isShare": 0,
+                    "fileSize": "2966038",
+                    "parentId": "0",
+                    "fileExtension": "docx",
+                    "canEdit": true,
+                    "source": "全部文档",
+                    "sourceId": "0",
+                    "filePath": "613628943546825605.docx"
+                },
+                {
+                    "id": "1844549308680568834",
+                    "fullName": "logo3.jpg",
+                    "type": 1,
+                    "creatorTime": "2024-10-11 09:23:19",
+                    "isShare": 0,
+                    "fileSize": "137704",
+                    "parentId": "0",
+                    "fileExtension": "jpg",
+                    "canEdit": true,
+                    "source": "全部文档",
+                    "sourceId": "0",
+                    "filePath": "614353958697288197.jpg"
+                },
+                {
+                    "id": "1845050927763488769",
+                    "fullName": "2024-10-12 18:36:35-新建文本文档.txt",
+                    "type": 1,
+                    "creatorTime": "2024-10-12 18:36:35",
+                    "isShare": 0,
+                    "fileSize": "9",
+                    "parentId": "0",
+                    "fileExtension": "txt",
+                    "canEdit": true,
+                    "source": "全部文档",
+                    "sourceId": "0",
+                    "filePath": "614855577822155525.txt"
+                }
+            ],
+            allSwitchList:false,
             shareVisible:false,
             superQueryJson: [
                 {
@@ -188,6 +391,7 @@ export default {
                     pickerOptions: this.global.timePickerOptions
                 }
             ],
+            gridFileListLoading:false,
             superQueryVisible: false,
             programmefrom: {},
             partentOrChild: 'partent',
@@ -248,6 +452,12 @@ export default {
         },
     },
     created() {
+
+        AllList({
+            parentId:0
+        }).then(res=>{
+            this.fileList = res.data.list
+        })
         this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
         this.getcategoryTree()
         // this.initData()
@@ -269,6 +479,61 @@ export default {
         window.onresize = null
     },
     methods: {
+        filterExtHandler(command){
+            if(command === ALL_TEXT){
+                this.currentExt= ''
+                return this.list = this.listCopy
+            }
+            this.currentExt= command
+            const suffixArr = Type2SuffixArr.get(command)
+            if(suffixArr && suffixArr.length){
+                return this.list = this.listCopy.filter(item=>suffixArr.includes(item.fileExtension))
+            }
+        },
+        async searchChange(data){
+            if(data.keyword === ''){
+                return this.searchList = []
+            }
+            this.searchPlaneLoading = true
+            const { start,end }= timeOptionHandler(data[TIME_OPTION_FLAG])
+            const fileType = fileExtOptionHandler(data[FILE_EXT_OPTION_FLAG])
+            const documentType = fileCategoryOptionHandler(data[FILE_CATEGORY_OPTION_FLAG])
+            const params ={
+                keyword:data.keyword,
+                start,
+                end,
+                fileType,
+                parentId:this.parentId,
+                documentType,
+                subsetFlag:true
+            }
+
+            switch (this.activeTab){
+                case "shareoutPanel":
+                    params.documentType = 'share'
+                    break;
+                case "sharetomePanel":
+                    params.documentType = 'shareToMe'
+                    break;
+                case "trashPanel":
+                    params.documentType = 'trash'
+                    break;
+
+            }
+            try {
+                const res = await AllList(params)
+                this.searchList = res.data.list.filter(item=>isFile(item))
+            }catch (e) {
+                console.error(e)
+            }finally {
+                this.searchPlaneLoading = false
+            }
+
+        },
+        searchItemClick(){},
+        searchList(){},
+        listItemClick(){},
+        allItemCommandHandler(){},
         shareFun() {
             if (!this.selectData.length) return this.$message.error("请先选择你要移交的客户")
             let idList = this.selectData.map(item => item.id);

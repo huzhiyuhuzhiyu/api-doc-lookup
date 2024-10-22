@@ -70,7 +70,7 @@
                         </el-col>
                         <el-col :sm="24" :xs="24">
                           <el-form-item label="故障情况照片" prop="frontPicList">
-                            <UploadImg v-model="dataForm.frontPicList" :limit="3"></UploadImg>
+                            <UploadImg v-model="dataForm.frontPicList"></UploadImg>
                           </el-form-item>
                         </el-col>
                       </el-row>

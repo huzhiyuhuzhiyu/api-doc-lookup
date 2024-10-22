@@ -70,6 +70,7 @@
                         <template slot-scope="{row}">
                             <el-tag type="warning" v-if="row.documentStatus === 'draft'">草稿</el-tag>
                             <el-tag type="success" v-else-if="row.documentStatus === 'submit'">提交</el-tag>
+                            <el-tag type="danger"  v-else-if="row.documentStatus === 'back'">退回</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column prop="version" label="版本号" width="80" />
@@ -155,7 +156,7 @@ import { mapGetters, mapState } from 'vuex'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import EditWorkingInstructionUpload from "@/views/esop/fileUpload/workinginstruction/Form.vue";
 import {
-    addBimFileUpload,
+    addBimFileUpload, backBimFileUpload,
     batchDeleteBimFileUpload,
     deleteBimFileUpload, detailBimFileUpload,
     getBimFileUpload, switchEnableMark
@@ -383,8 +384,17 @@ export default {
 
 
         },
-        backFileUpload(type,id){
-            console.log("backFileUpload",id)
+        async backFileUpload(type,id){
+            console.log('type',type)
+           try {
+               await getQueryConfirm(this,'是否要退回此记录？')
+               const res = await backBimFileUpload(id)
+               getSuccessInfo()
+               this.initData()
+           }catch (e) {
+                this.$message.error(e.message)
+           }
+
         },
         superQueryVisibleShow(){
           this.superQueryVisible = true

@@ -12,7 +12,7 @@
                                 <el-button type="primary" :loading="btnLoading" @click="handleConfirm(DocumentStatus.SUBMIT)">保存并提交</el-button>
                             </template>
                             <template v-else-if="isFileManagementPage">
-                                <el-button type="primary" :loading="btnLoading" @click="delFileUpload">退回</el-button>
+                                <el-button type="primary" :loading="btnLoading" @click="backFileUpload">退回</el-button>
                                 <el-button type="danger" :loading="btnLoading" @click="delFileUpload">删除</el-button>
                             </template>
                             <template v-else-if="isFileTrashPage">
@@ -60,7 +60,7 @@ import {getQueryConfirm, getSuccessInfo, isEmpty, notEmpty} from "@/utils";
 import FileUploadDrop from "@/views/esop/fileUpload/workinginstruction/component/FileUploadDrop.vue";
 import {DocumentStatus, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 import {
-    addBimFileUpload,
+    addBimFileUpload, backBimFileUpload,
     deleteBimFileUpload,
     detailBimFileUpload,
     modifyBimFileUpload
@@ -156,6 +156,19 @@ export default {
                 this.btnLoading = false
             }
 
+        },
+        async backFileUpload(){
+            try {
+                this.btnLoading = true
+                await getQueryConfirm(this,"是否要退回此记录")
+                await backBimFileUpload(this.id)
+                getSuccessInfo()
+                this.goBack()
+            }catch (e) {
+
+            }finally {
+                this.btnLoading = false
+            }
         },
         async handleRestore(){
             try {

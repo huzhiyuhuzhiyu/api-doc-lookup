@@ -128,7 +128,7 @@
 
 
 
-                        <el-table-column prop="waitReceiptNum" label="待收货数量" width="140" :key="777"
+                        <el-table-column prop="requiredReceivedQuantity" label="待收货数量" width="140" :key="777"
                           v-if="btnType != 'look'">
                         </el-table-column>
 
@@ -283,7 +283,7 @@
 
 
 
-                    <el-table-column prop="waitReceiptNum" label="待收货数量" width="140" :key="777" v-if="btnType != 'look'">
+                    <el-table-column prop="requiredReceivedQuantity" label="待收货数量" width="140" :key="777" v-if="btnType != 'look'">
                     </el-table-column>
 
 
@@ -370,7 +370,7 @@
                 <el-table-column prop="processName" label="工序名称" width="120" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="80" />
                 <el-table-column prop="purchaseQuantity" label="数量" width="80" sortable="custom" />
-                <el-table-column prop="waitReceiptNum" label="待收货数量" width="130" sortable="custom" />
+                <el-table-column prop="requiredReceivedQuantity" label="待收货数量" width="130" sortable="custom" />
                 <el-table-column prop="deliveryDate" label="交货日期" width="130" sortable="custom" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
               </JNPF-table>
@@ -1063,7 +1063,7 @@ export default {
                 console.log(item.num);
                 console.log(item.ordersNum);
                 submitFlag = false
-                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过订单数量")
+                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待收货数量")
                 break
               }
 

@@ -1231,6 +1231,7 @@ export default {
       var maxDate = null // 最大日期初始值设为null
       // 遍历数组，比较日期来找到最大日期
       for (var i = 0; i < this.dataFormTwo.data.length; i++) {
+        console.log(this.dataFormTwo.data[i], 'this.dataFormTwo.data[i]')
         var currentDate = new Date(this.dataFormTwo.data[i].deliveryDate)
         if (maxDate === null || currentDate > maxDate) {
           maxDate = currentDate
@@ -1238,9 +1239,9 @@ export default {
         this.$set(this.dataFormTwo.data[i], 'excludingTaxAmount', '') // 总金额(不含税)
         // this.$set(this.dataFormTwo.data[i], 'excludingTaxPrice', '')    // 	不含税单价
         this.$set(this.dataFormTwo.data[i], 'fixedPrice', '') //  	定价
-        this.$set(this.dataFormTwo.data[i], 'price', this.dataFormTwo.data[i].price) //  	含税单价
+        this.$set(this.dataFormTwo.data[i], 'price', this.dataFormTwo.data[i].purchasePrice) //  	含税单价
         this.$set(this.dataFormTwo.data[i], 'taxAmount', '') // 税额
-        this.$set(this.dataFormTwo.data[i], 'taxRate', this.dataFormTwo.data[i].taxRate) // taxRate
+        this.$set(this.dataFormTwo.data[i], 'taxRate', this.dataFormTwo.data[i].purchaseTaxRate) // taxRate
         this.$set(this.dataFormTwo.data[i], 'totalAmount', '') // 	价税合计
         this.$set(
           this.dataFormTwo.data[i],

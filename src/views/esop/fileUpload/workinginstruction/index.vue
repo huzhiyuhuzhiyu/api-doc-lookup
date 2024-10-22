@@ -76,7 +76,7 @@
                     <el-table-column prop="fileCount" label="文件数量" width="120" />
                     <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
                     <el-table-column prop="createByName" label="创建人" width="100" />
-                    <el-table-column prop="status" label="启用状态" width="120" align="center" v-if="isFileManagementPage">
+                    <el-table-column prop="status" label="启用状态" width="120" align="center" v-if="isFileManagementPage || isFileCheckPage">
                         <template slot-scope="scope">
                             <el-switch @change="changeState(scope.row)" v-model="scope.row.enabledMark"
                                        :active-value="true" :inactive-value="false">
@@ -85,7 +85,9 @@
                     </el-table-column>
                     <el-table-column label="操作" width="180" fixed="right">
                         <template slot-scope="scope">
-                                <tableOpts :isJudgePer="true"
+                                <tableOpts
+                                            v-if="!isFileCheckPage"
+                                            :isJudgePer="true"
                                            :del-disabled="isFileManagementPage && scope.row.enabledMark"
                                            :edit-text="tableOptsEditText"
                                            :del-text="tableOptsDelText"
@@ -109,6 +111,7 @@
                                                     </el-dropdown-menu>
                                             </el-dropdown>
                                 </tableOpts>
+                                <el-button v-if="isFileCheckPage" type="text" size="mini" @click="addOrUpdateHandle(ModelType.VIEW,scope.row.id)">查看详情</el-button>
                         </template>
                     </el-table-column>
                 </JNPF-table>
@@ -121,11 +124,12 @@
                 v-if="formVisible && recreateFlag" @recreate="recreate"
                 :flowCode="flowCode"
                 :type="uploadType"
-                :id="fileUploadId"
+                :id.sync="fileUploadId"
                 :applicationType="applicationType"
                 :isFileManagementPage="isFileManagementPage"
                 :isFileTrashPage="isFileTrashPage"
-                :isFileUpload="isFileUpload"
+                :isFileUploadPage="isFileUploadPage"
+                :isFileCheckPage="isFileCheckPage"
                 @back="editBack" />
         </slot>
 
@@ -153,9 +157,16 @@ import {
 import moment from "moment";
 import {
     ApplicationType,
-    DocumentStatus, FileManagePageSet, FileTrashPageSet,
+    DocumentStatus,
+    FileCheckPageSet,
+    FileManagementPageType2FileUploadUrl,
+    FileManagePageSet,
+    FileTrashPageSet,
+    FileUploadPageSet,
+    FileUploadPageType2Url,
     ModelType,
-    PageType
+    PageType,
+    PathQueryType
 } from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 import {FlowCode} from "@/views/esop/utils/constants";
 import {getQueryConfirm, getSuccessInfo, isEmpty, mapIfNonePutArr, trim} from "@/utils";
@@ -189,6 +200,16 @@ export default {
             type:String,
             default:""
         }
+    },
+    watch:{
+      "$route.query.id"(val){
+          if(!this.isFileUploadPage){
+              return
+          }
+          if( this.$route.query.type === PathQueryType.COPY){
+            this.addOrUpdateHandle(ModelType.COPY,val)
+          }
+      }
     },
     mixins:[RecreateMixin],
     data() {
@@ -256,11 +277,14 @@ export default {
         isFileTrashPage(){
             return FileTrashPageSet.has(this.pageType)
         },
-        isFileUpload(){
-            return !this.isFileManagementPage && !this.isFileTrashPage
+        isFileUploadPage(){
+            return FileUploadPageSet.has(this.pageType)
+        },
+        isFileCheckPage(){
+          return FileCheckPageSet.has(this.pageType)
         },
         hasTableTopOpts(){
-            return this.isFileUpload
+            return this.isFileUploadPage
         },
         tableOptsDelText(){
             return this.isFileTrashPage ? '还原' : '删除'
@@ -294,6 +318,15 @@ export default {
     methods: {
         copy2FileUpload(id){
             console.log("copy2FileUpload",id)
+            console.log(this.pageType)
+            console.log(FileManagementPageType2FileUploadUrl[this.pageType])
+            this.$router.replace({
+                path: FileManagementPageType2FileUploadUrl[this.pageType],
+                query:{
+                    id,
+                    type:PathQueryType.COPY
+                }
+            })
         },
         backFileUpload(type,id){
             console.log("backFileUpload",id)
@@ -367,7 +400,7 @@ export default {
             this.initData()
         },
         executeUploadPageParams(params){
-            if(this.isFileUpload){
+            if(this.isFileUploadPage){
                 params.uploadListFlag = 1
                 delete params.documentStatus
             }

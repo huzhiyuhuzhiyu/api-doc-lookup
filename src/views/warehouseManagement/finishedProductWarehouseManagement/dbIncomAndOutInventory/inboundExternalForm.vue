@@ -1109,7 +1109,7 @@ export default {
                 console.log(item.num);
                 console.log(item.ordersNum);
                 submitFlag = false
-                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过订单数量")
+                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待收货数量")
                 break
               }
 

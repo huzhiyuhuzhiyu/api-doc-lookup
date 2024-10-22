@@ -114,6 +114,7 @@ export default {
       this.dataForm.parentId = parentId || '-1'
       this.formLoading = true
       this.title = !this.dataForm.id ? '新建工序分类' : '编辑工序分类'
+      console.log(123)
       this.$nextTick(() => {
         if (this.dataForm.id) {
           this.fetchData('bm_gy_gxfl', false)

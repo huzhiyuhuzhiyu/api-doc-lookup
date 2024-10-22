@@ -322,6 +322,7 @@ export default {
               drawingNo: item.drawingNo,
               productCode: item.productCode,
               outShipmentListId: item.id,
+              id: item.id,
               processId: item.processId,
               processName: item.processName,
               calculationDirection: item.calculationDirection,

@@ -1254,6 +1254,11 @@ export default {
                   insertOutOrder(_data)
                     .then((res) => {
                       if (res.msg === 'Success') res.msg = '新建成功'
+                      if (value == 'draft') {
+                        this.submitmethodsTitle = '保存成功'
+                      } else if (value == 'submit') {
+                        this.submitmethodsTitle = '提交成功'
+                      }
                       this.tipsvisible = true
                     })
                     .catch(() => {

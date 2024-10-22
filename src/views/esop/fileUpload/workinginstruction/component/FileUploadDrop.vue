@@ -130,7 +130,7 @@ export default {
             type:Boolean,
             default:false
         },
-        isFileUpload:{
+        isFileUploadPage:{
             type:Boolean,
             default:false
         },
@@ -223,7 +223,7 @@ export default {
                     text:'查看',
                 },
             ]
-            if(this.isFileUpload){
+            if(this.isFileUploadPage){
                 origin.push({
                     value:'delete',
                     text:'删除',

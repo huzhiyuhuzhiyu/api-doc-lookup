@@ -358,7 +358,7 @@
     <section class="approver-pane" v-if="value && isStartNode()">
       <el-scrollbar class="config-scrollbar" style="height:100%">
       <el-tabs style="height:100%;">
-        <el-tab-pane label="基础设置">
+        <!-- <el-tab-pane label="基础设置">
           <el-scrollbar class="config-scrollbar">
             <el-form label-position="top" :model="startForm" class="pd-10-20">
               <el-form-item label="发起设置" v-if="flowType!=1">
@@ -403,8 +403,8 @@
               </el-form-item>
             </el-form>
           </el-scrollbar>
-        </el-tab-pane>
-        <el-tab-pane label="高级设置">
+        </el-tab-pane> -->
+        <!-- <el-tab-pane label="高级设置">
           <el-scrollbar class="config-scrollbar">
             <el-form label-position="top" class="pd-10-20">
               <el-form-item label="操作设置">
@@ -478,14 +478,6 @@
             </el-form>
             <el-form class="pd-10-20" style="margin-top:-20px" label-width="90px"
               label-position="left">
-              <!-- <el-form-item>
-                <div slot="label" class="form-item-label">手写签名
-                  <el-tooltip content="发起人在进行流程撤回操作时需手写签名" placement="top">
-                    <a class="el-icon-warning-outline"></a>
-                  </el-tooltip>
-                </div>
-                <el-switch v-model="startForm.hasSign" />
-              </el-form-item> -->
               <el-form-item>
                 <div slot="label" class="form-item-label">意见填写
                   <el-tooltip content="发起人在进行流程撤回操作需填写意见" placement="top">
@@ -527,8 +519,8 @@
               </el-form-item>
             </el-form>
           </el-scrollbar>
-        </el-tab-pane>
-        <el-tab-pane label="表单权限">
+        </el-tab-pane> -->
+        <!-- <el-tab-pane label="表单权限">
           <div class="form-auth-table">
             <el-table :data="getFormOperates()" class="JNPF-common-table" size="mini" height="100%">
               <el-table-column prop="name" label="表单字段" align="left"></el-table-column>
@@ -542,8 +534,8 @@
               </el-table-column>
             </el-table>
           </div>
-        </el-tab-pane>
-        <el-tab-pane label="流程事件">
+        </el-tab-pane> -->
+        <!-- <el-tab-pane label="流程事件">
           <el-scrollbar class="config-scrollbar">
             <el-form :model="startForm" class="pd-10-20" label-position="left">
               <el-alert title="开启后可配置触发事件同时进行参数赋值" type="warning" :closable="false" show-icon />
@@ -684,7 +676,7 @@
               </div>
             </el-form>
           </el-scrollbar>
-        </el-tab-pane>
+        </el-tab-pane> -->
         <el-tab-pane label="流程通知">
           <el-scrollbar class="config-scrollbar">
             <el-form :model="startForm" class="pd-10-20" label-position="top">
@@ -726,11 +718,11 @@
                             :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
                             :value="item.__vModel__" />
                         </el-option-group>
-                        <el-option-group>
+                        <!-- <el-option-group>
                           <el-option v-for="item in formFieldsOptions" :key="item.__vModel__"
                             :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
                             :value="item.__vModel__" />
-                        </el-option-group>
+                        </el-option-group> -->
                       </el-select>
                     </template>
                   </el-table-column>
@@ -772,11 +764,11 @@
                             :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
                             :value="item.__vModel__" />
                         </el-option-group>
-                        <el-option-group>
+                        <!-- <el-option-group>
                           <el-option v-for="item in formFieldsOptions" :key="item.__vModel__"
                             :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
                             :value="item.__vModel__" />
-                        </el-option-group>
+                        </el-option-group> -->
                       </el-select>
                     </template>
                   </el-table-column>
@@ -818,11 +810,11 @@
                             :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
                             :value="item.__vModel__" />
                         </el-option-group>
-                        <el-option-group>
+                        <!-- <el-option-group>
                           <el-option v-for="item in formFieldsOptions" :key="item.__vModel__"
                             :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
                             :value="item.__vModel__" />
-                        </el-option-group>
+                        </el-option-group> -->
                       </el-select>
                     </template>
                   </el-table-column>
@@ -864,11 +856,11 @@
                             :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
                             :value="item.__vModel__" />
                         </el-option-group>
-                        <el-option-group>
+                        <!-- <el-option-group>
                           <el-option v-for="item in formFieldsOptions" :key="item.__vModel__"
                             :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
                             :value="item.__vModel__" />
-                        </el-option-group>
+                        </el-option-group> -->
                       </el-select>
                     </template>
                   </el-table-column>
@@ -910,17 +902,17 @@
                             :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
                             :value="item.__vModel__" />
                         </el-option-group>
-                        <el-option-group>
+                        <!-- <el-option-group>
                           <el-option v-for="item in formFieldsOptions" :key="item.__vModel__"
                             :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
                             :value="item.__vModel__" />
-                        </el-option-group>
+                        </el-option-group> -->
                       </el-select>
                     </template>
                   </el-table-column>
                 </el-table>
               </div>
-              <el-form-item>
+              <!-- <el-form-item>
                 <div slot="label" class="form-item-label">节点超时
                   <el-tooltip content="所有节点超时的时候" placement="top">
                     <a class="el-icon-warning-outline"></a>
@@ -999,11 +991,11 @@
                     </template>
                   </el-table-column>
                 </el-table>
-              </div>
+              </div> -->
             </el-form>
           </el-scrollbar>
         </el-tab-pane>
-        <el-tab-pane label="超时提醒">
+        <!-- <el-tab-pane label="超时提醒">
           <el-scrollbar class="config-scrollbar">
             <el-form :model="startForm" class="pd-10-20" label-position="top">
               <el-form-item label="限时设置">
@@ -1147,7 +1139,7 @@
               </div>
             </el-form>
           </el-scrollbar>
-        </el-tab-pane>
+        </el-tab-pane> -->
       </el-tabs>
     </el-scrollbar>
     </section>
@@ -1683,11 +1675,11 @@
                             :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
                             :value="item.__vModel__" />
                         </el-option-group>
-                        <el-option-group>
+                        <!-- <el-option-group>
                           <el-option v-for="item in formFieldsOptions" :key="item.__vModel__"
                             :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
                             :value="item.__vModel__" />
-                        </el-option-group>
+                        </el-option-group> -->
                       </el-select>
                     </template>
                   </el-table-column>
@@ -1729,11 +1721,11 @@
                             :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
                             :value="item.__vModel__" />
                         </el-option-group>
-                        <el-option-group>
+                        <!-- <el-option-group>
                           <el-option v-for="item in formFieldsOptions" :key="item.__vModel__"
                             :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
                             :value="item.__vModel__" />
-                        </el-option-group>
+                        </el-option-group> -->
                       </el-select>
                     </template>
                   </el-table-column>
@@ -1775,17 +1767,17 @@
                             :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
                             :value="item.__vModel__" />
                         </el-option-group>
-                        <el-option-group>
+                        <!-- <el-option-group>
                           <el-option v-for="item in formFieldsOptions" :key="item.__vModel__"
                             :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
                             :value="item.__vModel__" />
-                        </el-option-group>
+                        </el-option-group> -->
                       </el-select>
                     </template>
                   </el-table-column>
                 </el-table>
               </div>
-              <el-form-item>
+              <!-- <el-form-item>
                 <div slot="label" class="form-item-label">节点提醒
                   <el-tooltip content="当前节点提醒的时候" placement="top">
                     <a class="el-icon-warning-outline"></a>
@@ -1824,7 +1816,7 @@
                     </template>
                   </el-table-column>
                 </el-table>
-              </div>
+              </div> -->
             </el-form>
           </el-scrollbar>
         </el-tab-pane>
@@ -2327,7 +2319,15 @@ const systemFieldOptions = [{
     required: true
   },
   __vModel__: '@flowOperatorUserName',
-}]
+},
+{
+  __config__: {
+    label: '当前时间',
+    required: true
+  },
+  __vModel__: '@currentTime',
+},
+]
 export default {
   props: [/*当前节点数据*/"value", /*整个节点数据*/"processData", "flowType"],
   components: { OrgSelect, MsgDialog, InterfaceDialog, FormulaDialog, FlowDialog },

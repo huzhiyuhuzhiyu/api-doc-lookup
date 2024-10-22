@@ -150,8 +150,9 @@ import { mapGetters, mapState } from 'vuex'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import EditWorkingInstructionUpload from "@/views/esop/fileUpload/workinginstruction/Form.vue";
 import {
+    addBimFileUpload,
     batchDeleteBimFileUpload,
-    deleteBimFileUpload,
+    deleteBimFileUpload, detailBimFileUpload,
     getBimFileUpload, switchEnableMark
 } from "@/api/esop/fileUpload/workinginstruction";
 import moment from "moment";
@@ -164,15 +165,16 @@ import {
     FileTrashPageSet,
     FileUploadPageSet,
     FileUploadPageType2Url,
-    ModelType,
+    ModelType, ORDER_CODE_FILE_UPLOAD,
     PageType,
     PathQueryType
 } from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 import {FlowCode} from "@/views/esop/utils/constants";
-import {getQueryConfirm, getSuccessInfo, isEmpty, mapIfNonePutArr, trim} from "@/utils";
+import {getQueryConfirm, getSuccessInfo, isEmpty, mapIfNonePutArr, notEmpty, trim} from "@/utils";
 import RecreateMixin from "@/views/esop/utils/RecreateMixin";
-import {BtnType, executeQueryTime} from "@/views/esop/utils/utils";
+import {BtnType, executeQueryTime, getUploadFileSaveData} from "@/views/esop/utils/utils";
 import {getBimRecycleBin, revertBimRecycleBin} from "@/api/esop/fileTrash";
+import {getBusinessFlowInfo} from "@/api/workFlow/FlowEngine";
 
 
 
@@ -202,12 +204,15 @@ export default {
         }
     },
     watch:{
-      "$route.query.id"(val){
-          if(!this.isFileUploadPage){
-              return
-          }
-          if( this.$route.query.type === PathQueryType.COPY){
-            this.addOrUpdateHandle(ModelType.COPY,val)
+      "$route.query.id":{
+          immediate:true,
+          handler(val){
+              if(!this.isFileUploadPage){
+                  return
+              }
+              if( this.$route.query.type === PathQueryType.DETAIL){
+                  this.addOrUpdateHandle(ModelType.EDIT,val)
+              }
           }
       }
     },
@@ -316,17 +321,62 @@ export default {
 
     },
     methods: {
-        copy2FileUpload(id){
-            console.log("copy2FileUpload",id)
-            console.log(this.pageType)
-            console.log(FileManagementPageType2FileUploadUrl[this.pageType])
-            this.$router.replace({
-                path: FileManagementPageType2FileUploadUrl[this.pageType],
-                query:{
-                    id,
-                    type:PathQueryType.COPY
+       async getFlowData(){
+           const resObj ={
+               flowData:null,
+               approvalFlag:false
+           }
+           try{
+               const res = await getBusinessFlowInfo(this.flowCode)
+               if (res.data) {
+                   resObj.approvalFlag = res.data.enabledMark
+                   resObj.flowData = res.data.enabledMark? res.data : null
+               }
+
+           }catch (e) {
+           }
+           return resObj
+        },
+
+        async copy2FileUpload(id){
+            this.listLoading = true
+            try {
+                const [{data}, {number},{ flowData,approvalFlag }] =
+                    await Promise.all([
+                        detailBimFileUpload(id),
+                        this.jnpf.getBillRuleConfigFun(ORDER_CODE_FILE_UPLOAD),
+                        this.getFlowData()
+                    ])
+
+                data.id = null
+                notEmpty(data.bimFileUploadLineVOList) &&
+                data.bimFileUploadLineVOList.forEach(item=>{
+                    item.id = null
+                    item.fileUploadId = null
+                })
+                data.orderNo = number
+                data.documentStatus = DocumentStatus.DRAFT
+                data.flowData =flowData
+                data.approvalFlag = approvalFlag
+                data.bimFileUploadLineList =  data.bimFileUploadLineVOList
+                const res = await addBimFileUpload(getUploadFileSaveData(data))
+                if(res.data){
+                    getSuccessInfo()
+                    this.$router.push({
+                        path: FileManagementPageType2FileUploadUrl[this.pageType],
+                        query:{
+                            id,
+                            type:PathQueryType.DETAIL
+                        }
+                    })
                 }
-            })
+            }catch (e) {
+               this.$message.error(e.message)
+            }finally {
+                this.listLoading = false
+            }
+
+
         },
         backFileUpload(type,id){
             console.log("backFileUpload",id)

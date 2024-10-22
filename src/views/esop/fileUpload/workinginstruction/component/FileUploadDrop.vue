@@ -49,10 +49,13 @@
                 <el-table ref="dataTable" :data="fileList" style="margin-top: 5px;" v-loading="loading" v-if="switchList" :header-cell-style="{background:'#f5f7fa'}">
                     <el-table-column type="index" width="60" label="序号" align="center">
                     </el-table-column>
-                    <el-table-column prop="name" label="文件名">
+                    <el-table-column prop="name" label="文件名" >
                         <template slot-scope="scope">
-                            <i class="el-icon-paperclip"></i>
-                            {{ scope.row.name }}
+                            <el-link :underline="false" @click="handlePreview(scope.row)">
+                                <i class="el-icon-paperclip"></i>
+                                {{ scope.row.name }}</el-link>
+
+
                         </template>
                     </el-table-column>
                     <el-table-column prop="fileSize" label="大小" width="150">

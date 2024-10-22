@@ -1,3 +1,6 @@
+
+export const ORDER_CODE_FILE_UPLOAD = 'WJSCSQ'
+
 /**
  * 弹窗类型
  * @type {{ADD: string, EDIT: string, VIEW: string}}
@@ -36,6 +39,7 @@ export const DocumentStatus ={
  */
 export const PathQueryType ={
     COPY:"copy",
+    DETAIL: "detail"
 }
 
 

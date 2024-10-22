@@ -1,6 +1,6 @@
 <template>
     <FileUploadWorkingInstruction
-        :page-type="PageType.FileManagementWork"
+        :page-type="PageType.FileManagementInspect"
         :application-type="ApplicationType.INSPECT"
         :flow-code="FlowCode.INSPECT"
         :approval-status="ApprovalStatus.OK"

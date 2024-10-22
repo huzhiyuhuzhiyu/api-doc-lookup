@@ -865,6 +865,8 @@ export default {
           },
           { prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120 }
         ]
+        this.activeNames = ['basicInfo', 'inspectionInfo', 'adverseCausesInfo']
+        this.activeNames = ['inspectionItem', 'basicInfo', 'inspectionInfo', 'adverseCausesInfo']
         console.log(this.inspectionItems)
       } else {
         this.dataForm.unqualifiedQuantity = '0'

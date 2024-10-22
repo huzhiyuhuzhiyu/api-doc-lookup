@@ -4,7 +4,7 @@
       <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
           <template v-for="item in searchList">
-            <el-col :span="item.searchType === 3 ? 6 : 4">
+            <el-col :span="item.searchType === 3 ? 6 :item.searchType==2?0 : 4">
               <el-form-item>
                 <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
                   @keyup.enter.native="search('basic')" />
@@ -248,6 +248,7 @@ export default {
       searchList: [
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 }, 
+        { field: 'approvalStatus', fieldValue: 'ok', label: '', symbol: 'like', searchType: 2, width: 0 }, 
       ],
       PurchaseOrderInboundFormVisible:false,
       outboundSaleSendFormVisible: false,
@@ -1118,6 +1119,7 @@ export default {
             .map((item) => {
               return {
                 ...item,
+                
                 fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
               }
             })

@@ -128,7 +128,7 @@
 
 
 
-                        <el-table-column prop="requiredReceivedQuantity" label="待收货数量" width="140" :key="777"
+                        <el-table-column prop="waitReceiptNum" label="待收货数量" width="140" :key="777"
                           v-if="btnType != 'look'">
                         </el-table-column>
 
@@ -181,7 +181,7 @@
                 </el-tab-pane>
               </el-tabs>
               <el-collapse v-model="activeNames" v-else>
-                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo"  style="margin-top: 5px;">
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
                       <el-col :sm="6" :xs="24">
@@ -283,7 +283,7 @@
 
 
 
-                    <el-table-column prop="requiredReceivedQuantity" label="待收货数量" width="140" :key="777" v-if="btnType != 'look'">
+                    <el-table-column prop="waitReceiptNum" label="待收货数量" width="140" :key="777" v-if="btnType != 'look'">
                     </el-table-column>
 
 
@@ -370,7 +370,7 @@
                 <el-table-column prop="processName" label="工序名称" width="120" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="80" />
                 <el-table-column prop="purchaseQuantity" label="数量" width="80" sortable="custom" />
-                <el-table-column prop="requiredReceivedQuantity" label="待收货数量" width="130" sortable="custom" />
+                <el-table-column prop="waitReceiptNum" label="待收货数量" width="130" sortable="custom" />
                 <el-table-column prop="deliveryDate" label="交货日期" width="130" sortable="custom" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
               </JNPF-table>

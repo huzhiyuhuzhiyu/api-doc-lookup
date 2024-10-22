@@ -124,9 +124,6 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="remark" label="备注" min-width="180" />
-          <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
-          <el-table-column prop="createByName" label="创建人" width="80" />
           <el-table-column prop="approvalStatus" label="审批状态" align="center" sortable="custom" min-width="120"
             v-if="showAppCodeFlag">
             <template slot-scope="scope">
@@ -138,6 +135,10 @@
               </div>
             </template>
           </el-table-column>
+          <el-table-column prop="remark" label="备注" min-width="180" />
+          <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
+          <el-table-column prop="createByName" label="创建人" width="80" />
+
 
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
@@ -409,19 +410,20 @@ export default {
 
     initData() {
       if (this.reconciliationDate && this.reconciliationDate.length > 0) {
-        this.superForm.reconciliationStartDate = this.reconciliationDate[0]
-        this.superForm.reconciliationEndDate = this.reconciliationDate[1]
+        this.listQuery.reconciliationStartDate = this.reconciliationDate[0]
+        this.listQuery.reconciliationEndDate = this.reconciliationDate[1]
       } else {
-        this.superForm.reconciliationStartDate = ''
-        this.superForm.reconciliationEndDate = ''
+        this.listQuery.reconciliationStartDate = ''
+        this.listQuery.reconciliationEndDate = ''
       }
       if (this.createRequirementDate && this.createRequirementDate.length > 0) {
-        this.superForm.createStartTime = this.createRequirementDate[0] + ' 00:00:00'
-        this.superForm.createEndTime = this.createRequirementDate[1] + ' 23:59:59'
+        this.listQuery.createStartTime = this.createRequirementDate[0] + ' 00:00:00'
+        this.listQuery.createEndTime = this.createRequirementDate[1] + ' 23:59:59'
       } else {
-        this.superForm.createStartTime = ''
-        this.superForm.createEndTime = ''
+        this.listQuery.createStartTime = ''
+        this.listQuery.createEndTime = ''
       }
+      this.superForm = this.listQuery
       this.listLoading = true
       getfinAccountList(this.superForm)
         .then((res) => {

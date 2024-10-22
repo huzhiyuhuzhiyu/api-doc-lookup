@@ -166,7 +166,7 @@
                   <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
                 </el-tab-pane>
               </el-tabs>
-              <el-collapse v-model="activeNames" v-else>
+              <el-collapse v-model="activeNames"  style="margin-top: 5px;" v-else>
                     <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                       <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px"
                         label-position="top">
@@ -1003,7 +1003,7 @@ export default {
                 console.log(item.num);
                 console.log(item.ordersNum);
                 submitFlag = false
-                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过订单数量")
+                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待发货数量")
                 break
               }
 

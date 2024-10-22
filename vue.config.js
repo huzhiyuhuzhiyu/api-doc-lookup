@@ -3,6 +3,8 @@ const path = require('path')
 const defaultSettings = require('./src/settings.js')
 const define = require('./src/utils/define.js')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
+const CompressionPlugin = require('compression-webpack-plugin')
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
@@ -16,6 +18,32 @@ const name = defaultSettings.title || '' // page title
 // port = 3000 npm run dev OR npm run dev --port = 3000
 const port = process.env.port || process.env.npm_config_port || 3000 // dev port
 
+const isDev = process.env.NODE_ENV === 'development'
+
+const plugins = [
+  new MonacoWebpackPlugin({
+    // available options are documented at https://github.com/Microsoft/monaco-editor-webpack-plugin#options
+    languages: ['javascript', 'css', 'html', 'typescript', 'json', 'java', 'sql']
+  })
+]
+if (!isDev) {
+  plugins.push(new TerserPlugin({
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: false,
+        pure_funcs: ['console.log'] // 移除console
+      }
+    },
+    sourceMap: false
+  }), new CompressionPlugin({
+    algorithm: 'gzip',
+    test: /\.(js|css)$/, // 匹配文件名
+    threshold: 10240, // 对超过10k的数据压缩
+    deleteOriginalAssets: false, // 不删除源文件
+    minRatio: 0.8 // 压缩比
+  }))
+}
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
   /**
@@ -62,12 +90,11 @@ module.exports = {
         'static': resolve('static') // 增加这一行代码
       }
     },
-    plugins: [
-      new MonacoWebpackPlugin({
-        // available options are documented at https://github.com/Microsoft/monaco-editor-webpack-plugin#options
-        languages: ['javascript', 'css', 'html', 'typescript', 'json', 'java', 'sql']
-      })
-    ]
+    plugins
+    // devtool: process.env.NODE_ENV !== 'production' ? 'source-map' : undefined
+  },
+  css: {
+    sourceMap: isDev
   },
   chainWebpack(config) {
     config.externals({
@@ -88,6 +115,14 @@ module.exports = {
       include: 'initial'
     }])
 
+    config.plugin('define').tap((definitions) => {
+      const date0bj = new Date()
+      const build_at = `${date0bj.toLocaleDateString()} ${date0bj.toLocaleTimeString()}`
+      definitions[0]['process.env']['VERSION'] = JSON.stringify(require('./package.json').version)
+
+      definitions[0]['process.env']['BUID_AT'] = JSON.stringify(build_at)
+      return definitions
+    })
     // when there are many pages, it will cause too many meaningless requests
     config.plugins.delete('prefetch')
 

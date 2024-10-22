@@ -68,7 +68,7 @@ import {
 import Process from "@/components/Process/Preview.vue";
 import recordList from "@/views/workFlow/components/RecordList.vue";
 import busFlow from "@/mixins/generator/busFlow";
-import {getTitleForType, isHasProcessApplicationType} from "@/views/esop/utils/utils";
+import {getTitleForType, getUploadFileSaveData, isHasProcessApplicationType} from "@/views/esop/utils/utils";
 import FlowMixin from "@/mixins/generator/flowMixin";
 import FinishSubmit from "@/views/esop/fileUpload/workinginstruction/old/finishSubmit.vue";
 import HasProcessBasicInfo from "@/views/esop/fileUpload/workinginstruction/component/HasProcessBasicInfo.vue";
@@ -224,9 +224,8 @@ export default {
                 categoryId,
                 categoryName
           } =  this.basicInfoRef.getSaveData()
-            return {
-                bimFileUpload:{
-                    applicationType:this.applicationType,
+
+            return getUploadFileSaveData({
                     documentStatus,
                     openProcess,
                     productsId,
@@ -235,18 +234,29 @@ export default {
                     id,
                     approvalFlag,
                     version,
+                    bimFileUploadLineList,
                     categoryId,
-                    categoryName
-                },
-                bimFileUploadLineList,
-                flowData:this.flowData,
-                // products: [
-                //     {
-                //         fileUploadId: this.dataForm.id,
-                //         productsId:  this.dataForm.productsId
-                //     }
-                // ]
-            }
+                    categoryName,
+                    applicationType:this.applicationType,
+                    flowData:this.flowData
+                })
+            // return {
+            //     bimFileUpload:{
+            //         applicationType:this.applicationType,
+            //         documentStatus,
+            //         openProcess,
+            //         productsId,
+            //         routingId,
+            //         orderNo,
+            //         id,
+            //         approvalFlag,
+            //         version,
+            //         categoryId,
+            //         categoryName
+            //     },
+            //     bimFileUploadLineList,
+            //     flowData:this.flowData,
+            // }
         },
         init(id, btnType, approvalFlag){
             this.approvalFlag = approvalFlag
@@ -319,6 +329,9 @@ export default {
         isAdd(){
             return this.type === ModelType.ADD
         },
+        isCopy(){
+            return this.type === ModelType.COPY
+        },
         title(){
             return getTitleForType(this.applicationType,this.type)
         },
@@ -341,20 +354,11 @@ export default {
 }
 
 ::v-deep .el-tabs {
-    height: 100% !important;
+    height: calc(100% - 47px) !important;
 }
 
 ::v-deep .el-tabs__content {
-    height: calc(100% - 47px) !important;
     overflow: auto !important;
-}
-
-
-
-
-
-.JNPF-preview-main{
-    overflow: hidden !important;
 }
 
 .JNPF-preview-main .main {

@@ -1,6 +1,6 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-center JNPF-flex-main">
+    <div style="overflow: auto;width: 100%;">
       <div class="group-container-body section">
         <div class="react-grid-layout" style="height: 220px;background: #fff;">
           <div style="height: 65px;width: 100%;padding: 10px;">
@@ -10,23 +10,12 @@
               </div>
             </div>
           </div>
-          <div class="vux-flexbox vux-flex-row" style="justify-content: center;">
-            <div style="height: 125px;width: calc(50% - 10px);">
+          <div class="vux-flexbox vux-flex-row" style="justify-content: center;margin-top: 16px;">
+            <div style="height: 125px;width: calc(50% - 10px);" v-for="(o,index) in flexlist" :key="index">
               <div class="dash-container has-hover">
                 <div class="speedy-entry-wrapper">
                   <ul class="entry-lists">
-                    <li v-for="item in flexlist" :key="item.label">
-                      <div class="node-wrapper"><img :src="item.icon" alt=""><span style="margin-left: 10px;">{{item.label}}</span></div>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div style="height: 125px;width: calc(50% - 10px);">
-              <div class="dash-container has-hover">
-                <div class="speedy-entry-wrapper">
-                  <ul class="entry-lists">
-                    <li v-for="item in rightflexlist" :key="item.label">
+                    <li v-for="item in o.list" :key="item.label" @click="navigationmenu(item.id)">
                       <div class="node-wrapper"><img :src="item.icon" alt=""><span style="margin-left: 10px;">{{item.label}}</span></div>
                     </li>
                   </ul>
@@ -34,10 +23,9 @@
               </div>
             </div>
           </div>
-
         </div>
       </div>
-      <div class="JNPF-common-layout-center JNPF-flex-main" style="margin-top: 10px;background-color: #fff;">
+      <div style="margin-top: 10px;background-color: #fff;">
         <el-tabs type="border-card" style="height: 100%;" v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="设备台账" name="sbtz">
             <div class="JNPF-common-layout">
@@ -74,7 +62,7 @@
                     </el-col>
                   </el-form>
                 </el-row>
-                <div class="JNPF-common-layout-main JNPF-flex-main">
+                <div style="height: 835px;">
                   <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableDatasbtz" @sort-change="sortChangesbtz" fixedNO custom-column>
                     <el-table-column prop="code" label="设备编码" min-width="200" sortable="custom" />
                     <el-table-column prop="name" label="设备名称" min-width="200" sortable="custom" />
@@ -153,7 +141,7 @@
                     </el-col>
                   </el-form>
                 </el-row>
-                <div class="JNPF-common-layout-main JNPF-flex-main" style="overflow: auto;">
+                <div class="JNPF-common-layout-main JNPF-flex-main">
                   <div class="vux-flexbox container-content vux-flex-row">
                     <div class="left-content">
                       <div class="react-grid-item dash-container has-hover" v-for="item in datalist" :key="item.id">
@@ -190,7 +178,7 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="点检分布" name="djfb">
-            <div class="JNPF-common-layout-main JNPF-flex-main" style="overflow-y: auto;">
+            <div class="JNPF-common-layout-main JNPF-flex-main">
               <div class="vux-flexbox container-content vux-flex-row">
                 <div class="left-content-dj">
                   <div class="react-grid-item-dj dash-container has-hover" v-for="item in datalistdj" :key="item.id">
@@ -238,7 +226,7 @@
                   </el-form>
                 </el-row>
               </div>
-              <div style="height: 364px;">
+              <div style="height: 500px;">
                 <JNPF-table ref="dataTabledjfb" v-loading="listLoadingdjfb" :data="tableDatadjfb" @sort-change="sortChangedjfb" fixedNO custom-column>
                   <el-table-column prop="equipmentIdCode" label="设备编码" width="200" />
                   <el-table-column prop="equipmentIdName" label="设备名称" width="200" sortable="custom" />
@@ -282,7 +270,7 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="维修分布" name="wxfb">
-            <div class="JNPF-common-layout-main JNPF-flex-main" style="overflow-y: auto;">
+            <div class="JNPF-common-layout-main JNPF-flex-main">
               <div class="vux-flexbox container-content vux-flex-row">
                 <div class="left-content-dj">
                   <div class="react-grid-item-dj dash-container has-hover" v-for="(item,index) in datalistwx" :key="index">
@@ -407,7 +395,7 @@
                   </el-form>
                 </el-row>
               </div>
-              <div style="height: 364px;">
+              <div style="height: 500px;">
                 <JNPF-table ref="dataTablewxfb" v-loading="listLoadingwxfb" :data="tableDatawxfb" @sort-change="sortChangewxfb" fixedNO custom-column>
                   <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" sortable="custom">
                   </el-table-column>
@@ -487,7 +475,7 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="保养分布" name="byfb">
-            <div class="JNPF-common-layout-main JNPF-flex-main" style="overflow-y: auto;">
+            <div class="JNPF-common-layout-main JNPF-flex-main">
               <div class="vux-flexbox container-content vux-flex-row" style="height: 168px;">
                 <div class="react-grid-item-by dash-container has-hover" v-for="item in datalistby" :key="item.id">
                   <div class="container-header-l">{{item.name}}</div>
@@ -528,7 +516,7 @@
                   </el-form>
                 </el-row>
               </div>
-              <div style="height: 516px;">
+              <div style="height: 652px;">
                 <JNPF-table ref="dataTablebyfb" v-loading="listLoadingbyfb" :data="tableDatabyfb" @sort-change="sortChangebyfb" fixedNO custom-column>
                   <el-table-column prop="maintenanceTaskIdText" label="任务名称" min-width="180" />
                   <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" />
@@ -574,7 +562,7 @@
 <script>
 import { equMaintenanceList, RepairRequestList } from '@/api/dailyManagement/Maintenance'
 import { getEquEquipmentList } from '@/api/basicData/index'
-import { getequMountedPlaces, gettotalOverview, gettotalEquStats, getequReporttotalNum, getdailyInspectionNum, getdailyInspectionMonthTotal } from "@/api/basicData/materialSettings";
+import { getequMountedPlaces, gettotalOverview, gettotalEquStats, getequReporttotalNum, getdailyInspectionNum, getdailyInspectionMonthTotal, gettotalMaintenance } from "@/api/basicData/materialSettings";
 import chart from "@/views/dailyManagement/deviceReportanaly/components/chart.vue";
 export default {
   components: { chart },
@@ -709,20 +697,26 @@ export default {
       tableData: [],
       tableDatasbtz: [],
       flexlist: [
-        { label: '设备档案', icon: require('./imgs/shebei.png') },
-        { label: '设备点检单', icon: require('./imgs/dianjian.png') },
-        { label: '设备巡检单', icon: require('./imgs/xunjian.png') },
-        { label: '设备维修单', icon: require('./imgs/weixiu.png') },
-        { label: '保养计划表', icon: require('./imgs/baoyangbiao.png') },
-        { label: '设备保养单', icon: require('./imgs/baoyangdan.png') }
-      ],
-      rightflexlist: [
-        { label: '设备动态看板', icon: require('./imgs/sbdt.png') },
-        { label: '点检统计看板', icon: require('./imgs/djtj.png') },
-        { label: '巡检统计看板', icon: require('./imgs/xjtj.png') },
-        { label: '维修统计看板', icon: require('./imgs/wxtj.png') },
-        { label: '保养统计看板', icon: require('./imgs/bytj.png') },
-        { label: '备件库存看板', icon: require('./imgs/bjtj.png') }
+        {
+          list: [
+            { label: '设备档案', icon: require('./imgs/shebei.png') },
+            { label: '设备点检单', icon: require('./imgs/dianjian.png') },
+            { label: '设备巡检单', icon: require('./imgs/xunjian.png') },
+            { label: '设备维修单', icon: require('./imgs/weixiu.png') },
+            { label: '保养计划表', icon: require('./imgs/baoyangbiao.png') },
+            { label: '设备保养单', icon: require('./imgs/baoyangdan.png') }
+          ]
+        },
+        {
+          list: [
+            { label: '设备动态看板', icon: require('./imgs/sbdt.png') },
+            { label: '点检统计看板', icon: require('./imgs/djtj.png') },
+            { label: '巡检统计看板', icon: require('./imgs/xjtj.png') },
+            { label: '维修统计看板', icon: require('./imgs/wxtj.png') },
+            { label: '保养统计看板', icon: require('./imgs/bytj.png') },
+            { label: '备件库存看板', icon: require('./imgs/bjtj.png') }
+          ]
+        }
       ],
       datalist: [
         { name: '累计点检次数', unit: '次', id: 'inspectionNum', value: '0' },
@@ -739,10 +733,10 @@ export default {
         { name: '处理中工单数', unit: '单', value: '0' },
       ],
       datalistby: [
-        { name: '今日待完成保养任务', unit: '次', id: 'Tobecompletedtoday', value: '0' },
-        { name: '今日已完成保养任务', unit: '次', id: 'Completedtoday', value: '0' },
-        { name: '本月已完成保养任务', unit: '次', id: 'Completedmonth', value: '0' },
-        { name: '本月待完成保养任务', unit: '次', id: 'Tobecompletedmonth', value: '0' },
+        { name: '今日待完成保养任务', unit: '次', id: 'dailyPlanNum', value: '0' },
+        { name: '今日已完成保养任务', unit: '次', id: 'dailyMaintenanceNum', value: '0' },
+        { name: '本月已完成保养任务', unit: '次', id: 'mouthMaintenanceNum', value: '0' },
+        { name: '本月待完成保养任务', unit: '次', id: 'mouthPlanNum', value: '0' },
       ],
       loadingfactoryFloorid: false,
       chartlistLoading: false,
@@ -800,6 +794,10 @@ export default {
     this.initequipmentledger()
   },
   methods: {
+    //导航菜单
+    navigationmenu(value){
+
+    },
     //设备台账
     initequipmentledger() {
       this.listLoading = true
@@ -1178,6 +1176,14 @@ export default {
     },
     //保养分布
     async initDatabyfb() {
+      let obj = {
+        classAttribute: "equipment"
+      }
+      gettotalMaintenance(obj).then(res => {
+        this.datalistby.forEach(item => {
+          item.value = res.data[item.id]
+        })
+      })
       this.getlistdatabyfb()
     },
     getlistdatabyfb() {
@@ -1381,7 +1387,7 @@ export default {
     margin-top: 10px;
     background-color: #fff;
     border-radius: 3px;
-    height: 400px;
+    height: 494px;
     width: calc(50% - 5px);
     &:nth-child(even) {
       margin-left: 10px;

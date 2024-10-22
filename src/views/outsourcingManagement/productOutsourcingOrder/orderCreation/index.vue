@@ -43,7 +43,7 @@
                                 ref="ComSelect-page" @change="supplierdata" :tableItems="PartnerTableItems"
                                 :placeholder="'请选择供应商名称'" title="选择供应商" treeTitle="供应商分类" :methodArr="PartnerMethodArr"
                                 :listMethod="getCooperativeData" :listRequestObj="PartnerListRequestObj"
-                                :paramsObj="{ oldData }" :searchList="PartnerTableSearchList" />
+                                :paramsObj="{ oldData }" :searchList="PartnerTableSearchList" :rowDblclick="false" />
                             </el-form-item>
                           </el-col>
                           <el-col :sm="6" :xs="24">
@@ -250,8 +250,8 @@
             </div>
             <ComSelect-page ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" title="选择产品"
               treeTitle="产品分类" :methodArr="ProductMethodArr" :listMethod="getProductList"
-              :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false"
-              multiple />
+              :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple
+              :rowDblclick="false" />
             <source-area v-if="sourceVisibled" ref="sourceRef" @confirm="handlerConfirm"></source-area>
             <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
               :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center"
@@ -464,9 +464,9 @@ export default {
         { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
         // { prop: 'name', label: '产品名称', sortable: 'custom' },
         { prop: 'code', label: '产品编码', sortable: 'custom' },
-        { prop: 'productCategoryName', label: '产品分类', sortable: 'custom' },
-        { prop: 'mainUnit', label: '单位' },
-        { prop: 'createTime', label: '创建日期', sortable: 'custom' }
+        { prop: 'productCategoryName', label: '产品分类', sortable: 'custom2' },
+        { prop: 'mainUnit', label: '单位', width: 60 },
+        { prop: 'createTime', label: '创建日期', sortable: 'custom', width: 180 }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
@@ -1254,6 +1254,11 @@ export default {
                   insertOutOrder(_data)
                     .then((res) => {
                       if (res.msg === 'Success') res.msg = '新建成功'
+                      if (this.dataForm.documentStatus == 'draft') {
+                        this.submitmethodsTitle = '保存成功'
+                      } else if (this.dataForm.documentStatus == 'submit') {
+                        this.submitmethodsTitle = '提交成功'
+                      }
                       this.tipsvisible = true
                     })
                     .catch(() => {

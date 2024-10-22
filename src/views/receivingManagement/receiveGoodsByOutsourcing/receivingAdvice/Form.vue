@@ -143,7 +143,7 @@
 
                     <el-table-column prop="standardValue" label="规值" width="100"></el-table-column>
                     <el-table-column prop="processName" label="工序" width="100" />
-                    <el-table-column prop="orderNo" label="订单号" min-width="200" />
+                    <el-table-column prop="ordersNo" label="订单号" min-width="200" />
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.remark" placeholder="请输入备注"
@@ -1420,36 +1420,36 @@ export default {
           formMethod = addpurPurchaseReceiptReturnGoods
         }
         console.log(obj, 'ohh')
-        // formMethod(obj)
-        //   .then((res) => {
-        //     // let msg = "";
-        //     // if (formMethod == addpurPurchaseReceiptReturnGoods) {
-        //     //   msg = "新建成功"
-        //     // } else if (value == 'draft') {
-        //     //   msg = "保存成功"
-        //     // } else if (value == 'submit') {
-        //     //   msg = '提交成功'
-        //     // }
-        //     if (value == 'draft') {
-        //       this.submitmethodsTitle = '保存成功'
-        //     } else if (value == 'submit') {
-        //       this.submitmethodsTitle = '提交成功'
-        //     }
-        //     this.tipsvisible = true
-        //     // this.$message({
-        //     //   message: msg,
-        //     //   type: 'success',
-        //     //   duration: 1500,
-        //     //   onClose: () => {
-        //     //     this.visible = false
-        //     //     this.btnLoading = false
-        //     //     this.$emit('close', true)
-        //     //   }
-        //     // })
-        //   })
-        //   .catch(() => {
-        //     this.btnLoading = false
-        //   })
+        formMethod(obj)
+          .then((res) => {
+            // let msg = "";
+            // if (formMethod == addpurPurchaseReceiptReturnGoods) {
+            //   msg = "新建成功"
+            // } else if (value == 'draft') {
+            //   msg = "保存成功"
+            // } else if (value == 'submit') {
+            //   msg = '提交成功'
+            // }
+            if (value == 'draft') {
+              this.submitmethodsTitle = '保存成功'
+            } else if (value == 'submit') {
+              this.submitmethodsTitle = '提交成功'
+            }
+            this.tipsvisible = true
+            // this.$message({
+            //   message: msg,
+            //   type: 'success',
+            //   duration: 1500,
+            //   onClose: () => {
+            //     this.visible = false
+            //     this.btnLoading = false
+            //     this.$emit('close', true)
+            //   }
+            // })
+          })
+          .catch(() => {
+            this.btnLoading = false
+          })
       }
     },
     // 测试审批流

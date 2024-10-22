@@ -176,7 +176,7 @@
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                     <el-table-column prop="drawingNo" label="品名规格" min-width="200"
                       show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="productCode" label="产品编码" width="120"></el-table-column>
+                    <el-table-column prop="productCode" label="产品编码" width="200"></el-table-column>
                     <el-table-column prop="processName" label="工序名称" width="100"></el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="80"></el-table-column>
                     <el-table-column prop="qty" label="基本数量" width="100" v-if="btnType !== 'look'"></el-table-column>
@@ -937,7 +937,7 @@ export default {
             deliveryQuantity: item.waitDeliverNum,
             price: item.price, // 含税单价
             totalAmount: item.totalAmount, // 金额(含税)
-            taxRate: item.taxRate, // 税率
+            taxRate: Number(item.taxRate), // 税率
             excludingTaxPrice: item.excludingTaxPrice, // 不含税单价
             taxAmount: item.taxAmount, // 税额
             excludingTaxAmount: item.excludingTaxAmount, // 金额(不含税)

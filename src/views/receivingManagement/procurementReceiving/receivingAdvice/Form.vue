@@ -155,7 +155,7 @@
                     <el-table-column prop="clearance" label="游隙" width="110" sortable="custom" />
                     <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom" />
                     <el-table-column prop="processName" label="工序" width="110" />
-                    <el-table-column prop="orderNo" label="订单号" width="200" sortable="custom" />
+                    <el-table-column prop="ordersNo" label="订单号" width="200" sortable="custom" />
 
                     <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
                       <template slot-scope="scope">
@@ -309,7 +309,7 @@
                 <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
                 <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom" />
                 <el-table-column prop="processName" label="工序" width="110" />
-                <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom" />
+                <el-table-column prop="ordersNo" label="订单号" width="180" sortable="custom" />
 
                 <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
                   <template slot-scope="scope">

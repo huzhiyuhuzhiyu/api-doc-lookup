@@ -131,7 +131,7 @@ import {
   getOrderLineReport
 } from '@/api/salesManagement/assemblyOrders'
 import { purchaseOrderReport } from '@/api/purchasingAndOutsourcingOrders/index'
-import Detail from '../../../outsourcingManagement/processOutsourcingOrders/orderList/Form.vue'
+import Detail from '../../../outsourcingManagement/productOutsourcingOrder/orderList/Form.vue'
 import Form from '../receivingAdvice/Form.vue'
 import OrderFollow from '../../../salesManagement/orderManagement/orderList/orderFollow'
 import UserRelationList from '../../../salesManagement/orderManagement/orderList/userRelation'

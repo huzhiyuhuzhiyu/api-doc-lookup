@@ -116,7 +116,7 @@
                         <el-table-column prop="requiredReceivedQuantity" label="待收货数量" width="140" :key="525"
                           v-if="btnType != 'look'">
                         </el-table-column>
-
+                        
 
                         <el-table-column prop="num" label="收货数量" width="140" :key="77">
                           <template slot="header">
@@ -177,7 +177,7 @@
                 </el-tab-pane>
               </el-tabs>
               <el-collapse v-model="activeNames" v-else>
-                    <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                    <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo"  style="margin-top: 5px;">
                       <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px"
                         label-position="top">
                         <el-row :gutter="30" class="custom-row">
@@ -1035,7 +1035,7 @@ export default {
                 console.log(item.num);
                 console.log(item.ordersNum);
                 submitFlag = false
-                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过订单数量")
+                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待收货数量")
                 break
               }
 

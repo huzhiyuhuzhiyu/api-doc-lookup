@@ -1183,8 +1183,9 @@ export default {
     },
     purchasePriceChange(row) {
       console.log(row, 'h')
-      if (!row.purchasePrice) return this.$message.error('错了哦，这是一条错误消息')
-
+      if (!row.purchasePrice) return this.$message.error('采购单价(含税)不能为空')
+      if (Number(row.purchasePrice) < 0) return this.$message.error('采购单价(含税)不能小于0')
+      if (!/^-?\d+\.?\d*$/.test(row.purchasePrice)) return this.$message.error('采购单价(含税)应该是数字')
       updateProductPrice(row).then((res) => {
         console.log(res, 'iiiF')
       })
@@ -1199,7 +1200,10 @@ export default {
     },
     salesPriceChange(row) {
       console.log(row, 'h')
-      if (!row.salesPrice) return this.$message.error('错了哦，这是一条错误消息')
+      if (!row.salesPrice) return this.$message.error('销售单价(含税)不能为空')
+      if (Number(row.salesPrice) < 0) return this.$message.error('销售单价(含税)不能小于0')
+      if (!/^-?\d+\.?\d*$/.test(row.salesPrice)) return this.$message.error('销售单价(含税)应该是数字')
+
 
       updateProductPrice(row).then((res) => {
         console.log(res, 'iiiF')

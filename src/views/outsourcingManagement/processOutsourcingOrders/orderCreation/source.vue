@@ -72,16 +72,16 @@
                 </template>
               </el-table-column>
 
-              <el-table-column prop="demandQuantity1" label="发料数量" min-width="140">
+              <el-table-column prop="qty" label="发料数量" min-width="140">
                 <template slot="header">
                   <span class="required">*</span>
                   发料数量
                 </template>
                 <template slot-scope="scope">
                   <!-- <el-input v-model="scope.row.demandQuantity1" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
-                  <el-form-item :prop="'data.' + scope.$index + '.' + 'demandQuantity1'"
+                  <el-form-item :prop="'data.' + scope.$index + '.' + 'qty'"
                     :rules="productRule.demandQuantity1">
-                    <el-input v-model="scope.row.demandQuantity1" :disabled="type === 'look'" maxlength="20"
+                    <el-input v-model="scope.row.qty" :disabled="type === 'look'" maxlength="20"
                       placeholder="请输入发料数量"></el-input>
                   </el-form-item>
                 </template>
@@ -322,6 +322,7 @@ export default {
               drawingNo: item.drawingNo,
               productCode: item.productCode,
               outShipmentListId: item.id,
+              id: item.id,
               processId: item.processId,
               processName: item.processName,
               calculationDirection: item.calculationDirection,

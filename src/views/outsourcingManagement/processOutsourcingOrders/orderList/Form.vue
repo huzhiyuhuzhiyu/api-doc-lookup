@@ -47,6 +47,12 @@
                             placeholder="请选择交货日期"></el-date-picker>
                         </el-form-item>
                       </el-col>
+                      <el-col :span="12">
+                        <el-form-item label="申请理由" prop="applicationReason" ref="applicationReason">
+                          <el-input type="textarea" :row="3" v-model="dataForm.applicationReason" placeholder="请输入申请理由"
+                            maxlength="200" :disabled="type == 'look' ? true : false"></el-input>
+                        </el-form-item>
+                      </el-col>
                       <el-col :span="6" v-if="type === 'look'">
                         <el-form-item label="订单状态" prop="receivingStatus" ref="receivingStatus">
                           <el-select v-model="dataForm.receivingStatus" style="width: 100%;" placeholder="请选择"
@@ -74,10 +80,10 @@
                     |
                   </div>
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                    <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="dataFormTwo.data"
-                      :data="dataFormTwo.data" id="table" @row-click="openDetails">
+                    <JNPF-table style="border: 1px solid #e3e7ee;" :hasC="type == 'edit'" hasNO fixedNO
+                      v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table" @row-click="openDetails">
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
-                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                      <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                         <!-- <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'">
@@ -262,7 +268,7 @@
                           </el-input>
                         </template>
                       </el-table-column>
-                      <el-table-column label="操作" width="180" fixed="right">
+                      <el-table-column label="操作" width="180" fixed="right" v-if="type == 'edit'">
                         <template slot-scope="scope">
                           <el-button size="mini" type="text" @click="handlerOpenSource(scope.$index, 'source')">
                             配置发料清单
@@ -273,7 +279,7 @@
                           </el-button>
                         </template>
                       </el-table-column>
-                    </el-table>
+                    </JNPF-table>
                   </el-form>
 
                   <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
@@ -292,8 +298,8 @@
                     <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
                     <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
                     <el-table-column prop="mainUnit" label="单位" min-width="140"></el-table-column>
-                    <el-table-column prop="purchaseQuantity" label="基本数量" min-width="140"></el-table-column>
-                    <el-table-column prop="demandQuantity" label="发料数量" min-width="140"></el-table-column>
+                    <!-- <el-table-column prop="qty" label="基本数量" min-width="140"></el-table-column> -->
+                    <el-table-column prop="qty" label="发料数量" min-width="140"></el-table-column>
                     <el-table-column prop="undeliveredQuantity" label="待出库数量" min-width="140"></el-table-column>
                   </el-table>
                 </el-collapse-item>
@@ -338,6 +344,12 @@
                       <el-date-picker :disabled="type == 'look'" v-model="dataForm.deliveryDate" type="date"
                         value-format="yyyy-MM-dd" style="width: 100%;" :picker-options="dataPickerOptions2"
                         placeholder="请选择交货日期"></el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="申请理由" prop="applicationReason" ref="applicationReason">
+                      <el-input type="textarea" :row="3" v-model="dataForm.applicationReason" placeholder="请输入申请理由"
+                        maxlength="200" :disabled="type == 'look' ? true : false"></el-input>
                     </el-form-item>
                   </el-col>
                   <el-col :span="6" v-if="type === 'look'">
@@ -525,8 +537,8 @@
                 <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
                 <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
                 <el-table-column prop="mainUnit" label="单位" min-width="140"></el-table-column>
-                <el-table-column prop="purchaseQuantity" label="基本数量" min-width="140"></el-table-column>
-                <el-table-column prop="demandQuantity" label="发料数量" min-width="140"></el-table-column>
+                <!-- <el-table-column prop="qty" label="基本数量" min-width="140"></el-table-column> -->
+                <el-table-column prop="qty" label="发料数量" min-width="140"></el-table-column>
                 <el-table-column prop="undeliveredQuantity" label="待出库数量" min-width="140"></el-table-column>
               </el-table>
             </el-collapse-item>
@@ -538,6 +550,20 @@
     <ComSelect-page ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" title="选择产品" treeTitle="产品分类"
       :methodArr="ProductMethodArr" :listMethod="getProductList" :listRequestObj="ProductListRequestObj"
       :searchList="ProductTableSearchList" :elementShow="false" multiple />
+    <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+      :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
+      <div>
+        <img src="@/assets/images/importSuccess.gif" alt="" style="width:100px" />
+        <span class="import_t">{{ submitmethodsTitle }}啦！</span>
+        <span class="import_b">您还可以进行如下操作：</span>
+      </div>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="goBack">返回列表</el-button>
+        <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()">{{ btnText }}</el-button>
+        <el-button v-else type="primary" @click="continueAdd()">{{ btnText }}</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -645,7 +671,9 @@ export default {
       flowData: {},
       approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime: 0
+      endTime: 0,
+      tipsvisible: false,
+      btnText: '继续新建'
     }
   },
   created() {
@@ -665,6 +693,9 @@ export default {
     // 抽屉提交
     handlerConfirm(data) {
       console.log(data, '资源资源数据')
+      data.forEach(item => {
+        console.log(item, 'p')
+      })
       this.dataFormTwo.data[this.index].outShipmentList = data
     },
     // 产品弹窗
@@ -693,6 +724,24 @@ export default {
         }
       }
       this.productArr = [] // 清空选中的行的数据
+    },
+    // 继续修改
+    continueEdit() {
+      this.init(this.oldId, this.oldType)
+    },
+    // 继续新增
+    continueAdd() {
+      this.init('', 'add')
+      this.dataForm = {}
+      this.linesList = []
+      this.datafilelist = []
+      this.tipsvisible = false
+      this.btnLoading = false
+    },
+    goBom() {
+      this.$router.push({
+        path: '/outsourcingManagement/processOutsourcingOrders/orderList'
+      })
     },
     // 产品组件回调
     addth(id, data) {
@@ -752,14 +801,14 @@ export default {
       this.autoId = row.id
       console.log(this.autoId, 'oiGGG')
       this.linesList = []
-      let obj = {
-        productsId: row.productsId,
-        purchaseQuantity: row.purchaseQuantity
-      }
-      // 通过需求池id 获取明细的数据
-      getShipmentList(obj).then((res) => {
-        this.linesList.push(...res.data)
-      })
+      // let obj = {
+      //   productsId: row.productsId,
+      //   purchaseQuantity: row.purchaseQuantity
+      // }
+      // // 通过需求池id 获取明细的数据
+      // getShipmentList(obj).then((res) => {
+      //   this.linesList.push(...res.data)
+      // })
       // purPurchaseOrderdetail(row.purchaseOrderId).then((res) => {
       //   console.log(res, 'iiii')
       //   this.linesList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
@@ -825,14 +874,14 @@ export default {
       // this.dataFormTwo.data[index].purchaseQuantity = val
       this.$set(this.dataFormTwo.data[index], 'purchaseQuantity', val)
 
-      let obj = {
-        productsId: this.dataFormTwo.data[index].productsId,
-        purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
-      }
-      // 通过需求池id 获取明细的数据
-      getShipmentList(obj).then((res) => {
-        this.dataFormTwo.data[index].outShipmentList = res.data
-      })
+      // let obj = {
+      //   productsId: this.dataFormTwo.data[index].productsId,
+      //   purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
+      // }
+      // // 通过需求池id 获取明细的数据
+      // getShipmentList(obj).then((res) => {
+      //   this.dataFormTwo.data[index].outShipmentList = res.data
+      // })
 
       if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
         this.dataFormTwo.data[index].purchaseQuantity2 = this.numberFormat(
@@ -850,6 +899,7 @@ export default {
       this.dataFormTwo.data = []
     },
     goBack() {
+      console.log('[]')
       this.$emit('close')
     },
     init(id, type, approvalFlag) {
@@ -874,6 +924,7 @@ export default {
         } else {
           this.loading = true
           purPurchaseOrderdetail(this.dataForm.id).then((res) => {
+            console.log(res, 'res')
             if (res.data.attachmentList) {
               res.data.attachmentList.forEach((item) => {
                 this.datafilelist.push({
@@ -890,18 +941,28 @@ export default {
             this.dataFormTwo.data.forEach((item, index) => {
               console.log(item.productsId, 'id')
               item.productDrawingNo = item.drawingNo
-              let obj = {
-                productsId: this.dataFormTwo.data[index].productsId,
-                purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
+              if (item.outShipmentVOList.length == 0) {
+                this.linesList.push(...item.outShipmentVOList)
+                item.outShipmentList = []
+              } else {
+                this.linesList.push(...item.outShipmentVOList)
+                item.outShipmentList = item.outShipmentVOList
               }
-              // 通过需求池id 获取明细的数据
-              getShipmentList(obj).then((res) => {
-                this.dataFormTwo.data[index].outShipmentList = res.data
-                this.linesList.push(...res.data)
-                console.log(this.linesList, 'this.linesList')
-              })
+              // let obj = {
+              //   productsId: this.dataFormTwo.data[index].productsId,
+              //   purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
+              // }
+              // // 通过需求池id 获取明细的数据
+              // getShipmentList(obj).then((res) => {
+              //   this.dataFormTwo.data[index].outShipmentList = res.data
+              //   if (res.data.length !== 0) {
+              //     this.linesList.push(res.data)
+              //   }
+
+              //   console.log(this.linesList, 'this.linesList')
+              // })
             })
-            this.linesList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
+            // this.linesList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
             if (this.type === 'edit') {
               this.getBusInfo()
             } else {
@@ -918,53 +979,71 @@ export default {
     },
     // 配置资源
     handlerOpenSource(index, type) {
-      console.log(this.dataFormTwo.data[index].purchaseQuantity, 'this.dataFormTwo.data[index].id')
-      console.log(this.dataFormTwo.data[index].outShipmentList, '[][]')
+      console.log(this.dataFormTwo.data, 'this.dataFormTwo.data[index].id')
+      console.log(this.dataFormTwo.data[index].outShipmentVOList, '[][]')
       if (!this.dataFormTwo.data[index].purchaseQuantity) return this.$message.error('请先输入数量')
       console.log(index, 'index')
       this.sourceVisibled = true
       this.index = index
       console.log(this.dataFormTwo.data[index], 'this.dataFormTwo.data[index].id')
-      let obj = {
-        productsId: this.dataFormTwo.data[index].productsId,
-        purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
+      // let obj = {
+      //   productsId: this.dataFormTwo.data[index].productsId,
+      //   purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
+      // }
+      // // 通过需求池id 获取明细的数据
+      // getShipmentList(obj).then((res) => {
+      //   console.log(res, '清单数据')
+      //   this.sourceData = res.data
+      //   this.dataFormTwo.data[this.index].outShipmentList = res.data
+      //   if (this.dataFormTwo.data[this.index].outShipmentList.length !== 0) {
+      //     this.sourceData = this.dataFormTwo.data[this.index].outShipmentList
+
+      //     // this.dataFormTwo.data[this.index].outShipmentList.forEach((item, ind) => {
+      //     //   console.log(item, 'p{{}}')
+      //     //   console.log(this.sourceData[ind], 'this.sourceData[ind]')
+      //     //   this.sourceData[ind].demandQuantity1 = item.demandQuantity1 ? item.demandQuantity1 : item.demandQuantity
+      //     //   this.sourceData[ind].processId = item.processId
+      //     //   this.sourceData[ind].processName = item.processName
+      //     // })
+      //   } else {
+      //     this.sourceData.forEach((item, index) => {
+      //       this.$set(this.sourceData[index], 'demandQuantity1', item.demandQuantity)
+      //     })
+      //   }
+      //   console.log(this.sourceData, '1111')
+
+      //   if (this.sourceData.length === 0) {
+      //     this.sourceDisabled = true
+      //   } else {
+      //     this.sourceDisabled = false
+      //   }
+      //   console.log(this.dataFormTwo.data, 'daaaa')
+      //   this.$nextTick(() => {
+      //     this.$refs['sourceRef'].init(
+      //       this.sourceData,
+      //       '',
+      //       this.dataFormTwo.data[this.index].productsId,
+      //       this.dataFormTwo.data[this.index].purchaseQuantity
+      //     )
+      //   })
+      // })
+      this.sourceData = this.dataFormTwo.data[index].outShipmentVOList
+      console.log(this.sourceData, '1111')
+
+      if (this.sourceData.length === 0) {
+        this.sourceDisabled = true
+      } else {
+        this.sourceDisabled = false
       }
-      // 通过需求池id 获取明细的数据
-      getShipmentList(obj).then((res) => {
-        console.log(res, '清单数据')
-        this.sourceData = res.data
-        this.dataFormTwo.data[this.index].outShipmentList = res.data
-        if (this.dataFormTwo.data[this.index].outShipmentList.length !== 0) {
-          this.sourceData = this.dataFormTwo.data[this.index].outShipmentList
-
-          // this.dataFormTwo.data[this.index].outShipmentList.forEach((item, ind) => {
-          //   console.log(item, 'p{{}}')
-          //   console.log(this.sourceData[ind], 'this.sourceData[ind]')
-          //   this.sourceData[ind].demandQuantity1 = item.demandQuantity1 ? item.demandQuantity1 : item.demandQuantity
-          //   this.sourceData[ind].processId = item.processId
-          //   this.sourceData[ind].processName = item.processName
-          // })
-        } else {
-          this.sourceData.forEach((item, index) => {
-            this.$set(this.sourceData[index], 'demandQuantity1', item.demandQuantity)
-          })
-        }
-        console.log(this.sourceData, '1111')
-
-        if (this.sourceData.length === 0) {
-          this.sourceDisabled = true
-        } else {
-          this.sourceDisabled = false
-        }
-        console.log(this.dataFormTwo.data, 'daaaa')
-        this.$nextTick(() => {
-          this.$refs['sourceRef'].init(
-            this.sourceData,
-            '',
-            this.dataFormTwo.data[this.index].productsId,
-            this.dataFormTwo.data[this.index].purchaseQuantity
-          )
-        })
+      console.log(this.dataFormTwo.data, 'daaaa')
+      console.log(this.sourceData, 'this.sourceData******')
+      this.$nextTick(() => {
+        this.$refs['sourceRef'].init(
+          this.sourceData,
+          '',
+          this.dataFormTwo.data[this.index].productsId,
+          this.dataFormTwo.data[this.index].purchaseQuantity
+        )
       })
     },
     async request(type) {
@@ -991,11 +1070,12 @@ export default {
       _data = {
         ...this.dataForm,
         attachmentList: this.datafilelist,
-        purProcurementRequirements: this.dataForm,
+        // purProcurementRequirements: this.dataForm,
         purchaseOrderLines: this.dataFormTwo.data,
         flowData: this.flowData,
         orderType: 'external_process'
       }
+      delete _data.purchaseOrderLineVOList
 
       let msg = ''
       if (this.dataForm.documentStatus === 'draft') {
@@ -1055,18 +1135,16 @@ export default {
                       this.btnLoading = false
                     })
                 } else {
+                  console.log(_data, 'poo')
                   editOutOrder(_data)
                     .then((res) => {
                       if (res.msg === 'Success') res.msg = '修改成功'
-                      this.$message({
-                        message: msg,
-                        type: 'success',
-                        duration: 1000,
-                        onClose: () => {
-                          this.btnLoading = false
-                          this.$emit('close', true)
-                        }
-                      })
+                      if (this.dataForm.documentStatus == 'draft') {
+                        this.submitmethodsTitle = '保存成功'
+                      } else if (this.dataForm.documentStatus == 'submit') {
+                        this.submitmethodsTitle = '提交成功'
+                      }
+                      this.tipsvisible = true
                     })
                     .catch(() => {
                       this.btnLoading = false
@@ -1298,5 +1376,22 @@ export default {
 
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
   padding-left: 0px !important;
+}
+
+.import_t {
+  font-size: 22px;
+  color: rgb(103, 194, 58);
+  vertical-align: top;
+  margin-top: 40px;
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.import_b {
+  font-size: 18px;
+  /* color: #67c23a; */
+  vertical-align: top;
+  margin-top: 43px;
+  display: inline-block;
 }
 </style>

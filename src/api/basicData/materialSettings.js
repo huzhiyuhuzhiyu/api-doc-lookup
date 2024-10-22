@@ -392,3 +392,11 @@ export function getdailyInspectionMonthTotal(data) {
     data
   })
 }
+// 设备保养分析
+export function gettotalMaintenance(data) {
+  return request({
+    url: `/api/mes/equReport/totalMaintenance`,
+    method: 'POST',
+    data
+  })
+}

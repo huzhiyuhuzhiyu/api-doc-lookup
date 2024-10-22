@@ -4,7 +4,7 @@
       <div slot="header" class="clearfix">
         <span>{{title}}</span>
       </div>
-      <el-empty v-if="!datalist.length" :image-size="150" description="暂无数据"></el-empty>
+      <el-empty v-if="!datalist.length" :image-size="58" description="暂无数据"></el-empty>
       <div v-else>
         <div style="display: flex;justify-content: space-between;" class="line sum">
           <div class="left">计数</div>

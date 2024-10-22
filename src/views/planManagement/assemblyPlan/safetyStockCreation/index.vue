@@ -1,8 +1,8 @@
 <template>
   <!-- 销售订单创建 -->
-  <div class="JNPF-common-layout"  v-if="!formVisible">
+  <div class="JNPF-common-layout" >
 
-    <div class="JNPF-common-layout-center JNPF-flex-main">
+    <div class="JNPF-common-layout-center JNPF-flex-main"  v-if="!formVisible">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
@@ -76,7 +76,7 @@
 
     </div>
 
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
+    <Form v-if="formVisible" ref="Forms" @refreshDataList="initData" @close="closeForm" />
 
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
@@ -263,7 +263,7 @@ export default {
     },
 
 
-    search() {
+    search(type) {
       this.form.pageNum = 1
       Object.keys(this.form).forEach(key => { // 清除搜索条件两端空格
         let item = this.form[key]
@@ -330,7 +330,8 @@ export default {
       if (!this.selectList.length) return this.$message.error("请选择您要生成计划的数据")
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(this.selectList)
+        console.log("this.$refs.Forms",this.$refs.Forms);
+        this.$refs.Forms.init(this.selectList)
       })
 
     },

@@ -184,7 +184,7 @@
                   </el-collapse-item>
                 </el-collapse>
               </el-tab-pane>
-              <el-tab-pane label="附件" name="annex">
+              <el-tab-pane label="附件" name="annex"   v-if="isattachmentswitch == '1'">
                 <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'">
                 </UploadWj>
               </el-tab-pane>
@@ -274,6 +274,8 @@ import { mapGetters, mapState } from 'vuex'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
+
+import { getBimBusinessDetail } from '@/api/basicData/index'
 import { log } from 'mathjs'
 
 export default {
@@ -281,6 +283,7 @@ export default {
 
   data() {
     return {
+      isattachmentswitch:"",
       planTypeList: [
         { label: "订单生成计划", value: "order_plan" },
         { label: "直接创建计划", value: "add_plan" },
@@ -369,10 +372,21 @@ export default {
   mounted() {
     this.init()
     this.getProductClassFun()
+    this.getBimBusinessDetail()
+
   },
   beforeDestroy() {
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_assembleCreateDirectly'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
 

@@ -172,7 +172,7 @@
               </el-collapse-item>
             </el-collapse>
           </el-tab-pane>
-          <el-tab-pane label="附件" name="annex">
+          <el-tab-pane label="附件" name="annex"   v-if="isattachmentswitch == '1'">
             <UploadWj v-model="datafilelist" :detailed="false"></UploadWj>
           </el-tab-pane>
         </el-tabs>
@@ -259,12 +259,15 @@ import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 import { log } from 'mathjs'
+import { getBimBusinessDetail } from '@/api/basicData/index'
 
 export default {
 
 
   data() {
     return {
+      isattachmentswitch: '',
+
       planTypeList: [
         { label: "订单生成计划", value: "order_plan" },
         { label: "直接创建计划", value: "add_plan" },
@@ -353,10 +356,21 @@ export default {
   mounted() {
     this.init()
     this.getProductClassFun()
+    this.getBimBusinessDetail()
+
   },
   beforeDestroy() {
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_assembleSafetyStock'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
 

@@ -1939,7 +1939,6 @@ export default {
         }
         this.$nextTick(() => {
           this.treeData = res.data
-          this.categoryType = this.treeData[0].businessType
           this.getTabdataList('basic') 
         })
 
@@ -3198,7 +3197,7 @@ export default {
       this.externalMaterOutboundFormVisible = false
       if (isRefresh) {
         // this.getStockMovelistFun()
-        this.getTabdataList()
+        this.getPickingConfig()
       }
     },
 

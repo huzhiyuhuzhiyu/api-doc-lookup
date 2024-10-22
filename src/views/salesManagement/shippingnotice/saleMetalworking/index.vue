@@ -428,10 +428,8 @@ export default {
     //禁用复选框
     checkSelectable(row) {
       if (row.deliveryStatus !== 'not_finished' || row.documentStatus == 'draft') {
-        console.log(222);
         return false
       } else {
-        console.log(333);
         return true
 
       }
@@ -492,7 +490,6 @@ export default {
     },
     //拆分订单
     splitorderNo(row) {
-      console.log("row", row);
       if (row.stockStatus == 'finished') return this.$message.error(`该订单已经备货不能拆分`)
       this.$confirm('确定拆分所选订单', this.$t('common.tipTitle'), {
         type: 'warning'

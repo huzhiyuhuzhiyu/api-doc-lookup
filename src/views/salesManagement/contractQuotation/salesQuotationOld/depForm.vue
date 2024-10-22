@@ -224,7 +224,7 @@
             </el-collapse>
 
           </el-tab-pane>
-          <el-tab-pane label="附件" name="annex">
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
             <UploadWj v-model="datafilelist" :disabled="btnType == 'look'" :detailed="btnType == 'look'"></UploadWj>
           </el-tab-pane>
           <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
@@ -569,6 +569,7 @@ import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import flowMixin from '@/mixins/generator/flowMixin'
+import { getBimBusinessDetail } from '@/api/basicData/index'
 export default {
   components: { ExportForm, Process, recordList },
   mixins: [busFlow,flowMixin],
@@ -728,7 +729,8 @@ export default {
       flowData: {},
       approvalFlag: false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime: 0
+      endTime: 0,
+      isattachmentswitch: '',
     }
   },
   watch: {
@@ -761,9 +763,18 @@ export default {
   },
   mounted() {
     this.getTaxRateFun()
+    this.getBimBusinessDetail()
   },
   methods: {
-
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_quotation'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     // 导出
     exportForm(exportTableRef) {
       this.exportTableRef = exportTableRef

@@ -7,7 +7,7 @@ import {getFilePreviewUrl} from "@/views/esop/utils/utils";
 import {detailBimFileUpload, switchEnableMark} from "@/api/esop/fileUpload/workinginstruction";
 import chooseProductParams from "@/views/esop/fileUpload/workinginstruction/utils/chooseProductParams";
 import BasicInfoMixin from "@/views/esop/fileUpload/workinginstruction/component/BasicInfoMixin";
-
+import CheckVersionCountDialog from "@/views/esop/fileUpload/workinginstruction/component/CheckVersionCountDialog .vue";
 
 function getOriginActiveNames(){
     return ['basicInfo']
@@ -15,7 +15,7 @@ function getOriginActiveNames(){
 
 export default {
     name: "HasProcessBasicInfo" ,
-    components: {FileUploadDrop},
+    components: {CheckVersionCountDialog, FileUploadDrop},
     data(){
         return {
             formLoading: false,
@@ -37,7 +37,8 @@ export default {
                 id:null,
                 version:'',
                 documentStatus:'',
-                enableMark:false
+                enableMark:false,
+                versionCount:0,
             },
             dataRule:Object.freeze({
                 version: [
@@ -259,7 +260,14 @@ export default {
                                             <el-input readonly :placeholder="dataForm.routingName" v-model="dataForm.routingName"></el-input>
                                         </el-form-item>
                                     </el-col>
-                                    <el-col :span="hasEnableMark ?3 : 6">
+                                    <el-col :span="3" v-if="isApprovalModel">
+                                        <el-form @submit.prevent   style="padding-top: 0;" >
+                                            <el-form-item label="关联版本数">
+                                                <el-input  readonly @click.native="versionCountHandler" v-model="dataForm.versionCount || 1" class="pointer versionCount"/>
+                                            </el-form-item>
+                                        </el-form>
+                                    </el-col>
+                                    <el-col :span="3">
                                         <el-form-item label="按工序上传">
                                             <div style="height: 32px;display: flex;align-items: center">
                                                 <el-tooltip :content="hasRoutingLine ? '开启后可为每一道工序上传作业指导书':'该产品未设置工艺路线，请设置工艺路线后再开启'" placement="top-start">
@@ -273,8 +281,9 @@ export default {
                                             </div>
                                         </el-form-item>
                                     </el-col>
+
                                     <el-col :span="3" v-if="hasEnableMark">
-                                        <el-form @submit.prevent :disabled="isView">
+                                        <el-form @submit.prevent :disabled="isView" style="padding-top: 0">
                                             <el-form-item label="是否启用">
                                                 <div style="height: 32px;display: flex;align-items: center">
                                                     <el-switch
@@ -286,8 +295,8 @@ export default {
                                                 </div>
                                             </el-form-item>
                                         </el-form>
-
                                     </el-col>
+
 
                                 </el-row>
                                 <el-row :gutter="10">
@@ -350,12 +359,19 @@ export default {
                     </el-collapse-item>
                 </el-collapse>
             </div>
+            <CheckVersionCountDialog :applicationType="dataForm.applicationType" v-if="versionCountVisible" :visible.sync="versionCountVisible"  :search-drawing-no="dataForm.drawingNo"></CheckVersionCountDialog>
         </div>
     </div>
     </div>
 </template>
 
 <style scoped lang="scss">
+::v-deep .versionCount .el-input__inner{
+    color: #409eff;
+    cursor: pointer !important;
+    background-color: #F5F7FA;
+    border-color: #E4E7ED;
+}
 .contain {
     position: relative;
     height: calc(100% - 47px);

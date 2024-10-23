@@ -324,6 +324,7 @@ export default {
                 isFileTrashPage: this.isFileTrashPage,
                 isFileUploadPage: this.isFileUploadPage,
                 isFileCheckPage: this.isFileCheckPage,
+                isApprovalModel: this.approvalFlag,
                 applicationType: this.applicationType,
             }
         },

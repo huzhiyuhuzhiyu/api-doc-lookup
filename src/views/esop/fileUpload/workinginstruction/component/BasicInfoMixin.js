@@ -7,6 +7,11 @@ import {
 } from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 
 export default {
+    data(){
+        return {
+            versionCountVisible:false,
+        }
+    },
     props:{
         type:{
             type:String,
@@ -44,6 +49,11 @@ export default {
             type:String,
             required:'',
         },
+        isApprovalModel:{
+            type:Boolean,
+            required:false,
+        },
+
     },
     methods:{
         async toggleEnableMarkHandler(){
@@ -78,6 +88,12 @@ export default {
             this.fetchData(!flag)
             flag &&  this.getDetail(data)
         },
+        versionCountHandler(){
+           // if(this.dataForm.versionCount === 0){
+           //     return this.$message.info('暂无可查看的关联版本')
+           // }
+          this.versionCountVisible = true
+        }
     },
     computed:{
         orderNoDisabled(){

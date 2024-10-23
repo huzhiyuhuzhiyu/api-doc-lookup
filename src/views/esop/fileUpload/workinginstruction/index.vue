@@ -5,7 +5,7 @@
                 <el-form @submit.native.prevent>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input  @keyup.enter.native="search" v-model="listQuery.superQuery.condition[0].fieldValue" placeholder="品名规格" clearable />
+                            <el-input @clear="search" @keyup.enter.native="search" v-model="listQuery.superQuery.condition[0].fieldValue" placeholder="品名规格" clearable />
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
@@ -169,11 +169,10 @@ import {
     FileManagementPageType2FileUploadUrl,
     FileManagePageSet,
     FileTrashPageSet,
-    FileUploadPageSet,
-    FileUploadPageType2Url,
+    FileUploadPageSet, isModelType,
     ModelType, ORDER_CODE_FILE_UPLOAD,
     PageType,
-    PathQueryType
+
 } from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 import {FlowCode} from "@/views/esop/utils/constants";
 import {getQueryConfirm, getSuccessInfo, isEmpty, mapIfNonePutArr, notEmpty, trim} from "@/utils";
@@ -213,12 +212,16 @@ export default {
       "$route.query.id":{
           immediate:true,
           handler(val){
-              if(!this.isFileUploadPage){
+              console.log('isFileUploadPage',this.isFileUploadPage)
+              console.log('isFileManagementPage',this.isFileManagementPage)
+              console.log(!this.isFileUploadPage && !this.isFileManagementPage)
+              if(!this.isFileUploadPage && !this.isFileManagementPage){
                   return
               }
-              if( this.$route.query.type === PathQueryType.DETAIL){
-                  this.addOrUpdateHandle(ModelType.EDIT,val)
+              if(isModelType(this.$route.query.type) && notEmpty(val)){
+                  this.addOrUpdateHandle(this.$route.query.type,val)
               }
+
           }
       }
     },
@@ -372,7 +375,7 @@ export default {
                         path: FileManagementPageType2FileUploadUrl[this.pageType],
                         query:{
                             id,
-                            type:PathQueryType.DETAIL
+                            type:ModelType.EDIT
                         }
                     })
                 }

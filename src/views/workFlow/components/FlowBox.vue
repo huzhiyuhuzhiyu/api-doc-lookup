@@ -366,6 +366,7 @@ export default {
       saleFlag: false,
       purchaseFlag: false,
       externalFlag: false,
+      pageViewVisible: false,
     }
   },
   computed: {
@@ -533,7 +534,7 @@ export default {
               let orderOrNotice = indAndoutTypeList.find(item => item.label === res.data.stockMove.businessType)
               console.log(orderOrNotice);
               if (['outbound_sale_send', 'inbound_purchase', 'outbound_sale_send', 'inbound_external'].includes(res.data.stockMove.businessType)) {
-                if (this.saleFlag || this.purchaseFlag || this.externalFlag ) {
+                if (this.saleFlag || this.purchaseFlag || this.externalFlag) {
                   page = orderOrNotice.value
                 }
               } else {
@@ -595,25 +596,74 @@ export default {
           }
           this.assignNodeList = assignNodeList
         }
-        setTimeout(() => {
-          this.$nextTick(() => {
-            if (data.formType === 3) {
-              console.log(data, 'data');
-              console.log(this.$refs.form, 'this.$refs.form');
-              let targetPage = this.inspectionTypeList.find(item => item.label === data.businessFlow)
-              this.inspectionType = targetPage ? targetPage.value : ''
-              if (data.businessFlow === 'b045') {
-                this.$refs.form && this.$refs.form.flowInit(data.businessId, 'look', true)
-              } else {
-                this.$refs.form && this.$refs.form.init(data.businessId, 'look', true, this.inspectionType)
-              }
-              this.loading = false
+        // setTimeout(() => {
+        //   this.$nextTick(async () => {
+        //     if (!this.$refs.form) {
+        //       console.warn('$refs.form is not defined yet, waiting...');
+        //       await new Promise(resolve => setTimeout(resolve, 1000)); // 再等待一秒
+        //       if (!this.$refs.form) {
+        //         console.error('Still unable to find $refs.form after waiting.');
+        //         return;
+        //       }
+        //     }
+
+        //     if (data.formType === 3) {
+        //       console.log(data, 'data');
+        //       console.log(this.$refs.form, 'this.$refs.form');
+
+        //       let targetPage = this.inspectionTypeList.find(item => item.label === data.businessFlow);
+        //       this.inspectionType = targetPage ? targetPage.value : '';
+        //       this.pageViewVisible = true;
+
+        //       if (data.businessFlow === 'b045') {
+        //         this.$refs.form && this.$refs.form.flowInit(data.businessId, 'look', true);
+        //       } else {
+        //         console.log('哈哈哈哈');
+        //         console.log(this.$refs, 'this.$refs.form');
+        //         this.$refs.form && this.$refs.form.init(data.businessId, 'look', true, this.inspectionType);
+        //       }
+        //     } else {
+        //       this.$refs.form && this.$refs.form.init(data);
+        //     }
+        //     this.loading = false;
+        //   });
+        // }, 500);
+        try {
+          const form = await this.waitForRef('form');
+          if (data.formType === 3) {
+
+            let targetPage = this.inspectionTypeList.find(item => item.label === data.businessFlow);
+            this.inspectionType = targetPage ? targetPage.value : '';
+            this.pageViewVisible = true;
+
+            if (data.businessFlow === 'b045') {
+              form.flowInit(data.businessId, 'look', true);
             } else {
-              this.$refs.form && this.$refs.form.init(data)
+              form.init(data.businessId, 'look', true, this.inspectionType);
             }
-          })
-        }, 500)
+          } else {
+            form.init(data);
+          }
+          this.loading = false;
+        } catch (error) {
+          console.error(error.message);
+        }
       }).catch(() => { this.loading = false })
+    },
+    waitForRef(refName, timeout = 5000) {
+      return new Promise((resolve, reject) => {
+        let attempts = 0;
+        const intervalId = setInterval(() => {
+          attempts++;
+          if (this.$refs[refName]) {
+            clearInterval(intervalId);
+            resolve(this.$refs[refName]);
+          } else if (attempts * 100 >= timeout) {
+            clearInterval(intervalId);
+            reject(new Error(`Failed to find $refs.${refName} after ${timeout} ms.`));
+          }
+        }, 100);
+      });
     },
     eventLauncher(eventType) {
       this.$refs.form && this.$refs.form.dataFormSubmit(eventType, this.flowUrgent, this.inspectionType, this.$refs.form, this.businessFlow)

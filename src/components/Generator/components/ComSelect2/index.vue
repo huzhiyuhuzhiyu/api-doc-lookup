@@ -30,7 +30,7 @@
     </div>
     <el-dialog title="选择分类" :close-on-click-modal="false" :visible.sync="visible"
       class="JNPF-dialog JNPF-dialog_center transfer-dialog" lock-scroll append-to-body width="800px"
-      :modal-append-to-body="false" @close="onClose">
+      :modal-append-to-body="false" @close="closeHandler">
       <div class="transfer__body">
         <div class="transfer-pane">
           <div class="transfer-pane__tools">
@@ -132,6 +132,10 @@ export default {
     isdisabled: {
       type: Boolean,
       default: false
+    } ,
+    closeHandler: {
+      type: Function,
+      default: ()=>{}
     }
   },
   data() {
@@ -364,7 +368,7 @@ export default {
       //   }
       //   this.innerValue = this.value
       // }
-      // return 
+      // return
       let selectedIds = this.multiple ? this.value : [[this.value]]
       this.selectedIds = JSON.parse(JSON.stringify(selectedIds))
       let textList = []

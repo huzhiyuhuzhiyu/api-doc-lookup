@@ -19,6 +19,7 @@
                 {{ $getLabel(configKeyList, scope.row.configKey, 'value', 'label') }}
               </template>
             </el-table-column>
+              <el-table-column prop="configValue3" label="文件分类" width="150" v-if="activeName === 'attachment'"/>
 
             <el-table-column prop="state" label="操作" :width="stateWidth" :align="stateAlign">
               <template slot-scope="scope">
@@ -33,7 +34,7 @@
                   </el-radio-group>
                 </div>
                 <div v-else>
-                  <el-checkbox v-model="scope.row.state" @change="stateChange(scope.row)"></el-checkbox>
+                  <el-checkbox v-model="scope.row.state" @change="stateChange(scope.row)" ></el-checkbox>
                   <el-input style="width: 150px;margin-left: 10px;" v-if="
                     (scope.row.state && scope.row.configKey == 'work_exceed_report') ||
                     (scope.row.state && scope.row.configKey == 'collect_exceed_picking')
@@ -54,12 +55,20 @@
         </div>
       </div>
     </div>
+   <ComSelect2
+       v-model="currentChooseCategory"
+       ref="selectFileCategory"
+       v-show="false"
+       placeholder="请选择所属分类" auth
+       :closeHandler="closeHandler"
+       @change="onOrganizeChange" :selectClassifyType="FileCategoryType.SYSTEM_ATTACHMENT"/>
   </div>
 </template>
 
 <script>
 import { getBimBusinessSwitchConfigList, editBimBusinessData } from '@/api/basicData/index'
-import { getLabel } from '@/utils/index'
+import {getLabel, isEmpty} from '@/utils/index'
+import {FileCategoryType} from "@/views/esop/fileCategoryManagement/constants";
 Vue.prototype.$getLabel = getLabel
 export default {
   name: 'ParamSetting',
@@ -419,7 +428,10 @@ export default {
           label: '开启后，在装配计划(销售订单创建)新建、编辑、查看都会显示附件操作。',
           value: 'fj_assembleSaleOrder'
         }
-      ],  
+      ],
+      currentData:null,
+      currentChooseCategory:'',
+      reverseFn:null,
     }
   },
   watch: {
@@ -431,6 +443,9 @@ export default {
     this.initData()
   },
   computed: {
+      FileCategoryType() {
+          return FileCategoryType
+      },
     stateWidth() {
       let width = 60
       let flag = true
@@ -491,6 +506,19 @@ export default {
     }
   },
   methods: {
+      closeHandler(){
+          if(isEmpty(this.currentChooseCategory)){
+              this.reverseFn && this.reverseFn()
+          }
+      },
+    onOrganizeChange(id,[category]){
+        if(!this.currentData){
+            return this.$message.error('没有选中数据')
+        }
+       this.currentData.configValue2 = category.id
+       this.currentData.configValue3 = category.name
+       this.stateChangeFn(this.currentData)
+    },
     initData() {
       if (this.activeName === 'product') {
         this.listQuery.pageSize = -1
@@ -533,6 +561,7 @@ export default {
             this.tableData = res.data.warehouse
           } else if (this.activeName == 'attachment') {
             this.tableData = res.data.attachment.filter((item) => item.configKey !== '' || item.configKey == 'fj_qzkh')
+              console.log( this.tableData)
           }
 
           this.tableData.forEach((item) => {
@@ -557,33 +586,49 @@ export default {
         })
         .catch(() => (this.formLoading = false))
     },
-    stateChange(data) {
-      let _data = []
+    stateChangeFn(data){
+          let _data = []
 
-      if (data.state) {
-        data.configValue1 = 1
-      } else {
-        data.configValue1 = 0
-      }
-      let query = {
-        ...data,
-        configKey: data.configKey
-      }
-      _data.push(query)
-      editBimBusinessData(_data).then((res) => {
-        if (res.code == '200') {
-          this.$message({
-            message: '修改成功',
-            type: 'success'
-          })
-          this.formLoading = false
-        } else {
-          this.formLoading = false
+          if (data.state) {
+              data.configValue1 = 1
+          } else {
+              data.configValue1 = 0
+          }
+          let query = {
+              ...data,
+              configKey: data.configKey
+          }
+          _data.push(query)
+         return editBimBusinessData(_data).then((res) => {
+              if (res.code == '200') {
+                  this.$message({
+                      message: '修改成功',
+                      type: 'success'
+                  })
+                  this.formLoading = false
+              } else {
+                  this.formLoading = false
+              }
+          }).finally(()=>{
+             this.currentData = null
+             this.reverseFn =null
+             this.currentChooseCategory =''
+         })
+      },
+    stateChange(data) {
+        if(this.activeName === 'attachment' && data.state){
+            this.currentChooseCategory =''
+            this.currentData = data
+            this.reverseFn =() => (data.state = false)
+
+            return this.$refs.selectFileCategory.openDialog()
         }
-      })
+        return this.stateChangeFn(data)
     },
     radioChange(data) {
       console.log(data, 'o')
+
+
       let _data = []
       if (data.radio) {
         data.configValue1 = 1

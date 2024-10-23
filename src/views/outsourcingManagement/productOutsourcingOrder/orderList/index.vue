@@ -479,6 +479,7 @@ export default {
 
     // 关闭新建、编辑页面
     closeForm(isRefresh) {
+      console.log(isRefresh, 'is')
       this.formVisible = false
       this.withdrawnVisible = false
       this.createFormVisible = false

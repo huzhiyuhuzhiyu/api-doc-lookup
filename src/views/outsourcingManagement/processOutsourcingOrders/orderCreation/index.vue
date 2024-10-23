@@ -53,7 +53,7 @@
                                 @change="deliveryDateChange"></el-date-picker>
                             </el-form-item>
                           </el-col>
-                          <el-col :span="24">
+                          <el-col :span="12">
                             <el-form-item label="申请理由" prop="applicationReason" ref="applicationReason">
                               <el-input type="textarea" :row="3" v-model="dataForm.applicationReason"
                                 placeholder="请输入申请理由" maxlength="200"
@@ -774,9 +774,9 @@ export default {
         { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
         // { prop: 'name', label: '产品名称', sortable: 'custom' },
         { prop: 'code', label: '产品编码', sortable: 'custom' },
-        { prop: 'productCategoryName', label: '产品分类', sortable: 'custom' },
-        { prop: 'mainUnit', label: '单位' },
-        { prop: 'createTime', label: '创建日期', sortable: 'custom' }
+        { prop: 'productCategoryName', label: '产品分类', sortable: 'custom2' },
+        { prop: 'mainUnit', label: '单位', width: 60 },
+        { prop: 'createTime', label: '创建日期', sortable: 'custom', width: 180 }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
@@ -1038,6 +1038,10 @@ export default {
     handlerConfirm(data) {
       console.log(this.index, '1111111111111111111111111')
       console.log(data, '资源资源数据')
+      data.forEach(item => {
+        console.log(item.id)
+        item.id = ''
+      })
       this.dataFormTwo.data[this.index].outShipmentList = data
       console.log(
         this.dataFormTwo.data[this.index].outShipmentList,
@@ -1548,9 +1552,9 @@ export default {
                   insertOutOrder(_data)
                     .then((res) => {
                       if (res.msg === 'Success') res.msg = '新建成功'
-                      if (value == 'draft') {
+                      if (this.dataForm.documentStatus == 'draft') {
                         this.submitmethodsTitle = '保存成功'
-                      } else if (value == 'submit') {
+                      } else if (this.dataForm.documentStatus == 'submit') {
                         this.submitmethodsTitle = '提交成功'
                       }
                       this.tipsvisible = true

@@ -1,6 +1,10 @@
 import {switchEnableMark} from "@/api/esop/fileUpload/workinginstruction";
 import {notEmpty} from "@/utils";
-import {ApprovalStatus, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
+import {
+    ApprovalStatus,
+    ORDER_CODE_FILE_UPLOAD,
+    ModelType
+} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 
 export default {
     props:{
@@ -58,7 +62,7 @@ export default {
                 bimFileUploadLineList: this.getUploadDetailList()
             }
         },
-        async fetchData(flag=true,code="WJSCSQ") {
+        async fetchData(flag=true,code=ORDER_CODE_FILE_UPLOAD) {
             try {
                 const data = await this.jnpf.getBillRuleConfigFun(code);
                 this.codeConfig = data

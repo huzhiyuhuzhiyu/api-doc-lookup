@@ -1104,9 +1104,12 @@ export default {
           console.log(res, 'df')
           if (res.data.length === 0) {
             this.dataFormTwo.data.forEach((item) => {
-              item.price = ''
-              item.fixedPrice = ''
+              console.log(item, 'p[[[]]]')
+              item.price = item.purchasePrice
+              item.fixedPrice = item.purchasePrice
+              item.taxRate = item.purchaseTaxRate
             })
+
           } else {
             res.data.forEach((item) => {
               const targetList = this.dataFormTwo.data.filter((line) => line.productsId === item.productId)
@@ -1239,9 +1242,9 @@ export default {
         this.$set(this.dataFormTwo.data[i], 'excludingTaxAmount', '') // 总金额(不含税)
         // this.$set(this.dataFormTwo.data[i], 'excludingTaxPrice', '')    // 	不含税单价
         this.$set(this.dataFormTwo.data[i], 'fixedPrice', '') //  	定价
-        this.$set(this.dataFormTwo.data[i], 'price', this.dataFormTwo.data[i].purchasePrice) //  	含税单价
+        this.$set(this.dataFormTwo.data[i], 'price', '') //  	含税单价
         this.$set(this.dataFormTwo.data[i], 'taxAmount', '') // 税额
-        this.$set(this.dataFormTwo.data[i], 'taxRate', this.dataFormTwo.data[i].purchaseTaxRate) // taxRate
+        this.$set(this.dataFormTwo.data[i], 'taxRate', '') // taxRate
         this.$set(this.dataFormTwo.data[i], 'totalAmount', '') // 	价税合计
         this.$set(
           this.dataFormTwo.data[i],

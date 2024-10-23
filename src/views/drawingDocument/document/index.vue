@@ -4,7 +4,7 @@
       <el-tab-pane name="allPanel">
         <span slot="label"><i class="icon-ym icon-ym-extend-folder-open"></i>全部文档</span>
         <div class="main JNPF-flex-main height-full">
-          <div class="JNPF-common-head">
+          <div :style="{height: this.headHeight}" class="JNPF-common-head">
             <el-breadcrumb>
               <el-breadcrumb-item v-if="levelList.length > 1">
                 <a @click="jump(levelList[levelList.length - 2], levelList.length - 2)">返回上一级</a>
@@ -16,7 +16,7 @@
             </el-breadcrumb>
             <SwitchListAndFilter @command="filterExtHandler" :switch-list.sync="allSwitchList" :current-ext.sync="currentExt" :file-ext-filter-option="fileExtFilterOption"/>
           </div>
-          <el-row class="JNPF-common-search-box searchWrapper">
+          <el-row  :style="{height: this.searchHeight}" class="JNPF-common-search-box searchWrapper">
               <SearchPlane
                   :loading.sync="searchPlaneLoading"
                   class="search-com"
@@ -31,7 +31,7 @@
                  <el-button type="primary" icon="el-icon-upload2" @click="uploadFile()">上传文件</el-button>
              </div>
           </el-row>
-          <div class="height-full">
+          <div :style="{height: this.listHeight}" class="height-full">
             <JNPF-table  class="table-style" v-if="allSwitchList" v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini">
               <el-table-column prop="fullName" label="文件名" custom-column>
                 <template slot-scope="scope">
@@ -89,14 +89,14 @@
       <el-tab-pane name="shareoutPanel">
         <span slot="label"><i class="icon-ym icon-ym-extend-thumbs-up"></i>我的共享</span>
         <div class="main JNPF-flex-main height-full">
-          <div class="JNPF-common-head">
+          <div :style="{height: this.headHeight}" class="JNPF-common-head">
             <el-breadcrumb>
               <el-breadcrumb-item>我的共享</el-breadcrumb-item>
             </el-breadcrumb>
               <SwitchListAndFilter @command="filterExtHandler" :switch-list.sync="shareSwitchList" :current-ext.sync="currentExt" :file-ext-filter-option="fileExtFilterOption"/>
 
           </div>
-          <el-row class="JNPF-common-search-box searchWrapper">
+          <el-row  :style="{height: this.searchHeight}" class="JNPF-common-search-box searchWrapper">
               <SearchPlane
                   :loading.sync="searchPlaneLoading"
                   class="width-full"
@@ -107,7 +107,7 @@
                   :keyword.sync="keyword"
               ></SearchPlane>
           </el-row>
-          <div class="height-full">
+          <div :style="{height: this.listHeight}" class="height-full">
             <JNPF-table   class="table-style" v-if="shareSwitchList"  v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini">
               <el-table-column prop="fullName" label="文件名">
                 <template slot-scope="scope">
@@ -141,14 +141,14 @@
       <el-tab-pane name="sharetomePanel">
         <span slot="label"><i class="icon-ym icon-ym-extend-share"></i>共享给我</span>
         <div class="main JNPF-flex-main height-full">
-          <div class="JNPF-common-head">
+          <div :style="{height: this.headHeight}" class="JNPF-common-head">
             <el-breadcrumb>
               <el-breadcrumb-item>共享给我</el-breadcrumb-item>
             </el-breadcrumb>
             <SwitchListAndFilter @command="filterExtHandler" :switch-list.sync="shareToMeSwitchList" :current-ext.sync="currentExt" :file-ext-filter-option="fileExtFilterOption"/>
 
           </div>
-            <el-row class="JNPF-common-search-box searchWrapper">
+          <el-row :style="{height: this.searchHeight}" class="JNPF-common-search-box searchWrapper">
                 <SearchPlane
                     :loading.sync="searchPlaneLoading"
                     class="width-full"
@@ -159,7 +159,7 @@
                     :keyword.sync="keyword"
                 ></SearchPlane>
             </el-row>
-          <div class="height-full">
+          <div :style="{height: this.listHeight}" class="height-full">
             <JNPF-table  class="table-style" v-if="shareToMeSwitchList" v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini" >
               <el-table-column prop="fullName" label="文件名">
                 <template slot-scope="scope">
@@ -189,14 +189,14 @@
       <el-tab-pane name="trashPanel">
         <span slot="label"><i class="icon-ym icon-ym-extend-trash"></i>回收站</span>
         <div class="main JNPF-flex-main height-full">
-          <div class="JNPF-common-head">
+          <div :style="{height: this.headHeight}" class="JNPF-common-head">
             <el-breadcrumb>
               <el-breadcrumb-item>回收站</el-breadcrumb-item>
             </el-breadcrumb>
             <SwitchListAndFilter @command="filterExtHandler" :switch-list.sync="trashSwitchList" :current-ext.sync="currentExt" :file-ext-filter-option="fileExtFilterOption"/>
 
           </div>
-            <el-row class="JNPF-common-search-box searchWrapper">
+          <el-row :style="{height: this.searchHeight}" class="JNPF-common-search-box searchWrapper">
                 <SearchPlane
                     :loading.sync="searchPlaneLoading"
                     class="width-full"
@@ -207,7 +207,7 @@
                     :keyword.sync="keyword"
                 ></SearchPlane>
             </el-row>
-          <div class="height-full">
+          <div :style="{height: this.listHeight}" class="height-full">
             <JNPF-table  class="table-style" v-if="trashSwitchList"  v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini" >
               <el-table-column prop="fullName" label="文件名">
                 <template slot-scope="scope">
@@ -929,7 +929,18 @@ export default {
       }
       return "icon-ym-file-blank"
     }
-  }
+  },
+    computed:{
+      headHeight(){
+          return '41px'
+      },
+      searchHeight(){
+        return '36px'
+      },
+      listHeight(){
+        return `calc(100% - ${this.headHeight} - ${this.searchHeight})`
+      }
+    }
 }
 </script>
 <style lang="scss" scoped>

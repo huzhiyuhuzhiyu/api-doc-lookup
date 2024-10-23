@@ -155,6 +155,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.JNPF-common-drawer{
+  overflow: auto;
+}
 .JNPF-messageList {
   .JNPF-messageList-title {
     display: flex;

@@ -836,7 +836,7 @@ export default {
         !this.dataForm.itemList ? (this.dataForm.itemList = []) : ''
         !this.dataForm.causesList ? (this.dataForm.causesList = []) : ''
 
-        this.initLinesListItems = () => [
+        this.inspectionItems = [
           { prop: 'name', label: '检验项目', value: '', type: 'view', minWidth: 120 },
           {
             prop: 'unqualifiedQuantity',
@@ -865,10 +865,12 @@ export default {
           },
           { prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120 }
         ]
+        this.activeNames = ['basicInfo', 'inspectionInfo', 'adverseCausesInfo']
+        this.activeNames = ['inspectionItem', 'basicInfo', 'inspectionInfo', 'adverseCausesInfo']
         console.log(this.inspectionItems)
       } else {
         this.dataForm.unqualifiedQuantity = '0'
-        this.initLinesListItems = () => [
+        this.inspectionItems = [
           { prop: 'name', label: '检验项目', value: '', type: 'view', minWidth: 120 },
           {
             prop: 'unqualifiedQuantity',
@@ -897,6 +899,7 @@ export default {
           },
           { prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120 }
         ]
+        console.log(this.inspectionItems, 'this.inspectionItems2')
       }
       this.setDataFormItems()
     },

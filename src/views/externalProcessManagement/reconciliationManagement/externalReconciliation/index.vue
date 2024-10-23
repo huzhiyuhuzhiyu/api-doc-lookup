@@ -391,19 +391,20 @@ export default {
 
     initData() {
       if (this.reconciliationDate && this.reconciliationDate.length > 0) {
-        this.superForm.reconciliationStartDate = this.reconciliationDate[0]
-        this.superForm.reconciliationEndDate = this.reconciliationDate[1]
+        this.listQuery.reconciliationStartDate = this.reconciliationDate[0]
+        this.listQuery.reconciliationEndDate = this.reconciliationDate[1]
       } else {
-        this.superForm.reconciliationStartDate = ''
-        this.superForm.reconciliationEndDate = ''
+        this.listQuery.reconciliationStartDate = ''
+        this.listQuery.reconciliationEndDate = ''
       }
       if (this.createRequirementDate && this.createRequirementDate.length > 0) {
-        this.superForm.createStartTime = this.createRequirementDate[0] + " 00:00:00"
-        this.superForm.createEndTime = this.createRequirementDate[1] + " 23:59:59"
+        this.listQuery.createStartTime = this.createRequirementDate[0] + " 00:00:00"
+        this.listQuery.createEndTime = this.createRequirementDate[1] + " 23:59:59"
       } else {
-        this.superForm.createStartTime = ''
-        this.superForm.createEndTime = ''
+        this.listQuery.createStartTime = ''
+        this.listQuery.createEndTime = ''
       }
+      this.superForm = this.listQuery
       this.listLoading = true
       getfinAccountList(this.superForm).then(res => {
         console.log(res, '对账单列表');

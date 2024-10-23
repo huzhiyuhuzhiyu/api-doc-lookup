@@ -62,18 +62,24 @@
                     enabled-checkbox-plus
                     :hasC="hasTableTopOpts"
                             ref="dataTable" :setColumnDisplayList="columnList">
-                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />
-                    <el-table-column prop="drawingNo" label="品名规格" min-width="150" />
+<!--                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />-->
+                    <el-table-column prop="drawingNo" label="品名规格" min-width="305" />
                     <el-table-column prop="productsCode" label="产品编码" min-width="120" />
                     <el-table-column prop="productsCategoryName" label="产品分类" width="140" />
                     <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center">
                         <template slot-scope="{row}">
                             <el-tag type="warning" v-if="row.documentStatus === 'draft'">草稿</el-tag>
                             <el-tag type="success" v-else-if="row.documentStatus === 'submit'">提交</el-tag>
+                            <el-tag type="danger"  v-else-if="row.documentStatus === 'back'">退回</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column prop="version" label="版本号" width="80" />
                     <el-table-column prop="fileCount" label="文件数量" width="120" />
+                    <el-table-column prop="versionCount" label="关联版本" width="120"  v-if="isFileManagementPage || isFileCheckPage">
+                        <template slot-scope="scope">
+                            <el-link :underline="false" type="primary" @click="searchVersion(scope.row.drawingNo)">{{scope.row.versionCount}}</el-link>
+                        </template>
+                    </el-table-column>
                     <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
                     <el-table-column prop="createByName" label="创建人" width="100" />
                     <el-table-column prop="status" label="启用状态" width="120" align="center" v-if="isFileManagementPage || isFileCheckPage">
@@ -150,8 +156,9 @@ import { mapGetters, mapState } from 'vuex'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import EditWorkingInstructionUpload from "@/views/esop/fileUpload/workinginstruction/Form.vue";
 import {
+    addBimFileUpload, backBimFileUpload,
     batchDeleteBimFileUpload,
-    deleteBimFileUpload,
+    deleteBimFileUpload, detailBimFileUpload,
     getBimFileUpload, switchEnableMark
 } from "@/api/esop/fileUpload/workinginstruction";
 import moment from "moment";
@@ -164,15 +171,16 @@ import {
     FileTrashPageSet,
     FileUploadPageSet,
     FileUploadPageType2Url,
-    ModelType,
+    ModelType, ORDER_CODE_FILE_UPLOAD,
     PageType,
     PathQueryType
 } from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 import {FlowCode} from "@/views/esop/utils/constants";
-import {getQueryConfirm, getSuccessInfo, isEmpty, mapIfNonePutArr, trim} from "@/utils";
+import {getQueryConfirm, getSuccessInfo, isEmpty, mapIfNonePutArr, notEmpty, trim} from "@/utils";
 import RecreateMixin from "@/views/esop/utils/RecreateMixin";
-import {BtnType, executeQueryTime} from "@/views/esop/utils/utils";
+import {BtnType, executeQueryTime, getUploadFileSaveData} from "@/views/esop/utils/utils";
 import {getBimRecycleBin, revertBimRecycleBin} from "@/api/esop/fileTrash";
+import {getBusinessFlowInfo} from "@/api/workFlow/FlowEngine";
 
 
 
@@ -202,12 +210,15 @@ export default {
         }
     },
     watch:{
-      "$route.query.id"(val){
-          if(!this.isFileUploadPage){
-              return
-          }
-          if( this.$route.query.type === PathQueryType.COPY){
-            this.addOrUpdateHandle(ModelType.COPY,val)
+      "$route.query.id":{
+          immediate:true,
+          handler(val){
+              if(!this.isFileUploadPage){
+                  return
+              }
+              if( this.$route.query.type === PathQueryType.DETAIL){
+                  this.addOrUpdateHandle(ModelType.EDIT,val)
+              }
           }
       }
     },
@@ -316,20 +327,74 @@ export default {
 
     },
     methods: {
-        copy2FileUpload(id){
-            console.log("copy2FileUpload",id)
-            console.log(this.pageType)
-            console.log(FileManagementPageType2FileUploadUrl[this.pageType])
-            this.$router.replace({
-                path: FileManagementPageType2FileUploadUrl[this.pageType],
-                query:{
-                    id,
-                    type:PathQueryType.COPY
-                }
-            })
+       async getFlowData(){
+           const resObj ={
+               flowData:null,
+               approvalFlag:false
+           }
+           try{
+               const res = await getBusinessFlowInfo(this.flowCode)
+               if (res.data) {
+                   resObj.approvalFlag = res.data.enabledMark
+                   resObj.flowData = res.data.enabledMark? res.data : null
+               }
+
+           }catch (e) {
+           }
+           return resObj
         },
-        backFileUpload(type,id){
-            console.log("backFileUpload",id)
+
+        async copy2FileUpload(id){
+            this.listLoading = true
+            try {
+                const [{data}, {number},{ flowData,approvalFlag }] =
+                    await Promise.all([
+                        detailBimFileUpload(id),
+                        this.jnpf.getBillRuleConfigFun(ORDER_CODE_FILE_UPLOAD),
+                        this.getFlowData()
+                    ])
+
+                data.id = null
+                notEmpty(data.bimFileUploadLineVOList) &&
+                data.bimFileUploadLineVOList.forEach(item=>{
+                    item.id = null
+                    item.fileUploadId = null
+                })
+                data.orderNo = number
+                data.documentStatus = DocumentStatus.DRAFT
+                data.flowData =flowData
+                data.approvalFlag = approvalFlag
+                data.bimFileUploadLineList =  data.bimFileUploadLineVOList
+                const res = await addBimFileUpload(getUploadFileSaveData(data))
+                if(res.data){
+                    getSuccessInfo()
+                    this.$router.push({
+                        path: FileManagementPageType2FileUploadUrl[this.pageType],
+                        query:{
+                            id,
+                            type:PathQueryType.DETAIL
+                        }
+                    })
+                }
+            }catch (e) {
+               this.$message.error(e.message)
+            }finally {
+                this.listLoading = false
+            }
+
+
+        },
+        async backFileUpload(type,id){
+            console.log('type',type)
+           try {
+               await getQueryConfirm(this,'是否要退回此记录？')
+               const res = await backBimFileUpload(id)
+               getSuccessInfo()
+               this.initData()
+           }catch (e) {
+                this.$message.error(e.message)
+           }
+
         },
         superQueryVisibleShow(){
           this.superQueryVisible = true
@@ -415,7 +480,11 @@ export default {
            this.total = data.total
            this.listLoading = false
         },
-
+        searchVersion(drawingNo){
+            this.createTimeArr =[]
+            this.listQuery.superQuery.condition[0].fieldValue = drawingNo
+            this.search()
+        },
         search() {
             trim(executeQueryTime(this.listQuery,this.createTimeArr))
             this.listQuery.pageNum = 1

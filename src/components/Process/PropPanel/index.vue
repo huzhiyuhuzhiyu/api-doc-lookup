@@ -355,9 +355,9 @@
     </section>
 
     <!-- 发起人 -->
-    <section class="approver-pane" v-if="value && isStartNode()">
+    <section class="approver-pane" v-if="value && isStartNode()" style="height:calc(100% - 60px);margin-bottom:5px">
       <el-scrollbar class="config-scrollbar" style="height:100%">
-      <el-tabs style="height:100%;">
+      <!-- <el-tabs style="height:100%;"> -->
         <!-- <el-tab-pane label="基础设置">
           <el-scrollbar class="config-scrollbar">
             <el-form label-position="top" :model="startForm" class="pd-10-20">
@@ -677,7 +677,7 @@
             </el-form>
           </el-scrollbar>
         </el-tab-pane> -->
-        <el-tab-pane label="流程通知">
+        <!-- <el-tab-pane label="流程通知"> -->
           <el-scrollbar class="config-scrollbar">
             <el-form :model="startForm" class="pd-10-20" label-position="top">
               <el-alert title="该通知设置配置外部第三方消息提醒，站内信系统默认发送" type="warning" :closable="false"
@@ -994,7 +994,7 @@
               </div> -->
             </el-form>
           </el-scrollbar>
-        </el-tab-pane>
+        <!-- </el-tab-pane> -->
         <!-- <el-tab-pane label="超时提醒">
           <el-scrollbar class="config-scrollbar">
             <el-form :model="startForm" class="pd-10-20" label-position="top">
@@ -1140,7 +1140,7 @@
             </el-form>
           </el-scrollbar>
         </el-tab-pane> -->
-      </el-tabs>
+      <!-- </el-tabs> -->
     </el-scrollbar>
     </section>
     <!-- 审批人 -->
@@ -3253,10 +3253,12 @@ export default {
 }
 
 .approver-pane {
-  height: 100%;
+  // height: 100%;
   overflow: hidden;
   padding: 10px;
-  >>> .el-tabs__content {
+  height:calc(100% - 60px);
+  margin-bottom:5px;
+  ::v-deep .el-tabs__content {
     height: calc(100% - 40px);
     .el-tab-pane {
       height: 100%;

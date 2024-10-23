@@ -96,6 +96,7 @@ export default {
 .grid-file-list{
     width: 100%;
     height: 100%;
+    overflow: auto;
     .icon-more{
         background: #ebebeb;
         border-radius: 4px;
@@ -137,7 +138,7 @@ export default {
             flex-shrink: 0;
             height: 158px;
             position: relative;
-            width: 135px;
+            width: 130px;
             .item-cover{
                 background-position: 50%;
                 background-size: contain;

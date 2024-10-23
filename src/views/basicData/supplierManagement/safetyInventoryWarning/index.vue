@@ -66,7 +66,6 @@
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
             </el-form-item>
           </el-col>
-          
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -264,8 +263,8 @@ export default {
         {
           prop: 'mainUnit',
           label: '单位',
-          type: 'input',
-        },
+          type: 'input'
+        }
         // {
         //   prop: 'safeInventory',
         //   label: '安全库存',
@@ -372,7 +371,7 @@ export default {
       this.listLoading = true
       this.treeLoading = true
       this.listQuery.productCategoryId = '' // 重置数据类型id筛选
-      getcategoryTree({ classAttribute: '' })
+      getcategoryTree({ classAttribute: '', type: 'material' })
         .then((res) => {
           this.treeData = res.data.length ? res.data : []
           this.$nextTick(() => {

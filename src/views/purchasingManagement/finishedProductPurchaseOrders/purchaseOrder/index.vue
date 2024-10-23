@@ -115,7 +115,7 @@
                     <el-dropdown-item @click.native="orderFormDownload(scope.row.id)">
                       下载订货单
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="printPurchaseOrder(scope.row.id, 'P001')">
+                    <el-dropdown-item @click.native="printView(scope.row, 'p006')">
                       打印订货单
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -202,7 +202,9 @@
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
-
+    <!-- 选择打印模版弹窗 -->
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" />
   </div>
 </template>
 
@@ -228,9 +230,10 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
 export default {
   name: 'purchaseOrder',
-  components: { JNPFForm, withdrawnForm, ExportForm, SuperQuery, PrintBrowse },
+  components: { JNPFForm, withdrawnForm, ExportForm, SuperQuery, PrintBrowse, PrintDialog },
   data() {
     return {
       printBrowseVisible: false,
@@ -408,14 +411,14 @@ export default {
       //	收货状态 待收货 receiving、已收货 received,可用值:received,receiving,returned,returning
       receiptReturnType: [{ label: '未完成', value: 'receiving' }, { label: '已完成', value: 'received' }],
       columnList: ['cooperativePartnerCode', 'excludingTaxTotalAmount', 'taxAmount', 'receivingStatus', 'createByName'],
-      showAppCodeFlag:true
+      showAppCodeFlag: true
     }
   },
   async created() {
     const res = await this.jnpf.getBusInfo('b028')
-    if (res){
+    if (res) {
       this.showAppCodeFlag = res.enabledMark
-    }else{
+    } else {
       this.showAppCodeFlag = false
     }
     this.initData()
@@ -725,12 +728,22 @@ export default {
         })
       })
     },
-    // 打印
-    printPurchaseOrder(id, enCode) {
+    // 选择模版弹窗
+    printView(row, enCode) {
+      this.selectWarehouse = [row]
+      this.enCode = enCode
+      this.fullName = '仓库二维码'
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(enCode)
+      })
+    },
+    printWarehouse(enCode) {
+      if (!this.selectWarehouse.length) return this.$message.error("请选择您要打印的数据!")
       getPrintBusInfo(enCode).then(res => {
         if (res.data) {
           this.prindId = res.data.id
-          this.formId = id
+          this.formId = this.selectWarehouse.map(item => item.id).join(',')
           this.printBrowseVisible = true
         } else {
           this.$message.warning('未找到相应打印模版')
@@ -738,6 +751,9 @@ export default {
       }).catch(() => {
         this.printBrowseVisible = false
       });
+    },
+    closePrint() {
+      this.printVisible = false
     },
 
   }

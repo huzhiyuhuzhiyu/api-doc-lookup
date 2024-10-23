@@ -2705,10 +2705,12 @@ export default {
 }
 
 .approver-pane {
-  height: 100%;
+  // height: 100%;
   overflow: hidden;
   padding: 10px;
-  >>> .el-tabs__content {
+  height:calc(100% - 60px);
+  margin-bottom:5px;
+  ::v-deep .el-tabs__content {
     height: calc(100% - 40px);
     .el-tab-pane {
       height: 100%;

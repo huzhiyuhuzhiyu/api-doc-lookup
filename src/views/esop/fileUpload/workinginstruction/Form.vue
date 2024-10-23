@@ -12,7 +12,7 @@
                                 <el-button type="primary" :loading="btnLoading" @click="handleConfirm(DocumentStatus.SUBMIT)">保存并提交</el-button>
                             </template>
                             <template v-else-if="isFileManagementPage">
-                                <el-button type="primary" :loading="btnLoading" @click="delFileUpload">退回</el-button>
+                                <el-button type="primary" :loading="btnLoading" @click="backFileUpload">退回</el-button>
                                 <el-button type="danger" :loading="btnLoading" @click="delFileUpload">删除</el-button>
                             </template>
                             <template v-else-if="isFileTrashPage">
@@ -60,7 +60,7 @@ import {getQueryConfirm, getSuccessInfo, isEmpty, notEmpty} from "@/utils";
 import FileUploadDrop from "@/views/esop/fileUpload/workinginstruction/component/FileUploadDrop.vue";
 import {DocumentStatus, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 import {
-    addBimFileUpload,
+    addBimFileUpload, backBimFileUpload,
     deleteBimFileUpload,
     detailBimFileUpload,
     modifyBimFileUpload
@@ -68,7 +68,7 @@ import {
 import Process from "@/components/Process/Preview.vue";
 import recordList from "@/views/workFlow/components/RecordList.vue";
 import busFlow from "@/mixins/generator/busFlow";
-import {getTitleForType, isHasProcessApplicationType} from "@/views/esop/utils/utils";
+import {getTitleForType, getUploadFileSaveData, isHasProcessApplicationType} from "@/views/esop/utils/utils";
 import FlowMixin from "@/mixins/generator/flowMixin";
 import FinishSubmit from "@/views/esop/fileUpload/workinginstruction/old/finishSubmit.vue";
 import HasProcessBasicInfo from "@/views/esop/fileUpload/workinginstruction/component/HasProcessBasicInfo.vue";
@@ -157,6 +157,19 @@ export default {
             }
 
         },
+        async backFileUpload(){
+            try {
+                this.btnLoading = true
+                await getQueryConfirm(this,"是否要退回此记录")
+                await backBimFileUpload(this.id)
+                getSuccessInfo()
+                this.goBack()
+            }catch (e) {
+
+            }finally {
+                this.btnLoading = false
+            }
+        },
         async handleRestore(){
             try {
                 this.btnLoading = true
@@ -224,9 +237,8 @@ export default {
                 categoryId,
                 categoryName
           } =  this.basicInfoRef.getSaveData()
-            return {
-                bimFileUpload:{
-                    applicationType:this.applicationType,
+
+            return getUploadFileSaveData({
                     documentStatus,
                     openProcess,
                     productsId,
@@ -235,18 +247,29 @@ export default {
                     id,
                     approvalFlag,
                     version,
+                    bimFileUploadLineList,
                     categoryId,
-                    categoryName
-                },
-                bimFileUploadLineList,
-                flowData:this.flowData,
-                // products: [
-                //     {
-                //         fileUploadId: this.dataForm.id,
-                //         productsId:  this.dataForm.productsId
-                //     }
-                // ]
-            }
+                    categoryName,
+                    applicationType:this.applicationType,
+                    flowData:this.flowData
+                })
+            // return {
+            //     bimFileUpload:{
+            //         applicationType:this.applicationType,
+            //         documentStatus,
+            //         openProcess,
+            //         productsId,
+            //         routingId,
+            //         orderNo,
+            //         id,
+            //         approvalFlag,
+            //         version,
+            //         categoryId,
+            //         categoryName
+            //     },
+            //     bimFileUploadLineList,
+            //     flowData:this.flowData,
+            // }
         },
         init(id, btnType, approvalFlag){
             this.approvalFlag = approvalFlag
@@ -344,20 +367,11 @@ export default {
 }
 
 ::v-deep .el-tabs {
-    height: 100% !important;
+    height: calc(100% - 47px) !important;
 }
 
 ::v-deep .el-tabs__content {
-    height: calc(100% - 47px) !important;
     overflow: auto !important;
-}
-
-
-
-
-
-.JNPF-preview-main{
-    overflow: hidden !important;
 }
 
 .JNPF-preview-main .main {

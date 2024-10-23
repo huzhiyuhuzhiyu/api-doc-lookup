@@ -77,7 +77,7 @@
                     |
                   </div>
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                    <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true" :hasC="type !== 'look'"
+                    <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true" :hasC="type == 'edit'"
                       @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
                       id="table" border height="460" @row-click="openDetails" :row-style="rowStyle">
                       <!-- <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column> -->
@@ -1079,7 +1079,7 @@ export default {
       this.$emit('close')
     },
     init(id, type, approvalFlag) {
-      console.log(id, 'idwww')
+      console.log(id, 'idwww99999')
       this.getProductClassFun()
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = id || ''

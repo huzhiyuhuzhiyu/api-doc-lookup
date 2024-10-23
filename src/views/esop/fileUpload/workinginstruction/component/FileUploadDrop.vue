@@ -1,6 +1,6 @@
 <template>
-    <div v-drag:[disabled].onlyFile="dragHandler" class="UploadFile-container">
-        <template>
+    <div v-drag:[dragDisabled].onlyFile="dragHandler" class="UploadFile-container">
+        <template v-if="!onlyShow">
             <div class='UploadFile-container-main noUpload'>
                 <el-upload
                     v-bind="$attrs"
@@ -49,10 +49,13 @@
                 <el-table ref="dataTable" :data="fileList" style="margin-top: 5px;" v-loading="loading" v-if="switchList" :header-cell-style="{background:'#f5f7fa'}">
                     <el-table-column type="index" width="60" label="序号" align="center">
                     </el-table-column>
-                    <el-table-column prop="name" label="文件名">
+                    <el-table-column prop="name" label="文件名" >
                         <template slot-scope="scope">
-                            <i class="el-icon-paperclip"></i>
-                            {{ scope.row.name }}
+                            <el-link :underline="false" @click="handlePreview(scope.row)">
+                                <i class="el-icon-paperclip"></i>
+                                {{ scope.row.name }}</el-link>
+
+
                         </template>
                     </el-table-column>
                     <el-table-column prop="fileSize" label="大小" width="150">
@@ -71,7 +74,7 @@
                 </el-table>
                 <div class="uploadlist" v-else>
                     <ul class="ul-upload" :style="{height: gridHeight}" v-loading="loading">
-                        <GridFileList @empty-lick="emptyUpload" :empty-description="disabled ? '当前状态不可上传文件': '暂无文件，您可点击或把文件拖拽至此上传'" :list="fileList" :file-options="fileOptions" @command="commandHandler" @item-click="itemClickHandler">
+                        <GridFileList @empty-lick="emptyUpload" :empty-description="dragDisabled ? '当前状态不可上传文件': '暂无文件，您可点击或把文件拖拽至此上传'" :list="fileList" :file-options="fileOptions" @command="commandHandler" @item-click="itemClickHandler">
                             <template v-slot:tooltip="{ item }">
                                 <el-row>
                                     <el-col style="text-align: right" :span="8">{{ item.type ? '文件名' : '文件夹名' }}：</el-col>
@@ -122,6 +125,10 @@ export default {
     },
     components: {SwitchListAndFilter, GridFileList, Preview},
     props: {
+        onlyShow:{
+            type:Boolean,
+            default:false
+        },
         isFileTrashPage:{
             type:Boolean,
             default:false
@@ -232,20 +239,6 @@ export default {
                 return origin
             }
 
-            // 不可以还原和删除明细
-            // if(this.isFileTrashPage){
-            //     origin.push({
-            //         value:'restore',
-            //         text:'还原',
-            //     })
-            //     return origin
-            // }
-            //
-            // origin.push({
-            //     value:'fileManageDelete',
-            //     text:'删除',
-            //     isShow:()=>!this.disabled
-            // })
             return origin
         },
         acceptText() {
@@ -281,6 +274,9 @@ export default {
             }
             return txt
         },
+        dragDisabled(){
+            return this.disabled || this.onlyShow
+        },
     },
     created() {
         // console.log('fff', this.fileList)
@@ -289,7 +285,7 @@ export default {
     methods: {
         emptyUpload() {
             if(this.disabled) return this.$message.info('当前状态不可上传文件')
-            this.$refs.clickUploadBtn.$el.click()
+            this.$refs.clickUploadBtn && this.$refs.clickUploadBtn.$el.click()
         },
         async fileManageDelete(index, {processUploadId}){
             try {

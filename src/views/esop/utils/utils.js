@@ -193,6 +193,39 @@ const Status2TagTypeMap =new Map([
     [5,'info'],
 ])
 
+
+export function getUploadFileSaveData(data) {
+   const  { applicationType,
+            documentStatus,
+            openProcess,
+            productsId,
+            routingId,
+            orderNo,
+            id,
+            approvalFlag,
+            version,
+            categoryId,
+            bimFileUploadLineList,
+            flowData,
+            categoryName} = data
+   return {
+        bimFileUpload:{
+                applicationType,
+                documentStatus,
+                openProcess,
+                productsId,
+                routingId,
+                orderNo,
+                id,
+                approvalFlag,
+                version,
+                categoryId,
+                categoryName
+        },
+        bimFileUploadLineList,
+        flowData,
+    }
+}
 /**
  * 获取审核状态中文
  * @param status

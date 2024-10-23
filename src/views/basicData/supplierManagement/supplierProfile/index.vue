@@ -96,23 +96,14 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:10px">
           <div style="display:flex;">
-            <el-button type="primary" size="mini" icon="el-icon-plus" @click.native="addSupplier()">
-              新建
-            </el-button>
-            <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
-              icon="el-icon-download" @click="exportForm">
-              导出
-            </el-button>
+            <topOpts @add="addSupplier()">
+              <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+                icon="el-icon-download" @click="exportForm">
+                导出
+              </el-button>
+            </topOpts>
           </div>
-          <!-- <div>
-                  <topOpts @add="addSupplier()" />
-                  <el-button type="primary" icon="el-icon-download" size="mini" @click="exportData()"
-                    style="margin-left: 10px;">导出
-                  </el-button>
-                  <el-button type="primary" icon="el-icon-upload el-icon--right" size="mini" @click="exportData()"
-                    style="margin-left: 10px;">上传文件
-                  </el-button>
-                </div> -->
+
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"

@@ -3,24 +3,6 @@
         <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
                 <el-form @submit.native.prevent>
-                    <!-- <el-col :span="4">
-                        <el-form-item>
-                            <el-input v-model="tableQuery.code" placeholder="班组编码" clearable />
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="4">
-                        <el-form-item>
-                            <el-input v-model="tableQuery.name" placeholder="班组名称" clearable />
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="4">
-                        <el-form-item>
-                            <el-select clearable v-model="tableQuery.state" placeholder="状态" style="width: 100%;">
-                                <el-option v-for="(item, index) in stateList" :key="index" :label="item.label"
-                                    :value="item.value"></el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col> -->
                     <template v-for="item in searchList">
                         <el-col :span="item.searchType === 3 ? 6 : 4" :key="item.prop">
                             <el-form-item>
@@ -52,17 +34,14 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
                 <div class="JNPF-common-head" style="padding: 8px">
-                    <!-- <el-dropdown> -->
                     <div>
-                        <el-button type="primary" size="mini" icon="el-icon-plus" @click.native="addSupplier('add')">
-                            新建
-                        </el-button>
-                        <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
-                            icon="el-icon-download" @click="exportForm">
-                            导出
-                        </el-button>
+                        <topOpts @add="addSupplier">
+                            <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
+                                icon="el-icon-download" @click="exportForm">
+                                导出
+                            </el-button>
+                        </topOpts>
                     </div>
-
                     <div class="JNPF-common-head-right">
                         <el-tooltip content="高级查询" placement="top" v-if="true">
                             <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -606,10 +585,10 @@ export default {
             this.$refs.SuperQuery.conditionList = []
             this.search('basic')
         },
-        addSupplier(type) {
+        addSupplier() {
             this.depFormVisible = true
             this.$nextTick(() => {
-                this.$refs.depForm.init('', type)
+                this.$refs.depForm.init('', 'add')
             })
         },
         addOrUpdateHandle(id, type) {

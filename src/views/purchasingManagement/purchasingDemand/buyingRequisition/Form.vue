@@ -527,7 +527,8 @@ export default {
       flowData: {},
       approvalFlag: false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime: 0
+      endTime: 0,
+      categoryId: ''
     }
   },
   created() {
@@ -543,6 +544,7 @@ export default {
       }
       getBimBusinessDetail(obj).then(res => {
         this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
       })
     },
     async fetchData(code) {
@@ -781,7 +783,8 @@ export default {
       if (this.datafilelist.length) {
         this.datafilelist.map((item, index) => {
           item.bimAttachments = {
-            businessType: '',
+            businessType: 'system_attachment',
+            categoryId: this.categoryId,
             documentId: item.id,
             fileFlag: '',
             sort: index

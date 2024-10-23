@@ -376,7 +376,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .approvalNeedHeader{
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
 ::v-deep .JNPF-common-page-header {

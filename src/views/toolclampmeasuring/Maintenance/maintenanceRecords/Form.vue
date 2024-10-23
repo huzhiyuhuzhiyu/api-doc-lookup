@@ -154,6 +154,11 @@
                         <el-input v-model="scope.row.description" placeholder="请输入说明" :disabled="btnType == 'look' ? true : false" maxlength="200" />
                       </template>
                     </el-table-column>
+                    <el-table-column prop="faultDescription" label="是否完成" width="90">
+                      <template slot-scope="scope">
+                        <el-checkbox v-model="scope.row.inspectionResult" true-label="finished" false-label="not_finished" :disabled="btnType == 'look'"></el-checkbox>
+                      </template>
+                    </el-table-column>
                     <el-table-column label="操作" width="120" v-if="btnType == 'edit' || btnType == 'add'" key="30">
                       <template slot-scope="scope">
                         <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
@@ -771,9 +776,13 @@ export default {
         if (this.dataForm.id) {
           detailequMaintenance(this.dataForm.id).then(res => {
             this.dataForms.lines = res.data.equLine
-            res.data.maintenance.picList = res.data.maintenance.picList.map(item => {
-              return JSON.parse(`{${item}}`)
-            })
+            if (res.data.maintenance.pic && res.data.maintenance.picList.length) {
+              res.data.maintenance.picList = res.data.maintenance.picList.map(item => {
+                return JSON.parse(`{${item}}`)
+              })
+            } else {
+              res.data.maintenance.picList = []
+            }
             this.dataForm = res.data.maintenance
             this.dataFormTwo.productData = res.data.lines
             this.$nextTick(() => {

@@ -250,52 +250,56 @@ export default {
                                             <el-input v-model="dataForm.orderNo" placeholder="请输入单号" :disabled="orderNoDisabled" />
                                         </el-form-item>
                                     </el-col>
-                                    <el-col :span="6">
-                                        <el-form-item label="版本号" prop="version">
-                                            <el-input v-model="dataForm.version" placeholder="请输入版本号"  />
-                                        </el-form-item>
-                                    </el-col>
+
                                     <el-col :span="6">
                                         <el-form-item label="工艺路线名称">
                                             <el-input readonly :placeholder="dataForm.routingName" v-model="dataForm.routingName"></el-input>
                                         </el-form-item>
                                     </el-col>
-                                    <el-col :span="2" v-if="isApprovalModel || isFileManagementPage">
-                                        <el-form @submit.prevent   style="padding-top: 0;" >
-                                            <el-form-item label="关联版本数">
-                                                <el-input  readonly @click.native="versionCountHandler" v-model="dataForm.versionCount || 1" class="pointer versionCount"/>
+                                    <template v-if="!isNoProductPage">
+                                        <el-col :span="6">
+                                            <el-form-item label="版本号" prop="version">
+                                                <el-input v-model="dataForm.version" placeholder="请输入版本号"  />
                                             </el-form-item>
-                                        </el-form>
-                                    </el-col>
-                                    <el-col :span="2">
-                                        <el-form-item label="按工序上传">
-                                            <div style="height: 32px;display: flex;align-items: center">
-                                                <el-tooltip :content="hasRoutingLine ? '开启后可为每一道工序上传作业指导书':'该产品未设置工艺路线，请设置工艺路线后再开启'" placement="top-start">
-                                                    <el-switch
-                                                        :active-value="1"
-                                                        :inactive-value="0"
-                                                        :disabled="!hasRoutingLine"
-                                                        @change="toggleProcessHandler"
-                                                        v-model="dataForm.openProcess"/>
-                                                </el-tooltip>
-                                            </div>
-                                        </el-form-item>
-                                    </el-col>
-
-                                    <el-col :span="2" v-if="hasEnableMark">
-                                        <el-form @submit.prevent :disabled="isView" style="padding-top: 0">
-                                            <el-form-item label="是否启用">
+                                        </el-col>
+                                        <el-col :span="2" >
+                                            <el-form @submit.prevent   style="padding-top: 0;" >
+                                                <el-form-item label="关联版本数">
+                                                    <el-input  readonly @click.native="versionCountHandler" v-model="dataForm.versionCount" class="pointer versionCount"/>
+                                                </el-form-item>
+                                            </el-form>
+                                        </el-col>
+                                        <el-col :span="2">
+                                            <el-form-item label="按工序上传">
                                                 <div style="height: 32px;display: flex;align-items: center">
-                                                    <el-switch
-                                                        :active-value="true"
-                                                        :inactive-value="false"
-                                                        :disabled="false"
-                                                        @change="toggleEnableMarkHandler"
-                                                        v-model="dataForm.enabledMark"/>
+                                                    <el-tooltip :content="hasRoutingLine ? '开启后可为每一道工序上传作业指导书':'该产品未设置工艺路线，请设置工艺路线后再开启'" placement="top-start">
+                                                        <el-switch
+                                                            :active-value="1"
+                                                            :inactive-value="0"
+                                                            :disabled="!hasRoutingLine"
+                                                            @change="toggleProcessHandler"
+                                                            v-model="dataForm.openProcess"/>
+                                                    </el-tooltip>
                                                 </div>
                                             </el-form-item>
-                                        </el-form>
-                                    </el-col>
+                                        </el-col>
+
+                                        <el-col :span="2" v-if="hasEnableMark">
+                                            <el-form @submit.prevent :disabled="isView" style="padding-top: 0">
+                                                <el-form-item label="是否启用">
+                                                    <div style="height: 32px;display: flex;align-items: center">
+                                                        <el-switch
+                                                            :active-value="true"
+                                                            :inactive-value="false"
+                                                            :disabled="false"
+                                                            @change="toggleEnableMarkHandler"
+                                                            v-model="dataForm.enabledMark"/>
+                                                    </div>
+                                                </el-form-item>
+                                            </el-form>
+                                        </el-col>
+
+                                    </template>
 
 
                                 </el-row>
@@ -304,6 +308,7 @@ export default {
                                         <el-form-item label="产品信息" prop="drawingNo">
                                             <div class="width-full flex-row">
                                                 <ComSelect-page
+                                                    placeholder="请选择产品编码"
                                                     style="width: 50%"
                                                     ref="ComSelect-page"
                                                     v-model="dataForm.drawingNo"

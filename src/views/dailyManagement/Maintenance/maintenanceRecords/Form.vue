@@ -161,7 +161,7 @@
                     </el-table-column>
                     <el-table-column prop="faultDescription" label="是否完成" width="90">
                       <template slot-scope="scope">
-                        <el-checkbox v-model="scope.row.repairResult" true-label="finished" false-label="not_finished" :disabled="btnType == 'look'"></el-checkbox>
+                        <el-checkbox v-model="scope.row.inspectionResult" true-label="finished" false-label="not_finished" :disabled="btnType == 'look'"></el-checkbox>
                       </template>
                     </el-table-column>
                     <el-table-column label="操作" width="120" v-if="btnType == 'edit' || btnType == 'add'" key="30">
@@ -783,9 +783,13 @@ export default {
         if (this.dataForm.id) {
           detailequMaintenance(this.dataForm.id).then(res => {
             this.dataForms.lines = res.data.equLine
-            res.data.maintenance.picList = res.data.maintenance.picList.map(item => {
-              return JSON.parse(`{${item}}`)
-            })
+            if (res.data.maintenance.pic && res.data.maintenance.picList.length) {
+              res.data.maintenance.picList = res.data.maintenance.picList.map(item => {
+                return JSON.parse(`{${item}}`)
+              })
+            } else {
+              res.data.maintenance.picList = []
+            }
             this.dataForm = res.data.maintenance
             this.dataFormTwo.productData = res.data.lines
             this.$nextTick(() => {

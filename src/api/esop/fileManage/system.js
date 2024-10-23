@@ -12,3 +12,15 @@ export function systemAttachmentsList(data){
         data
     })
 }
+
+/**
+ * 删除系统附件
+ * @param id
+ * @returns {AxiosPromise}
+ */
+export function systemAttachmentsDelete(id){
+    return request({
+        url: `/api/erp/attachments/remove/${id}`,
+        method: 'DELETE',
+    })
+}

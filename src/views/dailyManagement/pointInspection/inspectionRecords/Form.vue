@@ -40,13 +40,13 @@
                       </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="6" :xs="24">
+                  <!-- <el-col :sm="6" :xs="24">
                     <el-form-item label="点检结果" prop="inspectionResults">
                       <el-select v-model="dataForm.inspectionResults" placeholder="请选择点检结果" clearable style="width: 100%;" :disabled="btnType == 'look'">
                         <el-option v-for="(item, index) in inspectionResultsList" :key="index" :label="item.label" :value="item.value"></el-option>
                       </el-select>
                     </el-form-item>
-                  </el-col>
+                  </el-col> -->
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="备注" prop="remark">
                       <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btnType == 'look'" type="textarea" maxlength="200" :rows="2" />
@@ -157,7 +157,7 @@
                   </el-table-column>
                   <el-table-column prop="faultDescription" label="是否完成" width="90">
                     <template slot-scope="scope">
-                      <el-checkbox v-model="scope.row.repairResult" true-label="finished" false-label="not_finished" :disabled="btnType == 'look'"></el-checkbox>
+                      <el-checkbox v-model="scope.row.inspectionResult" true-label="finished" false-label="not_finished" :disabled="btnType == 'look'"></el-checkbox>
                     </template>
                   </el-table-column>
                   <el-table-column label="操作" width="120" fixed="right" v-if="btnType == 'edit' || btnType == 'add'" key="30">
@@ -310,7 +310,7 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
-        inspectionResults: 'normal',
+        // inspectionResults: 'normal',
         pic: '',
         name: '',
         cycleType: '',
@@ -343,9 +343,9 @@ export default {
       // },
       organizeIdTrees: [],
       dataRule: {
-        inspectionResults: [
-          { required: true, message: '请选择点检结果', trigger: 'change' }
-        ],
+        // inspectionResults: [
+        //   { required: true, message: '请选择点检结果', trigger: 'change' }
+        // ],
         equipmentId: [
           { required: true, message: '设备不能为空', trigger: 'change' }
         ],
@@ -633,9 +633,13 @@ export default {
       if (btnType !== 'maintenance') {
         if (this.dataForm.id) {
           detailequMaintenance(this.dataForm.id).then(res => {
-            res.data.maintenance.picList = res.data.maintenance.picList.map(item => {
-              return JSON.parse(`{${item}}`)
-            })
+            if (res.data.maintenance.pic && res.data.maintenance.picList.length) {
+              res.data.maintenance.picList = res.data.maintenance.picList.map(item => {
+                return JSON.parse(`{${item}}`)
+              })
+            } else {
+              res.data.maintenance.picList = []
+            }
             this.dataForm = res.data.maintenance
             this.dataFormTwo.productData = res.data.lines
             this.$nextTick(() => {
@@ -659,7 +663,7 @@ export default {
             })
           })
         } else {
-          this.dataForm.inspectionResults = 'normal'
+          // this.dataForm.inspectionResults = 'normal'
           this.dataForm.actualMaintenanceId = this.userInfo.userId
           this.dataForm.actualMaintenanceIdText = this.userInfo.userName
           this.dataForm.actualMaintenanceDate = this.jnpf.getToday()
@@ -682,7 +686,7 @@ export default {
           this.dataForm.maintenanceTaskId = id
           this.dataForm.planMaintenanceDate = res.data.task.nextMaintenanceTime
           this.dataForm.actualMaintenanceId = this.userInfo.userId
-          this.dataForm.inspectionResults = 'normal'
+          // this.dataForm.inspectionResults = 'normal'
           this.dataForm.actualMaintenanceIdText = this.userInfo.userName
           this.dataForm.actualMaintenanceDate = this.jnpf.getToday()
           this.cycleaction(this.dataForm.actualMaintenanceDate)

@@ -48,11 +48,11 @@
                           <el-form-item label="供应商名称" prop="partnerName">
                             <!-- 供应商选择弹窗  -->
                             <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
-                              v-model="dataForm.partnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
-                              @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'"
-                              title="选择供应商" treeTitle="供应商分类" :methodArr="PartnerMethodArr"
-                              :listMethod="getCooperativeData" :listRequestObj="PartnerListRequestObj"
-                              :paramsObj="{ oldData }" :searchList="PartnerTableSearchList" />
+                              v-model="dataForm.partnerName" :beforeSubmit="beforeSubmit" @change="supplierdata"
+                              :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商" treeTitle="供应商分类"
+                              :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
+                              :listRequestObj="PartnerListRequestObj" :paramsObj="{ oldData }"
+                              :searchList="PartnerTableSearchList" />
                           </el-form-item>
                         </el-col>
                         <el-col :sm="6" :xs="24">
@@ -136,9 +136,9 @@
                     </el-button>
                   </div>
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                    <el-table ref="product" :data="dataFormTwo.data" @selection-change="handeleProductInfoData"
-                      v-loading="tableloading" @row-click="openDetails" :row-style="rowStyle">
-                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                    <JNPF-table :hasC="btnType !== 'look'" hasNO fixedNO ref="product" :data="dataFormTwo.data"
+                      @selection-change="handeleProductInfoData" v-loading="tableloading" @row-click="openDetails"
+                      :row-style="rowStyle">
 
                       <el-table-column prop="drawingNo" label="品名规格" width="290" key="3"
                         show-overflow-tooltip></el-table-column>
@@ -163,7 +163,7 @@
                           <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
                         </template>
                       </el-table-column>
-                    </el-table>
+                    </JNPF-table>
                     <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
                       <span style="font-weight:500;margin:0 10px">总订单数量：{{ totalOrdersNum }}</span>
 
@@ -234,9 +234,9 @@
                       <el-form-item label="供应商名称" prop="partnerName">
                         <!-- 供应商选择弹窗  -->
                         <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
-                          v-model="dataForm.partnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
-                          @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
-                          treeTitle="供应商分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
+                          v-model="dataForm.partnerName" :beforeSubmit="beforeSubmit" @change="supplierdata"
+                          :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商" treeTitle="供应商分类"
+                          :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
                           :listRequestObj="PartnerListRequestObj" :paramsObj="{ oldData }"
                           :searchList="PartnerTableSearchList" />
                       </el-form-item>
@@ -323,6 +323,7 @@
               <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                 <el-table ref="product" :data="dataFormTwo.data" @selection-change="handeleProductInfoData"
                   v-loading="tableloading" @row-click="openDetails" :row-style="rowStyle">
+
                   <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
 
                   <el-table-column prop="drawingNo" label="品名规格" width="290" key="3"
@@ -407,7 +408,7 @@
       </div>
     </transition>
     <changeAddress v-if="addressVisibled" ref="addressRef" @getChangeAddress="getChangeAddress"></changeAddress>
-    <DkcComSelectPage ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" title="选择产品" treeTitle="产品分类"
+    <ComSelect-page ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" title="选择产品" treeTitle="产品分类"
       :methodArr="ProductMethodArr" :listMethod="detailpurchaseOrderList" :listRequestObj="ProductListRequestObj"
       :renderTree="false" :listDataFormatting="listDataFormatting" :searchList="ProductTableSearchList"
       :elementShow="false" multiple />
@@ -432,7 +433,7 @@ import {
 import { getCooperativeInfo, getCooperativeData, getAddressInfo, getBimBusinessDetail } from '@/api/basicData/index'
 import changeAddress from './changeAddress.vue'
 import { purPurchaseOrderdetail, detailpurchaseOrderList } from '@/api/purchasingAndOutsourcingOrders/index'
-import DkcComSelectPage from './components/ComSelect-page/index.vue'
+
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow'
@@ -440,7 +441,6 @@ import recordList from '@/views/workFlow/components/RecordList.vue'
 export default {
   components: {
     changeAddress,
-    DkcComSelectPage,
     Process,
     recordList
   },
@@ -484,17 +484,27 @@ export default {
       ProductListRequestObj: {
         orderType: 'external',
         shipmentStatus: 'not_finish',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'createTime'
+          }
+        ],
         pageNum: 1,
         pageSize: 20
         // queryType: 3
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
-        { prop: 'orderNo', label: '订单号', sortable: 'custom' },
-        { prop: 'cooperativePartnerName', label: '供应商名称', sortable: 'custom' },
+        { prop: 'orderNo', label: '订单号', sortable: 'custom', width: 200 },
+        { prop: 'cooperativePartnerName', label: '供应商名称', sortable: 'custom2', width: 160 },
         { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
-        { prop: 'processName', label: '工序名称', sortable: 'custom' },
+        { prop: 'processName', label: '工序名称', sortable: 'custom2' },
 
-        { prop: 'mainUnit', label: '单位', sortable: 'custom', },
+        { prop: 'mainUnit', label: '单位', sortable: 'custom', width: 80 },
         { prop: 'purchaseQuantity', label: '订单数量', sortable: 'custom', minWidth: 140 },
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
@@ -900,10 +910,8 @@ export default {
         this.dataFormTwo.data.forEach((item) => {
           productIdList.push(item.productsId)
         })
-        let _data = {
-          cooperativePartnerId: this.dataForm.cooperativePartnerId,
-          productIdList
-        }
+        this.dataFormTwo.data = []
+        this.linesList = []
       }
     },
 
@@ -1119,34 +1127,42 @@ export default {
           duration: 1500
         })
       }
-      for (let i = 0; i < this.selectRows.length; i++) {
-        const row = this.selectRows[i]
-        const index = this.dataFormTwo.data.indexOf(row)
-        if (index > -1) {
-          this.dataFormTwo.data.splice(index, 1) // 从tableData中删除选中的行
+      if (this.dataFormTwo.data.length > 1) {
+        for (let i = 0; i < this.selectRows.length; i++) {
+          const row = this.selectRows[i]
+          const index = this.dataFormTwo.data.indexOf(row)
+          if (index > -1) {
+            this.dataFormTwo.data.splice(index, 1) // 从tableData中删除选中的行
+          }
         }
+        this.selectRows = [] // 清空选中的行的数据
+
+      } else {
+        this.$message({
+          message: '已是最后一条数据',
+          type: 'error',
+          duration: 1500
+        })
       }
-      this.selectRows = [] // 清空选中的行的数据
+
+
     },
 
     // 单个删除
     handleDel(data) {
-      if (this.btnType == 'qrsh') {
-        if (this.dataFormTwo.data.length > 1) {
-          this.dataFormTwo.data.splice(data.$index, 1)
-        } else {
-          this.$message({
-            message: '已是最后一条数据',
-            type: 'error',
-            duration: 1500
-          })
-        }
-      } else {
+      console.log(this.btnType, 'this.btnType')
+
+      if (this.dataFormTwo.data.length > 1) {
         this.dataFormTwo.data.splice(data.$index, 1)
+
+      } else {
+        this.$message({
+          message: '已是最后一条数据',
+          type: 'error',
+          duration: 1500
+        })
       }
-      if (this.dataFormTwo.data.length == 0) {
-        // this.deletedata()
-      }
+
     },
 
     // 监听主数量输入
@@ -1313,6 +1329,7 @@ export default {
     // 切换table
     handleClick(tab, event) { },
     init(id, btnType, approvalFlag, data) {
+      console.log(data, 'klkk')
       this.formLoading = true
       // this.getProvinceList()
       this.dataForm.id = id || ''
@@ -1390,6 +1407,9 @@ export default {
         const formattedDate = `${year}-${month}-${date}`
         this.dataForm.deliverDate = formattedDate
         if (data) {
+          this.dataForm.partnerName = data[0].cooperativePartnerName
+          this.dataForm.cooperativePartnerCode = data[0].cooperativePartnerCode
+          this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
           this.dataFormTwo.data = data
           this.dataFormTwo.data.forEach((item) => {
             console.log(item, 'dd')
@@ -1482,8 +1502,17 @@ export default {
       })
       this.$refs['dataForm'].validate((valid) => {
         this.dataForm.documentStatus = value
+        console.log(valid, '[]')
         if (valid) {
           if (!this.dataFormTwo.data.length) {
+            this.$message({
+              message: '至少有一条产品',
+              type: 'error',
+              duration: 1500
+            })
+            return
+          }
+          if (!this.linesList.length) {
             this.$message({
               message: '至少有一条发料明细',
               type: 'error',

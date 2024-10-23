@@ -106,7 +106,6 @@
 <script>
 
 import { getcategoryTree } from '@/api/basicData/index'
-import { getPartnerList, releasePartner } from '@/api/customerManagement/index'
 
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {FileCategoryType} from "@/views/esop/fileCategoryManagement/constants";
@@ -116,6 +115,8 @@ import {AllList} from "@/api/extend/document";
 import {isFile, Type2SuffixArr} from "@/views/drawingDocument/document/utils";
 import SearchPlane from "@/views/drawingDocument/document/SearchPlane.vue";
 import SwitchListAndFilter from "@/views/drawingDocument/document/SwitchListAndFilter.vue";
+import {trim} from "@/utils";
+import {systemAttachmentsList} from "@/api/esop/fileManage/system";
 
 export default {
     name: 'myCustomer',
@@ -190,7 +191,7 @@ export default {
             initListQuery: {
                 "businessId": 0,
                 "businessType": "",
-                "categoryId": 0,
+                "categoryId": "",
                 "createByName": "",
                 "endTime": "",
                 "endUpdateTime": "",
@@ -232,15 +233,8 @@ export default {
         },
     },
     created() {
-
-        AllList({
-            parentId:0
-        }).then(res=>{
-            this.fileList = res.data.list
-        })
         this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
         this.getcategoryTree()
-        // this.initData()
         if (localStorage.getItem("punterFlag")) {
             let roleFlag = JSON.parse(localStorage.getItem('punterFlag'))
             this.expands = roleFlag
@@ -252,9 +246,7 @@ export default {
             return (this.$route.meta.modelId || '') + this.partentOrChild
         }
     },
-    beforeDestroy() {
-        window.onresize = null
-    },
+
     methods: {
         filterExtHandler(command){
             if(command === ALL_TEXT){
@@ -331,29 +323,7 @@ export default {
                 })
             })
         },
-        async switchStyle() {
-            await this.$nextTick();
-            const programmes = this.$refs.programmes ? this.$refs.programmes.offsetWidth : 0
-            if (programmes <= 100) {
-                this.programmelist = []
-                this.programmelist1 = this.datalist.slice(0)
-                Math.floor(programmes / 100)
-            } else {
-                let num = Math.floor(programmes / 100)
-                if (num - 1 > this.datalist.length) {
-                    num = this.datalist.length + 1
-                }
-                this.programmelist = this.datalist.slice(0, num - 1)
-                this.programmelist1 = this.datalist.slice(num - 1)
-            }
-            // 附带防抖的监听适配模式屏幕缩放
-            window.onresize = () => {
-                clearTimeout(this.timeout)
-                this.timeout = setTimeout(() => {
-                    this.switchStyle()
-                }, 100);
-            };
-        },
+
         filterNode(value, data) {
             console.log(value, data);
             if (!value) return true;
@@ -366,9 +336,7 @@ export default {
         changeLeft() {
             this.leftFlag = !this.leftFlag
         },
-        columnSetFun() {
-            this.$refs.dataTable.showDrawer()
-        },
+
         getcategoryTree() {
             this.treeLoading = true
             this.listLoading = true
@@ -392,12 +360,9 @@ export default {
         },
         initData() {
             this.listLoading = true
-            Object.keys(this.listQuery).forEach(key => {
-                let item = this.listQuery[key]
-                this.listQuery[key] = typeof item === 'string' ? item.trim() : item
-            })
+            trim(this.listQuery)
             this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
-            getPartnerList(this.listQuery).then(res => {
+            systemAttachmentsList(this.listQuery).then(res => {
                 this.tableData = res.data.records
                 this.total = res.data.total
                 this.listLoading = false
@@ -412,44 +377,13 @@ export default {
             this.listQuery.orderItems[0].column = order === null ? "" : newProp
             this.initData()
         },
-
-        // 关闭新建编辑页面
-        closeForm(isRefresh) {
-            this.shareVisible=false
-            this.formVisible = false
-            this.recordFormVisible = false
-            if (isRefresh) {
-                this.keyword = ''
-                this.initData()
-            }
-        },
         search() {
             this.listQuery.pageNum = 1
             this.initData()
         },
-        reset() {
-            this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-            this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-            this.$refs.SuperQuery.conditionList = []
-            this.programmefrom = {}
-            this.programmetitle = ''
-            this.filterText = ''
-            this.getcategoryTree()
-        },
 
-        addOrUpdateHandle(id, btntype) {
-            this.formVisible = true
-            this.$nextTick(() => {
-                this.$refs.Form1.init(id, btntype)
-            })
-        },
-        // 写记录
-        handleRecord(row) {
-            this.recordFormVisible = true
-            this.$nextTick(() => {
-                this.$refs.RecordForm1.init(row.id)
-            })
-        },
+
+
         handleDel(id) {
             this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
                 type: 'warning'
@@ -464,21 +398,7 @@ export default {
                 })
             }).catch(() => {})
         },
-        releaseFun() {
-            if (this.selectData.length) {
-                let idList = this.selectData.map(item => item.id)
-                releasePartner(idList).then(res => {
-                    this.initData()
-                    this.$message({
-                        type: 'success',
-                        message: "释放成功",
-                        duration: 1500,
-                    })
-                }).catch(() => { })
-            } else {
-                this.$message.warning('请选择您要释放的客户数据！')
-            }
-        },
+
     }
 }
 </script>

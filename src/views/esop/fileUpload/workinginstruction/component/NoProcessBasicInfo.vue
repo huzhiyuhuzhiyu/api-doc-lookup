@@ -176,6 +176,7 @@ export default {
                                         <el-form-item label="产品信息" prop="drawingNo">
                                             <div class="width-full flex-row">
                                                 <ComSelect-page
+                                                    placeholder="请选择产品编码"
                                                     style="width: 50%"
                                                     ref="ComSelect-page"
                                                     v-model="dataForm.drawingNo"

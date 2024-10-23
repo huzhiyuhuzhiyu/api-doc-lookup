@@ -118,7 +118,7 @@
                       key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
 
-                    <el-table-column prop="drawingNo" label="品名规格" width="160" show-overflow-tooltip />
+                    <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip />
                     <el-table-column prop="productCode" label="产品编码" width="100"
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="60" />
@@ -269,7 +269,7 @@
                   key="1" />
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
 
-                <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+                <el-table-column prop="drawingNo" label="品名规格" width="200" sortable="custom" show-overflow-tooltip />
                 <el-table-column prop="productCode" label="产品编码" width="200" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="mainUnit" label="单位" width="80" />
                 <el-table-column prop="purchaseQuantity" label="订单数量" width="140" />

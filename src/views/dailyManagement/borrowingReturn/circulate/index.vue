@@ -13,13 +13,6 @@
               <el-input v-model="orderForm.maintainerIdText" placeholder="请输入领用人" clearable @keydown.enter.native="dataFormSubmit()" />
             </el-form-item>
           </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-select v-model="orderForm.returnFlag" placeholder="请选择是否归还" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in collectionList" :key="index" :label="item.label" :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="dataFormSubmit()">
@@ -46,30 +39,22 @@
           </div>
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column style="padding-bottom: 50px;">
-          <el-table-column prop="orderNo" label="领用单号" width="200" sortable="custom">
+          <el-table-column prop="orderNo" label="领用单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
                                 scope.row.orderNo
                             }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="departmentIdText" label="领用部门" width="120" />
-          <el-table-column prop="maintainerIdText" label="领用人" width="120"></el-table-column>
+          <el-table-column prop="maintainerIdText" label="领用人" min-width="120"></el-table-column>
           <el-table-column prop="collectionTime" label="领用日期" width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="returnFlag" label="是否归还" width="120" sortable="custom" fixed="right">
-            <template slot-scope="scope">
-              <div v-if="scope.row.returnFlag == 1"><el-tag type="success">是</el-tag></div>
-              <div v-else-if="scope.row.returnFlag == 0"><el-tag type="danger">否</el-tag></div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="returnTime" label="归还日期" width="180"></el-table-column>
-          <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
+          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
           <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <el-button type="text" @click="returngongju(scope.row.id)" size="mini" :disabled="scope.row.returnFlag==1">归还</el-button>
-              <el-button type="text" @click="handleDel(scope.row.id,)" class="JNPF-table-delBtn" :disabled="scope.row.returnFlag==0" size="mini">删除</el-button>
+              <el-button type="text" @click="handleUserRelation(scope.row.id,'edit')" size="mini">编辑</el-button>
+              <el-button type="text" @click="handleDel(scope.row.id,)" class="JNPF-table-delBtn" size="mini">删除</el-button>
               <el-dropdown hide-on-click>
                 <span class="el-dropdown-link">
                   <el-button type="text" size="mini">
@@ -90,20 +75,6 @@
     </div>
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
-    <el-dialog title="归还" :visible.sync="dialogFormVisible" width="400px" top="40vh" :close-on-click-modal="false">
-      <el-form :model="form">
-        <el-form-item label="归还日期" label-width="100px">
-          <el-date-picker v-model="form.returnTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" :picker-options="{disabledDate (time) {
-          return time.getTime() > Date.now()
-        }}">
-          </el-date-picker>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogreturn" :loading="btnLoading">确 定</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 <script>
@@ -122,11 +93,6 @@ export default {
           type: 'input'
         },
         {
-          prop: 'departmentIdText',
-          label: "领用部门",
-          type: 'input'
-        },
-        {
           prop: 'maintainerIdText',
           label: "领用人",
           type: 'input'
@@ -134,24 +100,6 @@ export default {
         { // 日期选择器（区间）
           prop: 'collectionTime',
           label: '领用日期',
-          type: 'daterange',
-          valueFormat: "yyyy-MM-dd",
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        { // 下拉选
-          prop: 'returnFlag',
-          label: '是否归还',
-          type: 'select',
-          options: [
-            { label: '是', value: 1 },
-            { label: '否', value: 0 }
-          ]
-        },
-        { // 日期选择器（区间）
-          prop: 'returnTime',
-          label: '归还日期',
           type: 'daterange',
           valueFormat: "yyyy-MM-dd",
           startPlaceholder: '开始日期',
@@ -190,11 +138,9 @@ export default {
       dialogFormVisible: false,
       tableData: [],
       listLoading: false,
-      collectionList: [
-        { label: "否", value: 0 },
-        { label: "是", value: 1 }
-      ],
       orderForm: {
+        equipmentType: 'tool',
+        requisitionType: 'requisition',
         orderNo: '',
         maintainerIdText: '',
         returnFlag: '',
@@ -265,6 +211,8 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.orderForm = {
+        equipmentType: 'tool',
+        requisitionType: 'requisition',
         orderNo: '',
         auditStatus: '',
         documentStatus: '',
@@ -280,47 +228,10 @@ export default {
       }
       this.dataFormSubmit()
     },
-
     addSupplier(id, btntype) {
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.Form.init(id, btntype)
-      })
-    },
-    returngongju(id) {
-      // this.$confirm('此操作将归还工具，是否继续！', '提示', {
-      //   confirmButtonText: '确定',
-      //   cancelButtonText: '取消',
-      //   type: 'warning'
-      // }).then(() => {
-      //   guihuanCollectionandreturn(id).then(res => {
-      //     this.initData()
-      //     this.$message({
-      //       type: 'success',
-      //       message: "归还成功",
-      //       duration: 1500,
-      //     })
-      //   })
-      // }).catch(() => { })
-      this.dialogFormVisible = true
-      this.orderFormreturn.id = id
-      this.form.returnTime = this.jnpf.getToday()
-    },
-    dialogreturn() {
-      this.btnLoading = true
-      this.orderFormreturn.returnTime = this.form.returnTime
-      guihuanCollectionandreturn(this.orderFormreturn).then(res => {
-        this.btnLoading = false
-        this.dialogFormVisible = false
-        this.initData()
-        this.$message({
-          type: 'success',
-          message: "归还成功",
-          duration: 1500,
-        })
-      }).catch(() => {
-        this.dialogFormVisible = false
-        this.btnLoading = false
       })
     },
     handleDel(id) {

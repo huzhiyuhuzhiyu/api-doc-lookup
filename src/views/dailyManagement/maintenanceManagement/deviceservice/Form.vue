@@ -211,7 +211,7 @@
                         <el-checkbox v-model="scope.row.repairResult" true-label="finished" false-label="not_finished" :disabled="btnType == 'look'"></el-checkbox>
                       </template>
                     </el-table-column>
-                    <el-table-column label="操作" width="120" v-if="btnType == 'edit' || btnType == 'add'||btnType == 'end'" key="30">
+                    <el-table-column label="操作" width="120" v-if="btnType == 'edit' || btnType == 'add'||btnType == 'end'||btnType == 'look'" key="30">
                       <template slot-scope="scope">
                         <el-button type="text" @click="handleDel(scope)" v-if="btnType == 'edit' || btnType == 'add'" style="color: #ff3a3a">删除</el-button>
                         <el-button type="text" @click="solutionMeasuresfun(scope.row,scope.$index)" v-if="btnType == 'end'||(btnType == 'look'&&dataForm.solutionMeasures)">解决措施</el-button>
@@ -376,11 +376,11 @@
         <el-form :model="dataFormline" ref="dataFormline" :rules="dataRuleline" label-width="160px" label-position="top">
           <el-col :sm="24" :xs="24">
             <el-form-item label="解决措施" prop="solutionMeasures">
-              <el-input v-model="dataFormline.solutionMeasures" type="textarea" :rows="3"></el-input>
+              <el-input v-model="dataFormline.solutionMeasures" type="textarea" :rows="3" :disabled="btnType == 'look'"></el-input>
             </el-form-item>
             <el-button style="position: absolute;top:82px;right: 30px;" type="text" @click="usedsolutionMeasures">查看历史解决措施</el-button>
           </el-col>
-          <el-checkbox v-model="dataFormline.knowledgeFlag">保存为知识库</el-checkbox>
+          <el-checkbox v-model="dataFormline.knowledgeFlag" :disabled="btnType == 'look'">保存为知识库</el-checkbox>
         </el-form>
         <el-dialog width="60%" title="历史解决措施" :visible.sync="innerVisible" append-to-body>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" custom-column :height=500>
@@ -406,7 +406,7 @@
         </el-dialog>
         <div slot="footer" class="dialog-footer">
           <el-button @click="outerVisible = false">取 消</el-button>
-          <el-button type="primary" @click="confirmsolut">提交</el-button>
+          <el-button type="primary" @click="confirmsolut" v-if="btnType !== 'look'">提交</el-button>
         </div>
       </el-dialog>
       <ComSelect-page ref="ComSelect-pages" @change="submitfaultLocationName" :tableItems="faultLocationNameItems" title="故障部位" placeholder="请选择故障部位名称" :renderTree="false" :listMethod="parametersShelveslist" :paramsObj="{ index }" :listRequestObj="faultLocationNameRequestObj" :searchList="ProductfaultLocationName" :elementShow="false" />
@@ -1029,14 +1029,14 @@ export default {
       }
       if (this.dataForm.id) {
         detailRepairRequest(this.dataForm.id).then(res => {
-          if (res.data.repair.afterPic) {
+          if (res.data.repair.afterPic && res.data.repair.afterPicList.length) {
             res.data.repair.afterPicList = res.data.repair.afterPicList.map(item => {
               return JSON.parse(`{${item}}`)
             })
           } else {
             res.data.repair.afterPicList = []
           }
-          if (res.data.repair.frontPic) {
+          if (res.data.repair.frontPic && res.data.repair.afterPicList.length) {
             res.data.repair.frontPicList = res.data.repair.frontPicList.map(item => {
               return JSON.parse(`{${item}}`)
             })

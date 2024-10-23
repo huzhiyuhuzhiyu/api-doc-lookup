@@ -66,7 +66,7 @@
             custom-column>
             <el-table-column prop="orderNo" label="订单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="handleUserRelation(scope.row.purchaseOrderId, 'look')">
+                <el-link type="primary" @click.native="handleUserRelation(scope.row, 'look')">
                   {{ scope.row.orderNo }}
                 </el-link>
               </template>
@@ -80,10 +80,9 @@
             <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
             <el-table-column prop="purchaseQuantity" label="订单数量" width="120" sortable="custom" />
 
-            <el-table-column label="操作" width="180" fixed="right">
+            <el-table-column label="操作" width="100" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text"
-                  @click.native="handleUserRelation(scope.row.purchaseOrderId, 'look')">
+                <el-button size="mini" type="text" @click.native="handleUserRelation(scope.row, 'look')">
                   查看详情
                 </el-button>
               </template>
@@ -91,16 +90,15 @@
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
             @pagination="initData">
-            <div class="text">
-              <span>合计数量:{{ totalNum }}</span>
-            </div>
           </pagination>
         </div>
       </div>
     </div>
 
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" />
-
+    <ProductForm v-if="formVisible" ref="ProductForm" @refreshDataList="initData" @close="closeForm"
+      :customList="customList" />
+    <ProcessForm v-if="formVisible" ref="ProcessForm" @refreshDataList="initData" @close="closeForm"
+      :customList="customList" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <OrderFollow v-if="orderFollowVisible" ref="orderFollow" @refreshDataList="initData" @close="closeForm" />
     <!-- 高级查询 -->
@@ -123,20 +121,22 @@ import {
   getOrderLineReport
 } from '@/api/salesManagement/assemblyOrders'
 import { purchaseOrderList, detailpurchaseOrderList, deleteProcessOrder, purPurchaseBatch, purPurchaseBatchLine } from '@/api/purchasingAndOutsourcingOrders/index'
-// import Form from '../../orderManagement/orderList/Form.vue'
+
 // import OrderFollow from '../../orderManagement/orderList/orderFollow.vue'
 // import UserRelationList from '../../orderManagement/orderList/userRelation.vue'
 import { shipmentReport } from '@/api/purchasingAndOutsourcingOrders/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import AddForm from '../materialsIssueNotice/Form.vue'
-import Form from "../../productOutsourcingOrder/orderList/Form.vue";
+import ProductForm from "../../processOutsourcingOrders/orderList/Form.vue";
+import ProcessForm from "../../processOutsourcingOrders/orderList/Form.vue";
 import ExportForm from '@/components/no_mount/ExportBox/index'
 export default {
   name: 'materialOrderToBeIssued',
   components: {
     AddForm,
-    Form,
+    ProductForm,
+    ProcessForm,
     ExportForm,
     //  OrderFollow,
     SuperQuery
@@ -158,7 +158,7 @@ export default {
       detailFlag: false,
       ordeDateArr: [],
       orderForm: {
-        orderType: 'external',
+        externalFlag: 1,
         shipmentStatus: 'not_finish',
         deliveryEndDate: '',
         deliveryStartTime: '',
@@ -253,32 +253,7 @@ export default {
     selectCustomerFun(val) {
       this.list = val
     },
-    // 获取合计数据
-    getOrderLineReportFun() {
-      let obj = {
-        orderType: 'external',
-        shipmentStatus: 'not_finish',
-        deliveryEndDate: '',
-        deliveryStartTime: '',
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [
-          {
-            asc: true,
-            column: 'order_no'
-          },
-          {
-            asc: false,
-            column: 'delivery_date'
-          }
-        ],
 
-        superQuery: {}
-      }
-      getOrderLineReport(obj).then((res) => {
-        this.totalNum = res.data.total ? res.data.total.num : 0
-      })
-    },
     dateFun(dateStr) {
       const date = new Date(dateStr)
 
@@ -402,7 +377,6 @@ export default {
           this.tableData = res.data.records
           this.total = res.data.total
           this.listLoading = false
-          this.getOrderLineReportFun()
         })
         .catch(() => {
           this.listLoading = false
@@ -456,10 +430,7 @@ export default {
       })
     },
     addSupplier(id, btntype) {
-      // this.formVisible = true
-      // this.$nextTick(() => {
-      //   this.$refs.Form.init(id, btntype)
-      // })
+
       if (!this.list.length) return this.$message.error('请选择您要发料的产品')
       let flag = this.hasDifferentCooperativePartnerCode(this.list)
       if (flag) return this.$message.error('只能选择相同供应商的明细订单')
@@ -478,23 +449,6 @@ export default {
 
       return codes.size > 1 // 如果有多个不同的代码，则返回 true
     },
-    getCopyOrders(id, btntype) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype)
-      })
-    },
-    addOrUpdateHandle(id, btntype) {
-      this.formVisible = true
-      if (id) {
-        // setTimeout(() => {
-        this.$nextTick(() => {
-          this.$refs.Form.init(id, btntype)
-        })
-        // }, 600);
-      }
-    },
-
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
@@ -511,10 +465,16 @@ export default {
         })
         .catch(() => { })
     },
-    handleUserRelation(id, btnType) {
+    handleUserRelation(row, btnType) {
+      console.log(row, '[]')
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType)
+        if (row.orderType == "external") {
+          this.$refs.ProductForm.init(row.purchaseOrderId, btnType)
+        } else {
+          this.$refs.ProcessForm.init(row.purchaseOrderId, btnType)
+        }
+
       })
     },
     // 导出

@@ -2,7 +2,7 @@
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
       <div class="JNPF-common-page-header">
-        <el-page-header @back="goBack" :content="btnType=='look' ? '查看设备维修知识库' : btnType=='add'?'新建设备维修知识库':'编辑设备维修知识库'" />
+        <el-page-header @back="goBack" :content="btnType=='look' ? '查看工具维修知识库' : btnType=='add'?'新建工具维修知识库':'编辑工具维修知识库'" />
         <div class="options">
           <el-button type="primary" v-if="btnType!='look'" :loading="btnLoading" @click="handleConfirm()">
             提交
@@ -15,11 +15,11 @@
           <el-tab-pane label="基本信息" name="orderInfo">
             <el-collapse v-model="activeNames">
               <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
-                <el-collapse-item title="设备故障信息" name="basicInfo">
+                <el-collapse-item title="工具故障信息" name="basicInfo">
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="设备名称" prop="equipmentId">
-                        <el-input v-model="dataForm.equipmentIdName" placeholder="请选择设备名称" :disabled="btnType=='look'" readonly @focus="openSeleceProductDialogss">
+                      <el-form-item label="工具名称" prop="equipmentId">
+                        <el-input v-model="dataForm.equipmentIdName" placeholder="请选择工具名称" :disabled="btnType=='look'" readonly @focus="openSeleceProductDialogss">
                         </el-input>
                       </el-form-item>
                     </el-col>
@@ -70,7 +70,7 @@
       </div>
       <ComSelect-page ref="ComSelect-pages" @change="submitfaultLocationName" :tableItems="faultLocationNameItems" title="故障部位" placeholder="请选择故障部位名称" :renderTree="false" :listMethod="parametersShelveslist" :paramsObj="{ index }" :listRequestObj="faultLocationNameRequestObj" :searchList="ProductfaultLocationName" :elementShow="false" />
       <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" title="故障类型" placeholder="请选择故障类型名称" :renderTree="false" :listMethod="parametersShelveslist" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" />
-      <ComSelect-page ref="ComSelect-pagesb" @change="changeWarehouse" :tableItems="ProductTableItemss" title="选择设备" treeTitle="设备分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'equipment' } }" :listMethod="getEquEquipmentList" :listRequestObj="ProductListRequestObjs" :searchList="ProductTableSearchLists" :elementShow="false" />
+      <ComSelect-page ref="ComSelect-pagesb" @change="changeWarehouse" :tableItems="ProductTableItemss" title="选择工具" treeTitle="工具分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'tool' } }" :listMethod="getEquEquipmentList" :listRequestObj="ProductListRequestObjs" :searchList="ProductTableSearchLists" :elementShow="false" />
     </div>
   </transition>
 </template>
@@ -86,8 +86,8 @@ export default {
       formLoading: false,
       btnLoading: false,
       ProductTableSearchLists: [
-        { prop: "code", label: "设备编码", type: 'input' },
-        { prop: "name", label: "设备名称", type: 'input' },
+        { prop: "code", label: "工具编码", type: 'input' },
+        { prop: "name", label: "工具名称", type: 'input' },
       ],
       ProductListRequestObjs: {
         pageNum: 1,
@@ -106,15 +106,15 @@ export default {
         name: "",
         state: 'normal',
         deviceType: 'normal',
-        classAttribute: "equipment",
+        classAttribute: "tool",
       },
       getEquEquipmentList,
       getcategoryTree,
       ProductTableItemss: [
-        { prop: 'code', label: '设备编码', fixed: 'left' },
-        { prop: 'name', label: '设备名称', fixed: 'left' },
-        { prop: 'categoryName', label: '设备分类' },
-        { prop: 'specModel', label: '设备规格' },
+        { prop: 'code', label: '工具编码', fixed: 'left' },
+        { prop: 'name', label: '工具名称', fixed: 'left' },
+        { prop: 'categoryName', label: '工具分类' },
+        { prop: 'specModel', label: '工具规格' },
       ],
       ProductListRequestObj: {
         pageNum: 1,
@@ -179,7 +179,7 @@ export default {
       activeName: "orderInfo",
       datafilelist: [],
       dataForm: {
-        classAttribute: "equipment",
+        classAttribute: "tool",
         equipmentIdName: '',
         equipmentId: '',
         faultTypeName: '',
@@ -202,7 +202,7 @@ export default {
       },
       dataRule: {
         equipmentId: [
-          { required: true, message: '设备不能为空', trigger: 'blur' }
+          { required: true, message: '工具不能为空', trigger: 'blur' }
         ],
         faultTypeId: [
           { required: true, message: '故障类型名称不能为空', trigger: 'blur' }
@@ -249,7 +249,7 @@ export default {
         })
       }
     },
-    //选择设备
+    //选择工具
     changeWarehouse(val, data) {
       this.$nextTick(() => { this.$refs['dataForm'].validateField('equipmentId') })
       if (!val && !data.length) return

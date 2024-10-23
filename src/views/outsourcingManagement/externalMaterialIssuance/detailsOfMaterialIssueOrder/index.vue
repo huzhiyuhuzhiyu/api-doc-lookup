@@ -90,11 +90,12 @@
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true"
-                  @click="addOrUpdateHandle(scope.row.id, 'edit')">
+                  @click="addOrUpdateHandle(scope.row.returnDeliveryNoticeId, 'edit')">
                   编辑
                 </el-button>
                 <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                  :disabled="scope.row.documentStatus == 'draft' ? false : true" @click="handleDel(scope.row.id)">
+                  :disabled="scope.row.documentStatus == 'draft' ? false : true"
+                  @click="handleDel(scope.row.returnDeliveryNoticeId)">
                   删除
                 </el-button>
                 <el-dropdown hide-on-click>

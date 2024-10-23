@@ -1,5 +1,5 @@
 import {switchEnableMark} from "@/api/esop/fileUpload/workinginstruction";
-import {notEmpty} from "@/utils";
+import {isEmpty, notEmpty} from "@/utils";
 import {
     ApprovalStatus,
     ORDER_CODE_FILE_UPLOAD,
@@ -93,7 +93,7 @@ export default {
             flag &&  this.getDetail(data)
         },
         versionCountHandler(){
-           if(this.dataForm.versionCount === 0){
+           if(isEmpty(this.dataForm.versionCount)){
                return this.$message.info('暂无可查看的关联版本')
            }
           this.versionCountVisible = true

@@ -228,7 +228,7 @@ export function getUploadFileSaveData(data) {
 
 
 export function isNoProductPage(applicationType) {
-    return applicationType === ApplicationType.OFFICE
+    return [ApplicationType.OFFICE,ApplicationType.IMAGE].includes(applicationType)
 }
 
 /**

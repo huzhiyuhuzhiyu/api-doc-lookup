@@ -66,7 +66,7 @@
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="订单号" min-width="180" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
+                <el-link type="primary" @click.native="viewScheduleFun(scope.row.id)">{{
                   scope.row.orderNo
                 }}</el-link>
               </template>

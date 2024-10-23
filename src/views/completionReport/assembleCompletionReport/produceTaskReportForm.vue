@@ -13,14 +13,14 @@
         <el-collapse v-model="activeNames">
           <el-collapse-item title="任务信息" name="basicInfo" class="orderInfo" style="margin-top: 5px;">
             <div class="stoclInfo">
-              <el-descriptions   :column="1"  class="box">
+              <el-descriptions :column="1" class="box">
                 <el-descriptions-item label="品名规格" class="drawingNo">{{ dataForm.productDrawingNo
                   }}</el-descriptions-item>
               </el-descriptions>
-                <el-descriptions class="margin-top" :column="4">
+              <el-descriptions class="margin-top" :column="4">
                 <el-descriptions-item label="任务单号" class="orderNo">
                   {{ dataForm.orderNo }}</el-descriptions-item>
-              
+
                 <el-descriptions-item label="产品编码">{{ dataForm.productCode }}</el-descriptions-item>
                 <el-descriptions-item label="总生产数量">{{ dataForm.productionQuantity }}</el-descriptions-item>
                 <el-descriptions-item label="工艺名称">{{ dataForm.routingName }}</el-descriptions-item>
@@ -34,88 +34,11 @@
                 <el-descriptions-item label="特殊要求">{{ dataForm.specialRequire }}</el-descriptions-item>
               </el-descriptions>
             </div>
-            <!-- <el-col :span="6" class="eol">
-              <el-form ref="dataForm" :model="dataForm" label-width="120px" label-position="left" class="taskInfo">
-                <el-form-item label="任务单号：" prop="orderNo">
-                  <div>{{ dataForm.orderNo }}</div>
-                </el-form-item>
-                <el-form-item label="品名规格：" prop="productDrawingNo">
-                  <div>{{ dataForm.productDrawingNo }}</div>
-                </el-form-item>
-
-
-                <el-form-item label="产品编码：" prop="productCode">
-                  <div>{{ dataForm.productCode }}</div>
-
-                </el-form-item>
-
-
-                <el-form-item label="总生产数量：" prop="productionQuantity">
-                  <div>{{ dataForm.productionQuantity }}{{ dataForm.mainUnit }}</div>
-
-                </el-form-item>
-
-
-
-
-                <el-form-item label="工艺名称：" prop="routingName">
-                  <div>{{ dataForm.routingName }}</div>
-                </el-form-item>
-                <el-form-item label="打字内容：" prop="sealingCoverTyping">
-                  <div>{{ dataForm.sealingCoverTyping }}</div>
-                </el-form-item>
-
-
-                <el-form-item label="精度等级：" prop="accuracyLevel">
-                  <div>{{ dataForm.accuracyLevel }}</div>
-                </el-form-item>
-
-
-
-                <el-form-item label="振动等级：" prop="vibrationLevel">
-                  <div>{{ dataForm.vibrationLevel }}</div>
-
-                </el-form-item>
-
-
-                <el-form-item label="油脂：" prop="oil">
-                  <div>{{ dataForm.oil }}</div>
-
-                </el-form-item>
-
-
-                <el-form-item label="油脂量：" prop="oilQuantity">
-                  <div>{{ dataForm.oilQuantity }}</div>
-
-                </el-form-item>
-
-
-
-                <el-form-item label="游隙：" prop="clearance">
-                  <div>{{ dataForm.clearance }}</div>
-
-                </el-form-item>
-
-
-                <el-form-item label="包装方式：" prop="packagingMethod">
-                  <div>{{ dataForm.packagingMethod }}</div>
-
-                </el-form-item>
-
-
-                <el-form-item label="特殊要求：" prop="specialRequire">
-                  <div>{{ dataForm.specialRequire }}</div>
-
-                </el-form-item>
-
-              </el-form>
-            </el-col> -->
-
 
           </el-collapse-item>
         </el-collapse>
         <div>
-          <div class="process" >
+          <div class="process">
             <div v-for="(item, index) in workList" :key="index" class="workInfo"
               style="text-align: center;display: inline-block;">
               <div class="processInfoBox" style="cursor: pointer;"
@@ -127,7 +50,8 @@
           </div>
           <el-col :span="11" class="fixedInfo" ref="fixedInfo" :style="{ height: targetHeight + 'px!important' }"
             style="width: 48%!important;position: relative;">
-            <img src="@/assets/images/extend.png" alt="" v-if="currentProcess.processingType=='external_production'" class="extend">
+            <img src="@/assets/images/extend.png" alt="" v-if="currentProcess.processingType == 'external_production'"
+              class="extend">
             <el-row>
               <el-col :sm="24" :xs="24">
 
@@ -225,7 +149,7 @@
                 </div>
 
               </el-col>
-              
+
             </el-row>
           </el-col>
           <el-col :span="12" class="rightInfo" :style="{ height: targetHeight2 + 'px!important' }" ref="mycol"
@@ -252,7 +176,8 @@
 
                   <el-col :sm="24" :xs="24" v-if="!currentProcess.vibrateReportFlag">
                     <el-form-item label="合格数量:" prop="qualifiedQuantity" class="iptLabel">
-                      <el-input v-model="currentProcess.qualifiedQuantity" placeholder="合格数量" class="ipt" @blur="handleBlur(item)"/>
+                      <el-input v-model="currentProcess.qualifiedQuantity" placeholder="合格数量" class="ipt"
+                        @blur="handleBlur(item)" />
                     </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24" v-for="(item, index) in vibrationLevelList" :key="index"
@@ -308,13 +233,41 @@
                       <!-- equipmentId -->
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="24" :xs="24" >
-                    <div v-if="currentProcess.processingType == 'self_produced' && currentProcess.reportFlag == true" style="margin-bottom: 20px;"
-                      class="reportBtn_right">
+                  <el-col :sm="24" :xs="24">
+                    <div v-if="currentProcess.processingType == 'self_produced' && currentProcess.reportFlag == true"
+                      style="margin-bottom: 20px;" class="reportBtn_right">
                       <el-button type="primary" size="mini" @click='report()'>报 工</el-button>
                       <el-button type="primary" size="mini" @click="reportRecordsFun()">查看报工记录</el-button>
                     </div>
                   </el-col>
+                </div>
+
+
+              </el-row>
+            </el-form>
+          </el-col>
+          <el-col :span="12" class="rightInfo" :style="{ height: targetHeight2 + 'px!important' }"  
+            v-if="currentProcess.processingType == 'external_production'">
+            <el-form ref="reportRef" :model="currentProcess" :rules="dataRule" label-width="180px"
+              label-position="left">
+              <el-row>
+
+                <div style="padding: 0 20px;" class="external_text">
+
+                  <el-descriptions :column="1" >
+                    <el-descriptions-item label="计划外协数量" class="external_cotent">
+                      {{ currentProcess.productionQuantity }}
+                    </el-descriptions-item>
+                  </el-descriptions>
+                  <el-descriptions :column="1" >
+                    <el-descriptions-item label="完工数量" class="external_cotent">{{ currentProcess.qualifiedQuantity }}</el-descriptions-item>
+                  </el-descriptions>
+                  <el-descriptions :column="1" >
+                    <el-descriptions-item label="发料数量" class="external_cotent">
+                      <el-tag>{{ dataForm.productionQuantity }}</el-tag>
+                      
+                    </el-descriptions-item>
+                  </el-descriptions>
                 </div>
 
 
@@ -615,12 +568,12 @@ export default {
         this.currentProcessId = res.data.workOrderList[0].processId
         this.currentProcess = res.data.workOrderList[0]
         this.$set(this.currentProcess, 'reportingQuantity', 0)
-      this.$set(this.currentProcess, 'qualifiedQuantity', 0)
-      this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
-      this.$set(this.currentProcess, 'materialWasteQuantity', 0)
-      this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
-      this.$set(this.currentProcess, 'reworkQuantity', 0)
-      
+        this.$set(this.currentProcess, 'qualifiedQuantity', 0)
+        this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
+        this.$set(this.currentProcess, 'materialWasteQuantity', 0)
+        this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
+        this.$set(this.currentProcess, 'reworkQuantity', 0)
+
         this.commonFun()
         // this.getRoutingDetailFun(this.dataForm.routingId)
       })
@@ -635,34 +588,34 @@ export default {
       this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
       this.$set(this.currentProcess, 'reworkQuantity', 0)
       console.log("当前current", item);
-      this.targetHeight=""
-      this.targetHeight2=""
+      this.targetHeight = ""
+      this.targetHeight2 = ""
       this.commonFun()
 
     },
     handleBlur(item, data) {
       console.log("item", item, data, this.currentProcess.item);
       let total
-      if(this.currentProcess.item){
-        total= Object.values(this.currentProcess.item)
-        .map(Number) // 将每个值转换为数字  
-        .reduce((acc, curr) => acc + curr, 0); // 使用 reduce 方法计算总和
-      }else{
-        total=this.currentProcess.qualifiedQuantity
+      if (this.currentProcess.item) {
+        total = Object.values(this.currentProcess.item)
+          .map(Number) // 将每个值转换为数字  
+          .reduce((acc, curr) => acc + curr, 0); // 使用 reduce 方法计算总和
+      } else {
+        total = this.currentProcess.qualifiedQuantity
       }
-     
+
       this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [total, this.currentProcess.unqualifiedQuantity]), 6)
       this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
     },
     handleBlur2() {
       this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity]), 6)
       let total
-      if(this.currentProcess.item){
-        total= Object.values(this.currentProcess.item)
-        .map(Number) // 将每个值转换为数字  
-        .reduce((acc, curr) => acc + curr, 0); // 使用 reduce 方法计算总和
-      }else{
-        total=this.currentProcess.qualifiedQuantity
+      if (this.currentProcess.item) {
+        total = Object.values(this.currentProcess.item)
+          .map(Number) // 将每个值转换为数字  
+          .reduce((acc, curr) => acc + curr, 0); // 使用 reduce 方法计算总和
+      } else {
+        total = this.currentProcess.qualifiedQuantity
       }
       this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [total, this.currentProcess.unqualifiedQuantity]), 6)
       this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
@@ -670,12 +623,12 @@ export default {
     handleBlur3() {
       this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity]), 6)
       let total
-      if(this.currentProcess.item){
-        total= Object.values(this.currentProcess.item)
-        .map(Number) // 将每个值转换为数字  
-        .reduce((acc, curr) => acc + curr, 0); // 使用 reduce 方法计算总和
-      }else{
-        total=this.currentProcess.qualifiedQuantity
+      if (this.currentProcess.item) {
+        total = Object.values(this.currentProcess.item)
+          .map(Number) // 将每个值转换为数字  
+          .reduce((acc, curr) => acc + curr, 0); // 使用 reduce 方法计算总和
+      } else {
+        total = this.currentProcess.qualifiedQuantity
       }
       this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [total, this.currentProcess.unqualifiedQuantity]), 6)
       this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
@@ -686,12 +639,18 @@ export default {
         this.$set(this.currentProcess, 'item', {})
         this.getvibrationLevelFun()
       } else {
+        if(this.currentProcess.processingType == 'self_produced' && this.currentProcess.reportFlag == true){
 
-        this.$nextTick(() => {
-          const height = this.$refs.mycol.$el.clientHeight
-          console.log('el-col的高度是2：', height);
-          this.targetHeight = height;
-        });
+          this.$nextTick(() => {
+            const height = this.$refs.mycol.$el.clientHeight
+            console.log('el-col的高度是2：', height);
+            this.targetHeight = height;
+          });
+        }else{
+          const height = this.$refs.fixedInfo.$el.clientHeight
+            console.log('el-col的高度是2：', height);
+            this.targetHeight2 = height;
+        }
       }
       this.producePersonListFun(this.currentProcess.id)
       const end = new Date();//获取当前的日期
@@ -1093,10 +1052,10 @@ padding: 9px 10px;
 }
 
 .processInfo {
-  background-image: url('../../../assets/images/NotStarted.png');
+  background-image: url('../../../assets/images/NotStarted3.png');
   margin: 0 auto;
   border-radius: 2px;
-  color: #0b80e0;
+  color: #fff;
   white-space: nowrap;
   /* 不换行 */
   overflow: hidden;
@@ -1189,13 +1148,13 @@ box-card:nth-child(n+3) {
 
 }
 
-::v-deep .el-descriptions-item__label {
+.orderInfo::v-deep .el-descriptions-item__label {
   color: #fff;
   font-size: 18px;
   font-weight: bold;
 }
 
-::v-deep .el-descriptions-item__content {
+.orderInfo::v-deep .el-descriptions-item__content {
   color: #fff;
   font-size: 18px;
   font-weight: bold;
@@ -1206,13 +1165,14 @@ box-card:nth-child(n+3) {
   display: inline-block !important;
 }
 
- ::v-deep .el-descriptions__table {
+.orderInfo ::v-deep .el-descriptions__table {
   background: linear-gradient(0deg, #11B481 0%, #6ADE7D 100%);
 }
 
-.box ::v-deep .el-descriptions__table{
+.box ::v-deep .el-descriptions__table {
   background: #6ADE7D;
 }
+
 .info {
   margin-top: 18px;
 }
@@ -1256,9 +1216,11 @@ box-card:nth-child(n+3) {
   padding-left: 10px;
   padding-right: 0;
 }
-.rightInfo ::v-deep .el-form-item--small.el-form-item{
+
+.rightInfo ::v-deep .el-form-item--small.el-form-item {
   border: 1px solid #ebeef5;
 }
+
 .JNPF-common-drawer ::v-deep.el-drawer__body {
   overflow-y: auto;
 }
@@ -1300,17 +1262,23 @@ box-card:nth-child(n+3) {
   font-size: 18px !important;
   font-weight: bold;
 }
-.process{
+
+.process {
   padding-top: 5px;
-    padding: 0px 10px;
-    border: 1px solid #dcdfe6;
-    padding-top: 5px;
-    background: #f2f2f2;
+  padding: 0px 10px;
+  border: 1px solid #dcdfe6;
+  padding-top: 5px;
+  background: #f2f2f2;
 }
-.extend{
+
+.extend {
   width: 150px;
-    position: absolute;
-    right: 10px;
-    top: 10px;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+.external_text ::v-deep .el-descriptions-item__content,.external_text ::v-deep .el-descriptions-item__label{
+  font-size: 18px;
+  font-weight: bold;
 }
 </style>

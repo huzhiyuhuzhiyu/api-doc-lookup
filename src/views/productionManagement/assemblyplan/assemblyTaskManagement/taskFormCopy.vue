@@ -279,10 +279,8 @@
     </transition>
     <RelatedTasksForm v-if="relatedTaskVisible" ref="relatedTaskForms" @selectRelatedTasksFun="selectRelatedTasksFun">
     </RelatedTasksForm>
-    <Guidebook  v-if="guidebookVisible" ref="guidebookForms" @back="closeFun" :type="'look'" :needHeader="needHeader"
-                :id="fileUploadId"
-                :applicationType="applicationType"></Guidebook>
-    <Inspec v-if="detailFormVisible" :ref="detailForm" @close="closeFun"></Inspec>
+    <Guidebook  v-if="guidebookVisible" ref="guidebookForms" @back="closeFun" :type="'look'" approval-need-header></Guidebook>
+    <Inspec v-if="detailFormVisible" ref="detailForm" @close="closeFun"></Inspec>
   </div>
 </template>
 <script>
@@ -393,7 +391,7 @@ export default {
       this.detailFormVisible = true
 
         this.$nextTick(() => {
-          this.$refs.DetailForm.init(row.id, type, false, 'finished')
+          this.$refs.detailForm.init(id, type, false, 'finished')
         })
     },
     closeFun(){

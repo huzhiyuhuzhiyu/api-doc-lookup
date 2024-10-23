@@ -74,8 +74,9 @@
             <el-table-column prop="planStartDate" label="计划开始日期" min-width="150" sortable="custom" />
             <el-table-column prop="planEndDate" label="计划结束日期" min-width="150" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="80" />
-            <el-table-column prop="planQuantity" label="计划数量" min-width="120" sortable="custom" />
-            <el-table-column prop="relaxQuantity" label="宽放计划数量" min-width="150" sortable="custom" />
+            <el-table-column prop="planQuantity" label="需求数量" min-width="120" sortable="custom" />
+            <el-table-column prop="utilizationQuantity" label="利用库存数量" min-width="150" sortable="custom" />
+            <el-table-column prop="relaxQuantity" label="宽放需求数量" min-width="150" sortable="custom" />
             <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="150" sortable="custom" />
             <!-- <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
             <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />

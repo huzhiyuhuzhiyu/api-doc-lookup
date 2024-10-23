@@ -73,7 +73,7 @@
                
               </div>
             </el-collapse-item>
-            <el-collapse-item title="任务信息" name="info">
+            <el-collapse-item title="甘特图信息" name="info">
 
               <!-- <el-radio-group v-model="categoryType" style="background-color:#fafafa;width:100%;height: 40px;">
                 <el-radio-button v-for="item in categoryTypeList"  :key="item.code" style="height: 100%;"

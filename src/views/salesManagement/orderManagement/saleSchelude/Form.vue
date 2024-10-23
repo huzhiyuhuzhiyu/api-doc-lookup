@@ -60,42 +60,48 @@
             </el-collapse-item>
             <!-- <el-collapse-item title="" name="info" class="info" :disabled="true"> -->
             <el-collapse-item title="订单产品" name="product">
-              <JNPF-table ref="work" :data="productData" fixedNO  v-loading="tableloading" class="productTable">
+              <JNPF-table ref="work" :data="productData" fixedNO v-loading="tableloading" class="productTable">
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                 </el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
                 </el-table-column>
                 <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                 <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-                <el-table-column prop="outNum11" label="利用库存" width="120" :key="68">
+
+
+
+
+                <el-table-column prop="outNum11" label="订单状态" width="120" :key="68">
                   <template slot-scope="scope">
                     <div>{{ scope.row.outNum11 ? scope.row.outNum11 : 0 }}</div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="outNum12" label="自制数量" width="120" :key="58">
+
+
+                <el-table-column prop="num" label="订单数量" width="120" :key="58">
                   <template slot-scope="scope">
-                    <div>{{ scope.row.outNum12 ? scope.row.outNum12 : 0 }}</div>
+                    <div>{{ scope.row.num ? scope.row.num : 0 }}</div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="outNum13" label="采购数量" width="120" :key="84">
+                <el-table-column prop="outNum13" label="计划数量" width="120" :key="84">
                   <template slot-scope="scope">
                     <div>{{ scope.row.outNum13 ? scope.row.outNum13 : 0 }}</div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="outNum14" label="外协数量" width="120" :key="38">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.outNum14 ? scope.row.outNum14 : 0 }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="outNum15" label="已发货" width="100" :key="28">
+
+                <el-table-column prop="outNum15" label="已发货数量" width="120" :key="28">
                   <template slot-scope="scope">
                     <div>{{ scope.row.outNum15 ? scope.row.outNum15 : 0 }}</div>
                   </template>
                 </el-table-column>
-
-                <el-table-column prop="num" label="数量" width="100" :key="7">
+                <el-table-column prop="outNum14" label="入库数量" width="120" :key="38">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.outNum14 ? scope.row.outNum14 : 0 }}</div>
+                  </template>
                 </el-table-column>
-                <el-table-column prop="price" label="单价(含税)" width="120" :key="11">
+                <el-table-column prop="num" label="订单金额" width="100" :key="7">
+                </el-table-column>
+                <el-table-column prop="price" label="收款金额" width="120" :key="11">
                 </el-table-column>
                 <!-- <el-table-column prop="taxRate" label="税率" width="120" :key="171">
                   <template slot-scope="scope">
@@ -104,30 +110,17 @@
                 </el-table-column>
                 <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
                 <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column> -->
-                <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126">
+
+                <el-table-column prop="deliveryDate" label="欠款金额" width="180" :key="131"></el-table-column>
+                <el-table-column prop="excludingTaxAmount" label="开票金额" width="140" :key="126">
                   <template slot-scope="scope">
                     <div>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="deliveryDate" label="交货日期" width="180" :key="131"></el-table-column>
-                <el-table-column prop="contractNo" label="合同号" width="180" :key="132"></el-table-column>
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211">
-                </el-table-column>
-                <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123">
-                </el-table-column>
-                <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
-                </el-table-column>
-                <el-table-column prop="oil" label="油脂" width="120" :key="61">
-                </el-table-column>
-                <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51">
-                </el-table-column>
-                <el-table-column prop="clearance" label="游隙" width="120" :key="100">
-                </el-table-column>
-                <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101"> </el-table-column>
-                <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"></el-table-column>
+
                 <el-table-column label="操作" width="100" fixed="right">
                   <template slot-scope="scope">
-                    <el-button size="mini" type="text" @click="viewFun(scope.row.id, 'edit')">详情</el-button>
+                    <el-button size="mini" type="text" @click="viewFun(scope.row.ordersId, 'look')">详情</el-button>
                   </template>
                 </el-table-column>
               </JNPF-table>
@@ -138,36 +131,46 @@
                     item.fullName
                   }}</el-radio-button>
               </el-radio-group>
-              <JNPF-table ref="report" v-if="categoryType == 'plan'" height="450" :data="planData" fixedNO
-                v-loading="tableloading" :key="Math.random()">
-                <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180"  />
-                <el-table-column prop="productsDrawingNo" label="品名规格" min-width="300" show-overflow-tooltip ></el-table-column>
-                <el-table-column prop="productsCode" label="产品编码" min-width="140"  />
-                <el-table-column prop="mainUnit" label="单位" width="80" />
-                <el-table-column prop="planProductionQuantity" label="计划生产数量" min-width="160"  />
-                <el-table-column prop="availableArrangeQuantity" label="可编排数量" min-width="160"  />
-                <el-table-column prop="arrangeOrderNum" label="已编排单数/数量" min-width="180"  />
-               
-                <el-table-column prop="planStartDate" label="计划开始日期" min-width="160"
-                  ></el-table-column>
-                <el-table-column prop="planEndDate" label="计划结束日期" min-width="160" ></el-table-column>
-                <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120"  />
-                <el-table-column prop="accuracyLevel" label="精度等级" min-width="120"  />
-                <el-table-column prop="vibrationLevel" label="振动等级" min-width="120"  />
-                <el-table-column prop="oil" label="油脂" min-width="100"  />
-                <el-table-column prop="oilQuantity" label="油脂量" min-width="120"  />
-                <el-table-column prop="clearance" label="游隙" min-width="100"  />
-                <el-table-column prop="packagingMethod" label="包装方式" min-width="120"  />
-                <el-table-column prop="specialRequire" label="特殊要求" min-width="160"  />
-                <el-table-column prop="arithmeticNo" label="运算单号" min-width="200" show-overflow-tooltip />
-                <el-table-column prop="remark" label="备注" min-width="180" ></el-table-column>
-                <el-table-column prop="createTime" label="创建时间" min-width="180" ></el-table-column>
-                <el-table-column label="操作" width="100" fixed="right">
-                  <template slot-scope="scope">
-                    <el-button size="mini" type="text" @click="scheduleFun(scope.row.id, 'edit')">计划进度</el-button>
-                  </template>
-                </el-table-column>
-              </JNPF-table>
+
+              <div class="stoclInfo" v-if="categoryType == 'plan'">
+                <el-descriptions :column="1" class="orderNo">
+                  <el-descriptions-item label="计划单号">{{ dataForm.productionPlanNo
+                    }}</el-descriptions-item>
+
+                </el-descriptions>
+                <el-descriptions :column="1" class="box">
+                  <el-descriptions-item label="品名规格" class="drawingNo">{{ dataForm.productsDrawingNo
+                    }} </el-descriptions-item>
+                </el-descriptions>
+                <el-descriptions class="margin-top" :column="4">
+                  <el-descriptions-item label="产品编码">{{ dataForm.productsCode }}</el-descriptions-item>
+                  <el-descriptions-item label="需求数量">{{ dataForm.planProductionQuantity }}{{ dataForm.mainUnit
+                    }}</el-descriptions-item>
+                  <el-descriptions-item label="宽放需求数量">{{ dataForm.planProductionQuantity }}{{ dataForm.mainUnit
+                    }}</el-descriptions-item>
+                  <el-descriptions-item label="利用库存数量">{{ dataForm.planProductionQuantity }}{{ dataForm.mainUnit
+                    }}</el-descriptions-item>
+                  <el-descriptions-item label="安排采购数量">{{ dataForm.planProductionQuantity }}{{ dataForm.mainUnit
+                    }}</el-descriptions-item>
+                  <el-descriptions-item label="自制数量">{{ dataForm.planProductionQuantity }}{{ dataForm.mainUnit
+                    }}</el-descriptions-item>
+                  <el-descriptions-item label="已完成数量">{{ dataForm.completedQuantity ? dataForm.completedQuantity : '0'
+                    }}{{
+                      dataForm.mainUnit
+                    }}</el-descriptions-item>
+                  <el-descriptions-item label="打字内容">{{ dataForm.sealingCoverTyping }}</el-descriptions-item>
+                  <el-descriptions-item label="精度等级">{{ dataForm.accuracyLevel }}</el-descriptions-item>
+                  <el-descriptions-item label="振动等级">{{ dataForm.vibrationLevel }}</el-descriptions-item>
+                  <el-descriptions-item label="油脂">{{ dataForm.oil }}</el-descriptions-item>
+                  <el-descriptions-item label="油脂量">{{ dataForm.oilQuantity }}</el-descriptions-item>
+                  <el-descriptions-item label="游隙">{{ dataForm.clearance }}</el-descriptions-item>
+                  <el-descriptions-item label="包装方式">{{ dataForm.packagingMethod }}</el-descriptions-item>
+                  <el-descriptions-item label="特殊要求">{{ dataForm.specialRequire }}</el-descriptions-item>
+                  <el-descriptions-item label="计划日期">{{ dataForm.planStartDate }}至{{ dataForm.planEndDate
+                    }}</el-descriptions-item>
+                </el-descriptions>
+
+              </div>
             </el-collapse-item>
             <el-collapse-item title="计划甘特图" name="planGantt">
 
@@ -183,33 +186,42 @@
     </transition>
     <RelatedTasksForm v-if="relatedTaskVisible" ref="relatedTaskForms" @selectRelatedTasksFun="selectRelatedTasksFun">
     </RelatedTasksForm>
+    <Form v-if="formVisible" ref="form" @close="closeFun"></Form>
   </div>
 </template>
 <script>
 import { getOrderDetail } from '@/api/salesManagement/assemblyOrders'
 import { detailordershengchan } from '@/api/productOrdes/index.js'
 import { getWorkReportList } from "@/api/productOrdes/index.js"
+import Form from '../orderList/Form.vue'
 import { getInspectionList, deleteInspectionData, getInspectionLinesList } from '@/api/inspectionManagement/index' // 检验单
 import { getProductionPlanList } from '@/api/productionManagement/index'
 export default {
+  components: {
+    Form
+  },
   data() {
     return {
+      formVisible: false,
       categoryType: "plan",
       height: 0,
       relatedTaskVisible: false,
       categoryTypeList: [
         { code: "plan", fullName: "订单计划", },
-        { code: "inventory", fullName: "利用库存", },
         { code: "finishpurchase", fullName: "成品采购", },
         { code: "rawpurchase", fullName: "原材料采购", },
-        { code: "out", fullName: "外协", },
-        { code: "sendOut", fullName: "已发货", },
-        { code: "guidebook", fullName: "已退货", },
-        { code: "refund", fullName: "已退款", },
-        { code: "reconciliation", fullName: "已对账", },
-        
+        { code: "finishedOut", fullName: "成品外协", },
+        { code: "processOut", fullName: "工序外协", },
+        { code: "inbounwarehouse", fullName: "入库记录", },
+        { code: "shipmentRecord", fullName: "发货记录", },
+        { code: "returnRecord", fullName: "退货记录", },
+        { code: "refund", fullName: "对账记录", },
+        { code: "refund", fullName: "收款记录", },
+        { code: "refund", fullName: "退款记录", },
+        { code: "refund", fullName: "开票记录", },
+
       ],
-      productData: [], 
+      productData: [],
       orderTypeList: [
         { label: "正常订单", value: "normal", },
         { label: "返工订单", value: "rework", },
@@ -244,7 +256,7 @@ export default {
 
       prodOrderId: "",
       inspectData: [],
-      orderLinesId:""
+      orderLinesId: ""
     }
 
   },
@@ -259,14 +271,19 @@ export default {
     this.switchStyle()
   },
   methods: {
-    scheduleFun(id){
+    scheduleFun(id) {
 
     },
-    viewFun(id){
+    viewFun(id) {
       // 详情
-      this.orderLinesId=id
-      this.categoryType='plan'
-      this.getTabdataList()
+      this.orderLinesId = id
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.form.init(id, 'look')
+      })
+    },
+    closeFun() {
+      this.formVisible = false
     },
     //自适应窗口
     async switchStyle() {
@@ -291,14 +308,14 @@ export default {
 
 
       if (this.categoryType == 'plan') {
-        let obj={
-          ordersLineId:this.orderLinesId,
-          pageSize:-1,
-          pageNum:-1,
+        let obj = {
+          ordersLineId: this.orderLinesId,
+          pageSize: -1,
+          pageNum: -1,
         }
-        getProductionPlanList(obj).then(res=>{
-          console.log("计划信息",res);
-          this.planData=res.data.records
+        getProductionPlanList(obj).then(res => {
+          console.log("计划信息", res);
+          this.planData = res.data.records
         })
       } else if (this.categoryType == 'purchase') {
         // 投料
@@ -335,7 +352,7 @@ export default {
         });
         this.dataForm = res.data.order
         this.productData = res.data.orderLines
-        this.orderLinesId=this.productData[0].id
+        this.orderLinesId = this.productData[0].id
         this.getTabdataList()
 
       })
@@ -781,7 +798,8 @@ $footerPadding: '10px';
 ::v-deep .el-collapse-item {
   border-bottom: 1px solid rgb(220, 223, 230)
 }
-.productTable ::v-deep .el-table__body-wrapper{
-  height: auto!important;
+
+.productTable ::v-deep .el-table__body-wrapper {
+  height: auto !important;
 }
 </style>

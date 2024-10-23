@@ -116,6 +116,8 @@ import {AllList} from "@/api/extend/document";
 import {isFile, Type2SuffixArr} from "@/views/drawingDocument/document/utils";
 import SearchPlane from "@/views/drawingDocument/document/SearchPlane.vue";
 import SwitchListAndFilter from "@/views/drawingDocument/document/SwitchListAndFilter.vue";
+import {trim} from "@/utils";
+import {executeQueryTime} from "@/views/esop/utils/utils";
 
 export default {
     name: 'myCustomer',
@@ -366,9 +368,7 @@ export default {
         changeLeft() {
             this.leftFlag = !this.leftFlag
         },
-        columnSetFun() {
-            this.$refs.dataTable.showDrawer()
-        },
+
         getcategoryTree() {
             this.treeLoading = true
             this.listLoading = true
@@ -392,10 +392,7 @@ export default {
         },
         initData() {
             this.listLoading = true
-            Object.keys(this.listQuery).forEach(key => {
-                let item = this.listQuery[key]
-                this.listQuery[key] = typeof item === 'string' ? item.trim() : item
-            })
+            trim(this.listQuery)
             this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
             getPartnerList(this.listQuery).then(res => {
                 this.tableData = res.data.records

@@ -63,13 +63,13 @@
                     :hasC="hasTableTopOpts"
                             ref="dataTable" :setColumnDisplayList="columnList">
 <!--                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />-->
-                    <template v-if="!isNoProductPage">
+                    <template v-if="!isNoProductPage || isImage">
                         <el-table-column prop="drawingNo" label="品名规格" min-width="305" />
                         <el-table-column prop="productsCode" label="产品编码" min-width="120" />
                         <el-table-column prop="productsCategoryName" label="产品分类" width="140" />
                     </template>
-                    <template v-else>
-                        <el-table-column prop="categoryName" label="分类名称" min-width="120" />
+                    <template  v-if="isNoProductPage">
+                        <el-table-column prop="categoryName" label="文件分类" min-width="120" />
                     </template>
 
                     <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center">
@@ -287,6 +287,9 @@ export default {
         }
     },
     computed: {
+        isImage(){
+            return this.applicationType === ApplicationType.IMAGE
+        },
         isNoProductPage(){
             return isNoProductPage(this.applicationType)
         },

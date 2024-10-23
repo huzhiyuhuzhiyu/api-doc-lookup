@@ -467,3 +467,17 @@ export function array2Map(arr,key){
     arr.forEach(item=> map.set(item[key],item))
     return map
 }
+export function renderClg({ title, content, backgroundColor }) {
+    console.log(`%c ${title} %c ${content} %c`, `background: ${backgroundColor}; padding: 1px; border-radius: 3px 0 0 3px;  color: #fff`, 'background: #35495E; padding: 1px; border-radius: 0 3px 3px 0;  color: #fff', 'background:transparent')
+}
+
+export function printBuildInfo(info) {
+    info.forEach(item => {
+        const { title, content, backgroundColor } = item
+        return renderClg({
+            title,
+            content,
+            backgroundColor
+        })
+    })
+}

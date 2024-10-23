@@ -39,6 +39,17 @@ export function detailBimFileUpload(id) {
 }
 
 /**
+ * 退回文件上传申请单
+ * @param id
+ * @returns {AxiosPromise}
+ */
+export function backBimFileUpload(id) {
+    return request({
+        url: `/api/zgt/bimFileUpload/turnBack/${id}`,
+        method: 'get',
+    })
+}
+/**
  * 修改文件上传申请单
  * @param data
  * @returns {*}

@@ -332,7 +332,7 @@ export default {
       this.listLoading = true
       this.treeLoading = true
       this.initListQuery.productCategoryId = '' // 重置数据类型id筛选
-      getcategoryTree({ classAttribute: '' })
+      getcategoryTree({ classAttribute: '',type:"material" })
         .then((res) => {
           this.treeData = res.data.length ? res.data : []
           this.$nextTick(() => {

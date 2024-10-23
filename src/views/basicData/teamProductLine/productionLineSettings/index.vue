@@ -3,16 +3,6 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-          <!-- <el-col :span="4">
-            <el-form-item>
-              <el-input v-model.trim="tableQuery.code" placeholder="产线编码" @keyup.enter.native="search()" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model.trim="tableQuery.name" placeholder="产线名称" @keyup.enter.native="search()" clearable />
-            </el-form-item>
-          </el-col> -->
           <template v-for="item in searchList">
             <el-col :span="item.searchType === 3 ? 6 : 4" :key="item.prop">
               <el-form-item>
@@ -51,17 +41,10 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 8px">
-          <!-- <el-dropdown> -->
           <div>
-            <el-button type="primary" size="mini" icon="el-icon-plus" @click.native="addSupplier('add')">
-              新建
-            </el-button>
-            <!-- <el-button size="mini" :disabled="tableDataList.length > 0 ? false : true" type="primary"
-              icon="el-icon-download" @click="exportForm">
-              导出
-            </el-button> -->
+            <topOpts @add="addSupplier('add')">
+            </topOpts>
           </div>
-
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"

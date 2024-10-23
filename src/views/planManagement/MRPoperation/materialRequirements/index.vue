@@ -1908,8 +1908,9 @@ export default {
               item.cooperativePartnerId === ids.cooperativePartnerId &&
               item.productsId === ids.productsId
             ) {
+              ids.planDemandQuantity =
+              item.planDemandQuantity;
               ids.deliveryDate = item.deliveryDate;
-              ids.planDemandQuantity = this.outArrList[index].planDemandQuantity;
               ids.materialDemandId = this.outArrList[index].materialDemandId;
               ids.poolType = item.poolType;
             }
@@ -1978,7 +1979,7 @@ export default {
           this.purchaseArr.forEach((ids, index) => {
             if (item.productsId === ids.productsId) {
               ids.planDemandQuantity =
-                this.purchaseArrList[index].planDemandQuantity;
+                item.planDemandQuantity;
               ids.materialDemandId =
                 this.purchaseArrList[index].materialDemandId;
               ids.deliveryDate = item.deliveryDate;

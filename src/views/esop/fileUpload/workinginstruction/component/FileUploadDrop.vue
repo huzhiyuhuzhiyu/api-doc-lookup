@@ -1,6 +1,6 @@
 <template>
-    <div v-drag:[disabled].onlyFile="dragHandler" class="UploadFile-container">
-        <template>
+    <div v-drag:[dragDisabled].onlyFile="dragHandler" class="UploadFile-container">
+        <template v-if="!onlyShow">
             <div class='UploadFile-container-main noUpload'>
                 <el-upload
                     v-bind="$attrs"
@@ -74,7 +74,7 @@
                 </el-table>
                 <div class="uploadlist" v-else>
                     <ul class="ul-upload" :style="{height: gridHeight}" v-loading="loading">
-                        <GridFileList @empty-lick="emptyUpload" :empty-description="disabled ? '当前状态不可上传文件': '暂无文件，您可点击或把文件拖拽至此上传'" :list="fileList" :file-options="fileOptions" @command="commandHandler" @item-click="itemClickHandler">
+                        <GridFileList @empty-lick="emptyUpload" :empty-description="dragDisabled ? '当前状态不可上传文件': '暂无文件，您可点击或把文件拖拽至此上传'" :list="fileList" :file-options="fileOptions" @command="commandHandler" @item-click="itemClickHandler">
                             <template v-slot:tooltip="{ item }">
                                 <el-row>
                                     <el-col style="text-align: right" :span="8">{{ item.type ? '文件名' : '文件夹名' }}：</el-col>
@@ -125,6 +125,10 @@ export default {
     },
     components: {SwitchListAndFilter, GridFileList, Preview},
     props: {
+        onlyShow:{
+            type:Boolean,
+            default:false
+        },
         isFileTrashPage:{
             type:Boolean,
             default:false
@@ -235,20 +239,6 @@ export default {
                 return origin
             }
 
-            // 不可以还原和删除明细
-            // if(this.isFileTrashPage){
-            //     origin.push({
-            //         value:'restore',
-            //         text:'还原',
-            //     })
-            //     return origin
-            // }
-            //
-            // origin.push({
-            //     value:'fileManageDelete',
-            //     text:'删除',
-            //     isShow:()=>!this.disabled
-            // })
             return origin
         },
         acceptText() {
@@ -284,6 +274,9 @@ export default {
             }
             return txt
         },
+        dragDisabled(){
+            return this.disabled || this.onlyShow
+        },
     },
     created() {
         // console.log('fff', this.fileList)
@@ -292,7 +285,7 @@ export default {
     methods: {
         emptyUpload() {
             if(this.disabled) return this.$message.info('当前状态不可上传文件')
-            this.$refs.clickUploadBtn.$el.click()
+            this.$refs.clickUploadBtn && this.$refs.clickUploadBtn.$el.click()
         },
         async fileManageDelete(index, {processUploadId}){
             try {

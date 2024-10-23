@@ -202,7 +202,7 @@
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
-            <el-tab-pane label="附件" name="annex">
+            <el-tab-pane label="附件" name="annex"   v-if="isattachmentswitch == '1'">
               <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
             </el-tab-pane>
           </el-tabs>
@@ -229,6 +229,7 @@ import { addPlanList, updatePlanList } from '@/api/calculationList/calculationLi
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
+import { getBimBusinessDetail } from '@/api/basicData/index'
 
 export default {
 
@@ -237,6 +238,8 @@ export default {
   },
   data() {
     return {
+      isattachmentswitch: '',
+
       bomFormVisible:false,
       planTypeList: [
         { label: "订单生成计划", value: "order_plan" },
@@ -346,11 +349,20 @@ export default {
   created() {
   },
   mounted() {
-
+    this.getBimBusinessDetail()
   },
   beforeDestroy() {
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_assembleSaleOrder'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     lookBom(data){
       console.log(data);
       this.bomFormVisible=true

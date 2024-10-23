@@ -48,11 +48,11 @@
                           <el-form-item label="供应商名称" prop="partnerName">
                             <!-- 供应商选择弹窗  -->
                             <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
-                              v-model="dataForm.partnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
-                              @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'"
-                              title="选择供应商" treeTitle="供应商分类" :methodArr="PartnerMethodArr"
-                              :listMethod="getCooperativeData" :listRequestObj="PartnerListRequestObj"
-                              :paramsObj="{ oldData }" :searchList="PartnerTableSearchList" />
+                              v-model="dataForm.partnerName" :beforeSubmit="beforeSubmit" @change="supplierdata"
+                              :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商" treeTitle="供应商分类"
+                              :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
+                              :listRequestObj="PartnerListRequestObj" :paramsObj="{ oldData }"
+                              :searchList="PartnerTableSearchList" />
                           </el-form-item>
                         </el-col>
                         <el-col :sm="6" :xs="24">
@@ -234,9 +234,9 @@
                       <el-form-item label="供应商名称" prop="partnerName">
                         <!-- 供应商选择弹窗  -->
                         <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
-                          v-model="dataForm.partnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
-                          @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
-                          treeTitle="供应商分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
+                          v-model="dataForm.partnerName" :beforeSubmit="beforeSubmit" @change="supplierdata"
+                          :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商" treeTitle="供应商分类"
+                          :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
                           :listRequestObj="PartnerListRequestObj" :paramsObj="{ oldData }"
                           :searchList="PartnerTableSearchList" />
                       </el-form-item>
@@ -408,7 +408,7 @@
       </div>
     </transition>
     <changeAddress v-if="addressVisibled" ref="addressRef" @getChangeAddress="getChangeAddress"></changeAddress>
-    <DkcComSelectPage ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" title="选择产品" treeTitle="产品分类"
+    <ComSelect-page ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" title="选择产品" treeTitle="产品分类"
       :methodArr="ProductMethodArr" :listMethod="detailpurchaseOrderList" :listRequestObj="ProductListRequestObj"
       :renderTree="false" :listDataFormatting="listDataFormatting" :searchList="ProductTableSearchList"
       :elementShow="false" multiple />
@@ -433,7 +433,7 @@ import {
 import { getCooperativeInfo, getCooperativeData, getAddressInfo, getBimBusinessDetail } from '@/api/basicData/index'
 import changeAddress from './changeAddress.vue'
 import { purPurchaseOrderdetail, detailpurchaseOrderList } from '@/api/purchasingAndOutsourcingOrders/index'
-import DkcComSelectPage from './components/ComSelect-page/index.vue'
+
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow'
@@ -441,7 +441,6 @@ import recordList from '@/views/workFlow/components/RecordList.vue'
 export default {
   components: {
     changeAddress,
-    DkcComSelectPage,
     Process,
     recordList
   },
@@ -485,17 +484,27 @@ export default {
       ProductListRequestObj: {
         orderType: 'external',
         shipmentStatus: 'not_finish',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'createTime'
+          }
+        ],
         pageNum: 1,
         pageSize: 20
         // queryType: 3
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
-        { prop: 'orderNo', label: '订单号', sortable: 'custom' },
-        { prop: 'cooperativePartnerName', label: '供应商名称', sortable: 'custom' },
+        { prop: 'orderNo', label: '订单号', sortable: 'custom', width: 200 },
+        { prop: 'cooperativePartnerName', label: '供应商名称', sortable: 'custom2', width: 160 },
         { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
-        { prop: 'processName', label: '工序名称', sortable: 'custom' },
+        { prop: 'processName', label: '工序名称', sortable: 'custom2' },
 
-        { prop: 'mainUnit', label: '单位', sortable: 'custom', },
+        { prop: 'mainUnit', label: '单位', sortable: 'custom', width: 80 },
         { prop: 'purchaseQuantity', label: '订单数量', sortable: 'custom', minWidth: 140 },
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
@@ -901,10 +910,8 @@ export default {
         this.dataFormTwo.data.forEach((item) => {
           productIdList.push(item.productsId)
         })
-        let _data = {
-          cooperativePartnerId: this.dataForm.cooperativePartnerId,
-          productIdList
-        }
+        this.dataFormTwo.data = []
+        this.linesList = []
       }
     },
 
@@ -1322,6 +1329,7 @@ export default {
     // 切换table
     handleClick(tab, event) { },
     init(id, btnType, approvalFlag, data) {
+      console.log(data, 'klkk')
       this.formLoading = true
       // this.getProvinceList()
       this.dataForm.id = id || ''
@@ -1399,6 +1407,9 @@ export default {
         const formattedDate = `${year}-${month}-${date}`
         this.dataForm.deliverDate = formattedDate
         if (data) {
+          this.dataForm.partnerName = data[0].cooperativePartnerName
+          this.dataForm.cooperativePartnerCode = data[0].cooperativePartnerCode
+          this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
           this.dataFormTwo.data = data
           this.dataFormTwo.data.forEach((item) => {
             console.log(item, 'dd')

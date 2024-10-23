@@ -2,8 +2,8 @@
     <transition name="el-zoom-in-center">
         <template v-if="!isFinish">
             <div class="JNPF-preview-main org-form" ref="main" v-loading="pageLoading">
-                <template v-if="!approvalFlag">
-                    <div :class="['JNPF-common-page-header', isView ? 'noButtons' : '']" >
+
+                <div v-if="!approvalFlag || needHeader" :class="['JNPF-common-page-header', isView ? 'noButtons' : '']" >
                         <el-page-header @back="goBack('back')" :content="title" />
                         <div class="options" >
 
@@ -23,6 +23,7 @@
                         </div>
 
                     </div>
+                <template v-if="!approvalFlag">
                     <el-tabs   v-model="activeName">
                         <el-tab-pane label="基础信息" name="info">
                             <component
@@ -79,6 +80,10 @@ import {detailBimRecycleBin, getBimRecycleBin, revertBimRecycleBin} from "@/api/
 export default {
     components: { NoProcessBasicInfo, HasProcessBasicInfo, FinishSubmit, recordList, Process, FileUploadDrop},
     props:{
+        needHeader:{
+            type:Boolean,
+            default:false
+        },
         type:{
             type:String,
             required:true
@@ -111,6 +116,14 @@ export default {
             type:Boolean,
             required:false,
         },
+        pageType:{
+            type:String,
+            required:false
+        },
+        isNoProductPage:{
+            type:Boolean,
+            required:false
+        }
     },
     data() {
         return {
@@ -326,6 +339,8 @@ export default {
                 isFileCheckPage: this.isFileCheckPage,
                 isApprovalModel: this.approvalFlag,
                 applicationType: this.applicationType,
+                pageType:this.pageType,
+                isNoProductPage:this.isNoProductPage,
             }
         },
         basicInfoComName(){

@@ -160,6 +160,7 @@ export const PageType ={
     ...FileUploadPageType,
     ...FileAuditPageType,
 }
+
 export const FileManagePageSet = new Set(Object.values(FileManagementPageType))
 export const FileTrashPageSet = new Set(Object.values(FileTrashPageType))
 export const FileCheckPageSet = new Set(Object.values(FileCheckPageType))

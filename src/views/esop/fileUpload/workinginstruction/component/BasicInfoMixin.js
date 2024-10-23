@@ -3,8 +3,9 @@ import {notEmpty} from "@/utils";
 import {
     ApprovalStatus,
     ORDER_CODE_FILE_UPLOAD,
-    ModelType
+    ModelType, PageType, ApplicationType
 } from "@/views/esop/fileUpload/workinginstruction/utils/constant";
+import {isNoProductPage} from "@/views/esop/utils/utils";
 
 export default {
     data(){
@@ -53,7 +54,10 @@ export default {
             type:Boolean,
             required:false,
         },
-
+        pageType:{
+            type:String,
+            required:false,
+        },
     },
     methods:{
         async toggleEnableMarkHandler(){
@@ -89,9 +93,9 @@ export default {
             flag &&  this.getDetail(data)
         },
         versionCountHandler(){
-           // if(this.dataForm.versionCount === 0){
-           //     return this.$message.info('暂无可查看的关联版本')
-           // }
+           if(this.dataForm.versionCount === 0){
+               return this.$message.info('暂无可查看的关联版本')
+           }
           this.versionCountVisible = true
         }
     },
@@ -101,6 +105,9 @@ export default {
         },
         hasEnableMark(){
             return this.dataForm.approvalStatus === ApprovalStatus.OK && (this.isFileManagementPage || this.isFileCheckPage)
+        },
+        isNoProductPage(){
+            return isNoProductPage(this.dataForm.applicationType)
         },
     }
 }

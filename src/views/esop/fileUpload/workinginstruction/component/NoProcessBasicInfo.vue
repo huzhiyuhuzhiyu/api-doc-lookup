@@ -142,31 +142,34 @@ export default {
                                                 :paramsObj="{}" />
                                         </el-form-item>
                                     </el-col>
-                                    <el-col :span="6">
-                                        <el-form-item label="版本号" prop="version">
-                                            <el-input v-model="dataForm.version" placeholder="请输入版本号"  />
-                                        </el-form-item>
-                                    </el-col>
-                                    <el-col :span="3" v-if="isApprovalModel">
-                                        <el-form @submit.prevent   style="padding-top: 0;" >
-                                            <el-form-item label="关联版本数">
-                                                <el-input  readonly @click.native="versionCountHandler" v-model="dataForm.versionCount || 1" class="pointer versionCount"/>
+                                    <template v-if="!isNoProductPage">
+                                        <el-col :span="6">
+                                            <el-form-item label="版本号" prop="version">
+                                                <el-input v-model="dataForm.version" placeholder="请输入版本号"  />
                                             </el-form-item>
-                                        </el-form>
-                                    </el-col>
-                                    <el-col v-if="hasEnableMark" :span="6">
-                                        <el-form @submit.prevent :disabled="isView">
-                                            <el-form-item label="是否启用">
-                                                <div style="height: 32px;display: flex;align-items: center">
-                                                    <el-switch
-                                                        :active-value="true"
-                                                        :inactive-value="false"
-                                                        @change="toggleEnableMarkHandler"
-                                                        v-model="dataForm.enabledMark"/>
-                                                </div>
-                                            </el-form-item>
-                                        </el-form>
-                                    </el-col>
+                                        </el-col>
+                                        <el-col :span="3" v-if="isApprovalModel || isFileManagementPage">
+                                            <el-form @submit.prevent   style="padding-top: 0;" >
+                                                <el-form-item label="关联版本数">
+                                                    <el-input  readonly @click.native="versionCountHandler" v-model="dataForm.versionCount" class="pointer versionCount"/>
+                                                </el-form-item>
+                                            </el-form>
+                                        </el-col>
+                                        <el-col v-if="hasEnableMark" :span="3">
+                                            <el-form @submit.prevent :disabled="isView">
+                                                <el-form-item label="是否启用">
+                                                    <div style="height: 32px;display: flex;align-items: center">
+                                                        <el-switch
+                                                            :active-value="true"
+                                                            :inactive-value="false"
+                                                            @change="toggleEnableMarkHandler"
+                                                            v-model="dataForm.enabledMark"/>
+                                                    </div>
+                                                </el-form-item>
+                                            </el-form>
+                                        </el-col>
+                                    </template>
+
                                 </el-row>
                                 <el-row v-if="isImage" :gutter="10">
                                     <el-col :span="12">
@@ -215,7 +218,7 @@ export default {
             </div>
         </div>
         </div>
-        <CheckVersionCountDialog :applicationType="dataForm.applicationType" v-if="versionCountVisible" :visible.sync="versionCountVisible"  :search-drawing-no="dataForm.drawingNo"></CheckVersionCountDialog>
+        <CheckVersionCountDialog :current-id="dataForm.id" :applicationType="dataForm.applicationType" v-if="versionCountVisible" :visible.sync="versionCountVisible"  :search-drawing-no="dataForm.drawingNo"></CheckVersionCountDialog>
 
     </div>
 </template>

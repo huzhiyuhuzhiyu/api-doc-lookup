@@ -67,6 +67,11 @@ export default {
             }
         },
         getDetail(type,id) {
+            if(this.currentId === id){
+                this.$message.info('您已在此版本详情页')
+                return
+            }
+            console.log(this.applicationType,ApplicationType2FileManagementUrl[this.applicationType])
             this.$router.push({
                 path: ApplicationType2FileManagementUrl[this.applicationType],
                 query:{
@@ -121,6 +126,10 @@ export default {
             type:String,
             required:true
         },
+        currentId:{
+            type:String,
+            required:true
+        }
 
     },
     computed:{

@@ -45,6 +45,9 @@
                             <el-table-column prop="drawingNo" label="品名规格" min-width="150" />
                             <el-table-column prop="productsCode" label="产品编码" min-width="120" />
                         </template>
+                        <template v-else>
+                            <el-table-column prop="categoryName" label="分类名称" min-width="120" />
+                        </template>
                         <el-table-column prop="startTime" label="发起时间" min-width="150" :formatter="jnpf.tableDateFormat" />
                         <el-table-column prop="userName" label="发起人员" min-width="130" />
                         <el-table-column prop="flowUrgent" label="紧急程度" min-width="100" align="center">
@@ -277,7 +280,8 @@ export default {
                    ...map.get(item.id),
                    orderNo: item.orderNo,
                    drawingNo: item.drawingNo,
-                   productsCode: item.productsCode
+                   productsCode: item.productsCode,
+                     categoryName: item.categoryName
                })).sort((a,b)=>b.creatorTime - a.creatorTime)
            }catch (e) {
 

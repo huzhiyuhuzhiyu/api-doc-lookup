@@ -63,9 +63,15 @@
                     :hasC="hasTableTopOpts"
                             ref="dataTable" :setColumnDisplayList="columnList">
 <!--                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />-->
-                    <el-table-column prop="drawingNo" label="品名规格" min-width="305" />
-                    <el-table-column prop="productsCode" label="产品编码" min-width="120" />
-                    <el-table-column prop="productsCategoryName" label="产品分类" width="140" />
+                    <template v-if="!isNoProductPage">
+                        <el-table-column prop="drawingNo" label="品名规格" min-width="305" />
+                        <el-table-column prop="productsCode" label="产品编码" min-width="120" />
+                        <el-table-column prop="productsCategoryName" label="产品分类" width="140" />
+                    </template>
+                    <template v-else>
+                        <el-table-column prop="categoryName" label="分类名称" min-width="120" />
+                    </template>
+
                     <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center">
                         <template slot-scope="{row}">
                             <el-tag type="warning" v-if="row.documentStatus === 'draft'">草稿</el-tag>
@@ -73,22 +79,28 @@
                             <el-tag type="danger"  v-else-if="row.documentStatus === 'back'">退回</el-tag>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="version" label="版本号" width="80" />
+                    <el-table-column prop="version" label="版本号" width="80" v-if="!isNoProductPage" />
                     <el-table-column prop="fileCount" label="文件数量" width="120" />
-                    <el-table-column prop="versionCount" label="关联版本" width="120"  v-if="isFileManagementPage || isFileCheckPage">
-                        <template slot-scope="scope">
-                            <el-link :underline="false" type="primary" @click="searchVersion(scope.row.drawingNo)">{{scope.row.versionCount}}</el-link>
-                        </template>
-                    </el-table-column>
+                    <template v-if="!isNoProductPage">
+                        <el-table-column prop="versionCount" label="关联版本" width="120"  v-if="(isFileManagementPage || isFileCheckPage)">
+                            <template slot-scope="scope">
+                                <el-link :underline="false" type="primary" @click="searchVersion(scope.row.drawingNo)">{{scope.row.versionCount}}</el-link>
+                            </template>
+                        </el-table-column>
+                    </template>
+
                     <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
                     <el-table-column prop="createByName" label="创建人" width="100" />
-                    <el-table-column prop="status" label="启用状态" width="120" align="center" v-if="isFileManagementPage || isFileCheckPage">
-                        <template slot-scope="scope">
-                            <el-switch @change="changeState(scope.row)" v-model="scope.row.enabledMark"
-                                       :active-value="true" :inactive-value="false">
-                            </el-switch>
-                        </template>
-                    </el-table-column>
+                    <template v-if="!isNoProductPage">
+                        <el-table-column prop="status" label="启用状态" width="120" align="center" v-if="(isFileManagementPage || isFileCheckPage)">
+                            <template slot-scope="scope">
+                                <el-switch @change="changeState(scope.row)" v-model="scope.row.enabledMark"
+                                           :active-value="true" :inactive-value="false">
+                                </el-switch>
+                            </template>
+                        </el-table-column>
+                    </template>
+
                     <el-table-column label="操作" width="180" fixed="right">
                         <template slot-scope="scope">
                                 <tableOpts
@@ -135,10 +147,11 @@
                 :isFileManagementPage="isFileManagementPage"
                 :isFileTrashPage="isFileTrashPage"
                 :isFileUploadPage="isFileUploadPage"
+                :page-type="pageType"
                 :isFileCheckPage="isFileCheckPage"
+                :isNoProductPage="isNoProductPage"
                 @back="editBack" />
         </slot>
-
         <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
                     @superQuery="superQuerySearch" @close="superQueryVisible = false" />
         <!-- <UserRelationList v-if="userRelationListVisible" ref="UserRelationList" @refreshDataList="getOrganizeList" /> -->
@@ -177,7 +190,7 @@ import {
 import {FlowCode} from "@/views/esop/utils/constants";
 import {getQueryConfirm, getSuccessInfo, isEmpty, mapIfNonePutArr, notEmpty, trim} from "@/utils";
 import RecreateMixin from "@/views/esop/utils/RecreateMixin";
-import {BtnType, executeQueryTime, getUploadFileSaveData} from "@/views/esop/utils/utils";
+import {BtnType, executeQueryTime, getUploadFileSaveData, isNoProductPage} from "@/views/esop/utils/utils";
 import {getBimRecycleBin, revertBimRecycleBin} from "@/api/esop/fileTrash";
 import {getBusinessFlowInfo} from "@/api/workFlow/FlowEngine";
 
@@ -274,6 +287,9 @@ export default {
         }
     },
     computed: {
+        isNoProductPage(){
+            return isNoProductPage(this.applicationType)
+        },
         getListFn(){
             if(this.isFileTrashPage){
                 return getBimRecycleBin

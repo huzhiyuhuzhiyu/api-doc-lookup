@@ -260,14 +260,14 @@ export default {
                                             <el-input readonly :placeholder="dataForm.routingName" v-model="dataForm.routingName"></el-input>
                                         </el-form-item>
                                     </el-col>
-                                    <el-col :span="3" v-if="isApprovalModel">
+                                    <el-col :span="2" v-if="isApprovalModel || isFileManagementPage">
                                         <el-form @submit.prevent   style="padding-top: 0;" >
                                             <el-form-item label="关联版本数">
                                                 <el-input  readonly @click.native="versionCountHandler" v-model="dataForm.versionCount || 1" class="pointer versionCount"/>
                                             </el-form-item>
                                         </el-form>
                                     </el-col>
-                                    <el-col :span="3">
+                                    <el-col :span="2">
                                         <el-form-item label="按工序上传">
                                             <div style="height: 32px;display: flex;align-items: center">
                                                 <el-tooltip :content="hasRoutingLine ? '开启后可为每一道工序上传作业指导书':'该产品未设置工艺路线，请设置工艺路线后再开启'" placement="top-start">
@@ -282,7 +282,7 @@ export default {
                                         </el-form-item>
                                     </el-col>
 
-                                    <el-col :span="3" v-if="hasEnableMark">
+                                    <el-col :span="2" v-if="hasEnableMark">
                                         <el-form @submit.prevent :disabled="isView" style="padding-top: 0">
                                             <el-form-item label="是否启用">
                                                 <div style="height: 32px;display: flex;align-items: center">
@@ -359,7 +359,7 @@ export default {
                     </el-collapse-item>
                 </el-collapse>
             </div>
-            <CheckVersionCountDialog :applicationType="dataForm.applicationType" v-if="versionCountVisible" :visible.sync="versionCountVisible"  :search-drawing-no="dataForm.drawingNo"></CheckVersionCountDialog>
+            <CheckVersionCountDialog :current-id="dataForm.id" :applicationType="dataForm.applicationType" v-if="versionCountVisible" :visible.sync="versionCountVisible"  :search-drawing-no="dataForm.drawingNo"></CheckVersionCountDialog>
         </div>
     </div>
     </div>

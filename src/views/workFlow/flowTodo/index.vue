@@ -260,7 +260,7 @@ export default {
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.categoryIndex = -1
       this.getCount()
-      // this.initData()
+      this.initData()
     },
     'listQuery.flowCategory':function(newVal){
       this.initData()

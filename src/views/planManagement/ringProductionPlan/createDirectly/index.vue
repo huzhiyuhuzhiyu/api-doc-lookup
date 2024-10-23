@@ -63,7 +63,7 @@
                       @selection-change="handeleProductInfoData" border height="660" :key="165" style="width: 100%;"
                       hasC>
 
-                      <el-table-column type="planNo" width="160" label="计划单号" :key="1011"
+                      <el-table-column type="planNo" min-width="160" label="计划单号" :key="1011"
                         v-if="codeConfig.codeWay != 'auto'">
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.planNo" placeholder="计划单号" />
@@ -77,8 +77,8 @@
                       </el-table-column>
 
                       <el-table-column prop="mainUnit" label="单位" width="80" :key="89" />
-                      <el-table-column prop="inventoryQuantity" label="可用库存数量" width="140" :key="8" />
-                      <el-table-column prop="planQuantity" label="计划数量" width="100" :key="7">
+                      <el-table-column prop="inventoryQuantity" label="可用库存数量" min-width="140" :key="8" />
+                      <el-table-column prop="planQuantity" label="计划数量" min-width="120" :key="7">
                         <template slot="header">
                           <span class="required">*</span>计划数量
                         </template>
@@ -190,7 +190,7 @@
                   </el-collapse-item>
                 </el-collapse>
               </el-tab-pane>
-              <el-tab-pane label="附件" name="annex">
+              <el-tab-pane label="附件" name="annex"  v-if="isattachmentswitch == '1'">
                 <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'">
                 </UploadWj>
               </el-tab-pane>
@@ -282,11 +282,14 @@ import {
 } from "@/api/masterDataManagement/index";
 import { log } from 'mathjs'
 
+import { getBimBusinessDetail } from '@/api/basicData/index'
 export default {
 
 
   data() {
     return {
+      isattachmentswitch: '',
+
       planTypeList: [
         { label: "订单生成计划", value: "order_plan" },
         { label: "直接创建计划", value: "add_plan" },
@@ -372,12 +375,22 @@ export default {
   created() {
   },
   mounted() {
+    this.getBimBusinessDetail()
     this.init()
     this.getProductClassFun()
   },
   beforeDestroy() {
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_createDirectly'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
 

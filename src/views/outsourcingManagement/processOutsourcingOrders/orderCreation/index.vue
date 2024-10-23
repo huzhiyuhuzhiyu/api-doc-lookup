@@ -79,7 +79,7 @@
                         |
                       </div>
                       <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                        <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true"
+                        <el-table style="border: 1px solid #e3e7ee;" :fixedNO="true"
                           @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
                           id="table" border height="460">
                           <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column>
@@ -249,7 +249,7 @@
                               </el-button>
                             </template>
                           </el-table-column>
-                        </JNPF-table>
+                        </el-table>
                       </el-form>
                       <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
                         <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ computedValue3 }}</span>

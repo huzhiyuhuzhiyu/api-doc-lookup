@@ -23,7 +23,15 @@
                     <JNPF-col v-model="dataForm" :tabContent="inspectionInfo" ref="dataForm" :openMode="openMode" />
                   </el-collapse-item>
 
-                  <el-collapse-item title="检验项目" name="inspectionItem">
+                  <el-collapse-item title="检验项目" name="inspectionItem" v-if="dataForm.inspectionResults == 'qualified'">
+                    <el-row :gutter="30" style="padding: 0 0 10px 0;">
+                      <TableForm-ware :value="inspectionList" @input="contentChanges" ref="linesForm"
+                        :tableItems="inspectionItems" :openMode="openMode" @addth="addOrDelInspectionItem"
+                        @deleteth="addOrDelInspectionItem" :productsId="scope ? scope.productsId : ''" :num="rowNum"
+                        :nowNum="nowNum" />
+                    </el-row>
+                  </el-collapse-item>
+                  <el-collapse-item title="检验项目" name="inspectionItem" v-else>
                     <el-row :gutter="30" style="padding: 0 0 10px 0;">
                       <TableForm-ware :value="inspectionList" @input="contentChanges" ref="linesForm"
                         :tableItems="inspectionItems" :openMode="openMode" @addth="addOrDelInspectionItem"
@@ -865,6 +873,8 @@ export default {
           },
           { prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120 }
         ]
+        this.activeNames = ['basicInfo', 'inspectionInfo', 'adverseCausesInfo']
+        this.activeNames = ['inspectionItem', 'basicInfo', 'inspectionInfo', 'adverseCausesInfo']
         console.log(this.inspectionItems)
       } else {
         this.dataForm.unqualifiedQuantity = '0'

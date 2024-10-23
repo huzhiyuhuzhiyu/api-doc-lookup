@@ -4,17 +4,7 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <!-- <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.orderNo" placeholder="单号" clearable @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.partnerName" placeholder="供应商名称" clearable
-                  @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col> -->
+
             <template v-for="item in searchList">
               <el-col :span="item.searchType === 3 ? 6 : 4">
                 <el-form-item>
@@ -54,13 +44,11 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <div>
-              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
-                创建收货单
-              </el-button>
-
-              <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
-                导出
-              </el-button>
+              <topOpts @add="addSupplier('', 'add')" :addText="'创建收货单'">
+                <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
+                  导出
+                </el-button>
+              </topOpts>
             </div>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">

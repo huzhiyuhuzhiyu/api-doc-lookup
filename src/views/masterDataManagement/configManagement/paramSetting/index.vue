@@ -221,7 +221,34 @@ export default {
         {
           label: '启用请购单附件',
           value: 'fj_qgd'
-        }
+        },{
+          label: '启用销售报价附件',
+          value: 'fj_quotation'
+        },{
+          label: '启用销售订单附件',
+          value: 'fj_sales'
+        },{
+          label: '启用销售发货附件',
+          value: 'fj_sendOutGoods'
+        },{
+          label: '启用销售退货附件',
+          value: 'fj_returnGoods'
+        },{
+          label: '启用套圈计划(安全库存创建)附件',
+          value: 'fj_ringSafetyStock'
+        },{
+          label: '启用套圈计划(直接创建)附件',
+          value: 'fj_ringCreateDirectly'
+        },{
+          label: '启用装配计划(安全库存创建)附件',
+          value: 'fj_assembleSafetyStock'
+        },{
+          label: '启用装配计划(直接创建)附件',
+          value: 'fj_assembleCreateDirectly'
+        },{
+          label: '启用装配计划(销售订单创建)附件',
+          value: 'fj_assembleSaleOrder'
+        } 
       ],
       descriptionList: [
         {
@@ -363,6 +390,42 @@ export default {
         {
           label: '开启后，在请购单附件新建、编辑、查看都会显示附件操作。',
           value: 'fj_qgd'
+        },
+        {
+          label: '开启后，在销售报价新建、编辑、查看都会显示附件操作。',
+          value: 'fj_quotation'
+        },
+        {
+          label: '开启后，在销售订单新建、编辑、查看都会显示附件操作。',
+          value: 'fj_sales'
+        },
+        {
+          label: '开启后，在销售发货新建、编辑、查看都会显示附件操作。',
+          value: 'fj_sendOutGoods'
+        },
+        {
+          label: '开启后，在销售退货新建、编辑、查看都会显示附件操作。',
+          value: 'fj_returnGoods'
+        },
+        {
+          label: '开启后，在套圈计划(安全库存创建)新建、编辑、查看都会显示附件操作。',
+          value: 'fj_ringSafetyStock'
+        },
+        {
+          label: '开启后，在套圈计划(直接创建)新建、编辑、查看都会显示附件操作。',
+          value: 'fj_ringCreateDirectly'
+        },
+        {
+          label: '开启后，在装配计划(安全库存创建)新建、编辑、查看都会显示附件操作。',
+          value: 'fj_assembleSafetyStock'
+        },
+        {
+          label: '开启后，在装配计划(直接创建)新建、编辑、查看都会显示附件操作。',
+          value: 'fj_assembleCreateDirectly'
+        },
+        {
+          label: '开启后，在装配计划(销售订单创建)新建、编辑、查看都会显示附件操作。',
+          value: 'fj_assembleSaleOrder'
         }
       ],
       currentData:null,

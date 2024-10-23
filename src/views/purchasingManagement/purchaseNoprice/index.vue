@@ -14,7 +14,7 @@
               <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
-       
+
           <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
@@ -511,8 +511,12 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp
-      if (prop === 'productName' || prop === 'productDrawingNo') {
+      if (prop === 'productDrawingNo') {
         newProp = prop
+      } else if (prop === 'classAttributeList') {
+        newProp = 'class_attribute'
+      } else if (prop === 'createByName') {
+        newProp = 'create_by'
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }

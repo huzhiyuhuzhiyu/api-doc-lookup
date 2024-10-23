@@ -178,7 +178,7 @@
 
 
           </el-tab-pane>
-          <el-tab-pane label="附件" name="annex">
+          <el-tab-pane label="附件" name="annex"  v-if="isattachmentswitch == '1'">
             <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
           </el-tab-pane>
           <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
@@ -522,11 +522,15 @@ import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowE
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
+import { getBimBusinessDetail } from '@/api/basicData/index'
+
 export default {
   components: { Process, recordList },
   mixins: [busFlow],
   data() {
     return {
+      isattachmentswitch: '',
+
       tipsvisible: false,
       submitmethodsTitle: "",
       btnText: "",
@@ -805,11 +809,22 @@ export default {
     this.getAttributeline()
   },
   mounted() {
+    this.getBimBusinessDetail()
     let tBody = document.querySelectorAll('.el-table')[1]
     tBody.style.height = 'auto'
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
+
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_returnGoods'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     //发货数量不能为0
     calcValidatenum() {
       return (rule, value, callback) => {

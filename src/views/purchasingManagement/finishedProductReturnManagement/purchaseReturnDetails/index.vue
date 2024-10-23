@@ -36,15 +36,11 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <div>
-              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
-                新建
-              </el-button>
-              <!-- <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()">
-                取消退货
-              </el-button> -->
-              <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
-                导出
-              </el-button>
+              <topOpts @add="addSupplier('', 'add')">
+                <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
+                  导出
+                </el-button>
+              </topOpts>
             </div>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">

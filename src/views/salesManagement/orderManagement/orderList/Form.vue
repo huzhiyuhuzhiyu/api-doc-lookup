@@ -402,7 +402,7 @@
 
             </el-tab-pane>
 
-            <el-tab-pane label="附件" name="annex">
+            <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
               <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
             </el-tab-pane>
             <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
@@ -1037,6 +1037,7 @@ import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowE
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
+import { getBimBusinessDetail } from '@/api/basicData/index'
 
 export default {
   mixins: [busFlow],
@@ -1045,6 +1046,7 @@ export default {
   },
   data() {
     return {
+      isattachmentswitch: '',
       oldId: "",
       oldType: "",
       createdData: {
@@ -1392,6 +1394,7 @@ export default {
   },
   mounted() {
     console.log("this.userInfo", this.userInfo);
+    this.getBimBusinessDetail()
     this.dataForm.departmentId = this.userInfo.departmentId
     this.dataForm.salesName = this.userInfo.userName
     this.dataForm.salesId = this.userInfo.userId
@@ -1418,6 +1421,15 @@ export default {
   beforeDestroy() {
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_sales'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     searchDrawingNoProduct(data, idx) {
       console.log(data, idx);
       getDetailByDrawNo(data.drawingNo).then(res => {
@@ -2158,9 +2170,9 @@ export default {
       let allArray = data.map(item => item.all);
       console.log("all", allArray);
       allArray.forEach(item => {
-        item.price=item.salesPrice
-        item.taxRate=item.taxRate*1
-        if (item.taxRate) {  
+        item.price = item.salesPrice
+        item.taxRate = item.taxRate * 1
+        if (item.taxRate) {
           item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.price) / (1 + (Number(item.taxRate)) / 100), 2)
 
         } else {
@@ -2314,8 +2326,8 @@ export default {
         item.productName = item.name
         item.productCode = item.code
         item.productsId = item.id
-        item.price=item.salesPrice
-        item.taxRate=item.taxRate*1
+        item.price = item.salesPrice
+        item.taxRate = item.taxRate * 1
         if (item.taxRate) {
           item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.salesPrice) / (1 + (Number(item.taxRate)) / 100), 2)
 
@@ -2360,7 +2372,7 @@ export default {
     },
     // 选择客户
     seleceCustomer(e) {
-      console.log("e====>", e,this.productData);
+      console.log("e====>", e, this.productData);
       let arr = JSON.parse(JSON.stringify(this.productData))
       let index = arr.findIndex(item =>
         item.drawingNo === "" &&
@@ -2384,7 +2396,7 @@ export default {
         }).then(() => {
           this.productData = []
           let obj = JSON.parse(JSON.stringify(this.createdData))
-      this.productData.push(obj)
+          this.productData.push(obj)
           getCooperativeInfo(e.id).then(res => {
             let addressInfo = {}
             if (res.data.deliveryAddressList.length > 0) {

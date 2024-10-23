@@ -183,7 +183,6 @@
                     <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
                     <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
                     <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
-                    <el-table-column prop="remark" label="备注" width="160" />
                     <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
 
                     <el-table-column prop="remark" label="备注" min-width="200">
@@ -333,6 +332,7 @@
                 <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="160" />
                 <el-table-column prop="purchaseQuantity" label="数量" width="160" sortable="custom" />
+                <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
                 <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
@@ -340,6 +340,7 @@
                 <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
                 <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
                 <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
+                <el-table-column prop="processName" label="工序" width="160" sortable="custom" />
                 <el-table-column prop="remark" label="备注" width="160" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
               </JNPF-table>
@@ -847,11 +848,11 @@ export default {
     // 选择产品——搜索
     searchProductFun() {
       if (this.deliveryDateArr.length) {
-        this.orderForm.deliveryStartTime = this.deliveryDateArr[0]
-        this.orderForm.deliveryEndTime = this.deliveryDateArr[1]
+        this.orderForm.deliveryStarDate = this.deliveryDateArr[0]
+        this.orderForm.deliveryEndDate = this.deliveryDateArr[1]
       } else {
-        this.orderForm.deliveryStartTime = ''
-        this.orderForm.deliveryEndTime = ''
+        this.orderForm.deliveryStartDate = ''
+        this.orderForm.deliveryEndDate = ''
       }
       this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
       detailpurchaseOrderList(this.orderForm)
@@ -1546,7 +1547,6 @@ export default {
 }
 </style>
 <style scoped>
-
 .el-dialog .el-dialog__body {
   padding: 20px 0px 2px !important;
 }

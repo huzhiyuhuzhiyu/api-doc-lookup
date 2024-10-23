@@ -533,7 +533,7 @@ export default {
       if (this.selectArr.length > 1) return this.$message.error("改派只支持单条数据操作")
       this.BatchDispatchVisible=true
       this.$nextTick(()=>{
-        this.$refs.BatchDispatchForm.init(id,'all')
+        this.$refs.BatchDispatchForm.init(this.selectArr[0].id,'all')
       })
     },
   

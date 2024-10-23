@@ -248,8 +248,7 @@ export default {
         },{
           label: '启用装配计划(销售订单创建)附件',
           value: 'fj_assembleSaleOrder'
-        }
-        
+        } 
       ],
       descriptionList: [
         {
@@ -414,7 +413,7 @@ export default {
         },
         {
           label: '开启后，在套圈计划(直接创建)新建、编辑、查看都会显示附件操作。',
-          value: 'fj_createDirectly'
+          value: 'fj_ringCreateDirectly'
         },
         {
           label: '开启后，在装配计划(安全库存创建)新建、编辑、查看都会显示附件操作。',

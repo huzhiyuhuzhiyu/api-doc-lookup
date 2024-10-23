@@ -3,47 +3,50 @@
         <template v-if="!isFinish">
             <div class="JNPF-preview-main org-form" ref="main" v-loading="pageLoading">
 
-                <div v-if="!approvalFlag || needHeader" :class="['JNPF-common-page-header', isView ? 'noButtons' : '']" >
-                        <el-page-header @back="goBack('back')" :content="title" />
-                        <div class="options" >
 
-                            <template v-if="!isView && isFileUploadPage">
-                                <el-button type="success" :loading="btnLoading" @click="handleConfirm(DocumentStatus.DRAFT)">保存草稿</el-button>
-                                <el-button type="primary" :loading="btnLoading" @click="handleConfirm(DocumentStatus.SUBMIT)">保存并提交</el-button>
-                            </template>
-                            <template v-else-if="isFileManagementPage">
-                                <el-button type="primary" :loading="btnLoading" @click="backFileUpload">退回</el-button>
-                                <el-button type="danger" :loading="btnLoading" @click="delFileUpload">删除</el-button>
-                            </template>
-                            <template v-else-if="isFileTrashPage">
-                                <el-button type="success" :loading="btnLoading" @click="handleRestore">还原</el-button>
-                            </template>
+                    <template v-if="!approvalFlag || approvalNeedHeader">
+                        <div :class="['JNPF-common-page-header', isView ? 'noButtons' : '',approvalNeedHeader ?'approvalNeedHeader':'']">
+                            <el-page-header @back="goBack('back')" :content="title" />
+                            <div class="options" >
 
-                            <el-button @click="goBack('cancel')">{{ $t('common.cancelButton') }}</el-button>
+                                <template v-if="!isView && isFileUploadPage">
+                                    <el-button type="success" :loading="btnLoading" @click="handleConfirm(DocumentStatus.DRAFT)">保存草稿</el-button>
+                                    <el-button type="primary" :loading="btnLoading" @click="handleConfirm(DocumentStatus.SUBMIT)">保存并提交</el-button>
+                                </template>
+                                <template v-else-if="isFileManagementPage">
+                                    <el-button type="primary" :loading="btnLoading" @click="backFileUpload">退回</el-button>
+                                    <el-button type="danger" :loading="btnLoading" @click="delFileUpload">删除</el-button>
+                                </template>
+                                <template v-else-if="isFileTrashPage">
+                                    <el-button type="success" :loading="btnLoading" @click="handleRestore">还原</el-button>
+                                </template>
+
+                                <el-button @click="goBack('cancel')">{{ $t('common.cancelButton') }}</el-button>
+                            </div>
                         </div>
+                    </template>
+                    <template v-if="!approvalFlag">
+                        <el-tabs   v-model="activeName">
+                            <el-tab-pane label="基础信息" name="info">
+                                <component
+                                    :is="basicInfoComName"
+                                    v-bind="childBindData"
+                                    ref="basicInfo" />
+                            </el-tab-pane>
+                            <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
+                                <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
+                            </el-tab-pane>
+                            <el-tab-pane v-if="isView" label="流转记录" name="transferList">
+                                <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
+                            </el-tab-pane>
+                        </el-tabs>
+                    </template>
+                    <component
+                        v-if="approvalFlag"
+                        :is="basicInfoComName"
+                        v-bind="childBindData"
+                        :ref="'dataForm'" />
 
-                    </div>
-                <template v-if="!approvalFlag">
-                    <el-tabs   v-model="activeName">
-                        <el-tab-pane label="基础信息" name="info">
-                            <component
-                                :is="basicInfoComName"
-                                v-bind="childBindData"
-                                ref="basicInfo" />
-                        </el-tab-pane>
-                        <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
-                            <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
-                        </el-tab-pane>
-                        <el-tab-pane v-if="isView" label="流转记录" name="transferList">
-                            <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
-                        </el-tab-pane>
-                    </el-tabs>
-                </template>
-                <component
-                    v-if="approvalFlag"
-                    :is="basicInfoComName"
-                    v-bind="childBindData"
-                    ref="dataForm" />
             </div>
         </template>
         <FinishSubmit v-else
@@ -80,7 +83,7 @@ import {detailBimRecycleBin, getBimRecycleBin, revertBimRecycleBin} from "@/api/
 export default {
     components: { NoProcessBasicInfo, HasProcessBasicInfo, FinishSubmit, recordList, Process, FileUploadDrop},
     props:{
-        needHeader:{
+        approvalNeedHeader:{
             type:Boolean,
             default:false
         },
@@ -150,7 +153,7 @@ export default {
     },
     mixins: [busFlow,FlowMixin],
     async mounted(){
-        if( isEmpty(this.applicationType)){
+        if(isEmpty(this.applicationType)){
             return
         }
       this.initPage()
@@ -362,7 +365,7 @@ export default {
             return this.type === ModelType.COPY
         },
         title(){
-            return getTitleForType(this.applicationType,this.type)
+            return getTitleForType(this.applicationType || this.detailApplicationType,this.type)
         },
         productId(){
             return this.dataForm.id
@@ -372,7 +375,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-
+.approvalNeedHeader{
+    margin-bottom: 10px;
+}
 
 ::v-deep .JNPF-common-page-header {
     padding: 5px 10px;

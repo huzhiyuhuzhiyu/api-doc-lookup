@@ -51,9 +51,17 @@
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="equipmentIdName" label="工具名称" min-width="180" sortable="custom" />
             <el-table-column prop="equipmentIdCode" label="工具编码" min-width="180" sortable="custom" />
+            <el-table-column prop="equipmentIdState" label="工具状态" width="140" sortable="custom" fixed="right">
+              <template slot-scope="{row}">
+                <el-tag type="success" disable-transitions v-if="row.equipmentIdState == 'normal'">正常</el-tag>
+                <el-tag type="warning" disable-transitions v-if="row.equipmentIdState == 'verification'">检定</el-tag>
+                <el-tag disable-transitions v-if="row.equipmentIdState == 'use'">领用</el-tag>
+                <el-tag type="danger" disable-transitions v-if="row.equipmentIdState == 'discard'">报废</el-tag>
+              </template>
+            </el-table-column>
             <el-table-column prop="maintenanceType" label="维保类型" min-width="130" sortable="custom">
               <template slot-scope="scope">
-                <div>{{maintenancefunction(scope.row.maintenanceType)}}</div>
+                <div><el-tag :type="maintenancetype(scope.row.maintenanceType)" disable-transitions>{{maintenancefunction(scope.row.maintenanceType)}}</el-tag></div>
               </template>
             </el-table-column>
             <el-table-column prop="maintenanceDate" label="维保日期" width="160" sortable="custom" />
@@ -96,6 +104,8 @@ export default {
         { label: "维修", value: "repair" },
         { label: "保养", value: "maintenance" },
         { label: "点检", value: "inspection" },
+        { label: "领用", value: "use" },
+        { label: "归还", value: "back" },
         { label: "检定", value: "verification" },
         { label: "报废", value: "discard" }
       ],
@@ -137,6 +147,9 @@ export default {
           options: [
             { label: "维修", value: "repair" },
             { label: "保养", value: "maintenance" },
+            { label: "点检", value: "inspection" },
+            { label: "领用", value: "use" },
+            { label: "归还", value: "back" },
             { label: "检定", value: "verification" },
             { label: "报废", value: "discard" }
           ]
@@ -191,6 +204,18 @@ export default {
     this.initData()
   },
   methods: {
+    maintenancetype(val) {
+      let obj = {
+        repair: 'warning',
+        maintenance: 'success',
+        inspection: 'success',
+        use: '',
+        back: 'info',
+        verification: 'success',
+        discard: 'danger'
+      }
+      return obj[val]
+    },
     maintenancefunction(val) {
       let _data = this.maintenanceTypeList.filter(item => item.value == val)[0]
       return _data ? _data.label : val

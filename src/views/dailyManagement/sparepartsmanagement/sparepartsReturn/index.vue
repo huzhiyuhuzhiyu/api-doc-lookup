@@ -5,16 +5,22 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="orderForm.maintainerIdText" placeholder="请输入领用人" clearable @keydown.enter.native="search()" />
+              <el-input v-model="orderForm.maintainerIdText" placeholder="请输入归还人" clearable @keydown.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="orderForm.useApplication" placeholder="请选择领用目的" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in useApplicationlist" :key="index" :label="item.label" :value="item.value"></el-option>
-              </el-select>
+              <el-date-picker v-model="createRequirementDate" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;" start-placeholder="归还开始日期" end-placeholder="归还结束日期" clearable :picker-options="pickerOptions">
+              </el-date-picker>
             </el-form-item>
           </el-col>
+          <!-- <el-col :span="4">
+            <el-form-item>
+              <el-select v-model="orderForm.useApplication" placeholder="请选择归还目的" clearable style="width: 100%;">
+                <el-option v-for="(item, index) in [{label:'设备保养',value:'maintain'},{label:'设备维修',value:'repair'}]" :key="index" :label="item.label" :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col> -->
           <!-- <el-col :span="4">
             <el-form-item>
               <el-select v-model="orderForm.approvalStatus" placeholder="请选择审批状态" clearable style="width: 100%;">
@@ -34,18 +40,7 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <div>
-            <el-dropdown style="margin-right:10px;">
-              <el-button size="mini" type="primary" icon="el-icon-plus">
-                新建
-                <i class="el-icon-arrow-down el-icon--right"></i>
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="addOrUpdateHandle('', 'add','equipment')">设备</el-dropdown-item>
-                <el-dropdown-item @click.native="addOrUpdateHandle('','add','tool')">工具</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </div>
+          <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="handleUserRelation('', 'add')" />
           <div class="JNPF-common-head-right" style="float: right">
             <el-tooltip content="高级查询" placement="top">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
@@ -59,63 +54,13 @@
           </div>
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" custom-column>
-          <el-table-column prop="useApplication" label="领用目的" width="120" align="center">
-            <template slot-scope="scope">
-              <div v-if="scope.row.useApplication == 'equipmentmaintain'"><el-tag type="success">设备保养</el-tag></div>
-              <div v-else-if="scope.row.useApplication == 'equipmentrepair'"><el-tag type="danger">设备维修</el-tag></div>
-              <div v-else-if="scope.row.useApplication == 'toolrepair'"><el-tag type="warning">工具维修</el-tag></div>
-              <div v-else><el-tag>工具保养</el-tag></div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="collectionTime" label="领用日期" width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="maintainerIdText" label="领用人" width="120"></el-table-column>
-          <el-table-column prop="workNo" label="设备维修单号" min-width="200">
-            <template slot-scope="scope">
-              <div>{{scope.row.useApplication == 'equipmentrepair'?scope.row.workNo:''}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="equipmentIdName" label="维修设备名称" min-width="200">
-            <template slot-scope="scope">
-              <div>{{scope.row.useApplication == 'equipmentrepair'?scope.row.equipmentIdName:''}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="workNo1" label="设备保养单号" min-width="200">
-            <template slot-scope="scope">
-              <div>{{scope.row.useApplication == 'equipmentmaintain'?scope.row.workNo:''}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="equipmentIdName1" label="保养设备名称" min-width="200">
-            <template slot-scope="scope">
-              <div>{{scope.row.useApplication == 'equipmentmaintain'?scope.row.equipmentIdName:''}}</div>
-            </template>
-          </el-table-column>
-          
-
-          <el-table-column prop="toolworkNo" label="工具维修单号" min-width="200">
-            <template slot-scope="scope">
-              <div>{{scope.row.useApplication == 'toolrepair'?scope.row.workNo:''}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="toolIdName" label="维修工具名称" min-width="200">
-            <template slot-scope="scope">
-              <div>{{scope.row.useApplication == 'toolrepair'?scope.row.equipmentIdName:''}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="toolworkNo1" label="工具保养单号" min-width="200">
-            <template slot-scope="scope">
-              <div>{{scope.row.useApplication == 'toolmaintain'?scope.row.workNo:''}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="toolIdName1" label="保养工具名称" min-width="200">
-            <template slot-scope="scope">
-              <div>{{scope.row.useApplication == 'toolmaintain'?scope.row.equipmentIdName:''}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
-          <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
+          <el-table-column prop="collectionTime" label="归还日期" min-width="180" sortable="custom"></el-table-column>
+          <el-table-column prop="maintainerIdText" label="归还人" min-width="120"></el-table-column>
+          <el-table-column prop="createTime" label="创建时间" min-width="200" sortable="custom"></el-table-column>
+          <el-table-column prop="createByName" label="创建人" min-width="120"></el-table-column>
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="handleUserRelation(scope.row, 'edit')" @del="handleDel(scope.row.id)" :editDisabled="scope.row.documentStatus === 'submit'" :delDisabled="scope.row.documentStatus === 'submit'">
+              <tableOpts @edit="handleUserRelation(scope.row.id, 'edit')" @del="handleDel(scope.row.id)" :editDisabled="scope.row.documentStatus === 'submit'" :delDisabled="scope.row.documentStatus === 'submit'">
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -123,7 +68,7 @@
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="handleUserRelation(scope.row, 'look')">
+                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
                       查看详情
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -144,32 +89,16 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { CollectionandreturnList, deleteCollectionandreturn } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
 export default {
-  name: 'announceInvalidated',
+  name: 'sparepartsReturn',
   components: { Form, SuperQuery },
   data() {
     return {
-      useApplicationlist: [
-        { label: '设备保养', value: 'equipmentmaintain' },
-        { label: '设备维修', value: 'equipmentrepair' },
-        { label: '工具保养', value: 'toolmaintain' },
-        { label: '工具维修', value: 'toolrepair' }
-      ],
+      createRequirementDate: [],
       superQueryVisible: false,
       superQueryJson: [
-        { // 下拉选
-          prop: 'useApplication',
-          label: '领用目的',
-          type: 'select',
-          options: [
-            { label: '设备保养', value: 'equipmentmaintain' },
-            { label: '设备维修', value: 'equipmentrepair' },
-            { label: '工具保养', value: 'toolmaintain' },
-            { label: '工具维修', value: 'toolrepair' }
-          ]
-        },
         { // 日期选择器（区间）
           prop: 'collectionTime',
-          label: '领用日期',
+          label: '归还日期',
           type: 'daterange',
           valueFormat: "yyyy-MM-dd",
           startPlaceholder: '申请开始日期',
@@ -178,27 +107,7 @@ export default {
         },
         {
           prop: 'maintainerIdText',
-          label: "领用人",
-          type: 'input'
-        },
-        {
-          prop: 'workNo',
-          label: "设备维修单号",
-          type: 'input'
-        },
-        {
-          prop: 'equipmentIdName',
-          label: "维修设备名称",
-          type: 'input'
-        },
-        {
-          prop: 'workNo',
-          label: "设备保养单号",
-          type: 'input'
-        },
-        {
-          prop: 'equipmentIdName',
-          label: "保养设备名称",
+          label: "归还人",
           type: 'input'
         },
         { // 日期时间选择器（区间）
@@ -219,10 +128,12 @@ export default {
       tableData: [],
       listLoading: false,
       orderFormone: {
-        requisitionType: 'requisition',
+        requisitionType: 'back',
         equipmentType: 'spare_parts',
         maintainerIdText: '',
         useApplication: '',
+        startTime: '',
+        endTime: '',
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -281,11 +192,11 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.jnpf.searchTimeFormat(this.orderForm, this.createRequirementDate, 'startTime', 'endTime')
       CollectionandreturnList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
-
       }).catch(() => {
         this.listLoading = false
       })
@@ -309,22 +220,10 @@ export default {
         })
       }).catch(() => { })
     },
-    handleUserRelation(val, btnType) {
-      this.formVisible = true
-      let type = ''
-      if (val.useApplication == 'equipmentmaintain' || val.useApplication == 'equipmentrepair') {
-        type = 'equipment'
-      } else {
-        type = 'tool'
-      }
-      this.$nextTick(() => {
-        this.$refs.Form.init(val.id, btnType, type)
-      })
-    },
-    addOrUpdateHandle(id, btnType, type) {
+    handleUserRelation(id, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType, type)
+        this.$refs.Form.init(id, btnType)
       })
     }
   }

@@ -15,7 +15,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="orderForm.returnFlag" placeholder="请选择是否归还" clearable style="width: 100%;">
+              <el-select v-model="orderForm.requisitionType" placeholder="请选择类型" clearable style="width: 100%;">
                 <el-option v-for="(item, index) in collectionList" :key="index" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
@@ -53,22 +53,38 @@
                             }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="departmentIdText" label="领用部门" width="120" />
-          <el-table-column prop="maintainerIdText" label="领用人" width="120"></el-table-column>
-          <el-table-column prop="collectionTime" label="领用日期" width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="returnFlag" label="是否归还" width="120" sortable="custom" fixed="right">
+          <el-table-column prop="requisitionType" label="类型" width="120" fixed="right" align="center">
             <template slot-scope="scope">
-              <div v-if="scope.row.returnFlag == 1"><el-tag type="success">是</el-tag></div>
-              <div v-else-if="scope.row.returnFlag == 0"><el-tag type="danger">否</el-tag></div>
+              <div v-if="scope.row.requisitionType == 'requisition'"><el-tag type="success">领用</el-tag></div>
+              <div v-else-if="scope.row.requisitionType == 'back'"><el-tag>归还</el-tag></div>
             </template>
           </el-table-column>
-          <el-table-column prop="returnTime" label="归还日期" width="180"></el-table-column>
+          <el-table-column prop="maintainerIdText" label="领用人" width="120">
+            <template slot-scope="scope">
+              <div>{{scope.row.requisitionType=='requisition'?scope.row.maintainerIdText:''}}</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="collectionTime" label="领用日期" width="180" sortable="custom">
+            <template slot-scope="scope">
+              <div>{{scope.row.requisitionType=='requisition'?scope.row.collectionTime:''}}</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="maintainerIdText1" label="归还人" width="120">
+            <template slot-scope="scope">
+              <div>{{scope.row.requisitionType=='back'?scope.row.maintainerIdText:''}}</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="collectionTime1" label="归还日期" width="180">
+            <template slot-scope="scope">
+              <div>{{scope.row.requisitionType=='back'?scope.row.collectionTime:''}}</div>
+            </template>
+          </el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
           <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
           <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
-              <el-button type="text" @click="handleUserRelation(scope.row.id,'look')" size="mini">查看详情</el-button>
+              <el-button type="text" @click="handleUserRelation(scope.row,'look')" size="mini">查看详情</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -77,17 +93,20 @@
     </div>
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
+    <Form1 v-if="formVisible1" ref="Form1" @refreshDataList="initData" @close="closeForm" />
   </div>
 </template>
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { CollectionandreturnList, deleteCollectionandreturn, guihuanCollectionandreturn } from '@/api/dailyManagement/Maintenance'
+import { CollectionandreturnList } from '@/api/dailyManagement/Maintenance'
 import Form from '../circulate/Form.vue'
+import Form1 from '../toolreturn/Form.vue'
 export default {
   name: 'circulate',
-  components: { Form, SuperQuery },
+  components: { Form, SuperQuery, Form1 },
   data() {
     return {
+      formVisible1: false,
       superQueryJson: [
         {
           prop: 'orderNo',
@@ -95,9 +114,13 @@ export default {
           type: 'input'
         },
         {
-          prop: 'departmentIdText',
-          label: "领用部门",
-          type: 'input'
+          prop: 'requisitionType',
+          label: "类型",
+          type: 'select',
+          options: [
+            { label: "领用", value: "requisition" },
+            { label: "归还", value: "back" }
+          ]
         },
         {
           prop: 'maintainerIdText',
@@ -113,14 +136,10 @@ export default {
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
-        { // 下拉选
-          prop: 'returnFlag',
-          label: '是否归还',
-          type: 'select',
-          options: [
-            { label: '是', value: 1 },
-            { label: '否', value: 0 }
-          ]
+        {
+          prop: 'maintainerIdText',
+          label: "归还人",
+          type: 'input'
         },
         { // 日期选择器（区间）
           prop: 'returnTime',
@@ -163,13 +182,14 @@ export default {
       tableData: [],
       listLoading: false,
       collectionList: [
-        { label: "否", value: 0 },
-        { label: "是", value: 1 }
+        { label: "领用", value: 'requisition' },
+        { label: "归还", value: 'back' }
       ],
       orderForm: {
+        equipmentType: 'tool',
         orderNo: '',
         maintainerIdText: '',
-        returnFlag: '',
+        requisitionType: '',
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -218,6 +238,7 @@ export default {
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
+      this.formVisible1 = false
       if (isRefresh) {
         this.keyword = ''
         this.initData()
@@ -237,6 +258,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.orderForm = {
+        equipmentType: 'tool',
         orderNo: '',
         auditStatus: '',
         documentStatus: '',
@@ -252,25 +274,18 @@ export default {
       }
       this.dataFormSubmit()
     },
-    // handleDel(id) {
-    //   this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
-    //     type: 'warning'
-    //   }).then(() => {
-    //     deleteCollectionandreturn(id).then(res => {
-    //       this.initData()
-    //       this.$message({
-    //         type: 'success',
-    //         message: "删除成功",
-    //         duration: 1500,
-    //       })
-    //     })
-    //   }).catch(() => { })
-    // },
-    handleUserRelation(id, btnType) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType)
-      })
+    handleUserRelation(val, btnType) {
+      if (val.requisitionType=='requisition') {
+        this.formVisible = true
+        this.$nextTick(() => {
+          this.$refs.Form.init(val.id, btnType)
+        })
+      } else {
+        this.formVisible1 = true
+        this.$nextTick(() => {
+          this.$refs.Form1.init(val.id, btnType)
+        })
+      }
     }
   }
 }

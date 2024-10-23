@@ -5,12 +5,12 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="orderForm.equipmentIdCode" placeholder="请输入设备编码" clearable @keydown.enter.native="dataFormSubmit()" />
+              <el-input v-model="orderForm.equipmentIdCode" placeholder="请输入工具编码" clearable @keydown.enter.native="dataFormSubmit()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="orderForm.equipmentIdName" placeholder="请输入设备名称" clearable @keydown.enter.native="dataFormSubmit()" />
+              <el-input v-model="orderForm.equipmentIdName" placeholder="请输入工具名称" clearable @keydown.enter.native="dataFormSubmit()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -39,8 +39,8 @@
           </div>
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" custom-column>
-          <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" sortable="custom" />
-          <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom"></el-table-column>
+          <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" sortable="custom" />
+          <el-table-column prop="equipmentIdName" label="工具名称" min-width="200" sortable="custom"></el-table-column>
           <el-table-column prop="faultTypeName" label="故障类型名称" min-width="160" />
           <el-table-column prop="faultLocationName" label="故障部位名称" min-width="160" />
           <el-table-column prop="frontPicList" label="故障情况照片" min-width="140">
@@ -96,12 +96,12 @@ export default {
       superQueryJson: [
         {
           prop: 'equipmentIdCode',
-          label: "设备编码",
+          label: "工具编码",
           type: 'input'
         },
         {
           prop: 'equipmentIdName',
-          label: "设备名称",
+          label: "工具名称",
           type: 'input'
         },
         {
@@ -145,7 +145,7 @@ export default {
       tableData: [],
       listLoading: false,
       orderForm: {
-        classAttribute: "equipment",
+        classAttribute: "tool",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -223,7 +223,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.orderForm = {
-        classAttribute: "equipment",
+        classAttribute: "tool",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{

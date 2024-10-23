@@ -47,7 +47,7 @@
           </div>
         </div>
 
-        <JNPF-table ref="dataTable" hasC @selection-change="handeleInfoData" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column style="padding-bottom: 50px;">
+        <JNPF-table ref="dataTable" hasC @selection-change="handeleInfoData" v-loading="listLoading" :data="tableData" @sort-change="sortChange" custom-column>
           <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
@@ -85,7 +85,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="maintenancePersonnelName" label="维修负责人" width="120"></el-table-column>
-          <el-table-column prop="waitDuration" label="故障响应时长(小时)" min-width="160" />
+          <el-table-column prop="waitDuration" label="故障响应时长(小时)" min-width="180" />
           <el-table-column prop="sparePartsFlag" label="是否更换备件" width="140">
             <template slot-scope="scope">
               <div v-if="scope.row.sparePartsFlag == '0'"><el-tag type="warning">否</el-tag></div>

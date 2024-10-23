@@ -2,7 +2,6 @@ import {formatDate, isEmpty, notEmpty} from "@/utils";
 import {ApplicationType, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 import {getMenuList} from "@/api/system/menu";
 import {createButton} from "@/api/system/buttonAuthorize";
-import moment from "moment/moment";
 
 export function deleteLastChildList(category) {
     if (isEmpty(category)) return
@@ -226,6 +225,12 @@ export function getUploadFileSaveData(data) {
         flowData,
     }
 }
+
+
+export function isNoProductPage(applicationType) {
+    return [ApplicationType.OFFICE,ApplicationType.IMAGE].includes(applicationType)
+}
+
 /**
  * 获取审核状态中文
  * @param status

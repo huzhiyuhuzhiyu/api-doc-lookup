@@ -136,9 +136,9 @@
                     </el-button>
                   </div>
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                    <el-table ref="product" :data="dataFormTwo.data" @selection-change="handeleProductInfoData"
-                      v-loading="tableloading" @row-click="openDetails" :row-style="rowStyle">
-                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                    <JNPF-table :hasC="btnType !== 'look'" hasNO fixedNO ref="product" :data="dataFormTwo.data"
+                      @selection-change="handeleProductInfoData" v-loading="tableloading" @row-click="openDetails"
+                      :row-style="rowStyle">
 
                       <el-table-column prop="drawingNo" label="品名规格" width="290" key="3"
                         show-overflow-tooltip></el-table-column>
@@ -163,7 +163,7 @@
                           <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
                         </template>
                       </el-table-column>
-                    </el-table>
+                    </JNPF-table>
                     <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
                       <span style="font-weight:500;margin:0 10px">总订单数量：{{ totalOrdersNum }}</span>
 
@@ -323,6 +323,7 @@
               <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                 <el-table ref="product" :data="dataFormTwo.data" @selection-change="handeleProductInfoData"
                   v-loading="tableloading" @row-click="openDetails" :row-style="rowStyle">
+
                   <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
 
                   <el-table-column prop="drawingNo" label="品名规格" width="290" key="3"
@@ -1119,34 +1120,42 @@ export default {
           duration: 1500
         })
       }
-      for (let i = 0; i < this.selectRows.length; i++) {
-        const row = this.selectRows[i]
-        const index = this.dataFormTwo.data.indexOf(row)
-        if (index > -1) {
-          this.dataFormTwo.data.splice(index, 1) // 从tableData中删除选中的行
+      if (this.dataFormTwo.data.length > 1) {
+        for (let i = 0; i < this.selectRows.length; i++) {
+          const row = this.selectRows[i]
+          const index = this.dataFormTwo.data.indexOf(row)
+          if (index > -1) {
+            this.dataFormTwo.data.splice(index, 1) // 从tableData中删除选中的行
+          }
         }
+        this.selectRows = [] // 清空选中的行的数据
+
+      } else {
+        this.$message({
+          message: '已是最后一条数据',
+          type: 'error',
+          duration: 1500
+        })
       }
-      this.selectRows = [] // 清空选中的行的数据
+
+
     },
 
     // 单个删除
     handleDel(data) {
-      if (this.btnType == 'qrsh') {
-        if (this.dataFormTwo.data.length > 1) {
-          this.dataFormTwo.data.splice(data.$index, 1)
-        } else {
-          this.$message({
-            message: '已是最后一条数据',
-            type: 'error',
-            duration: 1500
-          })
-        }
-      } else {
+      console.log(this.btnType, 'this.btnType')
+
+      if (this.dataFormTwo.data.length > 1) {
         this.dataFormTwo.data.splice(data.$index, 1)
+
+      } else {
+        this.$message({
+          message: '已是最后一条数据',
+          type: 'error',
+          duration: 1500
+        })
       }
-      if (this.dataFormTwo.data.length == 0) {
-        // this.deletedata()
-      }
+
     },
 
     // 监听主数量输入
@@ -1482,8 +1491,17 @@ export default {
       })
       this.$refs['dataForm'].validate((valid) => {
         this.dataForm.documentStatus = value
+        console.log(valid, '[]')
         if (valid) {
           if (!this.dataFormTwo.data.length) {
+            this.$message({
+              message: '至少有一条产品',
+              type: 'error',
+              duration: 1500
+            })
+            return
+          }
+          if (!this.linesList.length) {
             this.$message({
               message: '至少有一条发料明细',
               type: 'error',

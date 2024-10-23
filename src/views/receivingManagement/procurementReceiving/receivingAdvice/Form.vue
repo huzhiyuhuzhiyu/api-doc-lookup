@@ -141,22 +141,16 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
+                    <el-table-column prop="processName" label="工序" width="110" />
+                    <el-table-column prop="ordersNo" label="订单号" width="200" sortable="custom" />
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.remark" placeholder="请输入备注"
                           :disabled="btnType == 'look' ? true : false" maxlength="200" show-overflow-tooltip />
                       </template>
                     </el-table-column>
-                    <el-table-column prop="standardValue" label="规值" min-width="100"></el-table-column>
-                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="110" sortable="custom" />
-                    <el-table-column prop="accuracyLevel" label="精度等级" width="110" sortable="custom" />
-                    <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom" />
-                    <el-table-column prop="oil" label="油脂" width="100" sortable="custom" />
-                    <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom" />
-                    <el-table-column prop="clearance" label="游隙" width="110" sortable="custom" />
-                    <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom" />
-                    <el-table-column prop="processName" label="工序" width="110" />
-                    <el-table-column prop="ordersNo" label="订单号" width="200" sortable="custom" />
+
+
 
                     <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
                       <template slot-scope="scope">
@@ -295,22 +289,16 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
+                <el-table-column prop="processName" label="工序" width="110" />
+                <el-table-column prop="ordersNo" label="订单号" width="180" sortable="custom" />
                 <el-table-column prop="remark" label="备注" min-width="200">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.remark" placeholder="请输入备注"
                       :disabled="btnType == 'look' ? true : false" maxlength="200" show-overflow-tooltip />
                   </template>
                 </el-table-column>
-                <el-table-column prop="standardValue" label="规值" min-width="100"></el-table-column>
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="110" sortable="custom" />
-                <el-table-column prop="accuracyLevel" label="精度等级" width="110" sortable="custom" />
-                <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom" />
-                <el-table-column prop="oil" label="油脂" width="110" sortable="custom" />
-                <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom" />
-                <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
-                <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom" />
-                <el-table-column prop="processName" label="工序" width="110" />
-                <el-table-column prop="ordersNo" label="订单号" width="180" sortable="custom" />
+
+
 
                 <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
                   <template slot-scope="scope">
@@ -452,14 +440,7 @@
                 <el-table-column prop="purchaseQuantity" label="数量" width="160" sortable="custom" />
                 <el-table-column prop="waitReceiptNum" label="待收货数量" width="160" sortable="custom" />
                 <el-table-column prop="deliveryDate" label="交货日期" min-width="200"></el-table-column>
-                <el-table-column prop="standardValue" label="规值" min-width="200"></el-table-column>
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
-                <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
-                <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
-                <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
-                <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
-                <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-                <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
+
                 <el-table-column prop="processName" label="工序" min-width="200"></el-table-column>
                 <el-table-column prop="remark" label="备注" width="160" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />

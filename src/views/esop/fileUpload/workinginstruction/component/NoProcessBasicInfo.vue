@@ -10,9 +10,10 @@ import chooseProductParams from "@/views/esop/fileUpload/workinginstruction/util
 import { getcategoryTree as getFileCategoryTree } from '@/api/basicData/index'
 import {FileCategoryType} from "@/views/esop/fileCategoryManagement/constants";
 import BasicInfoMixin from "@/views/esop/fileUpload/workinginstruction/component/BasicInfoMixin";
+import CheckVersionCountDialog from "@/views/esop/fileUpload/workinginstruction/component/CheckVersionCountDialog .vue";
 export default {
     name: "NoProcessBasicInfo" ,
-    components: {FileUploadDrop},
+    components: {CheckVersionCountDialog, FileUploadDrop},
     data(){
         return {
             getFileCategoryTree,
@@ -33,7 +34,8 @@ export default {
                 id:null,
                 version:'',
                 documentStatus:'',
-                applicationType:''
+                applicationType:'',
+                versionCount:0,
             },
             dataRule:Object.freeze({
                 version: [
@@ -115,7 +117,7 @@ export default {
 <template>
     <div class="contain">
         <div class="JNPF-common-layout">
-        <div class="JNPF-common-layout-center JNPF-flex-main" v-loading="formLoading">
+            <div class="JNPF-common-layout-center JNPF-flex-main" v-loading="formLoading">
             <div class="JNPF-common-layout-main JNPF-flex-main">
                 <el-collapse v-model="activeNames">
                     <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
@@ -140,30 +142,41 @@ export default {
                                                 :paramsObj="{}" />
                                         </el-form-item>
                                     </el-col>
-                                    <el-col :span="6">
-                                        <el-form-item label="版本号" prop="version">
-                                            <el-input v-model="dataForm.version" placeholder="请输入版本号"  />
-                                        </el-form-item>
-                                    </el-col>
-                                    <el-col v-if="hasEnableMark" :span="6">
-                                        <el-form @submit.prevent :disabled="isView">
-                                            <el-form-item label="是否启用">
-                                                <div style="height: 32px;display: flex;align-items: center">
-                                                    <el-switch
-                                                        :active-value="true"
-                                                        :inactive-value="false"
-                                                        @change="toggleEnableMarkHandler"
-                                                        v-model="dataForm.enabledMark"/>
-                                                </div>
+                                    <template v-if="!isNoProductPage">
+                                        <el-col :span="6">
+                                            <el-form-item label="版本号" prop="version">
+                                                <el-input v-model="dataForm.version" placeholder="请输入版本号"  />
                                             </el-form-item>
-                                        </el-form>
-                                    </el-col>
+                                        </el-col>
+                                        <el-col :span="3" v-if="isApprovalModel || isFileManagementPage">
+                                            <el-form @submit.prevent   style="padding-top: 0;" >
+                                                <el-form-item label="关联版本数">
+                                                    <el-input  readonly @click.native="versionCountHandler" v-model="dataForm.versionCount" class="pointer versionCount"/>
+                                                </el-form-item>
+                                            </el-form>
+                                        </el-col>
+                                        <el-col v-if="hasEnableMark" :span="3">
+                                            <el-form @submit.prevent :disabled="isView">
+                                                <el-form-item label="是否启用">
+                                                    <div style="height: 32px;display: flex;align-items: center">
+                                                        <el-switch
+                                                            :active-value="true"
+                                                            :inactive-value="false"
+                                                            @change="toggleEnableMarkHandler"
+                                                            v-model="dataForm.enabledMark"/>
+                                                    </div>
+                                                </el-form-item>
+                                            </el-form>
+                                        </el-col>
+                                    </template>
+
                                 </el-row>
                                 <el-row v-if="isImage" :gutter="10">
                                     <el-col :span="12">
                                         <el-form-item label="产品信息" prop="drawingNo">
                                             <div class="width-full flex-row">
                                                 <ComSelect-page
+                                                    placeholder="请选择产品编码"
                                                     style="width: 50%"
                                                     ref="ComSelect-page"
                                                     v-model="dataForm.drawingNo"
@@ -205,11 +218,19 @@ export default {
                 </el-collapse>
             </div>
         </div>
-    </div>
+        </div>
+        <CheckVersionCountDialog :current-id="dataForm.id" :applicationType="dataForm.applicationType" v-if="versionCountVisible" :visible.sync="versionCountVisible"  :search-drawing-no="dataForm.drawingNo"></CheckVersionCountDialog>
+
     </div>
 </template>
 
 <style scoped lang="scss">
+::v-deep .versionCount .el-input__inner{
+    color: #409eff;
+    cursor: pointer !important;
+    background-color: #F5F7FA;
+    border-color: #E4E7ED;
+}
 .contain {
     position: relative;
     height: calc(100% - 47px);

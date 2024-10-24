@@ -10,6 +10,7 @@ function resolve(dir) {
 }
 
 const name = defaultSettings.title || '' // page title
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
 
 // If your port is set to 80,
 // use administrator privileges to execute the command line.
@@ -24,7 +25,8 @@ const plugins = [
   new MonacoWebpackPlugin({
     // available options are documented at https://github.com/Microsoft/monaco-editor-webpack-plugin#options
     languages: ['javascript', 'css', 'html', 'typescript', 'json', 'java', 'sql']
-  })
+  }),
+  new HardSourceWebpackPlugin()
 ]
 if (!isDev) {
   plugins.push(new TerserPlugin({

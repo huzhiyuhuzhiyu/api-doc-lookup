@@ -156,7 +156,7 @@
                           <el-table-column prop="price" label="含税单价" min-width="180">
                             <template slot="header">
                               <span class="required">*</span>
-                              含税单价
+                              单价(含税)
                             </template>
                             <template slot-scope="scope">
                               <el-form-item :prop="'data.' + scope.$index + '.' + 'price'" :rules="productRules.price">
@@ -192,7 +192,7 @@
                             </template>
                           </el-table-column>
 
-                          <el-table-column prop="excludingTaxPrice" label="不含税单价" min-width="150">
+                          <el-table-column prop="excludingTaxPrice" label="单价(不含税)" min-width="150">
                             <template slot-scope="scope">
                               <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxPrice'">
                                 <div class="viewData">
@@ -746,8 +746,12 @@ export default {
         this.isattachmentswitch = res.data.configValue1
       })
     },
-    deliveryDateChange(e) {
-      console.log(e, 'e')
+    deliveryDateChange(val) {
+      this.dataFormTwo.data.forEach(item => {
+        if (!item.deliveryDate) {
+          this.$set(item, 'deliveryDate', val) // 总金额(不含税)
+        }
+      })
     },
     // 抽屉提交
     handlerConfirm(data) {

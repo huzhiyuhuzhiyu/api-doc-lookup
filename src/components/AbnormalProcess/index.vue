@@ -30,8 +30,12 @@ export default {
       data = getMockData()
     }
     this.updateFiled(data)
+    console.log(data);
     
     data.childNode && ((data.childNode.content && data.childNode.content !== '请设置提醒人') ? (data.childNode.content = data.childNode.content) : (data.childNode.content = this.planPersonName))
+    // 初次进入 未点击右抽屉保存
+    data.childNode && ((data.childNode.properties && data.childNode.properties.hasOwnProperty('approvers')) ? (data.childNode.properties = data.childNode.properties) : (data.childNode.properties.approvers = [this.planPersonId]))
+    data.childNode && ((data.childNode.properties && data.childNode.properties.hasOwnProperty('circulateUser')) ? (data.childNode.properties = data.childNode.properties) : (data.childNode.properties.circulateUser = [this.planPersonId]))
     this.$store.dispatch('base/getPositionList')
     this.$store.dispatch('base/getRoleList')
     this.$store.dispatch('generator/getDepTree')
@@ -112,7 +116,7 @@ export default {
      */
     eventReceiver({ event, args }) {
       if (event === "edit") {
-        this.activeData = (args && args[0].type === 'start') ? null : args[0]; // 打开属性面板
+        this.activeData = args[0]; // 打开属性面板
         return;
       }
       // 本实例只监听了第一层数据（startNode）变动

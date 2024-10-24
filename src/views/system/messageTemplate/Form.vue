@@ -26,6 +26,8 @@
               </el-checkbox>
               <el-checkbox v-model="dataForm.isDingTalk" :true-label="1" :false-label="0">阿里钉钉
               </el-checkbox>
+              <el-checkbox v-model="dataForm.isApp" :true-label="1" :false-label="0">APP
+              </el-checkbox>
               <el-checkbox v-model="dataForm.isSms" :true-label="1" :false-label="0"
                 @change="onIsSmsChange">短信
               </el-checkbox>
@@ -98,6 +100,7 @@ export default {
         isWecom: 0,
         isDingTalk: 0,
         isSms: 0,
+        isApp:0,
         smsId: '',
         smsTemplateName: '',
         templateJson: '',

@@ -246,7 +246,8 @@ export default {
             duration: 1500,
             onClose: () => {
               this.btnLoading = false
-              this.$emit('close', isRefresh)
+              this.visible = false
+              this.$emit('close', true)
             }
           })
         }).catch(() => { this.btnLoading = false })

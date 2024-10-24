@@ -3,7 +3,6 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-
           <template v-for="item in searchList">
             <el-col :span="item.searchType === 3 ? 6 : 4">
               <el-form-item>
@@ -26,18 +25,16 @@
             <el-form-item>
               <el-date-picker v-model="createRequirementDate" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
                 :default-time="['00:00:00', '23:59:59']" style="width: 100%;" start-placeholder="请选择创建开始时间"
-                end-placeholder="请选择创建结束时间" clearable :picker-options="global.timePickerOptions">
-              </el-date-picker>
+                end-placeholder="请选择创建结束时间" clearable :picker-options="global.timePickerOptions"></el-date-picker>
             </el-form-item>
           </el-col>
 
           <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
-                {{ $t('common.search') }}</el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{
-                $t('common.reset') }}
+                {{ $t('common.search') }}
               </el-button>
+              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
             </el-form-item>
           </el-col>
         </el-form>
@@ -47,11 +44,11 @@
           <div>
             <el-button size="mini" type="primary" @click="addOrUpdateHandle()">生成外协对账</el-button>
             <el-button v-has="'btn_export'" :disabled="tableDataList.length > 0 ? false : true" size="mini"
-              type="primary" icon="el-icon-download" @click="exportForm">导出</el-button>
+              type="primary" icon="el-icon-download" @click="exportForm">
+              导出
+            </el-button>
           </div>
           <div class="JNPF-common-head-right">
-
-
             <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                 @click="superQueryVisible = true" />
@@ -74,38 +71,38 @@
           <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
           <!-- <el-table-column prop="productName" label="产品名称" min-width="180" sortable="custom" /> -->
           <el-table-column prop="drawingNo" label="品名规格" min-width="180" sortable="custom" />
-          <el-table-column prop="businessType" label="收/退货类型" min-width="180" sortable="custom">
+          <el-table-column prop="businessType" label="收/退货类型" width="130" sortable="custom">
             <template slot-scope="scope">
-              <div v-if="scope.row.businessType == 'outbound_purchase'">退货</div>
-              <div v-else-if="scope.row.businessType == 'inbound_purchase'">收货</div>
+              <div v-if="scope.row.businessType == 'outbound_external'">退货</div>
+              <div v-else-if="scope.row.businessType == 'inbound_external'">收货</div>
             </template>
           </el-table-column>
-          <el-table-column prop="mainUnit" label="单位" min-width="180" />
-          <el-table-column prop="num" label="出入库数量" min-width="180" />
-          <el-table-column prop="costPrice" label="单价(含税)" min-width="140" />
-          <el-table-column prop="taxRate" label="税率(%)" min-width="140" />
-          <el-table-column prop="totalAmount" label="金额" min-width="140">
+          <el-table-column prop="mainUnit" label="单位" width="60" />
+          <el-table-column prop="num" label="出入库数量" width="120" />
+          <el-table-column prop="costPrice" label="单价(含税)" width="120" />
+          <el-table-column prop="taxRate" label="税率" width="80">
             <template slot-scope="scope">
-              <div v-if="scope.row.businessType == 'outbound_purchase'" style="color: #67C23A">+{{
-                scope.row.totalAmount }}</div>
-              <div v-else-if="scope.row.businessType == 'inbound_purchase'" style="color:red">-{{
-                scope.row.totalAmount
-              }}</div>
+              {{ scope.row.taxRate }}%
+            </template>
+          </el-table-column>
+          <el-table-column prop="totalAmount" label="金额" width="120">
+            <template slot-scope="scope">
+              <div v-if="scope.row.businessType == 'outbound_external'" style="color: #67C23A">
+                +{{ scope.row.totalAmount }}
+              </div>
+              <div v-else-if="scope.row.businessType == 'inbound_external'" style="color:red">
+                -{{ scope.row.totalAmount }}
+              </div>
             </template>
           </el-table-column>
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" min-width="180" sortable="custom" />
-
-
-
-
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
           :limit.sync="listQuery.pageSize" @pagination="initData" />
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="procureForm" @refresh="refresh" @close="closeForm" />
-
 
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
@@ -131,35 +128,44 @@ export default {
       superQuery: {},
       searchList: [
         { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+        {
+          field: 'cooperativePartnerName',
+          fieldValue: '',
+          label: '客户名称',
+          symbol: 'like',
+          searchType: 1,
+          width: 120
+        }
       ],
       superForm: {},
-      columnList: ["partnerCode", "productCode", "productName", "createByName"],
+      columnList: ['partnerCode', 'productCode', 'productName', 'createByName'],
       superQueryVisible: false,
-      title: "更多查询",
+      title: '更多查询',
       exportFormVisible: false,
-      background: true,//分页器背景颜色
+      background: true, //分页器背景颜色
       visible: false,
-      tableDataList: [
-      ],
+      tableDataList: [],
       formVisible: false,
       listLoading: false,
       listQuery: {
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "createTime"
-        }],
-        endTime: "",
-        orderNo: "",
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'createTime'
+          }
+        ],
+        endTime: '',
+        orderNo: '',
         pageNum: 1,
         pageSize: 20,
-        partnerName: "",
-        startTime: "",
+        partnerName: '',
+        startTime: '',
         businessType: 'outside_delivery_return',
-        superQuery: {},
+        superQuery: {}
       },
       receiptReturnTypeList: [
         {
@@ -169,32 +175,32 @@ export default {
         {
           label: '收货',
           value: 'inbound_purchase'
-        },
+        }
       ],
       createRequirementDate: [],
       deliveryDate: [],
-      selectData: [],                    // 选中的数据 带到form页
+      selectData: [], // 选中的数据 带到form页
       total: 0,
       formVisible: false,
       superQueryJson: [
         {
           prop: 'orderNo',
-          label: "出入库单号",
+          label: '出入库单号',
           type: 'input'
         },
         {
           prop: 'partnerName',
-          label: "客户名称",
+          label: '客户名称',
           type: 'input'
         },
         {
           prop: 'partnerCode',
-          label: "客户编码",
+          label: '客户编码',
           type: 'input'
         },
         {
           prop: 'productCode',
-          label: "产品编码",
+          label: '产品编码',
           type: 'input'
         },
         // {
@@ -204,39 +210,39 @@ export default {
         // },
         {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: '品名规格',
           type: 'input'
         },
         {
           prop: 'mainUnit',
-          label: "单位",
+          label: '单位',
           type: 'input'
         },
         {
           prop: 'num',
-          label: "出入库数量",
+          label: '出入库数量',
           type: 'input'
         },
         {
           prop: 'price',
-          label: "单价(含税)",
+          label: '单价(含税)',
           type: 'input'
         },
         {
           prop: 'taxRate',
-          label: "税率(%)",
+          label: '税率(%)',
           type: 'input'
         },
         {
           prop: 'excludingTaxAmount',
-          label: "金额",
+          label: '金额',
           type: 'input'
         },
         {
           prop: 'createTime',
           label: '创建时间',
           type: 'datetimerange',
-          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
           startPlaceholder: '创建开始时间',
           endPlaceholder: '创建结束时间',
           pickerOptions: this.global.timePickerOptions
@@ -244,12 +250,10 @@ export default {
 
         {
           prop: 'createByName',
-          label: "创建人",
+          label: '创建人',
           type: 'input'
         }
-
-
-      ],
+      ]
     }
   },
   created() {
@@ -266,30 +270,32 @@ export default {
       if (data.length) {
         this.exportFormVisible = true
         let domRef = this.$refs[`${ref}`]
-        console.log(domRef);
-        let columnList = domRef.columnList.filter(item => !!item.label && !!item.prop)
-        columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
-        this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+        console.log(domRef)
+        let columnList = domRef.columnList.filter((item) => !!item.label && !!item.prop)
+        columnList = columnList.map((item) => {
+          return { label: item.label, prop: item.prop }
+        })
+        this.$nextTick(() => {
+          this.$refs.exportForm.init(columnList)
+        })
       } else {
         this.$message({
-          message: "暂无数据导出",
-          type: "error",
-          duration: 1500,
+          message: '暂无数据导出',
+          type: 'error',
+          duration: 1500
         })
       }
     },
     // 导出
     exportForm() {
       this.exportType(this.tableDataList, 'tableForm')
-
-
     },
     download(data) {
       if (data) {
         this.exportFormVisible = false
         let includeFieldMap = {}
         for (let i = 0; i < data.selectKey.length; i++) {
-          includeFieldMap[data.selectKey[i]] = data.selectVal[i];
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i]
         }
         let query = this.listQuery
         let _data = {
@@ -297,13 +303,15 @@ export default {
           exportType: '1204',
           exportName: '出入库对账',
           includeFieldMap,
-          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
+          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
         }
-        excelExport(_data).then(res => {
-          this.exportFormVisible = false
-          if (!res.data.url) return
-          this.jnpf.downloadFile(res.data.url)
-        }).catch(() => { })
+        excelExport(_data)
+          .then((res) => {
+            this.exportFormVisible = false
+            if (!res.data.url) return
+            this.jnpf.downloadFile(res.data.url)
+          })
+          .catch(() => { })
       }
     },
     columnSetFun() {
@@ -314,7 +322,7 @@ export default {
     },
     // 选中列表的数据 将其带到生成订单下面表单表格中
     handeleProductInfoData(val) {
-      console.log(val);
+      console.log(val)
       this.selectData = val
     },
     moreQueries() {
@@ -334,7 +342,7 @@ export default {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
       this.listQuery.orderItems[0].asc = order !== 'descending'
-      this.listQuery.orderItems[0].column = order === null ? "" : newProp
+      this.listQuery.orderItems[0].column = order === null ? '' : newProp
       this.initData()
     },
 
@@ -350,39 +358,40 @@ export default {
       this.reset()
     },
 
-
     initData() {
       this.listLoading = true
       if (this.createRequirementDate && this.createRequirementDate.length > 0) {
-        this.listQuery.startTime = this.createRequirementDate[0] + " 00:00:00"
-        this.listQuery.endTime = this.createRequirementDate[1] + " 23:59:59"
+        this.listQuery.startTime = this.createRequirementDate[0] + ' 00:00:00'
+        this.listQuery.endTime = this.createRequirementDate[1] + ' 23:59:59'
       } else {
         this.listQuery.startTime = ''
         this.listQuery.endTime = ''
       }
       this.superForm = this.listQuery
-      getsalefinAccountList(this.superForm).then(res => {
-        console.log(res, '采购发/退货列表');
-        res.data.records.forEach(item => {
-          // if (item.planDemandQuantity * 1 <= item.orderedQuantity * 1) {
-          //   item.disabled = true
-          // } else {
-          //   item.disabled = fals
-          // }
-          item.excludingTaxAmount = this.jnpf.numberFormat(item.actualQuantity * item.price)
-        });
+      getsalefinAccountList(this.superForm)
+        .then((res) => {
+          console.log(res, '采购发/退货列表')
+          res.data.records.forEach((item) => {
+            // if (item.planDemandQuantity * 1 <= item.orderedQuantity * 1) {
+            //   item.disabled = true
+            // } else {
+            //   item.disabled = fals
+            // }
+            item.excludingTaxAmount = this.jnpf.numberFormat(item.actualQuantity * item.price)
+          })
 
-        this.tableDataList = res.data.records
-        console.log("this.tableDataList ", this.tableDataList);
-        this.total = res.data.total
-        this.listLoading = false
-        this.visible = false
-      }).catch(() => {
-        this.listLoading = false
-      })
+          this.tableDataList = res.data.records
+          console.log('this.tableDataList ', this.tableDataList)
+          this.total = res.data.total
+          this.listLoading = false
+          this.visible = false
+        })
+        .catch(() => {
+          this.listLoading = false
+        })
     },
     search(type) {
-      Object.keys(this.listQuery).forEach(key => {
+      Object.keys(this.listQuery).forEach((key) => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
@@ -411,28 +420,38 @@ export default {
       this.$refs['tableForm'].$refs.JNPFTable.clearSort()
 
       this.listQuery = {
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "createTime"
-        }],
-        endTime: "",
-        orderNo: "",
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'createTime'
+          }
+        ],
+        endTime: '',
+        orderNo: '',
         pageNum: 1,
         pageSize: 20,
-        partnerName: "",
-        startTime: "",
+        partnerName: '',
+        startTime: '',
         businessType: 'outside_delivery_return',
-        superQuery: {},
+        superQuery: {}
       }
       this.createRequirementDate = []
       this.deliveryDate = []
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
         { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+        {
+          field: 'cooperativePartnerName',
+          fieldValue: '',
+          label: '客户名称',
+          symbol: 'like',
+          searchType: 1,
+          width: 120
+        }
       ]
       this.superForm = JSON.parse(JSON.stringify(this.listQuery))
       this.search('basic')
@@ -442,15 +461,15 @@ export default {
     addOrUpdateHandle() {
       if (this.selectData.length === 0) {
         this.$message({
-          message: "请选择你要生成的采购对账单",
-          type: "error",
-          duration: 1500,
+          message: '请选择你要生成的采购对账单',
+          type: 'error',
+          duration: 1500
         })
       } else {
         // console.log(this.$refs);
         console.log(this.selectData, 'this.selectData')
         let firstCode = this.selectData[0].partnerCode
-        let allCode = this.selectData.every(obj => obj.partnerCode === firstCode)
+        let allCode = this.selectData.every((obj) => obj.partnerCode === firstCode)
         if (allCode) {
           this.formVisible = true
           this.$nextTick(() => {
@@ -459,11 +478,8 @@ export default {
         } else {
           this.$message.error('请选择客户相同的通知单!')
         }
-
       }
-
-    },
-
+    }
   }
 }
 </script>

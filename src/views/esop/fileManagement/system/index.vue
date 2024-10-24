@@ -72,7 +72,8 @@
                         <!--                <template slot-scope="scope">{{ scope.row.fileSize | toFileSize() }}</template>-->
                         <!--              </el-table-column>-->
                         <el-table-column prop="creatorTime" label="创建日期" width="200"/>
-                        <el-table-column label="操作" fixed="right" width="200">
+                        <el-table-column label="操作"
+                                         fixed="right" width="200">
                             <template slot-scope="scope">
                                 <el-button size="mini" type="text" @click="handleDownLoad(scope.row.id)"
                                            :disabled="!scope.row.type">下载</el-button>
@@ -96,10 +97,48 @@
                             </template>
                         </el-table-column>
                     </JNPF-table>
-                    <GridFileList v-loading="gridFileListLoading" class="table-style" style="border: 1px solid #ebeef5 !important;" v-else @item-click="listItemClick" @command="allItemCommandHandler"  :list="fileList" :file-options="allFileOptions"></GridFileList>
+                    <GridFileList
+                        v-else
+                        v-loading="gridFileListLoading"
+                        class="table-style"
+                        style="border: 1px solid #ebeef5 !important;"
+                        @item-click="listItemClick"
+                        @command="allItemCommandHandler"
+                        :list="fileList"
+                        :file-options="allFileOptions"
+                    >
+                        <template v-slot:tooltip="{ item }">
+                            <el-row>
+                                <el-col style="text-align: right" :span="8">{{ item.type ? '文件名' : '文件夹名' }}：</el-col>
+                                <el-col :span="16">{{ item.filename }}</el-col>
+                            </el-row>
+                            <el-row>
+                                <el-col style="text-align: right" :span="8">文件大小：</el-col>
+                                <el-col :span="16">{{ item.fileSize | toFileSize() }}</el-col>
+                            </el-row>
+                            <el-row  >
+                                <el-col style="text-align: right" :span="8">业务名称：</el-col>
+                                <el-col :span="16">{{ getBusinessTitle(item.configKey) }}</el-col>
+                            </el-row>
+                        </template>
+                        <template v-slot:bottom="{item}">
+                            <div>
+                                <p class="li-upload-p1 name">{{ item.filename }}</p>
+                                <p class="li-upload-p2 file-size" >{{ item.fileSize | toFileSize() }}</p>
+                            </div>
+                        </template>
+                    </GridFileList>
+                    <Preview  class="search-left" :visible.sync="previewVisible" :file="previewFile" />
                 </div>
             </div>
         </div>
+        <component
+            ref="detailRef"
+            v-if="showDetailVisible"
+            :is="componentPath"
+            v-bind="componentBindParams"
+            v-on="componentBindEvents"
+        ></component>
     </div>
 </template>
 
@@ -111,21 +150,38 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import {FileCategoryType} from "@/views/esop/fileCategoryManagement/constants";
 import FileUploadDrop from "@/views/esop/fileUpload/workinginstruction/component/FileUploadDrop.vue";
 import GridFileList from "@/views/drawingDocument/document/GridFileList.vue";
-import {AllList} from "@/api/extend/document";
+import {AllList, Download} from "@/api/extend/document";
 import {isFile, Type2SuffixArr} from "@/views/drawingDocument/document/utils";
 import SearchPlane from "@/views/drawingDocument/document/SearchPlane.vue";
 import SwitchListAndFilter from "@/views/drawingDocument/document/SwitchListAndFilter.vue";
-import {trim} from "@/utils";
-import {systemAttachmentsList} from "@/api/esop/fileManage/system";
+import {isEmpty, trim} from "@/utils";
+import {systemAttachmentsDelete, systemAttachmentsList} from "@/api/esop/fileManage/system";
+import ShowDetailMinix from "@/views/esop/fileManagement/system/ShowDetailMinix";
+import Preview from "@/components/upload-wj/Preview.vue";
+import {FILE_OPERATE} from "@/views/drawingDocument/document/constant";
+import {getFilePreviewUrl} from "@/views/esop/utils/utils";
 
 export default {
-    name: 'myCustomer',
-    components: {SwitchListAndFilter, SearchPlane, GridFileList, FileUploadDrop, SuperQuery, },
+    mixins:[ShowDetailMinix],
+    components: {Preview, SwitchListAndFilter, SearchPlane, GridFileList, FileUploadDrop, SuperQuery, },
     data() {
         return {
             allFileOptions:[
-
+                {
+                    text:'下载',
+                    value:FILE_OPERATE.DOWNLOAD,
+                },
+                {
+                    text:'删除',
+                    value:FILE_OPERATE.DELETE,
+                },
+                {
+                    text:'详情',
+                    value:FILE_OPERATE.DETAIL,
+                },
             ],
+            previewVisible:false,
+            previewFile:{},
             searchPlaneLoading:false,
             currentExt:'',
             fileExtFilterOption:Object.freeze( [
@@ -189,7 +245,7 @@ export default {
             tableData: [],
             listLoading: false,
             initListQuery: {
-                "businessId": 0,
+                "businessId": "",
                 "businessType": "",
                 "categoryId": "",
                 "createByName": "",
@@ -202,9 +258,9 @@ export default {
                         "column": ""
                     }
                 ],
-                "pageNum": 0,
-                "pageSize": 0,
-                "productsId": 0,
+                "pageNum": 1,
+                "pageSize": 20,
+                "productsId": null,
                 "startTime": "",
                 "startUpdateTime": "",
                 "superQuery": {
@@ -248,6 +304,12 @@ export default {
     },
 
     methods: {
+        getBusinessTitle(configKey){
+             if(isEmpty(this.configKey2Detail[configKey])){
+                 return '历史数据无编码'
+             }
+            return this.configKey2Detail[configKey].title
+        },
         filterExtHandler(command){
             if(command === ALL_TEXT){
                 this.currentExt= ''
@@ -301,8 +363,31 @@ export default {
         },
         searchItemClick(){},
         searchList(){},
-        listItemClick(){},
-        allItemCommandHandler(){},
+        listItemClick(item){
+            this.previewFile = {
+                name:item.filename,
+                filename:item.filePath,
+                url: getFilePreviewUrl(item.filePath)
+            }
+            this.previewVisible = true
+        },
+        handleDownLoad(id) {
+            Download(id).then(res => {
+                this.jnpf.downloadFile(res.data.url, res.data.name)
+            })
+        },
+        allItemCommandHandler(command, item,index){
+            switch (command) {
+                case FILE_OPERATE.DOWNLOAD:
+                    return this.handleDownLoad(item.documentId)
+                case FILE_OPERATE.DELETE:
+                    return this.handleDel(item.id)
+                case FILE_OPERATE.DETAIL:
+                    return this.showDetail(item)
+                default:
+                    break;
+            }
+        },
 
         // // 设置默认展开
         setexpand(expands) {
@@ -363,7 +448,7 @@ export default {
             trim(this.listQuery)
             this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
             systemAttachmentsList(this.listQuery).then(res => {
-                this.tableData = res.data.records
+                this.fileList = res.data.records
                 this.total = res.data.total
                 this.listLoading = false
                 this.visible = false
@@ -388,7 +473,7 @@ export default {
             this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
                 type: 'warning'
             }).then(() => {
-                deleteOrders(id).then(res => {
+                systemAttachmentsDelete(id).then(res => {
                     this.initData()
                     this.$message({
                         type: 'success',
@@ -404,6 +489,28 @@ export default {
 </script>
 <style src="@/assets/scss/index-list.scss" lang="scss" scoped />
 <style scoped lang="scss">
+.name{
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    color: #222;
+    display: -webkit-box;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 18px;
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+    width: 104px;
+    word-break: break-all;
+}
+.file-size{
+    margin-top: 3px;
+    color: #999;
+    font-size: 12px;
+    text-align: center;
+
+}
 .is-reverse {
     color: #fff !important;
     background-color: #3fb9f8;

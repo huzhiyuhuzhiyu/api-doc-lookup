@@ -190,7 +190,13 @@ import {
 import {FlowCode} from "@/views/esop/utils/constants";
 import {getQueryConfirm, getSuccessInfo, isEmpty, mapIfNonePutArr, notEmpty, trim} from "@/utils";
 import RecreateMixin from "@/views/esop/utils/RecreateMixin";
-import {BtnType, executeQueryTime, getUploadFileSaveData, isNoProductPage} from "@/views/esop/utils/utils";
+import {
+    BtnType,
+    executeQueryTime,
+    getTimeForSearchTimeType,
+    getUploadFileSaveData,
+    isNoProductPage
+} from "@/views/esop/utils/utils";
 import {getBimRecycleBin, revertBimRecycleBin} from "@/api/esop/fileTrash";
 import {getBusinessFlowInfo} from "@/api/workFlow/FlowEngine";
 
@@ -222,19 +228,19 @@ export default {
         }
     },
     watch:{
-      "$route.query.id":{
+      "$route.query.type":{
           immediate:true,
           handler(val){
-              console.log('isFileUploadPage',this.isFileUploadPage)
-              console.log('isFileManagementPage',this.isFileManagementPage)
-              console.log(!this.isFileUploadPage && !this.isFileManagementPage)
               if(!this.isFileUploadPage && !this.isFileManagementPage){
                   return
               }
-              if(isModelType(this.$route.query.type) && notEmpty(val)){
-                  this.addOrUpdateHandle(this.$route.query.type,val)
+              const type = this.$route.query.type
+              if(isModelType(type) && notEmpty(val)){
+                  if(type === ModelType.SEARCH){
+                    return this.modelTypeSearchHandler(type,this.$route.query)
+                  }
+                  return this.modelTypeDefaultHandler(type,this.$route.query)
               }
-
           }
       }
     },
@@ -345,10 +351,23 @@ export default {
         },
     },
     async created() {
+        if(notEmpty(this.$route.query.type)){
+            return
+        }
         this.initData()
-
     },
     methods: {
+        modelTypeDefaultHandler(type, {id}){
+           return this.addOrUpdateHandle(type,id)
+        },
+        modelTypeSearchHandler(type,{searchTimeType}){
+            if(isEmpty(searchTimeType)){
+                return
+            }
+            const [startTime,endTime]= getTimeForSearchTimeType(searchTimeType)
+            this.createTimeArr = [startTime,endTime]
+            this.search()
+        },
        async getFlowData(){
            const resObj ={
                flowData:null,
@@ -365,7 +384,6 @@ export default {
            }
            return resObj
         },
-
         async copy2FileUpload(id){
             this.listLoading = true
             try {

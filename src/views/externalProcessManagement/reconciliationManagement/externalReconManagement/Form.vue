@@ -122,7 +122,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="excludingTaxAmount" label="不含税总金额" min-width="140">
+                      <el-table-column prop="excludingTaxAmount" label="总金额(不含税)" min-width="140">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'"
                             :rules="productFormRules.excludingTaxAmount">
@@ -168,7 +168,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="includingTaxAmount" label="含税总金额" min-width="140">
+                      <el-table-column prop="includingTaxAmount" label="总金额(含税)" min-width="140">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'includingTaxAmount'"
                             :rules="productFormRules.includingTaxAmount">

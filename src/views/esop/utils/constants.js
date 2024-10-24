@@ -19,3 +19,21 @@ export const FlowId={
     "IMAGE":'615902865885617669',
     "OFFICE":'616955543407424965',
 }
+/**
+ * 页面间跳转传递的时间参数
+ * @type {{MONTH: number, WEEK: number, DAY: number}}
+ */
+export const SearchTimeType = {
+    DAY:'DAY',
+    WEEK:'WEEK',
+    MONTH:'MONTH',
+}
+/**
+ * 页面间跳转传递的时间参数
+ * @type {{MONTH: number, WEEK: number, DAY: number}}
+ */
+export const SearchTimeType2Chinese = {
+    [SearchTimeType.DAY]:'今日',
+    [SearchTimeType.WEEK] :'本周',
+    [SearchTimeType.MONTH] :'本月',
+}

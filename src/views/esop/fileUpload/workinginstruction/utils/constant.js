@@ -15,6 +15,7 @@ export const ModelType ={
     "EDIT":'edit',
     "VIEW":'look',
     "COPY":'copy',
+    "SEARCH":'search',
 }
 export const isModelType=(type)=>{
     return Object.values(ModelType).includes(type)

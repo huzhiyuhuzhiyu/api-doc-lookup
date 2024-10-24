@@ -744,6 +744,7 @@ export default {
         this.datafilelist.map((item, index) => {
           item.bimAttachments = {
             businessType: 'system_attachment',
+            configKey: 'fj_qgd',
             categoryId: this.categoryId,
             documentId: item.id,
             fileFlag: '',

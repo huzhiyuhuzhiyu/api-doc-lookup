@@ -72,7 +72,8 @@
                         <!--                <template slot-scope="scope">{{ scope.row.fileSize | toFileSize() }}</template>-->
                         <!--              </el-table-column>-->
                         <el-table-column prop="creatorTime" label="创建日期" width="200"/>
-                        <el-table-column label="操作" fixed="right" width="200">
+                        <el-table-column label="操作"
+                                         fixed="right" width="200">
                             <template slot-scope="scope">
                                 <el-button size="mini" type="text" @click="handleDownLoad(scope.row.id)"
                                            :disabled="!scope.row.type">下载</el-button>
@@ -115,6 +116,10 @@
                                 <el-col style="text-align: right" :span="8">文件大小：</el-col>
                                 <el-col :span="16">{{ item.fileSize | toFileSize() }}</el-col>
                             </el-row>
+                            <el-row  >
+                                <el-col style="text-align: right" :span="8">业务名称：</el-col>
+                                <el-col :span="16">{{ getBusinessTitle(item.configKey) }}</el-col>
+                            </el-row>
                         </template>
                         <template v-slot:bottom="{item}">
                             <div>
@@ -122,12 +127,18 @@
                                 <p class="li-upload-p2 file-size" >{{ item.fileSize | toFileSize() }}</p>
                             </div>
                         </template>
-
-
                     </GridFileList>
+                    <Preview  class="search-left" :visible.sync="previewVisible" :file="previewFile" />
                 </div>
             </div>
         </div>
+        <component
+            ref="detailRef"
+            v-if="showDetailVisible"
+            :is="componentPath"
+            v-bind="componentBindParams"
+            v-on="componentBindEvents"
+        ></component>
     </div>
 </template>
 
@@ -139,21 +150,38 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import {FileCategoryType} from "@/views/esop/fileCategoryManagement/constants";
 import FileUploadDrop from "@/views/esop/fileUpload/workinginstruction/component/FileUploadDrop.vue";
 import GridFileList from "@/views/drawingDocument/document/GridFileList.vue";
-import {AllList} from "@/api/extend/document";
+import {AllList, Download} from "@/api/extend/document";
 import {isFile, Type2SuffixArr} from "@/views/drawingDocument/document/utils";
 import SearchPlane from "@/views/drawingDocument/document/SearchPlane.vue";
 import SwitchListAndFilter from "@/views/drawingDocument/document/SwitchListAndFilter.vue";
-import {trim} from "@/utils";
-import {systemAttachmentsList} from "@/api/esop/fileManage/system";
+import {isEmpty, trim} from "@/utils";
+import {systemAttachmentsDelete, systemAttachmentsList} from "@/api/esop/fileManage/system";
+import ShowDetailMinix from "@/views/esop/fileManagement/system/ShowDetailMinix";
+import Preview from "@/components/upload-wj/Preview.vue";
+import {FILE_OPERATE} from "@/views/drawingDocument/document/constant";
+import {getFilePreviewUrl} from "@/views/esop/utils/utils";
 
 export default {
-    name: 'myCustomer',
-    components: {SwitchListAndFilter, SearchPlane, GridFileList, FileUploadDrop, SuperQuery, },
+    mixins:[ShowDetailMinix],
+    components: {Preview, SwitchListAndFilter, SearchPlane, GridFileList, FileUploadDrop, SuperQuery, },
     data() {
         return {
             allFileOptions:[
-
+                {
+                    text:'下载',
+                    value:FILE_OPERATE.DOWNLOAD,
+                },
+                {
+                    text:'删除',
+                    value:FILE_OPERATE.DELETE,
+                },
+                {
+                    text:'详情',
+                    value:FILE_OPERATE.DETAIL,
+                },
             ],
+            previewVisible:false,
+            previewFile:{},
             searchPlaneLoading:false,
             currentExt:'',
             fileExtFilterOption:Object.freeze( [
@@ -276,6 +304,12 @@ export default {
     },
 
     methods: {
+        getBusinessTitle(configKey){
+             if(isEmpty(this.configKey2Detail[configKey])){
+                 return '历史数据无编码'
+             }
+            return this.configKey2Detail[configKey].title
+        },
         filterExtHandler(command){
             if(command === ALL_TEXT){
                 this.currentExt= ''
@@ -329,8 +363,31 @@ export default {
         },
         searchItemClick(){},
         searchList(){},
-        listItemClick(){},
-        allItemCommandHandler(){},
+        listItemClick(item){
+            this.previewFile = {
+                name:item.filename,
+                filename:item.filePath,
+                url: getFilePreviewUrl(item.filePath)
+            }
+            this.previewVisible = true
+        },
+        handleDownLoad(id) {
+            Download(id).then(res => {
+                this.jnpf.downloadFile(res.data.url, res.data.name)
+            })
+        },
+        allItemCommandHandler(command, item,index){
+            switch (command) {
+                case FILE_OPERATE.DOWNLOAD:
+                    return this.handleDownLoad(item.documentId)
+                case FILE_OPERATE.DELETE:
+                    return this.handleDel(item.id)
+                case FILE_OPERATE.DETAIL:
+                    return this.showDetail(item)
+                default:
+                    break;
+            }
+        },
 
         // // 设置默认展开
         setexpand(expands) {
@@ -416,7 +473,7 @@ export default {
             this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
                 type: 'warning'
             }).then(() => {
-                deleteOrders(id).then(res => {
+                systemAttachmentsDelete(id).then(res => {
                     this.initData()
                     this.$message({
                         type: 'success',
@@ -448,7 +505,7 @@ export default {
     word-break: break-all;
 }
 .file-size{
-    margin-top: -3px;
+    margin-top: 3px;
     color: #999;
     font-size: 12px;
     text-align: center;

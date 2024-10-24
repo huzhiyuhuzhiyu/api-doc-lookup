@@ -73,7 +73,7 @@
               </el-collapse-item>
             </el-collapse>
           </el-tab-pane>
-          <el-tab-pane label="附件" name="annex">
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
             <UploadWj v-model="datafilelist" :disabled="btnType == 'look'" :detailed="btnType == 'look'"></UploadWj>
           </el-tab-pane>
         </el-tabs>
@@ -84,6 +84,7 @@
 </template>
     
 <script>
+import { getBimBusinessDetail } from '@/api/basicData/index'
 import { mapGetters } from 'vuex'
 import { updateCollectionandreturn, detailCollectionandreturn, checkmaintenanceList, RepairRequestList, addCollectionandreturn } from '@/api/dailyManagement/Maintenance'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
@@ -91,6 +92,8 @@ import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
   data() {
     return {
+      categoryId: '',
+      isattachmentswitch: '',
       activeNames: ["basicInfo", "sbxx"],
       datafilelist: [],
       getcategoryTree,
@@ -158,10 +161,23 @@ export default {
       selectRows: []
     }
   },
+  created() {
+    this.getBimBusinessDetail()
+  },
   computed: {
     ...mapGetters(['userInfo']),
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_bjgh'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
+      })
+    },
     //归还人
     hangleSelectSales(e, r) {
       this.$nextTick(() => { this.$refs.dataForm.validateField("recipientId") });
@@ -301,7 +317,9 @@ export default {
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
             item.bimAttachments = {
-              businessType: '',
+              businessType: 'system_attachment',
+              configKey: 'fj_bjgh',
+              categoryId: this.categoryId,
               documentId: item.id,
               fileFlag: '',
               sort: index

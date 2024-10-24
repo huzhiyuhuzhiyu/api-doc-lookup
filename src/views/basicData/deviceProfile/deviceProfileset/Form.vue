@@ -4,7 +4,7 @@
       <div class="JNPF-common-page-header">
         <el-page-header @back="goBack" :content="!dataForm.id ? `新建设备` : disabled ? '查看设备' : '编辑设备'" />
         <div class="options">
-          <el-button type="primary"  v-if="!disabled" :loading="btnLoading" @click="handleConfirm()">
+          <el-button type="primary" v-if="!disabled" :loading="btnLoading" @click="handleConfirm()">
             提交</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
@@ -226,7 +226,7 @@
               </el-collapse-item>
             </el-collapse>
           </el-tab-pane>
-          <el-tab-pane label="附件" name="annex">
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
             <UploadWj v-model="datafilelist" :disabled="disabled" :detailed="disabled"></UploadWj>
           </el-tab-pane>
         </el-tabs>
@@ -236,6 +236,7 @@
 </template>
 
 <script>
+import { getBimBusinessDetail } from '@/api/basicData/index'
 import {
   editEquEquipment, saveEquEquipment
   , getEquEquipmentInfo
@@ -254,6 +255,8 @@ export default {
   },
   data() {
     return {
+      isattachmentswitch: '',
+      categoryId: '',
       factorylistLoading: false,
       mountedPlacesList: [],
       factoryFloorList: [],
@@ -302,7 +305,7 @@ export default {
       picArr: [],
       type: '',
       dataForm: {
-        repairUserId:'',
+        repairUserId: '',
         salespersonId: "",
         purchaseAmount: "",
         id: "",
@@ -446,9 +449,20 @@ export default {
     }
   },
   created() {
+    this.getBimBusinessDetail()
     this.getfactoryFloor()
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_sbda'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
+      })
+    },
     getfactoryFloor() {
       let obj = {
         pageNum: 1,
@@ -591,7 +605,9 @@ export default {
           if (this.datafilelist.length) {
             this.datafilelist.map((item, index) => {
               item.bimAttachments = {
-                businessType: '',
+                businessType: 'system_attachment',
+                configKey: 'fj_sbda',
+                categoryId: this.categoryId,
                 documentId: item.id,
                 fileFlag: '',
                 sort: index

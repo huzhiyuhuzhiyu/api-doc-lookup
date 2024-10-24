@@ -120,7 +120,7 @@
                   </el-collapse-item>
                 </el-collapse>
               </el-tab-pane>
-              <el-tab-pane label="附件" name="annex">
+              <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
                 <UploadWj v-model="datafilelist">
                 </UploadWj>
               </el-tab-pane>
@@ -144,6 +144,7 @@
 </template>
 
 <script>
+import { getBimBusinessDetail } from '@/api/basicData/index'
 import UploadImg from "@/components/Generator/components/Upload/UploadImg.vue";
 import { addRepairRequest } from '@/api/dailyManagement/Maintenance'
 import { getOrganization } from '@/api/permission/user'
@@ -154,6 +155,8 @@ export default {
   components: { UploadImg },
   data() {
     return {
+      categoryId: '',
+      isattachmentswitch: '',
       codeConfig: {},//单据规则配置
       btnLoading: false,
       salesList: [],
@@ -282,8 +285,8 @@ export default {
       },
       productRules: {
         faultLocationName: [
-          { validator: this.formValidate({ type: 'noEmtry', params: ["故障部位名称不能为空", (errMsg, index) => { this.$message.error(`故障信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
-          { required: true, trigger: 'blur' },
+          { validator: this.formValidate({ type: 'noEmtry', params: ["故障部位名称不能为空", (errMsg, index) => { this.$message.error(`故障信息第${index + 1}行：${errMsg}`) }] }), trigger: 'change' },
+          { required: true, trigger: 'change' },
         ],
       },
       dataRule: {
@@ -313,9 +316,20 @@ export default {
     ...mapGetters(['userInfo'])
   },
   created() {
+    this.getBimBusinessDetail()
     this.init()
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_sbbx'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
+      })
+    },
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
@@ -527,6 +541,18 @@ export default {
               .replace("{", "")
               .replace("}", "")
           }) : "[]"
+        if (this.datafilelist.length) {
+          this.datafilelist.map((item, index) => {
+            item.bimAttachments = {
+              businessType: 'system_attachment',
+              configKey: 'fj_sbbx',
+              categoryId: this.categoryId,
+              documentId: item.id,
+              fileFlag: '',
+              sort: index
+            }
+          })
+        }
         let obj = {
           attachmentList: this.datafilelist,
           equLine: [],
@@ -678,7 +704,6 @@ export default {
 
 .options {
   display: inline-block;
-  float: right;
 }
 
 .pageTitle {

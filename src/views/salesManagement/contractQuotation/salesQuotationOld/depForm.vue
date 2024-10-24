@@ -899,7 +899,6 @@ export default {
     },
     handleSelect(row, index, item) {
       //返回的意见点击选择触发事件
-      console.log("产品数据", index, this.dataFormTwo.lines[index], item);
       let customerDrawingNumber
       let obj = JSON.parse(JSON.stringify(this.createdData))
       obj.taxRate = this.taxRate * 1
@@ -918,13 +917,15 @@ export default {
           }],
         }
         getQuotationmxLists(objs).then(res => {
-          console.log("产品信息", res);
           if (res.data.records.length) {
+            console.log('有值',res.data.records[0]);
+             let data=res.data.records[0]
+
             // res.data.records[0].customerProductDrawingNo = customerDrawingNumber ? customerDrawingNumber : res.data.records[0].customerProductDrawingNo
             res.data.records[0].taxRate = res.data.records[0].taxRate * 1
-            this.dataFormTwo.lines[index] = res.data.records[0]
+            this.$set(this.dataFormTwo.lines,index,res.data.records[0])
             // this.$set(this.dataFormTwo.lines, index, res.data.records[0])
-            console.log(this.dataFormTwo.lines);
+            console.log(111,this.dataFormTwo.lines);
             let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.records[0].taxRate));
             if (!exists && res.data.records[0].taxRate) {
               let obj = {
@@ -935,15 +936,13 @@ export default {
               this.taxRateList.push(obj)
             }
           } else {
-            console.log("index1", index, this.dataFormTwo.lines);
 
             item.data.taxRate = this.taxRate * 1
             this.$set(item.data, 'productDrawingNo', item.value)
             this.$set(item.data, 'unitPrice', "")
             this.$set(item.data, 'customerProductDrawingNo', customerDrawingNumber)
             item.data.productsId = item.data.id
-            console.log("item.da", item.data);
-            console.log("this.dataFormTwo.lines", this.dataFormTwo.lines);
+          
             this.$set(this.dataFormTwo.lines, index, item.data)
             // this.$set(this.dataFormTwo.lines, index, item.data)
             this.watchPrice(this.dataFormTwo.lines[index], index)

@@ -1030,7 +1030,7 @@ export default {
           } else {
             res.data.repair.afterPicList = []
           }
-          if (res.data.repair.frontPic && res.data.repair.afterPicList.length) {
+          if (res.data.repair.frontPic && res.data.repair.frontPicList.length) {
             res.data.repair.frontPicList = res.data.repair.frontPicList.map(item => {
               return JSON.parse(`{${item}}`)
             })

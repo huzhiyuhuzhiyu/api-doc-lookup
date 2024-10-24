@@ -86,7 +86,7 @@
               </el-collapse-item>
             </el-collapse>
           </el-tab-pane>
-          <el-tab-pane label="附件" name="annex">
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
             <UploadWj v-model="datafilelist" :disabled="btnType == 'look'" :detailed="btnType == 'look'"></UploadWj>
           </el-tab-pane>
         </el-tabs>
@@ -97,6 +97,7 @@
 </template>
     
 <script>
+import { getBimBusinessDetail } from '@/api/basicData/index'
 import { addScrapApplicationForm, updateScrapApplicationForm, detailScrapApplicationForm } from '@/api/dailyManagement/Maintenance'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getEquEquipmentList } from '@/api/basicData/index'
@@ -106,6 +107,8 @@ import { getOrganization } from '@/api/permission/user'
 export default {
   data() {
     return {
+      isattachmentswitch: '',
+      categoryId: '',
       codeConfig:{},
       activeNames: ["basicInfo", "sbxx"],
       datafilelist: [],
@@ -192,7 +195,20 @@ export default {
     tBody.style.height = 'auto'
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
+  created() {
+    this.getBimBusinessDetail()
+  },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_bfgl'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
+      })
+    },
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
@@ -398,7 +414,9 @@ export default {
             if (this.datafilelist.length) {
               this.datafilelist.map((item, index) => {
                 item.bimAttachments = {
-                  businessType: '',
+                  businessType: 'system_attachment',
+                  configKey: 'fj_bfgl',
+                  categoryId: this.categoryId,
                   documentId: item.id,
                   fileFlag: '',
                   sort: index

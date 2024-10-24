@@ -481,6 +481,7 @@
 </template>
 
 <script>
+import { getBimBusinessDetail } from '@/api/basicData/index'
 import { checkPartner, addPartner, updatePartner, detailPartner } from '@/api/customerManagement'
 import { getOrganization } from '@/api/permission/user'
 import { getOrganizeInfo } from '@/api/permission/organize'
@@ -705,15 +706,27 @@ export default {
       organizeIdTrees: [],
       salesFlag: false,
       businessType: "",
-      isattachmentswitch: ''
+      isattachmentswitch: '',
+      categoryId: ''
     }
   },
   created() {
+    this.getBimBusinessDetail()
     this.getAttachmentswitch()
     this.getProvinceList()
     this.getDictionaryType()
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_zskh'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
+      })
+    },
     changeindustry(val) {
       this.dataForm.industry = val[val.length - 1]
     },
@@ -1405,7 +1418,9 @@ export default {
           if (this.datafilelist.length) {
             this.datafilelist.map((item, index) => {
               item.bimAttachments = {
-                businessType: 'customer',
+                businessType: 'system_attachment',
+                configKey: 'fj_zskh',
+                categoryId: this.categoryId,
                 documentId: item.id,
                 fileFlag: '',
                 sort: index

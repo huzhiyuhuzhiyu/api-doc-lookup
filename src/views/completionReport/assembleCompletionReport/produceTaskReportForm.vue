@@ -246,7 +246,7 @@
               </el-row>
             </el-form>
           </el-col>
-          <el-col :span="12" class="rightInfo" :style="{ height: targetHeight2 + 'px!important' }"  
+          <el-col :span="12" class="rightInfo" style="padding-top: 18px;" :style="{ height: targetHeight2 + 'px!important' }"  
             v-if="currentProcess.processingType == 'external_production'">
             <el-form ref="reportRef" :model="currentProcess" :rules="dataRule" label-width="180px"
               label-position="left">

@@ -123,6 +123,7 @@
 </template>
 
 <script>
+import { getBimBusinessDetail } from '@/api/basicData/index'
 import { mapGetters } from 'vuex'
 import {
   getbimProductAttributes
@@ -134,6 +135,7 @@ import { addCluemanagement, updateCluemanagement, getCluemanagementDetail } from
 export default {
   data() {
     return {
+      categoryId: '',
       isattachmentswitch: '1',
       datafilelist: [],
       activeNames: ["basicInfo"],
@@ -185,6 +187,7 @@ export default {
     }
   },
   created() {
+    this.getBimBusinessDetail()
     getbimProductAttributes('428523727035040965').then(res => {
       this.sourceList = res.data.list.length ? res.data.list : []
     })
@@ -199,6 +202,16 @@ export default {
     ...mapGetters(['userInfo']),
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_clue'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
+      })
+    },
     // 电话 手机 二填一
     validateField2(rule, value, callback) {
       if (!this.dataForm.telephone && !value) {
@@ -317,7 +330,9 @@ export default {
           if (this.datafilelist.length) {
             this.datafilelist.map((item, index) => {
               item.bimAttachments = {
-                businessType: 'customer',
+                businessType: 'system_attachment',
+                configKey: 'fj_clue',
+                categoryId: this.categoryId,
                 documentId: item.id,
                 fileFlag: '',
                 sort: index

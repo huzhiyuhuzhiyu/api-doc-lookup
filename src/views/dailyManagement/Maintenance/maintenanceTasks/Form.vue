@@ -154,7 +154,7 @@
               </el-collapse-item>
             </el-collapse>
           </el-tab-pane>
-          <el-tab-pane label="附件" name="annex">
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
             <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
           </el-tab-pane>
         </el-tabs>
@@ -214,6 +214,7 @@
 </template>
     
 <script>
+import { getBimBusinessDetail } from '@/api/basicData/index'
 import { getcategoryTree, getequMaintenanceLevel } from '@/api/basicData/materialSettings'
 import { addcheckmaintenance, updatecheckmaintenance, detailcheckmaintenance } from '@/api/dailyManagement/Maintenance'
 import { parametersShelveslist } from '@/api/basicData/index'
@@ -226,6 +227,8 @@ import { log } from 'mathjs'
 export default {
   data() {
     return {
+      isattachmentswitch: '',
+      categoryId: '',
       activeNames: ["basicInfo", "sbxx", "xmxx"],
       level: [],
       options: [],
@@ -389,12 +392,25 @@ export default {
       deep: true
     }
   },
+  created() {
+    this.getBimBusinessDetail()
+  },
   mounted() {
     let tBody = document.querySelectorAll('.el-table')[1]
     tBody.style.height = 'auto'
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_byrwgl'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
+      })
+    },
     geteLevel() {
       getequMaintenanceLevel({ pageNum: 1, pageSize: -1 }).then(res => {
         this.options = res.data.records.reduce((acc, item) => {
@@ -787,7 +803,9 @@ export default {
           if (this.datafilelist.length) {
             this.datafilelist.map((item, index) => {
               item.bimAttachments = {
-                businessType: '',
+                businessType: 'system_attachment',
+                configKey: 'fj_byrwgl',
+                categoryId: this.categoryId,
                 documentId: item.id,
                 fileFlag: '',
                 sort: index

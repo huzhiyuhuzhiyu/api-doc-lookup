@@ -37,7 +37,7 @@
                         <el-input v-model="dataForm.nameEn" placeholder="请输入英文名称" :disabled="btnType === 'look' ? true : false" maxlength="200" />
                       </el-form-item>
                     </el-col>
-                    
+
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="联系人" prop="contacts">
                         <el-input v-model="dataForm.contacts" placeholder="请输入联系人" :disabled="btnType === 'look' ? true : false" maxlength="50" />
@@ -505,7 +505,7 @@
 <script>
 import { getOrganization } from '@/api/permission/user'
 import { getOrganizeInfo } from '@/api/permission/organize'
-import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
+import { getBimBusinessDetail, getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import {
   getCounryData, getBimBusinessInfo, getcategoryTree
 } from '@/api/basicData/index'
@@ -542,7 +542,7 @@ export default {
       billingTypeList: [],
       paymentMethodList: [],
       modeTransportList: [],
-      industryoptions:[],
+      industryoptions: [],
       channelList: [],
       contactsList: [],
       paymentCycleList: [],
@@ -599,7 +599,7 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
-        industry:'',
+        industry: '',
         nextTime: '',
         provincecityarea: [],
         // 合作伙伴
@@ -751,10 +751,12 @@ export default {
       organizeIdTrees: [],
       salesFlag: false,
       businessType: '',
-      isattachmentswitch: ''
+      isattachmentswitch: '',
+      categoryId: ''
     }
   },
   created() {
+    this.getBimBusinessDetail()
     this.dataForm.salespersonId = this.userInfo.userId
     this.dataForm.departmentId = this.userInfo.departmentId
     this.getAttachmentswitch()
@@ -762,6 +764,16 @@ export default {
     this.getDictionaryType()
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_wdkh'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
+      })
+    },
     changeindustry(val) {
       this.dataForm.industry = val[val.length - 1]
     },
@@ -1441,7 +1453,9 @@ export default {
           if (this.datafilelist.length) {
             this.datafilelist.map((item, index) => {
               item.bimAttachments = {
-                businessType: 'customer',
+                businessType: 'system_attachment',
+                configKey: 'fj_wdkh',
+                categoryId: this.categoryId,
                 documentId: item.id,
                 fileFlag: '',
                 sort: index

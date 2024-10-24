@@ -390,3 +390,11 @@ export function updateequEquipmentRepairKnowledge(data) {
     data
   })
 }
+// 本月各设备点检次数
+export function inspectionMonthTotalchart(data) {
+  return request({
+    url: `/api/mes/equReport/inspectionMonthTotal`,
+    method: 'POST',
+    data
+  })
+}

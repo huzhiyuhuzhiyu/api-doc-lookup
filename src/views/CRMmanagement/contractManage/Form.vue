@@ -185,6 +185,7 @@
 </template>
 
 <script>
+import { getBimBusinessDetail } from '@/api/basicData/index'
 import { mapGetters } from 'vuex'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
@@ -196,7 +197,8 @@ export default {
       codeConfig: {},//单据规则配置
       getcrmBusinessList,
       datafilelist: [],
-      isattachmentswitch: '1',
+      isattachmentswitch: '',
+      categoryId: '',
       typecontractList: [],
       contactsIdList: [],
       getcategoryTrees,
@@ -375,9 +377,20 @@ export default {
     ...mapGetters(['userInfo']),
   },
   created() {
+    this.getBimBusinessDetail()
     this.getDictionaryType()
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_htgl'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
+      })
+    },
     ProductTreeNodeClick(data, node, listQuery) {
       if (listQuery.productCategoryId === data.id) return listQuery
       listQuery.productCategoryList = []
@@ -777,7 +790,9 @@ export default {
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
             item.bimAttachments = {
-              businessType: 'customer',
+              businessType: 'system_attachment',
+              configKey: 'fj_htgl',
+              categoryId: this.categoryId,
               documentId: item.id,
               fileFlag: '',
               sort: index

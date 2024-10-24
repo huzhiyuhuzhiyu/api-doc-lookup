@@ -117,6 +117,7 @@
 </template>
 
 <script>
+import { getBimBusinessDetail } from '@/api/basicData/index'
 import { mapGetters } from 'vuex'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
@@ -125,7 +126,8 @@ import { getcrmReceivablesPlanlist, updatecrmReceivables, detailcrmReceivables, 
 export default {
   data() {
     return {
-      isattachmentswitch: '1',
+      isattachmentswitch: '',
+      categoryId: '',
       datafilelist: [],
       codeConfig: {},//单据规则配置
       _index: '',
@@ -254,6 +256,7 @@ export default {
     ...mapGetters(['userInfo']),
   },
   created() {
+    this.getBimBusinessDetail()
     this.getDictionaryType()
   },
   watch: {
@@ -265,6 +268,16 @@ export default {
     }
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_hkjl'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
+      })
+    },
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
@@ -461,7 +474,9 @@ export default {
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
             item.bimAttachments = {
-              businessType: 'customer',
+              businessType: 'system_attachment',
+              configKey: 'fj_hkjl',
+              categoryId: this.categoryId,
               documentId: item.id,
               fileFlag: '',
               sort: index

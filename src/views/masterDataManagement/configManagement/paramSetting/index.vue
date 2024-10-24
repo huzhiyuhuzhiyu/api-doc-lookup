@@ -242,8 +242,79 @@ export default {
         },  {
           label: '启用生产退料附件',
           value: 'fj_returnPick'
-        },   
-        
+        },
+        {
+          label: '启用线索附件',
+          value: 'fj_clue'
+        },
+        {
+          label: '启用跟进记录',
+          value: 'fj_gjjl'
+        }, 
+        {
+          label: '启用合同管理',
+          value: 'fj_htgl'
+        },
+        {
+          label: '启用回款计划',
+          value: 'fj_hkjh'
+        },
+        {
+          label: '启用回款记录',
+          value: 'fj_hkjl'
+        },
+        {
+          label: '启用发票管理',
+          value: 'fj_fpgl'
+        },
+        {
+          label: '启用回访管理',
+          value: 'fj_hfgl'
+        },
+        {
+          label: '启用CRM产品管理',
+          value: 'fj_crmcpgl'
+        },
+        {
+          label: '启用设备供应商档案',
+          value: 'fj_sbgysda'
+        },
+        {
+          label: '启用备件领用',
+          value: 'fj_bjly'
+        },
+        {
+          label: '启用备件归还',
+          value: 'fj_bjgh'
+        },
+        {
+          label: '启用设备档案',
+          value: 'fj_sbda'
+        },
+        {
+          label: '启用设备维修知识库',
+          value: 'fj_sbwxzsk'
+        },
+        {
+          label: '启用设备报修',
+          value: 'fj_sbbx'
+        },
+        {
+          label: '启用设备维修',
+          value: 'fj_sbwx'
+        },
+        {
+          label: '启用报废管理',
+          value: 'fj_bfgl'
+        },
+        {
+          label: '启用保养任务管理',
+          value: 'fj_byrwgl'
+        },
+        {
+          label: '启用点检任务管理',
+          value: 'fj_djrwgl'
+        },
       ],
       descriptionList: [
         {
@@ -411,6 +482,78 @@ export default {
         },{
           label: '开启后，在生产退料新建、编辑、查看都会显示附件操作。',
           value: 'fj_returnPick'
+        },
+        {
+          label: '开启后，在线索新建、编辑、查看都会显示附件操作。',
+          value: 'fj_clue'
+        },
+        {
+          label: '开启后，在跟进记录新建、编辑、查看都会显示附件操作。',
+          value: 'fj_gjjl'
+        },
+        {
+          label: '开启后，在合同管理新建、编辑、查看都会显示附件操作。',
+          value: 'fj_htgl'
+        },
+        {
+          label: '开启后，在回款计划新建、编辑、查看都会显示附件操作。',
+          value: 'fj_hkjh'
+        },
+        {
+          label: '开启后，在回款记录新建、编辑、查看都会显示附件操作。',
+          value: 'fj_hkjl'
+        },
+        {
+          label: '开启后，在发票管理新建、编辑、查看都会显示附件操作。',
+          value: 'fj_fpgl'
+        },
+        {
+          label: '开启后，在回访管理新建、编辑、查看都会显示附件操作。',
+          value: 'fj_hfgl'
+        },
+        {
+          label: '开启后，在CRM产品管理新建、编辑、查看都会显示附件操作。',
+          value: 'fj_crmcpgl'
+        },
+        {
+          label: '开启后，在设备供应商档案新建、编辑、查看都会显示附件操作。',
+          value: 'fj_sbgysda'
+        },
+        {
+          label: '开启后，在备件领用新建、编辑、查看都会显示附件操作。',
+          value: 'fj_bjly'
+        },
+        {
+          label: '开启后，在备件归还新建、编辑、查看都会显示附件操作。',
+          value: 'fj_bjgh'
+        },
+        {
+          label: '开启后，在设备档案新建、编辑、查看都会显示附件操作。',
+          value: 'fj_sbda'
+        },
+        {
+          label: '开启后，在设备维修知识库新建、编辑、查看都会显示附件操作。',
+          value: 'fj_sbwxzsk'
+        },
+        {
+          label: '开启后，在设备报修新建、编辑、查看都会显示附件操作。',
+          value: 'fj_sbbx'
+        },
+        {
+          label: '开启后，在设备维修新建、编辑、查看都会显示附件操作。',
+          value: 'fj_sbwx'
+        },
+        {
+          label: '开启后，在报废管理新建、编辑、查看都会显示附件操作。',
+          value: 'fj_bfgl'
+        },
+        {
+          label: '开启后，在保养任务管理新建、编辑、查看都会显示附件操作。',
+          value: 'fj_byrwgl'
+        },
+        {
+          label: '开启后，在点检任务管理新建、编辑、查看都会显示附件操作。',
+          value: 'fj_djrwgl'
         },
       ],
       currentData:null,

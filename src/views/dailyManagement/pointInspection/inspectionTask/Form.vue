@@ -141,7 +141,7 @@
               </el-collapse-item>
             </el-collapse>
           </el-tab-pane>
-          <el-tab-pane label="附件" name="annex">
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
             <UploadWj v-model="datafilelist" :disabled="btnType == 'look'" :detailed="btnType == 'look'"></UploadWj>
           </el-tab-pane>
         </el-tabs>
@@ -202,6 +202,7 @@
 </template>
     
 <script>
+import { getBimBusinessDetail } from '@/api/basicData/index'
 import { getcategoryTree, getequMaintenanceLevel } from '@/api/basicData/materialSettings'
 import { addcheckmaintenance, updatecheckmaintenance, detailcheckmaintenance } from '@/api/dailyManagement/Maintenance'
 import { parametersShelveslist } from '@/api/basicData/index'
@@ -213,6 +214,8 @@ import { getOrganization } from '@/api/permission/user'
 export default {
   data() {
     return {
+      isattachmentswitch: '',
+      categoryId: '',
       activeNames: ["basicInfo", "sbxx", "xmxx"],
       level: [],
       options: [
@@ -401,12 +404,25 @@ export default {
       selectRowssb: []
     }
   },
+  created() {
+    this.getBimBusinessDetail()
+  },
   mounted() {
     let tBody = document.querySelectorAll('.el-table')[1]
     tBody.style.height = 'auto'
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_djrwgl'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
+      })
+    },
     openSeleceProductDialogss() {
       this.$refs['ComSelect-pagesb'].openDialog()
     },
@@ -864,7 +880,9 @@ export default {
           if (this.datafilelist.length) {
             this.datafilelist.map((item, index) => {
               item.bimAttachments = {
-                businessType: '',
+                businessType: 'system_attachment',
+                configKey: 'fj_djrwgl',
+                categoryId: this.categoryId,
                 documentId: item.id,
                 fileFlag: '',
                 sort: index

@@ -96,7 +96,35 @@
                             </template>
                         </el-table-column>
                     </JNPF-table>
-                    <GridFileList v-loading="gridFileListLoading" class="table-style" style="border: 1px solid #ebeef5 !important;" v-else @item-click="listItemClick" @command="allItemCommandHandler"  :list="fileList" :file-options="allFileOptions"></GridFileList>
+                    <GridFileList
+                        v-else
+                        v-loading="gridFileListLoading"
+                        class="table-style"
+                        style="border: 1px solid #ebeef5 !important;"
+                        @item-click="listItemClick"
+                        @command="allItemCommandHandler"
+                        :list="fileList"
+                        :file-options="allFileOptions"
+                    >
+                        <template v-slot:tooltip="{ item }">
+                            <el-row>
+                                <el-col style="text-align: right" :span="8">{{ item.type ? '文件名' : '文件夹名' }}：</el-col>
+                                <el-col :span="16">{{ item.filename }}</el-col>
+                            </el-row>
+                            <el-row>
+                                <el-col style="text-align: right" :span="8">文件大小：</el-col>
+                                <el-col :span="16">{{ item.fileSize | toFileSize() }}</el-col>
+                            </el-row>
+                        </template>
+                        <template v-slot:bottom="{item}">
+                            <div>
+                                <p class="li-upload-p1 name">{{ item.filename }}</p>
+                                <p class="li-upload-p2 file-size" >{{ item.fileSize | toFileSize() }}</p>
+                            </div>
+                        </template>
+
+
+                    </GridFileList>
                 </div>
             </div>
         </div>
@@ -189,7 +217,7 @@ export default {
             tableData: [],
             listLoading: false,
             initListQuery: {
-                "businessId": 0,
+                "businessId": "",
                 "businessType": "",
                 "categoryId": "",
                 "createByName": "",
@@ -202,9 +230,9 @@ export default {
                         "column": ""
                     }
                 ],
-                "pageNum": 0,
-                "pageSize": 0,
-                "productsId": 0,
+                "pageNum": 1,
+                "pageSize": 20,
+                "productsId": null,
                 "startTime": "",
                 "startUpdateTime": "",
                 "superQuery": {
@@ -363,7 +391,7 @@ export default {
             trim(this.listQuery)
             this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
             systemAttachmentsList(this.listQuery).then(res => {
-                this.tableData = res.data.records
+                this.fileList = res.data.records
                 this.total = res.data.total
                 this.listLoading = false
                 this.visible = false
@@ -404,6 +432,28 @@ export default {
 </script>
 <style src="@/assets/scss/index-list.scss" lang="scss" scoped />
 <style scoped lang="scss">
+.name{
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    color: #222;
+    display: -webkit-box;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 18px;
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+    width: 104px;
+    word-break: break-all;
+}
+.file-size{
+    margin-top: -3px;
+    color: #999;
+    font-size: 12px;
+    text-align: center;
+
+}
 .is-reverse {
     color: #fff !important;
     background-color: #3fb9f8;

@@ -1,23 +1,22 @@
 
 <template>
-  <el-drawer :size="value && isConditionNode() ?'650px':'600px'" class="drawer JNPF-common-drawer"
-    :visible.sync="visible" @close="cancel" v-if="properties" append-to-body
-    :wrapperClosable="false">
+  <el-drawer :size="value && isConditionNode() ? '650px' : '600px'" class="drawer JNPF-common-drawer"
+    :visible.sync="visible" @close="cancel" v-if="properties" append-to-body :wrapperClosable="false">
     <!-- 标题 -->
     <header slot="title" class="header"
-      v-if="value && (value.type=='condition'|| value.type=='approver' || value.type=='subFlow' || value.type=='start' )">
+      v-if="value && (value.type == 'condition' || value.type == 'approver' || value.type == 'subFlow' || value.type == 'start')">
       <el-input size="mini" v-model="properties.title" style="z-index:9;max-width: 200px; font-size: 16px;"
         placeholder="请输入">
       </el-input>
     </header>
-    <header slot="title" class="header" v-else>{{properties.title}}</header>
+    <header slot="title" class="header" v-else>{{ properties.title }}</header>
 
 
     <!-- 发起人 -->
     <section class="approver-pane" v-if="value && isStartNode()">
       <el-scrollbar class="config-scrollbar" style="height:100%">
-      <el-tabs style="height:100%;">
-        <el-tab-pane label="基础设置">
+        <!-- <el-tabs style="height:100%;"> -->
+        <!-- <el-tab-pane label="基础设置">
           <el-scrollbar class="config-scrollbar">
             <el-form label-position="top" :model="startForm" class="pd-10-20">
               <el-form-item label="发起设置" v-if="flowType!=1">
@@ -34,7 +33,7 @@
                   <org-select ref="start-user-org" type="user" v-model="initiator" title="添加用户" />
                 </div>
               </el-form-item>
-              <!-- <el-form-item label="抄送设置">
+              <el-form-item label="抄送设置">
                 <div slot="label" class="form-item-label">抄送设置</div>
                 <div class="form-item-content">
                   <org-select ref="start-copy-role-org" type="role"
@@ -59,17 +58,16 @@
                   </el-form-item>
                   <el-checkbox v-model="startForm.isCustomCopy">允许自选抄送人</el-checkbox>
                 </div>
-              </el-form-item> -->
+              </el-form-item>
             </el-form>
           </el-scrollbar>
-        </el-tab-pane>
+        </el-tab-pane> -->
 
-        <el-tab-pane label="流程通知">
-          <el-scrollbar class="config-scrollbar">
-            <el-form :model="startForm" class="pd-10-20" label-position="top">
-              <el-alert title="该通知设置配置外部第三方消息提醒，站内信系统默认发送" type="warning" :closable="false"
-                show-icon />
-              <el-form-item class="mt-10">
+        <!-- <el-tab-pane label="流程通知"> -->
+        <el-scrollbar class="config-scrollbar">
+          <el-form :model="startForm" class="pd-10-20" label-position="top">
+            <el-alert title="该通知设置配置外部第三方消息提醒，站内信系统默认发送" type="warning" :closable="false" show-icon />
+            <!-- <el-form-item class="mt-10">
                 <div slot="label" class="form-item-label">流程待办
                   <el-tooltip content="流程处于等待的时候" placement="top">
                     <a class="el-icon-warning-outline"></a>
@@ -114,8 +112,8 @@
                     </template>
                   </el-table-column>
                 </el-table>
-              </div>
-              <el-form-item>
+              </div> -->
+            <!-- <el-form-item>
                 <div slot="label" class="form-item-label">流程结束
                   <el-tooltip content="流程结束的时候" placement="top">
                     <a class="el-icon-warning-outline"></a>
@@ -160,100 +158,140 @@
                     </template>
                   </el-table-column>
                 </el-table>
+              </div> -->
+            <el-form-item>
+              <div slot="label" class="form-item-label">节点处理
+                <el-tooltip content="当处理人处理的时候" placement="top">
+                  <a class="el-icon-warning-outline"></a>
+                </el-tooltip>
               </div>
-              <el-form-item>
-                <div slot="label" class="form-item-label">节点同意
-                  <el-tooltip content="所有节点审核人同意的时候" placement="top">
-                    <a class="el-icon-warning-outline"></a>
-                  </el-tooltip>
-                </div>
-                <el-select class="form-item-content" v-model="startForm.approveMsgConfig.on"
-                  placeholder="请选择">
-                  <el-option v-for="item in noticeOptions" :key="item.value" :label="item.label"
-                    :value="item.value" />
-                </el-select>
+              <el-select class="form-item-content" v-model="startForm.approveMsgConfig.on" placeholder="请选择">
+                <el-option v-for="item in noticeOptions" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
+            </el-form-item>
+            <div style="margin-bottom: 18px;" class="form-item-content" v-if="startForm.approveMsgConfig.on === 1">
+              <el-form-item label="消息模板">
+                <msg-dialog :value="startForm.approveMsgConfig.msgId" :title="startForm.approveMsgConfig.msgName"
+                  @change="onMsgChange('startForm', 'approveMsgConfig', arguments)" />
               </el-form-item>
-              <div style="margin-bottom: 18px;" class="form-item-content"
-                v-if="startForm.approveMsgConfig.on===1">
-                <el-form-item label="消息模板">
-                  <msg-dialog :value="startForm.approveMsgConfig.msgId"
-                    :title="startForm.approveMsgConfig.msgName"
-                    @change="onMsgChange('startForm','approveMsgConfig',arguments)" />
-                </el-form-item>
-                <div class="form-sub-title">参数设置</div>
-                <el-table :data="startForm.approveMsgConfig.templateJson">
-                  <el-table-column type="index" width="60" label="序号" align="center" />
-                  <el-table-column prop="field" label="参数名称" width="200">
-                    <template slot-scope="scope">
-                      {{scope.row.fieldName?scope.row.field+'('+scope.row.fieldName+')':scope.row.field}}
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="value" label="表单字段">
-                    <template slot-scope="scope">
-                      <el-select v-model="scope.row.relationField" placeholder="请选择表单字段" clearable
-                        filterable @change="onRelationFieldChange($event,scope.row)">
-                        <el-option-group>
-                          <el-option v-for="item in systemFieldOptions" :key="item.__vModel__"
-                            :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
-                            :value="item.__vModel__" />
-                        </el-option-group>
-                        <el-option-group>
+              <div class="form-sub-title">参数设置</div>
+              <el-table :data="startForm.approveMsgConfig.templateJson">
+                <el-table-column type="index" width="60" label="序号" align="center" />
+                <el-table-column prop="field" label="参数名称" width="200">
+                  <template slot-scope="scope">
+                    {{ scope.row.fieldName ? scope.row.field + '(' + scope.row.fieldName + ')' : scope.row.field }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="value" label="表单字段">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.relationField" placeholder="请选择表单字段" clearable filterable
+                      @change="onRelationFieldChange($event, scope.row)">
+                      <el-option-group>
+                        <el-option v-for="item in systemFieldOptions" :key="item.__vModel__"
+                          :label="item.__config__.label ? item.__vModel__ + '(' + item.__config__.label + ')' : item.__vModel__"
+                          :value="item.__vModel__" />
+                      </el-option-group>
+                      <!-- <el-option-group>
                           <el-option v-for="item in formFieldsOptions" :key="item.__vModel__"
                             :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
                             :value="item.__vModel__" />
-                        </el-option-group>
-                      </el-select>
-                    </template>
-                  </el-table-column>
-                </el-table>
+                        </el-option-group> -->
+                    </el-select>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+            <el-form-item v-if="startForm.approveMsgConfig.on === 1">
+              <div slot="label" class="form-item-label">推送渠道
+                <el-tooltip content="所选消息模板推送渠道" placement="top">
+                  <a class="el-icon-warning-outline"></a>
+                </el-tooltip>
               </div>
-              <el-form-item>
-                <div slot="label" class="form-item-label">节点拒绝
-                  <el-tooltip content="所有节点审核人拒绝的时候" placement="top">
-                    <a class="el-icon-warning-outline"></a>
-                  </el-tooltip>
-                </div>
-                <el-select class="form-item-content" v-model="startForm.rejectMsgConfig.on"
-                  placeholder="请选择">
-                  <el-option v-for="item in noticeOptions" :key="item.value" :label="item.label"
-                    :value="item.value" />
-                </el-select>
+              <el-checkbox disabled v-model="startForm.approveMsgConfig.isEmail" :true-label="1" :false-label="0">电子邮箱
+              </el-checkbox>
+              <el-checkbox disabled v-model="startForm.approveMsgConfig.isWecom" :true-label="1" :false-label="0">企业微信
+              </el-checkbox>
+              <el-checkbox disabled v-model="startForm.approveMsgConfig.isDingTalk" :true-label="1" :false-label="0">阿里钉钉
+              </el-checkbox>
+              <el-checkbox disabled v-model="startForm.approveMsgConfig.isApp" :true-label="1" :false-label="0">APP
+              </el-checkbox>
+              <el-checkbox disabled v-model="startForm.approveMsgConfig.isSms" :true-label="1" :false-label="0">短信
+              </el-checkbox>
+            </el-form-item>
+            <el-form-item v-if="startForm.approveMsgConfig.on === 1">
+              <div slot="label" class="form-item-label">消息内容</div>
+            </el-form-item>
+            <div style="margin-bottom: 18px;border: 1px solid #DCDFE6;padding:10px" class="form-item-content"
+              v-if="startForm.approveMsgConfig.msgContent">
+              {{ startForm.approveMsgConfig.msgContent }}
+            </div>
+            <el-form-item>
+              <div slot="label" class="form-item-label">节点取消
+                <el-tooltip content="当处理人取消的时候" placement="top">
+                  <a class="el-icon-warning-outline"></a>
+                </el-tooltip>
+              </div>
+              <el-select class="form-item-content" v-model="startForm.rejectMsgConfig.on" placeholder="请选择">
+                <el-option v-for="item in noticeOptions" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
+            </el-form-item>
+            <div style="margin-bottom: 18px;" class="form-item-content" v-if="startForm.rejectMsgConfig.on === 1">
+              <el-form-item label="消息模板">
+                <msg-dialog :value="startForm.rejectMsgConfig.msgId" :title="startForm.rejectMsgConfig.msgName"
+                  @change="onMsgChange('startForm', 'rejectMsgConfig', arguments)" />
               </el-form-item>
-              <div style="margin-bottom: 18px;" class="form-item-content"
-                v-if="startForm.rejectMsgConfig.on===1">
-                <el-form-item label="消息模板">
-                  <msg-dialog :value="startForm.rejectMsgConfig.msgId"
-                    :title="startForm.rejectMsgConfig.msgName"
-                    @change="onMsgChange('startForm','rejectMsgConfig',arguments)" />
-                </el-form-item>
-                <div class="form-sub-title">参数设置</div>
-                <el-table :data="startForm.rejectMsgConfig.templateJson">
-                  <el-table-column type="index" width="60" label="序号" align="center" />
-                  <el-table-column prop="field" label="参数名称" width="200">
-                    <template slot-scope="scope">
-                      {{scope.row.fieldName?scope.row.field+'('+scope.row.fieldName+')':scope.row.field}}
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="value" label="表单字段">
-                    <template slot-scope="scope">
-                      <el-select v-model="scope.row.relationField" placeholder="请选择表单字段" clearable
-                        filterable @change="onRelationFieldChange($event,scope.row)">
-                        <el-option-group>
-                          <el-option v-for="item in systemFieldOptions" :key="item.__vModel__"
-                            :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
-                            :value="item.__vModel__" />
-                        </el-option-group>
-                        <el-option-group>
+              <div class="form-sub-title">参数设置</div>
+              <el-table :data="startForm.rejectMsgConfig.templateJson">
+                <el-table-column type="index" width="60" label="序号" align="center" />
+                <el-table-column prop="field" label="参数名称" width="200">
+                  <template slot-scope="scope">
+                    {{ scope.row.fieldName ? scope.row.field + '(' + scope.row.fieldName + ')' : scope.row.field }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="value" label="表单字段">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.relationField" placeholder="请选择表单字段" clearable filterable
+                      @change="onRelationFieldChange($event, scope.row)">
+                      <el-option-group>
+                        <el-option v-for="item in systemFieldOptions" :key="item.__vModel__"
+                          :label="item.__config__.label ? item.__vModel__ + '(' + item.__config__.label + ')' : item.__vModel__"
+                          :value="item.__vModel__" />
+                      </el-option-group>
+                      <!-- <el-option-group>
                           <el-option v-for="item in formFieldsOptions" :key="item.__vModel__"
                             :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
                             :value="item.__vModel__" />
-                        </el-option-group>
-                      </el-select>
-                    </template>
-                  </el-table-column>
-                </el-table>
+                        </el-option-group> -->
+                    </el-select>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+            <el-form-item v-if="startForm.rejectMsgConfig.on === 1">
+              <div slot="label" class="form-item-label">推送渠道
+                <el-tooltip content="所选消息模板推送渠道" placement="top">
+                  <a class="el-icon-warning-outline"></a>
+                </el-tooltip>
               </div>
-              <el-form-item>
+              <el-checkbox disabled v-model="startForm.rejectMsgConfig.isEmail" :true-label="1" :false-label="0">电子邮箱
+              </el-checkbox>
+              <el-checkbox disabled v-model="startForm.rejectMsgConfig.isWecom" :true-label="1" :false-label="0">企业微信
+              </el-checkbox>
+              <el-checkbox disabled v-model="startForm.rejectMsgConfig.isDingTalk" :true-label="1" :false-label="0">阿里钉钉
+              </el-checkbox>
+              <el-checkbox disabled v-model="startForm.rejectMsgConfig.isApp" :true-label="1" :false-label="0">APP
+              </el-checkbox>
+              <el-checkbox disabled v-model="startForm.rejectMsgConfig.isSms" :true-label="1" :false-label="0">短信
+              </el-checkbox>
+            </el-form-item>
+            <el-form-item v-if="startForm.rejectMsgConfig.on === 1">
+              <div slot="label" class="form-item-label">消息内容</div>
+            </el-form-item>
+            <div style="margin-bottom: 18px;border: 1px solid #DCDFE6;padding:10px" class="form-item-content"
+              v-if="startForm.rejectMsgConfig.msgContent">
+              {{ startForm.rejectMsgConfig.msgContent }}
+            </div>
+            <!-- <el-form-item>
                 <div slot="label" class="form-item-label">节点抄送
                   <el-tooltip content="所有节点抄送的时候" placement="top">
                     <a class="el-icon-warning-outline"></a>
@@ -298,8 +336,8 @@
                     </template>
                   </el-table-column>
                 </el-table>
-              </div>
-              <el-form-item>
+              </div> -->
+            <!-- <el-form-item>
                 <div slot="label" class="form-item-label">节点超时
                   <el-tooltip content="所有节点超时的时候" placement="top">
                     <a class="el-icon-warning-outline"></a>
@@ -338,51 +376,70 @@
                     </template>
                   </el-table-column>
                 </el-table>
+              </div> -->
+            <el-form-item>
+              <div slot="label" class="form-item-label">节点提醒
+                <el-tooltip content="所有节点提醒的时候" placement="top">
+                  <a class="el-icon-warning-outline"></a>
+                </el-tooltip>
               </div>
-              <el-form-item>
-                <div slot="label" class="form-item-label">节点提醒
-                  <el-tooltip content="所有节点提醒的时候" placement="top">
-                    <a class="el-icon-warning-outline"></a>
-                  </el-tooltip>
-                </div>
-                <el-select class="form-item-content" v-model="startForm.noticeMsgConfig.on"
-                  placeholder="请选择">
-                  <el-option v-for="item in noticeOptions" :key="item.value" :label="item.label"
-                    :value="item.value" />
-                </el-select>
+              <el-select class="form-item-content" v-model="startForm.noticeMsgConfig.on" placeholder="请选择">
+                <el-option v-for="item in noticeOptions" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
+            </el-form-item>
+            <div style="margin-bottom: 18px;" class="form-item-content" v-if="startForm.noticeMsgConfig.on === 1">
+              <el-form-item label="消息模板">
+                <msg-dialog :value="startForm.noticeMsgConfig.msgId" :title="startForm.noticeMsgConfig.msgName"
+                  @change="onMsgChange('startForm', 'noticeMsgConfig', arguments)" />
               </el-form-item>
-              <div style="margin-bottom: 18px;" class="form-item-content"
-                v-if="startForm.noticeMsgConfig.on===1">
-                <el-form-item label="消息模板">
-                  <msg-dialog :value="startForm.noticeMsgConfig.msgId"
-                    :title="startForm.noticeMsgConfig.msgName"
-                    @change="onMsgChange('startForm','noticeMsgConfig',arguments)" />
-                </el-form-item>
-                <div class="form-sub-title">参数设置</div>
-                <el-table :data="startForm.noticeMsgConfig.templateJson">
-                  <el-table-column type="index" width="60" label="序号" align="center" />
-                  <el-table-column prop="field" label="参数名称" width="200">
-                    <template slot-scope="scope">
-                      {{scope.row.fieldName?scope.row.field+'('+scope.row.fieldName+')':scope.row.field}}
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="value" label="表单字段">
-                    <template slot-scope="scope">
-                      <el-select v-model="scope.row.relationField" placeholder="请选择表单字段" clearable
-                        filterable>
-                        <el-option v-for="item in funcOptions" :key="item.__vModel__"
-                          :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
-                          :value="item.__vModel__">
-                        </el-option>
-                      </el-select>
-                    </template>
-                  </el-table-column>
-                </el-table>
+              <div class="form-sub-title">参数设置</div>
+              <el-table :data="startForm.noticeMsgConfig.templateJson">
+                <el-table-column type="index" width="60" label="序号" align="center" />
+                <el-table-column prop="field" label="参数名称" width="200">
+                  <template slot-scope="scope">
+                    {{ scope.row.fieldName ? scope.row.field + '(' + scope.row.fieldName + ')' : scope.row.field }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="value" label="表单字段">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.relationField" placeholder="请选择表单字段" clearable filterable>
+                      <el-option v-for="item in funcOptions" :key="item.__vModel__"
+                        :label="item.__config__.label ? item.__vModel__ + '(' + item.__config__.label + ')' : item.__vModel__"
+                        :value="item.__vModel__">
+                      </el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+            <el-form-item v-if="startForm.noticeMsgConfig.on === 1">
+              <div slot="label" class="form-item-label">推送渠道
+                <el-tooltip content="所选消息模板推送渠道" placement="top">
+                  <a class="el-icon-warning-outline"></a>
+                </el-tooltip>
               </div>
-            </el-form>
-          </el-scrollbar>
-        </el-tab-pane>
-        <el-tab-pane label="超时提醒">
+              <el-checkbox disabled v-model="startForm.noticeMsgConfig.isEmail" :true-label="1" :false-label="0">电子邮箱
+              </el-checkbox>
+              <el-checkbox disabled v-model="startForm.noticeMsgConfig.isWecom" :true-label="1" :false-label="0">企业微信
+              </el-checkbox>
+              <el-checkbox disabled v-model="startForm.noticeMsgConfig.isDingTalk" :true-label="1" :false-label="0">阿里钉钉
+              </el-checkbox>
+              <el-checkbox disabled v-model="startForm.noticeMsgConfig.isApp" :true-label="1" :false-label="0">APP
+              </el-checkbox>
+              <el-checkbox disabled v-model="startForm.noticeMsgConfig.isSms" :true-label="1" :false-label="0">短信
+              </el-checkbox>
+            </el-form-item>
+            <el-form-item v-if="startForm.noticeMsgConfig.on === 1">
+              <div slot="label" class="form-item-label">消息内容</div>
+            </el-form-item>
+            <div style="margin-bottom: 18px;border: 1px solid #DCDFE6;padding:10px" class="form-item-content"
+              v-if="startForm.noticeMsgConfig.msgContent">
+              {{ startForm.noticeMsgConfig.msgContent }}
+            </div>
+          </el-form>
+        </el-scrollbar>
+        <!-- </el-tab-pane> -->
+        <!-- <el-tab-pane label="超时提醒">
           <el-scrollbar class="config-scrollbar">
             <el-form :model="startForm" class="pd-10-20" label-position="top">
               <el-form-item label="限时设置">
@@ -526,24 +583,23 @@
               </div>
             </el-form>
           </el-scrollbar>
-        </el-tab-pane>
-      </el-tabs>
-    </el-scrollbar>
+        </el-tab-pane> -->
+        <!-- </el-tabs> -->
+      </el-scrollbar>
     </section>
     <!-- 提醒人 -->
     <section class="approver-pane" v-if="value && isApproverNode()">
       <el-scrollbar class="config-scrollbar" style="height:100%">
         <el-tabs v-model="activeName" style="height:100%;">
-        <el-tab-pane label="基础设置" name="config"> 
-          <el-scrollbar class="config-scrollbar">
-            <el-form label-position="top" :model="approverForm" class="pd-10-20" :rules="approverRule">
-              <el-form-item label="超时提醒">
-                <div slot="label" class="form-item-label"><span style="color: red;margin-right: 4px;">*</span>超时提醒</div>
-                <div class="form-item-content">
+          <el-tab-pane label="基础设置" name="config">
+            <el-scrollbar class="config-scrollbar">
+              <el-form label-position="top" :model="approverForm" class="pd-10-20" :rules="approverRule">
+                <el-form-item label="超时提醒">
+                  <div slot="label" class="form-item-label"><span style="color: red;margin-right: 4px;">*</span>超时提醒</div>
+                  <div class="form-item-content">
                     <el-row :gutter="16">
                       <el-col :span="8">
-                        <el-input-number v-model="approverForm.planTime" :min="1"
-                          :step="1"></el-input-number>
+                        <el-input-number v-model="approverForm.planTime" :min="1" :step="1"></el-input-number>
                       </el-col>
                       <el-col :span="6">
                         <el-select class="form-item-content" v-model="approverForm.flowUnit">
@@ -553,49 +609,46 @@
                         </el-select>
                       </el-col>
                     </el-row>
-                </div>
-              </el-form-item>
-              <el-form-item label="提醒设置">
-                <div slot="label" class="form-item-label">提醒设置</div>
-                <div class="form-item-content">
-                  <el-radio-group v-model="approverForm.assigneeType" @change="resetOrgColl">
-                    <el-radio v-for="item in assigneeTypeOptions" :label="item.value"
-                      :key="item.value" :disabled="item.disabled" class="radio-item">{{item.label}}
-                    </el-radio>
-                  </el-radio-group>
-                  <div v-if="approverForm.assigneeType === 1" class="option-box-tip">
-                    发起者主管将作为提醒人</div>
-                  <div v-if="approverForm.assigneeType === 2" class="option-box-tip">
-                    发起者的部门主管将作为提醒人</div>
-                  <div v-if="approverForm.assigneeType === 3" class="option-box-tip">
-                    发起者自己将作为提醒人</div>
-                  <div v-if="approverForm.assigneeType === 4" class="option-box-tip">
-                    选择流程表单字段的值作为提醒人</div>
-                  <div v-if="approverForm.assigneeType === 5" class="option-box-tip">
-                    设置提醒人为提醒流程中某个环节的提醒人</div>
-                  <div v-if="approverForm.assigneeType === 6" class="option-box-tip">
-                    指定提醒人提醒</div>
-                  <div v-if="approverForm.assigneeType === 7" class="option-box-tip">
-                    指定可供选择的候选人提醒</div>
-                  <div v-if="approverForm.assigneeType === 9" class="option-box-tip">
-                    通过第三方调用从目标服务中获取提醒人</div>
-                  <el-form-item label="发起者的" style="margin-bottom:0!important"
-                    v-if="approverForm.assigneeType === 1">
-                    <el-select v-model="approverForm.managerLevel">
-                      <el-option v-for="item in 10" :key="item"
-                        :label="item===1?'直属主管':'第'+item+'级主管'" :value="item">
-                      </el-option>
-                    </el-select>
-                  </el-form-item>
-                  <el-form-item label="发起者的" style="margin-bottom:0!important"
-                    v-if="approverForm.assigneeType === 2">
-                    <el-select v-model="approverForm.departmentLevel">
-                      <el-option v-for="item in 10" :key="item" :label="'第'+item+'级部门主管'"
-                        :value="item">
-                      </el-option>
-                    </el-select>
-                  </el-form-item>
-                  <!-- <el-form-item label="表单字段" style="margin-bottom:0!important"
+                  </div>
+                </el-form-item>
+                <el-form-item label="提醒设置">
+                  <div slot="label" class="form-item-label">提醒设置</div>
+                  <div class="form-item-content">
+                    <el-radio-group v-model="approverForm.assigneeType" @change="resetOrgColl">
+                      <el-radio v-for="item in assigneeTypeOptions" :label="item.value" :key="item.value"
+                        :disabled="item.disabled" class="radio-item">{{ item.label }}
+                      </el-radio>
+                    </el-radio-group>
+                    <div v-if="approverForm.assigneeType === 1" class="option-box-tip">
+                      发起者主管将作为提醒人</div>
+                    <div v-if="approverForm.assigneeType === 2" class="option-box-tip">
+                      发起者的部门主管将作为提醒人</div>
+                    <div v-if="approverForm.assigneeType === 3" class="option-box-tip">
+                      发起者自己将作为提醒人</div>
+                    <div v-if="approverForm.assigneeType === 4" class="option-box-tip">
+                      选择流程表单字段的值作为提醒人</div>
+                    <div v-if="approverForm.assigneeType === 5" class="option-box-tip">
+                      设置提醒人为提醒流程中某个环节的提醒人</div>
+                    <div v-if="approverForm.assigneeType === 6" class="option-box-tip">
+                      指定提醒人提醒</div>
+                    <div v-if="approverForm.assigneeType === 7" class="option-box-tip">
+                      指定可供选择的候选人提醒</div>
+                    <div v-if="approverForm.assigneeType === 9" class="option-box-tip">
+                      通过第三方调用从目标服务中获取提醒人</div>
+                    <el-form-item label="发起者的" style="margin-bottom:0!important" v-if="approverForm.assigneeType === 1">
+                      <el-select v-model="approverForm.managerLevel">
+                        <el-option v-for="item in 10" :key="item" :label="item === 1 ? '直属主管' : '第' + item + '级主管'"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item label="发起者的" style="margin-bottom:0!important" v-if="approverForm.assigneeType === 2">
+                      <el-select v-model="approverForm.departmentLevel">
+                        <el-option v-for="item in 10" :key="item" :label="'第' + item + '级部门主管'" :value="item">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                    <!-- <el-form-item label="表单字段" style="margin-bottom:0!important"
                     v-if="approverForm.assigneeType === 4">
                     <el-radio-group v-model="approverForm.formFieldType">
                       <el-radio :label="1">用户</el-radio>
@@ -607,31 +660,28 @@
                       </el-option>
                     </el-select>
                   </el-form-item> -->
-                  <el-form-item label="提醒节点" style="margin-bottom:0!important"
-                    v-if="approverForm.assigneeType === 5">
-                    <el-select v-model="approverForm.nodeId" placeholder="请选择节点">
-                      <el-option v-for="item in nodeOptions" :key="item.nodeId"
-                        :label="item.properties.title" :value="item.nodeId">
-                      </el-option>
-                    </el-select>
-                  </el-form-item>
-                  <el-form-item style="margin-bottom:0!important"
-                    v-if="approverForm.assigneeType === 9">
-                    <div slot="label">请求路径
-                      <el-tooltip content="自带参数：taskId、taskNodeId" placement="top">
-                        <a class="el-icon-warning-outline"></a>
-                      </el-tooltip>
-                    </div>
-                    <el-input v-model="approverForm.getUserUrl" placeholder="请输入http或https接口地址">
-                      <template slot="prepend">GET</template>
-                    </el-input>
-                  </el-form-item>
-                  <el-form-item style="margin-bottom:0!important"
-                    v-if="approverForm.assigneeType === 6||approverForm.assigneeType === 7">
-                    <org-select ref="approver-user-org" title="添加用户"
-                      v-model="approverForm.circulateUser" />
-                  </el-form-item>
-                  <!-- <el-form-item style="margin-bottom:0!important"
+                    <el-form-item label="提醒节点" style="margin-bottom:0!important" v-if="approverForm.assigneeType === 5">
+                      <el-select v-model="approverForm.nodeId" placeholder="请选择节点">
+                        <el-option v-for="item in nodeOptions" :key="item.nodeId" :label="item.properties.title"
+                          :value="item.nodeId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item style="margin-bottom:0!important" v-if="approverForm.assigneeType === 9">
+                      <div slot="label">请求路径
+                        <el-tooltip content="自带参数：taskId、taskNodeId" placement="top">
+                          <a class="el-icon-warning-outline"></a>
+                        </el-tooltip>
+                      </div>
+                      <el-input v-model="approverForm.getUserUrl" placeholder="请输入http或https接口地址">
+                        <template slot="prepend">GET</template>
+                      </el-input>
+                    </el-form-item>
+                    <el-form-item style="margin-bottom:0!important"
+                      v-if="approverForm.assigneeType === 6 || approverForm.assigneeType === 7">
+                      <org-select ref="approver-user-org" title="添加用户" v-model="approverForm.circulateUser" />
+                    </el-form-item>
+                    <!-- <el-form-item style="margin-bottom:0!important"
                     v-if="approverForm.assigneeType === 6">
                     <div slot="label">附加条件
                       <el-tooltip content="指定成员增加人员选择范围附加条件" placement="top">
@@ -646,67 +696,88 @@
                       <el-option label="发起人下属" :value="5"></el-option>
                     </el-select>
                   </el-form-item> -->
-                </div>
-              </el-form-item>
-            </el-form>
-          </el-scrollbar>
-        </el-tab-pane>
-        <el-tab-pane label="节点通知">
-          <el-scrollbar class="config-scrollbar">
-            <el-form :model="approverForm" class="pd-10-20" label-position="top">
-              <el-alert title="该通知设置配置外部第三方消息提醒，站内信系统默认发送" type="warning" :closable="false"
-                show-icon />
-    
-              <el-form-item>
-                <div slot="label" class="form-item-label">节点提醒
-                  <el-tooltip content="当前节点提醒的时候" placement="top">
-                    <a class="el-icon-warning-outline"></a>
-                  </el-tooltip>
-                </div>
-                <el-select class="form-item-content" v-model="approverForm.copyMsgConfig.on"
-                  placeholder="请选择">
-                  <el-option v-for="item in nodeNoticeOptions" :key="item.value" :label="item.label"
-                    :value="item.value" />
-                </el-select>
-              </el-form-item>
-              <div style="margin-bottom: 18px;" class="form-item-content"
-                v-if="approverForm.copyMsgConfig.on===1">
-                <el-form-item label="消息模板">
-                  <msg-dialog :value="approverForm.copyMsgConfig.msgId"
-                    :title="approverForm.copyMsgConfig.msgName"
-                    @change="onMsgChange('approverForm','copyMsgConfig',arguments)" />
+                  </div>
                 </el-form-item>
-                <div class="form-sub-title">参数设置</div>
-                <el-table :data="approverForm.copyMsgConfig.templateJson">
-                  <el-table-column type="index" width="60" label="序号" align="center" />
-                  <el-table-column prop="field" label="参数名称" width="200">
-                    <template slot-scope="scope">
-                      {{scope.row.fieldName?scope.row.field+'('+scope.row.fieldName+')':scope.row.field}}
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="value" label="表单字段">
-                    <template slot-scope="scope">
-                      <el-select v-model="scope.row.relationField" placeholder="请选择表单字段" clearable
-                        filterable @change="onRelationFieldChange($event,scope.row)">
-                        <el-option-group>
-                          <el-option v-for="item in systemFieldOptions" :key="item.__vModel__"
-                            :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
-                            :value="item.__vModel__" />
-                        </el-option-group>
-                        <!-- <el-option-group>
+              </el-form>
+            </el-scrollbar>
+          </el-tab-pane>
+          <el-tab-pane label="节点通知">
+            <el-scrollbar class="config-scrollbar">
+              <el-form :model="approverForm" class="pd-10-20" label-position="top">
+                <el-alert title="该通知设置配置外部第三方消息提醒，站内信系统默认发送" type="warning" :closable="false" show-icon />
+
+                <el-form-item>
+                  <div slot="label" class="form-item-label">节点提醒
+                    <el-tooltip content="当前节点提醒的时候" placement="top">
+                      <a class="el-icon-warning-outline"></a>
+                    </el-tooltip>
+                  </div>
+                  <el-select class="form-item-content" v-model="approverForm.copyMsgConfig.on" placeholder="请选择">
+                    <el-option v-for="item in nodeNoticeOptions" :key="item.value" :label="item.label"
+                      :value="item.value" />
+                  </el-select>
+                </el-form-item>
+                <div style="margin-bottom: 18px;" class="form-item-content" v-if="approverForm.copyMsgConfig.on === 1">
+                  <el-form-item label="消息模板">
+                    <msg-dialog :value="approverForm.copyMsgConfig.msgId" :title="approverForm.copyMsgConfig.msgName"
+                      @change="onMsgChange('approverForm', 'copyMsgConfig', arguments)" />
+                  </el-form-item>
+                  <div class="form-sub-title">参数设置</div>
+                  <el-table :data="approverForm.copyMsgConfig.templateJson">
+                    <el-table-column type="index" width="60" label="序号" align="center" />
+                    <el-table-column prop="field" label="参数名称" width="200">
+                      <template slot-scope="scope">
+                        {{ scope.row.fieldName ? scope.row.field + '(' + scope.row.fieldName + ')' : scope.row.field }}
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="value" label="表单字段">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.relationField" placeholder="请选择表单字段" clearable filterable
+                          @change="onRelationFieldChange($event, scope.row)">
+                          <el-option-group>
+                            <el-option v-for="item in systemFieldOptions" :key="item.__vModel__"
+                              :label="item.__config__.label ? item.__vModel__ + '(' + item.__config__.label + ')' : item.__vModel__"
+                              :value="item.__vModel__" />
+                          </el-option-group>
+                          <!-- <el-option-group>
                           <el-option v-for="item in formFieldsOptions" :key="item.__vModel__"
                             :label="item.__config__.label?item.__vModel__+'('+item.__config__.label+')':item.__vModel__"
                             :value="item.__vModel__" />
                         </el-option-group> -->
-                      </el-select>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </div>
-            </el-form>
-          </el-scrollbar>
-        </el-tab-pane>
-        <!-- <el-tab-pane label="高级设置" name="senior">
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </div>
+                <el-form-item v-if="approverForm.copyMsgConfig.on === 1">
+                  <div slot="label" class="form-item-label">推送渠道
+                    <el-tooltip content="所选消息模板推送渠道" placement="top">
+                      <a class="el-icon-warning-outline"></a>
+                    </el-tooltip>
+                  </div>
+                  <el-checkbox disabled v-model="approverForm.copyMsgConfig.isEmail" :true-label="1" :false-label="0">电子邮箱
+                  </el-checkbox>
+                  <el-checkbox disabled v-model="approverForm.copyMsgConfig.isWecom" :true-label="1" :false-label="0">企业微信
+                  </el-checkbox>
+                  <el-checkbox disabled v-model="approverForm.copyMsgConfig.isDingTalk" :true-label="1"
+                    :false-label="0">阿里钉钉
+                  </el-checkbox>
+                  <el-checkbox disabled v-model="approverForm.copyMsgConfig.isApp" :true-label="1" :false-label="0">APP
+                  </el-checkbox>
+                  <el-checkbox disabled v-model="approverForm.copyMsgConfig.isSms" :true-label="1" :false-label="0">短信
+                  </el-checkbox>
+                </el-form-item>
+                <el-form-item v-if="approverForm.copyMsgConfig.on === 1">
+                  <div slot="label" class="form-item-label">消息内容</div>
+                </el-form-item>
+                <div style="margin-bottom: 18px;border: 1px solid #DCDFE6;padding:10px" class="form-item-content"
+                  v-if="approverForm.copyMsgConfig.msgContent">
+                  {{ approverForm.copyMsgConfig.msgContent }}
+                </div>
+              </el-form>
+            </el-scrollbar>
+          </el-tab-pane>
+          <!-- <el-tab-pane label="高级设置" name="senior">
           <el-scrollbar class="config-scrollbar">
             <el-form label-position="top" class="pd-10-20">
               <el-form-item label="操作设置">
@@ -775,7 +846,7 @@
             </el-form>
           </el-scrollbar>
         </el-tab-pane> -->
-        <!-- <el-tab-pane label="表单权限" name="formAuth">
+          <!-- <el-tab-pane label="表单权限" name="formAuth">
           <div class="form-auth-table">
             <el-table :data="getFormOperates()" class="JNPF-common-table" size="mini" height="100%">
               <el-table-column prop="name" label="表单字段" align="left"></el-table-column>
@@ -790,7 +861,7 @@
             </el-table>
           </div>
         </el-tab-pane> -->
-        <!-- <el-tab-pane label="节点事件">
+          <!-- <el-tab-pane label="节点事件">
           <el-scrollbar class="config-scrollbar">
             <el-form :model="approverForm" class="pd-10-20" label-position="left">
               <el-alert title="开启后可配置触发事件同时进行参数赋值" type="warning" :closable="false" show-icon />
@@ -1411,20 +1482,19 @@
     <el-dialog title="子流程传递" :close-on-click-modal="false" :visible.sync="ruleVisible"
       class="JNPF-dialog JNPF-dialog_center rule-dialog" lock-scroll append-to-body width='700px'>
       <div class="option-box-tip">当父流程流转到子流程时，将对应的字段赋值给子流程</div>
-      <el-row :gutter="10" v-for="(item,i) in assignList" :key="i" class="mb-10">
+      <el-row :gutter="10" v-for="(item, i) in assignList" :key="i" class="mb-10">
         <el-col :span="2" class="rule-cell">父流程</el-col>
         <el-col :span="7" class="rule-cell">
           <el-select v-model="item.parentField" placeholder="请选择字段">
-            <el-option v-for="item in usedFormItems" :key="item.__vModel__"
-              :label="item.__config__.label" :value="item.__vModel__" />
+            <el-option v-for="item in usedFormItems" :key="item.__vModel__" :label="item.__config__.label"
+              :value="item.__vModel__" />
           </el-select>
         </el-col>
         <el-col :span="4" class="rule-cell mid">赋值给</el-col>
         <el-col :span="2" class="rule-cell">子流程</el-col>
         <el-col :span="7" class="rule-cell">
           <el-select v-model="item.childField" placeholder="请选择字段">
-            <el-option v-for="item in childFieldOptions" :key="item.vmodel" :label="item.label"
-              :value="item.vmodel" />
+            <el-option v-for="item in childFieldOptions" :key="item.vmodel" :label="item.label" :value="item.vmodel" />
           </el-select>
         </el-col>
         <el-col :span="2" class="rule-cell">
@@ -1440,8 +1510,8 @@
         <el-button type="primary" @click="saveRule">确定</el-button>
       </span>
     </el-dialog>
-    <FormulaDialog :visible.sync="formulaVisible" :value="activeItem.field"
-      @updateFormula="updateFormula" :formFieldsOptions="formFieldsOptions" />
+    <FormulaDialog :visible.sync="formulaVisible" :value="activeItem.field" @updateFormula="updateFormula"
+      :formFieldsOptions="formFieldsOptions" />
   </el-drawer>
 </template>
 <script>
@@ -1511,13 +1581,13 @@ const defaultApproverForm = {
   progress: '50',  // 进度
   rejectStep: '0',  // 驳回步骤
   description: '',  // 节点描述
-  planProcessingTime:'',  //计划超时提醒（分钟）
-  planTime:'',  //计划超时提醒（分钟）
-  flowUnit:'d',            // 单位
-  flowUnitList:[
-    {label:'天',value:'d'},
-    {label:'小时',value:'h'},
-    {label:'分钟',value:'m'}
+  planProcessingTime: '',  //计划超时提醒（分钟）
+  planTime: '',  //计划超时提醒（分钟）
+  flowUnit: 'd',            // 单位
+  flowUnitList: [
+    { label: '天', value: 'd' },
+    { label: '小时', value: 'h' },
+    { label: '分钟', value: 'm' }
   ],
   managerLevel: 1,
   departmentLevel: 1,
@@ -1590,13 +1660,15 @@ const defaultApproverForm = {
     on: 2,
     msgId: '',
     msgName: '',
-    templateJson: []
+    templateJson: [],
+    msgContent: ''
   },
   approveMsgConfig: {
     on: 2,
     msgId: '',
     msgName: '',
-    templateJson: []
+    templateJson: [],
+    msgContent: ''
   },
   rejectMsgConfig: {
     on: 2,
@@ -1608,7 +1680,13 @@ const defaultApproverForm = {
     on: 0,
     msgId: '',
     msgName: '',
-    templateJson: []
+    templateJson: [],
+    msgContent: '',
+    isEmail:0,
+    isWecom:0,
+    isDingTalk:0,
+    isApp:0,
+    isSms:0,
   },
   approveFuncConfig: {
     on: false,
@@ -1687,7 +1765,7 @@ const overTimeOptions = [{
 const nodeNoticeOptions = [
   {
     value: 2,
-    label: '同步发起配置'
+    label: '使用发起节点模板'
   },
   ...noticeOptions
 ]
@@ -1763,7 +1841,7 @@ const systemFieldOptions = [{
 },
 ]
 export default {
-  props: [/*当前节点数据*/"value", /*整个节点数据*/"processData", "flowType",'planPersonId','planPersonName'],
+  props: [/*当前节点数据*/"value", /*整个节点数据*/"processData", "flowType", 'planPersonId', 'planPersonName'],
   components: { OrgSelect, MsgDialog, InterfaceDialog, FormulaDialog, FlowDialog },
   data() {
     return {
@@ -1784,7 +1862,7 @@ export default {
       startForm: JSON.parse(JSON.stringify(nodeConfig.defaultStartForm)),
       ruleVisible: false,
       subFlowForm: JSON.parse(JSON.stringify(defaultSubFlowForm)),
-      approverForm: JSON.parse(JSON.stringify({...defaultApproverForm,approvers:[this.planPersonId]})),
+      approverForm: JSON.parse(JSON.stringify({ ...defaultApproverForm, approvers: [this.planPersonId] })),
       initiateTypeOptions: typeOptions,
       assigneeTypeOptions: assigneeTypeOptions,
       noticeOptions,
@@ -1858,13 +1936,13 @@ export default {
       nodeOptions: [],
       formulaVisible: false,
       activeItem: {},
-      approverRule:{
-        planTime:[{required: true,message:'超时提醒不能为空',trigger:'click'}],
-        flowUnit:[{required: true,message:'超时提醒单位不能为空',trigger:'change'}],
+      approverRule: {
+        planTime: [{ required: true, message: '超时提醒不能为空', trigger: 'click' }],
+        flowUnit: [{ required: true, message: '超时提醒单位不能为空', trigger: 'change' }],
       },
     };
   },
-  created(){
+  created() {
     this.approverForm.circulateUser = [this.planPersonId]
   },
   computed: {
@@ -2238,7 +2316,7 @@ export default {
       let titleObj = {
         title: this.properties.title
       }
-      this.approverForm.planProcessingTime = this.jnpf.timeToMinutes(this.approverForm.planTime,this.approverForm.flowUnit)
+      this.approverForm.planProcessingTime = this.jnpf.timeToMinutes(this.approverForm.planTime, this.approverForm.flowUnit)
       this.approverForm.approvers = [this.planPersonId]
       Object.assign(this.properties, this.approverForm, titleObj)
       this.$emit("confirm", this.properties, content || '请设置提醒人')
@@ -2510,6 +2588,12 @@ export default {
         relationField: '',
         isSubTable: false
       }))
+      this[obj][key].msgContent = item.content
+      this[obj][key].isEmail = item.isEmail * 1
+      this[obj][key].isWecom = item.isWecom * 1
+      this[obj][key].isDingTalk = item.isDingTalk * 1
+      this[obj][key].isApp = item.isApp * 1
+      this[obj][key].isSms = item.isSms * 1
     },
     onFuncChange(obj, key, params) {
       const [id, item] = params
@@ -2608,36 +2692,41 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
-.hand >>> input {
+.hand>>>input {
   cursor: pointer;
 }
+
 .tips p {
   line-height: 24px;
 }
+
 .drawer {
-  >>> .el-drawer__body {
+  >>>.el-drawer__body {
     padding-bottom: 62px;
     overflow: hidden;
   }
+
   .el-select {
     width: 100%;
+
     &.timeout-select {
       width: 80px;
     }
   }
 
-  >>> .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  >>>.el-tabs--top .el-tabs__item.is-top:nth-child(2) {
     padding-left: 20px;
   }
 
-  >>> .el-tabs__item:focus {
+  >>>.el-tabs__item:focus {
     box-shadow: none !important;
   }
 
-  >>> .el-tabs__header {
+  >>>.el-tabs__header {
     margin-bottom: 0;
   }
 }
+
 .mr-10 {
   margin-right: 10px;
 }
@@ -2670,22 +2759,27 @@ export default {
 .form-auth-table {
   height: 100%;
   font-size: 14px;
-  >>> .el-checkbox__label {
+
+  >>>.el-checkbox__label {
     font-size: 12px;
   }
+
   .auth-table-header {
     background: #fafafa;
     line-height: 40px;
   }
+
   .row {
     display: flex;
     align-items: center;
     line-height: 32px;
     padding: 8px 12px;
     border-bottom: 1px solid #efefef;
+
     &:hover {
       background: #f5f7fa;
     }
+
     .label {
       flex: 1;
       white-space: nowrap;
@@ -2696,6 +2790,7 @@ export default {
         color: #f2725e;
       }
     }
+
     .radio-group {
       flex: 2;
       display: flex;
@@ -2708,14 +2803,18 @@ export default {
   // height: 100%;
   overflow: hidden;
   padding: 10px;
-  height:calc(100% - 60px);
-  margin-bottom:5px;
+  height: calc(100% - 60px);
+  margin-bottom: 5px;
+
   ::v-deep .el-tabs__content {
     height: calc(100% - 40px);
+
     .el-tab-pane {
       height: 100%;
+
       .config-scrollbar {
         height: 100%;
+
         .el-row {
           font-size: 14px;
           color: #606266;
@@ -2725,22 +2824,27 @@ export default {
       }
     }
   }
+
   .per-cell {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
+
     .el-checkbox {
       margin-right: 40px;
     }
+
     &:last-child {
       margin-bottom: unset;
     }
   }
 }
+
 .option-box-tip {
   font-size: 14px;
   color: #a5a5a5;
 }
+
 .option-box {
   font-size: 14px;
   padding-left: 1rem;
@@ -2751,83 +2855,101 @@ export default {
   overflow: auto;
   overflow-x: hidden;
 }
+
 .condition-list {
   font-size: 14px;
   line-height: 36px;
+
   &.condition-list-header {
-    >>> .el-col {
+    >>>.el-col {
       text-align: left;
     }
   }
-  >>> .el-col {
+
+  >>>.el-col {
     text-align: center;
     padding: 0 4px;
+
     &.label,
     &.fieldValue {
       display: flex;
       align-items: center;
     }
+
     .el-input,
     .el-input-number,
     .el-select {
       width: 100%;
     }
+
     .el-icon-delete {
       cursor: pointer;
+
       &:hover {
         color: #f2725e;
       }
     }
+
     .edit-script-btn {
       flex: 1;
       height: 32px;
     }
   }
+
   .condition-select {
     &.el-select {
       &.condition-type-select {
         width: 80px;
         flex-shrink: 0;
       }
-      >>> .el-input__inner {
+
+      >>>.el-input__inner {
         padding: 0 26px 0 10px;
       }
     }
   }
 }
+
 .rule-dialog {
-  >>> .el-dialog__body {
+  >>>.el-dialog__body {
     min-height: 300px !important;
     padding: 20px 20px 10px !important;
   }
+
   .option-box-tip {
     margin-bottom: 20px;
   }
+
   .rule-cell {
     line-height: 32px;
+
     &.mid {
       color: #1890ff;
       text-align: center;
     }
   }
 }
+
 .form-item-label {
   font-weight: 600;
   font-size: 14px;
   line-height: 32px;
 }
+
 .form-sub-title {
   font-size: 14px;
   color: #606266;
   line-height: 32px;
 }
+
 .form-item-content {
   padding: 0 10px;
+
   &.form-item-content-first {
     margin: -12px 0 18px;
   }
 }
+
 .el-form-item {
   margin-bottom: 12px !important;
-}
-</style>
+}</style>

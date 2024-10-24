@@ -65,31 +65,51 @@ const defaultStartForm = {
     on: 0,
     msgId: '',
     msgName: '',
-    templateJson: []
+    templateJson: [],
+    msgContent:''
   },
   endMsgConfig: {
     on: 0,
     msgId: '',
     msgName: '',
-    templateJson: []
+    templateJson: [],
+    msgContent:''
   },
   approveMsgConfig: {
     on: 0,
     msgId: '',
     msgName: '',
-    templateJson: []
+    templateJson: [],
+    msgContent:'',
+    isEmail:0,
+    isWecom:0,
+    isDingTalk:0,
+    isApp:0,
+    isSms:0,
   },
   rejectMsgConfig: {
     on: 0,
     msgId: '',
     msgName: '',
-    templateJson: []
+    templateJson: [],
+    msgContent:'',
+    isEmail:0,
+    isWecom:0,
+    isDingTalk:0,
+    isApp:0,
+    isSms:0,
   },
   copyMsgConfig: {
     on: 0,
     msgId: '',
     msgName: '',
-    templateJson: []
+    templateJson: [],
+    msgContent:'',
+    isEmail:0,
+    isWecom:0,
+    isDingTalk:0,
+    isApp:0,
+    isSms:0,
   },
   overTimeMsgConfig: {
     on: 0,
@@ -101,7 +121,13 @@ const defaultStartForm = {
     on: 0,
     msgId: '',
     msgName: '',
-    templateJson: []
+    templateJson: [],
+    msgContent:'',
+    isEmail:0,
+    isWecom:0,
+    isDingTalk:0,
+    isApp:0,
+    isSms:0,
   },
   hasSubmitBtn: true,
   submitBtnText: '提 交',

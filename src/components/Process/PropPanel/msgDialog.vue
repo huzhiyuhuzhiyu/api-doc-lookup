@@ -4,24 +4,21 @@
       <el-input placeholder="请选择消息模板" v-model="title" readonly :validate-event="false"
         @mouseenter.native="inputHovering = true" @mouseleave.native="inputHovering = false">
         <template slot="suffix">
-          <i v-show="!showClose"
-            :class="['el-select__caret', 'el-input__icon', 'el-icon-arrow-up']"></i>
-          <i v-if="showClose" class="el-select__caret el-input__icon el-icon-circle-close"
-            @click.stop="clear"></i>
+          <i v-show="!showClose" :class="['el-select__caret', 'el-input__icon', 'el-icon-arrow-up']"></i>
+          <i v-if="showClose" class="el-select__caret el-input__icon el-icon-circle-close" @click.stop="clear"></i>
         </template>
       </el-input>
     </div>
     <el-dialog title="消息模板" :close-on-click-modal="false" :visible.sync="visible"
-      class="JNPF-dialog JNPF-dialog_center JNPF-dialog-tree-select" lock-scroll append-to-body
-      width='700px'>
+      class="JNPF-dialog JNPF-dialog_center JNPF-dialog-tree-select" lock-scroll append-to-body width='1000px'>
       <div class="JNPF-common-layout">
         <div class="JNPF-common-layout-center">
           <el-row class="JNPF-common-search-box" :gutter="16">
             <el-form @submit.native.prevent>
               <el-col :span="10">
                 <el-form-item label="关键词">
-                  <el-input v-model="listQuery.keyword" placeholder="请输入关键词查询" clearable
-                    @keyup.enter.native="search()" class="search-input" />
+                  <el-input v-model="listQuery.keyword" placeholder="请输入关键词查询" clearable @keyup.enter.native="search()"
+                    class="search-input" />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
@@ -33,32 +30,38 @@
             </el-form>
             <div class="JNPF-common-search-box-right">
               <el-tooltip effect="dark" content="刷新" placement="top">
-                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                  @click="initData()" />
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
               </el-tooltip>
             </div>
           </el-row>
           <div class="JNPF-common-layout-main JNPF-flex-main">
-            <JNPF-table v-loading="listLoading" :data="list" :border="false" highlight-current-row
-              @row-click="rowClick" :hasNO="false">
+            <JNPF-table v-loading="listLoading" :data="list" :border="false" highlight-current-row @row-click="rowClick"
+              :hasNO="false">
               <el-table-column width="35">
                 <template slot-scope="scope">
                   <el-radio :label="scope.row.id" v-model="checked">&nbsp;</el-radio>
                 </template>
               </el-table-column>
               <el-table-column type="index" width="60" label="序号" align="center" />
-              <el-table-column prop="fullName" label="模板名称" width="150" />
-              <el-table-column prop="enCode" label="模板编码" width="100" />
-              <el-table-column prop="title" label="消息标题" show-overflow-tooltip />
+              <el-table-column prop="fullName" label="模板名称" min-width="120" />
+              <el-table-column prop="enCode" label="模板编码" min-width="100" />
+              <el-table-column prop="title" label="消息标题" min-width="120" show-overflow-tooltip />
+              <el-table-column prop="thirdSend" label="推送渠道" min-width="150" show-overflow-tooltip>
+                <template slot-scope="scope">
+                  <div>{{ scope.row.platforms}}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="content" label="消息内容" min-width="180" show-overflow-tooltip>
+              </el-table-column>
             </JNPF-table>
-            <pagination :total="total" :page.sync="listQuery.currentPage"
-              :limit.sync="listQuery.pageSize" @pagination="initData" />
+            <pagination :total="total" :page.sync="listQuery.currentPage" :limit.sync="listQuery.pageSize"
+              @pagination="initData" />
           </div>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false" size="small">{{$t('common.cancelButton')}}</el-button>
-        <el-button type="primary" @click="select()" size="small">{{$t('common.confirmButton')}}
+        <el-button @click="visible = false" size="small">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" @click="select()" size="small">{{ $t('common.confirmButton') }}
         </el-button>
       </span>
     </el-dialog>
@@ -122,6 +125,31 @@ export default {
       this.listLoading = true
       getSelector(this.listQuery).then(res => {
         this.list = res.data.list
+        
+
+        this.list = this.list.map(item => {
+          const platforms = []
+          if (item.isDingTalk === 1) {
+            platforms.push('钉钉');
+          }
+          if (item.isWecom === 1) {
+            platforms.push('企业微信');
+          }
+          if (item.isEmail === 1) {
+            platforms.push('邮箱');
+          }
+          if (item.isApp === 1) {
+            platforms.push('app');
+          }
+          if (item.isSms === 1) {
+            platforms.push('短信');
+          }
+          return {
+            ...item,
+            platforms:platforms.join(','),
+          }
+        })
+
         this.total = res.data.pagination.total
         this.listLoading = false
       }).catch(() => { this.listLoading = false })
@@ -161,14 +189,16 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
->>> .el-dialog__body {
+>>>.el-dialog__body {
   max-height: 70vh;
   padding: 0 0 10px !important;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+
   .JNPF-common-search-box {
     margin-bottom: 0;
+
     .JNPF-common-search-box-right {
       padding: 10px 10px 0 0;
     }

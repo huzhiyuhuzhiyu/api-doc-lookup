@@ -19,7 +19,25 @@
                 {{ $getLabel(configKeyList, scope.row.configKey, 'value', 'label') }}
               </template>
             </el-table-column>
-              <el-table-column prop="configValue3" label="文件分类" width="150" v-if="activeName === 'attachment'"/>
+              <el-table-column   class-name="pointer" prop="configValue3" label="文件分类" width="150" v-if="activeName === 'attachment'">
+                  <template v-slot:default="{row}" >
+                      <div @click="fileCategoryClick(row)" style="width: 100%">
+                          <ComSelect2
+                              v-if="row.editFlag"
+                              :currOrgId="row.configValue2"
+                              v-model="row.configValue2"
+                              :ref="row.configKey"
+                              placeholder="请选择所属分类" auth
+                              :closeHandler="()=>closeHandler(row)"
+                              @change="(...args)=>onOrganizeChange(...args,row)" :selectClassifyType="FileCategoryType.SYSTEM_ATTACHMENT"/>
+                          <div v-else>
+                             <div style="width: 100%" v-if="row.configValue3">{{row.configValue3}}</div>
+                             <div style="width: 100%;visibility: hidden" v-else>1</div></div>
+                      </div>
+
+                  </template>
+
+              </el-table-column>
 
             <el-table-column prop="state" label="操作" :width="stateWidth" :align="stateAlign">
               <template slot-scope="scope">
@@ -55,19 +73,13 @@
         </div>
       </div>
     </div>
-   <ComSelect2
-       v-model="currentChooseCategory"
-       ref="selectFileCategory"
-       v-show="false"
-       placeholder="请选择所属分类" auth
-       :closeHandler="closeHandler"
-       @change="onOrganizeChange" :selectClassifyType="FileCategoryType.SYSTEM_ATTACHMENT"/>
+
   </div>
 </template>
 
 <script>
 import { getBimBusinessSwitchConfigList, editBimBusinessData } from '@/api/basicData/index'
-import {getLabel, isEmpty} from '@/utils/index'
+import {getLabel, isEmpty, notEmpty} from '@/utils/index'
 import {FileCategoryType} from "@/views/esop/fileCategoryManagement/constants";
 Vue.prototype.$getLabel = getLabel
 export default {
@@ -242,8 +254,8 @@ export default {
         },  {
           label: '启用生产退料附件',
           value: 'fj_returnPick'
-        },   
-        
+        },
+
       ],
       descriptionList: [
         {
@@ -490,18 +502,21 @@ export default {
     }
   },
   methods: {
-      closeHandler(){
-          if(isEmpty(this.currentChooseCategory)){
-              this.reverseFn && this.reverseFn()
-          }
+     async fileCategoryClick(row){
+         row.editFlag =true
+         await this.$nextTick()
+         this.$refs[row.configKey].openDialog()
       },
-    onOrganizeChange(id,[category]){
-        if(!this.currentData){
+      closeHandler(row){
+          row.editFlag = false
+      },
+    onOrganizeChange(id,[category],row){
+        if(isEmpty(id)){
             return this.$message.error('没有选中数据')
         }
-       this.currentData.configValue2 = category.id
-       this.currentData.configValue3 = category.name
-       this.stateChangeFn(this.currentData)
+        row.configValue2 = category.id
+        row.configValue3 = category.name
+       this.stateChangeFn(row)
     },
     initData() {
       if (this.activeName === 'product') {
@@ -545,7 +560,6 @@ export default {
             this.tableData = res.data.warehouse
           } else if (this.activeName == 'attachment') {
             this.tableData = res.data.attachment.filter((item) => item.configKey !== '' || item.configKey == 'fj_qzkh')
-              console.log( this.tableData)
           }
 
           this.tableData.forEach((item) => {
@@ -564,6 +578,7 @@ export default {
               item.radioOn = '按订单入库'
             }
             this.$set(item, 'description', item.configKey)
+            this.$set(item, 'editFlag', false)
           })
 
           this.formLoading = false
@@ -593,19 +608,16 @@ export default {
               } else {
                   this.formLoading = false
               }
-          }).finally(()=>{
-             this.currentData = null
-             this.reverseFn =null
-             this.currentChooseCategory =''
-         })
+          })
       },
-    stateChange(data) {
+    async stateChange(data) {
         if(this.activeName === 'attachment' && data.state){
-            this.currentChooseCategory =''
-            this.currentData = data
-            this.reverseFn =() => (data.state = false)
-
-            return this.$refs.selectFileCategory.openDialog()
+            if(isEmpty(data.configValue2)){
+                this.$message.error('请先选择文件分类')
+                await this.$nextTick()
+                data.state = false
+                return
+            }
         }
         return this.stateChangeFn(data)
     },

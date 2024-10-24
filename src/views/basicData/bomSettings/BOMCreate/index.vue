@@ -300,7 +300,8 @@ export default {
       approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
       endTime: 0,
-      isattachmentswitch: ''
+      isattachmentswitch: '',
+      categoryId: ''
     }
   },
   computed: {

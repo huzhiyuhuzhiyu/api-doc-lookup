@@ -61,7 +61,7 @@
                     </el-collapse-item>
                   </el-collapse>
                 </el-tab-pane>
-                <el-tab-pane label="附件" name="annex">
+                <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
                   <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'">
                   </UploadWj>
                 </el-tab-pane>
@@ -99,7 +99,8 @@ import {
   checkBomCodeExist,
   getBomByProductId,
   checkLoopBug,
-  getBomTree
+  getBomTree,
+  getBimBusinessDetail
 } from '@/api/basicData/index'
 
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
@@ -114,6 +115,7 @@ export default {
   mixins: [busFlow],
   data() {
     return {
+      isattachmentswitch: '',
       activeNames: ['productInfo', 'basicInfo'],
       datafilelist: [],
       activeName: 'jcInfo',
@@ -380,6 +382,16 @@ export default {
     })
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_bomgl'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
+      })
+    },
     // // 设置默认展开
     setexpand(expands) {
       this.refreshTree = false
@@ -630,7 +642,9 @@ export default {
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
             item.bimAttachments = {
-              businessType: '',
+              businessType: 'system_attachment',
+              configKey: 'fj_bomgl',
+              categoryId: this.categoryId,
               documentId: item.id,
               fileFlag: '',
               sort: index

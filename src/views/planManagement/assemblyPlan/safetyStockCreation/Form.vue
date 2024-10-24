@@ -70,7 +70,7 @@
                   </el-table-column>
 
                   <el-table-column prop="mainUnit" label="单位" width="80" :key="89" />
-                  <el-table-column prop="inventoryQuantity" label="可用库存数量" width="140" :key="8" />
+                  <el-table-column prop="availableQuantity" label="可用库存数量" width="140" :key="8" />
                   <el-table-column prop="planQuantity" label="计划数量" width="140" :key="7">
                     <template slot="header">
                       <span class="required">*</span>计划数量
@@ -354,7 +354,6 @@ export default {
   created() {
   },
   mounted() {
-    this.init()
     this.getProductClassFun()
     this.getBimBusinessDetail()
 
@@ -369,6 +368,7 @@ export default {
       }
       getBimBusinessDetail(obj).then(res => {
         this.isattachmentswitch = res.data.configValue1
+        this.attachmentData=res.data
       })
     },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
@@ -742,16 +742,17 @@ export default {
       this.productData = []
     },
     init(data) {
-      setTimeout(() => {
+      console.log("data",data);
         data.forEach(item => {
           item.productsId = item.id
+          let num=this.jnpf.numberFormat(this.jnpf.math('subtract', [item.maxInventory, item.availableQuantity]))<0?0:this.jnpf.numberFormat(this.jnpf.math('subtract', [item.maxInventory, item.availableQuantity]))
+          this.$set(item,'planQuantity',num)
           item.planType = 'safety_stock_plan'
           if (this.codeConfig.codeWay != 'auto') {
             item.planNo = ""
           }
         })
         this.productData = data
-      }, 500);
       this.fetchData("JHDH")
     },
 
@@ -774,7 +775,9 @@ export default {
           if (this.datafilelist.length) {
             this.datafilelist.map((item, index) => {
               item.bimAttachments = {
-                businessType: '',
+                businessType: "system_attachment",
+                categoryId: this.attachmentData.configValue2,
+                configKey:this.attachmentData.configValue1,
                 documentId: item.id,
                 fileFlag: '',
                 sort: index

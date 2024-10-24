@@ -62,8 +62,9 @@
             <el-table-column prop="code" label="产品编码" min-width="120" sortable="custom" />
             <el-table-column prop="productCategoryName" label="产品分类" min-width="120" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" min-width="80" />
+            <el-table-column prop="availableQuantity" label="可用库存" min-width="120" />
             <el-table-column prop="safeInventory" label="安全库存" min-width="120" />
-            <el-table-column prop="inventoryQuantity" label="可用库存" min-width="120" />
+            <el-table-column prop="maxInventory" label="最高库存" min-width="120" />
 
           </JNPF-table>
 

@@ -44,10 +44,15 @@
               <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" />
               <el-table-column prop="productCode" label="产品编码" width="120" />
               <el-table-column prop="mainUnit" label="单位" width="80" />
-              <el-table-column prop="inventoryQuantity" label="库存数量" width="120" sortable="custom" />
+              <el-table-column prop="inventoryQuantity"  v-if="fieldFlag" label="库存数量" width="120" sortable="custom" />
               <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
-              <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom" />
-              <el-table-column prop="safeInventory" label="安全库存" min-width="100" />
+              <el-table-column prop="occupancyQuantity" v-if="fieldFlag" label="占用数量" width="120" sortable="custom" />
+              <el-table-column prop="safeInventory" label="安全库存" min-width="100" >
+                <template slot-scope="scope">
+                  <div >{{ scope.row.safeInventory?scope.row.safeInventory:0 }}</div>
+                  
+                </template>
+              </el-table-column>
               <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
               <el-table-column prop="inspectionResults" label="检验结果" sortable="custom" min-width="120">
                 <template slot-scope="scope">
@@ -144,6 +149,7 @@ export default {
         batchNumber: "",
         vibrationLevel: '',
         standardValue: '',
+        fieldFlag:true,
       }
     }
   },
@@ -212,8 +218,9 @@ export default {
         this.vibrationLevelList = arr
       })
     },
-    init(id, type) {
+    init(id, type,flag) {
       this.getProductClassFun()
+      this.fieldFlag=flag||true
       if (type === 'inventoryFlag') { this.title = '库存数明细' }
       else if (type === 'occupancyFlag') { this.title = '占用数明细' }
       else if (type === 'availableFlag') { this.title = '可用数明细' }
@@ -273,7 +280,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp
-      if (prop === 'productCode' || prop === 'productName' || prop === 'productSpec' || prop === 'routingName' || prop === 'processName') { newProp = prop }
+      if (prop === 'productCode' || prop === 'productName' || prop === 'productSpec' || prop === 'routingName' || prop === 'processName'||prop=='shelfSpaceName'||prop=='warehouseName') { newProp = prop }
       else { newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase()); }
       this.listQuery.orderItems[0].asc = order === 'ascending'
       this.listQuery.orderItems[0].column = order === null ? "" : newProp

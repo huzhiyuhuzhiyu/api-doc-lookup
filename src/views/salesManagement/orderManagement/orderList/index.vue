@@ -126,8 +126,8 @@
                     <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
                       查看详情
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="viewScheduleFun(scope.row.id)">
-                      查看进度
+                    <el-dropdown-item :disabled="scope.row.documentStatus == 'draft' ? true : false" @click.native="closeOrdersFun(scope.row.id)">
+                      关单
                     </el-dropdown-item>
                     <el-dropdown-item @click.native="getCopyOrders(scope.row.id, 'copy')">
                       复制订单
@@ -165,7 +165,7 @@
 import { UserListAll, } from '@/api/permission/user'
 import { excelExport } from '@/api/basicData/index'
 import OrderInfoDetail from './orderInfoDetail.vue'
-import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal } from '@/api/salesManagement/assemblyOrders'
+import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal,closeOrders } from '@/api/salesManagement/assemblyOrders'
 import Form from './Form'
 import OrderFollow from './orderFollow'
 import UserRelationList from './userRelation'
@@ -419,7 +419,20 @@ export default {
         this.$refs.OrderInfoDetailForm.init(id)
       })
     },
-
+    closeOrdersFun(id){
+      this.$confirm("您确定关闭该订单吗？", this.$t('提示'), {
+        type: 'warning'
+      }).then(() => {
+        closeOrders(id).then(res => {
+          this.initData()
+          this.$message({
+            type: 'success',
+            message: "关闭成功",
+            duration: 1500,
+          })
+        })
+      }).catch(() => { })
+    },
 
     filterateLabel(row, column, cellValue) {
       if (!cellValue) return ""

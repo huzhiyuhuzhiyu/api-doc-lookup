@@ -8,6 +8,14 @@ export function getsaleOrderList(data) {
       data
     })
   }
+  // 关单
+  export function closeOrders(id) {
+    return request({
+      url: `/api/erp/sale/orders/close?id=`+id,
+      method: 'put',
+    })
+  }
+
 //   明细列表
 export function getsaleOrderDetailList(data) {
     return request({

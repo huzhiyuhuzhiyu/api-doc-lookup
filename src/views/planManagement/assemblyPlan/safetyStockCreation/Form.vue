@@ -368,6 +368,7 @@ export default {
       }
       getBimBusinessDetail(obj).then(res => {
         this.isattachmentswitch = res.data.configValue1
+        this.attachmentData=res.data
       })
     },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
@@ -774,7 +775,9 @@ export default {
           if (this.datafilelist.length) {
             this.datafilelist.map((item, index) => {
               item.bimAttachments = {
-                businessType: '',
+                businessType: "system_attachment",
+                categoryId: this.attachmentData.configValue2,
+                configKey:this.attachmentData.configValue1,
                 documentId: item.id,
                 fileFlag: '',
                 sort: index

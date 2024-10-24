@@ -67,7 +67,7 @@
 
                           <el-input v-model="planForm.bomText" placeholder="请输入是否有BOM" disabled v-if="!planForm.bomId">
                           </el-input>
-                          <el-input style="color: #3fb9f8;" v-model="planForm.productDrawingNo" placeholder="请输入是否有BOM"
+                          <el-input class="BOM_T" style="color: #3fb9f8;" @focus="lookBom(planForm)" v-model="planForm.productDrawingNo" placeholder="请输入是否有BOM"
                             readonly v-else>
                           </el-input>
                           <!-- <el-tooltip class="item" effect="dark" :content="planForm.productDrawingNo"
@@ -1001,5 +1001,8 @@ export default {
   padding-left: 10px;
   vertical-align: bottom;
   font-size: 16px;
+}
+.BOM_T ::v-deep .el-input__inner{
+  color:rgb(63, 185, 248)
 }
 </style>

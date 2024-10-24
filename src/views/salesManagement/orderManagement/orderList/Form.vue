@@ -1349,7 +1349,8 @@ export default {
       flowData: {},
       approvalFlag: false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime: 0
+      endTime: 0,
+      attachmentData:{}
     }
   },
   computed: {
@@ -1430,6 +1431,7 @@ export default {
       }
       getBimBusinessDetail(obj).then(res => {
         this.isattachmentswitch = res.data.configValue1
+        this.attachmentData=res.data
       })
     },
     searchDrawingNoProduct(data, idx) {
@@ -2172,7 +2174,6 @@ export default {
       let allArray = data.map(item => item.all);
       console.log("all", allArray);
       allArray.forEach(item => {
-        item.price = item.salesPrice
         item.taxRate = item.taxRate * 1
         if (item.taxRate) {
           item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.price) / (1 + (Number(item.taxRate)) / 100), 2)
@@ -2892,9 +2893,19 @@ export default {
           this.dataForm.totalAmount = this.totalAmount
           this.dataForm.taxAmount = this.jnpf.numberFormat(this.totalAmount - this.excludingTaxAmount, 2)
           if (this.datafilelist.length) {
+            // this.datafilelist.map((item, index) => {
+            //   item.bimAttachments = {
+            //     businessType: '',
+            //     documentId: item.id,
+            //     fileFlag: '',
+            //     sort: index
+            //   }
+            // })
             this.datafilelist.map((item, index) => {
               item.bimAttachments = {
-                businessType: '',
+                businessType: "system_attachment",
+                categoryId: this.attachmentData.configValue2,
+                configKey:this.attachmentData.configKey,
                 documentId: item.id,
                 fileFlag: '',
                 sort: index

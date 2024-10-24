@@ -1169,6 +1169,7 @@ export default {
         productDrawingNo: "",
         productCategoryId: "",
         queryType: 2,
+        saleFlag:true,
         productStatus: 'enable',
         productCode: "",
         productName: "",
@@ -2229,6 +2230,7 @@ export default {
         productDrawingNo: "",
         queryType: 2,
         productStatus: 'enable',
+        saleFlag:true,
 
         productCategoryId: "",
         code: "",
@@ -2300,6 +2302,7 @@ export default {
         productDrawingNo: "",
         productCategoryId: "",
         queryType: 2,
+        saleFlag:true,
 
         productCode: "",
         productName: "",

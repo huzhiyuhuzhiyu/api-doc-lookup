@@ -751,6 +751,8 @@ export default {
       setTimeout(() => {
         data.forEach(item => {
           item.productsId = item.id
+          let num=this.jnpf.numberFormat(this.jnpf.math('subtract', [item.maxInventory, item.availableQuantity]))<0?0:this.jnpf.numberFormat(this.jnpf.math('subtract', [item.maxInventory, item.availableQuantity]))
+          this.$set(item,'planQuantity',num)
           item.planType = 'safety_stock_plan'
           if (this.codeConfig.codeWay != 'auto') {
             item.planNo = ""

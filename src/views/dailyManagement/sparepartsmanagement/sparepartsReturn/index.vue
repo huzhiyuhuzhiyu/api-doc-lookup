@@ -5,14 +5,29 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="orderForm.remark" placeholder="请输入备件编码" clearable @keydown.enter.native="search()" />
+              <el-input v-model="orderForm.maintainerIdText" placeholder="请输入归还人" clearable @keydown.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="orderForm.remark2" placeholder="请输入备件名称" clearable @keydown.enter.native="search()" />
+              <el-date-picker v-model="createRequirementDate" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;" start-placeholder="归还开始日期" end-placeholder="归还结束日期" clearable :picker-options="pickerOptions">
+              </el-date-picker>
             </el-form-item>
           </el-col>
+          <!-- <el-col :span="4">
+            <el-form-item>
+              <el-select v-model="orderForm.useApplication" placeholder="请选择归还目的" clearable style="width: 100%;">
+                <el-option v-for="(item, index) in [{label:'设备保养',value:'maintain'},{label:'设备维修',value:'repair'}]" :key="index" :label="item.label" :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col> -->
+          <!-- <el-col :span="4">
+            <el-form-item>
+              <el-select v-model="orderForm.approvalStatus" placeholder="请选择审批状态" clearable style="width: 100%;">
+                <el-option v-for="(item, index) in documentStatusList" :key="index" :label="item.label" :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col> -->
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -39,22 +54,10 @@
           </div>
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" custom-column>
-          <el-table-column prop="remark1" label="备件编码" width="200" sortable="custom">
-            <template slot-scope="scope">
-              <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
-                scope.row.orderNo
-              }}</el-link>
-            </template>
-          </el-table-column>
-          <el-table-column prop="remark2" label="备件名称" width="120" />
-          <el-table-column prop="remark3" label="规格型号" width="120"></el-table-column>
-          <el-table-column prop="remark4" label="单位" width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="remark5" label="生产厂家" min-width="200"></el-table-column>
-          <el-table-column prop="remark6" label="备注" min-width="200"></el-table-column>
-          <el-table-column prop="remark7" label="单价(元)" width="200" sortable="custom"></el-table-column>
-          <el-table-column prop="remark8" label="安全库存" width="120"></el-table-column>
-          <el-table-column prop="remark9" label="创建时间" min-width="200"></el-table-column>
-          <el-table-column prop="remark10" label="创建人" min-width="200"></el-table-column>
+          <el-table-column prop="collectionTime" label="归还日期" min-width="180" sortable="custom"></el-table-column>
+          <el-table-column prop="maintainerIdText" label="归还人" min-width="120"></el-table-column>
+          <el-table-column prop="createTime" label="创建时间" min-width="200" sortable="custom"></el-table-column>
+          <el-table-column prop="createByName" label="创建人" min-width="120"></el-table-column>
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="handleUserRelation(scope.row.id, 'edit')" @del="handleDel(scope.row.id)" :editDisabled="scope.row.documentStatus === 'submit'" :delDisabled="scope.row.documentStatus === 'submit'">
@@ -83,57 +86,32 @@
 </template>
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { ScrapApplicationFormList, deleteScrapApplicationForm } from '@/api/dailyManagement/Maintenance'
+import { CollectionandreturnList, deleteCollectionandreturn } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
 export default {
-  name: 'sparepartsinfo',
+  name: 'sparepartsReturn',
   components: { Form, SuperQuery },
   data() {
     return {
+      createRequirementDate: [],
       superQueryVisible: false,
       superQueryJson: [
-        {
-          prop: 'remark',
-          label: "备件编码",
-          type: 'input'
+        { // 日期选择器（区间）
+          prop: 'collectionTime',
+          label: '归还日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '申请开始日期',
+          endPlaceholder: '申请结束日期',
+          pickerOptions: this.global.timePickerOptions
         },
         {
-          prop: 'remark2',
-          label: "备件名称",
-          type: 'input'
-        },
-        {
-          prop: 'remark3',
-          label: "规格型号",
-          type: 'input'
-        },
-        {
-          prop: 'remark4',
-          label: "单位",
-          type: 'input'
-        },
-        {
-          prop: 'remark5',
-          label: "生产厂家",
-          type: 'input'
-        },
-        {
-          prop: 'remark6',
-          label: "备注",
-          type: 'input'
-        },
-        {
-          prop: 'remark7',
-          label: "单价(元)",
-          type: 'input'
-        },
-        {
-          prop: 'remark8',
-          label: "安全库存",
+          prop: 'maintainerIdText',
+          label: "归还人",
           type: 'input'
         },
         { // 日期时间选择器（区间）
-          prop: 'remark9',
+          prop: 'createTime',
           label: '创建时间',
           type: 'datetimerange',
           valueFormat: "yyyy-MM-dd HH:mm:ss",
@@ -142,7 +120,7 @@ export default {
           pickerOptions: this.global.timePickerOptions
         },
         {
-          prop: 'remark10',
+          prop: 'createByName',
           label: '创建人',
           type: 'input'
         }
@@ -150,8 +128,12 @@ export default {
       tableData: [],
       listLoading: false,
       orderFormone: {
-        remark2: '',
-        remark1: '',
+        requisitionType: 'back',
+        equipmentType: 'spare_parts',
+        maintainerIdText: '',
+        useApplication: '',
+        startTime: '',
+        endTime: '',
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -180,6 +162,7 @@ export default {
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
+
     sortChange({ prop, order }) {
       let newProp
       if (prop === 'equipmentIdName') {
@@ -209,11 +192,11 @@ export default {
     },
     initData() {
       this.listLoading = true
-      ScrapApplicationFormList(this.orderForm).then(res => {
+      this.jnpf.searchTimeFormat(this.orderForm, this.createRequirementDate, 'startTime', 'endTime')
+      CollectionandreturnList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
-
       }).catch(() => {
         this.listLoading = false
       })
@@ -227,7 +210,7 @@ export default {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
       }).then(() => {
-        deleteScrapApplicationForm(id).then(res => {
+        deleteCollectionandreturn(id).then(res => {
           this.initData()
           this.$message({
             type: 'success',

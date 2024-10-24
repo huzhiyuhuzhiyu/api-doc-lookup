@@ -11,7 +11,7 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-select v-model="listQuery.state" placeholder="请选择设备状态" clearable>
+                <el-select v-model="listQuery.equipmentIdState" placeholder="请选择设备状态" clearable>
                   <el-option v-for="item in maintenanceTypeList" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
@@ -49,13 +49,13 @@
             <el-table-column prop="mountedPlaces" label="安装地点" min-width="200" sortable="custom" />
             <el-table-column prop="partnerName" label="供应商" min-width="200" sortable="custom" />
             <el-table-column prop="supplier" label="生产厂家" min-width="200" sortable="custom" />
-            <el-table-column prop="state" label="设备状态" width="140" align="center" sortable="custom" fixed="right">
+            <el-table-column prop="equipmentIdState" label="设备状态" width="140" align="center" sortable="custom" fixed="right">
               <template slot-scope="{row}">
-                <el-tag type="success" disable-transitions v-if="row.state == 'normal'">正常</el-tag>
-                <el-tag type="warning" disable-transitions v-if="row.state == 'repair'">维修</el-tag>
-                <el-tag type="danger" disable-transitions v-if="row.state == 'discard'">报废</el-tag>
-                <el-tag disable-transitions v-if="row.state == 'spare'">备用</el-tag>
-                <el-tag type="info" disable-transitions v-if="row.state == 'stop'">停用</el-tag>
+                <el-tag type="success" disable-transitions v-if="row.equipmentIdState == 'normal'">正常</el-tag>
+                <el-tag type="warning" disable-transitions v-if="row.equipmentIdState == 'repair'">维修</el-tag>
+                <el-tag type="danger" disable-transitions v-if="row.equipmentIdState == 'discard'">报废</el-tag>
+                <el-tag disable-transitions v-if="row.equipmentIdState == 'spare'">备用</el-tag>
+                <el-tag type="info" disable-transitions v-if="row.equipmentIdState == 'stop'">停用</el-tag>
               </template>
             </el-table-column>
             <el-table-column prop="remark" label="备注" min-width="180" />
@@ -104,7 +104,7 @@ export default {
       initListQuery: {
         classAttribute: "equipment",
         name: '',
-        state: '',
+        equipmentIdState: '',
         maintenanceDate: '',
         pageNum: 1,
         pageSize: 20,
@@ -149,7 +149,7 @@ export default {
           type: 'input'
         },
         {
-          prop: 'state',
+          prop: 'equipmentIdState',
           label: "设备状态",
           type: 'select',
           options: [

@@ -12,8 +12,8 @@
           </div>
         </div>
         <div class="main" v-loading="formLoading">
-          <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
-            <el-tab-pane label="基础信息" name="orderInfo">
+          <!-- <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
+            <el-tab-pane label="基础信息" name="orderInfo"> -->
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
 
@@ -256,11 +256,11 @@
                   </el-form>
                 </el-collapse-item>
               </el-collapse>
-            </el-tab-pane>
-            <el-tab-pane label="附件" name="annex">
+            <!-- </el-tab-pane> -->
+            <!-- <el-tab-pane label="附件" name="annex"   v-if="isattachmentswitch == '1'">
               <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
-            </el-tab-pane>
-          </el-tabs>
+            </el-tab-pane> -->
+          <!-- </el-tabs> -->
         </div>
         <el-dialog :title="routingProResMapDiaTitle" :close-on-click-modal="false" :close-on-press-escape="false"
           append-to-body :visible.sync="routingProResMapDiaFlag" lock-scroll
@@ -489,12 +489,14 @@ import { excelExport, getProductionLineInfo, getProductionLineList } from "@/api
 import RoutingForm from "./RoutingForm.vue"
 import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
+import { getBimBusinessDetail } from '@/api/basicData/index'
 export default {
   components: {
     RoutingForm
   },
   data() {
     return {
+      isattachmentswitch:"",
       taskMethodList: [{ label: "指定加工对象", value: "appoint" }, { label: "不指定加工对象", value: "not_appoint" },],
       activeNames: ["productInfo", "basicInfo"],
       allocationFlag: false,
@@ -625,10 +627,20 @@ export default {
     this.getPickingConfig()
   },
   mounted() {
+    // this.getBimBusinessDetail()
 
   },
 
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_assembleArrange'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     selectLine(e) {
       console.log(e);
       getProductionLineInfo(e).then(res => {

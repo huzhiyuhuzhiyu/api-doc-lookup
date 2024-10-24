@@ -62,7 +62,7 @@
                     </el-col>
                   </el-form>
                 </el-row>
-                <div style="height: 835px;">
+                <div style="height: 835px;" class="JNPF-flex-main">
                   <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableDatasbtz" @sort-change="sortChangesbtz" fixedNO custom-column>
                     <el-table-column prop="code" label="设备编码" min-width="200" sortable="custom" />
                     <el-table-column prop="name" label="设备名称" min-width="200" sortable="custom" />
@@ -226,7 +226,7 @@
                   </el-form>
                 </el-row>
               </div>
-              <div style="height: 500px;">
+              <div style="height: 500px;" class="JNPF-flex-main">
                 <JNPF-table ref="dataTabledjfb" v-loading="listLoadingdjfb" :data="tableDatadjfb" @sort-change="sortChangedjfb" fixedNO custom-column>
                   <el-table-column prop="equipmentIdCode" label="设备编码" width="200" />
                   <el-table-column prop="equipmentIdName" label="设备名称" width="200" sortable="custom" />
@@ -395,7 +395,7 @@
                   </el-form>
                 </el-row>
               </div>
-              <div style="height: 500px;">
+              <div style="height: 500px;" class="JNPF-flex-main">
                 <JNPF-table ref="dataTablewxfb" v-loading="listLoadingwxfb" :data="tableDatawxfb" @sort-change="sortChangewxfb" fixedNO custom-column>
                   <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" sortable="custom">
                   </el-table-column>
@@ -516,7 +516,7 @@
                   </el-form>
                 </el-row>
               </div>
-              <div style="height: 652px;">
+              <div style="height: 652px;" class="JNPF-flex-main">
                 <JNPF-table ref="dataTablebyfb" v-loading="listLoadingbyfb" :data="tableDatabyfb" @sort-change="sortChangebyfb" fixedNO custom-column>
                   <el-table-column prop="maintenanceTaskIdText" label="任务名称" min-width="180" />
                   <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" />
@@ -795,11 +795,15 @@ export default {
   },
   methods: {
     //导航菜单
-    navigationmenu(value){
+    navigationmenu(value) {
 
     },
     //设备台账
     initequipmentledger() {
+      Object.keys(this.listQuerysbtz).forEach(key => {
+        let item = this.listQuerysbtz[key]
+        this.listQuerysbtz[key] = typeof item === 'string' ? item.trim() : item
+      })
       this.listLoading = true
       getEquEquipmentList(this.listQuerysbtz).then(res => {
         this.tableDatasbtz = res.data.records
@@ -810,10 +814,6 @@ export default {
       })
     },
     searchsbtz() {
-      Object.keys(this.listQuerysbtz).forEach(key => {
-        let item = this.listQuerysbtz[key]
-        this.listQuerysbtz[key] = typeof item === 'string' ? item.trim() : item
-      })
       this.listQuerysbtz.pageNum = 1
       this.initequipmentledger()
     },
@@ -946,6 +946,10 @@ export default {
             series: [
               {
                 barWidth: '30%',
+                label: {
+                  show: true,
+                  position: 'top'
+                },
                 name: '设备数量',
                 type: 'bar',
                 data: res.data.map(item => item.totalNum)
@@ -1017,6 +1021,9 @@ export default {
             {
               name: '点检次数',
               type: 'line',
+              label: {
+                show: true
+              },
               areaStyle: {
                 color: {
                   type: 'linear',
@@ -1050,10 +1057,6 @@ export default {
       this.searchdjfb()
     },
     searchdjfb() {
-      Object.keys(this.listQuerydjfb).forEach(key => { // 清除搜索条件两端空格
-        let item = this.listQuerydjfb[key]
-        this.listQuerydjfb[key] = typeof item === 'string' ? item.trim() : item
-      })
       this.listQuerydjfb.pageNum = 1 // 重置页码
       this.getlistdatadjfb()
     },
@@ -1069,6 +1072,10 @@ export default {
       this.getlistdatadjfb()
     },
     getlistdatadjfb() {
+      Object.keys(this.listQuerydjfb).forEach(key => { // 清除搜索条件两端空格
+        let item = this.listQuerydjfb[key]
+        this.listQuerydjfb[key] = typeof item === 'string' ? item.trim() : item
+      })
       this.listLoadingdjfb = true
       equMaintenanceList(this.listQuerydjfb).then(res => {
         this.tableDatadjfb = res.data.records.map(item => {
@@ -1122,6 +1129,10 @@ export default {
       this.getlistdatawxfbcl()
     },
     getlistdatawxfb() {
+      Object.keys(this.listQuerywxfb).forEach(key => { // 清除搜索条件两端空格
+        let item = this.listQuerywxfb[key]
+        this.listQuerywxfb[key] = typeof item === 'string' ? item.trim() : item
+      })
       this.listLoadingwxfb = true
       RepairRequestList(this.listQuerywxfb).then(res => {
         this.tableDatawxfb = res.data.records.map(item => {
@@ -1143,10 +1154,6 @@ export default {
       })
     },
     searchwxfb() {
-      Object.keys(this.listQuerywxfb).forEach(key => { // 清除搜索条件两端空格
-        let item = this.listQuerywxfb[key]
-        this.listQuerywxfb[key] = typeof item === 'string' ? item.trim() : item
-      })
       this.listQuerywxfb.pageNum = 1 // 重置页码
       this.getlistdatawxfb()
     },
@@ -1187,6 +1194,10 @@ export default {
       this.getlistdatabyfb()
     },
     getlistdatabyfb() {
+      Object.keys(this.listQuerybyfb).forEach(key => { // 清除搜索条件两端空格
+        let item = this.listQuerybyfb[key]
+        this.listQuerybyfb[key] = typeof item === 'string' ? item.trim() : item
+      })
       this.listLoadingbyfb = true
       equMaintenanceList(this.listQuerybyfb).then(res => {
         this.tableDatabyfb = res.data.records.map(item => {
@@ -1200,10 +1211,6 @@ export default {
       })
     },
     searchbyfb() {
-      Object.keys(this.listQuerybyfb).forEach(key => { // 清除搜索条件两端空格
-        let item = this.listQuerybyfb[key]
-        this.listQuerybyfb[key] = typeof item === 'string' ? item.trim() : item
-      })
       this.listQuerybyfb.pageNum = 1 // 重置页码
       this.getlistdatabyfb()
     },

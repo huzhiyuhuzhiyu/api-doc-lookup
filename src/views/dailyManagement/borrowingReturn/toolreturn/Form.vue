@@ -3,7 +3,7 @@
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-        <el-page-header @back="goBack" :content="btnType == 'add' ? '新建领用' : btnType == 'edit' ? '编辑领用' : '查看领用'" />
+        <el-page-header @back="goBack" :content="btnType == 'add' ? '新建归还' : btnType == 'edit' ? '编辑归还' : '查看归还'" />
         <div class="options">
           <!-- <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
             保存草稿</el-button> -->
@@ -15,20 +15,20 @@
       <div class="main" v-loading="formLoading">
 
         <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
-          <el-tab-pane label="领用信息" name="orderInfo" class="jcInfo" ref="orderInfos">
+          <el-tab-pane label="归还信息" name="orderInfo" class="jcInfo" ref="orderInfos">
             <el-collapse v-model="activeNames">
               <el-collapse-item title="基本信息" name="basicInfo">
                 <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="领用人" prop="recipientId">
-                        <user-select v-model="dataForm.recipientId" placeholder="请选择领用人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
+                      <el-form-item label="归还人" prop="recipientId">
+                        <user-select v-model="dataForm.recipientId" placeholder="请选择归还人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
                         </user-select>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="领用日期" prop="collectionTime">
-                        <el-date-picker v-model="dataForm.collectionTime" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择领用日期" :disabled="btnType == 'look'">
+                      <el-form-item label="归还日期" prop="collectionTime">
+                        <el-date-picker v-model="dataForm.collectionTime" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择归还日期" :disabled="btnType == 'look'">
                         </el-date-picker>
                       </el-form-item>
                     </el-col>
@@ -115,7 +115,7 @@ export default {
         name: "",
         classAttribute: "tool",
         deviceType: 'normal',
-        state: 'normal'
+        state: 'use'
       },
       index: '',
       ProductTableSearchList: [
@@ -138,7 +138,7 @@ export default {
       formLoading: false,
       dataForm: {
         equipmentType: 'tool',
-        requisitionType: 'requisition',
+        requisitionType: 'back',
         returnTime: '',
         collectionTime: '',
         recipientId: '',
@@ -152,10 +152,10 @@ export default {
 
       dataRule: {
         recipientId: [
-          { required: true, message: '领用人不能为空', trigger: 'change' }
+          { required: true, message: '归还人不能为空', trigger: 'change' }
         ],
         collectionTime: [
-          { required: true, message: '领用日期不能为空', trigger: 'change' }
+          { required: true, message: '归还日期不能为空', trigger: 'change' }
         ],
       },
       selectRows: []
@@ -165,7 +165,7 @@ export default {
     ...mapGetters(['userInfo']),
   },
   methods: {
-    //领用人
+    //归还人
     hangleSelectSales(e, r) {
       this.$nextTick(() => { this.$refs.dataForm.validateField("recipientId") });
     },

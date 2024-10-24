@@ -357,7 +357,7 @@ export default {
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
-        configKey: 'fj_assembleSaleOrder'
+        configKey: 'fj_plan'
       }
       getBimBusinessDetail(obj).then(res => {
         this.isattachmentswitch = res.data.configValue1

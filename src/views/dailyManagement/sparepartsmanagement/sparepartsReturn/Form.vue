@@ -3,7 +3,7 @@
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-        <el-page-header @back="goBack" :content="btnType == 'add' ? '新建备件领用' : btnType == 'edit' ? '编辑备件领用' : '查看备件领用'" />
+        <el-page-header @back="goBack" :content="btnType == 'add' ? '新建备件归还' : btnType == 'edit' ? '编辑备件归还' : '查看备件归还'" />
         <div class="options">
           <el-button type="primary" v-if="btnType != 'look'" :loading="btnLoading" @click="handleConfirm('submit')">
             提交</el-button>
@@ -12,64 +12,20 @@
       </div>
       <div class="main" v-loading="formLoading">
         <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
-          <el-tab-pane label="领用信息" name="orderInfo">
+          <el-tab-pane label="归还信息" name="orderInfo">
             <el-collapse v-model="activeNames">
               <el-collapse-item title="基本信息" name="basicInfo">
                 <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                   <el-row :gutter="30" class="custom-row">
-                    <el-col :sm="6" :xs="24" v-if="type=='equipment'">
-                      <el-form-item label="领用目的" prop="useApplication">
-                        <el-select v-model="dataForm.useApplication" placeholder="请选择领用目的" style="width: 100%;" @change="useApplicationchange" :disabled="btnType == 'look'">
-                          <el-option v-for="(item, index) in [{label:'设备保养',value:'equipmentmaintain'},{label:'设备维修',value:'equipmentrepair'}]" :key="index" :label="item.label" :value="item.value"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24" v-if="type=='tool'">
-                      <el-form-item label="领用目的" prop="useApplication">
-                        <el-select v-model="dataForm.useApplication" placeholder="请选择领用目的" style="width: 100%;" @change="useApplicationchange" :disabled="btnType == 'look'">
-                          <el-option v-for="(item, index) in [{label:'工具保养',value:'toolmaintain'},{label:'工具维修',value:'toolrepair'}]" :key="index" :label="item.label" :value="item.value"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24" v-if="dataForm.useApplication=='equipmentmaintain'">
-                      <el-form-item label="设备保养任务名称" prop="workNo">
-                        <ComSelect-page v-model="dataForm.workNo" @change="maintainChange" :tableItems="maintainTableItems" dialogTitle="选择设备保养" placeholder="请选择设备保养" :listMethod="checkmaintenanceList" :listRequestObj="maintainRequestObj" :searchList="maintainSearchList" :isdisabled="btnType === 'look'" :renderTree="false" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24" v-if="dataForm.useApplication=='equipmentrepair'">
-                      <el-form-item label="设备维修单号" prop="workNo">
-                        <ComSelect-page v-model="dataForm.workNo" @change="repairChange" :tableItems="repairTableItems" dialogTitle="选择维修单号" placeholder="请选择维修单号" :listMethod="RepairRequestList" :listRequestObj="repairRequestObj" :searchList="repairSearchList" :isdisabled="btnType === 'look'" :renderTree="false" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24" v-if="type=='equipment'">
-                      <el-form-item label="设备名称" prop="equipmentIdName">
-                        <el-input v-model="dataForm.equipmentIdName" placeholder="请输入设备名称" :disabled="true" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24" v-if="dataForm.useApplication=='toolmaintain'">
-                      <el-form-item label="工具保养任务名称" prop="workNo">
-                        <ComSelect-page v-model="dataForm.workNo" @change="maintainChange" :tableItems="maintainTableItemstool" dialogTitle="选择工具保养" placeholder="请选择工具保养" :listMethod="checkmaintenanceList" :listRequestObj="maintainRequestObjtool" :searchList="maintainSearchListtool" :isdisabled="btnType === 'look'" :renderTree="false" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24" v-if="dataForm.useApplication=='toolrepair'">
-                      <el-form-item label="工具维修单号" prop="workNo">
-                        <ComSelect-page v-model="dataForm.workNo" @change="repairChange" :tableItems="repairTableItemstool" dialogTitle="选择维修单号" placeholder="请选择维修单号" :listMethod="RepairRequestList" :listRequestObj="repairRequestObjtool" :searchList="repairSearchListtool" :isdisabled="btnType === 'look'" :renderTree="false" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24" v-if="type=='tool'">
-                      <el-form-item label="工具名称" prop="equipmentIdName">
-                        <el-input v-model="dataForm.equipmentIdName" placeholder="请输入工具名称" :disabled="true" />
-                      </el-form-item>
-                    </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="领用日期" prop="collectionTime">
-                        <el-date-picker v-model="dataForm.collectionTime" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择领用日期" :disabled="btnType == 'look'">
+                      <el-form-item label="归还日期" prop="returnTime">
+                        <el-date-picker v-model="dataForm.returnTime" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择归还日期" :disabled="btnType == 'look'">
                         </el-date-picker>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="领用人" prop="recipientId">
-                        <user-select v-model="dataForm.recipientId" placeholder="请选择领用人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
+                      <el-form-item label="归还人" prop="recipientId">
+                        <user-select v-model="dataForm.recipientId" placeholder="请选择归还人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
                         </user-select>
                       </el-form-item>
                     </el-col>
@@ -95,8 +51,6 @@
                     <el-table-column prop="drawingNo" label="品名规格" min-width="120" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="mainUnit" label="单位" min-width="120" show-overflow-tooltip>
-                    </el-table-column>
-                    <el-table-column prop="incomingOutgoingNum" label="出入库数量" min-width="120" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="requisitionNum" label="数量" width="160">
                       <template slot="header">
@@ -137,143 +91,6 @@ import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
   data() {
     return {
-      type: '',
-      repairSearchListtool: [
-        { prop: 'maintenanceNo', label: '维修单号', type: 'input' },
-        { prop: 'equipmentIdCode', label: '工具编码', type: 'input' },
-        { prop: 'equipmentIdName', label: '工具名称', type: 'input' }
-      ],
-      repairSearchList: [
-        { prop: 'maintenanceNo', label: '维修单号', type: 'input' },
-        { prop: 'equipmentIdCode', label: '设备编码', type: 'input' },
-        { prop: 'equipmentIdName', label: '设备名称', type: 'input' }
-      ],
-      repairRequestObjtool: {
-        state: 'maintaining',
-        classAttribute: "tool",
-        maintenanceNo: '',
-        equipmentIdCode: '',
-        equipmentIdName: '',
-        applicantIdName: '',
-        applicationStartDate: '',
-        applicationEndDate: '',
-        faultStartTimeStart: '',
-        faultStartTimeEnd: '',
-        maintenancePersonnel: '',
-        startTime: '',
-        endTime: '',
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time" /* 使用倒序日期作为默认排序 */
-        }],
-      },
-      repairRequestObj: {
-        state: 'maintaining',
-        classAttribute: "equipment",
-        maintenanceNo: '',
-        equipmentIdCode: '',
-        equipmentIdName: '',
-        applicantIdName: '',
-        applicationStartDate: '',
-        applicationEndDate: '',
-        faultStartTimeStart: '',
-        faultStartTimeEnd: '',
-        maintenancePersonnel: '',
-        startTime: '',
-        endTime: '',
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time" /* 使用倒序日期作为默认排序 */
-        }],
-      },
-      RepairRequestList,
-      repairTableItems: [
-        { prop: 'maintenanceNo', label: '维修单号' },
-        { prop: 'equipmentIdCode', label: '设备编码' },
-        { prop: 'equipmentIdName', label: '设备名称' }
-      ],
-      repairTableItemstool: [
-        { prop: 'maintenanceNo', label: '维修单号' },
-        { prop: 'equipmentIdCode', label: '工具编码' },
-        { prop: 'equipmentIdName', label: '工具名称' }
-      ],
-      maintainSearchList: [
-        { prop: 'name', label: '任务名称', type: 'input' },
-        { prop: 'equipmentIdCode', label: '设备编码', type: 'input' },
-        { prop: 'equipmentIdName', label: '设备名称', type: 'input' }
-      ],
-      maintainSearchListtool: [
-        { prop: 'name', label: '任务名称', type: 'input' },
-        { prop: 'equipmentIdCode', label: '工具编码', type: 'input' },
-        { prop: 'equipmentIdName', label: '工具名称', type: 'input' }
-      ],
-      maintainRequestObj: {
-        classAttribute: "equipment",
-        name: "",
-        taskType: 'maintenance',
-        cycleType: "",
-        equipmentIdCode: "",
-        equipmentIdName: '',
-        state: '',
-        nextMaintenanceStartTime: '',
-        nextMaintenanceEndTime: '',
-        startTime: '',
-        endTime: '',
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time" /* 使用倒序日期作为默认排序 */
-        }],
-      },
-      maintainTableItemstool: {
-        classAttribute: "tool",
-        name: "",
-        taskType: 'maintenance',
-        cycleType: "",
-        equipmentIdCode: "",
-        equipmentIdName: '',
-        state: '',
-        nextMaintenanceStartTime: '',
-        nextMaintenanceEndTime: '',
-        startTime: '',
-        endTime: '',
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time" /* 使用倒序日期作为默认排序 */
-        }],
-      },
-      checkmaintenanceList,
-      maintainTableItems: [
-        { prop: 'name', label: '任务名称' },
-        { prop: 'equipmentIdCode', label: '设备编码' },
-        { prop: 'equipmentIdName', label: '设备名称' },
-        { prop: 'nextMaintenanceTime', label: '计划保养日期' }
-      ],
-      maintainTableItemstool: [
-        { prop: 'name', label: '任务名称' },
-        { prop: 'equipmentIdCode', label: '工具编码' },
-        { prop: 'equipmentIdName', label: '工具名称' },
-        { prop: 'nextMaintenanceTime', label: '计划保养日期' }
-      ],
       activeNames: ["basicInfo", "sbxx"],
       datafilelist: [],
       getcategoryTree,
@@ -315,12 +132,11 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
-        requisitionType: 'requisition',
-        useApplication: '',
+        requisitionType: 'back',
         equipmentType: 'spare_parts',
         equipmentId: '',
         equipmentIdName: '',
-        collectionTime: '',
+        returnTime: '',
         recipientId: ''
       },
       productRules: {
@@ -332,17 +148,11 @@ export default {
         ]
       },
       dataRule: {
-        useApplication: [
-          { required: true, message: '请选择领用目的', trigger: 'change' }
-        ],
-        workNo: [
-          { required: true, message: '该项不能为空', trigger: 'blur' }
-        ],
         recipientId: [
-          { required: true, message: '领用人不能为空', trigger: 'blur' }
+          { required: true, message: '归还人不能为空', trigger: 'blur' }
         ],
-        collectionTime: [
-          { required: true, message: '领用日期不能为空', trigger: 'blur' }
+        returnTime: [
+          { required: true, message: '归还日期不能为空', trigger: 'blur' }
         ]
       },
       selectRows: []
@@ -352,37 +162,7 @@ export default {
     ...mapGetters(['userInfo']),
   },
   methods: {
-    useApplicationchange(val) {
-      this.dataForm.useApplication = val
-      this.$set(this.dataForm, 'workNo', '')
-      this.$set(this.dataForm, 'equipmentIdName', '')
-      this.$set(this.dataForm, 'equipmentId', '')
-    },
-    repairChange(val, data, paramsObj) {
-      this.$nextTick(() => { this.$refs['dataForm'].validateField('workNo') }) // 校验操作的元素(name是组件绑定的value)
-      if (data && data.length) { // 数据有效，进行更新
-        this.dataForm.workNo = data[0].all.maintenanceNo
-        this.dataForm.equipmentId = data[0].all.equipmentId
-        this.dataForm.equipmentIdName = data[0].all.equipmentIdName
-      } else { // 不选择任何内容，置空绑定的值
-        this.dataForm.equipmentId = ""
-        this.dataForm.workNo = ""
-        this.dataForm.equipmentIdName = ""
-      }
-    },
-    maintainChange(val, data, paramsObj) {
-      this.$nextTick(() => { this.$refs['dataForm'].validateField('workNo') }) // 校验操作的元素(name是组件绑定的value)
-      if (data && data.length) { // 数据有效，进行更新
-        this.dataForm.workNo = data[0].all.name
-        this.dataForm.equipmentId = data[0].all.equipmentId
-        this.dataForm.equipmentIdName = data[0].all.equipmentIdName
-      } else { // 不选择任何内容，置空绑定的值
-        this.dataForm.equipmentId = ""
-        this.dataForm.workNo = ""
-        this.dataForm.equipmentIdName = ""
-      }
-    },
-    //领用人
+    //归还人
     hangleSelectSales(e, r) {
       this.$nextTick(() => { this.$refs.dataForm.validateField("recipientId") });
     },
@@ -454,13 +234,12 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
     },
-    init(id, btnType, type) {
-      this.type = type
+    init(id, btnType) {
       this.dataForm.id = id || ''
       this.btnType = btnType
       if (this.btnType == 'add') {
         this.dataForm.recipientId = this.userInfo.userId
-        this.dataForm.collectionTime = this.jnpf.getToday()
+        this.dataForm.returnTime = this.jnpf.getToday()
       }
       if (this.dataForm.id) {
         detailCollectionandreturn(this.dataForm.id).then(res => {

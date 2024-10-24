@@ -299,6 +299,14 @@ export function addCollectionandreturn(data) {
     data
   })
 }
+// 领用归还 修改
+export function updateCollectionandreturn(data) {
+  return request({
+    url: `/api/mes/equRequisitionRecords/modify`,
+    method: 'PUT',
+    data
+  })
+}
 // 领用归还 删除
 export function deleteCollectionandreturn(id) {
   return request({

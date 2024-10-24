@@ -2,16 +2,46 @@
 
 import {debounce} from "throttle-debounce";
 import {fileTypeStatistic, increaseStatistic, uploadStatistic} from "@/api/esop/dashborad";
-import {ApplicationType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
-import {notEmpty} from "@/utils";
+import {ApplicationType, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
+import {array2Map, increaseNumber, notEmpty} from "@/utils";
+import {SearchTimeType, SearchTimeType2Chinese} from "@/views/esop/utils/constants";
 function randomData() {
     return Math.round(Math.random()*1000);
 }
 function getFullPath(pathName){
     return '/esop/fileManagement/'+pathName
 }
+
+
+function getItem(name,SearchTimeType,value=0){
+    return {
+        name,
+        value,
+        SearchTimeType
+    }
+}
+function getItemArray(){
+    return [
+        getItem('本日新增单数',SearchTimeType.DAY),
+        getItem('本周新增单数',SearchTimeType.WEEK),
+        getItem('本月新增单数',SearchTimeType.MONTH),
+    ]
+}
+function getSystemItemArray(){
+    return [
+        getItem('本日新增文件',SearchTimeType.DAY),
+        getItem('本周新增文件',SearchTimeType.WEEK),
+        getItem('本月新增文件',SearchTimeType.MONTH),
+    ]
+}
+
 export default {
     name: "index" ,
+    computed: {
+        SearchTimeType2Chinese() {
+            return SearchTimeType2Chinese
+        }
+    },
     data(){
         return{
             fileTypeInstance:null,
@@ -24,21 +54,7 @@ export default {
                 {
                     title:'作业指导书',
                     icon:'zgt-ifont zgt-ifont-zuoyezhidaoshu',
-                    item:[
-                        {
-                            name:'本日新增',
-                            value:22
-                        },
-                        {
-                            name:'本周新增',
-                            value:500
-                        },
-                        {
-                            name:'本月新增',
-                            value:0
-                        },
-
-                    ],
+                    item:getItemArray(),
                     pathName:'workinginstruction',
                     type:ApplicationType.WORK
                 },
@@ -46,84 +62,28 @@ export default {
                     title:'检验指导书',
                     pathName:'checkinstruction',
                     icon:'zgt-ifont zgt-ifont-nianjian',
-                    item:[
-                        {
-                            name:'本日新增',
-                            value:randomData()
-                        },
-                        {
-                            name:'本周新增',
-                            value:randomData()
-                        },
-                        {
-                            name:'本月新增',
-                            value:randomData()
-                        },
-
-                    ],
+                    item:getItemArray(),
                     type:ApplicationType.INSPECT
                 },
                 {
                     title:'图文档',
                     pathName:'docment',
                     icon:'zgt-ifont zgt-ifont-weibiaoti--copy',
-                    item:[
-                        {
-                            name:'本日新增',
-                            value:randomData()
-                        },
-                        {
-                            name:'本周新增',
-                            value:randomData()
-                        },
-                        {
-                            name:'本月新增',
-                            value:randomData()
-                        },
-
-                    ],
+                    item:getItemArray(),
                     type: ApplicationType.IMAGE
                 },
                 {
                     title:'办公文件',
                     pathName:'office',
                     icon:'zgt-ifont zgt-ifont-bangongwenjian',
-                    item:[
-                        {
-                            name:'本日新增',
-                            value:randomData()
-                        },
-                        {
-                            name:'本周新增',
-                            value:randomData()
-                        },
-                        {
-                            name:'本月新增',
-                            value:randomData()
-                        },
-
-                    ],
+                    item:getItemArray(),
                     type: ApplicationType.OFFICE
                 },
                 {
                     title:'系统附件',
                     pathName:'system',
                     icon:'zgt-ifont zgt-ifont-gongdanxitong-fujian',
-                    item:[
-                        {
-                            name:'本日新增',
-                            value:randomData()
-                        },
-                        {
-                            name:'本周新增',
-                            value:randomData()
-                        },
-                        {
-                            name:'本月新增',
-                            value:randomData()
-                        },
-
-                    ],
+                    item:getSystemItemArray(),
                     type: ApplicationType.SYSTEM
                 },
             ],
@@ -201,9 +161,9 @@ export default {
               data.filter(notEmpty).forEach(item=>{
                   const obj = this.topDataMap.get(item.type)
                   if(obj){
-                      obj.item[0].value = item.dailyCount
-                      obj.item[1].value = item.weeklyCount
-                      obj.item[2].value = item.monthlyCount || 0
+                      increaseNumber(obj.item[0],'value',item.dailyCount)
+                      increaseNumber(obj.item[1],'value',item.weeklyCount)
+                      increaseNumber(obj.item[2],'value',item.monthlyCount)
                   }
               })
           }catch (e) {
@@ -271,16 +231,22 @@ export default {
             this.loadUploadNum()
             this.loadUploadNumByDay()
       },
-      blockClick(pathName){
+      blockClick(pathName,SearchTimeType){
         const path =  getFullPath(pathName)
-        this.$router.push({path})
+        this.$router.push({
+            path,
+            query:{
+                type:ModelType.SEARCH,
+                searchTimeType:SearchTimeType
+            }
+        })
       }
     },
     beforeDestroy() {
       window.onresize = null
     },
     mounted() {
-        this.topData.forEach(item=>this.topDataMap.set(item.type,item))
+        this.topDataMap = array2Map(this.topData,'type')
         this.initCharts()
         this.loadData()
 
@@ -294,7 +260,7 @@ export default {
         <div class="JNPF-common-layout-center  JNPF-flex-main height-full">
            <div class="wrapper height-full">
                <div class="header" v-loading="topLoading">
-                   <div class="header-item pointer" @click="blockClick(top.pathName)" v-for="top in topData">
+                   <div class="header-item"  v-for="top in topData">
                        <div class="item-title">
                                {{top.title}}
                        </div>
@@ -304,10 +270,13 @@ export default {
                            </div>
                            <div style="width: 80%;height: 100%">
                                <div class="height-full flex-column justify-center align-center">
-                                   <div class="item-text"  v-for="item in top.item">
-                                       <div class="item-text-left">{{ item.value }}</div>
-                                       <div class="item-text-right">{{item.name}}</div>
-                                   </div>
+                                   <el-tooltip effect="dark" :content="`点击进入${top.title}管理查看${SearchTimeType2Chinese[item.SearchTimeType]}新增详情`" placement="top"  v-for="item in top.item">
+                                       <div class="item-text pointer" @click="blockClick(top.pathName,item.SearchTimeType)" >
+                                           <div class="item-text-left">{{ item.value }}</div>
+                                           <div class="item-text-right">{{item.name}}</div>
+                                       </div>
+                                   </el-tooltip>
+
                                </div>
                            </div>
                        </div>

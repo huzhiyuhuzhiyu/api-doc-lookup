@@ -234,21 +234,16 @@ export default {
           label: '启用销售退货附件',
           value: 'fj_returnGoods'
         },{
-          label: '启用套圈计划(安全库存创建)附件',
-          value: 'fj_ringSafetyStock'
-        },{
-          label: '启用套圈计划(直接创建)附件',
-          value: 'fj_ringCreateDirectly'
-        },{
-          label: '启用装配计划(安全库存创建)附件',
-          value: 'fj_assembleSafetyStock'
-        },{
-          label: '启用装配计划(直接创建)附件',
-          value: 'fj_assembleCreateDirectly'
-        },{
-          label: '启用装配计划(销售订单创建)附件',
-          value: 'fj_assembleSaleOrder'
-        } 
+          label: '启用计划管理附件',
+          value: 'fj_plan'
+        },  {
+          label: '启用生产领料附件',
+          value: 'fj_pick'
+        },  {
+          label: '启用生产退料附件',
+          value: 'fj_returnPick'
+        },   
+        
       ],
       descriptionList: [
         {
@@ -408,25 +403,15 @@ export default {
           value: 'fj_returnGoods'
         },
         {
-          label: '开启后，在套圈计划(安全库存创建)新建、编辑、查看都会显示附件操作。',
-          value: 'fj_ringSafetyStock'
+          label: '开启后，在计划管理新建、编辑、查看都会显示附件操作。',
+          value: 'fj_plan'
+        },{
+          label: '开启后，在生产领料新建、编辑、查看都会显示附件操作。',
+          value: 'fj_pick'
+        },{
+          label: '开启后，在生产退料新建、编辑、查看都会显示附件操作。',
+          value: 'fj_returnPick'
         },
-        {
-          label: '开启后，在套圈计划(直接创建)新建、编辑、查看都会显示附件操作。',
-          value: 'fj_ringCreateDirectly'
-        },
-        {
-          label: '开启后，在装配计划(安全库存创建)新建、编辑、查看都会显示附件操作。',
-          value: 'fj_assembleSafetyStock'
-        },
-        {
-          label: '开启后，在装配计划(直接创建)新建、编辑、查看都会显示附件操作。',
-          value: 'fj_assembleCreateDirectly'
-        },
-        {
-          label: '开启后，在装配计划(销售订单创建)新建、编辑、查看都会显示附件操作。',
-          value: 'fj_assembleSaleOrder'
-        }
       ],
       currentData:null,
       currentChooseCategory:'',

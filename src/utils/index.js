@@ -436,8 +436,15 @@ export function mapIfNonePutArr(map, key, value) {
  * @param format
  * @returns {string}
  */
-export function formatDate(time=new Date(), format ="YYYY-MM-DD hh:mm:ss") {
-  return moment(Number(time)).format(format)
+export function formatDate(time=new Date(), format ="YYYY-MM-DD HH:mm:ss") {
+  return moment(new Date(time)).format(format)
+}
+
+export function getWeekFirstDay(format="YYYY-MM-DD 00:00:00"){
+    return moment().startOf('week').format(format)
+}
+export function getMonthFirstDay(format="YYYY-MM-DD 00:00:00"){
+    return moment().startOf('month').format(format)
 }
 
 /**
@@ -480,4 +487,29 @@ export function printBuildInfo(info) {
             backgroundColor
         })
     })
+}
+
+/**
+ * 数字增长动画
+ * @param obj 对象
+ * @param valueField 需改变的字段
+ * @param targetValue 目标值
+ * @param duration 动画时长
+ */
+export function increaseNumber(obj,valueField, targetValue, duration=500) {
+    const current = obj[valueField]
+    const startTime = performance.now();
+    const difference = targetValue - current;
+    function animate(time) {
+        const elapsedTime = time - startTime;
+        const progress = Math.min(elapsedTime / duration, 1); // 计算动画进度（范围为0到1）
+
+        const newValue = current + difference * progress; // 根据进度计算当前值
+        obj[valueField] = Math.floor(newValue);
+        if (progress < 1) {
+            requestAnimationFrame(animate); // 继续动画
+        }
+    }
+
+    requestAnimationFrame(animate);
 }

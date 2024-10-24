@@ -42,6 +42,10 @@ export default {
         needBody:{
             type:Boolean,
             default:true
+        },
+        transitionTime:{
+            type:Number,
+            default:300
         }
     },
     data(){
@@ -118,11 +122,11 @@ export default {
 </script>
 
 <template>
-    <div class="search-left" style="transition: all 300ms;position: relative;">
+    <div class="search-left" :style="{transition: `width ${transitionTime}ms`,position: 'relative'}">
         <!-- <el-form-item label="关键词" style="margin: 0!important;">-->
-        <el-input @input="searchChange"  :class="[searchFocus?'active':'']" class="search-input"  @focus="searchFocusHandler"   suffix-icon="el-icon-search" v-model="inputKeyWord" placeholder="请输入关键词查询" clearable/>
+        <el-input @input="searchChange" :style="{transition: `all ${transitionTime}ms`}" :class="[searchFocus?'active':'']" class="search-input"  @focus="searchFocusHandler"   suffix-icon="el-icon-search" v-model="inputKeyWord" placeholder="请输入关键词查询" clearable/>
         <!-- </el-form-item>-->
-        <div v-loading="cLoading"  :style="{transform:searchPlaneTransform}" class="search-panel">
+        <div v-loading="cLoading"  :style="{transform:searchPlaneTransform,transition: `all ${transitionTime}ms`}" class="search-panel">
             <div class="panel-head">
                 <div class="panel-head-left">共{{list.length}}条结果</div>
                 <div class="panel-head-right">
@@ -176,7 +180,6 @@ export default {
     outline: 0;
 }
 .search-panel{
-    transition: all 300ms;
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 8px 24px 0 rgba(0,0,0,.17);

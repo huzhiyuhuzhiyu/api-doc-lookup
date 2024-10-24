@@ -196,6 +196,13 @@
                   <el-table-column prop="remark" label="备注" min-width="200" />
                   <el-table-column prop="createTime" label="创建时间" width="180" />
                   <el-table-column prop="createByName" label="创建人" width="100" />
+                  <el-table-column label="操作" width="180" fixed="right">
+                    <template slot-scope="scope">
+                      <el-button type="text" size="mini" @click="viewInspectionFun(scope.row.id, 'look')">
+                        查看详情
+                      </el-button>
+                    </template>
+                  </el-table-column>
                 </JNPF-table>
                 <JNPF-table ref="guidebook" v-if="categoryType == 'guidebook'" :data="guidebookData" fixedNO
                   :height="height" v-loading="tableloading" :key="Math.random()">
@@ -205,10 +212,16 @@
 
                   <el-table-column prop="productsCode" label="产品编码" min-width="160" />
                   <el-table-column prop="productsCategoryName" label="产品分类" width="140" />
-                  <el-table-column prop="documentStatus" label="单据状态" width="120" align="center">
+                  <!-- <el-table-column prop="documentStatus" label="单据状态" width="120" align="center">
                     <template slot-scope="{row}">
                       <el-tag type="warning" v-if="row.documentStatus === 'draft'">草稿</el-tag>
                       <el-tag type="success" v-else-if="row.documentStatus === 'submit'">提交</el-tag>
+                    </template>
+                  </el-table-column> -->
+                  <el-table-column prop="enabledMark" label="启用状态" width="120" align="center">
+                    <template slot-scope="{row}">
+                      <el-tag type="danger" v-if="row.enabledMark === false">禁用</el-tag>
+                      <el-tag type="success" v-else-if="row.enabledMark === true">启用</el-tag>
                     </template>
                   </el-table-column>
                   <el-table-column prop="version" label="版本号" width="80" />
@@ -227,15 +240,15 @@
                 <JNPF-table ref="inspectionManual" v-if="categoryType == 'inspectionManual'" :data="inspectionManualData" fixedNO
                   :height="height" v-loading="tableloading" :key="Math.random()">
 
-                  <el-table-column prop="orderNo" label="上传单编码" min-width="180" />
+                  <!-- <el-table-column prop="orderNo" label="上传单编码" min-width="180" /> -->
                   <el-table-column prop="drawingNo" label="品名规格" min-width="300"  show-overflow-tooltip/>
 
                   <el-table-column prop="productsCode" label="产品编码" min-width="160" />
                   <el-table-column prop="productsCategoryName" label="产品分类" width="140" />
-                  <el-table-column prop="documentStatus" label="单据状态" width="120" align="center">
+                  <el-table-column prop="enabledMark" label="启用状态" width="120" align="center">
                     <template slot-scope="{row}">
-                      <el-tag type="warning" v-if="row.documentStatus === 'draft'">草稿</el-tag>
-                      <el-tag type="success" v-else-if="row.documentStatus === 'submit'">提交</el-tag>
+                      <el-tag type="danger" v-if="row.enabledMark === false">禁用</el-tag>
+                      <el-tag type="success" v-else-if="row.enabledMark === true">启用</el-tag>
                     </template>
                   </el-table-column>
                   <el-table-column prop="version" label="版本号" width="80" />
@@ -266,10 +279,8 @@
     </transition>
     <RelatedTasksForm v-if="relatedTaskVisible" ref="relatedTaskForms" @selectRelatedTasksFun="selectRelatedTasksFun">
     </RelatedTasksForm>
-    <Guidebook  v-if="guidebookVisible" ref="guidebookForms" @back="closeFun" :type="'look'"
-                :id="fileUploadId"
-                :applicationType="applicationType"></Guidebook>
-
+    <Guidebook  v-if="guidebookVisible" ref="guidebookForms" @back="closeFun" :type="'look'" approval-need-header></Guidebook>
+    <Inspec v-if="detailFormVisible" ref="detailForm" @close="closeFun"></Inspec>
   </div>
 </template>
 <script>
@@ -279,16 +290,18 @@ import RelatedTasksForm from "./relatedTaskForm.vue";
 import { getInspectionList, deleteInspectionData, getInspectionLinesList } from '@/api/inspectionManagement/index' // 检验单
 import Guidebook from '@/views/esop/fileUpload/workinginstruction/Form.vue'
 import { deleteBimFileUpload, getBimFileUpload } from "@/api/esop/fileUpload/workinginstruction";
+import Inspec from '@/views/inspectionManagement/components/inspectionFormManagementDetail.vue'
 import {
     ApplicationType,
     DocumentStatus, FileManagePageSet, FileTrashPageSet,
     ModelType,
-    PageType
-} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
+    PageType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 export default {
-  components: { RelatedTasksForm,Guidebook },
+  components: { RelatedTasksForm,Guidebook,Inspec },
   data() {
     return {
+      detailFormVisible:false,
+      needHeader:true,
       ApplicationType,
       fileUploadId:"",
       applicationType:"",
@@ -305,7 +318,7 @@ export default {
         { code: "inspect", fullName: "检验", },
         { code: "guidebook", fullName: "作业指导书", },
         { code: "inspectionManual", fullName: "检验指导书", },
-        { code: "tool", fullName: "工装模具", },
+        // { code: "tool", fullName: "工装模具", },
       ],
       categoryType: "workOrder",
       orderTypeList: [
@@ -373,15 +386,26 @@ export default {
     this.switchStyle()
   },
   methods: {
+    // 查看检验详情
+    viewInspectionFun(id,type){
+      this.detailFormVisible = true
+
+        this.$nextTick(() => {
+          this.$refs.detailForm.init(id, type, false, 'finished')
+        })
+    },
     closeFun(){
       this.guidebookVisible=false
+      this.detailFormVisible=false
     },
     // 预览作业指导书
     previewFun(id, type,applicationType) {
       this.guidebookVisible = true
       this.fileUploadId=id
       this.applicationType=applicationType
-     
+     this.$nextTick(()=>{
+      this.$refs.guidebookForms.init(id,type,true)
+     })
     },
     //自适应窗口
     async switchStyle() {

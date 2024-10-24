@@ -1,8 +1,8 @@
-import {formatDate, isEmpty, notEmpty} from "@/utils";
+import {formatDate, getWeekFirstDay, isEmpty, notEmpty} from "@/utils";
 import {ApplicationType, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 import {getMenuList} from "@/api/system/menu";
 import {createButton} from "@/api/system/buttonAuthorize";
-import moment from "moment/moment";
+import {SearchTimeType} from "@/views/esop/utils/constants";
 
 export function deleteLastChildList(category) {
     if (isEmpty(category)) return
@@ -226,6 +226,12 @@ export function getUploadFileSaveData(data) {
         flowData,
     }
 }
+
+
+export function isNoProductPage(applicationType) {
+    return [ApplicationType.OFFICE,ApplicationType.IMAGE].includes(applicationType)
+}
+
 /**
  * 获取审核状态中文
  * @param status
@@ -237,5 +243,25 @@ export function getStatusChinese(status) {
 
 export function getStatusTagType(status) {
     return Status2TagTypeMap.get(status) || 'info'
+}
+
+export function getTimeForSearchTimeType(timeType){
+    let startTime = ''
+    let endTime = ''
+    switch (timeType) {
+        case SearchTimeType.DAY:
+            endTime  = formatDate(new Date())
+            startTime = formatDate(new Date(),'YYYY-MM-DD 00:00:00')
+            break;
+        case SearchTimeType.WEEK:
+            endTime  = formatDate(new Date())
+            startTime = getWeekFirstDay()
+            break;
+        case SearchTimeType.MONTH:
+            endTime = formatDate(new Date())
+            startTime = formatDate(new Date(),'YYYY-MM-01 00:00:00')
+            break;
+    }
+    return [startTime,endTime]
 }
 

@@ -15,7 +15,13 @@ export const ModelType ={
     "EDIT":'edit',
     "VIEW":'look',
     "COPY":'copy',
+    "SEARCH":'search',
 }
+export const isModelType=(type)=>{
+    return Object.values(ModelType).includes(type)
+}
+
+
 /**
  * 文件分类类型
  * @type {{DRAFT: string, SUBMIT: string}}
@@ -29,17 +35,6 @@ export const DocumentStatus ={
     DRAFT: 'draft',
     SUBMIT: 'submit',
     BACK:'back',
-}
-/**
- * 路径跳转类型
- * @type {{COPY: string}}
- * @readonly
- * @enum {string}
- * @property {string} COPY - 复制
- */
-export const PathQueryType ={
-    COPY:"copy",
-    DETAIL: "detail"
 }
 
 
@@ -107,15 +102,47 @@ export const FileUploadPageType={
     FileUploadOffice:'FileUploadOffice',
     FileUploadInspect:'FileUploadInspect',
 }
+
+export const FileAuditPageType={
+    FileAuditWork:'FileAuditWork',
+    FileAuditImage:'FileAuditImage',
+    FileAuditOffice:'FileAuditOffice',
+    FileAuditInspect:'FileAuditInspect',
+}
+
+
 function getESOPUploadPath(type){
      return `/esop/fileUpload/${type}`
 }
+function getESOPManagementPath(type){
+     return `/esop/fileManagement/${type}`
+}
+const ApplicationType2PathSuffix={
+    [ApplicationType.WORK]:'workinginstruction',
+    [ApplicationType.IMAGE]:'docment',
+    [ApplicationType.OFFICE]:'office',
+    [ApplicationType.INSPECT]:'checkinstruction',
+}
+
+
+
+const WorkUploadPath = getESOPUploadPath(ApplicationType2PathSuffix[ApplicationType.WORK])
+const ImageUploadPath = getESOPUploadPath(ApplicationType2PathSuffix[ApplicationType.IMAGE])
+const OfficeUploadPath = getESOPUploadPath(ApplicationType2PathSuffix[ApplicationType.OFFICE])
+const InspectUploadPath = getESOPUploadPath(ApplicationType2PathSuffix[ApplicationType.INSPECT])
 
 export const FileManagementPageType2FileUploadUrl={
-    [FileManagementPageType.FileManagementWork]:getESOPUploadPath('workinginstruction'),
-    [FileManagementPageType.FileManagementImage]:getESOPUploadPath('docment'),
-    [FileManagementPageType.FileManagementOffice]:getESOPUploadPath('office'),
-    [FileManagementPageType.FileManagementInspect]:getESOPUploadPath('checkinstruction'),
+    [FileManagementPageType.FileManagementWork]: WorkUploadPath,
+    [FileManagementPageType.FileManagementImage]:ImageUploadPath,
+    [FileManagementPageType.FileManagementOffice]:OfficeUploadPath,
+    [FileManagementPageType.FileManagementInspect]:InspectUploadPath,
+}
+
+export const ApplicationType2FileManagementUrl={
+    [ApplicationType.WORK]:getESOPManagementPath(ApplicationType2PathSuffix[ApplicationType.WORK]),
+    [ApplicationType.IMAGE]:getESOPManagementPath(ApplicationType2PathSuffix[ApplicationType.IMAGE]),
+    [ApplicationType.OFFICE]:getESOPManagementPath(ApplicationType2PathSuffix[ApplicationType.OFFICE]),
+    [ApplicationType.INSPECT]:getESOPManagementPath(ApplicationType2PathSuffix[ApplicationType.INSPECT]),
 }
 /**
  * 文件管理作业页面类型
@@ -132,8 +159,11 @@ export const PageType ={
     ...FileTrashPageType,
     ...FileCheckPageType,
     ...FileUploadPageType,
+    ...FileAuditPageType,
 }
+
 export const FileManagePageSet = new Set(Object.values(FileManagementPageType))
 export const FileTrashPageSet = new Set(Object.values(FileTrashPageType))
 export const FileCheckPageSet = new Set(Object.values(FileCheckPageType))
 export const FileUploadPageSet = new Set(Object.values(FileUploadPageType))
+export const FileAuditPageSet = new Set(Object.values(FileAuditPageType))

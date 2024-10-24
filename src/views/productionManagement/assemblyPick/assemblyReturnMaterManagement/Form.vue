@@ -114,7 +114,7 @@
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
-            <el-tab-pane label="附件" name="annex">
+            <el-tab-pane label="附件" name="annex"  v-if="isattachmentswitch == '1'">
               <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
             </el-tab-pane>
             <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
@@ -240,6 +240,8 @@ import { getBusinessFlowInfo , getBusinessFlowDetail } from '@/api/workFlow/Flow
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
+import { getBimBusinessDetail } from '@/api/basicData/index'
+
 export default {
   components: {
     ProductTaskForm,
@@ -250,6 +252,7 @@ export default {
   mixins: [busFlow],
   data() {
     return {
+      isattachmentswitch:"",
       orderMaterialFormVisible: false,
       processMaterialFormVisible: false,
       receiveTypeList: [
@@ -342,9 +345,18 @@ export default {
 
   },
   mounted() {
-
+    this.getBimBusinessDetail()
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_returnPick'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     checkSelection() {
       this.isSame = this.dataForm.receiveType === this.previousReceiveType; // 判断是否相同  
       this.previousReceiveType = this.dataForm.receiveType; // 更新上一次选择

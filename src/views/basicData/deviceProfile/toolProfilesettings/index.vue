@@ -77,7 +77,7 @@
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" :customColumn="true" ref="dataTable" @sort-change="sortChange" custom-column hasC @selection-change="handleSelectionChange">
           <el-table-column prop="code" label="工具编码" min-width="200" sortable="custom" />
           <el-table-column prop="name" label="工具名称" min-width="200" sortable="custom" />
-          <el-table-column prop="state" label="工具状态" min-width="200" sortable="custom">
+          <el-table-column prop="state" label="工具状态" min-width="140" sortable="custom">
             <template slot-scope="{row}">
               <el-tag type="success" disable-transitions v-if="row.state == 'normal'">正常</el-tag>
               <el-tag type="warning" disable-transitions v-if="row.state == 'verification'">检定</el-tag>

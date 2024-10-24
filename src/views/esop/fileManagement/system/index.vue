@@ -38,9 +38,10 @@
         </div>
         <div class="JNPF-common-layout-center JNPF-flex-main" style="background: #fff;padding: 10px;">
             <div class="main JNPF-flex-main height-full">
-                <div class="JNPF-common-search-box searchWrapper" style="width: 100%;display: flex;align-items: center;height: 57px">
+                <div class="JNPF-common-search-box searchWrapper" style="width: 100%;display: flex;align-items: center;height: 34px;padding-top: 0">
 
                         <SearchPlane
+                            :transition-time="500"
                             :loading.sync="searchPlaneLoading"
                             class="search-com"
                             :searchDropDownList="allSearchDropDownList"
@@ -48,13 +49,13 @@
                             @item-click="searchItemClick"
                             :list="searchList"
                             :keyword.sync="keyword"
-                            style="width: calc(100% - 39px)"
+                            style="width: calc(100% - 34px)"
                         ></SearchPlane>
 
                         <SwitchListAndFilter style="width: 39px" @command="filterExtHandler" :switch-list.sync="allSwitchList" :current-ext.sync="currentExt" :file-ext-filter-option="fileExtFilterOption"/>
 
                 </div>
-                <div style="height: calc(100% - 57px)">
+                <div style="height: calc(100% - 35px)">
                     <JNPF-table  class="table-style" v-if="allSwitchList" v-loading="listLoading" :data="fileList" empty-text="暂无文件" size="mini">
                         <el-table-column prop="fullName" label="文件名" custom-column>
                             <template slot-scope="scope">
@@ -95,19 +96,44 @@
                             </template>
                         </el-table-column>
                     </JNPF-table>
-                    <GridFileList v-loading="gridFileListLoading" class="table-style" style="border: 1px solid #ebeef5 !important;" v-else @item-click="listItemClick" @command="allItemCommandHandler"  :list="fileList" :file-options="allFileOptions"></GridFileList>
+                    <GridFileList
+                        v-else
+                        v-loading="gridFileListLoading"
+                        class="table-style"
+                        style="border: 1px solid #ebeef5 !important;"
+                        @item-click="listItemClick"
+                        @command="allItemCommandHandler"
+                        :list="fileList"
+                        :file-options="allFileOptions"
+                    >
+                        <template v-slot:tooltip="{ item }">
+                            <el-row>
+                                <el-col style="text-align: right" :span="8">{{ item.type ? '文件名' : '文件夹名' }}：</el-col>
+                                <el-col :span="16">{{ item.filename }}</el-col>
+                            </el-row>
+                            <el-row>
+                                <el-col style="text-align: right" :span="8">文件大小：</el-col>
+                                <el-col :span="16">{{ item.fileSize | toFileSize() }}</el-col>
+                            </el-row>
+                        </template>
+                        <template v-slot:bottom="{item}">
+                            <div>
+                                <p class="li-upload-p1 name">{{ item.filename }}</p>
+                                <p class="li-upload-p2 file-size" >{{ item.fileSize | toFileSize() }}</p>
+                            </div>
+                        </template>
+
+
+                    </GridFileList>
                 </div>
             </div>
         </div>
-        <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="getAdvancedQuery" />
     </div>
 </template>
 
 <script>
 
-import { getAdvancedQueryList } from "@/api/system/advancedQuery";
 import { getcategoryTree } from '@/api/basicData/index'
-import { getPartnerList, releasePartner } from '@/api/customerManagement/index'
 
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {FileCategoryType} from "@/views/esop/fileCategoryManagement/constants";
@@ -117,6 +143,8 @@ import {AllList} from "@/api/extend/document";
 import {isFile, Type2SuffixArr} from "@/views/drawingDocument/document/utils";
 import SearchPlane from "@/views/drawingDocument/document/SearchPlane.vue";
 import SwitchListAndFilter from "@/views/drawingDocument/document/SwitchListAndFilter.vue";
+import {trim} from "@/utils";
+import {systemAttachmentsList} from "@/api/esop/fileManage/system";
 
 export default {
     name: 'myCustomer',
@@ -164,233 +192,9 @@ export default {
             keyword:"",
             allSearchDropDownList:[
             ],
-            fileList:[
-                {
-                    "id": "1839210682899824642",
-                    "fullName": "123",
-                    "type": 0,
-                    "creatorTime": "2024-09-26 15:49:32",
-                    "isShare": 0,
-                    "fileSize": "",
-                    "parentId": "0",
-                    "fileExtension": null,
-                    "canEdit": true,
-                    "source": "全部文档",
-                    "sourceId": "0",
-                    "filePath": null
-                },
-                {
-                    "id": "1839217958427623425",
-                    "fullName": "465",
-                    "type": 0,
-                    "creatorTime": "2024-09-26 16:18:26",
-                    "isShare": 0,
-                    "fileSize": "",
-                    "parentId": "0",
-                    "fileExtension": null,
-                    "canEdit": true,
-                    "source": "全部文档",
-                    "sourceId": "0",
-                    "filePath": null
-                },
-                {
-                    "id": "1839217877028765697",
-                    "fullName": "轴管通-文件管理需求说明.docx",
-                    "type": 1,
-                    "creatorTime": "2024-09-26 16:18:07",
-                    "isShare": 1,
-                    "fileSize": "1895532",
-                    "parentId": "0",
-                    "fileExtension": "docx",
-                    "canEdit": true,
-                    "source": "全部文档",
-                    "sourceId": "0",
-                    "filePath": "609022527074832069.docx"
-                },
-                {
-                    "id": "1839217895550812162",
-                    "fullName": "2024-09-26 16:18:11-71D2CAC6-1A30-4e9e-8B93-E3AF26CB38E3.png",
-                    "type": 1,
-                    "creatorTime": "2024-09-26 16:18:11",
-                    "isShare": 0,
-                    "fileSize": "85890",
-                    "parentId": "0",
-                    "fileExtension": "png",
-                    "canEdit": true,
-                    "source": "全部文档",
-                    "sourceId": "0",
-                    "filePath": "609022545613655749.png"
-                },
-                {
-                    "id": "1839217895995408385",
-                    "fullName": "2024-09-26 16:18:12-轴管通-ESOP需求说明.docx",
-                    "type": 1,
-                    "creatorTime": "2024-09-26 16:18:12",
-                    "isShare": 0,
-                    "fileSize": "1516573",
-                    "parentId": "0",
-                    "fileExtension": "docx",
-                    "canEdit": true,
-                    "source": "全部文档",
-                    "sourceId": "0",
-                    "filePath": "609022546041474757.docx"
-                },
-                {
-                    "id": "1839217897970925570",
-                    "fullName": "2024-09-26 16:18:12-轴管通-文件管理需求说明.docx",
-                    "type": 1,
-                    "creatorTime": "2024-09-26 16:18:12",
-                    "isShare": 0,
-                    "fileSize": "1895532",
-                    "parentId": "0",
-                    "fileExtension": "docx",
-                    "canEdit": true,
-                    "source": "全部文档",
-                    "sourceId": "0",
-                    "filePath": "609022548004409029.docx"
-                },
-                {
-                    "id": "1840325452336005121",
-                    "fullName": "2024-09-29 17:39:14-轴管通-文件管理需求说明.docx",
-                    "type": 1,
-                    "creatorTime": "2024-09-29 17:39:14",
-                    "isShare": 0,
-                    "fileSize": "1895532",
-                    "parentId": "0",
-                    "fileExtension": "docx",
-                    "canEdit": true,
-                    "source": "全部文档",
-                    "sourceId": "0",
-                    "filePath": "610130102386272261.docx"
-                },
-                {
-                    "id": "1840638406629588993",
-                    "fullName": "新建文本文档.txt",
-                    "type": 1,
-                    "creatorTime": "2024-09-30 14:22:48",
-                    "isShare": 0,
-                    "fileSize": "0",
-                    "parentId": "0",
-                    "fileExtension": "txt",
-                    "canEdit": true,
-                    "source": "全部文档",
-                    "sourceId": "0",
-                    "filePath": "610443056692439045.txt"
-                },
-                {
-                    "id": "1843489641489563650",
-                    "fullName": "2024-10-08 11:12:35-新建文本文档.txt",
-                    "type": 1,
-                    "creatorTime": "2024-10-08 11:12:35",
-                    "isShare": 0,
-                    "fileSize": "0",
-                    "parentId": "0",
-                    "fileExtension": "txt",
-                    "canEdit": true,
-                    "source": "全部文档",
-                    "sourceId": "0",
-                    "filePath": "613294291544027973.txt"
-                },
-                {
-                    "id": "1843822085140971521",
-                    "fullName": "starry.jpg",
-                    "type": 1,
-                    "creatorTime": "2024-10-09 09:13:36",
-                    "isShare": 0,
-                    "fileSize": "479622",
-                    "parentId": "0",
-                    "fileExtension": "jpg",
-                    "canEdit": true,
-                    "source": "全部文档",
-                    "sourceId": "0",
-                    "filePath": "613626735124134789.jpg"
-                },
-                {
-                    "id": "1843824293521719298",
-                    "fullName": "轴管通-异常管理需求说明.docx",
-                    "type": 1,
-                    "creatorTime": "2024-10-09 09:22:22",
-                    "isShare": 0,
-                    "fileSize": "2966038",
-                    "parentId": "0",
-                    "fileExtension": "docx",
-                    "canEdit": true,
-                    "source": "全部文档",
-                    "sourceId": "0",
-                    "filePath": "613628943546825605.docx"
-                },
-                {
-                    "id": "1844549308680568834",
-                    "fullName": "logo3.jpg",
-                    "type": 1,
-                    "creatorTime": "2024-10-11 09:23:19",
-                    "isShare": 0,
-                    "fileSize": "137704",
-                    "parentId": "0",
-                    "fileExtension": "jpg",
-                    "canEdit": true,
-                    "source": "全部文档",
-                    "sourceId": "0",
-                    "filePath": "614353958697288197.jpg"
-                },
-                {
-                    "id": "1845050927763488769",
-                    "fullName": "2024-10-12 18:36:35-新建文本文档.txt",
-                    "type": 1,
-                    "creatorTime": "2024-10-12 18:36:35",
-                    "isShare": 0,
-                    "fileSize": "9",
-                    "parentId": "0",
-                    "fileExtension": "txt",
-                    "canEdit": true,
-                    "source": "全部文档",
-                    "sourceId": "0",
-                    "filePath": "614855577822155525.txt"
-                }
-            ],
+            fileList:[],
             allSwitchList:false,
             shareVisible:false,
-            superQueryJson: [
-                {
-                    prop: 'name',
-                    label: "客户名称",
-                    type: 'input'
-                },
-                {
-                    prop: 'code',
-                    label: "客户编码",
-                    type: 'input'
-                },
-                {
-                    prop: 'lxr',
-                    label: "联系人",
-                    type: 'input'
-                },
-                {
-                    prop: 'tel',
-                    label: "电话",
-                    type: 'input'
-                },
-                {
-                    prop: 'phone',
-                    label: "手机",
-                    type: 'input'
-                },
-                {
-                    prop: 'createByName',
-                    label: '创建人',
-                    type: 'input'
-                },
-                { // 日期时间选择器（区间）
-                    prop: 'createTime',
-                    label: '创建时间',
-                    type: 'datetimerange',
-                    valueFormat: "yyyy-MM-dd HH:mm:ss",
-                    startPlaceholder: '创建开始时间',
-                    endPlaceholder: '创建结束时间',
-                    pickerOptions: this.global.timePickerOptions
-                }
-            ],
             gridFileListLoading:false,
             superQueryVisible: false,
             programmefrom: {},
@@ -413,30 +217,35 @@ export default {
             tableData: [],
             listLoading: false,
             initListQuery: {
-                categoryId: '',
-                code: "",
-                contacts: "",
-                createByName: "",
-                endTime: "",
-                endUpdateTime: "",
-                keyword: "",
-                mobilePhone: "",
-                name: "",
-                pageNum: 1,
-                pageSize: 20,
-                phone: "",
-                customerStatus: 'private_sea',
-                startTime: "",
-                startUpdateTime: "",
-                totalRowFlag: false,
-                createTimeArr: [],
-                orderItems: [{
-                    asc: false,
-                    column: ""
-                }, {
-                    asc: false,
-                    column: "create_time"
-                }],
+                "businessId": "",
+                "businessType": "",
+                "categoryId": "",
+                "createByName": "",
+                "endTime": "",
+                "endUpdateTime": "",
+                "keyword": "",
+                "orderItems": [
+                    {
+                        "asc": true,
+                        "column": ""
+                    }
+                ],
+                "pageNum": 1,
+                "pageSize": 20,
+                "productsId": null,
+                "startTime": "",
+                "startUpdateTime": "",
+                "superQuery": {
+                    "condition": [
+                        {
+                            "field": "",
+                            "fieldValue": "",
+                            "symbol": ""
+                        }
+                    ],
+                    "matchLogic": ""
+                },
+                "totalRowFlag": false
             },
             listQuery: {},
             total: 0,
@@ -452,15 +261,8 @@ export default {
         },
     },
     created() {
-
-        AllList({
-            parentId:0
-        }).then(res=>{
-            this.fileList = res.data.list
-        })
         this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
         this.getcategoryTree()
-        // this.initData()
         if (localStorage.getItem("punterFlag")) {
             let roleFlag = JSON.parse(localStorage.getItem('punterFlag'))
             this.expands = roleFlag
@@ -472,12 +274,7 @@ export default {
             return (this.$route.meta.modelId || '') + this.partentOrChild
         }
     },
-    mounted() {
-        this.getAdvancedQuery()
-    },
-    beforeDestroy() {
-        window.onresize = null
-    },
+
     methods: {
         filterExtHandler(command){
             if(command === ALL_TEXT){
@@ -534,14 +331,7 @@ export default {
         searchList(){},
         listItemClick(){},
         allItemCommandHandler(){},
-        shareFun() {
-            if (!this.selectData.length) return this.$message.error("请先选择你要移交的客户")
-            let idList = this.selectData.map(item => item.id);
-            this.shareVisible = true
-            this.$nextTick(() => {
-                this.$refs.share.init(idList)
-            })
-        },
+
         // // 设置默认展开
         setexpand(expands) {
             this.refreshTree = false
@@ -561,45 +351,7 @@ export default {
                 })
             })
         },
-        getAdvancedQuery() {
-            getAdvancedQueryList(this.currMenuId).then(row => {
-                this.datalist = row.data.list
-                this.switchStyle()
-            })
-        },
-        superQuerySearch(query) {
-            this.listQuery.superQuery = query
-            this.superQueryVisible = false
-            this.search()
-        },
-        actionreverse(item) {
-            this.programmefrom = item
-            this.programmetitle = item.fullName
-            this.isopen = false
-        },
-        async switchStyle() {
-            await this.$nextTick();
-            const programmes = this.$refs.programmes ? this.$refs.programmes.offsetWidth : 0
-            if (programmes <= 100) {
-                this.programmelist = []
-                this.programmelist1 = this.datalist.slice(0)
-                Math.floor(programmes / 100)
-            } else {
-                let num = Math.floor(programmes / 100)
-                if (num - 1 > this.datalist.length) {
-                    num = this.datalist.length + 1
-                }
-                this.programmelist = this.datalist.slice(0, num - 1)
-                this.programmelist1 = this.datalist.slice(num - 1)
-            }
-            // 附带防抖的监听适配模式屏幕缩放
-            window.onresize = () => {
-                clearTimeout(this.timeout)
-                this.timeout = setTimeout(() => {
-                    this.switchStyle()
-                }, 100);
-            };
-        },
+
         filterNode(value, data) {
             console.log(value, data);
             if (!value) return true;
@@ -612,12 +364,7 @@ export default {
         changeLeft() {
             this.leftFlag = !this.leftFlag
         },
-        columnSetFun() {
-            this.$refs.dataTable.showDrawer()
-        },
-        handeleInfoData(val) {
-            this.selectData = val
-        },
+
         getcategoryTree() {
             this.treeLoading = true
             this.listLoading = true
@@ -641,13 +388,10 @@ export default {
         },
         initData() {
             this.listLoading = true
-            Object.keys(this.listQuery).forEach(key => {
-                let item = this.listQuery[key]
-                this.listQuery[key] = typeof item === 'string' ? item.trim() : item
-            })
+            trim(this.listQuery)
             this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
-            getPartnerList(this.listQuery).then(res => {
-                this.tableData = res.data.records
+            systemAttachmentsList(this.listQuery).then(res => {
+                this.fileList = res.data.records
                 this.total = res.data.total
                 this.listLoading = false
                 this.visible = false
@@ -661,44 +405,13 @@ export default {
             this.listQuery.orderItems[0].column = order === null ? "" : newProp
             this.initData()
         },
-
-        // 关闭新建编辑页面
-        closeForm(isRefresh) {
-            this.shareVisible=false
-            this.formVisible = false
-            this.recordFormVisible = false
-            if (isRefresh) {
-                this.keyword = ''
-                this.initData()
-            }
-        },
         search() {
             this.listQuery.pageNum = 1
             this.initData()
         },
-        reset() {
-            this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-            this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-            this.$refs.SuperQuery.conditionList = []
-            this.programmefrom = {}
-            this.programmetitle = ''
-            this.filterText = ''
-            this.getcategoryTree()
-        },
 
-        addOrUpdateHandle(id, btntype) {
-            this.formVisible = true
-            this.$nextTick(() => {
-                this.$refs.Form1.init(id, btntype)
-            })
-        },
-        // 写记录
-        handleRecord(row) {
-            this.recordFormVisible = true
-            this.$nextTick(() => {
-                this.$refs.RecordForm1.init(row.id)
-            })
-        },
+
+
         handleDel(id) {
             this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
                 type: 'warning'
@@ -711,28 +424,36 @@ export default {
                         duration: 1500,
                     })
                 })
-            }).catch(() => { })
+            }).catch(() => {})
         },
-        releaseFun() {
-            if (this.selectData.length) {
-                let idList = this.selectData.map(item => item.id)
-                releasePartner(idList).then(res => {
-                    this.initData()
-                    this.$message({
-                        type: 'success',
-                        message: "释放成功",
-                        duration: 1500,
-                    })
-                }).catch(() => { })
-            } else {
-                this.$message.warning('请选择您要释放的客户数据！')
-            }
-        },
+
     }
 }
 </script>
 <style src="@/assets/scss/index-list.scss" lang="scss" scoped />
 <style scoped lang="scss">
+.name{
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    color: #222;
+    display: -webkit-box;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 18px;
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+    width: 104px;
+    word-break: break-all;
+}
+.file-size{
+    margin-top: -3px;
+    color: #999;
+    font-size: 12px;
+    text-align: center;
+
+}
 .is-reverse {
     color: #fff !important;
     background-color: #3fb9f8;

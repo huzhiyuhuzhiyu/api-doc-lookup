@@ -1,12 +1,18 @@
 import {switchEnableMark} from "@/api/esop/fileUpload/workinginstruction";
-import {notEmpty} from "@/utils";
+import {isEmpty, notEmpty} from "@/utils";
 import {
     ApprovalStatus,
     ORDER_CODE_FILE_UPLOAD,
-    ModelType
+    ModelType, PageType, ApplicationType
 } from "@/views/esop/fileUpload/workinginstruction/utils/constant";
+import {isNoProductPage} from "@/views/esop/utils/utils";
 
 export default {
+    data(){
+        return {
+            versionCountVisible:false,
+        }
+    },
     props:{
         type:{
             type:String,
@@ -44,6 +50,14 @@ export default {
             type:String,
             required:'',
         },
+        isApprovalModel:{
+            type:Boolean,
+            required:false,
+        },
+        pageType:{
+            type:String,
+            required:false,
+        },
     },
     methods:{
         async toggleEnableMarkHandler(){
@@ -78,6 +92,12 @@ export default {
             this.fetchData(!flag)
             flag &&  this.getDetail(data)
         },
+        versionCountHandler(){
+           if(isEmpty(this.dataForm.versionCount)){
+               return this.$message.info('暂无可查看的关联版本')
+           }
+          this.versionCountVisible = true
+        }
     },
     computed:{
         orderNoDisabled(){
@@ -85,6 +105,9 @@ export default {
         },
         hasEnableMark(){
             return this.dataForm.approvalStatus === ApprovalStatus.OK && (this.isFileManagementPage || this.isFileCheckPage)
+        },
+        isNoProductPage(){
+            return isNoProductPage(this.dataForm.applicationType)
         },
     }
 }

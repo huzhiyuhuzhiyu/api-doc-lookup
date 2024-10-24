@@ -70,8 +70,10 @@
             <el-table-column prop="planStartDate" label="计划开始日期" min-width="150" sortable="custom" />
             <el-table-column prop="planEndDate" label="计划结束日期" min-width="150" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="80" />
-            <el-table-column prop="planQuantity" label="计划数量" min-width="120" sortable="custom" />
-            <el-table-column prop="relaxQuantity" label="宽放计划数量" min-width="150" sortable="custom" />
+            <el-table-column prop="planQuantity" label="需求数量" min-width="120" sortable="custom" />
+            <el-table-column prop="utilizationQuantity" label="利用库存数量" min-width="150" sortable="custom" />
+            
+            <el-table-column prop="relaxQuantity" label="宽放需求数量" min-width="150" sortable="custom" />
             <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="150" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
             <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
@@ -84,8 +86,8 @@
             <el-table-column prop="remark" label="备注" width="120" />
             <el-table-column prop="planState" label="计划状态" width="120">
               <template slot-scope="scope">
-                <div v-if="scope.row.planState == 'not_finish'"><el-tag type="danger">未完成</el-tag></div>
-                <div v-else-if="scope.row.planState == 'finish'"><el-tag type="success">已完成</el-tag></div>
+                <div v-if="scope.row.planState == 'not_finished'"><el-tag type="danger">未完成</el-tag></div>
+                <div v-else-if="scope.row.planState == 'finished'"><el-tag type="success">已完成</el-tag></div>
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />

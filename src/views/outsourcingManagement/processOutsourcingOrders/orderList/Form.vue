@@ -166,7 +166,7 @@
                       <el-table-column prop="price" label="含税单价" min-width="180">
                         <template slot="header">
                           <span class="required">*</span>
-                          含税单价
+                          单价(含税)
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'price'" :rules="productRules.price">

@@ -87,7 +87,7 @@
           <!-- <el-table-column prop="orderNo" label="对账单号" width="180" sortable="custom" /> -->
           <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="200" sortable="custom" />
           <el-table-column prop="cooperativePartnerCode" label="客户编码" min-width="200" />
-          <el-table-column prop="excludingTaxAmount" label="不含税总金额" min-width="180">
+          <el-table-column prop="excludingTaxAmount" label="总金额(不含税)" min-width="180">
             <template slot-scope="scope">
               <div :class="scope.row.excludingTaxAmount > 0 ? 'green' : 'red'">{{ scope.row.excludingTaxAmount > 0 ? '+'
                 + scope.row.excludingTaxAmount : scope.row.excludingTaxAmount }}</div>
@@ -99,7 +99,7 @@
                 scope.row.taxAmount : scope.row.taxAmount }}</div>
             </template>
           </el-table-column>
-          <el-table-column prop="includingTaxAmount" label="含税总金额" min-width="180">
+          <el-table-column prop="includingTaxAmount" label="总金额(含税)" min-width="180">
             <template slot-scope="scope">
               <div :class="scope.row.includingTaxAmount > 0 ? 'green' : 'red'">{{ scope.row.includingTaxAmount > 0 ? '+'
                 + scope.row.includingTaxAmount : scope.row.includingTaxAmount }}</div>

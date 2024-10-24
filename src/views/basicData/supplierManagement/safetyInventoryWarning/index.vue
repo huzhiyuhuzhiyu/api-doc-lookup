@@ -94,7 +94,7 @@
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" hasC @sort-change="sortChange"
           custom-column ref="dataTable" :setColumnDisplayList="columnList" @selection-change="handeleProductInfoData">
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
-          <el-table-column prop="code" label="产品编码" min-width="120"></el-table-column>
+          <el-table-column prop="code" label="产品编码" width="140" sortable="custom"></el-table-column>
           <el-table-column prop="classAttribute" label="类别属性" width="120" sortable="custom">
             <template slot-scope="scope">
               {{ $getLabel(classAttributeList, scope.row.classAttribute, 'value', 'label') }}
@@ -102,8 +102,9 @@
           </el-table-column>
           <el-table-column prop="productCategoryName" label="产品分类" width="120" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" width="60" />
-          <el-table-column prop="safeInventory" label="安全库存" min-width="100" />
           <el-table-column prop="availableQuantity" label="可用库存" min-width="130" sortable="custom" />
+          <el-table-column prop="safeInventory" label="安全库存" min-width="130" sortable="custom" />
+          <el-table-column prop="maxInventory" label="最高库存" min-width="130" sortable="custom" />
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
           :limit.sync="listQuery.pageSize" @pagination="initData" />
@@ -496,7 +497,7 @@ export default {
           // demandDelivery = maxDate.toISOString().split('T')[0];
           this.formVisible = true
           this.$nextTick(() => {
-            this.$refs.Form.init(this.selectData, this.listQuery.classAttribute)
+            this.$refs.Form.init(this.selectData, this.listQuery.classAttribut, 'safe')
           })
         }
       }

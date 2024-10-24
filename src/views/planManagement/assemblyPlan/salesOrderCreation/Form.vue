@@ -136,7 +136,7 @@
                             :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2" maxlength="200" />
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="24" :xs="24" class="special">
+                      <!-- <el-col :sm="24" :xs="24" class="special">
                         <div style="padding: 0 15px ;background-color: azure;">
                           <el-form-item label="下达数量">
                             <span class="lab_t" style="margin-left: 0">利用库存数量</span>
@@ -151,7 +151,7 @@
                             <span
                               :style="planForm.productSource == 'assemble' || planForm.productSource == 'produce' ? 'background:#3fb9f8;color:#fff' : ''"
                               class="lab_t">生产数量</span>
-                            <el-input class="ipt2" v-model="planForm.purchaseQuantity" @blur="watchcg"
+                            <el-input class="ipt2" v-model="planForm.produceQuantity" @blur="watchcg"
                               placeholder="生产数量" :disabled='btnType == "look"'
                               oninput="value=value.replace(/^(0+)|[^\d]+/g,'')"></el-input>
 
@@ -163,36 +163,36 @@
 
                             <span :style="planForm.productSource == 'out' ? 'background:#3fb9f8;color:#fff' : ''"
                               class="lab_t">外协数量</span>
-                            <el-input class="ipt4" v-model="planForm.purchaseQuantity" @blur="watchcg"
+                            <el-input class="ipt4" v-model="planForm.outQuantity" @blur="watchcg"
                               placeholder="外协数量" :disabled='btnType == "look"'
                               oninput="value=value.replace(/^(0+)|[^\d]+/g,'')"></el-input>
 
                           </el-form-item>
                         </div>
-                      </el-col>
-                      <!-- <el-col :sm="6" :xs="24">
+                      </el-col> -->
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="安排采购数量" prop="purchaseQuantity">
 
                           <el-input v-model="planForm.purchaseQuantity" @blur="watchcg" placeholder="请输入安排采购数量"
                             :disabled='btnType == "look"' oninput="value=value.replace(/^(0+)|[^\d]+/g,'')">
                           </el-input>
                         </el-form-item>
-                      </el-col> -->
-                      <!-- <el-col :sm="6" :xs="24">
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="利用库存数量" prop="utilizationQuantity">
 
                           <el-input v-model="planForm.utilizationQuantity" @blur="watchly" placeholder="请输入利用库存数量"
                             :disabled='btnType == "look"' oninput="value=value.replace(/^(0+)|[^\d]+/g,'')">
                           </el-input>
                         </el-form-item>
-                      </el-col> -->
-                      <!-- <el-col :sm="6" :xs="24">
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="最终计划数量" prop="finalPlanQuantity">
 
                           <el-input v-model="planForm.finalPlanQuantity" placeholder="请输入最终计划数量" disabled>
                           </el-input>
                         </el-form-item>
-                      </el-col> -->
+                      </el-col>
 
                     </el-row>
 
@@ -961,7 +961,7 @@ export default {
   display: inline-block;
   height: 32px;
   border: 1px solid #DCDFE6;
-  vertical-align: bottom;
+  vertical-align: top;
   line-height: 32px;
   padding: 0 10px;
   border-right: 0;
@@ -999,7 +999,7 @@ export default {
   cursor: pointer;
   border: 1px solid #dcdfe6;
   padding-left: 10px;
-  vertical-align: bottom;
+  vertical-align: top;
   font-size: 16px;
 }
 .BOM_T ::v-deep .el-input__inner{

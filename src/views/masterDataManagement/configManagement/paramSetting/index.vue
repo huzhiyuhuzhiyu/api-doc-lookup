@@ -17,7 +17,7 @@
               :span-method="activeName === 'attachment' ? arraySpanMethod : undefined"
               :height="maxHeight" :data="tableData" stripe :row-style="{ height: '50px' }"
             :header-cell-style="{ background: '#FAFAFA', color: '#606266', 'text-align': 'center' }">
-              <el-table-column  v-if="activeName === 'attachment'" prop="mainModule" label="所属模块" width="110"/>
+              <el-table-column align="center"  v-if="activeName === 'attachment'" prop="mainModule" label="所属模块" width="250"/>
 
 
 
@@ -67,6 +67,9 @@
                               <div style="width: 100%" v-if="row.configValue3">{{row.configValue3}}</div>
                               <div style="width: 100%;visibility: hidden" v-else>1</div></div>
                       </div>
+                  </template>
+                  <template v-slot:header>
+                        <div><i class="el-icon el-icon-edit-outline"></i> 文件分类</div>
                   </template>
               </el-table-column>
             <el-table-column prop="description" label="说明"/>
@@ -250,17 +253,19 @@ export default {
         this.tableRerender = false
       getBimBusinessSwitchConfigList(this.listQuery)
         .then((res) => {
+            let list = []
+
           if (this.activeName == 'product') {
-            this.tableData = res.data.product
+              list = res.data.product
           } else if (this.activeName == 'produce') {
-            this.tableData = res.data.produce
+              list = res.data.produce
           } else if (this.activeName == 'warehouse') {
-            this.tableData = res.data.warehouse
+              list = res.data.warehouse
           } else if (this.activeName == 'attachment') {
-            this.tableData = res.data.attachment.filter((item) => item.configKey !== '' || item.configKey == 'fj_qzkh')
+              list = res.data.attachment.filter((item) => item.configKey !== '' || item.configKey == 'fj_qzkh')
           }
 
-          this.tableData.forEach((item) => {
+            list.forEach((item) => {
             if (item.configValue1 == '1') {
               this.$set(item, 'state', true)
               this.$set(item, 'radio', 1)
@@ -286,7 +291,7 @@ export default {
 
             this.$set(item, 'editFlag', false)
           })
-
+          this.tableData =  list.sort((a,b)=> b.mainModule.localeCompare(a.mainModule))
           this.formLoading = false
         })
         .catch(() => (this.formLoading = false)).finally(() => {

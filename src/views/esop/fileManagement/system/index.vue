@@ -57,21 +57,22 @@
                 </div>
                 <div style="height: calc(100% - 35px)">
                     <JNPF-table  class="table-style" v-if="allSwitchList" v-loading="listLoading" :data="fileList" empty-text="暂无文件" size="mini">
-                        <el-table-column prop="fullName" label="文件名" custom-column>
+                        <el-table-column prop="filename" label="文件名" custom-column>
                             <template slot-scope="scope">
-                          <span v-if="scope.row.type" class="pointer" @click="listItemClick(scope.row)" >
-                            {{ scope.row.fullName }}
-                          </span>
-                                <span class='cursor-pointer' v-else @click="openFolder(scope.row)">
-                            <i class='icon-ym icon-ym-extend-folder text-warning' />
-                            {{ scope.row.fullName }}
-                          </span>
+                              <span  class="pointer" @click="listItemClick(scope.row)" >
+                                {{ scope.row.filename }}
+                              </span>
                             </template>
                         </el-table-column>
-                        <!--              <el-table-column prop="fileSize" label="大小">-->
-                        <!--                <template slot-scope="scope">{{ scope.row.fileSize | toFileSize() }}</template>-->
-                        <!--              </el-table-column>-->
-                        <el-table-column prop="creatorTime" label="创建日期" width="200"/>
+                       <el-table-column prop="fileSize" label="大小">
+                            <template slot-scope="scope">{{ scope.row.fileSize | toFileSize }}</template>
+                       </el-table-column>
+
+                        <el-table-column prop="fileSize" label="业务名称">
+                            <template slot-scope="{row}">{{ getBusinessTitle(row.configKey) }}</template>
+                        </el-table-column>
+
+                        <el-table-column prop="createTime" label="创建日期" width="200"/>
                         <el-table-column label="操作"
                                          fixed="right" width="200">
                             <template slot-scope="scope">
@@ -221,7 +222,7 @@ export default {
             allSearchDropDownList:[
             ],
             fileList:[],
-            allSwitchList:false,
+            allSwitchList:true,
             shareVisible:false,
             gridFileListLoading:false,
             superQueryVisible: false,

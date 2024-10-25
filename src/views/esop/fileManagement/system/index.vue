@@ -1,6 +1,6 @@
 <template>
     <div class="JNPF-common-layout">
-        <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
+        <div class="JNPF-common-layout-left treeBox" style="transition: width 500ms" :style="leftFlag ? 'width:15px;background:#fff' : ''">
             <div class="JNPF-common-title" style="display: block;padding:0" v-if="!leftFlag">
                 <div class="title_box">
                     <h2>系统附件分类</h2>
@@ -23,10 +23,10 @@
 
             <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
                 <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNode">
-          <span class="custom-tree-node" slot-scope="{ node }">
-            <i class="el-icon-notebook-2" />
-            <span class="text">{{ node.label }}</span>
-          </span>
+                  <span class="custom-tree-node" slot-scope="{ node }">
+                    <i class="el-icon-notebook-2" />
+                    <span class="text">{{ node.label }}</span>
+                  </span>
                 </el-tree>
             </el-scrollbar>
             <div v-if="!leftFlag" class="retract " style="position: absolute">
@@ -38,69 +38,115 @@
         </div>
         <div class="JNPF-common-layout-center JNPF-flex-main" style="background: #fff;padding: 10px;">
             <div class="main JNPF-flex-main height-full">
-                <div class="JNPF-common-search-box searchWrapper" style="width: 100%;display: flex;align-items: center;height: 34px;padding-top: 0">
+                <el-row class="JNPF-common-search-box" :gutter="16">
+                    <el-form @submit.native.prevent>
+                        <el-col :span="4" style="padding-left: 0 !important;">
+                            <el-form-item>
+                                <el-input @clear="search" @keyup.enter.native="search" v-model="listQuery.superQuery.condition[0].fieldValue" placeholder="文件名" clearable />
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item>
+                                <el-date-picker v-model="createTimeArr" type="datetimerange" :default-time="['00:00:00', '23:59:59']"
+                                                @change="search"
+                                                style="width: 100%" start-placeholder="创建开始时间" end-placeholder="创建结束时间" clearable></el-date-picker>
+                            </el-form-item>
+                        </el-col>
 
-                        <SearchPlane
-                            :transition-time="500"
-                            :loading.sync="searchPlaneLoading"
-                            class="search-com"
-                            :searchDropDownList="allSearchDropDownList"
-                            @search-change="searchChange"
-                            @item-click="searchItemClick"
-                            :list="searchList"
-                            :keyword.sync="keyword"
-                            style="width: calc(100% - 34px)"
-                        ></SearchPlane>
+                        <el-col :span="6">
+                            <el-form-item>
+                                <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                                    {{ $t('common.search') }}
+                                </el-button>
+                                <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
+                            </el-form-item>
+                        </el-col>
+                        <el-col   :span="6" class="JNPF-common-head-right" style="display:flex;justify-content:flex-end;align-items:center;float: right;line-height: 34px;padding-right: 16px !important;">
+                                                    <SwitchListAndFilter :needFilter="false" style="width: 39px" @command="filterExtHandler" :switch-list.sync="allSwitchList" :current-ext.sync="currentExt" :file-ext-filter-option="fileExtFilterOption"/>
 
-                        <SwitchListAndFilter style="width: 39px" @command="filterExtHandler" :switch-list.sync="allSwitchList" :current-ext.sync="currentExt" :file-ext-filter-option="fileExtFilterOption"/>
+                        </el-col>
+                    </el-form>
+                </el-row>
+<!--                <div class="JNPF-common-search-box searchWrapper" style="width: 100%;display: flex;align-items: center;height: 34px;padding-top: 0;justify-content: space-between;">-->
 
-                </div>
-                <div style="height: calc(100% - 35px)">
-                    <JNPF-table  class="table-style" v-if="allSwitchList" v-loading="listLoading" :data="fileList" empty-text="暂无文件" size="mini">
-                        <el-table-column prop="filename" label="文件名" custom-column>
-                            <template slot-scope="scope">
-                              <span  class="pointer" @click="listItemClick(scope.row)" >
-                                {{ scope.row.filename }}
-                              </span>
-                            </template>
-                        </el-table-column>
-                       <el-table-column prop="fileSize" label="大小">
-                            <template slot-scope="scope">{{ scope.row.fileSize | toFileSize }}</template>
-                       </el-table-column>
+<!--&lt;!&ndash;                        <SearchPlane&ndash;&gt;-->
+<!--&lt;!&ndash;                            :transition-time="500"&ndash;&gt;-->
+<!--&lt;!&ndash;                            :loading.sync="searchPlaneLoading"&ndash;&gt;-->
+<!--&lt;!&ndash;                            class="search-com"&ndash;&gt;-->
+<!--&lt;!&ndash;                            :searchDropDownList="allSearchDropDownList"&ndash;&gt;-->
+<!--&lt;!&ndash;                            @search-change="searchChange"&ndash;&gt;-->
+<!--&lt;!&ndash;                            @item-click="searchItemClick"&ndash;&gt;-->
+<!--&lt;!&ndash;                            :list="searchList"&ndash;&gt;-->
+<!--&lt;!&ndash;                            :keyword.sync="keyword"&ndash;&gt;-->
+<!--&lt;!&ndash;                            style="width: calc(100% - 34px)"&ndash;&gt;-->
+<!--&lt;!&ndash;                        ></SearchPlane>&ndash;&gt;-->
+<!--                        <el-form @submit.native.prevent style="display: flex;justify-content: center;">-->
+<!--                            <el-row :gutter="16">-->
+<!--                                <el-col :span="4">-->
+<!--                                    <el-form-item   style="margin-bottom: 0px !important">-->
+<!--                                        <el-input v-model="listQuery.superQuery.condition[0].fieldValue" placeholder="请输入文件名" style="width: 200px" clearable-->
+<!--                                                  @clear="search"-->
+<!--                                                  @keyup.enter.native="search()" ></el-input>-->
+<!--                                    </el-form-item>-->
+<!--                                </el-col>-->
+<!--                                <el-col :span="8">-->
+<!--                                    <el-form-item >-->
+<!--                                        <el-date-picker v-model="createTimeArr" type="datetimerange" :default-time="['00:00:00', '23:59:59']"-->
+<!--                                                        style="width: 100%" start-placeholder="创建开始时间" end-placeholder="创建结束时间" clearable></el-date-picker>-->
+<!--                                    </el-form-item>-->
+<!--                                </el-col>-->
+<!--                                <el-col :span="6">-->
+<!--                                    <el-form-item  style="margin-bottom: 0px !important;margin-left: 10px">-->
+<!--                                        <el-button type="primary" icon="el-icon-search" @click="search()" size="mini">-->
+<!--                                            {{$t('common.search')}}</el-button>-->
+<!--                                        <el-button icon="el-icon-refresh-right" @click="reset()" size="mini">{{$t('common.reset')}}-->
+<!--                                        </el-button>-->
+<!--                                    </el-form-item>-->
+<!--                                </el-col>-->
+<!--                            </el-row>-->
 
-                        <el-table-column prop="fileSize" label="业务名称">
-                            <template slot-scope="{row}">{{ getBusinessTitle(row.configKey) }}</template>
-                        </el-table-column>
 
-                        <el-table-column prop="createTime" label="创建日期" width="200"/>
-                        <el-table-column label="操作"
-                                         fixed="right" width="200">
-                            <template slot-scope="scope">
-                                <el-button size="mini" type="text" @click="handleDownLoad(scope.row.id)"
-                                           :disabled="!scope.row.type">下载</el-button>
-                                <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                                           @click="handleDel(scope.$index, scope.row.id)" v-if="scope.row.canEdit">删除</el-button>
-                                <el-dropdown v-if="scope.row.canEdit">
-                                    <el-button type=" text" size="mini">
-                                        {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                                    </el-button>
-                                    <el-dropdown-menu slot="dropdown">
-                                        <el-dropdown-item @click.native="shareFolder(scope.row.id)" v-if="scope.row.type">
-                                            共享
-                                        </el-dropdown-item>
-                                        <el-dropdown-item @click.native="getFolder(scope.row.id)">重命名
-                                        </el-dropdown-item>
-                                        <el-dropdown-item @click.native="moveTo(scope.row.id, scope.row.parentId)">
-                                            移动到
-                                        </el-dropdown-item>
-                                    </el-dropdown-menu>
-                                </el-dropdown>
-                            </template>
-                        </el-table-column>
-                    </JNPF-table>
+
+<!--                        </el-form>-->
+
+<!--                        <SwitchListAndFilter :needFilter="false" style="width: 39px" @command="filterExtHandler" :switch-list.sync="allSwitchList" :current-ext.sync="currentExt" :file-ext-filter-option="fileExtFilterOption"/>-->
+
+<!--                </div>-->
+                <div style="height: calc(100% - 35px)" v-loading="listLoading">
+
+                    <JNPF-table  v-if="allSwitchList"   class="table-style" :data="fileList" empty-text="暂无文件" size="mini">
+                            <el-table-column prop="filename" label="文件名" custom-column min-width="150">
+                                <template slot-scope="scope">
+                                    <el-link :underline="false" type="primary" @click="listItemClick(scope.row)" >
+                                        {{ scope.row.filename }}
+                                    </el-link>
+                                </template>
+                            </el-table-column>
+                            <el-table-column prop="fileSize" label="大小" width="100">
+                                <template slot-scope="scope">{{ scope.row.fileSize | toFileSize }}</template>
+                            </el-table-column>
+
+                            <el-table-column prop="fileSize" label="业务名称"  width="160">
+                                <template slot-scope="{row}">{{ getBusinessTitle(row.configKey) }}</template>
+                            </el-table-column>
+
+                            <el-table-column prop="createTime" label="创建日期" width="200"/>
+                            <el-table-column label="操作"
+                                             fixed="right" width="200">
+                                <template slot-scope="scope">
+                                    <el-button size="mini" type="text" @click="handleDownLoad(scope.row.documentId)">下载</el-button>
+                                    <el-button size="mini" type="text" @click="showDetail(scope.row)" >详情</el-button>
+                                    <template v-if="!isFileCheckPage">
+                                        <el-button v-if="isFileTrashPage" size="mini" type="text" class="JNPF-table-successBtn" @click="handleRevert(scope.row.id)">还原</el-button>
+                                        <el-button v-else size="mini" type="text" class="JNPF-table-delBtn" @click="handleDel(scope.row.id)">删除</el-button>
+                                    </template>
+
+
+                                </template>
+                            </el-table-column>
+                        </JNPF-table>
                     <GridFileList
                         v-else
-                        v-loading="gridFileListLoading"
                         class="table-style"
                         style="border: 1px solid #ebeef5 !important;"
                         @item-click="listItemClick"
@@ -129,8 +175,11 @@
                             </div>
                         </template>
                     </GridFileList>
-                    <Preview  class="search-left" :visible.sync="previewVisible" :file="previewFile" />
+                    <pagination  style="height: 36px" :total="total" :page.sync="listQuery.pageNum"
+                                 :limit.sync="listQuery.pageSize" @pagination="initData" />
                 </div>
+
+                <Preview  class="search-left" :visible.sync="previewVisible" :file="previewFile" />
             </div>
         </div>
         <component
@@ -147,40 +196,34 @@
 
 import { getcategoryTree } from '@/api/basicData/index'
 
-import SuperQuery from '@/components/SuperQuery/index.vue'
 import {FileCategoryType} from "@/views/esop/fileCategoryManagement/constants";
-import FileUploadDrop from "@/views/esop/fileUpload/workinginstruction/component/FileUploadDrop.vue";
 import GridFileList from "@/views/drawingDocument/document/GridFileList.vue";
 import {AllList, Download} from "@/api/extend/document";
 import {isFile, Type2SuffixArr} from "@/views/drawingDocument/document/utils";
 import SearchPlane from "@/views/drawingDocument/document/SearchPlane.vue";
 import SwitchListAndFilter from "@/views/drawingDocument/document/SwitchListAndFilter.vue";
-import {isEmpty, trim} from "@/utils";
+import {deepClone, getSuccessInfo, isEmpty, notEmpty, trim} from "@/utils";
 import {systemAttachmentsDelete, systemAttachmentsList} from "@/api/esop/fileManage/system";
 import ShowDetailMinix from "@/views/esop/fileManagement/system/ShowDetailMinix";
 import Preview from "@/components/upload-wj/Preview.vue";
 import {FILE_OPERATE} from "@/views/drawingDocument/document/constant";
-import {getFilePreviewUrl} from "@/views/esop/utils/utils";
+import {getFilePreviewUrl, getTimeForSearchTimeType} from "@/views/esop/utils/utils";
+import {isModelType, ModelType, PageType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
+import {recycleBinAttachList, recycleBinAttachRevert, recycleBinList} from "@/api/esop/fileTrash/attachment";
 
 export default {
+    name:"FileManagementSystem",
     mixins:[ShowDetailMinix],
-    components: {Preview, SwitchListAndFilter, SearchPlane, GridFileList, FileUploadDrop, SuperQuery, },
+    components: {Preview, SwitchListAndFilter, SearchPlane, GridFileList},
+    props:{
+        pageType:{
+            type:String,
+            default:PageType.FileManagementAttachment
+        }
+    },
     data() {
         return {
-            allFileOptions:[
-                {
-                    text:'下载',
-                    value:FILE_OPERATE.DOWNLOAD,
-                },
-                {
-                    text:'删除',
-                    value:FILE_OPERATE.DELETE,
-                },
-                {
-                    text:'详情',
-                    value:FILE_OPERATE.DETAIL,
-                },
-            ],
+            createTimeArr:[],
             previewVisible:false,
             previewFile:{},
             searchPlaneLoading:false,
@@ -219,12 +262,10 @@ export default {
                 },
             ]),
             keyword:"",
-            allSearchDropDownList:[
-            ],
+            allSearchDropDownList:[],
             fileList:[],
-            allSwitchList:true,
+            allSwitchList:false,
             shareVisible:false,
-            gridFileListLoading:false,
             superQueryVisible: false,
             programmefrom: {},
             partentOrChild: 'partent',
@@ -245,8 +286,9 @@ export default {
             visible: false,
             tableData: [],
             listLoading: false,
-            initListQuery: {
-                "businessId": "",
+
+            listQuery: {
+            "businessId": "",
                 "businessType": "",
                 "categoryId": "",
                 "createByName": "",
@@ -254,29 +296,28 @@ export default {
                 "endUpdateTime": "",
                 "keyword": "",
                 "orderItems": [
-                    {
-                        "asc": true,
-                        "column": ""
-                    }
-                ],
+                {
+                    "asc": true,
+                    "column": ""
+                }
+            ],
                 "pageNum": 1,
                 "pageSize": 20,
                 "productsId": null,
                 "startTime": "",
                 "startUpdateTime": "",
                 "superQuery": {
-                    "condition": [
-                        {
-                            "field": "",
-                            "fieldValue": "",
-                            "symbol": ""
-                        }
-                    ],
+                "condition": [
+                    {
+                        "field": "filename",
+                        "fieldValue": "",
+                        "symbol": "like"
+                    }
+                ],
                     "matchLogic": ""
-                },
-                "totalRowFlag": false
             },
-            listQuery: {},
+            "totalRowFlag": false
+        },
             total: 0,
             formVisible: false,
             selectData: [],
@@ -288,10 +329,25 @@ export default {
         filterText(val) {
             this.$refs.treeBox.filter(val);
         },
+        "$route.query.type":{
+            immediate:true,
+            handler(val){
+                if(!this.isFileManagementPage){
+                    return
+                }
+                const type = this.$route.query.type
+                if(isModelType(type) && notEmpty(val)){
+                    if(type === ModelType.SEARCH){
+                        return this.modelTypeSearchHandler(type,this.$route.query)
+                    }
+                }
+            }
+        }
     },
+
     created() {
-        this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-        this.getcategoryTree()
+
+        this.getcategoryTree(true)
         if (localStorage.getItem("punterFlag")) {
             let roleFlag = JSON.parse(localStorage.getItem('punterFlag'))
             this.expands = roleFlag
@@ -299,12 +355,66 @@ export default {
         }
     },
     computed: {
+        allFileOptions(){
+            const res = [
+                {
+                    text:'下载',
+                    value:FILE_OPERATE.DOWNLOAD,
+                },
+
+                {
+                    text:'详情',
+                    value:FILE_OPERATE.DETAIL,
+                },
+            ]
+            if(this.isFileManagementPage){
+                res.push({
+                        text:'删除',
+                        value:FILE_OPERATE.DELETE,
+                        isShow:()=>!this.isFileTrashPage
+                    })
+
+            }
+            if(this.isFileTrashPage){
+                res.push({
+                        text:'还原',
+                        value:FILE_OPERATE.REVERT,
+                })
+            }
+            return res
+        },
+        isFileTrashPage(){
+            return this.pageType === PageType.FileTrashAttachment
+        },
+        isFileManagementPage(){
+            return this.pageType === PageType.FileManagementAttachment
+        }, isFileCheckPage(){
+            return this.pageType === PageType.FileCheckAttachment
+        },
+        initFn(){
+            return this.isFileTrashPage ? recycleBinAttachList:systemAttachmentsList
+        },
         currMenuId() {
             return (this.$route.meta.modelId || '') + this.partentOrChild
         }
     },
 
     methods: {
+        modelTypeSearchHandler(type,{searchTimeType}){
+            if(isEmpty(searchTimeType)){
+                return
+            }
+            const [startTime,endTime]= getTimeForSearchTimeType(searchTimeType)
+            this.createTimeArr = [startTime,endTime]
+
+            this.search()
+        },
+        async handleRevert(id){
+            await recycleBinAttachRevert(id)
+            getSuccessInfo()
+            this.initData()
+        },
+        recycleBinAttachRevert,
         getBusinessTitle(configKey){
              if(isEmpty(this.configKey2Detail[configKey])){
                  return '历史数据无编码'
@@ -385,6 +495,8 @@ export default {
                     return this.handleDel(item.id)
                 case FILE_OPERATE.DETAIL:
                     return this.showDetail(item)
+                case FILE_OPERATE.REVERT:
+                    return this.handleRevert(item.id)
                 default:
                     break;
             }
@@ -411,7 +523,6 @@ export default {
         },
 
         filterNode(value, data) {
-            console.log(value, data);
             if (!value) return true;
             return data.name.indexOf(value) !== -1;
         },
@@ -423,7 +534,7 @@ export default {
             this.leftFlag = !this.leftFlag
         },
 
-        getcategoryTree() {
+        getcategoryTree(isInit=false) {
             this.treeLoading = true
             this.listLoading = true
             getcategoryTree({
@@ -437,7 +548,12 @@ export default {
                     this.listQuery.categoryId = ''
                     this.treeLoading = false
                     this.listLoading = false
+
+                    if(isInit && notEmpty(this.$route.query.type)){
+                        return
+                    }
                     this.initData()
+
                 })
             }).catch(() => {
                 this.listLoading = false
@@ -447,8 +563,12 @@ export default {
         initData() {
             this.listLoading = true
             trim(this.listQuery)
-            this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
-            systemAttachmentsList(this.listQuery).then(res => {
+            this.jnpf.searchTimeFormat(this.listQuery, this.createTimeArr, 'startTime', 'endTime')
+            const params = deepClone(this.listQuery)
+            if(params.superQuery.condition[0].fieldValue === ''){
+                delete params.superQuery
+            }
+           this.initFn(params).then(res => {
                 this.fileList = res.data.records
                 this.total = res.data.total
                 this.listLoading = false
@@ -467,7 +587,14 @@ export default {
             this.listQuery.pageNum = 1
             this.initData()
         },
-
+        reset(){
+            this.listQuery.categoryId = ""
+            this.listQuery.superQuery.condition[0].fieldValue = ""
+            this.createTimeArr = []
+            const treeBox = this.$refs.treeBox
+            treeBox && treeBox.setCurrentKey(null)
+            this.search()
+        },
 
 
         handleDel(id) {
@@ -576,5 +703,8 @@ export default {
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
+}
+.table-style{
+    height: calc(100% - 36px)
 }
 </style>

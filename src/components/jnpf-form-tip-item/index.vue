@@ -3,7 +3,8 @@
     <span slot="label">{{label}}
       <template v-if="tipLabel">
         <el-tooltip :content="tipLabel" placement="top">
-          <a :class="tipIcon"></a>
+          <a v-if="linkUrl" :href="linkUrl" :class="tipIcon" target="_blank"></a>
+          <a v-else :class="tipIcon"></a>
         </el-tooltip>
       </template>
       <a v-else class="empty-icon"></a>
@@ -27,7 +28,11 @@ export default {
     tipIcon: {
       type: String,
       default: 'el-icon-warning-outline'
-    }
+    },
+    linkUrl:{
+      type: String,
+      default: ''
+    },
   }
 }
 </script>

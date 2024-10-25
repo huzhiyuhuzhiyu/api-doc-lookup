@@ -134,7 +134,7 @@ export default {
         { prop: "cron", label: "执行周期", value: "", type: "input", itemSlot: { position: 'append', content: '执行周期', click: this.showDialog }, sm: 24, itemDisabled: this.btnType === 'look' ? true : false, itemRules: [{ required: true, message: '执行周期不能为空', trigger: 'click' }] },
         { prop: "remark", label: "异常说明", value: "", type: "textarea", sm: 24, rows: '4', itemDisabled: this.btnType === 'look' ? true : false },
         {
-          prop: "executionSql", label: "执行SQL", value: "", type: "textarea", sm: 24, rows: '6', itemDisabled: this.btnType === 'look' ? true : false,
+          prop: "executionSql", label: "执行SQL", value: "", type: "textarea", sm: 24, rows: '6', itemDisabled: this.btnType === 'look' ? true : false,maxlength:4096,
           itemRules: [
             { required: true, trigger: "blur" },
             {

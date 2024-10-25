@@ -12,14 +12,14 @@
             <el-col :span="4">
               <el-form-item>
                 <el-date-picker v-model="orderForm.deliveryStartDate" type="date" value-format="yyyy-MM-dd"
-                  style="width: 100%;" placeholder="收货开始日期" clearable></el-date-picker>
+                  style="width: 100%;" placeholder="交货开始日期" clearable></el-date-picker>
                 -
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
                 <el-date-picker v-model="orderForm.deliveryEndDate" type="date" value-format="yyyy-MM-dd"
-                  style="width: 100%;" placeholder="收货结束日期" clearable></el-date-picker>
+                  style="width: 100%;" placeholder="交货结束日期" clearable></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -205,12 +205,12 @@ export default {
         },
         {
           prop: 'cooperativePartnerCode',
-          label: '客户编码',
+          label: '供应商编码',
           type: 'input'
         },
         {
           prop: 'cooperativePartnerName',
-          label: '客户名称',
+          label: '供应商名称',
           type: 'input'
         },
 
@@ -233,17 +233,6 @@ export default {
         {
           prop: 'mainUnit',
           label: '单位',
-          type: 'input'
-        },
-       
-        {
-          prop: 'deputyUnit',
-          label: '交货日期',
-          type: 'input'
-        },
-        {
-          prop: 'assistantNum',
-          label: '数量(副)',
           type: 'input'
         },
         {

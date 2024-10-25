@@ -158,6 +158,9 @@ export default {
                 Object.keys(this.dataForm).forEach(key=>{
                     this.dataForm[key] = data[key]
                 })
+                if(this.dataForm.versionCount === null){
+                    this.dataForm.versionCount = 0
+                }
                 this.changeRoutingName(data.routingName)
 
                 if(data.openProcess){
@@ -262,14 +265,14 @@ export default {
                                                 <el-input v-model="dataForm.version" placeholder="请输入版本号"  />
                                             </el-form-item>
                                         </el-col>
-                                        <el-col :span="2" >
+                                        <el-col :span="2" v-if="!isFileUploadPage">
                                             <el-form @submit.prevent   style="padding-top: 0;" >
                                                 <el-form-item label="关联版本数">
                                                     <el-input  readonly @click.native="versionCountHandler" v-model="dataForm.versionCount" class="pointer versionCount"/>
                                                 </el-form-item>
                                             </el-form>
                                         </el-col>
-                                        <el-col :span="2">
+                                        <el-col :span="!isFileUploadPage ? 2 : 4">
                                             <el-form-item label="按工序上传">
                                                 <div style="height: 32px;display: flex;align-items: center">
                                                     <el-tooltip :content="hasRoutingLine ? '开启后可为每一道工序上传作业指导书':'该产品未设置工艺路线，请设置工艺路线后再开启'" placement="top-start">

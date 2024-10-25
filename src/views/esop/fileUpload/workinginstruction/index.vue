@@ -106,7 +106,7 @@
                                 <tableOpts
                                             v-if="!isFileCheckPage"
                                             :isJudgePer="true"
-                                           :del-disabled="isFileManagementPage && scope.row.enabledMark"
+                                           :del-disabled="getDelDisabled(scope)"
                                            :edit-text="tableOptsEditText"
                                            :del-text="tableOptsDelText"
                                            :has-del="tableOptsDelShow"
@@ -293,6 +293,7 @@ export default {
         }
     },
     computed: {
+
         isImage(){
             return this.applicationType === ApplicationType.IMAGE
         },
@@ -357,6 +358,12 @@ export default {
         this.initData()
     },
     methods: {
+        getDelDisabled(scope){
+            if(this.isNoProductPage){
+                return false
+            }
+            return this.isFileManagementPage && scope.row.enabledMark
+        },
         modelTypeDefaultHandler(type, {id}){
            return this.addOrUpdateHandle(type,id)
         },
@@ -411,7 +418,7 @@ export default {
                     this.$router.push({
                         path: FileManagementPageType2FileUploadUrl[this.pageType],
                         query:{
-                            id,
+                            id:res.data,
                             type:ModelType.EDIT
                         }
                     })

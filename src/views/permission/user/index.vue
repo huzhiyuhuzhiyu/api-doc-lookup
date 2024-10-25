@@ -83,6 +83,16 @@
             <el-button icon="el-icon-lock" type="warning" size="mini" @click="plhandleResetPwd">重置密码</el-button>
             <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" :disabled="!tableData.length" @click="exportForm">导出</el-button>
             <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus" @click="uploadForm">导入</el-button>
+            <el-dropdown style="margin-right:10px;">
+              <el-button size="mini" type="primary" icon="el-icon-plus">
+                同步
+                <i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="toWxHandle">同步到企业微信</el-dropdown-item>
+                <el-dropdown-item @click.native="toDingHandle">同步到阿里钉钉</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top">
@@ -183,6 +193,38 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <!-- <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" /> -->
+    <el-dialog title="数据同步" :visible.sync="dataVisible" class="JNPF-dialog JNPF-dialog_center sync-dialog" lock-scroll
+      width="450px">
+      <el-alert title="注意：尽量使用单向同步，避免双向同步造成数据重复" type="warning" :closable="false" show-icon />
+      <div class="add-main">
+        <div class="add-item add-item-sys">
+          <i class="add-icon icon-ym icon-ym-upload"></i>
+          <div class="add-txt">
+            <p class="add-title">{{ name }}</p>
+            <p class="add-desc">{{ names }}</p>
+          </div>
+          <div class="add-button">
+            <el-button type="primary" size="small" @click="name === '同步到企业微信' ? syncQy(0) : syncDing(0)"
+              :loading="wechatLoading" :disabled="dingLoading">
+              同步</el-button>
+          </div>
+        </div>
+      </div>
+      <div class="add-main">
+        <div class="add-item add-item-sys">
+          <i class="add-icons icon-ym icon-ym-download"></i>
+          <div class="add-txt">
+            <p class="add-title">同步到系统</p>
+            <p class="add-desc">{{ synchronization }}</p>
+          </div>
+          <div class="add-button">
+            <el-button type="primary" size="small" @click="name === '同步到企业微信' ? syncQy(1) : syncDing(1)"
+              :loading="dingLoading" :disabled="wechatLoading">
+              同步</el-button>
+          </div>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -204,7 +246,15 @@ import ExportForm from './ExportForm' // 导出数据
 import JobTransfer from './JobTransfer' // 岗位调动
 import JobQuit from './JobQuit' // 办理离职
 import JobEntry from './JobEntry' // 重新入职
+import {
+  synAllOrganizeDingToSys,
+  synAllUserDingToSys,
+  synAllOrganizeQyToSys,
+  synAllUserQyToSys,
+  getOrganizeToDing,
+  getUserToDing
 
+} from '@/api/system/sysConfig'
 export default {
   name: 'permission-user',
   components: {
@@ -261,6 +311,9 @@ export default {
         }
       ],
       superQueryVisible: false,
+      dataVisible:false,
+      wechatLoading:false,
+      dingLoading:false,
       uploadVisib: false,
       columnList: [],
       filterText: "",
@@ -311,6 +364,9 @@ export default {
       filteredTree: [],
       selectArr: [],
       leftFlag: false,
+      name: '',
+      names: '',
+      synchronization:''
     }
   },
   watch: {
@@ -694,11 +750,71 @@ export default {
       this.listQuery.orderItems[0].column = newProp
       this.initData()
     },
+    // 同步到钉钉
+    toDingHandle(){
+      if (!this.selectArr.length) return this.$message.warning('请选择您要同步的用户数据')
+      this.name = '同步到阿里钉钉'
+      this.names = '用户数据同步到阿里钉钉'
+      this.synchronization = '把阿里钉钉数据同步到系统'
+      this.dataVisible = true
+    },
+    syncQy(type) {
+      this.$confirm('同步以后会丢失现有数据，是否继续？', '提示', {
+        type: 'warning'
+      }).then(() => {
+        type == 0 ? this.wechatLoading = true : this.dingLoading = true
+        const method = this.row.synType == '组织' ? synAllOrganizeQyToSys : synAllUserQyToSys
+        method(type).then(res => {
+          type == 0 ? this.wechatLoading = false : this.dingLoading = false
+          this.dataVisible = false
+          if (res.msg === '正在进行同步,请稍等') {
+            this.$message({
+              message: res.msg,
+              type: 'success',
+              duration: 1500,
+            })
+            return
+          }
+          this.$message({
+            message: '同步成功',
+            type: 'success',
+            duration: 1500,
+          })
+        }).catch(() => { type == 0 ? this.wechatLoading = false : this.dingLoading = false })
+      })
+    },
+    syncDing(type) {
+      let ids = this.selectArr.map(item=>item.id)
+      this.$confirm('同步以后会丢失现有数据，是否继续？', '提示', {
+        type: 'warning'
+      }).then(() => {
+        type == 0 ? this.wechatLoading = true : this.dingLoading = true
+        const method = type == 0 ? getUserToDing : synAllUserDingToSys
+        let obj = type == 0 ? ids : type
+        method(obj).then(res => {
+          type == 0 ? this.wechatLoading = false : this.dingLoading = false
+          this.dataVisible = false
+          if (res.msg === '正在进行同步,请稍等') {
+            this.$message({
+              message: res.msg,
+              type: 'success',
+              duration: 1500,
+            })
+            return
+          }
+          this.$message({
+            message: '同步成功',
+            type: 'success',
+            duration: 1500,
+          })
+        }).catch(() => { type == 0 ? this.wechatLoading = false : this.dingLoading = false })
+      })
+    },
   }
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 /* .JNPF-common-layout-left {
   margin-right: 0;
   border-right: 1px solid #cacaca;
@@ -766,5 +882,74 @@ export default {
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
+}
+.add-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .add-item {
+    width: 450px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    &.add-item-sys {
+      .add-icon {
+        background: #75d8f791;
+        color: #08c0f8;
+      }
+    }
+
+    .add-icon {
+      width: 56px;
+      height: 56px;
+      margin-right: 10px;
+      background: #cefae2;
+      border-radius: 50%;
+      color: #0eac5c;
+      flex-shrink: 0;
+      font-size: 30px;
+      line-height: 56px;
+      text-align: center;
+    }
+
+    .add-button {
+      margin-left: 80px;
+    }
+
+    .add-icons {
+      width: 56px;
+      height: 56px;
+      margin-right: 10px;
+      background: #cefae2;
+      border-radius: 50%;
+      color: #0eac5c;
+      flex-shrink: 0;
+      font-size: 30px;
+      line-height: 56px;
+      text-align: center;
+    }
+
+    .add-txt {
+      height: 56px;
+
+      P {
+        line-height: 28px;
+      }
+
+      .add-title {
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .add-desc {
+        color: #8d8989;
+        font-size: 12px;
+        width: 150px;
+      }
+    }
+  }
 }
 </style>

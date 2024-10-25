@@ -182,28 +182,28 @@ export default {
     fj_hkjh: {
         configKeyLabel: '启用回款计划',
         description: '开启后，在回款计划新建、编辑、查看都会显示附件操作。',
-        mainModule: 'CRM'
+        mainModule: 'CRM管理'
 
     },
     fj_hkjl: {
         configKeyLabel: '启用回款记录',
         description: '开启后，在回款记录新建、编辑、查看都会显示附件操作。',
-        mainModule: 'CRM'
+        mainModule: 'CRM管理'
     },
     fj_fpgl: {
         configKeyLabel: '启用发票管理',
         description: '开启后，在发票管理新建、编辑、查看都会显示附件操作。',
-        mainModule: 'CRM'
+        mainModule: 'CRM管理'
     },
     fj_hfgl: {
         configKeyLabel: '启用回访管理',
         description: '开启后，在回访管理新建、编辑、查看都会显示附件操作。',
-        mainModule: 'CRM'
+        mainModule: 'CRM管理'
     },
     fj_crmcpgl: {
         configKeyLabel: '启用CRM产品管理',
         description: '开启后，在CRM产品管理新建、编辑、查看都会显示附件操作。',
-        mainModule: 'CRM'
+        mainModule: 'CRM管理'
     },
     fj_sbgysda: {
         configKeyLabel: '启用设备供应商档案',

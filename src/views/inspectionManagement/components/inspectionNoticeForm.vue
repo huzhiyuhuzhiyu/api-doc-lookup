@@ -194,12 +194,11 @@ export default {
   },
   methods: {
     getBimBusinessDetail(inspectionType) {
-      console.log(inspectionType, 'businessCode')
       let obj = {
         businessCode: 'attachment',
         configKey: `fj_${inspectionType}jyd`
       }
-      getBimBusinessDetail(obj).then(res => {
+      getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
       })
     },
@@ -322,7 +321,6 @@ export default {
           sm: 6,
           // itemDisabled: (rowIndex) => this.dataForm.inspectionMethod === 'exempt' || this.openMode === '只读',
           options: generateInspectionMethodList(this.inspectionType)
-
         },
 
         {
@@ -332,7 +330,10 @@ export default {
           type: 'input',
           sm: 6,
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
-          itemDisabled: this.dataForm.inspectionMethod == 'all' || this.dataForm.inspectionMethod == 'exempt' || this.openMode === '只读',
+          itemDisabled:
+            this.dataForm.inspectionMethod == 'all' ||
+            this.dataForm.inspectionMethod == 'exempt' ||
+            this.openMode === '只读',
           itemRules: [
             { required: true, trigger: 'blur' },
             {
@@ -409,13 +410,12 @@ export default {
     // 初始化
     async init(row, readOnly, inspectionType, type, businessCode) {
       this.getBimBusinessDetail(inspectionType)
-      console.log(row, 'row123')
+
       this.scope = { ...row }
 
       this.fetchData(businessCode, true)
       this.dataForm = { ...row, approvalFlag: false, approvalStatus: 'ing' }
-      console.log(this.dataForm, 'form')
-      console.log(this.dataForm.inspectorId, 'productDrawingNo')
+
       this.dataForm.inspectorId = this.dataForm.inspectorId ? this.dataForm.inspectorId : this.userInfo.userId
       this.dataForm.inspectionDate = this.jnpf.toDate(new Date(), 'yyyy-MM-dd')
       this.dataForm.productDrawingNo = row.productDrawingNo
@@ -433,8 +433,6 @@ export default {
         this.dataForm.docLineId = this.scope.id
         this.dataForm.docNo = this.scope.orderNo
       } else if (inspectionType === 'process') {
-        console.log(row, 'ppp998898989')
-        console.log(this.scope, 'this.scope')
         this.dataForm.inspectionQuantity = this.scope.productionQuantity
         this.dataForm.docId = this.scope.productionOrderId
         this.dataForm.docLineId = this.scope.id
@@ -467,11 +465,9 @@ export default {
         .catch((err) => {
           this.loading = false
         })
-      console.log(this.scope, 'this.scope.productsId')
-      console.log(inspectionType, 'inspectionType**************************')
+
       await getInspectionItem({ id: this.scope.productsId, inspectionCategory: inspectionType })
         .then((res) => {
-          console.log(res, 'oooooo000----')
           this.inspectionList = res.data
           this.addOrDelInspectionItem(res.data)
 
@@ -540,7 +536,6 @@ export default {
       if (this.inspectionType === 'finished' && !readOnly) {
       } else {
         res = await detailMethod(typeof id === 'string' ? id : id.id).catch((err) => false)
-        console.log(res, 'res123')
       }
       if (res.data) {
         if (res.data.attachmentList.length !== 0) {
@@ -570,20 +565,17 @@ export default {
         this.dataForm.submitMethod = 'add'
         this.formLoading = false
       } else if (inspectionType === 'sale_back' || inspectionType === 'back_material') {
-        console.log(inspectionType, 'ppppppp')
         // 销售退货、外协退料
 
         this.dataForm.notificationType = inspectionType
         this.dataForm.submitMethod = 'add'
         this.formLoading = false
-        console.log(this.dataForm, 'form123')
       } else if (inspectionType === 'produce') {
         // 生产退料
 
         this.dataForm.notificationType = inspectionType
         this.dataForm.submitMethod = 'add'
         this.formLoading = false
-        console.log(this.dataForm, 'form123')
       } else if (inspectionType === 'finished') {
         // 完工
 
@@ -699,7 +691,6 @@ export default {
         // dataObj.lines.forEach(line => { if (line.inspectionResults === 'qualified') { line.receiptQuantity = line.inspectionQuantity } })
         // dataObj.unqualifiedFlag = dataObj.lines.some(line => line.unqualifiedQuantity !== undefined && line.unqualifiedQuantity != '0')
         delete dataObj.active
-        console.log(dataObj, 'dataObj')
 
         formMethod(dataObj)
           .then((res) => {
@@ -839,36 +830,12 @@ export default {
 
         this.inspectionItems = [
           { prop: 'name', label: '检验项目', value: '', type: 'view', minWidth: 120 },
-          {
-            prop: 'unqualifiedQuantity',
-            label: '不合格数量',
-            value: '0',
-            type: 'input',
-            itemDisabled: true,
-            itemRules: [
-              { required: true, trigger: 'blur' },
-              {
-                validator: this.formValidate({
-                  type: 'decimal',
-                  params: [
-                    20,
-                    4,
-                    '',
-                    (errMsg) => {
-                      this.$message.error('不合格数量：' + errMsg)
-                    }
-                  ]
-                }),
-                trigger: 'blur'
-              }
-            ],
-            minWidth: 180
-          },
+          { prop: 'unqualifiedQuantity', label: '不合格数量', value: '0', type: 'view', minWidth: 180 },
+
           { prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120 }
         ]
         this.activeNames = ['basicInfo', 'inspectionInfo', 'adverseCausesInfo']
         this.activeNames = ['inspectionItem', 'basicInfo', 'inspectionInfo', 'adverseCausesInfo']
-        console.log(this.inspectionItems)
       } else {
         this.dataForm.unqualifiedQuantity = '0'
         this.inspectionItems = [
@@ -900,7 +867,6 @@ export default {
           },
           { prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120 }
         ]
-        console.log(this.inspectionItems, 'this.inspectionItems2')
       }
       this.setDataFormItems()
     },
@@ -916,10 +882,10 @@ export default {
       } else if (val === 'spot_check') {
         const _data = [{ productsId: this.dataForm.productsId, num: this.dataForm.inspectionQuantity }]
         let res = await getSamplingQuantityByProductId(_data).catch(() => false)
-        console.log(res.data[0].spotCheckNum, 'getRes.data[0].spotCheckNum')
+
         this.dataForm.samplingQuantity = res.data[0].spotCheckNum
         this.autosamplingQuantity = res.data[0].spotCheckNum
-        console.log(res, 'res')
+
         // 抽检
         this.dataForm.inspectionMethod = val
       } else if (val === 'all') {
@@ -1033,7 +999,6 @@ export default {
       return this.jnpf.numberFormat(newNumber, 4)
     },
     openMode() {
-
       // return this.dataForm.submitFlag === 'add' ? '新建' : this.title.includes('查看') ? '只读' : '编辑'
       if (this.title.includes('生产巡检')) {
         return this.title === '生产巡检' ? '新建' : '只读'

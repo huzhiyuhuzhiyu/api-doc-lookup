@@ -2,7 +2,7 @@ import request from "@/utils/request";
 
 export function recycleBinAttachList(data){
     return request({
-        url: '/api/zgt/bimRecycleBin/list/condition',
+        url: '/api/zgt/bimRecycleBin/attachmentsList/condition',
         method: 'post',
         data
     })

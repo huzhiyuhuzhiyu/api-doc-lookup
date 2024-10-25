@@ -262,7 +262,7 @@ export default {
                                                 <el-input v-model="dataForm.version" placeholder="请输入版本号"  />
                                             </el-form-item>
                                         </el-col>
-                                        <el-col :span="2" >
+                                        <el-col :span="2" v-if="!isFileUploadPage">
                                             <el-form @submit.prevent   style="padding-top: 0;" >
                                                 <el-form-item label="关联版本数">
                                                     <el-input  readonly @click.native="versionCountHandler" v-model="dataForm.versionCount" class="pointer versionCount"/>

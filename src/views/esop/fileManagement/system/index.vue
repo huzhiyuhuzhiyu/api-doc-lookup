@@ -1,6 +1,6 @@
 <template>
     <div class="JNPF-common-layout">
-        <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
+        <div class="JNPF-common-layout-left treeBox" style="transition: width 500ms" :style="leftFlag ? 'width:15px;background:#fff' : ''">
             <div class="JNPF-common-title" style="display: block;padding:0" v-if="!leftFlag">
                 <div class="title_box">
                     <h2>系统附件分类</h2>
@@ -38,34 +38,80 @@
         </div>
         <div class="JNPF-common-layout-center JNPF-flex-main" style="background: #fff;padding: 10px;">
             <div class="main JNPF-flex-main height-full">
-                <div class="JNPF-common-search-box searchWrapper" style="width: 100%;display: flex;align-items: center;height: 34px;padding-top: 0;justify-content: space-between;">
-
-<!--                        <SearchPlane-->
-<!--                            :transition-time="500"-->
-<!--                            :loading.sync="searchPlaneLoading"-->
-<!--                            class="search-com"-->
-<!--                            :searchDropDownList="allSearchDropDownList"-->
-<!--                            @search-change="searchChange"-->
-<!--                            @item-click="searchItemClick"-->
-<!--                            :list="searchList"-->
-<!--                            :keyword.sync="keyword"-->
-<!--                            style="width: calc(100% - 34px)"-->
-<!--                        ></SearchPlane>-->
-                        <el-form @submit.prevent style="display: flex;justify-content: center;">
-                            <el-form-item   style="margin-bottom: 0px !important">
-                                <el-input v-model="listQuery.superQuery.condition[0].fieldValue" placeholder="请输入文件名" style="width: 200px" clearable
-                                          @keyup.enter.native="search()" ></el-input>
+                <el-row class="JNPF-common-search-box" :gutter="16">
+                    <el-form @submit.native.prevent>
+                        <el-col :span="4" style="padding-left: 0 !important;">
+                            <el-form-item>
+                                <el-input @clear="search" @keyup.enter.native="search" v-model="listQuery.superQuery.condition[0].fieldValue" placeholder="文件名" clearable />
                             </el-form-item>
-                            <el-form-item  style="margin-bottom: 0px !important;margin-left: 10px">
-                                <el-button type="primary" icon="el-icon-search" @click="search()" size="mini">
-                                    {{$t('common.search')}}</el-button>
-                                <el-button icon="el-icon-refresh-right" @click="reset()" size="mini">{{$t('common.reset')}}
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item>
+                                <el-date-picker v-model="createTimeArr" type="datetimerange" :default-time="['00:00:00', '23:59:59']"
+                                                @change="search"
+                                                style="width: 100%" start-placeholder="创建开始时间" end-placeholder="创建结束时间" clearable></el-date-picker>
+                            </el-form-item>
+                        </el-col>
+
+                        <el-col :span="6">
+                            <el-form-item>
+                                <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                                    {{ $t('common.search') }}
                                 </el-button>
+                                <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
                             </el-form-item>
-                        </el-form>
-                        <SwitchListAndFilter :needFilter="false" style="width: 39px" @command="filterExtHandler" :switch-list.sync="allSwitchList" :current-ext.sync="currentExt" :file-ext-filter-option="fileExtFilterOption"/>
+                        </el-col>
+                        <el-col   :span="6" class="JNPF-common-head-right" style="display:flex;justify-content:flex-end;align-items:center;float: right;line-height: 34px;padding-right: 16px !important;">
+                                                    <SwitchListAndFilter :needFilter="false" style="width: 39px" @command="filterExtHandler" :switch-list.sync="allSwitchList" :current-ext.sync="currentExt" :file-ext-filter-option="fileExtFilterOption"/>
 
-                </div>
+                        </el-col>
+                    </el-form>
+                </el-row>
+<!--                <div class="JNPF-common-search-box searchWrapper" style="width: 100%;display: flex;align-items: center;height: 34px;padding-top: 0;justify-content: space-between;">-->
+
+<!--&lt;!&ndash;                        <SearchPlane&ndash;&gt;-->
+<!--&lt;!&ndash;                            :transition-time="500"&ndash;&gt;-->
+<!--&lt;!&ndash;                            :loading.sync="searchPlaneLoading"&ndash;&gt;-->
+<!--&lt;!&ndash;                            class="search-com"&ndash;&gt;-->
+<!--&lt;!&ndash;                            :searchDropDownList="allSearchDropDownList"&ndash;&gt;-->
+<!--&lt;!&ndash;                            @search-change="searchChange"&ndash;&gt;-->
+<!--&lt;!&ndash;                            @item-click="searchItemClick"&ndash;&gt;-->
+<!--&lt;!&ndash;                            :list="searchList"&ndash;&gt;-->
+<!--&lt;!&ndash;                            :keyword.sync="keyword"&ndash;&gt;-->
+<!--&lt;!&ndash;                            style="width: calc(100% - 34px)"&ndash;&gt;-->
+<!--&lt;!&ndash;                        ></SearchPlane>&ndash;&gt;-->
+<!--                        <el-form @submit.native.prevent style="display: flex;justify-content: center;">-->
+<!--                            <el-row :gutter="16">-->
+<!--                                <el-col :span="4">-->
+<!--                                    <el-form-item   style="margin-bottom: 0px !important">-->
+<!--                                        <el-input v-model="listQuery.superQuery.condition[0].fieldValue" placeholder="请输入文件名" style="width: 200px" clearable-->
+<!--                                                  @clear="search"-->
+<!--                                                  @keyup.enter.native="search()" ></el-input>-->
+<!--                                    </el-form-item>-->
+<!--                                </el-col>-->
+<!--                                <el-col :span="8">-->
+<!--                                    <el-form-item >-->
+<!--                                        <el-date-picker v-model="createTimeArr" type="datetimerange" :default-time="['00:00:00', '23:59:59']"-->
+<!--                                                        style="width: 100%" start-placeholder="创建开始时间" end-placeholder="创建结束时间" clearable></el-date-picker>-->
+<!--                                    </el-form-item>-->
+<!--                                </el-col>-->
+<!--                                <el-col :span="6">-->
+<!--                                    <el-form-item  style="margin-bottom: 0px !important;margin-left: 10px">-->
+<!--                                        <el-button type="primary" icon="el-icon-search" @click="search()" size="mini">-->
+<!--                                            {{$t('common.search')}}</el-button>-->
+<!--                                        <el-button icon="el-icon-refresh-right" @click="reset()" size="mini">{{$t('common.reset')}}-->
+<!--                                        </el-button>-->
+<!--                                    </el-form-item>-->
+<!--                                </el-col>-->
+<!--                            </el-row>-->
+
+
+
+<!--                        </el-form>-->
+
+<!--                        <SwitchListAndFilter :needFilter="false" style="width: 39px" @command="filterExtHandler" :switch-list.sync="allSwitchList" :current-ext.sync="currentExt" :file-ext-filter-option="fileExtFilterOption"/>-->
+
+<!--                </div>-->
                 <div style="height: calc(100% - 35px)" v-loading="listLoading">
 
                     <JNPF-table  v-if="allSwitchList"   class="table-style" :data="fileList" empty-text="暂无文件" size="mini">
@@ -156,13 +202,13 @@ import {AllList, Download} from "@/api/extend/document";
 import {isFile, Type2SuffixArr} from "@/views/drawingDocument/document/utils";
 import SearchPlane from "@/views/drawingDocument/document/SearchPlane.vue";
 import SwitchListAndFilter from "@/views/drawingDocument/document/SwitchListAndFilter.vue";
-import {getSuccessInfo, isEmpty, trim} from "@/utils";
+import {deepClone, getSuccessInfo, isEmpty, notEmpty, trim} from "@/utils";
 import {systemAttachmentsDelete, systemAttachmentsList} from "@/api/esop/fileManage/system";
 import ShowDetailMinix from "@/views/esop/fileManagement/system/ShowDetailMinix";
 import Preview from "@/components/upload-wj/Preview.vue";
 import {FILE_OPERATE} from "@/views/drawingDocument/document/constant";
-import {getFilePreviewUrl} from "@/views/esop/utils/utils";
-import {PageType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
+import {getFilePreviewUrl, getTimeForSearchTimeType} from "@/views/esop/utils/utils";
+import {isModelType, ModelType, PageType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 import {recycleBinAttachList, recycleBinAttachRevert, recycleBinList} from "@/api/esop/fileTrash/attachment";
 
 export default {
@@ -177,6 +223,7 @@ export default {
     },
     data() {
         return {
+            createTimeArr:[],
             previewVisible:false,
             previewFile:{},
             searchPlaneLoading:false,
@@ -217,7 +264,7 @@ export default {
             keyword:"",
             allSearchDropDownList:[],
             fileList:[],
-            allSwitchList:true,
+            allSwitchList:false,
             shareVisible:false,
             superQueryVisible: false,
             programmefrom: {},
@@ -239,8 +286,9 @@ export default {
             visible: false,
             tableData: [],
             listLoading: false,
-            initListQuery: {
-                "businessId": "",
+
+            listQuery: {
+            "businessId": "",
                 "businessType": "",
                 "categoryId": "",
                 "createByName": "",
@@ -248,29 +296,28 @@ export default {
                 "endUpdateTime": "",
                 "keyword": "",
                 "orderItems": [
-                    {
-                        "asc": true,
-                        "column": ""
-                    }
-                ],
+                {
+                    "asc": true,
+                    "column": ""
+                }
+            ],
                 "pageNum": 1,
                 "pageSize": 20,
                 "productsId": null,
                 "startTime": "",
                 "startUpdateTime": "",
                 "superQuery": {
-                    "condition": [
-                        {
-                            "field": "filename",
-                            "fieldValue": "",
-                            "symbol": "like"
-                        }
-                    ],
+                "condition": [
+                    {
+                        "field": "filename",
+                        "fieldValue": "",
+                        "symbol": "like"
+                    }
+                ],
                     "matchLogic": ""
-                },
-                "totalRowFlag": false
             },
-            listQuery: {},
+            "totalRowFlag": false
+        },
             total: 0,
             formVisible: false,
             selectData: [],
@@ -282,10 +329,25 @@ export default {
         filterText(val) {
             this.$refs.treeBox.filter(val);
         },
+        "$route.query.type":{
+            immediate:true,
+            handler(val){
+                if(!this.isFileManagementPage){
+                    return
+                }
+                const type = this.$route.query.type
+                if(isModelType(type) && notEmpty(val)){
+                    if(type === ModelType.SEARCH){
+                        return this.modelTypeSearchHandler(type,this.$route.query)
+                    }
+                }
+            }
+        }
     },
+
     created() {
-        this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-        this.getcategoryTree()
+
+        this.getcategoryTree(true)
         if (localStorage.getItem("punterFlag")) {
             let roleFlag = JSON.parse(localStorage.getItem('punterFlag'))
             this.expands = roleFlag
@@ -336,7 +398,17 @@ export default {
             return (this.$route.meta.modelId || '') + this.partentOrChild
         }
     },
+
     methods: {
+        modelTypeSearchHandler(type,{searchTimeType}){
+            if(isEmpty(searchTimeType)){
+                return
+            }
+            const [startTime,endTime]= getTimeForSearchTimeType(searchTimeType)
+            this.createTimeArr = [startTime,endTime]
+
+            this.search()
+        },
         async handleRevert(id){
             await recycleBinAttachRevert(id)
             getSuccessInfo()
@@ -462,7 +534,7 @@ export default {
             this.leftFlag = !this.leftFlag
         },
 
-        getcategoryTree() {
+        getcategoryTree(isInit=false) {
             this.treeLoading = true
             this.listLoading = true
             getcategoryTree({
@@ -476,7 +548,12 @@ export default {
                     this.listQuery.categoryId = ''
                     this.treeLoading = false
                     this.listLoading = false
+
+                    if(isInit && notEmpty(this.$route.query.type)){
+                        return
+                    }
                     this.initData()
+
                 })
             }).catch(() => {
                 this.listLoading = false
@@ -486,8 +563,12 @@ export default {
         initData() {
             this.listLoading = true
             trim(this.listQuery)
-            this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
-           this.initFn(this.listQuery).then(res => {
+            this.jnpf.searchTimeFormat(this.listQuery, this.createTimeArr, 'startTime', 'endTime')
+            const params = deepClone(this.listQuery)
+            if(params.superQuery.condition[0].fieldValue === ''){
+                delete params.superQuery
+            }
+           this.initFn(params).then(res => {
                 this.fileList = res.data.records
                 this.total = res.data.total
                 this.listLoading = false
@@ -504,13 +585,14 @@ export default {
         },
         search() {
             this.listQuery.pageNum = 1
-            this.listQuery.superQuery.condition[0].fieldValue = ""
             this.initData()
         },
         reset(){
             this.listQuery.categoryId = ""
             this.listQuery.superQuery.condition[0].fieldValue = ""
-            this.$refs.treeBox.setCurrentKey(null)
+            this.createTimeArr = []
+            const treeBox = this.$refs.treeBox
+            treeBox && treeBox.setCurrentKey(null)
             this.search()
         },
 

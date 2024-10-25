@@ -29,10 +29,18 @@
           </div>
           <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableList" custom-column row-key="id"
             :setColumnDisplayList="columnList" :fixedNO="true">
-            <el-table-column prop="name" label="名称" min-width="200" />
+            <el-table-column prop="name" label="名称" min-width="200">
+              <template v-slot:default="{ row }">
+                <el-input v-model="row.name" placeholder="请输入名称"></el-input>
+              </template>
+            </el-table-column>
             <el-table-column prop="code" label="编码" min-width="200" />
 
-            <el-table-column prop="progressPercentage" label="进度占比" width="120" />
+            <el-table-column prop="progressPercentage" label="进度占比" width="120">
+              <template v-slot:default="{ row }">
+                <el-input v-model="row.progressPercentage" placeholder="请输入名称"></el-input>
+              </template>
+            </el-table-column>
           </JNPF-table>
           <!-- <pagination :total="total" :page.sync="listQuery.currentPage" :limit.sync="listQuery.pageSize"
             @pagination="initData" /> -->
@@ -194,20 +202,28 @@ export default {
       })
     },
     addOrUpdateHandle() {
-      this.$confirm(`您确定要保存当前数据吗, 是否继续?`, '提示', {
-        type: 'warning'
-      }).then(() => {
-        saveProgressStatus(this.tableList).then(res => {
-          this.$message({
-            type: 'success',
-            message: res.msg,
-            duration: 1000,
-            onClose: () => {
-              row.enabledMark = row.enabledMark ? 0 : 1
-            }
-          })
-        })
-      }).catch(() => { })
+      console.log(555)
+      this.tableList.map(ele => {
+        let count = 0
+        count += Number(ele.progressPercentage)
+        if (count > 100) {
+          console.log(888)
+        }
+      })
+      // this.$confirm(`您确定要保存当前数据吗, 是否继续?`, '提示', {
+      //   type: 'warning'
+      // }).then(() => {
+      //   saveProgressStatus(this.tableList).then(res => {
+      //     this.$message({
+      //       type: 'success',
+      //       message: res.msg,
+      //       duration: 1000,
+      //       onClose: () => {
+      //         row.enabledMark = row.enabledMark ? 0 : 1
+      //       }
+      //     })
+      //   })
+      // }).catch(() => { })
     },
 
 

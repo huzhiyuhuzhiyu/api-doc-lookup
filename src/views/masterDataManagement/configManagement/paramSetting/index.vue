@@ -16,7 +16,7 @@
               v-if="tableRerender"
               :height="maxHeight" :data="tableData" stripe :row-style="{ height: '50px' }"
             :header-cell-style="{ background: '#FAFAFA', color: '#606266', 'text-align': 'center' }">
-              <el-table-column  v-if="activeName === 'attachment'" prop="mainModule" label="所属模块" width="230"/>
+              <el-table-column  v-if="activeName === 'attachment'" prop="mainModule" label="所属模块" width="110"/>
 
 
 

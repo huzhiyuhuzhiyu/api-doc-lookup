@@ -25,8 +25,8 @@ const plugins = [
   new MonacoWebpackPlugin({
     // available options are documented at https://github.com/Microsoft/monaco-editor-webpack-plugin#options
     languages: ['javascript', 'css', 'html', 'typescript', 'json', 'java', 'sql']
-  }),
-  new HardSourceWebpackPlugin()
+  })
+
 ]
 if (!isDev) {
   plugins.push(new TerserPlugin({
@@ -44,7 +44,8 @@ if (!isDev) {
     threshold: 10240, // 对超过10k的数据压缩
     deleteOriginalAssets: false, // 不删除源文件
     minRatio: 0.8 // 压缩比
-  }))
+  }),
+  new HardSourceWebpackPlugin())
 }
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {

@@ -12,13 +12,45 @@
       </div>
       <div class="JNPF-common-layout-center JNPF-flex-main" style="background-color: #FFFFFF;margin-top: 5px">
         <div style="margin: 10px -6px 0 10px;overflow: scroll;">
-          <el-table :height="maxHeight" :data="tableData" stripe :row-style="{ height: '50px' }"
+          <el-table
+              v-if="tableRerender"
+              :height="maxHeight" :data="tableData" stripe :row-style="{ height: '50px' }"
             :header-cell-style="{ background: '#FAFAFA', color: '#606266', 'text-align': 'center' }">
-            <el-table-column prop="configKey" label="功能" width="230">
-              <template slot-scope="scope">
-                {{ $getLabel(configKeyList, scope.row.configKey, 'value', 'label') }}
-              </template>
-            </el-table-column>
+              <el-table-column  v-if="activeName === 'attachment'" prop="mainModule" label="所属模块" width="230"/>
+
+
+
+
+              <el-table-column prop="configKeyLabel" label="功能" width="230">
+                  <template v-slot:default="{row}">
+                      <div>{{row.configKeyLabel}}</div>
+                  </template>
+              </el-table-column>
+              <el-table-column prop="state" label="操作" :width="stateWidth" :align="stateAlign">
+                  <template slot-scope="scope">
+                      <div v-if="scope.row.businessCode === 'warehouse'">
+                          <el-radio-group v-model="scope.row.radio" @input="radioChange(scope.row)">
+                              <el-radio :label="0">
+                                  {{ scope.row.radioOff }}
+                              </el-radio>
+                              <el-radio :label="1">
+                                  {{ scope.row.radioOn }}
+                              </el-radio>
+                          </el-radio-group>
+                      </div>
+                      <div v-else>
+                          <el-checkbox v-model="scope.row.state" @change="stateChange(scope.row)" ></el-checkbox>
+                          <el-input style="width: 150px;margin-left: 10px;" v-if="
+                    (scope.row.state && scope.row.configKey == 'work_exceed_report') ||
+                    (scope.row.state && scope.row.configKey == 'collect_exceed_picking')
+                  " v-model="scope.row.configValue2" @change="configValue2Change(scope.row)">
+                              <template slot="append">
+                                  %
+                              </template>
+                          </el-input>
+                      </div>
+                  </template>
+              </el-table-column>
               <el-table-column   class-name="pointer" prop="configValue3" label="文件分类" width="150" v-if="activeName === 'attachment'">
                   <template v-slot:default="{row}" >
                       <div @click="fileCategoryClick(row)" style="width: 100%">
@@ -31,44 +63,12 @@
                               :closeHandler="()=>closeHandler(row)"
                               @change="(...args)=>onOrganizeChange(...args,row)" :selectClassifyType="FileCategoryType.SYSTEM_ATTACHMENT"/>
                           <div v-else>
-                             <div style="width: 100%" v-if="row.configValue3">{{row.configValue3}}</div>
-                             <div style="width: 100%;visibility: hidden" v-else>1</div></div>
+                              <div style="width: 100%" v-if="row.configValue3">{{row.configValue3}}</div>
+                              <div style="width: 100%;visibility: hidden" v-else>1</div></div>
                       </div>
-
                   </template>
-
               </el-table-column>
-
-            <el-table-column prop="state" label="操作" :width="stateWidth" :align="stateAlign">
-              <template slot-scope="scope">
-                <div v-if="scope.row.businessCode == 'warehouse'">
-                  <el-radio-group v-model="scope.row.radio" @input="radioChange(scope.row)">
-                    <el-radio :label="0">
-                      {{ scope.row.radioOff }}
-                    </el-radio>
-                    <el-radio :label="1">
-                      {{ scope.row.radioOn }}
-                    </el-radio>
-                  </el-radio-group>
-                </div>
-                <div v-else>
-                  <el-checkbox v-model="scope.row.state" @change="stateChange(scope.row)" ></el-checkbox>
-                  <el-input style="width: 150px;margin-left: 10px;" v-if="
-                    (scope.row.state && scope.row.configKey == 'work_exceed_report') ||
-                    (scope.row.state && scope.row.configKey == 'collect_exceed_picking')
-                  " v-model="scope.row.configValue2" @change="configValue2Change(scope.row)">
-                    <template slot="append">
-                      %
-                    </template>
-                  </el-input>
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="description" label="说明">
-              <template slot-scope="scope">
-                {{ $getLabel(descriptionList, scope.row.description, 'value', 'label') }}
-              </template>
-            </el-table-column>
+            <el-table-column prop="description" label="说明"/>
           </el-table>
         </div>
       </div>
@@ -81,15 +81,18 @@
 import { getBimBusinessSwitchConfigList, editBimBusinessData } from '@/api/basicData/index'
 import {getLabel, isEmpty, notEmpty} from '@/utils/index'
 import {FileCategoryType} from "@/views/esop/fileCategoryManagement/constants";
+import ConfigKey from "@/views/masterDataManagement/configManagement/paramSetting/ConfigKey";
 Vue.prototype.$getLabel = getLabel
 export default {
   name: 'ParamSetting',
   data() {
     return {
+      tableRerender:false,
       maxHeight: null,
       activeName: 'product',
       dataForm: {},
       productForm: {},
+      configKeyObj:Object.freeze(ConfigKey),
       formLoading: false,
       listQuery: {
         pageSize: 1, // 1是编码 0是财务
@@ -97,477 +100,6 @@ export default {
       },
       codeSetData: [],
       tableData: [],
-      configKeyList: [
-        {
-          label: '启用产品型号',
-          value: 'enable_model'
-        },
-        {
-          label: '允许生产报工超报',
-          value: 'work_exceed_report'
-        },
-        {
-          label: '允许生产超领料',
-          value: 'collect_exceed_picking'
-        },
-        {
-          label: '启用自动生成领料单',
-          value: 'arrange_auto_picking'
-        },
-        {
-          label: '启用仓库库位',
-          value: 'allocation'
-        },
-        {
-          label: '采购收货',
-          value: 'inbound_purchase'
-        },
-        {
-          label: '外协收货',
-          value: 'inbound_external'
-        },
-        {
-          label: '销售发货',
-          value: 'outbound_sale_send'
-        },
-        {
-          label: '启用成交客户附件',
-          value: 'fj_zskh'
-        },
-        {
-          label: '启用我的客户附件',
-          value: 'fj_wdkh'
-        },
-        {
-          label: '启用潜在客户附件',
-          value: 'fj_qzkh'
-        },
-        {
-          label: '启用公海客户附件',
-          value: 'fj_ghkh'
-        },
-        {
-          label: '启用采购供应商附件',
-          value: 'fj_cggysgl'
-        },
-        {
-          label: '启用外协供应商附件',
-          value: 'fj_wxgysgl'
-        },
-        {
-          label: '启用设备供应商附件',
-          value: 'fj_sbgysgl'
-        },
-        {
-          label: '启用BOM管理附件',
-          value: 'fj_bomgl'
-        },
-        {
-          label: '启用工艺路线附件',
-          value: 'fj_gylx'
-        },
-        {
-          label: '启用定点定价附件',
-          value: 'fj_dddj'
-        },
-        {
-          label: '启用成品定点定价附件',
-          value: 'fj_cpdddj'
-        },
-        {
-          label: '启用采购订单附件',
-          value: 'fj_cgdd'
-        },
-        {
-          label: '启用成品采购退货通知单附件',
-          value: 'fj_cpcgthtzd'
-        },
-        {
-          label: '启用采购退货通知单附件',
-          value: 'fj_cgthtzd'
-        },
-        {
-          label: '启用外协订单附件',
-          value: 'fj_wxdd'
-        },
-        {
-          label: '启用外协发料通知单附件',
-          value: 'fj_wxfltzd'
-        },
-        {
-          label: '启用采购收货单附件',
-          value: 'fj_cgshd'
-        },
-        {
-          label: '启用成品采购收货单附件',
-          value: 'fj_cpcgshd'
-        },
-        {
-          label: '启用外协收货单附件',
-          value: 'fj_wxshd'
-        },
-        {
-          label: '启用采购检验附件',
-          value: 'fj_procurejyd'
-        },
-        {
-          label: '启用外协检验附件',
-          value: 'fj_externaljyd'
-        },
-        {
-          label: '启用退货检验附件',
-          value: 'fj_sale_backjyd'
-        },
-        {
-          label: '启用生产巡检附件',
-          value: 'fj_processjyd'
-        },
-        {
-          label: '启用完工检验附件',
-          value: 'fj_finishedjyd'
-        },
-        {
-          label: '启用退料检验附件',
-          value: 'fj_producejyd'
-        },
-        {
-          label: '启用请购单附件',
-          value: 'fj_qgd'
-        },{
-          label: '启用销售报价附件',
-          value: 'fj_quotation'
-        },{
-          label: '启用销售订单附件',
-          value: 'fj_sales'
-        },{
-          label: '启用销售发货附件',
-          value: 'fj_sendOutGoods'
-        },{
-          label: '启用销售退货附件',
-          value: 'fj_returnGoods'
-        },{
-          label: '启用计划管理附件',
-          value: 'fj_plan'
-        },  {
-          label: '启用生产领料附件',
-          value: 'fj_pick'
-        },  {
-          label: '启用生产退料附件',
-          value: 'fj_returnPick'
-        },
-        {
-          label: '启用线索附件',
-          value: 'fj_clue'
-        },
-        {
-          label: '启用跟进记录',
-          value: 'fj_gjjl'
-        },
-        {
-          label: '启用合同管理',
-          value: 'fj_htgl'
-        },
-        {
-          label: '启用回款计划',
-          value: 'fj_hkjh'
-        },
-        {
-          label: '启用回款记录',
-          value: 'fj_hkjl'
-        },
-        {
-          label: '启用发票管理',
-          value: 'fj_fpgl'
-        },
-        {
-          label: '启用回访管理',
-          value: 'fj_hfgl'
-        },
-        {
-          label: '启用CRM产品管理',
-          value: 'fj_crmcpgl'
-        },
-        {
-          label: '启用设备供应商档案',
-          value: 'fj_sbgysda'
-        },
-        {
-          label: '启用备件领用',
-          value: 'fj_bjly'
-        },
-        {
-          label: '启用备件归还',
-          value: 'fj_bjgh'
-        },
-        {
-          label: '启用设备档案',
-          value: 'fj_sbda'
-        },
-        {
-          label: '启用设备维修知识库',
-          value: 'fj_sbwxzsk'
-        },
-        {
-          label: '启用设备报修',
-          value: 'fj_sbbx'
-        },
-        {
-          label: '启用设备维修',
-          value: 'fj_sbwx'
-        },
-        {
-          label: '启用报废管理',
-          value: 'fj_bfgl'
-        },
-        {
-          label: '启用保养任务管理',
-          value: 'fj_byrwgl'
-        },
-        {
-          label: '启用点检任务管理',
-          value: 'fj_djrwgl'
-        },
-      ],
-      descriptionList: [
-        {
-          label: '启用产品型号管理后，创建成品产品时，需先创建型号，再创建产品。',
-          value: 'enable_model'
-        },
-        {
-          label: '允许超报后，生产报工总数量将大于计划生产数量。',
-          value: 'work_exceed_report'
-        },
-        {
-          label: '允许超领料后，生产领料总数量将大于计划用料总数量。',
-          value: 'collect_exceed_picking'
-        },
-        {
-          label: '启用后，在编辑任务后，将会自动生成领料单。',
-          value: 'arrange_auto_picking'
-        },
-        {
-          label: '开启后，在仓库库位新建、编辑、查看都会显示附件操作。',
-          value: 'allocation'
-        },
-        {
-          label: '仓库待办出入库中，会根据您设置的规则，显示收货单还是采购订单进行入库。',
-          value: 'inbound_purchase'
-        },
-        {
-          label: '仓库待办出入库中，会根据您设置的规则，显示收货单还是采购订单进行入库。',
-          value: 'inbound_external'
-        },
-        {
-          label: '仓库待办出入库中，会根据您设置的规则，显示发货通知单还是销售订单进行出库。',
-          value: 'outbound_sale_send'
-        },
-        {
-          label: '开启后，在成交客户新建、编辑、查看都会显示附件操作。',
-          value: 'fj_zskh'
-        },
-        {
-          label: '开启后，在我的客户新建、编辑、查看都会显示附件操作。',
-          value: 'fj_wdkh'
-        },
-        {
-          label: '开启后，在潜在客户新建、编辑、查看都会显示附件操作。',
-          value: 'fj_qzkh'
-        },
-        {
-          label: '开启后，在公海客户新建、编辑、查看都会显示附件操作。',
-          value: 'fj_ghkh'
-        },
-        {
-          label: '开启后，在采购供应新建、编辑、查看都会显示附件操作。',
-          value: 'fj_cggysgl'
-        },
-        {
-          label: '开启后，在外协供应商附件新建、编辑、查看都会显示附件操作。',
-          value: 'fj_wxgysgl'
-        },
-        {
-          label: '开启后，在设备供应商附件新建、编辑、查看都会显示附件操作。',
-          value: 'fj_sbgysgl'
-        },
-        {
-          label: '开启后，在BOM管理附件新建、编辑、查看都会显示附件操作。',
-          value: 'fj_bomgl'
-        },
-        {
-          label: '开启后，在工艺路线附件新建、编辑、查看都会显示附件操作。',
-          value: 'fj_gylx'
-        },
-        {
-          label: '开启后，在工艺路线附件新建、编辑、查看都会显示附件操作。',
-          value: 'fj_gylx'
-        },
-        {
-          label: '开启后，在定点定价附件新建、编辑、查看都会显示附件操作。',
-          value: 'fj_dddj'
-        },
-        {
-          label: '开启后，在成品定点定价附件新建、编辑、查看都会显示附件操作。',
-          value: 'fj_cpdddj'
-        },
-        {
-          label: '开启后，在采购订单附件新建、编辑、查看都会显示附件操作。',
-          value: 'fj_cgdd'
-        },
-        {
-          label: '开启后，在成品采购退货通知单附件新建、编辑、查看都会显示附件操作。',
-          value: 'fj_cpcgthtzd'
-        },
-        {
-          label: '开启后，在采购退货通知单附件新建、编辑、查看都会显示附件操作。',
-          value: 'fj_cgthtzd'
-        },
-        {
-          label: '开启后，在外协订单附件新建、编辑、查看都会显示附件操作。',
-          value: 'fj_wxdd'
-        },
-        {
-          label: '开启后，在外协发料通知单附件新建、编辑、查看都会显示附件操作。',
-          value: 'fj_wxfltzd'
-        },
-        {
-          label: '开启后，在采购收货单附件新建、编辑、查看都会显示附件操作。',
-          value: 'fj_cgshd'
-        },
-        {
-          label: '开启后，在成品采购收货单附件新建、编辑、查看都会显示附件操作。',
-          value: 'fj_cpcgshd'
-        },
-        {
-          label: '开启后，在外协收货单附件新建、编辑、查看都会显示附件操作。',
-          value: 'fj_wxshd'
-        },
-        {
-          label: '开启后，在采购检验附件新建、编辑、查看都会显示附件操作。',
-          value: 'fj_procurejyd'
-        },
-        {
-          label: '开启后，在外协检验附件新建、编辑、查看都会显示附件操作。',
-          value: 'fj_externaljyd'
-        },
-        {
-          label: '开启后，在退货检验附件新建、编辑、查看都会显示附件操作。',
-          value: 'fj_sale_backjyd'
-        },
-        {
-          label: '开启后，在生产巡检附件新建、编辑、查看都会显示附件操作。',
-          value: 'fj_processjyd'
-        },
-        {
-          label: '开启后，在完工检验附件新建、编辑、查看都会显示附件操作。',
-          value: 'fj_finishedjyd'
-        },
-        {
-          label: '开启后，在退料检验附件新建、编辑、查看都会显示附件操作。',
-          value: 'fj_producejyd'
-        },
-        {
-          label: '开启后，在请购单附件新建、编辑、查看都会显示附件操作。',
-          value: 'fj_qgd'
-        },
-        {
-          label: '开启后，在销售报价新建、编辑、查看都会显示附件操作。',
-          value: 'fj_quotation'
-        },
-        {
-          label: '开启后，在销售订单新建、编辑、查看都会显示附件操作。',
-          value: 'fj_sales'
-        },
-        {
-          label: '开启后，在销售发货新建、编辑、查看都会显示附件操作。',
-          value: 'fj_sendOutGoods'
-        },
-        {
-          label: '开启后，在销售退货新建、编辑、查看都会显示附件操作。',
-          value: 'fj_returnGoods'
-        },
-        {
-          label: '开启后，在计划管理新建、编辑、查看都会显示附件操作。',
-          value: 'fj_plan'
-        },{
-          label: '开启后，在生产领料新建、编辑、查看都会显示附件操作。',
-          value: 'fj_pick'
-        },{
-          label: '开启后，在生产退料新建、编辑、查看都会显示附件操作。',
-          value: 'fj_returnPick'
-        },
-        {
-          label: '开启后，在线索新建、编辑、查看都会显示附件操作。',
-          value: 'fj_clue'
-        },
-        {
-          label: '开启后，在跟进记录新建、编辑、查看都会显示附件操作。',
-          value: 'fj_gjjl'
-        },
-        {
-          label: '开启后，在合同管理新建、编辑、查看都会显示附件操作。',
-          value: 'fj_htgl'
-        },
-        {
-          label: '开启后，在回款计划新建、编辑、查看都会显示附件操作。',
-          value: 'fj_hkjh'
-        },
-        {
-          label: '开启后，在回款记录新建、编辑、查看都会显示附件操作。',
-          value: 'fj_hkjl'
-        },
-        {
-          label: '开启后，在发票管理新建、编辑、查看都会显示附件操作。',
-          value: 'fj_fpgl'
-        },
-        {
-          label: '开启后，在回访管理新建、编辑、查看都会显示附件操作。',
-          value: 'fj_hfgl'
-        },
-        {
-          label: '开启后，在CRM产品管理新建、编辑、查看都会显示附件操作。',
-          value: 'fj_crmcpgl'
-        },
-        {
-          label: '开启后，在设备供应商档案新建、编辑、查看都会显示附件操作。',
-          value: 'fj_sbgysda'
-        },
-        {
-          label: '开启后，在备件领用新建、编辑、查看都会显示附件操作。',
-          value: 'fj_bjly'
-        },
-        {
-          label: '开启后，在备件归还新建、编辑、查看都会显示附件操作。',
-          value: 'fj_bjgh'
-        },
-        {
-          label: '开启后，在设备档案新建、编辑、查看都会显示附件操作。',
-          value: 'fj_sbda'
-        },
-        {
-          label: '开启后，在设备维修知识库新建、编辑、查看都会显示附件操作。',
-          value: 'fj_sbwxzsk'
-        },
-        {
-          label: '开启后，在设备报修新建、编辑、查看都会显示附件操作。',
-          value: 'fj_sbbx'
-        },
-        {
-          label: '开启后，在设备维修新建、编辑、查看都会显示附件操作。',
-          value: 'fj_sbwx'
-        },
-        {
-          label: '开启后，在报废管理新建、编辑、查看都会显示附件操作。',
-          value: 'fj_bfgl'
-        },
-        {
-          label: '开启后，在保养任务管理新建、编辑、查看都会显示附件操作。',
-          value: 'fj_byrwgl'
-        },
-        {
-          label: '开启后，在点检任务管理新建、编辑、查看都会显示附件操作。',
-          value: 'fj_djrwgl'
-        },
-      ],
       currentData:null,
       currentChooseCategory:'',
       reverseFn:null,
@@ -693,6 +225,7 @@ export default {
     },
     getData(index) {
       this.formLoading = true
+        this.tableRerender = false
       getBimBusinessSwitchConfigList(this.listQuery)
         .then((res) => {
           if (this.activeName == 'product') {
@@ -720,13 +253,23 @@ export default {
               item.radioOff = '按通知单入库'
               item.radioOn = '按订单入库'
             }
-            this.$set(item, 'description', item.configKey)
+              const configKeyObj = ConfigKey[item.configKey]
+              if(notEmpty(configKeyObj)){
+                  this.$set(item, 'description', configKeyObj.description)
+                  this.$set(item, 'configKeyLabel',configKeyObj.configKeyLabel)
+                  this.activeName === 'attachment' &&  this.$set(item, 'mainModule',configKeyObj.mainModule)
+              }else{
+                  this.$set(item, 'configKeyLabel',item.configKey)
+              }
+
             this.$set(item, 'editFlag', false)
           })
 
           this.formLoading = false
         })
-        .catch(() => (this.formLoading = false))
+        .catch(() => (this.formLoading = false)).finally(() => {
+          this.tableRerender = true
+        })
     },
     stateChangeFn(data){
           let _data = []

@@ -747,7 +747,7 @@ export default {
       })
     },
     deliveryDateChange(val) {
-      this.dataFormTwo.data.forEach(item => {
+      this.dataFormTwo.data.forEach((item) => {
         if (!item.deliveryDate) {
           this.$set(item, 'deliveryDate', val) // 总金额(不含税)
         }
@@ -853,6 +853,7 @@ export default {
           console.log(deletedArray, '被删掉的数据')
         }
         this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
+        console.log(this.dataFormTwo.data, 'this.dataFormTwo.data')
         // 审批
         // this.$nextTick(() => { this.getApproverData() })
       }
@@ -1180,7 +1181,17 @@ export default {
     },
     // 表单提交
     handleSubmit(type) {
-      this.request(type)
+      let submitFlag = true
+      this.dataFormTwo.data.map((ele) => {
+        console.log(ele, 'ppp')
+        if (ele.outShipmentList.length == 0) {
+          submitFlag = false
+          return this.$message.error('发料清单为空')
+        }
+      })
+      if (submitFlag) {
+        this.request(type)
+      }
     },
 
     async request(type) {

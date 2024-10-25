@@ -679,17 +679,25 @@ export default {
       // immediate:true,
       handler: function (newVal, oldVal) {
         newVal.forEach((item) => {
-          if ((item.price && item.taxRate) || (item.price && item.taxRate == 0)) {
+          if ((item.price && item.taxRate) || (item.price && item.taxRate === 0)) {
             item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
+          } else {
+            item.excludingTaxPrice = ''
           }
           if (item.purchaseQuantity && item.excludingTaxPrice) {
             item.excludingTaxAmount = this.jnpf.numberFormat(item.purchaseQuantity * item.excludingTaxPrice)
+          } else {
+            item.excludingTaxAmount = ''
           }
           if (item.price && item.purchaseQuantity && item.excludingTaxAmount) {
             item.taxAmount = this.jnpf.numberFormat(item.price * item.purchaseQuantity - item.excludingTaxAmount)
+          } else {
+            item.taxAmount = ''
           }
           if (item.excludingTaxAmount && item.taxAmount) {
             item.totalAmount = this.jnpf.numberFormat(item.excludingTaxAmount * 1 + item.taxAmount * 1)
+          } else {
+            item.totalAmount = ''
           }
           // if (!item.price) {
           //   this.$message.error('未找到供应商单价')
@@ -841,6 +849,7 @@ export default {
           })
         }
         this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
+
         // 审批
         // this.$nextTick(() => { this.getApproverData() })
       }
@@ -1139,7 +1148,18 @@ export default {
     },
     // 表单提交
     handleConfirm(type) {
-      this.request(type)
+      let submitFlag = true
+      this.dataFormTwo.data.map(ele => {
+        console.log(ele, 'ppp')
+        if (ele.outShipmentList.length == 0) {
+          submitFlag = false
+          return this.$message.error('发料清单为空');
+        }
+      })
+      if (submitFlag) {
+        this.request(type)
+      }
+
     },
 
     async request(type) {

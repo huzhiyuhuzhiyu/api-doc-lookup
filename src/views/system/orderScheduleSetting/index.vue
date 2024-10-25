@@ -203,27 +203,32 @@ export default {
     },
     addOrUpdateHandle() {
       console.log(555)
+      let count = 0
       this.tableList.map(ele => {
-        let count = 0
+
         count += Number(ele.progressPercentage)
-        if (count > 100) {
-          console.log(888)
+        console.log(count, 'count')
+        if (count === 100) {
+          this.$confirm(`您确定要保存当前数据吗, 是否继续?`, '提示', {
+            type: 'warning'
+          }).then(() => {
+            saveProgressStatus(this.tableList).then(res => {
+              this.$message({
+                type: 'success',
+                message: res.msg,
+                duration: 1000,
+                onClose: () => {
+                  this.initData()
+                }
+              })
+            })
+          }).catch(() => { })
+
+        } else {
+          return this.$message.error('所有占比必须等于100%');
         }
       })
-      // this.$confirm(`您确定要保存当前数据吗, 是否继续?`, '提示', {
-      //   type: 'warning'
-      // }).then(() => {
-      //   saveProgressStatus(this.tableList).then(res => {
-      //     this.$message({
-      //       type: 'success',
-      //       message: res.msg,
-      //       duration: 1000,
-      //       onClose: () => {
-      //         row.enabledMark = row.enabledMark ? 0 : 1
-      //       }
-      //     })
-      //   })
-      // }).catch(() => { })
+
     },
 
 

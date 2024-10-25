@@ -128,3 +128,22 @@ export function setpattern(data) {
     data
   })
 }
+
+// 选择组织 到 钉钉
+
+export function getOrganizeToDing(data) {
+  return request({
+    url: `/api/system/SynThirdInfo/synSingleOrganizeSysToDing`,
+    method: 'POST',
+    data
+  })
+}
+// 选择用户 到 钉钉
+
+export function getUserToDing(data) {
+  return request({
+    url: `/api/system/SynThirdInfo/synSingleUserSysToDing`,
+    method: 'POST',
+    data
+  })
+}

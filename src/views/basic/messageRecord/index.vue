@@ -38,9 +38,15 @@
             </div>
             <JNPF-table v-loading="listLoading" :data="list" hasC
               @selection-change="handleSelectionChange">
-              <el-table-column prop="title" label="消息标题">
+              <el-table-column prop="title" label="消息标题" min-width="180">
                 <template slot-scope="scope">
-                  <el-link @click="readInfo(scope.row)" style="font-size:12px">{{ scope.row.title }}
+                  <el-link @click="readInfo(scope.row,1)" style="font-size:12px">{{ scope.row.title }}
+                  </el-link>
+                </template>
+              </el-table-column>
+              <el-table-column prop="businessNo" label="关联表单" min-width="180">
+                <template slot-scope="scope">
+                  <el-link @click="readInfo(scope.row,2)" style="font-size:12px">{{ scope.row.businessNo }}
                   </el-link>
                 </template>
               </el-table-column>
@@ -68,15 +74,17 @@
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" />
+    <MessageForm v-if="messageVisible" ref="messageForm" @refreshDataList="initData" />
   </div>
 </template>
 
 <script>
 import { getMessageList, MessageDeleteRecord, ReadInfo } from '@/api/system/message'
 import Form from './Form'
+import MessageForm from './messageForm'
 export default {
   name: 'messageRecord',
-  components: { Form },
+  components: { Form ,MessageForm},
   data() {
     return {
       visible: false,
@@ -91,7 +99,8 @@ export default {
         currentPage: 1,
         pageSize: 20,
         sort: 'desc',
-      }
+      },
+      messageVisible:false,
     }
   },
   watch: {
@@ -118,6 +127,7 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.messageVisible = false
       let type = this.activeName == '0' ? '' : this.activeName
       let data = {
         ...this.listQuery,
@@ -154,25 +164,32 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val.map(item => item.id)
     },
-    readInfo(item) {
+    readInfo(item,mesType) {
       if (item.type == 1) {
         this.formVisible = true
         item.isRead = '1'
         this.$nextTick(() => {
           this.$refs.Form.init(item.id)
         })
-      } else {
-        ReadInfo(item.id).then(res => {
-          item.isRead = '1'
-          if (!res.data.bodyText) return
-          const Base64 = require('js-base64').Base64
-          let bodyText = JSON.parse(res.data.bodyText)
-          if ([4,5].includes(bodyText.formType)){
-            this.$router.push('/AbmessageDetail?config=' + encodeURIComponent(Base64.encode(res.data.bodyText)))
-          }else{
-            this.$router.push('/workFlowDetail?config=' + encodeURIComponent(Base64.encode(res.data.bodyText)))
-          }
-        })
+      } else{
+         if (mesType == 1 && item.bodyText){
+          this.messageVisible = true
+          this.$nextTick(() => {
+            this.$refs.messageForm.init(item)
+          })
+        } else if (mesType === 2){
+          ReadInfo(item.id).then(res => {
+            item.isRead = '1'
+            if (!res.data.bodyText) return
+            const Base64 = require('js-base64').Base64
+            let bodyText = JSON.parse(res.data.bodyText)
+            if ([4,5].includes(bodyText.formType)){
+              this.$router.push('/AbmessageDetail?config=' + encodeURIComponent(Base64.encode(res.data.bodyText)))
+            }else{
+              this.$router.push('/workFlowDetail?config=' + encodeURIComponent(Base64.encode(res.data.bodyText)))
+            }
+          })
+        }
       }
     }
   }

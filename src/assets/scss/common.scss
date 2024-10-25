@@ -359,6 +359,23 @@
     }
   }
 }
+.JNPF-table-successBtn {
+  color:  #67C23A !important;
+
+  &.el-button--text:hover,
+  &.el-button--text:focus {
+    color: #67C23A !important;
+  }
+
+  &.is-disabled {
+    color: #C0C4CC !important;
+
+    &.el-button--text:hover,
+    &.el-button--text:focus {
+      color: #C0C4CC !important;
+    }
+  }
+}
 
 .JNPF-dialog {
   .el-input__validateIcon {

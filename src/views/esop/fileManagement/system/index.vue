@@ -23,10 +23,10 @@
 
             <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
                 <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNode">
-          <span class="custom-tree-node" slot-scope="{ node }">
-            <i class="el-icon-notebook-2" />
-            <span class="text">{{ node.label }}</span>
-          </span>
+                  <span class="custom-tree-node" slot-scope="{ node }">
+                    <i class="el-icon-notebook-2" />
+                    <span class="text">{{ node.label }}</span>
+                  </span>
                 </el-tree>
             </el-scrollbar>
             <div v-if="!leftFlag" class="retract " style="position: absolute">
@@ -38,69 +38,69 @@
         </div>
         <div class="JNPF-common-layout-center JNPF-flex-main" style="background: #fff;padding: 10px;">
             <div class="main JNPF-flex-main height-full">
-                <div class="JNPF-common-search-box searchWrapper" style="width: 100%;display: flex;align-items: center;height: 34px;padding-top: 0">
+                <div class="JNPF-common-search-box searchWrapper" style="width: 100%;display: flex;align-items: center;height: 34px;padding-top: 0;justify-content: space-between;">
 
-                        <SearchPlane
-                            :transition-time="500"
-                            :loading.sync="searchPlaneLoading"
-                            class="search-com"
-                            :searchDropDownList="allSearchDropDownList"
-                            @search-change="searchChange"
-                            @item-click="searchItemClick"
-                            :list="searchList"
-                            :keyword.sync="keyword"
-                            style="width: calc(100% - 34px)"
-                        ></SearchPlane>
-
-                        <SwitchListAndFilter style="width: 39px" @command="filterExtHandler" :switch-list.sync="allSwitchList" :current-ext.sync="currentExt" :file-ext-filter-option="fileExtFilterOption"/>
+<!--                        <SearchPlane-->
+<!--                            :transition-time="500"-->
+<!--                            :loading.sync="searchPlaneLoading"-->
+<!--                            class="search-com"-->
+<!--                            :searchDropDownList="allSearchDropDownList"-->
+<!--                            @search-change="searchChange"-->
+<!--                            @item-click="searchItemClick"-->
+<!--                            :list="searchList"-->
+<!--                            :keyword.sync="keyword"-->
+<!--                            style="width: calc(100% - 34px)"-->
+<!--                        ></SearchPlane>-->
+                        <el-form @submit.prevent style="display: flex;justify-content: center;">
+                            <el-form-item   style="margin-bottom: 0px !important">
+                                <el-input v-model="listQuery.superQuery.condition[0].fieldValue" placeholder="请输入文件名" style="width: 200px" clearable
+                                          @keyup.enter.native="search()" ></el-input>
+                            </el-form-item>
+                            <el-form-item  style="margin-bottom: 0px !important;margin-left: 10px">
+                                <el-button type="primary" icon="el-icon-search" @click="search()" size="mini">
+                                    {{$t('common.search')}}</el-button>
+                                <el-button icon="el-icon-refresh-right" @click="reset()" size="mini">{{$t('common.reset')}}
+                                </el-button>
+                            </el-form-item>
+                        </el-form>
+                        <SwitchListAndFilter :needFilter="false" style="width: 39px" @command="filterExtHandler" :switch-list.sync="allSwitchList" :current-ext.sync="currentExt" :file-ext-filter-option="fileExtFilterOption"/>
 
                 </div>
-                <div style="height: calc(100% - 35px)">
-                    <JNPF-table  class="table-style" v-if="allSwitchList" v-loading="listLoading" :data="fileList" empty-text="暂无文件" size="mini">
-                        <el-table-column prop="filename" label="文件名" custom-column>
-                            <template slot-scope="scope">
-                              <span  class="pointer" @click="listItemClick(scope.row)" >
-                                {{ scope.row.filename }}
-                              </span>
-                            </template>
-                        </el-table-column>
-                       <el-table-column prop="fileSize" label="大小">
-                            <template slot-scope="scope">{{ scope.row.fileSize | toFileSize }}</template>
-                       </el-table-column>
+                <div style="height: calc(100% - 35px)" v-loading="listLoading">
 
-                        <el-table-column prop="fileSize" label="业务名称">
-                            <template slot-scope="{row}">{{ getBusinessTitle(row.configKey) }}</template>
-                        </el-table-column>
+                    <JNPF-table  v-if="allSwitchList"   class="table-style" :data="fileList" empty-text="暂无文件" size="mini">
+                            <el-table-column prop="filename" label="文件名" custom-column min-width="150">
+                                <template slot-scope="scope">
+                                    <el-link :underline="false" type="primary" @click="listItemClick(scope.row)" >
+                                        {{ scope.row.filename }}
+                                    </el-link>
+                                </template>
+                            </el-table-column>
+                            <el-table-column prop="fileSize" label="大小" width="100">
+                                <template slot-scope="scope">{{ scope.row.fileSize | toFileSize }}</template>
+                            </el-table-column>
 
-                        <el-table-column prop="createTime" label="创建日期" width="200"/>
-                        <el-table-column label="操作"
-                                         fixed="right" width="200">
-                            <template slot-scope="scope">
-                                <el-button size="mini" type="text" @click="handleDownLoad(scope.row.id)"
-                                           :disabled="!scope.row.type">下载</el-button>
-                                <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                                           @click="handleDel(scope.$index, scope.row.id)" v-if="scope.row.canEdit">删除</el-button>
-                                <el-dropdown v-if="scope.row.canEdit">
-                                    <el-button type=" text" size="mini">
-                                        {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                                    </el-button>
-                                    <el-dropdown-menu slot="dropdown">
-                                        <el-dropdown-item @click.native="shareFolder(scope.row.id)" v-if="scope.row.type">
-                                            共享
-                                        </el-dropdown-item>
-                                        <el-dropdown-item @click.native="getFolder(scope.row.id)">重命名
-                                        </el-dropdown-item>
-                                        <el-dropdown-item @click.native="moveTo(scope.row.id, scope.row.parentId)">
-                                            移动到
-                                        </el-dropdown-item>
-                                    </el-dropdown-menu>
-                                </el-dropdown>
-                            </template>
-                        </el-table-column>
-                    </JNPF-table>
+                            <el-table-column prop="fileSize" label="业务名称"  width="160">
+                                <template slot-scope="{row}">{{ getBusinessTitle(row.configKey) }}</template>
+                            </el-table-column>
+
+                            <el-table-column prop="createTime" label="创建日期" width="200"/>
+                            <el-table-column label="操作"
+                                             fixed="right" width="200">
+                                <template slot-scope="scope">
+                                    <el-button size="mini" type="text" @click="handleDownLoad(scope.row.documentId)">下载</el-button>
+                                    <el-button size="mini" type="text" @click="showDetail(scope.row)" >详情</el-button>
+                                    <template v-if="!isFileCheckPage">
+                                        <el-button v-if="isFileTrashPage" size="mini" type="text" class="JNPF-table-successBtn" @click="handleRevert(scope.row.id)">还原</el-button>
+                                        <el-button v-else size="mini" type="text" class="JNPF-table-delBtn" @click="handleDel(scope.row.id)">删除</el-button>
+                                    </template>
+
+
+                                </template>
+                            </el-table-column>
+                        </JNPF-table>
                     <GridFileList
                         v-else
-                        v-loading="gridFileListLoading"
                         class="table-style"
                         style="border: 1px solid #ebeef5 !important;"
                         @item-click="listItemClick"
@@ -129,8 +129,11 @@
                             </div>
                         </template>
                     </GridFileList>
-                    <Preview  class="search-left" :visible.sync="previewVisible" :file="previewFile" />
+                    <pagination  style="height: 36px" :total="total" :page.sync="listQuery.pageNum"
+                                 :limit.sync="listQuery.pageSize" @pagination="initData" />
                 </div>
+
+                <Preview  class="search-left" :visible.sync="previewVisible" :file="previewFile" />
             </div>
         </div>
         <component
@@ -147,40 +150,33 @@
 
 import { getcategoryTree } from '@/api/basicData/index'
 
-import SuperQuery from '@/components/SuperQuery/index.vue'
 import {FileCategoryType} from "@/views/esop/fileCategoryManagement/constants";
-import FileUploadDrop from "@/views/esop/fileUpload/workinginstruction/component/FileUploadDrop.vue";
 import GridFileList from "@/views/drawingDocument/document/GridFileList.vue";
 import {AllList, Download} from "@/api/extend/document";
 import {isFile, Type2SuffixArr} from "@/views/drawingDocument/document/utils";
 import SearchPlane from "@/views/drawingDocument/document/SearchPlane.vue";
 import SwitchListAndFilter from "@/views/drawingDocument/document/SwitchListAndFilter.vue";
-import {isEmpty, trim} from "@/utils";
+import {getSuccessInfo, isEmpty, trim} from "@/utils";
 import {systemAttachmentsDelete, systemAttachmentsList} from "@/api/esop/fileManage/system";
 import ShowDetailMinix from "@/views/esop/fileManagement/system/ShowDetailMinix";
 import Preview from "@/components/upload-wj/Preview.vue";
 import {FILE_OPERATE} from "@/views/drawingDocument/document/constant";
 import {getFilePreviewUrl} from "@/views/esop/utils/utils";
+import {PageType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
+import {recycleBinAttachList, recycleBinAttachRevert, recycleBinList} from "@/api/esop/fileTrash/attachment";
 
 export default {
+    name:"FileManagementSystem",
     mixins:[ShowDetailMinix],
-    components: {Preview, SwitchListAndFilter, SearchPlane, GridFileList, FileUploadDrop, SuperQuery, },
+    components: {Preview, SwitchListAndFilter, SearchPlane, GridFileList},
+    props:{
+        pageType:{
+            type:String,
+            default:PageType.FileManagementAttachment
+        }
+    },
     data() {
         return {
-            allFileOptions:[
-                {
-                    text:'下载',
-                    value:FILE_OPERATE.DOWNLOAD,
-                },
-                {
-                    text:'删除',
-                    value:FILE_OPERATE.DELETE,
-                },
-                {
-                    text:'详情',
-                    value:FILE_OPERATE.DETAIL,
-                },
-            ],
             previewVisible:false,
             previewFile:{},
             searchPlaneLoading:false,
@@ -219,12 +215,10 @@ export default {
                 },
             ]),
             keyword:"",
-            allSearchDropDownList:[
-            ],
+            allSearchDropDownList:[],
             fileList:[],
             allSwitchList:true,
             shareVisible:false,
-            gridFileListLoading:false,
             superQueryVisible: false,
             programmefrom: {},
             partentOrChild: 'partent',
@@ -267,9 +261,9 @@ export default {
                 "superQuery": {
                     "condition": [
                         {
-                            "field": "",
+                            "field": "filename",
                             "fieldValue": "",
-                            "symbol": ""
+                            "symbol": "like"
                         }
                     ],
                     "matchLogic": ""
@@ -299,12 +293,56 @@ export default {
         }
     },
     computed: {
+        allFileOptions(){
+            const res = [
+                {
+                    text:'下载',
+                    value:FILE_OPERATE.DOWNLOAD,
+                },
+
+                {
+                    text:'详情',
+                    value:FILE_OPERATE.DETAIL,
+                },
+            ]
+            if(this.isFileManagementPage){
+                res.push({
+                        text:'删除',
+                        value:FILE_OPERATE.DELETE,
+                        isShow:()=>!this.isFileTrashPage
+                    })
+
+            }
+            if(this.isFileTrashPage){
+                res.push({
+                        text:'还原',
+                        value:FILE_OPERATE.REVERT,
+                })
+            }
+            return res
+        },
+        isFileTrashPage(){
+            return this.pageType === PageType.FileTrashAttachment
+        },
+        isFileManagementPage(){
+            return this.pageType === PageType.FileManagementAttachment
+        }, isFileCheckPage(){
+            return this.pageType === PageType.FileCheckAttachment
+        },
+        initFn(){
+            return this.isFileTrashPage ? recycleBinAttachList:systemAttachmentsList
+        },
         currMenuId() {
             return (this.$route.meta.modelId || '') + this.partentOrChild
         }
     },
-
     methods: {
+        async handleRevert(id){
+            await recycleBinAttachRevert(id)
+            getSuccessInfo()
+            this.initData()
+        },
+        recycleBinAttachRevert,
         getBusinessTitle(configKey){
              if(isEmpty(this.configKey2Detail[configKey])){
                  return '历史数据无编码'
@@ -385,6 +423,8 @@ export default {
                     return this.handleDel(item.id)
                 case FILE_OPERATE.DETAIL:
                     return this.showDetail(item)
+                case FILE_OPERATE.REVERT:
+                    return this.handleRevert(item.id)
                 default:
                     break;
             }
@@ -411,7 +451,6 @@ export default {
         },
 
         filterNode(value, data) {
-            console.log(value, data);
             if (!value) return true;
             return data.name.indexOf(value) !== -1;
         },
@@ -448,7 +487,7 @@ export default {
             this.listLoading = true
             trim(this.listQuery)
             this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
-            systemAttachmentsList(this.listQuery).then(res => {
+           this.initFn(this.listQuery).then(res => {
                 this.fileList = res.data.records
                 this.total = res.data.total
                 this.listLoading = false
@@ -465,9 +504,15 @@ export default {
         },
         search() {
             this.listQuery.pageNum = 1
+            this.listQuery.superQuery.condition[0].fieldValue = ""
             this.initData()
         },
-
+        reset(){
+            this.listQuery.categoryId = ""
+            this.listQuery.superQuery.condition[0].fieldValue = ""
+            this.$refs.treeBox.setCurrentKey(null)
+            this.search()
+        },
 
 
         handleDel(id) {
@@ -576,5 +621,8 @@ export default {
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
+}
+.table-style{
+    height: calc(100% - 36px)
 }
 </style>

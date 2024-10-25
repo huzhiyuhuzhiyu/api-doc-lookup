@@ -39,11 +39,13 @@ import md5 from 'js-md5'
 export default {
   data() {
     const validateUserPassword = (rule, value, callback) => {
-      const passwordreg = /(?=.*\d)(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{6,16}/
+      // const passwordreg = /(?=.*\d)(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{6,16}/
+      const passwordreg = /^[^\u4e00-\u9fa5 ]{6,16}$/
       if (!value) {
         callback(new Error('请输入新密码'));
       } else if (!passwordreg.test(value)) {
-        callback(new Error('密码必须由数字、字母、特殊字符组合,请输入6-16位'))
+        // callback(new Error('密码必须由数字、字母、特殊字符组合,请输入6-16位'))
+        callback(new Error('请输入不含有中文和空格6-16位密码'))
       } else {
         if (this.dataForm.userPassword !== '') {
           this.$refs.dataForm.validateField('validatePassword');

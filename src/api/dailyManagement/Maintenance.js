@@ -398,3 +398,43 @@ export function inspectionMonthTotalchart(data) {
     data
   })
 }
+// 日常保养点检分布
+export function dailyMaintenanceNum(data) {
+  return request({
+    url: `/api/mes/equReport/dailyMaintenanceNum`,
+    method: 'POST',
+    data
+  })
+}
+// 日常设备保养点检次数
+export function dailyEquMaintenanceNum(data) {
+  return request({
+    url: `/api/mes/equReport/dailyEquMaintenanceNum`,
+    method: 'POST',
+    data
+  })
+}
+// 维修概况分析
+export function totalRepairNum(data) {
+  return request({
+    url: `/api/mes/equReport/totalRepair`,
+    method: 'POST',
+    data
+  })
+}
+// 维修分布
+export function repairNum(data) {
+  return request({
+    url: `/api/mes/equReport/repairNum`,
+    method: 'POST',
+    data
+  })
+}
+// 点检时间结果统计
+export function equMaintenanceTime(data) {
+  return request({
+    url: `/api/mes/equReport/equMaintenanceTime`,
+    method: 'POST',
+    data
+  })
+}

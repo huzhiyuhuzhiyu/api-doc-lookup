@@ -179,6 +179,7 @@ export default {
         ],
         code: "",
         name: "",
+        deviceType: 'normal',
         repairFlag: 1,
         classAttribute: "equipment",
       },

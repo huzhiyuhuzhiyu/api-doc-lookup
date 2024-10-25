@@ -457,7 +457,7 @@
                   v-loading="tableloading">
                   <el-table-column prop="orderNo" label="单号" sortable="custom" min-width="180">
                     <template slot-scope="scope">
-                      <el-link type="primary" @click.native="viewFun(scope.row.id, 'look', scope.row)">{{
+                      <el-link type="primary" @click.native="viewOutInbound(scope.row, 'look')">{{
                         scope.row.orderNo
                       }}</el-link>
                     </template>

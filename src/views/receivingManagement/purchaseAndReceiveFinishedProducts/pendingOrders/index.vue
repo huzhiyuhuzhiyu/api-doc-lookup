@@ -12,14 +12,14 @@
             <el-col :span="4">
               <el-form-item>
                 <el-date-picker v-model="orderForm.deliveryStartDate" type="date" value-format="yyyy-MM-dd"
-                  style="width: 100%;" placeholder="收货开始日期" clearable></el-date-picker>
+                  style="width: 100%;" placeholder="交货开始日期" clearable></el-date-picker>
                 -
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
                 <el-date-picker v-model="orderForm.deliveryEndDate" type="date" value-format="yyyy-MM-dd"
-                  style="width: 100%;" placeholder="收货结束日期" clearable></el-date-picker>
+                  style="width: 100%;" placeholder="交货结束日期" clearable></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -83,7 +83,7 @@
             <el-table-column prop="purchaseQuantity" label="数量" min-width="100" sortable="custom" />
             <el-table-column prop="waitReceiptNum" label="待收货数量" min-width="130" sortable="custom" />
 
-            <el-table-column prop="deliveryDate" label="收货日期" min-width="120" sortable="custom" />
+            <el-table-column prop="deliveryDate" label="交货日期" min-width="120" sortable="custom" />
             <el-table-column prop="standardValue" label="规值" min-width="100" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" min-width="120" label="打字内容" sortable="custom" />
             <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
@@ -248,7 +248,7 @@ export default {
 
         {
           prop: 'deliveryDate',
-          label: '收货日期',
+          label: '交货日期',
           type: 'daterange',
           valueFormat: 'yyyy-MM-dd HH:mm:ss',
           startPlaceholder: '开始日期',

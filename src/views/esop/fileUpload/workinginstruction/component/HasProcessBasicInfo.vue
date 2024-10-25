@@ -158,6 +158,9 @@ export default {
                 Object.keys(this.dataForm).forEach(key=>{
                     this.dataForm[key] = data[key]
                 })
+                if(this.dataForm.versionCount === null){
+                    this.dataForm.versionCount = 0
+                }
                 this.changeRoutingName(data.routingName)
 
                 if(data.openProcess){
@@ -269,7 +272,7 @@ export default {
                                                 </el-form-item>
                                             </el-form>
                                         </el-col>
-                                        <el-col :span="2">
+                                        <el-col :span="!isFileUploadPage ? 2 : 4">
                                             <el-form-item label="按工序上传">
                                                 <div style="height: 32px;display: flex;align-items: center">
                                                     <el-tooltip :content="hasRoutingLine ? '开启后可为每一道工序上传作业指导书':'该产品未设置工艺路线，请设置工艺路线后再开启'" placement="top-start">

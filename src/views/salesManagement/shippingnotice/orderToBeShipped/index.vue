@@ -935,6 +935,9 @@ export default {
       if (flag) return this.$message.error("只能选择相同客户的明细订单")
       console.log(111,this.list);
       this.addFormVisible = true
+      this.list.forEach(item => {
+        this.$set(item,'ordersNo',item.orderNo)
+      });
       this.$nextTick(() => {
         this.$refs.addForm.init("", btntype,false, this.list)
       })

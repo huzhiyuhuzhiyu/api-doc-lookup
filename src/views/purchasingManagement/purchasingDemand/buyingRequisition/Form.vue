@@ -15,7 +15,7 @@
             <el-button @click="goBack" v-if="!!dialogTitle">{{ $t('common.cancelButton') }}</el-button>
           </div>
         </div>
-        <div class="main">
+        <div class="main" ref="main">
           <el-tabs v-model="activeName" v-if="!approvalFlag">
             <el-tab-pane label="基础信息" name="jcInfo">
               <el-collapse v-model="activeNames" style="margin-top: 5px;">
@@ -58,8 +58,9 @@
                   </div>
 
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                    <el-table style="border: 1px solid #e3e7ee;" @selection-change="handeleProductInfoData" hasC hasNO
-                      fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table">
+                    <el-table :height="height" style="border: 1px solid #e3e7ee;"
+                      @selection-change="handeleProductInfoData" hasC hasNO fixedNO v-bind="dataFormTwo.data"
+                      :data="dataFormTwo.data" id="table">
                       <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type !== 'look'" />
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
@@ -528,7 +529,8 @@ export default {
       approvalFlag: false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
       endTime: 0,
-      categoryId: ''
+      categoryId: '',
+      height: 0,
     }
   },
   created() {
@@ -536,7 +538,27 @@ export default {
     this.getBimBusinessDetail()
     if (this.type === 'add') this.getBusInfo()
   },
+  mounted() {
+    this.switchStyle()
+  },
   methods: {
+    //自适应窗口
+    async switchStyle() {
+      await this.$nextTick();
+      console.log(this.$refs.main, 'this.$refs.main')
+      let allHeight = this.$refs.main.clientHeight
+      // let HeightstoclInfo = this.$refs.stoclInfo.clientHeight
+      // let Heightradio = this.$refs.radio.clientHeight
+      this.height = (allHeight - 310) < 500 ? 500 : (allHeight - 310)
+      console.log(this.height, 'this.height')
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyle()
+        }, 100);
+      };
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',

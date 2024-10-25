@@ -646,7 +646,9 @@ export default {
     //自适应窗口
     async switchStyle() {
       await this.$nextTick();
+      console.log(this.$refs.main,'this.$refs.main')
       let allHeight = this.$refs.main.clientHeight
+      console.log(allHeight,'allHeight')
       // let HeightstoclInfo = this.$refs.stoclInfo.clientHeight
       // let Heightradio = this.$refs.radio.clientHeight
       this.height = (allHeight - 340) < 500 ? 500 : (allHeight - 340)

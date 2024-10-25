@@ -153,7 +153,7 @@
                   </div>
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                     <JNPF-table ref="product" :data="dataFormTwo.data" @selection-change="handeleProductInfoData"
-                      fixedNo :hasC="btnType!='look'" v-loading="tableloading">
+                      fixedNo :hasC="btnType != 'look'" v-loading="tableloading">
 
 
 
@@ -201,7 +201,7 @@
                       <el-table-column prop="clearance" label="游隙" width="160" />
                       <el-table-column prop="packagingMethod" label="包装方式" width="160" />
                       <el-table-column prop="specialRequire" label="特殊要求" width="160" />
-                      <el-table-column prop="saleOrderNo" label="订单号" width="160" />
+                      <el-table-column prop="ordersNo" label="订单号" width="160" />
                       <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
                         <template slot-scope="scope">
                           <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
@@ -362,7 +362,7 @@
               </div>
               <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                 <JNPF-table ref="product" :data="dataFormTwo.data" @selection-change="handeleProductInfoData" fixedNo
-                :hasC="btnType!='look'" v-loading="tableloading">
+                  :hasC="btnType != 'look'" v-loading="tableloading">
 
 
 
@@ -409,7 +409,7 @@
                   <el-table-column prop="clearance" label="游隙" width="160" />
                   <el-table-column prop="packagingMethod" label="包装方式" width="160" />
                   <el-table-column prop="specialRequire" label="特殊要求" width="160" />
-                  <el-table-column prop="saleOrderNo" label="订单号" width="160" />
+                  <el-table-column prop="ordersNo" label="订单号" width="160" />
                   <el-table-column prop="workOrderNo" label="工作令号" width="160" />
                   <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
                     <template slot-scope="scope">
@@ -941,9 +941,7 @@ export default {
     console.log(5555);
 
     this.getBimBusinessDetail()
-    let tBody = document.querySelectorAll('.el-table')[1]
-    tBody.style.height = 'auto'
-    tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
+
   },
   methods: {
     getBimBusinessDetail() {
@@ -1479,7 +1477,6 @@ export default {
         data.forEach(item => {
           item.ordersNum = item.num
           item.productDrawingNo = item.drawingNo
-          item.saleOrderNo = item.orderNo
         });
         this.getAddressInfoFun(data[0].cooperativePartnerId)
         this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId

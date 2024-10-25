@@ -82,7 +82,7 @@
                       <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
                       <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
                     </JNPF-table>
-                    <pagination :total="totald" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData" />
+                    <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData" />
                   </div>
                 </div>
               </div>
@@ -109,12 +109,14 @@
 
 <script>
 import chart from "@/views/dailyManagement/deviceReportanaly/components/chart.vue";
-import { equMaintenanceList } from '@/api/dailyManagement/Maintenance'
+import { equMaintenanceList, inspectionMonthTotalchart } from '@/api/dailyManagement/Maintenance'
+import { getdailyInspectionMonthTotal } from "@/api/basicData/materialSettings";
 import card from "@/views/dailyManagement/deviceReportanaly/components/card.vue";
 export default {
   components: { card, chart },
   data() {
     return {
+      total: 0,
       djchartbaroption: {},
       djchartlineoption: {},
       listLoading: false,
@@ -140,18 +142,6 @@ export default {
       },
     }
   },
-  watch: {
-    activeName: {
-      handler(newOption) {
-        if (newOption == 'djgk') {
-          this.initData()
-        } else {
-          this.initDatachart()
-        }
-      },
-      deep: true
-    }
-  },
   created() {
     this.listQuery = JSON.parse(JSON.stringify(this.listQueryone))
     this.initData()
@@ -159,131 +149,138 @@ export default {
   methods: {
     //点检次数分析
     initDatachart() {
-      this.djchartlineoption = {
-        title: {
-          text: '每日点检次数',
-          textStyle: {
-            fontWeight: '450',
-            fontSize: 14
+      let obj = {
+        classAttribute: "equipment"
+      }
+      getdailyInspectionMonthTotal(obj).then(res => {
+        this.djchartlineoption = {
+          title: {
+            text: '每日点检次数',
+            textStyle: {
+              fontWeight: '450',
+              fontSize: 14
+            },
+            top: 12
           },
-          top: 12
-        },
-        tooltip: {
-          trigger: 'axis'
-        },
-        grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
-          containLabel: true
-        },
-        xAxis: [
-          {
-            type: 'category',
-            boundaryGap: false,
-            data: [1, 2, 3, 4, 5, 6, 7]
-          }
-        ],
-        yAxis: [
-          {
-            type: 'value',
-            minInterval: 1,
-            axisTick: {
-              show: false
-            },
-            axisLine: {
-              show: false
+          tooltip: {
+            trigger: 'axis'
+          },
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
+          xAxis: [
+            {
+              type: 'category',
+              boundaryGap: false,
+              data: res.data.map(item => item.totalName)
             }
-          }
-        ],
-        color: ['#307deb'],
-        series: [
-          {
-            name: '点检次数',
-            type: 'line',
-            label: {
-              show: true
-            },
-            areaStyle: {
-              color: {
-                type: 'linear',
-                x: 0,
-                y: 0,
-                x2: 0,
-                y2: 1,
-                colorStops: [{
-                  offset: 0, color: '#3883ec' // 0% 处的颜色
-                }, {
-                  offset: 1, color: '#fff' // 100% 处的颜色
-                }],
-                global: false // 缺省为 false
+          ],
+          yAxis: [
+            {
+              type: 'value',
+              minInterval: 1,
+              axisTick: {
+                show: false
+              },
+              axisLine: {
+                show: false
               }
-            },
-            emphasis: {
-              focus: 'series'
-            },
-            smooth: true,
-            data: [50, 52, 36, 2, 34, 58, 77]
-          }
-        ]
-      }
-      this.djchartbaroption = {
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'shadow'
-          }
-        },
-        title: {
-          text: '本月各设备点检次数',
-          textStyle: {
-            fontWeight: '450',
-            fontSize: 14
-          },
-          top: 12
-        },
-        grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
-          containLabel: true
-        },
-        color: ['#0052cc'],
-        xAxis: [
-          {
-            type: 'category',
-            data: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-            axisTick: {
-              alignWithLabel: true,
-              show: false
             }
-          }
-        ],
-        yAxis: [
-          {
-            axisTick: {
-              show: false
+          ],
+          color: ['#307deb'],
+          series: [
+            {
+              name: '点检次数',
+              type: 'line',
+              label: {
+                show: true
+              },
+              areaStyle: {
+                color: {
+                  type: 'linear',
+                  x: 0,
+                  y: 0,
+                  x2: 0,
+                  y2: 1,
+                  colorStops: [{
+                    offset: 0, color: '#3883ec' // 0% 处的颜色
+                  }, {
+                    offset: 1, color: '#fff' // 100% 处的颜色
+                  }],
+                  global: false // 缺省为 false
+                }
+              },
+              emphasis: {
+                focus: 'series'
+              },
+              smooth: true,
+              data: res.data.map(item => item.totalNum)
+            }
+          ]
+        }
+      })
+      inspectionMonthTotalchart(obj).then(res => {
+        this.djchartbaroption = {
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow'
+            }
+          },
+          title: {
+            text: '本月各设备点检次数',
+            textStyle: {
+              fontWeight: '450',
+              fontSize: 14
             },
-            axisLine: {
-              show: false
-            },
-            type: 'value',
-            minInterval: 1
-          }
-        ],
-        series: [
-          {
-            barWidth: '30%',
-            name: '设备数量',
-            type: 'bar',
-            label: {
-              show: true,
-              position: 'top'
-            },
-            data: [1, 10, 21, 12, 3, 10, 22, 17, 11]
-          }
-        ]
-      }
+            top: 12
+          },
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
+          color: ['#0052cc'],
+          xAxis: [
+            {
+              type: 'category',
+              data: res.data.map(item => item.totalName),
+              axisTick: {
+                alignWithLabel: true,
+                show: false
+              }
+            }
+          ],
+          yAxis: [
+            {
+              axisTick: {
+                show: false
+              },
+              axisLine: {
+                show: false
+              },
+              type: 'value',
+              minInterval: 1
+            }
+          ],
+          series: [
+            {
+              barWidth: '30%',
+              name: '设备数量',
+              type: 'bar',
+              label: {
+                show: true,
+                position: 'top'
+              },
+              data: res.data.map(item => item.totalNum)
+            }
+          ]
+        }
+      })
     },
     handleClick({ name }) {
       if (name == 'djgk') {
@@ -296,6 +293,7 @@ export default {
       this.srcList[0] = url
     },
     reset() {
+      this.listQuery = JSON.parse(JSON.stringify(this.listQueryone))
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.search()
     },

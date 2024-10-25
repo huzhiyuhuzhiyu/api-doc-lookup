@@ -10,18 +10,11 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="orderForm.useApplication" placeholder="请选择领用目的" clearable style="width: 100%;">
+              <el-select v-model="orderForm.useApplication" placeholder="请选择领用目的" clearable>
                 <el-option v-for="(item, index) in useApplicationlist" :key="index" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <!-- <el-col :span="4">
-            <el-form-item>
-              <el-select v-model="orderForm.approvalStatus" placeholder="请选择审批状态" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in documentStatusList" :key="index" :label="item.label" :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col> -->
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -218,6 +211,7 @@ export default {
       ],
       tableData: [],
       listLoading: false,
+      orderForm:{},
       orderFormone: {
         requisitionType: 'requisition',
         equipmentType: 'spare_parts',

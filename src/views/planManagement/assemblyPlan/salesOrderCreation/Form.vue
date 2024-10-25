@@ -26,7 +26,7 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="计划单号" prop="planNo">
                           <el-input v-model="planForm.planNo" placeholder="请输入计划单号"
-                            :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false"
+                            :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false"
                             maxlength="300" />
                         </el-form-item>
                       </el-col>
@@ -46,7 +46,7 @@
                         </el-form-item>
                       </el-col>
 
-                    
+
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="产品编码" prop="productCode">
                           <el-input v-model="planForm.productCode" placeholder="请输入产品编码" disabled>
@@ -54,14 +54,26 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
+                        <el-form-item label="产品来源" prop="productSource">
+                          <el-select v-model="planForm.productSource" placeholder="产品来源" clearable style="width: 100%;"
+                            disabled>
+                            <el-option v-for="(item, index) in productSourceList" :key="index" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="BOM" prop="bomId">
 
                           <el-input v-model="planForm.bomText" placeholder="请输入是否有BOM" disabled v-if="!planForm.bomId">
                           </el-input>
-                          <el-tooltip class="item" effect="dark" :content="planForm.productDrawingNo"
+                          <el-input class="BOM_T" style="color: #3fb9f8;" @focus="lookBom(planForm)" v-model="planForm.productDrawingNo" placeholder="请输入是否有BOM"
+                            readonly v-else>
+                          </el-input>
+                          <!-- <el-tooltip class="item" effect="dark" :content="planForm.productDrawingNo"
                             placement="top-start" v-else>
                             <div style="color: #3fb9f8;" class="drawingNo" @click="lookBom(planForm)">{{ planForm.productDrawingNo }}</div>
-                          </el-tooltip>
+                          </el-tooltip> -->
 
                         </el-form-item>
                       </el-col>
@@ -84,15 +96,15 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="btnType != 'look'">
+                      <!-- <el-col :sm="6" :xs="24" v-if="btnType != 'look'">
                         <el-form-item label="可用库存数量" prop="availableQuantity">
 
                           <el-input v-model="planForm.availableQuantity" placeholder="请输入可用库存数量" disabled>
                           </el-input>
                         </el-form-item>
-                      </el-col>
+                      </el-col> -->
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="计划数量" prop="planQuantity">
+                        <el-form-item label="需求数量" prop="planQuantity">
 
                           <el-input v-model="planForm.planQuantity" placeholder="请输入计划数量" disabled>
                           </el-input>
@@ -110,7 +122,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="宽放计划数量" prop="relaxQuantity">
+                        <el-form-item label="宽放需求数量" prop="relaxQuantity">
 
                           <el-input v-model="planForm.relaxQuantity" placeholder="请输入宽放计划数量"
                             :disabled='btnType == "look"' @blur="watchkF"
@@ -118,6 +130,46 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="备注" prop="remark">
+                          <el-input v-model="planForm.remark" placeholder="请输入备注"
+                            :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2" maxlength="200" />
+                        </el-form-item>
+                      </el-col>
+                      <!-- <el-col :sm="24" :xs="24" class="special">
+                        <div style="padding: 0 15px ;background-color: azure;">
+                          <el-form-item label="下达数量">
+                            <span class="lab_t" style="margin-left: 0">利用库存数量</span>
+                            <el-input class="ipt1" v-model="planForm.utilizationQuantity" @blur="watchly"
+                              placeholder="利用库存数量" :disabled='btnType == "look"'
+                              oninput="value=value.replace(/^(0+)|[^\d]+/g,'')">
+                            </el-input>
+
+                            <span class="lab_t">可用库存数量</span>
+                            <span class="pointer" @click="viewAvailableQuantity()">{{ planForm.availableQuantity }}</span>
+
+                            <span
+                              :style="planForm.productSource == 'assemble' || planForm.productSource == 'produce' ? 'background:#3fb9f8;color:#fff' : ''"
+                              class="lab_t">生产数量</span>
+                            <el-input class="ipt2" v-model="planForm.produceQuantity" @blur="watchcg"
+                              placeholder="生产数量" :disabled='btnType == "look"'
+                              oninput="value=value.replace(/^(0+)|[^\d]+/g,'')"></el-input>
+
+                            <span :style="planForm.productSource == 'purchase' ? 'background:#3fb9f8;color:#fff' : ''"
+                              class="lab_t">采购数量</span>
+                            <el-input class="ipt3" v-model="planForm.purchaseQuantity" @blur="watchcg"
+                              placeholder="采购数量" :disabled='btnType == "look"'
+                              oninput="value=value.replace(/^(0+)|[^\d]+/g,'')"></el-input>
+
+                            <span :style="planForm.productSource == 'out' ? 'background:#3fb9f8;color:#fff' : ''"
+                              class="lab_t">外协数量</span>
+                            <el-input class="ipt4" v-model="planForm.outQuantity" @blur="watchcg"
+                              placeholder="外协数量" :disabled='btnType == "look"'
+                              oninput="value=value.replace(/^(0+)|[^\d]+/g,'')"></el-input>
+
+                          </el-form-item>
+                        </div>
+                      </el-col> -->
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="安排采购数量" prop="purchaseQuantity">
 
@@ -141,12 +193,7 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="12" :xs="24">
-                        <el-form-item label="备注" prop="remark">
-                          <el-input v-model="planForm.remark" placeholder="请输入备注"
-                            :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2" maxlength="200" />
-                        </el-form-item>
-                      </el-col>
+
                     </el-row>
 
 
@@ -202,7 +249,7 @@
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
-            <el-tab-pane label="附件" name="annex"   v-if="isattachmentswitch == '1'">
+            <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
               <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
             </el-tab-pane>
           </el-tabs>
@@ -210,7 +257,7 @@
       </div>
       <!-- <productForm v-if="productFormVisible" ref="productForm" @refresh="refresh" /> -->
       <BomForm v-if="bomFormVisible" ref="bomForm" @refreshDataList="initData" @close="closeForm" />
-  
+      <Form v-if="formVisible" ref="form"></Form>
     </div>
   </transition>
 </template>
@@ -226,6 +273,7 @@ import { getbomOrderDetail } from '@/api/salesManagement/assemblyOrders'
 import { mapGetters, mapState } from 'vuex'
 import { BillNumber } from '@/api/system/billRule'
 import { addPlanList, updatePlanList } from '@/api/calculationList/calculationList.js'
+import Form from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
@@ -234,13 +282,15 @@ import { getBimBusinessDetail } from '@/api/basicData/index'
 export default {
 
   components: {
-    BomForm
+    BomForm,
+    Form
   },
   data() {
     return {
+      formVisible:false,
       isattachmentswitch: '',
 
-      bomFormVisible:false,
+      bomFormVisible: false,
       planTypeList: [
         { label: "订单生成计划", value: "order_plan" },
         { label: "直接创建计划", value: "add_plan" },
@@ -287,7 +337,12 @@ export default {
           callback(new Error('请输入最多6位整数和最多4位小数')); // 验证失败
         }
       },
-
+      productSourceList: [
+        { label: '组装', value: 'assemble' },
+        { label: '生产', value: 'produce' },
+        { label: '采购', value: 'purchase' },
+        { label: '外协', value: 'out' }
+      ],
 
 
 
@@ -354,6 +409,13 @@ export default {
   beforeDestroy() {
   },
   methods: {
+    // 查看库存信息
+    viewAvailableQuantity(){
+      this.formVisible=true
+      this.$nextTick(()=>{
+        this.$refs.form.init(this.productData[0].productsId,'availableFlag',false,)
+      })
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -363,15 +425,15 @@ export default {
         this.isattachmentswitch = res.data.configValue1
       })
     },
-    lookBom(data){
+    lookBom(data) {
       console.log(data);
-      this.bomFormVisible=true
-      this.$nextTick(()=>{
-        this.$refs.bomForm.init(data.bomId,'look')
+      this.bomFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.bomForm.init(data.bomId, 'look')
       })
     },
-    closeForm(){
-      this.bomFormVisible=false
+    closeForm() {
+      this.bomFormVisible = false
     },
     // 监听列表计划数量/订单数量修改
     watchPlanQuantity(data) {
@@ -408,7 +470,7 @@ export default {
         this.$message.error("宽放数量不能为空")
         this.planForm.relaxQuantity = Math.ceil(this.jnpf.numberFormat(this.jnpf.math('multiply', [100, this.jnpf.numberFormat(this.jnpf.math('divide', [this.planForm.planQuantity, this.planForm.qualificationRate]), 6)]), 6))
         this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
-      }else{
+      } else {
         let total = this.jnpf.numberFormat(this.jnpf.math('add', [this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
         if (Number(total) > Number(this.planForm.relaxQuantity)) {
           this.$message.error("采购数量、利用库存数量之和不能超过宽放数量")
@@ -419,7 +481,7 @@ export default {
           this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
         }
       }
-      
+
 
 
     },
@@ -537,8 +599,8 @@ export default {
           productDrawingNo: productData[0].drawingNo,
           sealingCoverTyping: productData[0].sealingCoverTyping,
           vibrationLevel: productData[0].vibrationLevel,
-          packagingMethod:productData[0].packagingMethod,
-          specialRequire:productData[0].specialRequire,
+          packagingMethod: productData[0].packagingMethod,
+          specialRequire: productData[0].specialRequire,
         };
         this.planForm.bomId = productData[0].bomId
         if (productData[0].bomId) {
@@ -557,10 +619,12 @@ export default {
         this.planForm.productCode = productData[0].productCode
         this.planForm.mainUnit = productData[0].mainUnit
         this.planForm.productName = productData[0].productName
+        this.planForm.productSource = productData[0].productSource
+
         productData.forEach(item => {
           item.productDrawingNo = item.drawingNo
           item.ordersNo = item.orderNo
-          this.$set(item,'planQuantity',item.num)
+          this.$set(item, 'planQuantity', item.num)
         });
         console.log(obj);
         this.productData = productData
@@ -891,5 +955,54 @@ export default {
   white-space: nowrap;
   cursor: pointer;
   margin-top: 7px
+}
+
+.lab_t {
+  display: inline-block;
+  height: 32px;
+  border: 1px solid #DCDFE6;
+  vertical-align: top;
+  line-height: 32px;
+  padding: 0 10px;
+  border-right: 0;
+  font-size: 18px;
+  font-weight: 600;
+  margin-left: 10px;
+}
+
+
+.special{
+  padding: 0!important;
+}
+.special ::v-deep .el-form-item {
+  padding-bottom: 20px;
+
+}
+
+.special ::v-deep .el-input {
+  width: 8%;
+}
+
+.special ::v-deep.el-form-item__label {
+  font-size: 18px !important;
+  font-weight: 600;
+  padding: 5px 0 !important;
+  color: #000;
+}
+
+.pointer {
+  width: 8%;
+  display: inline-block;
+  height: 32px;
+  line-height: 32px;
+  color: #3FB9F8;
+  cursor: pointer;
+  border: 1px solid #dcdfe6;
+  padding-left: 10px;
+  vertical-align: top;
+  font-size: 16px;
+}
+.BOM_T ::v-deep .el-input__inner{
+  color:rgb(63, 185, 248)
 }
 </style>

@@ -144,7 +144,7 @@
                             :rules="productRules.purchaseQuantity">
                             <el-input v-model="scope.row.purchaseQuantity"
                               @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)" maxlength="20"
-                              placeholder="请输入主数量"></el-input>
+                              placeholder="请输入数量"></el-input>
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -152,7 +152,7 @@
                       <el-table-column prop="price" label="含税单价" min-width="180">
                         <template slot="header">
                           <span class="required">*</span>
-                          含税单价
+                          单价(含税)
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'price'" :rules="productRules.price">
@@ -188,7 +188,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="excludingTaxPrice" label="不含税单价" min-width="150">
+                      <el-table-column prop="excludingTaxPrice" label="单价(不含税)" min-width="150">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxPrice'">
                             <div class="viewData">
@@ -413,7 +413,7 @@ export default {
           },
           {
             validator: this.formValidate('positiveNumber', false, (errMsg) => {
-              this.$message.error(`数量(主)：${errMsg}`)
+              this.$message.error(`数量：${errMsg}`)
             }),
             trigger: 'blur'
           }
@@ -504,7 +504,7 @@ export default {
               params: [
                 '',
                 (errMsg, index) => {
-                  this.$message.error(`产品信息第${index + 1}行：数量(主)${errMsg}`)
+                  this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`)
                 }
               ]
             }),
@@ -518,7 +518,7 @@ export default {
                 4,
                 '',
                 (errMsg, index) => {
-                  this.$message.error(`产品信息第${index + 1}行：数量(主)${errMsg}`)
+                  this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`)
                 }
               ]
             }),
@@ -526,7 +526,7 @@ export default {
           },
           {
             validator: this.formValidate('positiveNumber', false, (errMsg, index) => {
-              this.$message.error(`产品信息第${index + 1}行：数量(主)${errMsg}`)
+              this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`)
             }),
             trigger: 'blur'
           },
@@ -682,17 +682,25 @@ export default {
       // immediate:true,
       handler: function (newVal, oldVal) {
         newVal.forEach((item) => {
-          if (item.price && item.taxRate) {
+          if ((item.price && item.taxRate) || (item.price && item.taxRate === 0)) {
             item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
+          } else {
+            item.excludingTaxPrice = ''
           }
           if (item.purchaseQuantity && item.excludingTaxPrice) {
             item.excludingTaxAmount = this.jnpf.numberFormat(item.purchaseQuantity * item.excludingTaxPrice)
+          } else {
+            item.excludingTaxAmount = ''
           }
           if (item.price && item.purchaseQuantity && item.excludingTaxAmount) {
             item.taxAmount = this.jnpf.numberFormat(item.price * item.purchaseQuantity - item.excludingTaxAmount)
+          } else {
+            item.taxAmount = ''
           }
           if (item.excludingTaxAmount && item.taxAmount) {
             item.totalAmount = this.jnpf.numberFormat(item.excludingTaxAmount * 1 + item.taxAmount * 1)
+          } else {
+            item.totalAmount = ''
           }
           // if (!item.price) {
           //   this.$message.error('未找到供应商单价')
@@ -807,7 +815,7 @@ export default {
         this.sourceData = res.data
         if (this.dataFormTwo.data[this.index].outShipmentList) {
           this.dataFormTwo.data[this.index].outShipmentList.forEach((item, ind) => {
-            this.sourceData[ind].demandQuantity1 = item.qty
+            this.sourceData[ind].demandQuantity1 = item.demandQuantity
             this.sourceData[ind].processId = item.processId
             this.sourceData[ind].processName = item.processName
             // this.sourceData[ind].demandQuantity1 = item.demandQuantity-item.issuedQuantity-item.undeliveredQuantity
@@ -986,6 +994,7 @@ export default {
     //下单数量输入事件
     changePurchaseQuantity(index, val) {
       // this.dataFormTwo.data[index].purchaseQuantity = val
+      if (!val) return
       this.$set(this.dataFormTwo.data[index], 'purchaseQuantity', val)
 
       let obj = {
@@ -1032,7 +1041,7 @@ export default {
           productDrawingNo: item.externalProductDrawingNo,
           deliveryDate: item.deliveryDate,
           mainUnit: item.externalMainUnit,
-          purchaseQuantity: item.purchaseQuantity,
+          purchaseQuantity: item.inventoryQuantity,
           productsId: item.externalProductsId,
           price: item.price,
           totalAmount: item.totalAmount,

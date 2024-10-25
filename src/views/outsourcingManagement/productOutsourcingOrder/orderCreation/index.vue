@@ -49,7 +49,8 @@
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="交货日期" prop="deliveryDate">
                               <el-date-picker v-model="dataForm.deliveryDate" type="date" value-format="yyyy-MM-dd"
-                                style="width: 100%;" placeholder="请选择交货日期"></el-date-picker>
+                                style="width: 100%;" placeholder="请选择交货日期"
+                                @change="deliveryDateChange"></el-date-picker>
                             </el-form-item>
                           </el-col>
                           <el-col :span="24">
@@ -137,7 +138,7 @@
                           <el-table-column prop="price" label="含税单价" min-width="180">
                             <template slot="header">
                               <span class="required">*</span>
-                              含税单价
+                              单价(含税)
                             </template>
                             <template slot-scope="scope">
                               <el-form-item :prop="'data.' + scope.$index + '.' + 'price'" :rules="productRules.price">
@@ -173,7 +174,7 @@
                             </template>
                           </el-table-column>
 
-                          <el-table-column prop="excludingTaxPrice" label="不含税单价" min-width="150">
+                          <el-table-column prop="excludingTaxPrice" label="单价(不含税)" min-width="150">
                             <template slot-scope="scope">
                               <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxPrice'">
                                 <div class="viewData">
@@ -678,17 +679,25 @@ export default {
       // immediate:true,
       handler: function (newVal, oldVal) {
         newVal.forEach((item) => {
-          if ((item.price && item.taxRate) || (item.price && item.taxRate == 0)) {
+          if ((item.price && item.taxRate) || (item.price && item.taxRate === 0)) {
             item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
+          } else {
+            item.excludingTaxPrice = ''
           }
           if (item.purchaseQuantity && item.excludingTaxPrice) {
             item.excludingTaxAmount = this.jnpf.numberFormat(item.purchaseQuantity * item.excludingTaxPrice)
+          } else {
+            item.excludingTaxAmount = ''
           }
           if (item.price && item.purchaseQuantity && item.excludingTaxAmount) {
             item.taxAmount = this.jnpf.numberFormat(item.price * item.purchaseQuantity - item.excludingTaxAmount)
+          } else {
+            item.taxAmount = ''
           }
           if (item.excludingTaxAmount && item.taxAmount) {
             item.totalAmount = this.jnpf.numberFormat(item.excludingTaxAmount * 1 + item.taxAmount * 1)
+          } else {
+            item.totalAmount = ''
           }
           // if (!item.price) {
           //   this.$message.error('未找到供应商单价')
@@ -742,6 +751,13 @@ export default {
     this.getBusInfo()
   },
   methods: {
+    deliveryDateChange(val) {
+      this.dataFormTwo.data.forEach(item => {
+        if (!item.deliveryDate) {
+          this.$set(item, 'deliveryDate', val) // 总金额(不含税)
+        }
+      })
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -833,6 +849,7 @@ export default {
           })
         }
         this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
+
         // 审批
         // this.$nextTick(() => { this.getApproverData() })
       }
@@ -1131,7 +1148,18 @@ export default {
     },
     // 表单提交
     handleConfirm(type) {
-      this.request(type)
+      let submitFlag = true
+      this.dataFormTwo.data.map(ele => {
+        console.log(ele, 'ppp')
+        if (ele.outShipmentList.length == 0) {
+          submitFlag = false
+          return this.$message.error('发料清单为空');
+        }
+      })
+      if (submitFlag) {
+        this.request(type)
+      }
+
     },
 
     async request(type) {

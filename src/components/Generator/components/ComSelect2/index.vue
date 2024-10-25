@@ -76,6 +76,7 @@
 <script>
 import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event';
 import { getcategoryTree } from '@/api/basicData/index'
+import {flatArr} from "@/views/esop/utils/utils";
 
 export default {
   name: 'comSelect2',
@@ -142,6 +143,7 @@ export default {
     return {
       treeData: [],
       allList: [],
+      allListMap:new Map(),
       keyword: '',
       innerValue: '',
       visible: false,
@@ -254,8 +256,12 @@ export default {
           keyword: "",
           id: ""
         }
+          this.allListMap.clear()
         method(obj).then(res => {
           this.treeData = res.data
+            flatArr(this.treeData,(item)=>{
+                this.allListMap.set(item.id,item)
+            })
           this.allList = this.treeData
         })
       }
@@ -371,20 +377,21 @@ export default {
       // return
       let selectedIds = this.multiple ? this.value : [[this.value]]
       this.selectedIds = JSON.parse(JSON.stringify(selectedIds))
-      let textList = []
-      for (let i = 0; i < selectedIds.length; i++) {
-        const item = selectedIds[i];
-        let textItem = JSON.parse(JSON.stringify(item))
-        for (let j = 0; j < item.length; j++) {
-          inner: for (let ii = 0; ii < this.allList.length; ii++) {
-            if (item[j] === this.allList[ii].id) {
-              textItem[j] = this.allList[ii].name
-              break inner
-            }
-          }
-        }
-        textList.push(textItem)
-      }
+      let textList = selectedIds.map(o => this.findCurrent(o))
+      // let textList = []
+      // for (let i = 0; i < selectedIds.length; i++) {
+      //   const item = selectedIds[i];
+      //   let textItem = JSON.parse(JSON.stringify(item))
+      //   for (let j = 0; j < item.length; j++) {
+      //     inner: for (let ii = 0; ii < this.allList.length; ii++) {
+      //       if (item[j] === this.allList[ii].id) {
+      //         textItem[j] = this.allList[ii].name
+      //         break inner
+      //       }
+      //     }
+      //   }
+      //   textList.push(textItem)
+      // }
       this.selectedData = textList.map(o => o.join(','))
       if (this.multiple) {
         this.innerValue = ''
@@ -410,6 +417,12 @@ export default {
       this.confirm()
       event.stopPropagation();
     },
+   findCurrent(ids){
+      return ids.map(item=>{
+          const data = this.allListMap.get(item)
+          return data ? data.name : ''
+      })
+   },
     resetInputWidth() {
       this.inputWidth = this.$refs.reference.$el.getBoundingClientRect().width;
     },

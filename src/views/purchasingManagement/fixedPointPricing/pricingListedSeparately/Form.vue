@@ -77,18 +77,6 @@
                       id="table">
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" /> -->
                       <!-- <el-table-column type="index" key="index" width="60" label="序号" align="center" fixed="left" /> -->
-                      <!-- <el-table-column prop="drawingNo" key="drawingNo" label="品名规格" min-width="200"
-                        show-overflow-tooltip>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'"
-                            :rules="productRules.drawingNo">
-                            <div class="viewData">
-                              <span>{{ scope.row.drawingNo }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-</el-table-column> -->
-
                       <el-table-column prop="drawingNo" key="drawingNo" label="品名规格" min-width="180">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'"

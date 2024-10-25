@@ -135,10 +135,10 @@
                   </el-button>
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'start')" :disabled="scope.row.state != 'toBeMaintain'">
+                  <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'start')" :disabled="scope.row.state !== 'toBeMaintain'">
                     审核派工
                   </el-dropdown-item>
-                  <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'end')" :disabled="scope.row.state != 'maintaining'">
+                  <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'end')" :disabled="scope.row.state !== 'maintaining'||scope.row.reviewComments !== 'immediately'">
                     维修
                   </el-dropdown-item>
                   <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">

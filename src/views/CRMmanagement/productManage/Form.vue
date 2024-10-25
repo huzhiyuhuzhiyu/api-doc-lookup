@@ -80,6 +80,7 @@
 </template>
 
 <script>
+import { getBimBusinessDetail } from '@/api/basicData/index'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { addcrmProduct, detailcrmProduct, updatecrmProduct, crmProductCategorytree } from '@/api/CRMmanagement/index'
 export default {
@@ -92,7 +93,8 @@ export default {
       stacklist: [{ fullName: '是', enCode: 1 }, { fullName: '否', enCode: 0 }],
       codeConfig: {},//单据规则配置
       datafilelist: [],
-      isattachmentswitch: '1',
+      isattachmentswitch: '',
+      categoryId: '',
       returnTypeList: [],
       activeNames: ["basicInfo"],
       activeName: "jcInfo",
@@ -109,8 +111,8 @@ export default {
         price: '',
         describe: '',
         stackingFlag: '',
-        productCategoryId:'',
-        productCategoryName:''
+        productCategoryId: '',
+        productCategoryName: ''
       },
       btntype: false,
       dataRule: {
@@ -134,9 +136,20 @@ export default {
     }
   },
   created() {
+    this.getBimBusinessDetail()
     this.getDictionaryType()
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_crmcpgl'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
+      })
+    },
     onOrganizeChange(val, data) {
       if (!data) {
         this.dataForm.productCategoryId = ''
@@ -218,7 +231,9 @@ export default {
           if (this.datafilelist.length) {
             this.datafilelist.map((item, index) => {
               item.bimAttachments = {
-                businessType: 'customer',
+                businessType: 'system_attachment',
+                configKey: 'fj_crmcpgl',
+                categoryId: this.categoryId,
                 documentId: item.id,
                 fileFlag: '',
                 sort: index

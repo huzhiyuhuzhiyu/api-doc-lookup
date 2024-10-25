@@ -290,7 +290,7 @@
             </el-collapse>
 
           </el-tab-pane>
-          <el-tab-pane label="报修附件" name="annex">
+          <el-tab-pane label="报修附件" name="annex" v-if="isattachmentswitch == '1'">
             <UploadWj v-model="datafilelist" :disabled="btnType == 'look'" :detailed="btnType == 'look'"></UploadWj>
           </el-tab-pane>
         </el-tabs>
@@ -417,6 +417,7 @@
 </template>
     
 <script>
+import { getBimBusinessDetail } from '@/api/basicData/index'
 import UploadImg from "@/components/Generator/components/Upload/UploadImg.vue";
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { addRepairRequest, updateRepairRequest, detailRepairRequest, equEquipmentRepairKnowledgeList, RepairRequestList } from '@/api/dailyManagement/Maintenance'
@@ -428,6 +429,8 @@ export default {
   components: { UploadImg },
   data() {
     return {
+      isattachmentswitch: '',
+      categoryId: '',
       dialogTableVisible: false,
       srcList: [
         'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg'
@@ -656,12 +659,25 @@ export default {
       _index: ''
     }
   },
+  created() {
+    this.getBimBusinessDetail()
+  },
   mounted() {
     let tBody = document.querySelectorAll('.el-table')[1]
     tBody.style.height = 'auto'
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_sbwx'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
+      })
+    },
     getTimes(time) {
       let d = parseInt(time / 60 / 60 / 24)
       let h = parseInt(time / 60 / 60 % 24)
@@ -1036,7 +1052,7 @@ export default {
           } else {
             res.data.repair.afterPicList = []
           }
-          if (res.data.repair.frontPic && res.data.repair.afterPicList.length) {
+          if (res.data.repair.frontPic && res.data.repair.frontPicList.length) {
             res.data.repair.frontPicList = res.data.repair.frontPicList.map(item => {
               return JSON.parse(`{${item}}`)
             })
@@ -1141,7 +1157,9 @@ export default {
       if (this.datafilelist.length) {
         this.datafilelist.map((item, index) => {
           item.bimAttachments = {
-            businessType: '',
+            businessType: 'system_attachment',
+            configKey: 'fj_sbwx',
+            categoryId: this.categoryId,
             documentId: item.id,
             fileFlag: '',
             sort: index

@@ -993,7 +993,7 @@ export default {
       this.getProductionLineListFun()
       this.fetchData("PROD")
 
-      this.getRoutingDetail(this.dataForm.routingId)
+      if(this.dataForm.routingId) this.getRoutingDetail(this.dataForm.routingId)
     },
     async fetchData(code) {
       try {

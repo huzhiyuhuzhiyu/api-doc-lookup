@@ -181,6 +181,7 @@
 </template>
 
 <script>
+import { getBimBusinessDetail } from '@/api/basicData/index'
 import { mapGetters } from 'vuex'
 import { getcrmReceivableslist, updatecrmInvoice, detailcrmInvoice, getcrmContractlist, addcrmInvoice, addcrmInvoiceInfo } from '@/api/CRMmanagement/index'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
@@ -190,7 +191,8 @@ export default {
   data() {
     return {
       datafilelist: [],
-      isattachmentswitch: '1',
+      isattachmentswitch: '',
+      categoryId: '',
       codeConfig: {},//单据规则配置
       _index: '',
       taxRateList: [],
@@ -328,6 +330,7 @@ export default {
     ...mapGetters(['userInfo']),
   },
   created() {
+    this.getBimBusinessDetail()
     this.getDictionaryType()
   },
   watch: {
@@ -339,6 +342,16 @@ export default {
     }
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_fpgl'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
+      })
+    },
     changeTaxRate(val) {
       let a = this.taxRateList.filter(item => item.enCode == val)
       this.dataFormTwo.lines[this._index].receivablesId = a[0].id
@@ -568,7 +581,9 @@ export default {
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
             item.bimAttachments = {
-              businessType: 'customer',
+              businessType: 'system_attachment',
+              configKey: 'fj_fpgl',
+              categoryId: this.categoryId,
               documentId: item.id,
               fileFlag: '',
               sort: index

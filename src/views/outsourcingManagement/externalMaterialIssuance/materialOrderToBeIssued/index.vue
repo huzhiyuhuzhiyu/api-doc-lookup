@@ -95,10 +95,8 @@
       </div>
     </div>
 
-    <ProductForm v-if="formVisible" ref="ProductForm" @refreshDataList="initData" @close="closeForm"
-      :customList="customList" />
-    <ProcessForm v-if="formVisible" ref="ProcessForm" @refreshDataList="initData" @close="closeForm"
-      :customList="customList" />
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" />
+
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <OrderFollow v-if="orderFollowVisible" ref="orderFollow" @refreshDataList="initData" @close="closeForm" />
     <!-- 高级查询 -->
@@ -128,15 +126,13 @@ import { shipmentReport } from '@/api/purchasingAndOutsourcingOrders/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import AddForm from '../materialsIssueNotice/Form.vue'
-import ProductForm from "../../processOutsourcingOrders/orderList/Form.vue";
-import ProcessForm from "../../processOutsourcingOrders/orderList/Form.vue";
+import Form from "../../processOutsourcingOrders/orderList/Form.vue";
 import ExportForm from '@/components/no_mount/ExportBox/index'
 export default {
   name: 'materialOrderToBeIssued',
   components: {
     AddForm,
-    ProductForm,
-    ProcessForm,
+    Form,
     ExportForm,
     //  OrderFollow,
     SuperQuery
@@ -165,10 +161,6 @@ export default {
         pageNum: 1,
         pageSize: 20,
         orderItems: [
-          {
-            asc: true,
-            column: 'order_no'
-          },
           {
             asc: false,
             column: 'delivery_date'
@@ -469,11 +461,8 @@ export default {
       console.log(row, '[]')
       this.formVisible = true
       this.$nextTick(() => {
-        if (row.orderType == "external") {
-          this.$refs.ProductForm.init(row.purchaseOrderId, btnType)
-        } else {
-          this.$refs.ProcessForm.init(row.purchaseOrderId, btnType)
-        }
+        this.$refs.Form.init(row.purchaseOrderId, btnType)
+
 
       })
     },

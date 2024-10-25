@@ -119,7 +119,7 @@
               </el-collapse-item>
             </el-collapse>
           </el-tab-pane>
-          <el-tab-pane label="附件" name="annex">
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
             <UploadWj v-model="datafilelist" :disabled="btnType == 'look'" :detailed="btnType == 'look'"></UploadWj>
           </el-tab-pane>
         </el-tabs>
@@ -130,6 +130,7 @@
 </template>
     
 <script>
+import { getBimBusinessDetail } from '@/api/basicData/index'
 import { mapGetters } from 'vuex'
 import { updateCollectionandreturn, detailCollectionandreturn, checkmaintenanceList, RepairRequestList, addCollectionandreturn } from '@/api/dailyManagement/Maintenance'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
@@ -137,6 +138,8 @@ import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
   data() {
     return {
+      isattachmentswitch: '',
+      categoryId: '',
       type: '',
       repairSearchListtool: [
         { prop: 'maintenanceNo', label: '维修单号', type: 'input' },
@@ -239,7 +242,7 @@ export default {
           column: "create_time" /* 使用倒序日期作为默认排序 */
         }],
       },
-      maintainTableItemstool: {
+      maintainRequestObjtool: {
         classAttribute: "tool",
         name: "",
         taskType: 'maintenance',
@@ -351,7 +354,20 @@ export default {
   computed: {
     ...mapGetters(['userInfo']),
   },
+  created() {
+    this.getBimBusinessDetail()
+  },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_bjly'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
+      })
+    },
     useApplicationchange(val) {
       this.dataForm.useApplication = val
       this.$set(this.dataForm, 'workNo', '')
@@ -522,7 +538,9 @@ export default {
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
             item.bimAttachments = {
-              businessType: '',
+              businessType: 'system_attachment',
+              configKey: 'fj_bjly',
+              categoryId: this.categoryId,
               documentId: item.id,
               fileFlag: '',
               sort: index

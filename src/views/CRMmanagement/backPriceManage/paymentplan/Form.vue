@@ -75,6 +75,7 @@
 </template>
 
 <script>
+import { getBimBusinessDetail } from '@/api/basicData/index'
 import { mapGetters } from 'vuex'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
@@ -84,7 +85,8 @@ export default {
   data() {
     return {
       datafilelist: [],
-      isattachmentswitch: '1',
+      isattachmentswitch: '',
+      categoryId: '',
       getcrmContractlist,
       //合同列表字段
       contractTableItems: [
@@ -190,9 +192,20 @@ export default {
     ...mapGetters(['userInfo']),
   },
   created() {
+    this.getBimBusinessDetail()
     this.getDictionaryType()
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_hkjh'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
+      })
+    },
     //负责人
     hangleSelectSales(e, r) {
       this.$nextTick(() => { this.$refs.dataForm.validateField("ownerUserId") });
@@ -293,7 +306,9 @@ export default {
           if (this.datafilelist.length) {
             this.datafilelist.map((item, index) => {
               item.bimAttachments = {
-                businessType: 'customer',
+                businessType: 'system_attachment',
+            configKey: 'fj_hkjh',
+            categoryId: this.categoryId,
                 documentId: item.id,
                 fileFlag: '',
                 sort: index

@@ -3,8 +3,7 @@
     <div class="JNPF-preview-main org-form">
       <div class="JNPF-common-page-header">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-        <el-page-header @back="goBack"
-          :content="btnType ? '查看供应商档案' : !parentId ? $t(`supplier.addSupplier`) : $t(`supplier.editSupplier`)" />
+        <el-page-header @back="goBack" :content="btnType ? '查看供应商档案' : !parentId ? $t(`supplier.addSupplier`) : $t(`supplier.editSupplier`)" />
         <div class="options" v-if="!btnType">
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm()">
             提交
@@ -24,45 +23,37 @@
                         <!-- <ComSelect2 v-model="dataForm.partnerCategoryIdText" :isdisabled="isdisabled" placeholder="请选择所属分类"
                       auth isOnlyOrg @change="onOrganizeChange" :currOrgId="parentId" :parentId="parentId"
                       :type="dataForm.type" /> -->
-                        <ComSelect-list :isdisabled="dataForm.id ? true : false"
-                          v-model="dataForm.partnerCategoryIdText" placeholder="请选择上级分类" auth @change="onOrganizeChange"
-                          :title="'选择上级分类'" :method="getcategoryTree" :requestObj="requestObjTwo" :paramsObj="{}" />
+                        <ComSelect-list :isdisabled="dataForm.id ? true : false" v-model="dataForm.partnerCategoryIdText" placeholder="请选择上级分类" auth @change="onOrganizeChange" :title="'选择上级分类'" :method="getcategoryTree" :requestObj="requestObjTwo" :paramsObj="{}" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="编码" prop="code">
-                        <el-input v-model="dataForm.code" placeholder="请输入编码" maxlength="20"
-                          :disabled="btnType ? true : false" />
+                        <el-input v-model="dataForm.code" placeholder="请输入编码" maxlength="20" :disabled="btnType ? true : false" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="税号" prop="taxId">
-                        <el-input v-model="dataForm.taxId" placeholder="请输入税号" :disabled="btnType ? true : false"
-                          maxlength="25" />
+                        <el-input v-model="dataForm.taxId" placeholder="请输入税号" :disabled="btnType ? true : false" maxlength="25" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="名称" prop="name">
-                        <el-input v-model="dataForm.name" placeholder="请输入名称" :disabled="btnType ? true : false"
-                          maxlength="100" />
+                        <el-input v-model="dataForm.name" placeholder="请输入名称" :disabled="btnType ? true : false" maxlength="100" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="英文名称" prop="nameEn">
-                        <el-input v-model="dataForm.nameEn" placeholder="请输入英文名称" :disabled="btnType ? true : false"
-                          maxlength="200" />
+                        <el-input v-model="dataForm.nameEn" placeholder="请输入英文名称" :disabled="btnType ? true : false" maxlength="200" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="联系人" prop="contacts">
-                        <el-input v-model="dataForm.contacts" placeholder="请输入联系人" :disabled="btnType ? true : false"
-                          maxlength="50" />
+                        <el-input v-model="dataForm.contacts" placeholder="请输入联系人" :disabled="btnType ? true : false" maxlength="50" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="负责人" prop="personResponsible">
-                        <el-input v-model="dataForm.personResponsible" placeholder="请输入负责人" maxlength="20"
-                          :disabled="btnType ? true : false" />
+                        <el-input v-model="dataForm.personResponsible" placeholder="请输入负责人" maxlength="20" :disabled="btnType ? true : false" />
                       </el-form-item>
                     </el-col>
                     <!-- <el-col :sm="8" :xs="24">
@@ -75,10 +66,8 @@
 
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="地区" prop="regionCode">
-                        <el-select v-model="dataForm.regionCode" placeholder="请选择地区" style="width: 100%;"
-                          :disabled="btnType ? true : false" @change="handleChange">
-                          <el-option v-for="(item, index) in areaList" :key="index" :label="item.fullName"
-                            :value="item.enCode"></el-option>
+                        <el-select v-model="dataForm.regionCode" placeholder="请选择地区" style="width: 100%;" :disabled="btnType ? true : false" @change="handleChange">
+                          <el-option v-for="(item, index) in areaList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
@@ -89,29 +78,22 @@
                       <el-option v-for="(item, index) in countryList" :disabled="item.code == 'CN'" :key="index"
                         :label="item.name" :value="item.code"></el-option>
                     </el-select> -->
-                        <el-select v-model="dataForm.country" placeholder="请选择国家" style="width: 100%;"
-                          :disabled="btnType ? true : false">
-                          <el-option v-for="(item, index) in countryList" :key="index" :label="item.name"
-                            :value="item.code"></el-option>
+                        <el-select v-model="dataForm.country" placeholder="请选择国家" style="width: 100%;" :disabled="btnType ? true : false">
+                          <el-option v-for="(item, index) in countryList" :key="index" :label="item.name" :value="item.code"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24" v-if="dataForm.regionCode != 'foreign'">
                       <el-form-item label="省" prop="province">
-                        <el-select v-model="dataForm.province" placeholder="请选择省" style="width: 100%;"
-                          :disabled="btnType ? true : false">
-                          <el-option v-for="item in provinces" size="small" :key="item.id" :label="item.fullName"
-                            :value="item.id" @click.native="changeProvince(item)"></el-option>
+                        <el-select v-model="dataForm.province" placeholder="请选择省" style="width: 100%;" :disabled="btnType ? true : false">
+                          <el-option v-for="item in provinces" size="small" :key="item.id" :label="item.fullName" :value="item.id" @click.native="changeProvince(item)"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24" v-if="dataForm.regionCode != 'foreign'">
                       <el-form-item label="市" prop="city">
-                        <el-select v-model="dataForm.city" placeholder="请选择市" style="width: 100%;"
-                          @focus="focusfoundation(dataForm.province)" :loading="foundationloadingcity"
-                          :disabled="btnType ? true : false || !dataForm.province">
-                          <el-option v-for="item in cities" size="small" :key="item.id" :label="item.fullName"
-                            :value="item.id" @click.native="changeCity(item)">
+                        <el-select v-model="dataForm.city" placeholder="请选择市" style="width: 100%;" @focus="focusfoundation(dataForm.province)" :loading="foundationloadingcity" :disabled="btnType ? true : false || !dataForm.province">
+                          <el-option v-for="item in cities" size="small" :key="item.id" :label="item.fullName" :value="item.id" @click.native="changeCity(item)">
                             {{ item.fullName }}
                           </el-option>
                         </el-select>
@@ -119,55 +101,45 @@
                     </el-col>
                     <el-col :sm="8" :xs="24" v-if="dataForm.regionCode != 'foreign'">
                       <el-form-item label="区" prop="area">
-                        <el-select v-model="dataForm.area" placeholder="请选择区" style="width: 100%;"
-                          @focus="foundationfocusactionarea(dataForm.city)" :loading="loadingareafoundation"
-                          :disabled="btnType ? true : false || !dataForm.city">
-                          <el-option v-for="item in area" size="small" :key="item.id" :label="item.fullName"
-                            :value="item.id"></el-option>
+                        <el-select v-model="dataForm.area" placeholder="请选择区" style="width: 100%;" @focus="foundationfocusactionarea(dataForm.city)" :loading="loadingareafoundation" :disabled="btnType ? true : false || !dataForm.city">
+                          <el-option v-for="item in area" size="small" :key="item.id" :label="item.fullName" :value="item.id"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
 
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="地址" prop="address">
-                        <el-input v-model="dataForm.address" placeholder="请输入地址" :disabled="btnType ? true : false"
-                          maxlength="300" />
+                        <el-input v-model="dataForm.address" placeholder="请输入地址" :disabled="btnType ? true : false" maxlength="300" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="电话" prop="phone">
-                        <el-input v-model="dataForm.phone" placeholder="请输入电话" :disabled="btnType ? true : false"
-                          maxlength="20" />
+                        <el-input v-model="dataForm.phone" placeholder="请输入电话" :disabled="btnType ? true : false" maxlength="20" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="手机号" prop="mobilePhone">
-                        <el-input v-model="dataForm.mobilePhone" placeholder="请输入手机号" :disabled="btnType ? true : false"
-                          maxlength="20" />
+                        <el-input v-model="dataForm.mobilePhone" placeholder="请输入手机号" :disabled="btnType ? true : false" maxlength="20" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="传真" prop="fax">
-                        <el-input v-model="dataForm.fax" placeholder="请输入传真" :disabled="btnType ? true : false"
-                          maxlength="50" />
+                        <el-input v-model="dataForm.fax" placeholder="请输入传真" :disabled="btnType ? true : false" maxlength="50" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="邮政编码" prop="zipCode">
-                        <el-input v-model="dataForm.zipCode" placeholder="请输入邮政编码" :disabled="btnType ? true : false"
-                          maxlength="10" />
+                        <el-input v-model="dataForm.zipCode" placeholder="请输入邮政编码" :disabled="btnType ? true : false" maxlength="10" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="邮箱" prop="email">
-                        <el-input v-model="dataForm.email" placeholder="请输入邮箱" :disabled="btnType ? true : false"
-                          maxlength="100" />
+                        <el-input v-model="dataForm.email" placeholder="请输入邮箱" :disabled="btnType ? true : false" maxlength="100" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="网址" prop="website">
-                        <el-input v-model="dataForm.website" placeholder="请输入网址" :disabled="btnType ? true : false"
-                          maxlength="512" />
+                        <el-input v-model="dataForm.website" placeholder="请输入网址" :disabled="btnType ? true : false" maxlength="512" />
                       </el-form-item>
                     </el-col>
 
@@ -185,57 +157,46 @@
                 </el-col> -->
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="付款方式" prop="paymentMethod">
-                        <el-select v-model="dataForm.paymentMethod" placeholder="请选择付款方式" style="width: 100%;"
-                          :disabled="btnType ? true : false">
-                          <el-option v-for="item in paymentMethodList" size="small" :key="item.enCode"
-                            :label="item.fullName" :value="item.enCode"></el-option>
+                        <el-select v-model="dataForm.paymentMethod" placeholder="请选择付款方式" style="width: 100%;" :disabled="btnType ? true : false">
+                          <el-option v-for="item in paymentMethodList" size="small" :key="item.enCode" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="付款周期" prop="paymentCycle">
-                        <el-select v-model="dataForm.paymentCycle" placeholder="请选择付款周期" style="width: 100%;"
-                          :disabled="btnType ? true : false">
-                          <el-option v-for="item in paymentCycleList" size="small" :key="item.enCode"
-                            :label="item.fullName" :value="item.enCode"></el-option>
+                        <el-select v-model="dataForm.paymentCycle" placeholder="请选择付款周期" style="width: 100%;" :disabled="btnType ? true : false">
+                          <el-option v-for="item in paymentCycleList" size="small" :key="item.enCode" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
 
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="开票类型" prop="billingTypeText">
-                        <el-select v-model="dataForm.billingType" placeholder="请选择开票类型" style="width: 100%;"
-                          :disabled="btnType ? true : false">
-                          <el-option v-for="item in billingTypeList" size="small" :key="item.enCode"
-                            :label="item.fullName" :value="item.enCode"></el-option>
+                        <el-select v-model="dataForm.billingType" placeholder="请选择开票类型" style="width: 100%;" :disabled="btnType ? true : false">
+                          <el-option v-for="item in billingTypeList" size="small" :key="item.enCode" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="税率%" prop="taxRate">
                         <el-select v-model="dataForm.taxRate" placeholder="请选择税率" style="width: 100%;">
-                          <el-option v-for="item in taxRateList" :key="item.id" :label="item.fullName"
-                            :value="item.enCode"></el-option>
+                          <el-option v-for="item in taxRateList" :key="item.id" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="认定日期" prop="customerRecognitionTime">
-                        <el-date-picker v-model="dataForm.customerRecognitionTime" type="date" format="yyyy-MM-dd"
-                          style="width: 100%;" value-format="yyyy-MM-dd" :picker-options="pickerOptions"
-                          placeholder="请选择认定日期" :disabled="btnType ? true : false"></el-date-picker>
+                        <el-date-picker v-model="dataForm.customerRecognitionTime" type="date" format="yyyy-MM-dd" style="width: 100%;" value-format="yyyy-MM-dd" :picker-options="pickerOptions" placeholder="请选择认定日期" :disabled="btnType ? true : false"></el-date-picker>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="开户银行" prop="bank">
-                        <el-input v-model="dataForm.bank" placeholder="请输入开户银行" :disabled="btnType ? true : false"
-                          maxlength="100" />
+                        <el-input v-model="dataForm.bank" placeholder="请输入开户银行" :disabled="btnType ? true : false" maxlength="100" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="银行账号" prop="bankInfo">
-                        <el-input v-model="dataForm.bankInfo" placeholder="请输入银行账号" :disabled="btnType ? true : false"
-                          maxlength="100" />
+                        <el-input v-model="dataForm.bankInfo" placeholder="请输入银行账号" :disabled="btnType ? true : false" maxlength="100" />
                       </el-form-item>
                     </el-col>
                     <!-- <el-col :sm="8" :xs="24">
@@ -252,10 +213,8 @@
 
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="渠道类型" prop="channel">
-                        <el-select v-model="dataForm.channel" placeholder="请选择渠道类型" clearable style="width: 100%;"
-                          :disabled="btnType ? true : false">
-                          <el-option v-for="(item, index) in channelList" :key="index" :label="item.fullName"
-                            :value="item.enCode"></el-option>
+                        <el-select v-model="dataForm.channel" placeholder="请选择渠道类型" clearable style="width: 100%;" :disabled="btnType ? true : false">
+                          <el-option v-for="(item, index) in channelList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
@@ -279,33 +238,27 @@
                 </el-col> -->
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="运输方式" prop="modeTransport">
-                        <el-select v-model="dataForm.modeTransport" placeholder="请选择运输方式" clearable style="width: 100%;"
-                          :disabled="btnType ? true : false">
-                          <el-option v-for="(item, index) in modeTransportList" :key="index" :label="item.fullName"
-                            :value="item.enCode"></el-option>
+                        <el-select v-model="dataForm.modeTransport" placeholder="请选择运输方式" clearable style="width: 100%;" :disabled="btnType ? true : false">
+                          <el-option v-for="(item, index) in modeTransportList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="运输时间(天)" prop="transportationTime">
-                        <el-input v-model="dataForm.transportationTime" oninput="value = value.replace(/[^0-9]/g,'')"
-                          placeholder="请输入运输时间(天)" :disabled="btnType ? true : false" maxlength="4" />
+                        <el-input v-model="dataForm.transportationTime" oninput="value = value.replace(/[^0-9]/g,'')" placeholder="请输入运输时间(天)" :disabled="btnType ? true : false" maxlength="4" />
                       </el-form-item>
                     </el-col>
 
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="等级" prop="grade">
-                        <el-select v-model="dataForm.grade" placeholder="请选择等级" clearable
-                          :disabled="btnType ? true : false" style="width: 100%;">
-                          <el-option v-for="(item, index) in gradeList" :key="index" :label="item.fullName"
-                            :value="item.enCode"></el-option>
+                        <el-select v-model="dataForm.grade" placeholder="请选择等级" clearable :disabled="btnType ? true : false" style="width: 100%;">
+                          <el-option v-for="(item, index) in gradeList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="备注" prop="remark">
-                        <el-input v-model="dataForm.remark" placeholder="请输入备注" maxlength="200"
-                          :disabled="btnType ? true : false" />
+                        <el-input v-model="dataForm.remark" placeholder="请输入备注" maxlength="200" :disabled="btnType ? true : false" />
                       </el-form-item>
                     </el-col>
                   </el-row>
@@ -321,8 +274,7 @@
                   姓名
                 </template>
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.name" :disabled="btnType ? true : false" maxlength="20"
-                    placeholder="请输入姓名">
+                  <el-input v-model="scope.row.name" :disabled="btnType ? true : false" maxlength="20" placeholder="请输入姓名">
                     {{ scope.row.name }}
                   </el-input>
                 </template>
@@ -330,8 +282,7 @@
               <el-table-column prop="sex" label="性别" width="100">
                 <template slot-scope="scope">
                   <el-select v-model="scope.row.sex" placeholder="请选择性别" :disabled="btnType ? true : false">
-                    <el-option v-for="(item, index) in sexList" :key="index" :label="item.label"
-                      :value="item.value"></el-option>
+                    <el-option v-for="(item, index) in sexList" :key="index" :label="item.label" :value="item.value"></el-option>
                   </el-select>
                 </template>
               </el-table-column>
@@ -341,16 +292,14 @@
                   电话
                 </template>
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.phone" :disabled="btnType ? true : false" maxlength="50"
-                    placeholder="请输入电话">
+                  <el-input v-model="scope.row.phone" :disabled="btnType ? true : false" maxlength="50" placeholder="请输入电话">
                     {{ scope.row.phone }}
                   </el-input>
                 </template>
               </el-table-column>
               <el-table-column prop="email" label="邮箱" width="180">
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.email" :disabled="btnType ? true : false" maxlength="200"
-                    placeholder="请输入邮箱">
+                  <el-input v-model="scope.row.email" :disabled="btnType ? true : false" maxlength="200" placeholder="请输入邮箱">
                     {{ scope.row.email }}
                   </el-input>
                 </template>
@@ -358,40 +307,35 @@
 
               <el-table-column prop="address" label="地址" width="220">
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.address" :disabled="btnType ? true : false" maxlength="250"
-                    placeholder="请输入地址">
+                  <el-input v-model="scope.row.address" :disabled="btnType ? true : false" maxlength="250" placeholder="请输入地址">
                     {{ scope.row.address }}
                   </el-input>
                 </template>
               </el-table-column>
               <el-table-column prop="displayName" label="职务" width="180">
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.displayName" :disabled="btnType ? true : false" maxlength="20"
-                    placeholder="请输入职务">
+                  <el-input v-model="scope.row.displayName" :disabled="btnType ? true : false" maxlength="20" placeholder="请输入职务">
                     {{ scope.row.displayName }}
                   </el-input>
                 </template>
               </el-table-column>
               <el-table-column prop="departmentName" label="部门" width="200">
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.departmentName" :disabled="btnType ? true : false" maxlength="20"
-                    placeholder="请输入所在的部门">
+                  <el-input v-model="scope.row.departmentName" :disabled="btnType ? true : false" maxlength="20" placeholder="请输入所在的部门">
                     {{ scope.row.departmentName }}
                   </el-input>
                 </template>
               </el-table-column>
               <el-table-column prop="hobby" label="爱好" width="180">
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.hobby" :disabled="btnType ? true : false" maxlength="200"
-                    placeholder="请输入爱好">
+                  <el-input v-model="scope.row.hobby" :disabled="btnType ? true : false" maxlength="200" placeholder="请输入爱好">
                     {{ scope.row.hobby }}
                   </el-input>
                 </template>
               </el-table-column>
               <el-table-column prop="remark" label="备注">
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.remark" :disabled="btnType ? true : false" maxlength="200"
-                    placeholder="请输入备注">
+                  <el-input v-model="scope.row.remark" :disabled="btnType ? true : false" maxlength="200" placeholder="请输入备注">
                     {{ scope.row.remark }}
                   </el-input>
                 </template>
@@ -417,8 +361,7 @@
                   收件人
                 </template>
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.recipient" :disabled="btnType ? true : false" maxlength="20"
-                    placeholder="请输入收件人">
+                  <el-input v-model="scope.row.recipient" :disabled="btnType ? true : false" maxlength="20" placeholder="请输入收件人">
                     {{ scope.row.recipient }}
                   </el-input>
                 </template>
@@ -429,8 +372,7 @@
                   收件人电话
                 </template>
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.phone" :disabled="btnType ? true : false" maxlength="20"
-                    placeholder="请输入收件人电话">
+                  <el-input v-model="scope.row.phone" :disabled="btnType ? true : false" maxlength="20" placeholder="请输入收件人电话">
                     {{ scope.row.phone }}
                   </el-input>
                 </template>
@@ -441,10 +383,8 @@
                   国家
                 </template>
                 <template slot-scope="scope">
-                  <el-select clearable v-model="scope.row.country" placeholder="请选择国家" filterable style="width: 100%;"
-                    :disabled="btnType ? true : false">
-                    <el-option v-for="(item, index) in countryList1" :key="index" :label="item.name"
-                      @click.native="changeCountry(item, scope.$index)" :value="item.code">
+                  <el-select clearable v-model="scope.row.country" placeholder="请选择国家" filterable style="width: 100%;" :disabled="btnType ? true : false">
+                    <el-option v-for="(item, index) in countryList1" :key="index" :label="item.name" @click.native="changeCountry(item, scope.$index)" :value="item.code">
                       {{ item.name }}
                     </el-option>
                   </el-select>
@@ -456,10 +396,8 @@
                   省
                 </template>
                 <template slot-scope="scope">
-                  <el-select v-model="scope.row.province" placeholder="请选择省份"
-                    :disabled="scope.row.country !== 'CN' ? true : btnType ? true : false">
-                    <el-option v-for="item in provinces" :key="item.id" :label="item.fullName" :value="item.id"
-                      @click.native="changeProvince1(item, scope.row)"></el-option>
+                  <el-select v-model="scope.row.province" placeholder="请选择省份" :disabled="scope.row.country !== 'CN' ? true : btnType ? true : false">
+                    <el-option v-for="item in provinces" :key="item.id" :label="item.fullName" :value="item.id" @click.native="changeProvince1(item, scope.row)"></el-option>
                   </el-select>
                 </template>
               </el-table-column>
@@ -469,10 +407,8 @@
                   市
                 </template>
                 <template slot-scope="scope">
-                  <el-select v-model="scope.row.city" placeholder="请选择城市" @focus="focusaction(scope.row)"
-                    :loading="loadingcity" :disabled="!scope.row.province ? true : btnType ? true : false">
-                    <el-option v-for="item in cities1" :key="item.id" :label="item.fullName" :value="item.id"
-                      @click.native="changeCity1(item, scope.row)"></el-option>
+                  <el-select v-model="scope.row.city" placeholder="请选择城市" @focus="focusaction(scope.row)" :loading="loadingcity" :disabled="!scope.row.province ? true : btnType ? true : false">
+                    <el-option v-for="item in cities1" :key="item.id" :label="item.fullName" :value="item.id" @click.native="changeCity1(item, scope.row)"></el-option>
                   </el-select>
                 </template>
               </el-table-column>
@@ -482,8 +418,7 @@
                   区
                 </template>
                 <template slot-scope="scope">
-                  <el-select v-model="scope.row.area" placeholder="请选择区" @focus="focusactionarea(scope.row)"
-                    :loading="loadingarea" :disabled="!scope.row.city ? true : btnType ? true : false">
+                  <el-select v-model="scope.row.area" placeholder="请选择区" @focus="focusactionarea(scope.row)" :loading="loadingarea" :disabled="!scope.row.city ? true : btnType ? true : false">
                     <el-option v-for="item in area1" :key="item.id" :label="item.fullName" :value="item.id"></el-option>
                   </el-select>
                 </template>
@@ -494,25 +429,21 @@
                   地址
                 </template>
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.address" :disabled="btnType ? true : false" maxlength="300"
-                    placeholder="请输入地址">
+                  <el-input v-model="scope.row.address" :disabled="btnType ? true : false" maxlength="300" placeholder="请输入地址">
                     {{ scope.row.address }}
                   </el-input>
                 </template>
               </el-table-column>
               <el-table-column prop="defaultFlag" label="是否默认" width="140">
                 <template slot-scope="scope">
-                  <el-select v-model="scope.row.defaultFlag" placeholder="请选择" :disabled="btnType ? true : false"
-                    @change="handleAddress(scope)">
-                    <el-option v-for="item in defaultFlagList" :key="item.value" :label="item.text"
-                      :value="item.value"></el-option>
+                  <el-select v-model="scope.row.defaultFlag" placeholder="请选择" :disabled="btnType ? true : false" @change="handleAddress(scope)">
+                    <el-option v-for="item in defaultFlagList" :key="item.value" :label="item.text" :value="item.value"></el-option>
                   </el-select>
                 </template>
               </el-table-column>
               <el-table-column prop="remark" label="备注">
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.remark" :disabled="btnType ? true : false" maxlength="200"
-                    placeholder="请输入备注">
+                  <el-input v-model="scope.row.remark" :disabled="btnType ? true : false" maxlength="200" placeholder="请输入备注">
                     {{ scope.row.remark }}
                   </el-input>
                 </template>
@@ -552,7 +483,7 @@ import {
 import formValidate from '@/utils/formValidate'
 import { getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { getProvinceList } from '@/api/system/province'
-import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
+import { getBimBusinessSwitchConfigList, getBimBusinessDetail } from '@/api/basicData/index'
 export default {
   data() {
     return {
@@ -729,27 +660,25 @@ export default {
         paymentMethod: [{ required: true, message: '请选择付款方式', trigger: 'change' }],
         paymentCycle: [{ required: true, message: '请选择付款周期', trigger: 'change' }]
       },
-      isattachmentswitch: ''
+      isattachmentswitch: '',
+      categoryId: ''
     }
   },
   created() {
-    this.getAttachmentswitch()
+    this.getBimBusinessDetail()
     this.getProvinceList()
     this.getDictionaryType()
     this.getbimProductAttributes()
   },
   methods: {
-    getAttachmentswitch() {
+    getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
-        pageSize: -1
+        configKey: 'fj_sbgysda'
       }
-      getBimBusinessSwitchConfigList(obj).then((res) => {
-        res.data.attachment.forEach(item => {
-          if (item.configKey == 'fj_sbgysgl') {
-            this.isattachmentswitch = item.configValue1
-          }
-        })
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
       })
     },
     getbimProductAttributes() {
@@ -1309,7 +1238,9 @@ export default {
           if (this.datafilelist.length) {
             this.datafilelist.map((item, index) => {
               item.bimAttachments = {
-                businessType: 'equipment_supplier',
+                businessType: 'system_attachment',
+                configKey: 'fj_sbgysda',
+                categoryId: this.categoryId,
                 documentId: item.id,
                 fileFlag: '',
                 sort: index

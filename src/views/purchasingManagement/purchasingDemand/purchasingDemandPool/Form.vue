@@ -34,7 +34,7 @@
                   <el-col :span="12">
                     <el-form-item label="交货日期" prop="deliveryDate">
                       <el-date-picker v-model="dataForm.deliveryDate" type="date" value-format="yyyy-MM-dd"
-                        style="width: 100%;" placeholder="请选择交货日期"></el-date-picker>
+                        style="width: 100%;" placeholder="请选择交货日期" @change="deliveryDateChange"></el-date-picker>
                     </el-form-item>
                   </el-col>
                 </el-form>
@@ -53,7 +53,7 @@
                       |
                       <el-table style="border: 1px solid #e3e7ee;" :fixedNO="true"
                         @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
-                        id="table" border>
+                        id="table" border  >
                         <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column>
                         <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
@@ -92,6 +92,26 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
+                        <el-table-column prop="availableQuantity" label="可用库存" min-width="100" show-overflow-tooltip
+                          v-if="this.purchasingType === 'safe'">
+                          <template slot-scope="scope">
+                            <el-form-item :prop="'data.' + scope.$index + '.' + 'availableQuantity'">
+                              <div class="viewData">
+                                <span>{{ scope.row.availableQuantity }}</span>
+                              </div>
+                            </el-form-item>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="maxInventory" label="最高库存" min-width="100" show-overflow-tooltip
+                          v-if="this.purchasingType === 'safe'">
+                          <template slot-scope="scope">
+                            <el-form-item :prop="'data.' + scope.$index + '.' + 'maxInventory'">
+                              <div class="viewData">
+                                <span>{{ scope.row.maxInventory }}</span>
+                              </div>
+                            </el-form-item>
+                          </template>
+                        </el-table-column>
                         <el-table-column prop="purchaseQuantity" label="数量" min-width="100">
                           <template slot="header">
                             <span class="required">*</span>
@@ -101,7 +121,7 @@
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity'"
                               :rules="productRules.purchaseQuantity">
                               <el-input @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)"
-                                v-model="scope.row.purchaseQuantity" maxlength="20" placeholder="请输入主数量"></el-input>
+                                v-model="scope.row.purchaseQuantity" maxlength="20" placeholder="请输入数量"></el-input>
                             </el-form-item>
                           </template>
                         </el-table-column>
@@ -109,7 +129,7 @@
                         <el-table-column prop="price" label="含税单价" min-width="180">
                           <template slot="header">
                             <span class="required">*</span>
-                            含税单价
+                            单价(含税)
                           </template>
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'price'" :rules="productRules.price">
@@ -502,7 +522,7 @@ export default {
               params: [
                 '',
                 (errMsg, index) => {
-                  this.$message.error(`产品信息第${index + 1}行：数量(主)${errMsg}`)
+                  this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`)
                 }
               ]
             }),
@@ -516,7 +536,7 @@ export default {
                 4,
                 '',
                 (errMsg, index) => {
-                  this.$message.error(`产品信息第${index + 1}行：数量(主)${errMsg}`)
+                  this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`)
                 }
               ]
             }),
@@ -524,7 +544,7 @@ export default {
           },
           {
             validator: this.formValidate('positiveNumber', false, (errMsg, index) => {
-              this.$message.error(`产品信息第${index + 1}行：数量(主)${errMsg}`)
+              this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`)
             }),
             trigger: 'blur'
           },
@@ -538,7 +558,7 @@ export default {
               params: [
                 '',
                 (errMsg, index) => {
-                  this.$message.error(`产品信息第${index + 1}行：数量(副)${errMsg}`)
+                  this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`)
                 }
               ]
             }),
@@ -639,7 +659,7 @@ export default {
         children: 'children',
         label: 'fullName'
       },
-      purchasingType: '',
+      purchasingType: 'safe',
       demandDelivery: '',
       demandDelivery2: '',
       olddeliveryDateArr: [], // 表格中旧的数据值
@@ -694,18 +714,25 @@ export default {
       // immediate:true,
       handler: function (newVal, oldVal) {
         newVal.forEach((item) => {
-          if (item.price && item.taxRate) {
+          if ((item.price && item.taxRate) || (item.price && item.taxRate === 0)) {
             item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
+          } else {
+            item.excludingTaxPrice = ''
           }
-
           if (item.purchaseQuantity && item.excludingTaxPrice) {
             item.excludingTaxAmount = this.jnpf.numberFormat(item.purchaseQuantity * item.excludingTaxPrice)
+          } else {
+            item.excludingTaxAmount = ''
           }
           if (item.price && item.purchaseQuantity && item.excludingTaxAmount) {
             item.taxAmount = this.jnpf.numberFormat(item.price * item.purchaseQuantity - item.excludingTaxAmount)
+          } else {
+            item.taxAmount = ''
           }
           if (item.excludingTaxAmount && item.taxAmount) {
             item.totalAmount = this.jnpf.numberFormat(item.excludingTaxAmount * 1 + item.taxAmount * 1)
+          } else {
+            item.totalAmount = ''
           }
           // if (!item.price) {
           //   this.$message.error('未找到供应商单价')
@@ -716,6 +743,14 @@ export default {
     }
   },
   methods: {
+    
+    deliveryDateChange(val) {
+      this.dataFormTwo.data.forEach(item => {
+        if (!item.deliveryDate) {
+          this.$set(item, 'deliveryDate', val) // 总金额(不含税)
+        }
+      })
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -1176,12 +1211,14 @@ export default {
       console.log(data, 'uuuu')
       console.log(classAttributeFlag, 'classAttributeFlag')
       this.purchasingType = type
+      console.log(this.purchasingType, 'this.purchasingType')
       data.forEach((item) => {
         if (item.productDrawingNo) {
           item.productDrawingNo = item.productDrawingNo
         } else {
           item.productDrawingNo = item.drawingNo
         }
+        item.purchaseQuantity = Number(item.maxInventory) - Number(item.availableQuantity)
       })
 
       this.dataForm.classAttribute = classAttributeFlag
@@ -1392,7 +1429,7 @@ export default {
 
       // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
       let maxHeight2 = mainHeight1 - bortherHeight - 112
-      let maxHeight = mainHeight1 - 280
+      let maxHeight = mainHeight1 - 235
       this.customStyleData = maxHeight
       // 附带防抖的监听适配模式屏幕缩放
       window.onresize = () => {

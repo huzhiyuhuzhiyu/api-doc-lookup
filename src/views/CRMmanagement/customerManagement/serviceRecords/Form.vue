@@ -135,6 +135,7 @@
 </template>
 
 <script>
+import { getBimBusinessDetail } from '@/api/basicData/index'
 import { mapGetters } from 'vuex'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
@@ -143,7 +144,7 @@ import { addServiceRecords, detailServiceRecords, updateServiceRecords, getcrmBu
 export default {
   data() {
     return {
-      isattachmentswitch: '1',
+      isattachmentswitch: '',
       datafilelist: [],
       receivablesNoSearchList: [
         { prop: 'receivablesNo', label: '回款编号', type: 'input' },
@@ -324,6 +325,7 @@ export default {
           { required: true, message: '请选择客户', trigger: 'blur' },
         ]
       },
+      categoryId: ''
     }
   },
   watch: {
@@ -347,12 +349,23 @@ export default {
     }
   },
   created() {
+    this.getBimBusinessDetail()
     this.getDictionaryType()
   },
   computed: {
     ...mapGetters(['userInfo']),
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_gjjl'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
+      })
+    },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
@@ -514,7 +527,9 @@ export default {
           if (this.datafilelist.length) {
             this.datafilelist.map((item, index) => {
               item.bimAttachments = {
-                businessType: 'customer',
+                businessType: 'system_attachment',
+                configKey: 'fj_gjjl',
+                categoryId: this.categoryId,
                 documentId: item.id,
                 fileFlag: '',
                 sort: index

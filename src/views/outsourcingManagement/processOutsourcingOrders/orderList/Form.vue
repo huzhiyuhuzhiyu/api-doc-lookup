@@ -166,7 +166,7 @@
                       <el-table-column prop="price" label="含税单价" min-width="180">
                         <template slot="header">
                           <span class="required">*</span>
-                          含税单价
+                          单价(含税)
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'price'" :rules="productRules.price">
@@ -679,7 +679,31 @@ export default {
   created() {
     this.getBimBusinessDetail()
   },
-
+  watch: {
+    'dataFormTwo.data': {
+      // immediate:true,
+      handler: function (newVal, oldVal) {
+        newVal.forEach((item) => {
+          if ((item.price && item.taxRate) || (item.price && item.taxRate == 0)) {
+            item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
+          }
+          if (item.purchaseQuantity && item.excludingTaxPrice) {
+            item.excludingTaxAmount = this.jnpf.numberFormat(item.purchaseQuantity * item.excludingTaxPrice)
+          }
+          if (item.price && item.purchaseQuantity && item.excludingTaxAmount) {
+            item.taxAmount = this.jnpf.numberFormat(item.price * item.purchaseQuantity - item.excludingTaxAmount)
+          }
+          if (item.excludingTaxAmount && item.taxAmount) {
+            item.totalAmount = this.jnpf.numberFormat(item.excludingTaxAmount * 1 + item.taxAmount * 1)
+          }
+          // if (!item.price) {
+          //   this.$message.error('未找到供应商单价')
+          // }
+        })
+      },
+      deep: true
+    }
+  },
   methods: {
     getBimBusinessDetail() {
       let obj = {
@@ -801,6 +825,7 @@ export default {
       this.autoId = row.id
       console.log(this.autoId, 'oiGGG')
       this.linesList = []
+      console.log(this.dataFormTwo.data, 'ooo')
       // let obj = {
       //   productsId: row.productsId,
       //   purchaseQuantity: row.purchaseQuantity
@@ -975,7 +1000,17 @@ export default {
     },
     // 表单提交
     handleSubmit(type) {
-      this.request(type)
+      let submitFlag = true
+      this.dataFormTwo.data.map(ele => {
+        console.log(ele, 'ppp')
+        if (ele.outShipmentList.length == 0) {
+          submitFlag = false
+          return this.$message.error('发料清单为空');
+        }
+      })
+      if (submitFlag) {
+        this.request(type)
+      }
     },
     // 配置资源
     handlerOpenSource(index, type) {
@@ -1070,7 +1105,6 @@ export default {
       _data = {
         ...this.dataForm,
         attachmentList: this.datafilelist,
-        // purProcurementRequirements: this.dataForm,
         purchaseOrderLines: this.dataFormTwo.data,
         flowData: this.flowData,
         orderType: 'external_process'

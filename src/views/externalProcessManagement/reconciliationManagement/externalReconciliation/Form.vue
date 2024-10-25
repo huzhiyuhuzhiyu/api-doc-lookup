@@ -139,14 +139,14 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="excludingTaxAmount" label="不含税金额" min-width="160">
+                      <el-table-column prop="excludingTaxAmount" label="金额(不含税)" min-width="160">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
                             <div :class="['viewData', scope.row.excludingTaxAmount < 0 ? 'red' : 'green']">
                               <span>
                                 {{
                                   scope.row.excludingTaxAmount < 0 ? scope.row.excludingTaxAmount : '+' +
-                                  scope.row.excludingTaxAmount }} </span>
+                                    scope.row.excludingTaxAmount }} </span>
                             </div>
                           </el-form-item>
                         </template>
@@ -161,14 +161,14 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="includingTaxAmount" label="含税金额" min-width="160">
+                      <el-table-column prop="includingTaxAmount" label="金额(含税)" min-width="160">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'includingTaxAmount'">
                             <div :class="['viewData', scope.row.includingTaxAmount < 0 ? 'red' : 'green']">
                               <span>
                                 {{
                                   scope.row.includingTaxAmount < 0 ? scope.row.includingTaxAmount : '+' +
-                                  scope.row.includingTaxAmount }} </span>
+                                    scope.row.includingTaxAmount }} </span>
                             </div>
                           </el-form-item>
                         </template>
@@ -195,12 +195,12 @@
 
                   <div class="text" style="height: 40px; line-height: 40px; background: #f5f7fa;">
                     <span style="font-weight:500;margin-right:10px">
-                      不含税金额：
+                      金额(不含税)：
                       <span :class="dataForm.excludingTaxAmount > 0 ? 'green' : 'red'">
                         {{
                           dataForm.excludingTaxAmount > 0
-                          ? '+' + dataForm.excludingTaxAmount
-                          : dataForm.excludingTaxAmount
+                            ? '+' + dataForm.excludingTaxAmount
+                            : dataForm.excludingTaxAmount
                         }}
                       </span>
                     </span>
@@ -211,12 +211,12 @@
                       </span>
                     </span>
                     <span style="font-weight:500;margin-right:10px">
-                      含税金额：
+                      金额(含税)：
                       <span :class="dataForm.totalReconciliationAmount > 0 ? 'green' : 'red'">
                         {{
                           dataForm.totalReconciliationAmount > 0
-                          ? '+' + dataForm.totalReconciliationAmount
-                          : dataForm.totalReconciliationAmount
+                            ? '+' + dataForm.totalReconciliationAmount
+                            : dataForm.totalReconciliationAmount
                         }}
                       </span>
                     </span>
@@ -232,93 +232,93 @@
             </el-tab-pane>
           </el-tabs>
           <el-collapse v-model="activeNames" v-else>
-                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                  <el-row :gutter="15" class="">
-                    <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
-                      label-position="top">
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="对账单号" prop="orderNo" ref="orderNo">
-                          <el-input v-model="dataForm.orderNo" placeholder="请输入对账单号"
-                            :disabled="type == 'look' ? true : false"></el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="客户名称" prop="supplierName" ref="supplierName">
-                          <el-input v-model="dataForm.cooperativePartnerName" placeholder="请输入客户名称"
-                            :disabled="type == 'look' ? true : false"></el-input>
-                        </el-form-item>
-                      </el-col>
+            <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+              <el-row :gutter="15" class="">
+                <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
+                  label-position="top">
+                  <el-col :sm="8" :xs="24">
+                    <el-form-item label="对账单号" prop="orderNo" ref="orderNo">
+                      <el-input v-model="dataForm.orderNo" placeholder="请输入对账单号"
+                        :disabled="type == 'look' ? true : false"></el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="8" :xs="24">
+                    <el-form-item label="客户名称" prop="supplierName" ref="supplierName">
+                      <el-input v-model="dataForm.cooperativePartnerName" placeholder="请输入客户名称"
+                        :disabled="type == 'look' ? true : false"></el-input>
+                    </el-form-item>
+                  </el-col>
 
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="对账日期" prop="reconciliationDate" ref="reconciliationDate">
-                          <!-- <el-input v-model="dataForm.reconciliationDate" placeholder="请选择报价有效期" clearable
+                  <el-col :sm="8" :xs="24">
+                    <el-form-item label="对账日期" prop="reconciliationDate" ref="reconciliationDate">
+                      <!-- <el-input v-model="dataForm.reconciliationDate" placeholder="请选择报价有效期" clearable
                         :style='{ "width": "100%" }' maxlength="20" :disabled="type == 'look'"></el-input> -->
 
-                          <el-date-picker v-model="dataForm.reconciliationDate" type="date" value-format="yyyy-MM-dd"
-                            style="width: 100%;" placeholder="请选择对账日期"
-                            :disabled="type == 'look' ? true : false"></el-date-picker>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="订单金额" prop="includingTaxAmount" ref="includingTaxAmount">
-                          <el-input v-model="dataForm.includingTaxAmount" placeholder="请输入订单金额"
-                            :disabled="type == 'look' ? true : false"></el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="对账金额" prop="totalReconciliationAmount" ref="totalReconciliationAmount">
-                          <el-input v-model="dataForm.totalReconciliationAmount" placeholder="请输入对账金额"
-                            :disabled="type == 'look' ? true : false"></el-input>
-                        </el-form-item>
-                      </el-col>
+                      <el-date-picker v-model="dataForm.reconciliationDate" type="date" value-format="yyyy-MM-dd"
+                        style="width: 100%;" placeholder="请选择对账日期"
+                        :disabled="type == 'look' ? true : false"></el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="8" :xs="24">
+                    <el-form-item label="订单金额" prop="includingTaxAmount" ref="includingTaxAmount">
+                      <el-input v-model="dataForm.includingTaxAmount" placeholder="请输入订单金额"
+                        :disabled="type == 'look' ? true : false"></el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="8" :xs="24">
+                    <el-form-item label="对账金额" prop="totalReconciliationAmount" ref="totalReconciliationAmount">
+                      <el-input v-model="dataForm.totalReconciliationAmount" placeholder="请输入对账金额"
+                        :disabled="type == 'look' ? true : false"></el-input>
+                    </el-form-item>
+                  </el-col>
 
-                      <el-col :span="24">
-                        <el-form-item label="备注" prop="remark" ref="remark">
-                          <el-input :disabled="type == 'look' ? true : false" type="textarea" :rows="3" maxlength="200"
-                            v-model="dataForm.remark" placeholder="请输入备注"></el-input>
-                        </el-form-item>
-                      </el-col>
-                    </el-form>
-                  </el-row>
-                </el-collapse-item>
+                  <el-col :span="24">
+                    <el-form-item label="备注" prop="remark" ref="remark">
+                      <el-input :disabled="type == 'look' ? true : false" type="textarea" :rows="3" maxlength="200"
+                        v-model="dataForm.remark" placeholder="请输入备注"></el-input>
+                    </el-form-item>
+                  </el-col>
+                </el-form>
+              </el-row>
+            </el-collapse-item>
 
-                <el-collapse-item title="对账信息" name="productInfo">
-                  <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                    <el-table style="border: 1px solid #e3e7ee;" hasC hasNO fixedNO v-bind="dataFormTwo.data"
-                      :data="dataFormTwo.data" id="table">
-                      <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
-                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+            <el-collapse-item title="对账信息" name="productInfo">
+              <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
+                <el-table style="border: 1px solid #e3e7ee;" hasC hasNO fixedNO v-bind="dataFormTwo.data"
+                  :data="dataFormTwo.data" id="table">
+                  <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
+                  <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
 
-                      <el-table-column prop="ordersNo" label="订单号" min-width="180" show-overflow-tooltip>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'ordersNo'">
-                            <div class="viewData">
-                              <span>{{ scope.row.ordersNo }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
+                  <el-table-column prop="ordersNo" label="订单号" min-width="180" show-overflow-tooltip>
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'ordersNo'">
+                        <div class="viewData">
+                          <span>{{ scope.row.ordersNo }}</span>
+                        </div>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
 
-                      <el-table-column prop="stockMoveOrderNo" label="出入库单号" min-width="180" show-overflow-tooltip>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'stockMoveOrderNo'">
-                            <div class="viewData">
-                              <span>{{ scope.row.stockMoveOrderNo }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
+                  <el-table-column prop="stockMoveOrderNo" label="出入库单号" min-width="180" show-overflow-tooltip>
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'stockMoveOrderNo'">
+                        <div class="viewData">
+                          <span>{{ scope.row.stockMoveOrderNo }}</span>
+                        </div>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
 
-                      <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'">
-                            <div class="viewData">
-                              <span>{{ scope.row.productCode ? scope.row.productCode : '调价' }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
-                      <!-- <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
+                  <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'">
+                        <div class="viewData">
+                          <span>{{ scope.row.productCode ? scope.row.productCode : '调价' }}</span>
+                        </div>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <!-- <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'">
                             <div class="viewData">
@@ -329,80 +329,80 @@
                           </el-form-item>
                         </template>
                       </el-table-column> -->
-                      <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
-                            <div class="viewData">
-                              <span>{{ scope.row.drawingNo ? scope.row.drawingNo : '调价' }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
+                  <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
+                        <div class="viewData">
+                          <span>{{ scope.row.drawingNo ? scope.row.drawingNo : '调价' }}</span>
+                        </div>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
 
-                      <el-table-column prop="reconciliationUnitPrice" label="对账数量" min-width="140">
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'reconciliationUnitPrice'">
-                            <div class="viewData">
-                              <span>{{ scope.row.reconciliationUnitPrice }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
+                  <el-table-column prop="reconciliationUnitPrice" label="对账数量" min-width="140">
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'reconciliationUnitPrice'">
+                        <div class="viewData">
+                          <span>{{ scope.row.reconciliationUnitPrice }}</span>
+                        </div>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
 
-                      <el-table-column prop="mainUnit" label="单位(主)" min-width="160" show-overflow-tooltip>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
-                            <div class="viewData">
-                              <span>{{ scope.row.mainUnit }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
+                  <el-table-column prop="mainUnit" label="单位(主)" min-width="160" show-overflow-tooltip>
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
+                        <div class="viewData">
+                          <span>{{ scope.row.mainUnit }}</span>
+                        </div>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
 
-                      <el-table-column prop="excludingTaxAmount" label="不含税金额" min-width="160">
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
-                            <div :class="['viewData', scope.row.excludingTaxAmount < 0 ? 'red' : 'green']">
-                              <span>
-                                {{
-                                  scope.row.excludingTaxAmount < 0 ? scope.row.excludingTaxAmount : '+' +
-                                  scope.row.excludingTaxAmount }} </span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="taxAmount" label="税额" min-width="160">
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'">
-                            <div :class="['viewData', scope.row.taxAmount < 0 ? 'red' : 'green']">
-                              <span>
-                                {{ scope.row.taxAmount < 0 ? scope.row.taxAmount : '+' + scope.row.taxAmount }} </span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="includingTaxAmount" label="含税金额" min-width="160">
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'includingTaxAmount'">
-                            <div :class="['viewData', scope.row.includingTaxAmount < 0 ? 'red' : 'green']">
-                              <span>
-                                {{
-                                  scope.row.includingTaxAmount < 0 ? scope.row.includingTaxAmount : '+' +
-                                  scope.row.includingTaxAmount }} </span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
+                  <el-table-column prop="excludingTaxAmount" label="不含税金额" min-width="160">
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
+                        <div :class="['viewData', scope.row.excludingTaxAmount < 0 ? 'red' : 'green']">
+                          <span>
+                            {{
+                              scope.row.excludingTaxAmount < 0 ? scope.row.excludingTaxAmount : '+' +
+                                scope.row.excludingTaxAmount }} </span>
+                        </div>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="taxAmount" label="税额" min-width="160">
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'">
+                        <div :class="['viewData', scope.row.taxAmount < 0 ? 'red' : 'green']">
+                          <span>
+                            {{ scope.row.taxAmount < 0 ? scope.row.taxAmount : '+' + scope.row.taxAmount }} </span>
+                        </div>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="includingTaxAmount" label="含税金额" min-width="160">
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'includingTaxAmount'">
+                        <div :class="['viewData', scope.row.includingTaxAmount < 0 ? 'red' : 'green']">
+                          <span>
+                            {{
+                              scope.row.includingTaxAmount < 0 ? scope.row.includingTaxAmount : '+' +
+                                scope.row.includingTaxAmount }} </span>
+                        </div>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
 
-                      <el-table-column prop="remark" label="备注" min-width="220">
-                        <template slot-scope="scope">
-                          <el-input v-model="scope.row.remark" :disabled="type === 'look'" maxlength="20"
-                            placeholder="请输入备注">
-                            {{ scope.row.remark }}
-                          </el-input>
-                        </template>
-                      </el-table-column>
-                      <!-- 
+                  <el-table-column prop="remark" label="备注" min-width="220">
+                    <template slot-scope="scope">
+                      <el-input v-model="scope.row.remark" :disabled="type === 'look'" maxlength="20"
+                        placeholder="请输入备注">
+                        {{ scope.row.remark }}
+                      </el-input>
+                    </template>
+                  </el-table-column>
+                  <!-- 
                   <el-table-column label="操作" width="180" fixed="right">
                     <template slot-scope="scope">
                       <el-button size="mini" type="text" class="JNPF-table-delBtn" :disabled="type === 'look'"
@@ -410,38 +410,38 @@
 
                     </template>
                   </el-table-column> -->
-                    </el-table>
-                  </el-form>
+                </el-table>
+              </el-form>
 
-                  <div class="text" style="height: 40px; line-height: 40px; background: #f5f7fa;">
-                    <span style="font-weight:500;margin-right:10px">
-                      不含税金额：
-                      <span :class="dataForm.excludingTaxAmount > 0 ? 'green' : 'red'">
-                        {{
-                          dataForm.excludingTaxAmount > 0
-                          ? '+' + dataForm.excludingTaxAmount
-                          : dataForm.excludingTaxAmount
-                        }}
-                      </span>
-                    </span>
-                    <span style="font-weight:500;margin-right:10px">
-                      税额：
-                      <span :class="dataForm.taxAmount > 0 ? 'green' : 'red'">
-                        {{ dataForm.taxAmount > 0 ? '+' + dataForm.taxAmount : dataForm.taxAmount }}
-                      </span>
-                    </span>
-                    <span style="font-weight:500;margin-right:10px">
-                      含税金额：
-                      <span :class="dataForm.totalReconciliationAmount > 0 ? 'green' : 'red'">
-                        {{
-                          dataForm.totalReconciliationAmount > 0
-                          ? '+' + dataForm.totalReconciliationAmount
-                          : dataForm.totalReconciliationAmount
-                        }}
-                      </span>
-                    </span>
-                  </div>
-                </el-collapse-item>
+              <div class="text" style="height: 40px; line-height: 40px; background: #f5f7fa;">
+                <span style="font-weight:500;margin-right:10px">
+                  不含税金额：
+                  <span :class="dataForm.excludingTaxAmount > 0 ? 'green' : 'red'">
+                    {{
+                      dataForm.excludingTaxAmount > 0
+                        ? '+' + dataForm.excludingTaxAmount
+                        : dataForm.excludingTaxAmount
+                    }}
+                  </span>
+                </span>
+                <span style="font-weight:500;margin-right:10px">
+                  税额：
+                  <span :class="dataForm.taxAmount > 0 ? 'green' : 'red'">
+                    {{ dataForm.taxAmount > 0 ? '+' + dataForm.taxAmount : dataForm.taxAmount }}
+                  </span>
+                </span>
+                <span style="font-weight:500;margin-right:10px">
+                  含税金额：
+                  <span :class="dataForm.totalReconciliationAmount > 0 ? 'green' : 'red'">
+                    {{
+                      dataForm.totalReconciliationAmount > 0
+                        ? '+' + dataForm.totalReconciliationAmount
+                        : dataForm.totalReconciliationAmount
+                    }}
+                  </span>
+                </span>
+              </div>
+            </el-collapse-item>
           </el-collapse>
         </div>
       </div>
@@ -485,7 +485,7 @@ export default {
         createByName: '',
         remark: '',
         totalReconciliationAmount: '',
-        approvalFlag: false, 
+        approvalFlag: false,
       },
       mainLoading: true,
       type: '',
@@ -511,7 +511,7 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    init(id, type,approvalFlag) {
+    init(id, type, approvalFlag) {
       console.log(id, type)
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = id || ''
@@ -531,7 +531,7 @@ export default {
             this.dataFormTwo.data = res.data.reconciliationLines
             this.mainLoading = false
             // 流程信息和流转记录
-           if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
           })
         }
       })

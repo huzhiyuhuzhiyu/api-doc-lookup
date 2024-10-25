@@ -14,9 +14,10 @@
         <div style="margin: 10px -6px 0 10px;overflow: scroll;">
           <el-table
               v-if="tableRerender"
+              :span-method="activeName === 'attachment' ? arraySpanMethod : undefined"
               :height="maxHeight" :data="tableData" stripe :row-style="{ height: '50px' }"
             :header-cell-style="{ background: '#FAFAFA', color: '#606266', 'text-align': 'center' }">
-              <el-table-column  v-if="activeName === 'attachment'" prop="mainModule" label="所属模块" width="230"/>
+              <el-table-column align="center" v-if="activeName === 'attachment'" prop="mainModule" label="所属模块" width="230"/>
 
 
 
@@ -177,6 +178,27 @@ export default {
     }
   },
   methods: {
+      arraySpanMethod({ row, column, rowIndex, columnIndex }){
+          const visibleData = this.tableData
+          const fields = ['mainModule']
+          const cellValue = row['mainModule']
+          if (cellValue && fields.includes(column.property)) {
+              const prevRow = visibleData[rowIndex - 1]
+              let nextRow = visibleData[rowIndex + 1]
+              if (prevRow && prevRow[column.property] === cellValue) {
+                  return { rowspan: 0, colspan: 0 }
+              } else {
+                  let countRowspan = 1
+                  while (nextRow && nextRow[column.property] === cellValue) {
+                      nextRow = visibleData[++countRowspan + rowIndex]
+                  }
+                  if (countRowspan > 1) {
+                      return { rowspan: countRowspan, colspan: 1 }
+                  }
+              }
+          }
+
+      },
      async fileCategoryClick(row){
          row.editFlag =true
          await this.$nextTick()

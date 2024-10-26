@@ -3,7 +3,8 @@
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
-          <el-page-header @back="goBack" :content="dialogTitle + `定点定价单`" />
+          <el-page-header @back="goBack"
+            :content="dialogTitle + dataForm.classAttribute == 'finish_product' ? '成品定点定价单' : '定点定价单'" />
           <div class="options" v-if="type != 'look'">
             <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
               保存草稿
@@ -989,7 +990,7 @@ export default {
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
-        configKey: 'fj_dddj'
+        configKey: this.dataForm.classAttribute == 'finish_product' ? 'fj_cpdddj' : 'fj_dddj'
       }
       getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
@@ -1722,7 +1723,9 @@ export default {
       if (this.datafilelist.length) {
         this.datafilelist.map((item, index) => {
           item.bimAttachments = {
-            businessType: '',
+            businessType: 'system_attachment',
+            configKey: this.dataForm.classAttribute == 'finish_product' ? 'fj_cpdddj' : 'fj_dddj',
+            categoryId: this.categoryId,
             documentId: item.id,
             fileFlag: '',
             sort: index

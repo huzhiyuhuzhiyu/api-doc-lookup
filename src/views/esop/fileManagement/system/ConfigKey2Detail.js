@@ -80,7 +80,7 @@ export default {
         closeEventName: "close", //关闭事件名称 不写默认为close
     },
     "fj_wxgysgl": {
-        title: "供应商档案", //此title为业务名称
+        title: "外协供应商档案", //此title为业务名称
         path: "basicData/outsourcingSuppliers/outsourcingSuppliersProfile/Form.vue", //需要调用的组件路径
         params: { //需要传递的参数，会被传递到组件的props中
 
@@ -98,6 +98,78 @@ export default {
     "fj_wxfltzd": {
         title: "外协发料通知单", //此title为业务名称
         path: "outsourcingManagement/externalMaterialIssuance/materialsIssueNotice/Form.vue", //需要调用的组件路径
+        params: { //需要传递的参数，会被传递到组件的props中
+
+        },
+        closeEventName: "close", //关闭事件名称 不写默认为close
+    },
+    "fj_cgshd": {
+        title: "采购收货单", //此title为业务名称
+        path: "receivingManagement/procurementReceiving/receivingAdvice/Form.vue", //需要调用的组件路径
+        params: { //需要传递的参数，会被传递到组件的props中
+
+        },
+        closeEventName: "close", //关闭事件名称 不写默认为close
+    },
+    "fj_cpcgshd": {
+        title: "采购成品收货单", //此title为业务名称
+        path: "receivingManagement/purchaseAndReceiveFinishedProducts/receivingAdvice/Form.vue", //需要调用的组件路径
+        params: { //需要传递的参数，会被传递到组件的props中
+
+        },
+        closeEventName: "close", //关闭事件名称 不写默认为close
+    },
+    "fj_wxshd": {
+        title: "外协收货单", //此title为业务名称
+        path: "receivingManagement/receiveGoodsByOutsourcing/receivingAdvice/Form.vue", //需要调用的组件路径
+        params: { //需要传递的参数，会被传递到组件的props中
+
+        },
+        closeEventName: "close", //关闭事件名称 不写默认为close
+    },
+    "fj_cggysgl": {
+        title: "采购供应商档案", //此title为业务名称
+        path: "basicData/supplierManagement/supplierProfile/Form.vue", //需要调用的组件路径
+        params: { //需要传递的参数，会被传递到组件的props中
+
+        },
+        closeEventName: "close", //关闭事件名称 不写默认为close
+    },
+    "'fj_dddj'": {
+        title: "定点定价", //此title为业务名称
+        path: "purchasingManagement/fixedPointPricing/pricingListedSeparately/Form.vue", //需要调用的组件路径
+        params: { //需要传递的参数，会被传递到组件的props中
+
+        },
+        closeEventName: "close", //关闭事件名称 不写默认为close
+    },
+    "'fj_cgdd'": {
+        title: "采购订单", //此title为业务名称
+        path: "purchasingManagement/purchaseOrders/purchaseOrder/Form.vue", //需要调用的组件路径
+        params: { //需要传递的参数，会被传递到组件的props中
+
+        },
+        closeEventName: "close", //关闭事件名称 不写默认为close
+    },
+    "'fj_cpcgdd'": {
+        title: "成品采购订单", //此title为业务名称
+        path: "purchasingManagement/finishedProductPurchaseOrders/purchaseOrder/Form.vue", //需要调用的组件路径
+        params: { //需要传递的参数，会被传递到组件的props中
+
+        },
+        closeEventName: "close", //关闭事件名称 不写默认为close
+    },
+    "'fj_cgthtzd'": {
+        title: "采购退货通知单", //此title为业务名称
+        path: "purchasingManagement/returnManagement/purchaseReturnNote/Form.vue", //需要调用的组件路径
+        params: { //需要传递的参数，会被传递到组件的props中
+
+        },
+        closeEventName: "close", //关闭事件名称 不写默认为close
+    },
+    "'fj_cpcgthtzd'": {
+        title: "成品采购退货通知单", //此title为业务名称
+        path: "purchasingManagement/finishedProductReturnManagement/purchaseReturnNote/Form.vue", //需要调用的组件路径
         params: { //需要传递的参数，会被传递到组件的props中
 
         },

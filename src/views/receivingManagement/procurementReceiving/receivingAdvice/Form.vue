@@ -116,10 +116,9 @@
                     <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
                       key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                    <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
-                    <!-- </el-table-column> -->
-                    <el-table-column prop="drawingNo" label="品名规格" width="200" sortable="custom"
+                    <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom"
                       show-overflow-tooltip />
+                      <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
                     <el-table-column prop="mainUnit" label="单位" width="60" />
                     <el-table-column prop="purchaseQuantity" label="订单数量" width="120" sortable="custom" />
                     <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
@@ -266,9 +265,8 @@
                 <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
                   key="1" />
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
-                <!-- </el-table-column> -->
                 <el-table-column prop="drawingNo" label="品名规格" width="200" sortable="custom" show-overflow-tooltip />
+                <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="60" />
                 <el-table-column prop="purchaseQuantity" label="订单数量" width="110" sortable="custom" />
                 <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="120"
@@ -434,7 +432,7 @@
                 @selection-change="handleSelectionChangeAllPruduct">
                 <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" width="200" sortable="custom" show-overflow-tooltip />
-                <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
+                <el-table-column prop="productCode" label="产品编码" width="130" sortable="custom" />
 
                 <el-table-column prop="mainUnit" label="单位" width="160" />
                 <el-table-column prop="purchaseQuantity" label="数量" width="160" sortable="custom" />
@@ -517,6 +515,7 @@ export default {
   data() {
     return {
       isattachmentswitch: '',
+      categoryId: '',
       scanDialog: false,
       tipsvisible: false,
       submitmethodsTitle: '',
@@ -837,6 +836,7 @@ export default {
       }
       getBimBusinessDetail(obj).then(res => {
         this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
       })
     },
     scanFun() {
@@ -1502,13 +1502,14 @@ export default {
       } catch (error) { }
     },
     init(id, btnType, approvalFlag, data) {
+      console.log(id, '[]')
       this.dataForm.id = id || ''
 
       this.btnType = btnType
       console.log(btnType, 'iiiiii')
       this.approvalFlag = approvalFlag
       console.log(data, 'ddd')
-      if (data.length !== 0) {
+      if (data) {
         this.dataFormTwo.productData = data
         this.dataForm.partnerName = data[0].cooperativePartnerName
         this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
@@ -1638,7 +1639,9 @@ export default {
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
             item.bimAttachments = {
-              businessType: '',
+              businessType: 'system_attachment',
+              configKey: 'fj_cgshd',
+              categoryId: this.categoryId,
               documentId: item.id,
               fileFlag: '',
               sort: index

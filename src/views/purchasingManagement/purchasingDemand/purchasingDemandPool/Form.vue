@@ -53,7 +53,7 @@
                       |
                       <el-table style="border: 1px solid #e3e7ee;" :fixedNO="true"
                         @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
-                        id="table" border  >
+                        id="table" border>
                         <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column>
                         <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
@@ -743,7 +743,7 @@ export default {
     }
   },
   methods: {
-    
+
     deliveryDateChange(val) {
       this.dataFormTwo.data.forEach(item => {
         if (!item.deliveryDate) {
@@ -1366,7 +1366,9 @@ export default {
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
             item.bimAttachments = {
-              businessType: '',
+              businessType: 'system_attachment',
+              configKey: this.dataForm.classAttribute == 'finish_product' ? 'fj_cgdd' : 'fj_cgdd',
+              categoryId: this.categoryId,
               documentId: item.id,
               fileFlag: '',
               sort: index

@@ -274,7 +274,7 @@
                             查看发料清单
                           </el-button>
                           <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                            v-if="dataFormTwo.data.length > 1" @click="delequipment_process_relList(scope.$index)">
+                            :disabled="dataFormTwo.data.length < 2" @click="delequipment_process_relList(scope.$index)">
                             删除
                           </el-button>
                         </template>
@@ -702,7 +702,9 @@ export default {
       flowData: {},
       approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime: 0
+      endTime: 0,
+      isattachmentswitch: '',
+      categoryId: ''
     }
   },
   computed: {
@@ -781,6 +783,7 @@ export default {
       }
       getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
       })
     },
     // 弹窗节点的点击
@@ -1150,11 +1153,11 @@ export default {
     // 表单提交
     handleSubmit(type) {
       let submitFlag = true
-      this.dataFormTwo.data.map(ele => {
+      this.dataFormTwo.data.map((ele, i) => {
         console.log(ele, 'ppp')
         if (ele.outShipmentList.length == 0) {
           submitFlag = false
-          return this.$message.error('发料清单为空');
+          return this.$message.error(`第${i + 1}行发料清单为空`)
         }
       })
       if (submitFlag) {
@@ -1171,7 +1174,9 @@ export default {
       if (this.datafilelist.length) {
         this.datafilelist.map((item, index) => {
           item.bimAttachments = {
-            businessType: '',
+            businessType: 'system_attachment',
+            configKey: 'fj_wxdd',
+            categoryId: this.categoryId,
             documentId: item.id,
             fileFlag: '',
             sort: index

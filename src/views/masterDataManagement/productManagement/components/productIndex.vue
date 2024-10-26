@@ -202,7 +202,7 @@
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <el-dialog title="快速创建" :visible.sync="quickVisible" width="30%" :before-close="handleClose"
-      class="JNPF-dialog JNPF-dialog_center">
+      class="JNPF-dialog JNPF-dialog_center" :close-on-click-modal="false">
       <el-form :model="quickForm" :rules="quickRules" ref="quickForm" label-width="100px" labelPosition="top"
         hide-required-asterisk="fasle">
         <el-form-item label="产品编码" prop="code">

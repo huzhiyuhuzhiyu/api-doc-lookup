@@ -12,14 +12,14 @@
             <el-col :span="4">
               <el-form-item>
                 <el-date-picker v-model="orderForm.deliveryStartDate" type="date" value-format="yyyy-MM-dd"
-                  style="width: 100%;" placeholder="收货开始日期" clearable></el-date-picker>
+                  style="width: 100%;" placeholder="交货开始日期" clearable></el-date-picker>
                 -
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
                 <el-date-picker v-model="orderForm.deliveryEndDate" type="date" value-format="yyyy-MM-dd"
-                  style="width: 100%;" placeholder="收货结束日期" clearable></el-date-picker>
+                  style="width: 100%;" placeholder="交货结束日期" clearable></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="8">

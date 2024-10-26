@@ -160,7 +160,8 @@ export default {
         {
           prop: 'mainUnit',
           label: '单位',
-          type: 'input'
+          type: 'select',
+          options: []
         },
 
         {

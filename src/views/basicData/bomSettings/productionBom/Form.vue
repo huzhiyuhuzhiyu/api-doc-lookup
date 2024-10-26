@@ -116,6 +116,7 @@ export default {
   data() {
     return {
       isattachmentswitch: '',
+      categoryId:'',
       activeNames: ['productInfo', 'basicInfo'],
       datafilelist: [],
       activeName: 'jcInfo',
@@ -409,6 +410,7 @@ export default {
       this.btnType = btnType
       this.approvalFlag = approvalFlag
       this.approvalStatus = approvalStatus ? approvalStatus.approvalStatus : ''
+      this.getBimBusinessDetail()
       this.statusFlag =
         this.approvalStatus == 'rebut' || this.approvalStatus == 'withdrawn' || this.approvalStatus == 'ing'
           ? true

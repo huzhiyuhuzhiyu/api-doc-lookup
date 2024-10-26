@@ -59,7 +59,8 @@
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
           <el-table-column label="操作" width="200" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)" :delDisabled="scope.row.status === 'enable' ? true : false">
+              <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)"
+                :editDisabled="scope.row.status === 'enable' ? true : false" :delDisabled="scope.row.status === 'enable' ? true : false">
                   <el-button size="mini" type="text" @click.native="addOrUpdateHandle(scope.row.id,'look')">查看详情</el-button>
                 </tableOpts>
             </template>

@@ -448,6 +448,7 @@ export default {
   data() {
     return {
       isattachmentswitch: '',
+      categoryId: '',
       getCooperativeData,
       getcategoryTree,
       getcategoryTrees,
@@ -482,7 +483,7 @@ export default {
         // { label: "其他分类", classAttribute: "other", method: getcategoryTree, requestObj: { classAttribute: "other" } }
       ], // 产品选择弹出框树状列表
       ProductListRequestObj: {
-        orderType: 'external',
+        externalFlag: 1,
         shipmentStatus: 'not_finish',
         orderItems: [
           {
@@ -589,7 +590,7 @@ export default {
       totalNum: 0,
       totalAssistantNum: 0,
       totalAmount: 0,
-      // 选择客户产品参数
+      // 选择供应商产品参数
       productForm: {
         drawingNo: '',
         productCode: '',
@@ -609,7 +610,7 @@ export default {
         pageSize: 20
       },
       productVisible: false,
-      cusPrototal: 0, //选择客户产品分页器的总条数
+      cusPrototal: 0, //选择供应商产品分页器的总条数
       cusProductData: [],
       // 选择全部产品参数
       allProVisible: false,
@@ -704,7 +705,7 @@ export default {
       dataRule: {
         orderNo: [{ required: true, message: '订单编号不能为空', trigger: 'change' }],
         exchangeGoodsFlag: [{ required: true, message: '换货标识不能为空', trigger: 'change' }],
-        partnerName: [{ required: true, message: '所属客户不能为空', trigger: 'change' }],
+        partnerName: [{ required: true, message: '所属供应商不能为空', trigger: 'change' }],
         deliverDate: [{ required: true, message: '发料日期不能为空', trigger: 'change' }],
         recipient: [{ required: true, message: '收件人不能为空', trigger: 'change' }],
         phone: [
@@ -819,6 +820,7 @@ export default {
       }
       getBimBusinessDetail(obj).then(res => {
         this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
       })
     },
     listDataFormatting(res) {
@@ -862,6 +864,7 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].validateField('partnerName')
         if (id) {
+
           getCooperativeInfo(id).then((res) => {
             console.log(res, 'res')
             this.customerData = res.data.cooperativePartner
@@ -889,6 +892,7 @@ export default {
               this.dataForm.recipient = ''
               this.dataForm.phone = ''
               this.dataForm.country = ''
+              this.defaultAddress = ''
             }
           })
         }
@@ -918,6 +922,7 @@ export default {
     // 点击选择产品
     openSeleceProductDialog() {
       if (!this.dataForm.cooperativePartnerId) return this.$message.error('请先选择供应商')
+      this.ProductListRequestObj.cooperativePartnerId = this.dataForm.cooperativePartnerId
       this.$refs['ComSelect-page'].openDialog()
     },
 
@@ -1053,7 +1058,7 @@ export default {
     },
     // 更换地址
     changeAddress() {
-      if (!this.customerData.id) return this.$message.error('请选择客户')
+      if (!this.customerData.id) return this.$message.error('请选择供应商')
       this.addressVisibled = true
 
       this.$nextTick(() => {
@@ -1410,6 +1415,35 @@ export default {
           this.dataForm.partnerName = data[0].cooperativePartnerName
           this.dataForm.cooperativePartnerCode = data[0].cooperativePartnerCode
           this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
+          getCooperativeInfo(this.dataForm.cooperativePartnerId).then((res) => {
+            console.log(res, 'res')
+            this.customerData = res.data.cooperativePartner
+            if (res.data.deliveryAddressList.length !== 0) {
+              this.dataForm.recipient = res.data.deliveryAddressList[0].recipient
+              this.dataForm.phone = res.data.deliveryAddressList[0].phone
+              this.dataForm.country = res.data.deliveryAddressList[0].country
+              this.dataForm.province = res.data.deliveryAddressList[0].province
+              this.dataForm.city = res.data.deliveryAddressList[0].city
+              this.dataForm.area = res.data.deliveryAddressList[0].area
+              this.dataForm.address = res.data.deliveryAddressList[0].address
+
+              if (this.dataForm.country === 'CN') {
+                this.defaultAddress =
+                  res.data.deliveryAddressList[0].countryText +
+                  res.data.deliveryAddressList[0].provinceText +
+                  res.data.deliveryAddressList[0].cityText +
+                  res.data.deliveryAddressList[0].areaText +
+                  res.data.deliveryAddressList[0].address
+              } else {
+                this.defaultAddress =
+                  res.data.deliveryAddressList[0].countryText + res.data.deliveryAddressList[0].address
+              }
+            } else {
+              this.dataForm.recipient = ''
+              this.dataForm.phone = ''
+              this.dataForm.country = ''
+            }
+          })
           this.dataFormTwo.data = data
           this.dataFormTwo.data.forEach((item) => {
             console.log(item, 'dd')
@@ -1542,7 +1576,9 @@ export default {
           if (this.datafilelist.length) {
             this.datafilelist.map((item, index) => {
               item.bimAttachments = {
-                businessType: '',
+                businessType: 'system_attachment',
+                configKey: 'fj_wxfltzd',
+                categoryId: this.categoryId,
                 documentId: item.id,
                 fileFlag: '',
                 sort: index

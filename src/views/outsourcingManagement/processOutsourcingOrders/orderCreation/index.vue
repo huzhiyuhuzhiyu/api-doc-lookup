@@ -238,13 +238,14 @@
                             </template>
                           </el-table-column>
 
-                          <el-table-column label="操作" width="120" fixed="right">
+                          <el-table-column label="操作" width="170" fixed="right">
                             <template slot-scope="scope">
                               <el-button size="mini" type="text" @click="handlerOpenSource(scope.$index, 'source')">
                                 配置发料清单
                               </el-button>
                               <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                                v-if="dataFormTwo.data.length > 1" @click="delequipment_process_relList(scope.$index)">
+                                :disabled="dataFormTwo.data.length < 2"
+                                @click="delequipment_process_relList(scope.$index)">
                                 删除
                               </el-button>
                             </template>
@@ -323,6 +324,7 @@ export default {
   data() {
     return {
       isattachmentswitch: '',
+      categoryId: '',
       datafilelist: [],
       activeName: 'jcInfo',
       activeNames: ['productInfo', 'basicInfo'],
@@ -745,10 +747,11 @@ export default {
       }
       getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
       })
     },
     deliveryDateChange(val) {
-      this.dataFormTwo.data.forEach(item => {
+      this.dataFormTwo.data.forEach((item) => {
         if (!item.deliveryDate) {
           this.$set(item, 'deliveryDate', val) // 总金额(不含税)
         }
@@ -854,6 +857,7 @@ export default {
           console.log(deletedArray, '被删掉的数据')
         }
         this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
+        console.log(this.dataFormTwo.data, 'this.dataFormTwo.data')
         // 审批
         // this.$nextTick(() => { this.getApproverData() })
       }
@@ -1182,7 +1186,17 @@ export default {
     },
     // 表单提交
     handleSubmit(type) {
-      this.request(type)
+      let submitFlag = true
+      this.dataFormTwo.data.map((ele, i) => {
+        console.log(ele, 'ppp')
+        if (ele.outShipmentList.length == 0) {
+          submitFlag = false
+          return this.$message.error(`第${i + 1}行发料清单为空`)
+        }
+      })
+      if (submitFlag) {
+        this.request(type)
+      }
     },
 
     async request(type) {
@@ -1193,7 +1207,9 @@ export default {
       if (this.datafilelist.length) {
         this.datafilelist.map((item, index) => {
           item.bimAttachments = {
-            businessType: '',
+            businessType: 'system_attachment',
+            configKey: 'fj_wxdd',
+            categoryId: this.categoryId,
             documentId: item.id,
             fileFlag: '',
             sort: index

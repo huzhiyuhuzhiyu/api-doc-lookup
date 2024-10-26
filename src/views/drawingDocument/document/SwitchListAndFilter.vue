@@ -17,7 +17,7 @@ export default {
         needFilter:{
             type:Boolean,
             default:true
-        }
+        },
     },
     computed:{
         cSwitchList:{

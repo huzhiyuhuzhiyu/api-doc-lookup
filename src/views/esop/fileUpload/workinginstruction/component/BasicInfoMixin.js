@@ -93,7 +93,7 @@ export default {
             flag &&  this.getDetail(data)
         },
         versionCountHandler(){
-           if(isEmpty(this.dataForm.versionCount)){
+           if(isEmpty(this.dataForm.versionCount) || this.dataForm.versionCount === 0){
                return this.$message.info('暂无可查看的关联版本')
            }
           this.versionCountVisible = true

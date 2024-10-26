@@ -148,7 +148,7 @@
                                 v-model="scope.row.taxRate" placeholder="请输入税率"></el-input> -->
                               <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;">
                                 <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
-                                  :value="item.id"></el-option>
+                                  :value="item.enCode"></el-option>
                               </el-select>
                             </el-form-item>
                           </template>
@@ -208,7 +208,6 @@
                           </template>
                         </el-table-column>
 
-
                         <el-table-column prop="processId" label="工序" width="120" :key="102">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.processId" placeholder="请选择" clearable style="width: 100%;">
@@ -227,9 +226,14 @@
                           </template>
                         </el-table-column>
 
-                        <el-table-column label="操作" width="180" fixed="right" v-if="dataFormTwo.data.length > 1">
+                        <el-table-column label="操作" width="170" fixed="right">
                           <template slot-scope="scope">
-                            <el-button type="text" class="JNPF-table-delBtn"
+                            <el-button size="mini" type="text" :disabled="sourceDisabled"
+                              @click="handlerOpenSource(scope.$index, 'source')">
+                              查看发料清单
+                            </el-button>
+                            <el-button size="mini" type="text" class="JNPF-table-delBtn"
+                              :disabled="dataFormTwo.data.length < 2"
                               @click="delequipment_process_relList(scope.$index)">
                               删除
                             </el-button>
@@ -245,7 +249,7 @@
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
-            <el-tab-pane label="附件" name="annex">
+            <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
               <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"></UploadWj>
             </el-tab-pane>
             <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
@@ -255,7 +259,21 @@
         </div>
       </div>
     </transition>
-    <sourceForm v-if="sourceFormVisible" ref="sourceForm" @confirm="sourceFormConfirm" />
+    <source-area v-if="sourceVisibled" ref="sourceRef" @confirm="handlerConfirm"></source-area>
+    <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+      :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
+      <div>
+        <img src="@/assets/images/importSuccess.gif" alt="" style="width:100px" />
+        <span class="import_t">{{ submitmethodsTitle }}啦！</span>
+        <span class="import_b">您还可以进行如下操作：</span>
+      </div>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="goBom">返回列表</el-button>
+        <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()">{{ btnText }}</el-button>
+        <el-button v-else type="primary" @click="continueAdd()">{{ btnText }}</el-button>
+      </span>
+    </el-dialog>
     <ComSelect-page ref="comSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems"
       dialogTitle="选择产品" :listMethod="purProcurementDemandPoolList" :listRequestObj="ProductListRequestObjs"
       :listDataFormatting="listDataFormatting" :searchList="ProductTableSearchList" :elementShow="false"
@@ -263,12 +281,12 @@
   </div>
 </template>
 <script>
-import sourceForm from './source.vue'
+import SourceArea from '@/views/outsourcingManagement/productOutsourcingOrder/orderCreation/source.vue'
 import { insertPurchaseOrder, partnerProductPrice, priceList } from '@/api/purchasingAndOutsourcingOrders/index'
-import { getCooperativeData, getcategoryTree } from '@/api/basicData/index'
+import { getCooperativeData, getcategoryTree, getBimBusinessDetail } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 import workFlow from '@/components/WorkFlow/settingBus.vue'
-import { purProcurementDemandPoolList } from '@/api/purchasingManagement/purchaseInquirySheet'
+import { getShipmentList, purProcurementDemandPoolList } from '@/api/purchasingManagement/purchaseInquirySheet'
 import {
   getApprovalTemplate,
   getApprovalDetailTree,
@@ -292,13 +310,17 @@ import { getbimProductAttributesList, getbimProductAttributes } from '@/api/mast
 import { getBimProcessList } from '@/api/bimProcess/index'
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
+
 export default {
   components: {
-    sourceForm,
+    SourceArea,
     Process
   },
   data() {
     return {
+      isattachmentswitch: '',
+      categoryId: '',
+      sourceVisibled: false,
       purProcurementDemandPoolList,
       activeNames: ['productInfo', 'basicInfo'],
       datafilelist: [],
@@ -335,7 +357,7 @@ export default {
       ProductTableSearchList: [
         { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
         { prop: 'productCode', label: '产品编码', type: 'input' },
-        { prop: 'deliveryDate', label: '交货日期', type: 'date' },
+        { prop: 'deliveryDate', label: '交货日期', type: 'date' }
       ],
       getcooperativeProduct,
       productVisible: false,
@@ -379,7 +401,7 @@ export default {
         attachmentList: [],
         cooperativePartnerName: '', //供应商名称
         deliveryDate: '', //交货日期.
-        orderType: 'procure',
+        orderType: 'external',
         purchaseOrderLines: [],
         excludingTaxTotalAmount: '', //订单 不含税总金额
         totalAmount: '', //   含税总金额
@@ -600,17 +622,25 @@ export default {
       // immediate:true,
       handler: function (newVal, oldVal) {
         newVal.forEach((item) => {
-          if ((item.price && item.taxRate) || (item.price && item.taxRate == 0)) {
+          if ((item.price && item.taxRate) || (item.price && item.taxRate === 0)) {
             item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
+          } else {
+            item.excludingTaxPrice = ''
           }
           if (item.purchaseQuantity && item.excludingTaxPrice) {
             item.excludingTaxAmount = this.jnpf.numberFormat(item.purchaseQuantity * item.excludingTaxPrice)
+          } else {
+            item.excludingTaxAmount = ''
           }
           if (item.price && item.purchaseQuantity && item.excludingTaxAmount) {
             item.taxAmount = this.jnpf.numberFormat(item.price * item.purchaseQuantity - item.excludingTaxAmount)
+          } else {
+            item.taxAmount = ''
           }
           if (item.excludingTaxAmount && item.taxAmount) {
             item.totalAmount = this.jnpf.numberFormat(item.excludingTaxAmount * 1 + item.taxAmount * 1)
+          } else {
+            item.totalAmount = ''
           }
           // if (!item.price) {
           //   this.$message.error('未找到供应商单价')
@@ -621,6 +651,58 @@ export default {
     }
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_wxdd'
+      }
+      getBimBusinessDetail(obj).then((res) => {
+        this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
+      })
+    },
+    // 配置资源
+    handlerOpenSource(index, type) {
+      if (!this.dataFormTwo.data[index].purchaseQuantity) return this.$message.error('请先输入数量')
+
+      this.sourceVisibled = true
+      this.index = index
+
+      let obj = {
+        productsId: this.dataFormTwo.data[index].productsId,
+        purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
+      }
+      // 通过需求池id 获取明细的数据
+      getShipmentList(obj).then((res) => {
+        this.sourceData = res.data
+        if (this.dataFormTwo.data[this.index].outShipmentList) {
+          this.dataFormTwo.data[this.index].outShipmentList.forEach((item, ind) => {
+            this.sourceData[ind].demandQuantity1 = item.demandQuantity1
+            // this.sourceData[ind].demandQuantity1 = item.demandQuantity-item.issuedQuantity-item.undeliveredQuantity
+          })
+        } else {
+          this.sourceData.forEach((item, index) => {
+            this.$set(
+              this.sourceData[index],
+              'demandQuantity1',
+              item.demandQuantity - item.issuedQuantity - item.undeliveredQuantity < 0
+                ? 0
+                : item.demandQuantity - item.issuedQuantity - item.undeliveredQuantity
+            )
+          })
+        }
+
+        // if (this.sourceData.length === 0) {
+        //   this.sourceDisabled = true
+        // } else {
+        //   this.sourceDisabled = false
+        // }
+
+        this.$nextTick(() => {
+          this.$refs['sourceRef'].init(this.sourceData, '')
+        })
+      })
+    },
     listDataFormatting(res) {
       console.log(res)
       res.data.records.forEach((item, index) => {
@@ -634,154 +716,6 @@ export default {
     },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
-      let obj0 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa008',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj0).then((res) => {
-        console.log(res, 'res123')
-        this.list0 = res.data.records
-      })
-
-      let obj1 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa007',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj1).then((res) => {
-        this.list1 = res.data.records
-      })
-      let obj2 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa006',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj2).then((res) => {
-        this.list2 = res.data.records
-      })
-      let obj3 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa005',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj3).then((res) => {
-        this.list3 = res.data.records
-      })
-      let obj4 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa002',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj4).then((res) => {
-        this.list4 = res.data.records
-      })
-      let obj5 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa003',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj5).then((res) => {
-        this.list5 = res.data.records
-      })
-      let obj6 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa001',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-
-      getbimProductAttributesList(obj6).then((res) => {
-        this.list6 = res.data.records
-      })
-      let obj7 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa015',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj7).then((res) => {
-        this.list7 = res.data.records
-      })
-
       let obj8 = {
         pageNum: -1,
         pageSize: 20,
@@ -975,6 +909,16 @@ export default {
       // this.dataFormTwo.data[index].purchaseQuantity = val
       this.$set(this.dataFormTwo.data[index], 'purchaseQuantity', val)
 
+      let obj = {
+        productsId: this.dataFormTwo.data[index].productsId,
+        purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
+      }
+      // 通过需求池id 获取明细的数据
+      getShipmentList(obj).then((res) => {
+        console.log(res, 'p')
+        this.dataFormTwo.data[index].outShipmentList = res.data
+      })
+
       if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
         this.dataFormTwo.data[index].purchaseQuantity2 = this.numberFormat(
           this.dataFormTwo.data[index].purchaseQuantity * this.dataFormTwo.data[index].ratio
@@ -1003,16 +947,29 @@ export default {
     init(data) {
       console.log(data, 'data')
       this.getProductClassFun()
+      this.getBimBusinessDetail()
       this.$set(this.dataFormTwo, 'data', JSON.parse(JSON.stringify(data)))
       console.log(this.dataFormTwo, 'two')
 
       var maxDate = null // 最大日期初始值设为null
-      // 遍历数组，比较日期来找到最大日期
-      for (var i = 0; i < this.dataFormTwo.data.length; i++) {
+
+      this.dataFormTwo.data.forEach((ele, i) => {
+
         var currentDate = new Date(this.dataFormTwo.data[i].deliveryDate)
         if (maxDate === null || currentDate > maxDate) {
           maxDate = currentDate
         }
+        let obj = {
+          productsId: this.dataFormTwo.data[i].productsId,
+          purchaseQuantity: this.dataFormTwo.data[i].purchaseQuantity
+        }
+        // 通过需求池id 获取明细的数据
+
+        getShipmentList(obj).then((res) => {
+          this.$set(this.dataFormTwo.data[i], 'outShipmentList', res.data)
+        })
+
+        console.log(this.dataFormTwo.data[i], 'ppppp')
         this.$set(this.dataFormTwo.data[i], 'excludingTaxAmount', '') // 总金额(不含税)
         // this.$set(this.dataFormTwo.data[i], 'excludingTaxPrice', '')    // 	不含税单价
         this.$set(this.dataFormTwo.data[i], 'fixedPrice', '') //  	定价
@@ -1027,7 +984,8 @@ export default {
           (this.dataFormTwo.data[i].orderedQuantity ? this.dataFormTwo.data[i].orderedQuantity : 0)
         ) // 	可下单数量
         this.olddeliveryDateArr.push(this.dataFormTwo.data[i].deliveryDate)
-      }
+        console.log(this.dataFormTwo.data, 'this.dataFormTwo.data')
+      })
       this.getBusInfo()
     },
     // 侧边拉出产品信息
@@ -1060,6 +1018,13 @@ export default {
     async handleSubmit() {
       this.btnLoading = true
       let submitFlag = true // 自动聚焦是否可用
+      this.dataFormTwo.data.map((ele, i) => {
+        if (ele.outShipmentList.length == 0) {
+          submitFlag = false
+          return this.$message.error(`第${i + 1}行发料清单为空`)
+        }
+      })
+
       let form_1 = this.$refs['elForm']
       let valid_1 = await form_1.validate().catch((err) => false)
       if (!valid_1 && submitFlag) {
@@ -1078,7 +1043,9 @@ export default {
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
             item.bimAttachments = {
-              businessType: '',
+              businessType: 'system_attachment',
+              configKey: 'fj_wxdd',
+              categoryId: this.categoryId,
               documentId: item.id,
               fileFlag: '',
               sort: index
@@ -1094,10 +1061,9 @@ export default {
         this.dataForm.purchaseOrderLines = dataTwo
         let _data = {
           ...this.dataForm,
-          form,
           flowData: this.flowData
         }
-
+        console.log(_data, '_')
         insertPurchaseOrder(_data)
           .then((res) => {
             if (res.msg === 'Success') res.msg = '保存成功'

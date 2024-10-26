@@ -523,6 +523,8 @@ export default {
       } else {
         if (!value) {
           return callback(new Error('对账结束日期不能为空'))
+        } else {
+          callback();
         }
       }
     }
@@ -706,7 +708,8 @@ export default {
         reconciliationStartDate: [{ required: true, message: '请选择对账开始日期', trigger: 'change' }],
         reconciliationEndDate: [{ required: true, validator: checkReconciliationEndDate, trigger: 'change' }]
       },
-      isattachmentswitch: ''
+      isattachmentswitch: '',
+      categoryId: ''
     }
   },
   created() {
@@ -735,6 +738,7 @@ export default {
         res.data.attachment.forEach((item) => {
           if (item.configKey == 'fj_cggysgl') {
             this.isattachmentswitch = item.configValue1
+            this.categoryId = item.configValue2
           }
         })
       })
@@ -970,7 +974,7 @@ export default {
       getProvinceList(this.nodeId, this.listQuery)
         .then((res) => {
           this.provinces = res.data.list
-          this.init(id, parentId)
+          this.init(id, this.btnType, false, parentId)
         })
         .catch(() => {
           this.listLoading = false
@@ -1075,7 +1079,7 @@ export default {
         }
       } catch (error) { }
     },
-    init(id, parentId, btnType) {
+    init(id, btnType, approvalFlag, parentId) {
       this.visible = true
       this.dataForm.id = id || ''
       this.parentId = parentId || ''
@@ -1309,7 +1313,9 @@ export default {
           if (this.datafilelist.length) {
             this.datafilelist.map((item, index) => {
               item.bimAttachments = {
-                businessType: 'supplier',
+                businessType: 'system_attachment',
+                configKey: 'fj_cggysgl',
+                categoryId: this.categoryId,
                 documentId: item.id,
                 fileFlag: '',
                 sort: index

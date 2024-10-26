@@ -5,7 +5,7 @@
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
             <template v-for="item in searchList">
-              <el-col :span="item.searchType === 3 ? 6 : 4" :key="item.prop">
+              <el-col :span="item.searchType === 3 ? 6 : 4" >
                 <el-form-item>
                   <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
                     @keyup.enter.native="search('basic')" />

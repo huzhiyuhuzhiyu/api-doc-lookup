@@ -17,6 +17,7 @@ export default {
   },
   created() {
     this.name = this.$route.meta.zhTitle
+    console.log(this.$route.meta, 'this.name')
     this.code = this.$route.meta.title
     // this.productCode = this.$route.query.productCode
 
@@ -39,7 +40,8 @@ export default {
       productStatus: "", // 产品状态
       customerQueryFields: [],
       createTimeArr: [],
-      classAttribute: this.code
+      classAttribute: this.code,
+      classAttributeText: this.name.slice(0, 2)
     }
     this.$nextTick(() => {
       this.$refs.productIndex.init(this.initListQuery)

@@ -82,18 +82,21 @@ export const FileManagementPageType={
     FileManagementImage:'FileManagementImage',
     FileManagementOffice:'FileManagementOffice',
     FileManagementInspect:'FileManagementInspect',
+    FileManagementAttachment:'FileManagementAttachment',
 }
 export const FileTrashPageType={
     FileTrashWork:'FileTrashWork',
     FileTrashImage:'FileTrashImage',
     FileTrashOffice:'FileTrashOffice',
     FileTrashInspect:'FileTrashInspect',
+    FileTrashAttachment:'FileTrashAttachment',
 }
 export const FileCheckPageType={
     FileCheckWork:'FileCheckWork',
     FileCheckImage:'FileCheckImage',
     FileCheckOffice:'FileCheckOffice',
     FileCheckInspect:'FileCheckInspect',
+    FileCheckAttachment:'FileCheckAttachment',
 }
 
 export const FileUploadPageType={

@@ -576,7 +576,7 @@ export default {
     addSupplier(id, btntype) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype, false, [])
+        this.$refs.Form.init(id, btntype, false)
       })
     },
     addOrUpdateHandle(id, btntype) {
@@ -609,7 +609,7 @@ export default {
     handleUserRelation(id, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType, false, [])
+        this.$refs.Form.init(id, btnType, false)
       })
     },
     // 导出

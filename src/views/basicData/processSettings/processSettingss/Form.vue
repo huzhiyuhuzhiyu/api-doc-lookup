@@ -29,10 +29,10 @@
                           <el-form-item label="工艺路线编码" prop="code" ref="code">
                             <el-input v-model="dataForm.code" placeholder="请输入工艺路线编码" clearable
                               :style="{ width: '100%' }" maxlength="20" :disabled="type == 'look'
+                                ? true
+                                : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag
                                   ? true
-                                  : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag
-                                    ? true
-                                    : false
+                                  : false
                                 "></el-input>
                           </el-form-item>
                         </el-col>
@@ -299,7 +299,7 @@
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
-        
+
             <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
               <UploadWj v-model="datafilelist" :disabled="type == 'look'" :detailed="type == 'look'"></UploadWj>
             </el-tab-pane>
@@ -320,10 +320,10 @@
                       <el-form-item label="工艺路线编码" prop="code" ref="code">
                         <el-input v-model="dataForm.code" placeholder="请输入工艺路线编码" clearable :style="{ width: '100%' }"
                           maxlength="20" :disabled="type == 'look'
+                            ? true
+                            : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag
                               ? true
-                              : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag
-                                ? true
-                                : false
+                              : false
                             "></el-input>
                       </el-form-item>
                     </el-col>
@@ -367,7 +367,7 @@
                     选择工序
                   </el-button>
                   |
-                
+
                   <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                     :disabled="type == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
                     批量删除
@@ -714,7 +714,8 @@ export default {
       approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
       endTime: 0,
-      isattachmentswitch: ''
+      isattachmentswitch: '',
+      categoryId: '',
     }
   },
   created() {
@@ -735,8 +736,9 @@ export default {
         businessCode: 'attachment',
         configKey: 'fj_gylx'
       }
-      getBimBusinessDetail(obj).then((res) => {
+      getBimBusinessDetail(obj).then(res => {
         this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
       })
     },
     listDataFormatting(res) {
@@ -1001,7 +1003,9 @@ export default {
       if (this.datafilelist.length) {
         this.datafilelist.map((item, index) => {
           item.bimAttachments = {
-            businessType: 'customer',
+            businessType: 'system_attachment',
+            configKey: 'fj_gylx',
+            categoryId: this.categoryId,
             documentId: item.id,
             fileFlag: '',
             sort: index

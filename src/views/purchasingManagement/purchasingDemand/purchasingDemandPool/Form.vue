@@ -714,18 +714,25 @@ export default {
       // immediate:true,
       handler: function (newVal, oldVal) {
         newVal.forEach((item) => {
-          if (item.price && item.taxRate) {
+          if ((item.price && item.taxRate) || (item.price && item.taxRate === 0)) {
             item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
+          } else {
+            item.excludingTaxPrice = ''
           }
-
           if (item.purchaseQuantity && item.excludingTaxPrice) {
             item.excludingTaxAmount = this.jnpf.numberFormat(item.purchaseQuantity * item.excludingTaxPrice)
+          } else {
+            item.excludingTaxAmount = ''
           }
           if (item.price && item.purchaseQuantity && item.excludingTaxAmount) {
             item.taxAmount = this.jnpf.numberFormat(item.price * item.purchaseQuantity - item.excludingTaxAmount)
+          } else {
+            item.taxAmount = ''
           }
           if (item.excludingTaxAmount && item.taxAmount) {
             item.totalAmount = this.jnpf.numberFormat(item.excludingTaxAmount * 1 + item.taxAmount * 1)
+          } else {
+            item.totalAmount = ''
           }
           // if (!item.price) {
           //   this.$message.error('未找到供应商单价')
@@ -736,7 +743,7 @@ export default {
     }
   },
   methods: {
-    
+
     deliveryDateChange(val) {
       this.dataFormTwo.data.forEach(item => {
         if (!item.deliveryDate) {
@@ -1359,7 +1366,9 @@ export default {
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
             item.bimAttachments = {
-              businessType: '',
+              businessType: 'system_attachment',
+              configKey: this.dataForm.classAttribute == 'finish_product' ? 'fj_cgdd' : 'fj_cgdd',
+              categoryId: this.categoryId,
               documentId: item.id,
               fileFlag: '',
               sort: index

@@ -607,7 +607,6 @@ export default {
         type: 'outsourcing_suppliers'
       },
       oldData: [],
-      isattachmentswitch: '',
       title: '',
       datafilelist: [],
       activeName: 'jcInfo',
@@ -673,13 +672,39 @@ export default {
       flowTaskOperatorRecordList: [],
       endTime: 0,
       tipsvisible: false,
-      btnText: '继续新建'
+      btnText: '继续新建',
+      isattachmentswitch: '',
+      categoryId: ''
     }
   },
   created() {
     this.getBimBusinessDetail()
   },
-
+  watch: {
+    'dataFormTwo.data': {
+      // immediate:true,
+      handler: function (newVal, oldVal) {
+        newVal.forEach((item) => {
+          if ((item.price && item.taxRate) || (item.price && item.taxRate == 0)) {
+            item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
+          }
+          if (item.purchaseQuantity && item.excludingTaxPrice) {
+            item.excludingTaxAmount = this.jnpf.numberFormat(item.purchaseQuantity * item.excludingTaxPrice)
+          }
+          if (item.price && item.purchaseQuantity && item.excludingTaxAmount) {
+            item.taxAmount = this.jnpf.numberFormat(item.price * item.purchaseQuantity - item.excludingTaxAmount)
+          }
+          if (item.excludingTaxAmount && item.taxAmount) {
+            item.totalAmount = this.jnpf.numberFormat(item.excludingTaxAmount * 1 + item.taxAmount * 1)
+          }
+          // if (!item.price) {
+          //   this.$message.error('未找到供应商单价')
+          // }
+        })
+      },
+      deep: true
+    }
+  },
   methods: {
     getBimBusinessDetail() {
       let obj = {
@@ -688,12 +713,13 @@ export default {
       }
       getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
       })
     },
     // 抽屉提交
     handlerConfirm(data) {
       console.log(data, '资源资源数据')
-      data.forEach(item => {
+      data.forEach((item) => {
         console.log(item, 'p')
       })
       this.dataFormTwo.data[this.index].outShipmentList = data
@@ -801,6 +827,7 @@ export default {
       this.autoId = row.id
       console.log(this.autoId, 'oiGGG')
       this.linesList = []
+      console.log(this.dataFormTwo.data, 'ooo')
       // let obj = {
       //   productsId: row.productsId,
       //   purchaseQuantity: row.purchaseQuantity
@@ -975,7 +1002,16 @@ export default {
     },
     // 表单提交
     handleSubmit(type) {
-      this.request(type)
+      let submitFlag = true
+      this.dataFormTwo.data.map((ele, i) => {
+        if (ele.outShipmentList.length == 0) {
+          submitFlag = false
+          return this.$message.error(`第${i + 1}行发料清单为空`)
+        }
+      })
+      if (submitFlag) {
+        this.request(type)
+      }
     },
     // 配置资源
     handlerOpenSource(index, type) {
@@ -986,47 +1022,7 @@ export default {
       this.sourceVisibled = true
       this.index = index
       console.log(this.dataFormTwo.data[index], 'this.dataFormTwo.data[index].id')
-      // let obj = {
-      //   productsId: this.dataFormTwo.data[index].productsId,
-      //   purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
-      // }
-      // // 通过需求池id 获取明细的数据
-      // getShipmentList(obj).then((res) => {
-      //   console.log(res, '清单数据')
-      //   this.sourceData = res.data
-      //   this.dataFormTwo.data[this.index].outShipmentList = res.data
-      //   if (this.dataFormTwo.data[this.index].outShipmentList.length !== 0) {
-      //     this.sourceData = this.dataFormTwo.data[this.index].outShipmentList
 
-      //     // this.dataFormTwo.data[this.index].outShipmentList.forEach((item, ind) => {
-      //     //   console.log(item, 'p{{}}')
-      //     //   console.log(this.sourceData[ind], 'this.sourceData[ind]')
-      //     //   this.sourceData[ind].demandQuantity1 = item.demandQuantity1 ? item.demandQuantity1 : item.demandQuantity
-      //     //   this.sourceData[ind].processId = item.processId
-      //     //   this.sourceData[ind].processName = item.processName
-      //     // })
-      //   } else {
-      //     this.sourceData.forEach((item, index) => {
-      //       this.$set(this.sourceData[index], 'demandQuantity1', item.demandQuantity)
-      //     })
-      //   }
-      //   console.log(this.sourceData, '1111')
-
-      //   if (this.sourceData.length === 0) {
-      //     this.sourceDisabled = true
-      //   } else {
-      //     this.sourceDisabled = false
-      //   }
-      //   console.log(this.dataFormTwo.data, 'daaaa')
-      //   this.$nextTick(() => {
-      //     this.$refs['sourceRef'].init(
-      //       this.sourceData,
-      //       '',
-      //       this.dataFormTwo.data[this.index].productsId,
-      //       this.dataFormTwo.data[this.index].purchaseQuantity
-      //     )
-      //   })
-      // })
       this.sourceData = this.dataFormTwo.data[index].outShipmentVOList
       console.log(this.sourceData, '1111')
 
@@ -1055,7 +1051,9 @@ export default {
       if (this.datafilelist.length) {
         this.datafilelist.map((item, index) => {
           item.bimAttachments = {
-            businessType: '',
+            businessType: 'system_attachment',
+            configKey: 'fj_wxdd',
+            categoryId: this.categoryId,
             documentId: item.id,
             fileFlag: '',
             sort: index
@@ -1070,7 +1068,6 @@ export default {
       _data = {
         ...this.dataForm,
         attachmentList: this.datafilelist,
-        // purProcurementRequirements: this.dataForm,
         purchaseOrderLines: this.dataFormTwo.data,
         flowData: this.flowData,
         orderType: 'external_process'

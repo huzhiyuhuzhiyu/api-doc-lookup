@@ -171,7 +171,7 @@ export default {
         ],
         code: "",
         name: "",
-        state: 'normal',
+        repairFlag: 1,
         deviceType: 'normal',
         classAttribute: "tool",
       },

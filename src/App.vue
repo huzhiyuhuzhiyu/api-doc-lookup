@@ -23,28 +23,6 @@ export default {
     // window.removeEventListener('beforeunload', this.beforeUnload)
   },
   created() {
-      printBuildInfo([
-          {
-              title: 'Environment',
-              content: process.env.NODE_ENV,
-              backgroundColor: '#42c02e'
-          },
-          {
-              title: 'Platform',
-              content: 'web',
-              backgroundColor: '#1475b2'
-          },
-          {
-              title: 'Version',
-              content: process.env.VERSION || '1.1.1',
-              backgroundColor: '#1475b2'
-          },
-          {
-              title: 'Build Date',
-              content: process.env.BUID_AT,
-              backgroundColor: '#1475b2'
-          }
-      ])
     // let imgURL = localStorage.getItem('aaa') === 'zgt' ? location.origin + '/favicon1.ico' : location.origin + '/favicon1.ico'
     // var head = document.getElementsByTagName('head')[0];
     // var linkTag = document.createElement('link');

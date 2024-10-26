@@ -267,14 +267,14 @@
                         </template>
                       </el-table-column> -->
 
-                      <el-table-column label="操作" width="120" fixed="right" v-if="type !== 'look'">
+                      <el-table-column label="操作" width="180" fixed="right" v-if="type !== 'look'">
                         <template slot-scope="scope">
                           <el-button size="mini" type="text" :disabled="sourceDisabled"
                             @click="handlerOpenSource(scope.$index, 'source')">
                             查看发料清单
                           </el-button>
                           <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                            v-if="dataFormTwo.data.length > 1" @click="delequipment_process_relList(scope.$index)">
+                            :disabled="dataFormTwo.data.length < 2" @click="delequipment_process_relList(scope.$index)">
                             删除
                           </el-button>
                         </template>
@@ -535,7 +535,7 @@
       </div>
 
       <span slot="footer" class="dialog-footer">
-        <el-button @click="goBom">返回列表</el-button>
+        <el-button @click="goBack">返回列表</el-button>
         <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()">{{ btnText }}</el-button>
         <el-button v-else type="primary" @click="continueAdd()">{{ btnText }}</el-button>
       </span>
@@ -702,7 +702,9 @@ export default {
       flowData: {},
       approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime: 0
+      endTime: 0,
+      isattachmentswitch: '',
+      categoryId: ''
     }
   },
   computed: {
@@ -745,17 +747,25 @@ export default {
       // immediate:true,
       handler: function (newVal, oldVal) {
         newVal.forEach((item) => {
-          if ((item.price && item.taxRate) || (item.price && item.taxRate == 0)) {
+          if ((item.price && item.taxRate) || (item.price && item.taxRate === 0)) {
             item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
+          } else {
+            item.excludingTaxPrice = ''
           }
           if (item.purchaseQuantity && item.excludingTaxPrice) {
             item.excludingTaxAmount = this.jnpf.numberFormat(item.purchaseQuantity * item.excludingTaxPrice)
+          } else {
+            item.excludingTaxAmount = ''
           }
           if (item.price && item.purchaseQuantity && item.excludingTaxAmount) {
             item.taxAmount = this.jnpf.numberFormat(item.price * item.purchaseQuantity - item.excludingTaxAmount)
+          } else {
+            item.taxAmount = ''
           }
           if (item.excludingTaxAmount && item.taxAmount) {
             item.totalAmount = this.jnpf.numberFormat(item.excludingTaxAmount * 1 + item.taxAmount * 1)
+          } else {
+            item.totalAmount = ''
           }
           // if (!item.price) {
           //   this.$message.error('未找到供应商单价')
@@ -773,6 +783,7 @@ export default {
       }
       getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
       })
     },
     // 弹窗节点的点击
@@ -1117,27 +1128,16 @@ export default {
             console.log(this.dataForm, '9')
             this.oldData = [{ id: this.dataForm.cooperativePartnerId, name: this.dataForm.cooperativePartnerName }]
             this.dataFormTwo.data = res.data.purchaseOrderLineVOList
-            this.dataFormTwo.data.forEach((item, index) => {
-              console.log(item.productsId, 'id')
-              let obj = {
-                productsId: this.dataFormTwo.data[index].productsId,
-                purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
-              }
-              // 通过需求池id 获取明细的数据
-              getShipmentList(obj).then((res) => {
-                this.dataFormTwo.data[index].outShipmentList = res.data
-                this.linesList.push(...res.data)
-              })
-            })
 
             this.dataFormTwo.data.forEach((item) => {
               console.log(item, 'o')
               item.productDrawingNo = item.drawingNo
               item.taxRate = Number(item.taxRate)
+              item.outShipmentList = item.outShipmentVOList
+              this.linesList.push(...item.outShipmentVOList)
             })
 
             console.log(this.linesList, 'this.linesList ')
-            // this.dataFormTwo.data[0].outShipmentList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
             if (this.type === 'edit') {
               this.getBusInfo()
             } else {
@@ -1152,7 +1152,17 @@ export default {
     },
     // 表单提交
     handleSubmit(type) {
-      this.request(type)
+      let submitFlag = true
+      this.dataFormTwo.data.map((ele, i) => {
+        console.log(ele, 'ppp')
+        if (ele.outShipmentList.length == 0) {
+          submitFlag = false
+          return this.$message.error(`第${i + 1}行发料清单为空`)
+        }
+      })
+      if (submitFlag) {
+        this.request(type)
+      }
     },
 
     async request(type) {
@@ -1164,7 +1174,9 @@ export default {
       if (this.datafilelist.length) {
         this.datafilelist.map((item, index) => {
           item.bimAttachments = {
-            businessType: '',
+            businessType: 'system_attachment',
+            configKey: 'fj_wxdd',
+            categoryId: this.categoryId,
             documentId: item.id,
             fileFlag: '',
             sort: index
@@ -1179,7 +1191,6 @@ export default {
       _data = {
         ...this.dataForm,
         attachmentList: this.datafilelist,
-        purProcurementRequirements: this.dataForm,
         purchaseOrderLines: this.dataFormTwo.data,
         orderType: 'external',
         flowData: this.flowData

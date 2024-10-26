@@ -4,15 +4,15 @@
       <div slot="header" class="clearfix">
         <span>{{title}}</span>
       </div>
-      <el-empty v-if="!datalist.length" :image-size="58" description="暂无数据"></el-empty>
+      <el-empty v-if="!datalist" :image-size="58" description="暂无数据"></el-empty>
       <div v-else>
         <div style="display: flex;justify-content: space-between;" class="line sum">
           <div class="left">计数</div>
-          <div class="right">{{num||0}}</div>
+          <div class="right">{{datalist.allNum||0}}</div>
         </div>
-        <div v-for="(item,index) in datalist" :key="index" class="show-raw-data number line">
-          <div class="left">削皮机</div>
-          <div class="right">1</div>
+        <div v-for="(item,index) in datalist.list" :key="index" class="show-raw-data number line">
+          <div class="left">{{item.totalName}}</div>
+          <div class="right">{{item.totalNum}}</div>
         </div>
       </div>
     </el-card>
@@ -31,8 +31,7 @@ export default {
       default: '未命名'
     },
     datalist: {
-      type: Array,
-      default: () => []
+      type: String
     },
   },
   data() {

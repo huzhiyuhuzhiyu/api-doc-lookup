@@ -1,3 +1,11 @@
+<!--
+ * @Author: DESKTOP-5E76NPE\tiger 1909446527@qq.com
+ * @Date: 2024-09-27 15:59:53
+ * @LastEditors: DESKTOP-5E76NPE\tiger 1909446527@qq.com
+ * @LastEditTime: 2024-10-25 16:13:51
+ * @FilePath: \os-web-zgt4.0\src\views\system\messageSettings\index.vue
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
 <template>
   <div class="app-container JNPF-flex-main systemConfig">
     <el-form ref="baseForm" :model="baseForm" :rules="rules" label-width="100px">
@@ -76,11 +84,11 @@
               <el-row style="margin-top: 15px" v-if="thirdTab == '0'">
                 <el-col :span="12">
                   <jnpf-form-tip-item label="AccessKey ID" prop="aliAccessKey" label-width="200px"
-                    tip-label="授权ID，【AccessKey管理】中的 AccessKey ID">
+                    tip-label="授权ID，【AccessKey管理】中的 AccessKey ID" linkUrl="https://www.aliyun.com/lowcode/promotion/dysms/supervalue">
                     <el-input v-model="baseForm.aliAccessKey" clearable placeholder="请输入AccessKey ID" />
                   </jnpf-form-tip-item>
                   <jnpf-form-tip-item label="AccessKey Secret" prop="aliSecret" label-width="200px"
-                    tip-label="授权密钥,【AccessKey管理】中的 AccessKey Secret">
+                    tip-label="授权密钥,【AccessKey管理】中的 AccessKey Secret" linkUrl="https://www.aliyun.com/lowcode/promotion/dysms/supervalue">
                     <el-input v-model="baseForm.aliSecret" show-password clearable placeholder="请输入AccessKey Secret" />
                   </jnpf-form-tip-item>
                   <el-form-item label-width="180px">
@@ -94,19 +102,19 @@
               <el-row style="margin-top: 15px" v-if="thirdTab == '1'">
                 <el-col :span="12">
                   <jnpf-form-tip-item label="SecretId" prop="tencentSecretId" label-width="180px"
-                    tip-label="在【访问管理】-【访问密钥】- 【API密钥管理】中获取 SecretId">
+                    tip-label="在【访问管理】-【访问密钥】- 【API密钥管理】中获取 SecretId" linkUrl="https://cloud.tencent.com/act/pro/csms">
                     <el-input v-model="baseForm.tencentSecretId" clearable placeholder="请输入SecretId" />
                   </jnpf-form-tip-item>
                   <jnpf-form-tip-item label="SecretKey" prop="tencentSecretKey" label-width="180px"
-                    tip-label="在【访问管理】-【访问密钥】- 【API密钥管理】中获取 SecretKey">
+                    tip-label="在【访问管理】-【访问密钥】- 【API密钥管理】中获取 SecretKey" linkUrl="https://cloud.tencent.com/act/pro/csms">
                     <el-input v-model="baseForm.tencentSecretKey" show-password clearable placeholder="请输入SecretKey" />
                   </jnpf-form-tip-item>
                   <jnpf-form-tip-item label="SDK AppID" prop="tencentAppId" label-width="180px"
-                    tip-label="【应⽤管理】-【应⽤列表】应⽤中的 SDK AppID">
+                    tip-label="【应⽤管理】-【应⽤列表】应⽤中的 SDK AppID" linkUrl="https://cloud.tencent.com/act/pro/csms">
                     <el-input v-model="baseForm.tencentAppId" clearable show-password placeholder="请输入SDK AppID" />
                   </jnpf-form-tip-item>
                   <jnpf-form-tip-item label="App Key" prop="tencentAppKey" label-width="180px"
-                    tip-label="【应⽤管理】-【应⽤列表】应⽤中的 App Key">
+                    tip-label="【应⽤管理】-【应⽤列表】应⽤中的 App Key" linkUrl="https://cloud.tencent.com/act/pro/csms">
                     <el-input v-model="baseForm.tencentAppKey" clearable show-password placeholder="请输入App Key" />
                   </jnpf-form-tip-item>
                   <el-form-item label-width="180px">
@@ -120,14 +128,22 @@
               <el-alert title="注意：系统邮件设置成功后所有邮件会由此邮箱发出" type="warning" :closable="false" show-icon />
               <el-row :gutter="20" style="margin-top: 15px">
                 <el-col :span="12">
-                  <el-form-item label="POP3服务" prop="emailPop3Host">
+                  <!-- <el-form-item label="POP3服务" prop="emailPop3Host">
                     <el-input v-model="baseForm.emailPop3Host" clearable placeholder="POP3服务" />
-                  </el-form-item>
+                  </el-form-item> -->
+                  <jnpf-form-tip-item label="POP3服务" prop="emailPop3Host" label-width="120px"
+                    tip-label="POP3服务" linkUrl="https://www.aliyun.com/product/directmail">
+                    <el-input v-model="baseForm.tencentAppKey" clearable show-password placeholder="POP3服务" />
+                  </jnpf-form-tip-item>
                 </el-col>
                 <el-col :span="12">
-                  <el-form-item label="SMTP服务" prop="emailSmtpHost">
+                  <!-- <el-form-item label="SMTP服务" prop="emailSmtpHost">
                     <el-input v-model="baseForm.emailSmtpHost" clearable placeholder="SMTP服务" />
-                  </el-form-item>
+                  </el-form-item> -->
+                  <jnpf-form-tip-item label="SMTP服务" prop="emailSmtpHost" label-width="120px"
+                    tip-label="SMTP服务" linkUrl="https://www.aliyun.com/product/directmail">
+                    <el-input v-model="baseForm.emailSmtpHost" clearable show-password placeholder="SMTP服务" />
+                  </jnpf-form-tip-item>
                 </el-col>
                 <el-col :span="12">
                   <el-form-item label="POP3端口" prop="emailPop3Port">
@@ -171,30 +187,52 @@
             <el-tab-pane label="企业微信">
               <el-row :gutter="20" style="margin-top: 15px">
                 <el-col :span="12" :offset="6" :pull="6">
-                  <el-form-item label="企业号Id" prop="qyhCorpId">
+                  <!-- <el-form-item label="企业号Id" prop="qyhCorpId">
                     <el-input v-model="baseForm.qyhCorpId" clearable placeholder="请输入CorpId" />
-                  </el-form-item>
+                  </el-form-item> -->
+                  <jnpf-form-tip-item label="企业号Id" prop="qyhCorpId" label-width="120px"
+                    tip-label="CorpId通过企业微信开发者平台获取" linkUrl="https://developer.work.weixin.qq.com/">
+                    <el-input v-model="baseForm.qyhCorpId" clearable show-password placeholder="请输入CorpId" />
+                  </jnpf-form-tip-item>
                 </el-col>
                 <el-col :span="12" :offset="6" :pull="6">
-                  <el-form-item label="应用凭证" prop="qyhAgentId">
+                  <!-- <el-form-item label="应用凭证" prop="qyhAgentId" label-width="120px">
                     <el-input v-model="baseForm.qyhAgentId" clearable placeholder="请输入AgentId" />
-                  </el-form-item>
+                  </el-form-item> -->
+                  <jnpf-form-tip-item label="应用凭证" prop="qyhAgentId" label-width="120px"
+                    tip-label="AgentId通过企业微信开发者平台获取" linkUrl="https://developer.work.weixin.qq.com/">
+                    <el-input v-model="baseForm.qyhAgentId" clearable show-password placeholder="请输入AgentId" />
+                  </jnpf-form-tip-item>
                 </el-col>
                 <el-col :span="12" :offset="6" :pull="6">
-                  <el-form-item label="凭证密钥" prop="qyhAgentSecret">
+                  <jnpf-form-tip-item label="凭证密钥" prop="qyhAgentSecret" label-width="120px"
+                    tip-label="AppSecret通过企业微信开发者平台获取" linkUrl="https://developer.work.weixin.qq.com/">
                     <el-input v-model="baseForm.qyhAgentSecret" placeholder="请输入AppSecret" show-password>
                       <el-button slot="append" @click="checkQy(0)" :loading="testQyLoading">连接测试
                       </el-button>
                     </el-input>
-                  </el-form-item>
+                  </jnpf-form-tip-item>
+                  <!-- <el-form-item label="凭证密钥" prop="qyhAgentSecret" label-width="120px">
+                    <el-input v-model="baseForm.qyhAgentSecret" placeholder="请输入AppSecret" show-password>
+                      <el-button slot="append" @click="checkQy(0)" :loading="testQyLoading">连接测试
+                      </el-button>
+                    </el-input>
+                  </el-form-item> -->
                 </el-col>
                 <el-col :span="12" :offset="6" :pull="6">
-                  <el-form-item label="同步密钥" prop="qyhCorpSecret">
+                  <!-- <el-form-item label="同步密钥" prop="qyhCorpSecret" label-width="120px">
                     <el-input v-model="baseForm.qyhCorpSecret" placeholder="请输入CorpSecret" show-password>
                       <el-button slot="append" @click="checkQy(1)" :loading="testSyncLoading">同步测试
                       </el-button>
                     </el-input>
-                  </el-form-item>
+                  </el-form-item> -->
+                  <jnpf-form-tip-item label="同步密钥" prop="qyhCorpSecret" label-width="120px"
+                    tip-label="CorpSecret通过企业微信开发者平台获取" linkUrl="https://developer.work.weixin.qq.com/">
+                    <el-input v-model="baseForm.qyhCorpSecret" placeholder="请输入CorpSecret" show-password>
+                      <el-button slot="append" @click="checkQy(1)" :loading="testSyncLoading">同步测试
+                      </el-button>
+                    </el-input>
+                  </jnpf-form-tip-item>
                 </el-col>
                 <!-- <el-col>
                   <el-form-item label="触发事件">
@@ -209,7 +247,7 @@
                     </el-table>
                   </el-form-item>
                 </el-col> -->
-                <el-col>
+                <!-- <el-col>
                   <el-form-item label="同步反馈">
                     <el-table :data="wxResults" border>
                       <el-table-column prop="synType" label="同步类型" key="synType" />
@@ -226,7 +264,7 @@
                       </el-table-column>
                     </el-table>
                   </el-form-item>
-                </el-col>
+                </el-col> -->
                 <el-col>
                   <el-form-item>
                     <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitForm()">保
@@ -238,22 +276,37 @@
             <el-tab-pane label="阿里钉钉">
               <el-row :gutter="20" style="margin-top: 15px">
                 <el-col :span="12" :offset="6" :pull="6">
-                  <el-form-item label="企业号Id" prop="dingAgentId">
+                  <!-- <el-form-item label="企业号Id" prop="dingAgentId">
                     <el-input v-model="baseForm.dingAgentId" clearable placeholder="请输入AgentId" />
-                  </el-form-item>
+                  </el-form-item> -->
+                  <jnpf-form-tip-item label="企业号Id" prop="dingAgentId" label-width="120px"
+                    tip-label="AgentId在钉钉开放平台获取" linkUrl="https://open-dev.dingtalk.com/fe/ai?hash=%23%2Fapp%2Fc37ad4b5-fc78-4de3-9ba1-bc4184820ce6%2Fbaseinfo#/app/c37ad4b5-fc78-4de3-9ba1-bc4184820ce6/baseinfo">
+                    <el-input v-model="baseForm.dingAgentId" clearable show-password placeholder="请输入AgentId" />
+                  </jnpf-form-tip-item>
                 </el-col>
                 <el-col :span="12" :offset="6" :pull="6">
-                  <el-form-item label="应用凭证" prop="dingSynAppKey">
+                  <!-- <el-form-item label="应用凭证" prop="dingSynAppKey">
                     <el-input v-model="baseForm.dingSynAppKey" clearable placeholder="请输入AppKey" />
-                  </el-form-item>
+                  </el-form-item> -->
+                  <jnpf-form-tip-item label="应用凭证" prop="dingSynAppKey" label-width="120px"
+                    tip-label="AppKey在钉钉开放平台获取" linkUrl="https://open-dev.dingtalk.com/fe/ai?hash=%23%2Fapp%2Fc37ad4b5-fc78-4de3-9ba1-bc4184820ce6%2Fbaseinfo#/app/c37ad4b5-fc78-4de3-9ba1-bc4184820ce6/baseinfo">
+                    <el-input v-model="baseForm.dingSynAppKey" clearable show-password placeholder="请输入AppKey" />
+                  </jnpf-form-tip-item>
                 </el-col>
                 <el-col :span="12" :offset="6" :pull="6">
-                  <el-form-item label="凭证密钥" prop="dingSynAppSecret">
+                  <!-- <el-form-item label="凭证密钥" prop="dingSynAppSecret">
                     <el-input v-model="baseForm.dingSynAppSecret" placeholder="请输入AppSecret" show-password>
                       <el-button slot="append" @click="checkDing" :loading="testDingLoading">连接测试
                       </el-button>
                     </el-input>
-                  </el-form-item>
+                  </el-form-item> -->
+                  <jnpf-form-tip-item label="凭证密钥" prop="dingSynAppSecret" label-width="120px"
+                    tip-label="AppSecret在钉钉开放平台获取" linkUrl="https://open-dev.dingtalk.com/fe/ai?hash=%23%2Fapp%2Fc37ad4b5-fc78-4de3-9ba1-bc4184820ce6%2Fbaseinfo#/app/c37ad4b5-fc78-4de3-9ba1-bc4184820ce6/baseinfo">
+                    <el-input v-model="baseForm.dingSynAppSecret" placeholder="请输入AppSecret" show-password>
+                      <el-button slot="append" @click="checkDing" :loading="testDingLoading">连接测试
+                      </el-button>
+                    </el-input>
+                  </jnpf-form-tip-item>
                 </el-col>
                 <!-- <el-col>
                   <el-form-item label="触发事件">
@@ -268,7 +321,7 @@
                     </el-table>
                   </el-form-item>
                 </el-col> -->
-                <el-col>
+                <!-- <el-col>
                   <el-form-item label="同步反馈">
                     <el-table :data="ddResults" border>
                       <el-table-column prop="synType" label="同步类型" key="synType"/>
@@ -285,7 +338,7 @@
                       </el-table-column>
                     </el-table>
                   </el-form-item>
-                </el-col>
+                </el-col> -->
                 <el-col>
                   <el-form-item>
                     <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitForm()">保
@@ -316,7 +369,7 @@
     </el-form>
     <el-dialog title="数据同步" :visible.sync="visible" class="JNPF-dialog JNPF-dialog_center sync-dialog" lock-scroll
       width="450px">
-      <!-- <div class="add-main">
+      <div class="add-main">
         <div class="add-item add-item-sys">
           <i class="add-icon icon-ym icon-ym-upload"></i>
           <div class="add-txt">
@@ -329,7 +382,7 @@
               同步</el-button>
           </div>
         </div>
-      </div> -->
+      </div>
       <div class="add-main">
         <div class="add-item add-item-sys">
           <i class="add-icons icon-ym icon-ym-download"></i>

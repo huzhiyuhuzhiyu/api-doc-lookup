@@ -126,7 +126,7 @@ export default {
         ],
         code: "",
         name: "",
-        state: 'normal',
+        noState: 'discard',
         deviceType: 'normal',
         classAttribute: "tool",
       },

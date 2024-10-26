@@ -67,8 +67,8 @@
 
                           <el-input v-model="planForm.bomText" placeholder="请输入是否有BOM" disabled v-if="!planForm.bomId">
                           </el-input>
-                          <el-input class="BOM_T" style="color: #3fb9f8;" @focus="lookBom(planForm)" v-model="planForm.productDrawingNo" placeholder="请输入是否有BOM"
-                            readonly v-else>
+                          <el-input class="BOM_T" style="color: #3fb9f8;" @focus="lookBom(planForm)"
+                            v-model="planForm.productDrawingNo" placeholder="请输入是否有BOM" readonly v-else>
                           </el-input>
                           <!-- <el-tooltip class="item" effect="dark" :content="planForm.productDrawingNo"
                             placement="top-start" v-else>
@@ -114,7 +114,7 @@
                         <el-form-item label="合格率" prop="qualificationRate">
                           <el-input v-model="planForm.qualificationRate" placeholder="请输入合格率"
                             :disabled='btnType == "look"' oninput="value=value.replace(/^(0+)|[^\d]+/g,'')"
-                            @blur="watchRate">
+                            @blur="watchRate(planForm.qualificationRate)">
                             <template slot="append">
                               <div>%</div>
                             </template>
@@ -136,7 +136,7 @@
                             :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2" maxlength="200" />
                         </el-form-item>
                       </el-col>
-                      <!-- <el-col :sm="24" :xs="24" class="special">
+                      <el-col :sm="24" :xs="24" class="special">
                         <div style="padding: 0 15px ;background-color: azure;">
                           <el-form-item label="下达数量">
                             <span class="lab_t" style="margin-left: 0">利用库存数量</span>
@@ -146,31 +146,33 @@
                             </el-input>
 
                             <span class="lab_t">可用库存数量</span>
-                            <span class="pointer" @click="viewAvailableQuantity()">{{ planForm.availableQuantity }}</span>
+                            <span class="pointer" @click="viewAvailableQuantity()">{{ planForm.availableQuantity
+                              }}</span>
 
                             <span
                               :style="planForm.productSource == 'assemble' || planForm.productSource == 'produce' ? 'background:#3fb9f8;color:#fff' : ''"
                               class="lab_t">生产数量</span>
-                            <el-input class="ipt2" v-model="planForm.produceQuantity" @blur="watchcg"
-                              placeholder="生产数量" :disabled='btnType == "look"'
+                            <el-input class="ipt2" v-model="planForm.productionQuantity" @blur="watchProduce"
+                              placeholder="生产数量"
+                              :disabled='btnType == "look" || planForm.productSource == "assemble" || planForm.productSource == "produce"'
                               oninput="value=value.replace(/^(0+)|[^\d]+/g,'')"></el-input>
 
                             <span :style="planForm.productSource == 'purchase' ? 'background:#3fb9f8;color:#fff' : ''"
                               class="lab_t">采购数量</span>
                             <el-input class="ipt3" v-model="planForm.purchaseQuantity" @blur="watchcg"
-                              placeholder="采购数量" :disabled='btnType == "look"'
+                              placeholder="采购数量" :disabled='btnType == "look" || planForm.productSource == "purchase"'
                               oninput="value=value.replace(/^(0+)|[^\d]+/g,'')"></el-input>
 
                             <span :style="planForm.productSource == 'out' ? 'background:#3fb9f8;color:#fff' : ''"
                               class="lab_t">外协数量</span>
-                            <el-input class="ipt4" v-model="planForm.outQuantity" @blur="watchcg"
-                              placeholder="外协数量" :disabled='btnType == "look"'
+                            <el-input class="ipt4" v-model="planForm.outsourcingQuantity" @blur="watchOut
+                              " placeholder="外协数量" :disabled='btnType == "look" || planForm.productSource == "out"'
                               oninput="value=value.replace(/^(0+)|[^\d]+/g,'')"></el-input>
 
                           </el-form-item>
                         </div>
-                      </el-col> -->
-                      <el-col :sm="6" :xs="24">
+                      </el-col>
+                      <!-- <el-col :sm="6" :xs="24">
                         <el-form-item label="安排采购数量" prop="purchaseQuantity">
 
                           <el-input v-model="planForm.purchaseQuantity" @blur="watchcg" placeholder="请输入安排采购数量"
@@ -192,7 +194,7 @@
                           <el-input v-model="planForm.finalPlanQuantity" placeholder="请输入最终计划数量" disabled>
                           </el-input>
                         </el-form-item>
-                      </el-col>
+                      </el-col> -->
 
                     </el-row>
 
@@ -287,7 +289,7 @@ export default {
   },
   data() {
     return {
-      formVisible:false,
+      formVisible: false,
       isattachmentswitch: '',
 
       bomFormVisible: false,
@@ -313,6 +315,8 @@ export default {
         qualificationRate: 100,
         relaxQuantity: 0,
         purchaseQuantity: 0,
+        outsourcingQuantity: 0,
+        productionQuantity: 0,
         utilizationQuantity: "",
         finalPlanQuantity: "",
         remark: "",
@@ -410,10 +414,10 @@ export default {
   },
   methods: {
     // 查看库存信息
-    viewAvailableQuantity(){
-      this.formVisible=true
-      this.$nextTick(()=>{
-        this.$refs.form.init(this.productData[0].productsId,'availableFlag',false,)
+    viewAvailableQuantity() {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.form.init(this.productData[0].productsId, 'availableFlag', false,)
       })
     },
     getBimBusinessDetail() {
@@ -440,7 +444,8 @@ export default {
       console.log(data);
       this.planForm.planQuantity = data.planQuantity
       this.planForm.relaxQuantity = Math.ceil(this.jnpf.numberFormat(this.jnpf.math('multiply', [100, this.jnpf.numberFormat(this.jnpf.math('divide', [this.planForm.planQuantity, this.planForm.qualificationRate]), 6)]), 6))
-      this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+      // this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+      this.planForm.finalPlanQuantity = this.planForm.productionQuantity
     },
     // 合格率
     // relaxQuantity 宽放 
@@ -456,11 +461,13 @@ export default {
         this.planForm.qualificationRate = 100
         this.planForm.relaxQuantity = Math.ceil(this.jnpf.numberFormat(this.jnpf.math('multiply', [100, this.jnpf.numberFormat(this.jnpf.math('divide', [this.planForm.planQuantity, this.planForm.qualificationRate]), 6)]), 6))
 
-        this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+        this.countFun1()
+        // this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
       } else if (1 <= Number(val) <= 100) {
         this.planForm.relaxQuantity = Math.ceil(this.jnpf.numberFormat(this.jnpf.math('multiply', [100, this.jnpf.numberFormat(this.jnpf.math('divide', [this.planForm.planQuantity, this.planForm.qualificationRate]), 6)]), 6))
 
-        this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+        this.countFun1()
+        // this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
       }
 
     },
@@ -469,55 +476,194 @@ export default {
       if (!this.planForm.relaxQuantity) {
         this.$message.error("宽放数量不能为空")
         this.planForm.relaxQuantity = Math.ceil(this.jnpf.numberFormat(this.jnpf.math('multiply', [100, this.jnpf.numberFormat(this.jnpf.math('divide', [this.planForm.planQuantity, this.planForm.qualificationRate]), 6)]), 6))
-        this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+        // this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+        this.countFun1()
       } else {
-        let total = this.jnpf.numberFormat(this.jnpf.math('add', [this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
-        if (Number(total) > Number(this.planForm.relaxQuantity)) {
-          this.$message.error("采购数量、利用库存数量之和不能超过宽放数量")
-          this.planForm.purchaseQuantity = 0
-          this.planForm.utilizationQuantity = 0
-          this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+        let total = this.jnpf.numberFormat(this.jnpf.math('add', [this.planForm.purchaseQuantity, this.planForm.utilizationQuantity, this.planForm.outsourcingQuantity, this.planForm.productionQuantity]), 6)
+        if (Number(total) > Number(this.planForm.relaxQuantity)) this.$message.error("采购数量、外协数量、生产数量、利用库存数量之和不能超过宽放数量")
+        this.countFun1()
+      }
+    },
+
+
+
+    countFun1() {
+
+      if (this.planForm.productSource == 'assemble' || this.planForm.productSource == 'produce') {
+        this.planForm.purchaseQuantity = 0
+        this.planForm.outsourcingQuantity = 0
+        if (this.planForm.availableQuantity >= this.planForm.relaxQuantity) {
+          this.planForm.utilizationQuantity = this.planForm.relaxQuantity
+          this.planForm.finalPlanQuantity = this.planForm.productionQuantity = 0
         } else {
-          this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+          this.planForm.utilizationQuantity = this.planForm.availableQuantity
+          this.planForm.finalPlanQuantity = this.planForm.productionQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.utilizationQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity]))
+        }
+        if (this.planForm.utilizationQuantity < 0) {
+          this.planForm.utilizationQuantity = 0
+          this.planForm.finalPlanQuantity = this.planForm.productionQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity, this.planForm.utilizationQuantity]), 6)
         }
       }
 
+      if (this.planForm.productSource == 'purchase') {
+        this.planForm.finalPlanQuantity = this.planForm.productionQuantity = 0
+        this.planForm.outsourcingQuantity = 0
+        if (this.planForm.availableQuantity >= this.planForm.relaxQuantity) {
+          this.planForm.utilizationQuantity = this.planForm.relaxQuantity
+          this.planForm.purchaseQuantity = 0
+        } else {
+          this.planForm.utilizationQuantity = this.planForm.availableQuantity
+          this.planForm.purchaseQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.utilizationQuantity, this.planForm.outsourcingQuantity, this.planForm.productionQuantity]))
+        }
+        if (this.planForm.utilizationQuantity < 0) {
+          this.planForm.utilizationQuantity = 0
+          this.planForm.purchaseQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.utilizationQuantity]), 6)
+        }
+      }
+      if (this.planForm.productSource == 'out') {
+        this.planForm.finalPlanQuantity = this.planForm.productionQuantity = 0
+        this.planForm.purchaseQuantity = 0
+        if (this.planForm.availableQuantity >= this.planForm.relaxQuantity) {
+          this.planForm.utilizationQuantity = this.planForm.relaxQuantity
+          this.planForm.outsourcingQuantity = 0
+        } else {
+          this.planForm.utilizationQuantity = this.planForm.availableQuantity
+          this.planForm.outsourcingQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.utilizationQuantity, this.planForm.purchaseQuantity, this.planForm.productionQuantity]))
+        }
+        if (this.planForm.utilizationQuantity < 0) {
+          this.planForm.utilizationQuantity = 0
+          this.planForm.outsourcingQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+        }
+      }
 
+    },
+    countFun2() {
+
+      if (this.planForm.productSource == 'assemble' || this.planForm.productSource == 'produce') {
+
+        if (this.planForm.availableQuantity >= this.planForm.relaxQuantity) {
+          this.planForm.utilizationQuantity = this.planForm.relaxQuantity
+          this.planForm.finalPlanQuantity = this.planForm.productionQuantity = 0
+        } else {
+          this.planForm.utilizationQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity]))
+        }
+        if (this.planForm.utilizationQuantity < 0) {
+          this.planForm.utilizationQuantity = 0
+          this.planForm.finalPlanQuantity = this.planForm.productionQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity, this.planForm.utilizationQuantity]), 6)
+        }
+      }
+
+      if (this.planForm.productSource == 'purchase') {
+
+        if (this.planForm.availableQuantity >= this.planForm.relaxQuantity) {
+          this.planForm.utilizationQuantity = this.planForm.relaxQuantity
+          this.planForm.purchaseQuantity = 0
+        } else {
+          this.planForm.utilizationQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity]))
+        }
+        if (this.planForm.utilizationQuantity < 0) {
+          this.planForm.utilizationQuantity = 0
+          this.planForm.purchaseQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.utilizationQuantity]), 6)
+        }
+      }
+      if (this.planForm.productSource == 'out') {
+
+        if (this.planForm.availableQuantity >= this.planForm.relaxQuantity) {
+          this.planForm.utilizationQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity,  this.planForm.purchaseQuantity,this.planForm.outsourcingQuantity]))
+          this.planForm.outsourcingQuantity = 0
+        } else {
+          this.planForm.utilizationQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity,  this.planForm.purchaseQuantity,this.planForm.outsourcingQuantity]))
+        }
+        if (this.planForm.utilizationQuantity < 0) {
+          this.planForm.utilizationQuantity = 0
+          this.planForm.outsourcingQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+        }
+      }
 
     },
     // 采购数量监听
     watchcg(val) {
+      let Nums = this.jnpf.numberFormat(this.jnpf.math('add', [this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity, this.planForm.productionQuantity, this.planForm.utilizationQuantity]), 6)
       if (Number(this.planForm.purchaseQuantity) > Number(this.planForm.relaxQuantity)) {
-        this.$message.error("安排采购数量不能超过宽放数量")
+        this.$message.error("采购数量不能超过宽放数量")
         this.planForm.purchaseQuantity = 0
-        this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+        // this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+        this.countFun2()
         return
       } else {
-        let total = this.jnpf.numberFormat(this.jnpf.math('add', [this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
-        if (Number(total) > Number(this.planForm.relaxQuantity)) {
-          this.$message.error("采购数量、利用库存数量之和不能超过宽放数量")
-          this.planForm.purchaseQuantity = 0
-          this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
-        } else {
-          this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
-        }
+        if (Nums > Number(this.planForm.relaxQuantity)) this.$message.error("采购数量、外协数量、生产数量、利用库存数量之和不能超过宽放数量")
+        this.countFun2()
+      }
+
+    },
+    // 外协数量监听
+    watchOut(val) {
+      let Nums = this.jnpf.numberFormat(this.jnpf.math('add', [this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity, this.planForm.productionQuantity, this.planForm.utilizationQuantity]), 6)
+      if (Number(this.planForm.outsourcingQuantity) > Number(this.planForm.relaxQuantity)) {
+        this.$message.error("外协数量不能超过宽放数量")
+        this.planForm.outsourcingQuantity = 0
+        // this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+        this.countFun2()
+        return
+      } else {
+        if ((Nums > Number(this.planForm.relaxQuantity))) this.$message.error("采购数量、外协数量、生产数量、利用库存数量之和不能超过宽放数量")
+        this.countFun2()
       }
     },
-    // 利用数量监听
-    watchly(val) {
-      if (Number(this.planForm.utilizationQuantity) > Number(this.planForm.relaxQuantity)) {
-        this.$message.error("利用库存数量不能超过宽放数量")
-        this.planForm.utilizationQuantity = 0
-        this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+    // 生产数量监听
+    watchProduce(val) {
+      let Nums = this.jnpf.numberFormat(this.jnpf.math('add', [this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity, this.planForm.productionQuantity, this.planForm.utilizationQuantity]), 6)
+      if (Number(this.planForm.productionQuantity) > Number(this.planForm.relaxQuantity)) {
+        this.$message.error("生产数量不能超过宽放数量")
+        this.planForm.productionQuantity = 0
+        // this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+        this.countFun2()
         return
       } else {
-        let total = this.jnpf.numberFormat(this.jnpf.math('add', [this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
-        if (Number(total) > Number(this.planForm.relaxQuantity)) {
-          this.$message.error("采购数量、利用库存数量之和不能超过宽放数量")
-          this.planForm.utilizationQuantity = 0
-          this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
-        } else {
-          this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+        if ((Nums > Number(this.planForm.relaxQuantity))) this.$message.error("采购数量、外协数量、生产数量、利用库存数量之和不能超过宽放数量")
+        this.countFun2()
+      }
+    },
+
+    // 利用数量监听
+    watchly(val) {
+      let total = this.jnpf.numberFormat(this.jnpf.math('add', [this.planForm.purchaseQuantity, this.planForm.utilizationQuantity, this.planForm.outsourcingQuantity, this.planForm.productionQuantity]), 6)
+      if (Number(this.planForm.utilizationQuantity) > Number(this.planForm.availableQuantity)) {
+        this.$message.error("利用库存数量不能超过可用库存数量")
+        if (this.planForm.availableQuantity) this.planForm.utilizationQuantity = 0
+        if (this.planForm.availableQuantity >= this.planForm.relaxQuantity) this.planForm.utilizationQuantity = this.planForm.relaxQuantity
+        else this.planForm.utilizationQuantity = this.planForm.availableQuantity
+
+
+      }
+      else if (Number(this.planForm.utilizationQuantity) > Number(this.planForm.relaxQuantity)) {
+        this.$message.error("利用库存数量不能超过宽放数量")
+        this.planForm.utilizationQuantity = 0
+        this.countFun2()
+
+        // this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+        return
+      }
+      if (Number(total) > Number(this.planForm.relaxQuantity)) {
+        this.$message.error("采购数量、外协数量、生产数量、利用库存数量之和不能超过宽放数量")
+        this.planForm.utilizationQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity]))
+        // this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+      } else {
+        if (this.planForm.productSource == 'assemble' || this.planForm.productSource == 'produce') {
+
+     
+            this.planForm.finalPlanQuantity = this.planForm.productionQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity, this.planForm.utilizationQuantity]), 6)
+        }
+
+        if (this.planForm.productSource == 'purchase') {
+
+        
+            this.planForm.purchaseQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.utilizationQuantity]), 6)
+        }
+        if (this.planForm.productSource == 'out') {
+
+         
+            this.planForm.outsourcingQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
         }
       }
     },
@@ -638,8 +784,9 @@ export default {
           } else {
             this.planForm.utilizationQuantity = JSON.parse(JSON.stringify(this.planForm.availableQuantity))
           }
+          this.countFun1()
 
-          this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+          // this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
         })
       }
       if (btnType == 'edit' || btnType == 'look') {
@@ -710,8 +857,9 @@ export default {
             } else {
               this.planForm.utilizationQuantity = JSON.parse(JSON.stringify(this.planForm.availableQuantity))
             }
+            this.countFun1()
 
-            this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+            // this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
           })
         }
 
@@ -971,9 +1119,10 @@ export default {
 }
 
 
-.special{
-  padding: 0!important;
+.special {
+  padding: 0 !important;
 }
+
 .special ::v-deep .el-form-item {
   padding-bottom: 20px;
 
@@ -1002,7 +1151,8 @@ export default {
   vertical-align: top;
   font-size: 16px;
 }
-.BOM_T ::v-deep .el-input__inner{
-  color:rgb(63, 185, 248)
+
+.BOM_T ::v-deep .el-input__inner {
+  color: rgb(63, 185, 248)
 }
 </style>

@@ -5,8 +5,7 @@
         <div class="JNPF-common-layout-center JNPF-flex-main">
           <div class="JNPF-preview-main org-form">
             <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']">
-              <el-page-header @back="goBack" :content="dialogTitle + `工序外协订单`" v-if="!!dialogTitle" />
-              <div style="font-size:18px" v-else>新建工序外协订单</div>
+              <el-page-header @back="goBack" content="新建工序外协订单" />
               <div class="options" v-if="type != 'look'">
                 <el-button type="success" :loading="btnLoading" @click="handleSubmit('draft')">
                   保存草稿
@@ -14,7 +13,7 @@
                 <el-button type="primary" :loading="btnLoading" @click="handleSubmit('submit')">
                   保存并提交
                 </el-button>
-                <el-button @click="goBack" v-if="!!dialogTitle">{{ $t('common.cancelButton') }}</el-button>
+                <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
               </div>
             </div>
             <div class="main">
@@ -64,15 +63,14 @@
                       </el-row>
                     </el-collapse-item>
 
-                    <el-collapse-item title="产品信息" name="productInfo">
+                    <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
                       <div v-if="type !== 'look'">
-                        <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                          icon="el-icon-plus" :disabled="type == 'look' ? true : false"
-                          @click="openSeleceProductDialog()">
+                        <el-button type="text" style="margin-right:8px; font-size:14px!important" icon="el-icon-plus"
+                          :disabled="type == 'look' ? true : false" @click="openSeleceProductDialog()">
                           选择产品
                         </el-button>
                         |
-                        <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                        <el-button type="text" style="margin-right:8px;font-size:14px!important"
                           :disabled="type == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
                           批量删除
                         </el-button>
@@ -315,6 +313,9 @@ import { getbimProductAttributesList, getbimProductAttributes } from '@/api/mast
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import { getBimProcessList } from '@/api/bimProcess/index'
+import {
+  detailProduct,
+} from '@/api/masterDataManagement/productManage'
 export default {
   components: {
     SourceArea,
@@ -729,11 +730,7 @@ export default {
   },
   created() {
     this.getBimBusinessDetail()
-    console.log(this.$route.query.alert, 'this.$route.query.alert')
-    if (this.$route.query.alert) {
-      this.dialogTitle = '新建'
-    }
- 
+
     this.fetchData('EPDH')
     this.getBusInfo()
   },
@@ -802,9 +799,7 @@ export default {
       this.btnLoading = false
     },
     goBom() {
-      this.$router.push({
-        path: '/outsourcingManagement/processOutsourcingOrders/orderList'
-      })
+       this.$emit('close',true)
     },
     // 产品组件回调
     addth(id, data) {
@@ -1113,72 +1108,51 @@ export default {
       this.dataFormTwo.data = []
     },
     goBack() {
-      this.$router.go(-1)
       this.$emit('close', true)
     },
-    init(id, type, data) {
-      console.log(id, type, data)
+    init(data, type) {
       // this.fetchData('QGD')
       // 此处判断用户选择新增还是编辑
-      this.dataForm.id = id || ''
-
-      this.dialogTitle = type == 'add' ? '新建' : type == 'edit' ? '编辑' : `查看`
+      console.log("转外协的数据", data);
       this.type = type
-      this.$nextTick(() => {
-        this.$refs['elForm'].resetFields()
-        if (!this.dataForm.id) {
-          this.clearData()
-        } else if (this.dataForm.id && this.type == 'add') {
-          this.loading = true
-          getpurProcurementRequireDetail(this.dataForm.id).then((res) => {
-            this.dataForm = res.data
-            if (res.data.attachmentList) {
-              res.data.attachmentList.forEach((item) => {
-                this.datafilelist.push({
-                  name: item.document.fullName,
-                  fileSize: item.document.fileSize,
-                  filename: item.document.filePath,
-                  id: item.document.id,
-                  url: item.url
-                })
-              })
-            }
-
-            purProcurementRequirementsList(this.dataForm.id).then((res) => {
-              this.dataForm.approvalStatus = ''
-              this.dataForm.submitDate = ''
-              this.dataForm.approvalCompletionDate = ''
-              this.dataForm.id = ''
-              this.dataForm.documentStatus = ''
-              this.dataFormTwo.data = res.data
-              this.dataFormTwo.data.forEach((item) => {
-                item.id = ''
-              })
-            })
-            // 审批
-            // this.$nextTick(() => { this.getApproverData() })
-          })
-        } else {
-          this.loading = true
-          getpurProcurementRequireDetail(this.dataForm.id).then((res) => {
-            this.dataForm = res.data
-            if (res.data.attachmentList) {
-              res.data.attachmentList.forEach((item) => {
-                this.datafilelist.push({
-                  name: item.document.fullName,
-                  fileSize: item.document.fileSize,
-                  filename: item.document.filePath,
-                  id: item.document.id,
-                  url: item.url
-                })
-              })
-            }
-            purProcurementRequirementsList(this.dataForm.id).then((res) => {
-              this.dataFormTwo.data = res.data
-            })
-          })
+      let productInfo = {}
+      detailProduct(data.productsId).then(res => {
+        console.log("产品详情", res);
+        productInfo = res.data
+        let obj = {
+          productSource: productInfo.productSource, // 产品来源 采购
+          classAttribute: productInfo.classAttribute,
+          productsId: productInfo.id, // 产品id
+          productName: productInfo.name, // 产品名称
+          productCode: productInfo.code, // 产品编码
+          productDrawingNo: productInfo.drawingNo, // 品名规格
+          ratio: productInfo.ratio, // 转换系数
+          calculationDirection: productInfo.calculationDirection, // 计算方向
+          mainUnit: productInfo.mainUnit, // 主单位
+          purchaseQuantity: productInfo.purchaseQuantity, // 数量
+          price: productInfo.price, // 含税单价
+          totalAmount: productInfo.totalAmount, // 金额(含税)
+          taxRate: Number(productInfo.taxRate), // 税率
+          excludingTaxPrice: productInfo.excludingTaxPrice, // 不含税单价
+          taxAmount: productInfo.taxAmount, // 税额
+          excludingTaxAmount: productInfo.excludingTaxAmount, // 金额(不含税)
+          deputyUnit: productInfo.deputyUnit, // 副单位
+          planQuantity: '', //计划数量主
+          planQuantity2: '', //计划数量副
+          remark: productInfo.remark,
+          deliveryDate: this.dataForm.deliveryDate, // 交期
+          processId:data.processId,
+          processName:data.processName,
+          processCode:data.processCode,
+          noproducerNum:this.jnpf.numberFormat(this.jnpf.math('subtract', [data.waitReportNum, data.outsourcingQuantity]), 6),
+          workOrderId:data.id,
+          productionOrderId:data.productionOrderId,
         }
+        this.dataFormTwo.data .push(obj)
       })
+
+
+
     },
     // 表单提交
     handleSubmit(type) {
@@ -1382,6 +1356,10 @@ export default {
   border-top: none !important;
 }
 
+.productInfo ::v-deep .el-collapse-item__wrap {
+  padding-top: 0;
+}
+
 ::v-deep .el-collapse-item__content {
   padding-bottom: 0px;
 }
@@ -1400,7 +1378,6 @@ export default {
 ::v-deep .el-tabs__header {
   /* padding-left: 10px !important; */
   padding-bottom: 5px !important;
-  margin-bottom: 0 !important;
   background: #fff;
 }
 

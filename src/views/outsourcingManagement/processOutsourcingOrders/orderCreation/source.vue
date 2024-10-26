@@ -183,8 +183,8 @@ export default {
       ],
       // 供应商搜索条件
       ProcessTableSearchList: [
-        { prop: 'code', label: '工序编码', type: 'input' },
-        { prop: 'name', label: '工序名称', type: 'input' }
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'code', label: '产品编码', type: 'input' },
       ],
       // 供应商请求参数
       ProcessListRequestObj: {

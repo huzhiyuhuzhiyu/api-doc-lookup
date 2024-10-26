@@ -63,7 +63,7 @@
                       <span class="orderNo">单号：{{ item.orderNo }}</span>
                     </div>
                     <!-- <div class="label_title"> 品名规格:{{item.productDrawingNo}}</div>                    -->
-                    <div class="label_title"> 品名规格:6933ZZC03.4GN11AA6</div>
+                    <div class="label_title"> 品名规格:{{ item.productDrawingNo }}</div>
                     <div class="label_title bold" style="color: #3fb9f8;"> 总生产数量:<span>{{ item.productionQuantity
                         }}</span></div>
                     <div class="label_title bold" style="color: #67c23A;"> 已完成数量:<span>{{ item.completedQuantity

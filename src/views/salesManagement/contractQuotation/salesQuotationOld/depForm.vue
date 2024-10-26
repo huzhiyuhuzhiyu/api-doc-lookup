@@ -136,7 +136,7 @@
                         <el-autocomplete v-model="scope.row.productDrawingNo" :fetch-suggestions="querySearchAsync"
                           placeholder="请输入" prefix-icon="el-icon-search" style="width: 100%;"
                           @select="handleSelect(scope.row, scope.$index, $event)"
-                          @keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)"
+                          @stop.keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)"
                           :disabled="status"></el-autocomplete>
                         <!-- <el-input v-model="scope.row.drawingNo" placeholder="请输入" :disabled="status" maxlength="100"
                           style="width: 100%;"  /> -->
@@ -356,7 +356,7 @@
                     <el-autocomplete v-model="scope.row.productDrawingNo" :fetch-suggestions="querySearchAsync"
                       placeholder="请输入" prefix-icon="el-icon-search"
                       @select="handleSelect(scope.row, scope.$index, $event)"
-                      @keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)"
+                      @stop.keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)"
                       :disabled="status"></el-autocomplete>
                     <!-- <el-input v-model="scope.row.drawingNo" placeholder="请输入" :disabled="status" maxlength="100"
                           style="width: 100%;"  /> -->
@@ -575,6 +575,7 @@ export default {
   mixins: [busFlow,flowMixin],
   data() {
     return {
+      enterFlag:false,
       exportFormVisible: false,
       historyPriceTotal: 0,
       historyPriceData: [],
@@ -898,6 +899,7 @@ export default {
 
     },
     handleSelect(row, index, item) {
+      console.log(666,item);
       //返回的意见点击选择触发事件
       let customerDrawingNumber
       let obj = JSON.parse(JSON.stringify(this.createdData))
@@ -947,6 +949,7 @@ export default {
             // this.$set(this.dataFormTwo.lines, index, item.data)
             this.watchPrice(this.dataFormTwo.lines[index], index)
           }
+          console.log(666777);
           this.dataFormTwo.lines.push(obj)
         })
       }
@@ -981,11 +984,11 @@ export default {
       console.log(data, idx);
       let obj = JSON.parse(JSON.stringify(this.createdData))
       obj.taxRate = this.taxRate * 1
-
-      this.dataFormTwo.lines.push(obj)
+      console.log(8989);
       if (data.num || data.unitPrice) return
       getDetailByDrawNo(data.productDrawingNo).then(res => {
         if (res.data) {
+      this.dataFormTwo.lines.push(obj)
           res.data.unitPrice = ""
           res.data.customerDrawingNumber = data.customerDrawingNumber
           res.data.productCode = res.data.code
@@ -993,7 +996,6 @@ export default {
           res.data.productsId = res.data.id
           res.data.taxRate = this.taxRate*1
           this.$set(this.dataFormTwo.lines, idx, res.data)
-          console.log(this.dataFormTwo.lines);
           let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.taxRate));
           if (!exists && res.data.taxRate) {
             let obj = {

@@ -61,6 +61,7 @@
     "codemirror": "^5.58.2",
     "compression-webpack-plugin": "^4.0.0",
     "dayjs": "^1.8.29",
+    "dhtmlx-gantt": "^9.0.1",
     "dplayer": "^1.27.1",
     "driver.js": "0.9.5",
     "dropzone": "5.5.1",

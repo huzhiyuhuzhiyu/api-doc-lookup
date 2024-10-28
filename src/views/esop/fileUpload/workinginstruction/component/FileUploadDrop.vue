@@ -200,7 +200,7 @@ export default {
             loading: false,
             activeFile: {},
             fileList: this.value,
-
+            fetchArr:[]
         }
     },
     watch: {
@@ -386,6 +386,7 @@ export default {
             if (this.code != null) formData.append("code", this.code)
             if (this.parentId != null) formData.append("parentId", this.parentId)
             this.loading = true
+            this.fetchArr.push(1)
             //调用上传文件接口
             uploaderWithCode(formData).then(({data}) => {
                 this.fileList.push({
@@ -400,9 +401,11 @@ export default {
                 this.$emit('input', this.fileList)
             }).catch(err => {
                 this.$message.error(err.message || `当前文件上传失败`)
-                this.loading = false
-            }).finally(() => {
-                this.loading = false
+             }).finally(() => {
+                 this.fetchArr.pop()
+                if(this.fetchArr.length === 0){
+                    this.loading = false
+                }
             })
         },
         // 预览图片

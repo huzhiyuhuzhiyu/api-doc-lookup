@@ -1155,9 +1155,14 @@ export default {
       let submitFlag = true
       this.dataFormTwo.data.map((ele, i) => {
         console.log(ele, 'ppp')
-        if (ele.outShipmentList.length == 0) {
+        if (!ele.purchaseQuantity) {
           submitFlag = false
-          return this.$message.error(`第${i + 1}行发料清单为空`)
+          this.$message.error(`产品信息第${i + 1}行：数量不能为空`)
+        } else {
+          if (ele.outShipmentList.length == 0) {
+            submitFlag = false
+            return this.$message.error(`产品信息第${i + 1}行：发料清单为空`)
+          }
         }
       })
       if (submitFlag) {

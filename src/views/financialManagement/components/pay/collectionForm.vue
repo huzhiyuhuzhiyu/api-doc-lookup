@@ -12,8 +12,6 @@
         </div>
       </div>
       <div class="main">
-        <!-- <el-dialog append-to-body :title="showLabel + '款'" :close-on-click-modal="false" :close-on-press-escape="false"
-        :visible.sync="visible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px"> -->
         <el-collapse v-model="activeNames">
           <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
 
@@ -44,7 +42,11 @@
                       maxlength="20" disabled />
                   </el-form-item>
                 </el-col>
-
+                <el-col :span="8">
+                  <el-form-item label="抵扣金额" prop="deductionAmount">
+                    <el-input v-model="dataForm.deductionAmount" maxlength="20" disabled />
+                  </el-form-item>
+                </el-col>
                 <el-col :span="12">
                   <el-form-item :label="Number(dataForm.totalReconciliationAmount) >= 0 ? showLabel + '款方式' : '退款方式'"
                     prop="paymentMethod">
@@ -91,7 +93,7 @@
             <div style="display: flex;flex-direction: column;height: 100%;">
               <el-table style="border: 1px solid #e3e7ee;" @selection-change="handeleProductInfoData" hasC fixedNO
                 v-loading="formLoading" :data="payData" custom-column ref="payRef" :checkSelectable="checkSelectable">
-
+                <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                 <el-table-column prop="remainingAmount" :label="showLabel + '款剩余金额'" min-width="160" />
                 <el-table-column prop="paymentDate" :label="showLabel + '款日期'" min-width="180" />
@@ -102,8 +104,8 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="remark" label="备注" min-width="160" />
-                <el-table-column prop="createTime" label="创建时间" min-width="160" />
-                <el-table-column prop="createByName" label="创建人" min-width="140" />
+                <el-table-column prop="createTime" label="创建时间" width="180" />
+                <el-table-column prop="createByName" label="创建人" width="100" />
               </el-table>
             </div>
 
@@ -111,12 +113,6 @@
         </el-collapse>
 
       </div>
-      <!-- <span slot="footer" class="dialog-footer">
-          <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-          <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
-            提交</el-button>
-        </span>
-      </el-dialog> -->
     </div>
   </transition>
 </template>
@@ -124,7 +120,7 @@
 <script>
 import { getfinAccountList, getfinAccountDetail } from '@/api/ReconciliaRePayments/index'
 
-import { addfinInvoiceRecords, getfinPaymentRecords } from '@/api/financialManagement/index'
+import { addfinInvoiceRecords, getfinPaymentRecords, addfinPaymentRecords } from '@/api/financialManagement/index'
 import formValidate from "@/utils/formValidate";
 export default {
   components: {
@@ -144,23 +140,6 @@ export default {
   data() {
     return {
       activeNames: ['productInfo', 'basicInfo'],
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }],
       payData: [],
       payForm: {
         partnerId: '',
@@ -273,10 +252,12 @@ export default {
             paymentDate: '',
             remark: '',
             paymentAmount: '',
+            duePayAmount: res.data.totalReconciliationAmount - (res.data.totalPaymentAmount ? res.data.totalPaymentAmount : 0),
             accountsReceivableReconciliationId: this.dataForm.accountsReceivableReconciliationId
           }
           this.dataForm.paymentAmount = this.dataForm.dueAmount
           this.payForm.partnerId = res.data.cooperativePartnerId
+          this.orgainDataForm = JSON.parse(JSON.stringify(this.dataForm))
           if (Number(this.dataForm.totalReconciliationAmount) < 0) {
             this.dataRule.paymentMethod.message = '请选择退款方式'
             this.dataRule.paymentDate[0].message = '请选择退款日期'
@@ -347,21 +328,45 @@ export default {
         }
       })
     },
+    // 处理与抵扣金额方法
+    handleAmount(arr) {
+      console.log(arr, 'ppiijjj')
+      let remaining = this.dataForm.duePayAmount
+      const newArr = arr.map(obj => {
+        const num = +obj.remainingAmount
+        let newNum = 0;
+        if (remaining >= num) {
+          newNum = num;
+          remaining -= num;
+        } else {
+          newNum = remaining;
+          remaining = 0;
+        }
+        return { num: num - newNum, id: obj.id, deductionAmount: newNum };
+      });
+      return newArr
+    },
     // 选中列表的数据 将其带到进行抵抗计算 传值等
     handeleProductInfoData(val) {
+      console.log(val, 'pppp')
       this.selectData = val
       this.dataForm.deductionAmount = 0
       this.dataForm.dueAmount = this.orgainDataForm.dueAmount
       //  勾选id数组
-      if (this.selectData.length) {
+      if (this.selectData.length !== 0) {
         const numArr = this.handleAmount(this.selectData)
+        console.log(numArr, 'numArr')
         this.prePayIdList = numArr.map(item => item.id)
         this.dataForm.deductionAmount = numArr.reduce((acc, item) => {
+          console.log(acc, 'acc')
+          console.log(item.deductionAmount, 'pppp')
           return acc * 1 + item.deductionAmount * 1
         }, 0)
+        console.log(this.dataForm.deductionAmount, 'this.dataForm.deductionAmount')
       } else {
         this.prePayIdList = []
         this.dataForm.deductionAmount = 0
+        this.$set(this.dataForm, 'deductionAmount', 0)
       }
     },
   }

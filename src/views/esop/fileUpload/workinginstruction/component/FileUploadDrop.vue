@@ -395,6 +395,7 @@ export default {
                     id: data.id,
                     url: data.url,
                     fullName: data.fullName,
+                    filePath:data.filename
                 })
                 this.$emit('input', this.fileList)
             }).catch(err => {

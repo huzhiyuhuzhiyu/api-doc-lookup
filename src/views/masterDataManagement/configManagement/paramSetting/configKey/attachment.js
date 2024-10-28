@@ -235,11 +235,11 @@ export default {
         description: '开启后，在设备报修新建、编辑、查看都会显示附件操作。',
         mainModule: '设备管理'
     },
-    fj_sbwx: {
-        configKeyLabel: '启用设备维修',
-        description: '开启后，在设备维修新建、编辑、查看都会显示附件操作。',
-        mainModule: '设备管理'
-    },
+    // fj_sbwx: {
+    //     configKeyLabel: '启用设备维修',
+    //     description: '开启后，在设备维修新建、编辑、查看都会显示附件操作。',
+    //     mainModule: '设备管理'
+    // },
     fj_bfgl: {
         configKeyLabel: '启用报废管理',
         description: '开启后，在报废管理新建、编辑、查看都会显示附件操作。',
@@ -254,5 +254,45 @@ export default {
         configKeyLabel: '启用点检任务管理',
         description: '开启后，在点检任务管理新建、编辑、查看都会显示附件操作。',
         mainModule: '设备管理'
+    },
+    fj_gjda: {
+      configKeyLabel: '启用工具档案设置',
+      description: '开启后，在工具档案设置新建、编辑、查看都会显示附件操作。',
+      mainModule: '工夹器量具'
+    },
+    fj_gjwxzsk: {
+      configKeyLabel: '启用工具维修知识库',
+      description: '开启后，在工具维修知识库新建、编辑、查看都会显示附件操作。',
+      mainModule: '工夹器量具'
+    },
+    fj_gjly: {
+      configKeyLabel: '启用工具领用',
+      description: '开启后，在工具领用新建、编辑、查看都会显示附件操作。',
+      mainModule: '工夹器量具'
+    },
+    fj_gjgh: {
+      configKeyLabel: '启用工具归还',
+      description: '开启后，在工具归还新建、编辑、查看都会显示附件操作。',
+      mainModule: '工夹器量具'
+    },
+    fj_gjbx: {
+      configKeyLabel: '启用工具报修',
+      description: '开启后，在工具报修新建、编辑、查看都会显示附件操作。',
+      mainModule: '工夹器量具'
+    },
+    fj_gjbf: {
+      configKeyLabel: '启用报废订单',
+      description: '开启后，在报废订单新建、编辑、查看都会显示附件操作。',
+      mainModule: '工夹器量具'
+    },
+    fj_gjbyrwgl: {
+      configKeyLabel: '启用保养任务管理',
+      description: '开启后，在保养任务管理新建、编辑、查看都会显示附件操作。',
+      mainModule: '工夹器量具'
+    },
+    fj_gjjdrwgl: {
+      configKeyLabel: '启用检定任务管理',
+      description: '开启后，在检定任务管理新建、编辑、查看都会显示附件操作。',
+      mainModule: '工夹器量具'
     }
 }

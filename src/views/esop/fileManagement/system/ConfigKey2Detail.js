@@ -175,4 +175,140 @@ export default {
         },
         closeEventName: "close", //关闭事件名称 不写默认为close
     },
+    "fj_sbgysda": {
+      title: "设备供应商档案",
+      path: "basicData/equipmentManagement/equipmentSupplierProfile/Form.vue", //需要调用的组件路径
+      params: {
+
+      },
+      closeEventName: "close",
+    },
+    "fj_bjly": {
+      title: "备件领用",
+      path: "dailyManagement/sparepartsmanagement/sparepartsrequisition/Form.vue", //需要调用的组件路径
+      params: {
+
+      },
+      closeEventName: "close",
+    },
+    "fj_bjgh": {
+      title: "备件归还",
+      path: "dailyManagement/sparepartsmanagement/sparepartsReturn/Form.vue", //需要调用的组件路径
+      params: {
+
+      },
+      closeEventName: "close",
+    },
+    "fj_sbda": {
+      title: "设备档案",
+      path: "basicData/deviceProfile/deviceProfileset/Form.vue", //需要调用的组件路径
+      params: {
+
+      },
+      closeEventName: "close",
+    },
+    "fj_sbwxzsk": {
+      title: "设备维修知识库",
+      path: "basicData/deviceProfile/maintenanceknowledgeBase/Form.vue", //需要调用的组件路径
+      params: {
+
+      },
+      closeEventName: "close",
+    },
+    "fj_sbbx": {
+      title: "设备报修",
+      path: "dailyManagement/maintenanceManagement/deviceservice/Form.vue", //需要调用的组件路径
+      params: {
+
+      },
+      closeEventName: "close",
+    },
+    "fj_bfgl": {
+      title: "报废申请单",
+      path: "dailyManagement/scrapManagement/announceInvalidated/Form.vue", //需要调用的组件路径
+      params: {
+
+      },
+      closeEventName: "close",
+    },
+    "fj_byrwgl": {
+      title: "保养任务",
+      path: "dailyManagement/Maintenance/maintenanceTasks/Form.vue", //需要调用的组件路径
+      params: {
+
+      },
+      closeEventName: "close",
+    },
+    "fj_byrwgl": {
+      title: "点检任务",
+      path: "dailyManagement/pointInspection/inspectionTask/Form.vue", //需要调用的组件路径
+      params: {
+
+      },
+      closeEventName: "close",
+    },
+    "fj_gjda": {
+      title: "工具档案设置",
+      path: "basicData/deviceProfile/toolProfilesettings/Form.vue", //需要调用的组件路径
+      params: {
+
+      },
+      closeEventName: "close",
+    },
+    "fj_gjwxzsk": {
+      title: "工具维修知识库",
+      path: "basicData/deviceProfile/toolknowledgeBase/Form.vue", //需要调用的组件路径
+      params: {
+
+      },
+      closeEventName: "close",
+    },
+    "fj_gjly": {
+      title: "工具领用",
+      path: "dailyManagement/borrowingReturn/circulate/Form.vue", //需要调用的组件路径
+      params: {
+
+      },
+      closeEventName: "close",
+    },
+    "fj_gjgh": {
+      title: "工具归还",
+      path: "dailyManagement/borrowingReturn/toolreturn/Form.vue", //需要调用的组件路径
+      params: {
+
+      },
+      closeEventName: "close",
+    },
+    "fj_gjbx": {
+      title: "工具报修",
+      path: "toolclampmeasuring/toolManagement/deviceservice/Form.vue", //需要调用的组件路径
+      params: {
+
+      },
+      closeEventName: "close",
+    },
+    "fj_gjbf": {
+      title: "报废申请单",
+      path: "toolclampmeasuring/scrapManagement/announceInvalidated/Form.vue", //需要调用的组件路径
+      params: {
+
+      },
+      closeEventName: "close",
+    },
+    "fj_gjbyrwgl": {
+      title: "保养任务",
+      path: "toolclampmeasuring/Maintenance/maintenanceTasks/Form.vue", //需要调用的组件路径
+      params: {
+
+      },
+      closeEventName: "close",
+    },
+    "fj_gjjdrwgl": {
+      title: "检定任务",
+      path: "toolclampmeasuring/verification/inspectionTask/Form.vue", //需要调用的组件路径
+      params: {
+
+      },
+      closeEventName: "close",
+    }
 }

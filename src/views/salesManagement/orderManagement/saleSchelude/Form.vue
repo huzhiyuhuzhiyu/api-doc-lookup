@@ -72,7 +72,7 @@
 
 
 
-                <el-table-column prop="progressStatus" label="进度状态" width="120" :key="68">
+                <el-table-column prop="progressStatus" label="订单状态" width="120" :key="68">
                   <template slot-scope="scope">
                     <div v-if="scope.row.progressStatus == 'ps001'">已下订单</div>
                     <div v-if="scope.row.progressStatus == 'ps002'">已转计划</div>
@@ -83,7 +83,11 @@
                     <div v-if="scope.row.progressStatus == 'ps007'">已发货</div>
                   </template>
                 </el-table-column>
-
+                <el-table-column prop="totalProgress" label="订单进度" width="120" :key="68">
+                  <template slot-scope="scope">
+                     <div>30%</div>
+                  </template>
+                </el-table-column>
 
                 <el-table-column prop="num" label="订单数量" width="120" :key="58">
                   <template slot-scope="scope">
@@ -96,36 +100,27 @@
                   </template>
                 </el-table-column>
 
-
-                <el-table-column prop="receivedQuantity" label="入库数量" width="120" :key="38">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.receivedQuantity ? scope.row.receivedQuantity : 0 }}</div>
-                  </template>
-                </el-table-column>
                 <el-table-column prop="outboundQuantity" label="出库数量" width="120" :key="38">
                   <template slot-scope="scope">
                     <div>{{ scope.row.outboundQuantity ? scope.row.outboundQuantity : 0 }}</div>
                   </template>
-
                 </el-table-column>
-                <el-table-column prop="num" label="订单金额" width="100" :key="7">
-                </el-table-column>
-                <el-table-column prop="price" label="收款金额" width="120" :key="11">
-                </el-table-column>
-                <!-- <el-table-column prop="taxRate" label="税率" width="120" :key="171">
+                <el-table-column prop="receivedQuantity" label="生产入库数量" width="120" :key="38">
                   <template slot-scope="scope">
-                    <div>{{ scope.row.taxRate }}%</div>
+                    <div>{{ scope.row.receivedQuantity ? scope.row.receivedQuantity : 0 }}</div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
-                <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column> -->
-
+            
+                <!-- <el-table-column prop="num" label="订单金额" width="100" :key="7">
+                </el-table-column>
+                <el-table-column prop="price" label="收款金额" width="120" :key="11">
+                </el-table-column> 
                 <el-table-column prop="deliveryDate" label="欠款金额" width="180" :key="131"></el-table-column>
                 <el-table-column prop="excludingTaxAmount" label="开票金额" width="140" :key="126">
                   <template slot-scope="scope">
                     <div>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</div>
                   </template>
-                </el-table-column>
+                </el-table-column> -->
 
                 <el-table-column label="操作" width="100" fixed="right">
                   <template slot-scope="scope">
@@ -687,8 +682,8 @@
                 </JNPF-table>
               </div>
               <!-- 收款记录 -->
-              <div v-if="categoryType == 'receivePay'">
-                <JNPF-table ref="receivePay" :height="height" :data="productData" fixedNO v-loading="tableloading"
+              <div v-if="categoryType == 'receivePayRefund'">
+                <JNPF-table ref="receivePayRefund" :height="height" :data="productData" fixedNO v-loading="tableloading"
                   @row-click="handleRowClick">
                   <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                   </el-table-column>
@@ -951,14 +946,16 @@ export default {
         { code: "finishpurchase", fullName: "成品采购", },
         { code: "rawpurchase", fullName: "原材料采购", },
         { code: "finishedOut", fullName: "成品外协", },
-        { code: "processOut", fullName: "工序外协", },
+        { code: "processOut", fullName: "子件外协", },
         // { code: "outbounwarehouse", fullName: "出库记录", },
         { code: "shipmentRecord", fullName: "发货记录", },
         { code: "returnRecord", fullName: "退货记录", },
         { code: "outinboundwarehouse", fullName: "出入库记录", },
         { code: "reconciliation", fullName: "对账记录", },
-        { code: "receivePay", fullName: "收款记录", },
-        { code: "refund", fullName: "退款记录", },
+        { code: "receivePayRefund", fullName: "收退款记录", },
+        
+        // { code: "receivePay", fullName: "收款记录", },
+        // { code: "refund", fullName: "退款记录", },
         { code: "invoice", fullName: "开票记录", },
 
       ],
@@ -1208,11 +1205,15 @@ export default {
         })
       } else if (this.categoryType == 'reconciliation') {
         // 对账记录
-      } else if (this.categoryType == 'receivePay') {
+      }else if (this.categoryType == 'receivePayRefund') {
         // 收款记录
-      } else if (this.categoryType == 'refund') {
-        // 退款记录
-      } else if (this.categoryType == 'invoice') {
+      } 
+      // else if (this.categoryType == 'receivePay') {
+      //   // 收款记录
+      // } else if (this.categoryType == 'refund') {
+      //   // 退款记录
+      // }
+       else if (this.categoryType == 'invoice') {
         // 开票记录
       }
     },

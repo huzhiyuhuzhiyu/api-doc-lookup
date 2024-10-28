@@ -1997,7 +1997,7 @@ export default {
              
               this.outboundExternalSendFormVisible = true
               this.$nextTick(() => {
-                this.$refs.outboundExternalSendREFForm.init(arr, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
+                this.$refs.outboundExternalSendREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
               })
             } else {
               let arr = []

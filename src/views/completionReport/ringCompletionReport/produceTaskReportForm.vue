@@ -175,7 +175,7 @@
                 <div style="padding: 0 20px;">
 
                   <el-col :sm="24" :xs="24">
-                    <el-form-item label="合格数量:" prop="qualifiedQuantity" class="iptLabel">
+                    <el-form-item label="合格数量:" prop="qualifiedQuantity" class="iptLabel"  :style="{ marginBottom: iptLabelMargin }">
                       <el-input v-model="currentProcess.qualifiedQuantity" placeholder="合格数量" class="ipt"
                         @blur="handleBlur(item)" />
                     </el-form-item>
@@ -353,6 +353,7 @@ export default {
           { validator: this.formValidate('noZero', '合格数量不能为0', (errMsg) => { this.$message.error(errMsg) }), trigger: 'blur' },
         ]
       },
+      iptLabelMargin:'18px',
     }
   },
 
@@ -410,6 +411,12 @@ export default {
 
       this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity]), 6)
       this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
+        if(!this.currentProcess.qualifiedQuantity){
+          this.iptLabelMargin='38px'
+        }else{
+          this.iptLabelMargin='18px'
+
+        }
     },
     handleBlur2() {
       this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity]), 6)
@@ -1009,5 +1016,9 @@ box-card:nth-child(n+3) {
 .external_text ::v-deep .el-descriptions-item__label {
   font-size: 18px;
   font-weight: bold;
+}
+::v-deep .el-form-item__error{
+  font-size: 16px!important;
+  margin: 15px 0
 }
 </style>

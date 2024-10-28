@@ -83,7 +83,7 @@
 
 <script>
 import { getBimBusinessSwitchConfigList, editBimBusinessData } from '@/api/basicData/index'
-import {getLabel, isEmpty, notEmpty} from '@/utils/index'
+import {getLabel, isEmpty, notEmpty, sleep} from '@/utils/index'
 import {FileCategoryType} from "@/views/esop/fileCategoryManagement/constants";
 import ConfigKey from "@/views/masterDataManagement/configManagement/paramSetting/ConfigKey";
 Vue.prototype.$getLabel = getLabel
@@ -120,6 +120,9 @@ export default {
   computed: {
       FileCategoryType() {
           return FileCategoryType
+      },
+      isAttachment(){
+          return this.activeName === 'attachment'
       },
     stateWidth() {
       let width = 60
@@ -237,7 +240,7 @@ export default {
       //   this.listQuery.annexFlag = 0
       //   this.getData(1)
       // }
-      else if (this.activeName === 'attachment') {
+      else if (this.isAttachment) {
         this.listQuery.pageSize = -1
         this.listQuery.businessCode = 'attachment'
         this.getData(3)
@@ -248,54 +251,58 @@ export default {
       //   this.getData(2)
       // }
     },
-    getData(index) {
+        getData(index) {
       this.formLoading = true
         this.tableRerender = false
       getBimBusinessSwitchConfigList(this.listQuery)
         .then((res) => {
             let list = []
 
-          if (this.activeName == 'product') {
+          if (this.activeName === 'product') {
               list = res.data.product
-          } else if (this.activeName == 'produce') {
+          } else if (this.activeName === 'produce') {
               list = res.data.produce
-          } else if (this.activeName == 'warehouse') {
+          } else if (this.activeName === 'warehouse') {
               list = res.data.warehouse
-          } else if (this.activeName == 'attachment') {
-              list = res.data.attachment.filter((item) => item.configKey !== '' || item.configKey == 'fj_qzkh')
+          } else if (this.isAttachment) {
+              list = res.data.attachment.filter((item) => item.configKey !== '' || item.configKey === 'fj_qzkh')
           }
 
-            list.forEach((item) => {
-            if (item.configValue1 == '1') {
-              this.$set(item, 'state', true)
-              this.$set(item, 'radio', 1)
+          list.forEach((item) => {
+            if (item.configValue1 === '1') {
+                item.state = true
+                item.radio = 1
             } else {
-              this.$set(item, 'state', false)
-              this.$set(item, 'radio', 0)
+                item.state = false
+                item.radio = 0
             }
-            if (item.configKey == 'inbound_purchase' || item.configKey == 'inbound_external') {
+            if (item.configKey === 'inbound_purchase' || item.configKey === 'inbound_external') {
               item.radioOff = '按收货单入库'
               item.radioOn = '按订单入库'
-            } else if (item.configKey == 'outbound_sale_send') {
+            } else if (item.configKey === 'outbound_sale_send') {
               item.radioOff = '按通知单入库'
               item.radioOn = '按订单入库'
             }
               const configKeyObj = ConfigKey[item.configKey]
               if(notEmpty(configKeyObj)){
-                  this.$set(item, 'description', configKeyObj.description)
-                  this.$set(item, 'configKeyLabel',configKeyObj.configKeyLabel)
-                  this.activeName === 'attachment' &&  this.$set(item, 'mainModule',configKeyObj.mainModule)
+                  item.description = configKeyObj.description
+                  item.configKeyLabel =configKeyObj.configKeyLabel
+                  this.isAttachment && (item.mainModule = configKeyObj.mainModule)
               }else{
-                  this.$set(item, 'configKeyLabel',item.configKey)
+                  item.configKeyLabel =item.configKey
+                  item.mainModule = " 暂无设置"
               }
-
-            this.$set(item, 'editFlag', false)
+              item.editFlag = false
           })
-          this.tableData =  list.sort((a,b)=> b.mainModule.localeCompare(a.mainModule))
+          this.isAttachment && list.sort((a,b)=> b.mainModule.localeCompare(a.mainModule))
+          this.tableData = list
           this.formLoading = false
         })
-        .catch(() => (this.formLoading = false)).finally(() => {
-          this.tableRerender = true
+        .catch((err) => {
+            console.error(err)
+        }).finally( () => {
+          this.formLoading = false
+           this.tableRerender = true
         })
     },
     stateChangeFn(data){
@@ -324,7 +331,7 @@ export default {
           })
       },
     async stateChange(data) {
-        if(this.activeName === 'attachment' && data.state){
+        if(this.isAttachment && data.state){
             if(isEmpty(data.configValue2)){
                 this.$message.error('请先选择文件分类')
                 await this.$nextTick()

@@ -51,11 +51,11 @@
                         批量删除
                       </el-button>
                       |
-                      <el-table style="border: 1px solid #e3e7ee;" :fixedNO="true"
+                      <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true" hasC
                         @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
                         id="table" border>
-                        <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column>
-                        <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                        <!-- <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column>
+                        <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                           <template slot="header">
                             <span class="required">*</span>
@@ -325,7 +325,7 @@
                             </el-button>
                           </template>
                         </el-table-column>
-                      </el-table>
+                      </JNPF-table>
                     </el-form>
                   </div>
                   <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">

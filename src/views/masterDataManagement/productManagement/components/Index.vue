@@ -109,7 +109,11 @@
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           ref="dataTable" :setColumnDisplayList="columnList">
-          <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
+          <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label"
+            :formatter="item.formatter || toFormatter" :sortable="item.sortable ? 'custom' : false"
+            :align="item.align || 'left'"
+            v-bind="{ minWidth: item.hasOwnProperty('minWidth') ? item.width : 140 }"></el-table-column>
+          <!-- <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
             <template slot="header" slot-scope="scope">
               {{ classAttributeText }}编码
             </template>
@@ -118,12 +122,13 @@
                 {{ scope.row.code }}
               </el-link>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
-          <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom">
-            <template slot="header" slot-scope="scope">
+          <el-table-column prop="name" label="备件名称" 
+            min-width="140" sortable="custom">
+            <!-- <template slot="header" slot-scope="scope">
               {{ classAttributeText }}名称
-            </template>
+            </template> -->
           </el-table-column>
 
           <el-table-column prop="productCategoryName" label="产品分类" width="120">
@@ -308,6 +313,18 @@ export default {
       type: Object,
       default() {
         return {
+          tableItems: [
+            {
+              align: 'left',
+              formatter: '',
+              jnpfKey: '',
+              label: '订单号',
+              minWidth: 180,
+              prop: 'code',
+              sortable: true,
+              width: 180
+            }
+          ],
           code: '',
           name: '',
           orderItems: [

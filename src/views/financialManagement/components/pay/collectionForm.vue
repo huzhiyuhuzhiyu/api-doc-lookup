@@ -87,23 +87,24 @@
             </el-form>
           </el-collapse-item>
 
-          <el-collapse-item title="产品信息" name="productInfo">
+          <el-collapse-item title="预收款信息" name="productInfo">
             <div style="display: flex;flex-direction: column;height: 100%;">
-              ooooo
-              <JNPF-table @selection-change="handeleProductInfoData" hasC fixedNO v-loading="formLoading"
-                :data="payData" custom-column ref="payRef" :checkSelectable="checkSelectable">
-                <!-- <el-table-column prop="remainingAmount" :label="showLabel2 + '款剩余金额'" min-width="160" />
-                <el-table-column prop="paymentDate" :label="showLabel2 + '款日期'" min-width="180" />
-                <el-table-column prop="paymentMethod" :label="showLabel2 + '款方式'" min-width="160">
+              <el-table style="border: 1px solid #e3e7ee;" @selection-change="handeleProductInfoData" hasC fixedNO
+                v-loading="formLoading" :data="payData" custom-column ref="payRef" :checkSelectable="checkSelectable">
+
+                <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                <el-table-column prop="remainingAmount" :label="showLabel + '款剩余金额'" min-width="160" />
+                <el-table-column prop="paymentDate" :label="showLabel + '款日期'" min-width="180" />
+                <el-table-column prop="paymentMethod" :label="showLabel + '款方式'" min-width="160">
                   <template slot-scope="scope">
                     <div v-if="scope.row.paymentMethod === 'transfer_accounts'">转账</div>
                     <div v-if="scope.row.paymentMethod === 'draft'">汇票</div>
                   </template>
-</el-table-column> -->
+                </el-table-column>
                 <el-table-column prop="remark" label="备注" min-width="160" />
                 <el-table-column prop="createTime" label="创建时间" min-width="160" />
                 <el-table-column prop="createByName" label="创建人" min-width="140" />
-              </JNPF-table>
+              </el-table>
             </div>
 
           </el-collapse-item>
@@ -143,6 +144,23 @@ export default {
   data() {
     return {
       activeNames: ['productInfo', 'basicInfo'],
+      tableData: [{
+        date: '2016-05-02',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-04',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1517 弄'
+      }, {
+        date: '2016-05-01',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1519 弄'
+      }, {
+        date: '2016-05-03',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1516 弄'
+      }],
       payData: [],
       payForm: {
         partnerId: '',

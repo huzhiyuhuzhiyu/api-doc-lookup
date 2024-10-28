@@ -49,16 +49,16 @@
 
         <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO show-summary
           :summary-method="getSummaries" :fixedNO="true" @sort-change="sortChange" :setColumnDisplayList="columnList">
-          <template v-for="item in tableItems">
-            <el-table-column :key="item.prop" :prop="item.prop" :label="item.label" :fixed="item.fixed || false"
-              :min-width="item.minWidth || 120" :sortable="item.sortable" />
+          <template>
+            <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label"
+              :fixed="item.fixed || false" :min-width="item.minWidth || 120" :sortable="item.sortable" />
           </template>
 
           <el-table-column label="操作" min-width="180" fixed="right">
             <template slot-scope="scope">
               <el-button size="mini" type="text" :disabled="Math.abs(scope.row.totalReconciliationAmount) - Math.abs(scope.row.totalPaymentAmount) == 0
-                  ? true
-                  : false
+                ? true
+                : false
                 " @click="addOrUpdateHandle(scope.row.id, 'pay')">
                 {{ reconciliationType !== 'receivable' ? '付款' : '收款' }}
               </el-button>

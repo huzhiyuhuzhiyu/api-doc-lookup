@@ -195,7 +195,7 @@ export default {
             <el-table-column prop="createByName" label="创建人" width="100" />
             <el-table-column prop="status" label="启用状态" width="120" align="center">
                 <template slot-scope="scope">
-                    <el-switch @change="changeState(scope.row)" v-model="scope.row.enabledMark"
+                    <el-switch @change="changeState(scope.row)" v-model="scope.row.enabledMark" :disabled="true"
                                :active-value="true" :inactive-value="false">
                     </el-switch>
                 </template>

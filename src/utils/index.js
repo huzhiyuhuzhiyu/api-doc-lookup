@@ -500,3 +500,13 @@ export function increaseNumber(obj,valueField, targetValue, duration=500) {
 
     requestAnimationFrame(animate);
 }
+
+
+/**
+ * 延时执行
+ * @param time
+ * @returns {Promise<unknown>}
+ */
+export function sleep(time){
+    return new Promise(resolve=>setTimeout(resolve,time))
+}

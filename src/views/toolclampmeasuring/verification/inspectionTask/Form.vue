@@ -115,7 +115,7 @@
               </el-collapse-item>
             </el-collapse>
           </el-tab-pane>
-          <el-tab-pane label="附件" name="annex">
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
             <UploadWj v-model="datafilelist" :disabled="btnType == 'look'" :detailed="btnType == 'look'"></UploadWj>
           </el-tab-pane>
         </el-tabs>
@@ -129,12 +129,14 @@
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { addverification, updateverification, detailverification } from '@/api/dailyManagement/Maintenance'
 import { getOrganizeInfo } from '@/api/permission/organize'
-import { stateEquEquipment } from '@/api/basicData/index'
+import { stateEquEquipment,getBimBusinessDetail } from '@/api/basicData/index'
 import { getOrganization } from '@/api/permission/user'
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
   data() {
     return {
+      isattachmentswitch: '',
+      categoryId: '',
       activeNames: ["basicInfo", "xmxx"],
       datafilelist: [],
       ProductListRequestObj: {
@@ -239,12 +241,25 @@ export default {
       selectRows: []
     }
   },
+  created() {
+    this.getBimBusinessDetail()
+  },
   mounted() {
     let tBody = document.querySelectorAll('.el-table')[1]
     tBody.style.height = 'auto'
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_gjjdrwgl'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
+      })
+    },
     //表格某一行被点击
     rowaction(row) {
       this.$refs['dataTable'].$refs.JNPFTable.toggleRowSelection(row)
@@ -422,7 +437,9 @@ export default {
           if (this.datafilelist.length) {
             this.datafilelist.map((item, index) => {
               item.bimAttachments = {
-                businessType: '',
+                businessType: 'system_attachment',
+                configKey: 'fj_sbda',
+                categoryId: this.categoryId,
                 documentId: item.id,
                 fileFlag: '',
                 sort: index

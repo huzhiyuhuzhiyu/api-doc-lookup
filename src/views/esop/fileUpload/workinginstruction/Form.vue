@@ -206,7 +206,7 @@ export default {
         async initPage(){
             const hasId = notEmpty(this.id)
             await this.basicInit(this.id, this.type, this.approvalFlag)
-            if(hasId && this.dataForm.approvalFlag && this.dataForm.documentStatus !== DocumentStatus.DRAFT){
+            if(hasId && this.dataForm.approvalFlag && this.dataForm.documentStatus === DocumentStatus.SUBMIT){
                return  this.getFlowDetail(this.id)
             }
             this.getBusInfo(this.flowCode)

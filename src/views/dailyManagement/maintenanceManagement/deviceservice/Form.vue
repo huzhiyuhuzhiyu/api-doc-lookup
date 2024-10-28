@@ -290,7 +290,7 @@
             </el-collapse>
 
           </el-tab-pane>
-          <el-tab-pane label="报修附件" name="annex" v-if="isattachmentswitch == '1'">
+          <el-tab-pane label="报修附件" name="annex">
             <UploadWj v-model="datafilelist" :disabled="btnType == 'look'" :detailed="btnType == 'look'"></UploadWj>
           </el-tab-pane>
         </el-tabs>
@@ -659,9 +659,9 @@ export default {
       _index: ''
     }
   },
-  created() {
-    this.getBimBusinessDetail()
-  },
+  // created() {
+  //   this.getBimBusinessDetail()
+  // },
   mounted() {
     let tBody = document.querySelectorAll('.el-table')[1]
     tBody.style.height = 'auto'
@@ -1157,9 +1157,7 @@ export default {
       if (this.datafilelist.length) {
         this.datafilelist.map((item, index) => {
           item.bimAttachments = {
-            businessType: 'system_attachment',
-            configKey: 'fj_sbwx',
-            categoryId: this.categoryId,
+            businessType: '',
             documentId: item.id,
             fileFlag: '',
             sort: index

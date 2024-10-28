@@ -1,5 +1,4 @@
 <template>
-  <div>
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
@@ -442,7 +441,6 @@
       </div>
     </transition>
 
-  </div>
 </template>
 <script>
 import { getfinAccountList, getfinAccountDetail } from '@/api/ReconciliaRePayments/index'
@@ -607,9 +605,8 @@ export default {
 
 ::v-deep .el-tabs__header {
   padding: 0px !important;
-  padding-bottom: 10px !important;
-  margin-bottom: 0 !important;
   background: #fff;
+  margin-bottom: 5px;
 }
 
 ::v-deep .JNPF-common-page-header.noButtons {

@@ -2331,7 +2331,7 @@ export default {
         item.productName = item.name
         item.productCode = item.code
         item.productsId = item.id
-        item.price = item.salesPrice
+        this.$set(item,'price',item.salesPrice)
         item.taxRate = item.taxRate * 1
         if (item.taxRate) {
           item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.salesPrice) / (1 + (Number(item.taxRate)) / 100), 2)

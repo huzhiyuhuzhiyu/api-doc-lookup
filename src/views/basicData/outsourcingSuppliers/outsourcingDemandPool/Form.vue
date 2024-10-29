@@ -270,7 +270,7 @@
 </template>
 <script>
 import SourceArea from '@/views/outsourcingManagement/productOutsourcingOrder/orderCreation/source.vue'
-import { insertPurchaseOrder, partnerProductPrice, priceList } from '@/api/purchasingAndOutsourcingOrders/index'
+import { insertOutOrder, partnerProductPrice, priceList } from '@/api/purchasingAndOutsourcingOrders/index'
 import { getCooperativeData, getcategoryTree, getBimBusinessDetail } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 import workFlow from '@/components/WorkFlow/settingBus.vue'
@@ -896,16 +896,22 @@ export default {
     changePurchaseQuantity(index, val) {
       // this.dataFormTwo.data[index].purchaseQuantity = val
       this.$set(this.dataFormTwo.data[index], 'purchaseQuantity', val)
-
-      let obj = {
-        productsId: this.dataFormTwo.data[index].productsId,
-        purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
+      if (this.dataFormTwo.data[index].purchaseQuantity) {
+        let obj = {
+          productsId: this.dataFormTwo.data[index].productsId,
+          purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
+        }
+        // 通过需求池id 获取明细的数据
+        getShipmentList(obj).then((res) => {
+          console.log(res, 'p')
+          this.dataFormTwo.data[index].outShipmentList = res.data
+          this.dataFormTwo.data[index].outShipmentList.forEach(item => {
+            item.demandQuantity = this.dataFormTwo.data[index].purchaseQuantity
+          })
+          console.log(this.dataFormTwo.data[index].outShipmentList, 'o')
+        })
       }
-      // 通过需求池id 获取明细的数据
-      getShipmentList(obj).then((res) => {
-        console.log(res, 'p')
-        this.dataFormTwo.data[index].outShipmentList = res.data
-      })
+
 
       if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
         this.dataFormTwo.data[index].purchaseQuantity2 = this.numberFormat(
@@ -917,18 +923,7 @@ export default {
         )
       }
     },
-    // 副数量输入事件
-    changePlanQuantity2(index, val) {
-      if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
-        this.dataFormTwo.data[index].purchaseQuantity = this.numberFormat(
-          this.dataFormTwo.data[index].purchaseQuantity2 / this.dataFormTwo.data[index].ratio
-        )
-      } else {
-        this.dataFormTwo.data[index].purchaseQuantity = this.numberFormat(
-          this.dataFormTwo.data[index].purchaseQuantity2 * this.dataFormTwo.data[index].ratio
-        )
-      }
-    },
+   
     goBack() {
       this.$emit('close')
     },
@@ -955,6 +950,11 @@ export default {
 
         getShipmentList(obj).then((res) => {
           this.$set(this.dataFormTwo.data[i], 'outShipmentList', res.data)
+          this.dataFormTwo.data[i].outShipmentList.forEach(item => {
+            item.demandQuantity = this.dataFormTwo.data[i].purchaseQuantity
+          })
+          console.log(this.dataFormTwo.data[i].outShipmentList, 'o')
+
         })
 
         console.log(this.dataFormTwo.data[i], 'ppppp')
@@ -976,32 +976,7 @@ export default {
       })
       this.getBusInfo()
     },
-    // 侧边拉出产品信息
-    async openSource(id) {
-      priceList(id).then((res) => {
-        this.sourceFormVisible = true
-        this.$nextTick(() => {
-          this.$refs.sourceForm.init(res.data, this.dataForm.deliveryDate)
-        })
-      })
-    },
-    // 侧边栏提交
-    sourceFormConfirm(selectData) {
-      const data = [
-        {
-          all: {
-            ...selectData,
-            fixedPrice: selectData.price,
-            id: selectData.cooperativePartnerId,
-            code: selectData.cooperativePartnerIdCode,
-            name: selectData.cooperativePartnerIdName
-          }
-        }
-      ]
-      this.supplierdata('', data)
-      this.sourceFormVisible = false
-    },
-
+   
     // 表单提交
     async handleSubmit(type) {
       this.btnLoading = true
@@ -1049,7 +1024,7 @@ export default {
         this.btnLoading = true
         let dataTwo = []
         dataTwo = this.dataFormTwo.data.map((obj) => {
-          return { ...obj, procurementDemandPoolId: obj.id, productsId: obj.id, id: null }
+          return { ...obj, procurementDemandPoolId: obj.id, productsId: obj.productsId, id: null }
         })
         this.dataForm.attachmentList = this.datafilelist
         this.dataForm.purchaseOrderLines = dataTwo
@@ -1058,7 +1033,7 @@ export default {
           flowData: this.flowData
         }
         console.log(_data, '_')
-        insertPurchaseOrder(_data)
+        insertOutOrder(_data)
           .then((res) => {
             if (res.msg === 'Success') res.msg = '保存成功'
             this.$message({

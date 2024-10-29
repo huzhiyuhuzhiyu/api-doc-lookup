@@ -1061,15 +1061,17 @@ export default {
     changePurchaseQuantity(index, val) {
       // this.dataFormTwo.data[index].purchaseQuantity = val
       this.$set(this.dataFormTwo.data[index], 'purchaseQuantity', val)
-
-      let obj = {
-        productsId: this.dataFormTwo.data[index].productsId,
-        purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
+      if (this.dataFormTwo.data[index].purchaseQuantity) {
+        let obj = {
+          productsId: this.dataFormTwo.data[index].productsId,
+          purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
+        }
+        // 通过需求池id 获取明细的数据
+        getShipmentList(obj).then((res) => {
+          this.dataFormTwo.data[index].outShipmentList = res.data
+        })
       }
-      // 通过需求池id 获取明细的数据
-      getShipmentList(obj).then((res) => {
-        this.dataFormTwo.data[index].outShipmentList = res.data
-      })
+
 
       if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
         this.dataFormTwo.data[index].purchaseQuantity2 = this.numberFormat(

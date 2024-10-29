@@ -17,11 +17,13 @@
           <template v-for="item in tabs">
             <!-- <el-tab-pane :label="item.tabName" :name="item.tabCode" :key="item.tabCode"> -->
             <el-collapse v-model="activeNames">
-              <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+              <el-collapse-item title="基本信息" name="basicInfo"
+                :class="['finish_product', 'semi_finished', 'raw_material', 'accessories'].includes(classAttribute) ? orderInfo : ''">
 
                 <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
               </el-collapse-item>
-              <el-collapse-item title="其他信息" name="otherInfo">
+              <el-collapse-item title="其他信息" name="otherInfo"
+                v-if="['finish_product', 'semi_finished', 'raw_material', 'accessories'].includes(classAttribute)">
                 <JNPF-col v-model="dataForm" :tabContent="otherItems" ref="dataForm" :openMode="openMode" />
               </el-collapse-item>
             </el-collapse>
@@ -110,6 +112,28 @@ export default {
         this.dataForm[tc.prop] = tc.value || '' // 设置默认value
         if (this.classAttribute !== 'semi_finished') {
           if (tc.prop === 'saleFlag' || tc.prop === 'tradeFlag') {
+            tc.render = false
+          }
+        }
+        if (!['finish_product', 'semi_finished', 'raw_material', 'accessories'].includes(this.classAttribute)) {
+          console.log(this.classAttribute, 'this.classAttribute666')
+          if (tc.prop === 'productCategoryName') {
+            tc.label = `${this.productName.slice(0, 2)}分类`
+            tc.itemRules = [{ required: true, message: `请选择${this.productName.slice(0, 2)}分类`, trigger: "no" }]
+          } else if (tc.prop === 'code') {
+            tc.label = `${this.productName.slice(0, 2)}编码`
+          } else if (tc.prop === 'name') {
+            tc.label = `${this.productName.slice(0, 2)}名称`
+          } else if (tc.prop === 'productSource') {
+            tc.label = `${this.productName.slice(0, 2)}来源`
+            tc.options = [{ label: "采购", value: "purchase" }]
+            tc.value = 'purchase'
+            tc.itemDisabled = true
+          } else if (tc.prop === 'productStatus') {
+            tc.label = `${this.productName.slice(0, 2)}状态`
+          } else if (tc.prop === 'mainUnit') {
+            tc.label = '单位'
+          } else if (['deputyUnit', 'ratio', 'calculationDirection', 'brand'].includes(tc.prop)) {
             tc.render = false
           }
         }

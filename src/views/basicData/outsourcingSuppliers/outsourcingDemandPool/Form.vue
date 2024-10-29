@@ -5,9 +5,9 @@
         <div class="JNPF-common-page-header">
           <el-page-header @back="goBack" content="生成外协订单" />
           <div class="options">
-            <!-- <el-button type="success" :loading="btnLoading" @click="dataFormSubmit('draft')">
-              保存草稿</el-button> -->
-            <el-button type="primary" :loading="btnLoading" @click="handleSubmit()">
+            <el-button type="success" :loading="btnLoading" @click="handleSubmit('draft')">
+              保存草稿</el-button>
+            <el-button type="primary" :loading="btnLoading" @click="handleSubmit('submit')">
               {{ $t('common.submitButton') }}
             </el-button>
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
@@ -57,13 +57,6 @@
                         <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column>
                         <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
-                          <!-- <template slot-scope="scope">
-                            <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'">
-                              <div class="viewData">
-                                <span>{{ scope.row.productDrawingNo }}</span>
-                              </div>
-                            </el-form-item>
-                          </template> -->
                           <template slot="header">
                             <span class="required">*</span>
                             品名规格
@@ -144,8 +137,7 @@
                           </template>
                           <template slot-scope="scope">
                             <el-form-item :rules="productRules.taxRate">
-                              <!-- <el-input oninput="value = value.replace(/\D/g,'')" maxlength="2"
-                                v-model="scope.row.taxRate" placeholder="请输入税率"></el-input> -->
+
                               <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;">
                                 <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                                   :value="item.enCode"></el-option>
@@ -184,8 +176,6 @@
                           </template>
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'">
-                              <!-- <el-input v-model="scope.row.taxAmount" maxlength="20" placeholder="请输入税额">
-                          </el-input> -->
                               <div class="viewData">
                                 <span>{{ scope.row.taxAmount ? scope.row.taxAmount : 0 }}</span>
                               </div>
@@ -199,8 +189,6 @@
                           </template>
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
-                              <!-- <el-input v-model="scope.row.excludingTaxAmount" maxlength="20"
-                                placeholder="请输入金额(不含税)"></el-input> -->
                               <div class="viewData">
                                 <span>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</span>
                               </div>
@@ -282,7 +270,7 @@
 </template>
 <script>
 import SourceArea from '@/views/outsourcingManagement/productOutsourcingOrder/orderCreation/source.vue'
-import { insertPurchaseOrder, partnerProductPrice, priceList } from '@/api/purchasingAndOutsourcingOrders/index'
+import { insertOutOrder, partnerProductPrice, priceList } from '@/api/purchasingAndOutsourcingOrders/index'
 import { getCooperativeData, getcategoryTree, getBimBusinessDetail } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 import workFlow from '@/components/WorkFlow/settingBus.vue'
@@ -434,7 +422,7 @@ export default {
               params: [
                 '',
                 (errMsg, index) => {
-                  this.$message.error(`产品信息第${index + 1}行：数量(主)${errMsg}`)
+                  this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`)
                 }
               ]
             }),
@@ -598,12 +586,18 @@ export default {
     ...mapGetters(['userInfo']),
     computedValue() {
       // 在这里计算第三个输入框的值
+      // 在这里计算第三个输入框的值
+      let excludingCount = 0
       let count = 0
+      let taxAmountCount = 0
       this.dataFormTwo.data.forEach((item) => {
-        count += item.excludingTaxAmount * 1
+        count += item.totalAmount * 1
+        excludingCount += item.excludingTaxAmount * 1
+        taxAmountCount += item.taxAmount * 1
       })
-      this.dataForm.excludingTaxTotalAmount = this.jnpf.numberFormat(count)
-
+      this.dataForm.totalAmount = this.jnpf.numberFormat(count)
+      this.dataForm.excludingTaxTotalAmount = this.jnpf.numberFormat(excludingCount)
+      this.dataForm.taxAmount = this.jnpf.numberFormat(taxAmountCount)
       return this.dataForm.excludingTaxTotalAmount
     },
     computedValue2() {
@@ -908,16 +902,22 @@ export default {
     changePurchaseQuantity(index, val) {
       // this.dataFormTwo.data[index].purchaseQuantity = val
       this.$set(this.dataFormTwo.data[index], 'purchaseQuantity', val)
-
-      let obj = {
-        productsId: this.dataFormTwo.data[index].productsId,
-        purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
+      if (this.dataFormTwo.data[index].purchaseQuantity) {
+        let obj = {
+          productsId: this.dataFormTwo.data[index].productsId,
+          purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
+        }
+        // 通过需求池id 获取明细的数据
+        getShipmentList(obj).then((res) => {
+          console.log(res, 'p')
+          this.dataFormTwo.data[index].outShipmentList = res.data
+          this.dataFormTwo.data[index].outShipmentList.forEach(item => {
+            item.demandQuantity = this.dataFormTwo.data[index].purchaseQuantity
+          })
+          console.log(this.dataFormTwo.data[index].outShipmentList, 'o')
+        })
       }
-      // 通过需求池id 获取明细的数据
-      getShipmentList(obj).then((res) => {
-        console.log(res, 'p')
-        this.dataFormTwo.data[index].outShipmentList = res.data
-      })
+
 
       if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
         this.dataFormTwo.data[index].purchaseQuantity2 = this.numberFormat(
@@ -929,18 +929,7 @@ export default {
         )
       }
     },
-    // 副数量输入事件
-    changePlanQuantity2(index, val) {
-      if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
-        this.dataFormTwo.data[index].purchaseQuantity = this.numberFormat(
-          this.dataFormTwo.data[index].purchaseQuantity2 / this.dataFormTwo.data[index].ratio
-        )
-      } else {
-        this.dataFormTwo.data[index].purchaseQuantity = this.numberFormat(
-          this.dataFormTwo.data[index].purchaseQuantity2 * this.dataFormTwo.data[index].ratio
-        )
-      }
-    },
+
     goBack() {
       this.$emit('close')
     },
@@ -967,6 +956,11 @@ export default {
 
         getShipmentList(obj).then((res) => {
           this.$set(this.dataFormTwo.data[i], 'outShipmentList', res.data)
+          this.dataFormTwo.data[i].outShipmentList.forEach(item => {
+            item.demandQuantity = this.dataFormTwo.data[i].purchaseQuantity
+          })
+          console.log(this.dataFormTwo.data[i].outShipmentList, 'o')
+
         })
 
         console.log(this.dataFormTwo.data[i], 'ppppp')
@@ -988,43 +982,24 @@ export default {
       })
       this.getBusInfo()
     },
-    // 侧边拉出产品信息
-    async openSource(id) {
-      priceList(id).then((res) => {
-        this.sourceFormVisible = true
-        this.$nextTick(() => {
-          this.$refs.sourceForm.init(res.data, this.dataForm.deliveryDate)
-        })
-      })
-    },
-    // 侧边栏提交
-    sourceFormConfirm(selectData) {
-      const data = [
-        {
-          all: {
-            ...selectData,
-            fixedPrice: selectData.price,
-            id: selectData.cooperativePartnerId,
-            code: selectData.cooperativePartnerIdCode,
-            name: selectData.cooperativePartnerIdName
-          }
-        }
-      ]
-      this.supplierdata('', data)
-      this.sourceFormVisible = false
-    },
 
     // 表单提交
-    async handleSubmit() {
+    async handleSubmit(type) {
       this.btnLoading = true
-      let submitFlag = true // 自动聚焦是否可用
+      let submitFlag = true
       this.dataFormTwo.data.map((ele, i) => {
-        if (ele.outShipmentList.length == 0) {
+        console.log(ele, 'ppp')
+        if (!ele.purchaseQuantity) {
           submitFlag = false
-          return this.$message.error(`第${i + 1}行发料清单为空`)
+          this.$message.error(`产品信息第${i + 1}行：数量不能为空`)
+        } else {
+          if (ele.outShipmentList.length == 0) {
+            submitFlag = false
+            return this.$message.error(`产品信息第${i + 1}行：发料清单为空`)
+          }
         }
       })
-
+      this.dataForm.documentStatus = type
       let form_1 = this.$refs['elForm']
       let valid_1 = await form_1.validate().catch((err) => false)
       if (!valid_1 && submitFlag) {
@@ -1055,7 +1030,7 @@ export default {
         this.btnLoading = true
         let dataTwo = []
         dataTwo = this.dataFormTwo.data.map((obj) => {
-          return { ...obj, procurementDemandPoolId: obj.id, productsId: obj.id, id: null }
+          return { ...obj, procurementDemandPoolId: obj.id, productsId: obj.productsId, id: null }
         })
         this.dataForm.attachmentList = this.datafilelist
         this.dataForm.purchaseOrderLines = dataTwo
@@ -1064,7 +1039,7 @@ export default {
           flowData: this.flowData
         }
         console.log(_data, '_')
-        insertPurchaseOrder(_data)
+        insertOutOrder(_data)
           .then((res) => {
             if (res.msg === 'Success') res.msg = '保存成功'
             this.$message({

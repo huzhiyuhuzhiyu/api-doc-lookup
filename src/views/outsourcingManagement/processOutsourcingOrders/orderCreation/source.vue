@@ -326,7 +326,7 @@ export default {
               processId: item.processId,
               processName: item.processName,
               calculationDirection: item.calculationDirection,
-              demandQuantity: item.demandQuantity,
+              demandQuantity: item.qty,
               demandQuantity1: item.demandQuantity1,
               deputyUnit: item.deputyUnit,
               mainUnit: item.mainUnit,

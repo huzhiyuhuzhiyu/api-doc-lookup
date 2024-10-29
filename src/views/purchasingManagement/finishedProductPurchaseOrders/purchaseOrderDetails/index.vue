@@ -51,7 +51,7 @@
                   @click="columnSetFun()" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="detailData()" />
               </el-tooltip>
             </div>
           </div>
@@ -84,15 +84,15 @@
             <el-table-column prop="taxAmount" label="税额" width="80" />
             <el-table-column prop="excludingTaxAmount" label="总金额(不含税)" width="160" sortable="custom" />
             <el-table-column prop="deliveryDate" label="交货日期" width="140" sortable="custom" />
-            <el-table-column prop="receivingStatus" label="收货状态" align="center" sortable="custom" width="120">
+            <el-table-column prop="receivingStatus" label="订单状态" align="center" sortable="custom" width="120">
               <template slot-scope="scope">
-                <div v-if="scope.row.receivingStatus == 'receiving' || scope.row.receivingStatus == 'returning'">
+                <div v-if="scope.row.receivingStatus == 'not_finished' || scope.row.receivingStatus == 'returning'">
                   <el-tag>未完成</el-tag>
                 </div>
-                <div v-if="scope.row.receivingStatus == 'received' || scope.row.receivingStatus == 'returned'">
+                <div v-if="scope.row.receivingStatus == 'finished' || scope.row.receivingStatus == 'returned'">
                   <el-tag type="success">已完成</el-tag>
                 </div>
-                <div v-if="scope.row.approvalStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
+                <div v-if="scope.row.receivingStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
               </template>
             </el-table-column>
             <el-table-column prop="standardValue" label="规值" width="100" sortable="custom" />
@@ -340,7 +340,7 @@ export default {
         },
         {
           prop: 'receivingStatus',
-          label: '收货状态',
+          label: '订单状态',
           type: 'select',
           options: [
             { label: '审批中', value: 'receiving' },
@@ -481,7 +481,7 @@ export default {
             column: 'create_time'
           }
         ],
-        receivingStatus: 'receiving'
+        receivingStatus: ''
       },
       // 明细参数
       listsQuery: {
@@ -505,7 +505,7 @@ export default {
         startTime: '',
         productCode: '',
         productName: '',
-        receivingStatus: 'receiving'
+        receivingStatus: ''
       },
       total: 0,
       formVisible: false,
@@ -575,7 +575,6 @@ export default {
     this.getProductClassFun()
   },
   created() {
-    this.initData()
     this.detailData()
   },
   methods: {
@@ -856,7 +855,7 @@ export default {
                     duration: 1000,
                     onClose: () => {
                       this.btnLoading = false
-                      this.initData()
+                      this.detailData()
                     }
                   })
                 }
@@ -937,7 +936,7 @@ export default {
       }
       this.listQuery.orderItems[0].asc = order !== 'descending'
       this.listQuery.orderItems[0].column = order === null ? '' : newProp
-      this.initData()
+      this.detailData()
     },
     sortChangeDetail({ prop, order }) {
       let newProp
@@ -962,45 +961,13 @@ export default {
       this.formVisible = false
       this.withdrawnVisible = false
       if (isRefresh) {
-        this.initData()
+        this.detailData()
       }
     },
     refresh() {
       this.formVisible = false
       this.withdrawnVisible = false
       this.reset()
-    },
-
-    initData() {
-      this.listLoading = true
-      if (this.createRequirementDate && this.createRequirementDate.length > 0) {
-        this.listQuery.startTime = this.createRequirementDate[0] + ' 00:00:00'
-        this.listQuery.endTime = this.createRequirementDate[1] + ' 23:59:59'
-      } else {
-        this.listQuery.startTime = ''
-        this.listQuery.endTime = ''
-      }
-      if (this.deliveryDate && this.deliveryDate.length > 0) {
-        this.listQuery.deliveryStartDate = this.deliveryDate[0]
-        this.listQuery.deliveryEndDate = this.deliveryDate[1]
-      } else {
-        this.listQuery.deliveryStartDate = ''
-        this.listQuery.deliveryEndDate = ''
-      }
-      purchaseOrderList(this.listQuery)
-        .then((res) => {
-          console.log(res, '采购订单列表')
-          this.tableDataList = res.data.records
-          this.tableDataList.forEach((item) => {
-            item.disabled = item.receivingStatus == 'receiving' && item.approvalStatus == 'ok' ? false : true
-          })
-          this.total = res.data.total
-          this.listLoading = false
-          this.visible = false
-        })
-        .catch(() => {
-          this.listLoading = false
-        })
     },
 
     detailData() {
@@ -1025,7 +992,7 @@ export default {
           this.detailTableData = res.data.records
           console.log(this.detailTableData)
           this.detailTableData.forEach((item) => {
-            item.disabled = item.receivingStatus == 'receiving' && item.approvalStatus == 'ok' ? false : true
+            item.disabled = item.receivingStatus == 'not_finished' && item.approvalStatus == 'ok' ? false : true
           })
           this.total = res.data.total
           this.listLoading = false
@@ -1052,39 +1019,7 @@ export default {
       this.listsQuery.pageNum = 1
       this.detailData()
     },
-    reset() {
-      this.$refs['tableForm'].$refs.JNPFTable.clearSort()
-      this.listQuery = {
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        approvalStatus: '', //审批状态:审批中ing 审批通过ok 审核未通过rebut,可用值:ing,no,ok,rebut,wait
-        cooperativePartnerCode: '', //供应商编码
-        cooperativePartnerName: '', // 	供应商名称
-        createByName: '',
-        delivery: '', //发货方式(外协) 送货 deliver_goods、自提 self_pickup、快递 express_delivery、货运 freight_transport、到付 collect_payment
-        deliveryEndDate: '', //交货结束日期
-        deliveryStartDate: '',
-        deliveryDate: '',
-        endTime: '',
-        orderNo: '', //订单号
-        orderType: 'procure', //	订单类型 采购 procure、外协 external
-        startTime: ''
-      }
-      this.createRequirementDate = []
-      this.deliveryDate = []
-      this.$refs.SuperQuery.conditionList = []
-      this.search()
-    },
+
     // 重置明细
     resetDetail() {
       this.$refs['detailTableData'].$refs.JNPFTable.clearSort()
@@ -1097,6 +1032,8 @@ export default {
         endTime: '',
         orderNo: '',
         orderType: 'procure',
+        classAttribute: 'finish_product',
+        receivingStatus: '',
         orderItems: [
           {
             asc: false,
@@ -1150,7 +1087,7 @@ export default {
               message: '撤回成功',
               duration: 1500,
               onClose: () => {
-                this.initData()
+                this.detailData()
               }
             })
           })

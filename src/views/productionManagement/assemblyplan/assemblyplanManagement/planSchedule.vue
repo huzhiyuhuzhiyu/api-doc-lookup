@@ -79,7 +79,7 @@
 
               <div ref='ganttRef'></div>
               <section style='display: flex;justify-content: start;'>
-           
+
               </section>
             </el-collapse-item>
           </el-collapse>
@@ -92,8 +92,7 @@
   </div>
 </template>
 <script>
-import { detailordershengchan } from '@/api/productOrdes/index.js'
-import { getWorkReportList } from "@/api/productOrdes/index.js"
+import { detailordershengchan, getWorkReportList, getPlanSchedule } from '@/api/productOrdes/index.js'
 import { gantt } from 'dhtmlx-gantt' // 引入dhtmlx-gantt
 import 'dhtmlx-gantt/codebase/dhtmlxgantt.css'
 export default {
@@ -109,7 +108,6 @@ export default {
         { code: "inspectionManual", fullName: "检验指导书", },
         { code: "tool", fullName: "工装模具", },
       ],
-      categoryType: "workOrder",
       orderTypeList: [
         { label: "正常订单", value: "normal", },
         { label: "返工订单", value: "rework", },
@@ -138,11 +136,6 @@ export default {
 
       activeNames1: ["basicInfo", 'info'],
 
-      activeNames2: ["workOrderInfoForm"],
-
-      activeNames3: ["feedInfoForm"],
-
-      activeNames4: ['record'],
 
       activeName: 'orderInfo',
 
@@ -174,7 +167,7 @@ export default {
                  task：普通任务
                  milestone：菱形块，可表示中转关系
            * */
-          { id: 1, text: 'PPDH202410080004', person: '管理员', progress:0.1, type: 'task', start_date: new Date('2023-10-01'), end_date: new Date('2023-10-12'), open: true },
+          { id: 1, text: 'PPDH202410080004', person: '管理员', progress: 0.1, type: 'task', start_date: new Date('2023-10-01'), end_date: new Date('2023-10-12'), open: true },
           { id: 11, parent: 1, text: '初始化项目', person: '李四', type: 'task', progress: 0.9, color: '#ff0000', start_date: new Date('2023-10-02'), end_date: new Date('2023-10-05'), open: true },
           { id: 12, parent: 1, text: '前后端开发', type: 'task', progress: 0, color: '#00ff00', start_date: new Date('2023-10-05'), end_date: new Date('2023-10-08') },
           { id: 13, parent: 1, text: '测试', type: 'task', progress: 0, color: '#0000ff', start_date: new Date('2023-10-08'), end_date: new Date('2023-10-10') },
@@ -271,7 +264,7 @@ export default {
         //       return  "<div style='width: 10px;height: 10px;' style='background:"+ task.color+ "'>"+"</div>"}
         //   }
         // },
-        { align: 'left', name: 'text', label: '', tree: true, width: "*", min_width: 180,},
+        { align: 'left', name: 'text', label: '', tree: true, width: "*", min_width: 180, },
         { align: 'center', name: 'person', label: '负责人', width: '120' },
         // { align: 'right', name: 'time', label: '时间节点', width: '80' },
         { align: 'center', name: 'progress', label: '进度', width: '120', template: (task) => task.progress * 100 + '%' },
@@ -280,12 +273,7 @@ export default {
 
   },
 
-  watch: {
 
-    'categoryType': function (newVal) {
-      this.getTabdataList()
-    },
-  },
   mounted() {
     // 清空之前的配置
     gantt.clearAll();
@@ -345,7 +333,7 @@ export default {
     },
     formatWeekday(date) { //1号 周一
       const dateToStr = gantt.date.date_to_str("%d");
-      return dateToStr(date) ;
+      return dateToStr(date);
     },
     setScaleConfig(level) {
       switch (level) {
@@ -388,54 +376,7 @@ export default {
     selectRelatedTasksFun(val) {
       this.init(val.id)
     },
-    getTabdataList() {
 
-      // 工单数据
-
-      if (this.categoryType == 'workOrder') {
-
-
-
-      } else if (this.categoryType == 'feed') {
-
-        // 投料
-
-      } else if (this.categoryType == 'report') {
-
-        // 报工
-
-        let obj = {
-
-          productionOrderNo: this.prodOrderId,
-          classAttribute: "finish_product",
-          processId: "",
-          "orderItems": [
-            {
-              "asc": false,
-              "column": ""
-            },
-            {
-              "asc": false,
-              "column": "create_time"
-            }
-          ],
-          pageNum: -1,
-          pageSize: 20,
-        }
-        getWorkReportList(obj).then(res => {
-          this.recoredsData = res.data.records
-        })
-
-      } else if (this.categoryType == 'test') {
-        // 检验
-      } else if (this.categoryType == 'guidebook') {
-        // 作业指导书
-      } else if (this.categoryType == 'inspectionManual') {
-        // 检验指导书
-      } else if (this.categoryType == 'tool') {
-        // 工装模具
-      }
-    },
     goBack() {
       this.$emit('close')
     },
@@ -450,9 +391,13 @@ export default {
     init(row) {
       console.log(row);
       this.dataForm = row
-
+      this.getPlanScheduleFun(row.id)
     },
-
+    getPlanScheduleFun(id) {
+      getPlanSchedule(id).then(res => {
+        console.log("进度",res);
+      })
+    },
 
 
 

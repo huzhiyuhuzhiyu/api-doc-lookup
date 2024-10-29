@@ -51,7 +51,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="treeList" row-key="id" v-if="refreshTable" :default-expand-all="expands" :tree-props="{children: 'childrenList', hasChildren: ''}" custom-column>
-          <el-table-column prop="name" label="名称">
+            <el-table-column prop="name" label="名称">
             <template slot-scope="scope">
               <i :class="[scope.row.childrenList.length>=1?'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']"></i>{{scope.row.name}}
             </template>
@@ -101,6 +101,7 @@ import { getcategoryTree, deleteCategory, editCategory } from '@/api/basicData/i
 import DepForm from './depForm'
 import CheckUser from './checkUser.vue'
 import {FileCategoryTypeList} from "@/views/esop/fileCategoryManagement/constants";
+import {optimizeArrayPush} from "@/utils";
 export default {
   name: 'customerCategory',
   components: { DepForm, CheckUser },
@@ -152,15 +153,22 @@ export default {
       })
     },
     initData() {
-      this.loading = true
+      this.listLoading = true
       getcategoryTree(this.listQuery).then(res => {
-        this.treeList = res.data
-        if (this.treeList.length > 0) this.setTableIndex(this.treeList);
-        this.listLoading = false
-        this.btnLoading = false
+        if (res.data.length > 0) {
+            const list = this.setTableIndex(res.data)
+            this.treeList = []
+            optimizeArrayPush(this.treeList, list,(index,remain)=>{
+                console.log(index,remain,index % 5 === 0)
+                return index % 5 === 0
+            })
+        }
+        setTimeout(()=>{
+            this.listLoading = false
+        },500)
+
       }).catch(() => {
         this.listLoading = false
-        this.btnLoading = false
       })
     },
     search() {
@@ -168,7 +176,6 @@ export default {
     },
     // 树形列表index层级，实现方法（可复制直接调用）
     setTableIndex(arr, index) {
-      console.log("arr", arr, index);
       arr.forEach((item, key) => {
         item.index = key + 1;
         if (index) {
@@ -178,6 +185,7 @@ export default {
           this.setTableIndex(item.childrenList, item.index);
         }
       });
+      return arr;
     },
     reset() {
       this.listQuery.keyword = ''

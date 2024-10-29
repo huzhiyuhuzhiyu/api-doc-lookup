@@ -158,10 +158,7 @@ export default {
         if (res.data.length > 0) {
             const list = this.setTableIndex(res.data)
             this.treeList = []
-            optimizeArrayPush(this.treeList, list,(index,remain)=>{
-                console.log(index,remain,index % 5 === 0)
-                return index % 5 === 0
-            })
+            optimizeArrayPush(this.treeList, list,5)
         }
         setTimeout(()=>{
             this.listLoading = false

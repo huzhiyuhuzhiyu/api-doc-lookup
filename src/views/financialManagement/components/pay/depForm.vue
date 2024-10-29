@@ -126,8 +126,8 @@
                 </el-collapse-item>
 
                 <el-collapse-item title="对账信息" name="productInfo">
-                  <div :style="{ height: 220 + 'px' }">
-                    <div :style="{ height: 220 + 'px' }">
+                  <div>
+                    <div >
                       <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
                         <JNPF-table style="border: 1px solid #e3e7ee;" :hasC="type != 'look'" hasNO fixedNO
                           v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table">

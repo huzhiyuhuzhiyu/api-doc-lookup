@@ -11,20 +11,20 @@
           }}</el-button>
         </div>
       </div>
-      <div class="main">
+      <div class="main" ref="main">
         <el-collapse v-model="activeNames">
           <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
 
             <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
               label-width="120px">
               <el-row :gutter="30">
-                <el-col :span="12">
+                <el-col :span="6">
                   <el-form-item label="对账单号" prop="orderNo">
                     <el-input v-model="dataForm.orderNo" placeholder="请输入对账单号" maxlength="20" disabled />
                   </el-form-item>
                 </el-col>
 
-                <el-col :span="12">
+                <el-col :span="6">
                   <el-form-item
                     :label="Number(dataForm.totalReconciliationAmount) >= 0 ? '应' + showLabel + '金额' : '应退金额'"
                     prop="totalReconciliationAmount">
@@ -33,7 +33,7 @@
                       maxlength="20" disabled />
                   </el-form-item>
                 </el-col>
-                <el-col :span="12">
+                <el-col :span="6">
                   <el-form-item
                     :label="Number(dataForm.totalReconciliationAmount) >= 0 ? '待' + showLabel + '金额' : '待退金额'"
                     prop="dueAmount">
@@ -42,12 +42,12 @@
                       maxlength="20" disabled />
                   </el-form-item>
                 </el-col>
-                <el-col :span="8">
+                <el-col :span="6">
                   <el-form-item label="抵扣金额" prop="deductionAmount">
-                    <el-input v-model="dataForm.deductionAmount" maxlength="20" disabled />
+                    <el-input v-model="deductionAmount" maxlength="20" disabled />
                   </el-form-item>
                 </el-col>
-                <el-col :span="12">
+                <el-col :span="6">
                   <el-form-item :label="Number(dataForm.totalReconciliationAmount) >= 0 ? showLabel + '款方式' : '退款方式'"
                     prop="paymentMethod">
                     <el-select v-model="dataForm.paymentMethod"
@@ -59,7 +59,7 @@
                   </el-form-item>
                 </el-col>
 
-                <el-col :span="12">
+                <el-col :span="6">
                   <el-form-item :label="Number(dataForm.totalReconciliationAmount) >= 0 ? showLabel + '款金额' : '退款金额'"
                     prop="paymentAmount">
                     <el-input v-model="dataForm.paymentAmount"
@@ -68,7 +68,7 @@
                   </el-form-item>
                 </el-col>
 
-                <el-col :span="12">
+                <el-col :span="6">
 
                   <el-form-item :label="Number(dataForm.totalReconciliationAmount) >= 0 ? showLabel + '款日期' : '退款日期'"
                     prop="paymentDate">
@@ -79,7 +79,7 @@
                   </el-form-item>
                 </el-col>
 
-                <el-col :span="24">
+                <el-col :span="12">
                   <el-form-item label="备注" prop="remark">
                     <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200"
                       :disabled="btntype ? true : false" placeholder="请输入备注" />
@@ -89,12 +89,11 @@
             </el-form>
           </el-collapse-item>
 
-          <el-collapse-item title="预收款信息" name="productInfo">
-            <div style="display: flex;flex-direction: column;height: 100%;">
-              <el-table style="border: 1px solid #e3e7ee;" @selection-change="handeleProductInfoData" hasC fixedNO
+          <el-collapse-item title="预收款信息" name="productInfo" v-if="payData.length !== 0">
+            <div style="display: flex;flex-direction: column;" :style="{ height: height + 'px' }">
+              <JNPF-table @selection-change="handeleProductInfoData" :hasC="type != 'look'" fixedNO
                 v-loading="formLoading" :data="payData" custom-column ref="payRef" :checkSelectable="checkSelectable">
-                <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
-                <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+
                 <el-table-column prop="remainingAmount" :label="showLabel + '款剩余金额'" min-width="160" />
                 <el-table-column prop="paymentDate" :label="showLabel + '款日期'" min-width="180" />
                 <el-table-column prop="paymentMethod" :label="showLabel + '款方式'" min-width="160">
@@ -106,7 +105,7 @@
                 <el-table-column prop="remark" label="备注" min-width="160" />
                 <el-table-column prop="createTime" label="创建时间" width="180" />
                 <el-table-column prop="createByName" label="创建人" width="100" />
-              </el-table>
+              </JNPF-table>
             </div>
 
           </el-collapse-item>
@@ -139,6 +138,7 @@ export default {
   },
   data() {
     return {
+      height: 0,
       activeNames: ['productInfo', 'basicInfo'],
       payData: [],
       payForm: {
@@ -184,6 +184,7 @@ export default {
         reconciliationType: "payable",
         remark: ""
       },
+      deductionAmount: 0,
       noZero: '',
       paymentMethodList: [
         { label: '转账', value: ' transfer_accounts' },
@@ -206,7 +207,28 @@ export default {
   },
   created() {
   },
+  mounted() {
+    this.switchStyle()
+  },
   methods: {
+    //自适应窗口
+    async switchStyle() {
+      await this.$nextTick();
+      console.log(this.$refs.main, 'this.$refs.main')
+      let allHeight = this.$refs.main.clientHeight
+      console.log(allHeight, 'allHeight')
+      // let HeightstoclInfo = this.$refs.stoclInfo.clientHeight
+      // let Heightradio = this.$refs.radio.clientHeight
+      this.height = (allHeight - 425) < 340 ? 340 : (allHeight - 425)
+      console.log(this.height, 'this.height')
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyle()
+        }, 100);
+      };
+    },
     goBack() {
       this.$emit("close", true);
     },
@@ -350,23 +372,24 @@ export default {
     handeleProductInfoData(val) {
       console.log(val, 'pppp')
       this.selectData = val
-      this.dataForm.deductionAmount = 0
+      this.deductionAmount = 0
       this.dataForm.dueAmount = this.orgainDataForm.dueAmount
       //  勾选id数组
       if (this.selectData.length !== 0) {
         const numArr = this.handleAmount(this.selectData)
         console.log(numArr, 'numArr')
         this.prePayIdList = numArr.map(item => item.id)
-        this.dataForm.deductionAmount = numArr.reduce((acc, item) => {
+        this.deductionAmount = numArr.reduce((acc, item) => {
           console.log(acc, 'acc')
           console.log(item.deductionAmount, 'pppp')
           return acc * 1 + item.deductionAmount * 1
         }, 0)
-        console.log(this.dataForm.deductionAmount, 'this.dataForm.deductionAmount')
+        this.dataForm.deductionAmount = this.deductionAmount
+        console.log(this.deductionAmount, 'this.dataForm.deductionAmount')
       } else {
         this.prePayIdList = []
-        this.dataForm.deductionAmount = 0
-        this.$set(this.dataForm, 'deductionAmount', 0)
+        this.deductionAmount = 0
+        this.dataForm.deductionAmount = this.deductionAmount
       }
     },
   }

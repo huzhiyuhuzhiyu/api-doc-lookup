@@ -586,12 +586,18 @@ export default {
     ...mapGetters(['userInfo']),
     computedValue() {
       // 在这里计算第三个输入框的值
+      // 在这里计算第三个输入框的值
+      let excludingCount = 0
       let count = 0
+      let taxAmountCount = 0
       this.dataFormTwo.data.forEach((item) => {
-        count += item.excludingTaxAmount * 1
+        count += item.totalAmount * 1
+        excludingCount += item.excludingTaxAmount * 1
+        taxAmountCount += item.taxAmount * 1
       })
-      this.dataForm.excludingTaxTotalAmount = this.jnpf.numberFormat(count)
-
+      this.dataForm.totalAmount = this.jnpf.numberFormat(count)
+      this.dataForm.excludingTaxTotalAmount = this.jnpf.numberFormat(excludingCount)
+      this.dataForm.taxAmount = this.jnpf.numberFormat(taxAmountCount)
       return this.dataForm.excludingTaxTotalAmount
     },
     computedValue2() {
@@ -923,7 +929,7 @@ export default {
         )
       }
     },
-   
+
     goBack() {
       this.$emit('close')
     },
@@ -976,7 +982,7 @@ export default {
       })
       this.getBusInfo()
     },
-   
+
     // 表单提交
     async handleSubmit(type) {
       this.btnLoading = true

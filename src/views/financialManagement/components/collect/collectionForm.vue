@@ -11,24 +11,28 @@
         </el-col>
 
         <el-col :span="12">
-          <el-form-item :label="Number(dataForm.totalReconciliationAmount) >= 0 ? '应'+ showLabel + '金额' : '应退金额'"
+          <el-form-item :label="Number(dataForm.totalReconciliationAmount) >= 0 ? '应' + showLabel + '金额' : '应退金额'"
             prop="totalReconciliationAmount">
             <el-input v-model="dataForm.totalReconciliationAmount"
-              :placeholder="Number(dataForm.totalReconciliationAmount) >= 0 ? '应'+ showLabel + '金额' : '应退金额'" maxlength="20" disabled />
+              :placeholder="Number(dataForm.totalReconciliationAmount) >= 0 ? '应' + showLabel + '金额' : '应退金额'"
+              maxlength="20" disabled />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item :label="Number(dataForm.totalReconciliationAmount) >= 0 ? '待'+ showLabel + '金额' : '待退金额'" prop="dueAmount">
+          <el-form-item :label="Number(dataForm.totalReconciliationAmount) >= 0 ? '待' + showLabel + '金额' : '待退金额'"
+            prop="dueAmount">
             <el-input v-model="dataForm.dueAmount"
-              :placeholder="Number(dataForm.totalReconciliationAmount) >= 0 ? '待'+ showLabel + '金额' : '待退金额'" maxlength="20" disabled />
+              :placeholder="Number(dataForm.totalReconciliationAmount) >= 0 ? '待' + showLabel + '金额' : '待退金额'"
+              maxlength="20" disabled />
           </el-form-item>
         </el-col>
 
         <el-col :span="12">
-          <el-form-item :label="Number(dataForm.totalReconciliationAmount) >= 0 ? showLabel + '款方式' : '退款方式'" prop="paymentMethod">
+          <el-form-item :label="Number(dataForm.totalReconciliationAmount) >= 0 ? showLabel + '款方式' : '退款方式'"
+            prop="paymentMethod">
             <el-select v-model="dataForm.paymentMethod"
-              :placeholder="Number(dataForm.totalReconciliationAmount) >= 0 ? '请选择' + showLabel + '款方式' : '请选择退款方式'" clearable
-              style="width: 100%;">
+              :placeholder="Number(dataForm.totalReconciliationAmount) >= 0 ? '请选择' + showLabel + '款方式' : '请选择退款方式'"
+              clearable style="width: 100%;">
               <el-option v-for="(item, index) in paymentMethodList" :key="index" :label="item.label"
                 :value="item.value"></el-option>
             </el-select>
@@ -36,15 +40,18 @@
         </el-col>
 
         <el-col :span="12">
-          <el-form-item :label="Number(dataForm.totalReconciliationAmount) >= 0 ? showLabel + '款金额' : '退款金额'" prop="paymentAmount">
+          <el-form-item :label="Number(dataForm.totalReconciliationAmount) >= 0 ? showLabel + '款金额' : '退款金额'"
+            prop="paymentAmount">
             <el-input v-model="dataForm.paymentAmount"
-              :placeholder="Number(dataForm.totalReconciliationAmount) >= 0 ? '请输入' + showLabel + '款金额' : '请输入退款金额'" maxlength="20" />
+              :placeholder="Number(dataForm.totalReconciliationAmount) >= 0 ? '请输入' + showLabel + '款金额' : '请输入退款金额'"
+              maxlength="20" />
           </el-form-item>
         </el-col>
 
         <el-col :span="12">
 
-          <el-form-item :label="Number(dataForm.totalReconciliationAmount) >= 0 ? showLabel + '款日期' : '退款日期'" prop="paymentDate">
+          <el-form-item :label="Number(dataForm.totalReconciliationAmount) >= 0 ? showLabel + '款日期' : '退款日期'"
+            prop="paymentDate">
             <el-date-picker v-model="dataForm.paymentDate" type="date" value-format="yyyy-MM-dd" style="width: 100%;"
               :placeholder="Number(dataForm.totalReconciliationAmount) >= 0 ? '请选择' + showLabel + '款日期' : '请选择退款日期'">
             </el-date-picker>
@@ -75,14 +82,14 @@ import formValidate from "@/utils/formValidate";
 export default {
   components: {
   },
-  props:{
-    reconciliationType:{
-      type:String,
+  props: {
+    reconciliationType: {
+      type: String,
       required: true
     },
   },
-  computed:{
-    showLabel(){
+  computed: {
+    showLabel() {
       let label = this.reconciliationType !== 'receivable' ? '付' : '收'
       return label
     },
@@ -106,7 +113,7 @@ export default {
         reconciliationType: "payable",
         remark: ""
       },
-      noZero:'',
+      noZero: '',
       paymentMethodList: [
         { label: '转账', value: ' transfer_accounts' },
         { label: '汇票', value: ' draft' },
@@ -131,15 +138,15 @@ export default {
   methods: {
     numCalcMethod() {
       return (rule, value, callback) => {
-        let msg = Number(this.dataForm.totalReconciliationAmount) > 0 ?   this.showLabel +'款金额不能超过待' +  this.showLabel +'款金额' : '退款金额不能超过待退款金额'
+        let msg = Number(this.dataForm.totalReconciliationAmount) > 0 ? this.showLabel + '款金额不能超过待' + this.showLabel + '款金额' : '退款金额不能超过待退款金额'
         if (!value) { callback() }
         else {
           if (value > 0) {
-            if (value > this.dataForm.dueAmount ) {
+            if (value > this.dataForm.dueAmount) {
               callback(msg)
             } else { callback() }
-          }else{
-            if (Math.abs(value) > Math.abs(this.dataForm.dueAmount) ) {
+          } else {
+            if (Math.abs(value) > Math.abs(this.dataForm.dueAmount)) {
               callback(msg)
             } else { callback() }
           }
@@ -176,11 +183,11 @@ export default {
             this.dataRule.paymentDate[0].message = '请选择退款日期'
             this.dataRule.paymentAmount[0].message = '请输入退款金额'
             this.noZero = '退款金额不能为0'
-          }else{
+          } else {
             this.dataRule.paymentMethod.message = '请选择' + this.showLabel + '款方式'
-            this.dataRule.paymentDate[0].message = '请选择' + this.showLabel +'款日期'
-            this.dataRule.paymentAmount[0].message = '请输入' + this.showLabel +'款金额'
-            this.noZero = this.showLabel +'款金额不能为0'
+            this.dataRule.paymentDate[0].message = '请选择' + this.showLabel + '款日期'
+            this.dataRule.paymentAmount[0].message = '请输入' + this.showLabel + '款金额'
+            this.noZero = this.showLabel + '款金额不能为0'
           }
         })
 
@@ -201,7 +208,7 @@ export default {
 
             formMethod(queryData).then(res => {
               console.log(666, res);
-              let msg = Number(this.dataForm.totalReconciliationAmount) >= 0 ? this.showLabel + "款成功" : '退款成功' 
+              let msg = Number(this.dataForm.totalReconciliationAmount) >= 0 ? this.showLabel + "款成功" : '退款成功'
               this.$message({
                 message: msg,
                 type: 'success',
@@ -235,4 +242,5 @@ export default {
 
 ::v-deep#table .el-form-item--small.el-form-item {
   margin-bottom: 0px;
-}</style>
+}
+</style>

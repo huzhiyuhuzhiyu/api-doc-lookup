@@ -6,10 +6,9 @@
           <el-page-header @back="goBack" :content="showLabel + '票'" />
           <div class="options">
             <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
-              提交</el-button>
-            <el-button @click="goBack">{{
-              $t("common.cancelButton")
-            }}</el-button>
+              提交
+            </el-button>
+            <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div>
         </div>
 
@@ -27,7 +26,8 @@
 
                   <el-col :span="8">
                     <el-form-item label="账单金额" prop="totalReconciliationAmount">
-                      <el-input v-model="dataForm.totalReconciliationAmount" placeholder="账单金额" maxlength="20" disabled />
+                      <el-input v-model="dataForm.totalReconciliationAmount" placeholder="账单金额" maxlength="20"
+                        disabled />
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
@@ -47,7 +47,6 @@
                     </el-form-item>
                   </el-col>
 
-
                   <el-col :span="8">
                     <el-form-item :label="showLabel + '票金额'" prop="invoicingAmount">
                       <el-input v-model="dataForm.invoicingAmount" :placeholder="'请输入' + showLabel + '票金额'"
@@ -66,11 +65,9 @@
                   </el-col>
 
                   <el-col :span="8">
-
                     <el-form-item label="开票日期" prop="invoiceDate">
                       <el-date-picker v-model="dataForm.invoiceDate" type="date" value-format="yyyy-MM-dd"
-                        style="width: 100%;" placeholder="请选择开票日期">
-                      </el-date-picker>
+                        style="width: 100%;" placeholder="请选择开票日期"></el-date-picker>
                     </el-form-item>
                   </el-col>
 
@@ -111,15 +108,14 @@
 <script>
 import { getfinAccountList, getfinAccountDetail } from '@/api/ReconciliaRePayments/index'
 import { addfinInvoiceRecords, getfinPaymentRecords } from '@/api/financialManagement/index'
-import formValidate from "@/utils/formValidate";
+import formValidate from '@/utils/formValidate'
 export default {
-  components: {
-  },
+  components: {},
   props: {
     reconciliationType: {
       type: String,
       required: true
-    },
+    }
   },
   computed: {
     showLabel() {
@@ -129,11 +125,11 @@ export default {
     showLabel2() {
       let label = this.reconciliationType === 'receivable' ? '收' : '付'
       return label
-    },
+    }
   },
   data() {
     return {
-      activeName: "jcInfo",
+      activeName: 'jcInfo',
       visible: false,
       formLoading: false,
       btnLoading: false,
@@ -141,68 +137,81 @@ export default {
       dataForm: {
         accountsReceivableReconciliationId: '',
         id: 0,
-        invoiceCode: "",
-        invoiceDate: "",
-        invoiceNumber: "",
+        invoiceCode: '',
+        invoiceDate: '',
+        invoiceNumber: '',
         invoicingAmount: 0,
-        remark: "",
-        reconciliationType: "payable",
-        includingTaxAmount: '',
+        remark: '',
+        reconciliationType: 'payable',
+        includingTaxAmount: ''
       },
 
       btntype: false,
       dataRule: {
-        paymentMethod: { required: true, message: this.reconciliationType != 'receivable' ? '请选择付款方式' : '请选择收款方式', trigger: 'change' },
+        paymentMethod: {
+          required: true,
+          message: this.reconciliationType != 'receivable' ? '请选择付款方式' : '请选择收款方式',
+          trigger: 'change'
+        },
         invoiceDate: [
-          { required: true, message: this.reconciliationType != 'receivable' ? '请选择收票日期' : '请选择开票日期', trigger: 'change' }
+          {
+            required: true,
+            message: this.reconciliationType != 'receivable' ? '请选择收票日期' : '请选择开票日期',
+            trigger: 'change'
+          }
         ],
         invoiceNumber: [{ required: true, message: '请输入发票号码', trigger: 'blur' }],
         invoicingAmount: [
-          { required: true, message: this.reconciliationType != 'receivable' ? '请输入收票金额' : '请输入开票金额', trigger: 'blur' },
-          { validator: this.formValidate({ type: 'decimal2', params: [10, 2, "",] }), trigger: 'blur' },
-          { validator: this.numCalcMethod(), trigger: 'blur' },
+          {
+            required: true,
+            message: this.reconciliationType != 'receivable' ? '请输入收票金额' : '请输入开票金额',
+            trigger: 'blur'
+          },
+          { validator: this.formValidate({ type: 'decimal2', params: [10, 2, ''] }), trigger: 'blur' },
+          { validator: this.numCalcMethod(), trigger: 'blur' }
           // { validator: this.formValidate('noZero', '收票金额不能为0', ), trigger: 'blur' }
-        ],
+        ]
       },
       payData: [],
       payForm: {
         partnerId: '',
-        createByName: "",
-        endTime: "",
-        keyword: "",
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time"
-        }],
-        orderNo: "",
+        createByName: '',
+        endTime: '',
+        keyword: '',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        orderNo: '',
         pageNum: 1,
         pageSize: -1,
         reconciliationDate: '',
-        paymentEndDate: "",
-        paymentStartDate: "",
-        reconciliationType: "receivable",
-        startTime: "",
+        paymentEndDate: '',
+        paymentStartDate: '',
+        reconciliationType: 'receivable',
+        startTime: '',
         paymentDateArr: [],
         createTimeArr: [],
         sourcePaymentRecordsId: '',
-        remainLtZero: 1,     // "剩余预收付款>0 0否 1是"
-        prePayFlag: 1,       // 预收付款列表标识 0否 1是"
+        remainLtZero: 1, // "剩余预收付款>0 0否 1是"
+        prePayFlag: 1 // 预收付款列表标识 0否 1是"
       },
       selectData: [],
       deductionAmount: 0,
       prePayIdList: [],
-      orgainDataForm: {},
+      orgainDataForm: {}
     }
   },
-  created() {
-
-  },
+  created() { },
   methods: {
     goBack() {
-      this.$emit("close", true);
+      this.$emit('close', true)
     },
     checkSelectable(row) {
       return !row.disabled
@@ -210,29 +219,33 @@ export default {
     numCalcMethod() {
       return (rule, value, callback) => {
         let msg = this.reconciliationType != 'receivable' ? '收票金额不能超过待付金额' : '开票金额不能超过待收金额'
-        if (!value) { callback() }
-        else {
+        if (!value) {
+          callback()
+        } else {
           if (value > 0) {
             if (value > this.dataForm.dueAmount) {
               callback(msg)
-            } else { callback() }
+            } else {
+              callback()
+            }
           } else {
             if (Math.abs(value) > Math.abs(this.dataForm.dueAmount)) {
               callback(msg)
-            } else { callback() }
+            } else {
+              callback()
+            }
           }
         }
-      };
+      }
     },
     init(id, type) {
-      this.visible = true 
+      this.visible = true
       this.dataForm.accountsReceivableReconciliationId = id
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
 
         this.loading = true
-        getfinAccountDetail(this.dataForm.accountsReceivableReconciliationId).then(res => { 
-
+        getfinAccountDetail(this.dataForm.accountsReceivableReconciliationId).then((res) => {
           this.dataForm = {
             id: '',
             orderNo: res.data.orderNo,
@@ -240,23 +253,31 @@ export default {
             includingTaxAmount: res.data.includingTaxAmount,
             totalInvoicingAmount: res.data.totalInvoicingAmount ? res.data.totalInvoicingAmount : 0,
             totalReconciliationAmount: res.data.totalReconciliationAmount ? res.data.totalReconciliationAmount : 0,
-            dueAmount: res.data.totalReconciliationAmount < 0 ? -(Math.abs(res.data.totalReconciliationAmount) - Math.abs((res.data.totalInvoicingAmount ? res.data.totalInvoicingAmount : 0))) : Math.abs(res.data.totalReconciliationAmount) - Math.abs((res.data.totalInvoicingAmount ? res.data.totalInvoicingAmount : 0)),
+            dueAmount:
+              res.data.totalReconciliationAmount < 0
+                ? -(
+                  Math.abs(res.data.totalReconciliationAmount) -
+                  Math.abs(res.data.totalInvoicingAmount ? res.data.totalInvoicingAmount : 0)
+                )
+                : Math.abs(res.data.totalReconciliationAmount) -
+                Math.abs(res.data.totalInvoicingAmount ? res.data.totalInvoicingAmount : 0),
             accountsReceivableReconciliationId: this.dataForm.accountsReceivableReconciliationId,
-            invoiceCode: "",
+            invoiceCode: '',
             invoiceDate: this.jnpf.getToday(),
-            invoiceNumber: "",
+            invoiceNumber: '',
             invoicingAmount: 0,
-            remark: "",
-            reconciliationType: "payable",
-            duePayAmount: res.data.totalReconciliationAmount - (res.data.totalPaymentAmount ? res.data.totalPaymentAmount : 0),
-            deductionAmount: 0,
+            remark: '',
+            reconciliationType: 'payable',
+            duePayAmount:
+              res.data.totalReconciliationAmount - (res.data.totalPaymentAmount ? res.data.totalPaymentAmount : 0),
+            deductionAmount: 0
           }
           this.dataForm.invoicingAmount = this.dataForm.dueAmount
           this.payForm.partnerId = res.data.cooperativePartnerId
           this.orgainDataForm = JSON.parse(JSON.stringify(this.dataForm))
-          getfinPaymentRecords(this.payForm).then(res => {
+          getfinPaymentRecords(this.payForm).then((res) => {
             if (this.dataForm.dueAmount < 0) {
-              this.payData = res.data.records.map(item => {
+              this.payData = res.data.records.map((item) => {
                 return {
                   ...item,
                   disabled: true
@@ -268,62 +289,59 @@ export default {
             this.formLoading = false
           })
         })
-
       })
     },
     // 处理与抵扣金额方法
     handleAmount(arr) {
       let remaining = this.dataForm.duePayAmount
-      const newArr = arr.map(obj => {
+      const newArr = arr.map((obj) => {
         const num = +obj.remainingAmount
-        let newNum = 0;
+        let newNum = 0
         if (remaining >= num) {
-          newNum = num;
-          remaining -= num;
+          newNum = num
+          remaining -= num
         } else {
-          newNum = remaining;
-          remaining = 0;
+          newNum = remaining
+          remaining = 0
         }
-        return { num: num - newNum, id: obj.id, deductionAmount: newNum };
-      });
+        return { num: num - newNum, id: obj.id, deductionAmount: newNum }
+      })
       return newArr
     },
     dataFormSubmit() {
-      this.btnLoading = true;
+      this.btnLoading = true
       // this.dataForm.invoicingAmount = '-'+ this.dataForm.invoicingAmount
       this.dataForm.reconciliationType = this.reconciliationType
       let queryData = {
         invoiceRecords: {
           ...this.dataForm,
-          prePayIdList: this.prePayIdList,
-        },
-      };
+          prePayIdList: this.prePayIdList
+        }
+      }
       let msg = true
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           if (msg) {
-
             let formMethod = addfinInvoiceRecords
 
-            formMethod(queryData).then(res => { 
-              let msg = "提交成功"
-              this.$message({
-                message: msg,
-                type: 'success',
-                duration: 1500,
-                onClose: () => {
-                  this.visible = false
-                  this.btnLoading = false
-                  this.$emit('close', true)
-                }
+            formMethod(queryData)
+              .then((res) => {
+                let msg = '提交成功'
+                this.$message({
+                  message: msg,
+                  type: 'success',
+                  duration: 1500,
+                  onClose: () => {
+                    this.visible = false
+                    this.btnLoading = false
+                    this.$emit('close', true)
+                  }
+                })
               })
-            }).catch(() => {
-              this.btnLoading = false
-            })
+              .catch(() => {
+                this.btnLoading = false
+              })
           }
-
-
-
         } else {
           this.btnLoading = false
         }
@@ -336,8 +354,8 @@ export default {
       this.dataForm.dueAmount = this.orgainDataForm.dueAmount
       //  勾选id数组
       if (this.selectData.length) {
-        const numArr = this.handleAmount(this.selectData) 
-        this.prePayIdList = numArr.map(item => item.id)
+        const numArr = this.handleAmount(this.selectData)
+        this.prePayIdList = numArr.map((item) => item.id)
         this.dataForm.deductionAmount = numArr.reduce((acc, item) => {
           return acc * 1 + item.deductionAmount * 1
         }, 0)
@@ -345,8 +363,7 @@ export default {
         this.prePayIdList = []
         this.dataForm.deductionAmount = 0
       }
-    },
-
+    }
   }
 }
 </script>
@@ -385,7 +402,8 @@ export default {
   display: flex;
   flex-direction: column;
 }
-::v-deep .el-tabs{
+
+::v-deep .el-tabs {
   height: 100% !important;
 }
 </style>

@@ -14,8 +14,8 @@
         </div>
 
         <div class="main">
-          <el-tabs v-model="activeName">
-            <el-tab-pane label="基础信息" name="jcInfo">
+          <el-collapse v-model="activeNames">
+            <el-collapse-item title="基础信息" name="basicInfo" class="orderInfo">
               <el-row :gutter="30">
                 <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
                   label-width="120px">
@@ -27,7 +27,8 @@
 
                   <el-col :span="8">
                     <el-form-item label="账单金额" prop="totalReconciliationAmount">
-                      <el-input v-model="dataForm.totalReconciliationAmount" placeholder="账单金额" maxlength="20" disabled />
+                      <el-input v-model="dataForm.totalReconciliationAmount" placeholder="账单金额" maxlength="20"
+                        disabled />
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
@@ -74,7 +75,7 @@
                     </el-form-item>
                   </el-col>
 
-                  <el-col :span="24">
+                  <el-col :span="12">
                     <el-form-item label="备注" prop="remark">
                       <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200"
                         :disabled="btntype ? true : false" placeholder="请输入备注" />
@@ -82,8 +83,10 @@
                   </el-col>
                 </el-form>
               </el-row>
-            </el-tab-pane>
-            <el-tab-pane :label="'预' + showLabel2 + '款信息'" name="receiverInfo">
+
+            </el-collapse-item>
+
+            <!-- <el-collapse-item :title="'预' + showLabel2 + '款信息'" name="productInfo">
               <div style="display: flex;flex-direction: column;height: 100%;">
                 <JNPF-table @selection-change="handeleProductInfoData" hasC fixedNO v-loading="formLoading"
                   :data="payData" custom-column ref="payRef" :checkSelectable="checkSelectable">
@@ -94,14 +97,15 @@
                       <div v-if="scope.row.paymentMethod === 'transfer_accounts'">转账</div>
                       <div v-if="scope.row.paymentMethod === 'draft'">汇票</div>
                     </template>
-                  </el-table-column>
-                  <el-table-column prop="remark" label="备注" min-width="160" />
-                  <el-table-column prop="createTime" label="创建时间" min-width="160" />
-                  <el-table-column prop="createByName" label="创建人" min-width="140" />
-                </JNPF-table>
-              </div>
-            </el-tab-pane>
-          </el-tabs>
+</el-table-column>
+<el-table-column prop="remark" label="备注" min-width="160" />
+<el-table-column prop="createTime" label="创建时间" min-width="160" />
+<el-table-column prop="createByName" label="创建人" min-width="140" />
+</JNPF-table>
+</div>
+</el-collapse-item> -->
+          </el-collapse>
+
         </div>
       </div>
     </transition>
@@ -134,6 +138,7 @@ export default {
   data() {
     return {
       activeName: "jcInfo",
+      activeNames: ['productInfo', 'basicInfo'],
       visible: false,
       formLoading: false,
       btnLoading: false,
@@ -225,13 +230,13 @@ export default {
       };
     },
     init(id, type) {
-      this.visible = true 
+      this.visible = true
       this.dataForm.accountsReceivableReconciliationId = id
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
 
         this.loading = true
-        getfinAccountDetail(this.dataForm.accountsReceivableReconciliationId).then(res => { 
+        getfinAccountDetail(this.dataForm.accountsReceivableReconciliationId).then(res => {
 
           this.dataForm = {
             id: '',
@@ -305,7 +310,7 @@ export default {
 
             let formMethod = addfinInvoiceRecords
 
-            formMethod(queryData).then(res => { 
+            formMethod(queryData).then(res => {
               let msg = "提交成功"
               this.$message({
                 message: msg,
@@ -336,7 +341,7 @@ export default {
       this.dataForm.dueAmount = this.orgainDataForm.dueAmount
       //  勾选id数组
       if (this.selectData.length) {
-        const numArr = this.handleAmount(this.selectData) 
+        const numArr = this.handleAmount(this.selectData)
         this.prePayIdList = numArr.map(item => item.id)
         this.dataForm.deductionAmount = numArr.reduce((acc, item) => {
           return acc * 1 + item.deductionAmount * 1
@@ -385,7 +390,44 @@ export default {
   display: flex;
   flex-direction: column;
 }
-::v-deep .el-tabs{
+
+::v-deep .el-tabs {
   height: 100% !important;
+}
+
+::v-deep .el-collapse-item__header {
+  line-height: 33px;
+  font-size: 18px;
+  border-top: 1px solid rgb(220, 223, 230);
+  background: rgb(250, 250, 250);
+  padding-left: 5px;
+  font-weight: 700;
+  border-right: 1px solid #dcdfe6;
+  border-left: 1px solid #dcdfe6;
+}
+
+::v-deep .el-collapse-item__wrap {
+  border: 1px solid #dcdfe6 !important;
+  border-top: none;
+  margin-bottom: 0;
+  padding: 0 10px 0px;
+  border-top: none !important;
+
+}
+
+::v-deep .el-collapse-item__content {
+  padding-bottom: 0px
+}
+
+.JNPF-preview-main .main {
+  padding-top: 5px;
+}
+
+::v-deep .el-tabs__item {
+  padding: 0 10px !important
+}
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important
 }
 </style>

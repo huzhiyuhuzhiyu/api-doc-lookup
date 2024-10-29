@@ -323,7 +323,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         classAttribute: 'other',
-        // demandStatus: 'not_finish', //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
+        demandStatus: null, //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
         poolType: 'procure', //采购池类型  采购 procure、外协 external,可用值:external,procure
         productCode: '', //产品编码
         productName: '', //产品名称
@@ -546,7 +546,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         classAttribute: 'other',
-        demandStatus: 'not_finish', //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
+        demandStatus: null, //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
         poolType: 'procure', //采购池类型  采购 procure、外协 external,可用值:external,procure
         productCode: '', //产品编码
         productName: '', //产品名称

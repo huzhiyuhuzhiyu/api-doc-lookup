@@ -36,7 +36,7 @@ export default {
         orderNo: "",
         pageNum: 1,
         pageSize: 20,
-        paymentStatus: "not_finished",
+        invoiceStatus: "not_finished",
         reconciliationEndDate: "",
         reconciliationStartDate: "",
         reconciliationType: "receivable",

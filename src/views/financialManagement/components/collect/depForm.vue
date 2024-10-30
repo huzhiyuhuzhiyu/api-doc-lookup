@@ -10,7 +10,7 @@
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div> -->
         </div>
-        <div class="main">
+        <div class="main" ref="main">
           <el-tabs v-model="activeName">
             <el-tab-pane label="账单信息" name="jcInfo">
               <el-collapse v-model="activeNames">
@@ -141,10 +141,9 @@
                             </div>
                           </el-form-item>
                         </template>
-                      </el-table-column> -->
+</el-table-column> -->
 
-                      <el-table-column prop="stockMoveOrderNo" label="出入库单号" min-width="180"
-                        show-overflow-tooltip>
+                      <el-table-column prop="stockMoveOrderNo" label="出入库单号" min-width="180" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'stockMoveOrderNo'">
                             <div class="viewData">
@@ -202,7 +201,7 @@
                         </template>
                       </el-table-column>
 
-                
+
 
                       <el-table-column prop="taxRate" label="税率%" min-width="100">
                         <template slot-scope="scope">
@@ -328,24 +327,26 @@
                 :limit.sync="collectionQuery.pageSize" @pagination="collectionData" />
             </el-tab-pane> -->
             <el-tab-pane :label="showLabel2 + '票信息'" name="collectionInfo">
-              <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="makeoutForm"
-                :data="makeoutList">
-                <el-table-column prop="totalReconciliationAmount" :label="'应' + showLabel + '金额'" min-width="120">
-                </el-table-column>
-                <el-table-column prop="totalPaymentAmount" :label="'已' + showLabel + '金额'" min-width="120">
-                </el-table-column>
-                <el-table-column prop="invoicingAmount" :label="'已' + showLabel2 + '票金额'" min-width="120" />
-                <el-table-column prop="invoiceDate" label="开票日期" min-width="160" />
+              <div class="JNPF-common-layout-main JNPF-flex-main" :style="{ height: height + 'px' }">
+                <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="makeoutForm"
+                  :data="makeoutList">
+                  <el-table-column prop="totalReconciliationAmount" :label="'应' + showLabel + '金额'" min-width="120">
+                  </el-table-column>
+                  <el-table-column prop="totalPaymentAmount" :label="'已' + showLabel + '金额'" min-width="120">
+                  </el-table-column>
+                  <el-table-column prop="invoicingAmount" :label="'已' + showLabel2 + '票金额'" min-width="120" />
+                  <el-table-column prop="invoiceDate" label="开票日期" min-width="160" />
 
-                <el-table-column prop="invoiceCode" label="发票代码" min-width="120" />
-                <el-table-column prop="invoiceNumber" label="发票号码" min-width="120" />
+                  <el-table-column prop="invoiceCode" label="发票代码" min-width="120" />
+                  <el-table-column prop="invoiceNumber" label="发票号码" min-width="120" />
 
-                <el-table-column prop="remark" label="备注" min-width="180" />
-                <el-table-column prop="createTime" label="创建时间" min-width="180" />
-                <el-table-column prop="createByName" label="创建人" min-width="120" />
-              </JNPF-table>
-              <pagination :total="makeouttotal" :page.sync="makeQuery.pageNum" :limit.sync="makeQuery.pageSize"
-                @pagination="makeData" />
+                  <el-table-column prop="remark" label="备注" min-width="180" />
+                  <el-table-column prop="createTime" label="创建时间" min-width="180" />
+                  <el-table-column prop="createByName" label="创建人" min-width="120" />
+                </JNPF-table>
+                <pagination :total="makeouttotal" :page.sync="makeQuery.pageNum" :limit.sync="makeQuery.pageSize"
+                  @pagination="makeData" />
+              </div>
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -457,6 +458,7 @@ export default {
       makeoutList: [],   // 开票
       collecttotal: 0,
       makeouttotal: 0,
+      height: 0
     }
   },
   computed: {
@@ -482,7 +484,28 @@ export default {
     this.collectionData()
     this.makeData()
   },
+  mounted() {
+    this.switchStyle()
+  },
   methods: {
+    //自适应窗口
+    async switchStyle() {
+      await this.$nextTick();
+      console.log(this.$refs.main, 'this.$refs.main')
+      let allHeight = this.$refs.main.clientHeight
+      console.log(allHeight, 'allHeight')
+      // let HeightstoclInfo = this.$refs.stoclInfo.clientHeight
+      // let Heightradio = this.$refs.radio.clientHeight
+      this.height = (allHeight - 60) < 500 ? 500 : (allHeight - 60)
+      console.log(this.height, 'oooo')
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyle()
+        }, 100);
+      };
+    },
     //  收款列表 请求
     collectionData() {
       this.listLoading = true
@@ -818,6 +841,7 @@ export default {
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
   padding-left: 0px !important
 }
+
 .JNPF-preview-main .main {
   padding-top: 0;
 }

@@ -90,18 +90,18 @@
                   <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" @selection-change="handeleProductInfoData">
                     <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType !== 'look'" key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed='left' key="11" />
-                    <el-table-column prop="productCode" label="产品编码" min-width="120" show-overflow-tooltip>
+                    <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="productName" label="产品名称" min-width="120" show-overflow-tooltip>
+                    <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
                       <template slot="header">
                         <span class="required">*</span>产品名称
                       </template>
                     </el-table-column>
-                    <el-table-column prop="drawingNo" label="品名规格" min-width="120" show-overflow-tooltip>
+                    <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="unit" label="单位" min-width="120" show-overflow-tooltip>
+                    <el-table-column prop="unit" label="单位" width="120" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="availableQuantity" label="可用库存数量" min-width="120" show-overflow-tooltip>
+                    <el-table-column prop="availableQuantity" label="可用库存数量" width="160" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="requisitionNum" label="数量" width="160">
                       <template slot="header">
@@ -320,6 +320,7 @@ export default {
       formLoading: false,
       dataForm: {
         orderNo:'',
+        returnFlag: 0,
         requisitionType: 'requisition',
         useApplication: '',
         equipmentType: 'spare_parts',

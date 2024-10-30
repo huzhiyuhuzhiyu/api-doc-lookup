@@ -1,6 +1,6 @@
 <template>
-  <el-dialog title="结存" :close-on-click-modal="false" append-to-body :visible.sync="balVisible"
-    class="JNPF-dialog JNPF-dialog_center" lock-scroll width="400px">
+  <el-dialog :title="(this.type === 'normal' ? '' : '反') + '结存'" :close-on-click-modal="false" append-to-body
+    :visible.sync="balVisible" class="JNPF-dialog JNPF-dialog_center" lock-scroll width="400px">
     <el-row :gutter="15" class="">
       <el-form ref="elForm" :model="dataForm" size="small" label-position="top">
         <el-row :gutter="30" class="custom-row">
@@ -23,29 +23,32 @@
 </template>
 
 <script>
-import { paymentBalance } from '@/api/balances/index'
+import { paymentBalance, paymentBalanceNegate } from '@/api/balances/index'
 export default {
   data() {
     return {
       btnLoading: false,
       dataForm: {
         accountPeriod: '',
-        reconciliationType:'',
+        reconciliationType: '',
       },
+      type: '',
       balVisible: false,
     }
   },
   methods: {
-    init(accountPeriod,reconciliationType) {
+    init(accountPeriod, reconciliationType, type) {
       this.balVisible = true
       this.dataForm.accountPeriod = accountPeriod
       this.dataForm.reconciliationType = reconciliationType
+      this.type = type
     },
     dataFormSubmit() {
       this.btnLoading = true
-      paymentBalance(this.dataForm).then(res => {
+      const apiMethod = this.type === 'normal' ? paymentBalance : paymentBalanceNegate
+      apiMethod(this.dataForm).then(res => {
         this.$message({
-          message: '结存成功',
+          message: (this.type === 'normal' ? '' : '反') + '结存成功',
           type: 'success',
           duration: 1500,
           onClose: () => {
@@ -53,9 +56,9 @@ export default {
             this.btnLoading = false
             this.$emit('close', true)
           }
-        }).catch(() => {
-          this.btnLoading = false
         })
+      }).catch(() => {
+        this.btnLoading = false
       })
     },
   }

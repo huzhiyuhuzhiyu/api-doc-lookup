@@ -7,7 +7,7 @@
 import { paymentBalanceReport } from '@/api/balances/index'
 import Balances from '@/views/financialManagement/components/balances/index.vue'
 export default {
-  name: 'outPayment',
+  name: 'outPaymentBalance',
   components: { Balances },
   data() {
     return {
@@ -37,8 +37,8 @@ export default {
       tableItems: [
         { prop: 'accountPeriod', label: '账期', minWidth: '180' },
         { prop: 'balanceState', label: '结存状态', minWidth: '120' },
-        { prop: 'partnerCode', label: '外协供应商编码', minWidth: '160' },
-        { prop: 'partnerName', label: '外协供应商名称', minWidth: '160' },
+        { prop: 'partnerCode', label: '外协供应商编码', minWidth: '140' },
+        { prop: 'partnerName', label: '外协供应商名称', minWidth: '260' },
         { prop: 'paymentCycle', label: '付款周期' },
         { prop: 'initPaymentAmount', label: '期初应付金额' },
         { prop: 'currentBillingAmount', label: '本期收票金额' },

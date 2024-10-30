@@ -21,6 +21,12 @@
               </el-form-item>
             </el-col>
           </template>
+          <el-col :span="4">
+            <el-form-item>
+              <el-date-picker v-model="reconciliationDate" type="daterange" value-format="yyyy-MM-dd"
+                style="width: 100%;" start-placeholder="请选择对账开始日期" end-placeholder="请选择对账结束日期"></el-date-picker>
+            </el-form-item>
+          </el-col>
           <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
@@ -33,12 +39,7 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <div>
-            <el-button v-has="'btn_export'" :disabled="tableDataList.length > 0 ? false : true" size="mini"
-              type="primary" icon="el-icon-download" @click="exportForm">
-              导出
-            </el-button>
-          </div>
+          <div></div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -63,8 +64,8 @@
             </template>
           </el-table-column>
           <el-table-column prop="reconciliationDate" label="对账日期" min-width="180" sortable="custom" />
-          <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="200" sortable="custom" />
-          <el-table-column prop="cooperativePartnerCode" label="客户编码" width="160" sortable="custom" />
+          <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="200" sortable="custom" />
+          <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="200" sortable="custom" />
           <el-table-column prop="totalReconciliationAmount" label="出入库金额" width="140" sortable="custom">
             <template slot-scope="scope">
               <div :class="scope.row.totalReconciliationAmount > 0 ? 'green' : 'red'">
@@ -135,22 +136,20 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
 
 <script>
 import { getbuyInquirySheetList, deletebuyInquirySheet } from '@/api/purchasingManagement/purchaseInquirySheet'
-import ExportForm from '@/components/no_mount/ExportBox/index'
-import { excelExport } from '@/api/basicData/index'
+
 import { getfinAccountLineList, getfinAccountDetail } from '@/api/ReconciliaRePayments/index'
-import JNPFForm from '../salesReconManagement/Form.vue'
+import JNPFForm from '../purReconciliation/Form.vue'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
-import withdrawnForm from '../salesReconManagement/withranForm.vue'
+import withdrawnForm from '../purReconciliation/withranForm.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
   name: 'purchaseInquirySheet',
-  components: { JNPFForm, withdrawnForm, SuperQuery, ExportForm },
+  components: { JNPFForm, withdrawnForm, SuperQuery },
   data() {
     return {
       superQueryVisible: false,
@@ -171,12 +170,12 @@ export default {
         },
         {
           prop: 'cooperativePartnerName',
-          label: '客户名称',
+          label: '供应商名称',
           type: 'input'
         },
         {
           prop: 'cooperativePartnerCode',
-          label: '客户编码',
+          label: '供应商编码',
           type: 'input'
         },
         {
@@ -239,8 +238,7 @@ export default {
           width: 120
         }
       ],
-      columnList: ['cooperativePartnerCode', 'totalReconciliationAmount'],
-      exportFormVisible: false,
+      columnList: ["cooperativePartnerCode", "totalReconciliationAmount"],
       withdrawnVisible: false,
       title: '更多查询',
       background: true, //分页器背景颜色
@@ -265,7 +263,7 @@ export default {
         pageSize: 20,
         reconciliationEndDate: '',
         reconciliationStartDate: '',
-        reconciliationType: 'receivable',
+        reconciliationType: 'payable',
         startTime: '',
         orderItems: [
           {
@@ -302,55 +300,6 @@ export default {
       this.listQuery.orderItems[0].asc = order !== 'descending'
       this.listQuery.orderItems[0].column = order === null ? '' : newProp
       this.initData()
-    },
-    exportType(data, ref) {
-      if (data.length) {
-        this.exportFormVisible = true
-        let domRef = this.$refs[`${ref}`]
-        console.log(domRef)
-        let columnList = domRef.columnList.filter((item) => !!item.label && !!item.prop)
-        columnList = columnList.map((item) => {
-          return { label: item.label, prop: item.prop }
-        })
-        console.log(columnList, 'columnList')
-        this.$nextTick(() => {
-          this.$refs.exportForm.init(columnList)
-        })
-      } else {
-        this.$message({
-          message: '暂无数据导出',
-          type: 'error',
-          duration: 1500
-        })
-      }
-    },
-    // 导出
-    exportForm() {
-      this.exportType(this.tableDataList, 'tableForm')
-    },
-    download(data) {
-      if (data) {
-        this.exportFormVisible = false
-        let includeFieldMap = {}
-        for (let i = 0; i < data.selectKey.length; i++) {
-          includeFieldMap[data.selectKey[i]] = data.selectVal[i]
-        }
-        let query = this.listQuery
-        let _data = {
-          ...query,
-          exportType: '1063',
-          exportName: '出入库对账',
-          includeFieldMap,
-          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
-        }
-        excelExport(_data)
-          .then((res) => {
-            this.exportFormVisible = false
-            if (!res.data.url) return
-            this.jnpf.downloadFile(res.data.url)
-          })
-          .catch(() => { })
-      }
     },
     columnSetFun() {
       this.$refs.tableForm.showDrawer()
@@ -445,7 +394,7 @@ export default {
         pageSize: 20,
         reconciliationEndDate: '',
         reconciliationStartDate: '',
-        reconciliationType: 'receivable',
+        reconciliationType: 'payable',
         startTime: '',
         orderItems: [
           {
@@ -536,7 +485,7 @@ export default {
           reconciliationDate: res.data.reconciliationDate,
           totalReconciliationAmount: res.data.totalReconciliationAmount,
           id: '',
-          reconciliationType: 'receivable',
+          reconciliationType: 'payable',
           reasonRejection: '',
           documentStatus: 'submit',
           orderNo: '',

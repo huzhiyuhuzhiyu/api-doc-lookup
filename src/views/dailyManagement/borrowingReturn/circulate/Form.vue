@@ -50,18 +50,28 @@
                     <el-table ref="product" class="TableForm table" :data="dataFormTwo.productData" v-bind="customStyleData" hasC hasNO fixedNO @selection-change="handeleProductInfoData" v-if="tableVisible">
                       <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType !== 'look'" key="1" />
                       <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
-                      <el-table-column prop="equipmentIdCode" label="工具编码" width="200" show-overflow-tooltip>
+                      <el-table-column prop="productCode" label="工具编码" min-width="160" show-overflow-tooltip>
                       </el-table-column>
-                      <el-table-column prop="equipmentIdName" label="工具名称" width="200" show-overflow-tooltip>
+                      <el-table-column prop="productName" label="工具名称" min-width="160" show-overflow-tooltip>
                         <template slot="header">
                           <span class="required">*</span>工具名称
                         </template>
                       </el-table-column>
-                      <el-table-column prop="spec" label="工具规格" width="200" show-overflow-tooltip>
+                      <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                       </el-table-column>
-                      <el-table-column prop="description" label="说明" min-width="300">
+                      <el-table-column prop="unit" label="单位" width="120" show-overflow-tooltip>
+                      </el-table-column>
+                      <el-table-column prop="availableQuantity" label="可用库存数量" width="160" show-overflow-tooltip>
+                      </el-table-column>
+                      <el-table-column prop="requisitionNum" label="数量" width="160">
+                        <template slot="header">
+                          <span class="required">*</span>数量
+                        </template>
                         <template slot-scope="scope">
-                          <el-input v-model="scope.row.description" placeholder="请输入说明" :disabled="btnType == 'look' ? true : false" maxlength="200" />
+                          <el-form-item :prop="'productData.'+scope.$index+'.'+'requisitionNum'" :rules='productRules.requisitionNum'>
+                            <el-input v-model="scope.row.requisitionNum" placeholder="请输入数量" :disabled="btnType == 'look'" maxlength="11" style="width: 135px;">
+                            </el-input>
+                          </el-form-item>
                         </template>
                       </el-table-column>
                       <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="30">
@@ -80,16 +90,17 @@
           </el-tab-pane>
         </el-tabs>
       </div>
-      <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" title="选择工具" treeTitle="工具分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'tool' } }" :listMethod="getEquEquipmentList" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple />
+      <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" title="选择工具" treeTitle="工具分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'spare_parts' } }" :listMethod="getProductList" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple />
     </div>
   </transition>
 </template>
     
 <script>
+import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import { mapGetters } from 'vuex'
 import { detailCollectionandreturn, addCollectionandreturn } from '@/api/dailyManagement/Maintenance'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
-import { getEquEquipmentList, getBimBusinessDetail } from '@/api/basicData/index'
+import { getBimBusinessDetail } from '@/api/basicData/index'
 export default {
   data() {
     return {
@@ -99,25 +110,17 @@ export default {
       tableVisible: true,
       datafilelist: [],
       getcategoryTree,
-      getEquEquipmentList,
+      getProductList,
       ProductListRequestObj: {
+        classAttribute: "spare_parts",
+        code: "",
+        drawingNo: "",
+        endTime: "",
+        name: "",
+        orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }],
         pageNum: 1,
         pageSize: 20,
-        orderItems: [
-          {
-            "asc": false,
-            "column": ""
-          },
-          {
-            "asc": false,
-            "column": "create_time"
-          }
-        ],
-        code: "",
-        name: "",
-        classAttribute: "tool",
-        deviceType: 'normal',
-        state: 'normal'
+        startTime: "",
       },
       index: '',
       ProductTableSearchList: [
@@ -125,10 +128,11 @@ export default {
         { prop: "name", label: "工具名称", type: 'input' },
       ],
       ProductTableItems: [
-        { prop: 'code', label: '工具编码', fixed: 'left' },
-        { prop: 'name', label: '工具名称', fixed: 'left' },
-        { prop: 'specModel', label: '工具规格' },
-        { prop: 'categoryName', label: '工具分类' },
+        { prop: 'code', label: '产品编码' },
+        { prop: 'name', label: '产品名称' },
+        { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'productCategoryName', label: '产品分类' },
+        { prop: 'availableQuantity', label: '可用库存数量' },
       ],
       salesList: [],
       dataFormTwo: {
@@ -151,7 +155,14 @@ export default {
       },
       customStyleData: {},
       organizeIdTrees: [],
-
+      productRules: {
+        // 数量
+        requisitionNum: [
+          { validator: this.formValidate({ type: 'noEmtry', params: ["数量不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
+          { required: true, trigger: 'blur' },
+          { validator: this.formValidate('positiveNumber', '数量必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }
+        ]
+      },
       dataRule: {
         recipientId: [
           { required: true, message: '领用人不能为空', trigger: 'change' }
@@ -196,12 +207,13 @@ export default {
       selectedList.map(item => {
         if (!item.isrepeat) {
           this.dataFormTwo.productData.push({
-            equipmentIdCode: item.all.code,
-            spec: item.all.specModel,
-            equipmentIdName: item.name,
-            equipmentId: item.id,
-            productId: item.id,
-            description: '',
+            productName: item.all.name,
+            productCode: item.all.code,
+            drawingNo: item.all.drawingNo,
+            unit: item.all.mainUnit,
+            availableQuantity: item.all.availableQuantity,
+            productId: item.all.id,
+            requisitionNum: '',
           })
         } else {
           this.$message({

@@ -50,18 +50,26 @@
                     <el-table ref="product" class="TableForm table" :data="dataFormTwo.productData" v-bind="customStyleData" hasC hasNO fixedNO @selection-change="handeleProductInfoData" v-if="tableVisible">
                       <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType !== 'look'" key="1" />
                       <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
-                      <el-table-column prop="equipmentIdCode" label="工具编码" width="200" show-overflow-tooltip>
+                      <el-table-column prop="productCode" label="工具编码" min-width="160" show-overflow-tooltip>
                       </el-table-column>
-                      <el-table-column prop="equipmentIdName" label="工具名称" width="200" show-overflow-tooltip>
+                      <el-table-column prop="productName" label="工具名称" min-width="160" show-overflow-tooltip>
                         <template slot="header">
                           <span class="required">*</span>工具名称
                         </template>
                       </el-table-column>
-                      <el-table-column prop="spec" label="工具规格" width="200" show-overflow-tooltip>
+                      <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                       </el-table-column>
-                      <el-table-column prop="description" label="说明" min-width="300">
+                      <el-table-column prop="unit" label="单位" width="120" show-overflow-tooltip>
+                      </el-table-column>
+                      <el-table-column prop="requisitionNum" label="数量" width="160">
+                        <template slot="header">
+                          <span class="required">*</span>数量
+                        </template>
                         <template slot-scope="scope">
-                          <el-input v-model="scope.row.description" placeholder="请输入说明" :disabled="btnType == 'look' ? true : false" maxlength="200" />
+                          <el-form-item :prop="'productData.'+scope.$index+'.'+'requisitionNum'" :rules='productRules.requisitionNum'>
+                            <el-input v-model="scope.row.requisitionNum" placeholder="请输入数量" :disabled="btnType == 'look'" maxlength="11" style="width: 135px;">
+                            </el-input>
+                          </el-form-item>
                         </template>
                       </el-table-column>
                       <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="30">
@@ -151,7 +159,14 @@ export default {
       },
       customStyleData: {},
       organizeIdTrees: [],
-
+      productRules: {
+        // 数量
+        requisitionNum: [
+          { validator: this.formValidate({ type: 'noEmtry', params: ["数量不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
+          { required: true, trigger: 'blur' },
+          { validator: this.formValidate('positiveNumber', '数量必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }
+        ]
+      },
       dataRule: {
         recipientId: [
           { required: true, message: '归还人不能为空', trigger: 'change' }
@@ -188,7 +203,7 @@ export default {
     submitCustomerProduct(selectedIds, selectedList) {
       selectedList.map(item => {
         this.dataFormTwo.productData.map((item1) => {
-          if (item.all.code == item1.equipmentIdCode && item.name == item1.equipmentIdName) {
+          if (item.all.id == item1.productId) {
             item.isrepeat = true
           }
         })
@@ -196,12 +211,13 @@ export default {
       selectedList.map(item => {
         if (!item.isrepeat) {
           this.dataFormTwo.productData.push({
-            equipmentIdCode: item.all.code,
-            spec: item.all.specModel,
-            equipmentIdName: item.name,
-            equipmentId: item.id,
-            productId: item.id,
-            description: '',
+            productName: item.all.name,
+            productCode: item.all.code,
+            drawingNo: item.all.drawingNo,
+            unit: item.all.mainUnit,
+            incomingOutgoingNum: item.all.incomingOutgoingNum,
+            productId: item.all.id,
+            requisitionNum: '',
           })
         } else {
           this.$message({

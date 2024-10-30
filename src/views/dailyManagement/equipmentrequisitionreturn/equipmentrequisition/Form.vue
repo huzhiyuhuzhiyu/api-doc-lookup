@@ -50,18 +50,18 @@
                     <el-table ref="product" class="TableForm table" :data="dataFormTwo.productData" v-bind="customStyleData" hasC hasNO fixedNO @selection-change="handeleProductInfoData">
                       <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType !== 'look'" key="1" />
                       <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
-                      <el-table-column prop="productCode" label="设备编码" width="200" show-overflow-tooltip>
+                      <el-table-column prop="productCode" label="设备编码" min-width="160" show-overflow-tooltip>
                       </el-table-column>
-                      <el-table-column prop="productName" label="设备名称" width="200" show-overflow-tooltip>
+                      <el-table-column prop="productName" label="设备名称" min-width="160" show-overflow-tooltip>
                         <template slot="header">
                           <span class="required">*</span>设备名称
                         </template>
                       </el-table-column>
-                      <el-table-column prop="drawingNo" label="设备规格" width="200" show-overflow-tooltip>
+                      <el-table-column prop="drawingNo" label="设备规格" min-width="160" show-overflow-tooltip>
                       </el-table-column>
-                      <el-table-column prop="unit" label="单位" min-width="120" show-overflow-tooltip>
+                      <el-table-column prop="unit" label="单位" width="120" show-overflow-tooltip>
                       </el-table-column>
-                      <el-table-column prop="availableQuantity" label="可用库存数量" min-width="120" show-overflow-tooltip>
+                      <el-table-column prop="availableQuantity" label="可用库存数量" width="160" show-overflow-tooltip>
                       </el-table-column>
                       <el-table-column prop="requisitionNum" label="数量" width="160">
                         <template slot="header">

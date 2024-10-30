@@ -208,7 +208,7 @@
                     </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24" class="iptLabel">
-                    <el-form-item label="生产人:" prop="producerName" v-if="currentProcess.taskMethod != 'not_appoint'">
+                    <el-form-item label="生产人:" prop="producerName" v-if="currentProcess.taskMethod != 'not_appoint'"  :style="{ marginBottom: producerMargin }">
                       <el-select v-model="currentProcess.producerName" placeholder="生产人" style="width: 100%;"
                         class="ipt">
                         <el-option v-for="(item, index) in personList" :key="index" :label="item.label"
@@ -217,7 +217,7 @@
 
                       <!-- producerId -->
                     </el-form-item>
-                    <el-form-item label="生产人:" prop="producerId" v-if="currentProcess.taskMethod == 'not_appoint'"
+                    <el-form-item label="生产人:" prop="producerId" v-if="currentProcess.taskMethod == 'not_appoint'"  :style="{ marginBottom: producerMargin }"
                       class="iptLabel">
                       <user-select v-model="currentProcess.producerId" placeholder="生产人" clearable style="width: 100%;"
                         class="ipt" @change="hangleSelectSales">
@@ -354,6 +354,7 @@ export default {
         ]
       },
       iptLabelMargin:'18px',
+      producerMargin: '18px'
     }
   },
 
@@ -411,11 +412,21 @@ export default {
 
       this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity]), 6)
       this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
-        if(!this.currentProcess.qualifiedQuantity){
+        if(!this.currentProcess.qualifiedQuantity || this.currentProcess.qualifiedQuantity == 0){
           this.iptLabelMargin='38px'
         }else{
           this.iptLabelMargin='18px'
-
+          if (!this.currentProcess.producerId) {
+            this.producerMargin = '38px'
+            console.log(1);
+          } else {
+            this.producerMargin = '18px'
+          }
+          this.$nextTick(() => {
+          const height = this.$refs.mycol.$el.clientHeight
+          console.log('el-col的高度是1：', height);
+          this.targetHeight = height;
+          })
         }
     },
     handleBlur2() {
@@ -560,6 +571,26 @@ export default {
             this.$message.success("报工成功")
             this.init(this.id)
           })
+        }else {
+          if (!this.currentProcess.vibrateReportFlag) {
+            if (!this.currentProcess.qualifiedQuantity || this.currentProcess.qualifiedQuantity == 0) {
+              this.iptLabelMargin = '38px'
+            } else {
+              this.iptLabelMargin = '18px'
+
+            }
+          }
+          if (!this.currentProcess.producerId) {
+            this.producerMargin = '38px'
+          } else {
+            this.producerMargin = '18px'
+
+          }
+          this.$nextTick(() => {
+            const height = this.$refs.mycol.$el.clientHeight
+            console.log('el-col的高度是1：', height);
+            this.targetHeight = height;
+          });
         }
       })
 

@@ -253,13 +253,13 @@
                       </el-link>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
-                  <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
-                  <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
-                  <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" width="180" sortable="custom" />
-                  <el-table-column prop="taxAmount" label="税额" width="120" sortable="custom" />
-                  <el-table-column prop="totalAmount" label="总金额(含税)" width="140" sortable="custom" />
-                  <el-table-column prop="receivingStatus" label="订单状态" align="center" sortable="custom" width="120">
+                  <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180"  />
+                  <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180"  />
+                  <el-table-column prop="deliveryDate" label="交货日期" width="120"  />
+                  <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" width="180"  />
+                  <el-table-column prop="taxAmount" label="税额" width="120"  />
+                  <el-table-column prop="totalAmount" label="总金额(含税)" width="140"  />
+                  <el-table-column prop="receivingStatus" label="订单状态" align="center"  width="120">
                     <template slot-scope="scope">
                       <div v-if="scope.row.receivingStatus == 'not_finished'">
                         <el-tag>未完成</el-tag>
@@ -269,7 +269,7 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop="remark" min-width="140" label="备注" />
-                  <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
+                  <el-table-column prop="createTime" label="创建时间" min-width="180"  />
                   <el-table-column prop="createByName" label="创建人" />
                   <el-table-column label="操作" width="180" fixed="right">
                     <template slot-scope="scope">
@@ -291,13 +291,13 @@
                       </el-link>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
-                  <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
-                  <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
-                  <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" width="180" sortable="custom" />
-                  <el-table-column prop="taxAmount" label="税额" width="120" sortable="custom" />
-                  <el-table-column prop="totalAmount" label="总金额(含税)" width="140" sortable="custom" />
-                  <el-table-column prop="receivingStatus" label="订单状态" align="center" sortable="custom" width="120">
+                  <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180"  />
+                  <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180"  />
+                  <el-table-column prop="deliveryDate" label="交货日期" width="120"  />
+                  <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" width="180"  />
+                  <el-table-column prop="taxAmount" label="税额" width="120"  />
+                  <el-table-column prop="totalAmount" label="总金额(含税)" width="140"  />
+                  <el-table-column prop="receivingStatus" label="订单状态" align="center"  width="120">
                     <template slot-scope="scope">
                       <div v-if="scope.row.receivingStatus == 'not_finished'">
                         <el-tag>未完成</el-tag>
@@ -307,7 +307,7 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop="remark" min-width="140" label="备注" />
-                  <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
+                  <el-table-column prop="createTime" label="创建时间" min-width="180"  />
                   <el-table-column prop="createByName" label="创建人" />
                   <el-table-column label="操作" width="180" fixed="right">
                     <template slot-scope="scope">

@@ -210,7 +210,7 @@ export default {
         //   }
         // },
         { align: 'left', name: 'text', label: '', tree: true, width: "*", min_width: 180, },
-        { align: 'center', name: 'person', label: '负责人', width: '120' },
+        // { align: 'center', name: 'person', label: '负责人', width: '120' },
         // { align: 'right', name: 'time', label: '时间节点', width: '80' },
         { align: 'center', name: 'progress', label: '进度', width: '120', template: (task) => task.progress * 100 + '%' },
       ]
@@ -238,6 +238,43 @@ export default {
       }
       return true;
     });
+    // 显示到任务上的文本
+    gantt.templates.task_text = function (start, end, task) {
+      if (!task.parent) {
+        return "" + task.text + "<span style='margin-left:20px;'></span>" + task
+          .completedQuantity + "/" + task.productionQuantity;
+      } else {
+        return "" + task.text + "<span style='margin-left:20px;'></span>" + task
+          .qualifiedQuantity + "/" + task.productionQuantity;
+      }
+
+    };
+    // // 鼠标悬浮工具提示文本配置
+    // gantt.templates.tooltip_text = function (start, end, task) {
+    //   if (!task.parent) {
+    //     return `
+    //         <div style='display:flex;flex-wrap:wrap;align-items: center;width:300px;'>
+    //           <div style='width: 60%;line-height: 18px;'>任务单号：${task.text}</div> 
+    //           <div style='width: 60%;line-height: 18px;'>数量：${task.qualifiedQuantity}/${task.productionQuantity}</div>
+    //           <div style='width: 60%;line-height: 18px;'>计划时间：${task.start_date} ~ ${task.end_date}</div>
+    //         </div>
+    //         `;
+    //   } else {
+    //     return `
+    //         <div style='display:flex;flex-wrap:wrap;align-items: center;width:300px;'>
+    //           <div style='width: 60%;line-height: 18px;'>工单编号：${task.orderNo}</div>
+    //           <div style='width: 40%;line-height: 18px;'>工序名称：${task.text}</div>
+    //           <div style='width: 60%;line-height: 18px;'>数量：${task.qualifiedQuantity}/${task.productionQuantity}</div>
+    //           <div style='width: 60%;line-height: 18px;'>计划时间：${task.start_date} ~ ${task.end_date}</div>
+    //         </div>
+    //         `;
+    //   }
+    // };
+    gantt.plugins({
+          tooltip: true, // 启用tooltip悬浮框
+          marker: true, // 时间标记
+          // drag_timeline: true, // 拖动图
+        });
     gantt.config.autofit = false;
     gantt.config.column_width = 50;
     gantt.config.work_time = true;
@@ -269,6 +306,8 @@ export default {
     // 初始化甘特图
 
     gantt.templates.task_class = (start, end, task) => {
+      console.log(task.progress);
+      if (task.progress == 0) return 'Noproduc'
       if (task.progress < 0.5) {
         return "low-progress"; //进度低于50%  
       } else if (task.progress < 1.0) {
@@ -279,17 +318,25 @@ export default {
     }
     const style = document.createElement('style');
     style.innerHTML = `  
+    .Noproduc{
+    background-color:"#ccc!important"
+    }
       .low-progress {  
-      background-color: #ccffcc; /*低进度颜色 */  
+      color:red!important; /*低进度颜色 */  
       }  
       .mid-progress {  
-      background-color: #ccffcc; /* 中等进度颜色 */  
+      background-color: yellow; /* 中等进度颜色 */  
       }  
       .high-progress {  
-      background-color: #ccffcc; /* 高进度颜色 */  
+      background-color: green; /* 高进度颜色 */  
       }  
       `;
     document.head.appendChild(style);
+
+
+  },
+  created () {
+    gantt.clearAll() // 先清空，再添加，就不会有缓存
   },
   methods: {
 
@@ -304,10 +351,7 @@ export default {
 
 
 
-
-    selectRelatedTasksFun(val) {
-      this.init(val.id)
-    },
+ 
 
     goBack() {
       this.$emit('close')
@@ -332,12 +376,15 @@ export default {
         res.data.forEach(item => {
           let obj = {
             id: item.id,
-            text: item.productionPlanNo,
-            progress: this.jnpf.numberFormat(this.jnpf.math('divide', [item.qualifiedQuantity, item.productionQuantity]), 2),
+            text: item.orderNo,
+            progress: this.jnpf.numberFormat(this.jnpf.math('divide', [item.completedQuantity, item.productionQuantity]), 2),
             type: 'task',
             start_date: new Date(item.planStartDate),
             end_date: new Date(item.planEndDate),
             open: item.productionOrderId ? false : true,
+            color: '#ccc',
+            completedQuantity: item.completedQuantity,
+            productionQuantity: item.productionQuantity,
           }
           console.log(6666);
           arr.push(obj)
@@ -364,7 +411,10 @@ export default {
                 start_date: new Date(items.planStartDate),
                 end_date: new Date(items.planEndDate),
                 open: items.productionOrderId ? false : true,
-                color: "#00ffff",
+                qualifiedQuantity: items.qualifiedQuantity,
+                productionQuantity: items.productionQuantity,
+                orderNo:item.orderNo,
+                color:"#ccc",
               }
               arr.push(bjs)
             })

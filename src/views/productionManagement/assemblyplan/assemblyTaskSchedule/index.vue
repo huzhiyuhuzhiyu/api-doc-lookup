@@ -498,40 +498,49 @@ export default {
       this.listLoading = true
       this.showFlag = false
       ordershengchanList(this.orderForm).then(res => {
-        res.data.records.forEach(item => {
-          // 初始化 processInfoList 为一个空数组  
-          item.processInfoList = [];
+        if (res.data.records.length) {
 
-          // 检查 processSchedule 字段是否有值  
-          if (item.processSchedule) {
-            // 判断是否包含逗号  
-            if (item.processSchedule.includes(',')) {
-              // 以逗号分割为数组  
-              const processes = item.processSchedule.split(',');
+          res.data.records.forEach(item => {
+            // 初始化 processInfoList 为一个空数组  
+            item.processInfoList = [];
 
-              // 遍历每一项并处理  
-              processes.forEach(process => {
-                const [name, value] = process.split(':');
+            // 检查 processSchedule 字段是否有值  
+            if (item.processSchedule) {
+              // 判断是否包含逗号  
+              if (item.processSchedule.includes(',')) {
+                // 以逗号分割为数组  
+                const processes = item.processSchedule.split(',');
+
+                // 遍历每一项并处理  
+                processes.forEach(process => {
+                  const [name, value] = process.split(':');
+                  item.processInfoList.push({ name, value: parseInt(value, 10) });
+                });
+              } else {
+                // 直接以冒号分割  
+                const [name, value] = item.processSchedule.split(':');
                 item.processInfoList.push({ name, value: parseInt(value, 10) });
-              });
-            } else {
-              // 直接以冒号分割  
-              const [name, value] = item.processSchedule.split(':');
-              item.processInfoList.push({ name, value: parseInt(value, 10) });
+              }
             }
-          }
-        });
-        console.log("表格数据", res);
-        let longestProcessInfo = res.data.records.reduce((longest, current) => {
-          return current.processInfoList.length > longest.processInfoList.length ? current : longest;
-        }, res.data.records[0]);
-        this.maxWidth = longestProcessInfo.processInfoList.length * 100 + 50
-        this.showFlag = true
-        setTimeout(() => {
-          this.listLoading = false
-        }, 500);
-        this.tableData = res.data.records
-        this.total = res.data.total
+          });
+          console.log("表格数据", res);
+          let longestProcessInfo = res.data.records.reduce((longest, current) => {
+            return current.processInfoList.length > longest.processInfoList.length ? current : longest;
+          }, res.data.records[0]);
+          this.maxWidth = longestProcessInfo.processInfoList.length * 100 + 50
+          this.showFlag = true
+          setTimeout(() => {
+            this.listLoading = false
+          }, 500);
+          this.tableData = res.data.records
+          this.total = res.data.total
+        }else{
+          this.showFlag=true
+          
+          this.tableData=[]
+          this.total=0
+          this.listLoading=false
+        }
         // this.listLoading = false
       }).catch(() => {
         this.listLoading = false

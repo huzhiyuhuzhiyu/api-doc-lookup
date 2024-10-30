@@ -320,6 +320,7 @@ export default {
       formLoading: false,
       dataForm: {
         orderNo:'',
+        returnFlag: 0,
         requisitionType: 'requisition',
         useApplication: '',
         equipmentType: 'spare_parts',

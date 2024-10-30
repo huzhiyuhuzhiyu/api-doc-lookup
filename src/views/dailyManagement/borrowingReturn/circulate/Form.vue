@@ -3,7 +3,7 @@
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-        <el-page-header @back="goBack" :content="btnType == 'add' ? '新建领用' : btnType == 'edit' ? '编辑领用' : '查看领用'" />
+        <el-page-header @back="goBack" :content="btnType == 'add' ? '新建工具领用' : btnType == 'edit' ? '编辑工具领用' : '查看工具领用'" />
         <div class="options">
           <!-- <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
             保存草稿</el-button> -->
@@ -20,6 +20,11 @@
               <el-collapse-item title="基本信息" name="basicInfo">
                 <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                   <el-row :gutter="30" class="custom-row">
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="领用单号" prop="orderNo">
+                        <el-input v-model="dataForm.orderNo" placeholder="请输入领用单号" :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="领用人" prop="recipientId">
                         <user-select v-model="dataForm.recipientId" placeholder="请选择领用人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
@@ -104,6 +109,7 @@ import { getBimBusinessDetail } from '@/api/basicData/index'
 export default {
   data() {
     return {
+      codeConfig: {},//单据规则配置
       isattachmentswitch: '',
       categoryId: '',
       activeNames: ["basicInfo", "gjxx"],
@@ -143,6 +149,8 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
+        orderNo:'',
+        returnFlag: 0,
         equipmentType: 'tool',
         requisitionType: 'requisition',
         returnTime: '',
@@ -181,6 +189,16 @@ export default {
     this.getBimBusinessDetail()
   },
   methods: {
+    async fetchData(code) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code);
+        this.codeConfig = data
+        if (this.btnType == 'add') {
+          this.dataForm.orderNo = data.number
+        }
+      } catch (error) {
+      }
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -265,6 +283,7 @@ export default {
     init(id, btnType) {
       this.dataForm.id = id || ''
       this.btnType = btnType
+      if (this.btnType === 'add' || this.btnType === 'edit') this.fetchData('LYDH')
       if (this.btnType == 'add') {
         this.dataForm.recipientId = this.userInfo.userId
         this.dataForm.collectionTime = this.jnpf.getToday()
@@ -308,7 +327,7 @@ export default {
               this.datafilelist.map((item, index) => {
                 item.bimAttachments = {
                   businessType: 'system_attachment',
-                  configKey: 'fj_sbda',
+                  configKey: 'fj_gjly',
                   categoryId: this.categoryId,
                   documentId: item.id,
                   fileFlag: '',

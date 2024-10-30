@@ -255,6 +255,16 @@ export default {
         description: '开启后，在点检任务管理新建、编辑、查看都会显示附件操作。',
         mainModule: '设备管理'
     },
+    fj_sbly: {
+      configKeyLabel: '启用设备领用',
+      description: '开启后，在设备领用新建、编辑、查看都会显示附件操作。',
+      mainModule: '设备管理'
+    },
+    fj_sbgh: {
+      configKeyLabel: '启用设备归还',
+      description: '开启后，在设备归还新建、编辑、查看都会显示附件操作。',
+      mainModule: '设备管理'
+    },
     fj_gjda: {
       configKeyLabel: '启用工具档案设置',
       description: '开启后，在工具档案设置新建、编辑、查看都会显示附件操作。',

@@ -18,6 +18,11 @@
                 <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="6" :xs="24">
+                      <el-form-item label="设备待归还单号" prop="waitRequisitionNo">
+                        <ComSelect-page v-model="dataForm.waitRequisitionNo" @change="waitRequisitionChange" :tableItems="waitRequisitionTableItems" dialogTitle="选择单号" placeholder="请选择待归还单号" :listMethod="CollectionandreturnList" :listRequestObj="waitRequisitionRequestObj" :searchList="waitRequisitionSearchList" :isdisabled="btntype === 'look'" :renderTree="false" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="归还日期" prop="collectionTime">
                         <el-date-picker v-model="dataForm.collectionTime" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择归还日期" :disabled="btnType == 'look'">
                         </el-date-picker>
@@ -32,20 +37,31 @@
                   </el-row>
                 </el-form>
               </el-collapse-item>
-              <el-collapse-item title="产品信息" name="sbxx">
+              <el-collapse-item title="设备信息" name="sbxx">
                 <div v-if="btnType !== 'look'">
-                  <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择产品</el-button>|
+                  <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择设备</el-button>|
                   <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
                 </div>
                 <el-form :model="dataFormTwo" ref="productForm" class="data-form">
                   <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" @selection-change="handeleProductInfoData">
                     <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType !== 'look'" key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed='left' key="11" />
-                    <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
-                    </el-table-column>
-                    <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
+                    <el-table-column prop="equipmentCode" label="设备编号" width="180">
                       <template slot="header">
-                        <span class="required">*</span>产品名称
+                        <span class="required">*</span>设备编号
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'productData.'+scope.$index+'.'+'equipmentCode'" :rules='productRules.equipmentCode'>
+                          <el-input v-model="scope.row.equipmentCode" placeholder="请输入设备编号" :disabled="btnType == 'look'" style="width: 155px;">
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="productCode" label="设备编码" min-width="160" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="productName" label="设备名称" min-width="160" show-overflow-tooltip>
+                      <template slot="header">
+                        <span class="required">*</span>设备名称
                       </template>
                     </el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
@@ -78,7 +94,7 @@
           </el-tab-pane>
         </el-tabs>
       </div>
-      <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" title="选择产品" treeTitle="产品分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'spare_parts' } }" :listMethod="getProductList" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple />
+      <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" title="选择设备" treeTitle="设备分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'spare_parts' } }" :listMethod="getProductList" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple />
     </div>
   </transition>
 </template>
@@ -86,12 +102,37 @@
 <script>
 import { getBimBusinessDetail } from '@/api/basicData/index'
 import { mapGetters } from 'vuex'
-import { updateCollectionandreturn, detailCollectionandreturn, checkmaintenanceList, RepairRequestList, addCollectionandreturn } from '@/api/dailyManagement/Maintenance'
+import { updateCollectionandreturn, detailCollectionandreturn, CollectionandreturnList, addCollectionandreturn } from '@/api/dailyManagement/Maintenance'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
-import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
+import { getProductList } from '@/api/basicData/materialFiles' // 设备列表
 export default {
   data() {
     return {
+      waitRequisitionSearchList: [
+        { prop: 'orderNo', label: '领用单号', type: 'input' },
+      ],
+      waitRequisitionRequestObj: {
+        requisitionType: 'requisition',
+        equipmentType: 'equipment',
+        returnFlag: 0,
+        maintainerIdText: '',
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time" /* 使用倒序日期作为默认排序 */
+        }],
+      },
+      CollectionandreturnList,
+      waitRequisitionTableItems: [
+        { prop: 'orderNo', label: '领用单号' },
+        { prop: 'collectionTime', label: '领用日期' },
+        { prop: 'maintainerIdText', label: '领用人' },
+        { prop: 'createTime', label: '创建时间' }
+      ],
       categoryId: '',
       isattachmentswitch: '',
       activeNames: ["basicInfo", "sbxx"],
@@ -117,14 +158,14 @@ export default {
       },
       index: '',
       ProductTableSearchList: [
-        { prop: "code", label: "产品编码", type: 'input' },
-        { prop: "name", label: "产品名称", type: 'input' },
+        { prop: "code", label: "设备编码", type: 'input' },
+        { prop: "name", label: "设备名称", type: 'input' },
       ],
       ProductTableItems: [
-        { prop: 'code', label: '产品编码' },
-        { prop: 'name', label: '产品名称' },
+        { prop: 'code', label: '设备编码' },
+        { prop: 'name', label: '设备名称' },
         { prop: 'drawingNo', label: '品名规格' },
-        { prop: 'productCategoryName', label: '产品分类' },
+        { prop: 'productCategoryName', label: '设备分类' },
       ],
       salesList: [],
       dataFormTwo: {
@@ -135,6 +176,7 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
+        waitRequisitionNo:'',
         requisitionType: 'back',
         equipmentType: 'equipment',
         equipmentId: '',
@@ -145,9 +187,13 @@ export default {
       productRules: {
         // 数量
         requisitionNum: [
-          { validator: this.formValidate({ type: 'noEmtry', params: ["数量不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
+          { validator: this.formValidate({ type: 'noEmtry', params: ["数量不能为空", (errMsg, index) => { this.$message.error(`设备信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' },
-          { validator: this.formValidate('positiveNumber', '数量必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }
+          { validator: this.formValidate('positiveNumber', '数量必须大于0', (errMsg, index) => { this.$message.error(`设备信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }
+        ],
+        equipmentCode: [
+          { validator: this.formValidate({ type: 'noEmtry', params: ["设备编号不能为空", (errMsg, index) => { this.$message.error(`设备信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
+          { required: true, trigger: 'blur' },
         ]
       },
       dataRule: {
@@ -168,10 +214,15 @@ export default {
     ...mapGetters(['userInfo']),
   },
   methods: {
+    waitRequisitionChange(val, data) {
+      detailCollectionandreturn(data[0].all.id).then(res => {
+        this.dataFormTwo.productData = res.data.lines
+      })
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
-        configKey: 'fj_bjgh'
+        configKey: 'fj_sbgh'
       }
       getBimBusinessDetail(obj).then(res => {
         this.isattachmentswitch = res.data.configValue1
@@ -204,7 +255,7 @@ export default {
           })
         } else {
           this.$message({
-            message: "所选产品重复",
+            message: "所选设备重复",
             type: 'error',
             duration: 1500,
           })
@@ -218,7 +269,7 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    // 产品列表选中 
+    // 设备列表选中 
     handeleProductInfoData(val) {
       console.log(val);
       this.selectRows = val
@@ -228,7 +279,7 @@ export default {
       // 遍历选中的行的数据
       if (!this.selectRows.length) {
         this.$message({
-          message: '请选择要删除的产品',
+          message: '请选择要删除的设备',
           type: 'error',
           duration: 1500,
         })
@@ -294,7 +345,7 @@ export default {
       }
       if (!this.dataFormTwo.productData.length) {
         this.$message({
-          message: '请添加产品',
+          message: '请添加设备',
           type: 'error',
           duration: 1500,
         })
@@ -318,7 +369,7 @@ export default {
           this.datafilelist.map((item, index) => {
             item.bimAttachments = {
               businessType: 'system_attachment',
-              configKey: 'fj_bjgh',
+              configKey: 'fj_sbgh',
               categoryId: this.categoryId,
               documentId: item.id,
               fileFlag: '',

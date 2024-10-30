@@ -265,15 +265,15 @@ export default {
                                {{top.title}}
                        </div>
                        <div  class="flex-row justify-center align-center" style="height: calc(100% - 28px)">
-                           <div style="width: 20%;height: 100%" class="flex-row justify-center align-center">
+                           <div style="width: 30%;height: 100%" class="flex-row justify-center align-center">
                                <span :class="top.icon" style="font-size: 38px"></span>
                            </div>
-                           <div style="width: 80%;height: 100%">
+                           <div style="width: 70%;height: 100%">
                                <div class="height-full flex-column justify-center align-center">
                                    <el-tooltip effect="dark" :content="`点击进入${top.title}管理查看${SearchTimeType2Chinese[item.SearchTimeType]}新增详情`" placement="top"  v-for="item in top.item">
                                        <div class="item-text pointer" @click="blockClick(top.pathName,item.SearchTimeType)" >
-                                           <div class="item-text-left">{{ item.value }}</div>
                                            <div class="item-text-right">{{item.name}}</div>
+                                           <div class="item-text-left">{{ item.value }}</div>
                                        </div>
                                    </el-tooltip>
 
@@ -346,12 +346,11 @@ export default {
                 .item-text-left{
                     color: #ff0000;
                     font-size: 32px;
-                    width:42%;
-                    text-align: right;
-                    padding-right: 10px;
+                    width: 50%;
+                    text-align: left;
                 }
                 .item-text-right {
-                    width: 58%;
+                    width: 50%;
                     display: flex;
                     align-items: center;
                     justify-content: left;

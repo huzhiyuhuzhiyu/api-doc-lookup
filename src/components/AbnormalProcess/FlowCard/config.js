@@ -86,6 +86,7 @@ const defaultStartForm = {
     isDingTalk:0,
     isApp:0,
     isSms:0,
+    url:''
   },
   rejectMsgConfig: {
     on: 0,
@@ -98,6 +99,7 @@ const defaultStartForm = {
     isDingTalk:0,
     isApp:0,
     isSms:0,
+    url:''
   },
   copyMsgConfig: {
     on: 0,
@@ -110,6 +112,7 @@ const defaultStartForm = {
     isDingTalk:0,
     isApp:0,
     isSms:0,
+    url:''
   },
   overTimeMsgConfig: {
     on: 0,
@@ -128,6 +131,7 @@ const defaultStartForm = {
     isDingTalk:0,
     isApp:0,
     isSms:0,
+    url:''
   },
   hasSubmitBtn: true,
   submitBtnText: '提 交',

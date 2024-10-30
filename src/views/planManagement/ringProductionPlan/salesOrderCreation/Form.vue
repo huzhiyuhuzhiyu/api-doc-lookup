@@ -57,10 +57,9 @@
 
                           <el-input v-model="planForm.bomText" placeholder="请输入是否有BOM" disabled v-if="!planForm.bomId">
                           </el-input>
-                          <el-tooltip class="item" effect="dark" :content="planForm.productDrawingNo"
-                            placement="top-start" v-else>
-                            <div style="color: #3fb9f8;" class="drawingNo"  @click="lookBom(planForm)">{{ planForm.productDrawingNo }}</div>
-                          </el-tooltip>
+                          <el-input class="BOM_T" style="color: #3fb9f8;" @focus="lookBom(planForm)"
+                            v-model="planForm.productDrawingNo" placeholder="请输入是否有BOM" readonly v-else>
+                          </el-input>
 
                         </el-form-item>
                       </el-col>
@@ -359,6 +358,7 @@ export default {
         this.$refs.bomForm.init(data.bomId,'look',false)
       })
     },
+    
     closeForm(){
       this.bomFormVisible=false
     },
@@ -877,5 +877,8 @@ export default {
   white-space: nowrap;
   cursor: pointer;
   margin-top: 7px
+}
+.BOM_T ::v-deep .el-input__inner {
+  color: rgb(63, 185, 248)
 }
 </style>

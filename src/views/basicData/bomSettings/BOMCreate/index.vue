@@ -665,6 +665,7 @@ export default {
       }
       getBimBusinessDetail(obj).then(res => {
         this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
       })
     },
     async handleConfirm(submitModel) {
@@ -723,7 +724,9 @@ export default {
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
             item.bimAttachments = {
-              businessType: '',
+              businessType: 'system_attachment',
+              configKey: 'fj_bomgl',
+              categoryId: this.categoryId,
               documentId: item.id,
               fileFlag: '',
               sort: index

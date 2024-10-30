@@ -115,7 +115,7 @@
                   </el-collapse-item>
                 </el-collapse>
               </el-tab-pane>
-              <el-tab-pane label="附件" name="annex">
+              <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
                 <UploadWj v-model="datafilelist">
                 </UploadWj>
               </el-tab-pane>
@@ -144,12 +144,14 @@ import { addRepairRequest } from '@/api/dailyManagement/Maintenance'
 import { getOrganization } from '@/api/permission/user'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { mapGetters } from 'vuex'
-import { getEquEquipmentList, parametersShelveslist } from '@/api/basicData/index'
+import { getEquEquipmentList, parametersShelveslist, getBimBusinessDetail } from '@/api/basicData/index'
 export default {
   components: { UploadImg },
   data() {
     return {
-      codeConfig:{},
+      isattachmentswitch: '',
+      categoryId: '',
+      codeConfig: {},
       btnLoading: false,
       salesList: [],
       ProductTableSearchLists: [
@@ -171,7 +173,7 @@ export default {
         ],
         code: "",
         name: "",
-        state: 'normal',
+        repairFlag: 1,
         deviceType: 'normal',
         classAttribute: "tool",
       },
@@ -247,7 +249,7 @@ export default {
       activeName: "orderInfo",
       datafilelist: [],
       dataForm: {
-        maintenanceNo:'',
+        maintenanceNo: '',
         frontPicList: [],
         usin: '',
         maintenancePersonnel: '',
@@ -276,8 +278,7 @@ export default {
       },
       productRules: {
         faultLocationName: [
-          { validator: this.formValidate({ type: 'noEmtry', params: ["故障部位名称不能为空", (errMsg, index) => { this.$message.error(`故障信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
-          { required: true, trigger: 'blur' },
+          { validator: this.formValidate({ type: 'noEmtry', params: ["故障部位名称不能为空", (errMsg, index) => { this.$message.error(`故障信息第${index + 1}行：${errMsg}`) }] }), trigger: 'change' },
         ],
       },
       dataRule: {
@@ -307,9 +308,20 @@ export default {
     ...mapGetters(['userInfo'])
   },
   created() {
+    this.getBimBusinessDetail()
     this.init()
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_gjbx'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
+      })
+    },
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
@@ -517,7 +529,19 @@ export default {
             return JSON.stringify(item)
               .replace("{", "")
               .replace("}", "")
-          }) : "[]"
+          }) : []
+        if (this.datafilelist.length) {
+          this.datafilelist.map((item, index) => {
+            item.bimAttachments = {
+              businessType: 'system_attachment',
+              configKey: 'fj_gjbx',
+              categoryId: this.categoryId,
+              documentId: item.id,
+              fileFlag: '',
+              sort: index
+            }
+          })
+        }
         let obj = {
           attachmentList: this.datafilelist,
           equLine: [],

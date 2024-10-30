@@ -140,7 +140,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                 
+
                     <el-table-column prop="standardValue" label="规值" min-width="200"></el-table-column>
                     <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
                     <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
@@ -149,7 +149,7 @@
                     <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
                     <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
                     <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
-                  
+
                     <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
@@ -319,7 +319,7 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-           
+
                 <el-table-column prop="standardValue" label="规值" min-width="200"></el-table-column>
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
                 <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
@@ -539,6 +539,7 @@ export default {
   data() {
     return {
       isattachmentswitch: '',
+      categoryId: '',
       tipsvisible: false,
       submitmethodsTitle: '',
       btnText: '',
@@ -850,6 +851,7 @@ export default {
       }
       getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
       })
     },
     getWarehouseList() {
@@ -1567,7 +1569,9 @@ export default {
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
             item.bimAttachments = {
-              businessType: '',
+              businessType: 'system_attachment',
+              configKey: 'fj_cpcgthtzd',
+              categoryId: this.categoryId,
               documentId: item.id,
               fileFlag: '',
               sort: index
@@ -1770,7 +1774,6 @@ export default {
 }
 </style>
 <style scoped>
-
 .el-dialog .el-dialog__body {
   padding: 20px 0px 2px !important;
 }

@@ -27,18 +27,7 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <div>
-            <el-dropdown style="margin-right:10px;">
-              <el-button size="mini" type="primary" icon="el-icon-plus">
-                新建
-                <i class="el-icon-arrow-down el-icon--right"></i>
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="addOrUpdateHandle('', 'add','equipment')">设备</el-dropdown-item>
-                <el-dropdown-item @click.native="addOrUpdateHandle('','add','tool')">工具</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </div>
+          <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="handleUserRelation('', 'add')" />
           <div class="JNPF-common-head-right" style="float: right">
             <el-tooltip content="高级查询" placement="top">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
@@ -69,22 +58,9 @@
           </el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
-          <el-table-column label="操作" width="180" fixed="right">
+          <el-table-column label="操作" width="140" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="handleUserRelation(scope.row, 'edit')" @del="handleDel(scope.row.id)" :editDisabled="scope.row.documentStatus === 'submit'" :delDisabled="scope.row.documentStatus === 'submit'">
-                <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="handleUserRelation(scope.row, 'look')">
-                      查看详情
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </tableOpts>
+              <el-button type="text" size="mini" @click.native="handleUserRelation(scope.row.id, 'look')">查看详情</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -98,9 +74,9 @@
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { CollectionandreturnList, deleteCollectionandreturn } from '@/api/dailyManagement/Maintenance'
-import Form from './Form'
+import Form from '../sparepartsrequisition/Form.vue'
 export default {
-  name: 'announceInvalidated',
+  name: 'sparepartsrequisitionreturn',
   components: { Form, SuperQuery },
   data() {
     return {
@@ -173,6 +149,7 @@ export default {
       orderFormone: {
         requisitionType: 'requisition',
         equipmentType: 'spare_parts',
+        returnFlag: 0,
         maintainerIdText: '',
         useApplication: '',
         pageNum: 1,
@@ -261,16 +238,10 @@ export default {
         })
       }).catch(() => { })
     },
-    handleUserRelation(val, btnType) {
+    handleUserRelation(id, btnType) {
       this.formVisible = true
-      let type = ''
-      if (val.useApplication == 'equipmentmaintain' || val.useApplication == 'equipmentrepair') {
-        type = 'equipment'
-      } else {
-        type = 'tool'
-      }
       this.$nextTick(() => {
-        this.$refs.Form.init(val.id, btnType, type)
+        this.$refs.Form.init(id, btnType)
       })
     },
     addOrUpdateHandle(id, btnType, type) {

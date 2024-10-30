@@ -129,7 +129,7 @@ export default {
         ],
         code: "",
         name: "",
-        state: '',
+        noState: 'discard',
         deviceType: 'normal',
         classAttribute: "equipment",
       },

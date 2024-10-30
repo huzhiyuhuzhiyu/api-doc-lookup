@@ -62,7 +62,7 @@
               </el-form>
             </el-collapse>
           </el-tab-pane>
-          <el-tab-pane label="附件" name="annex">
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
             <UploadWj v-model="datafilelist" :disabled="btnType == 'look'" :detailed="btnType == 'look'">
             </UploadWj>
           </el-tab-pane>
@@ -75,6 +75,7 @@
   </transition>
 </template>
 <script>
+import { getBimBusinessDetail } from '@/api/basicData/index'
 import UploadImg from "@/components/Generator/components/Upload/UploadImg.vue";
 import { addequEquipmentRepairKnowledge, updateequEquipmentRepairKnowledge, detailequEquipmentRepairKnowledge } from '@/api/dailyManagement/Maintenance'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
@@ -83,6 +84,8 @@ export default {
   components: { UploadImg },
   data() {
     return {
+      isattachmentswitch: '',
+      categoryId: '',
       formLoading: false,
       btnLoading: false,
       ProductTableSearchLists: [
@@ -220,7 +223,20 @@ export default {
       tipsvisible: false
     }
   },
+  created() {
+    this.getBimBusinessDetail()
+  },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_gjwxzsk'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
+      })
+    },
     init(id, type) {
       this.dataForm.id = id || ''
       this.btnType = type
@@ -316,6 +332,18 @@ export default {
               .replace("{", "")
               .replace("}", "")
           }) : []
+        if (this.datafilelist.length) {
+          this.datafilelist.map((item, index) => {
+            item.bimAttachments = {
+              businessType: 'system_attachment',
+              configKey: 'fj_gjwxzsk',
+              categoryId: this.categoryId,
+              documentId: item.id,
+              fileFlag: '',
+              sort: index
+            }
+          })
+        }
         let obj = {
           attachmentList: this.datafilelist,
           ...this.dataForm

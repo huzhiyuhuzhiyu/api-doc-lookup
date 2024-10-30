@@ -23,7 +23,7 @@
                       </div>
                     </div>
                   </div>
-                  <card class="card-item" bodyheight="200px" title="设备维修工单数"></card>
+                  <card class="card-item" bodyheight="200px" title="设备维修工单数" :datalist="datalistobj"></card>
                 </div>
                 <div class="table-content">
                   <div style="margin-top: 15px;">
@@ -251,9 +251,24 @@
                 </div>
               </div>
             </el-tab-pane>
-            <el-tab-pane label="维修及时率分析" name="wxjslfx">
-
-            </el-tab-pane>
+            <!-- <el-tab-pane label="维修及时率分析" name="wxjslfx">
+              <div class="statistical">
+                <div class="new-engine-chart">
+                  <div class="wx-container-content has-hover">
+                    <chart id="repairline" :option="repairlinetion"></chart>
+                  </div>
+                  <div class="wx-container-content has-hover">
+                    <chart id="maintenanceduration" :option="maintenancedurationtion"></chart>
+                  </div>
+                  <div class="wx-container-content has-hover">
+                    <chart id="trend" :option="trendtion"></chart>
+                  </div>
+                  <div class="wx-container-content has-hover">
+                    1231
+                  </div>
+                </div>
+              </div>
+            </el-tab-pane> -->
           </el-tabs>
         </div>
       </div>
@@ -263,21 +278,25 @@
 
 <script>
 import chart from "@/views/dailyManagement/deviceReportanaly/components/chart.vue";
-import { RepairRequestList } from '@/api/dailyManagement/Maintenance'
+import { RepairRequestList, totalRepairNum, repairNum } from '@/api/dailyManagement/Maintenance'
 import card from "@/views/dailyManagement/deviceReportanaly/components/card.vue";
 export default {
   components: { card, chart },
   data() {
     return {
+      datalistobj: {},
+      trendtion: {},
+      maintenancedurationtion: {},
+      repairlinetion: {},
       total: 0,
       rejectoption: {},
       supplieroption: {},
       dispatchworkoption: {},
       datalistwx: [
-        { name: '代派工工单数', unit: '单', id: 'dailyPlanNum', value: '0' },
-        { name: '维修中工单数', unit: '单', id: 'dailyMaintenanceNum', value: '0' },
-        { name: '本月报修工单总数', unit: '单', id: 'mouthMaintenanceNum', value: '0' },
-        { name: '维修工单总数', unit: '单', id: 'mouthPlanNum', value: '0' },
+        { name: '代派工工单数', unit: '单', id: 'allNum', value: '0' },
+        { name: '维修中工单数', unit: '单', id: 'maintainingNum', value: '0' },
+        { name: '本月报修工单总数', unit: '单', id: 'mouthNum', value: '0' },
+        { name: '维修工单总数', unit: '单', id: 'toBeMaintenanceNum', value: '0' },
       ],
       listLoading: false,
       srcList: [
@@ -313,7 +332,7 @@ export default {
   },
   created() {
     this.listQuery = JSON.parse(JSON.stringify(this.listQueryone))
-    this.initData()
+    this.initDatawxqkgl()
   },
   methods: {
     //派工情况概览
@@ -419,13 +438,159 @@ export default {
     },
     handleClick({ name }) {
       if (name === 'wxqkgl') {
-        this.initData()
+        this.initDatawxqkgl()
       } else if (name === 'pgqkgl') {
         this.initDatapgqkgl()
+      } else {
+        this.initDatawxjslfx()
+      }
+    },
+    //维修及时率分析
+    initDatawxjslfx() {
+      this.repairlinetion = this.maintenancedurationtion = {
+        title: {
+          text: '不同故障等级的响应时长和维修时长',
+          textStyle: {
+            fontWeight: '450',
+            fontSize: 14
+          },
+          top: 12
+        },
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          data: ['故障响应时长（小时）', '维修时长（小时）'],
+          bottom: 10
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '15%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        },
+        yAxis: {
+          type: 'value',
+          axisTick: {
+            show: false
+          },
+          axisLine: {
+            show: false
+          }
+        },
+        series: [
+          {
+            name: '故障响应时长（小时）',
+            type: 'line',
+            stack: 'Total',
+            data: [120, 132, 101, 134, 90, 230, 210]
+          },
+          {
+            name: '维修时长（小时）',
+            type: 'line',
+            stack: 'Total',
+            data: [220, 182, 191, 234, 290, 330, 310]
+          },
+        ]
+      }
+      this.trendtion = {
+        title: {
+          text: '维修及时率趋势',
+          textStyle: {
+            fontWeight: '450',
+            fontSize: 14
+          },
+          top: 12
+        },
+        tooltip: {
+          trigger: 'axis',
+          // axisPointer: {
+          //   type: 'shadow'
+          // },
+          // formatter: '{b} : {c}%'
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: [
+          {
+            type: 'category',
+            boundaryGap: false,
+            data: [1, 2, 3, 4, 5]
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value',
+            max: 100,
+            splitNumber: 5,
+            axisTick: {
+              show: false
+            },
+            axisLine: {
+              show: false
+            },
+            axisLabel: {
+              formatter: '{value}%'
+            }
+          }
+        ],
+        color: ['#307deb'],
+        series: [
+          {
+            name: '维修及时率',
+            type: 'line',
+            label: {
+              show: true
+            },
+            areaStyle: {
+              color: {
+                type: 'linear',
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [{
+                  offset: 0, color: '#3883ec' // 0% 处的颜色
+                }, {
+                  offset: 1, color: '#fff' // 100% 处的颜色
+                }],
+                global: false // 缺省为 false
+              }
+            },
+            emphasis: {
+              focus: 'series'
+            },
+            smooth: true,
+            data: [12, 22, 10, 15, 14]
+          }
+        ]
       }
     },
     bigimg(url) {
       this.srcList[0] = url
+    },
+    initDatawxqkgl() {
+      let obj = {
+        classAttribute: "equipment"
+      }
+      repairNum(obj).then(res => {
+        this.datalistobj = res.data
+      })
+      totalRepairNum(obj).then(res => {
+        this.datalistwx.forEach(item => {
+          item.value = res.data[item.id]
+        })
+      })
+      this.initData()
     },
     reset() {
       this.listQuery = JSON.parse(JSON.stringify(this.listQueryone))
@@ -530,6 +695,16 @@ export default {
   }
 }
 .statistical {
+  .new-engine-chart {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    .wx-container-content {
+      width: calc(50% - 5px);
+      height: 420px;
+      margin-bottom: 10px;
+    }
+  }
   .analysis-content {
     display: flex;
     justify-content: space-between;

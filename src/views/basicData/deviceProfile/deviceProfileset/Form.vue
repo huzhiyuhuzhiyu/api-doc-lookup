@@ -236,14 +236,12 @@
 </template>
 
 <script>
-import { getBimBusinessDetail } from '@/api/basicData/index'
 import {
   editEquEquipment, saveEquEquipment
   , getEquEquipmentInfo
 } from '@/api/basicData/index'
 import { getequMountedPlaces } from "@/api/basicData/materialSettings";
-import { getCategoryTrees, getCooperativeData, checkEquEquipmentCode } from '@/api/basicData/index'
-
+import { getBimBusinessDetail, getCategoryTrees, getCooperativeData, checkEquEquipmentCode } from '@/api/basicData/index'
 import singleImg from '@/components/Upload/SingleImg'
 import UploadImg from '@/components/upload-img/index.vue'
 import axios from 'axios'

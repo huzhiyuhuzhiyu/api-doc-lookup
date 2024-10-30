@@ -72,8 +72,9 @@
 
     </div>
     <NormalForm v-if="normalFormVisible" ref="normalForm" @close="closeForm"></NormalForm>
-    <VibrateForm v-if="vibrateFormVisible" ref="VibrateForm" @close="closeForm"></VibrateForm>
+    <!-- <VibrateForm v-if="vibrateFormVisible" ref="VibrateForm" @close="closeForm"></VibrateForm> -->
     <recordForm  v-if="recordFormVisible" ref="recordForm" ></recordForm> 
+    <Drawer v-if="vibrateFormVisible" ref="VibrateForm" @close="closeForm"></Drawer>
   </div>
 </template>
 
@@ -86,12 +87,12 @@ import { detailProcess, } from '@/api/basicData/processSettingss.js'
 import { detailordershengchan, getWorkList, addWorkReport } from '@/api/productOrdes/index.js'
 import { log } from 'mathjs'
 import NormalForm from './NormalForm.vue'
-import VibrateForm from './VibrateForm.vue'
 import recordForm from './recordForm.vue'
+import Drawer from './drawer.vue'
 export default {
 
   components: {
-    NormalForm, VibrateForm,recordForm
+    NormalForm,recordForm,Drawer
   },
   data() {
     return {
@@ -164,7 +165,7 @@ export default {
     reportFun(row) { 
         this.vibrateFormVisible = true
         this.$nextTick(() => {
-          this.$refs.VibrateForm.init(row)
+          this.$refs.VibrateForm.init(row,'process')
 
         })
        

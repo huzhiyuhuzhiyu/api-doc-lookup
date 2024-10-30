@@ -94,7 +94,7 @@
                     <template v-if="!isNoProductPage">
                         <el-table-column prop="status" label="启用状态" width="120" align="center" v-if="(isFileManagementPage || isFileCheckPage)">
                             <template slot-scope="scope">
-                                <el-switch @change="changeState(scope.row)" v-model="scope.row.enabledMark"
+                                <el-switch @change="changeState(scope.row)" v-model="scope.row.enabledMark" :disabled="isFileCheckPage"
                                            :active-value="true" :inactive-value="false">
                                 </el-switch>
                             </template>
@@ -107,6 +107,7 @@
                                             v-if="!isFileCheckPage"
                                             :isJudgePer="true"
                                            :del-disabled="getDelDisabled(scope)"
+                                           :edit-disabled="getDelDisabled(scope)"
                                            :edit-text="tableOptsEditText"
                                            :del-text="tableOptsDelText"
                                            :has-del="tableOptsDelShow"

@@ -126,7 +126,7 @@
                     <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
                       查看详情
                     </el-dropdown-item>
-                    <el-dropdown-item :disabled="scope.row.documentStatus == 'draft' ? true : false" @click.native="closeOrdersFun(scope.row.id)">
+                    <el-dropdown-item :disabled="scope.row.documentStatus == 'draft'||scope.row.orderState == 'finish' ? true : false" @click.native="closeOrdersFun(scope.row.id)">
                       关单
                     </el-dropdown-item>
                     <el-dropdown-item @click.native="getCopyOrders(scope.row.id, 'copy')">

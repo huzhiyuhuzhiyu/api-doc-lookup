@@ -500,3 +500,51 @@ export function increaseNumber(obj,valueField, targetValue, duration=500) {
 
     requestAnimationFrame(animate);
 }
+
+
+/**
+ * 延时执行
+ * @param time
+ * @returns {Promise<unknown>}
+ */
+export function sleep(time){
+    return new Promise(resolve=>setTimeout(resolve,time))
+}
+
+/**
+ * 优化数组push
+ * 实际上使用此方法会使总渲染时长边长，但是会减少首屏渲染时长
+ * @param { Array } arr
+ * @param { Array } target
+ * @param { Number | Function } gap 如果传入的是数字，则每隔gap个元素push一次，如果传入的是函数，则每次调用函数返回true时push一次
+ */
+export function optimizeArrayPush(arr,target,gap=5){
+
+    const gapIsFn = typeof gap === 'function'
+    let index = gapIsFn ? 0 : Math.max(0,gap)
+    let run =null
+
+      if(gapIsFn){
+          run = (()=>{
+              index++
+              requestAnimationFrame(()=>{
+                  if(gap(index,target.length - arr.length)){
+                      arr.push(target[arr.length])
+                  }
+                  arr.length < target.length && run()
+              })
+          })
+      }else{
+          run = (()=>{
+              index++
+              requestAnimationFrame(()=>{
+                  if((index % gap === 0)){
+                      arr.push(target[arr.length])
+                  }
+                  arr.length < target.length && run()
+              })
+          })
+      }
+    run()
+}
+

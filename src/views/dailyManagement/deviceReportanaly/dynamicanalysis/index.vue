@@ -10,8 +10,8 @@
               </div>
             </div>
           </div>
-          <div class="vux-flexbox vux-flex-row" style="justify-content: center;margin-top: 16px;">
-            <div style="height: 125px;width: calc(50% - 10px);" v-for="(o,index) in flexlist" :key="index">
+          <div class="vux-flexbox vux-flex-row" style="justify-content: space-between;margin-top: 16px;padding-right: 10px;">
+            <div style="height: 125px;width: calc(50% - 10px);background: #bce1fb;margin-left: 10px;" v-for="(o,index) in flexlist" :key="index">
               <div class="dash-container has-hover">
                 <div class="speedy-entry-wrapper">
                   <ul class="entry-lists">

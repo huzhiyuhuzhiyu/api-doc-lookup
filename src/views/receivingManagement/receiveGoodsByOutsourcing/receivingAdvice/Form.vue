@@ -119,7 +119,7 @@
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
 
                     <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip />
-                    <el-table-column prop="productCode" label="产品编码" width="100"
+                    <el-table-column prop="productCode" label="产品编码" width="140"
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="60" />
                     <el-table-column prop="purchaseQuantity" label="订单数量" width="100" />
@@ -270,7 +270,7 @@
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
 
                 <el-table-column prop="drawingNo" label="品名规格" width="200" sortable="custom" show-overflow-tooltip />
-                <el-table-column prop="productCode" label="产品编码" width="200" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productCode" label="产品编码" width="140" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="mainUnit" label="单位" width="80" />
                 <el-table-column prop="purchaseQuantity" label="订单数量" width="140" />
                 <!-- <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
@@ -378,6 +378,7 @@ export default {
   data() {
     return {
       isattachmentswitch: '',
+      categoryId: '',
       tipsvisible: false,
       getCooperativeData,
       getcategoryTree,
@@ -679,6 +680,7 @@ export default {
       }
       getBimBusinessDetail(obj).then(res => {
         this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
       })
     },
     scanFun() {
@@ -1188,14 +1190,14 @@ export default {
       this.approvalFlag = approvalFlag
       this.btnType = btnType
       console.log(this.btnType, 'this.btnType')
-      // if (data.length !== 0) {
-      //   data.forEach(item => {
-      //     item.ordersNo = item.orderNo
-      //   })
-      //   this.dataFormTwo.productData = data
-      //   this.dataForm.partnerName = data[0].cooperativePartnerName
-      //   this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
-      // }
+      if (data) {
+        data.forEach(item => {
+          item.ordersNo = item.orderNo
+        })
+        this.dataFormTwo.productData = data
+        this.dataForm.partnerName = data[0].cooperativePartnerName
+        this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
+      }
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
@@ -1311,7 +1313,9 @@ export default {
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
             item.bimAttachments = {
-              businessType: '',
+              businessType: 'system_attachment',
+              configKey: 'fj_wxshd',
+              categoryId: this.categoryId,
               documentId: item.id,
               fileFlag: '',
               sort: index

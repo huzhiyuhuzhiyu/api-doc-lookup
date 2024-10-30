@@ -16,6 +16,36 @@
         <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
           <el-collapse v-model="activeNames">
             <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+              <el-collapse-item title="设备信息" name="sbInfo">
+                <el-row :gutter="30">
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="设备名称" prop="equipmentId">
+                      <!-- <ComSelectListone :requestObj="{ classAttribute: 'equipment' }" :dialogTitle="'请选择设备'"
+                      :disrequestobj="{ state: 'discard', classAttribute: 'equipment' }"
+                      v-model="dataForm.equipmentIdName" :placeholder="'请选择设备名称'"
+                      :isdisabled="btnType == 'look' || btnType == 'maintenance'" :method="editEquEquipmentAll"
+                      @change="changeWarehouse"></ComSelectListone> -->
+                      <el-input v-model="dataForm.equipmentIdName" placeholder="请选择设备名称" readonly @focus="openSeleceProductDialogss" :disabled="btnType !== 'add'">
+                      </el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="设备编码" prop="equipmentIdCode">
+                      <el-input v-model="dataForm.equipmentIdCode" placeholder="请输入设备编码" :disabled="true" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="使用车间" prop="factoryFloor">
+                      <el-input v-model="dataForm.factoryFloor" placeholder="请输入使用车间" :disabled="true" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="安装地点" prop="mountedPlaces">
+                      <el-input v-model="dataForm.mountedPlaces" placeholder="请输入安装地点" :disabled="true" />
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-collapse-item>
               <el-collapse-item title="点检信息" name="basicInfo">
                 <el-row :gutter="30" class="custom-row">
                   <el-col :sm="6" :xs="24">
@@ -59,37 +89,7 @@
                   </el-col>
                 </el-row>
               </el-collapse-item>
-              <el-collapse-item title="设备信息" name="sbInfo">
-                <el-row :gutter="30">
-                  <el-col :sm="6" :xs="24">
-                    <el-form-item label="设备名称" prop="equipmentId">
-                      <!-- <ComSelectListone :requestObj="{ classAttribute: 'equipment' }" :dialogTitle="'请选择设备'"
-                      :disrequestobj="{ state: 'discard', classAttribute: 'equipment' }"
-                      v-model="dataForm.equipmentIdName" :placeholder="'请选择设备名称'"
-                      :isdisabled="btnType == 'look' || btnType == 'maintenance'" :method="editEquEquipmentAll"
-                      @change="changeWarehouse"></ComSelectListone> -->
-                      <el-input v-model="dataForm.equipmentIdName" placeholder="请选择设备名称" readonly @focus="openSeleceProductDialogss" :disabled="btnType !== 'add'">
-                      </el-input>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :sm="6" :xs="24">
-                    <el-form-item label="设备编码" prop="equipmentIdCode">
-                      <el-input v-model="dataForm.equipmentIdCode" placeholder="请输入设备编码" :disabled="true" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :sm="6" :xs="24">
-                    <el-form-item label="使用车间" prop="factoryFloor">
-                      <el-input v-model="dataForm.factoryFloor" placeholder="请输入使用车间" :disabled="true" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :sm="6" :xs="24">
-                    <el-form-item label="安装地点" prop="mountedPlaces">
-                      <el-input v-model="dataForm.mountedPlaces" placeholder="请输入安装地点" :disabled="true" />
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-              </el-collapse-item>
-              <el-collapse-item title="点检任务" name="byrw">
+              <el-collapse-item title="点检任务" name="byrw" v-if="btnType==='look'">
                 <el-row :gutter="30">
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="计划点检人" prop="maintainerIdName">

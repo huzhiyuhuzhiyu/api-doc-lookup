@@ -660,7 +660,7 @@ export default {
       if (id) {
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.Form.init(id, parentId)
+          this.$refs.Form.init(id, '', false, parentId)
         })
         // }, 600);
       }
@@ -698,7 +698,7 @@ export default {
     handleUserRelation(id, parentId, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, parentId, btnType)
+        this.$refs.Form.init(id, btnType, false, parentId)
       })
     }
   }

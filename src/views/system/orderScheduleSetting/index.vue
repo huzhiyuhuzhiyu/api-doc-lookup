@@ -153,6 +153,7 @@ export default {
     addOrUpdateHandle() {
       let count = 0
       this.tableList.forEach((ele) => {
+        ele.totalProgress = Number(ele.progressPercentage) + count
         count += Number(ele.progressPercentage)
       })
       if (count === 100) {
@@ -173,7 +174,7 @@ export default {
           })
           .catch(() => { })
       } else {
-        return this.$message.error('所有占比必须等于100%')
+        return this.$message.error('所有占比必须等于100%,当前所有占比为' + count + '%')
       }
     }
   }

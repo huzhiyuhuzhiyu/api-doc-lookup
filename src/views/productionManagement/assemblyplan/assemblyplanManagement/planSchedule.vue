@@ -15,9 +15,9 @@
             <el-collapse-item title="计划信息" name="basicInfo">
               <div class="stoclInfo">
                 <el-descriptions :column="1" class="orderNo">
-                  <el-descriptions-item label="计划单号"  >{{ dataForm.productionPlanNo
+                  <el-descriptions-item label="计划单号">{{ dataForm.productionPlanNo
                     }}</el-descriptions-item>
-                 
+
                 </el-descriptions>
                 <el-descriptions :column="1" class="box">
                   <el-descriptions-item label="品名规格" class="drawingNo">{{ dataForm.productsDrawingNo
@@ -37,27 +37,29 @@
               <template slot-scope="scope">
                 <div :style="scope.row.urgentFlag ? 'color:red' : ''">{{ scope.row.urgentFlag ? '是' : '否' }}</div>
               </template>
-            </el-table-column>
-            <el-table-column prop="planStartDate" label="计划开始日期" min-width="160" sortable="custom"></el-table-column>
-            <el-table-column prop="planEndDate" label="计划结束日期" min-width="160" sortable="custom"></el-table-column>
-            <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
-            <el-table-column prop="oil" label="油脂" min-width="100" sortable="custom" />
-            <el-table-column prop="oilQuantity" label="油脂量" min-width="120" sortable="custom" />
-            <el-table-column prop="clearance" label="游隙" min-width="100" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
-            <el-table-column prop="specialRequire" label="特殊要求" min-width="160" sortable="custom" />
-            <el-table-column prop="arithmeticNo" label="运算单号" min-width="160" sortable="custom" />
-            <el-table-column prop="remark" label="备注" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" /> -->
+</el-table-column>
+<el-table-column prop="planStartDate" label="计划开始日期" min-width="160" sortable="custom"></el-table-column>
+<el-table-column prop="planEndDate" label="计划结束日期" min-width="160" sortable="custom"></el-table-column>
+<el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
+<el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
+<el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
+<el-table-column prop="oil" label="油脂" min-width="100" sortable="custom" />
+<el-table-column prop="oilQuantity" label="油脂量" min-width="120" sortable="custom" />
+<el-table-column prop="clearance" label="游隙" min-width="100" sortable="custom" />
+<el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
+<el-table-column prop="specialRequire" label="特殊要求" min-width="160" sortable="custom" />
+<el-table-column prop="arithmeticNo" label="运算单号" min-width="160" sortable="custom" />
+<el-table-column prop="remark" label="备注" min-width="180" sortable="custom"></el-table-column>
+<el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
+<el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" /> -->
 
                 <el-descriptions class="margin-top" :column="4">
                   <el-descriptions-item label="产品编码">{{ dataForm.productsCode }}</el-descriptions-item>
                   <el-descriptions-item label="计划生产数量">{{ dataForm.planProductionQuantity }}{{ dataForm.mainUnit
                     }}</el-descriptions-item>
-                  <el-descriptions-item label="已完成数量">{{ dataForm.completedQuantity?dataForm.completedQuantity:'0' }}{{ dataForm.mainUnit
+                  <el-descriptions-item label="已完成数量">{{ dataForm.completedQuantity ? dataForm.completedQuantity : '0'
+                    }}{{
+                      dataForm.mainUnit
                     }}</el-descriptions-item>
                   <el-descriptions-item label="打字内容">{{ dataForm.sealingCoverTyping }}</el-descriptions-item>
                   <el-descriptions-item label="精度等级">{{ dataForm.accuracyLevel }}</el-descriptions-item>
@@ -70,117 +72,34 @@
                   <el-descriptions-item label="计划日期">{{ dataForm.planStartDate }}至{{ dataForm.planEndDate
                     }}</el-descriptions-item>
                 </el-descriptions>
-               
+
               </div>
             </el-collapse-item>
             <el-collapse-item title="甘特图信息" name="info">
 
-              <!-- <el-radio-group v-model="categoryType" style="background-color:#fafafa;width:100%;height: 40px;">
-                <el-radio-button v-for="item in categoryTypeList"  :key="item.code" style="height: 100%;"
-                  :label="item.code">{{
-                    item.fullName
-                  }}</el-radio-button>
-              </el-radio-group>
-              <JNPF-table ref="work" v-if="categoryType == 'workOrder'" :data="workOrderData" fixedNO
-                v-loading="tableloading">
-                <el-table-column prop="processName" label="工序名称" min-width="120" />
-                <el-table-column prop="processCode" label="工序编码" min-width="120"></el-table-column>
-                <el-table-column prop="processingType" label="加工类型" min-width="120">
-                  <template slot-scope="scope">
-                    <div>
-                      {{ scope.row.processingType == "self_produced" ? "自制" : "外协" }}
-                    </div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="planStartDate" label="计划开始日期" min-width="150"></el-table-column>
-                <el-table-column prop="planEndDate" label="计划结束日期" min-width="150"></el-table-column>
-                <el-table-column prop="mainUnit" label="单位" min-width="80"></el-table-column>
-                <el-table-column prop="productionQuantity" label="生产数量" min-width="100"></el-table-column>
-                <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="100"></el-table-column>
-                <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="130"></el-table-column>
-                <el-table-column v-if="dataForm.taskMethod != 'not_appoint'" prop="personName" label="人员"
-                  min-width="120">
-                </el-table-column>
-                <el-table-column v-if="dataForm.taskMethod != 'not_appoint'" prop="workGroupName" label="班组"
-                  min-width="160">
-                </el-table-column>
-                <el-table-column v-if="dataForm.taskMethod != 'not_appoint'" prop="device" label="设备" min-width="120">
-                </el-table-column>
-                <el-table-column prop="pickingFlag" label="是否领料" min-width="100">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.pickingFlag ? "是" : "否" }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="firstInspection" label="是否首检" min-width="100">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.firstInspection ? "是" : "否" }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="checkFlag" label="是否检验" min-width="100">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.checkFlag ? "是" : "否" }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="reportFlag" label="是否报工" min-width="100">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.reportFlag ? "是" : "否" }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="stockFlag" label="是否入库" min-width="100">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.stockFlag ? "是" : "否" }}</div>
-                  </template>
-                </el-table-column>
-              </JNPF-table>
-              <JNPF-table ref="feed" v-if="categoryType == 'feed'" :data="feedData" fixedNO v-loading="tableloading"
-                :key="Math.random()">
-                <el-table-column prop="productDrawingNo" show-overflow-tooltip label="用料规格"></el-table-column>
-                <el-table-column prop="productCode" label="用料编码" />
-                <el-table-column prop="processName" label="工序名称" />
-                <el-table-column prop="mainUnit" label="单位" />
-                <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
-                <el-table-column prop="materialsUsedQuantity" label="计划用量" />
-                <el-table-column prop="receivedQuantity" label="已领数量" />
-                <el-table-column prop="inventoryQuantity" label="库存数量">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.inventoryQuantity ? scope.row.inventoryQuantity : "0" }}</div>
-                  </template>
-                </el-table-column>
-              </JNPF-table>
-              <JNPF-table ref="feed" v-if="categoryType == 'report'" :data="recoredsData" fixedNO
-                v-loading="tableloading" :key="Math.random()">
-                <el-table-column prop="workNo" label="工单号" min-width="180"></el-table-column>
-                <el-table-column prop="orderNo" label="报工单号" min-width="180"></el-table-column>
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="180"></el-table-column>
-                <el-table-column prop="processName" label="工序名称" width="160" />
-                <el-table-column prop="reportingTime" label="报工时间" min-width="160" />
-                <el-table-column prop="producerName" label="生产人" min-width="160" />
-                <el-table-column prop="mainUnit" label="单位" min-width="160" />
-                <el-table-column prop="reportingQuantity" label="报工数量" min-width="160" />
-                <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="160" />
-                <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="160" />
-                <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="160" />
-                <el-table-column prop="reworkQuantity" label="返工数量" min-width="160" />
-                <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" />
-                <el-table-column prop="createTime" label="创建时间" min-width="180"></el-table-column>
-              </JNPF-table> -->
+              <div ref='ganttRef'></div>
+              <section style='display: flex;justify-content: start;'>
+           
+              </section>
             </el-collapse-item>
           </el-collapse>
         </div>
       </div>
-      
-   
+
+
     </transition>
- 
+
   </div>
 </template>
 <script>
 import { detailordershengchan } from '@/api/productOrdes/index.js'
 import { getWorkReportList } from "@/api/productOrdes/index.js"
+import { gantt } from 'dhtmlx-gantt' // 引入dhtmlx-gantt
+import 'dhtmlx-gantt/codebase/dhtmlxgantt.css'
 export default {
   data() {
     return {
-      relatedTaskVisible:false,
+      relatedTaskVisible: false,
       categoryTypeList: [
         { code: "workOrder", fullName: "工单", },
         { code: "feed", fullName: "投料", },
@@ -217,7 +136,7 @@ export default {
 
       recoredsData: [],
 
-      activeNames1: ["basicInfo",'info'],
+      activeNames1: ["basicInfo", 'info'],
 
       activeNames2: ["workOrderInfoForm"],
 
@@ -239,7 +158,124 @@ export default {
 
       title: "",
 
-      prodOrderId: "", 
+      prodOrderId: "",
+      gantttt: {
+        data: [
+
+          /**
+           *
+           id：任务标识，可用来标识父子关系、连接links等
+           start_date,end_date：项目开始截至时间 Date|string //（‘14-07-2022’）
+           text：文本，任务的显示文字
+           progress：项目的进度，用颜色深浅显示
+           parent：父子关系(id标识)；子任务的parent为父任务的id
+           type：任务类型，有三种，object，task，milestone；
+                 object：没有时间限制，长度为包含所有子任务的长度
+                 task：普通任务
+                 milestone：菱形块，可表示中转关系
+           * */
+          { id: 1, text: 'PPDH202410080004', person: '管理员', progress:0.1, type: 'task', start_date: new Date('2023-10-01'), end_date: new Date('2023-10-12'), open: true },
+          { id: 11, parent: 1, text: '初始化项目', person: '李四', type: 'task', progress: 0.9, color: '#ff0000', start_date: new Date('2023-10-02'), end_date: new Date('2023-10-05'), open: true },
+          { id: 12, parent: 1, text: '前后端开发', type: 'task', progress: 0, color: '#00ff00', start_date: new Date('2023-10-05'), end_date: new Date('2023-10-08') },
+          { id: 13, parent: 1, text: '测试', type: 'task', progress: 0, color: '#0000ff', start_date: new Date('2023-10-08'), end_date: new Date('2023-10-10') },
+          { id: 14, parent: 1, text: '上线', type: 'task', progress: 0, color: '#00ffff', start_date: new Date('2023-10-10'), end_date: new Date('2023-10-12') },
+
+          { id: 111, parent: 11, text: '创建git仓库', type: 'task', progress: 1, color: '#880000', start_date: new Date('2023-10-02'), end_date: new Date('2023-10-03') },
+          { id: 112, parent: 11, text: '搭建脚手架', type: 'task', progress: 0.5, color: '#550000', start_date: new Date('2023-10-03'), end_date: new Date('2023-10-04') },
+          { id: 113, parent: 11, text: '完成初始化', type: 'task', progress: 0.1, color: '#330000', start_date: new Date('2023-10-04'), end_date: new Date('2023-10-05') },
+
+
+          { id: 121, parent: 12, text: '前端开发', person: '甲', type: 'task', progress: 0, color: '#00aa00', start_date: new Date('2023-10-05'), end_date: new Date('2023-10-07') },
+          { id: 122, parent: 12, text: '后端开发', person: '已', type: 'task', progress: 0, color: '#007700', start_date: new Date('2023-10-05'), end_date: new Date('2023-10-07') },
+          { id: 123, parent: 12, text: '前后端对接', person: '甲、已', type: 'task', progress: 0, color: '#003300', start_date: new Date('2023-10-07'), end_date: new Date('2023-10-08') },
+
+
+          // { id: 3, text: 'Team', type: 'milestone', start_date: '14-07-2023' },
+          // { id: 1, text: '1222', start_date: '25-04-2023', end_date: '01-07-2023', open: true },
+          // {
+          //   id: 12323544,
+          //   text: '44444',
+          //   start_date: '27-04-2023',
+          //   end_date: '01-06-2023',
+          //   duration: 5,
+          //   progress: 0.5,
+          //   person: 'Julia Garner',
+          //   parent: 1,
+          //   open: true
+          // },
+          // {
+          //   id: 1232354422,
+          //   text: '5555555555555555555555555555555555555555555555555555555555555555',
+          //   start_date: new Date('2023-04-27'),
+          //   end_date: new Date('2023-05-01'),
+          //   duration: 2,
+          //   progress: 0.2,
+          //   color: '#2F80ED',
+          //   person: 'Julia Garner',
+          //   parent: 12323544
+          // },
+          // {
+          //   id: 1232354421,
+          //   text: '22222',
+          //   start_date: new Date('2023-05-02'),
+          //   end_date: new Date('2023-05-21'),
+          //   duration: 2,
+          //   progress: 0.3,
+          //   color: '#2F80ED',
+          //   parent: 12323544
+          // },
+          // {
+          //   id: 12323545,
+          //   text: '333333333333333',
+          //   start_date: new Date('2023-05-15'),
+          //   end_date: new Date('2023-06-30'),
+          //   time: '02/01-02/20',
+          //   duration: 2,
+          //   progress: 0.7,
+          //   parent: 1,
+          //   open: true
+          // },
+          // {
+          //   id: 12345453,
+          //   text: '222222',
+          //   start_date: new Date('2023-04-27'),
+          //   end_date: new Date('2023-05-18'),
+          //   time: '02/01-02/20',
+          //   duration: 3,
+          //   progress: 0.9,
+          //   color: '#ED263D',
+          //   parent: 12323545
+          // }
+        ],
+        links: [
+          { id: 1, source: 11, target: 12, type: '0' },
+          { id: 2, source: 12, target: 13, type: '0' },
+          { id: 3, source: 13, target: 14, type: '0' },
+
+          { id: 4, source: 111, target: 112, type: '0' },
+          { id: 5, source: 112, target: 113, type: '0' },
+
+          { id: 6, source: 121, target: 123, type: '0' },
+          { id: 7, source: 122, target: 123, type: '0' },
+
+          // { id: 1, source: 1, target: 3, type: '0' },
+          // { id: 2, source: 1232354422, target: 1232354421, type: '0' },
+          // { id: 3, source: 12345453, target: 12345437, type: '0' }
+        ]
+      },
+      ganttColumns: [
+        // { align: 'right', name: 'color', label: '', width: '150',
+        //   template:function(task){
+        //     if(task.color){
+        //       console.log(task.color)
+        //       return  "<div style='width: 10px;height: 10px;' style='background:"+ task.color+ "'>"+"</div>"}
+        //   }
+        // },
+        { align: 'left', name: 'text', label: '', tree: true, width: "*", min_width: 180,},
+        { align: 'center', name: 'person', label: '负责人', width: '120' },
+        // { align: 'right', name: 'time', label: '时间节点', width: '80' },
+        { align: 'center', name: 'progress', label: '进度', width: '120', template: (task) => task.progress * 100 + '%' },
+      ]
     }
 
   },
@@ -251,9 +287,105 @@ export default {
     },
   },
   mounted() {
+    // 清空之前的配置
+    gantt.clearAll();
+    // 默认配置
+    gantt.plugins({
+      marker: true,
+    });
+    // const markerId = gantt.addMarker({
+    //   start_date: new Date(2023, 4, 26),
+    //   css: 'marker',
+    //   text: 'makerId aaaa',
+    // });
+    //任务的点击方法
+    gantt.attachEvent("onTaskClick", function (id, e) {
+      if (e.target.className === 'gantt_task_content') { //点击内容
+        console.log(id, e.target)
+      }
+      return true;
+    });
+    gantt.config.work_time = true;
+    gantt.i18n.setLocale('cn'); // 设置中文
+    gantt.config.readonly = true; // 设置为只读
+    gantt.config.bar_height = 32; //task高度
+    //自适应甘特图的尺寸大小, 使得在不出现滚动条的情况下, 显示全部任务
+    gantt.config.autosize = true;
+    //激活列表展开、折叠功能
+    gantt.config.open_split_tasks = true;
+    //用户可以通过拖拽调整行高
+    gantt.config.resize_rows = true;
+    //图标项目栏可以任意拖拽
+    gantt.config.order_branch = true;
+    gantt.config.order_branch_free = true;
+    //设置甘特图表头高度
+    gantt.config.scale_height = 32;
+    //点击表头可排序
+    gantt.config.sort = false;
+    // 显示列配置，限制最大最小时间
+    // gantt.config.start_date = new Date(2023, 3, 25);
+    // gantt.config.end_date = new Date(2023, 5, 26);
+    gantt.config.columns = this.ganttColumns;
+    gantt.config.scales = [
+      // { unit: 'month', step: 1, format: '%Y年%F' },
+      { unit: 'day', step: 1, format: this.formatWeekday },
+    ];
+    // gantt.getMarker(markerId);
+    // 初始化甘特图
+    gantt.init(this.$refs.ganttRef);
+    gantt.parse(this.gantttt)
   },
   methods: {
-    selectRelatedTasksFun(val){
+    weekScaleTemplate(date) {
+      let dateToStr = gantt.date.date_to_str("%d");
+      let endDate = gantt.date.add(gantt.date.add(date, 1, "week"), -1, "day");
+      const weekNum = gantt.date.date_to_str('%Y年%M 第%D日 ');
+      // return weekNum(date) + dateToStr(date) + "-" + dateToStr(endDate) + '日';
+      return weekNum(date)
+    },
+    formatWeekday(date) { //1号 周一
+      const dateToStr = gantt.date.date_to_str("%d");
+      return dateToStr(date) ;
+    },
+    setScaleConfig(level) {
+      switch (level) {
+        case "day":
+          gantt.config.scales = [
+            { unit: "day", step: 1, format: "%d %M" }
+          ];
+          gantt.config.scale_height = 27;
+          break;
+        case "week":
+          var weekScaleTemplate = function (date) {
+            var dateToStr = gantt.date.date_to_str("%d %M");
+            var endDate = gantt.date.add(gantt.date.add(date, 1, "week"), -1, "day");
+            return dateToStr(date) + " - " + dateToStr(endDate);
+          };
+          gantt.config.scales = [
+            { unit: "week", step: 1, format: weekScaleTemplate },
+          ];
+          gantt.config.scale_height = 27;
+          break;
+        case "month":
+          gantt.config.scales = [
+            { unit: "month", step: 1, format: "%F, %Y" },
+          ];
+          gantt.config.scale_height = 27;
+          break;
+        case "year":
+          gantt.config.scales = [
+            { unit: "year", step: 1, format: "%Y" },
+          ];
+          gantt.config.scale_height = 27;
+          break;
+      }
+
+    },
+
+
+
+
+    selectRelatedTasksFun(val) {
       this.init(val.id)
     },
     getTabdataList() {
@@ -309,16 +441,16 @@ export default {
     },
 
     associationTaskFun() {
-      this.relatedTaskVisible=true
+      this.relatedTaskVisible = true
       console.log(666);
-      this.$nextTick(()=>{
+      this.$nextTick(() => {
         this.$refs.relatedTaskForms.init(this.dataForm.productionPlanNo)
       })
     },
     init(row) {
       console.log(row);
-      this.dataForm=row
-     
+      this.dataForm = row
+
     },
 
 
@@ -670,9 +802,11 @@ $footerPadding: '10px';
   text-decoration: underline;
 
 }
+
 .personBox p {
   text-align: center;
 }
+
 .personBox:nth-child(n + 6) {
 
   margin-top: 12px;
@@ -736,15 +870,15 @@ $footerPadding: '10px';
 }
 
 
- 
+
 
 
 ::v-deep .el-descriptions-item__label {
-  font-size: 16px; 
+  font-size: 16px;
 }
 
 ::v-deep .el-descriptions-item__content {
-  font-size: 16px; 
+  font-size: 16px;
   width: 200px;
   white-space: nowrap;
   overflow: hidden;
@@ -768,21 +902,27 @@ $footerPadding: '10px';
   top: 0;
   width: 120px;
 }
-.JNPF-preview-main .main{
+
+.JNPF-preview-main .main {
   padding-top: 0;
 }
-::v-deep .el-radio-button__inner{
+
+::v-deep .el-radio-button__inner {
   padding: 12px 15px;
   background-color: #fafafa;
   border: none;
   border-right: 1px solid #dcdfe6;
-  font-size: 16px; 
-  }
-  ::v-deep .el-radio-button:last-child .el-radio-button__inner,::v-deep .el-radio-button:first-child .el-radio-button__inner{
-    border-radius: 0;
-  }
-  .orderNo ::v-deep .el-descriptions-item__label,.orderNo ::v-deep .el-descriptions-item__content{
-    font-size: 20px;
-    font-weight: bold;
-  }
+  font-size: 16px;
+}
+
+::v-deep .el-radio-button:last-child .el-radio-button__inner,
+::v-deep .el-radio-button:first-child .el-radio-button__inner {
+  border-radius: 0;
+}
+
+.orderNo ::v-deep .el-descriptions-item__label,
+.orderNo ::v-deep .el-descriptions-item__content {
+  font-size: 20px;
+  font-weight: bold;
+}
 </style>

@@ -1170,7 +1170,7 @@ export default {
         orderItems: [{ asc: true, column: 'sort' }]
       }
       getclassAttributeList(obj).then((res) => {
-        this.categoryList = res.data.records
+        this.categoryList = res.data.records.filter((item) => item.code !== 'spare_parts')
         console.log(this.categoryList, 'list')
       })
     },
@@ -1203,7 +1203,6 @@ export default {
       if (!row.salesPrice) return this.$message.error('销售单价(含税)不能为空')
       if (Number(row.salesPrice) < 0) return this.$message.error('销售单价(含税)不能小于0')
       if (!/^-?\d+\.?\d*$/.test(row.salesPrice)) return this.$message.error('销售单价(含税)应该是数字')
-
 
       updateProductPrice(row).then((res) => {
         console.log(res, 'iiiF')

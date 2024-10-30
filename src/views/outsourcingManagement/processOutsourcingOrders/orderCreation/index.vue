@@ -238,13 +238,14 @@
                             </template>
                           </el-table-column>
 
-                          <el-table-column label="操作" width="120" fixed="right">
+                          <el-table-column label="操作" width="170" fixed="right">
                             <template slot-scope="scope">
                               <el-button size="mini" type="text" @click="handlerOpenSource(scope.$index, 'source')">
                                 配置发料清单
                               </el-button>
                               <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                                v-if="dataFormTwo.data.length > 1" @click="delequipment_process_relList(scope.$index)">
+                                :disabled="dataFormTwo.data.length < 2"
+                                @click="delequipment_process_relList(scope.$index)">
                                 删除
                               </el-button>
                             </template>
@@ -323,6 +324,7 @@ export default {
   data() {
     return {
       isattachmentswitch: '',
+      categoryId: '',
       datafilelist: [],
       activeName: 'jcInfo',
       activeNames: ['productInfo', 'basicInfo'],
@@ -414,7 +416,7 @@ export default {
                 4,
                 '',
                 (errMsg) => {
-                  this.$message.error('主数量：' + errMsg)
+                  this.$message.error('数量：' + errMsg)
                 }
               ]
             }),
@@ -422,7 +424,7 @@ export default {
           },
           {
             validator: this.formValidate('positiveNumber', false, (errMsg) => {
-              this.$message.error(`数量(主)：${errMsg}`)
+              this.$message.error(`数量：${errMsg}`)
             }),
             trigger: 'blur'
           }
@@ -511,14 +513,14 @@ export default {
         productDrawingNo: [{ required: true, message: '请输入产品名称', trigger: ['blur'] }],
         productName: [{ required: true, message: '请输入产品名称', trigger: ['blur'] }],
         purchaseQuantity: [
-          // 主数量
+          // 数量
           {
             validator: this.formValidate({
               type: 'noEmtry',
               params: [
                 '',
                 (errMsg, index) => {
-                  this.$message.error(`产品信息第${index + 1}行：数量(主)${errMsg}`)
+                  this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`)
                 }
               ]
             }),
@@ -532,7 +534,7 @@ export default {
                 4,
                 '',
                 (errMsg, index) => {
-                  this.$message.error(`产品信息第${index + 1}行：数量(主)${errMsg}`)
+                  this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`)
                 }
               ]
             }),
@@ -540,7 +542,7 @@ export default {
           },
           {
             validator: this.formValidate('positiveNumber', false, (errMsg, index) => {
-              this.$message.error(`产品信息第${index + 1}行：数量(主)${errMsg}`)
+              this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`)
             }),
             trigger: 'blur'
           },
@@ -733,6 +735,7 @@ export default {
     if (this.$route.query.alert) {
       this.dialogTitle = '新建'
     }
+
     this.fetchData('EPDH')
     this.getBusInfo()
   },
@@ -744,6 +747,7 @@ export default {
       }
       getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
       })
     },
     deliveryDateChange(val) {
@@ -821,7 +825,7 @@ export default {
             productDrawingNo: item.drawingNo, // 品名规格
             ratio: item.ratio, // 转换系数
             calculationDirection: item.calculationDirection, // 计算方向
-            mainUnit: item.mainUnit, // 主单位
+            mainUnit: item.mainUnit, // 单位
             purchaseQuantity: item.purchaseQuantity, // 数量
             price: item.price, // 含税单价
             totalAmount: item.totalAmount, // 金额(含税)
@@ -830,7 +834,7 @@ export default {
             taxAmount: item.taxAmount, // 税额
             excludingTaxAmount: item.excludingTaxAmount, // 金额(不含税)
             deputyUnit: item.deputyUnit, // 副单位
-            planQuantity: '', //计划数量主
+            planQuantity: '', //计划数量
             planQuantity2: '', //计划数量副
             remark: item.remark,
             deliveryDate: this.dataForm.deliveryDate // 交期
@@ -997,7 +1001,7 @@ export default {
         return formatted
       }
     },
-    //主数量输入事件
+    //数量输入事件
     changePlanQuantity(index, val) {
       if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
         console.log(this.dataFormTwo.data[index].ratio)
@@ -1074,17 +1078,20 @@ export default {
       // this.dataFormTwo.data[index].purchaseQuantity = val
       this.$set(this.dataFormTwo.data[index], 'purchaseQuantity', val)
       console.log(this.dataFormTwo.data[index], 'this.dataFormTwo.data[index]')
-      let obj = {
-        productsId: this.dataFormTwo.data[index].productsId,
-        purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
-      }
-      // 通过需求池id 获取明细的数据
-      getShipmentList(obj).then((res) => {
-        console.log(res, '清单数据')
-        this.dataFormTwo.data[index].outShipmentList = res.data
+      if (this.dataFormTwo.data[index].purchaseQuantity) {
+        let obj = {
+          productsId: this.dataFormTwo.data[index].productsId,
+          purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
+        }
+        // 通过需求池id 获取明细的数据
+        getShipmentList(obj).then((res) => {
+          console.log(res, '清单数据')
+          this.dataFormTwo.data[index].outShipmentList = res.data
 
-        console.log(this.dataFormTwo.data, 'daaaa')
-      })
+          console.log(this.dataFormTwo.data, 'daaaa')
+        })
+      }
+
 
       if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
         this.dataFormTwo.data[index].purchaseQuantity2 = this.numberFormat(
@@ -1113,6 +1120,7 @@ export default {
       this.dataFormTwo.data = []
     },
     goBack() {
+      this.$router.go(-1)
       this.$emit('close', true)
     },
     init(id, type, data) {
@@ -1182,11 +1190,16 @@ export default {
     // 表单提交
     handleSubmit(type) {
       let submitFlag = true
-      this.dataFormTwo.data.map((ele) => {
+      this.dataFormTwo.data.map((ele, i) => {
         console.log(ele, 'ppp')
-        if (ele.outShipmentList.length == 0) {
+        if (!ele.purchaseQuantity) {
           submitFlag = false
-          return this.$message.error('发料清单为空')
+          this.$message.error(`产品信息第${i + 1}行：数量不能为空`)
+        } else {
+          if (ele.outShipmentList.length == 0) {
+            submitFlag = false
+            return this.$message.error(`产品信息第${i + 1}行：发料清单为空`)
+          }
         }
       })
       if (submitFlag) {
@@ -1202,7 +1215,9 @@ export default {
       if (this.datafilelist.length) {
         this.datafilelist.map((item, index) => {
           item.bimAttachments = {
-            businessType: '',
+            businessType: 'system_attachment',
+            configKey: 'fj_wxdd',
+            categoryId: this.categoryId,
             documentId: item.id,
             fileFlag: '',
             sort: index
@@ -1260,7 +1275,7 @@ export default {
                   if (!item.planQuantity) {
                     this.$message({
                       type: 'error',
-                      message: '请输入第' + (i + 1) + '行的主数量',
+                      message: '请输入第' + (i + 1) + '行的数量',
                       duration: 1500
                     })
                     break

@@ -109,19 +109,30 @@
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           ref="dataTable" :setColumnDisplayList="columnList">
-          <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
-            <template slot-scope="scope">
+          <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label"
+          ></el-table-column>
+          <!-- <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
+            <template slot="header" slot-scope="scope">
+              {{ classAttributeText }}编码
+            </template>
+<template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">
                 {{ scope.row.code }}
               </el-link>
             </template>
-          </el-table-column>
+</el-table-column> -->
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
-          <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" />
+          <el-table-column prop="name" :label="classAttributeText + '名称'" min-width="140" sortable="custom">
+            <!-- <template slot="header" slot-scope="scope">
+              {{ classAttributeText }}名称
+            </template> -->
+          </el-table-column>
 
-          <el-table-column prop="productCategoryName" label="产品分类" width="120" />
+          <el-table-column prop="productCategoryName" :label="classAttributeText + '分类'" width="120">
+
+          </el-table-column>
           <el-table-column prop="mainUnit" label="单位" width="120" />
-          <el-table-column prop="productSource" label="产品来源" width="120">
+          <el-table-column prop="productSource" :label="classAttributeText + '来源'" width="120">
             <template slot-scope="{ row }">
               <template v-if="row.productSource == 'produce'">
                 生产
@@ -134,7 +145,8 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column prop="productStatus" label="产品状态" width="120" align="center">
+          <el-table-column prop="productStatus" :label="classAttributeText + '状态'" width="120" align="center">
+
             <template slot-scope="{ row }">
               <el-tag type="success" disable-transitions v-if="row.productStatus == 'enable'">启用</el-tag>
               <el-tag type="danger" disable-transitions v-else-if="row.productStatus == 'disabled'">禁用</el-tag>
@@ -202,7 +214,7 @@
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <el-dialog title="快速创建" :visible.sync="quickVisible" width="30%" :before-close="handleClose"
-      class="JNPF-dialog JNPF-dialog_center">
+      class="JNPF-dialog JNPF-dialog_center" :close-on-click-modal="false">
       <el-form :model="quickForm" :rules="quickRules" ref="quickForm" label-width="100px" labelPosition="top"
         hide-required-asterisk="fasle">
         <el-form-item label="产品编码" prop="code">
@@ -291,6 +303,18 @@ export default {
       type: Object,
       default() {
         return {
+          tableItems: [
+            {
+              align: 'left',
+              formatter: '',
+              jnpfKey: '',
+              label: '订单号',
+              minWidth: 180,
+              prop: 'code',
+              sortable: true,
+              width: 180
+            }
+          ],
           code: '',
           name: '',
           orderItems: [
@@ -591,7 +615,8 @@ export default {
         label: 'name'
       },
       uploadVisib: false,
-      leftFlag: false
+      leftFlag: false,
+      classAttributeText: ''
     }
   },
   watch: {
@@ -666,6 +691,9 @@ export default {
     init(initListQuery) {
       this.quickVisible = false
       this.listQuery = JSON.parse(JSON.stringify(initListQuery))
+      console.log(initListQuery, 'uuu')
+      this.classAttributeText = this.listQuery.classAttributeText
+      console.log(this.classAttributeText, '[]')
       this.getcategoryTree()
       this.initData()
       if (localStorage.getItem(this.listQuery.classAttribute)) {

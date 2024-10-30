@@ -1,8 +1,8 @@
 <template>
   <paymentIndex :reconciliationType="listRequestObj.reconciliationType" :listMethod="getfinAccountsReport"
-    :listRequestObj="listRequestObj" :tableItems="tableItems" :searchList="searchList"  />
+    :listRequestObj="listRequestObj" :tableItems="tableItems" :searchList="searchList" />
 </template>
-  
+
 <script>
 import { getfinAccountList, getfinAccountDetail, getfinAccountsReport } from '@/api/ReconciliaRePayments/index'
 import paymentIndex from '@/views/financialManagement/components/collect/index.vue'
@@ -48,8 +48,8 @@ export default {
       tableItems: [
         { prop: 'orderNo', label: '对账流水号', minWidth: '180' },
         { prop: 'reconciliationDate', label: '对账日期', minWidth: '180' },
-        { prop: 'cooperativePartnerCode', label: '客户编码' },
-        { prop: 'cooperativePartnerName', label: '客户名称' },
+        { prop: 'cooperativePartnerCode', label: '客户编码', minWidth: '160' },
+        { prop: 'cooperativePartnerName', label: '客户名称', minWidth: '160' },
         { prop: 'includingTaxAmount', label: '出入库金额', minWidth: '160' },
         { prop: 'totalReconciliationAmount', label: '应付金额', minWidth: '160' },
         { prop: 'totalPaymentAmount', label: '已收款金额', minWidth: '160' },
@@ -61,7 +61,7 @@ export default {
         // { prop: 'createByName', label: '创建人' },
       ],
       searchList: [
-        { prop: 'paymentStatus', label: '收款状态', type: 'select', options: [{ label: '未完成 ', value: 'not_finished', }, { label: '已完成 ', value: 'finished', }] },
+        { prop: 'invoiceStatus', label: '开票状态', type: 'select', options: [{ label: '未完成 ', value: 'not_finished', }, { label: '已完成 ', value: 'finished', }] },
         { prop: 'reconciliationDateArr', label: '对账日期', type: 'date' },
         { prop: 'cooperativePartnerName', label: '客户名称', type: 'input' },
       ],
@@ -73,5 +73,3 @@ export default {
 
 }
 </script>
-
-  

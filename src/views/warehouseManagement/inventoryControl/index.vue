@@ -292,6 +292,7 @@ export default {
     },
     safeInventoryBlurFun(row, index) {
       let arr = []
+      if(this.safeInventory==row.safeInventory) return
       if (row.safeInventory) {
         arr.push(row)
         batchUpdataProductIncentory(arr).then(res => {
@@ -306,6 +307,7 @@ export default {
     },
     maxInventoryBlurFun(row, index) {
       let arr = []
+      if(this.maxInventory==row.maxInventory) return
       if (row.maxInventory) {
         arr.push(row)
         batchUpdataProductIncentory(arr).then(res => {

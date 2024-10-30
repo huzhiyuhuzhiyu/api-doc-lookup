@@ -607,7 +607,6 @@ export default {
         type: 'outsourcing_suppliers'
       },
       oldData: [],
-      isattachmentswitch: '',
       title: '',
       datafilelist: [],
       activeName: 'jcInfo',
@@ -673,7 +672,9 @@ export default {
       flowTaskOperatorRecordList: [],
       endTime: 0,
       tipsvisible: false,
-      btnText: '继续新建'
+      btnText: '继续新建',
+      isattachmentswitch: '',
+      categoryId: ''
     }
   },
   created() {
@@ -712,12 +713,13 @@ export default {
       }
       getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
       })
     },
     // 抽屉提交
     handlerConfirm(data) {
       console.log(data, '资源资源数据')
-      data.forEach(item => {
+      data.forEach((item) => {
         console.log(item, 'p')
       })
       this.dataFormTwo.data[this.index].outShipmentList = data
@@ -1001,11 +1003,16 @@ export default {
     // 表单提交
     handleSubmit(type) {
       let submitFlag = true
-      this.dataFormTwo.data.map(ele => {
+      this.dataFormTwo.data.map((ele, i) => {
         console.log(ele, 'ppp')
-        if (ele.outShipmentList.length == 0) {
+        if (!ele.purchaseQuantity) {
           submitFlag = false
-          return this.$message.error('发料清单为空');
+          this.$message.error(`产品信息第${i + 1}行：数量不能为空`)
+        } else {
+          if (ele.outShipmentList.length == 0) {
+            submitFlag = false
+            return this.$message.error(`产品信息第${i + 1}行：发料清单为空`)
+          }
         }
       })
       if (submitFlag) {
@@ -1021,47 +1028,7 @@ export default {
       this.sourceVisibled = true
       this.index = index
       console.log(this.dataFormTwo.data[index], 'this.dataFormTwo.data[index].id')
-      // let obj = {
-      //   productsId: this.dataFormTwo.data[index].productsId,
-      //   purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
-      // }
-      // // 通过需求池id 获取明细的数据
-      // getShipmentList(obj).then((res) => {
-      //   console.log(res, '清单数据')
-      //   this.sourceData = res.data
-      //   this.dataFormTwo.data[this.index].outShipmentList = res.data
-      //   if (this.dataFormTwo.data[this.index].outShipmentList.length !== 0) {
-      //     this.sourceData = this.dataFormTwo.data[this.index].outShipmentList
 
-      //     // this.dataFormTwo.data[this.index].outShipmentList.forEach((item, ind) => {
-      //     //   console.log(item, 'p{{}}')
-      //     //   console.log(this.sourceData[ind], 'this.sourceData[ind]')
-      //     //   this.sourceData[ind].demandQuantity1 = item.demandQuantity1 ? item.demandQuantity1 : item.demandQuantity
-      //     //   this.sourceData[ind].processId = item.processId
-      //     //   this.sourceData[ind].processName = item.processName
-      //     // })
-      //   } else {
-      //     this.sourceData.forEach((item, index) => {
-      //       this.$set(this.sourceData[index], 'demandQuantity1', item.demandQuantity)
-      //     })
-      //   }
-      //   console.log(this.sourceData, '1111')
-
-      //   if (this.sourceData.length === 0) {
-      //     this.sourceDisabled = true
-      //   } else {
-      //     this.sourceDisabled = false
-      //   }
-      //   console.log(this.dataFormTwo.data, 'daaaa')
-      //   this.$nextTick(() => {
-      //     this.$refs['sourceRef'].init(
-      //       this.sourceData,
-      //       '',
-      //       this.dataFormTwo.data[this.index].productsId,
-      //       this.dataFormTwo.data[this.index].purchaseQuantity
-      //     )
-      //   })
-      // })
       this.sourceData = this.dataFormTwo.data[index].outShipmentVOList
       console.log(this.sourceData, '1111')
 
@@ -1090,7 +1057,9 @@ export default {
       if (this.datafilelist.length) {
         this.datafilelist.map((item, index) => {
           item.bimAttachments = {
-            businessType: '',
+            businessType: 'system_attachment',
+            configKey: 'fj_wxdd',
+            categoryId: this.categoryId,
             documentId: item.id,
             fileFlag: '',
             sort: index

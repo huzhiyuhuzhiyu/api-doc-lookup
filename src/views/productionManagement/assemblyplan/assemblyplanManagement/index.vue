@@ -80,7 +80,7 @@
             <el-table-column prop="mainUnit" label="单位" width="80" />
             <el-table-column prop="planProductionQuantity" label="计划生产数量" min-width="160" sortable="custom" />
             <el-table-column prop="availableArrangeQuantity" label="可编排数量" min-width="160" sortable="custom" />
-            <el-table-column prop="arrangeOrderNum" label="已编排单数/数量" min-width="180" sortable="custom" />
+            <el-table-column prop="arrangeOrderNum" label="生产订单/已编排数" min-width="180" sortable="custom" />
             <el-table-column prop="urgentFlag" label="是否紧急" min-width="120" sortable="custom"
               :cell-class-name="cellClassName">
               <template slot-scope="scope">

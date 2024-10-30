@@ -59,12 +59,6 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="12" :xs="24">
-                        <el-form-item label="图号" prop="drawingNo">
-                          <el-input v-model="dataForm.drawingNo" placeholder="请输入图号" maxlength="50" :disabled="true">
-                          </el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="12" :xs="24">
                         <el-form-item label="长" prop="equLong">
                           <el-input v-model="dataForm.equLong" placeholder="请输入长" :disabled="true">
                             <template #append>（cm）</template>
@@ -91,6 +85,12 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="12" :xs="24">
+                        <el-form-item label="图号" prop="drawingNo">
+                          <el-input v-model="dataForm.drawingNo" placeholder="请输入图号" maxlength="50" :disabled="true">
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="12" :xs="24">
                         <el-form-item label="用途" prop="usin">
                           <el-input maxlength="200" v-model="dataForm.usin" placeholder="请输入用途" :disabled="true" />
                         </el-form-item>
@@ -102,7 +102,7 @@
 
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="12" :xs="8">
+                      <el-col :sm="12" :xs="24">
                         <el-form-item label="使用部门" prop="userDepartmentName">
                           <el-input v-model="dataForm.userDepartmentName" readonly placeholder="请输入使用部门" :disabled="true" />
                         </el-form-item>
@@ -122,7 +122,50 @@
                     </el-row>
                   </el-form>
                 </div>
-                <div v-if="activeName=='lyghinfo'">领用归还信息</div>
+                <div v-if="activeName=='lyghinfo'">
+                  <div class="axis-content">
+                    <div class="content-title">领用归还记录：<span>{{lyghdataTable.length}}</span>条</div>
+                  </div>
+                  <JNPF-table ref="lyghdataTable" v-loading="lyghlistLoading" :data="lyghdataTable" @sort-change="lyghsortChange" fixedNO custom-column :height=height>
+                    <el-table-column prop="orderNo" label="领用单号" width="200" sortable="custom">
+                    </el-table-column>
+                    <el-table-column prop="requisitionType" label="类型" width="120" fixed="right" align="center">
+                      <template slot-scope="scope">
+                        <div v-if="scope.row.requisitionType == 'requisition'"><el-tag type="success">领用</el-tag></div>
+                        <div v-else-if="scope.row.requisitionType == 'back'"><el-tag>归还</el-tag></div>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="maintainerIdText" label="领用人" width="120">
+                      <template slot-scope="scope">
+                        <div>{{scope.row.requisitionType=='requisition'?scope.row.maintainerIdText:''}}</div>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="collectionTime" label="领用日期" width="180" sortable="custom">
+                      <template slot-scope="scope">
+                        <div>{{scope.row.requisitionType=='requisition'?scope.row.collectionTime:''}}</div>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="maintainerIdText1" label="归还人" width="120">
+                      <template slot-scope="scope">
+                        <div>{{scope.row.requisitionType=='back'?scope.row.maintainerIdText:''}}</div>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="collectionTime1" label="归还日期" width="180">
+                      <template slot-scope="scope">
+                        <div>{{scope.row.requisitionType=='back'?scope.row.collectionTime:''}}</div>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
+                    <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
+                    <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
+                    <el-table-column label="操作" width="100" fixed="right">
+                      <template slot-scope="scope">
+                        <el-button type="text" @click="handleUserRelation(scope.row,'look')" size="mini">查看详情</el-button>
+                      </template>
+                    </el-table-column>
+                  </JNPF-table>
+                  <pagination :total="total" :page.sync="lyghorderForm.pageNum" :limit.sync="lyghorderForm.pageSize" @pagination="lyghinitData" />
+                </div>
                 <div v-if="activeName=='wxjlinfo'">
                   <div class="axis-content">
                     <div class="content-title">维修记录：<span>{{wxjldataTable.length}}</span>条</div>
@@ -355,7 +398,7 @@
                       </template>
                     </el-table-column>
                   </JNPF-table>
-                  <pagination :total="djjltotal" :page.sync="djjlorderForm.pageNum" :limit.sync="djjlorderForm.pageSize" @pagination="getdjjlinfo" />
+                  <pagination :total="total" :page.sync="djjlorderForm.pageNum" :limit.sync="djjlorderForm.pageSize" @pagination="getdjjlinfo" />
                 </div>
               </div>
             </el-collapse-item>
@@ -367,19 +410,30 @@
 </template>
     
 <script>
-import { checkmaintenanceList, RepairRequestList, equMaintenanceList, VerificationrecordsList, verificationList } from '@/api/dailyManagement/Maintenance'
+import { CollectionandreturnList, checkmaintenanceList, RepairRequestList, equMaintenanceList, VerificationrecordsList, verificationList } from '@/api/dailyManagement/Maintenance'
 import { getEquEquipmentInfo } from '@/api/basicData/index'
 export default {
   data() {
     return {
+      lyghlistLoading: false,
+      lyghdataTable: [],
       srcList: [
         'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg'
       ],
-      wxjltotal: 0,
-      byrwtotal: 0,
-      byjltotal: 0,
-      djrwtotal: 0,
-      djjltotal: 0,
+      total: 0,
+      lyghorderForm: {
+        equipmentType: 'tool',
+        equipmentId: '',
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "collection_time" /* 使用倒序日期作为默认排序 */
+        }],
+      },
       wxjlorderForm: {
         state: 'maintained',
         classAttribute: "tool",
@@ -508,6 +562,8 @@ export default {
       handler(newOption) {
         if (newOption == 'sbxxinfo') {
           this.getsbxxinfo()
+        } else if (newOption == 'lyghinfo') {
+          this.getlyghinfo()
         } else if (newOption == 'wxjlinfo') {
           this.getwxjlinfo()
         } else if (newOption == 'byrwinfo') {
@@ -557,6 +613,18 @@ export default {
         this.dataFormLoading = false
       })
     },
+    //领用归还信息
+    getlyghinfo() {
+      this.lyghlistLoading = true
+      this.lyghorderForm.equipmentId = this.id
+      CollectionandreturnList(this.lyghorderForm).then(res => {
+        this.lyghdataTable = res.data.records
+        this.total = res.data.total
+        this.lyghlistLoading = false
+      }).catch(() => {
+        this.lyghlistLoading = false
+      })
+    },
     //维修记录
     getwxjlinfo() {
       this.wxjllistLoading = true
@@ -573,7 +641,7 @@ export default {
           item.maintenanceDuration = this.getTimes(item.maintenanceDuration)
           return item
         })
-        this.wxjltotal = res.data.total
+        this.total = res.data.total
         this.wxjllistLoading = false
       }).catch(() => {
         this.wxjllistLoading = false
@@ -585,7 +653,7 @@ export default {
       this.byrworderForm.equipmentId = this.id
       checkmaintenanceList(this.byrworderForm).then(res => {
         this.byrwdataTable = res.data.records
-        this.byrwtotal = res.data.total
+        this.total = res.data.total
         this.byrwlistLoading = false
       }).catch(() => {
         this.byrwlistLoading = false
@@ -600,7 +668,7 @@ export default {
           if (item.picList && item.picList.length) item.picList = item.picList.map(o => { return JSON.parse(`{${o}}`) })
           return item
         })
-        this.byjltotal = res.data.total
+        this.total = res.data.total
         this.byjllistLoading = false
       }).catch(() => {
         this.byjllistLoading = false
@@ -612,7 +680,7 @@ export default {
       this.djrworderForm.equipmentId = this.id
       verificationList(this.djrworderForm).then(res => {
         this.djrwdataTable = res.data.records
-        this.djrwtotal = res.data.total
+        this.total = res.data.total
         this.djrwlistLoading = false
       }).catch(() => {
         this.djrwlistLoading = false
@@ -627,7 +695,7 @@ export default {
           if (item.picList && item.picList.length) item.picList = item.picList.map(o => { return JSON.parse(`{${o}}`) })
           return item
         })
-        this.djjltotal = res.data.total
+        this.total = res.data.total
         this.djjllistLoading = false
       }).catch(() => {
         this.djjllistLoading = false
@@ -640,6 +708,17 @@ export default {
       let m = parseInt(time / 60 % 60)
       let s = parseInt(time % 60)
       return d != '0' ? `${d} 天 ${h} 时 ${m} 分 ${s} 秒` : h != '0' ? `${h} 时 ${m} 分 ${s} 秒` : m != '0' ? `${m} 分 ${s} 秒` : `${s} 秒`
+    },
+    lyghsortChange({ prop, order }) {
+      let newProp
+      if (prop === 'equipmentIdName') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      this.lyghorderForm.orderItems[0].asc = order !== "descending"
+      this.lyghorderForm.orderItems[0].column = order === null ? "" : newProp
+      this.getlyghinfo()
     },
     wxjlsortChange({ prop, order }) {
       let newProp

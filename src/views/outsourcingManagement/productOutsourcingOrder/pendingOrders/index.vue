@@ -12,14 +12,14 @@
             <el-col :span="4">
               <el-form-item>
                 <el-date-picker v-model="orderForm.deliveryStartDate" type="date" value-format="yyyy-MM-dd"
-                  style="width: 100%;" placeholder="收货开始日期" clearable></el-date-picker>
+                  style="width: 100%;" placeholder="交货开始日期" clearable></el-date-picker>
                 -
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
                 <el-date-picker v-model="orderForm.deliveryEndDate" type="date" value-format="yyyy-MM-dd"
-                  style="width: 100%;" placeholder="收货结束日期" clearable></el-date-picker>
+                  style="width: 100%;" placeholder="交货结束日期" clearable></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -190,12 +190,12 @@ export default {
         },
         {
           prop: 'cooperativePartnerCode',
-          label: '客户编码',
+          label: '供应商编码',
           type: 'input'
         },
         {
           prop: 'cooperativePartnerName',
-          label: '客户名称',
+          label: '供应商名称',
           type: 'input'
         },
 
@@ -222,16 +222,6 @@ export default {
         },
 
         {
-          prop: 'deputyUnit',
-          label: '交货日期',
-          type: 'input'
-        },
-        {
-          prop: 'assistantNum',
-          label: '数量(副)',
-          type: 'input'
-        },
-        {
           prop: 'deliveryDate',
           label: '交货日期',
           type: 'daterange',
@@ -241,54 +231,7 @@ export default {
           pickerOptions: this.global.timePickerOptions
         },
 
-        {
-          prop: 'standardValue',
-          label: '规值',
-          type: 'input'
-        },
-        {
-          prop: 'sealingCoverTyping',
-          label: '打字内容',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'accuracyLevel',
-          label: '精度等级',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'vibrationLevel',
-          label: '振动等级',
-          type: 'select',
-          options: []
-        },
-
-        {
-          prop: 'oil',
-          label: '油脂',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'oilQuantity',
-          label: '油脂量',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'clearance',
-          label: '游隙',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'packagingMethod',
-          label: '包装方式',
-          type: 'select',
-          options: []
-        },
+       
         {
           prop: 'createTime',
           label: '创建时间',
@@ -315,10 +258,6 @@ export default {
     filterText(val) {
       this.$refs.treeBox.filter(val)
     }
-  },
-
-  mounted() {
-    this.getProductClassFun()
   },
   created() {
     // 默认设置为近3天

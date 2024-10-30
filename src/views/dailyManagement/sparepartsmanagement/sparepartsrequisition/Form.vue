@@ -17,6 +17,11 @@
               <el-collapse-item title="基本信息" name="basicInfo">
                 <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                   <el-row :gutter="30" class="custom-row">
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="领用单号" prop="orderNo">
+                        <el-input v-model="dataForm.orderNo" placeholder="请输入领用单号" :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="6" :xs="24" v-if="type=='equipment'">
                       <el-form-item label="领用目的" prop="useApplication">
                         <el-select v-model="dataForm.useApplication" placeholder="请选择领用目的" style="width: 100%;" @change="useApplicationchange" :disabled="btnType == 'look'">
@@ -85,18 +90,18 @@
                   <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" @selection-change="handeleProductInfoData">
                     <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType !== 'look'" key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed='left' key="11" />
-                    <el-table-column prop="code" label="产品编码" min-width="120" show-overflow-tooltip>
+                    <el-table-column prop="productCode" label="产品编码" min-width="120" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="name" label="产品名称" min-width="120" show-overflow-tooltip>
+                    <el-table-column prop="productName" label="产品名称" min-width="120" show-overflow-tooltip>
                       <template slot="header">
                         <span class="required">*</span>产品名称
                       </template>
                     </el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="120" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="mainUnit" label="单位" min-width="120" show-overflow-tooltip>
+                    <el-table-column prop="unit" label="单位" min-width="120" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="incomingOutgoingNum" label="出入库数量" min-width="120" show-overflow-tooltip>
+                    <el-table-column prop="availableQuantity" label="可用库存数量" min-width="120" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="requisitionNum" label="数量" width="160">
                       <template slot="header">
@@ -138,6 +143,7 @@ import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
   data() {
     return {
+      codeConfig: {},//单据规则配置
       isattachmentswitch: '',
       categoryId: '',
       type: '',
@@ -308,6 +314,7 @@ export default {
         { prop: 'name', label: '产品名称' },
         { prop: 'drawingNo', label: '品名规格' },
         { prop: 'productCategoryName', label: '产品分类' },
+        { prop: 'availableQuantity', label: '可用库存数量' },
       ],
       salesList: [],
       dataFormTwo: {
@@ -318,6 +325,7 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
+        orderNo:'',
         requisitionType: 'requisition',
         useApplication: '',
         equipmentType: 'spare_parts',
@@ -335,6 +343,9 @@ export default {
         ]
       },
       dataRule: {
+        orderNo: [
+          { required: true, message: '领用单号不能为空', trigger: 'blur' }
+        ],
         useApplication: [
           { required: true, message: '请选择领用目的', trigger: 'change' }
         ],
@@ -358,6 +369,16 @@ export default {
     this.getBimBusinessDetail()
   },
   methods: {
+    async fetchData(code) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code);
+        this.codeConfig = data
+        if (this.btnType == 'add') {
+          this.dataForm.orderNo = data.number
+        }
+      } catch (error) {
+      }
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -414,11 +435,11 @@ export default {
       selectedList.map(item => {
         if (!item.isrepeat) {
           this.dataFormTwo.productData.push({
-            name: item.all.name,
-            code: item.all.code,
+            productName: item.all.name,
+            productCode: item.all.code,
             drawingNo: item.all.drawingNo,
-            mainUnit: item.all.mainUnit,
-            incomingOutgoingNum: item.all.incomingOutgoingNum,
+            unit: item.all.mainUnit,
+            availableQuantity: item.all.availableQuantity,
             productId: item.all.id,
             requisitionNum: '',
           })
@@ -474,6 +495,7 @@ export default {
       this.type = type
       this.dataForm.id = id || ''
       this.btnType = btnType
+      if (this.btnType === 'add' || this.btnType === 'edit') this.fetchData('BJLY')
       if (this.btnType == 'add') {
         this.dataForm.recipientId = this.userInfo.userId
         this.dataForm.collectionTime = this.jnpf.getToday()

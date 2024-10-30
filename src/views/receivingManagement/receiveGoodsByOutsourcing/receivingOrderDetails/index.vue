@@ -523,7 +523,7 @@ export default {
     addSupplier(id, btntype) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype, false, [])
+        this.$refs.Form.init(id, btntype, false)
       })
     },
     addOrUpdateHandle(id, btntype) {

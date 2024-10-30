@@ -147,3 +147,21 @@ export function getUserToDing(data) {
     data
   })
 }
+// 选择组织 到 企业微信
+
+export function getOrganizeToWx(data) {
+  return request({
+    url: `/api/system/SynThirdInfo/synSingleOrganizeSysToQy`,
+    method: 'POST',
+    data
+  })
+}
+// 选择用户 到 企业微信
+
+export function getUserToWx(data) {
+  return request({
+    url: `/api/system/SynThirdInfo/synSingleUserSysToQy`,
+    method: 'POST',
+    data
+  })
+}

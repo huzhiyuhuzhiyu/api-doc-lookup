@@ -2,7 +2,7 @@
   <div class="UploadFile-container">
     <template v-if="fileList.length">
       <transition-group class="el-upload-list el-upload-list--picture-card" tag="ul" name="el-list">
-        <li class="el-upload-list__item is-success" v-for="(file,index) in fileList" :key="file.fileId">
+        <li class="el-upload-list__item is-success" v-for="(file,index) in fileList" :key="file.fileId || file.url">
           <el-image :src="define.comUrl+file.url" class="el-upload-list__item-thumbnail" :preview-src-list="getImgList(fileList)" :z-index="10000" :ref="'image'+index">
           </el-image>
           <span class="el-upload-list__item-actions">
@@ -90,7 +90,7 @@ export default {
             if (!this.$refs.elUpload) return
             this.$refs.elUpload.uploadFiles = val.map(o => ({
               ...o,
-              uid: o.fileId
+              uid: o.fileId || o.url
             }))
           }
         })

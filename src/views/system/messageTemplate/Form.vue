@@ -5,14 +5,14 @@
         <el-page-header @back="goBack" :content="!dataForm.id ? '新建消息模板' : '编辑消息模板'" />
         <div class="options">
           <el-button type="primary" size="mini" @click="dataFormSubmit()" :loading="btnLoading">
-            {{$t('common.confirmButton')}}</el-button>
-          <el-button  size="mini" @click="goBack()">{{$t('common.cancelButton')}}</el-button>
+            {{ $t('common.confirmButton') }}</el-button>
+          <el-button size="mini" @click="goBack()">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
       <el-row class="main" v-loading="loading">
         <el-col :span="12" :offset="6">
-          <el-form :model="dataForm" :rules="dataRule" ref="dataForm" class="mt-20"
-            label-width="100px" @submit.native.prevent>
+          <el-form :model="dataForm" :rules="dataRule" ref="dataForm" class="mt-20" label-width="100px"
+            @submit.native.prevent>
             <el-form-item label="模板名称" prop="fullName">
               <el-input v-model="dataForm.fullName" placeholder="模板名称"></el-input>
             </el-form-item>
@@ -26,10 +26,9 @@
               </el-checkbox>
               <el-checkbox v-model="dataForm.isDingTalk" :true-label="1" :false-label="0">阿里钉钉
               </el-checkbox>
-              <el-checkbox v-model="dataForm.isApp" :true-label="1" :false-label="0">APP
+              <el-checkbox v-model="dataForm.isApp" :true-label="1" :false-label="0" @change="noNeedImg">APP
               </el-checkbox>
-              <el-checkbox v-model="dataForm.isSms" :true-label="1" :false-label="0"
-                @change="onIsSmsChange">短信
+              <el-checkbox v-model="dataForm.isSms" :true-label="1" :false-label="0" @change="onIsSmsChange">短信
               </el-checkbox>
             </el-form-item>
             <el-form-item label="状态" prop="enabledMark">
@@ -37,16 +36,18 @@
             </el-form-item>
             <group-title content="内容配置" class="mb-20" />
             <el-form-item label="短信模板" prop="smsId" v-if="dataForm.isSms">
-              <sms-dialog v-model="dataForm.smsId" :title="dataForm.smsTemplateName"
-                @change="onSmsChange" />
+              <sms-dialog v-model="dataForm.smsId" :title="dataForm.smsTemplateName" @change="onSmsChange" />
             </el-form-item>
             <el-form-item label="参数定义" prop="templateJson">
               <el-button icon="el-icon-plus" @click="showDialog()">添加参数</el-button>
               <div class="tag-list">
-                <el-tag v-for="(tag,index) in templateJson" :key="tag.field" effect="plain"
-                  :closable="tag.closable" @close="onTagClose(index)" @click="addContent(tag)">
-                  {{tag.fieldName?tag.field+'('+tag.fieldName+')':tag.field}}</el-tag>
+                <el-tag v-for="(tag, index) in templateJson" :key="tag.field" effect="plain" :closable="tag.closable"
+                  @close="onTagClose(index)" @click="addContent(tag)">
+                  {{ tag.fieldName ? tag.field + '(' + tag.fieldName + ')' : tag.field }}</el-tag>
               </div>
+            </el-form-item>
+            <el-form-item label="消息图片" prop="urlList" v-if="dataForm.isDingTalk || dataForm.isWecom || dataForm.isEmail">
+              <JNPF-UploadImg v-model="dataForm.urlList" :limit="1" />
             </el-form-item>
             <el-form-item label="消息标题" prop="title">
               <el-input v-model="dataForm.title" placeholder="消息标题"></el-input>
@@ -68,10 +69,10 @@
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible=false">{{$t('common.cancelButton')}}
+          <el-button @click="dialogVisible = false">{{ $t('common.cancelButton') }}
           </el-button>
           <el-button type="primary" @click="addParameter()">
-            {{$t('common.confirmButton')}}</el-button>
+            {{ $t('common.confirmButton') }}</el-button>
         </span>
       </el-dialog>
     </div>
@@ -89,7 +90,7 @@ export default {
   },
   data() {
     return {
-      dataForm: {
+      initDataForm:{
         id: '',
         category: '1',
         fullName: '',
@@ -100,13 +101,16 @@ export default {
         isWecom: 0,
         isDingTalk: 0,
         isSms: 0,
-        isApp:0,
+        isApp: 0,
         smsId: '',
         smsTemplateName: '',
         templateJson: '',
         content: '',
         enabledMark: 1,
+        url:'',
+        urlList:[],
       },
+      dataForm: {},
       dataRule: {
         fullName: [
           { required: true, message: '模板名称不能为空', trigger: 'blur' },
@@ -154,21 +158,17 @@ export default {
       this.$emit('close')
     },
     init(id) {
+      this.dataForm = JSON.parse(JSON.stringify(this.initDataForm))
       this.templateJson = []
-      this.dataForm.isStationLetter = 0
-      this.dataForm.isEmail = 0
-      this.dataForm.isWecom = 0
-      this.dataForm.isDingTalk = 0
-      this.dataForm.isSms = 0
       this.dataForm.id = id || ''
-      this.dataForm.smsTemplateName = ''
-      this.dataForm.smsId = ''
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {
           this.loading = true
           getInfo(this.dataForm.id).then(res => {
-            this.dataForm = res.data
+            this.dataForm = {...res.data,urlList:[{url:res.data.url}]}
+            console.log(this.dataForm);
+            
             this.templateJson = this.dataForm.templateJson ? JSON.parse(this.dataForm.templateJson) : []
             this.loading = false
           }).catch(() => {
@@ -179,7 +179,7 @@ export default {
     },
     dataFormSubmit() {
       this.dataForm.templateJson = JSON.stringify(this.templateJson)
-      if (!this.dataForm.isEmail && !this.dataForm.isWecom && !this.dataForm.isDingTalk && !this.dataForm.isSms) {
+      if (!this.dataForm.isEmail && !this.dataForm.isWecom && !this.dataForm.isDingTalk && !this.dataForm.isSms && !this.dataForm.isApp) {
         this.$message.error(`请至少选择一个通知方式`)
         return
       }
@@ -187,6 +187,8 @@ export default {
         if (valid) {
           this.btnLoading = true
           const formMethod = this.dataForm.id ? Update : Create
+          console.log(this.dataForm);
+          if (this.dataForm.urlList) this.dataForm.url = this.dataForm.urlList[0].url
           formMethod(this.dataForm).then((res) => {
             this.$message({
               message: res.msg,
@@ -234,11 +236,17 @@ export default {
       this.dataForm.title += '{' + item.field + '}'
       this.dataForm.content += '{' + item.field + '}'
     },
+    noNeedImg(){
+      this.dataForm.urlList = []
+      this.dataForm.url = ''
+    },
     onIsSmsChange() {
       if (this.dataForm.isSms) return
       this.dataForm.smsId = ''
       this.dataForm.smsTemplateName = ''
       this.templateJson = this.templateJson.filter(o => o.closable)
+      this.dataForm.urlList = []
+      this.dataForm.url = ''
     },
     onSmsChange(id, item) {
       if (!id) return this.dataForm.smsTemplateName = ''
@@ -270,7 +278,8 @@ export default {
   .el-tag {
     margin-top: 10px;
     cursor: pointer;
-    & + .el-tag {
+
+    &+.el-tag {
       margin-left: 10px;
     }
   }

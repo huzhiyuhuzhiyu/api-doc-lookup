@@ -1222,7 +1222,12 @@ export default {
         } else {
           item.productDrawingNo = item.drawingNo
         }
-        item.purchaseQuantity = Number(item.maxInventory) - Number(item.availableQuantity)
+        if (this.purchasingType == 'pool') {
+          item.purchaseQuantity = item.planDemandQuantity
+        } else {
+          item.purchaseQuantity = Number(item.maxInventory) - Number(item.availableQuantity)
+        }
+
       })
 
       this.dataForm.classAttribute = classAttributeFlag

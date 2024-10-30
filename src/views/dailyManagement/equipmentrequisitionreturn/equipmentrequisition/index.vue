@@ -1,23 +1,21 @@
 <template>
   <div class="JNPF-common-layout">
-    <div v-if="!formVisible" class="JNPF-common-layout-center JNPF-flex-main">
+    <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="orderForm.maintainerIdText" placeholder="请输入领用人" clearable @keydown.enter.native="search()" />
+              <el-input v-model="orderForm.orderNo" placeholder="请输入领用单号" clearable @keydown.enter.native="dataFormSubmit()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="orderForm.useApplication" placeholder="请选择领用目的" clearable>
-                <el-option v-for="(item, index) in useApplicationlist" :key="index" :label="item.label" :value="item.value"></el-option>
-              </el-select>
+              <el-input v-model="orderForm.maintainerIdText" placeholder="请输入领用人" clearable @keydown.enter.native="dataFormSubmit()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+              <el-button type="primary" size="mini" icon="el-icon-search" @click="dataFormSubmit()">
                 {{ $t('common.search') }}</el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
               </el-button>
@@ -27,19 +25,8 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <div>
-            <el-dropdown style="margin-right:10px;">
-              <el-button size="mini" type="primary" icon="el-icon-plus">
-                新建
-                <i class="el-icon-arrow-down el-icon--right"></i>
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="addOrUpdateHandle('', 'add','equipment')">设备</el-dropdown-item>
-                <el-dropdown-item @click.native="addOrUpdateHandle('','add','tool')">工具</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </div>
-          <div class="JNPF-common-head-right" style="float: right">
+          <el-button size="mini" type="primary" icon="el-icon-plus" @click="addSupplier('', 'add')">领用</el-button>
+          <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
             </el-tooltip>
@@ -51,40 +38,35 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" custom-column>
-          <el-table-column prop="orderNo" label="领用单号" min-width="180"></el-table-column>
-          <el-table-column prop="useApplication" label="领用目的" width="120" align="center">
+        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column style="padding-bottom: 50px;">
+          <el-table-column prop="orderNo" label="领用单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
-              <div v-if="scope.row.useApplication == 'equipmentmaintain'"><el-tag type="success">设备保养</el-tag></div>
-              <div v-else-if="scope.row.useApplication == 'equipmentrepair'"><el-tag type="danger">设备维修</el-tag></div>
-              <div v-else-if="scope.row.useApplication == 'toolrepair'"><el-tag type="warning">工具维修</el-tag></div>
-              <div v-else><el-tag>工具保养</el-tag></div>
+              <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
+                                scope.row.orderNo
+                            }}</el-link>
             </template>
           </el-table-column>
+          <el-table-column prop="maintainerIdText" label="领用人" min-width="120"></el-table-column>
           <el-table-column prop="collectionTime" label="领用日期" width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="maintainerIdText" label="领用人" width="120"></el-table-column>
-          <el-table-column prop="workNo" label="单号" min-width="200">
-          </el-table-column>
-          <el-table-column prop="equipmentIdName" label="名称" min-width="200">
-          </el-table-column>
-          <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
+          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
+          <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="handleUserRelation(scope.row, 'edit')" @del="handleDel(scope.row.id)" :editDisabled="scope.row.documentStatus === 'submit'" :delDisabled="scope.row.documentStatus === 'submit'">
-                <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="handleUserRelation(scope.row, 'look')">
-                      查看详情
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </tableOpts>
+              <el-button type="text" @click="handleUserRelation(scope.row.id,'edit')" size="mini">编辑</el-button>
+              <el-button type="text" @click="handleDel(scope.row.id,)" class="JNPF-table-delBtn" size="mini">删除</el-button>
+              <el-dropdown hide-on-click>
+                <span class="el-dropdown-link">
+                  <el-button type="text" size="mini">
+                    {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                  </el-button>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
+                    查看详情
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -97,60 +79,32 @@
 </template>
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { CollectionandreturnList, deleteCollectionandreturn } from '@/api/dailyManagement/Maintenance'
+import { CollectionandreturnList, deleteCollectionandreturn, guihuanCollectionandreturn } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
 export default {
-  name: 'announceInvalidated',
+  name: 'circulate',
   components: { Form, SuperQuery },
   data() {
     return {
-      useApplicationlist: [
-        { label: '设备保养', value: 'equipmentmaintain' },
-        { label: '设备维修', value: 'equipmentrepair' },
-        { label: '工具保养', value: 'toolmaintain' },
-        { label: '工具维修', value: 'toolrepair' }
-      ],
-      superQueryVisible: false,
       superQueryJson: [
         {
           prop: 'orderNo',
           label: "领用单号",
           type: 'input'
         },
-        { // 下拉选
-          prop: 'useApplication',
-          label: '领用目的',
-          type: 'select',
-          options: [
-            { label: '设备保养', value: 'equipmentmaintain' },
-            { label: '设备维修', value: 'equipmentrepair' },
-            { label: '工具保养', value: 'toolmaintain' },
-            { label: '工具维修', value: 'toolrepair' }
-          ]
+        {
+          prop: 'maintainerIdText',
+          label: "领用人",
+          type: 'input'
         },
         { // 日期选择器（区间）
           prop: 'collectionTime',
           label: '领用日期',
           type: 'daterange',
           valueFormat: "yyyy-MM-dd",
-          startPlaceholder: '申请开始日期',
-          endPlaceholder: '申请结束日期',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'maintainerIdText',
-          label: "领用人",
-          type: 'input'
-        },
-        {
-          prop: 'workNo',
-          label: "单号",
-          type: 'input'
-        },
-        {
-          prop: 'equipmentIdName',
-          label: "名称",
-          type: 'input'
         },
         { // 日期时间选择器（区间）
           prop: 'createTime',
@@ -165,16 +119,31 @@ export default {
           prop: 'createByName',
           label: '创建人',
           type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: "备注",
+          type: 'input'
         }
       ],
+      superQueryVisible: false,
+      btnLoading: false,
+      orderFormreturn: {
+        returnTime: '',
+        id: ''
+      },
+      form: {
+        returnTime: ''
+      },
+      dialogFormVisible: false,
       tableData: [],
       listLoading: false,
-      orderForm: {},
-      orderFormone: {
+      orderForm: {
+        equipmentType: 'equipment',
         requisitionType: 'requisition',
-        equipmentType: 'spare_parts',
+        orderNo: '',
         maintainerIdText: '',
-        useApplication: '',
+        returnFlag: '',
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -187,23 +156,20 @@ export default {
       },
       total: 0,
       formVisible: false,
-      superQuery: {}
     }
   },
   created() {
-    this.orderForm = JSON.parse(JSON.stringify(this.orderFormone))
     this.initData()
   },
   methods: {
-    superQuerySearch(query) {
-      this.orderForm.superQuery = query
-      this.superQueryVisible = false
-      this.search()
-    },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
-
+    superQuerySearch(query) {
+      this.orderForm.superQuery = query
+      this.superQueryVisible = false
+      this.dataFormSubmit()
+    },
     sortChange({ prop, order }) {
       let newProp
       if (prop === 'equipmentIdName') {
@@ -215,7 +181,7 @@ export default {
       this.orderForm.orderItems[0].column = order === null ? "" : newProp
       this.initData()
     },
-    search() {
+    dataFormSubmit() {
       Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
         let item = this.orderForm[key]
         this.orderForm[key] = typeof item === 'string' ? item.trim() : item
@@ -244,8 +210,29 @@ export default {
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.orderForm = JSON.parse(JSON.stringify(this.orderFormone))
-      this.search()
+      this.orderForm = {
+        equipmentType: 'equipment',
+        requisitionType: 'requisition',
+        orderNo: '',
+        auditStatus: '',
+        documentStatus: '',
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time" /* 使用倒序日期作为默认排序 */
+        }],
+      }
+      this.dataFormSubmit()
+    },
+    addSupplier(id, btntype) {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(id, btntype)
+      })
     },
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
@@ -261,27 +248,13 @@ export default {
         })
       }).catch(() => { })
     },
-    handleUserRelation(val, btnType) {
-      this.formVisible = true
-      let type = ''
-      if (val.useApplication == 'equipmentmaintain' || val.useApplication == 'equipmentrepair') {
-        type = 'equipment'
-      } else {
-        type = 'tool'
-      }
-      this.$nextTick(() => {
-        this.$refs.Form.init(val.id, btnType, type)
-      })
-    },
-    addOrUpdateHandle(id, btnType, type) {
+    handleUserRelation(id, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType, type)
+        this.$refs.Form.init(id, btnType)
       })
     }
   }
 }
 </script>
 <style src="@/assets/scss/index-list.scss" lang="scss" scoped />
-
-

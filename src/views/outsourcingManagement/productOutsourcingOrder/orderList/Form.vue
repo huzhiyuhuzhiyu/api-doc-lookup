@@ -59,6 +59,12 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
+                      <el-col :span="12">
+                        <el-form-item label="备注" prop="remark" ref="remark">
+                          <el-input type="textarea" :row="3" v-model="dataForm.remark" placeholder="请输入备注"
+                            maxlength="200" :disabled="type == 'look' ? true : false"></el-input>
+                        </el-form-item>
+                      </el-col>
                     </el-form>
                   </el-row>
                 </el-collapse-item>
@@ -804,6 +810,7 @@ export default {
           type: 'warning'
         })
           .then(() => {
+            this.dataFormTwo.data = []
             this.$message({
               type: 'success',
               message: '更换成功!'
@@ -1258,7 +1265,7 @@ export default {
                             this.datafilelist = []
                             this.dataFormTwo.data = []
                             this.dataForm = {
-                              applicationReason: '',
+                              remark: '',
                               approvalCompletionDate: '',
                               // approvalStatus: "",
                               documentStatus: '',

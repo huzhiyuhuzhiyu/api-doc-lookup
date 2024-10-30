@@ -18,9 +18,9 @@
                     <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
                       v-model="scope.row.drawingNo" ref="ComSelect-page" @change="productChange"
                       :tableItems="ProductTableItems" :placeholder="'请选择产品'" title="选择产品" treeTitle="产品分类"
-                      :methodArr="ProductMethodArr" :listMethod="getProductWithOut"
-                      :listRequestObj="ProductListRequestObj" :paramsObj="{ scope }"
-                      :searchList="ProcessTableSearchList" />
+                      :methodArr="ProductMethodArr" :listMethod="getProductList" :listRequestObj="ProductListRequestObj"
+                      :paramsObj="{ scope }" :searchList="ProcessTableSearchList"
+                      :listDataFormatting="listDataFormatting" />
                   </el-form-item>
                 </template>
               </el-table-column>
@@ -45,11 +45,10 @@
                 </template>
                 <template slot-scope="scope">
                   <el-form-item :prop="'data.' + scope.$index + '.' + 'processName'" :rules="productRule.processName">
-                    <!-- <el-input v-model="scope.row.processName" placeholder="请输入产品名称" /> -->
                     <!-- 工序选择弹窗  -->
-                    <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
+                    <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeProcessClick"
                       v-model="scope.row.processName" ref="ComSelect-page" @change="onOrganizeChangeTwo"
-                      :tableItems="ProcessTableItems" :placeholder="'请选择工序名称'" title="选择工序" treeTitle="工序分类"
+                      :tableItems="ProcessTableItems" :placeholder="'工序名称'" title="选择工序" treeTitle="工序分类"
                       :methodArr="ProcessMethodArr" :listMethod="getBimProcessList"
                       :listRequestObj="ProcessListRequestObj" :paramsObj="{ scope }"
                       :searchList="ProcessTableSearchList" />
@@ -79,10 +78,9 @@
                 </template>
                 <template slot-scope="scope">
                   <!-- <el-input v-model="scope.row.demandQuantity1" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
-                  <el-form-item :prop="'data.' + scope.$index + '.' + 'qty'"
-                    :rules="productRule.demandQuantity1">
+                  <el-form-item :prop="'data.' + scope.$index + '.' + 'qty'" :rules="productRule.demandQuantity1">
                     <el-input v-model="scope.row.qty" :disabled="type === 'look'" maxlength="20"
-                      placeholder="请输入发料数量"></el-input>
+                      placeholder="发料数量"></el-input>
                   </el-form-item>
                 </template>
               </el-table-column>
@@ -118,73 +116,74 @@
 import formValidate from '@/utils/formValidate'
 import { getBimProcessList } from '@/api/bimProcess/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
-import { getProductWithOut } from '@/api/purchasingManagement/purchaseInquirySheet'
+import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
+import { getclassAttributeList } from '@/api/masterDataManagement/index'
+import { getLabel } from '@/utils/index'
+Vue.prototype.$getLabel = getLabel
 export default {
   components: {},
   data() {
     return {
+      classAttributeList: [],
       types: '',
       drawer: false,
       direction: 'rtl',
       type: '',
       activeName: 'personnel',
       // 产品
-      getProductWithOut, // 产品选择弹出框树状列表请求api
+      getProductList, // 产品选择弹出框树状列表请求api
       ProductMethodArr: [
-        { label: '产品分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '' } }
+        { label: '产品分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '', type: 'material' } }
       ], // 产品选择弹出框树状列表
       ProductListRequestObj: {
-        createByName: '',
-        keyword: '',
-        pageNum: 1,
-        pageSize: 20,
-        productDrawingNo: '',
-        productName: '',
-        productCode: '',
-        startTime: '',
-        endTime: '',
-        productWithout: 'price',
-        productWithout: 'bom',
+        classAttribute: '',
+        classAttributeList: ['raw_material', 'semi_finished', 'finish_product', 'accessories'],
+        productCategoryId: '',
+        code: '',
+        name: '',
         orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
           {
             asc: false,
             column: 'create_time'
           }
         ],
-        createTimeArr: []
+        productStatus: 'enable',
+        productSource: 'out',
+        pageNum: 1,
+        pageSize: 20
+        // queryType: 3
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
-        { prop: 'code', label: '产品编码', fixed: 'left' },
-        // { prop: 'name', label: '产品名称', fixed: 'left' },
         { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'code', label: '产品编码' },
+        // { prop: 'name', label: '产品名称', fixed: 'left' },
+
         // { prop: 'spec', label: '规格型号' },
         { prop: 'classAttributeName', label: '类别属性' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
         { prop: 'productCode', label: '产品编码', type: 'input' },
         // { prop: "name", label: "产品名称", type: 'input', },
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' }
+
       ], // 产品选择弹出框搜索条件
       // 工序
       getBimProcessList,
       getcategoryTree,
       //  供应商 树请求
-      ProcessMethodArr: { method: getcategoryTree, requestObj: { classAttribute: 'process' } },
+      ProcessMethodArr: { method: getcategoryTree, requestObj: { type: 'process' } },
       // 供应商 列表
       ProcessTableItems: [
-        { prop: 'code', label: '工序编码' },
         { prop: 'name', label: '工序名称' },
+        { prop: 'code', label: '工序编码' },
+
         // { prop: 'nameEn', label: '英文名称' },
         // { prop: 'taxId', label: '税号' }
       ],
       // 供应商搜索条件
       ProcessTableSearchList: [
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
-        { prop: 'code', label: '产品编码', type: 'input' },
+        { prop: 'name', label: '工序名称', type: 'input' },
+        { prop: 'code', label: '工序编码', type: 'input' },
       ],
       // 供应商请求参数
       ProcessListRequestObj: {
@@ -220,8 +219,34 @@ export default {
       }
     }
   },
-
+  mounted() {
+    this.getclassAttributeList()
+  },
   methods: {
+    listDataFormatting(res) {
+      res.data.records.forEach((item, index) => {
+        item.classAttributeName = this.$getLabel(this.classAttributeList, item.classAttribute, 'value', 'label')
+      })
+
+      return res.data.records
+    },
+    getclassAttributeList() {
+      let obj = {
+        pageNum: 1,
+        pageSize: 20
+      }
+      getclassAttributeList(obj).then((res) => {
+        let arr = []
+        res.data.records.forEach((item) => {
+          let obj = {
+            label: item.name,
+            value: item.code
+          }
+          arr.push(obj)
+        })
+        this.classAttributeList = arr
+      })
+    },
     handlerAdd() {
       this.dataFormTwo.data.push({
         drawingNo: '', processName: '', demandQuantity1: this.purchaseQuantity
@@ -272,6 +297,19 @@ export default {
     },
     handleClick(tab, event) {
       this.activeName = tab.name
+    },
+    // 弹窗节点的点击
+    treeNodeClick(data, node, listQuery) {
+      if (listQuery.partnerCategoryId === data.id) return listQuery
+      listQuery.partnerCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
+      listQuery.classAttribute = data.classAttribute
+      return listQuery
+    },
+    // 弹窗节点的点击
+    treeNodeProcessClick(data, node, listQuery) {
+      if (listQuery.productCategoryId === data.id) return listQuery
+      listQuery.productCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
+      return listQuery
     },
     // 选择产品名称的弹框
     productChange(val, data, paramsObj) {

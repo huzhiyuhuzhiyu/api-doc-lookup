@@ -1514,6 +1514,11 @@ export default {
       } else {
         this.fetchData('CGSH')
         this.dataForm.salesman = this.userInfo.userName
+        data.forEach((item) => {
+          console.log('ooooooo', item)
+          item.ordersNo = item.orderNo
+
+        })
         this.getBusInfo()
       }
 
@@ -1648,7 +1653,7 @@ export default {
             classAttribute: item.classAttribute,
             id: item.id ? item.id : '',
             // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-            ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+            ordersLineId: item.ordersLineId ? item.ordersLineId : item.purchaseOrderId,
             // pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
             ratio: item.ratio ? item.ratio : '',
             receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
@@ -1669,7 +1674,7 @@ export default {
             productsId: item.productsId ? item.productsId : '',
             waitReceiptNum: item.waitReceiptNum ? item.waitReceiptNum : '',
             // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-            ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+            ordersLineId: item.ordersLineId ? item.ordersLineId : item.purchaseOrderId,
             pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
             ratio: item.ratio ? item.ratio : '',
             receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',

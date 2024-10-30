@@ -72,6 +72,7 @@ const defaultStartForm = {
     isDingTalk: 0,
     isApp: 0,
     isSms: 0,
+    url:''
   },
   endMsgConfig: {
     on: 2,
@@ -84,6 +85,7 @@ const defaultStartForm = {
     isDingTalk: 0,
     isApp: 0,
     isSms: 0,
+    url:''
   },
   approveMsgConfig: {
     on: 2,
@@ -96,6 +98,7 @@ const defaultStartForm = {
     isDingTalk: 0,
     isApp: 0,
     isSms: 0,
+    url:''
   },
   rejectMsgConfig: {
     on: 2,
@@ -108,6 +111,7 @@ const defaultStartForm = {
     isDingTalk: 0,
     isApp: 0,
     isSms: 0,
+    url:''
   },
   copyMsgConfig: {
     on: 2,
@@ -120,6 +124,7 @@ const defaultStartForm = {
     isDingTalk: 0,
     isApp: 0,
     isSms: 0,
+    url:''
   },
   overTimeMsgConfig: {
     on: 2,
@@ -132,6 +137,7 @@ const defaultStartForm = {
     isDingTalk: 0,
     isApp: 0,
     isSms: 0,
+    url:''
   },
   noticeMsgConfig: {
     on: 2,
@@ -144,6 +150,7 @@ const defaultStartForm = {
     isDingTalk: 0,
     isApp: 0,
     isSms: 0,
+    url:''
   },
   hasSubmitBtn: true,
   submitBtnText: '提 交',

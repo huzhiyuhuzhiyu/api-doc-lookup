@@ -9,6 +9,14 @@ export function getfinAccountList(data) {
     })
   }
 
+// 对账收款
+export function getfinAccountLineList(data) {
+  return request({
+    url: `/api/erp/finAccountsReceivableReconciliation/line/list`,
+    method: 'post',
+    data
+  })
+}
 
 // 详情
 export const getfinAccountDetail = (id) => {

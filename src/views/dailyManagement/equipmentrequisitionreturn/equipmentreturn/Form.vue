@@ -3,7 +3,7 @@
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-        <el-page-header @back="goBack" :content="btnType == 'add' ? '新建备件归还' : btnType == 'edit' ? '编辑备件归还' : '查看备件归还'" />
+        <el-page-header @back="goBack" :content="btnType == 'add' ? '新建设备归还' : btnType == 'edit' ? '编辑设备归还' : '查看设备归还'" />
         <div class="options">
           <el-button type="primary" v-if="btnType != 'look'" :loading="btnLoading" @click="handleConfirm('submit')">
             提交</el-button>
@@ -136,7 +136,7 @@ export default {
       formLoading: false,
       dataForm: {
         requisitionType: 'back',
-        equipmentType: 'spare_parts',
+        equipmentType: 'equipment',
         equipmentId: '',
         equipmentIdName: '',
         collectionTime: '',
@@ -182,7 +182,7 @@ export default {
     hangleSelectSales(e, r) {
       this.$nextTick(() => { this.$refs.dataForm.validateField("recipientId") });
     },
-    //备件选择
+    //设备选择
     submitCustomerProduct(selectedIds, selectedList) {
       selectedList.map(item => {
         this.dataFormTwo.productData.map((item1) => {
@@ -211,7 +211,7 @@ export default {
         }
       })
     },
-    // 打开备件
+    // 打开设备
     openSeleceProductDialog() {
       this.$refs['ComSelect-page'].openDialog()
     },

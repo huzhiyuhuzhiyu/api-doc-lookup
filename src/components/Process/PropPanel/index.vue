@@ -713,10 +713,16 @@
               </el-checkbox>
             </el-form-item>
             <el-form-item v-if="startForm.waitMsgConfig.on === 1">
+              <div slot="label" class="form-item-label" v-if="startForm.waitMsgConfig.url">消息图片</div>
+              <el-image v-if="startForm.waitMsgConfig.url" :src="define.comUrl + startForm.waitMsgConfig.url"
+                class="el-upload-list__item-thumbnail" :z-index="10000">
+              </el-image>
+            </el-form-item>
+            <el-form-item v-if="startForm.waitMsgConfig.on === 1">
               <div slot="label" class="form-item-label">消息内容</div>
             </el-form-item>
             <div style="margin-bottom: 18px;border: 1px solid #DCDFE6;padding:10px" class="form-item-content"
-              v-if="startForm.waitMsgConfig.msgContent">
+              v-if="startForm.waitMsgConfig.msgContent  && startForm.waitMsgConfig.on === 1">
               {{ startForm.waitMsgConfig.msgContent }}
             </div>
             <el-form-item>
@@ -779,10 +785,16 @@
               </el-checkbox>
             </el-form-item>
             <el-form-item v-if="startForm.endMsgConfig.on === 1">
+              <div slot="label" class="form-item-label" v-if="startForm.endMsgConfig.url">消息图片</div>
+              <el-image v-if="startForm.endMsgConfig.url" :src="define.comUrl + startForm.endMsgConfig.url"
+                class="el-upload-list__item-thumbnail" :z-index="10000">
+              </el-image>
+            </el-form-item>
+            <el-form-item v-if="startForm.endMsgConfig.on === 1">
               <div slot="label" class="form-item-label">消息内容</div>
             </el-form-item>
             <div style="margin-bottom: 18px;border: 1px solid #DCDFE6;padding:10px" class="form-item-content"
-              v-if="startForm.endMsgConfig.msgContent">
+              v-if="startForm.endMsgConfig.msgContent  && startForm.endMsgConfig.on === 1">
               {{ startForm.endMsgConfig.msgContent }}
             </div>
             <el-form-item>
@@ -845,10 +857,16 @@
               </el-checkbox>
             </el-form-item>
             <el-form-item v-if="startForm.approveMsgConfig.on === 1">
+              <div slot="label" class="form-item-label" v-if="startForm.approveMsgConfig.url">消息图片</div>
+              <el-image v-if="startForm.approveMsgConfig.url" :src="define.comUrl + startForm.approveMsgConfig.url"
+                class="el-upload-list__item-thumbnail" :z-index="10000">
+              </el-image>
+            </el-form-item>
+            <el-form-item v-if="startForm.approveMsgConfig.on === 1">
               <div slot="label" class="form-item-label">消息内容</div>
             </el-form-item>
             <div style="margin-bottom: 18px;border: 1px solid #DCDFE6;padding:10px" class="form-item-content"
-              v-if="startForm.approveMsgConfig.msgContent">
+              v-if="startForm.approveMsgConfig.msgContent  && startForm.approveMsgConfig.on === 1">
               {{ startForm.approveMsgConfig.msgContent }}
             </div>
             <el-form-item>
@@ -911,10 +929,16 @@
               </el-checkbox>
             </el-form-item>
             <el-form-item v-if="startForm.rejectMsgConfig.on === 1">
+              <div slot="label" class="form-item-label" v-if="startForm.rejectMsgConfig.url">消息图片</div>
+              <el-image v-if="startForm.rejectMsgConfig.url" :src="define.comUrl + startForm.rejectMsgConfig.url"
+                class="el-upload-list__item-thumbnail" :z-index="10000">
+              </el-image>
+            </el-form-item>
+            <el-form-item v-if="startForm.rejectMsgConfig.on === 1">
               <div slot="label" class="form-item-label">消息内容</div>
             </el-form-item>
             <div style="margin-bottom: 18px;border: 1px solid #DCDFE6;padding:10px" class="form-item-content"
-              v-if="startForm.rejectMsgConfig.msgContent">
+              v-if="startForm.rejectMsgConfig.msgContent  && startForm.rejectMsgConfig.on === 1">
               {{ startForm.rejectMsgConfig.msgContent }}
             </div>
             <el-form-item>
@@ -977,10 +1001,16 @@
               </el-checkbox>
             </el-form-item>
             <el-form-item v-if="startForm.copyMsgConfig.on === 1">
+              <div slot="label" class="form-item-label" v-if="startForm.copyMsgConfig.url">消息图片</div>
+              <el-image v-if="startForm.copyMsgConfig.url" :src="define.comUrl + startForm.copyMsgConfig.url"
+                class="el-upload-list__item-thumbnail" :z-index="10000">
+              </el-image>
+            </el-form-item>
+            <el-form-item v-if="startForm.copyMsgConfig.on === 1">
               <div slot="label" class="form-item-label">消息内容</div>
             </el-form-item>
             <div style="margin-bottom: 18px;border: 1px solid #DCDFE6;padding:10px" class="form-item-content"
-              v-if="startForm.copyMsgConfig.msgContent">
+              v-if="startForm.copyMsgConfig.msgContent  && startForm.copyMsgConfig.on === 1">
               {{ startForm.copyMsgConfig.msgContent }}
             </div>
             <!-- <el-form-item>
@@ -1761,10 +1791,17 @@
                   </el-checkbox>
                 </el-form-item>
                 <el-form-item v-if="approverForm.approveMsgConfig.on === 1">
+                  <div slot="label" class="form-item-label" v-if="approverForm.approveMsgConfig.url">消息图片</div>
+                  <el-image v-if="approverForm.approveMsgConfig.url"
+                    :src="define.comUrl + approverForm.approveMsgConfig.url" class="el-upload-list__item-thumbnail"
+                    :z-index="10000">
+                  </el-image>
+                </el-form-item>
+                <el-form-item v-if="approverForm.approveMsgConfig.on === 1">
                   <div slot="label" class="form-item-label">消息内容</div>
                 </el-form-item>
                 <div style="margin-bottom: 18px;border: 1px solid #DCDFE6;padding:10px" class="form-item-content"
-                  v-if="approverForm.approveMsgConfig.msgContent">
+                  v-if="approverForm.approveMsgConfig.msgContent && approverForm.approveMsgConfig.on === 1">
                   {{ approverForm.approveMsgConfig.msgContent }}
                 </div>
                 <el-form-item>
@@ -1831,10 +1868,17 @@
                   </el-checkbox>
                 </el-form-item>
                 <el-form-item v-if="approverForm.rejectMsgConfig.on === 1">
+                  <div slot="label" class="form-item-label" v-if="approverForm.rejectMsgConfig.url">消息图片</div>
+                  <el-image v-if="approverForm.rejectMsgConfig.url"
+                    :src="define.comUrl + approverForm.rejectMsgConfig.url" class="el-upload-list__item-thumbnail"
+                    :z-index="10000">
+                  </el-image>
+                </el-form-item>
+                <el-form-item v-if="approverForm.rejectMsgConfig.on === 1">
                   <div slot="label" class="form-item-label">消息内容</div>
                 </el-form-item>
                 <div style="margin-bottom: 18px;border: 1px solid #DCDFE6;padding:10px" class="form-item-content"
-                  v-if="approverForm.rejectMsgConfig.msgContent">
+                  v-if="approverForm.rejectMsgConfig.msgContent && approverForm.rejectMsgConfig.on === 1">
                   {{ approverForm.rejectMsgConfig.msgContent }}
                 </div>
                 <el-form-item>
@@ -1899,10 +1943,16 @@
                   </el-checkbox>
                 </el-form-item>
                 <el-form-item v-if="approverForm.copyMsgConfig.on === 1">
+                  <div slot="label" class="form-item-label" v-if="approverForm.copyMsgConfig.url">消息图片</div>
+                  <el-image v-if="approverForm.copyMsgConfig.url" :src="define.comUrl + approverForm.copyMsgConfig.url"
+                    class="el-upload-list__item-thumbnail" :z-index="10000">
+                  </el-image>
+                </el-form-item>
+                <el-form-item v-if="approverForm.copyMsgConfig.on === 1">
                   <div slot="label" class="form-item-label">消息内容</div>
                 </el-form-item>
                 <div style="margin-bottom: 18px;border: 1px solid #DCDFE6;padding:10px" class="form-item-content"
-                  v-if="approverForm.copyMsgConfig.msgContent">
+                  v-if="approverForm.copyMsgConfig.msgContent && approverForm.copyMsgConfig.on === 1">
                   {{ approverForm.copyMsgConfig.msgContent }}
                 </div>
                 <!-- <el-form-item>
@@ -2281,6 +2331,7 @@ const defaultApproverForm = {
     isDingTalk: 0,
     isApp: 0,
     isSms: 0,
+    url: ''
   },
   noticeMsgConfig: {
     on: 0,
@@ -2293,6 +2344,7 @@ const defaultApproverForm = {
     isDingTalk: 0,
     isApp: 0,
     isSms: 0,
+    url: ''
   },
   approveMsgConfig: {
     on: 0,
@@ -2305,6 +2357,7 @@ const defaultApproverForm = {
     isDingTalk: 0,
     isApp: 0,
     isSms: 0,
+    url: ''
   },
   rejectMsgConfig: {
     on: 0,
@@ -2317,6 +2370,7 @@ const defaultApproverForm = {
     isDingTalk: 0,
     isApp: 0,
     isSms: 0,
+    url: ''
   },
   copyMsgConfig: {
     on: 0,
@@ -2329,6 +2383,7 @@ const defaultApproverForm = {
     isDingTalk: 0,
     isApp: 0,
     isSms: 0,
+    url: ''
   },
   approveFuncConfig: {
     on: false,
@@ -3221,6 +3276,7 @@ export default {
       this[obj][key].isDingTalk = item.isDingTalk * 1
       this[obj][key].isApp = item.isApp * 1
       this[obj][key].isSms = item.isSms * 1
+      this[obj][key].url = item.url
     },
     onFuncChange(obj, key, params) {
       const [id, item] = params

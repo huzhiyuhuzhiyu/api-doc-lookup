@@ -17,7 +17,8 @@
 
               <el-date-picker v-else-if="item.type === 'date'" v-model="listQuery[item.prop]" type="daterange"
                 value-format="yyyy-MM-dd" style="width: 100%;" clearable
-                :start-placeholder="'请选择' + item.placeholder + '开始日期'" :end-placeholder="'请选择' + item.placeholder + '结束日期'">
+                :start-placeholder="'' + item.placeholder + '开始日期'"
+                :end-placeholder="'' + item.placeholder + '结束日期'">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -45,11 +46,19 @@
             </el-tooltip>
           </div>
         </div>
-        <!-- show-summary :summary-method="getSummaries"  合计行处理 后续需要 放入 -->
-        <JNPF-table :partentOrChild="'child'" ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO custom-column>
+        <JNPF-table :partentOrChild="'child'" ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO
+          custom-column show-summary :summary-method="getSummaries">
           <template v-for="item in tableItems">
-            <el-table-column :key="item.prop" :prop="item.prop" :label="item.label" :fixed="item.fixed || false"
-              :min-width="item.minWidth || 120" />
+            <el-table-column v-if="['paymentMethod'].includes(item.prop)" :key="item.prop" :prop="item.prop"
+              :label="item.label" :fixed="item.fixed || false" :min-width="item.minWidth || 120">
+              <template slot-scope="scope">
+                <span v-if="scope.row[item.prop] === 'transfer_accounts'">转账</span>
+                <span v-else-if="scope.row[item.prop] === 'draft'">汇票</span>
+                <span v-else>{{ scope.row[item.prop] }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column v-else :key="item.prop + '_else'" :prop="item.prop" :label="item.label"
+              :fixed="item.fixed || false" :min-width="item.minWidth || 120" />
           </template>
 
         </JNPF-table>
@@ -75,7 +84,14 @@
 
               <el-date-picker v-else-if="item.type === 'date'" v-model="listQuery[item.prop]" type="daterange"
                 value-format="yyyy-MM-dd" style="width: 100%;" clearable
-                :start-placeholder="'请选择' + item.placeholder + '开始日期'" :end-placeholder="'请选择' + item.placeholder + '结束日期'">
+                :start-placeholder="'请选择' + item.placeholder + '开始日期'"
+                :end-placeholder="'请选择' + item.placeholder + '结束日期'">
+              </el-date-picker>
+
+              <el-date-picker v-else-if="item.type === 'dateTime'" v-model="listQuery[item.prop]" type="datetimerange"
+                value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" clearable
+                :start-placeholder="'请选择' + item.placeholder + '开始时间'"
+                :end-placeholder="'请选择' + item.placeholder + '结束时间'" :default-time="['00:00:00', '23:59:59']">
               </el-date-picker>
 
             </el-form-item>
@@ -178,6 +194,7 @@ export default {
       cooperativePartnerId: '',
       totalList: [],
       lineType: '',
+      totalData: {},
     }
   },
 
@@ -198,33 +215,6 @@ export default {
         this.initData()
       }
     },
-    // 合计处理
-    getSummaries(param) {
-      const { columns, data } = param;
-      const sums = [];
-      columns.forEach((column, index) => {
-        if (index === 0) {
-          sums[index] = '合计';
-          return;
-        }
-        const values = this.totalList.map(item => item[column.property] ? Number(item[column.property]) : '');
-        if (!values.every(value => isNaN(value))) {
-          sums[index] = values.reduce((prev, curr) => {
-            const value = Number(curr);
-            if (!isNaN(value)) {
-              return prev + curr;
-            } else {
-              return prev;
-            }
-          });
-          // sums[index] += '';
-        } else {
-          sums[index] = null;
-        }
-      });
-      return sums;
-
-    },
     initData() {
       this.visible = false
       this.listLoading = true
@@ -236,17 +226,26 @@ export default {
       this.jnpf.searchTimeFormat(this.listQuery, 'reconciliationDateArr', 'reconciliationStartDate', 'reconciliationEndDate')
       this.jnpf.searchTimeFormat(this.listQuery, 'invoiceDateArr', 'invoiceStartDate', 'invoiceEndDate')
       this.jnpf.searchTimeFormat(this.listQuery, 'createTimeArr', 'startTime', 'endTime')
-      this.listMethod(this.listQuery).then(res => {
+      const loadKey = +new Date()
+      this.loadKey = loadKey
+      this.listMethod({
+        ...this.listQuery,
+        totalAllRowFlag: true
+      }).then(res => {
+        if (this.loadKey !== loadKey) return
         if (['currentBillingAmount', 'currentInboundOutboundAmount', 'currentActualAmount'].includes(this.lineType)) {
-          this.tableData = res.data.records
+          this.tableData = res.data.records.slice(0, res.data.records.length - 1)
+          this.totalData = res.data.records[res.data.records.length - 1] || {}
           this.total = res.data.total
-        }else{
+        } else {
           this.tableData = res.data.page ? res.data.page.records : []
+          this.totalData = res.data.total || {}
           res.data.total ? this.totalList.push(res.data.total) : ''
           this.total = res.data.page ? res.data.page.total : 0
         }
         this.listLoading = false
       }).catch(() => {
+        if (this.loadKey !== loadKey) return
         this.listLoading = false
       })
     },
@@ -266,19 +265,27 @@ export default {
       columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
       this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
     },
+    // 总计处理
+    getSummaries(param) {
+      return param.columns.map((column, index) => {
+        if (index === 0) return '总计'
+        if (!column.property) return ''
+        return this.totalData[column.property]
+      })
+    },
     download(data) {
       let code = ''
       let exportName = ''
       if (this.lineType === 'currentBillingAmount') {
         code = '1119'
         exportName = '发票记录'
-      }else if (this.lineType === 'currentInboundOutboundAmount') {
+      } else if (this.lineType === 'currentInboundOutboundAmount') {
         code = '1121'
         exportName = '收付款结存出入库明细'
-      }else if (this.lineType === 'currentActualAmount') {
+      } else if (this.lineType === 'currentActualAmount') {
         code = '1120'
         exportName = '本期实收付'
-      }else if (['duePaymentAmount', 'overduePaymentAmount'].includes(this.lineType)) {
+      } else if (['duePaymentAmount', 'overduePaymentAmount'].includes(this.lineType)) {
         code = '1063'
         exportName = this.lineType === 'duePaymentAmount' ? '到期应收付' : '逾期收付款'
       }
@@ -294,12 +301,12 @@ export default {
           exportName: exportName,
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
-          totalRowFlag: true,
+          totalAllRowFlag: true,
         }
         excelExport(_data).then(res => {
           this.exportFormVisible = false
           if (!res.data.url) return
-          this.jnpf.downloadFile(res.data.url,res.data.name)
+          this.jnpf.downloadFile(res.data.url, res.data.name)
         }).catch(() => { })
       }
     },
@@ -312,75 +319,4 @@ export default {
   }
 }
 </script>
-<style  scoped>
-.el-tab-pane {
-  height: calc(100% - 10px);
-}
-
-::v-deep .el-tabs__content {
-  height: calc(100% - 40px);
-}
-
-.el-tabs {
-  height: 100%;
-}
-
-.el-tabs__nav-scroll {
-  padding-left: 10px;
-}
-
-.JNPF-common-head {
-  padding: 10px;
-}
-
-.JNPF-common-search-box {
-  padding-top: 5px;
-  padding-bottom: 10px;
-  margin-bottom: 5px;
-}
-
-.JNPF-common-search-box .el-form-item {
-  margin-bottom: 0px !important;
-}
-
-.pagination-container {
-  background-color: #ebeef5;
-  margin-top: 0px;
-  padding-right: 10px;
-  padding-top: 2px;
-  padding-bottom: 2px;
-}
-
-.main {
-  padding: 10px 30px 0;
-}
-
-::v-deep .el-tabs__header {
-  padding: 0 !important;
-  padding-bottom: 10px !important;
-  margin-bottom: 0;
-  padding-left: 10px !important;
-  background: #fff;
-}
-
-.el-button--small {
-  padding: 1;
-}
-
-::v-deep .JNPF-common-page-header {
-  padding: 5px 10px;
-}
-
-.JNPF-common-layout-center .JNPF-common-layout-main {
-  padding-bottom: 0;
-}
-
-::v-deep.el-range-editor--small.el-input__inner {
-  height: 34px;
-}
-
-::v-deep.el-table__body-wrapper {
-  height: auto !important;
-}
-</style>
-
+<style src="@/assets/scss/index-list.scss" lang="scss" scoped />

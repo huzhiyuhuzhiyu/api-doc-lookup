@@ -56,7 +56,7 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="编排任务方式" prop="taskMethod">
                           <el-select v-model="dataForm.taskMethod" placeholder="请选择业务类型" style="width: 100%;"
                             @change="selectTaskMethod">
@@ -608,6 +608,7 @@ export default {
   },
   data() {
     return {
+      taskMethodList: [{ label: "指定加工对象", value: "appoint" }, { label: "不指定加工对象", value: "not_appoint" },],
       reduceTypeList: [
         { label: "生成领料单", value: "picking" },
         { label: "自动扣减料", value: "auto" },

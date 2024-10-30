@@ -210,7 +210,8 @@
                     </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24" class="iptLabel">
-                    <el-form-item label="生产人:" prop="producerName" v-if="currentProcess.taskMethod != 'not_appoint'">
+                    <el-form-item label="生产人:" prop="producerName" v-if="currentProcess.taskMethod != 'not_appoint'"
+                      :style="{ marginBottom: producerMargin }">
                       <el-select v-model="currentProcess.producerName" placeholder="生产人" style="width: 100%;"
                         class="ipt">
                         <el-option v-for="(item, index) in personList" :key="index" :label="item.label"
@@ -219,7 +220,7 @@
 
                       <!-- producerId -->
                     </el-form-item>
-                    <el-form-item label="生产人:" prop="producerId" v-if="currentProcess.taskMethod == 'not_appoint'"
+                    <el-form-item label="生产人:" prop="producerId" v-if="currentProcess.taskMethod == 'not_appoint'" :style="{ marginBottom: producerMargin }"
                       class="iptLabel">
                       <user-select v-model="currentProcess.producerId" placeholder="生产人" clearable style="width: 100%;"
                         class="ipt" @change="hangleSelectSales">
@@ -353,6 +354,7 @@ export default {
         ]
       },
       iptLabelMargin: '18px',
+      producerMargin: '18px'
     }
   },
 
@@ -372,7 +374,7 @@ export default {
         this.currentProcessId = res.data.workOrderList[0].processId
         this.currentProcess = res.data.workOrderList[0]
         this.$set(this.currentProcess, 'reportingQuantity', 0)
-        this.$set(this.currentProcess, 'qualifiedQuantity', 0)
+        this.$set(this.currentProcess, 'qualifiedQuantity', "")
         this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
         this.$set(this.currentProcess, 'materialWasteQuantity', 0)
         this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
@@ -386,7 +388,7 @@ export default {
       this.currentProcess = item
       this.currentProcessId = item.processId
       this.$set(this.currentProcess, 'reportingQuantity', 0)
-      this.$set(this.currentProcess, 'qualifiedQuantity', 0)
+      this.$set(this.currentProcess, 'qualifiedQuantity', "")
       this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
       this.$set(this.currentProcess, 'materialWasteQuantity', 0)
       this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
@@ -408,10 +410,19 @@ export default {
         total = this.currentProcess.qualifiedQuantity
       }
       if (!this.currentProcess.vibrateReportFlag) {
-        if (!this.currentProcess.qualifiedQuantity) {
+        if (!this.currentProcess.qualifiedQuantity || this.currentProcess.qualifiedQuantity == 0) {
           this.iptLabelMargin = '38px'
         } else {
           this.iptLabelMargin = '18px'
+          if (!this.currentProcess.producerId) {
+            this.producerMargin = '38px'
+          } else {
+            this.producerMargin = '18px'
+          }
+          this.$nextTick(() => {
+          const height = this.$refs.mycol.$el.clientHeight
+          this.targetHeight = height;
+        });
 
         }
       }
@@ -454,12 +465,10 @@ export default {
 
           this.$nextTick(() => {
             const height = this.$refs.mycol.$el.clientHeight
-            console.log('el-col的高度是2：', height);
             this.targetHeight = height;
           });
         } else {
           const height = this.$refs.fixedInfo.$el.clientHeight
-          console.log('el-col的高度是2：', height);
           this.targetHeight2 = height;
         }
       }
@@ -471,7 +480,6 @@ export default {
     producePersonListFun(id) {
       producePersonList(id).then(res => {
 
-        console.log("生产人", res);
         if (res.data) {
           let result = Object.entries(res.data).map(([key, value]) => {
             return {
@@ -510,7 +518,6 @@ export default {
         ]
       };
       getbimProductAttributesList(obj3).then(res => {
-        console.log("振动等级数据", res);
         this.vibrationLevelList = res.data.records
         res.data.records.forEach(item => {
           this.$set(this.currentProcess, item[item.name], 0)
@@ -518,7 +525,6 @@ export default {
         });
         this.$nextTick(() => {
           const height = this.$refs.mycol.$el.clientHeight
-          console.log('el-col的高度是1：', height);
           this.targetHeight = height;
         });
         console.log(666666, this.currentProcess);
@@ -636,6 +642,25 @@ export default {
             this.$message.success("报工成功")
             this.init(this.id)
           })
+        } else {
+          if (!this.currentProcess.vibrateReportFlag) {
+            if (!this.currentProcess.qualifiedQuantity || this.currentProcess.qualifiedQuantity == 0) {
+              this.iptLabelMargin = '38px'
+            } else {
+              this.iptLabelMargin = '18px'
+
+            }
+          }
+          if (!this.currentProcess.producerId) {
+            this.producerMargin = '38px'
+          } else {
+            this.producerMargin = '18px'
+
+          }
+          this.$nextTick(() => {
+            const height = this.$refs.mycol.$el.clientHeight
+            this.targetHeight = height;
+          });
         }
       })
 

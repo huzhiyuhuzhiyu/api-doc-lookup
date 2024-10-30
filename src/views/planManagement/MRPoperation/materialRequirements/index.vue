@@ -118,7 +118,7 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
-                <template v-for="item in searchList3">
+                <template v-for="item in searchList2">
                   <el-col :span="item.searchType === 3 ? 6 : 4">
                     <el-form-item>
                       <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label"
@@ -395,7 +395,7 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
-                <template v-for="item in searchList3">
+                <template v-for="item in searchList4">
                   <el-col :span="item.searchType === 3 ? 6 : 4">
                     <el-form-item>
                       <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label"
@@ -1469,6 +1469,10 @@ export default {
         pageNum: 1,
         pageSize: 20,
       }, 
+      this.searchList2=[
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
+      ]
       this.$refs.SuperQuery.conditionList = []
       this.getproduceData('basic')
     },

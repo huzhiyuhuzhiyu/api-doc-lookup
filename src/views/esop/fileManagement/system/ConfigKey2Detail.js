@@ -310,5 +310,21 @@ export default {
 
       },
       closeEventName: "close",
+    },
+    "fj_sbly": {
+      title: "设备领用",
+      path: "dailyManagement/equipmentrequisitionreturn/equipmentrequisition/Form.vue", //需要调用的组件路径
+      params: {
+
+      },
+      closeEventName: "close",
+    },
+    "fj_sbgh": {
+      title: "设备归还",
+      path: "dailyManagement/equipmentrequisitionreturn/equipmentreturn/Form.vue", //需要调用的组件路径
+      params: {
+
+      },
+      closeEventName: "close",
     }
 }

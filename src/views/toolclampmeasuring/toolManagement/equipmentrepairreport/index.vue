@@ -693,7 +693,6 @@ export default {
 
 .options {
   display: inline-block;
-  float: right;
 }
 
 .pageTitle {

@@ -80,7 +80,9 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:10px">
-          <topOpts @add="addSupplier()" />
+          <topOpts @add="addSupplier()">
+            <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus" @click="importProductFun">导入</el-button>
+          </topOpts>
 
           <!-- <div>
                   <topOpts @add="addSupplier()" />
@@ -105,7 +107,7 @@
           </div>
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" :fixedNO="true"
-          @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+          @sort-change="sortChange" custom-column :setColumnDisplayList="columnList" :element-loading-text="loadingText">
           <el-table-column prop="code" label="编码" width="160" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
@@ -169,6 +171,20 @@
           @pagination="initData" />
       </div>
     </div>
+    <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
+      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" drag :auto-upload="false" :limit="1" :on-change="handleFileChange" ref="uploadRef">
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text"><em>点击选取文件上传</em></div>
+        <div class="el-upload__tip" slot="tip">只能上传.xls/.xlsx文件 <el-button type="text" class="topButton" icon="el-icon-download" @click="downLoadTemplate">下载模板</el-button></div>
+
+      </el-upload>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" @click="submit()">
+          提交</el-button>
+      </span>
+    </el-dialog>
     <!-- </div> -->
 
     <!-- </el-tab-pane> -->
@@ -199,6 +215,9 @@ export default {
   components: { Form, UserRelationList, SuperQuery },
   data() {
     return {
+      loadingText: '',
+      file: {},
+      uploadVisib: false,
       filterText: '',
       basicQuery: {},
       superQuery: {},
@@ -460,6 +479,91 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    submit() {
+      this.UploadProduct(this.file)
+    },
+    cancelFun() {
+      this.uploadVisib = false
+      this.$refs['uploadRef'].clearFiles();
+    },
+    handleFileChange(file) {
+      this.file = file.raw
+    },
+    // 导入产品
+    importProductFun() {
+      this.uploadVisib = true
+    },
+    // 下载模板
+    downLoadTemplate() {
+      const a = document.createElement('a')
+      a.setAttribute('download', '')
+      a.setAttribute('href', location.origin + '/static/供应商导入模板.xlsx')
+      a.click()
+    },
+    UploadProduct(data) {
+      this.loadingText = '正在导入数据'
+      this.listLoading = true
+      var formData = new FormData()
+      formData.append("file", data)
+      //调用上传文件接口
+      saleCluemanagementpoolModel(formData).then(res => {
+        if (!res.data) {
+          this.$message.success(`导入成功`)
+          this.listLoading = false
+          this.loadingText = ''
+        } else {
+          this.handleMessage(res.data)
+        }
+        this.uploadVisib = false
+        this.initData()
+      }).catch(err => {
+        this.$message.error(`文件上传失败`)
+        this.uploadVisib = false
+        this.listLoading = false
+        this.loadingText = ''
+      })
+    },
+    // 提示
+    handleMessage(data) {
+      const h = this.$createElement
+      this.$message({
+        type: "error",
+        duration: 0,
+        showClose: true,
+        customClass: 'my-message', // 自定义类名，用于设置样式
+        message: h('div',
+          {
+            style: "padding-right:20px;display:flex;align-items:center;color:#f56c6c;"
+          },
+          [
+            h('p', { style: 'font-size:14px;' }, '导入成功，存在信息错误！'),
+            h('el-button', {
+              props: {
+                type: 'text',
+                size: "mini",
+                icon: 'el-icon-download'
+              },
+              on: {
+                click: () => {
+                  this.downNoProduct(data)
+                }
+              },
+              style: {
+                border: "none",
+                textAlign: "center",
+                // width:"20%",
+                margin: "0 5px 0 5px ",
+              },
+            }, '下载导入错误数据')
+          ]
+        ),
+      })
+      return
+    },
+    // 导入产品  下载导入错误数据
+    downNoProduct(res) {
+      this.jnpf.downloadFile(res.url, res.name)
+    },
     superQuerySearch(query) {
       this.superQuery = query
       this.superQueryVisible = false

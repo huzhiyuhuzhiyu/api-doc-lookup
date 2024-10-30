@@ -290,18 +290,12 @@ export default {
       ProductListRequestObj: {
         classAttribute: "spare_parts",
         code: "",
-        createTimeArr: [],
-        customerQueryFields: [],
         drawingNo: "",
         endTime: "",
         name: "",
         orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }],
         pageNum: 1,
         pageSize: 20,
-        productCategoryId: "",
-        productSource: "",
-        productStatus: "",
-        startAndEndTime: [],
         startTime: "",
       },
       index: '',
@@ -495,7 +489,7 @@ export default {
       this.type = type
       this.dataForm.id = id || ''
       this.btnType = btnType
-      if (this.btnType === 'add' || this.btnType === 'edit') this.fetchData('BJLY')
+      if (this.btnType === 'add' || this.btnType === 'edit') this.fetchData('LYDH')
       if (this.btnType == 'add') {
         this.dataForm.recipientId = this.userInfo.userId
         this.dataForm.collectionTime = this.jnpf.getToday()

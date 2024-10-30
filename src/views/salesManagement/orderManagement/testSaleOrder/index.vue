@@ -207,6 +207,7 @@ export default {
             formatter: item.formatter ? formatterFunction.bind(this)() : ''
           }
         })
+        console.log(this.tableItems,'this.tableItems')
         this.superQueryJson = this.columnData.searchOptions.map(item => {
           return {
             ...item,

@@ -3,7 +3,9 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
+
           <el-col :span="4" v-for="item in searchList" :key="item.prop">
+
             <el-form-item>
               <el-input v-if="item.type === 'input'" v-model="listQuery[item.prop]" :placeholder="'请输入' + item.label"
                 clearable />
@@ -15,18 +17,20 @@
 
               <el-date-picker v-else-if="item.type === 'date'" v-model="listQuery.reconciliationDateArr"
                 type="daterange" value-format="yyyy-MM-dd" style="width: 100%;" :start-placeholder="item.label + '开始日期'"
-                :end-placeholder="item.label + '结束日期'"></el-date-picker>
+                :end-placeholder="item.label + '结束日期'">
+              </el-date-picker>
             </el-form-item>
           </el-col>
 
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
-                {{ $t('common.search') }}
+                {{ $t('common.search') }}</el-button>
+              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
               </el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
             </el-form-item>
           </el-col>
+
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -47,40 +51,20 @@
           </div>
         </div>
 
-        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO show-summary
-          :summary-method="getSummaries" :fixedNO="true" @sort-change="sortChange" :setColumnDisplayList="columnList">
-          <template>
-            <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label"
-              :fixed="item.fixed || false" :min-width="item.minWidth || 120" :sortable="item.sortable" />
+        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO :fixedNO="true"
+          @sort-change="sortChange"  :setColumnDisplayList="columnList">
+          <template v-for="item in tableItems">
+            <el-table-column :key="item.prop" :prop="item.prop" :label="item.label" :fixed="item.fixed || false"
+              :min-width="item.minWidth || 120" :sortable="item.sortable" />
           </template>
 
           <el-table-column label="操作" min-width="180" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" :disabled="Math.abs(scope.row.totalReconciliationAmount) - Math.abs(scope.row.totalPaymentAmount) == 0
-                ? true
-                : false
-                " @click="addOrUpdateHandle(scope.row.id, 'pay')">
-                {{ reconciliationType !== 'receivable' ? '付款' : '收款' }}
-              </el-button>
-              <!-- <el-button size="mini" type="text"
-                :disabled="Math.abs(scope.row.totalReconciliationAmount) - Math.abs(scope.row.totalInvoicingAmount) == 0 ? true : false"
-                @click="addOrUpdateHandle(scope.row.id, 'make')">{{ reconciliationType !== 'receivable' ? '收票' : '开票'
-                }}</el-button> -->
-              <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id, 'look', scope.row.orderNo)">
-                查看详情
-              </el-button>
-              <!-- <el-dropdown hide-on-click>
-                <span class="el-dropdown-link">
-                  <el-button type="text" size="mini">
-                    {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                  </el-button>
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look', scope.row.orderNo)">
-                    查看详情
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown> -->
+
+
+              <el-button size="mini" type="text"
+                @click="addOrUpdateHandle(scope.row.accountsReceivableReconciliationId, 'look', scope.row.orderNo)">查看对账单</el-button>
+
             </template>
           </el-table-column>
         </JNPF-table>
@@ -101,11 +85,14 @@
 </template>
 
 <script>
+
 import collectionForm from './collectionForm.vue'
 import makeForm from './makeForm.vue'
 import depForm from './depForm.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import {
+  getbimProductAttributesList, getbimProductAttributes
+} from "@/api/masterDataManagement/index";
 export default {
   name: 'payment',
   components: { collectionForm, makeForm, depForm, SuperQuery },
@@ -153,7 +140,7 @@ export default {
           return { id, orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }], pageNum: 1, pageSize: 20 }
         }
       */
-    }
+    },
   },
   data() {
     return {
@@ -207,12 +194,12 @@ export default {
         {
           prop: 'totalInvoicingAmount',
           label: '已开票金额',
-          type: 'input'
+          type: 'input',
         },
         {
           prop: 'totalNotInvoicedAmount',
           label: '未开票金额',
-          type: 'input'
+          type: 'input',
         },
         {
           prop: 'remark',
@@ -232,7 +219,8 @@ export default {
           prop: 'createByName',
           label: '创建人',
           type: 'input'
-        }
+        },
+
       ],
       columnList: ['cooperativePartnerCode'],
       title: '更多查询',
@@ -247,11 +235,11 @@ export default {
       total: 0,
       formVisible: false,
       orderNo: '',
-      totalList: []
+      totalList: [],
     }
   },
   mounted() {
-    console.log(this.tableItems, '[this.tableItems]')
+    this.getProductClassFun()
   },
   created() {
     this.getData()
@@ -262,7 +250,247 @@ export default {
       this.superQueryVisible = false
       this.search()
     },
+    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
+    getProductClassFun() {
 
+      let obj1 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa007",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+
+      getbimProductAttributesList(obj1).then(res => {
+
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'sealingCoverTyping');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj2 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa006",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+
+
+      getbimProductAttributesList(obj2).then(res => {
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'accuracyLevel');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj3 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa005",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj3).then(res => {
+
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'vibrationLevel');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj4 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa002",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj4).then(res => {
+
+
+
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'oil');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj5 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa003",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj5).then(res => {
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'oilQuantity');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj6 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa001",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+
+      getbimProductAttributesList(obj6).then(res => {
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'clearance');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj7 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa015",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj7).then(res => {
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'packagingMethod');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+
+
+      // 获取税率(数据字典)
+      getbimProductAttributes("585438081021126405").then(res => {
+        res.data.list.forEach(item => {
+          item.taxRate = item.enCode.replace('%', '') * 1
+        })
+        this.taxRateList = res.data.list
+        console.log("税率", this.taxRateList);
+      })
+
+    },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
@@ -298,57 +526,24 @@ export default {
         this.initData()
       }
     },
-    // 合计处理
-    getSummaries(param) {
-      const { columns, data } = param
-      const sums = []
-      columns.forEach((column, index) => {
-        if (index === 0) {
-          sums[index] = '合计'
-          return
-        }
-        const values = this.totalList.map((item) => (item[column.property] ? Number(item[column.property]) : ''))
-        if (!values.every((value) => isNaN(value))) {
-          sums[index] = values.reduce((prev, curr) => {
-            const value = Number(curr)
-            if (!isNaN(value)) {
-              return prev + curr
-            } else {
-              return prev
-            }
-          })
-          // sums[index] += '';
-        } else {
-          sums[index] = null
-        }
-      })
-      return sums
-    },
+
     initData() {
       this.visible = false
       this.listLoading = true
-      Object.keys(this.listQuery).forEach((key) => {
-        // 清除搜索条件两端空格
+      Object.keys(this.listQuery).forEach(key => { // 清除搜索条件两端空格
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
       this.totalList = []
-      this.jnpf.searchTimeFormat(
-        this.listQuery,
-        'reconciliationDateArr',
-        'reconciliationStartDate',
-        'reconciliationEndDate'
-      )
-      this.listMethod(this.listQuery)
-        .then((res) => {
-          this.tableData = res.data.page ? res.data.page.records : []
-          res.data.total ? this.totalList.push(res.data.total) : ''
-          this.total = res.data.page ? res.data.page.total : 0
-          this.listLoading = false
-        })
-        .catch(() => {
-          this.listLoading = false
-        })
+      this.jnpf.searchTimeFormat(this.listQuery, 'reconciliationDateArr', 'reconciliationStartDate', 'reconciliationEndDate')
+      this.listMethod(this.listQuery).then(res => {
+        this.tableData = res.data.page ? res.data.page.records : []
+        res.data.total ? this.totalList.push(res.data.total) : ''
+        this.total = res.data.page ? res.data.page.total : 0
+        this.listLoading = false
+      }).catch(() => {
+        this.listLoading = false
+      })
     },
 
     search() {
@@ -379,7 +574,11 @@ export default {
           this.$refs.depForm.init(id, type, orderNo)
         })
       }
-    }
+    },
+
+
+
+
   }
 }
 </script>
@@ -425,6 +624,8 @@ export default {
 .main {
   padding: 10px 30px 0;
 }
+
+
 
 .el-button--small {
   padding: 1;

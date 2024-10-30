@@ -109,8 +109,12 @@
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           ref="dataTable" :setColumnDisplayList="columnList">
-          <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label"
-          ></el-table-column>
+          <template v-if="tableItems">
+            <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label"
+              :formatter="item.formatter || toFormatter" :sortable="item.sortable ? 'custom' : false"
+              :align="item.align || 'left'" v-bind="{ minWidth: item.hasOwnProperty('minWidth') ? item.width : 140 }">
+            </el-table-column>
+          </template>
           <!-- <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
             <template slot="header" slot-scope="scope">
               {{ classAttributeText }}编码
@@ -310,7 +314,7 @@ export default {
               jnpfKey: '',
               label: '订单号',
               minWidth: 180,
-              prop: 'code',
+              prop: 'code666',
               sortable: true,
               width: 180
             }

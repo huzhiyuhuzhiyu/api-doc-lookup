@@ -1,14 +1,14 @@
 <template>
   <div>
     <el-drawer title="发料清单" :visible.sync="drawer" :direction="direction" :wrapperClosable="false" append-to-body
-      :before-close="handleClose" size="40%" columnSettings-drawer class="JNPF-common-drawer">
-      <div>
-        <el-scrollbar class="column-list" style="margin-bottom: 16px;">
+      :before-close="handleClose" size="45%" columnSettings-drawer class="JNPF-common-drawer">
+      <div ref="main">
+        <el-scrollbar style="height: 100%;">
           <!-- 人员配置 -->
           <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-            <el-table hasNO fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" size="mini" id="table"
-              style="width: 100%">
-              <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+            <JNPF-table hasNO fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" size="mini" id="table"
+              :style="{ height: height + 'px' }">
+              <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
               <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                 <template slot-scope="scope">
                   <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
@@ -24,7 +24,7 @@
                   </el-form-item>
                 </template>
               </el-table-column>
-              <el-table-column prop="productCode" label="产品编码" min-width="150" show-overflow-tooltip>
+              <el-table-column prop="productCode" label="产品编码" width="130" show-overflow-tooltip>
                 <template slot-scope="scope">
                   <!-- <el-input v-model="scope.row.productCode" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
                   <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'" :rules="productRule.productCode">
@@ -38,7 +38,7 @@
                   </el-form-item>
                 </template>
               </el-table-column>
-              <el-table-column prop="processName" label="工序名称" min-width="160" show-overflow-tooltip>
+              <el-table-column prop="processName" label="工序名称" width="135" show-overflow-tooltip>
                 <template slot="header">
                   <span class="required">*</span>
                   工序名称
@@ -58,7 +58,7 @@
 
 
 
-              <el-table-column prop="mainUnit" label="单位" min-width="90" show-overflow-tooltip>
+              <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip>
                 <template slot-scope="scope">
                   <!-- <el-input v-model="scope.row.mainUnit" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
                   <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
@@ -71,7 +71,7 @@
                 </template>
               </el-table-column>
 
-              <el-table-column prop="qty" label="发料数量" min-width="140">
+              <el-table-column prop="qty" label="发料数量" width="120">
                 <template slot="header">
                   <span class="required">*</span>
                   发料数量
@@ -98,7 +98,7 @@
                   </el-button>
                 </template>
               </el-table-column>
-            </el-table>
+            </JNPF-table>
           </el-form>
         </el-scrollbar>
         <div class="footer">
@@ -124,6 +124,7 @@ export default {
   components: {},
   data() {
     return {
+      height: 700,
       classAttributeList: [],
       types: '',
       drawer: false,
@@ -220,9 +221,29 @@ export default {
     }
   },
   mounted() {
+    this.switchStyle()
     this.getclassAttributeList()
+
   },
   methods: {
+    //自适应窗口
+    async switchStyle() {
+      await this.$nextTick();
+      console.log(this.$refs.main, 'this.$refs.main')
+      let allHeight = this.$refs.main.clientHeight
+      console.log(allHeight, 'allHeight')
+      // let HeightstoclInfo = this.$refs.stoclInfo.clientHeight
+      // let Heightradio = this.$refs.radio.clientHeight
+      this.height = (allHeight - 700) < 700 ? 700 : (allHeight - 425)
+      console.log(this.height, 'this.height')
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyle()
+        }, 100);
+      };
+    },
     listDataFormatting(res) {
       res.data.records.forEach((item, index) => {
         item.classAttributeName = this.$getLabel(this.classAttributeList, item.classAttribute, 'value', 'label')

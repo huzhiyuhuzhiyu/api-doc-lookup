@@ -8,7 +8,7 @@
             <el-button type="success" :loading="btnLoading" @click="handleSubmit('draft')">
               保存草稿</el-button>
             <el-button type="primary" :loading="btnLoading" @click="handleSubmit('submit')">
-              {{ $t('common.submitButton') }}
+              保存并提交
             </el-button>
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div>

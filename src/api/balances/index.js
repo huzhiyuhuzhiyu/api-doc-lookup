@@ -69,6 +69,15 @@ export function paymentBalance(data) {
   })
 }
 
+//  反结存
+export function paymentBalanceNegate(data) {
+  return request({
+    url: `/api/erp/payment/balance/negate?accountPeriod=${data.accountPeriod}&reconciliationType=${data.reconciliationType}`,
+    method: 'post',
+    // data
+  })
+}
+
 // 出入库明细列表
 export function paymentStockLine(data) {
   return request({

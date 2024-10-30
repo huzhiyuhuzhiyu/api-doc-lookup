@@ -224,6 +224,7 @@ export default {
     showDrawer() {
       this.drawerVisible = true
       this.$nextTick(() => {
+        console.log(this.columnList,'this.columnList')
         this.$refs.columnSettings.init(this.columnList, this.columns)
       })
     },
@@ -238,10 +239,13 @@ export default {
       this.hasSlotContent = this.checkForSlotContent()
       if (!this.hasSlotContent) return
       this.$nextTick(() => {
+        console.log(this.$slots,'this.$slots')
         this.columns = this.$slots.default // 代码传入的列
+        console.log(this.columns,'this.columns')
         let defaultColumns = this.columns.map(o => o.componentOptions && o.componentOptions.propsData).filter(item => item)
         this.defaultColumns = JSON.parse(JSON.stringify(defaultColumns.filter(o => o.prop))) //
         let list = JSON.parse(JSON.stringify(this.defaultColumns))
+        console.log(list,'lois')
         const cacheList = this.jnpf.storageGet(this.menuId + this.partentOrChild)
 
         if (!cacheList) {

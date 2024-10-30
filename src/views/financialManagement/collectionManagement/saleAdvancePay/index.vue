@@ -42,7 +42,7 @@ export default {
                 prePayFlag: 1,           //预收付款标识
             },
             tableItems: [
-                { prop: 'partnerName', label: '客户名称', sortable: 'custom' },
+                { prop: 'partnerName', label: '客户名称', sortable: 'custom', minWidth: 200 },
                 { prop: 'partnerCode', label: '客户编码', sortable: 'custom' },
                 { prop: 'paymentAmount', label: '收款金额' },
                 { prop: 'remainingAmount', label: '剩余金额' },
@@ -50,7 +50,7 @@ export default {
                 { prop: 'paymentDate', label: '收款日期', minWidth: '180', sortable: 'custom' },
                 { prop: 'remark', label: '备注' },
                 { prop: 'createTime', label: '创建时间', minWidth: '180', sortable: 'custom' },
-                { prop: 'createByName', label: '创建人' },
+                { prop: 'createByName', label: '创建人', width: 100 },
             ],
             searchList: [
                 { prop: 'partnerName', label: '客户名称', type: 'input' },

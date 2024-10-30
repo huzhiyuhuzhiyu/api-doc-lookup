@@ -85,7 +85,7 @@
                 </el-table-column>
                 <el-table-column prop="totalProgress" label="订单进度" width="120" :key="68">
                   <template slot-scope="scope">
-                     <div>30%</div>
+                    <div>30%</div>
                   </template>
                 </el-table-column>
 
@@ -110,7 +110,7 @@
                     <div>{{ scope.row.receivedQuantity ? scope.row.receivedQuantity : 0 }}</div>
                   </template>
                 </el-table-column>
-            
+
                 <!-- <el-table-column prop="num" label="订单金额" width="100" :key="7">
                 </el-table-column>
                 <el-table-column prop="price" label="收款金额" width="120" :key="11">
@@ -450,26 +450,25 @@
               <div v-if="categoryType == 'outinboundwarehouse'">
                 <JNPF-table ref="outinboundwarehouse" :height="height" :data="outInboundData" fixedNO
                   v-loading="tableloading">
-                  <el-table-column prop="orderNo" label="单号" sortable="custom" min-width="180">
+                  <el-table-column prop="orderNo" label="单号" min-width="180">
                     <template slot-scope="scope">
                       <el-link type="primary" @click.native="viewOutInbound(scope.row, 'look')">{{
                         scope.row.orderNo
                       }}</el-link>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="businessType" label="业务类型" sortable="custom" min-width="120">
+                  <el-table-column prop="businessType" label="业务类型" min-width="120">
                     <template slot-scope="scope">
                       <div v-if="scope.row.businessType == 'outbound_sale_send'">销售发货</div>
                       <div v-if="scope.row.businessType == 'inbound_sale_return'">销售退货</div>
 
                     </template>
                   </el-table-column>
-                  <el-table-column prop="partnerName" label="客户/供应商" sortable="custom" min-width="160">
+                  <el-table-column prop="partnerName" label="客户/供应商" min-width="160">
 
                   </el-table-column>
-                  <el-table-column prop="partnerCode" label="客户/供应商编码" sortable="custom"
-                    min-width="180"></el-table-column>
-                  <el-table-column prop="inspectionResults" label="检验标志" min-width="120" sortable="custom">
+                  <el-table-column prop="partnerCode" label="客户/供应商编码" min-width="180"></el-table-column>
+                  <el-table-column prop="inspectionResults" label="检验标志" min-width="120">
                     <template slot-scope="scope">
                       <el-tag type="success" v-if="scope.row.inspectionResults == 'qualified'">合格</el-tag>
                       <el-tag type="danger" v-else-if="scope.row.inspectionResults == 'unqualified'">不合格</el-tag>
@@ -486,7 +485,7 @@
 
                   </el-table-column>
                   <el-table-column prop="remark" label="备注" min-width="180" />
-                  <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
+                  <el-table-column prop="createTime" label="创建时间" min-width="180" />
                   <el-table-column prop="createByName" label="创建人" width="120" />
 
                   <el-table-column label="操作" width="100" fixed="right">
@@ -615,273 +614,154 @@
               </div>
               <!-- 对账记录 -->
               <div v-if="categoryType == 'reconciliation'">
-                <JNPF-table ref="reconciliation" :height="height" :data="productData" fixedNO v-loading="tableloading"
-                  @row-click="handleRowClick">
-                  <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
-                  </el-table-column>
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
-                  </el-table-column>
-                  <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
-                  <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-
-
-
-
-                  <el-table-column prop="outNum11" label="订单状态" width="120" :key="68">
+                <JNPF-table ref="reconciliation" :height="height" :data="reconciliationData" fixedNO
+                  v-loading="tableloading">
+                  <el-table-column prop="orderNo" label="对账单号" min-width="180">
                     <template slot-scope="scope">
-                      <div>{{ scope.row.outNum11 ? scope.row.outNum11 : 0 }}</div>
+                      <el-link type="primary" @click.native="viewReconciliationFun(scope.row.id, 'look')">{{
+                        scope.row.orderNo
+                      }}</el-link>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="reconciliationDate" label="对账日期" min-width="180" />
+
+                  <!-- <el-table-column prop="orderNo" label="对账单号" width="180"  /> -->
+                  <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="200" />
+                  <el-table-column prop="cooperativePartnerCode" label="客户编码" min-width="200" />
+                  <el-table-column prop="excludingTaxAmount" label="不含税总金额" min-width="180">
+                    <template slot-scope="scope">
+                      <div :class="scope.row.excludingTaxAmount > 0 ? 'green' : 'red'">{{ scope.row.excludingTaxAmount >
+                        0 ? '+'
+                      + scope.row.excludingTaxAmount : scope.row.excludingTaxAmount }}</div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="taxAmount" label="总税额" min-width="180">
+                    <template slot-scope="scope">
+                      <div :class="scope.row.taxAmount > 0 ? 'green' : 'red'">{{ scope.row.taxAmount > 0 ? '+' +
+                        scope.row.taxAmount : scope.row.taxAmount }}</div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="includingTaxAmount" label="含税总金额" min-width="180">
+                    <template slot-scope="scope">
+                      <div :class="scope.row.includingTaxAmount > 0 ? 'green' : 'red'">{{ scope.row.includingTaxAmount >
+                        0 ? '+'
+                      + scope.row.includingTaxAmount : scope.row.includingTaxAmount }}</div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="totalReconciliationAmount" label="对账金额" min-width="180">
+                    <template slot-scope="scope">
+                      <div :class="scope.row.totalReconciliationAmount > 0 ? 'green' : 'red'">{{
+                        scope.row.totalReconciliationAmount > 0 ? '+' + scope.row.totalReconciliationAmount :
+                          scope.row.totalReconciliationAmount }}</div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="totalPaymentAmount" label="已收款金额" min-width="180">
+                    <template slot-scope="scope">
+                      <div :class="scope.row.totalPaymentAmount > 0 ? 'green' : 'red'">{{ scope.row.totalPaymentAmount >
+                        0 ? '+'
+                      + scope.row.totalPaymentAmount : scope.row.totalPaymentAmount }}</div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="totalInvoicingAmount" label="已开票金额" min-width="180">
+                    <template slot-scope="scope">
+                      <div :class="scope.row.totalInvoicingAmount > 0 ? 'green' : 'red'">{{
+                        scope.row.totalInvoicingAmount > 0 ?
+                          '+' + scope.row.totalInvoicingAmount : scope.row.totalInvoicingAmount }}</div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="remark" label="备注" min-width="180" />
+                  <el-table-column prop="createTime" label="创建时间" width="180" />
+                  <el-table-column prop="createByName" label="创建人" min-width="180" />
+                  <el-table-column prop="approvalStatus" label="审批状态" align="center" min-width="120"
+                    v-if="showAppCodeFlag">
+                    <template slot-scope="scope">
+                      <div v-if="scope.row.approvalStatus == 'ing'"><el-tag>审批中</el-tag> </div>
+                      <div v-if="scope.row.approvalStatus == 'ok'"><el-tag type="success">审批通过</el-tag></div>
+                      <div v-if="scope.row.approvalStatus == 'rebut'"><el-tag type="danger">审批拒绝</el-tag></div>
+                      <div v-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus == 'submit'">
+                        <el-tag type="warning">审批撤回</el-tag>
+                      </div>
+                    </template>
+                  </el-table-column>
+
+                  <el-table-column label="操作" width="180" fixed="right">
+                    <template slot-scope="scope">
+                      <el-button type="text" size="mini" @click.native="viewReconciliationFun(scope.row.accountsReceivableReconciliationId, 'look')">
+                        详情</el-button>
                     </template>
                   </el-table-column>
 
 
-                  <el-table-column prop="num" label="订单数量" width="120" :key="58">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.num ? scope.row.num : 0 }}</div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="outNum13" label="计划数量" width="120" :key="84">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.outNum13 ? scope.row.outNum13 : 0 }}</div>
-                    </template>
-                  </el-table-column>
-
-                  <el-table-column prop="outNum15" label="已发货数量" width="120" :key="28">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.outNum15 ? scope.row.outNum15 : 0 }}</div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="outNum14" label="入库数量" width="120" :key="38">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.outNum14 ? scope.row.outNum14 : 0 }}</div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="num" label="订单金额" width="100" :key="7">
-                  </el-table-column>
-                  <el-table-column prop="price" label="收款金额" width="120" :key="11">
-                  </el-table-column>
-                  <!-- <el-table-column prop="taxRate" label="税率" width="120" :key="171">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.taxRate }}%</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
-                <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column> -->
-
-                  <el-table-column prop="deliveryDate" label="欠款金额" width="180" :key="131"></el-table-column>
-                  <el-table-column prop="excludingTaxAmount" label="开票金额" width="140" :key="126">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</div>
-                    </template>
-                  </el-table-column>
-
-                  <el-table-column label="操作" width="100" fixed="right">
-                    <template slot-scope="scope">
-                      <el-button size="mini" type="text" @click="viewFun(scope.row.ordersId, 'look')">详情</el-button>
-                    </template>
-                  </el-table-column>
                 </JNPF-table>
               </div>
-              <!-- 收款记录 -->
+           
+              <!-- 收退款记录 -->
               <div v-if="categoryType == 'receivePayRefund'">
-                <JNPF-table ref="receivePayRefund" :height="height" :data="productData" fixedNO v-loading="tableloading"
-                  @row-click="handleRowClick">
-                  <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
-                  </el-table-column>
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
-                  </el-table-column>
-                  <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
-                  <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-
-
-
-
-                  <el-table-column prop="outNum11" label="订单状态" width="120" :key="68">
+                <JNPF-table ref="receivePayRefund" :height="height" :data="receivePayRefundData" fixedNO
+                  v-loading="tableloading">
+                  <el-table-column prop="orderNo" label="对账单号" min-width="180">
                     <template slot-scope="scope">
-                      <div>{{ scope.row.outNum11 ? scope.row.outNum11 : 0 }}</div>
+                      <el-link type="primary" @click.native="viewReceivePayRefundFun(scope.row.accountsReceivableReconciliationId, 'look',scope.row.orderNo)">{{
+                        scope.row.orderNo
+                      }}</el-link>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="reconciliationDate" label="对账日期" min-width="180" />
+
+                  <!-- <el-table-column prop="orderNo" label="对账单号" width="180"  /> -->
+                  <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="200" />
+                  <el-table-column prop="cooperativePartnerCode" label="客户编码" min-width="200" />
+                  <el-table-column prop="includingTaxAmount" label="出入库金额" min-width="180">
+                  </el-table-column>
+                  <el-table-column prop="totalReconciliationAmount" label="应收金额" min-width="180">
+                    
+                  </el-table-column>
+                  <el-table-column prop="totalPaymentAmount" label="已收款金额" min-width="180">
+                     
+                  </el-table-column>
+                  <el-table-column prop="totalUnpaidAmount" label="未收款金额" min-width="180">
+                    <template slot-scope="scope">
+                      <div>{{ scope.row.totalUnpaidAmount?scope.row.totalUnpaidAmount:0 }}</div>
+                    </template>
+                  </el-table-column>
+                   
+                  <el-table-column prop="remark" label="备注" min-width="180" />
+                 
+                  <el-table-column label="操作" width="180" fixed="right">
+                    <template slot-scope="scope">
+                      <el-button type="text" size="mini" @click.native="viewReceivePayRefundFun(scope.row.accountsReceivableReconciliationId, 'look',scope.row.orderNo)">
+                        详情</el-button>
                     </template>
                   </el-table-column>
 
 
-                  <el-table-column prop="num" label="订单数量" width="120" :key="58">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.num ? scope.row.num : 0 }}</div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="outNum13" label="计划数量" width="120" :key="84">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.outNum13 ? scope.row.outNum13 : 0 }}</div>
-                    </template>
-                  </el-table-column>
-
-                  <el-table-column prop="outNum15" label="已发货数量" width="120" :key="28">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.outNum15 ? scope.row.outNum15 : 0 }}</div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="outNum14" label="入库数量" width="120" :key="38">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.outNum14 ? scope.row.outNum14 : 0 }}</div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="num" label="订单金额" width="100" :key="7">
-                  </el-table-column>
-                  <el-table-column prop="price" label="收款金额" width="120" :key="11">
-                  </el-table-column>
-                  <!-- <el-table-column prop="taxRate" label="税率" width="120" :key="171">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.taxRate }}%</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
-                <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column> -->
-
-                  <el-table-column prop="deliveryDate" label="欠款金额" width="180" :key="131"></el-table-column>
-                  <el-table-column prop="excludingTaxAmount" label="开票金额" width="140" :key="126">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</div>
-                    </template>
-                  </el-table-column>
-
-                  <el-table-column label="操作" width="100" fixed="right">
-                    <template slot-scope="scope">
-                      <el-button size="mini" type="text" @click="viewFun(scope.row.ordersId, 'look')">详情</el-button>
-                    </template>
-                  </el-table-column>
                 </JNPF-table>
               </div>
-              <!-- 退款记录 -->
-              <div v-if="categoryType == 'refund'">
-                <JNPF-table ref="refund" :height="height" :data="productData" fixedNO v-loading="tableloading"
-                  @row-click="handleRowClick">
-                  <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
-                  </el-table-column>
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
-                  </el-table-column>
-                  <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
-                  <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-
-
-
-
-                  <el-table-column prop="outNum11" label="订单状态" width="120" :key="68">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.outNum11 ? scope.row.outNum11 : 0 }}</div>
-                    </template>
-                  </el-table-column>
-
-
-                  <el-table-column prop="num" label="订单数量" width="120" :key="58">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.num ? scope.row.num : 0 }}</div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="outNum13" label="计划数量" width="120" :key="84">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.outNum13 ? scope.row.outNum13 : 0 }}</div>
-                    </template>
-                  </el-table-column>
-
-                  <el-table-column prop="outNum15" label="已发货数量" width="120" :key="28">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.outNum15 ? scope.row.outNum15 : 0 }}</div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="outNum14" label="入库数量" width="120" :key="38">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.outNum14 ? scope.row.outNum14 : 0 }}</div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="num" label="订单金额" width="100" :key="7">
-                  </el-table-column>
-                  <el-table-column prop="price" label="收款金额" width="120" :key="11">
-                  </el-table-column>
-                  <!-- <el-table-column prop="taxRate" label="税率" width="120" :key="171">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.taxRate }}%</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
-                <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column> -->
-
-                  <el-table-column prop="deliveryDate" label="欠款金额" width="180" :key="131"></el-table-column>
-                  <el-table-column prop="excludingTaxAmount" label="开票金额" width="140" :key="126">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</div>
-                    </template>
-                  </el-table-column>
-
-                  <el-table-column label="操作" width="100" fixed="right">
-                    <template slot-scope="scope">
-                      <el-button size="mini" type="text" @click="viewFun(scope.row.ordersId, 'look')">详情</el-button>
-                    </template>
-                  </el-table-column>
-                </JNPF-table>
-              </div>
+           
 
               <!-- 开票记录 -->
               <div v-if="categoryType == 'invoice'">
-                <JNPF-table ref="invoice" :height="height" :data="productData" fixedNO v-loading="tableloading"
-                  @row-click="handleRowClick">
-                  <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
-                  </el-table-column>
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
-                  </el-table-column>
-                  <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
-                  <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-
-
-
-
-                  <el-table-column prop="outNum11" label="订单状态" width="120" :key="68">
+                <JNPF-table ref="invoice" :height="height" :data="invoiceData" fixedNO v-loading="tableloading">
+                  <el-table-column prop="orderNo" label="对账流水号"min- width="160" :key="1212">
                     <template slot-scope="scope">
-                      <div>{{ scope.row.outNum11 ? scope.row.outNum11 : 0 }}</div>
+                      <el-link type="primary" @click.native="viewInvoiceFun(scope.row.id, 'look',scope.row.orderNo)">{{
+                        scope.row.orderNo
+                      }}</el-link>
                     </template>
                   </el-table-column>
-
-
-                  <el-table-column prop="num" label="订单数量" width="120" :key="58">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.num ? scope.row.num : 0 }}</div>
-                    </template>
+                  <el-table-column prop="reconciliationDate" label="对账日期" min-width="160" :key="6">
                   </el-table-column>
-                  <el-table-column prop="outNum13" label="计划数量" width="120" :key="84">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.outNum13 ? scope.row.outNum13 : 0 }}</div>
-                    </template>
-                  </el-table-column>
-
-                  <el-table-column prop="outNum15" label="已发货数量" width="120" :key="28">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.outNum15 ? scope.row.outNum15 : 0 }}</div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="outNum14" label="入库数量" width="120" :key="38">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.outNum14 ? scope.row.outNum14 : 0 }}</div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="num" label="订单金额" width="100" :key="7">
-                  </el-table-column>
-                  <el-table-column prop="price" label="收款金额" width="120" :key="11">
-                  </el-table-column>
-                  <!-- <el-table-column prop="taxRate" label="税率" width="120" :key="171">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.taxRate }}%</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
-                <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column> -->
-
-                  <el-table-column prop="deliveryDate" label="欠款金额" width="180" :key="131"></el-table-column>
-                  <el-table-column prop="excludingTaxAmount" label="开票金额" width="140" :key="126">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</div>
-                    </template>
-                  </el-table-column>
+                  <el-table-column prop="cooperativePartnerCode" label="客户编码" min-width="160" :key="4" />
+                  <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="160" :key="18" />
+                  <el-table-column prop="includingTaxAmount" label="出入库金额" min-width="160" :key="28" />
+                  <el-table-column prop="totalReconciliationAmount" label="应付金额" min-width="160" :key="83" />
+                  <el-table-column prop="totalPaymentAmount" label="已收款金额" min-width="160" :key="38" />
+                  <el-table-column prop="totalUnpaidAmount" label="未收款金额" min-width="160" :key="48" />
+                  <el-table-column prop="remark" label="备注" min-width="160" :key="58" />
 
                   <el-table-column label="操作" width="100" fixed="right">
                     <template slot-scope="scope">
-                      <el-button size="mini" type="text" @click="viewFun(scope.row.ordersId, 'look')">详情</el-button>
+                      <el-button size="mini" type="text" @click="viewInvoiceFun(scope.row.id, 'look',scope.row.orderNo)">详情</el-button>
                     </template>
                   </el-table-column>
                 </JNPF-table>
@@ -905,6 +785,10 @@
     </OutboundSaleSendForm>
     <InboundSaleReturnForm v-if="inboundSaleReturnFormVisible" ref="inboundSaleReturnREFForm" @close="closeFun">
     </InboundSaleReturnForm>
+    <Reconciliation v-if="reconciliationVisible" ref="reconciliationForm" @close="closeFun"></Reconciliation>
+    <ReceivePayRefundForm v-if="receivePayRefundVisible" ref="receivePayRefundForm" @close="closeFun"></ReceivePayRefundForm>
+    <InvoiceForm  v-if="invoiceVisibled" ref="invoiceForm" @close="closeFun" />
+    
   </div>
 </template>
 <script>
@@ -923,13 +807,23 @@ import { getWarehouseList } from '@/api/warehouseManagement/inboundAndOutbound'
 import SaleOutboundForm from '@/views/warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/saleOutboundForm.vue'
 import OutboundSaleSendForm from '@/views/warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/outboundSaleSendForm.vue'
 import InboundSaleReturnForm from '@/views/warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/inboundSaleReturnForm.vue'
-
+import { getfinAccountList, getfinAccountsReport } from '@/api/ReconciliaRePayments/index'
+import { addfinInvoiceRecords, getfinPaymentRecords } from "@/api/financialManagement/index";
+import Reconciliation from '@/views/salesManagement/saleReconciliationManagement/salesReconManagement/Form.vue'
+import ReceivePayRefundForm from '@/views/financialManagement/components/pay/depForm.vue'
+import InvoiceForm from '@/views/financialManagement/components/collect/depForm.vue'
 export default {
   components: {
-    Form, ShipementForm, ReturnForm,SaleOutboundForm,OutboundSaleSendForm,InboundSaleReturnForm
+    Form, ShipementForm, ReturnForm, SaleOutboundForm, OutboundSaleSendForm, InboundSaleReturnForm, Reconciliation,ReceivePayRefundForm,InvoiceForm
   },
   data() {
     return {
+      invoiceVisibled:false,
+      receivePayRefundVisible:false,
+      invoiceData: [],
+      reconciliationVisible: false,
+      receivePayRefundData: [],
+      reconciliationData: [],
       inboundSaleReturnFormVisible: false,
       saleOutboundFormVisible: false,
       outboundSaleSendFormVisible: false,
@@ -953,7 +847,7 @@ export default {
         { code: "outinboundwarehouse", fullName: "出入库记录", },
         { code: "reconciliation", fullName: "对账记录", },
         { code: "receivePayRefund", fullName: "收退款记录", },
-        
+
         // { code: "receivePay", fullName: "收款记录", },
         // { code: "refund", fullName: "退款记录", },
         { code: "invoice", fullName: "开票记录", },
@@ -1029,6 +923,26 @@ export default {
     this.switchStyle()
   },
   methods: {
+    viewInvoiceFun(id,type,orderNo){
+      this.invoiceVisibled=true
+      this.$nextTick(()=>{
+        this.$refs.invoiceForm.init(id,type,orderNo)
+      })
+    },
+    viewReceivePayRefundFun(id,type,orderNo){
+      this.receivePayRefundVisible=true
+      this.$nextTick(()=>{
+        this.$refs.receivePayRefundForm.init(id,type,orderNo)
+      })
+    },
+    // 查看对账
+    viewReconciliationFun(id, type) {
+      this.reconciliationVisible = true
+      this.$nextTick(() => {
+        this.$refs.reconciliationForm.init(id, type)
+      })
+
+    },
     // 查看出入库详情
     viewOutInbound(row, type) {
       // 销售发货
@@ -1096,6 +1010,9 @@ export default {
       this.saleOutboundFormVisible = false
       this.outboundSaleSendFormVisible = false
       this.inboundSaleReturnFormVisible = false
+      this.reconciliationVisible = false
+      this.receivePayRefundVisible=false
+      this.invoiceVisibled=false
 
     },
     //自适应窗口
@@ -1205,16 +1122,66 @@ export default {
         })
       } else if (this.categoryType == 'reconciliation') {
         // 对账记录
-      }else if (this.categoryType == 'receivePayRefund') {
+        let obj = {
+          approvalStatus: "OK",
+          // billingStatus:"finished",
+          documentStatus: "submit",
+          ordersLineId: this.orderLinesId,
+          reconciliationType: "receivable",
+          pageNum: 1,
+          pageSize: -1,
+
+          orderItems: [{
+            asc: false,
+            column: ""
+          }, {
+            asc: false,
+            column: "create_time"
+          }],
+        }
+        getfinAccountList(obj).then(res => {
+          console.log('对账', res);
+          this.reconciliationData = res.data.records
+        })
+      } else if (this.categoryType == 'receivePayRefund') {
+        let obj = {
+          reconciliationType: "receivable",
+          ordersLineId: this.orderLinesId,
+        }
+        getfinPaymentRecords(obj).then(res => {
+          console.log("收付款记录", res);
+          this.receivePayRefundData = res.data.records
+        })
         // 收款记录
-      } 
+      }
       // else if (this.categoryType == 'receivePay') {
       //   // 收款记录
       // } else if (this.categoryType == 'refund') {
       //   // 退款记录
       // }
-       else if (this.categoryType == 'invoice') {
-        // 开票记录
+      else if (this.categoryType == 'invoice') {
+        // 开票记录 
+        let obj = {
+          approvalStatus: "OK",
+          // billingStatus:"finished",
+          documentStatus: "submit",
+          ordersLineId: this.orderLinesId,
+          reconciliationType: "receivable",
+          pageNum: 1,
+          pageSize: -1,
+          invoiceStatus:"finished",
+          orderItems: [{
+            asc: false,
+            column: ""
+          }, {
+            asc: false,
+            column: "create_time"
+          }],
+        }
+        getfinAccountsReport(obj).then(res => {
+          this.invoiceData = res.data.page.records
+        })
+        
       }
     },
     goBack() {
@@ -1282,18 +1249,6 @@ export default {
   color: red;
 
   margin-right: 4px;
-
-}
-
-
-
-::v-deep .el-tabs__header {
-
-  padding: 0 !important;
-
-  padding-bottom: 0px !important;
-
-  margin-bottom: 0;
 
 }
 </style>

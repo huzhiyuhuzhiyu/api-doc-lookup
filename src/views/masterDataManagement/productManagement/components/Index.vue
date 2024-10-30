@@ -110,37 +110,29 @@
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           ref="dataTable" :setColumnDisplayList="columnList">
           <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label"
-            :formatter="item.formatter || toFormatter" :sortable="item.sortable ? 'custom' : false"
-            :align="item.align || 'left'"
-            v-bind="{ minWidth: item.hasOwnProperty('minWidth') ? item.width : 140 }"></el-table-column>
+          ></el-table-column>
           <!-- <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
             <template slot="header" slot-scope="scope">
               {{ classAttributeText }}编码
             </template>
-            <template slot-scope="scope">
+<template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">
                 {{ scope.row.code }}
               </el-link>
             </template>
-          </el-table-column> -->
+</el-table-column> -->
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
-          <el-table-column prop="name" label="备件名称" 
-            min-width="140" sortable="custom">
+          <el-table-column prop="name" :label="classAttributeText + '名称'" min-width="140" sortable="custom">
             <!-- <template slot="header" slot-scope="scope">
               {{ classAttributeText }}名称
             </template> -->
           </el-table-column>
 
-          <el-table-column prop="productCategoryName" label="产品分类" width="120">
-            <template slot="header" slot-scope="scope">
-              {{ classAttributeText }}分类
-            </template>
+          <el-table-column prop="productCategoryName" :label="classAttributeText + '分类'" width="120">
+
           </el-table-column>
           <el-table-column prop="mainUnit" label="单位" width="120" />
-          <el-table-column prop="productSource" label="产品来源" width="120">
-            <template slot="header" slot-scope="scope">
-              {{ classAttributeText }}来源
-            </template>
+          <el-table-column prop="productSource" :label="classAttributeText + '来源'" width="120">
             <template slot-scope="{ row }">
               <template v-if="row.productSource == 'produce'">
                 生产
@@ -153,10 +145,8 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column prop="productStatus" label="产品状态" width="120" align="center">
-            <template slot="header" slot-scope="scope">
-              {{ classAttributeText }}状态
-            </template>
+          <el-table-column prop="productStatus" :label="classAttributeText + '状态'" width="120" align="center">
+
             <template slot-scope="{ row }">
               <el-tag type="success" disable-transitions v-if="row.productStatus == 'enable'">启用</el-tag>
               <el-tag type="danger" disable-transitions v-else-if="row.productStatus == 'disabled'">禁用</el-tag>

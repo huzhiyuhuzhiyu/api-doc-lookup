@@ -53,7 +53,7 @@
                       |
                       <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true" hasC
                         @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
-                        id="table" border>
+                        border>
                         <!-- <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column>
                         <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
@@ -689,13 +689,17 @@ export default {
     ...mapGetters(['userInfo']),
     computedValue() {
       // 在这里计算第三个输入框的值
+      let excludingCount = 0
       let count = 0
-
+      let taxAmountCount = 0
       this.dataFormTwo.data.forEach((item) => {
-        count += item.excludingTaxAmount * 1
+        count += item.totalAmount * 1
+        excludingCount += item.excludingTaxAmount * 1
+        taxAmountCount += item.taxAmount * 1
       })
-      this.dataForm.excludingTaxTotalAmount = this.jnpf.numberFormat(count)
-
+      this.dataForm.totalAmount = this.jnpf.numberFormat(count)
+      this.dataForm.excludingTaxTotalAmount = this.jnpf.numberFormat(excludingCount)
+      this.dataForm.taxAmount = this.jnpf.numberFormat(taxAmountCount)
       return this.dataForm.excludingTaxTotalAmount
     },
     computedValue2() {

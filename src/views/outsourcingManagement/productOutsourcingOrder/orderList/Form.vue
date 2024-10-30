@@ -1061,15 +1061,17 @@ export default {
     changePurchaseQuantity(index, val) {
       // this.dataFormTwo.data[index].purchaseQuantity = val
       this.$set(this.dataFormTwo.data[index], 'purchaseQuantity', val)
-
-      let obj = {
-        productsId: this.dataFormTwo.data[index].productsId,
-        purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
+      if (this.dataFormTwo.data[index].purchaseQuantity) {
+        let obj = {
+          productsId: this.dataFormTwo.data[index].productsId,
+          purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
+        }
+        // 通过需求池id 获取明细的数据
+        getShipmentList(obj).then((res) => {
+          this.dataFormTwo.data[index].outShipmentList = res.data
+        })
       }
-      // 通过需求池id 获取明细的数据
-      getShipmentList(obj).then((res) => {
-        this.dataFormTwo.data[index].outShipmentList = res.data
-      })
+
 
       if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
         this.dataFormTwo.data[index].purchaseQuantity2 = this.numberFormat(
@@ -1155,9 +1157,14 @@ export default {
       let submitFlag = true
       this.dataFormTwo.data.map((ele, i) => {
         console.log(ele, 'ppp')
-        if (ele.outShipmentList.length == 0) {
+        if (!ele.purchaseQuantity) {
           submitFlag = false
-          return this.$message.error(`第${i + 1}行发料清单为空`)
+          this.$message.error(`产品信息第${i + 1}行：数量不能为空`)
+        } else {
+          if (ele.outShipmentList.length == 0) {
+            submitFlag = false
+            return this.$message.error(`产品信息第${i + 1}行：发料清单为空`)
+          }
         }
       })
       if (submitFlag) {

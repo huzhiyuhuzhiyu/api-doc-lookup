@@ -174,20 +174,20 @@ export default {
                  task：普通任务
                  milestone：菱形块，可表示中转关系
            * */
-          { id: 1, text: 'PPDH202410080004', person: '管理员', progress:0.1, type: 'task', start_date: new Date('2024-10-15'), end_date: new Date('2024-11-20'), open: true },
-          // { id: 11, parent: 1, text: '初始化项目', person: '李四', type: 'task', progress: 0.9, color: '#ff0000', start_date: new Date('2023-10-02'), end_date: new Date('2023-10-05'), open: true },
-          // { id: 12, parent: 1, text: '前后端开发', type: 'task', progress: 0, color: '#00ff00', start_date: new Date('2023-10-05'), end_date: new Date('2023-10-08') },
-          // { id: 13, parent: 1, text: '测试', type: 'task', progress: 0, color: '#0000ff', start_date: new Date('2023-10-08'), end_date: new Date('2023-10-10') },
-          // { id: 14, parent: 1, text: '上线', type: 'task', progress: 0, color: '#00ffff', start_date: new Date('2023-10-10'), end_date: new Date('2023-10-12') },
+          { id: 1, text: 'PPDH202410080004', person: '管理员', progress:0.1, type: 'task', start_date: new Date('2023-10-01'), end_date: new Date('2023-10-12'), open: true },
+          { id: 11, parent: 1, text: '初始化项目', person: '李四', type: 'task', progress: 0.9, color: '#ff0000', start_date: new Date('2023-10-02'), end_date: new Date('2023-10-05'), open: true },
+          { id: 12, parent: 1, text: '前后端开发', type: 'task', progress: 0, color: '#00ff00', start_date: new Date('2023-10-05'), end_date: new Date('2023-10-08') },
+          { id: 13, parent: 1, text: '测试', type: 'task', progress: 0, color: '#0000ff', start_date: new Date('2023-10-08'), end_date: new Date('2023-10-10') },
+          { id: 14, parent: 1, text: '上线', type: 'task', progress: 0, color: '#00ffff', start_date: new Date('2023-10-10'), end_date: new Date('2023-10-12') },
 
-          // { id: 111, parent: 11, text: '创建git仓库', type: 'task', progress: 1, color: '#880000', start_date: new Date('2023-10-02'), end_date: new Date('2023-10-03') },
-          // { id: 112, parent: 11, text: '搭建脚手架', type: 'task', progress: 0.5, color: '#550000', start_date: new Date('2023-10-03'), end_date: new Date('2023-10-04') },
-          // { id: 113, parent: 11, text: '完成初始化', type: 'task', progress: 0.1, color: '#330000', start_date: new Date('2023-10-04'), end_date: new Date('2023-10-05') },
+          { id: 111, parent: 11, text: '创建git仓库', type: 'task', progress: 1, color: '#880000', start_date: new Date('2023-10-02'), end_date: new Date('2023-10-03') },
+          { id: 112, parent: 11, text: '搭建脚手架', type: 'task', progress: 0.5, color: '#550000', start_date: new Date('2023-10-03'), end_date: new Date('2023-10-04') },
+          { id: 113, parent: 11, text: '完成初始化', type: 'task', progress: 0.1, color: '#330000', start_date: new Date('2023-10-04'), end_date: new Date('2023-10-05') },
 
 
-          // { id: 121, parent: 12, text: '前端开发', person: '甲', type: 'task', progress: 0, color: '#00aa00', start_date: new Date('2023-10-05'), end_date: new Date('2023-10-07') },
-          // { id: 122, parent: 12, text: '后端开发', person: '已', type: 'task', progress: 0, color: '#007700', start_date: new Date('2023-10-05'), end_date: new Date('2023-10-07') },
-          // { id: 123, parent: 12, text: '前后端对接', person: '甲、已', type: 'task', progress: 0, color: '#003300', start_date: new Date('2023-10-07'), end_date: new Date('2023-10-08') },
+          { id: 121, parent: 12, text: '前端开发', person: '甲', type: 'task', progress: 0, color: '#00aa00', start_date: new Date('2023-10-05'), end_date: new Date('2023-10-07') },
+          { id: 122, parent: 12, text: '后端开发', person: '已', type: 'task', progress: 0, color: '#007700', start_date: new Date('2023-10-05'), end_date: new Date('2023-10-07') },
+          { id: 123, parent: 12, text: '前后端对接', person: '甲、已', type: 'task', progress: 0, color: '#003300', start_date: new Date('2023-10-07'), end_date: new Date('2023-10-08') },
 
 
           // { id: 3, text: 'Team', type: 'milestone', start_date: '14-07-2023' },

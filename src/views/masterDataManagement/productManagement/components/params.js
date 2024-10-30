@@ -26,7 +26,7 @@ export default () => [
       { prop: "brand", label: "品牌", value: "", typeCode: 'pa011', type: 'select', options: [], maxlength: 200 },
       // { prop: "saleFlag", label: "是否可销售", value: true, type: "select",options: [{ label: "是", value: true }, { label: "否", value: false }],clearable:false,render:true},
       // { prop: "tradeFlag", label: "是否贸易件", value: false, type: "select",options: [{ label: "是", value: true }, { label: "否", value: false }],clearable:false,render:true},
-      { prop: "remark", label: "备注", value: "", type: 'textarea', sm: 24 },
+      { prop: "remark", label: "备注", value: "", type: 'textarea', sm: 12 },
     ],
   },
 ]

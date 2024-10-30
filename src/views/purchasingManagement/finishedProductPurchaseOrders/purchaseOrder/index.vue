@@ -284,7 +284,7 @@ export default {
         },
         {
           prop: 'receivingStatus',
-          label: '收货状态',
+          label: '订单状态',
           type: 'select',
           options: [
             { label: '待退货', value: 'receiving' },
@@ -362,7 +362,7 @@ export default {
             column: 'create_time'
           }
         ],
-        receivingStatus: 'receiving'
+        receivingStatus: ''
       },
 
       total: 0,
@@ -410,7 +410,7 @@ export default {
       printForm: {}, // 表单数据
       //	收货状态 待收货 receiving、已收货 received,可用值:received,receiving,returned,returning
       receiptReturnType: [{ label: '未完成', value: 'receiving' }, { label: '已完成', value: 'received' }],
-      columnList: ['cooperativePartnerCode', 'excludingTaxTotalAmount', 'taxAmount', 'receivingStatus', 'createByName'],
+      columnList: ['cooperativePartnerCode', 'excludingTaxTotalAmount', 'taxAmount', 'createByName'],
       showAppCodeFlag: true
     }
   },
@@ -655,6 +655,8 @@ export default {
         endTime: '',
         orderNo: '', //订单号
         orderType: 'procure', //	订单类型 采购 procure、外协 external
+        classAttribute: 'finish_product',
+        receivingStatus: '',
         startTime: ''
       }
       this.createRequirementDate = []

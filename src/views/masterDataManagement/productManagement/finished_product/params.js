@@ -46,7 +46,7 @@ export default () => [
       { prop: "aperture", label: "孔径", value: "", type: "select", typeCode: 'pa009', options: [] },
 
 
-      { prop: "remark", label: "备注", value: "", type: "textarea", sm: 24 },
+      { prop: "remark", label: "备注", value: "", type: "textarea", sm: 12 },
     ],
   },
 ]

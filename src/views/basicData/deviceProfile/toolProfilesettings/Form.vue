@@ -4,7 +4,7 @@
       <div class="JNPF-common-page-header">
         <el-page-header @back="goBack" :content="!dataForm.id ? `新建工具档案` : disabled ? '查看工具档案' : '编辑工具档案'" />
         <div class="options">
-          <el-button  v-if="!disabled" type="primary" :loading="btnLoading" @click="handleConfirm()">
+          <el-button v-if="!disabled" type="primary" :loading="btnLoading" @click="handleConfirm()">
             提交</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
@@ -25,6 +25,7 @@
                         <ComSelect-list :isdisabled="disabled" v-model="dataForm.categoryName" placeholder="请选择工具类型" auth @change="onOrganizeChangeTwo" :title="'选择工具类型'" :method="getCategoryTrees" :requestObj="requestObj" :paramsObj="{}" />
                       </el-form-item>
                     </el-col>
+
                     <el-col :sm="12" :xs="24">
                       <el-form-item label="工具名称" prop="name">
                         <el-input v-model="dataForm.name" placeholder="请输入工具名称" maxlength="20" :disabled="disabled" />
@@ -39,13 +40,6 @@
                     <el-col :sm="12" :xs="24">
                       <el-form-item label="工具规格" prop="specModel">
                         <el-input maxlength="50" v-model="dataForm.specModel" placeholder="请输入工具规格" :disabled="disabled" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="12" :xs="24">
-                      <el-form-item label="图号" prop="drawingNo">
-                        <el-input v-model="dataForm.drawingNo" placeholder="请输入图号" maxlength="50" :disabled="disabled">
-                          <!-- <template slot="append">KG</template> -->
-                        </el-input>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="12" :xs="24">
@@ -89,6 +83,12 @@
               </el-form-item>
             </el-col> -->
                     <el-col :sm="12" :xs="24">
+                      <el-form-item label="图号" prop="drawingNo">
+                        <el-input v-model="dataForm.drawingNo" placeholder="请输入图号" maxlength="50" :disabled="disabled">
+                        </el-input>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
                       <el-form-item label="用途" prop="usin">
                         <el-input maxlength="200" v-model="dataForm.usin" placeholder="请输入用途" :disabled="disabled" />
                       </el-form-item>
@@ -112,7 +112,7 @@
 
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="12" :xs="8">
+                    <el-col :sm="12" :xs="24">
                       <el-form-item label="使用部门" prop="userDepartmentName">
                         <el-input v-model="dataForm.userDepartmentName" readonly placeholder="请输入使用部门" :disabled="disabled" />
                       </el-form-item>
@@ -170,7 +170,7 @@ export default {
     return {
       isattachmentswitch: '',
       categoryId: '',
-      activeNames:["basicInfo"],
+      activeNames: ["basicInfo"],
       datafilelist: [],
       activeName: "jcInfo",
       getCategoryTrees,

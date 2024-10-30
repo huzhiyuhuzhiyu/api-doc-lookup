@@ -278,8 +278,7 @@ export default {
       },
       productRules: {
         faultLocationName: [
-          { validator: this.formValidate({ type: 'noEmtry', params: ["故障部位名称不能为空", (errMsg, index) => { this.$message.error(`故障信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
-          { required: true, trigger: 'blur' },
+          { validator: this.formValidate({ type: 'noEmtry', params: ["故障部位名称不能为空", (errMsg, index) => { this.$message.error(`故障信息第${index + 1}行：${errMsg}`) }] }), trigger: 'change' },
         ],
       },
       dataRule: {

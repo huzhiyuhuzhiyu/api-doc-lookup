@@ -118,7 +118,7 @@
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                     <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom"
                       show-overflow-tooltip />
-                      <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
+                    <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
                     <el-table-column prop="mainUnit" label="单位" width="60" />
                     <el-table-column prop="purchaseQuantity" label="订单数量" width="120" sortable="custom" />
                     <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
@@ -1509,7 +1509,7 @@ export default {
       console.log(btnType, 'iiiiii')
       this.approvalFlag = approvalFlag
       console.log(data, 'ddd')
-      if (data) {
+      if (data.length) {
         this.dataFormTwo.productData = data
         this.dataForm.partnerName = data[0].cooperativePartnerName
         this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
@@ -1539,8 +1539,10 @@ export default {
 
             let data = res.data.noticeLineList
             data.forEach((item) => {
-              console.log('ooooooo', item)
+              console.log('ooo888oooo', item)
               item.drawingNo = item.productDrawingNo
+
+
             })
             this.dataFormTwo.productData = data
 
@@ -1566,6 +1568,11 @@ export default {
         })
       } else {
         this.dataForm.salesman = this.userInfo.userName
+        data.forEach((item) => {
+          console.log('ooooooo', item)
+          item.ordersNo = item.orderNo
+          item.ordersId = item.id
+        })
         this.fetchData('CGSH')
         this.getBusInfo()
       }
@@ -1702,7 +1709,7 @@ export default {
             classAttribute: item.classAttribute,
             id: item.id ? item.id : '',
             // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-            ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+            ordersLineId: item.ordersLineId ? item.ordersLineId : item.purchaseOrderId,
             // pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
             ratio: item.ratio ? item.ratio : '',
             receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
@@ -1723,7 +1730,7 @@ export default {
             productsId: item.productsId ? item.productsId : '',
             waitReceiptNum: item.waitReceiptNum ? item.waitReceiptNum : '',
             // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-            ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+            ordersLineId: item.ordersLineId ? item.ordersLineId : item.purchaseOrderId,
             pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
             ratio: item.ratio ? item.ratio : '',
             receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',

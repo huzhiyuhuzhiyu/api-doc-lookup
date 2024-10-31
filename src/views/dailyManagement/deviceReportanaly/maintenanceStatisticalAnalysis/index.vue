@@ -278,7 +278,7 @@
 
 <script>
 import chart from "@/views/dailyManagement/deviceReportanaly/components/chart.vue";
-import { RepairRequestList, totalRepairNum, repairNum } from '@/api/dailyManagement/Maintenance'
+import { RepairRequestList, totalRepairNum, repairNum, repairSupplierNum, repairCommentsNum } from '@/api/dailyManagement/Maintenance'
 import card from "@/views/dailyManagement/deviceReportanaly/components/card.vue";
 export default {
   components: { card, chart },
@@ -337,104 +337,108 @@ export default {
   methods: {
     //派工情况概览
     initDatapgqkgl() {
-      this.supplieroption = {
-        title: {
-          text: '供应商维修单数量',
-          textStyle: {
-            fontWeight: '450',
-            fontSize: 14
-          },
-          top: 12
-        },
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'shadow'
-          }
-        },
-        grid: {
-          left: '1%',
-          right: '1%',
-          bottom: '15%',
-          containLabel: true
-        },
-        color: ['#0052cc'],
-        legend: {
-          data: ['维修单数量'],
-          bottom: 10
-        },
-        xAxis: [
-          {
-            type: 'category',
-            data: [1, 2, 3, 4, 5, 6],
-            axisTick: {
-              alignWithLabel: true,
-              show: false
-            }
-          }
-        ],
-        yAxis: [
-          {
-            axisTick: {
-              show: false
-            },
-            axisLine: {
-              show: false
-            },
-            type: 'value',
-            minInterval: 1
-          }
-        ],
-        series: [
-          {
-            barWidth: '30%',
-            label: {
-              show: true,
-              position: 'top'
-            },
-            name: '维修单数量',
-            type: 'bar',
-            data: [12, 22, 11, 25, 28, 10]
-          }
-        ]
+      let obj = {
+        classAttribute: "equipment"
       }
-      this.dispatchworkoption = this.rejectoption = {
-        title: {
-          text: '派工审核意见统计',
-          textStyle: {
-            fontWeight: '450',
-            fontSize: 14
+      repairSupplierNum(obj).then(res => {
+        this.supplieroption = {
+          title: {
+            text: '供应商维修单数量',
+            textStyle: {
+              fontWeight: '450',
+              fontSize: 14
+            },
+            top: 12
           },
-          top: 12
-        },
-        tooltip: {
-          trigger: 'item'
-        },
-        legend: {
-          bottom: 10
-        },
-        series: [
-          {
-            name: 'Access From',
-            type: 'pie',
-            radius: '50%',
-            data: [
-              { value: 1048, name: 'Search Engine' },
-              { value: 735, name: 'Direct' },
-              { value: 580, name: 'Email' },
-              { value: 484, name: 'Union Ads' },
-              { value: 300, name: 'Video Ads' }
-            ],
-            emphasis: {
-              itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow'
+            }
+          },
+          grid: {
+            left: '1%',
+            right: '1%',
+            bottom: '15%',
+            containLabel: true
+          },
+          color: ['#0052cc'],
+          legend: {
+            data: ['维修单数量'],
+            bottom: 10
+          },
+          xAxis: [
+            {
+              type: 'category',
+              data: res.data.map(item => item.totalName),
+              axisTick: {
+                alignWithLabel: true,
+                show: false
               }
             }
-          }
-        ]
-      };
+          ],
+          yAxis: [
+            {
+              axisTick: {
+                show: false
+              },
+              axisLine: {
+                show: false
+              },
+              type: 'value',
+              minInterval: 1
+            }
+          ],
+          series: [
+            {
+              barWidth: '30%',
+              label: {
+                show: true,
+                position: 'top'
+              },
+              name: '维修单数量',
+              type: 'bar',
+              data: res.data.map(item => item.totalNum)
+            }
+          ]
+        }
+      })
+      repairCommentsNum(obj).then(res => {
+        this.dispatchworkoption = this.rejectoption = {
+          title: {
+            text: '派工审核意见统计',
+            textStyle: {
+              fontWeight: '450',
+              fontSize: 14
+            },
+            top: 12
+          },
+          tooltip: {
+            trigger: 'item'
+          },
+          legend: {
+            bottom: 10
+          },
+          series: [
+            {
+              name: 'Access From',
+              type: 'pie',
+              radius: '50%',
+              data: res.data.map(item => {
+                return { value: item.totalNum, name: item.totalName }
+              }),
+              emphasis: {
+                itemStyle: {
+                  shadowBlur: 10,
+                  shadowOffsetX: 0,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+              }
+            }
+          ]
+        }
+      })
+
     },
     handleClick({ name }) {
       if (name === 'wxqkgl') {

@@ -132,8 +132,8 @@ export default {
         equipmentType: 'equipment',
         maintainerIdText: '',
         useApplication: '',
-        startTime: '',
-        endTime: '',
+        collStartTime: '',
+        collEndTime: '',
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -192,7 +192,7 @@ export default {
     },
     initData() {
       this.listLoading = true
-      this.jnpf.searchTimeFormat(this.orderForm, this.createRequirementDate, 'startTime', 'endTime')
+      this.jnpf.searchTimeFormat(this.orderForm, this.createRequirementDate, 'collStartTime', 'collEndTime')
       CollectionandreturnList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total

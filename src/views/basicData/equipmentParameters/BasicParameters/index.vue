@@ -618,7 +618,6 @@ export default {
     },
     // 树形列表index层级，实现方法（可复制直接调用）
     setTableIndex(arr, index) {
-      console.log("arr", arr, index);
       arr.forEach((item, key) => {
         item.index = key + 1;
         if (index) {
@@ -638,7 +637,7 @@ export default {
       this.initData()
     },
     reset() {
-      this.$refs.dataTable.clearSort() // 清除排序箭头高亮
+      this.$refs['dataTable' + this.actionname].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.tableQuery = {
         pageNum: 1,
         pageSize: 20,

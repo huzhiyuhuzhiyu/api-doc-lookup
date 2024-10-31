@@ -203,6 +203,7 @@ export default {
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+      this.createRequirementDate = []
       this.orderForm = JSON.parse(JSON.stringify(this.orderFormone))
       this.search()
     },

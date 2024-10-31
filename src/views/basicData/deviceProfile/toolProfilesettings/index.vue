@@ -80,7 +80,8 @@
           <el-table-column prop="state" label="工具状态" min-width="140" sortable="custom">
             <template slot-scope="{row}">
               <el-tag type="success" disable-transitions v-if="row.state == 'normal'">正常</el-tag>
-              <el-tag type="warning" disable-transitions v-if="row.state == 'verification'">检定</el-tag>
+              <el-tag type="warning" disable-transitions v-if="row.state == 'repair'">维修</el-tag>
+              <el-tag type="info" disable-transitions v-if="row.state == 'verification'">检定</el-tag>
               <el-tag disable-transitions v-if="row.state == 'use'">领用</el-tag>
               <el-tag type="danger" disable-transitions v-if="row.state == 'discard'">报废</el-tag>
             </template>
@@ -150,6 +151,7 @@ export default {
           options: [
             { label: "正常", value: "normal" },
             { label: "检定", value: "verification" },
+            { label: "维修", value: "repair" },
             { label: "领用", value: "use" },
             { label: "报废", value: "discard" }
           ]
@@ -216,6 +218,10 @@ export default {
         {
           value: "verification",
           label: "检定"
+        },
+        {
+          value: "repair",
+          label: "维修"
         },
         {
           value: "use",

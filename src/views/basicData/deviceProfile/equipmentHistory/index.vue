@@ -17,12 +17,6 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-date-picker v-model="listQuery.maintenanceDate" type="date" value-format="yyyy-MM-dd" placeholder="请选择维保日期">
-                </el-date-picker>
-              </el-form-item>
-            </el-col>
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -54,7 +48,8 @@
             <el-table-column prop="equipmentIdState" label="工具状态" width="140" sortable="custom" fixed="right">
               <template slot-scope="{row}">
                 <el-tag type="success" disable-transitions v-if="row.equipmentIdState == 'normal'">正常</el-tag>
-                <el-tag type="warning" disable-transitions v-if="row.equipmentIdState == 'verification'">检定</el-tag>
+                <el-tag type="warning" disable-transitions v-if="row.equipmentIdState == 'repair'">维修</el-tag>
+                <el-tag type="info" disable-transitions v-if="row.equipmentIdState == 'verification'">检定</el-tag>
                 <el-tag disable-transitions v-if="row.equipmentIdState == 'use'">领用</el-tag>
                 <el-tag type="danger" disable-transitions v-if="row.equipmentIdState == 'discard'">报废</el-tag>
               </template>

@@ -238,7 +238,7 @@
                 <UploadWj v-model="datafilelist" :disabled="btnType == 'look' || btnType == 'start' || btnType == 'end'" :detailed="btnType == 'look'"></UploadWj>
               </el-collapse-item>
             </el-form>
-            <el-collapse-item title="故障信息" name="gzxx" v-show="statesuc==='report'||statesuc==='repair'">
+            <el-collapse-item title="故障信息" name="gzxx" v-if="statesuc==='report'||statesuc==='repair'">
               <div v-if="btnType == 'edit' || btnType == 'add'">
                 <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择故障类型</el-button>|
                 <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important" :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|

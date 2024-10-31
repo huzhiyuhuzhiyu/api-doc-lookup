@@ -47,12 +47,7 @@
                             placeholder="请选择交货日期"></el-date-picker>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="12">
-                        <el-form-item label="申请理由" prop="applicationReason" ref="applicationReason">
-                          <el-input type="textarea" :row="3" v-model="dataForm.applicationReason" placeholder="请输入申请理由"
-                            maxlength="200" :disabled="type == 'look' ? true : false"></el-input>
-                        </el-form-item>
-                      </el-col>
+
                       <el-col :span="6" v-if="type === 'look'">
                         <el-form-item label="订单状态" prop="receivingStatus" ref="receivingStatus">
                           <el-select v-model="dataForm.receivingStatus" style="width: 100%;" placeholder="请选择"
@@ -60,6 +55,12 @@
                             <el-option v-for="item in receivingStatusOptions" :key="item.value" :label="item.label"
                               :value="item.value"></el-option>
                           </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="12">
+                        <el-form-item label="备注" prop="remark" ref="remark">
+                          <el-input type="textarea" :row="3" v-model="dataForm.remark" placeholder="请输入备注"
+                            maxlength="200" :disabled="type == 'look' ? true : false"></el-input>
                         </el-form-item>
                       </el-col>
                     </el-form>
@@ -329,12 +330,12 @@
                   </el-col>
                   <el-col :span="6">
                     <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
-                      <!-- <el-input :disabled="type == 'look'" v-model="dataForm.cooperativePartnerName"
-                        placeholder="请选择供应商名称" @focus="openDialog"></el-input> -->
-                      <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
-                        v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
-                        @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
-                        treeTitle="供应商分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
+
+                      <ComSelect-page :clearable="type !== 'look'" :isdisabled="type === 'look'"
+                        :treeNodeClick="treeNodeClick" v-model="dataForm.cooperativePartnerName"
+                        :beforeSubmit="beforeSubmit" ref="ComSelect-page" @change="supplierdata"
+                        :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商" treeTitle="供应商分类"
+                        :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
                         :listRequestObj="PartnerListRequestObj" :paramsObj="{ oldData }"
                         :searchList="PartnerTableSearchList" />
                     </el-form-item>
@@ -347,9 +348,9 @@
                     </el-form-item>
                   </el-col>
                   <el-col :span="12">
-                    <el-form-item label="申请理由" prop="applicationReason" ref="applicationReason">
-                      <el-input type="textarea" :row="3" v-model="dataForm.applicationReason" placeholder="请输入申请理由"
-                        maxlength="200" :disabled="type == 'look' ? true : false"></el-input>
+                    <el-form-item label="备注" prop="remark" ref="remark">
+                      <el-input type="textarea" :row="3" v-model="dataForm.remark" placeholder="请输入备注" maxlength="200"
+                        :disabled="type == 'look' ? true : false"></el-input>
                     </el-form-item>
                   </el-col>
                   <el-col :span="6" v-if="type === 'look'">
@@ -575,6 +576,7 @@ import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getShipmentList } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import SourceArea from '../orderCreation/source.vue'
 import { getCooperativeData, getBimBusinessDetail } from '@/api/basicData/index'
+import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
 export default {
   components: { Process, recordList, SourceArea },
@@ -680,6 +682,9 @@ export default {
   created() {
     this.getBimBusinessDetail()
   },
+  mounted() {
+    this.getProductClassFun()
+  },
   watch: {
     'dataFormTwo.data': {
       // immediate:true,
@@ -687,15 +692,23 @@ export default {
         newVal.forEach((item) => {
           if ((item.price && item.taxRate) || (item.price && item.taxRate == 0)) {
             item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
+          } else {
+            item.excludingTaxPrice = ''
           }
           if (item.purchaseQuantity && item.excludingTaxPrice) {
             item.excludingTaxAmount = this.jnpf.numberFormat(item.purchaseQuantity * item.excludingTaxPrice)
+          } else {
+            item.excludingTaxAmount = ''
           }
           if (item.price && item.purchaseQuantity && item.excludingTaxAmount) {
             item.taxAmount = this.jnpf.numberFormat(item.price * item.purchaseQuantity - item.excludingTaxAmount)
+          } else {
+            item.taxAmount = ''
           }
           if (item.excludingTaxAmount && item.taxAmount) {
             item.totalAmount = this.jnpf.numberFormat(item.excludingTaxAmount * 1 + item.taxAmount * 1)
+          } else {
+            item.totalAmount = ''
           }
           // if (!item.price) {
           //   this.$message.error('未找到供应商单价')
@@ -706,6 +719,17 @@ export default {
     }
   },
   methods: {
+    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
+    getProductClassFun() {
+      // 获取税率(数据字典)
+      getbimProductAttributes('585438081021126405').then((res) => {
+        res.data.list.forEach((item) => {
+          item.taxRate = item.enCode.replace('%', '') * 1
+        })
+        this.taxRateList = res.data.list
+        console.log(this.taxRateList, 'loisi')
+      })
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -968,6 +992,7 @@ export default {
             this.dataFormTwo.data.forEach((item, index) => {
               console.log(item.productsId, 'id')
               item.productDrawingNo = item.drawingNo
+              item.taxRate = Number(item.taxRate)
               if (item.outShipmentVOList.length == 0) {
                 this.linesList.push(...item.outShipmentVOList)
                 item.outShipmentList = []

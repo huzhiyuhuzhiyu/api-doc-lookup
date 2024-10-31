@@ -234,6 +234,7 @@ export default {
       return this.$slots && this.$slots.default && this.$slots.default.reduce(checkForContent, false)
     },
     getColumns() {
+      console.log(this.customColumn,'customColumn')
       if (!this.customColumn) return
       this.hasSlotContent = this.checkForSlotContent()
       if (!this.hasSlotContent) return
@@ -242,6 +243,7 @@ export default {
         let defaultColumns = this.columns.map(o => o.componentOptions && o.componentOptions.propsData).filter(item => item)
         this.defaultColumns = JSON.parse(JSON.stringify(defaultColumns.filter(o => o.prop))) //
         let list = JSON.parse(JSON.stringify(this.defaultColumns))
+
         const cacheList = this.jnpf.storageGet(this.menuId + this.partentOrChild)
 
         if (!cacheList) {

@@ -38,7 +38,7 @@ export default {
         { prop: 'accountPeriod', label: '账期', minWidth: '180' },
         { prop: 'balanceState', label: '结存状态', minWidth: '120' },
         { prop: 'partnerCode', label: '供应商编码' },
-        { prop: 'partnerName', label: '供应商名称' },
+        { prop: 'partnerName', label: '供应商名称', minWidth: '260' },
         { prop: 'paymentCycle', label: '付款周期' },
         { prop: 'initPaymentAmount', label: '期初应付金额' },
         { prop: 'currentBillingAmount', label: '本期收票金额' },

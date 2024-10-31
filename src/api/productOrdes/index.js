@@ -251,3 +251,13 @@ export function revokeReport(id) {
     method: 'POST',
   })
 }
+
+
+// 进度
+export function getPlanSchedule(id) {
+  return request({
+    url: `/api/zgt/prod/plan/schedule?id=${id}`,
+    method: 'get',
+  })
+}
+

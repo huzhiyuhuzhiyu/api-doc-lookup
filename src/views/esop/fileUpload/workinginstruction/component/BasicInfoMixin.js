@@ -107,7 +107,7 @@ export default {
             return this.dataForm.approvalStatus === ApprovalStatus.OK && (this.isFileManagementPage || this.isFileCheckPage)
         },
         isNoProductPage(){
-            return isNoProductPage(this.dataForm.applicationType)
+            return isNoProductPage(this.dataForm.applicationType || this.applicationType)
         },
     }
 }

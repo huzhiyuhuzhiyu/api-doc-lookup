@@ -72,7 +72,7 @@
                         }}</span></div>
                     <div class="label_title"> 计划日期:{{ item.planStartDate }}—{{ item.planEndDate }}</div>
                     <div>
-                      <el-button style="color:red;" type="text">关单</el-button>
+                      <el-button style="color:red;" type="text" @click="closeTaskFun(item)">关单</el-button>
                       <el-button type="primary" size="mini" @click='produceTaskReportFun(item.id)'>报 工</el-button>
                       <el-button type="primary" size="mini" @click="viewTask(item)">查看任务</el-button>
                     </div>
@@ -516,7 +516,7 @@ export default {
         name: "",
         code: "",
         pageNum: 1,
-        pageSize: 20,
+        pageSize: 24,
         orderItems: [{
           asc: false,
           column: ""
@@ -669,7 +669,24 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    closeTaskFun(row) {
+      this.$confirm('您确认关闭当前任务吗？', this.$t('common.tipTitle'), {
+        type: 'warning',
+        customClass: 'custom-confirm',
+      }).then(() => {
+        let arr = []
+        arr.push(row.id)
+        prodOrderClose(arr).then(res => {
+          this.$message.success("关单成功")
+          this.searchProductData()
+          arr = []
+        }).catch(() => {
 
+        })
+
+      }).catch(() => { })
+
+    },
 
     closeForm(flag) {
       this.taskFormVisible = false
@@ -767,26 +784,7 @@ export default {
 
       }
     },
-    // 关单
-    Cancelshipment() {
-      if (!this.selectArr.length) return this.$message.error("请选择您要关单的任务")
-      this.$confirm('您确认关闭选中的任务吗？', this.$t('common.tipTitle'), {
-        type: 'warning',
-        customClass: 'custom-confirm',
-      }).then(() => {
-
-        let arr = this.selectArr.map(item => {
-          return item.id
-        })
-        console.log(arr)
-        prodOrderClose(arr).then(res => {
-          console.log(555);
-          this.$message.success("关单成功")
-          this.search()
-        }).catch(() => {
-        })
-      }).catch(() => { })
-    },
+ 
     // 生产任务列表
     searchProductData() {
       if (this.planDate.length) {
@@ -872,7 +870,7 @@ export default {
         name: "",
         code: "",
         pageNum: 1,
-        pageSize: 20,
+        pageSize: 24,
         orderItems: [{
           asc: false,
           column: ""

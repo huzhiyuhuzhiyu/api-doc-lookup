@@ -18,8 +18,8 @@
                 <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="归还日期" prop="returnTime">
-                        <el-date-picker v-model="dataForm.returnTime" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择归还日期" :disabled="btnType == 'look'">
+                      <el-form-item label="归还日期" prop="collectionTime">
+                        <el-date-picker v-model="dataForm.collectionTime" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择归还日期" :disabled="btnType == 'look'">
                         </el-date-picker>
                       </el-form-item>
                     </el-col>
@@ -41,16 +41,16 @@
                   <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" @selection-change="handeleProductInfoData">
                     <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType !== 'look'" key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed='left' key="11" />
-                    <el-table-column prop="code" label="产品编码" min-width="120" show-overflow-tooltip>
+                    <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="name" label="产品名称" min-width="120" show-overflow-tooltip>
+                    <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
                       <template slot="header">
                         <span class="required">*</span>产品名称
                       </template>
                     </el-table-column>
-                    <el-table-column prop="drawingNo" label="品名规格" min-width="120" show-overflow-tooltip>
+                    <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="mainUnit" label="单位" min-width="120" show-overflow-tooltip>
+                    <el-table-column prop="unit" label="单位" width="120" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="requisitionNum" label="数量" width="160">
                       <template slot="header">
@@ -139,7 +139,7 @@ export default {
         equipmentType: 'spare_parts',
         equipmentId: '',
         equipmentIdName: '',
-        returnTime: '',
+        collectionTime: '',
         recipientId: ''
       },
       productRules: {
@@ -154,7 +154,7 @@ export default {
         recipientId: [
           { required: true, message: '归还人不能为空', trigger: 'blur' }
         ],
-        returnTime: [
+        collectionTime: [
           { required: true, message: '归还日期不能为空', trigger: 'blur' }
         ]
       },
@@ -194,10 +194,10 @@ export default {
       selectedList.map(item => {
         if (!item.isrepeat) {
           this.dataFormTwo.productData.push({
-            name: item.all.name,
-            code: item.all.code,
+            productName: item.all.name,
+            productCode: item.all.code,
             drawingNo: item.all.drawingNo,
-            mainUnit: item.all.mainUnit,
+            unit: item.all.mainUnit,
             incomingOutgoingNum: item.all.incomingOutgoingNum,
             productId: item.all.id,
             requisitionNum: '',
@@ -255,7 +255,7 @@ export default {
       this.btnType = btnType
       if (this.btnType == 'add') {
         this.dataForm.recipientId = this.userInfo.userId
-        this.dataForm.returnTime = this.jnpf.getToday()
+        this.dataForm.collectionTime = this.jnpf.getToday()
       }
       if (this.dataForm.id) {
         detailCollectionandreturn(this.dataForm.id).then(res => {

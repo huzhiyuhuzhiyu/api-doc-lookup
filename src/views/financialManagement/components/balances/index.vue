@@ -14,9 +14,10 @@
                 <el-option v-for="item2 in item.options" :key="item2.value" :label="item2.label"
                   :value="item2.value"></el-option>
               </el-select>
-             
+
               <el-date-picker v-else-if="item.type === 'date'" v-model="listQuery[item.prop]" type="month"
-                value-format="yyyy-MM" style="width: 100%;" :clearable="false" popper-class="date_form">
+                value-format="yyyy-MM" style="width: 100%;" :clearable="false" popper-class="date_form"
+                @change="search()">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -26,17 +27,28 @@
                 {{ $t('common.search') }}</el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
               </el-button>
-              <el-button :disabled="tableData.length > 0 ? false : true" type="text" icon="el-icon-download"
-                @click="exportForm">导出</el-button>
+
             </el-form-item>
           </el-col>
-          <el-button style="float: right;margin-right: 20px;" size="mini" type="primary" icon="el-icon-search"
-            @click="visible = true">更多查询</el-button>
+
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head" style="padding:10px" v-if="listQuery.accountPeriod === accountPeriod && tableData.length">
-          <topOpts :addText="'结存'" @add="addOrUpdateHandle(listQuery.accountPeriod, reconciliationType)" />
+        <div class="JNPF-common-head" style="padding:10px">
+          <div>
+            <el-button type="primary" size="mini" icon="el-icon-plus"
+              @click="addOrUpdateHandle(listQuery.accountPeriod, reconciliationType, 'normal')" :disabled="!tableData.length
+                || tableData[0].accountPeriod !== listQuery.accountPeriod
+                || tableData[0].accountPeriod !== accountPeriodList[0]">结存</el-button>
+            <el-button type="primary" size="mini" icon="el-icon-refresh-left"
+              @click="addOrUpdateHandle(listQuery.accountPeriod, reconciliationType, 'reverse')" :disabled="!tableData.length
+                || tableData[0].accountPeriod !== listQuery.accountPeriod
+                || accountPeriodList.includes(tableData[0].accountPeriod)
+                || accountPeriodList.length > 1
+                || isInCurrentOrLastMonth(tableData[0].accountPeriod)">反结存</el-button>
+            <el-button type="primary" size="mini" :disabled="!tableData.length" icon="el-icon-download"
+              @click="exportForm">导出</el-button>
+          </div>
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
@@ -47,22 +59,23 @@
         <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO custom-column>
           <template v-for="item in tableItems">
             <el-table-column v-if="item.prop == 'balanceState'" :prop="item.prop" :key="item.prop" :label="item.label"
-              :fixed="item.fixed || false" :min-width="item.minWidth || 120">
+              :fixed="item.fixed || false" :min-width="item.minWidth || 120" align="center">
               <template slot-scope="scope">
-                <el-tag v-if="scope.row.balanceState === 'not_finished'">未完成</el-tag>
-                <el-tag type="primary" v-if="scope.row.balanceState === 'finished'">已完成</el-tag>
+                <el-tag type="warning" v-if="scope.row.balanceState === 'not_finished'">未完成</el-tag>
+                <el-tag type="success" v-else-if="scope.row.balanceState === 'finished'">已完成</el-tag>
               </template>
             </el-table-column>
             <el-table-column v-else-if="item.prop == 'paymentCycle'" :prop="item.prop" :key="item.prop"
               :label="item.label" :fixed="item.fixed || false" :min-width="item.minWidth || 120">
               <template slot-scope="scope">
-                <div v-if="scope.row.paymentCycle === 'DAY30'">30天</div>
-                <div v-if="scope.row.paymentCycle === 'DAY45'">45天</div>
-                <div v-if="scope.row.paymentCycle === 'DAY60'">60天</div>
-                <div v-if="scope.row.paymentCycle === 'DAY75'">75天</div>
-                <div v-if="scope.row.paymentCycle === 'DAY90'">90天</div>
-                <div v-if="scope.row.paymentCycle === 'DELIVERY'">票到付款</div>
-                <div v-if="scope.row.paymentCycle === 'KDFH'">款到发货</div>
+                <div v-if="scope.row.paymentCycle === '30DAY'">30天</div>
+                <div v-else-if="scope.row.paymentCycle === '45DAY'">45天</div>
+                <div v-else-if="scope.row.paymentCycle === '60DAY'">60天</div>
+                <div v-else-if="scope.row.paymentCycle === '75DAY'">75天</div>
+                <div v-else-if="scope.row.paymentCycle === '90DAY'">90天</div>
+                <div v-else-if="scope.row.paymentCycle === 'DELIVERY'">票到付款</div>
+                <div v-else-if="scope.row.paymentCycle === 'KDFH'">款到发货</div>
+                <div v-else>{{ scope.row.paymentCycle }}</div>
               </template>
             </el-table-column>
             <el-table-column
@@ -85,41 +98,13 @@
           @pagination="initData" />
       </div>
     </div>
-    <el-dialog :title="'更多查询'" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px" append-to-body>
-      <el-row :gutter="20">
-        <el-form ref="diaForm" :model="listQuery" label-width="120px" label-position="top">
 
-          <el-col :span="12" v-for="item in searchListMore" :key="item.prop">
-            <el-form-item :label="item.label">
-              <el-input v-if="item.type === 'input'" v-model="listQuery[item.prop]" :placeholder="'请输入' + item.label"
-                clearable />
-
-              <el-select v-else-if="item.type === 'select'" v-model="listQuery[item.prop]"
-                :placeholder="'请选择' + item.label" style="width: 100%;">
-                <el-option v-for="item2 in item.options" :key="item2.value" :label="item2.label"
-                  :value="item2.value"></el-option>
-              </el-select>
-
-              <el-date-picker v-else-if="item.type === 'date'" v-model="listQuery[item.prop]" type="month"
-                value-format="yyyy-MM" style="width: 100%;" :clearable="false" popper-class="date_form">
-              </el-date-picker>
-
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="search()">搜 索</el-button>
-      </span>
-    </el-dialog>
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
 
     <lineTables v-if="lineVisible" ref="lineForm" :reconciliationType="reconciliationType" :listMethod="lineMathods"
       :listRequestObj="lineRequestObj" :tableItems="lineTableItems" :searchList="lineSearchList"
-      :searchListMore="lineSearchListMore" @close="closeForm"/>
+      :searchListMore="lineSearchListMore" @close="closeForm" />
   </div>
 </template>
 
@@ -200,7 +185,7 @@ export default {
       visible: false,
       lineVisible: false,
       listQuery: {},
-      accountPeriod: '',
+      accountPeriodList: [],
       exportFormVisible: false,
       total: 0,
       formVisible: false,
@@ -236,8 +221,8 @@ export default {
         reconciliationType: this.reconciliationType,
         startTime: "",
         accountPeriod: '',
-        invoiceDateArr:[],
-        reconciliationDateArr:[],
+        invoiceDateArr: [],
+        reconciliationDateArr: [],
       },
       makeTableItem: [
         { prop: "orderNo", label: "对账单流水号", minWidth: 180 },
@@ -251,14 +236,14 @@ export default {
       ],
       makeSearchList: [
         { prop: "orderNo", label: "对账单流水号", type: 'input' },
-        { prop: "invoiceDate", label: this.showLabel3 + '票日期', type: 'date',placeholder:this.showLabel3 + '票' },
+        { prop: "invoiceDateArr", label: this.showLabel3 + '票日期', type: 'date', placeholder: this.showLabel3 + '票' },
         { prop: "invoiceCode", label: "发票代码", type: 'input' },
         { prop: "invoiceNumber", label: "发票号码", type: 'input' },
       ],
       makeSearchListMore: [
         { prop: "orderNo", label: "对账单流水号", type: 'input' },
-        { prop: "reconciliationDate", label: "对账日期", type: 'date',placeholder:'对账' },
-        { prop: "invoiceDate", label: this.showLabel3 + '票日期', type: 'date',placeholder:this.showLabel3 + '票' },
+        { prop: "reconciliationDateArr", label: "对账日期", type: 'date', placeholder: '对账' },
+        { prop: "invoiceDateArr", label: this.showLabel3 + '票日期', type: 'date', placeholder: this.showLabel3 + '票' },
         { prop: "invoiceCode", label: "发票代码", type: 'input' },
         { prop: "invoiceNumber", label: "发票号码", type: 'input' },
       ],
@@ -290,18 +275,20 @@ export default {
         startTime: "",
         startUpdateTime: "",
         totalRowFlag: false,
-        createTimeArr:[],
+        createTimeArr: [],
       },
       inboundAndOutTableItem: [
         { prop: 'moveOrderNo', label: this.showLabel2 + '库单号', minWidth: '180' },
-        { prop: 'productsCode', label: '产品编码' },
+        { prop: 'productsCode', label: '产品编码', minWidth: '140' },
         { prop: 'productsName', label: '产品名称' },
-        { prop: 'productsDrawingNo', label: '产品图号', minWidth: '180' },
-        { prop: 'batchNumber', label: '批次号' },
-        { prop: 'mainUnit', label: '单位' },
+        { prop: 'productsDrawingNo', label: '产品图号', minWidth: '300' },
+        { prop: 'batchNumber', label: '批次号', minWidth: '180' },
+        { prop: 'mainUnit', label: '单位', minWidth: '80' },
         { prop: 'num', label: this.showLabel2 + '库数量' },
-        { prop: 'costPrice', label: this.showLabel2 + '库单价' },
-        { prop: 'totalAmount', label: this.showLabel2 + '库金额' },
+        // { prop: 'costPrice', label: this.showLabel2 + '库单价' },
+        // { prop: 'totalAmount', label: this.showLabel2 + '库金额' },
+        { prop: 'costPrice', label: this.showLabel2 + '库单价(含税)', minWidth: '140' },
+        { prop: 'totalWithTaxAmount', label: this.showLabel2 + '库金额(含税)', minWidth: '140' },
         { prop: 'createTime', label: '创建时间', minWidth: '180' },
         { prop: "createByName", label: "创建人" },
       ],
@@ -312,11 +299,11 @@ export default {
       ],
       inboundAndOutSearchListMore: [
         { prop: "moveOrderNo", label: this.showLabel2 + '库单号', type: 'input' },
-        { prop: 'productsCode', label: '产品编码', type: 'input' },
+        { prop: 'productsCode', label: '产品编码', minWidth: '140', type: 'input' },
         { prop: 'productsName', label: '产品名称', type: 'input' },
         { prop: 'productsDrawingNo', label: '产品图号', type: 'input' },
-        { prop: 'batchNumber', label: '批次号', type: 'input' },
-        { prop: 'createTime', label: '创建时间', type: 'date',placeholder:'创建' },
+        { prop: 'batchNumber', label: '批次号', type: 'input', minWidth: '180' },
+        { prop: 'createTimeArr', label: '创建时间', type: 'dateTime', placeholder: '创建' },
       ],
       // 到期
       dueQuery: {
@@ -354,17 +341,17 @@ export default {
         startTime: "",
         startUpdateTime: "",
         totalRowFlag: false,
-        reconciliationDateArr:[],
+        reconciliationDateArr: [],
       },
       dueTableItem: [
         { prop: "orderNo", label: "对账单流水号", minWidth: 180 },
         { prop: "reconciliationDate", label: "对账日期", minWidth: 180 },
-        { prop: "totalReconciliationAmount", label: '对账'+this.showLabel +'款总金额', },
-        { prop: "totalPaymentAmount", label: '已'+this.showLabel +'款总金额', },
-        { prop: "totalUnpaidAmount", label: '未'+this.showLabel +'款总金额', },
-        { prop: "approvalCompletionDate", label: "审批通过时间", },
+        { prop: "totalReconciliationAmount", label: '对账' + this.showLabel + '款总金额', minWidth: 150 },
+        { prop: "totalPaymentAmount", label: '已' + this.showLabel + '款总金额', },
+        { prop: "totalUnpaidAmount", label: '未' + this.showLabel + '款总金额', },
+        { prop: "approvalCompletionDate", label: "审批通过时间", minWidth: 180 },
 
-        { prop: "paymentCycle", label: this.showLabel +'款周期', },
+        { prop: "paymentCycle", label: this.showLabel + '款周期', },
         { prop: "paymentDate", label: "到期时间", },
 
         { prop: "createTime", label: "创建时间", minWidth: '180' },
@@ -372,7 +359,7 @@ export default {
       ],
       dueSearchList: [
         { prop: "orderNo", label: "对账单流水号", type: 'input' },
-        { prop: 'reconciliationDate', label: '对账日期', type: 'date',placeholder:'对账' },
+        { prop: 'reconciliationDateArr', label: '对账日期', type: 'date', placeholder: '对账' },
       ],
       dueSearchListMore: [],
 
@@ -403,20 +390,21 @@ export default {
         startTime: "",
         startUpdateTime: "",
         totalRowFlag: false,
-        reconciliationDateArr:[],
+        reconciliationDateArr: [],
       },
       currentTableItem: [
+        { prop: "type", label: "付款类型", width: 120 },
         { prop: "orderNo", label: "对账单流水号", minWidth: 180 },
         { prop: "reconciliationDate", label: "对账日期", minWidth: 180 },
-        { prop: "paymentAmount", label: this.showLabel +'款金额', },
-        { prop: "paymentDate", label: this.showLabel +'款日期', minWidth: 180 },
-        { prop: "paymentMethod", label: this.showLabel +'款方式' },
+        { prop: "paymentAmount", label: this.showLabel + '款金额', },
+        { prop: "paymentDate", label: this.showLabel + '款日期', minWidth: 180 },
+        { prop: "paymentMethod", label: this.showLabel + '款方式' },
         { prop: "createTime", label: "创建时间", minWidth: '180' },
         { prop: "createByName", label: "创建人" },
       ],
       currentSearchList: [
         { prop: "orderNo", label: "对账单流水号", type: 'input' },
-        { prop: 'reconciliationDate', label: '对账日期', type: 'date',placeholder:'对账' },
+        { prop: 'reconciliationDateArr', label: '对账日期', type: 'date', placeholder: '对账' },
       ],
       currentSearchListMore: [],
       // 逾期
@@ -455,14 +443,14 @@ export default {
         startTime: "",
         startUpdateTime: "",
         totalRowFlag: false,
-        reconciliationDateArr:[],
+        reconciliationDateArr: [],
       },
       overdueTableItem: [
         { prop: "orderNo", label: "对账单流水号", minWidth: 180 },
         { prop: "reconciliationDate", label: "对账日期", minWidth: 180 },
-        { prop: "totalReconciliationAmount", label: '对账'+this.showLabel +'款总金额', },
-        { prop: "totalPaymentAmount", label: '已'+this.showLabel +'款总金额', },
-        { prop: "totalUnpaidAmount", label: '未'+this.showLabel +'款总金额', },
+        { prop: "totalReconciliationAmount", label: '对账' + this.showLabel + '款总金额', },
+        { prop: "totalPaymentAmount", label: '已' + this.showLabel + '款总金额', },
+        { prop: "totalUnpaidAmount", label: '未' + this.showLabel + '款总金额', },
         { prop: "approvalCompletionDate", label: "审批通过时间", },
 
         { prop: "paymentCycle", label: this.showLabel + "款周期", },
@@ -473,7 +461,7 @@ export default {
       ],
       overdueSearchList: [
         { prop: "orderNo", label: "对账单流水号", type: 'input' },
-        { prop: 'reconciliationDate', label: '对账日期', type: 'date',placeholder:'对账' },
+        { prop: 'reconciliationDateArr', label: '对账日期', type: 'date', placeholder: '对账' },
       ],
       overdueSearchListMore: [],
 
@@ -546,7 +534,7 @@ export default {
         this.listLoading = false
       })
       paymentBalanceCan(this.reconciliationType).then(res => {
-        this.accountPeriod = res.data
+        this.accountPeriodList = res.data || [] // 可结存期
       })
     },
 
@@ -558,10 +546,10 @@ export default {
       this.getData()
     },
 
-    addOrUpdateHandle(accountPeriod, reconciliationType) {
+    addOrUpdateHandle(accountPeriod, reconciliationType, type = 'normal') {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(accountPeriod, reconciliationType)
+        this.$refs.Form.init(accountPeriod, reconciliationType, type)
       })
     },
     // 导出
@@ -602,15 +590,17 @@ export default {
         this.initmakeQuery.accountPeriod = row.accountPeriod
         this.initmakeQuery.cooperativePartnerId = row.cooperativePartnerId
         this.lineRequestObj = JSON.parse(JSON.stringify(this.initmakeQuery))
+        this.lineRequestObj.cooperativePartnerId = row.cooperativePartnerId
         this.lineTableItems = this.makeTableItem
         this.lineSearchList = this.makeSearchList
         this.lineSearchListMore = this.makeSearchListMore
       } else if (type === 'currentInboundOutboundAmount') {
         // 出入库
         this.lineMathods = paymentStockLine
-        this.initmakeQuery.accountPeriod = row.accountPeriod
-        this.initmakeQuery.cooperativePartnerId = row.cooperativePartnerId
+        this.inboundAndOutQuery.accountPeriod = row.accountPeriod
+        this.inboundAndOutQuery.cooperativePartnerId = row.cooperativePartnerId
         this.lineRequestObj = JSON.parse(JSON.stringify(this.inboundAndOutQuery))
+        this.lineRequestObj.cooperativePartnerId = row.cooperativePartnerId
         this.lineTableItems = this.inboundAndOutTableItem
         this.lineSearchList = this.inboundAndOutSearchList
         this.lineSearchListMore = this.inboundAndOutSearchListMore
@@ -622,6 +612,7 @@ export default {
         this.dueQuery.accountPeriod = row.accountPeriod
         this.dueQuery.cooperativePartnerId = row.cooperativePartnerId
         this.lineRequestObj = JSON.parse(JSON.stringify(this.dueQuery))
+        this.lineRequestObj.cooperativePartnerId = row.cooperativePartnerId
         this.lineTableItems = this.dueTableItem
         this.lineSearchList = this.dueSearchList
         this.lineSearchListMore = this.dueSearchListMore
@@ -631,15 +622,17 @@ export default {
         this.currentQuery.accountPeriod = row.accountPeriod
         this.currentQuery.cooperativePartnerId = row.cooperativePartnerId
         this.lineRequestObj = JSON.parse(JSON.stringify(this.currentQuery))
+        this.lineRequestObj.cooperativePartnerId = row.cooperativePartnerId
         this.lineTableItems = this.currentTableItem
         this.lineSearchList = this.currentSearchList
         this.lineSearchListMore = this.currentSearchList
-      }else if (type === 'overduePaymentAmount') {
+      } else if (type === 'overduePaymentAmount') {
         // 逾期应付
         this.lineMathods = getfinAccountsReport
         this.overdueQuery.accountPeriod = row.accountPeriod
         this.overdueQuery.cooperativePartnerId = row.cooperativePartnerId
         this.lineRequestObj = JSON.parse(JSON.stringify(this.overdueQuery))
+        this.lineRequestObj.cooperativePartnerId = row.cooperativePartnerId
         this.lineTableItems = this.overdueTableItem
         this.lineSearchList = this.overdueSearchList
         this.lineSearchListMore = this.overdueSearchListMore
@@ -649,82 +642,35 @@ export default {
         this.$refs.lineForm.getData(type)
       })
     },
+    isInCurrentOrLastMonth(dateString) {
+      // 获取当前日期  
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth(); // 月份从0开始，0代表1月，11代表12月  
 
+      // 解析输入的日期字符串  
+      const [month, day] = dateString.split('-').map(Number);
+
+      // 创建指定日期对象  
+      const targetDate = new Date(currentYear, month - 1, day); // month - 1 因为月份从0开始  
+
+      // 获取指定日期的月份  
+      const targetMonth = targetDate.getMonth();
+      const targetYear = targetDate.getFullYear();
+
+      // 检查是否在本月或上月  
+      if (targetYear === currentYear) {
+        if (targetMonth === currentMonth || targetMonth === currentMonth - 1) {
+          return true;
+        }
+      } else if (targetYear === currentYear - 1 && currentMonth === 0 && targetMonth === 11) {
+        // 处理跨年情况：去年12月  
+        return true;
+      }
+
+      return false;
+    },
   }
 }
 </script>
-<style lang="scss"  scoped>
-.el-tab-pane {
-  height: calc(100% - 10px);
-}
-
-::v-deep .el-tabs__content {
-  height: calc(100% - 40px);
-}
-
-.el-tabs {
-  height: 100%;
-}
-
-.el-tabs__nav-scroll {
-  padding-left: 10px;
-}
-
-.JNPF-common-head {
-  padding: 10px;
-}
-
-.JNPF-common-search-box {
-  padding-top: 5px;
-  padding-bottom: 10px;
-  margin-bottom: 5px;
-}
-
-.JNPF-common-search-box .el-form-item {
-  margin-bottom: 0px !important;
-}
-
-.pagination-container {
-  background-color: #ebeef5;
-  margin-top: 0px;
-  padding-right: 10px;
-  padding-top: 2px;
-  padding-bottom: 2px;
-}
-
-.main {
-  padding: 10px 30px 0;
-}
-
-::v-deep .el-tabs__header {
-  padding: 0 !important;
-  padding-bottom: 10px !important;
-  margin-bottom: 0;
-  padding-left: 10px !important;
-  background: #fff;
-}
-
-.el-button--small {
-  padding: 1;
-}
-
-::v-deep .JNPF-common-page-header {
-  padding: 5px 10px;
-}
-
-.JNPF-common-layout-center .JNPF-common-layout-main {
-  padding-bottom: 0;
-}
-
-::v-deep.el-range-editor--small.el-input__inner {
-  height: 34px;
-}
-
-::v-deep.el-table__body-wrapper {
-  height: auto !important;
-}
-
-
-
-</style>
-
+<style src="@/assets/scss/index-list.scss" lang="scss" scoped />

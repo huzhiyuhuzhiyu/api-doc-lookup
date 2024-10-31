@@ -118,8 +118,7 @@
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <!-- <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : scope.row.approvalStatus == 'ok'" -->
-                <el-button size="mini" type="text" :disabled="scope.row.documentStatus !== 'draft'"
-                  @click="updateHandle(scope.row.id, 'edit')">
+                <el-button size="mini" type="text" @click="updateHandle(scope.row.id, 'edit')">
                   编辑
                 </el-button>
                 <el-button size="mini" type="text" class="JNPF-table-delBtn"

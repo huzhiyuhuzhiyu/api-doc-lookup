@@ -1466,9 +1466,15 @@ export default {
       this.btnType = btnType
 
       if (data) {
+        console.log(data)
         this.dataFormTwo.productData = data
         this.dataForm.partnerName = data[0].cooperativePartnerName
         this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
+        data.forEach((item) => {
+          console.log('ooooooo', item)
+          item.ordersNo = item.orderNo
+
+        })
       }
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
@@ -1491,6 +1497,7 @@ export default {
             this.dataFormTwo.productData = res.data.noticeLineList
             this.dataFormTwo.productData.forEach((item) => {
               item.drawingNo = item.productDrawingNo
+
             })
             if (this.btnType === 'edit') {
               this.getBusInfo()
@@ -1514,6 +1521,7 @@ export default {
       } else {
         this.fetchData('CGSH')
         this.dataForm.salesman = this.userInfo.userName
+
         this.getBusInfo()
       }
 

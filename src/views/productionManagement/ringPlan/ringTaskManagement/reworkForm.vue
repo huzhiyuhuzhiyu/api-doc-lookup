@@ -22,35 +22,35 @@
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
 
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
-                    <el-row :gutter="30" class="custom-row">
-                      <el-col :sm="8" :xs="24">
+                    <el-row :gutter="20" class="custom-row">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="生产任务单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo"
                             :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="返工产品" prop="drawingNo">
                           <el-input v-model="dataForm.drawingNo" placeholder="返工产品"
                             @focus="openSelectProductFun"></el-input>
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="工艺路线名称" prop="routingName">
                           <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" readonly
                             @focus="openRoutingFun"></el-input>
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="计划生产开始—结束日期" prop="planDate">
                           <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="返工生产数量" prop="productionQuantity">
                           <el-input v-model="dataForm.productionQuantity" placeholder="返工生产数量">
                           </el-input>
@@ -66,7 +66,7 @@
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="打字内容" prop="sealingCoverTyping">
                           <el-select v-model="dataForm.sealingCoverTyping" placeholder="打字内容" clearable
                             style="width: 100%;">
@@ -75,7 +75,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="精度等级" prop="accuracyLevel">
                           <el-select v-model="dataForm.accuracyLevel" placeholder="精度等级" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
@@ -84,7 +84,7 @@
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="振动等级" prop="vibrationLevel">
                           <el-select v-model="dataForm.vibrationLevel" placeholder="振动等级" clearable
                             style="width: 100%;">
@@ -93,7 +93,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="油脂" prop="oil">
                           <el-select v-model="dataForm.oil" placeholder="油脂" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
@@ -101,7 +101,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="油脂量" prop="oilQuantity">
                           <el-select v-model="dataForm.oilQuantity" placeholder="油脂量" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
@@ -110,7 +110,7 @@
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="游隙" prop="clearance">
                           <el-select v-model="dataForm.clearance" placeholder="游隙" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
@@ -118,7 +118,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="包装方式" prop="packagingMethod">
                           <el-select v-model="dataForm.packagingMethod" placeholder="包装方式" clearable
                             style="width: 100%;">
@@ -127,7 +127,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="特殊要求" prop="specialRequire">
                           <el-select v-model="dataForm.specialRequire" placeholder="特殊要求" clearable
                             style="width: 100%;">
@@ -273,13 +273,13 @@
                   <el-form ref="collectForm" :model="collect" :rules="pickDataRule" label-width="160px"
                     label-position="top">
                     <el-row :gutter="30" class="custom-row">
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="领料单号" prop="orderNo">
                           <el-input v-model="collect.orderNo"
                             :disabled="btnType == 'look' ? true : collectConfig.codeWay == 'auto' && !collectConfig.modifyFlag ? true : false" />
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="领料人" prop="personId">
                           <user-select v-model="collect.personId" placeholder="请选择领料人" clearable style="width: 100%;"
                             :disabled="btnType == 'look'" @change="hangleSelectSales">
@@ -608,6 +608,7 @@ export default {
   },
   data() {
     return {
+      taskMethodList: [{ label: "指定加工对象", value: "appoint" }, { label: "不指定加工对象", value: "not_appoint" },],
       reduceTypeList: [
         { label: "生成领料单", value: "picking" },
         { label: "自动扣减料", value: "auto" },
@@ -1528,18 +1529,28 @@ export default {
           }
           for (let index = 0; index < this.dataFormTwo.data.length; index++) {
             const item = this.dataFormTwo.data[index];
-            if (
-              !item.workGroupId &&
-              !item.personId &&
-              !this.dataFormTwo.prodOrderList[0].blankingProductsId &&
-              item.processingType == "self_produced"
-            ) {
-              submitFlag = false;
-              this.$message({
-                message: "第" + (index + 1) + "行班组、人员需要必填一项",
-                type: "error",
-              });
-              break;
+            if(item.reportFlag){
+
+              if (
+                !item.workGroupId &&
+                !item.personId &&item.processingType == "self_produced"
+              ) {
+                submitFlag = false;
+                this.$message({
+                  message: "第" + (index + 1) + "行班组、人员需要必填一项",
+                  type: "error",
+                });
+                break;
+              }
+            }else{
+              if(!item.personId){
+                submitFlag = false;
+                this.$message({
+                  message: "第" + (index + 1) + "行工序需配置人员信息",
+                  type: "error",
+                });
+                break;
+              }
             }
           }
           this.dataFormTwo.data.forEach(item => {
@@ -1807,5 +1818,8 @@ $footerPadding: '10px';
 .active {
   background-color: #5d9bd5;
   color: #fff;
+}
+::v-deep .el-range-editor{
+  height: 34px!important;
 }
 </style>

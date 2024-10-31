@@ -35,7 +35,7 @@
                           <!-- <el-input :disabled="type == 'look'" v-model="dataForm.cooperativePartnerName"
                             placeholder="请选择供应商名称" @focus="openDialog"></el-input> -->
                           <!-- 供应商选择弹窗  -->
-                          <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
+                          <ComSelect-page :clearable="type !== 'look'" :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
                             v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
                             @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'"
                             title="选择供应商" treeTitle="供应商分类" :methodArr="PartnerMethodArr"
@@ -57,6 +57,12 @@
                             <el-option v-for="item in receivingStatusOptions" :key="item.value" :label="item.label"
                               :value="item.value"></el-option>
                           </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="12">
+                        <el-form-item label="备注" prop="remark" ref="remark">
+                          <el-input type="textarea" :row="3" v-model="dataForm.remark" placeholder="请输入备注"
+                            maxlength="200" :disabled="type == 'look' ? true : false"></el-input>
                         </el-form-item>
                       </el-col>
                     </el-form>
@@ -804,6 +810,7 @@ export default {
           type: 'warning'
         })
           .then(() => {
+            this.dataFormTwo.data = []
             this.$message({
               type: 'success',
               message: '更换成功!'
@@ -1258,7 +1265,7 @@ export default {
                             this.datafilelist = []
                             this.dataFormTwo.data = []
                             this.dataForm = {
-                              applicationReason: '',
+                              remark: '',
                               approvalCompletionDate: '',
                               // approvalStatus: "",
                               documentStatus: '',

@@ -69,7 +69,7 @@
                       <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
 
-                      <el-table-column prop="ordersNo" label="订单号" min-width="180" show-overflow-tooltip>
+                      <el-table-column prop="ordersNo" label="订单号" min-width="190" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'ordersNo'">
                             <div class="viewData">
@@ -119,7 +119,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="reconciliationUnitPrice" label="对账数量" min-width="140">
+                      <el-table-column prop="reconciliationUnitPrice" label="对账数量" width="110">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'reconciliationUnitPrice'">
                             <div class="viewData">
@@ -129,7 +129,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="mainUnit" label="单位(主)" min-width="160" show-overflow-tooltip>
+                      <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
                             <div class="viewData">
@@ -139,7 +139,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="excludingTaxAmount" label="金额(不含税)" min-width="160">
+                      <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="110">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
                             <div :class="['viewData', scope.row.excludingTaxAmount < 0 ? 'red' : 'green']">
@@ -151,7 +151,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="taxAmount" label="税额" min-width="160">
+                      <el-table-column prop="taxAmount" label="税额" width="100">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'">
                             <div :class="['viewData', scope.row.taxAmount < 0 ? 'red' : 'green']">
@@ -161,7 +161,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="includingTaxAmount" label="金额(含税)" min-width="160">
+                      <el-table-column prop="includingTaxAmount" label="金额(含税)" width="110">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'includingTaxAmount'">
                             <div :class="['viewData', scope.row.includingTaxAmount < 0 ? 'red' : 'green']">
@@ -289,7 +289,7 @@
                   <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
                   <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
 
-                  <el-table-column prop="ordersNo" label="订单号" min-width="180" show-overflow-tooltip>
+                  <el-table-column prop="ordersNo" label="订单号" min-width="190" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'ordersNo'">
                         <div class="viewData">
@@ -339,7 +339,7 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="reconciliationUnitPrice" label="对账数量" min-width="140">
+                  <el-table-column prop="reconciliationUnitPrice" label="对账数量" width="120">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'reconciliationUnitPrice'">
                         <div class="viewData">
@@ -349,7 +349,7 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="mainUnit" label="单位(主)" min-width="160" show-overflow-tooltip>
+                  <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
                         <div class="viewData">
@@ -359,7 +359,7 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="excludingTaxAmount" label="不含税金额" min-width="160">
+                  <el-table-column prop="excludingTaxAmount" label="不含税金额" width="110">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
                         <div :class="['viewData', scope.row.excludingTaxAmount < 0 ? 'red' : 'green']">
@@ -371,7 +371,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="taxAmount" label="税额" min-width="160">
+                  <el-table-column prop="taxAmount" label="税额" width="100">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'">
                         <div :class="['viewData', scope.row.taxAmount < 0 ? 'red' : 'green']">
@@ -381,7 +381,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="includingTaxAmount" label="含税金额" min-width="160">
+                  <el-table-column prop="includingTaxAmount" label="含税金额" width="110">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'includingTaxAmount'">
                         <div :class="['viewData', scope.row.includingTaxAmount < 0 ? 'red' : 'green']">

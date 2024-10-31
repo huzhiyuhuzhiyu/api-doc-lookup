@@ -8,7 +8,7 @@
             <el-button type="success" :loading="btnLoading" @click="handleSubmit('draft')">
               保存草稿</el-button>
             <el-button type="primary" :loading="btnLoading" @click="handleSubmit('submit')">
-              {{ $t('common.submitButton') }}
+              保存并提交
             </el-button>
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div>
@@ -35,6 +35,12 @@
                     <el-form-item label="交货日期" prop="deliveryDate">
                       <el-date-picker v-model="dataForm.deliveryDate" type="date" value-format="yyyy-MM-dd"
                         style="width: 100%;" placeholder="请选择交货日期"></el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="备注" prop="remark" ref="remark">
+                      <el-input type="textarea" :row="3" v-model="dataForm.remark" placeholder="请输入备注" maxlength="200"
+                        :disabled="type == 'look' ? true : false"></el-input>
                     </el-form-item>
                   </el-col>
                 </el-form>

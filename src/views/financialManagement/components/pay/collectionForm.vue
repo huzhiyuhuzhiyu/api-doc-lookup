@@ -42,7 +42,7 @@
                       maxlength="20" disabled />
                   </el-form-item>
                 </el-col>
-                <el-col :span="6">
+                <el-col :span="6" v-if="Number(dataForm.totalReconciliationAmount) >= 0">
                   <el-form-item label="抵扣金额" prop="deductionAmount">
                     <el-input v-model="deductionAmount" maxlength="20" disabled />
                   </el-form-item>
@@ -385,12 +385,14 @@ export default {
           return acc * 1 + item.deductionAmount * 1
         }, 0)
         this.dataForm.deductionAmount = this.deductionAmount
+
         console.log(this.deductionAmount, 'this.dataForm.deductionAmount')
       } else {
         this.prePayIdList = []
         this.deductionAmount = 0
         this.dataForm.deductionAmount = this.deductionAmount
       }
+      this.dataForm.paymentAmount = Number(this.dataForm.totalReconciliationAmount) - Number(this.deductionAmount)
     },
   }
 }

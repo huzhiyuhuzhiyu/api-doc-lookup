@@ -145,11 +145,11 @@
                               oninput="value=value.replace(/^(0+)|[^\d]+/g,'')">
                             </el-input>
 
-                            <span class="lab_t">可用库存数量</span>
-                            <span class="pointer" @click="viewAvailableQuantity()">{{ planForm.availableQuantity
+                            <span class="lab_t" v-if="btnType!='look'">可用库存数量</span>
+                            <span v-if="btnType!='look'" class="pointer" @click="viewAvailableQuantity()">{{ planForm.availableQuantity
                               }}</span>
 
-                            <span
+                            <span 
                               :style="planForm.productSource == 'assemble' || planForm.productSource == 'produce' ? 'background:#3fb9f8;color:#fff' : ''"
                               class="lab_t">生产数量</span>
                             <el-input class="ipt2" v-model="planForm.productionQuantity" @blur="watchProduce"
@@ -172,29 +172,7 @@
                           </el-form-item>
                         </div>
                       </el-col>
-                      <!-- <el-col :sm="6" :xs="24">
-                        <el-form-item label="安排采购数量" prop="purchaseQuantity">
-
-                          <el-input v-model="planForm.purchaseQuantity" @blur="watchcg" placeholder="请输入安排采购数量"
-                            :disabled='btnType == "look"' oninput="value=value.replace(/^(0+)|[^\d]+/g,'')">
-                          </el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="利用库存数量" prop="utilizationQuantity">
-
-                          <el-input v-model="planForm.utilizationQuantity" @blur="watchly" placeholder="请输入利用库存数量"
-                            :disabled='btnType == "look"' oninput="value=value.replace(/^(0+)|[^\d]+/g,'')">
-                          </el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="最终计划数量" prop="finalPlanQuantity">
-
-                          <el-input v-model="planForm.finalPlanQuantity" placeholder="请输入最终计划数量" disabled>
-                          </el-input>
-                        </el-form-item>
-                      </el-col> -->
+                 
 
                     </el-row>
 
@@ -545,9 +523,9 @@ export default {
           this.planForm.utilizationQuantity = this.planForm.relaxQuantity
           this.planForm.finalPlanQuantity = this.planForm.productionQuantity = 0
         } else {
-          this.planForm.utilizationQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity]))
         }
-        if (this.planForm.utilizationQuantity < 0) {
+          this.planForm.utilizationQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity]))
+          if (this.planForm.utilizationQuantity < 0) {
           this.planForm.utilizationQuantity = 0
           this.planForm.finalPlanQuantity = this.planForm.productionQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity, this.planForm.utilizationQuantity]), 6)
         }
@@ -572,9 +550,9 @@ export default {
           this.planForm.utilizationQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity,  this.planForm.purchaseQuantity,this.planForm.outsourcingQuantity]))
           this.planForm.outsourcingQuantity = 0
         } else {
-          this.planForm.utilizationQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity,  this.planForm.purchaseQuantity,this.planForm.outsourcingQuantity]))
         }
-        if (this.planForm.utilizationQuantity < 0) {
+          this.planForm.utilizationQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity,  this.planForm.purchaseQuantity,this.planForm.outsourcingQuantity]))
+          if (this.planForm.utilizationQuantity < 0) {
           this.planForm.utilizationQuantity = 0
           this.planForm.outsourcingQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
         }
@@ -902,7 +880,7 @@ export default {
 
           if (this.btnType == 'add') {
             obj.plan.documentStatus = value
-            obj.plan.finalPlanQuantity = this.planForm.finalPlanQuantity
+            obj.plan.finalPlanQuantity = this.planForm.productionQuantity
             obj.plan.planNo = this.planForm.planNo
             obj.plan.planQuantity = this.planForm.planQuantity
             obj.plan.planState = "not_finished"
@@ -912,6 +890,8 @@ export default {
             obj.plan.relaxQuantity = this.planForm.relaxQuantity
             obj.plan.remark = this.planForm.remark
             obj.plan.id = this.planForm.id
+            obj.plan.outsourcingQuantity=this.planForm.outsourcingQuantity
+            obj.plan.productionQuantity=this.planForm.productionQuantity
             obj.plan.utilizationQuantity = this.planForm.utilizationQuantity
             obj.plan.sealingCoverTyping = this.productData[0].sealingCoverTyping
             obj.plan.vibrationLevel = this.productData[0].vibrationLevel
@@ -934,7 +914,6 @@ export default {
             obj.plan = this.planForm
           }
           console.log(obj);
-
 
           this.btnLoading = true
           let formMethod = null;

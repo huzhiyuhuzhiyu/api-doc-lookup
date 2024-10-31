@@ -35,10 +35,10 @@ export default {
         reconciliationType:'receivable',
       },
       tableItems: [
-        { prop: 'accountPeriod', label: '账期', minWidth: '180' },
+        { prop: 'accountPeriod', label: '账期', minWidth: '120' },
         { prop: 'balanceState', label: '结存状态', minWidth: '120' },
-        { prop: 'partnerCode', label: '客户编码' },
-        { prop: 'partnerName', label: '客户名称' },
+        { prop: 'partnerName', label: '客户名称',minWidth: '160' },
+        { prop: 'partnerCode', label: '客户编码',minWidth: '160' },
         { prop: 'paymentCycle', label: '收款周期' },
         { prop: 'initPaymentAmount', label: '期初应收金额' },
         { prop: 'currentBillingAmount', label: '本期开票金额' },

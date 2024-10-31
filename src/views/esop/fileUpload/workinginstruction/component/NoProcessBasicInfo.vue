@@ -172,12 +172,10 @@ export default {
 
                                 </el-row>
                                 <el-row v-if="isImage" :gutter="10">
-                                    <el-col :span="12">
-                                        <el-form-item label="产品信息" prop="drawingNo">
-                                            <div class="width-full flex-row">
+                                    <el-col :span="6">
+                                        <el-form-item label="品名规格" prop="drawingNo">
                                                 <ComSelect-page
-                                                    placeholder="请选择产品编码"
-                                                    style="width: 50%"
+                                                    placeholder="请选择品名规格"
                                                     ref="ComSelect-page"
                                                     v-model="dataForm.drawingNo"
                                                     @change="submitCustomerProduct"
@@ -190,12 +188,14 @@ export default {
                                                     :listRequestObj="listRequestObj"
                                                     :searchList="searchList"
                                                     :elementShow="true"  />
-                                                <el-input @click.native="chooseProduct" placeholder="请选择产品编码" :value="dataForm.productsCode"  style="margin-left: 10px;width: calc(50% - 10px)" readonly/>
-                                            </div>
-
                                         </el-form-item>
                                     </el-col>
-                                    <el-col :span="12">
+                                    <el-col :span="6" >
+                                        <el-form-item label="产品编码">
+                                            <el-input @click.native="chooseProduct" placeholder="请选择产品编码" :value="dataForm.productsCode" readonly/>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="6">
                                         <el-form-item label="产品分类">
                                             <el-input @click.native="chooseProduct" :value="dataForm.productsCategoryName" placeholder="请选择产品分类" readonly/>
                                         </el-form-item>

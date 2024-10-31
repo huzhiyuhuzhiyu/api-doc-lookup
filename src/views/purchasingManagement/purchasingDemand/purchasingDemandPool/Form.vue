@@ -41,7 +41,7 @@
               </el-row>
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="产品信息" name="basicInfo" class="orderInfo">
-                  <div :style="{ height: customStyleData + 'px' }">
+                  <div :style="{ height: 300 + 'px' }">
                     <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
                       <el-button type="text" class="topButton" icon="el-icon-plus" @click="openSeleceProductDialog">
                         选择产品
@@ -327,11 +327,12 @@
                         </el-table-column>
                       </JNPF-table>
                     </el-form>
+                    <div style="height: 40px;margin-top: 100px; line-height: 40px; background: #f5f7fa;" class="text">
+                      <span style="font-weight:500;margin-right:10px">总金额：{{ computedValue }}</span>
+                      <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue2 }}</span>
+                    </div>
                   </div>
-                  <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
-                    <span style="font-weight:500;margin-right:10px">总金额：{{ computedValue }}</span>
-                    <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue2 }}</span>
-                  </div>
+
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
@@ -1222,7 +1223,12 @@ export default {
         } else {
           item.productDrawingNo = item.drawingNo
         }
-        item.purchaseQuantity = Number(item.maxInventory) - Number(item.availableQuantity)
+        if (this.purchasingType == 'pool') {
+          item.purchaseQuantity = item.planDemandQuantity
+        } else {
+          item.purchaseQuantity = Number(item.maxInventory) - Number(item.availableQuantity)
+        }
+
       })
 
       this.dataForm.classAttribute = classAttributeFlag

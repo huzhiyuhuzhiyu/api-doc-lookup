@@ -53,11 +53,10 @@
                                 @change="deliveryDateChange"></el-date-picker>
                             </el-form-item>
                           </el-col>
-                          <el-col :span="24">
-                            <el-form-item label="申请理由" prop="applicationReason" ref="applicationReason">
-                              <el-input type="textarea" :row="3" v-model="dataForm.applicationReason"
-                                placeholder="请输入申请理由" maxlength="200"
-                                :disabled="type == 'look' ? true : false"></el-input>
+                          <el-col :span="12">
+                            <el-form-item label="备注" prop="remark" ref="remark">
+                              <el-input type="textarea" :row="3" v-model="dataForm.remark" placeholder="请输入备注"
+                                maxlength="200" :disabled="type == 'look' ? true : false"></el-input>
                             </el-form-item>
                           </el-col>
                         </el-form>
@@ -82,7 +81,8 @@
                         <el-table style="border: 1px solid #e3e7ee;" :fixedNO="true"
                           @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
                           id="table" border height="460">
-                          <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column>
+                          <el-table-column type="selection" width="55" fixed="left" align="center"
+                            :key="2"></el-table-column>
                           <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                           <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                             <template slot="header">
@@ -348,7 +348,7 @@ export default {
 
       inquirySheetId: '', //询价单id
       dataForm: {
-        applicationReason: '', // 申请理由
+        remark: '', // 备注
         approvalCompletionDate: '', // 审批完成时间
         // approvalStatus: "",               // 审批状态
         documentStatus: '', // 单据状态
@@ -362,7 +362,7 @@ export default {
       type: 'add',
       dataFormArr: [],
       rules: {
-        applicationReason: [{ required: true, message: '请输入申请理由', trigger: ['blur'] }]
+        remark: [{ required: true, message: '请输入备注', trigger: ['blur'] }]
       },
       productRules: {
         productName: [{ required: true, trigger: ['change'] }],
@@ -480,7 +480,7 @@ export default {
       codeConfig: {},
       oldData: [],
       rules: {
-        // applicationReason: [{ required: true, message: '请输入申请理由', trigger: ['blur'] }],
+        // applicationReason: [{ required: true, message: '请输入备注', trigger: ['blur'] }],
         cooperativePartnerName: [{ required: true, message: '请选择供应商名称', trigger: ['change'] }],
         deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
       },
@@ -917,6 +917,7 @@ export default {
           type: 'warning'
         })
           .then(() => {
+            this.dataFormTwo.data = []
             this.$message({
               type: 'success',
               message: '更换成功!'

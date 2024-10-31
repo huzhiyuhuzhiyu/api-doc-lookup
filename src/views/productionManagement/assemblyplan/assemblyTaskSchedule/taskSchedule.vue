@@ -60,69 +60,10 @@
               </div>
             </el-collapse-item>
             <el-collapse-item title="工序甘特图" name="info">
-              <el-row :gutter="0">
-                <el-col :span="12" ref="tab">
-                  <div class="processTitle">工序信息</div>
-                  <JNPF-table ref="work" :data="workOrderData" fixedNO highlight-current-row :height="height"
-                    v-loading="tableloading" @row-click="handleRowClick"  
-                    :row-class-name="rowClassName" >
-                    <el-table-column prop="processName" label="工序名称" min-width="120" />
-                    <el-table-column prop="processCode" label="工序编码" min-width="120"></el-table-column>
-                    <el-table-column prop="processingType" label="加工类型" min-width="120">
-                      <template slot-scope="scope">
-                        <div>
-                          {{ scope.row.processingType == "self_produced" ? "自制" : "外协" }}
-                        </div>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="planStartDate" label="计划开始日期" min-width="150"></el-table-column>
-                    <el-table-column prop="planEndDate" label="计划结束日期" min-width="150"></el-table-column>
-                    <el-table-column prop="mainUnit" label="单位" min-width="80"></el-table-column>
-                    <el-table-column prop="productionQuantity" label="生产数量" min-width="100"></el-table-column>
-                    <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="100"></el-table-column>
-                    <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="130"></el-table-column>
-                    <el-table-column v-if="dataForm.taskMethod != 'not_appoint'" prop="personName" label="人员"
-                      min-width="120">
-                    </el-table-column>
-                    <el-table-column v-if="dataForm.taskMethod != 'not_appoint'" prop="workGroupName" label="班组"
-                      min-width="160">
-                    </el-table-column>
-                    <el-table-column v-if="dataForm.taskMethod != 'not_appoint'" prop="device" label="设备"
-                      min-width="120">
-                    </el-table-column>
-                    <el-table-column prop="pickingFlag" label="是否领料" min-width="100">
-                      <template slot-scope="scope">
-                        <div>{{ scope.row.pickingFlag ? "是" : "否" }}</div>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="firstInspection" label="是否首检" min-width="100">
-                      <template slot-scope="scope">
-                        <div>{{ scope.row.firstInspection ? "是" : "否" }}</div>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="checkFlag" label="是否检验" min-width="100">
-                      <template slot-scope="scope">
-                        <div>{{ scope.row.checkFlag ? "是" : "否" }}</div>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="reportFlag" label="是否报工" min-width="100">
-                      <template slot-scope="scope">
-                        <div>{{ scope.row.reportFlag ? "是" : "否" }}</div>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="stockFlag" label="是否入库" min-width="100">
-                      <template slot-scope="scope">
-                        <div>{{ scope.row.stockFlag ? "是" : "否" }}</div>
-                      </template>
-                    </el-table-column>
-                  </JNPF-table>
-                </el-col>
-                <el-col :span="12">
-                  <div class="processTitle" style="border-left: 1px solid #dcdfe6;">甘特图信息</div>
+              <div ref='ganttRef'></div>
+              <section style='display: flex;justify-content: start;'>
 
-                </el-col>
-              </el-row>
-
+              </section>
 
 
             </el-collapse-item>
@@ -138,6 +79,8 @@
 <script>
 import { detailordershengchan } from '@/api/productOrdes/index.js'
 import { getWorkReportList } from "@/api/productOrdes/index.js"
+import { gantt } from 'dhtmlx-gantt' // 引入dhtmlx-gantt
+import 'dhtmlx-gantt/codebase/dhtmlxgantt.css'
 export default {
   data() {
     return {
@@ -202,8 +145,124 @@ export default {
       title: "",
 
       prodOrderId: "",
-      selectedRow:null,
+      selectedRow: null,
+      gantttt: {
+        data: [
 
+          /**
+           *
+           id：任务标识，可用来标识父子关系、连接links等
+           start_date,end_date：项目开始截至时间 Date|string //（‘14-07-2022’）
+           text：文本，任务的显示文字
+           progress：项目的进度，用颜色深浅显示
+           parent：父子关系(id标识)；子任务的parent为父任务的id
+           type：任务类型，有三种，object，task，milestone；
+                 object：没有时间限制，长度为包含所有子任务的长度
+                 task：普通任务
+                 milestone：菱形块，可表示中转关系
+           * */
+          { id: 1, text: 'PPDH202410080004', person: '管理员', progress: 0.1, type: 'task', start_date: new Date('2022-10-01'), end_date: new Date('2023-10-12'), open: true },
+          { id: 11, parent: 1, text: '初始化项目', person: '李四', type: 'task', progress: 0.1, color: '#ff0000', start_date: new Date('2023-10-02'), end_date: new Date('2023-10-05'), open: true },
+          { id: 12, parent: 1, text: '前后端开发', type: 'task', progress: 0.1, color: '#00ff00', start_date: new Date('2023-10-05'), end_date: new Date('2023-10-08'), open: true },
+          { id: 13, parent: 1, text: '测试', type: 'task', progress: 0.1, color: '#0000ff', start_date: new Date('2023-10-08'), end_date: new Date('2023-10-10') },
+          { id: 14, parent: 1, text: '上线', type: 'task', progress: 0.1, color: '#00ffff', start_date: new Date('2023-10-10'), end_date: new Date('2023-10-12') },
+
+          { id: 111, parent: 11, text: '创建git仓库', type: 'task', progress: 1, color: '#880000', start_date: new Date('2023-10-02'), end_date: new Date('2023-10-03') },
+          { id: 112, parent: 11, text: '搭建脚手架', type: 'task', progress: 0.5, color: '#550000', start_date: new Date('2023-10-03'), end_date: new Date('2023-10-04') },
+          { id: 113, parent: 11, text: '完成初始化', type: 'task', progress: 0.1, color: '#330000', start_date: new Date('2023-10-04'), end_date: new Date('2023-10-05') },
+
+
+          { id: 121, parent: 12, text: '前端开发', person: '甲', type: 'task', progress: 0, color: '#00aa00', start_date: new Date('2023-10-05'), end_date: new Date('2023-10-07') },
+          { id: 122, parent: 12, text: '后端开发', person: '已', type: 'task', progress: 0, color: '#007700', start_date: new Date('2023-10-05'), end_date: new Date('2023-10-07') },
+          { id: 123, parent: 12, text: '前后端对接', person: '甲、已', type: 'task', progress: 0, color: '#003300', start_date: new Date('2023-10-07'), end_date: new Date('2023-10-08') },
+
+
+          // { id: 3, text: 'Team', type: 'milestone', start_date: '14-07-2023' },
+          // { id: 1, text: '1222', start_date: '25-04-2023', end_date: '01-07-2023', open: true },
+          // {
+          //   id: 12323544,
+          //   text: '44444',
+          //   start_date: '27-04-2023',
+          //   end_date: '01-06-2023',
+          //   duration: 5,
+          //   progress: 0.5,
+          //   person: 'Julia Garner',
+          //   parent: 1,
+          //   open: true
+          // },
+          // {
+          //   id: 1232354422,
+          //   text: '5555555555555555555555555555555555555555555555555555555555555555',
+          //   start_date: new Date('2023-04-27'),
+          //   end_date: new Date('2023-05-01'),
+          //   duration: 2,
+          //   progress: 0.2,
+          //   color: '#2F80ED',
+          //   person: 'Julia Garner',
+          //   parent: 12323544
+          // },
+          // {
+          //   id: 1232354421,
+          //   text: '22222',
+          //   start_date: new Date('2023-05-02'),
+          //   end_date: new Date('2023-05-21'),
+          //   duration: 2,
+          //   progress: 0.3,
+          //   color: '#2F80ED',
+          //   parent: 12323544
+          // },
+          // {
+          //   id: 12323545,
+          //   text: '333333333333333',
+          //   start_date: new Date('2023-05-15'),
+          //   end_date: new Date('2023-06-30'),
+          //   time: '02/01-02/20',
+          //   duration: 2,
+          //   progress: 0.7,
+          //   parent: 1,
+          //   open: true
+          // },
+          // {
+          //   id: 12345453,
+          //   text: '222222',
+          //   start_date: new Date('2023-04-27'),
+          //   end_date: new Date('2023-05-18'),
+          //   time: '02/01-02/20',
+          //   duration: 3,
+          //   progress: 0.9,
+          //   color: '#ED263D',
+          //   parent: 12323545
+          // }
+        ],
+        links: [
+          { id: 1, source: 11, target: 12, type: '0' },
+          { id: 2, source: 12, target: 13, type: '0' },
+          { id: 3, source: 13, target: 14, type: '0' },
+
+          { id: 4, source: 111, target: 112, type: '0' },
+          { id: 5, source: 112, target: 113, type: '0' },
+
+          { id: 6, source: 121, target: 123, type: '0' },
+          { id: 7, source: 122, target: 123, type: '0' },
+
+          // { id: 1, source: 1, target: 3, type: '0' },
+          // { id: 2, source: 1232354422, target: 1232354421, type: '0' },
+          // { id: 3, source: 12345453, target: 12345437, type: '0' }
+        ]
+      },
+      ganttColumns: [
+        // { align: 'right', name: 'color', label: '', width: '150',
+        //   template:function(task){
+        //     if(task.color){
+        //       console.log(task.color)
+        //       return  "<div style='width: 10px;height: 10px;' style='background:"+ task.color+ "'>"+"</div>"}
+        //   }
+        // },
+        { align: 'left', name: 'text', label: '', tree: true, width: "*", min_width: 180, },
+        // { align: 'center', name: 'person', label: '负责人', width: '120' },
+        // { align: 'right', name: 'time', label: '时间节点', width: '80' },
+        { align: 'center', name: 'progress', label: '进度', width: '120', template: (task) => task.progress * 100 + '%' },
+      ]
     }
 
   },
@@ -213,30 +272,151 @@ export default {
 
   },
   mounted() {
-    this.switchStyle() 
-    this.selectedRow = this.workOrderData[0];  
+    this.switchStyle()
+    // 清空之前的配置
+    gantt.clearAll();
+    // 默认配置
+    gantt.plugins({
+      marker: true,
+    });
+    // const markerId = gantt.addMarker({
+    //   start_date: new Date(2023, 4, 26),
+    //   css: 'marker',
+    //   text: 'makerId aaaa',
+    // });
+    //任务的点击方法
+    gantt.attachEvent("onTaskClick", function (id, e) {
+      if (e.target.className === 'gantt_task_content') { //点击内容
+        console.log(id, e.target)
+      }
+      return true;
+    });
+    // 显示到任务上的文本
+    gantt.templates.task_text = function (start, end, task) {
+
+      return "" + task.text + "<span style='margin-left:20px;'></span>" + task
+        .qualifiedQuantity + "/" + task.productionQuantity;
+
+
+    };
+    // // 鼠标悬浮工具提示文本配置
+    // gantt.templates.tooltip_text = function (start, end, task) {
+    //   if (!task.parent) {
+    //     return `
+    //         <div style='display:flex;flex-wrap:wrap;align-items: center;width:300px;'>
+    //           <div style='width: 60%;line-height: 18px;'>任务单号：${task.text}</div> 
+    //           <div style='width: 60%;line-height: 18px;'>数量：${task.qualifiedQuantity}/${task.productionQuantity}</div>
+    //           <div style='width: 60%;line-height: 18px;'>计划时间：${task.start_date} ~ ${task.end_date}</div>
+    //         </div>
+    //         `;
+    //   } else {
+    //     return `
+    //         <div style='display:flex;flex-wrap:wrap;align-items: center;width:300px;'>
+    //           <div style='width: 60%;line-height: 18px;'>工单编号：${task.orderNo}</div>
+    //           <div style='width: 40%;line-height: 18px;'>工序名称：${task.text}</div>
+    //           <div style='width: 60%;line-height: 18px;'>数量：${task.qualifiedQuantity}/${task.productionQuantity}</div>
+    //           <div style='width: 60%;line-height: 18px;'>计划时间：${task.start_date} ~ ${task.end_date}</div>
+    //         </div>
+    //         `;
+    //   }
+    // };
+    gantt.plugins({
+      tooltip: true, // 启用tooltip悬浮框
+      marker: true, // 时间标记
+      // drag_timeline: true, // 拖动图
+    });
+    gantt.config.autofit = false;
+    gantt.config.column_width = 50;
+    gantt.config.work_time = true;
+    gantt.i18n.setLocale('cn'); // 设置中文
+    gantt.config.readonly = true; // 设置为只读
+    gantt.config.bar_height = 32; //task高度
+    //自适应甘特图的尺寸大小, 使得在不出现滚动条的情况下, 显示全部任务
+    gantt.config.autosize = true;
+    //激活列表展开、折叠功能
+    gantt.config.open_split_tasks = true;
+    //用户可以通过拖拽调整行高
+    gantt.config.resize_rows = true;
+    //图标项目栏可以任意拖拽
+    gantt.config.order_branch = true;
+    gantt.config.order_branch_free = true;
+    //设置甘特图表头高度
+    gantt.config.scale_height = 32;
+    //点击表头可排序
+    gantt.config.sort = false;
+    // 显示列配置，限制最大最小时间
+    // gantt.config.start_date = new Date(2023, 3, 25);
+    // gantt.config.end_date = new Date(2023, 5, 26);
+    gantt.config.columns = this.ganttColumns;
+    gantt.config.scales = [
+      { unit: 'month', step: 1, format: '%Y年%F' },
+      { unit: 'day', step: 1, format: this.formatWeekday },
+    ];
+    // gantt.getMarker(markerId);
+    // 初始化甘特图
+
+    gantt.templates.task_class = (start, end, task) => {
+      console.log(task.progress);
+      if (task.progress == 0) return 'Noproduc'
+      if (task.progress < 0.5) {
+        return "low-progress"; //进度低于50%  
+      } else if (task.progress < 1.0) {
+        return "mid-progress"; //进度在50%-99%之间 
+      } else {
+        return "high-progress"; // 完成 }  
+      };
+    }
+    const style = document.createElement('style');
+    style.innerHTML = `  
+    .Noproduc{
+    background-color:"#ccc!important"
+    }
+      .low-progress {  
+      color:red!important; /*低进度颜色 */  
+      }  
+      .mid-progress {  
+      background-color: yellow; /* 中等进度颜色 */  
+      }  
+      .high-progress {  
+      background-color: green; /* 高进度颜色 */  
+      }  
+      `;
+    document.head.appendChild(style);
+
   },
   methods: {
-    
-    handleRowClick(row) {  
+
+    formatWeekday(date) { //1号 周一
+      const dateToStr = gantt.date.date_to_str("%d");
+      const dateToStrss = gantt.date.date_to_str("%Y年");
+      const dateToStrs = gantt.date.date_to_str("%M");
+      // return dateToStrss(date)+dateToStrs(date)+dateToStr(date)+'日';
+      return dateToStrs(date) + dateToStr(date) + '日';
+    },
+
+
+
+
+
+    handleRowClick(row) {
       console.log(row);
       this.selectedRow = row; // 点击行时更新选中行  
-      console.log(123,row==this.selectedRow);
-    },  
+      console.log(123, row == this.selectedRow);
+    },
     // 这里处理行的样式类  
-    rowClassName({ row, rowIndex }) {  
-      const classes = [];  
-      if (rowIndex === 0 && this.selectedRow != this.workOrderData[0]) {  
+    rowClassName({ row, rowIndex }) {
+      const classes = [];
+      if (rowIndex === 0 && this.selectedRow != this.workOrderData[0]) {
         console.log(666666);
         classes.push('highlight-first-row'); // 只有在没有选中其他行时才添加第一行的背景色  
       }
-     this.$nextTick(()=>{
-      if (this.selectedRow == row) {  
-        classes.push('highlight-selected-row'); // 选中行添加背景色类  
-      } 
-     }) 
+      this.$nextTick(() => {
+        if (this.selectedRow == row) {
+          classes.push('highlight-selected-row'); // 选中行添加背景色类  
+        }
+      })
       return classes.join(' '); // 返回类名  
-    },  
+    },
     //自适应窗口
     async switchStyle() {
       await this.$nextTick();
@@ -253,8 +433,8 @@ export default {
         }, 100);
       };
     },
-    
-  
+
+
     selectRelatedTasksFun(val) {
       this.init(val.id)
     },
@@ -277,6 +457,40 @@ export default {
         this.dataForm = res.data.prodOrder
         this.feedData = res.data.materialList
         this.workOrderData = res.data.workOrderList
+        let arr = []
+       
+
+
+        // 2. 拆分成单个项目
+        const list = this.dataForm.processSchedule.split(',');
+
+        // 3. 将每个项目转换为对象格式
+        const result = list.map(item => {
+          const [name, progress] = item.split(':');
+          return { name: name, progress: progress };
+        });
+
+        console.log(123, result);
+        this.workOrderData.forEach((items, index) => {
+          let bjs = {
+            id: items.id,
+            text: items.processName,
+            parent:"",
+            progress: result[index].progress / 100,
+            type: 'task',
+            start_date: new Date(items.planStartDate),
+            end_date: new Date(items.planEndDate),
+            qualifiedQuantity: items.qualifiedQuantity,
+            productionQuantity: items.productionQuantity,
+            orderNo: items.orderNo,
+            color: "#ccc",
+          }
+          arr.push(bjs)
+        })
+        console.log("arr", arr);
+        this.gantttt.data = arr
+        gantt.init(this.$refs.ganttRef);
+        gantt.parse(this.gantttt)
       })
     },
 
@@ -778,13 +992,19 @@ $footerPadding: '10px';
   line-height: 40px;
   border-bottom: 1px solid #dcdfe6;
 }
-::v-deep .highlight-first-row {  
-  background-color: #e0f7fa ; /* 设置第一行的背景色 */  
-}  
-::v-deep .highlight-first-rows {  
-  background-color: red ; /* 设置第一行的背景色 */  
-}  
-::v-deep .highlight-selected-row {  
-  background-color: #f2f2f2; /* 设置选中行的背景色 */  
-}  
+
+::v-deep .highlight-first-row {
+  background-color: #e0f7fa;
+  /* 设置第一行的背景色 */
+}
+
+::v-deep .highlight-first-rows {
+  background-color: red;
+  /* 设置第一行的背景色 */
+}
+
+::v-deep .highlight-selected-row {
+  background-color: #f2f2f2;
+  /* 设置选中行的背景色 */
+}
 </style>

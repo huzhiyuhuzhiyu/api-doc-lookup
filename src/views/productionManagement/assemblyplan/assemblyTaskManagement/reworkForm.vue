@@ -986,8 +986,8 @@ export default {
     // 选择返工产品
     selectProductFun(data) {
       console.log("所选返工产品", data);
-      this.dataForm = data 
-      this.$set(this.dataForm,'taskMethod','appoint')
+      this.dataForm = data
+      this.$set(this.dataForm, 'taskMethod', 'appoint')
       this.$set(this.dataForm, 'planDate', [])
       this.$set(this.dataForm, 'orderNo', this.codeConfig.number)
     },
@@ -1534,18 +1534,28 @@ export default {
 
             for (let index = 0; index < this.dataFormTwo.data.length; index++) {
               const item = this.dataFormTwo.data[index];
-              if (
-                !item.workGroupId &&
-                !item.personId &&
-                !item.equipmentId &&
-                item.processingType == "self_produced"
-              ) {
-                submitFlag = false;
-                this.$message({
-                  message: "第" + (index + 1) + "行班组、人员需要必填一项",
-                  type: "error",
-                });
-                break;
+              if (item.reportFlag) {
+
+                if (
+                  !item.workGroupId &&
+                  !item.personId && item.processingType == "self_produced"
+                ) {
+                  submitFlag = false;
+                  this.$message({
+                    message: "第" + (index + 1) + "行班组、人员需要必填一项",
+                    type: "error",
+                  });
+                  break;
+                }
+              } else {
+                if (!item.personId) {
+                  submitFlag = false;
+                  this.$message({
+                    message: "第" + (index + 1) + "行工序需配置人员信息",
+                    type: "error",
+                  });
+                  break;
+                }
               }
             }
           } else {

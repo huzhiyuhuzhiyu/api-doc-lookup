@@ -1023,9 +1023,9 @@ export default {
 
             }
           } else {
-          }
-        });
-        this.dataFormTwo.data = res.data.routingLineList;
+          } 
+      });
+        this.dataFormTwo.data =res.data.routingLineList.filter(item => item.workOrderFlag).sort((a, b) => a.sort - b.sort);
         this.processList = JSON.parse(JSON.stringify(res.data.routingLineList))
       })
     },

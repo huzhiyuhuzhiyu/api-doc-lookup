@@ -955,7 +955,7 @@ export default {
       detailProcess(id).then(res => {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
         console.log("工艺详情", res);
-        this.dataFormTwo.data = res.data.routingLineList;
+        this.dataFormTwo.data = res.data.routingLineList.filter(item => item.workOrderFlag).sort((a, b) => a.sort - b.sort)
         res.data.routingLineList.forEach((item) => {
 
           if (item.routingProResMap) {

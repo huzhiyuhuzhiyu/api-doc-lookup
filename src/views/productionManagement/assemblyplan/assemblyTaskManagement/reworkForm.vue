@@ -1832,4 +1832,7 @@ $footerPadding: '10px';
   background-color: #5d9bd5;
   color: #fff;
 }
+::v-deep .el-range-editor{
+  height: 34px!important;
+}
 </style>

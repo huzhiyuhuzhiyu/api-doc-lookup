@@ -1822,4 +1822,7 @@ $footerPadding: '10px';
 ::v-deep .el-range-editor{
   height: 34px!important;
 }
+::v-deep .el-range-editor{
+  height: 34px!important;
+}
 </style>

@@ -394,7 +394,7 @@ export default {
         let hasItemList = []
         for (let i = 0; i < this.selectData.length; i++) {
           let item = this.selectData[i]
-
+          console.log(item.externalProductsId,'item.externalProductsId')
           if (!item.externalProductsId) {
             this.$message.error(`请配置毛坯产品所对就主产品的BOM！`)
             msg = false

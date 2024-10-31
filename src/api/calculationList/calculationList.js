@@ -49,3 +49,14 @@ export function detailPlanList(id) {
     method: 'GET'
   })
 }
+
+
+
+// 计划进度
+
+export function getPlanSchedule(id) {
+  return request({
+    url: `/api/mrp/plan/schedule?id=`+id,
+    method: 'GET'
+  })
+}

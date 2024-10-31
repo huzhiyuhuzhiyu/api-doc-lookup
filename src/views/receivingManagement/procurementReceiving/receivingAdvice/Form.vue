@@ -1509,10 +1509,15 @@ export default {
       console.log(btnType, 'iiiiii')
       this.approvalFlag = approvalFlag
       console.log(data, 'ddd')
-      if (data.length) {
+      if (data) {
         this.dataFormTwo.productData = data
         this.dataForm.partnerName = data[0].cooperativePartnerName
         this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
+        data.forEach((item) => {
+          console.log('ooooooo', item)
+          item.ordersNo = item.orderNo
+
+        })
       }
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
@@ -1568,11 +1573,7 @@ export default {
         })
       } else {
         this.dataForm.salesman = this.userInfo.userName
-        data.forEach((item) => {
-          console.log('ooooooo', item)
-          item.ordersNo = item.orderNo
 
-        })
         this.fetchData('CGSH')
         this.getBusInfo()
       }

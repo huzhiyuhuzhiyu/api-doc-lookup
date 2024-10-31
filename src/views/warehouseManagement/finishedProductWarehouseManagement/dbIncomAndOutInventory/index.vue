@@ -1281,6 +1281,11 @@
       @close="closeForm">
     </ExternalMaterOutboundForm>
 
+    <EquipmentOutboundForm v-if="equipmentOutboundVisible" ref="equipmentOutboundREFForm"
+      @close="closeForm">
+    </EquipmentOutboundForm>
+
+
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -1329,6 +1334,8 @@ import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
 import ToolForm from '@/views/dailyManagement/borrowingReturn/circulate/Form.vue'
 import SparePartsForm from '@/views/dailyManagement/sparepartsmanagement/sparepartsrequisition/Form.vue'
 import EquipmentForm from '@/views/dailyManagement/equipmentrequisitionreturn/equipmentrequisition/Form.vue'
+import { CollectionandreturnList } from '@/api/dailyManagement/Maintenance'
+import EquipmentOutboundForm from './equipmentOutboundForm.vue'
 export default {
   name: 'dbIncomAndOutInventory',
   mixins: [mixin],
@@ -1340,7 +1347,7 @@ export default {
     InboundSaleReturnForm, InboundPurchaseForm, OutboundPurchaseForm,
     OutboundExternalSendForm, InboundExternalForm, OutboundPickOutForm, InboundReturnMaterialsForm,
     SaleForm, SaleOutboundForm, PurchaseOrderInboundForm, PurchaseForm, ProductExternalForm, ExternalInboundForm,
-    ExternalMaterOutboundForm,ToolForm,SparePartsForm,EquipmentForm
+    ExternalMaterOutboundForm,ToolForm,SparePartsForm,EquipmentForm,EquipmentOutboundForm
   },
   props: {
     warehouseCode: "",
@@ -1429,11 +1436,13 @@ export default {
         }],
       },
       useDateArr:[],
+      equipmentOutboundVisible:false,
       outboundUseTableList:[],
       outboundUseTotal:0,
       outboundUseList:["createByName"],
       outboundUseForm:{
-        stockFlag:false,
+        classAttributeList:[],
+        stockFlag:true,
         equipmentType:"",
         maintainerIdText:"",
         orderNo:"",
@@ -2039,6 +2048,10 @@ export default {
               item.fullName = '资产领用'
 
             }
+            if(item.businessType=='inbound_return'){
+              item.fullName = '资产归还'
+
+            }
 
           });
         }
@@ -2137,7 +2150,17 @@ export default {
           this.$nextTick(() => {
             this.$refs.inboundReturnMaterialsREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
           })
-        } else {
+        }else if (this.categoryType == 'outbound_use') {
+          this.equipmentOutboundVisible = true
+          this.$nextTick(() => {
+            console.log(12345,data);
+            console.log(12345,btnType);
+            console.log(12345,this.categoryType);
+            console.log(12345, this.classAttributeList);
+            console.log(12345, this.warehouseCode);
+            this.$refs.equipmentOutboundREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
+          })
+        }  else {
           this.formVisible = true
           this.$nextTick(() => {
             this.$refs[ref].init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
@@ -2681,8 +2704,8 @@ export default {
           this.outboundUseForm.collEndTime=""
         }
         this.listLoading = true
-        this.returnMaterForm.productClassAttributeList = this.classAttributeList
-        // this.returnMaterForm.approvalStatus = 'ok'
+        this.outboundUseForm.classAttributeList = this.classAttributeList
+        this.outboundUseForm.approvalStatus = 'ok'
 
         this.superForm = this.outboundUseForm
         if (type === 'basic') {
@@ -2702,7 +2725,7 @@ export default {
         if (type === 'super') {
           this.superForm.superQuery = this.superQuery
         }
-        WithdrawalList(this.returnMaterForm).then(res => {
+        CollectionandreturnList(this.outboundUseForm).then(res => {
           console.log("退料", res);
           this.outboundUseTableList = res.data.records
           this.outboundUseTotal = res.data.total
@@ -3297,7 +3320,8 @@ export default {
       if (this.categoryType == 'outbound_use') {
         this.useDateArr=[]
         this.superForm = this.outboundUseForm = {
-          stockFlag:false,
+          stockFlag:true,
+          classAttributeList:this.classAttributeList,
           equipmentType:"",
         maintainerIdText:"",
         orderNo:"",
@@ -3394,6 +3418,7 @@ export default {
       this.productExternalVisible = false
       this.externalInboundFormVisible = false
       this.externalMaterOutboundFormVisible = false
+      this.equipmentOutboundVisible=false
       if (isRefresh) {
         // this.getStockMovelistFun()
         this.getPickingConfig()

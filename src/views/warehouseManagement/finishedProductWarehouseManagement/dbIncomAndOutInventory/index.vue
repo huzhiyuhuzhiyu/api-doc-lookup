@@ -6,7 +6,8 @@
         style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:0px 0 0px 0">
         <el-radio-group v-model="categoryType" style="background-color:#fff;">
 
-          <el-badge :value="item.num!=null||item.num!=undefined ? item.num : item.todoNum" :max="99" v-for="item in treeData" :key="item.id">
+          <el-badge :value="item.num != null || item.num != undefined ? item.num : item.todoNum" :max="99"
+            v-for="item in treeData" :key="item.id">
             <el-radio-button style="margin:2px 0;" :key="item.businessType" :label="item.businessType">{{ item.fullName
               }}</el-radio-button>
           </el-badge>
@@ -35,8 +36,8 @@
               </el-form-item>
             </el-col>
           </template>
-      
-          
+
+
           <el-col :span="6">
             <el-form-item>
               <el-date-picker v-model="fhDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
@@ -56,8 +57,8 @@
         </el-form>
         <!-- 销售发货  订单 -->
         <el-form @submit.native.prevent v-if="categoryType == 'outbound_sale_send' && saleFlag">
-          
-         
+
+
           <template v-for="item in searchList9">
             <el-col :span="item.searchType === 3 ? 6 : 4">
               <el-form-item>
@@ -95,7 +96,7 @@
         <!-- 采购 收退货查询条件 -->
         <el-form @submit.native.prevent
           v-if="categoryType == 'outbound_purchase' || (categoryType == 'inbound_purchase' && !purchaseFlag)">
-       
+
           <template v-for="item in searchList2">
             <el-col :span="item.searchType === 3 ? 6 : 4">
               <el-form-item>
@@ -151,7 +152,7 @@
               </el-form-item>
             </el-col>
           </template>
-         
+
           <el-col :span="6">
             <el-form-item>
               <el-date-picker v-model="purchaserOrderDateArr" type="daterange" value-format="yyyy-MM-dd"
@@ -171,7 +172,7 @@
 
         <!-- 外协收货查询条件 -->
         <el-form @submit.native.prevent v-if="categoryType == 'inbound_external' && !externalFlag">
-         
+
           <template v-for="item in searchList4">
             <el-col :span="item.searchType === 3 ? 6 : 4">
               <el-form-item>
@@ -208,7 +209,7 @@
         </el-form>
         <!-- 外协收货 订单 -->
         <el-form @submit.native.prevent v-if="categoryType == 'inbound_external' && externalFlag">
-          
+
           <template v-for="item in searchList11">
             <el-col :span="item.searchType === 3 ? 6 : 4">
               <el-form-item>
@@ -227,7 +228,7 @@
               </el-form-item>
             </el-col>
           </template>
-     
+
           <el-col :span="6">
             <el-form-item>
               <el-date-picker v-model="externalDate" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
@@ -265,7 +266,7 @@
             </el-col>
           </template>
 
-          
+
           <el-col :span="6">
             <el-form-item>
               <el-date-picker v-model="wxflDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
@@ -284,7 +285,7 @@
         </el-form>
         <!-- 外协发料 订单查询条件 -->
         <el-form @submit.native.prevent v-if="categoryType == 'outbound_external_send' && externalFlag">
-          
+
           <template v-for="item in searchList12">
             <el-col :span="item.searchType === 3 ? 6 : 4">
               <el-form-item>
@@ -303,7 +304,7 @@
               </el-form-item>
             </el-col>
           </template>
-      
+
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList('basic')">
@@ -315,7 +316,7 @@
         </el-form>
         <!-- 生产领料 查询 -->
         <el-form @submit.native.prevent v-if="categoryType == 'outbound_pick_out'">
-           
+
           <template v-for="item in searchList5">
             <el-col :span="item.searchType === 3 ? 6 : 4">
               <el-form-item>
@@ -334,7 +335,7 @@
               </el-form-item>
             </el-col>
           </template>
-        
+
           <el-col :span="4">
             <el-form-item>
               <el-select v-model="pickForm.receiveType" placeholder="领料类型" style="width: 100%;">
@@ -355,10 +356,10 @@
         </el-form>
         <!-- 生产退料 查询 -->
         <el-form @submit.native.prevent v-if="categoryType == 'inbound_return_materials'">
-         
-         
-        
-        
+
+
+
+
           <template v-for="item in searchList6">
             <el-col :span="item.searchType === 3 ? 6 : 4">
               <el-form-item>
@@ -394,6 +395,42 @@
             </el-form-item>
           </el-col>
         </el-form>
+        <!-- 设备领用 查询 -->
+        <el-form @submit.native.prevent v-if="categoryType == 'outbound_use'">
+          <template v-for="item in searchList13">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="getTabdataList('basic')" />
+
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
+          <el-col :span="6">
+              <el-form-item>
+                <el-date-picker v-model="useDateArr" type="daterange" value-format="yyyy-MM-dd"
+                  style="width: 100%;" start-placeholder="领用开始日期" end-placeholder="领用结束日期" clearable>
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+          <el-col :span="6">
+            <el-form-item>
+              <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList('basic')">
+                {{ $t('common.search') }}</el-button>
+              <el-button size="mini" icon="el-icon-refresh-right" @click="resetFun()">{{ $t('common.reset') }}
+              </el-button>
+            </el-form-item>
+          </el-col>
+        </el-form>
       </el-row>
 
       <div class="JNPF-common-layout-main JNPF-flex-main" v-if="categoryType != 'inbound_mock_production'">
@@ -416,33 +453,33 @@
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                v-if="categoryType == 'outbound_sale_send'&&!saleFlag" @click="columnSetFun('fhtabForm')" />
-                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                v-if="categoryType == 'outbound_sale_send'&&saleFlag" @click="columnSetFun('salestabForm')" />
+                v-if="categoryType == 'outbound_sale_send' && !saleFlag" @click="columnSetFun('fhtabForm')" />
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                v-if="categoryType == 'outbound_sale_send' && saleFlag" @click="columnSetFun('salestabForm')" />
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                 v-if="categoryType == 'inbound_sale_return'" @click="columnSetFun('thtabForm')" />
 
-                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                v-if="categoryType == 'outbound_purchase' "  @click="columnSetFun('cgthtabForm')" />
-                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                v-if="categoryType == 'inbound_purchase'&& !purchaseFlag"
-                @click="columnSetFun('cgshtabForm')" />
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                v-if=" categoryType == 'inbound_purchase'&& purchaseFlag"
-                @click="columnSetFun('purchasetabForm')" />
+                v-if="categoryType == 'outbound_purchase'" @click="columnSetFun('cgthtabForm')" />
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                v-if="categoryType == 'inbound_purchase' && !purchaseFlag" @click="columnSetFun('cgshtabForm')" />
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                v-if="categoryType == 'inbound_purchase' && purchaseFlag" @click="columnSetFun('purchasetabForm')" />
 
 
 
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                v-if="categoryType == 'inbound_external'&&!externalFlag" @click="columnSetFun('wxshtabForm')" />
-                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                v-if="categoryType == 'inbound_external'&&externalFlag" @click="columnSetFun('externaltabForm')" />
+                v-if="categoryType == 'inbound_external' && !externalFlag" @click="columnSetFun('wxshtabForm')" />
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                v-if="categoryType == 'inbound_external' && externalFlag" @click="columnSetFun('externaltabForm')" />
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                 v-if="categoryType == 'outbound_external_send'" @click="columnSetFun('wxfltabForm')" />
-                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                 v-if="categoryType == 'outbound_pick_out'" @click="columnSetFun('picktabForm')" />
-                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                 v-if="categoryType == 'inbound_return_materials'" @click="columnSetFun('returnMatertabForm')" />
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                v-if="categoryType == 'outbound_use'" @click="columnSetFun('outboundUseForm')" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
@@ -451,9 +488,9 @@
           </div>
         </div>
         <!-- 销售发货通知单列表 -->
-        <JNPF-table  :partentOrChild="'fhtabForm'" v-loading="listLoading" :data="fhTableList" @sort-change="sortChange"
+        <JNPF-table :partentOrChild="'fhtabForm'" v-loading="listLoading" :data="fhTableList" @sort-change="sortChange"
           v-show="categoryType == 'outbound_sale_send' && !saleFlag" custom-column ref="fhtabForm" :fixedNO="true"
-          :setColumnDisplayList="fhcolumnList" >
+          :setColumnDisplayList="fhcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
@@ -502,7 +539,7 @@
               </div>
             </template>
           </el-table-column>
- 
+
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
           <el-table-column label="操作" width="180" fixed="right">
@@ -515,9 +552,9 @@
           </el-table-column>
         </JNPF-table>
         <!-- 销售发货 订单列表 -->
-        <JNPF-table    :key='1' v-loading="listLoading" :data="saleList" @sort-change="sortChange" v-show="categoryType == 'outbound_sale_send' && saleFlag"
-          custom-column ref="salestabForm" :fixedNO="true" :setColumnDisplayList="salecolumnList" hasC
-          @selection-change="handeleselectSale">
+        <JNPF-table :key='1' v-loading="listLoading" :data="saleList" @sort-change="sortChange"
+          v-show="categoryType == 'outbound_sale_send' && saleFlag" custom-column ref="salestabForm" :fixedNO="true"
+          :setColumnDisplayList="salecolumnList" hasC @selection-change="handeleselectSale">
           <el-table-column prop="orderNo" label="订单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
@@ -558,8 +595,9 @@
           </el-table-column>
         </JNPF-table>
         <!-- 销售退货货通知单列表 -->
-        <JNPF-table :partentOrChild="'thtabForm'" v-loading="listLoading" :data="thTableList" @sort-change="sortChange" v-show="categoryType == 'inbound_sale_return'"
-          custom-column ref="thtabForm" :fixedNo="true" :setColumnDisplayList="thcolumnList">
+        <JNPF-table :partentOrChild="'thtabForm'" v-loading="listLoading" :data="thTableList" @sort-change="sortChange"
+          v-show="categoryType == 'inbound_sale_return'" custom-column ref="thtabForm" :fixedNo="true"
+          :setColumnDisplayList="thcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
@@ -581,7 +619,7 @@
               </div>
             </template>
           </el-table-column>
-         
+
 
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
@@ -594,57 +632,48 @@
             </template>
           </el-table-column>
         </JNPF-table>
-        <!-- { label: "销售发货", value: "outbound_sale_send" },
-        { label: "销售退货", value: "inbound_sale_return" },
-        { label: "采购收货", value: "inbound_purchase" },
-        { label: "采购退货", value: "outbound_purchase" },
-        { label: "生产领料", value: "outbound_pick_out" },
-        { label: "生产退料", value: "inbound_return_materials" },
-        { label: "外协发料", value: "outbound_external_send" },
-        { label: "外协退料", value: "inbound_external_return" },
-        { label: "外协收货", value: "inbound_external" },
-        { label: "外协退货", value: "outbound_external" }, -->
+ 
 
         <!-- 采购 退货 通知单-->
-        <JNPF-table :partentOrChild="'cgthtabForm'" v-loading="listLoading" @sort-change="sortChange" :data="cgTableList"
-          v-show="categoryType == 'outbound_purchase'"
-          custom-column ref="cgthtabForm" :fixedNo="true" :setColumnDisplayList="cgthcolumnList">
+        <JNPF-table :partentOrChild="'cgthtabForm'" v-loading="listLoading" @sort-change="sortChange"
+          :data="cgTableList" v-show="categoryType == 'outbound_purchase'" custom-column ref="cgthtabForm"
+          :fixedNo="true" :setColumnDisplayList="cgthcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
-              <el-link type="primary" 
+              <el-link type="primary"
                 @click.native="viewFun(scope.row.id, 'look', 'CGTHREFForm', cgthFormVisible = true)">{{
                   scope.row.orderNo
                 }}</el-link>
-             
+
             </template>
           </el-table-column>
           <el-table-column prop="partnerName" label="供应商名称" min-width="140" sortable="custom" />
           <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" />
           <el-table-column prop="salesman" label="操作员" min-width="140" sortable="custom" />
-          <el-table-column prop="deliverDate" label="退货日期" min-width="140" sortable="custom" ></el-table-column> 
- 
+          <el-table-column prop="deliverDate" label="退货日期" min-width="140" sortable="custom"></el-table-column>
+
           <el-table-column prop="remark" label="备注" width="180"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="createByName" label="创建人" width="140"  />
+          <el-table-column prop="createByName" label="创建人" width="140" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <el-button size="mini" type="text" v-if="categoryType == 'outbound_purchase'"
                 @click="incomAndOutInventFun(scope.row, 'add', 'Form', 'outbound_purchase')">出库</el-button>
-   
+
               <el-button size="mini" type="text" v-if="categoryType == 'outbound_purchase'"
                 @click="viewFun(scope.row.id, 'look', 'CGTHREFForm', cgthFormVisible = true)">查看详情</el-button>
-           
+
             </template>
           </el-table-column>
         </JNPF-table>
         <!-- 采购收货通知单 -->
-        <JNPF-table :partentOrChild="'cgshtabForm'" v-loading="listLoading" @sort-change="sortChange" :data="cgTableList"
-          v-show="categoryType == 'inbound_purchase' && !purchaseFlag"
-          custom-column ref="cgshtabForm" :fixedNo="true" :setColumnDisplayList="cgthcolumnList">
+        <JNPF-table :partentOrChild="'cgshtabForm'" v-loading="listLoading" @sort-change="sortChange"
+          :data="cgTableList" v-show="categoryType == 'inbound_purchase' && !purchaseFlag" custom-column
+          ref="cgshtabForm" :fixedNo="true" :setColumnDisplayList="cgthcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
-           
-              <el-link type="primary" 
+
+              <el-link type="primary"
                 @click.native="viewFun(scope.row.id, 'look', 'CGSHREFForm', cgshFormVisible = true)">{{
                   scope.row.orderNo
                 }}</el-link>
@@ -652,26 +681,27 @@
           </el-table-column>
           <el-table-column prop="partnerName" label="供应商名称" min-width="140" sortable="custom" />
           <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" />
-          <el-table-column prop="salesman" label="操作员" min-width="140" sortable="custom" /> 
-          <el-table-column prop="deliverDate" label="收货日期" min-width="140" sortable="custom" ></el-table-column>
+          <el-table-column prop="salesman" label="操作员" min-width="140" sortable="custom" />
+          <el-table-column prop="deliverDate" label="收货日期" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="remark" label="备注" width="180"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="createByName" label="创建人" width="140"  />
+          <el-table-column prop="createByName" label="创建人" width="140" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-            
+
               <el-button size="mini" type="text" v-if="categoryType == 'inbound_purchase'"
                 @click="incomAndOutInventFun(scope.row, 'add', 'Form', 'inbound_purchase')">入库</el-button>
-          
+
               <el-button size="mini" type="text" v-if="categoryType == 'inbound_purchase'"
                 @click="viewFun(scope.row.id, 'look', 'CGSHREFForm', cgshFormVisible = true)">查看详情</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
         <!-- 采购收货 订单 -->
-        <JNPF-table :partentOrChild="'purchasetabForm'"  v-loading="listLoading" @sort-change="sortChange" :data="purchaseList"
-          v-show="categoryType == 'inbound_purchase' && purchaseFlag" custom-column ref="purchasetabForm" :fixedNo="true"
-          hasC @selection-change="handeleselectPurchase" :setColumnDisplayList="purchasecolumnList">
+        <JNPF-table :partentOrChild="'purchasetabForm'" v-loading="listLoading" @sort-change="sortChange"
+          :data="purchaseList" v-show="categoryType == 'inbound_purchase' && purchaseFlag" custom-column
+          ref="purchasetabForm" :fixedNo="true" hasC @selection-change="handeleselectPurchase"
+          :setColumnDisplayList="purchasecolumnList">
           <el-table-column prop="orderNo" label="订单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
@@ -701,8 +731,8 @@
           <el-table-column prop="packagingMethod" label="包装方式" min-width="160" sortable="custom" />
           <el-table-column prop="specialRequire" label="特殊要求" min-width="160" sortable="custom" />
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" min-width="120"  />
-         
+          <el-table-column prop="createByName" label="创建人" min-width="120" />
+
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <el-button size="mini" type="text"
@@ -713,9 +743,9 @@
           </el-table-column>
         </JNPF-table>
         <!-- 外协收货 -->
-        <JNPF-table :partentOrChild="'wxshtabForm'" v-loading="listLoading" @sort-change="sortChange" :data="wxshTableList"
-          v-show="categoryType == 'inbound_external' && !externalFlag" custom-column ref="wxshtabForm" :fixedNo="true"
-          :setColumnDisplayList="wxshthcolumnList">
+        <JNPF-table :partentOrChild="'wxshtabForm'" v-loading="listLoading" @sort-change="sortChange"
+          :data="wxshTableList" v-show="categoryType == 'inbound_external' && !externalFlag" custom-column
+          ref="wxshtabForm" :fixedNo="true" :setColumnDisplayList="wxshthcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
               <!-- <el-link type="primary" v-if="categoryType == 'outbound_purchase'"
@@ -749,9 +779,9 @@
           </el-table-column>
         </JNPF-table>
         <!-- 外协收货 订单 -->
-        <JNPF-table :partentOrChild="'externaltabForm'" v-loading="listLoading" @sort-change="sortChange" :data="externalList"
-          v-show="categoryType == 'inbound_external' && externalFlag" hasC custom-column ref="externaltabForm"
-          fixedNO :setColumnDisplayList="externalcolumnList"
+        <JNPF-table :partentOrChild="'externaltabForm'" v-loading="listLoading" @sort-change="sortChange"
+          :data="externalList" v-show="categoryType == 'inbound_external' && externalFlag" hasC custom-column
+          ref="externaltabForm" fixedNO :setColumnDisplayList="externalcolumnList"
           @selection-change="handeleselectExternal">
           <el-table-column prop="orderNo" label="订单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
@@ -782,9 +812,9 @@
           </el-table-column>
         </JNPF-table>
         <!-- 外协发料 -->
-        <JNPF-table  :partentOrChild="'wxfltabForm'"  v-loading="listLoading" @sort-change="sortChange" :key="3" :data="wxflTableList"
-          v-show="categoryType == 'outbound_external_send' && !externalFlag" custom-column ref="wxfltabForm"
-          :fixedNo="true" :setColumnDisplayList="wxflcolumnList">
+        <JNPF-table :partentOrChild="'wxfltabForm'" v-loading="listLoading" @sort-change="sortChange" :key="3"
+          :data="wxflTableList" v-show="categoryType == 'outbound_external_send' && !externalFlag" custom-column
+          ref="wxfltabForm" :fixedNo="true" :setColumnDisplayList="wxflcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
@@ -832,12 +862,12 @@
                 @click="viewFun(scope.row.id, 'look', 'WXFLREFForm', wxflFormVisible = true)">查看详情</el-button>
             </template>
           </el-table-column>
-        </JNPF-table> 
-        
+        </JNPF-table>
+
         <!-- 外协发料 订单-->
-        <JNPF-table  :partentOrChild="'wxfltabForm'" v-loading="listLoading" @sort-change="sortChange"  :key="3" :data="exterMaterList"
-          v-show="categoryType == 'outbound_external_send' && externalFlag" custom-column ref="wxfltabForm" hasC
-          @selection-change="handeleselectExternalMter" fixedNO
+        <JNPF-table :partentOrChild="'wxfltabForm'" v-loading="listLoading" @sort-change="sortChange" :key="3"
+          :data="exterMaterList" v-show="categoryType == 'outbound_external_send' && externalFlag" custom-column
+          ref="wxfltabForm" hasC @selection-change="handeleselectExternalMter" fixedNO
           :setColumnDisplayList="wxflcolumnList">
           <el-table-column prop="orderNo" label="订单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
@@ -855,7 +885,7 @@
           <el-table-column prop="processName" label="工序名称" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="mainUnit" label="单位" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="purchaseQuantity" label="订单数量" min-width="140" sortable="custom"></el-table-column>
-          
+
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <el-button size="mini" type="text"
@@ -866,8 +896,9 @@
           </el-table-column>
         </JNPF-table>
         <!-- 装配/套圈领料 outbound_pick_out -->
-        <JNPF-table  :partentOrChild="'picktabForm'"  v-loading="listLoading"   @sort-change="sortChange" :data="pickingTableList" v-show="categoryType == 'outbound_pick_out'"
-          custom-column ref="picktabForm" :fixedNo="true" :setColumnDisplayList="pickcolumnList">
+        <JNPF-table :partentOrChild="'picktabForm'" v-loading="listLoading" @sort-change="sortChange"
+          :data="pickingTableList" v-show="categoryType == 'outbound_pick_out'" custom-column ref="picktabForm"
+          :fixedNo="true" :setColumnDisplayList="pickcolumnList">
           <el-table-column prop="orderNo" label="领料单号" min-width="160" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
@@ -895,14 +926,15 @@
           </el-table-column>
         </JNPF-table>
 
-        <!-- 装配/套圈退料 outbound_pick_out -->
-        <JNPF-table :partentOrChild="'returnMatertabForm'"  v-loading="listLoading" @sort-change="sortChange" :data="returnMaterTableList"
-          v-show="categoryType == 'inbound_return_materials'" custom-column ref="returnMatertabForm" :fixedNo="true"
-          :setColumnDisplayList="returnMatercolumnList">
+        
+           <!-- 装配/套圈退料 outbound_pick_out -->
+        <JNPF-table :partentOrChild="'returnMatertabForm'" v-loading="listLoading" @sort-change="sortChange"
+          :data="returnMaterTableList" v-show="categoryType == 'inbound_return_materials'" custom-column
+          ref="returnMatertabForm" :fixedNo="true" :setColumnDisplayList="returnMatercolumnList">
           <el-table-column prop="orderNo" label="退料单号" min-width="160" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
-                @click.native="viewFun(scope.row.id, 'look', 'ReturnMaterREFForm', returnMaterFormVisible = true)">{{
+                @click.native="viewFun(scope.row.id, 'look', 'ReturnMaterREFForm', returnMaterFormVisible = true,scope.row)">{{
                   scope.row.orderNo
                 }}</el-link>
             </template>
@@ -921,12 +953,41 @@
               <el-button size="mini" type="text"
                 @click="incomAndOutInventFun(scope.row, 'add', 'Form', 'returnMater')">入库</el-button>
               <el-button size="mini" type="text"
-                @click="viewFun(scope.row.id, 'look', 'ReturnMaterREFForm', returnMaterFormVisible = true)">查看详情</el-button>
+                @click="viewFun(scope.row.id, 'look', 'ReturnMaterREFForm', returnMaterFormVisible = true,scope.row)">查看详情</el-button>
+            </template>
+          </el-table-column>
+        </JNPF-table> 
+        <!-- 设备领用 outbound_use -->
+        <JNPF-table :partentOrChild="'outboundUseForm'" v-loading="listLoading" @sort-change="sortChange"
+          :data="outboundUseTableList" v-show="categoryType == 'outbound_use'" custom-column
+          ref="outboundUseForm" :fixedNo="true" :setColumnDisplayList="equipmentOutboundList">
+          <el-table-column prop="orderNo" label="领用单号" min-width="160" sortable="custom">
+            <template slot-scope="scope">
+              <el-link type="primary"
+                @click.native="viewEquipmentFun(scope.row.id, 'look',scope.row)">{{
+                  scope.row.orderNo
+                }}</el-link>
+            </template>
+          </el-table-column>
+          <el-table-column prop="receiveType" label="领用目的" min-width="120" sortable="custom">
+            <template slot-scope="scope">
+              <div v-if="scope.row.receiveType=='equipmentmaintain'">设备保养</div>
+              <div v-if="scope.row.receiveType=='equipmentrepair'">设备维修</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="collectionTime" label="领用日期" min-width="160" sortable="custom" />
+          <el-table-column prop="maintainerIdText" label="领用人" min-width="140" sortable="custom"></el-table-column>
+          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
+          <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
+          <el-table-column label="操作" width="180" fixed="right">
+            <template slot-scope="scope">
+              <el-button size="mini" type="text"
+                @click="incomAndOutInventFun(scope.row, 'add', 'Form', 'returnMater')">出库</el-button>
+              <el-button size="mini" type="text"
+                @click="viewEquipmentFun(scope.row.id, 'look',scope.row)">查看详情</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
-
-
         <pagination :total="fhTotal" :page.sync="fhForm.pageNum" :limit.sync="fhForm.pageSize"
           @pagination="getTabdataList"
           v-if="(categoryType == 'outbound_sale_send' && !saleFlag) || categoryType == 'inbound_sale_return'">
@@ -960,6 +1021,9 @@
         <pagination :total="externalTotal" :page.sync="externalForm.pageNum" :limit.sync="externalForm.pageSize"
           @pagination="getTabdataList" v-if="categoryType == 'inbound_external' && externalFlag">
         </pagination>
+        <pagination :total="outboundUseTotal" :page.sync="outboundUseForm.pageNum" :limit.sync="outboundUseForm.pageSize"
+          @pagination="getTabdataList" v-if="categoryType == 'outbound_use'">
+        </pagination>
 
       </div>
 
@@ -969,14 +1033,14 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
               <el-form @submit.native.prevent>
-              
-                
+
+
                 <template v-for="item in searchList7">
                   <el-col :span="item.searchType === 3 ? 6 : 4">
                     <el-form-item>
-                      <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
-                        @keyup.enter.native="getTabdataList('basic')" />
-                    
+                      <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label"
+                        clearable @keyup.enter.native="getTabdataList('basic')" />
+
                       <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
                         clearable>
                         <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
@@ -1031,8 +1095,9 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table :partentOrChild="'dataTableProductRef'"  ref="dataTableProductRef" v-loading="listLoading" :data="productData" :fixedNO="true"
-                custom-column :setColumnDisplayList="productColumns" v-show="categoryType == 'inbound_mock_production'">
+              <JNPF-table :partentOrChild="'dataTableProductRef'" ref="dataTableProductRef" v-loading="listLoading"
+                :data="productData" :fixedNO="true" custom-column :setColumnDisplayList="productColumns"
+                v-show="categoryType == 'inbound_mock_production'">
                 <el-table-column prop="orderNo" label="任务单号" width="180" />
                 <el-table-column prop="orderType" label="任务类型" width="120">
                   <template slot-scope="scope">
@@ -1083,9 +1148,9 @@
                 <template v-for="item in searchList8">
                   <el-col :span="item.searchType === 3 ? 6 : 4">
                     <el-form-item>
-                      <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
-                        @keyup.enter.native="getTabdataList('basic')" />
-                    
+                      <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label"
+                        clearable @keyup.enter.native="getTabdataList('basic')" />
+
                       <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
                         clearable>
                         <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
@@ -1098,7 +1163,7 @@
                     </el-form-item>
                   </el-col>
                 </template>
-                
+
                 <el-col :span="6">
                   <el-form-item>
                     <el-button type="primary" size="mini" icon="el-icon-search" @click="searchWorkDta('basic')">
@@ -1132,8 +1197,9 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table  :partentOrChild="'dataTableWorkRef'"  ref="dataTableWorkRef" v-loading="listLoading" :data="workData" :fixedNO="true"
-                @sort-change="sortChange" custom-column  :setColumnDisplayList="workColumns">
+              <JNPF-table :partentOrChild="'dataTableWorkRef'" ref="dataTableWorkRef" v-loading="listLoading"
+                :data="workData" :fixedNO="true" @sort-change="sortChange" custom-column
+                :setColumnDisplayList="workColumns">
                 <el-table-column prop="productionOrderNo" label="任务单号" min-width="180" />
                 <el-table-column prop="orderNo" label="工单号" width="200" />
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" />
@@ -1174,6 +1240,11 @@
     <PurchaseForm v-if="purchaseFormVisible" ref="purchaseREFForm" @close="closeForm"></PurchaseForm>
     <ProductExternalForm v-if="productExternalVisible" ref="productExternalREFForm" @close="closeForm">
     </ProductExternalForm>
+    <EquipmentForm  v-if="equipmentVisible" ref="quipmentREFForm" @close="closeForm"></EquipmentForm>
+    <SparePartsForm  v-if="sparePartsVisible" ref="sparePartsREFForm" @close="closeForm"></SparePartsForm>
+    <ToolForm  v-if="toolVisible" ref="toolREFForm" @close="closeForm"></ToolForm>
+     
+
 
 
     <!-- 出/入库 -->
@@ -1255,7 +1326,9 @@ import PurchaseOrderInboundForm from './purchaseOrderInboundForm.vue'
 import ExternalMaterOutboundForm from './externalMaterialsForm.vue'
 import { WithdrawalList } from '@/api/productOrdes/index.js'
 import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
-
+import ToolForm from '@/views/dailyManagement/borrowingReturn/circulate/Form.vue'
+import SparePartsForm from '@/views/dailyManagement/sparepartsmanagement/sparepartsrequisition/Form.vue'
+import EquipmentForm from '@/views/dailyManagement/equipmentrequisitionreturn/equipmentrequisition/Form.vue'
 export default {
   name: 'dbIncomAndOutInventory',
   mixins: [mixin],
@@ -1267,14 +1340,14 @@ export default {
     InboundSaleReturnForm, InboundPurchaseForm, OutboundPurchaseForm,
     OutboundExternalSendForm, InboundExternalForm, OutboundPickOutForm, InboundReturnMaterialsForm,
     SaleForm, SaleOutboundForm, PurchaseOrderInboundForm, PurchaseForm, ProductExternalForm, ExternalInboundForm,
-    ExternalMaterOutboundForm
+    ExternalMaterOutboundForm,ToolForm,SparePartsForm,EquipmentForm
   },
   props: {
     warehouseCode: "",
   },
   data() {
     return {
-      visibleForm:false,
+      visibleForm: false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -1319,19 +1392,23 @@ export default {
       searchList10: [
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
-         
+
       ],
       searchList11: [
         { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-         
+
       ],
       searchList12: [
         { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],
-     
+
+      searchList13: [
+        { field: 'orderNo', fieldValue: '', label: '领用单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'maintainerIdText', fieldValue: '', label: '领用人', symbol: 'like', searchType: 1, width: 120 },
+      ],
       externalMaterOutboundFormVisible: false,
       exterMaterList: [],
       exterMaterTotal: 0,
@@ -1351,7 +1428,28 @@ export default {
           column: "delivery_date"
         }],
       },
-
+      useDateArr:[],
+      outboundUseTableList:[],
+      outboundUseTotal:0,
+      outboundUseList:["createByName"],
+      outboundUseForm:{
+        stockFlag:false,
+        equipmentType:"",
+        maintainerIdText:"",
+        orderNo:"",
+        pageNum:1,
+        pageSize:20,
+        collStartTime:"",
+        collEndTime:"",
+        requisitionType:"requisition",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: true,
+          column: "create_time"
+        }],
+      },
 
 
       externalInboundFormVisible: false,
@@ -1460,7 +1558,7 @@ export default {
         pageSize: 20,
       },
 
-      workColumns:['productCode',],
+      workColumns: ['productCode',],
       workTotal: 0,
       workData: [],
       workForm: {
@@ -1681,53 +1779,56 @@ export default {
       selectPurchaseList: [],
       selectExternalList: [],
       selectExternalMaterList: [],
+      toolVisible:false,
+      equipmentVisible:false,
+      sparePartsVisible:false,
     }
   },
   watch: {
     'categoryType': function (newVal) {
-      this.fhDateArr=[]
-      this.fhForm.partnerName=""
-      this.fhForm.orderNo=''
+      this.fhDateArr = []
+      this.fhForm.partnerName = ""
+      this.fhForm.orderNo = ''
 
-      this.cgDateArr=[]
-      this.cgForm.orderNo=''
-      this.cgForm.partnerName=''
+      this.cgDateArr = []
+      this.cgForm.orderNo = ''
+      this.cgForm.partnerName = ''
 
-      this.wxflDateArr=[]
-     this.wxflForm.orderNo=''
-      this.wxflForm.partnerName=''
+      this.wxflDateArr = []
+      this.wxflForm.orderNo = ''
+      this.wxflForm.partnerName = ''
 
-      this.wxshDateArr=[]
-     this.wxshForm.orderNo=''
-      this.wxshForm.partnerName=''
-
-
+      this.wxshDateArr = []
+      this.wxshForm.orderNo = ''
+      this.wxshForm.partnerName = ''
 
 
 
-      this.externalDate=[]
-      this.externalForm.cooperativePartnerName=''
-      this.externalForm.productDrawingNo=''
 
-      this.purchaserOrderDateArr=[]
-      this.purchaseForm.orderNo=''
-      this.purchaseForm.partnerName=''
 
-      this.saleOrderDateArr=[]
-      this.saleOrderForm.cooperativePartnerName=''
-      this.saleOrderForm.customerProductNo=''
-     
-      this.exterMaterForm.orderNo=''
-      this.exterMaterForm.partnerName=''
-      this.exterMaterForm.productDrawingNo=''
-    
-    
+      this.externalDate = []
+      this.externalForm.cooperativePartnerName = ''
+      this.externalForm.productDrawingNo = ''
+
+      this.purchaserOrderDateArr = []
+      this.purchaseForm.orderNo = ''
+      this.purchaseForm.partnerName = ''
+
+      this.saleOrderDateArr = []
+      this.saleOrderForm.cooperativePartnerName = ''
+      this.saleOrderForm.customerProductNo = ''
+
+      this.exterMaterForm.orderNo = ''
+      this.exterMaterForm.partnerName = ''
+      this.exterMaterForm.productDrawingNo = ''
+
+
 
       this.getTabdataList()
 
     },
   },
-  created(){
+  created() {
     this.getPickingConfig()
 
   },
@@ -1759,25 +1860,25 @@ export default {
     // 外协发料 订单
     getexterMaterFUN(type) {
       this.exterMaterForm.classAttributeList = this.classAttributeList
-          this.exterMaterForm.approvalStatus='ok'
-      this.superForm=this.exterMaterForm
-          if (type === 'basic') {
-          this.basicQuery = {
-            matchLogic: 'AND',
-            condition: this.searchList12
-              .filter((item) => item.fieldValue)
-              .map((item) => {
-                return {
-                  ...item,
-                  fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
-                }
-              })
-          }
-          this.superForm.superQuery = this.basicQuery
+      this.exterMaterForm.approvalStatus = 'ok'
+      this.superForm = this.exterMaterForm
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList12
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
         }
-        if (type === 'super') {
-          this.superForm.superQuery = this.superQuery
-        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       detailpurchaseOrderList(this.exterMaterForm).then(res => {
         this.exterMaterTotal = res.data.total
         this.exterMaterList = res.data.records
@@ -1804,25 +1905,25 @@ export default {
         this.externalForm.deliveryEndDate = ''
       }
       this.externalForm.classAttributeList = this.classAttributeList
-          this.externalForm.approvalStatus='ok'
-          this.superForm=this.externalForm
-          if (type === 'basic') {
-          this.basicQuery = {
-            matchLogic: 'AND',
-            condition: this.searchList11
-              .filter((item) => item.fieldValue)
-              .map((item) => {
-                return {
-                  ...item,
-                  fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
-                }
-              })
-          }
-          this.superForm.superQuery = this.basicQuery
+      this.externalForm.approvalStatus = 'ok'
+      this.superForm = this.externalForm
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList11
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
         }
-        if (type === 'super') {
-          this.superForm.superQuery = this.superQuery
-        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       detailpurchaseOrderList(this.externalForm).then(res => {
         this.externalList = res.data.records
         this.externalTotal = res.data.total
@@ -1878,9 +1979,9 @@ export default {
         this.saleFlag = res.data.warehouse[2].configValue1 == '1' ? true : false
         this.purchaseFlag = res.data.warehouse[0].configValue1 == '1' ? true : false
         this.externalFlag = res.data.warehouse[1].configValue1 == '1' ? true : false
-        if(this.saleFlag){
-          console.log(555,this.$refs.salestabForm);
-          this.salecolumnList=["cooperativePartnerCode",]
+        if (this.saleFlag) {
+          console.log(555, this.$refs.salestabForm);
+          this.salecolumnList = ["cooperativePartnerCode",]
         }
         this.getclassAttributeList()
       })
@@ -1900,7 +2001,7 @@ export default {
           res.data.forEach(item => {
             if (item.businessType == 'outbound_sale_send') {
               if (this.saleFlag) item.num = item.orderTodoNum
-              console.log("item====>",item);
+              console.log("item====>", item);
               this.$set(item, 'fullName', '销售发货')
             }
             if (item.businessType == 'inbound_sale_return') {
@@ -1926,7 +2027,7 @@ export default {
               item.fullName = '生产领料'
 
             }
-            if (item.businessType == 'inbound_return_materials') { 
+            if (item.businessType == 'inbound_return_materials') {
               item.fullName = '生产退料'
 
             }
@@ -1934,12 +2035,16 @@ export default {
               item.fullName = '生产入库'
 
             }
+            if (item.businessType == 'outbound_use') {
+              item.fullName = '资产领用'
+
+            }
 
           });
         }
         this.$nextTick(() => {
           this.treeData = res.data
-          this.getTabdataList('basic') 
+          this.getTabdataList('basic')
         })
 
       })
@@ -1947,7 +2052,7 @@ export default {
     // 点击出库/入库按钮
     incomAndOutInventFun(data, btnType, ref) {
       if (this.categoryType) {
-        this.visibleForm=true
+        this.visibleForm = true
         if (this.categoryType == 'outbound_sale_send') {
           if (this.saleFlag) {
             // 销售发货订单
@@ -1965,197 +2070,197 @@ export default {
             })
           }
         } else if (this.categoryType == 'inbound_sale_return') {
-            this.inboundSaleReturnFormVisible = true
+          this.inboundSaleReturnFormVisible = true
+          this.$nextTick(() => {
+            this.$refs.inboundSaleReturnREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
+          })
+        } else if (this.categoryType == 'inbound_purchase') {
+          if (this.purchaseFlag) {
+            let arr = []
+            arr.push(data)
+            this.purchaseOrderInboundFormVisible = true
             this.$nextTick(() => {
-              this.$refs.inboundSaleReturnREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
-            })
-          } else if (this.categoryType == 'inbound_purchase') {
-            if (this.purchaseFlag) {
-              let arr = []
-              arr.push(data)
-              this.purchaseOrderInboundFormVisible = true
-              this.$nextTick(() => {
-                this.$refs.purchaseOrderInboundREFForm.init(arr, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
-              })
-            } else {
-              this.inboundPurchaseFormVisible = true
-              this.$nextTick(() => {
-                this.$refs.inboundPurchaseREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
-              })
-            }
-
-
-
-
-          } else if (this.categoryType == 'outbound_purchase') {
-            this.outboundPurchaseFormVisible = true
-            this.$nextTick(() => {
-              this.$refs.outboundPurchaseREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
-            })
-          } else if (this.categoryType == 'outbound_external_send') {
-            if (!this.externalFlag) {
-             
-              this.outboundExternalSendFormVisible = true
-              this.$nextTick(() => {
-                this.$refs.outboundExternalSendREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
-              })
-            } else {
-              let arr = []
-              arr.push(data)
-              this.externalMaterOutboundFormVisible = true
-              this.$nextTick(() => {
-                this.$refs.externalMaterOutboundREFForm.init(arr, 'add', this.categoryType, this.classAttributeList, this.warehouseCode)
-              })
-            }
-          } else if (this.categoryType == 'inbound_external') {
-            if (this.externalFlag) {
-              let arr = []
-              arr.push(data)
-              this.externalInboundFormVisible = true
-              this.$nextTick(() => {
-                this.$refs.externalInboundREFForm.init(arr, 'add', this.categoryType, this.classAttributeList, this.warehouseCode)
-              })
-            } else {
-
-              this.inboundExternalFormVisible = true
-              this.$nextTick(() => {
-                this.$refs.inboundExternalREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
-              })
-            }
-          } else if (this.categoryType == 'outbound_pick_out') {
-            this.outboundPickOutFormVisible = true
-            this.$nextTick(() => {
-              this.$refs.outboundPickOutREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
-            })
-          } else if (this.categoryType == 'inbound_return_materials') {
-            this.inboundReturnMaterialsFormVisible = true
-            this.$nextTick(() => {
-              this.$refs.inboundReturnMaterialsREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
+              this.$refs.purchaseOrderInboundREFForm.init(arr, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
             })
           } else {
-            this.formVisible = true
+            this.inboundPurchaseFormVisible = true
             this.$nextTick(() => {
-              this.$refs[ref].init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
+              this.$refs.inboundPurchaseREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
             })
           }
+
+
+
+
+        } else if (this.categoryType == 'outbound_purchase') {
+          this.outboundPurchaseFormVisible = true
+          this.$nextTick(() => {
+            this.$refs.outboundPurchaseREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
+          })
+        } else if (this.categoryType == 'outbound_external_send') {
+          if (!this.externalFlag) {
+
+            this.outboundExternalSendFormVisible = true
+            this.$nextTick(() => {
+              this.$refs.outboundExternalSendREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
+            })
+          } else {
+            let arr = []
+            arr.push(data)
+            this.externalMaterOutboundFormVisible = true
+            this.$nextTick(() => {
+              this.$refs.externalMaterOutboundREFForm.init(arr, 'add', this.categoryType, this.classAttributeList, this.warehouseCode)
+            })
+          }
+        } else if (this.categoryType == 'inbound_external') {
+          if (this.externalFlag) {
+            let arr = []
+            arr.push(data)
+            this.externalInboundFormVisible = true
+            this.$nextTick(() => {
+              this.$refs.externalInboundREFForm.init(arr, 'add', this.categoryType, this.classAttributeList, this.warehouseCode)
+            })
+          } else {
+
+            this.inboundExternalFormVisible = true
+            this.$nextTick(() => {
+              this.$refs.inboundExternalREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
+            })
+          }
+        } else if (this.categoryType == 'outbound_pick_out') {
+          this.outboundPickOutFormVisible = true
+          this.$nextTick(() => {
+            this.$refs.outboundPickOutREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
+          })
+        } else if (this.categoryType == 'inbound_return_materials') {
+          this.inboundReturnMaterialsFormVisible = true
+          this.$nextTick(() => {
+            this.$refs.inboundReturnMaterialsREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
+          })
+        } else {
+          this.formVisible = true
+          this.$nextTick(() => {
+            this.$refs[ref].init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
+          })
+        }
 
 
       }
     },
     sortChange({ prop, order }) {
       // 销售发货 排序
-      if(this.categoryType == 'outbound_sale_send'){
+      if (this.categoryType == 'outbound_sale_send') {
         let newProp
-        if(this.saleFlag){
+        if (this.saleFlag) {
           console.log("销售发货订单");
-          if (prop == 'customerProductNo' || prop == 'deliveryDate'|| prop == 'sealingCoverTyping' || prop == 'sealingCoverTyping'||prop=='vibrationLevel'||prop=='oilQuantity'||prop=='packagingMethod'||prop=='accuracyLevel'||prop=='specialRequire') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-          else newProp =  prop
+          if (prop == 'customerProductNo' || prop == 'deliveryDate' || prop == 'sealingCoverTyping' || prop == 'sealingCoverTyping' || prop == 'vibrationLevel' || prop == 'oilQuantity' || prop == 'packagingMethod' || prop == 'accuracyLevel' || prop == 'specialRequire') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+          else newProp = prop
           this.saleOrderForm.orderItems[0].asc = order === 'ascending'
           this.saleOrderForm.orderItems[0].column = newProp
-        }else{
+        } else {
           console.log("销售发货通知单");
-          if (prop == 'orderNo' || prop == 'deliverDate'||prop=='recipient'||prop=='phone'||prop=='exchangeGoodsFlag'||prop=='createTime') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-          else newProp =  prop
+          if (prop == 'orderNo' || prop == 'deliverDate' || prop == 'recipient' || prop == 'phone' || prop == 'exchangeGoodsFlag' || prop == 'createTime') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+          else newProp = prop
           this.fhForm.orderItems[0].asc = order === 'ascending'
           this.fhForm.orderItems[0].column = newProp
         }
 
       }
       // 销售退货 排序
-      if(this.categoryType == 'inbound_sale_return'){
+      if (this.categoryType == 'inbound_sale_return') {
         let newProp
-               
-        if (prop == 'orderNo'  || prop == 'deliverDate'||prop=='exchangeGoodsFlag'||prop=='createTime') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-        else newProp =  prop
+
+        if (prop == 'orderNo' || prop == 'deliverDate' || prop == 'exchangeGoodsFlag' || prop == 'createTime') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+        else newProp = prop
         this.fhForm.orderItems[0].asc = order === 'ascending'
         this.fhForm.orderItems[0].column = newProp
       }
       // 采购收货 排序
-      if(this.categoryType == 'inbound_purchase'){
+      if (this.categoryType == 'inbound_purchase') {
         let newProp
-        if(this.purchaseFlag){
+        if (this.purchaseFlag) {
           console.log("采购收货订单");
-                 
-                
-          if (prop == 'orderNo' || prop == 'cooperativePartnerName'|| prop == 'cooperativePartnerCode' || prop == 'drawingNo'||prop=='productCode'||prop=='num'||prop=='waitReceiptNum'
-          ||prop=='deliveryDate'||prop=='standardValue'||prop=='colour'||prop=='processName'||prop=='sealingCoverTyping'||prop=='accuracyLevel'||prop=='vibrationLevel'||prop=='oil'
-          ||prop=='oilQuantity'||prop=='clearance'||prop=='packagingMethod'||prop=='specialRequire'||prop=='createTime'||prop=='createByName') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-          else newProp =  prop
+
+
+          if (prop == 'orderNo' || prop == 'cooperativePartnerName' || prop == 'cooperativePartnerCode' || prop == 'drawingNo' || prop == 'productCode' || prop == 'num' || prop == 'waitReceiptNum'
+            || prop == 'deliveryDate' || prop == 'standardValue' || prop == 'colour' || prop == 'processName' || prop == 'sealingCoverTyping' || prop == 'accuracyLevel' || prop == 'vibrationLevel' || prop == 'oil'
+            || prop == 'oilQuantity' || prop == 'clearance' || prop == 'packagingMethod' || prop == 'specialRequire' || prop == 'createTime' || prop == 'createByName') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+          else newProp = prop
           this.purchaseForm.orderItems[0].asc = order === 'ascending'
           this.purchaseForm.orderItems[0].column = newProp
-        }else{
+        } else {
 
           console.log("采购收货通知单");
-          if (prop == 'orderNo' ||prop=='salesman'||prop=='deliverDate'||prop=='createTime') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-          else newProp =  prop
+          if (prop == 'orderNo' || prop == 'salesman' || prop == 'deliverDate' || prop == 'createTime') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+          else newProp = prop
           this.cgForm.orderItems[0].asc = order === 'ascending'
           this.cgForm.orderItems[0].column = newProp
         }
 
       }
-  // 采购退货 排序
-  if(this.categoryType == 'outbound_purchase'){
+      // 采购退货 排序
+      if (this.categoryType == 'outbound_purchase') {
         let newProp
-               
-        if (prop == 'orderNo' ||prop=='salesman'||prop=='deliverDate'||prop=='createTime') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-        else newProp =  prop
+
+        if (prop == 'orderNo' || prop == 'salesman' || prop == 'deliverDate' || prop == 'createTime') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+        else newProp = prop
         this.cgForm.orderItems[0].asc = order === 'ascending'
         this.cgForm.orderItems[0].column = newProp
       }
       // 外协发料 排序
-      if(this.categoryType == 'outbound_external_send'){
+      if (this.categoryType == 'outbound_external_send') {
 
         let newProp
-        if(!this.externalFlag){
+        if (!this.externalFlag) {
           console.log("外协发料通知单");
-          if (prop == 'orderNo'|| prop == 'partnerName'|| prop == 'partnerCode'|| prop == 'deliverDate'  || prop == 'recipient'
-          ||prop=='phone'||prop=='delivery'||prop=='countryName'||prop=='provinceName'||prop=='cityName'||prop=='areaName'||prop=='address'
-          ||prop=='createTime'||prop=='createByName') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-          else newProp =  prop
+          if (prop == 'orderNo' || prop == 'partnerName' || prop == 'partnerCode' || prop == 'deliverDate' || prop == 'recipient'
+            || prop == 'phone' || prop == 'delivery' || prop == 'countryName' || prop == 'provinceName' || prop == 'cityName' || prop == 'areaName' || prop == 'address'
+            || prop == 'createTime' || prop == 'createByName') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+          else newProp = prop
           this.wxflForm.orderItems[0].asc = order === 'ascending'
           this.wxflForm.orderItems[0].column = newProp
-        }else{
+        } else {
           console.log("外协发料订单");
-          if (prop == 'orderNo'|| prop == 'deliveryDate'  || prop == 'drawingNo' ||prop=='mainUnit'||prop=='purchaseQuantity') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-          else newProp =  prop
+          if (prop == 'orderNo' || prop == 'deliveryDate' || prop == 'drawingNo' || prop == 'mainUnit' || prop == 'purchaseQuantity') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+          else newProp = prop
           this.exterMaterForm.orderItems[0].asc = order === 'ascending'
           this.exterMaterForm.orderItems[0].column = newProp
         }
       }
       // 外协收货 排序
-      if(this.categoryType == 'inbound_external'){
+      if (this.categoryType == 'inbound_external') {
 
         let newProp
-        if(!this.externalFlag){
+        if (!this.externalFlag) {
           console.log("外协收货通知单");
-          if (prop == 'orderNo'|| prop == 'partnerName'|| prop == 'partnerCode'|| prop == 'deliverDate'  || prop == 'recipient'
-          ||prop=='phone'||prop=='delivery'||prop=='countryName'||prop=='provinceName'||prop=='cityName'||prop=='areaName'||prop=='address'
-          ||prop=='createTime'||prop=='createByName') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-          else newProp =  prop
+          if (prop == 'orderNo' || prop == 'partnerName' || prop == 'partnerCode' || prop == 'deliverDate' || prop == 'recipient'
+            || prop == 'phone' || prop == 'delivery' || prop == 'countryName' || prop == 'provinceName' || prop == 'cityName' || prop == 'areaName' || prop == 'address'
+            || prop == 'createTime' || prop == 'createByName') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+          else newProp = prop
           this.wxflForm.orderItems[0].asc = order === 'ascending'
           this.wxflForm.orderItems[0].column = newProp
-        }else{
+        } else {
 
           console.log("外协收货订单");
-          if (prop == 'orderNo'|| prop == 'drawingNo'|| prop == 'mainUnit'  || prop == 'purchaseQuantity' ||prop=='deliveryDate') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-          else newProp =  prop
+          if (prop == 'orderNo' || prop == 'drawingNo' || prop == 'mainUnit' || prop == 'purchaseQuantity' || prop == 'deliveryDate') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+          else newProp = prop
           this.externalForm.orderItems[0].asc = order === 'ascending'
           this.externalForm.orderItems[0].column = newProp
         }
       }
-       // 生产领料 排序
-       if(this.categoryType == 'outbound_pick_out'){
+      // 生产领料 排序
+      if (this.categoryType == 'outbound_pick_out') {
         let newProp
-        if (prop == 'orderNo'  || prop == 'receiveType'||prop=='createTime') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-        else newProp =  prop
+        if (prop == 'orderNo' || prop == 'receiveType' || prop == 'createTime') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+        else newProp = prop
         this.pickForm.orderItems[0].asc = order === 'ascending'
         this.pickForm.orderItems[0].column = newProp
       }
       // 生产退料 排序
-      if(this.categoryType == 'outbound_pick_out'){
+      if (this.categoryType == 'outbound_pick_out') {
         let newProp
-        if (prop == 'orderNo'  || prop == 'receiveType'||prop=='createTime') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-        else newProp =  prop
+        if (prop == 'orderNo' || prop == 'receiveType' || prop == 'createTime') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+        else newProp = prop
         this.returnMaterForm.orderItems[0].asc = order === 'ascending'
         this.returnMaterForm.orderItems[0].column = newProp
       }
@@ -2167,7 +2272,7 @@ export default {
       // 销售发货
       console.log(this.categoryType);
       if (this.categoryType == 'outbound_sale_send') {
-        if (this.saleFlag) { 
+        if (this.saleFlag) {
           if (this.saleOrderDateArr.length) {
             this.saleOrderForm.deliveryStartTime = this.saleOrderDateArr[0]
             this.saleOrderForm.deliveryEndTime = this.saleOrderDateArr[1]
@@ -2176,64 +2281,64 @@ export default {
             this.saleOrderForm.deliveryEndTime = ""
           }
           this.saleOrderForm.classAttributeList = this.classAttributeList
-          this.saleOrderForm.approvalStatus='ok'
-          this.superForm=this.saleOrderForm
+          this.saleOrderForm.approvalStatus = 'ok'
+          this.superForm = this.saleOrderForm
           if (type === 'basic') {
-          this.basicQuery = {
-            matchLogic: 'AND',
-            condition: this.searchList9
-              .filter((item) => item.fieldValue)
-              .map((item) => {
-                return {
-                  ...item,
-                  fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
-                }
-              })
+            this.basicQuery = {
+              matchLogic: 'AND',
+              condition: this.searchList9
+                .filter((item) => item.fieldValue)
+                .map((item) => {
+                  return {
+                    ...item,
+                    fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+                  }
+                })
+            }
+            this.superForm.superQuery = this.basicQuery
           }
-          this.superForm.superQuery = this.basicQuery
-        }
-        if (type === 'super') {
-          this.superForm.superQuery = this.superQuery
-        }
-          this.listLoading=true
+          if (type === 'super') {
+            this.superForm.superQuery = this.superQuery
+          }
+          this.listLoading = true
           getsaleOrderDetailList(this.saleOrderForm).then(res => {
-          this.listLoading=false
-          console.log("销售明细", res);
+            this.listLoading = false
+            console.log("销售明细", res);
             this.saleList = res.data.records
             this.saleTotal = res.data.total
-          }).catch(error=>{
-            this.listLoading=false
+          }).catch(error => {
+            this.listLoading = false
           })
         } else {
           this.listLoading = true
           this.fhForm.returnDeliveryType = 'delivery'
-          if(this.fhDateArr.length){
-            this.fhForm.rdsDate=this.fhDateArr[0]
-            this.fhForm.rdeDate=this.fhDateArr[1]
-          }else{
-            this.fhForm.rdsDate=""
-            this.fhForm.rdeDate=""
+          if (this.fhDateArr.length) {
+            this.fhForm.rdsDate = this.fhDateArr[0]
+            this.fhForm.rdeDate = this.fhDateArr[1]
+          } else {
+            this.fhForm.rdsDate = ""
+            this.fhForm.rdeDate = ""
           }
           this.fhForm.classAttributeList = this.classAttributeList
-          this.fhForm.approvalStatus='ok'
-          this.superForm=this.fhForm
+          this.fhForm.approvalStatus = 'ok'
+          this.superForm = this.fhForm
           if (type === 'basic') {
-          this.basicQuery = {
-            matchLogic: 'AND',
-            condition: this.searchList1
-              .filter((item) => item.fieldValue)
-              .map((item) => {
-                return {
-                  ...item,
-                  fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
-                }
-              })
+            this.basicQuery = {
+              matchLogic: 'AND',
+              condition: this.searchList1
+                .filter((item) => item.fieldValue)
+                .map((item) => {
+                  return {
+                    ...item,
+                    fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+                  }
+                })
+            }
+            this.superForm.superQuery = this.basicQuery
           }
-          this.superForm.superQuery = this.basicQuery
-        }
-        if (type === 'super') {
-          this.superForm.superQuery = this.superQuery
-        }
+          if (type === 'super') {
+            this.superForm.superQuery = this.superQuery
+          }
           getQuotationdatasendlist(this.fhForm).then(res => {
             this.fhTableList = res.data.records
             this.fhTotal = res.data.total
@@ -2249,16 +2354,16 @@ export default {
         this.listLoading = true
         this.fhForm.returnDeliveryType = 'back'
         this.$set(this.fhForm, 'inspectionStatus', 'inspected')
-        if(this.fhDateArr.length){
-            this.fhForm.rdsDate=this.fhDateArr[0]
-            this.fhForm.rdeDate=this.fhDateArr[1]
-          }else{
-            this.fhForm.rdsDate=""
-            this.fhForm.rdeDate=""
-          }
+        if (this.fhDateArr.length) {
+          this.fhForm.rdsDate = this.fhDateArr[0]
+          this.fhForm.rdeDate = this.fhDateArr[1]
+        } else {
+          this.fhForm.rdsDate = ""
+          this.fhForm.rdeDate = ""
+        }
         this.fhForm.classAttributeList = this.classAttributeList
-          this.fhForm.approvalStatus='ok'
-          this.superForm=this.fhForm
+        this.fhForm.approvalStatus = 'ok'
+        this.superForm = this.fhForm
         if (type === 'basic') {
           this.basicQuery = {
             matchLogic: 'AND',
@@ -2298,25 +2403,25 @@ export default {
             this.purchaseForm.deliveryStartTime = ""
             this.purchaseForm.deliveryEndTime = ""
           }
-          this.purchaseForm.approvalStatus='ok'
-          this.superForm=this.purchaseForm
+          this.purchaseForm.approvalStatus = 'ok'
+          this.superForm = this.purchaseForm
           if (type === 'basic') {
-          this.basicQuery = {
-            matchLogic: 'AND',
-            condition: this.searchList10
-              .filter((item) => item.fieldValue)
-              .map((item) => {
-                return {
-                  ...item,
-                  fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
-                }
-              })
+            this.basicQuery = {
+              matchLogic: 'AND',
+              condition: this.searchList10
+                .filter((item) => item.fieldValue)
+                .map((item) => {
+                  return {
+                    ...item,
+                    fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+                  }
+                })
+            }
+            this.superForm.superQuery = this.basicQuery
           }
-          this.superForm.superQuery = this.basicQuery
-        }
-        if (type === 'super') {
-          this.superForm.superQuery = this.superQuery
-        }
+          if (type === 'super') {
+            this.superForm.superQuery = this.superQuery
+          }
           detailpurchaseOrderList(this.purchaseForm).then(res => {
             console.log("采购明细", res);
             this.purchaseTotal = res.data.total
@@ -2327,34 +2432,34 @@ export default {
           // this.$set(this.cgForm,'receiptInboundFlag',1)
           this.cgForm.classAttributeList = this.classAttributeList
           this.cgForm.receiptInboundFlag = true
-          if(this.cgDateArr.length){
-            this.cgForm.deliverDateStart= this.cgDateArr[0]
-            this.cgForm.deliverDateEnd= this.cgDateArr[1]
-          }else{
-            this.cgForm.deliverDateStart=""
-            this.cgForm.deliverDateEnd= ""
+          if (this.cgDateArr.length) {
+            this.cgForm.deliverDateStart = this.cgDateArr[0]
+            this.cgForm.deliverDateEnd = this.cgDateArr[1]
+          } else {
+            this.cgForm.deliverDateStart = ""
+            this.cgForm.deliverDateEnd = ""
           }
-          this.cgForm.approvalStatus='ok'
-          this.superForm=this.cgForm
+          this.cgForm.approvalStatus = 'ok'
+          this.superForm = this.cgForm
           if (type === 'basic') {
-          this.basicQuery = {
-            matchLogic: 'AND',
-            condition: this.searchList2
-              .filter((item) => item.fieldValue)
-              .map((item) => {
-                return {
-                  ...item,
-                  fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
-                }
-              })
+            this.basicQuery = {
+              matchLogic: 'AND',
+              condition: this.searchList2
+                .filter((item) => item.fieldValue)
+                .map((item) => {
+                  return {
+                    ...item,
+                    fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+                  }
+                })
+            }
+            this.superForm.superQuery = this.basicQuery
           }
-          this.superForm.superQuery = this.basicQuery
-        }
-        if (type === 'super') {
-          this.superForm.superQuery = this.superQuery
-        }
+          if (type === 'super') {
+            this.superForm.superQuery = this.superQuery
+          }
           this.listLoading = true
-        
+
           purPurchaseReceiptReturnGoodsList(this.cgForm).then(res => {
             this.cgTableList = res.data.records
             this.cgTotal = res.data.total
@@ -2370,16 +2475,16 @@ export default {
         this.cgForm.receiptReturnType = 'back'
         this.cgForm.receiptInboundFlag = null
         this.cgForm.classAttributeList = this.classAttributeList
-        if(this.cgDateArr.length){
-            this.cgForm.deliverDateStart= this.cgDateArr[0]
-            this.cgForm.deliverDateEnd= this.cgDateArr[1]
-          }else{
-            this.cgForm.deliverDateStart=""
-            this.cgForm.deliverDateEnd= ""
-          } 
-          this.cgForm.approvalStatus='ok'
-          this.superForm=this.cgForm
-          if (type === 'basic') {
+        if (this.cgDateArr.length) {
+          this.cgForm.deliverDateStart = this.cgDateArr[0]
+          this.cgForm.deliverDateEnd = this.cgDateArr[1]
+        } else {
+          this.cgForm.deliverDateStart = ""
+          this.cgForm.deliverDateEnd = ""
+        }
+        this.cgForm.approvalStatus = 'ok'
+        this.superForm = this.cgForm
+        if (type === 'basic') {
           this.basicQuery = {
             matchLogic: 'AND',
             condition: this.searchList2
@@ -2396,8 +2501,8 @@ export default {
         if (type === 'super') {
           this.superForm.superQuery = this.superQuery
         }
-        
-          purPurchaseReceiptReturnGoodsList(this.cgForm).then(res => {
+
+        purPurchaseReceiptReturnGoodsList(this.cgForm).then(res => {
           this.cgTableList = res.data.records
           this.cgTotal = res.data.total
           this.listLoading = false
@@ -2410,33 +2515,33 @@ export default {
         if (this.externalFlag) {
           this.getexterMaterFUN(type)
         } else {
-          if(this.wxflDateArr.length){
-            this.wxflForm.rdeDate=this.wxflDateArr[0]
-            this.wxflForm.rdsDate=this.wxflDateArr[1]
-          }else{
-            this.wxflForm.rdeDate=""
-            this.wxflForm.rdsDate=""
+          if (this.wxflDateArr.length) {
+            this.wxflForm.rdeDate = this.wxflDateArr[0]
+            this.wxflForm.rdsDate = this.wxflDateArr[1]
+          } else {
+            this.wxflForm.rdeDate = ""
+            this.wxflForm.rdsDate = ""
           }
           this.wxflForm.classAttributeList = this.classAttributeList
-          this.wxflForm.approvalStatus='ok'
-          this.superForm=this.wxflForm
+          this.wxflForm.approvalStatus = 'ok'
+          this.superForm = this.wxflForm
           if (type === 'basic') {
-          this.basicQuery = {
-            matchLogic: 'AND',
-            condition: this.searchList3
-              .filter((item) => item.fieldValue)
-              .map((item) => {
-                return {
-                  ...item,
-                  fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
-                }
-              })
+            this.basicQuery = {
+              matchLogic: 'AND',
+              condition: this.searchList3
+                .filter((item) => item.fieldValue)
+                .map((item) => {
+                  return {
+                    ...item,
+                    fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+                  }
+                })
+            }
+            this.superForm.superQuery = this.basicQuery
           }
-          this.superForm.superQuery = this.basicQuery
-        }
-        if (type === 'super') {
-          this.superForm.superQuery = this.superQuery
-        }
+          if (type === 'super') {
+            this.superForm.superQuery = this.superQuery
+          }
           this.listLoading = true
           getQuotationdatasendlist(this.wxflForm).then(res => {
             this.wxflTableList = res.data.records
@@ -2455,32 +2560,32 @@ export default {
 
           this.listLoading = true
           this.$set(this.wxshForm, 'receiptInboundFlag', 1)
-          if(this.wxshDateArr.length){
-            this.wxshForm.deliverDateStart=this.wxshDateArr[0]
-            this.wxshForm.deliverDateEnd=this.wxshDateArr[1]
-          }else{
-            this.wxshForm.deliverDateStart=""
-            this.wxshForm.deliverDateEnd=""
+          if (this.wxshDateArr.length) {
+            this.wxshForm.deliverDateStart = this.wxshDateArr[0]
+            this.wxshForm.deliverDateEnd = this.wxshDateArr[1]
+          } else {
+            this.wxshForm.deliverDateStart = ""
+            this.wxshForm.deliverDateEnd = ""
           }
-          this.wxshForm.approvalStatus='ok'
-          this.superForm=this.wxshForm
+          this.wxshForm.approvalStatus = 'ok'
+          this.superForm = this.wxshForm
           if (type === 'basic') {
-          this.basicQuery = {
-            matchLogic: 'AND',
-            condition: this.searchList4
-              .filter((item) => item.fieldValue)
-              .map((item) => {
-                return {
-                  ...item,
-                  fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
-                }
-              })
+            this.basicQuery = {
+              matchLogic: 'AND',
+              condition: this.searchList4
+                .filter((item) => item.fieldValue)
+                .map((item) => {
+                  return {
+                    ...item,
+                    fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+                  }
+                })
+            }
+            this.superForm.superQuery = this.basicQuery
           }
-          this.superForm.superQuery = this.basicQuery
-        }
-        if (type === 'super') {
-          this.superForm.superQuery = this.superQuery
-        }
+          if (type === 'super') {
+            this.superForm.superQuery = this.superQuery
+          }
           this.wxshForm.classAttributeList = this.classAttributeList
           purPurchaseReceiptReturnGoodsList(this.wxshForm).then(res => {
             this.wxshTableList = res.data.records
@@ -2496,10 +2601,10 @@ export default {
         this.listLoading = true
         console.log(555);
         this.pickForm.productClassAttributeList = this.classAttributeList
-        this.pickForm.approvalStatus='ok'
-         
-          this.superForm=this.pickForm
-          if (type === 'basic') {
+        this.pickForm.approvalStatus = 'ok'
+
+        this.superForm = this.pickForm
+        if (type === 'basic') {
           this.basicQuery = {
             matchLogic: 'AND',
             condition: this.searchList5
@@ -2529,10 +2634,10 @@ export default {
       if (this.categoryType == 'inbound_return_materials') {
         this.listLoading = true
         this.returnMaterForm.productClassAttributeList = this.classAttributeList
-        this.returnMaterForm.approvalStatus='ok'
-        
-          this.superForm=this.returnMaterForm
-          if (type === 'basic') {
+        this.returnMaterForm.approvalStatus = 'ok'
+
+        this.superForm = this.returnMaterForm
+        if (type === 'basic') {
           this.basicQuery = {
             matchLogic: 'AND',
             condition: this.searchList6
@@ -2566,17 +2671,24 @@ export default {
           this.searchWorkDta(type)
         }
       }
-    },
-    // 生产产品数据
-    searchProductData(type) {
-      this.listLoading = true
-      this.productForm.classAttributeList = this.classAttributeList
-        this.productForm.approvalStatus='ok'
-        this.superForm=this.productForm
-          if (type === 'basic') {
+      // 资产领用 
+       if (this.categoryType == 'outbound_use') {
+        if(this.useDateArr.length){
+          this.outboundUseForm.collStartTime=this.useDateArr[0]
+          this.outboundUseForm.collStartTime=this.useDateArr[1]
+        }else{
+          this.outboundUseFormcollStartTime=""
+          this.outboundUseForm.collEndTime=""
+        }
+        this.listLoading = true
+        this.returnMaterForm.productClassAttributeList = this.classAttributeList
+        // this.returnMaterForm.approvalStatus = 'ok'
+
+        this.superForm = this.outboundUseForm
+        if (type === 'basic') {
           this.basicQuery = {
             matchLogic: 'AND',
-            condition: this.searchList7
+            condition: this.searchList13
               .filter((item) => item.fieldValue)
               .map((item) => {
                 return {
@@ -2590,6 +2702,39 @@ export default {
         if (type === 'super') {
           this.superForm.superQuery = this.superQuery
         }
+        WithdrawalList(this.returnMaterForm).then(res => {
+          console.log("退料", res);
+          this.outboundUseTableList = res.data.records
+          this.outboundUseTotal = res.data.total
+          this.listLoading = false
+        }).catch(error => {
+          this.listLoading = false
+        })
+      }
+    },
+    // 生产产品数据
+    searchProductData(type) {
+      this.listLoading = true
+      this.productForm.classAttributeList = this.classAttributeList
+      this.productForm.approvalStatus = 'ok'
+      this.superForm = this.productForm
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList7
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       ordershengchanList(this.productForm).then(res => {
         console.log("生产产品", res);
         this.productData = res.data.records
@@ -2603,25 +2748,25 @@ export default {
     searchWorkDta(type) {
       this.listLoading = true
       this.workForm.classAttributeList = this.classAttributeList
-        this.workForm.approvalStatus='ok'
-        this.superForm=this.workForm
-          if (type === 'basic') {
-          this.basicQuery = {
-            matchLogic: 'AND',
-            condition: this.searchList8
-              .filter((item) => item.fieldValue)
-              .map((item) => {
-                return {
-                  ...item,
-                  fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
-                }
-              })
-          }
-          this.superForm.superQuery = this.basicQuery
+      this.workForm.approvalStatus = 'ok'
+      this.superForm = this.workForm
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList8
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
         }
-        if (type === 'super') {
-          this.superForm.superQuery = this.superQuery
-        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       getWorkPage(this.workForm).then(res => {
         console.log("生产产品", res);
         this.workData = res.data.records
@@ -2669,6 +2814,8 @@ export default {
         this.$refs.workInboundREFForm.init(arr, 'add', this.classAttributeList, this.warehouseCode)
       })
     },
+ 
+  
 
     // 高级查询
     advancedQueryFun() {
@@ -2837,13 +2984,13 @@ export default {
             pageSize: 20,
           }
           this.$refs.SuperQuery.conditionList = []
-          this.searchList9=[
-        { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
-      ]
+          this.searchList9 = [
+            { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+            { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
+          ]
         } else {
-          this.fhDateArr=[]
-          this.superForm=this.fhForm = {
+          this.fhDateArr = []
+          this.superForm = this.fhForm = {
             orderNo: "",
             classAttributeList: this.classAttributeList,
             partnerName: "",
@@ -2865,7 +3012,7 @@ export default {
             superQuery: {},
           }
           this.$refs.SuperQuery.conditionList = []
-          this.searchList1=[
+          this.searchList1 = [
             { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
             { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
           ]
@@ -2874,16 +3021,16 @@ export default {
       }
       if (this.categoryType == 'inbound_purchase' || this.categoryType == 'outbound_purchase') {
 
-        if ((this.categoryType == 'inbound_purchase' && !this.purchaseFlag)||this.categoryType == 'outbound_purchase') {
-          this.cgDateArr=[]
-          this.superForm=this.cgForm = {
+        if ((this.categoryType == 'inbound_purchase' && !this.purchaseFlag) || this.categoryType == 'outbound_purchase') {
+          this.cgDateArr = []
+          this.superForm = this.cgForm = {
             documentStatus: "sibmit",
             classAttributeList: this.classAttributeList,
             deliverDateStart: "",
             deliverDateEnd: "",
             notificationType: "procure",
             receivingStatus: "not_finished",
-            receiptReturnType: "", 
+            receiptReturnType: "",
             orderNo: "",
             partnerName: "",
             orderItems: [{
@@ -2896,7 +3043,7 @@ export default {
             superQuery: {},
           }
           this.$refs.SuperQuery.conditionList = []
-          this.searchList2=[
+          this.searchList2 = [
             { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
             { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
           ]
@@ -2919,20 +3066,20 @@ export default {
             pageSize: 20,
           }
           this.$refs.SuperQuery.conditionList = []
-          this.searchList10= [
-        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
-         
-      ]
+          this.searchList10 = [
+            { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+            { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+
+          ]
         }
-       
+
         this.getTabdataList()
       }
 
       if (this.categoryType == 'outbound_external_send') {
         if (!this.externalFlag) {
-          this.wxflDateArr=[]
-          this.superForm=this.wxflForm = {
+          this.wxflDateArr = []
+          this.superForm = this.wxflForm = {
             documentStatus: "sibmit",
             classAttributeList: this.classAttributeList,
 
@@ -2954,7 +3101,7 @@ export default {
             superQuery: {},
           }
           this.$refs.SuperQuery.conditionList = []
-          this.searchList3=[
+          this.searchList3 = [
             { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
             { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
           ]
@@ -2977,11 +3124,11 @@ export default {
           }
 
           this.$refs.SuperQuery.conditionList = []
-          this.searchList12= [
-        { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-      ]
+          this.searchList12 = [
+            { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
+            { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+            { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+          ]
         }
         this.getTabdataList()
       }
@@ -3006,14 +3153,14 @@ export default {
             }],
           }
           this.$refs.SuperQuery.conditionList = []
-          this.searchList11=[
-        { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-         
-      ]
+          this.searchList11 = [
+            { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+            { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+
+          ]
         } else {
-          this.wxshDateArr=[]
-          this.superForm=this.wxshForm = {
+          this.wxshDateArr = []
+          this.superForm = this.wxshForm = {
             orderNo: "",
             classAttributeList: this.classAttributeList,
             partnerName: "",
@@ -3035,7 +3182,7 @@ export default {
             superQuery: {},
           }
           this.$refs.SuperQuery.conditionList = []
-          this.searchList4=[
+          this.searchList4 = [
             { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
             { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
           ]
@@ -3043,7 +3190,7 @@ export default {
         this.getTabdataList()
       }
       if (this.categoryType == 'outbound_pick_out') {
-        this.superForm=this.pickForm = {
+        this.superForm = this.pickForm = {
           pageNum: 1,
           pageSize: 20,
           productClassAttributeList: this.classAttributeList,
@@ -3061,14 +3208,14 @@ export default {
           superQuery: {},
         },
           this.$refs.SuperQuery.conditionList = []
-          this.searchList5=[
-        { field: 'orderNo', fieldValue: '', label: '领料单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'partnerName', fieldValue: '', label: '领料人', symbol: 'like', searchType: 1, width: 120 },
-      ]
-          this.getTabdataList()
+        this.searchList5 = [
+          { field: 'orderNo', fieldValue: '', label: '领料单号', symbol: 'like', searchType: 1, width: 120 },
+          { field: 'partnerName', fieldValue: '', label: '领料人', symbol: 'like', searchType: 1, width: 120 },
+        ]
+        this.getTabdataList()
       }
       if (this.categoryType == 'inbound_return_materials') {
-        this.superForm=this.returnMaterForm = {
+        this.superForm = this.returnMaterForm = {
           receiveType: "",
           orderNo: "",
           personName: "",
@@ -3085,11 +3232,11 @@ export default {
           pageNum: 1,
           pageSize: 20,
         }
-          this.$refs.SuperQuery.conditionList = []
-          this.searchList6=[
-        { field: 'orderNo', fieldValue: '', label: '领料单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'partnerName', fieldValue: '', label: '领料人', symbol: 'like', searchType: 1, width: 120 },
-      ]
+        this.$refs.SuperQuery.conditionList = []
+        this.searchList6 = [
+          { field: 'orderNo', fieldValue: '', label: '领料单号', symbol: 'like', searchType: 1, width: 120 },
+          { field: 'partnerName', fieldValue: '', label: '领料人', symbol: 'like', searchType: 1, width: 120 },
+        ]
         this.getTabdataList()
       }
       if (this.categoryType == 'inbound_mock_production') {
@@ -3112,11 +3259,11 @@ export default {
             pageSize: 20,
           }
           this.$refs.SuperQuery.conditionList = []
-          this.searchList7=[
-        { field: 'orderNo', fieldValue: '', label: '任务单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-      ]
-    
+          this.searchList7 = [
+            { field: 'orderNo', fieldValue: '', label: '任务单号', symbol: 'like', searchType: 1, width: 120 },
+            { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+          ]
+
           this.searchProductData()
         } else {
           this.superForm = this.workForm = {
@@ -3138,20 +3285,67 @@ export default {
             pageSize: 20,
           }
           this.$refs.SuperQuery.conditionList = []
-          this.searchList8=[
-        { field: 'productionOrderNo', fieldValue: '', label: '任务单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'orderNo', fieldValue: '', label: '工单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
-      ]
+          this.searchList8 = [
+            { field: 'productionOrderNo', fieldValue: '', label: '任务单号', symbol: 'like', searchType: 1, width: 120 },
+            { field: 'orderNo', fieldValue: '', label: '工单号', symbol: 'like', searchType: 1, width: 120 },
+            { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+            { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
+          ]
           this.searchWorkDta()
         }
       }
-
+      if (this.categoryType == 'outbound_use') {
+        this.useDateArr=[]
+        this.superForm = this.outboundUseForm = {
+          stockFlag:false,
+          equipmentType:"",
+        maintainerIdText:"",
+        orderNo:"",
+        pageNum:1,
+        pageSize:20,
+        requisitionType:"requisition",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: true,
+          column: "create_time"
+        }],
+          superQuery: {}, 
+        }
+        this.$refs.SuperQuery.conditionList = []
+        this.searchList13=[
+        { field: 'orderNo', fieldValue: '', label: '领用单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'maintainerIdText', fieldValue: '', label: '领用人', symbol: 'like', searchType: 1, width: 120 },
+      ]
+        this.getTabdataList()
+      }
     },
 
-
-
+    // 领用查看详情
+    viewEquipmentFun(id,type,data){
+      if(data.equipmentType=='spare_parts'){
+        // 配件
+        this.sparePartsVisible=true
+        this.$nextTick(()=>{
+          this.$refs.sparePartsREFForm.init(id,type)
+        })
+      }
+      if(data.equipmentType=='equipment'){
+        // 设备
+        this.equipmentVisible=true
+        this.$nextTick(()=>{
+          this.$refs.quipmentREFForm.init(id,type)
+        })
+      }
+      if(data.equipmentType=='tool'){
+        // 工具
+        this.toolVisible=true
+        this.$nextTick(()=>{
+          this.$refs.toolREFForm.init(id,type)
+        })
+      }
+    },
     // 查看详情
     viewFun(id, btnType, ref, visible) {
       console.log(id, btnType, ref, visible);
@@ -3159,16 +3353,21 @@ export default {
         if (ref == 'PickREFForm') {
           console.log(666);
           this.$refs[ref].init(id, btnType, false, 'pick')
+        } else if(ref=='OutbounduseREFForm'){
+          // 设备领用查看详情
+
         } else {
-          this.$refs[ref].init(id, btnType,false, [])
+          this.$refs[ref].init(id, btnType, false, [])
 
         }
       })
     },
     // 关闭新建编辑页面
     closeForm(isRefresh) {
-        this.visibleForm=false
-        
+      this.visibleForm = false
+      this.toolVisible=false
+      this.equipmentVisible=false
+      this.sparePartsVisible=false
       this.fhFormVisible = false
       this.thFormVisible = false
       this.formVisible = false
@@ -3385,7 +3584,7 @@ export default {
 }
 
 .JNPF-common-head {
-  padding: 8px ;
+  padding: 8px;
   padding-left: 0px
 }
 

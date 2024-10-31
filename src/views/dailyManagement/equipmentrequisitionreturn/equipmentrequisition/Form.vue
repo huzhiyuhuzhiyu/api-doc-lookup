@@ -48,8 +48,8 @@
               <el-collapse-item title="设备信息" name="gjxx">
                 <div class="TableForm_main">
                   <div v-if="btnType !== 'look'" class="TableForm_title">
-                    <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择设备</el-button>|
-                    <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
+                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择设备</el-button>|
+                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important" :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
                   </div>
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="tableContainer data-form">
                     <el-table ref="product" class="TableForm table" :data="dataFormTwo.productData" v-bind="customStyleData" hasC hasNO fixedNO @selection-change="handeleProductInfoData">

@@ -331,10 +331,11 @@
                   <el-col :span="6">
                     <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
 
-                      <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
-                        v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
-                        @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
-                        treeTitle="供应商分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
+                      <ComSelect-page :clearable="type !== 'look'" :isdisabled="type === 'look'"
+                        :treeNodeClick="treeNodeClick" v-model="dataForm.cooperativePartnerName"
+                        :beforeSubmit="beforeSubmit" ref="ComSelect-page" @change="supplierdata"
+                        :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商" treeTitle="供应商分类"
+                        :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
                         :listRequestObj="PartnerListRequestObj" :paramsObj="{ oldData }"
                         :searchList="PartnerTableSearchList" />
                     </el-form-item>
@@ -348,8 +349,8 @@
                   </el-col>
                   <el-col :span="12">
                     <el-form-item label="备注" prop="remark" ref="remark">
-                      <el-input type="textarea" :row="3" v-model="dataForm.remark" placeholder="请输入备注"
-                        maxlength="200" :disabled="type == 'look' ? true : false"></el-input>
+                      <el-input type="textarea" :row="3" v-model="dataForm.remark" placeholder="请输入备注" maxlength="200"
+                        :disabled="type == 'look' ? true : false"></el-input>
                     </el-form-item>
                   </el-col>
                   <el-col :span="6" v-if="type === 'look'">

@@ -47,9 +47,10 @@
           </div>
         </div>
 
-        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO show-summary
-          :summary-method="getSummaries" :fixedNO="true" @sort-change="sortChange" :setColumnDisplayList="columnList">
-          <template>
+        <JNPF-table ref="dataTable" :partentOrChild="'dataTable'" v-loading="listLoading" :data="tableData" fixedNO
+          show-summary :summary-method="getSummaries" :fixedNO="true" @sort-change="sortChange"  custom-column
+          :setColumnDisplayList="columnList">
+          <template v-if="tableItems">
             <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label"
               :fixed="item.fixed || false" :min-width="item.minWidth || 120" :sortable="item.sortable" />
           </template>
@@ -264,6 +265,9 @@ export default {
     },
 
     columnSetFun() {
+      console.log(666)
+      console.log(this.$refs.dataTable,'dataTable')
+      console.log(this.tableItems, 'tableItems')
       this.$refs.dataTable.showDrawer()
     },
     sortChange({ prop, order }) {

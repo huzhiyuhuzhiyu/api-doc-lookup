@@ -35,7 +35,7 @@
                           <!-- <el-input :disabled="type == 'look'" v-model="dataForm.cooperativePartnerName"
                             placeholder="请选择供应商名称" @focus="openDialog"></el-input> -->
                           <!-- 供应商选择弹窗  -->
-                          <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
+                          <ComSelect-page :clearable="type !== 'look'" :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
                             v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
                             @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'"
                             title="选择供应商" treeTitle="供应商分类" :methodArr="PartnerMethodArr"

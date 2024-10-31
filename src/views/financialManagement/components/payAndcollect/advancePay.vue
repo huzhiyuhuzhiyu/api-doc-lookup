@@ -51,7 +51,7 @@
                 </div>
 
                 <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO show-summary
-                    :summary-method="getSummaries" @sort-change="sortChange">
+                    :summary-method="getSummaries" @sort-change="sortChange" custom-column>
                     <template v-for="item in tableItems">
                         <el-table-column v-if="item.prop === 'paymentMethod'" :key="item.prop" :prop="item.prop"
                             :label="item.label" :fixed="item.fixed || false" :min-width="item.minWidth || 120">
@@ -104,9 +104,7 @@
 <script>
 import advancePayForm from './advancePayForm.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import {
-    getbimProductAttributesList, getbimProductAttributes
-} from "@/api/masterDataManagement/index";
+import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 export default {
     name: 'advancePayment',
     components: { advancePayForm, SuperQuery },
@@ -119,9 +117,9 @@ export default {
             type: Array,
             default: () => []
             /* [
-                      {prop:'code',label:'编码'},
-                      {prop:'name',label:'名称'}
-                    ] */
+                            {prop:'code',label:'编码'},
+                            {prop:'name',label:'名称'}
+                          ] */
         },
         PartnerMethodArr: {
             type: Object,
@@ -139,28 +137,28 @@ export default {
             type: Object | Function,
             required: true
             /* 
-                    对象写法：{ code: "", name: "", orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }], pageNum: 1, pageSize: 20 }
-                    函数写法：(rowIndex) => {
-                      let id = this.linesList[rowIndex].id
-                      return { id, orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }], pageNum: 1, pageSize: 20 }
-                    }
-                  */
+                          对象写法：{ code: "", name: "", orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }], pageNum: 1, pageSize: 20 }
+                          函数写法：(rowIndex) => {
+                            let id = this.linesList[rowIndex].id
+                            return { id, orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }], pageNum: 1, pageSize: 20 }
+                          }
+                        */
         },
         searchList: {
             type: Array,
             default: () => []
             /* [
-                      {prop:'code',label:'编码'},
-                      {prop:'name',label:'名称'}
-                    ] */
+                            {prop:'code',label:'编码'},
+                            {prop:'name',label:'名称'}
+                          ] */
         },
         searchListMore: {
             type: Array,
             default: () => []
             /* [
-                      {prop:'code',label:'编码'},
-                      {prop:'name',label:'名称'}
-                    ] */
+                            {prop:'code',label:'编码'},
+                            {prop:'name',label:'名称'}
+                          ] */
         },
         /* 列表数据请求方法 */
         listMethod: {
@@ -175,12 +173,12 @@ export default {
             type: Object | Function,
             required: true
             /* 
-                    对象写法：{ code: "", name: "", orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }], pageNum: 1, pageSize: 20 }
-                    函数写法：(rowIndex) => {
-                      let id = this.linesList[rowIndex].id
-                      return { id, orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }], pageNum: 1, pageSize: 20 }
-                    }
-                  */
+                          对象写法：{ code: "", name: "", orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }], pageNum: 1, pageSize: 20 }
+                          函数写法：(rowIndex) => {
+                            let id = this.linesList[rowIndex].id
+                            return { id, orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }], pageNum: 1, pageSize: 20 }
+                          }
+                        */
         }
     },
     data() {
@@ -240,8 +238,7 @@ export default {
                     prop: 'createByName',
                     label: '创建人',
                     type: 'input'
-                },
-
+                }
             ],
             title: '更多查询',
             tableData: [],

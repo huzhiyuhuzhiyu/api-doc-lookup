@@ -51,11 +51,12 @@
           </div>
         </div>
 
-        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO show-summary
-          :summary-method="getSummaries" :fixedNO="true" @sort-change="sortChange"  :setColumnDisplayList="columnList">
-          <template v-for="item in tableItems">
-            <el-table-column :key="item.prop" :prop="item.prop" :label="item.label" :fixed="item.fixed || false"
-              :min-width="item.minWidth || 120" :sortable="item.sortable" />
+        <JNPF-table ref="dataTable" :partentOrChild="'dataTable'" v-loading="listLoading" :data="tableData" fixedNO
+          show-summary :summary-method="getSummaries" :fixedNO="true" @sort-change="sortChange"
+           :setColumnDisplayList="columnList" custom-column>
+          <template v-if="tableItems">
+            <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label"
+              :fixed="item.fixed || false" :min-width="item.minWidth || 120" :sortable="item.sortable" />
           </template>
 
           <el-table-column label="操作" min-width="180" fixed="right">
@@ -68,7 +69,7 @@
                 :disabled="Math.abs(scope.row.totalReconciliationAmount) - Math.abs(scope.row.totalInvoicingAmount) == 0 ? true : false"
                 @click="addOrUpdateHandle(scope.row.id, 'make')">{{ reconciliationType !== 'receivable' ? '收票' : '开票'
                 }}</el-button>
-                 <el-button size="mini" type="text"
+              <el-button size="mini" type="text"
                 @click="addOrUpdateHandle(scope.row.id, 'look', scope.row.orderNo)">查看详情</el-button>
               <!-- <el-dropdown hide-on-click>
                 <span class="el-dropdown-link">
@@ -509,6 +510,8 @@ export default {
 
     },
     columnSetFun() {
+      console.log(9999)
+      console.log(this.tableItems, 'tableItems')
       this.$refs.dataTable.showDrawer()
     },
     sortChange({ prop, order }) {

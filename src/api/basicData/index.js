@@ -8,7 +8,7 @@ export const editbatchequEquipment = (data) => {
   })
 }
 // 胶管制造费单价设置-设置单价
-export function setManufacturingPrice (data) {
+export function setManufacturingPrice(data) {
   return request({
     url: `/api/erp/finHoseManufacturingPrice/setPrice`,
     method: 'post',
@@ -16,7 +16,7 @@ export function setManufacturingPrice (data) {
   })
 }
 // 胶管制造费单价设置-默认单价
-export function ManufacturingupdataPrice () {
+export function ManufacturingupdataPrice() {
   return request({
     url: `/api/erp/finHoseManufacturingPrice/lastPrice`,
     method: 'post',
@@ -31,7 +31,7 @@ export function ManufacturingupdataPrice () {
 //       data:data
 //     })
 //   }
-export function getCooperativeData (data) {
+export function getCooperativeData(data) {
   return request({
     url: `/api/erp/cooperative/partner/list/condition`,
     method: 'post',
@@ -40,14 +40,14 @@ export function getCooperativeData (data) {
 }
 // 修改发货状态
 
-export function editShipmentfreeze (data) {
+export function editShipmentfreeze(data) {
   return request({
     url: `/api/erp/cooperative/partner/modify/shipment/freeze`,
     method: 'post',
     data: data
   })
 }
-export function getProductionLotList1 (data) {
+export function getProductionLotList1(data) {
   return request({
     url: `/api/wms/stock/production/lot/list`,
     method: 'post',
@@ -62,7 +62,7 @@ export function getbimInspectionTypelist(data) {
   })
 }
 // 供应商、客户、外协、承运商类别  新建级别 
-export function addCategory (data) {
+export function addCategory(data) {
   return request({
     url: `/api/erp/partner/category/insert`,
     method: 'post',
@@ -71,7 +71,7 @@ export function addCategory (data) {
 }
 
 // 供应商、客户、外协、承运商类别  属树形图 
-export function getcategoryTree (data) {
+export function getcategoryTree(data) {
   return request({
     url: `/api/erp/partner/category/tree`,
     method: 'post',
@@ -81,7 +81,7 @@ export function getcategoryTree (data) {
 
 // 供应商、客户、外协等待 分类列表检查子节点
 
-export function checkCategorychildNode (data) {
+export function checkCategorychildNode(data) {
   return request({
     url: `/api/erp/partner/category/check/child/node`,
     method: 'post',
@@ -244,7 +244,7 @@ export const deletePrivate = (id) => {
   })
 }
 // 获取设备信息列表分页
-export function getEquEquipmentList (data) {
+export function getEquEquipmentList(data) {
   return request({
     url: `/api/mes/equEquipment/list/condition`,
     method: 'post',
@@ -253,7 +253,7 @@ export function getEquEquipmentList (data) {
 }
 
 // 设备档案设置获取字典
-export function getCategoryTrees (data) {
+export function getCategoryTrees(data) {
   return request({
     url: `/api/erp/product/category/tree`,
     method: 'post',
@@ -318,7 +318,7 @@ export const plmsync = (id) => {
   })
 }
 // 获取用户
-export function getUserList (data) {
+export function getUserList(data) {
   return request({
     url: `/api/permission/Users/All`,
     method: 'get',
@@ -330,7 +330,7 @@ export function getUserList (data) {
 // 仓库管理模块
 
 // 获取仓库列表数据(树形)
-export function getWarehouseList (data) {
+export function getWarehouseList(data) {
   return request({
     url: `/api/wms/stockWarehouse/tree`,
     method: 'post',
@@ -338,7 +338,7 @@ export function getWarehouseList (data) {
   })
 }
 // 新增仓库
-export function addWarehouse (data) {
+export function addWarehouse(data) {
   return request({
     url: `/api/wms/stockWarehouse/insert`,
     method: 'post',
@@ -379,7 +379,7 @@ export const getWarehouseInfo = (id) => {
 }
 // 验证编码唯一性
 
-export function checWarehouseCode (code, id) {
+export function checWarehouseCode(code, id) {
   return request({
     url: `/api/wms/stockWarehouse/check/code/exist?code=` + code + '&id=' + id,
     method: 'get',
@@ -389,7 +389,7 @@ export function checWarehouseCode (code, id) {
 
 
 // 货架货位 列表
-export function getStockGoodsShelvesList (data) {
+export function getStockGoodsShelvesList(data) {
   return request({
     url: `/api/wms/stockGoodsShelves/list/condition`,
     method: 'post',
@@ -397,7 +397,7 @@ export function getStockGoodsShelvesList (data) {
   })
 }
 // 货架货位   树形结构
-export function getStockGoodsShelves (data) {
+export function getStockGoodsShelves(data) {
   return request({
     url: `/api/wms/stockGoodsShelves/tree`,
     method: 'post',
@@ -406,7 +406,7 @@ export function getStockGoodsShelves (data) {
 }
 // 新增货架货位
 
-export function addstockGoodsShelves (data) {
+export function addstockGoodsShelves(data) {
   return request({
     url: `/api/wms/stockGoodsShelves/insert`,
     method: 'post',
@@ -436,7 +436,7 @@ export const getStockGoodsShelvesInfo = (id) => {
   })
 }
 // 校验编码唯一性
-export function checStockGoodsCode (code, id) {
+export function checStockGoodsCode(code, id) {
   return request({
     url: `/api/wms/stockGoodsShelves/check/code/exist?code=` + code + '&id=' + id,
     method: 'get',
@@ -445,7 +445,7 @@ export function checStockGoodsCode (code, id) {
 
 
 // 设备基础参数-列表
-export function parametersShelveslist (data) {
+export function parametersShelveslist(data) {
   return request({
     url: `/api/mes/equEquipmentParameters/list`,
     method: 'post',
@@ -454,7 +454,7 @@ export function parametersShelveslist (data) {
 }
 
 // 设备基础参数-新增
-export function addparametersShelves (data) {
+export function addparametersShelves(data) {
   return request({
     url: `/api/mes/equEquipmentParameters/insert`,
     method: 'post',
@@ -484,7 +484,7 @@ export const getparametersInfo = (id) => {
   })
 }
 // 设备基础参数-校验编码唯一性
-export function checparametersCode (code, typeCode, id) {
+export function checparametersCode(code, typeCode, id) {
   return request({
     url: `/api/mes/equEquipmentParameters/check/code/exist?code=` + code + '&typeCode=' + typeCode + '&id=' + id,
     method: 'get',
@@ -493,7 +493,7 @@ export function checparametersCode (code, typeCode, id) {
 
 
 // 保养周期设置-列表
-export function maintenanceShelveslist (data) {
+export function maintenanceShelveslist(data) {
   return request({
     url: `/api/mes/bimEquipmentMaintenanceCycle/list`,
     method: 'post',
@@ -502,7 +502,7 @@ export function maintenanceShelveslist (data) {
 }
 
 // 保养周期设置-新增
-export function addmaintenanceShelves (data) {
+export function addmaintenanceShelves(data) {
   return request({
     url: `/api/mes/bimEquipmentMaintenanceCycle/insert`,
     method: 'post',
@@ -532,7 +532,7 @@ export const getmaintenanceInfo = (id) => {
   })
 }
 // 保养周期设置-校验编码唯一性
-export function checmaintenanceCode (code, id) {
+export function checmaintenanceCode(code, id) {
   return request({
     url: `/api/mes/bimEquipmentMaintenanceCycle/check/code/exist?code=` + code + '&id=' + id,
     method: 'get',
@@ -540,7 +540,7 @@ export function checmaintenanceCode (code, id) {
 }
 
 // 检查客户图号是否重复
-export function checkCustomerCode ({ customerName, code }) {
+export function checkCustomerCode({ customerName, code }) {
   return request({
     url: `/api/erp/quotation/basic/data/check/customer/material/code?customerName=` + customerName + '&code=' + code,
     method: 'get',
@@ -549,7 +549,7 @@ export function checkCustomerCode ({ customerName, code }) {
 
 // 新增销售报价基础数据
 
-export function addBasicData (data) {
+export function addBasicData(data) {
   return request({
     url: `/api/erp/quotation/basic/data/insert`,
     method: 'post',
@@ -572,7 +572,7 @@ export const editBasicData = (data) => {
   })
 }
 // 销售报价基础数据-列表数据
-export function getBasicDataList (data) {
+export function getBasicDataList(data) {
   return request({
     url: `/api/erp/quotation/basic/data/list`,
     method: 'post',
@@ -595,7 +595,7 @@ export const uploadQuotationBasicData = (data) => {
   })
 }
 // 销售订单-进度跟踪
-export function getscheduleList (data) {
+export function getscheduleList(data) {
   return request({
     url: `/api/erp/sale/orders/schedule/list`,
     method: 'post',
@@ -606,7 +606,7 @@ export function getscheduleList (data) {
 // 公式管理
 
 // 获取列表数据
-export function getFormulaList (data) {
+export function getFormulaList(data) {
   return request({
     url: `/api/erp/formula/list`,
     method: 'post',
@@ -614,7 +614,7 @@ export function getFormulaList (data) {
   })
 }
 // 新增公式数据
-export function addFormulaList (data) {
+export function addFormulaList(data) {
   return request({
     url: `/api/erp/formula/insert`,
     method: 'post',
@@ -622,14 +622,14 @@ export function addFormulaList (data) {
   })
 }
 // 删除公式数据
-export function deleteFormulaData (id) {
+export function deleteFormulaData(id) {
   return request({
     url: `/api/erp/formula/remove/${id}`,
     method: 'delete',
   })
 }
 // 修改公式数据
-export function editFormulaList (data) {
+export function editFormulaList(data) {
   return request({
     url: `/api/erp/formula/modify`,
     method: 'put',
@@ -637,7 +637,7 @@ export function editFormulaList (data) {
   })
 }
 // 获取公式详情
-export function getFormulaData (id) {
+export function getFormulaData(id) {
   return request({
     url: `/api/erp/formula/detail/${id}`,
     method: 'get',
@@ -645,7 +645,7 @@ export function getFormulaData (id) {
 }
 // 检查公式编号是否重复
 
-export function checkFormulaNum (value, id) {
+export function checkFormulaNum(value, id) {
   return request({
     url: `/api/erp/formula/check/formula/number?formulaNumber=` + value + '&id=' + id,
     method: 'get',
@@ -653,7 +653,7 @@ export function checkFormulaNum (value, id) {
 }
 
 // 批量校验公式明细中  公式代码项是否重复
-export function batchCheckformula (data) {
+export function batchCheckformula(data) {
   return request({
     url: `/api/erp/formula/line/batch/check/formula/item/code`,
     method: 'post',
@@ -665,7 +665,7 @@ export function batchCheckformula (data) {
 
 // 图号规则
 // 表格数据
-export function getRuleList (data) {
+export function getRuleList(data) {
   return request({
     url: `/api/erp/customer/drawing/number/rules/list`,
     method: 'post',
@@ -673,7 +673,7 @@ export function getRuleList (data) {
   })
 }
 // 新增图号规则
-export function addRuleData (data) {
+export function addRuleData(data) {
   return request({
     url: `/api/erp/customer/drawing/number/rules/insert`,
     method: 'post',
@@ -681,14 +681,14 @@ export function addRuleData (data) {
   })
 }
 // 删除图号规则
-export function deleteRuleData (id) {
+export function deleteRuleData(id) {
   return request({
     url: `/api/erp/customer/drawing/number/rules/remove/${id}`,
     method: 'delete',
   })
 }
 // 批量删除图号规则
-export function BatchdeleteRuleData (data) {
+export function BatchdeleteRuleData(data) {
   return request({
     url: `/api/erp/customer/drawing/number/rules/delBatch`,
     method: 'delete',
@@ -696,7 +696,7 @@ export function BatchdeleteRuleData (data) {
   })
 }
 // 修改图号规则
-export function editRuleData (data) {
+export function editRuleData(data) {
   return request({
     url: `/api/erp/customer/drawing/number/rules/modify`,
     method: 'put',
@@ -704,21 +704,21 @@ export function editRuleData (data) {
   })
 }
 // 图号规则详情数据
-export function getRuleDataInfo (id) {
+export function getRuleDataInfo(id) {
   return request({
     url: `/api/erp/customer/drawing/number/rules/detail/${id}`,
     method: 'get',
   })
 }
 // 图号规则  检查图号是否重复
-export function checRulesCode (code, id) {
+export function checRulesCode(code, id) {
   return request({
     url: `/api/erp/customer/drawing/number/rules/check/code/exist?code=` + code + '&id=' + id,
     method: 'get',
   })
 }
 // 图号规则 上传批量翻译
-export function uploadCalculate (data) {
+export function uploadCalculate(data) {
   return request({
     url: `/api/erp/customer/drawing/number/rules/line/upload/calculate`,
     method: 'post',
@@ -727,7 +727,7 @@ export function uploadCalculate (data) {
 }
 // 生成BOM
 
-export function generateData (data) {
+export function generateData(data) {
   return request({
     url: `/api/erp/customer/drawing/number/rules/generate/bom/batch`,
     method: 'post',
@@ -736,7 +736,7 @@ export function generateData (data) {
 }
 
 // 图号规则-通过公式ID获取明细
-export function getLineList (id) {
+export function getLineList(id) {
   return request({
     url: `/api/erp/formula/line/list/${id}`,
     method: 'get',
@@ -744,7 +744,7 @@ export function getLineList (id) {
 }
 // 图号计算
 
-export function calculate (data) {
+export function calculate(data) {
   return request({
     url: `/api/erp/customer/drawing/number/rules/line/calculate`,
     method: 'post',
@@ -757,7 +757,7 @@ export function calculate (data) {
 
 // 材质管理
 // 列表数据
-export function getMaterialList (data) {
+export function getMaterialList(data) {
   return request({
     url: `/api/erp/material/quality/list`,
     method: 'post',
@@ -766,7 +766,7 @@ export function getMaterialList (data) {
 }
 // 新增
 
-export function addMaterialList (data) {
+export function addMaterialList(data) {
   return request({
     url: `/api/erp/material/quality/insert`,
     method: 'post',
@@ -775,7 +775,7 @@ export function addMaterialList (data) {
 }
 // 删除
 
-export function deleteMaterialList (id) {
+export function deleteMaterialList(id) {
   return request({
     url: `/api/erp/material/quality/remove/${id}`,
     method: 'delete',
@@ -784,7 +784,7 @@ export function deleteMaterialList (id) {
 }
 // 修改
 
-export function editMaterialList (data) {
+export function editMaterialList(data) {
   return request({
     url: `/api/erp/material/quality/modify`,
     method: 'put',
@@ -792,7 +792,7 @@ export function editMaterialList (data) {
   })
 }
 // 详情
-export function getMaterialInfo (id) {
+export function getMaterialInfo(id) {
   return request({
     url: `/api/erp/material/quality/detail/${id}`,
     method: 'get',
@@ -800,7 +800,7 @@ export function getMaterialInfo (id) {
   })
 }
 // 校验材质编码是否唯一
-export function checkMaterialCode (code, id) {
+export function checkMaterialCode(code, id) {
   return request({
     url: `/api/erp/material/quality/check/code/exist?code=` + code + '&id=' + id,
     method: 'get',
@@ -811,7 +811,7 @@ export function checkMaterialCode (code, id) {
 
 // 班组管理
 //  列表数据
-export function getGroupList (data) {
+export function getGroupList(data) {
   return request({
     url: `/api/mes/work/group/list`,
     method: 'post',
@@ -820,7 +820,7 @@ export function getGroupList (data) {
 }
 // 新增
 
-export function addGroupData (data) {
+export function addGroupData(data) {
   return request({
     url: `/api/mes/work/group/insert`,
     method: 'post',
@@ -828,14 +828,14 @@ export function addGroupData (data) {
   })
 }
 // 删除
-export function deleteGroupData (id) {
+export function deleteGroupData(id) {
   return request({
     url: `/api/mes/work/group/remove/${id}`,
     method: 'delete',
   })
 }
 // 修改
-export function editGroupData (data) {
+export function editGroupData(data) {
   return request({
     url: `/api/mes/work/group/modify`,
     method: 'put',
@@ -843,7 +843,7 @@ export function editGroupData (data) {
   })
 }
 // 详情
-export function getGroupDataInfo (id) {
+export function getGroupDataInfo(id) {
   return request({
     url: `/api/mes/work/group/detail/${id}`,
     method: 'get',
@@ -851,7 +851,7 @@ export function getGroupDataInfo (id) {
 }
 // 检查编码是否重复
 
-export function checkGroupCode (code, id) {
+export function checkGroupCode(code, id) {
   return request({
     url: `/api/mes/work/group/check/code/exist?code=` + code + '&id=' + id,
     method: 'get',
@@ -864,7 +864,7 @@ export function checkGroupCode (code, id) {
 
 // 产线管理
 //  列表数据
-export function getProductionLineList (data) {
+export function getProductionLineList(data) {
   return request({
     url: `/api/mes/production/line/list`,
     method: 'post',
@@ -872,7 +872,7 @@ export function getProductionLineList (data) {
   })
 }
 // 新增
-export function addProductionLineData (data) {
+export function addProductionLineData(data) {
   return request({
     url: `/api/mes/production/line/insert`,
     method: 'post',
@@ -880,14 +880,14 @@ export function addProductionLineData (data) {
   })
 }
 // 删除
-export function deleteProductionLineData (id) {
+export function deleteProductionLineData(id) {
   return request({
     url: `/api/mes/production/line/remove/${id}`,
     method: 'delete',
   })
 }
 // 修改
-export function editProductionLineData (data) {
+export function editProductionLineData(data) {
   return request({
     url: `/api/mes/production/line/modify`,
     method: 'put',
@@ -895,7 +895,7 @@ export function editProductionLineData (data) {
   })
 }
 // 详情
-export function getProductionLineInfo (id) {
+export function getProductionLineInfo(id) {
   return request({
     url: `/api/mes/production/line/detail/${id}`,
     method: 'get',
@@ -903,7 +903,7 @@ export function getProductionLineInfo (id) {
 }
 // 检查编码是否重复
 
-export function checkProductionLineCode (code, id) {
+export function checkProductionLineCode(code, id) {
   return request({
     url: `/api/mes/production/line/check/code/exist?code=` + code + '&id=' + id,
     method: 'get',
@@ -912,7 +912,7 @@ export function checkProductionLineCode (code, id) {
 
 // 工位终端管理
 //  列表数据
-export function getTerminalList (data) {
+export function getTerminalList(data) {
   return request({
     url: `/api/mes/equStationTerminal/list`,
     method: 'post',
@@ -920,7 +920,7 @@ export function getTerminalList (data) {
   })
 }
 // 新增
-export function addTerminalData (data) {
+export function addTerminalData(data) {
   return request({
     url: `/api/mes/equStationTerminal/insert`,
     method: 'post',
@@ -928,14 +928,14 @@ export function addTerminalData (data) {
   })
 }
 // 删除
-export function deleteTerminalData (id) {
+export function deleteTerminalData(id) {
   return request({
     url: `/api/mes/equStationTerminal/remove/${id}`,
     method: 'delete',
   })
 }
 // 修改
-export function editTerminalData (data) {
+export function editTerminalData(data) {
   return request({
     url: `/api/mes/equStationTerminal/modify`,
     method: 'put',
@@ -943,7 +943,7 @@ export function editTerminalData (data) {
   })
 }
 // 详情
-export function getTerminalInfo (id) {
+export function getTerminalInfo(id) {
   return request({
     url: `/api/mes/equStationTerminal/detail/${id}`,
     method: 'get',
@@ -951,7 +951,7 @@ export function getTerminalInfo (id) {
 }
 // 检查终端编码是否重复
 
-export function checkTerminalCode (code, id) {
+export function checkTerminalCode(code, id) {
   return request({
     url: `/api/mes/equStationTerminal/check/code/exist?code=` + code + '&id=' + id,
     method: 'get',
@@ -962,7 +962,7 @@ export function checkTerminalCode (code, id) {
 // 不良原因
 
 //  列表数据
-export function getAdverseCausesList (data) {
+export function getAdverseCausesList(data) {
   return request({
     url: `/api/mes/adverseCauses/list`,
     method: 'post',
@@ -970,7 +970,7 @@ export function getAdverseCausesList (data) {
   })
 }
 // 新增
-export function addAdverseCausesData (data) {
+export function addAdverseCausesData(data) {
   return request({
     url: `/api/mes/adverseCauses/insert`,
     method: 'post',
@@ -978,14 +978,14 @@ export function addAdverseCausesData (data) {
   })
 }
 // 删除
-export function deleteAdverseCausesData (id) {
+export function deleteAdverseCausesData(id) {
   return request({
     url: `/api/mes/adverseCauses/remove/${id}`,
     method: 'delete',
   })
 }
 // 修改
-export function editAdverseCausesData (data) {
+export function editAdverseCausesData(data) {
   return request({
     url: `/api/mes/adverseCauses/modify`,
     method: 'put',
@@ -993,7 +993,7 @@ export function editAdverseCausesData (data) {
   })
 }
 // 详情
-export function getAdverseCausesInfo (id) {
+export function getAdverseCausesInfo(id) {
   return request({
     url: `/api/mes/adverseCauses/detail/${id}`,
     method: 'get',
@@ -1001,7 +1001,7 @@ export function getAdverseCausesInfo (id) {
 }
 // 检查编码是否重复
 
-export function checkadverseCausesCode (code, id) {
+export function checkadverseCausesCode(code, id) {
   return request({
     url: `/api/mes/adverseCauses/check/code/exist?code=` + code + '&id=' + id,
     method: 'get',
@@ -1014,7 +1014,7 @@ export function checkadverseCausesCode (code, id) {
 
 // 检验项目
 //  列表数据
-export function getBimInspectionItemsList (data) {
+export function getBimInspectionItemsList(data) {
   return request({
     url: `/api/mes/bimInspectionItems/list`,
     method: 'post',
@@ -1022,7 +1022,7 @@ export function getBimInspectionItemsList (data) {
   })
 }
 // 新增
-export function addBimInspectionItemsData (data) {
+export function addBimInspectionItemsData(data) {
   return request({
     url: `/api/mes/bimInspectionItems/insert`,
     method: 'post',
@@ -1030,14 +1030,14 @@ export function addBimInspectionItemsData (data) {
   })
 }
 // 删除
-export function deleteBimInspectionItemsData (id) {
+export function deleteBimInspectionItemsData(id) {
   return request({
     url: `/api/mes/bimInspectionItems/remove/${id}`,
     method: 'delete',
   })
 }
 // 修改
-export function editBimInspectionItemsData (data) {
+export function editBimInspectionItemsData(data) {
   return request({
     url: `/api/mes/bimInspectionItems/modify`,
     method: 'put',
@@ -1045,7 +1045,7 @@ export function editBimInspectionItemsData (data) {
   })
 }
 // 详情
-export function getBimInspectionItemsInfo (id) {
+export function getBimInspectionItemsInfo(id) {
   return request({
     url: `/api/mes/bimInspectionItems/detail/${id}`,
     method: 'get',
@@ -1053,7 +1053,7 @@ export function getBimInspectionItemsInfo (id) {
 }
 // 检查编码是否重复
 
-export function checkBimInspectionItemsCode (code, id) {
+export function checkBimInspectionItemsCode(code, id) {
   return request({
     url: `/api/mes/bimInspectionItems/check/code/exist?code=` + code + '&id=' + id,
     method: 'get',
@@ -1061,7 +1061,7 @@ export function checkBimInspectionItemsCode (code, id) {
 }
 // 检验类型
 //列表
-export function getbimInspectionType (data) {
+export function getbimInspectionType(data) {
   return request({
     url: `/api/mes/bimInspectionType/list`,
     method: 'post',
@@ -1070,7 +1070,7 @@ export function getbimInspectionType (data) {
 }
 // 详情
 
-export function bimInspectionTypedetail (id) {
+export function bimInspectionTypedetail(id) {
   return request({
     url: `/api/mes/bimInspectionType/detail/${id}`,
     method: 'get',
@@ -1078,7 +1078,7 @@ export function bimInspectionTypedetail (id) {
   })
 }
 // 新增
-export function addbimInspectionType (data) {
+export function addbimInspectionType(data) {
   return request({
     url: `/api/mes/bimInspectionType/insert`,
     method: 'post',
@@ -1086,7 +1086,7 @@ export function addbimInspectionType (data) {
   })
 }
 // 修改
-export function editbimInspectionType (data) {
+export function editbimInspectionType(data) {
   return request({
     url: `/api/mes/bimInspectionType/modify`,
     method: 'put',
@@ -1094,7 +1094,7 @@ export function editbimInspectionType (data) {
   })
 }
 // 删除
-export function delbimInspectionType (id) {
+export function delbimInspectionType(id) {
   return request({
     url: `/api/mes/bimInspectionType/remove/${id}`,
     method: 'delete',
@@ -1102,7 +1102,7 @@ export function delbimInspectionType (id) {
 }
 // 编码是否重复
 
-export function checkBimInspectionTypeCode (code, id) {
+export function checkBimInspectionTypeCode(code, id) {
   return request({
     url: `/api/mes/bimInspectionType/check/code/exist?code=` + code + '&id=' + id,
     method: 'get',
@@ -1111,7 +1111,7 @@ export function checkBimInspectionTypeCode (code, id) {
 
 // 业务开关
 // 列表
-export function getBimBusinessSwitchConfigList (data) {
+export function getBimBusinessSwitchConfigList(data) {
   return request({
     url: `/api/erp/bimBusinessSwitchConfig/configMap`,
     method: 'post',
@@ -1120,7 +1120,7 @@ export function getBimBusinessSwitchConfigList (data) {
 }
 
 // 业务配置-详情(根据Key)
-export function getBimBusinessDetail (data) {
+export function getBimBusinessDetail(data) {
   return request({
     url: `/api/erp/bimBusinessSwitchConfig/detail`,
     method: 'get',
@@ -1129,29 +1129,29 @@ export function getBimBusinessDetail (data) {
 }
 
 // 开关
-export function editSwitch (id) {
+export function editSwitch(id) {
   return request({
     url: `/api/erp/bimBusinessSwitchConfig/switch/${id}`,
     method: 'post',
   })
 }
 // 详情
-export function getBimBusinessInfo (id) {
+export function getBimBusinessInfo(id) {
   return request({
     url: `/api/erp/bimBusinessSwitchConfig/detailByKey?configKey=${id}`,
     method: 'get',
   })
 }
 // 详情
-export function getByCode (code) {
+export function getByCode(code) {
   return request({
-    url: '/api/system/BillRule/getByCode?code=' + code ,
+    url: '/api/system/BillRule/getByCode?code=' + code,
     method: 'get',
   })
 }
 // 修改
 
-export function editBimBusinessData (data) {
+export function editBimBusinessData(data) {
   return request({
     url: `/api/erp/bimBusinessSwitchConfig/modify`,
     method: 'put',
@@ -1160,14 +1160,14 @@ export function editBimBusinessData (data) {
 }
 // 人员设备
 // 列表详情
-export function getequEquipmentPersonDetail (id) {
+export function getequEquipmentPersonDetail(id) {
   return request({
     url: `/api/mes/equEquipmentPerson/detail/${id}`,
     method: 'get',
   })
 }
 // 新增
-export function addequEquipmentPerson (data) {
+export function addequEquipmentPerson(data) {
   return request({
     url: `/api/mes/equEquipmentPerson/insert`,
     method: 'post',
@@ -1175,7 +1175,7 @@ export function addequEquipmentPerson (data) {
   })
 }
 // 修改
-export function updateequEquipmentPerson (data) {
+export function updateequEquipmentPerson(data) {
   return request({
     url: `/api/mes/equEquipmentPerson/modify`,
     method: 'put',
@@ -1183,7 +1183,7 @@ export function updateequEquipmentPerson (data) {
   })
 }
 // 删除
-export function deleteequEquipmentPerson (id) {
+export function deleteequEquipmentPerson(id) {
   return request({
     url: `/api/mes/equEquipmentPerson/remove/${id}`,
     method: 'delete',
@@ -1191,7 +1191,7 @@ export function deleteequEquipmentPerson (id) {
 }
 // 条件查询 及列表
 
-export function getquEquipmentPerson (data) {
+export function getquEquipmentPerson(data) {
   return request({
     url: `/api/mes/equEquipmentPerson/list`,
     method: 'post',
@@ -1201,14 +1201,14 @@ export function getquEquipmentPerson (data) {
 
 // 图纸管理
 // 图纸详情
-export function getbimDrawingDetail (id) {
+export function getbimDrawingDetail(id) {
   return request({
     url: `/api/mes/bimDrawing/detail/${id}`,
     method: 'get',
   })
 }
 // 新增
-export function addbimDrawing (data) {
+export function addbimDrawing(data) {
   return request({
     url: `/api/mes/bimDrawing/insert`,
     method: 'post',
@@ -1216,7 +1216,7 @@ export function addbimDrawing (data) {
   })
 }
 // 修改
-export function updatebimDrawing (data) {
+export function updatebimDrawing(data) {
   return request({
     url: `/api/mes/bimDrawing/modify`,
     method: 'put',
@@ -1224,7 +1224,7 @@ export function updatebimDrawing (data) {
   })
 }
 // 列表
-export function getbimDrawingData (data) {
+export function getbimDrawingData(data) {
   return request({
     url: `/api/mes/bimDrawing/list`,
     method: 'post',
@@ -1233,7 +1233,7 @@ export function getbimDrawingData (data) {
 }
 
 // 删除
-export function deletebimDrawing (id) {
+export function deletebimDrawing(id) {
   return request({
     url: `/api/mes/bimDrawing/remove/${id}`,
     method: 'delete',
@@ -1241,21 +1241,21 @@ export function deletebimDrawing (id) {
 }
 // 作业指导书
 //删除
-export function getworkingbimDrawingDetail (id) {
+export function getworkingbimDrawingDetail(id) {
   return request({
     url: `/api/mes/bimWorkingInstruction/remove/${id}`,
     method: 'delete',
   })
 }
 //详情
-export function getworkingbimDrawinglook (id) {
+export function getworkingbimDrawinglook(id) {
   return request({
     url: `/api/mes/bimWorkingInstruction/detail/${id}`,
     method: 'get',
   })
 }
 // 新增
-export function addworkingbimDrawing (data) {
+export function addworkingbimDrawing(data) {
   return request({
     url: `/api/mes/bimWorkingInstruction/insert`,
     method: 'post',
@@ -1263,7 +1263,7 @@ export function addworkingbimDrawing (data) {
   })
 }
 // 修改
-export function updateworkingbimDrawing (data) {
+export function updateworkingbimDrawing(data) {
   return request({
     url: `/api/mes/bimWorkingInstruction/modify`,
     method: 'put',
@@ -1271,7 +1271,7 @@ export function updateworkingbimDrawing (data) {
   })
 }
 // 列表
-export function getworkingbimDrawingData (data) {
+export function getworkingbimDrawingData(data) {
   return request({
     url: `/api/mes/bimWorkingInstruction/list`,
     method: 'post',
@@ -1282,7 +1282,7 @@ export function getworkingbimDrawingData (data) {
 
 // 工位管理
 // 列表
-export function bimWorkstationList (data) {
+export function bimWorkstationList(data) {
   return request({
     url: `/api/mes/bimWorkstation/list`,
     method: 'post',
@@ -1290,7 +1290,7 @@ export function bimWorkstationList (data) {
   })
 }
 // 详情
-export function getBimWorkstation (id) {
+export function getBimWorkstation(id) {
   return request({
     url: `/api/mes/bimWorkstation/detail/${id}`,
     method: 'get',
@@ -1298,7 +1298,7 @@ export function getBimWorkstation (id) {
 }
 // 新增
 
-export function addBimWorkstation (data) {
+export function addBimWorkstation(data) {
   return request({
     url: `/api/mes/bimWorkstation/insert`,
     method: 'post',
@@ -1306,7 +1306,7 @@ export function addBimWorkstation (data) {
   })
 }
 // 修改
-export function updateBimWorkstation (data) {
+export function updateBimWorkstation(data) {
   return request({
     url: `/api/mes/bimWorkstation/modify`,
     method: 'put',
@@ -1315,14 +1315,14 @@ export function updateBimWorkstation (data) {
 }
 // 删除
 
-export function deleteBimWorkstation (id) {
+export function deleteBimWorkstation(id) {
   return request({
     url: `/api/mes/bimWorkstation/remove/${id}`,
     method: 'delete',
   })
 }
 // 检查工位编码
-export function checkBimWorkstationCode (code, id) {
+export function checkBimWorkstationCode(code, id) {
   return request({
     url: `/api/mes/bimWorkstation/check/code/exist?code=` + code + '&id=' + id,
     method: 'get',
@@ -1331,7 +1331,7 @@ export function checkBimWorkstationCode (code, id) {
 
 // 车型对照表
 // 列表
-export function getBimVehicleTypeData (data) {
+export function getBimVehicleTypeData(data) {
   return request({
     url: `/api/erp/bimVehicleTypeCorresponding/list`,
     method: 'post',
@@ -1339,7 +1339,7 @@ export function getBimVehicleTypeData (data) {
   })
 }
 // 新增
-export function addBimVehicleType (data) {
+export function addBimVehicleType(data) {
   return request({
     url: `/api/erp/bimVehicleTypeCorresponding/insert`,
     method: 'post',
@@ -1347,7 +1347,7 @@ export function addBimVehicleType (data) {
   })
 }
 // 修改
-export function updateBimVehicleType (data) {
+export function updateBimVehicleType(data) {
   return request({
     url: `/api/erp/bimVehicleTypeCorresponding/modify`,
     method: 'put',
@@ -1355,14 +1355,14 @@ export function updateBimVehicleType (data) {
   })
 }
 // 详情
-export function detailBimVehicleType (id) {
+export function detailBimVehicleType(id) {
   return request({
     url: `/api/erp/bimVehicleTypeCorresponding/detail/${id}`,
     method: 'get',
   })
 }
 // 删除
-export function deleteBimVehicleType (id) {
+export function deleteBimVehicleType(id) {
   return request({
     url: `/api/erp/bimVehicleTypeCorresponding/remove/${id}`,
     method: 'delete',
@@ -1370,7 +1370,7 @@ export function deleteBimVehicleType (id) {
 }
 // 产品替代件
 //列表
-export function getBimProductData (data) {
+export function getBimProductData(data) {
   return request({
     url: `/api/erp/bimProductSubstitutionComparison/list`,
     method: 'post',
@@ -1378,7 +1378,7 @@ export function getBimProductData (data) {
   })
 }
 // 新增
-export function addBimProduct (data) {
+export function addBimProduct(data) {
   return request({
     url: `/api/erp/bimProductSubstitutionComparison/insert`,
     method: 'post',
@@ -1386,14 +1386,14 @@ export function addBimProduct (data) {
   })
 }
 // 详情
-export function detailBimProduct (id) {
+export function detailBimProduct(id) {
   return request({
     url: `/api/erp/bimProductSubstitutionComparison/detail/${id}`,
     method: 'get',
   })
 }
 // 删除
-export function deleteBimProduct (id) {
+export function deleteBimProduct(id) {
   return request({
     url: `/api/erp/bimProductSubstitutionComparison/remove/${id}`,
     method: 'delete',
@@ -1402,7 +1402,7 @@ export function deleteBimProduct (id) {
 
 
 // 生产BOM 查询
-export function getBomList (data) {
+export function getBomList(data) {
   return request({
     url: `/api/erp/bom/list`,
     method: 'POST',
@@ -1411,7 +1411,7 @@ export function getBomList (data) {
 }
 
 // 生产BOM 新增
-export function addBomData (data) {
+export function addBomData(data) {
   return request({
     url: `/api/erp/bom/add`,
     method: 'POST',
@@ -1420,7 +1420,7 @@ export function addBomData (data) {
 }
 
 // 生产BOM 修改
-export function updateBomData (data) {
+export function updateBomData(data) {
   return request({
     url: `/api/erp/bom/modify`,
     method: 'PUT',
@@ -1429,7 +1429,7 @@ export function updateBomData (data) {
 }
 
 // 生产BOM 检查是否会有循环错误
-export function checkLoopBug (data) {
+export function checkLoopBug(data) {
   return request({
     url: `/api/erp/bom/check/cyclic`,
     method: 'POST',
@@ -1438,7 +1438,7 @@ export function checkLoopBug (data) {
 }
 
 // 生产BOM 删除
-export function deleteBomData (id) {
+export function deleteBomData(id) {
   return request({
     url: `/api/erp/bom/remove/${id}`,
     method: 'DELETE'
@@ -1446,7 +1446,7 @@ export function deleteBomData (id) {
 }
 
 // 生产BOM 详情
-export function detailBomData (id) {
+export function detailBomData(id) {
   return request({
     url: `/api/erp/bom/detail/${id}`,
     method: 'GET'
@@ -1454,28 +1454,28 @@ export function detailBomData (id) {
 }
 
 // 生产BOM 检查编码是否存在
-export function checkBomCodeExist (code) {
+export function checkBomCodeExist(code) {
   return request({
     url: `/api/erp/bom/check/code/exist?code=${code}`,
     method: 'GET'
   })
 }
 // 生产BOM 根据产品ID查询BOM ID
-export function getBomByProductId (productId) {
+export function getBomByProductId(productId) {
   return request({
     url: `/api/erp/bom/query/${productId}`,
     method: 'GET'
   })
 }
 // 生产BOM 完整BOM树
-export function getBomTree (id) {
+export function getBomTree(id) {
   return request({
     url: `/api/erp/bom/tree/${id}`,
     method: 'GET'
   })
 }
 // 生产BOM 批量计算净长
-export function batchCalculateLen (data) {
+export function batchCalculateLen(data) {
   return request({
     url: `/api/erp/bom/batch/calculate/len`,
     method: 'POST',
@@ -1485,7 +1485,7 @@ export function batchCalculateLen (data) {
 
 // 客户产品/供应商产品
 
-export function getPartnerOrProductData (data) {
+export function getPartnerOrProductData(data) {
   return request({
     url: `/api/erp/cooperative/partner/product/list`,
     method: 'post',
@@ -1494,7 +1494,7 @@ export function getPartnerOrProductData (data) {
 }
 
 // 批次列表
-export function getProductionLotList (data) {
+export function getProductionLotList(data) {
   return request({
     url: `/api/wms/stock/production/lot/list`,
     method: 'POST',
@@ -1504,7 +1504,7 @@ export function getProductionLotList (data) {
 
 // 多租户数据同步
 // 一键同步
-export function dataSync (data) {
+export function dataSync(data) {
   return request({
     url: `/api/sync/data/sync/record/total`,
     method: 'POST',
@@ -1514,7 +1514,7 @@ export function dataSync (data) {
 
 // 列表
 
-export function dataSyncList (data) {
+export function dataSyncList(data) {
   return request({
     url: `/api/sync/data/sync/record/list`,
     method: 'POST',
@@ -1524,7 +1524,7 @@ export function dataSyncList (data) {
 
 // 基础数据 导出接口
 
-export function excelExport (data) {
+export function excelExport(data) {
   return request({
     url: `/api/base/export`,
     method: 'POST',
@@ -1532,7 +1532,7 @@ export function excelExport (data) {
   })
 }
 // 检验报告-导出
-export function exportInspection (id) {
+export function exportInspection(id) {
   return request({
     url: `/api/mes/bimInspectionType/export/${id}`,
     method: 'get',
@@ -1572,21 +1572,21 @@ export function detailLabelPrintTemplateData(id) {
 }
 // 程序管理
 // 详情
-export function getbimProgramDetail (id) {
+export function getbimProgramDetail(id) {
   return request({
     url: `/api/mes/bimProgram/detail/${id}`,
     method: 'get',
   })
 }
 // 查看程序
-export function getbimProgramlook (data) {
+export function getbimProgramlook(data) {
   return request({
     url: `/api/mes/bimProgram/preview/${data.type}/${data.fileName}`,
     method: 'get',
   })
 }
 // 新增
-export function addbimProgram (data) {
+export function addbimProgram(data) {
   return request({
     url: `/api/mes/bimProgram/insert`,
     method: 'post',
@@ -1594,7 +1594,7 @@ export function addbimProgram (data) {
   })
 }
 // 修改
-export function updatebimProgram (data) {
+export function updatebimProgram(data) {
   return request({
     url: `/api/mes/bimProgram/modify`,
     method: 'put',
@@ -1602,7 +1602,7 @@ export function updatebimProgram (data) {
   })
 }
 // 列表
-export function getbimProgramData (data) {
+export function getbimProgramData(data) {
   return request({
     url: `/api/mes/bimProgram/list`,
     method: 'post',
@@ -1611,7 +1611,7 @@ export function getbimProgramData (data) {
 }
 
 // 删除
-export function deletebimProgram (id) {
+export function deletebimProgram(id) {
   return request({
     url: `/api/mes/bimProgram/remove/${id}`,
     method: 'delete',
@@ -1619,7 +1619,7 @@ export function deletebimProgram (id) {
 }
 
 // 生成二维码
-export function BuildQRCode () {
+export function BuildQRCode() {
   return request({
     url: `/api/extend/BarCode/BuildQRCode`,
     method: 'get',
@@ -1627,7 +1627,7 @@ export function BuildQRCode () {
 }
 //线索管理
 // 新增
-export function addCluemanagement (data) {
+export function addCluemanagement(data) {
   return request({
     url: `/api/zgt/bimClue/add`,
     method: 'post',
@@ -1635,7 +1635,7 @@ export function addCluemanagement (data) {
   })
 }
 // 列表
-export function getCluemanagementlist (data) {
+export function getCluemanagementlist(data) {
   return request({
     url: `/api/zgt/bimClue/list`,
     method: 'post',
@@ -1643,14 +1643,14 @@ export function getCluemanagementlist (data) {
   })
 }
 //详情
-export function getCluemanagementDetail (id) {
+export function getCluemanagementDetail(id) {
   return request({
     url: `/api/zgt/bimClue/detail/${id}`,
     method: 'get',
   })
 }
 // 修改
-export function updateCluemanagement (data) {
+export function updateCluemanagement(data) {
   return request({
     url: `/api/zgt/bimClue/update`,
     method: 'put',
@@ -1658,14 +1658,14 @@ export function updateCluemanagement (data) {
   })
 }
 // 删除
-export function deleteCluemanagement (id) {
+export function deleteCluemanagement(id) {
   return request({
     url: `/api/zgt/bimClue/del/${id}`,
     method: 'delete',
   })
 }
 // 转入线索池
-export function updateCluemanagementpool (data) {
+export function updateCluemanagementpool(data) {
   return request({
     url: `/api/zgt/bimClue/turn/pool`,
     method: 'put',
@@ -1673,7 +1673,7 @@ export function updateCluemanagementpool (data) {
   })
 }
 // 分配线索
-export function Assignclues (data) {
+export function Assignclues(data) {
   return request({
     url: `/api/zgt/bimClue/turn/clue`,
     method: 'put',
@@ -1729,5 +1729,13 @@ export function getDepartmentList(type) {
   return request({
     url: `/api/permission/Organize/department/list?type=${type}`,
     method: 'post',
+  })
+}
+// 供应商导入
+export function supplierupload(data, type) {
+  return request({
+    url: `/api/erp/cooperative/partner/upload/supplier/${type}`,
+    method: 'post',
+    data
   })
 }

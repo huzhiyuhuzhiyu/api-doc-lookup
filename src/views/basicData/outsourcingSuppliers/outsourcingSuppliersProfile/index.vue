@@ -203,7 +203,7 @@
 </template>
 
 <script>
-import { getcategoryTree, getCooperativeData, deleteCooperative } from '@/api/basicData/index'
+import { getcategoryTree, getCooperativeData, deleteCooperative,supplierupload } from '@/api/basicData/index'
 import Form from './Form'
 import UserRelationList from './userRelation'
 import moment from 'moment'
@@ -506,7 +506,7 @@ export default {
       var formData = new FormData()
       formData.append("file", data)
       //调用上传文件接口
-      saleCluemanagementpoolModel(formData).then(res => {
+      supplierupload(formData,'outsourcing_suppliers').then(res => {
         if (!res.data) {
           this.$message.success(`导入成功`)
           this.listLoading = false

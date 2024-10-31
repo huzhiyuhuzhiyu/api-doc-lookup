@@ -133,7 +133,7 @@
                       </el-table-column>
                       <el-table-column prop="code" label="工序编码" min-width="140" />
 
-                      <el-table-column prop="processType" label="工序类型" width="180">
+                      <el-table-column prop="processType" label="工序类型" width="120">
                         <template slot-scope="scope">
                           <template v-if="scope.row.processType == 'normal'">
                             正常工序
@@ -149,7 +149,7 @@
                           </template>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="processingType" label="加工类型" width="180">
+                      <el-table-column prop="processingType" label="加工类型" width="100">
                         <template slot-scope="scope">
                           <template v-if="scope.row.processingType === 'self_produced'">
                             自制
@@ -184,7 +184,7 @@
                               </el-form>
                             </template>
                           </el-table-column> -->
-                      <el-table-column prop="firstFlag" label="是否首道工序" min-width="140">
+                      <el-table-column prop="firstFlag" label="是否首道工序" width="120">
                         <template slot-scope="scope">
                           <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row">
                             <el-form-item prop="firstFlag" ref="firstFlag">
@@ -195,7 +195,7 @@
                           </el-form>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="pickingFlag" label="是否领料" min-width="130">
+                      <el-table-column prop="pickingFlag" label="是否领料" width="90">
                         <template slot-scope="{ row }">
                           <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
                             <el-form-item prop="pickingFlag" ref="pickingFlag">
@@ -205,7 +205,7 @@
                           </el-form>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="firstInspection" label="是否首检" min-width="130">
+                      <el-table-column prop="firstInspection" label="是否首检" width="90">
                         <template slot-scope="{ row }">
                           <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
                             <el-form-item prop="firstInspection" ref="firstInspection">
@@ -216,7 +216,7 @@
                           </el-form>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="checkFlag" label="是否检验" min-width="130">
+                      <el-table-column prop="checkFlag" label="是否检验" width="90">
                         <template slot-scope="{ row }">
                           <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
                             <el-form-item prop="checkFlag" ref="checkFlag">
@@ -227,7 +227,7 @@
                           </el-form>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="reportFlag" label="是否报工" min-width="130">
+                      <el-table-column prop="reportFlag" label="是否报工" width="90">
                         <template slot-scope="scope">
                           <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row" :rules="rulesTwo">
                             <el-form-item prop="reportFlag" ref="reportFlag">
@@ -252,7 +252,7 @@
                           </template>
                         </el-table-column> -->
 
-                      <el-table-column prop="stockFlag" label="是否入库" min-width="130">
+                      <el-table-column prop="stockFlag" label="是否入库" width="90">
                         <template slot-scope="scope">
                           <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row" :rules="rulesTwo">
                             <el-form-item prop="stockFlag" ref="stockFlag">
@@ -266,7 +266,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="lastFlag" label="是否末道工序" min-width="140">
+                      <el-table-column prop="lastFlag" label="是否末道工序" width="120">
                         <template slot-scope="scope">
                           <el-form :ref="`tableForm_1_${scope.row.index}`" :model="scope.row">
                             <el-form-item prop="lastFlag" ref="lastFlag">
@@ -277,10 +277,10 @@
                           </el-form>
                         </template>
                       </el-table-column>
-                      <el-table-column label="操作" min-width="180" fixed="right">
+                      <el-table-column label="操作" width="180" fixed="right">
                         <template slot-scope="scope">
                           <el-button type="text" class="JNPF-table-delBtn"
-                            :disabled="type !== 'add' && dataForm.documentStatus == 'submit'"
+                            :disabled="type == 'look' || dataForm.documentStatus == 'submit'"
                             @click="delequipment_process_relList(scope.$index)">
                             删除
                           </el-button>
@@ -391,7 +391,7 @@
                   </el-table-column>
                   <el-table-column prop="code" label="工序编码" min-width="140" />
 
-                  <el-table-column prop="processType" label="工序类型" width="180">
+                  <el-table-column prop="processType" label="工序类型" width="120">
                     <template slot-scope="scope">
                       <template v-if="scope.row.processType == 'normal'">
                         正常工序
@@ -407,7 +407,7 @@
                       </template>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="processingType" label="加工类型" width="180">
+                  <el-table-column prop="processingType" label="加工类型" width="100">
                     <template slot-scope="scope">
                       <template v-if="scope.row.processingType === 'self_produced'">
                         自制
@@ -417,7 +417,7 @@
                       </template>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="firstFlag" label="是否首道工序" min-width="140">
+                  <el-table-column prop="firstFlag" label="是否首道工序" width="120">
                     <template slot-scope="scope">
                       <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row">
                         <el-form-item prop="firstFlag" ref="firstFlag">
@@ -428,7 +428,7 @@
                       </el-form>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="pickingFlag" label="是否领料" min-width="130">
+                  <el-table-column prop="pickingFlag" label="是否领料" width="90">
                     <template slot-scope="{ row }">
                       <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
                         <el-form-item prop="pickingFlag" ref="pickingFlag">
@@ -438,7 +438,7 @@
                       </el-form>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="firstInspection" label="是否首检" min-width="130">
+                  <el-table-column prop="firstInspection" label="是否首检" width="90">
                     <template slot-scope="{ row }">
                       <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
                         <el-form-item prop="firstInspection" ref="firstInspection">
@@ -449,7 +449,7 @@
                       </el-form>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="checkFlag" label="是否检验" min-width="130">
+                  <el-table-column prop="checkFlag" label="是否检验" width="90">
                     <template slot-scope="{ row }">
                       <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
                         <el-form-item prop="checkFlag" ref="checkFlag">
@@ -460,7 +460,7 @@
                       </el-form>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="reportFlag" label="是否报工" min-width="130">
+                  <el-table-column prop="reportFlag" label="是否报工" width="90">
                     <template slot-scope="scope">
                       <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row" :rules="rulesTwo">
                         <el-form-item prop="reportFlag" ref="reportFlag">
@@ -473,7 +473,7 @@
                       </el-form>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="stockFlag" label="是否入库" min-width="130">
+                  <el-table-column prop="stockFlag" label="是否入库" width="90">
                     <template slot-scope="scope">
                       <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row" :rules="rulesTwo">
                         <el-form-item prop="stockFlag" ref="stockFlag">
@@ -487,7 +487,7 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="lastFlag" label="是否末道工序" min-width="140">
+                  <el-table-column prop="lastFlag" label="是否末道工序" width="120">
                     <template slot-scope="scope">
                       <el-form :ref="`tableForm_1_${scope.row.index}`" :model="scope.row">
                         <el-form-item prop="lastFlag" ref="lastFlag">
@@ -498,7 +498,7 @@
                       </el-form>
                     </template>
                   </el-table-column>
-                  <el-table-column label="操作" min-width="180" fixed="right">
+                  <el-table-column label="操作" width="180" fixed="right">
                     <template slot-scope="scope">
                       <el-button type="text" class="JNPF-table-delBtn"
                         :disabled="type !== 'add' && dataForm.documentStatus == 'submit'"
@@ -1074,6 +1074,7 @@ export default {
               departmentId: item.departmentId,
               stockFlag: item.stockFlag,
               firstInspection: item.firstInspection,
+              pickingFlag: item.pickingFlag,
               firstFlag: item.firstFlag,
               lastFlag: item.lastFlag,
               defaultFlag: item.defaultFlag,

@@ -1,6 +1,6 @@
 <template>
   <FinishedProduct v-if="code == 'finished_product'"></FinishedProduct>
-  <ProductIndex v-else ref="productIndex" :initListQuery="initListQuery" :productName="name" :busSetId="'CPBM'" />
+  <ProductIndex v-else ref="productIndex" :initListQuery="initListQuery" :tableItems="tableItems" :productName="name" :busSetId="'CPBM'" />
 </template>
 
 <script>
@@ -13,6 +13,7 @@ export default {
     return {
       code: '',
       name: '',
+      productCode: ''
     }
   },
   created() {
@@ -41,10 +42,33 @@ export default {
       customerQueryFields: [],
       createTimeArr: [],
       classAttribute: this.code,
-      classAttributeText: this.name.slice(0, 2)
+      classAttributeText: this.name
     }
+    this.productCode = this.name + '编码'
+    this.tableItems = [
+      {
+        align: '',
+        formatter: '',
+        jnpfKey: '',
+        label: this.productCode,
+        minWidth: 180,
+        prop: 'code',
+        sortable: true,
+        width: 180
+      },
+      {
+        align: '',
+        formatter: '',
+        jnpfKey: '',
+        label: `${this.name}规格`,
+        minWidth: 180,
+        prop: 'drawingNo',
+        sortable: true,
+        width: 180
+      }
+    ]
     this.$nextTick(() => {
-      this.$refs.productIndex.init(this.initListQuery)
+      this.$refs.productIndex.init(this.initListQuery, JSON.stringify(this.tableItems))
     })
 
   }

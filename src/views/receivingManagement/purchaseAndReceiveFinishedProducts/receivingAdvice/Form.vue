@@ -1491,6 +1491,7 @@ export default {
             this.dataFormTwo.productData = res.data.noticeLineList
             this.dataFormTwo.productData.forEach((item) => {
               item.drawingNo = item.productDrawingNo
+
             })
             if (this.btnType === 'edit') {
               this.getBusInfo()
@@ -1653,7 +1654,7 @@ export default {
             classAttribute: item.classAttribute,
             id: item.id ? item.id : '',
             // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-            ordersLineId: item.ordersLineId ? item.ordersLineId : item.purchaseOrderId,
+            ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
             // pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
             ratio: item.ratio ? item.ratio : '',
             receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
@@ -1674,7 +1675,7 @@ export default {
             productsId: item.productsId ? item.productsId : '',
             waitReceiptNum: item.waitReceiptNum ? item.waitReceiptNum : '',
             // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-            ordersLineId: item.ordersLineId ? item.ordersLineId : item.purchaseOrderId,
+            ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
             pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
             ratio: item.ratio ? item.ratio : '',
             receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',

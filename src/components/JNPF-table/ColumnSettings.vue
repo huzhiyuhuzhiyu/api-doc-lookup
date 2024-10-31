@@ -88,6 +88,7 @@ export default {
     init() {
       this.drawerVisible = true
       // this.list = [...this.columnList]
+      console.log(this.columnList,'this.columnList')
       this.list = JSON.parse(JSON.stringify(this.columnList))
     },
     reset() {

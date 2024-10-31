@@ -463,7 +463,7 @@ export default {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
       this.orderForm.orderItems[0].asc = order !== 'descending'
-
+      this.orderForm.orderItems[0].column = order === null ? '' : newProp
       this.initData()
     },
     // 关闭新建编辑页面

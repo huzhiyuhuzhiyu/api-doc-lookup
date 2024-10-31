@@ -1092,7 +1092,7 @@ export default {
     async beforeSubmit(data, paramsObj) {
       let flag = true
       if (paramsObj.oldData.length) {
-        flag = await this.$confirm('切换供应商将修改产品信息的含税单价和税率，是否继续？', '提示', {
+        flag = await this.$confirm('切换供应商将更新产品信息的含税单价和税率，是否继续？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'

@@ -375,8 +375,8 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="tableDataCustomer" @row-dblclick="seleceCustomer">
-                <el-table-column prop="code" label="客户编码" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="name" label="客户名称" />
+                <el-table-column prop="code" label="供应商编码" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="name" label="供应商名称" />
                 <el-table-column prop="taxId" label="税号" />
                 <el-table-column label="操作" width="100">
                   <template slot-scope="scope">
@@ -428,7 +428,7 @@
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="productList" @row-dblclick="seleceCustomer" hasC
+              <JNPF-table v-loading="listLoading" :data="productList" hasC
                 @selection-change="handleSelectionChangeAllPruduct">
                 <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" width="200" sortable="custom" show-overflow-tooltip />
@@ -1321,7 +1321,7 @@ export default {
     seleceCustomer(e) {
       getCooperativeInfo(e.id).then((res) => {
         if (this.dataForm.cooperativePartnerId && res.msg == 'Success') {
-          this.$confirm('已选择过客户，是否切换，切换后将清空订单和产品信息，是否继续！', '提示', {
+          this.$confirm('切换供应商后将清空订单和产品信息，是否继续！', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
@@ -1513,6 +1513,11 @@ export default {
         this.dataFormTwo.productData = data
         this.dataForm.partnerName = data[0].cooperativePartnerName
         this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
+        data.forEach((item) => {
+          console.log('ooooooo', item)
+          item.ordersNo = item.orderNo
+
+        })
       }
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
@@ -1568,11 +1573,7 @@ export default {
         })
       } else {
         this.dataForm.salesman = this.userInfo.userName
-        data.forEach((item) => {
-          console.log('ooooooo', item)
-          item.ordersNo = item.orderNo
 
-        })
         this.fetchData('CGSH')
         this.getBusInfo()
       }

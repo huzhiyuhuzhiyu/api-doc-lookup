@@ -25,7 +25,7 @@
 
             <el-col :span="6">
               <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
                   {{ $t('common.search') }}
                 </el-button>
                 <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">
@@ -449,7 +449,7 @@ export default {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
       this.orderForm.orderItems[0].asc = order !== 'descending'
-
+      this.orderForm.orderItems[0].column = order === null ? '' : newProp
       this.initData()
     },
     // 关闭新建编辑页面
@@ -539,7 +539,7 @@ export default {
     addSupplier(id, btntype) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype, false)
+        this.$refs.Form.init(id, btntype, false,[])
       })
     },
     addOrUpdateHandle(id, btntype) {
@@ -572,7 +572,7 @@ export default {
     handleUserRelation(id, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType, false)
+        this.$refs.Form.init(id, btnType, false, [])
       })
     },
     // 导出

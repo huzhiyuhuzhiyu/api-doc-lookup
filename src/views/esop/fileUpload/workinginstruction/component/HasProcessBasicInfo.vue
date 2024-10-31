@@ -265,14 +265,7 @@ export default {
                                                 <el-input v-model="dataForm.version" placeholder="请输入版本号"  />
                                             </el-form-item>
                                         </el-col>
-                                        <el-col :span="2" v-if="!isFileUploadPage">
-                                            <el-form @submit.prevent   style="padding-top: 0;" >
-                                                <el-form-item label="关联版本数">
-                                                    <el-input  readonly @click.native="versionCountHandler" v-model="dataForm.versionCount" class="pointer versionCount"/>
-                                                </el-form-item>
-                                            </el-form>
-                                        </el-col>
-                                        <el-col :span="!isFileUploadPage ? 2 : 4">
+                                        <el-col :span="hasEnableMark ? 2 : 6">
                                             <el-form-item label="按工序上传">
                                                 <div style="height: 32px;display: flex;align-items: center">
                                                     <el-tooltip :content="hasRoutingLine ? '开启后可为每一道工序上传作业指导书':'该产品未设置工艺路线，请设置工艺路线后再开启'" placement="top-start">
@@ -286,8 +279,7 @@ export default {
                                                 </div>
                                             </el-form-item>
                                         </el-col>
-
-                                        <el-col :span="2" v-if="hasEnableMark">
+                                        <el-col :span="4" v-if="hasEnableMark">
                                             <el-form @submit.prevent :disabled="isView" style="padding-top: 0">
                                                 <el-form-item label="是否启用">
                                                     <div style="height: 32px;display: flex;align-items: center">
@@ -307,12 +299,11 @@ export default {
 
                                 </el-row>
                                 <el-row :gutter="10">
-                                    <el-col :span="12">
-                                        <el-form-item label="产品信息" prop="drawingNo">
-                                            <div class="width-full flex-row">
+                                    <el-col :span="6">
+                                        <el-form-item label="品名规格" prop="drawingNo">
                                                 <ComSelect-page
-                                                    placeholder="请选择产品编码"
-                                                    style="width: 50%"
+                                                    placeholder="请选择品名规格"
+
                                                     ref="ComSelect-page"
                                                     v-model="dataForm.drawingNo"
                                                     @change="submitCustomerProduct"
@@ -325,15 +316,24 @@ export default {
                                                     :listRequestObj="listRequestObj"
                                                     :searchList="searchList"
                                                     :elementShow="true"  />
-                                                <el-input @click.native="chooseProduct" placeholder="请选择产品编码" :value="dataForm.productsCode"  style="margin-left: 10px;width: calc(50% - 10px)" readonly/>
-                                            </div>
-
                                         </el-form-item>
                                     </el-col>
-                                    <el-col :span="12">
+                                    <el-col :span="6">
+                                        <el-form-item label="产品编码">
+                                            <el-input @click.native="chooseProduct" placeholder="请选择产品编码" :value="dataForm.productsCode" readonly/>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="6">
                                         <el-form-item label="产品分类">
                                             <el-input @click.native="chooseProduct" :value="dataForm.productsCategoryName" placeholder="请选择产品分类" readonly/>
                                         </el-form-item>
+                                    </el-col>
+                                    <el-col :span="6" v-if="!isFileUploadPage && !isNoProductPage">
+                                        <el-form @submit.prevent   style="padding-top: 0;" >
+                                            <el-form-item label="关联版本数">
+                                                <el-input  readonly @click.native="versionCountHandler" v-model="dataForm.versionCount" class="pointer versionCount"/>
+                                            </el-form-item>
+                                        </el-form>
                                     </el-col>
                                 </el-row>
 

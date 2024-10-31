@@ -4,29 +4,6 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <!-- <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.orderNo" placeholder="请输入单号" clearable @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.partnerName" placeholder="请输入客户名称" clearable
-                  @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.customerProductNo" placeholder="请输入客户料号" clearable
-                  @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable
-                  @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col> -->
             <template v-for="item in searchList">
               <el-col :span="item.searchType === 3 ? 6 : 4">
                 <el-form-item>
@@ -47,7 +24,7 @@
             </template>
             <el-col :span="6">
               <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
                   {{ $t('common.search') }}
                 </el-button>
                 <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">
@@ -468,12 +445,7 @@ export default {
     handleClick(e) {
       this.activeName = e.name
     },
-    //   sortChange({ prop, order }) {
-    //   const newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-    //   this.listQuery.orderItems[0].asc = order !== 'descending'
-    //   this.listQuery.orderItems[0].column = order === null ? "" : newProp
-    //   this.initData()
-    // },
+
     //排序
     sortChange({ prop, order }) {
       let newProp
@@ -494,7 +466,7 @@ export default {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
       this.orderForm.orderItems[0].asc = order !== 'descending'
-
+      this.orderForm.orderItems[0].column = order === null ? '' : newProp
       this.initData()
     },
     // 关闭新建编辑页面
@@ -576,7 +548,7 @@ export default {
     addSupplier(id, btntype) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype, false)
+        this.$refs.Form.init(id, btntype, false,[])
       })
     },
     addOrUpdateHandle(id, btntype) {
@@ -585,7 +557,7 @@ export default {
         console.log(id)
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.Form.init(id, btntype)
+          this.$refs.Form.init(id, btntype, false, [])
         })
         // }, 600);
       }
@@ -609,7 +581,7 @@ export default {
     handleUserRelation(id, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType, false)
+        this.$refs.Form.init(id, btnType, false, [])
       })
     },
     // 导出

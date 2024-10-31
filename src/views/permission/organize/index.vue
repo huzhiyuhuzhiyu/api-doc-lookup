@@ -143,7 +143,7 @@
           </div>
         </div>
       </div>
-      <div class="add-main">
+      <div class="add-main" v-if="synchronization !== '把企业微信数据同步到系统'">
         <div class="add-item add-item-sys">
           <i class="add-icons icon-ym icon-ym-download"></i>
           <div class="add-txt">
@@ -330,7 +330,7 @@ export default {
     toWxHandle(){
       if (!this.$refs.dataTable.getCurrentSelection().length) return this.$message.warning('请选择您要同步的组织数据')
       this.name = '同步到企业微信'
-      this.names = '用户数据同步到企业微信'
+      this.names = '组织数据同步到企业微信'
       this.synchronization = '把企业微信数据同步到系统'
       this.dataVisible = true
     },

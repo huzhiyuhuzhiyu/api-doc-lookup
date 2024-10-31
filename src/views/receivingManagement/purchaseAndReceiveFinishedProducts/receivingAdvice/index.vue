@@ -504,7 +504,7 @@ export default {
         console.log(id)
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.Form.init(id, btntype)
+          this.$refs.Form.init(id, btntype, false, [])
         })
         // }, 600);
       }
@@ -528,7 +528,7 @@ export default {
     handleUserRelation(id, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType, false)
+        this.$refs.Form.init(id, btnType, false, [])
       })
     },
     //确认收货

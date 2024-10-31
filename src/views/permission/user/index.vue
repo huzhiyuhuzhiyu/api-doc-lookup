@@ -210,7 +210,7 @@
           </div>
         </div>
       </div>
-      <div class="add-main">
+      <div class="add-main"  v-if="synchronization !== '把企业微信数据同步到系统'">
         <div class="add-item add-item-sys">
           <i class="add-icons icon-ym icon-ym-download"></i>
           <div class="add-txt">
@@ -252,6 +252,7 @@ import {
   synAllOrganizeQyToSys,
   synAllUserQyToSys,
   getOrganizeToDing,
+  getUserToWx,
   getUserToDing
 
 } from '@/api/system/sysConfig'
@@ -758,13 +759,23 @@ export default {
       this.synchronization = '把阿里钉钉数据同步到系统'
       this.dataVisible = true
     },
+     // 同步到企微
+     toWxHandle(){
+      if (!this.selectArr.length) return this.$message.warning('请选择您要同步的用户数据')
+      this.name = '同步到企业微信'
+      this.names = '用户数据同步到企业微信'
+      this.synchronization = '把企业微信数据同步到系统'
+      this.dataVisible = true
+    },
     syncQy(type) {
+      let ids = this.selectArr.map(item=>item.id)
       this.$confirm('同步以后会丢失现有数据，是否继续？', '提示', {
         type: 'warning'
       }).then(() => {
         type == 0 ? this.wechatLoading = true : this.dingLoading = true
-        const method = this.row.synType == '组织' ? synAllOrganizeQyToSys : synAllUserQyToSys
-        method(type).then(res => {
+        const method = type === 0  ? getUserToWx : synAllUserQyToSys
+        let obj = type == 0 ? ids : type
+        method(obj).then(res => {
           type == 0 ? this.wechatLoading = false : this.dingLoading = false
           this.dataVisible = false
           if (res.msg === '正在进行同步,请稍等') {

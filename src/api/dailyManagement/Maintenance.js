@@ -438,3 +438,19 @@ export function equMaintenanceTime(data) {
     data
   })
 }
+// 维修供应商次数
+export function repairSupplierNum(data) {
+  return request({
+    url: `/api/mes/equReport/repairSupplierNum`,
+    method: 'POST',
+    data
+  })
+}
+// 维修审核意见
+export function repairCommentsNum(data) {
+  return request({
+    url: `/api/mes/equReport/repairCommentsNum`,
+    method: 'POST',
+    data
+  })
+}

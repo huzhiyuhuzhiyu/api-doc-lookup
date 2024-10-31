@@ -125,7 +125,7 @@
               </el-link>
             </template>
 </el-table-column> -->
-          <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
+          <!-- <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" /> -->
           <el-table-column prop="name" :label="classAttributeText + '名称'" min-width="140" sortable="custom">
             <!-- <template slot="header" slot-scope="scope">
               {{ classAttributeText }}名称
@@ -307,18 +307,6 @@ export default {
       type: Object,
       default() {
         return {
-          tableItems: [
-            {
-              align: 'left',
-              formatter: '',
-              jnpfKey: '',
-              label: '订单号',
-              minWidth: 180,
-              prop: 'code666',
-              sortable: true,
-              width: 180
-            }
-          ],
           code: '',
           name: '',
           orderItems: [
@@ -692,10 +680,13 @@ export default {
         }
       } catch (error) { }
     },
-    init(initListQuery) {
+    init(initListQuery, tableItems) {
       this.quickVisible = false
       this.listQuery = JSON.parse(JSON.stringify(initListQuery))
+      this.tableItems = JSON.parse(tableItems)
       console.log(initListQuery, 'uuu')
+      console.log(this.tableItems, 'this.tableItems')
+      console.log(this.$refs.dataTable, 'dataTable9')
       this.classAttributeText = this.listQuery.classAttributeText
       console.log(this.classAttributeText, '[]')
       this.getcategoryTree()

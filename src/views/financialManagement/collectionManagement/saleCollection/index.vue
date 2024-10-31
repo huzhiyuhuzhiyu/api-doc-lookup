@@ -1,8 +1,8 @@
 <template>
   <paymentIndex :reconciliationType="listRequestObj.reconciliationType" :listMethod="getfinAccountsReport"
-    :listRequestObj="listRequestObj" :tableItems="tableItems" :searchList="searchList"  />
+    :listRequestObj="listRequestObj" :tableItems="tableItems" :searchList="searchList" />
 </template>
-  
+
 <script>
 import { getfinAccountList, getfinAccountDetail, getfinAccountsReport } from '@/api/ReconciliaRePayments/index'
 import paymentIndex from '@/views/financialManagement/components/pay/index.vue'
@@ -48,7 +48,7 @@ export default {
       tableItems: [
         { prop: 'orderNo', label: '对账流水号', minWidth: '180', sortable: 'custom' },
         { prop: 'reconciliationDate', label: '对账日期', minWidth: '180', sortable: 'custom' },
-        { prop: 'cooperativePartnerName', label: '客户名称', sortable: 'custom' },
+        { prop: 'cooperativePartnerName', label: '客户名称', sortable: 'custom', minWidth: '180' },
         { prop: 'cooperativePartnerCode', label: '客户编码', sortable: 'custom' },
         { prop: 'includingTaxAmount', label: '出入库金额', minWidth: '160', sortable: 'custom' },
         { prop: 'totalReconciliationAmount', label: '应收金额', sortable: 'custom' },
@@ -72,5 +72,3 @@ export default {
 
 }
 </script>
-
-  

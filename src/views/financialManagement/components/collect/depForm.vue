@@ -203,11 +203,11 @@
 
 
 
-                      <el-table-column prop="taxRate" label="税率%" min-width="100">
+                      <el-table-column prop="taxRate" label="税率" min-width="100">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'taxRate'">
                             <div class="viewData">
-                              <span>{{ scope.row.taxRate }}</span>
+                              <span>{{ scope.row.taxRate }}%</span>
                             </div>
                           </el-form-item>
                         </template>
@@ -221,7 +221,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column> -->
-                      <el-table-column prop="excludingTaxAmount" label="不含税金额" min-width="160">
+                      <el-table-column prop="excludingTaxAmount" label="金额(不含税)" min-width="160">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
 
@@ -243,7 +243,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="includingTaxAmount" label="含税金额" min-width="160">
+                      <el-table-column prop="includingTaxAmount" label="金额(含税)" min-width="160">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'includingTaxAmount'">
                             <div :class="['viewData', scope.row.includingTaxAmount < 0 ? 'red' : 'green']">

@@ -47,7 +47,7 @@
           </div>
         </div>
 
-        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO show-summary
+        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO show-summary  custom-column
           :summary-method="getSummaries" :fixedNO="true" @sort-change="sortChange" :setColumnDisplayList="columnList">
           <template v-for="item in tableItems">
             <el-table-column :key="item.prop" :prop="item.prop" :label="item.label" :fixed="item.fixed || false"

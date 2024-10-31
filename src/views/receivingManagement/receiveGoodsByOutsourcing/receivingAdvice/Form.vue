@@ -818,28 +818,32 @@ export default {
     // 切换供应商后给的提示
     async beforeSubmit(data, paramsObj) {
       let flag = true
-      if (paramsObj.oldData.length) {
-        flag = await this.$confirm('切换供应商将清空产品信息，是否继续？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-          .then(() => {
-            this.$message({
-              type: 'success',
-              message: '更换成功!'
-            })
-            this.$refs['productForm'].resetFields()
-            return true
+      if (this.dataFormTwo.productData.length) {
+        if (paramsObj.oldData.length) {
+          flag = await this.$confirm('切换供应商将清空产品信息，是否继续？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
           })
-          .catch(() => {
-            this.$message({
-              type: 'info',
-              message: '已取消'
+            .then(() => {
+              this.$message({
+                type: 'success',
+                message: '更换成功!'
+              })
+              this.$refs['productForm'].resetFields()
+              this.dataFormTwo.productData = []
+              return true
             })
-            return false
-          })
+            .catch(() => {
+              this.$message({
+                type: 'info',
+                message: '已取消'
+              })
+              return false
+            })
+        }
       }
+
       return flag
     },
     supplierdata(id, data) {
@@ -901,7 +905,9 @@ export default {
     // 点击选择产品
     openSeleceProductDialog() {
       if (!this.dataForm.cooperativePartnerId) return this.$message.error('请先选择供应商')
+      this.ProductListRequestObj.cooperativePartnerId = this.dataForm.cooperativePartnerId
       this.$refs['ComSelect-page'].openDialog()
+
     },
     // 产品组件回调
     addth(id, data) {
@@ -1194,6 +1200,7 @@ export default {
         data.forEach(item => {
           item.ordersNo = item.orderNo
         })
+        this.oldData = data
         this.dataFormTwo.productData = data
         this.dataForm.partnerName = data[0].cooperativePartnerName
         this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId

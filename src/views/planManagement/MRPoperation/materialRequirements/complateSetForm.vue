@@ -70,7 +70,6 @@
           </div>
           <el-table style="border: 1px solid #e3e7ee;"  hasNO fixedNO :data="popupList" id="table"
             border>
-            <el-table-column type="selection" width="45" fixed="left" align="center" key="selection" />
             <el-table-column type="index" key="index" width="60" label="序号" align="center" fixed="left" />
             <el-table-column prop="productCode" key="productCode" label="产品编码" min-width="140" show-overflow-tooltip>
             </el-table-column>

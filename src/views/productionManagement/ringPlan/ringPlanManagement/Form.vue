@@ -13,188 +13,188 @@
         </div>
         <div class="main" v-loading="formLoading">
           <!-- <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table"> -->
-            <!-- <el-tab-pane label="基础信息" name="orderInfo"> -->
-              <el-collapse v-model="activeNames">
-                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+          <!-- <el-tab-pane label="基础信息" name="orderInfo"> -->
+          <el-collapse v-model="activeNames">
+            <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
 
-                  <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
-                    <el-row :gutter="30" class="custom-row">
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="生产计划单号" prop="productionPlanNo">
-                          <el-input v-model="dataForm.productionPlanNo" disabled />
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="生产任务单号" prop="orderNo">
-                          <el-input v-model="dataForm.orderNo"
-                            :disabled="codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
-                        </el-form-item>
-                      </el-col>
-
-
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="品名规格" prop="productsDrawingNo">
-                          <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" disabled>
-                          </el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="产品编码" prop="productsCode">
-                          <el-input v-model="dataForm.productsCode" placeholder="产品编码" disabled>
-                          </el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="单位" prop="mainUnit">
-                          <el-input v-model="dataForm.mainUnit" placeholder="单位" disabled>
-                          </el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="计划生产数量" prop="planProductionQuantity">
-                          <el-input v-model="dataForm.planProductionQuantity" placeholder="计划生产数量" disabled>
-                          </el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="可编排数量" prop="availableArrangeQuantity">
-                          <el-input v-model="dataForm.availableArrangeQuantity" placeholder="可编排数量" disabled>
-                          </el-input>
-                        </el-form-item>
-                      </el-col>
+              <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+                <el-row :gutter="30" class="custom-row">
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="生产计划单号" prop="productionPlanNo">
+                      <el-input v-model="dataForm.productionPlanNo" disabled />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="生产任务单号" prop="orderNo">
+                      <el-input v-model="dataForm.orderNo"
+                        :disabled="codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
+                    </el-form-item>
+                  </el-col>
 
 
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="编排数量" prop="productionQuantity">
-                          <el-input v-model="dataForm.productionQuantity" placeholder="编排数量">
-                          </el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="编排任务方式" prop="taskMethod">
-                          <el-select v-model="dataForm.taskMethod" placeholder="请选择业务类型" style="width: 100%;"
-                            @change="selectTaskMethod">
-                            <el-option v-for="(item, index) in taskMethodList" :key="index" :label="item.label"
-                              :value="item.value"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="计划生产开始—结束日期" prop="planDate">
-                          <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
-                            style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
-                          </el-date-picker>
-                        </el-form-item>
-                      </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="品名规格" prop="productsDrawingNo">
+                      <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" disabled>
+                      </el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="产品编码" prop="productsCode">
+                      <el-input v-model="dataForm.productsCode" placeholder="产品编码" disabled>
+                      </el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="单位" prop="mainUnit">
+                      <el-input v-model="dataForm.mainUnit" placeholder="单位" disabled>
+                      </el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="计划生产数量" prop="planProductionQuantity">
+                      <el-input v-model="dataForm.planProductionQuantity" placeholder="计划生产数量" disabled>
+                      </el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="可编排数量" prop="availableArrangeQuantity">
+                      <el-input v-model="dataForm.availableArrangeQuantity" placeholder="可编排数量" disabled>
+                      </el-input>
+                    </el-form-item>
+                  </el-col>
 
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="工艺路线名称" prop="routingName">
-                          <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" readonly
-                            @focus="openRoutingFun"></el-input>
-                        </el-form-item>
-                      </el-col>
 
-                      <el-col :sm="12" :xs="24">
-                        <el-form-item label="备注" prop="remark">
-                          <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" maxlength="200"
-                            :rows="2" />
-                        </el-form-item>
-                      </el-col>
-                    </el-row>
-                  </el-form>
-                </el-collapse-item>
-                <el-collapse-item title="领料信息" name="pickInfo" v-if="allocationFlag">
-                  <el-form ref="collectForm" :model="collectForm" :rules="pickDataRule" label-width="160px"
-                    label-position="top">
-                    <el-row :gutter="30" class="custom-row">
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="领料单号" prop="orderNo">
-                          <el-input v-model="collectForm.orderNo"
-                            :disabled="collectConfig.codeWay == 'auto' && !collectConfig.modifyFlag ? true : false" />
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="领料人" prop="personId">
-                          <user-select v-model="collectForm.personId" placeholder="请选择领料人" clearable
-                            style="width: 100%;" :disabled="btnType == 'look'" @change="hangleSelectSales">
-                          </user-select>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="编排数量" prop="productionQuantity">
+                      <el-input v-model="dataForm.productionQuantity" placeholder="编排数量">
+                      </el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="编排任务方式" prop="taskMethod">
+                      <el-select v-model="dataForm.taskMethod" placeholder="请选择业务类型" style="width: 100%;"
+                        @change="selectTaskMethod">
+                        <el-option v-for="(item, index) in taskMethodList" :key="index" :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="计划生产开始—结束日期" prop="planDate">
+                      <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
+                        style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
+                      </el-date-picker>
+                    </el-form-item>
+                  </el-col>
 
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="领料日期" prop="operationDate">
-                          <el-date-picker v-model="collectForm.operationDate" :default-value="new Date()"
-                            type="datetime" value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="领料日期"
-                            :disabled="btnType == 'look' ? true : false" @change="changDateFun">
-                          </el-date-picker>
-                        </el-form-item>
-                      </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="工艺路线名称" prop="routingName">
+                      <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" readonly
+                        @focus="openRoutingFun"></el-input>
+                    </el-form-item>
+                  </el-col>
 
-                    </el-row>
-                  </el-form>
-                </el-collapse-item>
-                <el-collapse-item title="工序信息" name="productInfo" class="productInfo">
-                  <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                    <JNPF-table ref="product" :data="dataFormTwo.data" fixedNo v-loading="tableloading">
-                      <el-table-column prop="processCode" label="工序编码" width="130"></el-table-column>
-                      <el-table-column prop="processName" label="工序名称" min-width="170" />
-                      <el-table-column prop="processingType" label="加工类型" width="100">
-                        <template slot-scope="scope">
-                          <div>
-                            {{ scope.row.processingType == "self_produced" ? "自制" : "外协" }}
-                          </div>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="personId" label="人员" min-width="150">
+                  <el-col :sm="12" :xs="24">
+                    <el-form-item label="备注" prop="remark">
+                      <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" maxlength="200"
+                        :rows="2" />
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-form>
+            </el-collapse-item>
+            <el-collapse-item title="领料信息" name="pickInfo" v-if="allocationFlag">
+              <el-form ref="collectForm" :model="collectForm" :rules="pickDataRule" label-width="160px"
+                label-position="top">
+                <el-row :gutter="30" class="custom-row">
+                  <el-col :sm="8" :xs="24">
+                    <el-form-item label="领料单号" prop="orderNo">
+                      <el-input v-model="collectForm.orderNo"
+                        :disabled="collectConfig.codeWay == 'auto' && !collectConfig.modifyFlag ? true : false" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="8" :xs="24">
+                    <el-form-item label="领料人" prop="personId">
+                      <user-select v-model="collectForm.personId" placeholder="请选择领料人" clearable style="width: 100%;"
+                        :disabled="btnType == 'look'" @change="hangleSelectSales">
+                      </user-select>
 
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.personId" placeholder="" clearable
-                            style="width: 60%; display: none" class="applySelect" disabled>
-                            <el-option
-                              v-for="(item, index) in scope.row.routingProResMap ? scope.row.routingProResMap.personnel : []"
-                              :key="index" :label="item.resourceName" :value="item.resourceId"></el-option>
-                          </el-select>
-                          <el-button @click="selectPersonnelFun(scope)" type="text" class="underline-button"
-                            :disabled="scope.row.processingType != 'self_produced'">
-                            {{ scope.row.personId ? scope.row.personName : "请选择人员" }}
-                          </el-button>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="workGroupId" label="班组" min-width="150">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.workGroupId" placeholder="" class="applySelect" disabled
-                            style="width: 70%; display: none">
-                            <el-option
-                              v-for="(item, index) in scope.row.routingProResMap ? scope.row.routingProResMap.work_group : []"
-                              :key="index" :label="item.resourceName" :value="item.resourceId"></el-option>
-                          </el-select>
-                          <el-button @click="selectWorkgroupFun(scope)" type="text" class="underline-button"
-                            :disabled="scope.row.processingType != 'self_produced'">
-                            {{ scope.row.workGroupId ? scope.row.workGroupName : "请选择班组" }}
-                          </el-button>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="equipmentId" label="设备" min-width="150">
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="领料日期" prop="operationDate">
+                      <el-date-picker v-model="collectForm.operationDate" :default-value="new Date()" type="datetime"
+                        value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="领料日期"
+                        :disabled="btnType == 'look' ? true : false" @change="changDateFun">
+                      </el-date-picker>
+                    </el-form-item>
+                  </el-col>
 
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.equipmentId" placeholder="请选择设备" clearable
-                            style="width:70%;display:none" class="applySelect" disabled>
-                            <el-option
-                              v-for="(item, index) in scope.row.routingProResMap ? scope.row.routingProResMap.device : []"
-                              :key="index" :label="item.resourceName + '(' + item.resourceCode + ')'"
-                              :value="item.resourceId"></el-option>
-                          </el-select>
-                          <el-button @click="selectDeviceFun(scope)" type="text" class="underline-button"
-                            :disabled="scope.row.processingType != 'self_produced'">
-                            {{ scope.row.equipmentId ? scope.row.equipmentCode ?
-                              scope.row.equipmentName + "(" + scope.row.equipmentCode + ")" : scope.row.equipmentName :
-                              "请选择设备" }}
+                </el-row>
+              </el-form>
+            </el-collapse-item>
+            <el-collapse-item title="工序信息" name="productInfo" class="productInfo">
+              <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
+                <JNPF-table ref="product" :data="dataFormTwo.data" fixedNo v-loading="tableloading">
+                  <el-table-column prop="processCode" label="工序编码" width="130"></el-table-column>
+                  <el-table-column prop="processName" label="工序名称" min-width="170" />
+                  <el-table-column prop="processingType" label="加工类型" width="100">
+                    <template slot-scope="scope">
+                      <div>
+                        {{ scope.row.processingType == "self_produced" ? "自制" : "外协" }}
+                      </div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="personId" label="人员" min-width="150">
 
-                          </el-button>
-                        </template>
-                      </el-table-column>
+                    <template slot-scope="scope">
+                      <el-select v-model="scope.row.personId" placeholder="" clearable style="width: 60%; display: none"
+                        class="applySelect" disabled>
+                        <el-option
+                          v-for="(item, index) in scope.row.routingProResMap ? scope.row.routingProResMap.personnel : []"
+                          :key="index" :label="item.resourceName" :value="item.resourceId"></el-option>
+                      </el-select>
+                      <el-button @click="selectPersonnelFun(scope)" type="text" class="underline-button"
+                        :disabled="scope.row.processingType != 'self_produced'">
+                        {{ scope.row.personId ? scope.row.personName : "请选择人员" }}
+                      </el-button>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="workGroupId" label="班组" min-width="150">
+                    <template slot-scope="scope">
+                      <el-select v-model="scope.row.workGroupId" placeholder="" class="applySelect" disabled
+                        style="width: 70%; display: none">
+                        <el-option
+                          v-for="(item, index) in scope.row.routingProResMap ? scope.row.routingProResMap.work_group : []"
+                          :key="index" :label="item.resourceName" :value="item.resourceId"></el-option>
+                      </el-select>
+                      <el-button @click="selectWorkgroupFun(scope)" type="text" class="underline-button"
+                        :disabled="scope.row.processingType != 'self_produced'">
+                        {{ scope.row.workGroupId ? scope.row.workGroupName : "请选择班组" }}
+                      </el-button>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="equipmentId" label="设备" min-width="150">
 
-                      <!-- <el-table-column prop="productionLineId" label="产线" min-width="160">
+                    <template slot-scope="scope">
+                      <el-select v-model="scope.row.equipmentId" placeholder="请选择设备" clearable
+                        style="width:70%;display:none" class="applySelect" disabled>
+                        <el-option
+                          v-for="(item, index) in scope.row.routingProResMap ? scope.row.routingProResMap.device : []"
+                          :key="index" :label="item.resourceName + '(' + item.resourceCode + ')'"
+                          :value="item.resourceId"></el-option>
+                      </el-select>
+                      <el-button @click="selectDeviceFun(scope)" type="text" class="underline-button"
+                        :disabled="scope.row.processingType != 'self_produced'">
+                        {{ scope.row.equipmentId ? scope.row.equipmentCode ?
+                          scope.row.equipmentName + "(" + scope.row.equipmentCode + ")" : scope.row.equipmentName :
+                          "请选择设备" }}
+
+                      </el-button>
+                    </template>
+                  </el-table-column>
+
+                  <!-- <el-table-column prop="productionLineId" label="产线" min-width="160">
 
                         <template slot-scope="scope">
                           <el-select v-model="dataForm.productionLineId" placeholder="请选择产线" clearable
@@ -213,39 +213,39 @@
                           </el-select>
                         </template>
                       </el-table-column> -->
-                      <el-table-column prop="pickingFlag" label="是否领料" min-width="160">
-                        <template slot-scope="scope">
-                          <div>{{ scope.row.pickingFlag ? "是" : "否" }}</div>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="firstInspection" label="是否首检" min-width="160">
-                        <template slot-scope="scope">
-                          <div>{{ scope.row.firstInspection ? "是" : "否" }}</div>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="checkFlag" label="是否检验" min-width="160">
-                        <template slot-scope="scope">
-                          <div>{{ scope.row.checkFlag ? "是" : "否" }}</div>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="reportFlag" label="是否报工" min-width="160">
-                        <template slot-scope="scope">
-                          <div>{{ scope.row.reportFlag ? "是" : "否" }}</div>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="stockFlag" label="是否入库" min-width="160">
-                        <template slot-scope="scope">
-                          <div>{{ scope.row.stockFlag ? "是" : "否" }}</div>
-                        </template>
-                      </el-table-column>
+                  <el-table-column prop="pickingFlag" label="是否领料" min-width="160">
+                    <template slot-scope="scope">
+                      <div>{{ scope.row.pickingFlag ? "是" : "否" }}</div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="firstInspection" label="是否首检" min-width="160">
+                    <template slot-scope="scope">
+                      <div>{{ scope.row.firstInspection ? "是" : "否" }}</div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="checkFlag" label="是否检验" min-width="160">
+                    <template slot-scope="scope">
+                      <div>{{ scope.row.checkFlag ? "是" : "否" }}</div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="reportFlag" label="是否报工" min-width="160">
+                    <template slot-scope="scope">
+                      <div>{{ scope.row.reportFlag ? "是" : "否" }}</div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="stockFlag" label="是否入库" min-width="160">
+                    <template slot-scope="scope">
+                      <div>{{ scope.row.stockFlag ? "是" : "否" }}</div>
+                    </template>
+                  </el-table-column>
 
-                    </JNPF-table>
+                </JNPF-table>
 
-                  </el-form>
-                </el-collapse-item>
-              </el-collapse>
-            <!-- </el-tab-pane> -->
-            <!-- <el-tab-pane label="附件" name="annex"   v-if="isattachmentswitch == '1'">
+              </el-form>
+            </el-collapse-item>
+          </el-collapse>
+          <!-- </el-tab-pane> -->
+          <!-- <el-tab-pane label="附件" name="annex"   v-if="isattachmentswitch == '1'">
               <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
             </el-tab-pane> -->
           <!-- </el-tabs> -->
@@ -485,7 +485,7 @@ export default {
   },
   data() {
     return {
-      isattachmentswitch:"",
+      isattachmentswitch: "",
       taskMethodList: [{ label: "指定加工对象", value: "appoint" }, { label: "不指定加工对象", value: "not_appoint" },],
       activeNames: ["productInfo", "basicInfo"],
       allocationFlag: false,
@@ -585,7 +585,7 @@ export default {
         backgroundColor: '#f5f7fa',
         fontWeight: 'bold'
       },
-      naturalResourcesFlag:true,
+      naturalResourcesFlag: true,
     }
   },
   computed: {
@@ -993,7 +993,7 @@ export default {
       this.getProductionLineListFun()
       this.fetchData("PROD")
 
-      if(this.dataForm.routingId) this.getRoutingDetail(this.dataForm.routingId)
+      if (this.dataForm.routingId) this.getRoutingDetail(this.dataForm.routingId)
     },
     async fetchData(code) {
       try {
@@ -1023,19 +1023,28 @@ export default {
 
         for (let index = 0; index < this.dataFormTwo.data.length; index++) {
           const item = this.dataFormTwo.data[index];
-          if (
-            !item.workGroupId &&
-            !item.personId &&
-            !item.equipmentId &&
-            item.processingType == "self_produced"
-          ) {
-            submitFlag = false;
-            this.btnLoading = false;
-            this.$message({
-              message: "第" + (index + 1) + "行班组、人员需要必填一项",
-              type: "error",
-            });
-            break;
+          if (item.reportFlag) {
+
+            if (
+              !item.workGroupId &&
+              !item.personId && item.processingType == "self_produced"
+            ) {
+              submitFlag = false;
+              this.$message({
+                message: "第" + (index + 1) + "行班组、人员需要必填一项",
+                type: "error",
+              });
+              break;
+            }
+          } else {
+            if (!item.personId) {
+              submitFlag = false;
+              this.$message({
+                message: "第" + (index + 1) + "行工序需配置人员信息",
+                type: "error",
+              });
+              break;
+            }
           }
         }
       } else {
@@ -1111,9 +1120,11 @@ export default {
     margin-bottom: 0 !important;
   }
 }
-.data-form ::v-deep.el-table__body-wrapper{
-  height: auto!important;
+
+.data-form ::v-deep.el-table__body-wrapper {
+  height: auto !important;
 }
+
 ::v-deep .JNPF-common-page-header.noButtons {
   padding: 11px 10px;
 }
@@ -1327,7 +1338,8 @@ $footerPadding: '10px';
   background-color: #5d9bd5;
   color: #fff;
 }
-::v-deep .UploadFile-container-main{
+
+::v-deep .UploadFile-container-main {
   margin-top: 5px;
 }
 </style>

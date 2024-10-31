@@ -152,7 +152,7 @@
 
             </el-row>
           </el-col>
-          <el-col :span="12" class="rightInfo" :style="{ height: targetHeight2 + 'px!important' }" ref="mycol"
+          <el-col :span="12" class="rightInfo"  ref="mycol"
             v-if="currentProcess.processingType == 'self_produced' && currentProcess.reportFlag == true">
             <el-form ref="reportRef" :model="currentProcess" :rules="dataRule" label-width="180px"
               label-position="left">

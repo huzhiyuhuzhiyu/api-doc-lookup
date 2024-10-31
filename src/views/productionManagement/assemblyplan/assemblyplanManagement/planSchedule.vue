@@ -249,32 +249,6 @@ export default {
       }
 
     };
-    // // 鼠标悬浮工具提示文本配置
-    // gantt.templates.tooltip_text = function (start, end, task) {
-    //   if (!task.parent) {
-    //     return `
-    //         <div style='display:flex;flex-wrap:wrap;align-items: center;width:300px;'>
-    //           <div style='width: 60%;line-height: 18px;'>任务单号：${task.text}</div> 
-    //           <div style='width: 60%;line-height: 18px;'>数量：${task.qualifiedQuantity}/${task.productionQuantity}</div>
-    //           <div style='width: 60%;line-height: 18px;'>计划时间：${task.start_date} ~ ${task.end_date}</div>
-    //         </div>
-    //         `;
-    //   } else {
-    //     return `
-    //         <div style='display:flex;flex-wrap:wrap;align-items: center;width:300px;'>
-    //           <div style='width: 60%;line-height: 18px;'>工单编号：${task.orderNo}</div>
-    //           <div style='width: 40%;line-height: 18px;'>工序名称：${task.text}</div>
-    //           <div style='width: 60%;line-height: 18px;'>数量：${task.qualifiedQuantity}/${task.productionQuantity}</div>
-    //           <div style='width: 60%;line-height: 18px;'>计划时间：${task.start_date} ~ ${task.end_date}</div>
-    //         </div>
-    //         `;
-    //   }
-    // };
-    gantt.plugins({
-          tooltip: true, // 启用tooltip悬浮框
-          marker: true, // 时间标记
-          // drag_timeline: true, // 拖动图
-        });
     gantt.config.autofit = false;
     gantt.config.column_width = 50;
     gantt.config.work_time = true;

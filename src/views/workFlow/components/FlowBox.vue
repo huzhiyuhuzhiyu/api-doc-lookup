@@ -344,6 +344,9 @@ export default {
         'b050': 'esop/fileUpload/workinginstruction/Form.vue',
         'b052': 'esop/fileUpload/workinginstruction/Form.vue',
         'b051': 'warehouseManagement/finishedProductWarehouseManagement/transferManagement/Form.vue',
+        'b053': 'dailyManagement/sparepartsmanagement/sparepartsrequisition/Form.vue',
+        'b054': 'dailyManagement/equipmentrequisitionreturn/equipmentrequisition/Form.vue',
+        'b055': 'dailyManagement/borrowingReturn/circulate/Form.vue',
       },
       inspectionTypeList: [
         // 不良品

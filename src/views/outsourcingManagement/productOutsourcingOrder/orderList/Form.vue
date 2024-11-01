@@ -32,8 +32,6 @@
                       </el-col>
                       <el-col :span="6">
                         <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
-                          <!-- <el-input :disabled="type == 'look'" v-model="dataForm.cooperativePartnerName"
-                            placeholder="请选择供应商名称" @focus="openDialog"></el-input> -->
                           <!-- 供应商选择弹窗  -->
                           <ComSelect-page :clearable="type !== 'look'" :isdisabled="type === 'look'"
                             :treeNodeClick="treeNodeClick" v-model="dataForm.cooperativePartnerName"
@@ -90,13 +88,7 @@
                       <!-- <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column> -->
                       <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
-                        <!-- <template slot-scope="scope">
-                            <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'">
-                              <div class="viewData">
-                                <span>{{ scope.row.productDrawingNo }}</span>
-                              </div>
-                            </el-form-item>
-                          </template> -->
+
                         <template slot="header">
                           <span class="required">*</span>
                           品名规格
@@ -109,18 +101,6 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <!-- <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
-                        <template slot="header">
-                          <span class="required">*</span>
-                          产品名称
-                        </template>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'"
-                            :rules="productRules.productName">
-                            <el-input v-model="scope.row.productName" placeholder="请输入产品名称" />
-                          </el-form-item>
-                        </template>
-                      </el-table-column> -->
 
                       <el-table-column prop="deliveryDate" label="交货日期" min-width="200">
                         <template slot="header">
@@ -191,8 +171,7 @@
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :rules="productRules.taxRate">
-                            <!-- <el-input oninput="value = value.replace(/\D/g,'')" maxlength="2"
-                                v-model="scope.row.taxRate" placeholder="请输入税率"></el-input> -->
+
                             <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;"
                               :disabled="type === 'look'">
                               <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
@@ -232,8 +211,6 @@
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'">
-                            <!-- <el-input v-model="scope.row.taxAmount" maxlength="20" placeholder="请输入税额">
-                          </el-input> -->
                             <div class="viewData">
                               <span>{{ scope.row.taxAmount ? scope.row.taxAmount : 0 }}</span>
                             </div>
@@ -247,8 +224,7 @@
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
-                            <!-- <el-input v-model="scope.row.excludingTaxAmount" maxlength="20"
-                                placeholder="请输入金额(不含税)"></el-input> -->
+
                             <div class="viewData">
                               <span>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</span>
                             </div>
@@ -265,14 +241,6 @@
                         </template>
                       </el-table-column>
 
-                      <!-- <el-table-column label="操作" width="180" fixed="right" v-if="dataFormTwo.data.length > 1">
-                        <template slot-scope="scope">
-                          <el-button type="text" class="JNPF-table-delBtn"
-                            @click="delequipment_process_relList(scope.$index)">
-                            删除
-                          </el-button>
-                        </template>
-                      </el-table-column> -->
 
                       <el-table-column label="操作" width="180" fixed="right" v-if="type !== 'look'">
                         <template slot-scope="scope">
@@ -333,8 +301,6 @@
                   </el-col>
                   <el-col :span="6">
                     <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
-                      <!-- <el-input :disabled="type == 'look'" v-model="dataForm.cooperativePartnerName"
-                        placeholder="请选择供应商名称" @focus="openDialog"></el-input> -->
                       <ComSelect-page :clearable="type !== 'look'" :isdisabled="type === 'look'"
                         :treeNodeClick="treeNodeClick" v-model="dataForm.cooperativePartnerName"
                         :beforeSubmit="beforeSubmit" ref="ComSelect-page" @change="supplierdata"
@@ -1004,18 +970,8 @@ export default {
       this.autoId = row.id
       console.log(this.autoId, 'oiGGG')
       this.linesList = []
-      let obj = {
-        productsId: row.productsId,
-        purchaseQuantity: row.purchaseQuantity
-      }
-      // 通过需求池id 获取明细的数据
-      getShipmentList(obj).then((res) => {
-        this.linesList.push(...res.data)
-      })
-      // purPurchaseOrderdetail(row.purchaseOrderId).then((res) => {
-      //   console.log(res, 'iiii')
-      //   this.linesList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
-      // })
+      this.linesList = row.outShipmentList
+
     },
     // 更改选中行背景色
     rowStyle({ row }) {

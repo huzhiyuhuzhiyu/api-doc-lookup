@@ -84,19 +84,17 @@
                   <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="addtable()">添加零部件</el-button>|
                   <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important" :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDeleteling">批量删除</el-button>|
                 </div>
-                <el-form :model="dataForms" v-bind="dataForms" ref="productForms" style="margin-bottom: 18px;">
+                <el-form :model="dataForms" v-bind="dataForms" ref="productForms" class="data-form">
                   <el-table ref="product" :data="dataForms.lines" @selection-change="handeleProductInfoDataling">
                     <el-table-column type="selection" width="60" align="center" v-if="btnType !== 'look'" key="22" />
                     <el-table-column type="index" width="60" label="序号" align="center"></el-table-column>
-                    <el-table-column prop="partName" label="零部件名称" min-width="200">
-                      <template slot="header">
-                        <span class="required">*</span>零部件名称
-                      </template>
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'partName'" :rules='productRulesling.partName'>
-                          <el-input v-model="scope.row.partName" placeholder="请输入零部件名称" :disabled="btnType == 'look'" maxlength="100" />
-                        </el-form-item>
-                      </template>
+                    <el-table-column prop="partCode" label="备件编码" min-width="160" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="partName" label="备件名称" min-width="160" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="mainUnit" label="单位" width="120" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="num" label="数量" width="180">
                       <template slot="header">
@@ -104,18 +102,8 @@
                       </template>
                       <template slot-scope="scope">
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'num'" :rules='productRulesling.num'>
-                          <el-input :title="scope.row.num" v-model="scope.row.num" placeholder="请输入数量" :disabled="btnType == 'look'" maxlength="11" @input="watchnums(scope.row, scope.$index)" style="width: 100%;" oninput="value=value.replace(/[^0-9.]/g,'')">
+                          <el-input :title="scope.row.num" v-model="scope.row.num" placeholder="请输入数量" :disabled="btnType == 'look'" maxlength="11" style="width: 100%;">
                           </el-input>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="mainUnit" label="单位" width="140">
-                      <template slot="header">
-                        <span class="required">*</span>单位
-                      </template>
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'mainUnit'" :rules='productRulesling.mainUnit'>
-                          <el-input v-model="scope.row.mainUnit" placeholder="请输入单位" :disabled="btnType == 'look'" maxlength="20" style="width: 115px;" />
                         </el-form-item>
                       </template>
                     </el-table-column>
@@ -405,6 +393,8 @@
       <ComSelect-page ref="ComSelect-pages" @change="submitfaultLocationName" :tableItems="faultLocationNameItems" title="故障部位" placeholder="请选择故障部位名称" :renderTree="false" :listMethod="parametersShelveslist" :paramsObj="{ index }" :listRequestObj="faultLocationNameRequestObj" :searchList="ProductfaultLocationName" :elementShow="false" />
       <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" title="故障类型" placeholder="请选择故障类型名称" :renderTree="false" :listMethod="parametersShelveslist" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple />
       <ComSelect-page ref="ComSelect-pagesb" @change="changeWarehouse" :tableItems="ProductTableItemss" title="选择工具" treeTitle="工具分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'tool' } }" :listMethod="getEquEquipmentList" :listRequestObj="ProductListRequestObjs" :searchList="ProductTableSearchLists" :elementShow="false" />
+      <!-- 备件 -->
+      <ComSelect-page ref="ComSelect-sparepart" @change="submitsparepart" :tableItems="sparepartItems" title="备件" placeholder="请选择备件" :renderTree="false" :listMethod="equRequisitionRecordsproducts" :listRequestObj="sparepartRequestObj" :searchList="[]" :elementShow="false" multiple />
     </div>
   </transition>
 </template>
@@ -413,7 +403,7 @@
 import { getBimBusinessDetail } from '@/api/basicData/index'
 import UploadImg from "@/components/Generator/components/Upload/UploadImg.vue";
 import { getcategoryTree } from '@/api/basicData/materialSettings'
-import { addRepairRequest, updateRepairRequest, detailRepairRequest, equEquipmentRepairKnowledgeList, RepairRequestList } from '@/api/dailyManagement/Maintenance'
+import { addRepairRequest, updateRepairRequest, detailRepairRequest, equEquipmentRepairKnowledgeList, RepairRequestList,equRequisitionRecordsproducts } from '@/api/dailyManagement/Maintenance'
 import { getOrganizeInfo } from '@/api/permission/organize'
 import { getEquEquipmentList, parametersShelveslist } from '@/api/basicData/index'
 import { getOrganization } from '@/api/permission/user'
@@ -422,6 +412,18 @@ export default {
   components: { UploadImg },
   data() {
     return {
+      sparepartRequestObj: {
+        pageNum: 1,
+        pageSize: 20,
+        workNo: '',
+      },
+      equRequisitionRecordsproducts,
+      sparepartItems: [
+        { prop: 'productCode', label: '备件编码' },
+        { prop: 'productName', label: '备件名称' },
+        { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'requisitionNum', label: '领用数量' },
+      ],
       statesuc: '',
       isattachmentswitch: '',
       categoryId: '',
@@ -485,8 +487,8 @@ export default {
         classAttribute: "tool",
       },
       ProductTableItemss: [
-        { prop: 'code', label: '工具编码', fixed: 'left' },
-        { prop: 'name', label: '工具名称', fixed: 'left' },
+        { prop: 'code', label: '工具编码' },
+        { prop: 'name', label: '工具名称' },
         { prop: 'categoryName', label: '工具分类' },
         { prop: 'specModel', label: '工具规格' },
       ],
@@ -497,9 +499,11 @@ export default {
       ],
       formLoading: false,
       productRulesling: {
-        num: [{ required: true, trigger: 'blur' }, { validator: this.calcValidate(), trigger: 'blur' }],
-        partName: [{ required: true, trigger: 'blur' }],
-        mainUnit: [{ required: true, trigger: 'blur' }]
+        num: [
+          { validator: this.formValidate({ type: 'noEmtry', params: ["数量不能为空", (errMsg, index) => { this.$message.error(`备件信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
+          { required: true, trigger: 'blur' },
+          { validator: this.formValidate('positiveNumber', '数量必须大于0', (errMsg, index) => { this.$message.error(`备件信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }
+        ]
       },
       dataForms: {
         lines: []
@@ -658,6 +662,34 @@ export default {
   //   this.getBimBusinessDetail()
   // },
   methods: {
+    //备件选择
+    submitsparepart(selectedIds, selectedList) {
+      selectedList.map(item => {
+        this.dataForms.lines.map((item1) => {
+          if (item.id == item1.productId) {
+            item.isrepeat = true
+          }
+        })
+      });
+      selectedList.map(item => {
+        if (!item.isrepeat) {
+          this.dataForms.lines.push({
+            partName: item.all.productName,
+            partCode: item.all.productCode,
+            drawingNo: item.all.drawingNo,
+            mainUnit: item.all.mainUnit,
+            productId: item.all.productId,
+            num: '',
+          })
+        } else {
+          this.$message({
+            message: "所选备件重复",
+            type: 'error',
+            duration: 1500,
+          })
+        }
+      })
+    },
     stateaction(val) {
       this.statesuc = val
     },
@@ -763,60 +795,6 @@ export default {
       if (e == 'reject') return this.dataForm.startMaintenanceTime = ''
       this.dataForm.startMaintenanceTime = this.jnpf.getToday('YYYY-MM-DD HH:mm:ss')
     },
-    //数量单价不能为0
-    calcValidate() {
-      return (rule, value, callback) => {
-        if (value == 0) {
-          this.$message.error('数量不能为"0"')
-          callback(new Error('数量不能为"0"'));
-        } else {
-          callback()
-        }
-      };
-    },
-    // 监听主数量输入
-    watchnums(row, index) {
-      row.num = row.num.replace(/[^\d.]/g, '');
-
-      if (row.num.length == 1 && row.num == '.') {
-        // 如果第一位是小数点，则清空输入框
-        row.num = '';
-      } else if (row.num.length == 2 && row.num[0] == '0' && row.num[1] != '.') {
-        // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
-        row.num = row.num.slice(0, 1) + '.' + row.num.slice(1);
-      } else if (row.num.length > 2 && row.num[0] == '0' && row.num[1] != '.') {
-        row.num = row.num.substring(1, row.num.length)
-      }
-      if (row.num.includes('.')) {
-        let dotCount = 0; // 小数点的数量
-        let result = ''; // 处理后的结果
-        for (let i = 0; i < row.num.length; i++) {
-          const char = row.num[i];
-          if (char === '.') {
-            if (dotCount === 0) {
-              // 第一个小数点保留
-              result += char;
-              dotCount++;
-            }
-          } else {
-            result += char;
-          }
-        }
-        row.num = result;
-        let arr = row.num.split('.')
-        if (arr[0].length > 8) {
-          arr[0] = arr[0].substring(0, 8)
-        }
-        if (arr[1].length > 2) {
-          arr[1] = arr[1].substring(0, 2)
-        }
-        row.num = arr[0] + '.' + arr[1]
-      } else {
-        if (row.num.length > 8) {
-          row.num = row.num.substring(0, 8);
-        }
-      }
-    },
     //零部件信息删除当前行
     deltable(row, index) {
       this.dataForms.lines.splice(row.$index, 1)
@@ -842,14 +820,8 @@ export default {
     },
     //零部件信息新增行
     addtable() {
-      this.dataForms.lines.push({
-        businessId: '',
-        businessType: 'repair',
-        id: "",
-        mainUnit: "",
-        num: "",
-        partName: ""
-      })
+      this.sparepartRequestObj.workNo = this.dataForm.maintenanceNo
+      this.$refs['ComSelect-sparepart'].openDialog()
     },
     //零部件选中
     handeleProductInfoDataling(val) {

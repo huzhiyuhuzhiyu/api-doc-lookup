@@ -156,7 +156,7 @@ export default {
 
       linesListItems: [
         { prop: 'drawingNo', label: '子件规格', value: '', type: 'view', minWidth: 340 },
-        { prop: "classType", label: "子件类型", value: "", type: 'view', minWidth: 160 },
+        { prop: "classTypeName", label: "子件类型", value: "", type: 'view', minWidth: 160 },
         { prop: 'productCode', label: '子件编码', value: '', type: 'view', minWidth: 160 },
         {
           prop: 'qty',
@@ -706,12 +706,12 @@ export default {
         if (this.linesList.length > 1) {
           this.linesList.forEach(item => {
             console.log(item, 'p')
-            this.btnLoading = false
-            this.btnDisabled = false;
-            return
+
             if (item.classType === 'inner_ring_blank' || item.classType === 'outer_ring_blank') {
+              submitFlag = false
               this.btnLoading = false
               this.btnDisabled = false;
+
               return this.$message.error('半成品产品，创建BOM的子件，子件选择内外圈毛坯，只能有一个子件')
             }
           })

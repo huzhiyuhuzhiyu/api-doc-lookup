@@ -427,10 +427,10 @@ export default {
         { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
         { prop: 'immediatelyBuyFlag', label: '立即采购', sortable: 'custom' },
         { prop: 'mainUnit', label: '单位' },
-        { prop: 'planDemandQuantity', label: '计划需求数', sortable: 'custom', width: 150 },
-        { prop: 'orderedQuantity', label: '已下单数量', sortable: 'custom', width: 150 },
+        // { prop: 'planDemandQuantity', label: '计划需求数', sortable: 'custom', width: 150 },
+        // { prop: 'orderedQuantity', label: '已下单数量', sortable: 'custom', width: 150 },
         { prop: 'deliveryDate', label: '交货日期', sortable: 'custom' },
-        { prop: 'createTime', label: '创建日期', sortable: 'custom' }
+        { prop: 'createTime', label: '创建日期', sortable: 'custom', width: 180 }
       ],
       ProductPoolTableItems: [
         { prop: 'productDrawingNo', label: '品名规格', sortable: 'custom' },
@@ -439,7 +439,7 @@ export default {
         { prop: 'planDemandQuantity', label: '计划需求数', sortable: 'custom', width: 150 },
         { prop: 'orderedQuantity', label: '已下单数量', sortable: 'custom', width: 150 },
         { prop: 'deliveryDate', label: '交货日期', sortable: 'custom' },
-        { prop: 'createTime', label: '创建日期', sortable: 'custom' }
+        { prop: 'createTime', label: '创建日期', sortable: 'custom', width: 180 }
       ],
       // 客户产品查询条件
       ProductTableSearchList: [

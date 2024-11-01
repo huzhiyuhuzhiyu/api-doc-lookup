@@ -221,6 +221,7 @@ export default {
       }).catch(() => { })
     },
     toFormatter(row, column, cellValue, index) {
+      console.log(cellValue,'cellValue')
       return cellValue
     },
     initData() {

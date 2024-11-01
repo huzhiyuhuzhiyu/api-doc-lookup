@@ -454,3 +454,19 @@ export function repairCommentsNum(data) {
     data
   })
 }
+// 维修驳回
+export function repairRejectReasonNum(data) {
+  return request({
+    url: `/api/mes/equReport/repairRejectReasonNum`,
+    method: 'POST',
+    data
+  })
+}
+// 领用记录-产品列表
+export function equRequisitionRecordsproducts(data) {
+  return request({
+    url: `/api/mes/equRequisitionRecords/products/list`,
+    method: 'POST',
+    data
+  })
+}

@@ -3602,6 +3602,7 @@ export default {
   padding: 0 8px;
   background-color: #fff;
   margin-top: 5px;
+  margin-bottom:5px
 }
 
 ::v-deep .el-tabs__item {

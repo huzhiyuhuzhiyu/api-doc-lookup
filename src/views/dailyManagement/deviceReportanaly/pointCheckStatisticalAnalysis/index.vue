@@ -102,12 +102,12 @@
                       <el-form @submit.native.prevent>
                         <el-col :span="4">
                           <el-form-item>
-                            <el-input v-model="listQueryInspection.equipmentIdCode" placeholder="请输入设备编码" clearable @keydown.enter.native="search()" />
+                            <el-input v-model="listQueryInspection.totalCode" placeholder="请输入设备编码" clearable @keydown.enter.native="search()" />
                           </el-form-item>
                         </el-col>
                         <el-col :span="4">
                           <el-form-item>
-                            <el-input v-model="listQueryInspection.equipmentIdName" placeholder="请输入设备名称" clearable @keydown.enter.native="search()" />
+                            <el-input v-model="listQueryInspection.totalName" placeholder="请输入设备名称" clearable @keydown.enter.native="search()" />
                           </el-form-item>
                         </el-col>
                         <el-col :span="6">
@@ -123,10 +123,10 @@
                   </div>
                   <div style="height: 672px;" class="JNPF-flex-main">
                     <JNPF-table ref="dataTableInspection" v-loading="listLoadingInspection" :data="tableInspectionresults" fixedNO custom-column>
-                      <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" />
-                      <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" />
-                      <el-table-column prop="factoryFloor1" label="正常次数" min-width="140" />
-                      <el-table-column prop="factoryFloor" label="异常次数" min-width="140" />
+                      <el-table-column prop="totalCode" label="设备编码" min-width="200" />
+                      <el-table-column prop="totalName" label="设备名称" min-width="200" />
+                      <el-table-column prop="normalNum" label="正常次数" min-width="140" />
+                      <el-table-column prop="abnormalNum" label="异常次数" min-width="140" />
                     </JNPF-table>
                     <pagination :total="totalInspection" :page.sync="listQueryInspection.pageNum" :limit.sync="listQueryInspection.pageSize" @pagination="initDataInspection" />
                   </div>
@@ -154,6 +154,9 @@ export default {
       listLoadingInspection: false,
       listQueryInspection: {},
       listQuerytwo: {
+        totalName:'',
+        totalCode:'',
+        classAttribute: "equipment",
         recordType: 'inspection',
         pageNum: 1,
         pageSize: 20,
@@ -342,7 +345,7 @@ export default {
       })
       this.listLoadingInspection = true
       equMaintenanceTime(this.listQueryInspection).then(res => {
-        this.tableInspectionresults = res.data.records
+        this.tableInspectionresults = res.data
         this.totalInspection = res.data.total
         this.listLoadingInspection = false
       }).catch(() => {

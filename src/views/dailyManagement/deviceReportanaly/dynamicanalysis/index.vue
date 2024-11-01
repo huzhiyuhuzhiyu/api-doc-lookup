@@ -15,8 +15,8 @@
               <div class="dash-container has-hover">
                 <div class="speedy-entry-wrapper">
                   <ul class="entry-lists">
-                    <li v-for="item in o.list" :key="item.label" @click="navigationmenu(item.id)">
-                      <div class="node-wrapper"><img :src="item.icon" alt=""><span style="margin-left: 10px;">{{item.label}}</span></div>
+                    <li v-for="item in o.list" :key="item.label" @click="navigationmenu(item.path)">
+                      <div class="node-wrapper text"><img :src="item.icon" alt=""><span style="margin-left: 10px;">{{item.label}}</span></div>
                     </li>
                   </ul>
                 </div>
@@ -699,22 +699,22 @@ export default {
       flexlist: [
         {
           list: [
-            { label: '设备档案', icon: require('./imgs/shebei.png') },
-            { label: '设备点检单', icon: require('./imgs/dianjian.png') },
-            { label: '设备巡检单', icon: require('./imgs/xunjian.png') },
-            { label: '设备维修单', icon: require('./imgs/weixiu.png') },
-            { label: '保养计划表', icon: require('./imgs/baoyangbiao.png') },
-            { label: '设备保养单', icon: require('./imgs/baoyangdan.png') }
+            // { label: '设备档案', icon: require('./imgs/shebei.png'),path:'/basicData/deviceProfile/deviceProfileset' },
+            { label: '设备点检单', icon: require('./imgs/dianjian.png'), path: '/dailyManagement/pointInspection/checkQuery' },
+            // { label: '设备报废单', icon: require('./imgs/xunjian.png'),path:'/dailyManagement/scrapManagement/announceInvalidated' },
+            { label: '设备维修单', icon: require('./imgs/weixiu.png'), path: '/dailyManagement/maintenanceManagement/deviceservice' },
+            { label: '保养计划表', icon: require('./imgs/baoyangbiao.png'), path: '/dailyManagement/Maintenance/maintenanceTasks' },
+            { label: '设备保养单', icon: require('./imgs/baoyangdan.png'), path: '/dailyManagement/Maintenance/taskQuery' }
           ]
         },
         {
           list: [
-            { label: '设备动态看板', icon: require('./imgs/sbdt.png') },
-            { label: '点检统计看板', icon: require('./imgs/djtj.png') },
-            { label: '巡检统计看板', icon: require('./imgs/xjtj.png') },
-            { label: '维修统计看板', icon: require('./imgs/wxtj.png') },
-            { label: '保养统计看板', icon: require('./imgs/bytj.png') },
-            { label: '备件库存看板', icon: require('./imgs/bjtj.png') }
+            { label: '设备动态看板', icon: require('./imgs/sbdt.png'), path: '/dailyManagement/deviceReportanaly/dynamicanalysis' },
+            { label: '点检统计看板', icon: require('./imgs/djtj.png'), path: '/dailyManagement/deviceReportanaly/pointCheckStatisticalAnalysis' },
+            // { label: '巡检统计看板', icon: require('./imgs/xjtj.png'),path:'/dailyManagement/scrapManagement/announceInvalidated' },
+            { label: '维修统计看板', icon: require('./imgs/wxtj.png'), path: '/dailyManagement/deviceReportanaly/maintenanceStatisticalAnalysis' },
+            { label: '保养统计看板', icon: require('./imgs/bytj.png'), path: '/dailyManagement/deviceReportanaly/upkeepStatisticalAnalysis' },
+            // { label: '备件库存看板', icon: require('./imgs/bjtj.png'),path:'/dailyManagement/scrapManagement/announceInvalidated' }
           ]
         }
       ],
@@ -795,8 +795,8 @@ export default {
   },
   methods: {
     //导航菜单
-    navigationmenu(value) {
-
+    navigationmenu(path) {
+      this.$router.push({ path })
     },
     //设备台账
     initequipmentledger() {
@@ -1279,7 +1279,7 @@ export default {
         display: inline-block;
         text-align: center;
         list-style-type: none;
-        width: calc(33% - 12px);
+        width: calc(50% - 12px);
         margin: 4px 6px;
         .node-wrapper {
           -webkit-box-align: center;

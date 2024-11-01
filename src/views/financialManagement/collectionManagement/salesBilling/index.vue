@@ -1,6 +1,7 @@
 <template>
   <paymentIndex :reconciliationType="listRequestObj.reconciliationType" :listMethod="getfinAccountsReport"
-    :listRequestObj="listRequestObj" :tableItems="tableItems" :searchList="searchList" />
+    :listRequestObj="listRequestObj" :tableItems="tableItems" :searchList="searchList" :superQueryJson="superQueryJson"
+    :columnList="columnList" />
 </template>
 
 <script>
@@ -65,6 +66,54 @@ export default {
         { prop: 'reconciliationDateArr', label: '对账日期', type: 'date' },
         { prop: 'cooperativePartnerName', label: '客户名称', type: 'input' },
       ],
+      superQueryJson: [
+        {
+          prop: 'orderNo',
+          label: '对账流水号',
+          type: 'input'
+        },
+
+        {
+          prop: 'reconciliationDate',
+          label: '对账日期',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'cooperativePartnerCode',
+          label: '客户编码',
+          type: 'input'
+        },
+        {
+          prop: 'cooperativePartnerName',
+          label: '客户名称',
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: '备注',
+          type: 'input'
+        },
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        },
+
+      ],
+      columnList: ['cooperativePartnerCode'],
 
     }
   },

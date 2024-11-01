@@ -84,7 +84,10 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="totalProgress" label="订单进度" width="120" :key="68">
-
+                  <template slot-scope="scope">
+                      <el-progress
+                        :percentage="scope.row.totalProgress || 0"></el-progress>
+                    </template>
                 </el-table-column>
 
                 <el-table-column prop="num" label="订单数量" width="120" :key="58">
@@ -954,10 +957,10 @@ export default {
       color:red!important; /*低进度颜色 */  
       }  
       .mid-progress {  
-      background-color: yellow; /* 中等进度颜色 */  
+      background-color: #67c23a; /* 中等进度颜色 */  
       }  
       .high-progress {  
-      background-color: green; /* 高进度颜色 */  
+      background-color: #67c23a; /* 高进度颜色 */  
       }  
       `;
     document.head.appendChild(style);
@@ -1121,6 +1124,7 @@ export default {
               });
               setTimeout(() => {
                 res.data.forEach(item => {
+                  // let data=res.data[0]
                   let obj = {
                     id: item.id,
                     text: item.productionPlanNo,
@@ -1142,15 +1146,13 @@ export default {
                       let bjs = {
                         id: items.id,
                         text: items.orderNo,
-                        parent: items.productionPlanId,
                         progress: this.jnpf.numberFormat(this.jnpf.math('divide', [items.completedQuantity, items.productionQuantity]), 2),
                         type: 'task',
                         start_date: new Date(items.planStartDate),
                         end_date: new Date(items.planEndDate),
                         open: true,
-                        qualifiedQuantity: items.completedQuantity,
+                        completedQuantity: items.completedQuantity,
                         productionQuantity: items.productionQuantity,
-                        orderNo: item.orderNo,
                         color: "#ccc",
                       }
                       arr.push(bjs)
@@ -1163,20 +1165,23 @@ export default {
                         return { name: name, progress: progress };
                       });
                       if (items.workOrderList.length) {
+                        console.log("items.workOrderList",items.workOrderList);
                         items.workOrderList.forEach((itemss, index) => {
                           itemss.actualStartDate=itemss.actualStartDate?itemss.actualStartDate.substring(0,10):""
                           itemss.actualEndDate=itemss.actualEndDate?itemss.actualEndDate.substring(0,10):""
+                          console.log("时间1",itemss.actualStartDate,itemss.planStartDate);
+                          console.log("时间2",itemss.actualEndDate,itemss.planEndDate);
                           let bjss = {
                             id: itemss.id,
                             text: itemss.orderNo+"("+result[index].name+")",
                             parent: itemss.productionOrderId,
                             progress: result[index].progress / 100,
                             type: 'task',
-                            start_date: new Date(itemss.actualStartDate),
-                            end_date: new Date(itemss.actualEndDate),
+                            start_date: new Date(itemss.planStartDate),
+                            end_date: new Date(itemss.planEndDate),
                             qualifiedQuantity: itemss.qualifiedQuantity,
                             productionQuantity: itemss.productionQuantity,
-
+                            duration: 2,
                             color: "#ccc",
                           }
                           arr.push(bjss)
@@ -1185,9 +1190,11 @@ export default {
                     })
                   }
                   console.log("arr", arr);
-                  this.gantttt.data = arr
+                  this.$nextTick(()=>{
+                    this.gantttt.data = arr
                   gantt.init(this.$refs.ganttRef);
                   gantt.parse(this.gantttt)
+                  })
                 });
               }, 500);
             })

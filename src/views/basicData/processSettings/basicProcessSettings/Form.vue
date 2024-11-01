@@ -68,7 +68,7 @@
 
             <div class="box"></div>
           </el-tab-pane>
-          <el-tab-pane label="工序资源配置" name="zypz">
+          <el-tab-pane label="工序资源配置" name="zypz" v-if="dataForm.processingType !== 'external_production'">
             <div>
               <el-tabs v-model="configurationName" @tab-click="handleClickFun" stretch style="margin-top:-10px">
                 <div v-if="type !== 'look'">
@@ -78,7 +78,6 @@
                     选择{{ actTitle }}
                   </el-button>
                   |
-                  <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
                   <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                     :disabled="type == 'look' ? true : false" icon="el-icon-delete"
                     @click="batchDelete(configurationName)">
@@ -92,14 +91,7 @@
                     style="width: 100%">
                     <el-table-column prop="resourceId" label="人员名称">
                       <template slot-scope="scope">
-                        <!-- <el-select v-model="scope.row.resourceId" filterable placeholder="请选择" style="width:100%;">
-                                    <el-option v-for="item in selectList" :key="item.id" :label="item.realName"
-                                        :value="item.id">
-                                    </el-option>
-                                </el-select> -->
-                        <!-- <div>{{ scope.row }}</div> -->
-                        <!-- <user-select :disabled="type === 'look'" v-model="scope.row.resourceId" ref="resourceId"
-                  placeholder="请选择人员" @change="changePerple" clearable style="width: 100%;"></user-select> -->
+
                         <el-input v-model="scope.row.resourceName" placeholder="请输入人员名称" :disabled="type === 'look'"
                           readonly />
                       </template>
@@ -152,9 +144,7 @@
                     style="width: 100%">
                     <el-table-column prop="resourceId" label="设备名称">
                       <template slot-scope="scope">
-                        <!-- <ComSelect-list :isdisabled="type === 'look'" v-model="scope.row.resourceName" placeholder="请选择设备" auth
-                  @change="onOrganizeChangeTwo" :title="'选择设备'" :method="editEquEquipmentAll" :requestObj="requestObj3"
-                  :paramsObj="{}" /> -->
+
                         <el-input :disabled="type === 'look'" v-model="scope.row.resourceName" placeholder="请输入设备名称"
                           readonly />
                       </template>
@@ -180,13 +170,7 @@
                     style="width: 100%">
                     <el-table-column prop="resourceId" label="工具名称">
                       <template slot-scope="scope">
-                        <!-- <el-select v-model="scope.row.resourceId" filterable placeholder="请选择" style="width:100%;">
-                                    <el-option v-for="item in tooList" :key="item.id" :label="item.name" :value="item.id">
-                                    </el-option>
-                                </el-select> -->
-                        <!-- <ComSelect-list :isdisabled="type === 'look'" v-model="scope.row.resourceName" placeholder="请选择工具" auth
-                  @change="onOrganizeChangeThree" :title="'选择工具'" :method="getEquEquipmentList" :requestObj="requestObj4"
-                  :paramsObj="{}" /> -->
+
                         <el-input v-model="scope.row.resourceName" placeholder="请输入工具名称" :disabled="type === 'look'"
                           readonly />
                       </template>
@@ -932,9 +916,17 @@ export default {
           item.resourceClass = 'process'
         })
       }
-      let obj = {
-        process: this.dataForm,
-        resourceList: data
+      let obj = {}
+      if (this.dataForm.processingType !== 'external_production') {
+        obj = {
+          process: this.dataForm,
+          resourceList: data
+        }
+      } else {
+        obj = {
+          process: this.dataForm,
+          resourceList: []
+        }
       }
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {

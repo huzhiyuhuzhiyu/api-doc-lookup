@@ -35,12 +35,13 @@
                           <!-- <el-input :disabled="type == 'look'" v-model="dataForm.cooperativePartnerName"
                             placeholder="请选择供应商名称" @focus="openDialog"></el-input> -->
                           <!-- 供应商选择弹窗  -->
-                          <ComSelect-page :clearable="type !== 'look'" :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
-                            v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
-                            @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'"
-                            title="选择供应商" treeTitle="供应商分类" :methodArr="PartnerMethodArr"
-                            :listMethod="getCooperativeData" :listRequestObj="PartnerListRequestObj"
-                            :paramsObj="{ oldData }" :searchList="PartnerTableSearchList" />
+                          <ComSelect-page :clearable="type !== 'look'" :isdisabled="type === 'look'"
+                            :treeNodeClick="treeNodeClick" v-model="dataForm.cooperativePartnerName"
+                            :beforeSubmit="beforeSubmit" ref="ComSelect-page" @change="supplierdata"
+                            :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商" treeTitle="供应商分类"
+                            :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
+                            :listRequestObj="PartnerListRequestObj" :paramsObj="{ oldData }"
+                            :searchList="PartnerTableSearchList" />
                         </el-form-item>
                       </el-col>
                       <el-col :span="6">
@@ -334,10 +335,11 @@
                     <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                       <!-- <el-input :disabled="type == 'look'" v-model="dataForm.cooperativePartnerName"
                         placeholder="请选择供应商名称" @focus="openDialog"></el-input> -->
-                      <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
-                        v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
-                        @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
-                        treeTitle="供应商分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
+                      <ComSelect-page :clearable="type !== 'look'" :isdisabled="type === 'look'"
+                        :treeNodeClick="treeNodeClick" v-model="dataForm.cooperativePartnerName"
+                        :beforeSubmit="beforeSubmit" ref="ComSelect-page" @change="supplierdata"
+                        :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商" treeTitle="供应商分类"
+                        :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
                         :listRequestObj="PartnerListRequestObj" :paramsObj="{ oldData }"
                         :searchList="PartnerTableSearchList" />
                     </el-form-item>

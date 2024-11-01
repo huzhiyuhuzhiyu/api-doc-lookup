@@ -115,12 +115,12 @@
                             :rules="productRules.processName">
                             <!-- <el-input v-model="scope.row.productName" placeholder="请输入产品名称" /> -->
                             <!-- 工序选择弹窗  -->
-                            <ComSelect-page :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
-                              v-model="scope.row.processName" @change="onOrganizeChangeTwo"
-                              :tableItems="ProcessTableItems" :placeholder="'请选择工序名称'" title="选择工序" treeTitle="工序分类"
-                              :methodArr="ProcessMethodArr" :listMethod="getBimProcessList"
-                              :listRequestObj="ProcessListRequestObj" :paramsObj="{ scope }"
-                              :searchList="ProcessTableSearchList" />
+                            <ComSelect-page :clearable="type !== 'look'" :isdisabled="type === 'look'"
+                              :treeNodeClick="treeNodeClick" v-model="scope.row.processName"
+                              @change="onOrganizeChangeTwo" :tableItems="ProcessTableItems" :placeholder="'请选择工序名称'"
+                              title="选择工序" treeTitle="工序分类" :methodArr="ProcessMethodArr"
+                              :listMethod="getBimProcessList" :listRequestObj="ProcessListRequestObj"
+                              :paramsObj="{ scope }" :searchList="ProcessTableSearchList" />
                           </el-form-item>
                         </template>
                       </el-table-column>

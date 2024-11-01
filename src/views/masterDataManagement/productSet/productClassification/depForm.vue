@@ -148,7 +148,7 @@ export default {
       classTypelist: [
         { label: '包装物', value: 'packaging' },
         { label: '内圈毛坯', value: 'inner_ring_blank' },
-        { label: '外协毛坯', value: 'outer_ring_blank' }
+        { label: '外圈毛坯', value: 'outer_ring_blank' }
       ]
     }
   },
@@ -208,7 +208,9 @@ export default {
       }
     },
     async dataFormSubmit() {
-      this.dataForm.classAttribute = this.classAttribute
+      if (!this.dataForm.id) {
+        this.dataForm.classAttribute = this.classAttribute
+      }
       let valid = await this.$refs['dataForm'].validate().catch((err) => false)
       this.btnLoading = true
       if (valid) {

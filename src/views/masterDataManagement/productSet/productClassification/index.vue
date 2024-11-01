@@ -148,7 +148,7 @@ export default {
       classTypelist: [
         { label: '包装物', value: 'packaging' },
         { label: '内圈毛坯', value: 'inner_ring_blank' },
-        { label: '外协毛坯', value: 'outer_ring_blank' }
+        { label: '外圈毛坯', value: 'outer_ring_blank' }
       ],
       treeList: [],
       treeDataAll: [],
@@ -194,7 +194,7 @@ export default {
           type: 'select',
           options: [{ label: '包装物', value: 'packaging' },
           { label: '内圈毛坯', value: 'inner_ring_blank' },
-          { label: '外协毛坯', value: 'outer_ring_blank' }]
+          { label: '外圈毛坯', value: 'outer_ring_blank' }]
         },
         {
           prop: 'createTime',

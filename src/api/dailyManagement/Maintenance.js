@@ -462,3 +462,11 @@ export function repairRejectReasonNum(data) {
     data
   })
 }
+// 领用记录-产品列表
+export function equRequisitionRecordsproducts(data) {
+  return request({
+    url: `/api/mes/equRequisitionRecords/products/list`,
+    method: 'POST',
+    data
+  })
+}

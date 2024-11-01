@@ -94,6 +94,7 @@ export default {
   data() {
     return {
       listQuery: {
+        classAttribute: "equipment",
         keyword: '',
         type: "equipment_supplier",
         orderItems: [{

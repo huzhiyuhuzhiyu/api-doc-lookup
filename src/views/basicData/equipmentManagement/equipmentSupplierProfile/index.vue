@@ -339,6 +339,7 @@ export default {
         email: '',
         grade: "",
         type: "equipment_supplier",
+        classAttribute: "equipment",
         partnerCategoryId: "",
         pageNum: 1,
         pageSize: 20,
@@ -752,7 +753,8 @@ export default {
       this.treeLoading = true
       let listQuery = {
         keyword: '',
-        type: "equipment_supplier"
+        type: "equipment_supplier",
+        classAttribute: "equipment"
       };
       getcategoryTree(listQuery).then(res => {
         console.log(99, res);

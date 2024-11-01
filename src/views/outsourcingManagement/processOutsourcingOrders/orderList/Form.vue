@@ -300,8 +300,8 @@
                     <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
                     <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
                     <el-table-column prop="mainUnit" label="单位" min-width="140"></el-table-column>
-                    <!-- <el-table-column prop="qty" label="基本数量" min-width="140"></el-table-column> -->
-                    <el-table-column prop="qty" label="发料数量" min-width="140"></el-table-column>
+                    <el-table-column prop="qty" label="基本数量" min-width="140"></el-table-column>
+                    <el-table-column prop="demandQuantity" label="发料数量" min-width="140"></el-table-column>
                     <el-table-column prop="undeliveredQuantity" label="待出库数量" min-width="140"></el-table-column>
                   </el-table>
                 </el-collapse-item>
@@ -539,8 +539,8 @@
                 <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
                 <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
                 <el-table-column prop="mainUnit" label="单位" min-width="140"></el-table-column>
-                <!-- <el-table-column prop="qty" label="基本数量" min-width="140"></el-table-column> -->
-                <el-table-column prop="qty" label="发料数量" min-width="140"></el-table-column>
+                <el-table-column prop="qty" label="基本数量" min-width="140"></el-table-column>
+                <el-table-column prop="demandQuantity" label="发料数量" min-width="140"></el-table-column>
                 <el-table-column prop="undeliveredQuantity" label="待出库数量" min-width="140"></el-table-column>
               </el-table>
             </el-collapse-item>

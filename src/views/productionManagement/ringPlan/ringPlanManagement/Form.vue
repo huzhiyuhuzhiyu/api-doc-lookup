@@ -238,7 +238,7 @@
                       <div>{{ scope.row.stockFlag ? "是" : "否" }}</div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="workOrderFlag" label="是否生成工单" min-width="100">
+                  <el-table-column prop="workOrderFlag" label="是否生成工单" min-width="160">
                     <template slot-scope="scope">
                       <div>{{ scope.row.workOrderFlag ? "是" : "否" }}</div>
                     </template>

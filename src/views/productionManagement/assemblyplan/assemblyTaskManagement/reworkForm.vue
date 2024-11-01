@@ -263,7 +263,11 @@
                           <div>{{ scope.row.stockFlag ? "是" : "否" }}</div>
                         </template>
                       </el-table-column>
-
+                      <el-table-column prop="workOrderFlag" label="是否生成工单" min-width="100">
+                    <template slot-scope="scope">
+                      <div>{{ scope.row.workOrderFlag ? "是" : "否" }}</div>
+                    </template>
+                  </el-table-column>
                     </JNPF-table>
 
                   </el-form>
@@ -1548,7 +1552,7 @@ export default {
                   break;
                 }
               } else {
-                if (!item.personId) {
+                if (!item.personId && item.processingType == "self_produced") {
                   submitFlag = false;
                   this.$message({
                     message: "第" + (index + 1) + "行工序需配置人员信息",

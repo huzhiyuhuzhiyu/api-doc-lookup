@@ -213,32 +213,36 @@
                           </el-select>
                         </template>
                       </el-table-column> -->
-                  <el-table-column prop="pickingFlag" label="是否领料" min-width="160">
+                  <el-table-column prop="pickingFlag" label="是否领料" min-width="100">
                     <template slot-scope="scope">
                       <div>{{ scope.row.pickingFlag ? "是" : "否" }}</div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="firstInspection" label="是否首检" min-width="160">
+                  <el-table-column prop="firstInspection" label="是否首检" min-width="100">
                     <template slot-scope="scope">
                       <div>{{ scope.row.firstInspection ? "是" : "否" }}</div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="checkFlag" label="是否检验" min-width="160">
+                  <el-table-column prop="checkFlag" label="是否检验" min-width="100">
                     <template slot-scope="scope">
                       <div>{{ scope.row.checkFlag ? "是" : "否" }}</div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="reportFlag" label="是否报工" min-width="160">
+                  <el-table-column prop="reportFlag" label="是否报工" min-width="100">
                     <template slot-scope="scope">
                       <div>{{ scope.row.reportFlag ? "是" : "否" }}</div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="stockFlag" label="是否入库" min-width="160">
+                  <el-table-column prop="stockFlag" label="是否入库" min-width="100">
                     <template slot-scope="scope">
                       <div>{{ scope.row.stockFlag ? "是" : "否" }}</div>
                     </template>
                   </el-table-column>
-
+                  <el-table-column prop="workOrderFlag" label="是否生成工单" min-width="100">
+                    <template slot-scope="scope">
+                      <div>{{ scope.row.workOrderFlag ? "是" : "否" }}</div>
+                    </template>
+                  </el-table-column>
                 </JNPF-table>
 
               </el-form>
@@ -955,7 +959,7 @@ export default {
       detailProcess(id).then(res => {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
         console.log("工艺详情", res);
-        this.dataFormTwo.data = res.data.routingLineList.filter(item => item.workOrderFlag).sort((a, b) => a.sort - b.sort)
+        this.dataFormTwo.data = res.data.routingLineList
         res.data.routingLineList.forEach((item) => {
 
           if (item.routingProResMap) {
@@ -1037,7 +1041,7 @@ export default {
               break;
             }
           } else {
-            if (!item.personId) {
+            if (!item.personId && item.processingType == "self_produced") {
               submitFlag = false;
               this.$message({
                 message: "第" + (index + 1) + "行工序需配置人员信息",

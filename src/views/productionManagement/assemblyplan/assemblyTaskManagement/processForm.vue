@@ -32,7 +32,7 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @selection-change="selectProcess"
+          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @selection-change="selectProcess" :checkSelectable="dispurchaseData"
             @row-click="handleRowClick" hasC ref="processRef">
             <el-table-column prop="processName" label="工序名称"></el-table-column>
             <el-table-column prop="processCode" label="工序编码" />
@@ -49,6 +49,12 @@
               <template slot-scope="scope">
                 <div v-if="scope.row.processingType == 'self_produced'">自制</div>
                 <div v-if="scope.row.processingType == 'external_production'">外协</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="workOrderFlag" label="是否生成工单" width="180">
+              <template slot-scope="scope">
+                <div v-if="scope.row.workOrderFlag == true">是</div>
+                <div v-if="scope.row.workOrderFlag == false">否</div>
               </template>
             </el-table-column>
           </JNPF-table>
@@ -102,6 +108,9 @@ export default {
     selectProcess(val) {
       this.selectArr = val
     },
+    dispurchaseData(row) {
+      return row.workOrderFlag;
+    }, 
     submitFun() {
       if (!this.selectArr.length) return this.$message.error("请先选择工序")
         this.selectArr.sort(function (a, b) {
@@ -237,7 +246,7 @@ export default {
       detailProcess(id).then(res => {
         this.listLoading = false
         console.log("工艺详情", res);
-        let linesData = res.data.routingLineList.filter(item => item.workOrderFlag).sort((a, b) => a.sort - b.sort)
+        let linesData = res.data.routingLineList
         console.log(linesData);
         linesData.forEach(item => {
           item.selectFlag = false

@@ -295,7 +295,8 @@
                             @click="delequipment_process_relList(scope.$index)">
                             删除
                           </el-button>
-                          <el-button type="text" @click="handlerOpenSource(scope.$index, type)">
+                          <el-button type="text" @click="handlerOpenSource(scope.$index, type)"
+                            :disabled="scope.row.processingType === 'external_production'">
                             工艺资源配置
                           </el-button>
                         </template>
@@ -509,6 +510,17 @@
                       </el-form>
                     </template>
                   </el-table-column>
+                  <el-table-column prop="workOrderFlag" label="是否生成工单" width="130">
+                    <template slot-scope="{ row }">
+                      <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
+                        <el-form-item prop="workOrderFlag" ref="workOrderFlag">
+                          <el-checkbox v-model="row.workOrderFlag" :true-label="1"
+                            :disabled="type == 'look' || row.processingType === 'self_produced'" :false-label="0">
+                            {{ row.workOrderFlag ? '是' : '否' }}</el-checkbox>
+                        </el-form-item>
+                      </el-form>
+                    </template>
+                  </el-table-column>
                   <el-table-column label="操作" width="180" fixed="right">
                     <template slot-scope="scope">
                       <el-button type="text" class="JNPF-table-delBtn"
@@ -516,7 +528,8 @@
                         @click="delequipment_process_relList(scope.$index)">
                         删除
                       </el-button>
-                      <el-button type="text" @click="handlerOpenSource(scope.$index, type)">
+                      <el-button type="text" @click="handlerOpenSource(scope.$index, type)"
+                        :disabled="scope.row.processingType === 'external_production'">
                         工艺资源配置
                       </el-button>
                     </template>

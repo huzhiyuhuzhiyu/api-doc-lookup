@@ -83,16 +83,28 @@
             <el-button icon="el-icon-lock" type="warning" size="mini" @click="plhandleResetPwd">重置密码</el-button>
             <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" :disabled="!tableData.length" @click="exportForm">导出</el-button>
             <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus" @click="uploadForm">导入</el-button>
-            <el-dropdown style="margin-right:10px;">
-              <el-button size="mini" type="primary" icon="el-icon-plus">
-                同步
-                <i class="el-icon-arrow-down el-icon--right"></i>
+            <el-button style="margin-left:10px" type="primary" icon="el-icon-plus" @click.native="toDingHandle('')">
+              阿里钉钉同步到系统
               </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="toWxHandle">同步到企业微信</el-dropdown-item>
-                <el-dropdown-item @click.native="toDingHandle">同步到阿里钉钉</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
+            <!-- <el-dropdown style="margin:0 10px;">
+                <el-button  type="primary" icon="el-icon-plus">
+                  同步到系统
+                  <i class="el-icon-arrow-down el-icon--right"></i>
+                </el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item @click.native="toDingHandle('')">阿里钉钉同步到系统</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown> -->
+            <el-dropdown style="margin:0 10px;">
+                <el-button  type="primary" icon="el-icon-plus">
+                  同步到第三方
+                  <i class="el-icon-arrow-down el-icon--right"></i>
+                </el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item @click.native="toWxHandle('sync')">同步到企业微信</el-dropdown-item>
+                  <el-dropdown-item @click.native="toDingHandle('sync')">同步到阿里钉钉</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
           </div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top">
@@ -196,7 +208,7 @@
     <el-dialog title="数据同步" :visible.sync="dataVisible" class="JNPF-dialog JNPF-dialog_center sync-dialog" lock-scroll
       width="450px">
       <el-alert title="注意：尽量使用单向同步，避免双向同步造成数据重复" type="warning" :closable="false" show-icon />
-      <div class="add-main">
+      <div class="add-main" v-if="syncType">
         <div class="add-item add-item-sys">
           <i class="add-icon icon-ym icon-ym-upload"></i>
           <div class="add-txt">
@@ -210,7 +222,7 @@
           </div>
         </div>
       </div>
-      <div class="add-main"  v-if="synchronization !== '把企业微信数据同步到系统'">
+      <div class="add-main"  v-if="synchronization !== '把企业微信数据同步到系统' && !syncType">
         <div class="add-item add-item-sys">
           <i class="add-icons icon-ym icon-ym-download"></i>
           <div class="add-txt">
@@ -271,6 +283,7 @@ export default {
   },
   data() {
     return {
+      syncType:'',
       superQueryJson: [
         {
           prop: 'account',
@@ -752,16 +765,18 @@ export default {
       this.initData()
     },
     // 同步到钉钉
-    toDingHandle(){
-      if (!this.selectArr.length) return this.$message.warning('请选择您要同步的用户数据')
+    toDingHandle(syncType){
+      this.syncType = syncType
+      if (!this.selectArr.length && this.syncType) return this.$message.warning('请选择您要同步的用户数据')
       this.name = '同步到阿里钉钉'
       this.names = '用户数据同步到阿里钉钉'
       this.synchronization = '把阿里钉钉数据同步到系统'
       this.dataVisible = true
     },
      // 同步到企微
-     toWxHandle(){
-      if (!this.selectArr.length) return this.$message.warning('请选择您要同步的用户数据')
+     toWxHandle(syncType){
+      this.syncType = syncType
+      if (!this.selectArr.length && this.syncType) return this.$message.warning('请选择您要同步的用户数据')
       this.name = '同步到企业微信'
       this.names = '用户数据同步到企业微信'
       this.synchronization = '把企业微信数据同步到系统'

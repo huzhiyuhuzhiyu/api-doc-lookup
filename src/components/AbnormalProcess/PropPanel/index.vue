@@ -719,7 +719,7 @@
               </el-form>
             </el-scrollbar>
           </el-tab-pane>
-          <el-tab-pane label="节点通知">
+          <el-tab-pane label="消息提醒">
             <el-scrollbar class="config-scrollbar">
               <el-form :model="approverForm" class="pd-10-20" label-position="top">
                 <el-alert title="该通知设置配置外部第三方消息提醒，站内信系统默认发送" type="warning" :closable="false" show-icon />

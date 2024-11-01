@@ -3,9 +3,7 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-
           <el-col :span="4" v-for="item in searchList" :key="item.prop">
-
             <el-form-item>
               <el-input v-if="item.type === 'input'" v-model="listQuery[item.prop]" :placeholder="'请输入' + item.label"
                 clearable />
@@ -17,26 +15,29 @@
 
               <el-date-picker v-else-if="item.type === 'date'" v-model="listQuery.reconciliationDateArr"
                 type="daterange" value-format="yyyy-MM-dd" style="width: 100%;" :start-placeholder="item.label + '开始日期'"
-                :end-placeholder="item.label + '结束日期'">
-              </el-date-picker>
+                :end-placeholder="item.label + '结束日期'"></el-date-picker>
             </el-form-item>
           </el-col>
 
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
-                {{ $t('common.search') }}</el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
+                {{ $t('common.search') }}
               </el-button>
+              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
             </el-form-item>
           </el-col>
-
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
           <!-- <topOpts @add="addOrUpdateHandle('', 'add')" /> -->
-          <div></div>
+          <div>
+            <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+              icon="el-icon-download" @click="exportForm">
+              导出
+            </el-button>
+          </div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -52,19 +53,29 @@
         </div>
 
         <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO :fixedNO="true"
-          @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+          @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
           <template v-for="item in tableItems">
             <el-table-column :key="item.prop" :prop="item.prop" :label="item.label" :fixed="item.fixed || false"
-              :min-width="item.minWidth || 120" :sortable="item.sortable" />
+              :min-width="item.minWidth || 120" :sortable="item.sortable">
+              <template #default="scope">
+                <!-- 根据 item.prop 判断是否需要转换 -->
+                <span v-if="item.type === 'select'">
+                  {{ scope.row.value === 'not_credited' ? '未入账' : '已入账' }}
+                </span>
+                <span v-else>
+                  {{ scope.row[item.prop] }}
+                  <!-- 显示其他属性的原始值 -->
+                </span>
+              </template>
+            </el-table-column>
           </template>
 
-          <el-table-column label="操作" min-width="180" fixed="right">
+          <el-table-column label="操作" width="110" fixed="right">
             <template slot-scope="scope">
-
-
               <el-button size="mini" type="text"
-                @click="addOrUpdateHandle(scope.row.accountsReceivableReconciliationId, 'look', scope.row.orderNo)">查看对账单</el-button>
-
+                @click="addOrUpdateHandle(scope.row.accountsReceivableReconciliationId, 'look', scope.row.orderNo)">
+                查看对账单
+              </el-button>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -81,21 +92,22 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+     
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
 
 <script>
-
 import collectionForm from './collectionForm.vue'
 import makeForm from './makeForm.vue'
 import depForm from './depForm.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import {
-  getbimProductAttributesList, getbimProductAttributes
-} from "@/api/masterDataManagement/index";
+import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import ExportForm from '@/components/no_mount/ExportBox/index'
+import { excelExport } from '@/api/basicData/index'
 export default {
   name: 'payment',
-  components: { collectionForm, makeForm, depForm, SuperQuery },
+  components: { collectionForm, makeForm, depForm, SuperQuery, ExportForm },
   props: {
     reconciliationType: {
       type: String,
@@ -141,88 +153,19 @@ export default {
         }
       */
     },
+    superQueryJson: {
+      type: Array,
+      default: () => []
+    },
+    columnList: {
+      type: Array,
+      default: () => []
+    }
   },
   data() {
     return {
       superQueryVisible: false,
-      superQueryJson: [
-        {
-          prop: 'orderNo',
-          label: '对账流水号',
-          type: 'input'
-        },
-
-        {
-          prop: 'reconciliationDate',
-          label: '对账日期',
-          type: 'daterange',
-          valueFormat: 'yyyy-MM-dd',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'cooperativePartnerCode',
-          label: '客户编码',
-          type: 'input'
-        },
-        {
-          prop: 'cooperativePartnerName',
-          label: '客户名称',
-          type: 'input'
-        },
-        {
-          prop: 'includingTaxAmount',
-          label: '出入库金额',
-          type: 'input'
-        },
-        {
-          prop: 'totalReconciliationAmount',
-          label: '应付金额',
-          type: 'input'
-        },
-        {
-          prop: 'totalPaymentAmount',
-          label: '已收款金额',
-          type: 'input'
-        },
-        {
-          prop: 'totalUnpaidAmount',
-          label: '未收款金额',
-          type: 'input'
-        },
-        {
-          prop: 'totalInvoicingAmount',
-          label: '已开票金额',
-          type: 'input',
-        },
-        {
-          prop: 'totalNotInvoicedAmount',
-          label: '未开票金额',
-          type: 'input',
-        },
-        {
-          prop: 'remark',
-          label: '备注',
-          type: 'input'
-        },
-        {
-          prop: 'createTime',
-          label: '创建时间',
-          type: 'daterange',
-          valueFormat: 'yyyy-MM-dd HH:mm:ss',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'createByName',
-          label: '创建人',
-          type: 'input'
-        },
-
-      ],
-      columnList: ['cooperativePartnerCode'],
+      exportFormVisible: false,
       title: '更多查询',
       tableData: [],
       listLoading: false,
@@ -235,11 +178,8 @@ export default {
       total: 0,
       formVisible: false,
       orderNo: '',
-      totalList: [],
+      totalList: []
     }
-  },
-  mounted() {
-    this.getProductClassFun()
   },
   created() {
     this.getData()
@@ -250,246 +190,35 @@ export default {
       this.superQueryVisible = false
       this.search()
     },
-    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
-    getProductClassFun() {
-
-      let obj1 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa007",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-
-      getbimProductAttributesList(obj1).then(res => {
-
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'sealingCoverTyping');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
+    // 导出
+    exportForm() {
+      this.exportFormVisible = true
+      let columnList = this.$refs.dataTable.columnList.filter(item => !!item.label && !!item.prop)
+      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
+      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+    },
+    download(data) {
+      if (data) {
+        this.exportFormVisible = false
+        let includeFieldMap = {}
+        for (let i = 0; i < data.selectKey.length; i++) {
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i];
         }
-      })
-      let obj2 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa006",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-
-
-      getbimProductAttributesList(obj2).then(res => {
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'accuracyLevel');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
+        console.log(includeFieldMap);
+        let _data = {
+          ...this.listQuery,
+          exportType: '1119',
+          exportName: '发票记录查询',
+          includeFieldMap,
+          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
+          // totalRowFlag: true,
         }
-      })
-      let obj3 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa005",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj3).then(res => {
-
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'vibrationLevel');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-      let obj4 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa002",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj4).then(res => {
-
-
-
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'oil');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-      let obj5 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa003",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj5).then(res => {
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'oilQuantity');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-      let obj6 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa001",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-
-      getbimProductAttributesList(obj6).then(res => {
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'clearance');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-      let obj7 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa015",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj7).then(res => {
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'packagingMethod');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-
-
-      // 获取税率(数据字典)
-      getbimProductAttributes("585438081021126405").then(res => {
-        res.data.list.forEach(item => {
-          item.taxRate = item.enCode.replace('%', '') * 1
-        })
-        this.taxRateList = res.data.list
-        console.log("税率", this.taxRateList);
-      })
-
+        excelExport(_data).then(res => {
+          this.exportFormVisible = false
+          if (!res.data.url) return
+          this.jnpf.downloadFile(res.data.url)
+        }).catch(() => { })
+      }
     },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
@@ -530,20 +259,28 @@ export default {
     initData() {
       this.visible = false
       this.listLoading = true
-      Object.keys(this.listQuery).forEach(key => { // 清除搜索条件两端空格
+      Object.keys(this.listQuery).forEach((key) => {
+        // 清除搜索条件两端空格
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
       this.totalList = []
-      this.jnpf.searchTimeFormat(this.listQuery, 'reconciliationDateArr', 'reconciliationStartDate', 'reconciliationEndDate')
-      this.listMethod(this.listQuery).then(res => {
-        this.tableData = res.data.page ? res.data.page.records : []
-        res.data.total ? this.totalList.push(res.data.total) : ''
-        this.total = res.data.page ? res.data.page.total : 0
-        this.listLoading = false
-      }).catch(() => {
-        this.listLoading = false
-      })
+      this.jnpf.searchTimeFormat(
+        this.listQuery,
+        'reconciliationDateArr',
+        'reconciliationStartDate',
+        'reconciliationEndDate'
+      )
+      this.listMethod(this.listQuery)
+        .then((res) => {
+          this.tableData = res.data.page ? res.data.page.records : []
+          res.data.total ? this.totalList.push(res.data.total) : ''
+          this.total = res.data.page ? res.data.page.total : 0
+          this.listLoading = false
+        })
+        .catch(() => {
+          this.listLoading = false
+        })
     },
 
     search() {
@@ -574,11 +311,7 @@ export default {
           this.$refs.depForm.init(id, type, orderNo)
         })
       }
-    },
-
-
-
-
+    }
   }
 }
 </script>
@@ -624,8 +357,6 @@ export default {
 .main {
   padding: 10px 30px 0;
 }
-
-
 
 .el-button--small {
   padding: 1;

@@ -21,12 +21,6 @@
               </el-form-item>
             </el-col>
           </template>
-          <el-col :span="4">
-            <el-form-item>
-              <el-date-picker v-model="reconciliationDate" type="daterange" value-format="yyyy-MM-dd"
-                style="width: 100%;" start-placeholder="请选择对账开始日期" end-placeholder="请选择对账结束日期"></el-date-picker>
-            </el-form-item>
-          </el-col>
           <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
@@ -39,7 +33,10 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <div></div>
+          <div> <el-button v-has="'btn_export'" :disabled="tableDataList.length > 0 ? false : true" size="mini"
+              type="primary" icon="el-icon-download" @click="exportForm">
+              导出
+            </el-button></div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -136,6 +133,7 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
 
@@ -147,12 +145,15 @@ import JNPFForm from '../externalReconciliation/Form.vue'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import withdrawnForm from '../externalReconciliation/withranForm.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import ExportForm from '@/components/no_mount/ExportBox/index'
+import { excelExport } from '@/api/basicData/index'
 export default {
   name: 'purchaseInquirySheet',
-  components: { JNPFForm, withdrawnForm, SuperQuery },
+  components: { JNPFForm, withdrawnForm, SuperQuery, ExportForm },
   data() {
     return {
       superQueryVisible: false,
+      exportFormVisible: false,
       superQueryJson: [
         {
           prop: 'orderNo',
@@ -299,6 +300,55 @@ export default {
       this.listQuery.orderItems[0].asc = order !== 'descending'
       this.listQuery.orderItems[0].column = order === null ? '' : newProp
       this.initData()
+    },
+    exportType(data, ref) {
+      if (data.length) {
+        this.exportFormVisible = true
+        let domRef = this.$refs[`${ref}`]
+        console.log(domRef)
+        let columnList = domRef.columnList.filter((item) => !!item.label && !!item.prop)
+        columnList = columnList.map((item) => {
+          return { label: item.label, prop: item.prop }
+        })
+        console.log(columnList, 'columnList')
+        this.$nextTick(() => {
+          this.$refs.exportForm.init(columnList)
+        })
+      } else {
+        this.$message({
+          message: '暂无数据导出',
+          type: 'error',
+          duration: 1500
+        })
+      }
+    },
+    // 导出
+    exportForm() {
+      this.exportType(this.tableDataList, 'tableForm')
+    },
+    download(data) {
+      if (data) {
+        this.exportFormVisible = false
+        let includeFieldMap = {}
+        for (let i = 0; i < data.selectKey.length; i++) {
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i]
+        }
+        let query = this.listQuery
+        let _data = {
+          ...query,
+          exportType: '1226',
+          exportName: '对账单明细',
+          includeFieldMap,
+          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
+        }
+        excelExport(_data)
+          .then((res) => {
+            this.exportFormVisible = false
+            if (!res.data.url) return
+            this.jnpf.downloadFile(res.data.url)
+          })
+          .catch(() => { })
+      }
     },
     columnSetFun() {
       this.$refs.tableForm.showDrawer()

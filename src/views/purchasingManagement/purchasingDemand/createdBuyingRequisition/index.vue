@@ -469,7 +469,7 @@ export default {
       ], // 产品选择弹出框树状列表
       ProductListRequestObj: {
         classAttribute: '',
-        classAttributeList: ['raw_material', 'semi_finished', 'finish_product', 'accessories'],
+        // classAttributeList: ['raw_material', 'semi_finished', 'finish_product', 'accessories'],
         productCategoryId: '',
         code: '',
         name: '',

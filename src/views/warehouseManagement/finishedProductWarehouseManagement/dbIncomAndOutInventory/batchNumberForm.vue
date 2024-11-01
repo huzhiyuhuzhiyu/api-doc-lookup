@@ -122,8 +122,7 @@ export default {
       this.form.accuracyLevel=data.accuracyLevel
       this.form.warehouseId=data.warehouseId
       this.form.packagingMethod=data.packagingMethod
-      this.form.specialRequire=data.specialRequire
-      this.form.productsId=data.productsId
+      this.form.specialRequire=data.specialRequire 
       this.getbatchNumList()
     },
     // 选择批次

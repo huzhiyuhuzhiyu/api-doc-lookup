@@ -45,8 +45,10 @@
 <template>
   <div class="TableForm_main">
     <div v-if="realOpenMode !== '只读' && hasToolbar" class="TableForm_title">
-      <el-button type="text" class="topButton" icon="el-icon-plus" @click="openSeleceProductDialog">选择子件</el-button>|
-      <el-button type="text" class="topButton" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
+      <el-button type="text" class="topButton" icon="el-icon-plus" @click="openSeleceProductDialog">选择子件</el-button>
+      |
+      <el-button type="text" class="topButton" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
+      |
     </div>
 
     <el-form :model="JNPFColTableData" ref="main" class="tableContainer">
@@ -62,7 +64,8 @@
             :label="item.label" :width="item.width" :min-width="item.minWidth || 100" :fixed="item.fixed"
             :show-overflow-tooltip="item.type === 'view'">
             <template slot="header" v-if="isRequire(item)">
-              <span class="required">*</span>{{ item.label }}
+              <span class="required">*</span>
+              {{ item.label }}
             </template>
             <template slot-scope="scope">
               <FormItem :item="item" :lineItem="JNPFColTableData.data[scope.$index]"
@@ -102,12 +105,12 @@
 </template>
 
 <script>
-import FormItem from "@/components/JNPF-col-table/item"
+import FormItem from '@/components/JNPF-col-table/item'
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
 import { getclassAttributeList } from '@/api/masterDataManagement/index'
 import { getLabel } from '@/utils/index'
-import DkcComSelectPage from "../ComSelect-page/index.vue";
+import DkcComSelectPage from '../ComSelect-page/index.vue'
 Vue.prototype.$getLabel = getLabel
 export default {
   components: { FormItem, DkcComSelectPage },
@@ -122,35 +125,39 @@ export default {
       classAttributeList: [],
       customStyleData: {},
       getProductList, // 产品选择弹出框树状列表请求api
-      ProductMethodArr: { method: getcategoryTree, requestObj: { classAttribute: "" } }, // 产品选择弹出框树状列表
+      ProductMethodArr: { method: getcategoryTree, requestObj: { classAttribute: '', type: 'material' } }, // 产品选择弹出框树状列表
       ProductListRequestObj: {
-        classAttributeList: ["raw_material", "semi_finished", "finish_product", "accessories"],
-        productCategoryId: "",
-        code: "",
-        name: "",
-        orderItems: [{
-          "asc": false,
-          "column": ""
-        }, {
-          "asc": false,
-          "column": "create_time"
-        }],
-        productStatus: "enable",
+        classAttributeList: ['raw_material', 'semi_finished', 'finish_product', 'accessories'],
+        productCategoryId: '',
+        code: '',
+        name: '',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        productStatus: 'enable',
         pageNum: 1,
-        pageSize: 20,
+        pageSize: 20
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
-        { prop: 'code', label: '产品编码', fixed: 'left' },
-        // { prop: 'name', label: '产品名称', fixed: 'left' },
         { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'code', label: '子件编码' },
+        { prop: 'classTypeName', label: '子件类型' },
+
         // { prop: 'spec', label: '规格型号' },
-        { prop: 'classAttributeName', label: '产品分类' }
+        { prop: 'classAttributeName', label: '子件分类' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
-        { prop: "productCode", label: "产品编码", type: 'input' },
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productCode', label: '产品编码', type: 'input' }
         // { prop: "name", label: "产品名称", type: 'input' },
-        { prop: "productDrawingNo", label: "品名规格", type: 'input' }
-      ], // 产品选择弹出框搜索条件
+      ] // 产品选择弹出框搜索条件
     }
   },
   props: {
@@ -177,19 +184,23 @@ export default {
       type: Boolean,
       default: true
     },
-    fixedNO: { // 序号固定
+    fixedNO: {
+      // 序号固定
       type: Boolean,
       default: true
     },
-    fixedC: { // 复选框固定
+    fixedC: {
+      // 复选框固定
       type: Boolean,
       default: true
     },
-    fixedA: { // 操作栏固定
+    fixedA: {
+      // 操作栏固定
       type: Boolean,
       default: true
     },
-    customStyle: { // 允许切换表格样式
+    customStyle: {
+      // 允许切换表格样式
       type: Boolean,
       default: false
     }
@@ -197,8 +208,8 @@ export default {
   watch: {
     value: {
       handler: function (newValue) {
-        this.JNPFColTableData.data = newValue;
-      },
+        this.JNPFColTableData.data = newValue
+      }
       // deep: true
     }
   },
@@ -219,7 +230,7 @@ export default {
   },
   mounted() {
     this.getclassAttributeList()
-    this.setDefaultValue();
+    this.setDefaultValue()
   },
 
   beforeDestroy() {
@@ -229,6 +240,13 @@ export default {
     listDataFormatting(res) {
       res.data.records.forEach((item, index) => {
         item.classAttributeName = this.$getLabel(this.classAttributeList, item.classAttribute, 'value', 'label')
+        if (item.classType === 'packaging') {
+          item.classTypeName = '包装物'
+        } else if (item.classType === 'inner_ring_blank') {
+          item.classTypeName = '内圈毛坯'
+        } else if (item.classType === 'outer_ring_blank') {
+          item.classTypeName = '外圈毛坯'
+        }
       })
 
       return res.data.records
@@ -251,33 +269,33 @@ export default {
       })
     },
     handleInput(val, key, index) {
-      this.$emit('input', index, key, val);
+      this.$emit('input', index, key, val)
     },
     setDefaultValue() {
       const formDataList = [...this.value]
       formDataList.forEach((item, index) => {
         this.tableItems.forEach((item2, index2) => {
-          const { prop, value } = item2;
-          if ((item[prop] === null || item[prop] === "" || item[prop] === undefined) && value !== undefined) {
-            item[prop] = value;
+          const { prop, value } = item2
+          if ((item[prop] === null || item[prop] === '' || item[prop] === undefined) && value !== undefined) {
+            item[prop] = value
           }
         })
       })
-      this.$emit('input', [...formDataList]);
+      this.$emit('input', [...formDataList])
     },
 
     openSeleceProductDialog() {
       this.$refs['ComSelect-page'].openDialog()
     },
     isRequire(data) {
-      return data.hasOwnProperty('itemRules') && data.itemRules.some(item => item.required === true)
+      return data.hasOwnProperty('itemRules') && data.itemRules.some((item) => item.required === true)
     },
     addth(selectedIds, selectedList) {
-      selectedList.forEach(item => {
+      selectedList.forEach((item) => {
         item.all.productId = item.id
         item.all.productName = item.name
       })
-      let list = selectedList.map(item => item.all)
+      let list = selectedList.map((item) => item.all)
       this.$emit('addth', list)
     },
     deleteth(scope) {
@@ -285,37 +303,37 @@ export default {
     },
     batchDelete() {
       if (!this.selectedList.length) {
-        this.$message.error("请选择你要删除的数据")
+        this.$message.error('请选择你要删除的数据')
         return
       }
       let tempData = [...this.value]
       for (let i = 0; i < this.selectedList.length; i++) {
-        const row = this.selectedList[i];
-        const index = tempData.indexOf(row);
+        const row = this.selectedList[i]
+        const index = tempData.indexOf(row)
         if (index > -1) {
-          tempData.splice(index, 1); // 从tableData中删除选中的行
+          tempData.splice(index, 1) // 从tableData中删除选中的行
         }
       }
-      this.selectedList = []  // 清空选中的行的数据
-      this.$emit('input', [...tempData]);
+      this.selectedList = [] // 清空选中的行的数据
+      this.$emit('input', [...tempData])
     },
     handleSelectionChange(data) {
       this.selectedList = data
     },
     async switchStyle(type) {
-      await this.$nextTick();
+      await this.$nextTick()
       function getParentMain(_this) {
         if (!_this) return null
         if (_this.$refs.main) return _this.$refs.main
         return getParentMain(_this.$parent)
       }
       const mainRegion = getParentMain(this.$parent) // 表单页面区域
-      if (JSON.stringify(this.customStyleData) === "{}" || type === 'onresize') {
+      if (JSON.stringify(this.customStyleData) === '{}' || type === 'onresize') {
         if (type !== 'onresize') this.$message.success('适配模式')
-        const mainHeight = mainRegion.clientHeight;
+        const mainHeight = mainRegion.clientHeight
         let bortherHeight = 0
         const bortherItems = mainRegion.querySelectorAll('.jcInfo > *') // 与TableForm同级的所有组件
-        bortherItems.forEach(item => {
+        bortherItems.forEach((item) => {
           if (item.className !== 'TableForm_main') bortherHeight += item.clientHeight // 计算除TableForm之外的所有组件的高
         })
         const TableFormTitle = mainRegion.querySelector('.TableForm_title') // 获取TableForm头部操作栏
@@ -332,14 +350,14 @@ export default {
           height: 10000,
           maxHeight
         }
-        console.log(this.customStyleData);
+        console.log(this.customStyleData)
         // 附带防抖的监听适配模式屏幕缩放
         window.onresize = () => {
           clearTimeout(this.timeout)
           this.timeout = setTimeout(() => {
             this.switchStyle('onresize')
-          }, 100);
-        };
+          }, 100)
+        }
       } else {
         this.$message.success('全展模式')
         window.onresize = null
@@ -347,17 +365,19 @@ export default {
         mainRegion.querySelector('.tableContainer').style.height = '100%' // 设置表单容器的高度
         // 重新加载表格
         this.tableVisible = false
-        this.$nextTick(() => { this.tableVisible = true })
+        this.$nextTick(() => {
+          this.tableVisible = true
+        })
       }
     },
     calcHeight() {
       this.$nextTick(() => {
         let tBodyList = document.querySelectorAll('.TableForm.table')
-        tBodyList.forEach(item => {
+        tBodyList.forEach((item) => {
           item.style.height = 'auto'
           item.querySelector('.el-table__body-wrapper').style.height = 'auto'
         })
-      });
+      })
     }
   }
 }

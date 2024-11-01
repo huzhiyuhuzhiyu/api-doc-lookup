@@ -156,7 +156,7 @@ export default {
 
       linesListItems: [
         { prop: 'drawingNo', label: '子件规格', value: '', type: 'view', minWidth: 340 },
-        // { prop: "productName", label: "产品名称", value: "", type: 'view', minWidth: 160 },
+        { prop: "classTypeName", label: "子件类型", value: "", type: 'view', minWidth: 160 },
         { prop: 'productCode', label: '子件编码', value: '', type: 'view', minWidth: 160 },
         {
           prop: 'qty',
@@ -249,7 +249,7 @@ export default {
       ],
       getProductWithOut, // 产品选择弹出框树状列表请求api
       ProductMethodArr: [
-        { label: '产品分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '' } }
+        { label: '产品分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '', type: "material" } }
       ], // 产品选择弹出框树状列表
       ProductListRequestObj: {
         createByName: '',
@@ -698,13 +698,26 @@ export default {
         this.$message.error('请至少添加一个子产品')
       } else if (!this.linesList.some((item) => item.reduceType === 'picking') && submitFlag) {
         submitFlag = false
-        this.$message.error('至少有一个子产品的扣减料方式为生成领料单')
-      }
-      if (this.dataForm.classAttribute == 'semi_finished' && this.dataForm.productSource == 'out') {
-        if (this.linesList.length > 1)
-          return this.$message.error('半成品产品来源是外协时，创建BOM的子件，只能选择一个子件')
         this.btnLoading = false
         this.btnDisabled = false;
+        this.$message.error('至少有一个子产品的扣减料方式为生成领料单')
+      }
+      if (this.dataForm.classAttribute == 'semi_finished') {
+        if (this.linesList.length > 1) {
+          this.linesList.forEach(item => {
+            console.log(item, 'p')
+
+            if (item.classType === 'inner_ring_blank' || item.classType === 'outer_ring_blank') {
+              submitFlag = false
+              this.btnLoading = false
+              this.btnDisabled = false;
+
+              return this.$message.error('半成品产品，创建BOM的子件，子件选择内外圈毛坯，只能有一个子件')
+            }
+          })
+        }
+
+
       }
       if (submitFlag) {
         let index = this.linesList.findIndex((line) => line.productId === this.dataForm.productId)

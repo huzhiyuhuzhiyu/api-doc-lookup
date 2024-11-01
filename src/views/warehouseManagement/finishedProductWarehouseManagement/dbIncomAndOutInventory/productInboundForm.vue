@@ -96,7 +96,6 @@
                         style="width: 100%;">
                         <!-- <el-table-column type="selection" width="55" fixed="left" :key="2">
                         </el-table-column> -->
-                        <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
 
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" :key="6"
                           show-overflow-tooltip> </el-table-column>
@@ -317,7 +316,6 @@
                         style="width: 100%;">
                         <!-- <el-table-column type="selection" width="55" fixed="left" :key="2">
                         </el-table-column> -->
-                        <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
 
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" :key="6"
                           show-overflow-tooltip> </el-table-column>

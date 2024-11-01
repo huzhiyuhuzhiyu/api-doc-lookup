@@ -84,7 +84,7 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="totalProgress" label="订单进度" width="120" :key="68">
-                   
+
                 </el-table-column>
 
                 <el-table-column prop="num" label="订单数量" width="120" :key="58">
@@ -170,6 +170,12 @@
                 </div>
 
                 <div class="gantt">甘特图信息</div>
+                <div>
+                  <div ref='ganttRef'></div>
+                  <section style='display: flex;justify-content: start;'>
+
+                  </section>
+                </div>
               </div>
               <!-- 成品采购 -->
               <div v-if="categoryType == 'finishpurchase'">
@@ -245,7 +251,8 @@
               </div>
               <!-- 成品外协 -->
               <div v-if="categoryType == 'finishedOut'">
-                <JNPF-table ref="finishedOut" :height="height" :data="finishExtendData" fixedNO v-loading="tableloading">
+                <JNPF-table ref="finishedOut" :height="height" :data="finishExtendData" fixedNO
+                  v-loading="tableloading">
                   <el-table-column prop="orderNo" label="外协单号" min-width="200">
                     <template slot-scope="scope">
                       <el-link type="primary" @click.native="viewFinishExtendFun(scope.row.id, 'look')">
@@ -253,13 +260,13 @@
                       </el-link>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180"  />
-                  <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180"  />
-                  <el-table-column prop="deliveryDate" label="交货日期" width="120"  />
-                  <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" width="180"  />
-                  <el-table-column prop="taxAmount" label="税额" width="120"  />
-                  <el-table-column prop="totalAmount" label="总金额(含税)" width="140"  />
-                  <el-table-column prop="receivingStatus" label="订单状态" align="center"  width="120">
+                  <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" />
+                  <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" />
+                  <el-table-column prop="deliveryDate" label="交货日期" width="120" />
+                  <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" width="180" />
+                  <el-table-column prop="taxAmount" label="税额" width="120" />
+                  <el-table-column prop="totalAmount" label="总金额(含税)" width="140" />
+                  <el-table-column prop="receivingStatus" label="订单状态" align="center" width="120">
                     <template slot-scope="scope">
                       <div v-if="scope.row.receivingStatus == 'not_finished'">
                         <el-tag>未完成</el-tag>
@@ -269,16 +276,16 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop="remark" min-width="140" label="备注" />
-                  <el-table-column prop="createTime" label="创建时间" min-width="180"  />
+                  <el-table-column prop="createTime" label="创建时间" min-width="180" />
                   <el-table-column prop="createByName" label="创建人" />
                   <el-table-column label="操作" width="180" fixed="right">
                     <template slot-scope="scope">
                       <el-button size="mini" type="text" @click.native="viewFinishExtendFun(scope.row.id, 'look')">
-                          查看详情
-                        </el-button>
+                        查看详情
+                      </el-button>
                     </template>
                   </el-table-column>
-                  
+
                 </JNPF-table>
               </div>
               <!-- 工序外协 -->
@@ -291,13 +298,13 @@
                       </el-link>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180"  />
-                  <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180"  />
-                  <el-table-column prop="deliveryDate" label="交货日期" width="120"  />
-                  <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" width="180"  />
-                  <el-table-column prop="taxAmount" label="税额" width="120"  />
-                  <el-table-column prop="totalAmount" label="总金额(含税)" width="140"  />
-                  <el-table-column prop="receivingStatus" label="订单状态" align="center"  width="120">
+                  <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" />
+                  <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" />
+                  <el-table-column prop="deliveryDate" label="交货日期" width="120" />
+                  <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" width="180" />
+                  <el-table-column prop="taxAmount" label="税额" width="120" />
+                  <el-table-column prop="totalAmount" label="总金额(含税)" width="140" />
+                  <el-table-column prop="receivingStatus" label="订单状态" align="center" width="120">
                     <template slot-scope="scope">
                       <div v-if="scope.row.receivingStatus == 'not_finished'">
                         <el-tag>未完成</el-tag>
@@ -307,13 +314,13 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop="remark" min-width="140" label="备注" />
-                  <el-table-column prop="createTime" label="创建时间" min-width="180"  />
+                  <el-table-column prop="createTime" label="创建时间" min-width="180" />
                   <el-table-column prop="createByName" label="创建人" />
                   <el-table-column label="操作" width="180" fixed="right">
                     <template slot-scope="scope">
                       <el-button size="mini" type="text" @click.native="viewFinishExtendFun(scope.row.id, 'look')">
-                          查看详情
-                        </el-button>
+                        查看详情
+                      </el-button>
                     </template>
                   </el-table-column>
                   <el-table-column label="操作" width="100" fixed="right">
@@ -672,14 +679,14 @@
     </ReceivePayRefundForm>
     <InvoiceForm v-if="invoiceVisibled" ref="invoiceForm" @close="closeFun" />
     <PurchaseForm v-if="purchaseVisibled" ref="purchaseForm" @close="closeFun" />
-    <ExtendForm  v-if="extendVisible" ref="extendForm" @close="closeFun" ></ExtendForm>
+    <ExtendForm v-if="extendVisible" ref="extendForm" @close="closeFun"></ExtendForm>
   </div>
 </template>
 <script>
 import { getOrderDetail } from '@/api/salesManagement/assemblyOrders'
 import { detailordershengchan } from '@/api/productOrdes/index.js'
 import { getWorkReportList } from "@/api/productOrdes/index.js"
-import { getPlanList } from "@/api/calculationList/calculationList.js"
+import { getPlanList, getPlanSchedule } from "@/api/calculationList/calculationList.js"
 import ShipementForm from '@/views/salesManagement/shippingnotice/saleMetalworking/Form.vue'
 import Form from '../orderList/Form.vue'
 import ReturnForm from '@/views/salesManagement/shippingnotice/returnSalesmemo/Form.vue'
@@ -699,13 +706,15 @@ import InvoiceForm from '@/views/financialManagement/components/collect/depForm.
 import { purchaseOrderList } from '@/api/purchasingAndOutsourcingOrders/index.js'
 import PurchaseForm from '@/views/purchasingManagement/purchaseOrders/purchaseOrder/Form.vue'
 import ExtendForm from '@/views/outsourcingManagement/productOutsourcingOrder/orderList/Form.vue'
+import { gantt } from 'dhtmlx-gantt' // 引入dhtmlx-gantt
+import 'dhtmlx-gantt/codebase/dhtmlxgantt.css'
 export default {
   components: {
-    Form, ShipementForm, ReturnForm, SaleOutboundForm, OutboundSaleSendForm, InboundSaleReturnForm, Reconciliation, ReceivePayRefundForm, InvoiceForm, PurchaseForm,ExtendForm
+    Form, ShipementForm, ReturnForm, SaleOutboundForm, OutboundSaleSendForm, InboundSaleReturnForm, Reconciliation, ReceivePayRefundForm, InvoiceForm, PurchaseForm, ExtendForm
   },
   data() {
     return {
-      extendVisible:false,
+      extendVisible: false,
       processOutData: [],
       finishExtendData: [],
       rawData: [],
@@ -822,12 +831,107 @@ export default {
   },
   mounted() {
     this.switchStyle()
+        // 清空之前的配置
+        gantt.clearAll();
+    // 默认配置
+    gantt.plugins({
+      marker: true,
+    });
+    // const markerId = gantt.addMarker({
+    //   start_date: new Date(2023, 4, 26),
+    //   css: 'marker',
+    //   text: 'makerId aaaa',
+    // });
+    //任务的点击方法
+    gantt.attachEvent("onTaskClick", function (id, e) {
+      if (e.target.className === 'gantt_task_content') { //点击内容
+        console.log(id, e.target)
+      }
+      return true;
+    });
+    // 显示到任务上的文本
+    gantt.templates.task_text = function (start, end, task) {
+      if (!task.parent) {
+        return "" + task.text + "<span style='margin-left:20px;'></span>" + task
+          .completedQuantity + "/" + task.productionQuantity;
+      } else {
+        return "" + task.text + "<span style='margin-left:20px;'></span>" + task
+          .qualifiedQuantity + "/" + task.productionQuantity;
+      }
+
+    };
+    gantt.config.autofit = false;
+    gantt.config.column_width = 50;
+    gantt.config.work_time = true;
+    gantt.i18n.setLocale('cn'); // 设置中文
+    gantt.config.readonly = true; // 设置为只读
+    gantt.config.bar_height = 32; //task高度
+    //自适应甘特图的尺寸大小, 使得在不出现滚动条的情况下, 显示全部任务
+    gantt.config.autosize = true;
+    //激活列表展开、折叠功能
+    gantt.config.open_split_tasks = true;
+    //用户可以通过拖拽调整行高
+    gantt.config.resize_rows = true;
+    //图标项目栏可以任意拖拽
+    gantt.config.order_branch = true;
+    gantt.config.order_branch_free = true;
+    //设置甘特图表头高度
+    gantt.config.scale_height = 32;
+    //点击表头可排序
+    gantt.config.sort = false;
+    // 显示列配置，限制最大最小时间
+    // gantt.config.start_date = new Date(2023, 3, 25);
+    // gantt.config.end_date = new Date(2023, 5, 26);
+    gantt.config.columns = this.ganttColumns;
+    gantt.config.scales = [
+      { unit: 'month', step: 1, format: '%Y年%F' },
+      { unit: 'day', step: 1, format: this.formatWeekday },
+    ];
+    // gantt.getMarker(markerId);
+    // 初始化甘特图
+
+    gantt.templates.task_class = (start, end, task) => {
+      console.log(task.progress);
+      if (task.progress == 0) return 'Noproduc'
+      if (task.progress < 0.5) {
+        return "low-progress"; //进度低于50%  
+      } else if (task.progress < 1.0) {
+        return "mid-progress"; //进度在50%-99%之间 
+      } else {
+        return "high-progress"; // 完成 }  
+      };
+    }
+    const style = document.createElement('style');
+    style.innerHTML = `  
+    .Noproduc{
+    background-color:"#ccc!important"
+    }
+      .low-progress {  
+      color:red!important; /*低进度颜色 */  
+      }  
+      .mid-progress {  
+      background-color: yellow; /* 中等进度颜色 */  
+      }  
+      .high-progress {  
+      background-color: green; /* 高进度颜色 */  
+      }  
+      `;
+    document.head.appendChild(style);
+
   },
   methods: {
-    viewFinishExtendFun(id,type){
-      this.extendVisible=true
-      this.$nextTick(()=>{
-        this.$refs.extendForm.init(id,type)
+    formatWeekday(date) { //1号 周一
+      const dateToStr = gantt.date.date_to_str("%d");
+      const dateToStrss = gantt.date.date_to_str("%Y年");
+      const dateToStrs = gantt.date.date_to_str("%M");
+      // return dateToStrss(date)+dateToStrs(date)+dateToStr(date)+'日';
+      return dateToStrs(date) + dateToStr(date) + '日';
+    },
+
+    viewFinishExtendFun(id, type) {
+      this.extendVisible = true
+      this.$nextTick(() => {
+        this.$refs.extendForm.init(id, type)
       })
     },
     viewPurchaseFun(id, type) {
@@ -927,7 +1031,7 @@ export default {
       this.receivePayRefundVisible = false
       this.invoiceVisibled = false
       this.purchaseVisibled = false
-      this.extendVisible=false
+      this.extendVisible = false
     },
     //自适应窗口
     async switchStyle() {
@@ -964,6 +1068,9 @@ export default {
           if (res.data.records.length) {
 
             this.planData = res.data.records[0]
+            getPlanSchedule(this.planData.id).then(res => {
+              console.log("计划进度", res);
+            })
           }
         })
       } else if (this.categoryType == 'finishpurchase') {

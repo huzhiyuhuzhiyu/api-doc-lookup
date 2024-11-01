@@ -6,7 +6,7 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="listQuery.name" placeholder="请输入设备名称" clearable @keydown.enter.native="search()" />
+                <el-input v-model="listQuery.equipmentIdName" placeholder="请输入设备名称" clearable @keydown.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
@@ -103,7 +103,7 @@ export default {
       superQueryVisible: false,
       initListQuery: {
         classAttribute: "equipment",
-        name: '',
+        equipmentIdName: '',
         equipmentIdState: '',
         maintenanceDate: '',
         pageNum: 1,

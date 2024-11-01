@@ -121,8 +121,9 @@ export default {
       tableVisible: true,
       classAttributeList: [],
       customStyleData: {},
+      classTypelist: [],
       getProductList, // 产品选择弹出框树状列表请求api
-      ProductMethodArr: { method: getcategoryTree, requestObj: { classAttribute: "" } }, // 产品选择弹出框树状列表
+      ProductMethodArr: { method: getcategoryTree, requestObj: { classAttribute: "", type: "material" } }, // 产品选择弹出框树状列表
       ProductListRequestObj: {
         classAttributeList: ["raw_material", "semi_finished", "finish_product", "accessories"],
         productCategoryId: "",
@@ -140,17 +141,20 @@ export default {
         pageSize: 20,
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
-        { prop: 'code', label: '产品编码', fixed: 'left' },
-        // { prop: 'name', label: '产品名称', fixed: 'left' },
         { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'code', label: '子件编码' },
+        { prop: 'classTypeName', label: '子件类型' },
+
         // { prop: 'spec', label: '规格型号' },
-        { prop: 'classAttributeName', label: '产品分类' }
+        { prop: 'classAttributeName', label: '子件分类' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
+        { prop: "productDrawingNo", label: "品名规格", type: 'input' },
         { prop: "productCode", label: "产品编码", type: 'input' },
         // { prop: "name", label: "产品名称", type: 'input' },
-        { prop: "productDrawingNo", label: "品名规格", type: 'input' }
+
       ], // 产品选择弹出框搜索条件
+
     }
   },
   props: {
@@ -220,6 +224,7 @@ export default {
   mounted() {
     this.getclassAttributeList()
     this.setDefaultValue();
+
   },
 
   beforeDestroy() {
@@ -227,8 +232,25 @@ export default {
   },
   methods: {
     listDataFormatting(res) {
+
+      this.classTypelist = [
+        { label: '包装物', value: 'packaging' },
+        { label: '内圈毛坯', value: 'inner_ring_blank' },
+        { label: '外圈毛坯', value: 'outer_ring_blank' }
+      ]
+      console.log(this.classTypeList, 'this.classTypeList')
       res.data.records.forEach((item, index) => {
+        console.log(item, 'item11')
         item.classAttributeName = this.$getLabel(this.classAttributeList, item.classAttribute, 'value', 'label')
+        if (item.classType === 'packaging') {
+          item.classTypeName === '包装物'
+        } else if (item.classType === 'inner_ring_blank') {
+          item.classTypeName === '内圈毛坯'
+        } else if (item.classType === 'outer_ring_blank') {
+          item.classTypeName === '外圈毛坯'
+        }
+        // this.$set(item, 'classTypeName', this.$getLabel(this.classTypeList, item.classType, 'value', 'label'))
+        // item.classTypeName = this.$getLabel(this.classTypeList, item.classType, 'value', 'label')
       })
 
       return res.data.records
@@ -267,7 +289,15 @@ export default {
     },
 
     openSeleceProductDialog() {
+      this.classTypelist = [
+        { label: '包装物', value: 'packaging' },
+        { label: '内圈毛坯', value: 'inner_ring_blank' },
+        { label: '外圈毛坯', value: 'outer_ring_blank' }
+      ]
       this.$refs['ComSelect-page'].openDialog()
+
+      console.log(this.classTypeList)
+      console.log(this.ProductTableItems, 'ProductTableItems')
     },
     isRequire(data) {
       return data.hasOwnProperty('itemRules') && data.itemRules.some(item => item.required === true)

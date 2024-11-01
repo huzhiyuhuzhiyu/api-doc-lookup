@@ -818,7 +818,7 @@ export default {
     async beforeSubmit(data, paramsObj) {
       let flag = true
       if (paramsObj.oldData.length) {
-        flag = await this.$confirm('切换供应商将清空产品信息，是否继续？', '提示', {
+        flag = await this.$confirm('切换供应商将清空产品价格信息，是否继续？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'

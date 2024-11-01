@@ -9,21 +9,21 @@
     <div style="padding:10px">
       <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :type="dataForm.type" :rules="dataRule"
         label-position="top" label-width="120px" hide-required-asterisk="fasle">
-        <el-form-item label="类别属性" prop="classAttribute" v-if="!dataForm.parentName">
+        <el-form-item label="类别属性" prop="classAttribute">
           <template slot="label">
             类别属性
             <span class="required">*</span>
           </template>
           <el-select v-model="dataForm.classAttribute" placeholder="请选择类别属性" clearable style="width: 100%;"
-            :disabled="dataForm.id ? true : false">
+            :disabled="dataForm.id ? true : dataForm.parentName ? true : false">
             <el-option v-for="(item, index) in categoryPropertList" :key="index" :label="item.label"
               :value="item.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="上级分类" prop="parentName">
-          <ComSelect-list :isdisabled="dataForm.id ? true : false" v-model="dataForm.parentName" placeholder="请选择上级分类"
-            auth @change="onOrganizeChange" :title="'选择上级分类'" :method="getcategoryTree" :requestObj="requestObjTwo"
-            :paramsObj="{}" />
+          <ComSelect-list :isdisabled="dataForm.id ? true : dataForm.classAttribute ? true : false" clearable
+            v-model="dataForm.parentName" placeholder="请选择上级分类" auth @change="onOrganizeChange" :title="'选择上级分类'"
+            :method="getcategoryTree" :requestObj="requestObjTwo" :paramsObj="{}" />
         </el-form-item>
 
         <el-form-item label="分类名称" prop="name">
@@ -91,6 +91,7 @@ export default {
         classAttribute: '',
         type: 'material'
       },
+      classAttribute: '',
       categoryPropertList: [
         {
           label: '原材料',
@@ -147,7 +148,7 @@ export default {
       classTypelist: [
         { label: '包装物', value: 'packaging' },
         { label: '内圈毛坯', value: 'inner_ring_blank' },
-        { label: '外协毛坯', value: 'outer_ring_blank' }
+        { label: '外圈毛坯', value: 'outer_ring_blank' }
       ]
     }
   },
@@ -203,10 +204,13 @@ export default {
       } else {
         this.dataForm.parentId = data[0].id
         this.dataForm.parentName = data[0].name
-        this.dataForm.classAttribute = data[0].all.classAttribute
+        this.classAttribute = data[0].all.classAttribute
       }
     },
     async dataFormSubmit() {
+      if (!this.dataForm.id) {
+        this.dataForm.classAttribute = this.classAttribute
+      }
       let valid = await this.$refs['dataForm'].validate().catch((err) => false)
       this.btnLoading = true
       if (valid) {

@@ -165,7 +165,7 @@ export default {
       searchList: [
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 }
       ],
       superForm: {},
       superQueryVisible: false,
@@ -310,11 +310,6 @@ export default {
           type: 'input'
         },
         {
-          prop: 'deliveryQuantity',
-          label: '退货数量',
-          type: 'input'
-        },
-        {
           prop: 'sealingCoverTyping',
           label: '打字内容',
           type: 'select',
@@ -387,7 +382,7 @@ export default {
           prop: 'remark',
           label: '备注',
           type: 'input'
-        },
+        }
       ]
     }
   },
@@ -451,17 +446,22 @@ export default {
       let newProp
       if (
         prop === 'partnerCode' ||
+        prop === 'orderNo' ||
+        prop === 'ordersNo' ||
         prop === 'partnerName' ||
         prop === 'createByName' ||
         prop === 'productCode' ||
         prop === 'productName' ||
-        prop === 'productDrawingNo'
+        prop === 'productDrawingNo' ||
+        prop === 'sealingCoverTyping' ||
+        prop === 'accuracyLevel' ||
+        prop === 'vibrationLevel' ||
+        prop === 'oilQuantity' ||
+        prop === 'documentStatus' ||
+        prop === 'createTime' ||
+        prop === 'createByName'
       ) {
-        if (prop === 'createByName') {
-          newProp = 'create_by'
-        } else {
-          newProp = prop
-        }
+        newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
@@ -539,8 +539,15 @@ export default {
       this.superForm = JSON.parse(JSON.stringify(this.initOrderForm))
       this.searchList = [
         { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        {
+          field: 'cooperativePartnerName',
+          fieldValue: '',
+          label: '供应商名称',
+          symbol: 'like',
+          searchType: 1,
+          width: 120
+        },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 }
       ]
 
       this.search('basic')
@@ -548,7 +555,7 @@ export default {
     addSupplier(id, btntype) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype, false)
+        this.$refs.Form.init(id, btntype, false, [])
       })
     },
     addOrUpdateHandle(id, btntype) {
@@ -557,7 +564,7 @@ export default {
         console.log(id)
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.Form.init(id, btntype)
+          this.$refs.Form.init(id, btntype, false, [])
         })
         // }, 600);
       }
@@ -581,7 +588,7 @@ export default {
     handleUserRelation(id, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType, false)
+        this.$refs.Form.init(id, btnType, false, [])
       })
     },
     // 导出

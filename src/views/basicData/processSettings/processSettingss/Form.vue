@@ -200,7 +200,7 @@
                           <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
                             <el-form-item prop="pickingFlag" ref="pickingFlag">
                               <el-checkbox v-model="row.pickingFlag" :true-label="1" :disabled="type == 'look'"
-                                :false-label="0"></el-checkbox>
+                                :false-label="0"> {{ row.pickingFlag ? '是' : '否' }}</el-checkbox>
                             </el-form-item>
                           </el-form>
                         </template>
@@ -211,7 +211,7 @@
                             <el-form-item prop="firstInspection" ref="firstInspection">
                               <el-checkbox v-model="row.firstInspection" :true-label="1"
                                 :disabled="type == 'look' || row.processingType === 'external_production'"
-                                :false-label="0"></el-checkbox>
+                                :false-label="0"> {{ row.firstInspection ? '是' : '否' }}</el-checkbox>
                             </el-form-item>
                           </el-form>
                         </template>
@@ -222,7 +222,7 @@
                             <el-form-item prop="checkFlag" ref="checkFlag">
                               <el-checkbox v-model="row.checkFlag" :true-label="1"
                                 :disabled="type == 'look' || row.processingType === 'external_production'"
-                                :false-label="0"></el-checkbox>
+                                :false-label="0"> {{ row.checkFlag ? '是' : '否' }}</el-checkbox>
                             </el-form-item>
                           </el-form>
                         </template>
@@ -235,7 +235,7 @@
                                 scope.row.defaultFlag ||
                                 scope.$index === dataFormTwo.length - 1 ||
                                 type === 'look'
-                                " :false-label="0"></el-checkbox>
+                                " :false-label="0"> {{ scope.row.reportFlag ? '是' : '否' }}</el-checkbox>
                             </el-form-item>
                           </el-form>
                         </template>
@@ -260,7 +260,7 @@
                                 scope.$index === dataFormTwo.length - 1 ||
                                 type === 'look' ||
                                 scope.row.processingType === 'external_production'
-                                " :false-label="0"></el-checkbox>
+                                " :false-label="0"> {{ scope.row.lastFlag ? '是' : '否' }}</el-checkbox>
                             </el-form-item>
                           </el-form>
                         </template>
@@ -277,6 +277,17 @@
                           </el-form>
                         </template>
                       </el-table-column>
+                      <el-table-column prop="workOrderFlag" label="是否生成工单" width="130">
+                        <template slot-scope="{ row }">
+                          <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
+                            <el-form-item prop="workOrderFlag" ref="workOrderFlag">
+                              <el-checkbox v-model="row.workOrderFlag" :true-label="1"
+                                :disabled="type == 'look' || row.processingType === 'self_produced'" :false-label="0">
+                                {{ row.workOrderFlag ? '是' : '否' }}</el-checkbox>
+                            </el-form-item>
+                          </el-form>
+                        </template>
+                      </el-table-column>
                       <el-table-column label="操作" width="180" fixed="right">
                         <template slot-scope="scope">
                           <el-button type="text" class="JNPF-table-delBtn"
@@ -284,7 +295,8 @@
                             @click="delequipment_process_relList(scope.$index)">
                             删除
                           </el-button>
-                          <el-button type="text" @click="handlerOpenSource(scope.$index, type)">
+                          <el-button type="text" @click="handlerOpenSource(scope.$index, type)"
+                            :disabled="scope.row.processingType === 'external_production'">
                             工艺资源配置
                           </el-button>
                         </template>
@@ -498,6 +510,17 @@
                       </el-form>
                     </template>
                   </el-table-column>
+                  <el-table-column prop="workOrderFlag" label="是否生成工单" width="130">
+                    <template slot-scope="{ row }">
+                      <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
+                        <el-form-item prop="workOrderFlag" ref="workOrderFlag">
+                          <el-checkbox v-model="row.workOrderFlag" :true-label="1"
+                            :disabled="type == 'look' || row.processingType === 'self_produced'" :false-label="0">
+                            {{ row.workOrderFlag ? '是' : '否' }}</el-checkbox>
+                        </el-form-item>
+                      </el-form>
+                    </template>
+                  </el-table-column>
                   <el-table-column label="操作" width="180" fixed="right">
                     <template slot-scope="scope">
                       <el-button type="text" class="JNPF-table-delBtn"
@@ -505,7 +528,8 @@
                         @click="delequipment_process_relList(scope.$index)">
                         删除
                       </el-button>
-                      <el-button type="text" @click="handlerOpenSource(scope.$index, type)">
+                      <el-button type="text" @click="handlerOpenSource(scope.$index, type)"
+                        :disabled="scope.row.processingType === 'external_production'">
                         工艺资源配置
                       </el-button>
                     </template>
@@ -1041,6 +1065,7 @@ export default {
               firstInspection: item.firstInspection,
               id: item.id,
               lastFlag: item.lastFlag,
+              workOrderFlag: item.workOrderFlag,
               nextId: item.nextId,
               pickingFlag: item.pickingFlag,
               previousId: item.previousId,
@@ -1077,6 +1102,7 @@ export default {
               pickingFlag: item.pickingFlag,
               firstFlag: item.firstFlag,
               lastFlag: item.lastFlag,
+              workOrderFlag: item.workOrderFlag,
               defaultFlag: item.defaultFlag,
               defaultReport: item.defaultReport,
               sort: item.sort,
@@ -1194,7 +1220,8 @@ export default {
             stockFlag: 0, // 是否入库
             firstInspection: 0, // 是否首检
             firstFlag: false, //是否首道工序
-            lastFlag: false // 是否末道工序
+            lastFlag: false, // 是否末道工序
+            workOrderFlag: 1 // 是否生成工单
           }
           responseFlag = true
 

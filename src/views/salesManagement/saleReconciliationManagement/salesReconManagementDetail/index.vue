@@ -338,8 +338,8 @@ export default {
         let query = this.listQuery
         let _data = {
           ...query,
-          exportType: '1063',
-          exportName: '出入库对账',
+          exportType: '1226',
+          exportName: '对账单明细',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
         }

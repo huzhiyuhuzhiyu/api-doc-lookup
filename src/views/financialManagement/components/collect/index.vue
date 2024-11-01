@@ -59,7 +59,7 @@
               :fixed="item.fixed || false" :min-width="item.minWidth || 120" :sortable="item.sortable" />
           </template>
 
-          <el-table-column label="操作" min-width="180" fixed="right">
+          <el-table-column label="操作" width="140" fixed="right">
             <template slot-scope="scope">
               <!-- <el-button size="mini" type="text"
                 :disabled="Math.abs(scope.row.totalReconciliationAmount) - Math.abs(scope.row.totalPaymentAmount) == 0 ? true : false"
@@ -159,88 +159,19 @@ export default {
         }
       */
     },
+    superQueryJson: {
+      type: Array,
+      default: () => []
+    },
+    columnList: {
+      type: Array,
+      default: () => []
+    }
   },
   data() {
     return {
       superQueryVisible: false,
-      superQueryJson: [
-        {
-          prop: 'orderNo',
-          label: '对账流水号',
-          type: 'input'
-        },
 
-        {
-          prop: 'reconciliationDate',
-          label: '对账日期',
-          type: 'daterange',
-          valueFormat: 'yyyy-MM-dd',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'cooperativePartnerCode',
-          label: '客户编码',
-          type: 'input'
-        },
-        {
-          prop: 'cooperativePartnerName',
-          label: '客户名称',
-          type: 'input'
-        },
-        {
-          prop: 'includingTaxAmount',
-          label: '出入库金额',
-          type: 'input'
-        },
-        {
-          prop: 'totalReconciliationAmount',
-          label: '应付金额',
-          type: 'input'
-        },
-        {
-          prop: 'totalPaymentAmount',
-          label: '已收款金额',
-          type: 'input'
-        },
-        {
-          prop: 'totalUnpaidAmount',
-          label: '未收款金额',
-          type: 'input'
-        },
-        {
-          prop: 'totalInvoicingAmount',
-          label: '已开票金额',
-          type: 'input',
-        },
-        {
-          prop: 'totalNotInvoicedAmount',
-          label: '未开票金额',
-          type: 'input',
-        },
-        {
-          prop: 'remark',
-          label: '备注',
-          type: 'input'
-        },
-        {
-          prop: 'createTime',
-          label: '创建时间',
-          type: 'daterange',
-          valueFormat: 'yyyy-MM-dd HH:mm:ss',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'createByName',
-          label: '创建人',
-          type: 'input'
-        },
-
-      ],
-      columnList: ['cooperativePartnerCode'],
       title: '更多查询',
       tableData: [],
       listLoading: false,

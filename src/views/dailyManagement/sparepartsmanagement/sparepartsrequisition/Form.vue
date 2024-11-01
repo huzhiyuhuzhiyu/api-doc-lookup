@@ -1,7 +1,7 @@
 <template>
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
-      <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
+      <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add' ? '新建备件领用' : btnType == 'edit' ? '编辑备件领用' : '查看备件领用'" />
         <div class="options">
@@ -127,6 +127,12 @@
           <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
             <UploadWj v-model="datafilelist" :disabled="btnType == 'look'" :detailed="btnType == 'look'"></UploadWj>
           </el-tab-pane>
+          <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
+            <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
+          </el-tab-pane>
+          <el-tab-pane v-if="btnType == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
+            <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
+          </el-tab-pane>
         </el-tabs>
       </div>
       <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" title="选择产品" treeTitle="产品分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'spare_parts' } }" :listMethod="getProductList" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple />
@@ -135,14 +141,25 @@
 </template>
     
 <script>
+import Process from '@/components/Process/Preview'
+import busFlow from '@/mixins/generator/busFlow';
+import recordList from '@/views/workFlow/components/RecordList.vue'
+import flowMixin from '@/mixins/generator/flowMixin'
 import { getBimBusinessDetail } from '@/api/basicData/index'
 import { mapGetters } from 'vuex'
 import { updateCollectionandreturn, detailCollectionandreturn, checkmaintenanceList, RepairRequestList, addCollectionandreturn } from '@/api/dailyManagement/Maintenance'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
+  mixins: [busFlow, flowMixin],
+  components: { Process, recordList },
   data() {
     return {
+      flowTemplateJson: {},
+      flowData: {},
+      approvalFlag: false,   // 待办事宜等页面 需要
+      flowTaskOperatorRecordList: [],
+      endTime: 0,
       codeConfig: {},//单据规则配置
       isattachmentswitch: '',
       categoryId: '',
@@ -319,7 +336,8 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
-        orderNo:'',
+        approvalFlag: false,
+        orderNo: '',
         returnFlag: 0,
         requisitionType: 'requisition',
         useApplication: '',
@@ -490,7 +508,10 @@ export default {
       this.type = type
       this.dataForm.id = id || ''
       this.btnType = btnType
-      if (this.btnType === 'add' || this.btnType === 'edit') this.fetchData('LYDH')
+      if (this.btnType === 'add' || this.btnType === 'edit') {
+        this.getBusInfo('b053')
+        this.fetchData('LYDH')
+      }
       if (this.btnType == 'add') {
         this.dataForm.recipientId = this.userInfo.userId
         this.dataForm.collectionTime = this.jnpf.getToday()
@@ -512,10 +533,18 @@ export default {
               )
             })
           }
+          if (this.btnType == 'add') {
+            this.dataForm.id = ''
+          }
         })
+        if (this.btnType === 'look') {
+          // 流程信息和流转记录
+          if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+        }
       }
     },
     async handleConfirm(value) {
+      this.dataForm.documentStatus = value
       let submitFlag = true
       const form_1 = this.$refs.dataForm
       const valid_1 = await form_1.validate().catch(err => false)
@@ -567,7 +596,8 @@ export default {
         let obj = {
           attachmentList: this.datafilelist,
           requisition: this.dataForm,
-          lines: this.dataFormTwo.productData
+          lines: this.dataFormTwo.productData,
+          flowData: this.flowData
         }
         this.btnLoading = true
         let formMethod = null;

@@ -56,6 +56,7 @@ export default {
         type: 'equipment_supplier'
       },
       dataForm: {
+        classAttribute: "equipment",
         name: '',
         remark: '',
         type: 'equipment_supplier',

@@ -421,7 +421,7 @@ import { getpurPurchaseReceiptReturnGoodsdetail, addpurPurchaseReceiptReturnGood
 import { purPurchaseReceiptReturnGoodsDetailList } from '@/api/purchasingManagement/purchaseInquirySheet'
 import { detailordershengchan, detailWithdrawal, addWithdrawal, updateWithdrawal, getWorkList, WithdrawalmxList } from '@/api/productOrdes/index.js'
 import BatchNumberForm from './batchNumberForm.vue'
-import { detailCollectionandreturn, addCollectionandreturn, getEquLinse } from '@/api/dailyManagement/Maintenance'
+import { detailCollectionandreturn, addCollectionandreturn, equRequisitionRecordsproducts } from '@/api/dailyManagement/Maintenance'
 
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
@@ -654,7 +654,7 @@ export default {
     //  
     searchProductFun() {
       this.productForm.orderNo = this.dataForm.sourceNo
-      getEquLinse(this.productForm).then(res => {
+      equRequisitionRecordsproducts(this.productForm).then(res => {
         if (res.data.records.length) {
           res.data.records.forEach(element => {
             this.$set(item, 'num', this.jnpf.numberFormat(this.jnpf.math('subtract', [item.requisitionNum, item.incomingOutgoingNum]), 2))

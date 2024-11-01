@@ -462,10 +462,8 @@ export function repairRejectReasonNum(data) {
     data
   })
 }
-
-// 设备、工具、备件领用明细
-
-export function getEquLinse(data) {
+// 领用记录-产品列表
+export function equRequisitionRecordsproducts(data) {
   return request({
     url: `/api/mes/equRequisitionRecords/products/list`,
     method: 'POST',

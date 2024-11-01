@@ -51,6 +51,22 @@
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
           <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
+          <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center" v-if="showAppCodeFlag">
+            <template slot-scope="scope">
+              <div v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'">
+                <el-tag>审批中</el-tag>
+              </div>
+              <div v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus == 'submit'">
+                <el-tag type="success">审批通过</el-tag>
+              </div>
+              <div v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus == 'submit'">
+                <el-tag type="danger">审批拒绝</el-tag>
+              </div>
+              <div v-else-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus == 'submit'">
+                <el-tag type="warning">审批撤回</el-tag>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <el-button type="text" @click="handleUserRelation(scope.row.id,'edit')" size="mini">编辑</el-button>
@@ -62,6 +78,12 @@
                   </el-button>
                 </span>
                 <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item v-if="(scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn') && showAppCodeFlag" @click.native="handleUserRelation(scope.row.id, 'add')">
+                    重新提交
+                  </el-dropdown-item>
+                  <el-dropdown-item v-if="scope.row.approvalStatus === 'ing' && showAppCodeFlag" @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
+                    审批撤回
+                  </el-dropdown-item>
                   <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
                     查看详情
                   </el-dropdown-item>
@@ -78,6 +100,7 @@
   </div>
 </template>
 <script>
+import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { CollectionandreturnList, deleteCollectionandreturn, guihuanCollectionandreturn } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
@@ -86,6 +109,7 @@ export default {
   components: { Form, SuperQuery },
   data() {
     return {
+      showAppCodeFlag: true,
       superQueryJson: [
         {
           prop: 'orderNo',
@@ -158,10 +182,35 @@ export default {
       formVisible: false,
     }
   },
-  created() {
+  async created() {
+    const res = await this.jnpf.getBusInfo('b054')
+    if (res) {
+      this.showAppCodeFlag = res.enabledMark
+    } else {
+      this.showAppCodeFlag = false
+    }
     this.initData()
   },
   methods: {
+    withdrawnHandle(formId) {
+      let _data = {
+        formId
+      }
+      this.$confirm('此操作将撤回审批单，是否继续？', this.$t('common.tipTitle'), {
+        type: 'warning'
+      }).then(() => {
+        withdrawn(_data).then(res => {
+          this.$message({
+            type: 'success',
+            message: "撤回成功",
+            duration: 1500,
+            onClose: () => {
+              this.initData()
+            }
+          })
+        })
+      }).catch(() => { })
+    },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },

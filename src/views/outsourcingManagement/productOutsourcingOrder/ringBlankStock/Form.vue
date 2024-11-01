@@ -456,7 +456,6 @@ export default {
       ], // 产品选择弹出框树状列表
       ProductListRequestObj: {
         classAttribute: '',
-        classAttributeList: ['raw_material', 'semi_finished', 'finish_product', 'accessories'],
         productCategoryId: '',
         code: '',
         name: '',
@@ -1039,12 +1038,15 @@ export default {
     },
     init(data, type) {
       let arr = data.map((item) => {
+        console.log(data, 'pp')
         return {
           productDrawingNo: item.externalProductDrawingNo,
           deliveryDate: item.deliveryDate,
           mainUnit: item.externalMainUnit,
           purchaseQuantity: item.inventoryQuantity,
           productsId: item.externalProductsId,
+          processName: '',
+          processId: '',
           price: item.price,
           totalAmount: item.totalAmount,
           taxRate: 13,
@@ -1053,12 +1055,7 @@ export default {
           excludingTaxAmount: item.excludingTaxAmount,
           remark: item.remark,
           outShipmentList: [
-            {
-              productDrawingNo: item.productDrawingNo,
-              productCode: item.productCode,
-              mainUnit: item.mainUnit,
-              demandQuantity: item.inventoryQuantity
-            }
+
           ]
         }
       })
@@ -1067,6 +1064,35 @@ export default {
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = data.id || ''
       this.dataFormTwo.data = arr
+      this.dataFormTwo.data.forEach((item, index) => {
+        let obj = {
+          productsId: this.dataFormTwo.data[index].productsId,
+          purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
+        }
+        // 通过需求池id 获取明细的数据
+        getShipmentList(obj).then((res) => {
+          this.dataFormTwo.data[index].outShipmentList = res.data
+          this.dataFormTwo.data[index].outShipmentList.forEach(item => {
+            item.demandQuantity = this.dataFormTwo.data[index].purchaseQuantity
+          })
+          console.log(this.dataFormTwo.data[index].outShipmentList, 'o')
+        })
+
+        let ProcessListRequestObj = {
+          code: '',
+          name: '',
+          processType: 'heat_treatment',
+          pageNum: 1,
+          pageSize: 20
+        }
+        getBimProcessList(ProcessListRequestObj).then(res => {
+          console.log(res, 'pjj')
+          let data = res.data.records
+          this.dataFormTwo.data[index].processName = data[0].name
+          this.dataFormTwo.data[index].processId = data[0].id
+          console.log(this.dataFormTwo.data, '[[this.dataFormTwo.data]]')
+        })
+      })
 
       this.dialogTitle = type == 'add' ? '新建' : type == 'edit' ? '编辑' : `查看`
       this.type = type
@@ -1103,7 +1129,7 @@ export default {
           purProcurementRequirements: this.dataForm,
           purchaseOrderLines: this.dataFormTwo.data,
           flowData: this.flowData,
-          orderType: 'external'
+          orderType: 'external_process'
         }
       }
       if (this.type === 'edit' || this.type === 'look') {
@@ -1115,7 +1141,7 @@ export default {
           attachmentList: this.datafilelist,
           purProcurementRequirements: this.dataForm,
           purchaseOrderLines: this.dataFormTwo.data,
-          orderType: 'external'
+          orderType: 'external_process'
         }
       }
 

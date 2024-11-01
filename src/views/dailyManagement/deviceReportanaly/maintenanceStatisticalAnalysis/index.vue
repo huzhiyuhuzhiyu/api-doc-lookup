@@ -278,7 +278,7 @@
 
 <script>
 import chart from "@/views/dailyManagement/deviceReportanaly/components/chart.vue";
-import { RepairRequestList, totalRepairNum, repairNum, repairSupplierNum, repairCommentsNum } from '@/api/dailyManagement/Maintenance'
+import { RepairRequestList, totalRepairNum, repairNum, repairSupplierNum, repairCommentsNum, repairRejectReasonNum } from '@/api/dailyManagement/Maintenance'
 import card from "@/views/dailyManagement/deviceReportanaly/components/card.vue";
 export default {
   components: { card, chart },
@@ -305,6 +305,7 @@ export default {
       listQuery: {},
       activeName: 'wxqkgl',
       listQueryone: {
+        reviewComments: '',
         state: 'maintained',
         classAttribute: "equipment",
         maintenanceNo: '',
@@ -363,10 +364,6 @@ export default {
             containLabel: true
           },
           color: ['#0052cc'],
-          legend: {
-            data: ['维修单数量'],
-            bottom: 10
-          },
           xAxis: [
             {
               type: 'category',
@@ -404,7 +401,7 @@ export default {
         }
       })
       repairCommentsNum(obj).then(res => {
-        this.dispatchworkoption = this.rejectoption = {
+        this.dispatchworkoption = {
           title: {
             text: '派工审核意见统计',
             textStyle: {
@@ -421,7 +418,6 @@ export default {
           },
           series: [
             {
-              name: 'Access From',
               type: 'pie',
               radius: '50%',
               data: res.data.map(item => {
@@ -438,7 +434,41 @@ export default {
           ]
         }
       })
-
+      repairRejectReasonNum(obj).then(res => {
+        this.rejectoption = {
+          title: {
+            text: '报修单驳回原因统计',
+            textStyle: {
+              fontWeight: '450',
+              fontSize: 14
+            },
+            top: 12
+          },
+          tooltip: {
+            trigger: 'item'
+          },
+          legend: {
+            bottom: 10
+          },
+          series: [
+            {
+              type: 'pie',
+              radius: '50%',
+              data: res.data.map(item => {
+                return { value: item.totalNum, name: item.totalName }
+              }),
+              emphasis: {
+                itemStyle: {
+                  shadowBlur: 10,
+                  shadowOffsetX: 0,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+              }
+            }
+          ]
+        }
+      })
+      this.initData()
     },
     handleClick({ name }) {
       if (name === 'wxqkgl') {
@@ -599,6 +629,11 @@ export default {
     reset() {
       this.listQuery = JSON.parse(JSON.stringify(this.listQueryone))
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+      if (this.activeName == 'wxqkgl') {
+        this.listQuery.reviewComments = ''
+      } else {
+        this.listQuery.reviewComments = 'outsourcing'
+      }
       this.search()
     },
     search() {
@@ -631,6 +666,11 @@ export default {
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
       this.listLoading = true
+      if (this.activeName == 'wxqkgl') {
+        this.listQuery.reviewComments = ''
+      } else {
+        this.listQuery.reviewComments = 'outsourcing'
+      }
       RepairRequestList(this.listQuery).then(res => {
         this.tableData = res.data.records.map(item => {
           if (item.frontPic) {

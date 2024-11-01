@@ -439,7 +439,16 @@ export default {
           this.jnpf.focusErrValidItem(form.fields)
         }
       }
-
+      if (!['finish_product', 'semi_finished', 'raw_material', 'accessories'].includes(this.classAttribute)) {
+        console.log(this.classAttribute, 'this.classAttribute666999')
+        this.dataForm.mainUnit = this.dataForm.mainUnit
+        this.dataForm.deputyUnit = this.dataForm.mainUnit
+        this.dataForm.ratio = 1
+        this.dataForm.calculationDirection = 'multiplication'
+        this.dataForm.saleFlag = true
+        this.dataForm.tradeFlag = false
+      }
+      console.log(this.dataForm)
       // 判断条件后发送请求
       if (submitFlag) {
         this.dataForm.documentStatus = 'submit'

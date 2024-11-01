@@ -79,7 +79,8 @@
                     <el-table style="border: 1px solid #e3e7ee;" :fixedNO="true"
                       @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
                       id="table" border height="460">
-                      <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column>
+                      <el-table-column type="selection" width="55" align="center" fixed="left"
+                        :key="2"></el-table-column>
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                         <template slot="header">
@@ -93,7 +94,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="productName" label="工序名称" min-width="160" show-overflow-tooltip>
+                      <el-table-column prop="productName" label="工序名称" min-width="190" show-overflow-tooltip>
                         <template slot="header">
                           <span class="required">*</span>
                           工序名称
@@ -111,7 +112,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="deliveryDate" label="交货日期" min-width="200">
+                      <el-table-column prop="deliveryDate" label="交货日期" width="195">
                         <template slot="header">
                           <span class="required">*</span>
                           交货日期
@@ -125,7 +126,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="mainUnit" label="单位" min-width="60" show-overflow-tooltip>
+                      <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
                             <div class="viewData">
@@ -149,7 +150,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="price" label="含税单价" min-width="180">
+                      <el-table-column prop="price" label="含税单价" width="180">
                         <template slot="header">
                           <span class="required">*</span>
                           单价(含税)

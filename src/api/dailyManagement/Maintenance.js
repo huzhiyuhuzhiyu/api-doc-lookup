@@ -454,3 +454,11 @@ export function repairCommentsNum(data) {
     data
   })
 }
+// 维修驳回
+export function repairRejectReasonNum(data) {
+  return request({
+    url: `/api/mes/equReport/repairRejectReasonNum`,
+    method: 'POST',
+    data
+  })
+}

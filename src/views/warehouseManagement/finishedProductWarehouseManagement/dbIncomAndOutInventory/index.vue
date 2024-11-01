@@ -431,6 +431,42 @@
             </el-form-item>
           </el-col>
         </el-form>
+        <!-- 设备归还 查询 -->
+        <el-form @submit.native.prevent v-if="categoryType == 'inbound_return'">
+          <template v-for="item in searchList14">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="getTabdataList('basic')" />
+
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
+          <el-col :span="6">
+              <el-form-item>
+                <el-date-picker v-model="repayDateArr" type="daterange" value-format="yyyy-MM-dd"
+                  style="width: 100%;" start-placeholder="归还开始日期" end-placeholder="归还结束日期" clearable>
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+          <el-col :span="6">
+            <el-form-item>
+              <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList('basic')">
+                {{ $t('common.search') }}</el-button>
+              <el-button size="mini" icon="el-icon-refresh-right" @click="resetFun()">{{ $t('common.reset') }}
+              </el-button>
+            </el-form-item>
+          </el-col>
+        </el-form>
       </el-row>
 
       <div class="JNPF-common-layout-main JNPF-flex-main" v-if="categoryType != 'inbound_mock_production'">
@@ -480,6 +516,8 @@
                 v-if="categoryType == 'inbound_return_materials'" @click="columnSetFun('returnMatertabForm')" />
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                 v-if="categoryType == 'outbound_use'" @click="columnSetFun('outboundUseForm')" />
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                v-if="categoryType == 'outbound_use'" @click="columnSetFun('inboundReturnForm')" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
@@ -982,9 +1020,35 @@
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <el-button size="mini" type="text"
-                @click="incomAndOutInventFun(scope.row, 'add', 'Form', 'returnMater')">出库</el-button>
+                @click="incomAndOutInventFun(scope.row, 'add', 'Form')">出库</el-button>
               <el-button size="mini" type="text"
                 @click="viewEquipmentFun(scope.row.id, 'look',scope.row)">查看详情</el-button>
+            </template>
+          </el-table-column>
+        </JNPF-table>
+          <!-- 设备归还 inbound_return -->
+          <JNPF-table :partentOrChild="'inboundReturnForm'" v-loading="listLoading" @sort-change="sortChange"
+          :data="inboundReturnData" v-show="categoryType == 'inbound_return'" custom-column
+          ref="inboundReturnForm" :fixedNo="true" :setColumnDisplayList="inboundReturnList">
+          <el-table-column prop="orderNo" label="归还单号" min-width="160" sortable="custom">
+            <template slot-scope="scope">
+              <el-link type="primary"
+                @click.native="viewRepayFun(scope.row.id, 'look',scope.row)">{{
+                  scope.row.orderNo
+                }}</el-link>
+            </template>
+          </el-table-column>
+      
+          <el-table-column prop="collectionTime" label="归还日期" min-width="160" sortable="custom" />
+          <el-table-column prop="maintainerIdText" label="归还人" min-width="140" sortable="custom"></el-table-column>
+          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
+          <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
+          <el-table-column label="操作" width="180" fixed="right">
+            <template slot-scope="scope">
+              <el-button size="mini" type="text"
+                @click="incomAndOutInventFun(scope.row, 'add', 'Form')">出库</el-button>
+              <el-button size="mini" type="text"
+                @click="viewRepayFun(scope.row.id, 'look',scope.row)">查看详情</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -1024,7 +1088,9 @@
         <pagination :total="outboundUseTotal" :page.sync="outboundUseForm.pageNum" :limit.sync="outboundUseForm.pageSize"
           @pagination="getTabdataList" v-if="categoryType == 'outbound_use'">
         </pagination>
-
+        <pagination :total="inboundReturnTotal" :page.sync="inboundReturnForm.pageNum" :limit.sync="inboundReturnForm.pageSize"
+          @pagination="getTabdataList" v-if="categoryType == 'inbound_return'">
+        </pagination>
       </div>
 
       <el-tabs v-model="activeName" @tab-click="handleClick" v-show="categoryType == 'inbound_mock_production'"
@@ -1243,7 +1309,9 @@
     <EquipmentForm  v-if="equipmentVisible" ref="quipmentREFForm" @close="closeForm"></EquipmentForm>
     <SparePartsForm  v-if="sparePartsVisible" ref="sparePartsREFForm" @close="closeForm"></SparePartsForm>
     <ToolForm  v-if="toolVisible" ref="toolREFForm" @close="closeForm"></ToolForm>
-     
+    <EquipmentFormS  v-if="equipmentSVisible" ref="quipmentSREFForm" @close="closeForm"></EquipmentFormS>
+    <SparePartsFormS  v-if="sparePartsSVisible" ref="sparePartsSREFForm" @close="closeForm"></SparePartsFormS>
+    <ToolFormS  v-if="toolSVisible" ref="toolSREFForm" @close="closeForm"></ToolFormS>
 
 
 
@@ -1336,6 +1404,9 @@ import SparePartsForm from '@/views/dailyManagement/sparepartsmanagement/sparepa
 import EquipmentForm from '@/views/dailyManagement/equipmentrequisitionreturn/equipmentrequisition/Form.vue'
 import { CollectionandreturnList } from '@/api/dailyManagement/Maintenance'
 import EquipmentOutboundForm from './equipmentOutboundForm.vue'
+import ToolFormS from '@/views/dailyManagement/borrowingReturn/toolreturn/Form.vue'
+import EquipmentFormS from '@/views/dailyManagement/equipmentrequisitionreturn/equipmentreturn/Form.vue'
+import SparePartsFormS from '@/views/dailyManagement/sparepartsmanagement/sparepartsReturn/Form.vue'
 export default {
   name: 'dbIncomAndOutInventory',
   mixins: [mixin],
@@ -1347,13 +1418,42 @@ export default {
     InboundSaleReturnForm, InboundPurchaseForm, OutboundPurchaseForm,
     OutboundExternalSendForm, InboundExternalForm, OutboundPickOutForm, InboundReturnMaterialsForm,
     SaleForm, SaleOutboundForm, PurchaseOrderInboundForm, PurchaseForm, ProductExternalForm, ExternalInboundForm,
-    ExternalMaterOutboundForm,ToolForm,SparePartsForm,EquipmentForm,EquipmentOutboundForm
+    ExternalMaterOutboundForm,ToolForm,SparePartsForm,EquipmentForm,EquipmentOutboundForm,ToolFormS,EquipmentFormS,SparePartsFormS
   },
   props: {
     warehouseCode: "",
   },
   data() {
     return {
+      repayDateArr:[],
+      toolSVisible:false,
+      sparePartsSVisible:false,
+      equipmentSVisible:false,
+      inboundReturnVisible:false,
+      inboundReturnList:["createByName"],
+      inboundReturnData:[],
+      inboundReturnTotal:0,
+      inboundReturnForm:{
+        documentStatus:"submit",
+        classAttributeList:[],
+        stockFlag:true,
+        equipmentType:"",
+        maintainerIdText:"",
+        orderNo:"",
+        pageNum:1,
+        pageSize:20,
+        collStartTime:"",
+        collEndTime:"",
+        requisitionType:"back",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: true,
+          column: "create_time"
+        }],
+      },
+ 
       visibleForm: false,
       superQuery: {},
       superForm: {},
@@ -1416,6 +1516,10 @@ export default {
         { field: 'orderNo', fieldValue: '', label: '领用单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'maintainerIdText', fieldValue: '', label: '领用人', symbol: 'like', searchType: 1, width: 120 },
       ],
+      searchList14: [
+        { field: 'orderNo', fieldValue: '', label: '归还单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'maintainerIdText', fieldValue: '', label: '归还人', symbol: 'like', searchType: 1, width: 120 },
+      ],
       externalMaterOutboundFormVisible: false,
       exterMaterList: [],
       exterMaterTotal: 0,
@@ -1442,6 +1546,7 @@ export default {
       outboundUseList:["createByName"],
       outboundUseForm:{
         classAttributeList:[],
+        documentStatus:"submit",
         stockFlag:true,
         equipmentType:"",
         maintainerIdText:"",
@@ -1467,6 +1572,7 @@ export default {
       externalTotal: 0,
       externalcolumnList: ["cooperativePartnerCode", "createByName",],
       externalForm: {
+        documentStatus:"submit",
         receiptQueryFlag: true,
         productDrawingNo: "",
         cooperativePartnerName: "",
@@ -1497,6 +1603,7 @@ export default {
       saleFormVisible: false,
       salecolumnList: ["cooperativePartnerCode",],
       saleOrderForm: {
+        documentStatus:"submit",
         deliverQueryFlag: true,
         deliveryStartTime: "",
         deliveryEndTime: "",
@@ -1520,6 +1627,7 @@ export default {
       purchaserOrderDateArr: [],
       purchasecolumnList: ["cooperativePartnerCode", 'createByName'],
       purchaseForm: {
+        documentStatus:"submit",
         cooperativePartnerName: "",
         productDrawingNo: "",
         deliveryStartDate: "",
@@ -1571,6 +1679,7 @@ export default {
       workTotal: 0,
       workData: [],
       workForm: {
+        documentStatus:"submit",
         productionOrderNo: "",
         orderNo: "",
         processName: "",
@@ -1691,7 +1800,7 @@ export default {
         rdeDate: "",
         rdsDate: "",
         notifyType: "external",
-        receivingStatus: "not_finished",
+        deliveryStatus: "not_finished",
         returnDeliveryType: "delivery",
         orderNo: "",
         partnerName: "",
@@ -1713,6 +1822,7 @@ export default {
       pickTotal: 0,
       pickFormVisible: false,
       pickForm: {
+        documentStatus:"submit",
         pageNum: 1,
         pageSize: 20,
         productClassAttributeList: "",
@@ -1735,6 +1845,7 @@ export default {
       returnMaterTotal: 0,
       returnMaterTableList: [],
       returnMaterForm: {
+        documentStatus:"submit",
         receiveType: "",
         orderNo: "",
         personName: "",
@@ -2153,11 +2264,7 @@ export default {
         }else if (this.categoryType == 'outbound_use') {
           this.equipmentOutboundVisible = true
           this.$nextTick(() => {
-            console.log(12345,data);
-            console.log(12345,btnType);
-            console.log(12345,this.categoryType);
-            console.log(12345, this.classAttributeList);
-            console.log(12345, this.warehouseCode);
+          
             this.$refs.equipmentOutboundREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
           })
         }  else {
@@ -2734,6 +2841,46 @@ export default {
           this.listLoading = false
         })
       }
+       // 资产归还
+       if (this.categoryType == 'inbound_return') {
+        if(this.repayDateArr.length){
+          this.inboundReturnForm.collStartTime=this.repayDateArr[0]
+          this.inboundReturnForm.collStartTime=this.repayDateArr[1]
+        }else{
+          this.inboundReturnForm.collStartTime=""
+          this.inboundReturnForm.collEndTime=""
+        }
+        this.listLoading = true
+        this.inboundReturnForm.classAttributeList = this.classAttributeList
+        this.inboundReturnForm.approvalStatus = 'ok'
+
+        this.superForm = this.inboundReturnForm
+        if (type === 'basic') {
+          this.basicQuery = {
+            matchLogic: 'AND',
+            condition: this.searchList14
+              .filter((item) => item.fieldValue)
+              .map((item) => {
+                return {
+                  ...item,
+                  fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+                }
+              })
+          }
+          this.superForm.superQuery = this.basicQuery
+        }
+        if (type === 'super') {
+          this.superForm.superQuery = this.superQuery
+        }
+        CollectionandreturnList(this.inboundReturnForm).then(res => {
+          console.log("归还", res);
+          this.inboundReturnData = res.data.records
+          this.inboundReturnTotal = res.data.total
+          this.listLoading = false
+        }).catch(error => {
+          this.listLoading = false
+        })
+      }
     },
     // 生产产品数据
     searchProductData(type) {
@@ -3109,7 +3256,7 @@ export default {
             rdeDate: "",
             rdsDate: "",
             notifyType: "external",
-            receivingStatus: "not_finished",
+            deliveryStatus: "not_finished",
             receiptReturnType: "receipt",
             orderNo: "",
             partnerName: "",
@@ -3344,6 +3491,33 @@ export default {
       ]
         this.getTabdataList()
       }
+      if (this.categoryType == 'inbound_return') {
+        this.useDateArr=[]
+        this.superForm = this.inboundReturnForm = {
+          stockFlag:true,
+          classAttributeList:this.classAttributeList,
+          equipmentType:"",
+        maintainerIdText:"",
+        orderNo:"",
+        pageNum:1,
+        pageSize:20,
+        requisitionType:"back",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: true,
+          column: "create_time"
+        }],
+          superQuery: {}, 
+        }
+        this.$refs.SuperQuery.conditionList = []
+        this.searchList14=[
+        { field: 'orderNo', fieldValue: '', label: '归还单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'maintainerIdText', fieldValue: '', label: '归还人', symbol: 'like', searchType: 1, width: 120 },
+      ]
+        this.getTabdataList()
+      }
     },
 
     // 领用查看详情
@@ -3367,6 +3541,30 @@ export default {
         this.toolVisible=true
         this.$nextTick(()=>{
           this.$refs.toolREFForm.init(id,type)
+        })
+      }
+    },
+    // 归还查看详情
+    viewRepayFun(id,type,data){
+      if(data.equipmentType=='spare_parts'){
+        // 配件
+        this.sparePartsSVisible=true
+        this.$nextTick(()=>{
+          this.$refs.sparePartsSREFForm.init(id,type)
+        })
+      }
+      if(data.equipmentType=='equipment'){
+        // 设备
+        this.equipmentSVisible=true
+        this.$nextTick(()=>{
+          this.$refs.quipmentSREFForm.init(id,type)
+        })
+      }
+      if(data.equipmentType=='tool'){
+        // 工具
+        this.toolSVisible=true
+        this.$nextTick(()=>{
+          this.$refs.toolSREFForm.init(id,type)
         })
       }
     },
@@ -3419,6 +3617,9 @@ export default {
       this.externalInboundFormVisible = false
       this.externalMaterOutboundFormVisible = false
       this.equipmentOutboundVisible=false
+      this.toolSVisible=false
+      this.sparePartsSVisible=false
+      this.equipmentSVisible=false
       if (isRefresh) {
         // this.getStockMovelistFun()
         this.getPickingConfig()

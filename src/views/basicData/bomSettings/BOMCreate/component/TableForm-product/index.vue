@@ -127,7 +127,6 @@ export default {
       getProductList, // 产品选择弹出框树状列表请求api
       ProductMethodArr: { method: getcategoryTree, requestObj: { classAttribute: '', type: 'material' } }, // 产品选择弹出框树状列表
       ProductListRequestObj: {
-        classAttributeList: ['raw_material', 'semi_finished', 'finish_product', 'accessories'],
         productCategoryId: '',
         code: '',
         name: '',

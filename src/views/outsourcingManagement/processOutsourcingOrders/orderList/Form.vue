@@ -32,12 +32,13 @@
                       </el-col>
                       <el-col :span="6">
                         <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
-                          <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
-                            v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
-                            @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'"
-                            title="选择供应商" treeTitle="供应商分类" :methodArr="PartnerMethodArr"
-                            :listMethod="getCooperativeData" :listRequestObj="PartnerListRequestObj"
-                            :paramsObj="{ oldData }" :searchList="PartnerTableSearchList" />
+                          <ComSelect-page :clearable="type !== 'look'" :isdisabled="type === 'look'"
+                            :treeNodeClick="treeNodeClick" v-model="dataForm.cooperativePartnerName"
+                            :beforeSubmit="beforeSubmit" ref="ComSelect-page" @change="supplierdata"
+                            :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商" treeTitle="供应商分类"
+                            :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
+                            :listRequestObj="PartnerListRequestObj" :paramsObj="{ oldData }"
+                            :searchList="PartnerTableSearchList" />
                         </el-form-item>
                       </el-col>
                       <el-col :span="6">
@@ -113,7 +114,7 @@
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'processName'"
                             :rules="productRules.processName">
-                            <!-- <el-input v-model="scope.row.productName" placeholder="请输入产品名称" /> -->
+
                             <!-- 工序选择弹窗  -->
                             <ComSelect-page :clearable="type !== 'look'" :isdisabled="type === 'look'"
                               :treeNodeClick="treeNodeClick" v-model="scope.row.processName"
@@ -299,8 +300,8 @@
                     <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
                     <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
                     <el-table-column prop="mainUnit" label="单位" min-width="140"></el-table-column>
-                    <!-- <el-table-column prop="qty" label="基本数量" min-width="140"></el-table-column> -->
-                    <el-table-column prop="qty" label="发料数量" min-width="140"></el-table-column>
+                    <el-table-column prop="qty" label="基本数量" min-width="140"></el-table-column>
+                    <el-table-column prop="demandQuantity" label="发料数量" min-width="140"></el-table-column>
                     <el-table-column prop="undeliveredQuantity" label="待出库数量" min-width="140"></el-table-column>
                   </el-table>
                 </el-collapse-item>
@@ -538,8 +539,8 @@
                 <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
                 <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
                 <el-table-column prop="mainUnit" label="单位" min-width="140"></el-table-column>
-                <!-- <el-table-column prop="qty" label="基本数量" min-width="140"></el-table-column> -->
-                <el-table-column prop="qty" label="发料数量" min-width="140"></el-table-column>
+                <el-table-column prop="qty" label="基本数量" min-width="140"></el-table-column>
+                <el-table-column prop="demandQuantity" label="发料数量" min-width="140"></el-table-column>
                 <el-table-column prop="undeliveredQuantity" label="待出库数量" min-width="140"></el-table-column>
               </el-table>
             </el-collapse-item>
@@ -851,19 +852,7 @@ export default {
       this.autoId = row.id
       console.log(this.autoId, 'oiGGG')
       this.linesList = []
-      console.log(this.dataFormTwo.data, 'ooo')
-      // let obj = {
-      //   productsId: row.productsId,
-      //   purchaseQuantity: row.purchaseQuantity
-      // }
-      // // 通过需求池id 获取明细的数据
-      // getShipmentList(obj).then((res) => {
-      //   this.linesList.push(...res.data)
-      // })
-      // purPurchaseOrderdetail(row.purchaseOrderId).then((res) => {
-      //   console.log(res, 'iiii')
-      //   this.linesList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
-      // })
+      this.linesList = row.outShipmentList
     },
     disabledDate(time) {
       // 将输入的日期字符串转换为日期对象

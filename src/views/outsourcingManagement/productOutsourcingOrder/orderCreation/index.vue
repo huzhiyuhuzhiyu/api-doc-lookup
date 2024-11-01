@@ -447,7 +447,6 @@ export default {
       ], // 产品选择弹出框树状列表
       ProductListRequestObj: {
         classAttribute: '',
-        classAttributeList: ['raw_material', 'semi_finished', 'finish_product', 'accessories'],
         productCategoryId: '',
         code: '',
         name: '',
@@ -1161,6 +1160,7 @@ export default {
       let submitFlag = true
       this.dataFormTwo.data.map((ele, i) => {
         console.log(ele, 'ppp')
+        return
         if (!ele.purchaseQuantity) {
           submitFlag = false
           this.$message.error(`产品信息第${i + 1}行：数量不能为空`)

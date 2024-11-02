@@ -445,6 +445,9 @@ export default {
                 2
               )
               item.taxAmount = this.jnpf.numberFormat(item.includingTaxAmount - item.excludingTaxAmount, 2)
+            } else {
+              item.excludingTaxAmount = ''
+              item.taxAmount = ''
             }
           }
         })

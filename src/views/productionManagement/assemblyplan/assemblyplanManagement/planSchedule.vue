@@ -293,23 +293,23 @@ export default {
     const style = document.createElement('style');
     style.innerHTML = `  
     .Noproduc{
-    background-color:"#ccc!important"
+    background-color:"#67c23a!important"
     }
       .low-progress {  
-      color:red!important; /*低进度颜色 */  
+      background-color:#67c23a; /*低进度颜色 */  
       }  
       .mid-progress {  
-      background-color: yellow; /* 中等进度颜色 */  
+      background-color: #67c23a; /* 中等进度颜色 */  
       }  
       .high-progress {  
-      background-color: green; /* 高进度颜色 */  
+      background-color: #67c23a; /* 高进度颜色 */  
       }  
       `;
     document.head.appendChild(style);
 
 
   },
-  created () {
+  created() {
     gantt.clearAll() // 先清空，再添加，就不会有缓存
   },
   methods: {
@@ -325,7 +325,7 @@ export default {
 
 
 
- 
+
 
     goBack() {
       this.$emit('close')
@@ -352,11 +352,13 @@ export default {
             id: item.id,
             text: item.orderNo,
             progress: this.jnpf.numberFormat(this.jnpf.math('divide', [item.completedQuantity, item.productionQuantity]), 2),
+            // progress: 0.1,
             type: 'task',
-            start_date: new Date(item.planStartDate),
-            end_date: new Date(item.planEndDate),
+            start_date: new Date(item.planStartDate == item.planEndDate ? item.planStartDate + ' 00:00:00' : item.planStartDate + ' 00:00:00'),
+            end_date: new Date(item.planStartDate == item.planEndDate ? item.planEndDate + ' 23:59:59' : item.planEndDate + ' 23:59:59'),
             open: item.productionOrderId ? false : true,
-            color: '#ccc',
+            color: "green",
+            // color: '#67c23a',
             completedQuantity: item.completedQuantity,
             productionQuantity: item.productionQuantity,
           }
@@ -375,24 +377,50 @@ export default {
 
           console.log(123, result);
           if (item.workOrderList.length) {
-            item.workOrderList.forEach((items, index) => {
-              let bjs = {
-                id: items.id,
+            console.log("item.workOrderList", item.workOrderList);
+            item.workOrderList.forEach((itemss, index) => {
+              if (!itemss.actualStartDate||!item.actualEndDate) {
+                itemss.actualStartDate = itemss.planStartDate
+                itemss.actualEndDate = itemss.planEndDate
+              } else {
+                itemss.actualStartDate = itemss.actualStartDate ? itemss.actualStartDate.substring(0, 10) : ""
+                itemss.actualEndDate = itemss.actualEndDate ? itemss.actualEndDate.substring(0, 10) : ""
+              }
+              let bjss = {
+                id: itemss.id,
                 text: result[index].name,
-                parent: items.productionOrderId,
+                parent: itemss.productionOrderId,
                 progress: result[index].progress / 100,
                 type: 'task',
-                start_date: new Date(items.planStartDate),
-                end_date: new Date(items.planEndDate),
-                open: items.productionOrderId ? false : true,
-                qualifiedQuantity: items.qualifiedQuantity,
-                productionQuantity: items.productionQuantity,
-                orderNo:item.orderNo,
-                color:"#ccc",
+                start_date: new Date(itemss.actualStartDate == itemss.actualEndDate ? itemss.actualStartDate + ' 00:00:00' : itemss.actualStartDate + ' 00:00:00'),
+                end_date: new Date(itemss.actualStartDate == itemss.actualEndDate ? itemss.actualEndDate + ' 23:59:59' : itemss.actualEndDate + ' 23:59:59'),
+                qualifiedQuantity: itemss.qualifiedQuantity,
+                productionQuantity: itemss.productionQuantity,
+                duration: 20,
+                color: "green",
               }
-              arr.push(bjs)
+              arr.push(bjss)
             })
           }
+          // if (item.workOrderList.length) {
+          //   item.workOrderList.forEach((items, index) => {
+          //     let bjs = {
+          //       id: items.id,
+          //       text: result[index].name,
+          //       parent: items.productionOrderId,
+          //       progress: result[index].progress / 100,
+          //       type: 'task',
+          //       start_date: new Date(items.planStartDate),
+          //       end_date: new Date(items.planEndDate),
+          //       open: items.productionOrderId ? false : true,
+          //       qualifiedQuantity: items.qualifiedQuantity,
+          //       productionQuantity: items.productionQuantity,
+          //       orderNo: item.orderNo,
+          //       color: "#ccc",
+          //     }
+          //     arr.push(bjs)
+          //   })
+          // }
           console.log("arr", arr);
           this.gantttt.data = arr
           gantt.init(this.$refs.ganttRef);

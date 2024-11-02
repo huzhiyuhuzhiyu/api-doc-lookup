@@ -85,9 +85,8 @@
                 </el-table-column>
                 <el-table-column prop="totalProgress" label="订单进度" width="120" :key="68">
                   <template slot-scope="scope">
-                      <el-progress
-                        :percentage="scope.row.totalProgress || 0"></el-progress>
-                    </template>
+                    <el-progress :percentage="scope.row.totalProgress || 0"></el-progress>
+                  </template>
                 </el-table-column>
 
                 <el-table-column prop="num" label="订单数量" width="120" :key="58">
@@ -1120,7 +1119,7 @@ export default {
               let arr = []
               if (!res.data.length) return
               res.data.forEach(item => {
-                item.completedQuantity = item.prodOrderList.reduce((sum, order) => sum + Number(order.completedQuantity) , 0);
+                item.completedQuantity = item.prodOrderList.reduce((sum, order) => sum + Number(order.completedQuantity), 0);
               });
               setTimeout(() => {
                 res.data.forEach(item => {
@@ -1130,10 +1129,12 @@ export default {
                     text: item.productionPlanNo,
                     progress: this.jnpf.numberFormat(this.jnpf.math('divide', [item.completedQuantity, item.planProductionQuantity]), 2),
                     type: 'task',
-                    start_date: new Date(item.planStartDate),
-                    end_date: new Date(item.planEndDate),
+
+
+                    start_date: new Date(item.planStartDate == item.planEndDate ? item.planStartDate + ' 00:00:00' : item.planStartDate + " 00:00:00"),
+                    end_date: new Date(item.planStartDate == item.planEndDate ? item.planEndDate + ' 23:59:59' : item.planEndDate + " 23:59:59"),
                     open: true,
-                    color: '#ccc',
+                    color: 'green',
                     completedQuantity: item.completedQuantity,
                     productionQuantity: item.planProductionQuantity,
                   }
@@ -1143,17 +1144,21 @@ export default {
 
                   if (item.prodOrderList.length) {
                     item.prodOrderList.forEach((items, index) => {
+
                       let bjs = {
                         id: items.id,
                         text: items.orderNo,
                         progress: this.jnpf.numberFormat(this.jnpf.math('divide', [items.completedQuantity, items.productionQuantity]), 2),
                         type: 'task',
-                        start_date: new Date(items.planStartDate),
-                        end_date: new Date(items.planEndDate),
+
+
+                        start_date: new Date(items.planStartDate == items.planEndDate ? items.planStartDate + ' 00:00:00' : items.planStartDate + " 00:00:00"),
+                        end_date: new Date(items.planStartDate == items.planEndDate ? items.planEndDate + ' 23:59:59' : items.planEndDate + " 23:59:59"),
+                        parent: items.productionPlanId,
                         open: true,
-                        completedQuantity: items.completedQuantity,
+                        qualifiedQuantity: items.completedQuantity,
                         productionQuantity: items.productionQuantity,
-                        color: "#ccc",
+                        color: "green",
                       }
                       arr.push(bjs)
                       // 2. 拆分成单个项目
@@ -1165,24 +1170,25 @@ export default {
                         return { name: name, progress: progress };
                       });
                       if (items.workOrderList.length) {
-                        console.log("items.workOrderList",items.workOrderList);
+                        console.log("items.workOrderList", items.workOrderList);
                         items.workOrderList.forEach((itemss, index) => {
-                          itemss.actualStartDate=itemss.actualStartDate?itemss.actualStartDate.substring(0,10):""
-                          itemss.actualEndDate=itemss.actualEndDate?itemss.actualEndDate.substring(0,10):""
-                          console.log("时间1",itemss.actualStartDate,itemss.planStartDate);
-                          console.log("时间2",itemss.actualEndDate,itemss.planEndDate);
+                       
+                          itemss.actualStartDate = itemss.actualStartDate ? itemss.actualStartDate.substring(0, 10) : ""
+                          itemss.actualEndDate = itemss.actualEndDate ? itemss.actualEndDate.substring(0, 10) : ""
+                          console.log("时间1", itemss.actualStartDate,);
+                          console.log("时间2", itemss.actualEndDate,);
                           let bjss = {
                             id: itemss.id,
-                            text: itemss.orderNo+"("+result[index].name+")",
+                            text: result[index].name,
                             parent: itemss.productionOrderId,
                             progress: result[index].progress / 100,
                             type: 'task',
-                            start_date: new Date(itemss.planStartDate),
-                            end_date: new Date(itemss.planEndDate),
+                            start_date: new Date(itemss.actualStartDate == itemss.actualEndDate ? itemss.actualStartDate + ' 00:00:00' : itemss.actualStartDate + ' 00:00:00'),
+                            end_date: new Date(itemss.actualStartDate == itemss.actualEndDate ? itemss.actualStartDate + ' 23:59:59' : itemss.actualEndDate + ' 23:59:59'),
                             qualifiedQuantity: itemss.qualifiedQuantity,
                             productionQuantity: itemss.productionQuantity,
-                            duration: 2,
-                            color: "#ccc",
+                            duration: 20,
+                            color: "green",
                           }
                           arr.push(bjss)
                         })
@@ -1190,10 +1196,10 @@ export default {
                     })
                   }
                   console.log("arr", arr);
-                  this.$nextTick(()=>{
+                  this.$nextTick(() => {
                     this.gantttt.data = arr
-                  gantt.init(this.$refs.ganttRef);
-                  gantt.parse(this.gantttt)
+                    gantt.init(this.$refs.ganttRef);
+                    gantt.parse(this.gantttt)
                   })
                 });
               }, 500);

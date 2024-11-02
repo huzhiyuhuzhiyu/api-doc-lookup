@@ -361,8 +361,7 @@
           <el-button type="primary" :loading="btnLoading" @click="submitAllProduct()">
             确定</el-button>
         </span>
-      </el-dialog>
-      <!-- 选择产品信息 -->
+      </el-dialog> 
       <el-dialog title="设置资产编码" :close-on-click-modal="false" :close-on-press-escape="false"
         @close="setcodeVisible = false" :visible.sync="setcodeVisible" lock-scroll
         class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body>
@@ -581,8 +580,7 @@ export default {
       console.log(row);
       this.setcodeVisible = true
       this.currentUseIndex=index
-      let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [row.requisitionNum, row.incomingOutgoingNum]), 2)
-      this.arr = Array.from({ length: num }, () => ({
+      this.arr = Array.from({ length: row.num }, () => ({
         assetCode: "",
         moveId: "",
         moveLineId: "",
@@ -941,7 +939,12 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待领用数量")
                 break
               }
-
+              if (!item.warehouseCodeLineList.length) {
+              
+                submitFlag = false
+                this.$message.error("产品信息第" + (index + 1) + "行资产编码不能为空")
+                break
+              }
               if (this.dataForm.businessType == 'outbound_sale_send' && item.num > item.availableBatchNumber) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次可用数量")

@@ -80,7 +80,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="receiptReturnType" label="收/退货类型" min-width="200" show-overflow-tooltip>
+                      <el-table-column prop="receiptReturnType" label="收/退货类型" width="120" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'receiptReturnType'">
                             <div class="viewData">
@@ -97,19 +97,16 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="mainUnit" label="单位" min-width="200" show-overflow-tooltip>
+                      <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
-                            <!-- <el-input v-model="scope.row.mainUnit" readonly maxlength="20" placeholder="请输入主单位">{{
-                              scope.row.mainUnit }}
-                            </el-input> -->
                             <div class="viewData">
                               <span>{{ scope.row.mainUnit }}</span>
                             </div>
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="reconciliationUnitPrice" label="数量" min-width="200">
+                      <el-table-column prop="reconciliationUnitPrice" label="数量" width="100">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'reconciliationUnitPrice'">
                             <div class="viewData">
@@ -147,20 +144,19 @@
                           </el-form-item>
                         </template>
                       </el-table-column> -->
-                      <el-table-column prop="excludingTaxAmount" label="不含税总金额" min-width="140">
+                      <el-table-column prop="excludingTaxAmount" label="总金额(不含税)" width="140">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'"
                             :rules="productFormRules.excludingTaxAmount">
-                            <!-- <el-input v-model="scope.row.excludingTaxAmount" maxlength="20" placeholder="请输入不含税总金额">
-                        </el-input> -->
+
                             <div :class="[
                               'viewData',
-                              scope.row.receiptReturnType === 'outbound_purchase' ? 'green' : 'red'
+                              scope.row.receiptReturnType === 'inbound_purchase' ? 'green' : 'red'
                             ]">
-                              <span v-if="scope.row.receiptReturnType === 'outbound_purchase'">
+                              <span v-if="scope.row.receiptReturnType === 'inbound_purchase'">
                                 +{{ scope.row.excludingTaxAmount }}
                               </span>
-                              <span v-else-if="scope.row.receiptReturnType === 'inbound_purchase'">
+                              <span v-else-if="scope.row.receiptReturnType === 'outbound_purchase'">
                                 {{ scope.row.excludingTaxAmount }}
                               </span>
                               <el-input v-if="!scope.row.receiptReturnType" disabled
@@ -172,18 +168,18 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="taxAmount" label="税额" min-width="140">
+                      <el-table-column prop="taxAmount" label="税额" width="140">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'"
                             :rules="productFormRules.taxAmount">
                             <div :class="[
                               'viewData',
-                              scope.row.receiptReturnType === 'outbound_purchase' ? 'green' : 'red'
+                              scope.row.receiptReturnType === 'inbound_purchase' ? 'green' : 'red'
                             ]">
-                              <span v-if="scope.row.receiptReturnType === 'outbound_purchase'">
+                              <span v-if="scope.row.receiptReturnType === 'inbound_purchase'">
                                 +{{ scope.row.taxAmount }}
                               </span>
-                              <span v-else-if="scope.row.receiptReturnType === 'inbound_purchase'">
+                              <span v-else-if="scope.row.receiptReturnType === 'outbound_purchase'">
                                 {{ scope.row.taxAmount }}
                               </span>
 
@@ -195,18 +191,18 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="includingTaxAmount" label="含税总金额" min-width="140">
+                      <el-table-column prop="includingTaxAmount" label="总金额(含税)" width="140">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'includingTaxAmount'"
                             :rules="productFormRules.includingTaxAmount">
                             <div :class="[
                               'viewData',
-                              scope.row.receiptReturnType === 'outbound_purchase' ? 'green' : 'red'
+                              scope.row.receiptReturnType === 'inbound_purchase' ? 'green' : 'red'
                             ]">
-                              <span v-if="scope.row.receiptReturnType === 'outbound_purchase'">
+                              <span v-if="scope.row.receiptReturnType === 'inbound_purchase'">
                                 +{{ scope.row.includingTaxAmount }}
                               </span>
-                              <span v-else-if="scope.row.receiptReturnType === 'inbound_purchase'">
+                              <span v-else-if="scope.row.receiptReturnType === 'outbound_purchase'">
                                 {{ scope.row.includingTaxAmount }}
                               </span>
                               <el-input v-if="!scope.row.receiptReturnType" v-model="scope.row.includingTaxAmount">
@@ -238,13 +234,14 @@
                   </el-form>
                   <div class="text" style="height: 40px; line-height: 40px; background: #f5f7fa;">
                     <span style="font-weight:500;margin-right:10px">
-                      退货合计金额：
-                      <span class="red">{{ backComputedValue }}</span>
-                    </span>
-                    <span style="font-weight:500;margin-right:10px">
                       收货合计金额：
                       <span :class="receiptComputedValue > 0 ? 'green' : 'red'">+{{ receiptComputedValue }}</span>
                     </span>
+                    <span style="font-weight:500;margin-right:10px">
+                      退货合计金额：
+                      <span class="red">{{ backComputedValue }}</span>
+                    </span>
+
                     <span style="font-weight:500;margin-right:10px">
                       不含税金额：
                       <span :class="computedValue > 0 ? 'green' : 'red'">
@@ -457,7 +454,7 @@ export default {
     backComputedValue() {
       let count = 0
       this.dataFormTwo.data.forEach((item) => {
-        if (item.receiptReturnType == 'back') {
+        if (item.receiptReturnType == 'outbound_purchase') {
           count += item.includingTaxAmount * 1
         }
       })
@@ -470,7 +467,7 @@ export default {
     receiptComputedValue() {
       let count = 0
       this.dataFormTwo.data.forEach((item) => {
-        if (item.receiptReturnType === 'receipt') {
+        if (item.receiptReturnType === 'inbound_purchase') {
           count += item.includingTaxAmount * 1
         }
       })
@@ -673,6 +670,12 @@ export default {
     // 表单提交
     dataFormSubmit() {
       this.request()
+      let _data = {
+        reconciliation: JSON.parse(JSON.stringify(this.dataForm)),
+        reconciliationLine: JSON.parse(JSON.stringify(this.dataFormTwo.data)),
+        flowData: this.flowData
+      }
+      console.log(_data, '_')
     },
 
     async request() {

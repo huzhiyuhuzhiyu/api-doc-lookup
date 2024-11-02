@@ -85,8 +85,8 @@
           <el-table-column prop="reconciliationDate" label="对账日期" width="120" sortable="custom" />
 
           <!-- <el-table-column prop="orderNo" label="对账单号" width="180" sortable="custom" /> -->
-          <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="200" sortable="custom" />
-          <el-table-column prop="cooperativePartnerCode" label="客户编码" min-width="200" />
+          <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="200" sortable="custom" />
+          <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="200" />
           <el-table-column prop="excludingTaxAmount" label="总金额(不含税)" min-width="180">
             <template slot-scope="scope">
               <div :class="scope.row.excludingTaxAmount > 0 ? 'green' : 'red'">{{ scope.row.excludingTaxAmount > 0 ? '+'

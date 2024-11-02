@@ -1,7 +1,14 @@
 <template>
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
-      <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
+      <div :class="['JNPF-common-page-header']" v-if="!dataForm.id">
+        <div class="pageTitle">备件归还</div>
+        <div class="options">
+          <el-button type="primary" size="mini" :loading="btnLoading" @click="handleConfirm('submit')">
+            保存并提交</el-button>
+        </div>
+      </div>
+      <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="dataForm.id">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add' ? '新建备件归还' : btnType == 'edit' ? '编辑备件归还' : '查看备件归还'" />
         <div class="options">
@@ -78,6 +85,14 @@
           </el-tab-pane>
         </el-tabs>
       </div>
+      <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
+        <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
+            {{ submitmethodsTitle }}啦！</span><span class="import_b">您还可以进行如下操作：</span></div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="goBackmenu">返回列表</el-button>
+          <el-button type="primary" @click="continueAdd()"> 继续新增</el-button>
+        </span>
+      </el-dialog>
       <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" title="选择产品" treeTitle="产品分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'spare_parts' } }" :listMethod="getProductList" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple />
     </div>
   </transition>
@@ -92,6 +107,8 @@ import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
   data() {
     return {
+      submitmethodsTitle: '',
+      tipsvisible: false,
       categoryId: '',
       isattachmentswitch: '',
       activeNames: ["basicInfo", "sbxx"],
@@ -135,6 +152,7 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
+        id: '',
         requisitionType: 'back',
         equipmentType: 'spare_parts',
         equipmentId: '',
@@ -162,12 +180,37 @@ export default {
     }
   },
   created() {
+    if (!this.dataForm.id) this.init('', 'add')
     this.getBimBusinessDetail()
   },
   computed: {
     ...mapGetters(['userInfo']),
   },
   methods: {
+    // 继续新增
+    continueAdd() {
+      this.tipsvisible = false
+      this.btnLoading = false
+      this.datafilelist = []
+      this.dataForm = {
+        id: '',
+        requisitionType: 'back',
+        equipmentType: 'spare_parts',
+        equipmentId: '',
+        equipmentIdName: '',
+        collectionTime: '',
+        recipientId: ''
+      }
+      this.dataFormTwo.productData = []
+      this.init('', 'add')
+    },
+    //返回菜单
+    goBackmenu() {
+      this.$router.push({
+        path: "dailyManagement/sparepartsmanagement/sparepartsReturn/index",
+      })
+      this.tipsvisible = false
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -347,13 +390,18 @@ export default {
           } else if (value == 'submit') {
             msg = '提交成功'
           }
+          this.submitmethodsTitle = msg
           this.$message({
             message: msg,
             type: 'success',
             duration: 1500,
             onClose: () => {
               this.btnLoading = false
-              this.$emit('close', true)
+              if (this.dataForm.id) {
+                this.$emit('close', true)
+              } else {
+                this.tipsvisible = true
+              }
             }
           })
         }).catch(() => {

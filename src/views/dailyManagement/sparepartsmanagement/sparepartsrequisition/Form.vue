@@ -1,12 +1,19 @@
 <template>
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
-      <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
+      <div :class="['JNPF-common-page-header']" v-if="!dataForm.id">
+        <div class="pageTitle">备件领用</div>
+        <div class="options">
+          <el-button type="primary" size="mini" :loading="btnLoading" @click="handleConfirm('submit')">
+            保存并提交</el-button>
+        </div>
+      </div>
+      <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="dataForm.id&&!approvalFlag">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add' ? '新建备件领用' : btnType == 'edit' ? '编辑备件领用' : '查看备件领用'" />
         <div class="options">
           <el-button type="primary" v-if="btnType != 'look'" :loading="btnLoading" @click="handleConfirm('submit')">
-            提交</el-button>
+            保存并提交</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
@@ -22,17 +29,10 @@
                         <el-input v-model="dataForm.orderNo" placeholder="请输入领用单号" :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="type=='equipment'">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="领用目的" prop="useApplication">
                         <el-select v-model="dataForm.useApplication" placeholder="请选择领用目的" style="width: 100%;" @change="useApplicationchange" :disabled="btnType == 'look'">
-                          <el-option v-for="(item, index) in [{label:'设备保养',value:'equipmentmaintain'},{label:'设备维修',value:'equipmentrepair'}]" :key="index" :label="item.label" :value="item.value"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24" v-if="type=='tool'">
-                      <el-form-item label="领用目的" prop="useApplication">
-                        <el-select v-model="dataForm.useApplication" placeholder="请选择领用目的" style="width: 100%;" @change="useApplicationchange" :disabled="btnType == 'look'">
-                          <el-option v-for="(item, index) in [{label:'工具保养',value:'toolmaintain'},{label:'工具维修',value:'toolrepair'}]" :key="index" :label="item.label" :value="item.value"></el-option>
+                          <el-option v-for="(item, index) in [{label:'工具保养',value:'toolmaintain'},{label:'工具维修',value:'toolrepair'},{label:'设备保养',value:'equipmentmaintain'},{label:'设备维修',value:'equipmentrepair'}]" :key="index" :label="item.label" :value="item.value"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
@@ -46,7 +46,7 @@
                         <ComSelect-page v-model="dataForm.workNo" @change="repairChange" :tableItems="repairTableItems" dialogTitle="选择维修单号" placeholder="请选择维修单号" :listMethod="RepairRequestList" :listRequestObj="repairRequestObj" :searchList="repairSearchList" :isdisabled="btnType === 'look'" :renderTree="false" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="type=='equipment'">
+                    <el-col :sm="6" :xs="24" v-if="dataForm.useApplication=='equipmentrepair'||dataForm.useApplication=='equipmentmaintain'">
                       <el-form-item label="设备名称" prop="equipmentIdName">
                         <el-input v-model="dataForm.equipmentIdName" placeholder="请输入设备名称" :disabled="true" />
                       </el-form-item>
@@ -61,7 +61,7 @@
                         <ComSelect-page v-model="dataForm.workNo" @change="repairChange" :tableItems="repairTableItemstool" dialogTitle="选择维修单号" placeholder="请选择维修单号" :listMethod="RepairRequestList" :listRequestObj="repairRequestObjtool" :searchList="repairSearchListtool" :isdisabled="btnType === 'look'" :renderTree="false" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="type=='tool'">
+                    <el-col :sm="6" :xs="24" v-if="dataForm.useApplication=='toolmaintain'||dataForm.useApplication=='toolrepair'">
                       <el-form-item label="工具名称" prop="equipmentIdName">
                         <el-input v-model="dataForm.equipmentIdName" placeholder="请输入工具名称" :disabled="true" />
                       </el-form-item>
@@ -99,7 +99,7 @@
                     </el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="unit" label="单位" width="120" show-overflow-tooltip>
+                    <el-table-column prop="mainUnit" label="单位" width="120" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="availableQuantity" label="可用库存数量" width="160" show-overflow-tooltip>
                     </el-table-column>
@@ -135,6 +135,14 @@
           </el-tab-pane>
         </el-tabs>
       </div>
+      <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
+        <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
+            {{ submitmethodsTitle }}啦！</span><span class="import_b">您还可以进行如下操作：</span></div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="goBackmenu">返回列表</el-button>
+          <el-button type="primary" @click="continueAdd()"> 继续新增</el-button>
+        </span>
+      </el-dialog>
       <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" title="选择产品" treeTitle="产品分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'spare_parts' } }" :listMethod="getProductList" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple />
     </div>
   </transition>
@@ -155,6 +163,8 @@ export default {
   components: { Process, recordList },
   data() {
     return {
+      submitmethodsTitle: '',
+      tipsvisible: false,
       flowTemplateJson: {},
       flowData: {},
       approvalFlag: false,   // 待办事宜等页面 需要
@@ -336,6 +346,7 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
+        id: '',
         approvalFlag: false,
         orderNo: '',
         returnFlag: 0,
@@ -379,9 +390,38 @@ export default {
     ...mapGetters(['userInfo']),
   },
   created() {
+    if (!this.dataForm.id) this.init('', 'add')
     this.getBimBusinessDetail()
   },
   methods: {
+    // 继续新增
+    continueAdd() {
+      this.tipsvisible = false
+      this.btnLoading = false
+      this.datafilelist = []
+      this.dataForm = {
+        id: '',
+        approvalFlag: false,
+        orderNo: '',
+        returnFlag: 0,
+        requisitionType: 'requisition',
+        useApplication: '',
+        equipmentType: 'spare_parts',
+        equipmentId: '',
+        equipmentIdName: '',
+        collectionTime: '',
+        recipientId: ''
+      }
+      this.dataFormTwo.productData = []
+      this.init('', 'add')
+    },
+    //返回菜单
+    goBackmenu() {
+      this.$router.push({
+        path: "dailyManagement/sparepartsmanagement/sparepartsrequisition/index",
+      })
+      this.tipsvisible = false
+    },
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
@@ -451,7 +491,7 @@ export default {
             productName: item.all.name,
             productCode: item.all.code,
             drawingNo: item.all.drawingNo,
-            unit: item.all.mainUnit,
+            mainUnit: item.all.mainUnit,
             availableQuantity: item.all.availableQuantity,
             productId: item.all.id,
             requisitionNum: '',
@@ -505,7 +545,7 @@ export default {
       console.log(tab, event);
     },
     init(id, btnType, type) {
-      this.type = type
+      // this.type = type
       this.dataForm.id = id || ''
       this.btnType = btnType
       if (this.btnType === 'add' || this.btnType === 'edit') {
@@ -615,13 +655,18 @@ export default {
           } else if (value == 'submit') {
             msg = '提交成功'
           }
+          this.submitmethodsTitle = msg
           this.$message({
             message: msg,
             type: 'success',
             duration: 1500,
             onClose: () => {
               this.btnLoading = false
-              this.$emit('close', true)
+              if (this.dataForm.id) {
+                this.$emit('close', true)
+              } else {
+                this.tipsvisible = true
+              }
             }
           })
         }).catch(() => {

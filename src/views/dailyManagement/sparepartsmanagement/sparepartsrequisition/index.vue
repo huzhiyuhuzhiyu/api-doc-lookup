@@ -28,7 +28,7 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
           <div>
-            <el-dropdown style="margin-right:10px;">
+            <!-- <el-dropdown style="margin-right:10px;">
               <el-button size="mini" type="primary" icon="el-icon-plus">
                 新建
                 <i class="el-icon-arrow-down el-icon--right"></i>
@@ -37,7 +37,7 @@
                 <el-dropdown-item @click.native="addOrUpdateHandle('', 'add','equipment')">设备</el-dropdown-item>
                 <el-dropdown-item @click.native="addOrUpdateHandle('','add','tool')">工具</el-dropdown-item>
               </el-dropdown-menu>
-            </el-dropdown>
+            </el-dropdown> -->
           </div>
           <div class="JNPF-common-head-right" style="float: right">
             <el-tooltip content="高级查询" placement="top">

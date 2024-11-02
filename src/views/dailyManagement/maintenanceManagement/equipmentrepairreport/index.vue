@@ -155,6 +155,7 @@ export default {
   components: { UploadImg },
   data() {
     return {
+      submitmethodsTitle: '',
       categoryId: '',
       isattachmentswitch: '',
       codeConfig: {},//单据规则配置
@@ -561,8 +562,9 @@ export default {
         }
         this.btnLoading = true;
         addRepairRequest(obj).then(res => {
+          this.submitmethodsTitle = '提交成功'
           this.$message({
-            message: '新建成功',
+            message: '提交成功',
             type: 'success',
             duration: 1500,
             onClose: () => {

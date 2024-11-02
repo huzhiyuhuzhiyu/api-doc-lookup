@@ -107,7 +107,7 @@
             <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id)">查看详情</el-button>
+                <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id,scope.row.orderNo)">查看详情</el-button>
               </template>
             </el-table-column>
           </JNPF-table>

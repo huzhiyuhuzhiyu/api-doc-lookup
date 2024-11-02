@@ -84,7 +84,10 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="totalProgress" label="订单进度" width="120" :key="68">
-
+                  <template slot-scope="scope">
+                      <el-progress
+                        :percentage="scope.row.totalProgress || 0"></el-progress>
+                    </template>
                 </el-table-column>
 
                 <el-table-column prop="num" label="订单数量" width="120" :key="58">
@@ -103,9 +106,9 @@
                     <div>{{ scope.row.outboundQuantity ? scope.row.outboundQuantity : 0 }}</div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="receivedQuantity" label="生产入库数量" width="120" :key="38">
+                <el-table-column prop="producedQuantity" label="生产入库数量" width="120" :key="38">
                   <template slot-scope="scope">
-                    <div>{{ scope.row.receivedQuantity ? scope.row.receivedQuantity : 0 }}</div>
+                    <div>{{ scope.row.producedQuantity ? scope.row.producedQuantity : 0 }}</div>
                   </template>
                 </el-table-column>
 
@@ -170,12 +173,11 @@
                 </div>
 
                 <div class="gantt">甘特图信息</div>
-                <div>
-                  <div ref='ganttRef'></div>
-                  <section style='display: flex;justify-content: start;'>
-
-                  </section>
+                <div ref='ganttRef'>
                 </div>
+                <section style='display: flex;justify-content: start;'>
+
+                </section>
               </div>
               <!-- 成品采购 -->
               <div v-if="categoryType == 'finishpurchase'">
@@ -818,7 +820,52 @@ export default {
         pageNum: 1,
         pageSize: -1,
         source: "",
-      }
+      },
+      gantttt: {
+        data: [
+
+          /**
+           *
+           id：任务标识，可用来标识父子关系、连接links等
+           start_date,end_date：项目开始截至时间 Date|string //（‘14-07-2022’）
+           text：文本，任务的显示文字
+           progress：项目的进度，用颜色深浅显示
+           parent：父子关系(id标识)；子任务的parent为父任务的id
+           type：任务类型，有三种，object，task，milestone；
+                 object：没有时间限制，长度为包含所有子任务的长度
+                 task：普通任务
+                 milestone：菱形块，可表示中转关系
+           * */
+        ],
+        links: [
+          { id: 1, source: 11, target: 12, type: '0' },
+          { id: 2, source: 12, target: 13, type: '0' },
+          { id: 3, source: 13, target: 14, type: '0' },
+
+          { id: 4, source: 111, target: 112, type: '0' },
+          { id: 5, source: 112, target: 113, type: '0' },
+
+          { id: 6, source: 121, target: 123, type: '0' },
+          { id: 7, source: 122, target: 123, type: '0' },
+
+          // { id: 1, source: 1, target: 3, type: '0' },
+          // { id: 2, source: 1232354422, target: 1232354421, type: '0' },
+          // { id: 3, source: 12345453, target: 12345437, type: '0' }
+        ]
+      },
+      ganttColumns: [
+        // { align: 'right', name: 'color', label: '', width: '150',
+        //   template:function(task){
+        //     if(task.color){
+        //       console.log(task.color)
+        //       return  "<div style='width: 10px;height: 10px;' style='background:"+ task.color+ "'>"+"</div>"}
+        //   }
+        // },
+        { align: 'left', name: 'text', label: '', tree: true, width: "*", min_width: 180, },
+        // { align: 'center', name: 'person', label: '负责人', width: '120' },
+        // { align: 'right', name: 'time', label: '时间节点', width: '80' },
+        { align: 'center', name: 'progress', label: '进度', width: '120', template: (task) => task.progress * 100 + '%' },
+      ]
     }
 
   },
@@ -831,8 +878,8 @@ export default {
   },
   mounted() {
     this.switchStyle()
-        // 清空之前的配置
-        gantt.clearAll();
+    // 清空之前的配置
+    gantt.clearAll();
     // 默认配置
     gantt.plugins({
       marker: true,
@@ -910,10 +957,10 @@ export default {
       color:red!important; /*低进度颜色 */  
       }  
       .mid-progress {  
-      background-color: yellow; /* 中等进度颜色 */  
+      background-color: #67c23a; /* 中等进度颜色 */  
       }  
       .high-progress {  
-      background-color: green; /* 高进度颜色 */  
+      background-color: #67c23a; /* 高进度颜色 */  
       }  
       `;
     document.head.appendChild(style);
@@ -1070,6 +1117,86 @@ export default {
             this.planData = res.data.records[0]
             getPlanSchedule(this.planData.id).then(res => {
               console.log("计划进度", res);
+              let arr = []
+              if (!res.data.length) return
+              res.data.forEach(item => {
+                item.completedQuantity = item.prodOrderList.reduce((sum, order) => sum + Number(order.completedQuantity) , 0);
+              });
+              setTimeout(() => {
+                res.data.forEach(item => {
+                  // let data=res.data[0]
+                  let obj = {
+                    id: item.id,
+                    text: item.productionPlanNo,
+                    progress: this.jnpf.numberFormat(this.jnpf.math('divide', [item.completedQuantity, item.planProductionQuantity]), 2),
+                    type: 'task',
+                    start_date: new Date(item.planStartDate),
+                    end_date: new Date(item.planEndDate),
+                    open: true,
+                    color: '#ccc',
+                    completedQuantity: item.completedQuantity,
+                    productionQuantity: item.planProductionQuantity,
+                  }
+                  console.log(6666);
+                  arr.push(obj)
+
+
+                  if (item.prodOrderList.length) {
+                    item.prodOrderList.forEach((items, index) => {
+                      let bjs = {
+                        id: items.id,
+                        text: items.orderNo,
+                        progress: this.jnpf.numberFormat(this.jnpf.math('divide', [items.completedQuantity, items.productionQuantity]), 2),
+                        type: 'task',
+                        start_date: new Date(items.planStartDate),
+                        end_date: new Date(items.planEndDate),
+                        open: true,
+                        completedQuantity: items.completedQuantity,
+                        productionQuantity: items.productionQuantity,
+                        color: "#ccc",
+                      }
+                      arr.push(bjs)
+                      // 2. 拆分成单个项目
+                      const list = items.processSchedule.split(',');
+
+                      // 3. 将每个项目转换为对象格式
+                      const result = list.map(item => {
+                        const [name, progress] = item.split(':');
+                        return { name: name, progress: progress };
+                      });
+                      if (items.workOrderList.length) {
+                        console.log("items.workOrderList",items.workOrderList);
+                        items.workOrderList.forEach((itemss, index) => {
+                          itemss.actualStartDate=itemss.actualStartDate?itemss.actualStartDate.substring(0,10):""
+                          itemss.actualEndDate=itemss.actualEndDate?itemss.actualEndDate.substring(0,10):""
+                          console.log("时间1",itemss.actualStartDate,itemss.planStartDate);
+                          console.log("时间2",itemss.actualEndDate,itemss.planEndDate);
+                          let bjss = {
+                            id: itemss.id,
+                            text: itemss.orderNo+"("+result[index].name+")",
+                            parent: itemss.productionOrderId,
+                            progress: result[index].progress / 100,
+                            type: 'task',
+                            start_date: new Date(itemss.planStartDate),
+                            end_date: new Date(itemss.planEndDate),
+                            qualifiedQuantity: itemss.qualifiedQuantity,
+                            productionQuantity: itemss.productionQuantity,
+                            duration: 2,
+                            color: "#ccc",
+                          }
+                          arr.push(bjss)
+                        })
+                      }
+                    })
+                  }
+                  console.log("arr", arr);
+                  this.$nextTick(()=>{
+                    this.gantttt.data = arr
+                  gantt.init(this.$refs.ganttRef);
+                  gantt.parse(this.gantttt)
+                  })
+                });
+              }, 500);
             })
           }
         })

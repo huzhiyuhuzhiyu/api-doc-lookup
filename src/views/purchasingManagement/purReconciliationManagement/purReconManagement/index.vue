@@ -45,8 +45,8 @@
           <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
           <div>
             <el-button size="mini" type="primary" @click="addOrUpdateHandle()">生成采购对账</el-button>
-            <el-button v-has="'btn_export'" :disabled="tableDataList.length > 0 ? false : true" size="mini"
-              type="primary" icon="el-icon-download" @click="exportForm">
+            <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
+              icon="el-icon-download" @click="exportForm">
               导出
             </el-button>
           </div>
@@ -89,10 +89,10 @@
           </el-table-column>
           <el-table-column prop="totalAmount" label="金额" width="90">
             <template slot-scope="scope">
-              <div v-if="scope.row.businessType == 'outbound_purchase'" style="color: #67C23A">
+              <div v-if="scope.row.businessType == 'inbound_purchase'" style="color: #67C23A">
                 +{{ scope.row.totalAmount }}
               </div>
-              <div v-else-if="scope.row.businessType == 'inbound_purchase'" style="color:red">
+              <div v-else-if="scope.row.businessType == 'outbound_purchase'" style="color:red">
                 -{{ scope.row.totalAmount }}
               </div>
             </template>

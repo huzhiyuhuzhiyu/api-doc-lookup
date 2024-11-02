@@ -234,14 +234,14 @@
                           </el-col>
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="检验结果" prop="inspectionResults">
-                              <el-select v-model="dataForm.inspectionResults" placeholder="请选择检验结果" disabled="btnType == 'look' ? true : false"
+                              <el-select v-model="dataForm.inspectionResults" placeholder="请选择检验结果" :disabled="btnType == 'look' ? true : false"
                                 style="width: 100%;">
                                 <el-option v-for="(item, index) in inspectionResultsList" :key="index"
                                   :label="item.label" :value="item.value"></el-option>
                               </el-select>
                             </el-form-item>
                           </el-col>
-
+                          
                           <el-col :sm="12" :xs="24">
                             <el-form-item label="备注" prop="remark">
                               <el-input v-model="dataForm.remark" placeholder="请输入备注"

@@ -116,7 +116,7 @@
                             <div> {{ scope.row.shelfSpaceName }}</div>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="unit" label="单位" width="80" :key="8" />
+                        <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
                         <el-table-column prop="availableBatchNumber" label="可用数量" width="140" v-if="btnType != 'look'"
                           :key="7"></el-table-column>
 
@@ -125,7 +125,7 @@
                           v-if="btnType != 'look'">
                         </el-table-column>
 
-                        <el-table-column prop="num" label="领用数量" width="140" :key="77">
+                        <el-table-column prop="num" label="领用出库数量" width="160" :key="77">
                           <template slot="header">
                             <span class="required">*</span>领用数量
                           </template>
@@ -141,10 +141,12 @@
                               placeholder="备注"></el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'"
+                        <el-table-column label="操作" width="160" v-if="productData.length && btnType != 'look'"
                           fixed="right">
                           <template slot-scope="scope">
-                            <el-button type="text" @click="copyFun(scope.row, scope.$index)" size="mini">复制</el-button>
+                            <!-- <el-button type="text" @click="copyFun(scope.row, scope.$index)" size="mini">复制</el-button> -->
+                            <el-button type="text" @click="setCodeFun(scope.row, scope.$index)"
+                              size="mini">设置资产编码</el-button>
                           </template>
                         </el-table-column>
                       </JNPF-table>
@@ -193,15 +195,8 @@
                           <ComSelect-list :requestObj="warehouseRequestObj" :dialogTitle="'选择仓库'"
                             :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName" :method="getWarehouseList"
                             placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
-
-
-
-
-
                         </el-form-item>
                       </el-col>
-
-
                       <el-col :sm="12" :xs="24">
                         <el-form-item label="备注" prop="remark">
                           <el-input v-model="dataForm.remark" placeholder="请输入备注"
@@ -254,22 +249,22 @@
                         <div> {{ scope.row.shelfSpaceName }}</div>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="unit" label="单位" width="80" :key="8" />
+                    <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
                     <el-table-column prop="availableBatchNumber" label="可用数量" width="140" v-if="btnType != 'look'"
                       :key="7"></el-table-column>
 
 
-                    <el-table-column prop="unReceiveQuantity" label="待领料数量" width="140" :key="777"
+                    <el-table-column prop="unReceiveQuantity" label="待领用数量" width="140" :key="777"
                       v-if="btnType != 'look'">
                     </el-table-column>
 
-                    <el-table-column prop="num" label="领料数量" width="140" :key="77">
+                    <el-table-column prop="num" label="领用数量" width="140" :key="77">
                       <template slot="header">
-                        <span class="required">*</span>领料数量
+                        <span class="required">*</span>领用数量
                       </template>
                       <template slot-scope="scope">
                         <el-input :disabled="btnType == 'look'" @input="watchNum(scope.row, scope.$index)"
-                          v-model="scope.row.num" placeholder="领料数量"></el-input>
+                          v-model="scope.row.num" placeholder="领用数量"></el-input>
                       </template>
                     </el-table-column>
 
@@ -278,10 +273,12 @@
                         <el-input v-model="scope.row.remark" :disabled="btnType == 'look'" placeholder="备注"></el-input>
                       </template>
                     </el-table-column>
-                    <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'"
+                    <el-table-column label="操作" width="160" v-if="productData.length && btnType != 'look'"
                       fixed="right">
                       <template slot-scope="scope">
-                        <el-button type="text" @click="copyFun(scope.row, scope.$index)" size="mini">复制</el-button>
+                        <el-button type="text" @click="setCodeFun(scope.row, scope.$index)"
+                          size="mini">设置资产编码</el-button>
+                        <!-- <el-button type="text" @click="copyFun(scope.row, scope.$index)" size="mini">复制</el-button> -->
                       </template>
                     </el-table-column>
                   </JNPF-table>
@@ -305,24 +302,19 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
 
-              <!-- 生产领退料 -->
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable />
+                    <el-input v-model="productForm.productDrawingNo" placeholder="品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.productCode" placeholder="产品编码" clearable />
+                    <el-input v-model="productForm.productCode" placeholder="产品编码" clearable />
                   </el-form-item>
                 </el-col>
 
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-input v-model="orderForm.processName" placeholder="工序名称" clearable />
-                  </el-form-item>
-                </el-col>
+
                 <!-- { label: "销售发货", value: "outbound_sale_send" },
 { label: "销售退货", value: "inbound_sale_return" },
 { label: "采购收货", value: "inbound_purchase" },
@@ -348,31 +340,18 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
                 @selection-change="handleSelectionChangeAllPruduct" ref="form">
-                <el-table-column prop="orderNo" label="领料单号" width="190" sortable="custom"></el-table-column>
-                <el-table-column prop="orderNo" label="退货单号" width="190" sortable="custom"
-                  v-if="dataForm.businessType == 'inbound_sale_return' || dataForm.businessType == 'outbound_purchase'"></el-table-column>
-                <el-table-column prop="operationDate" label="领料日期" width="180" sortable="custom" />
-                <el-table-column prop="ordersNo" label="任务单号" width="190" sortable="custom" />
-                <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom"
-                  v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'" />
+                <el-table-column prop="orderNo" label="领用单号" width="190" sortable="custom"></el-table-column>
+
+                <el-table-column prop="collectionTime" label="领用日期" width="180" sortable="custom" />
+
                 <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
-                <el-table-column prop="processName" label="工序" width="120" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="90" sortable="custom" />
-                <el-table-column prop="num" label="领料数量" width="120" sortable="custom" />
-                <el-table-column prop="unReceiveQuantity" label="待领料数量" width="130" sortable="custom" />
-                <!-- { label: "销售发货", value: "outbound_sale_send" },
-        { label: "销售退货", value: "inbound_sale_return" },
-        { label: "采购收货", value: "inbound_purchase" },
-        { label: "采购退货", value: "outbound_purchase" },
-        { label: "生产领料", value: "outbound_pick_out" },
-        { label: "生产退料", value: "inbound_return_materials" },
-        { label: "外协发料", value: "outbound_external_send" },
-        { label: "外协退料", value: "inbound_external_return" },
-        { label: "外协收货", value: "inbound_external" },
-        { label: "外协退货", value: "outbound_external" }, -->
+                <el-table-column prop="awitNum" label="待领用数量" width="150" sortable="custom" />
+                <el-table-column prop="num" label="领用数量" width="120" sortable="custom" />
+
               </JNPF-table>
-              <pagination :total="productTotal" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
+              <pagination :total="productTotal" :page.sync="productForm.pageNum" :limit.sync="productForm.pageSize"
                 @pagination="searchProductFun" />
             </div>
           </div>
@@ -380,6 +359,33 @@
         <span slot="footer" class="dialog-footer">
           <el-button @click=" productVisible = false">{{ $t('common.cancelButton') }}</el-button>
           <el-button type="primary" :loading="btnLoading" @click="submitAllProduct()">
+            确定</el-button>
+        </span>
+      </el-dialog>
+      <!-- 选择产品信息 -->
+      <el-dialog title="设置资产编码" :close-on-click-modal="false" :close-on-press-escape="false"
+        @close="setcodeVisible = false" :visible.sync="setcodeVisible" lock-scroll
+        class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body>
+
+        <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
+
+          <div class="JNPF-common-layout-center JNPF-flex-main" style="background-color: #fff;">
+            <el-row class="JNPF-common-search-box" :gutter="16">
+
+              <el-form @submit.native.prevent>
+                <el-col :span="6" v-for="(item, index) in arr" :key="inde">
+                  <el-form-item>
+                    <el-input v-model="item.assetCode" placeholder="资产编码" clearable />
+                  </el-form-item>
+                </el-col>
+              </el-form>
+            </el-row>
+
+          </div>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click=" setcodeVisible = false">{{ $t('common.cancelButton') }}</el-button>
+          <el-button type="primary" :loading="btnLoading" @click="submitCodeFun()">
             确定</el-button>
         </span>
       </el-dialog>
@@ -415,7 +421,7 @@ import { getpurPurchaseReceiptReturnGoodsdetail, addpurPurchaseReceiptReturnGood
 import { purPurchaseReceiptReturnGoodsDetailList } from '@/api/purchasingManagement/purchaseInquirySheet'
 import { detailordershengchan, detailWithdrawal, addWithdrawal, updateWithdrawal, getWorkList, WithdrawalmxList } from '@/api/productOrdes/index.js'
 import BatchNumberForm from './batchNumberForm.vue'
-import { detailCollectionandreturn, addCollectionandreturn } from '@/api/dailyManagement/Maintenance'
+import { detailCollectionandreturn, addCollectionandreturn, equRequisitionRecordsproducts } from '@/api/dailyManagement/Maintenance'
 
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
@@ -427,6 +433,7 @@ export default {
   mixins: [flowMixin, busFlow],
   data() {
     return {
+      setcodeVisible: false,
       warehouseRequestObj: {
         type: 'normal', state: 'enable'
       },
@@ -531,7 +538,6 @@ export default {
       loadingText: '',
       copyLinesData: [],
       previousValue: "",
-      orderForm: {},
       classAttribute: "",
       activeName: "orderInfo",
       productClassAttributeList: [],
@@ -540,7 +546,24 @@ export default {
       flowData: {},
       approvalFlag: false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime: 0
+      endTime: 0,
+      oldData: {},
+      productForm: {
+        orderNo: "",
+        productCode: "",
+        productDrawingNo: "",
+        orderItems: [{
+          "asc": false,
+          "column": ""
+        },],
+        pageNum: 1,
+        pageSize: 20,
+      },
+      currentUseNum: 0,
+      currentUseIndex: "",
+      codeList: "",
+      arr: [],
+      classAttributeList:[],
     }
   },
   created() {
@@ -553,6 +576,28 @@ export default {
     }
   },
   methods: {
+    // 设置编码
+    setCodeFun(row, index) {
+      console.log(row);
+      this.setcodeVisible = true
+      this.currentUseIndex=index
+      let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [row.requisitionNum, row.incomingOutgoingNum]), 2)
+      this.arr = Array.from({ length: num }, () => ({
+        assetCode: "",
+        moveId: "",
+        moveLineId: "",
+      }));
+    },
+    // 提交编码设置
+    submitCodeFun() {
+      console.log(this.arr);
+      const hasEmptyAssetCode = this.arr.some(item => item.assetCode === "");
+      if(hasEmptyAssetCode)  return this.$message.error("资产编码不能为空，请检查") 
+      this.productData
+    this.$set(this.productData[this.currentUseIndex],'warehouseCodeLineList',this.arr)
+    this.setcodeVisible=false
+    console.log(this.productData);
+    },
     // 打开选择批次号弹框
     openSeleceBatchNumberDialog(data, index) {
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库")
@@ -600,35 +645,24 @@ export default {
 
     },
 
-    // 点击选择产品 销售发货 
+    // 点击选择产品 
     openSeleceProductDialog() {
-      if (this.dataForm.businessType != 'inbound_return_materials' && this.dataForm.businessType != 'outbound_pick_out') {
-        if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
 
-      }
       this.productVisible = true
       this.searchProductFun()
     },
-    // 销售发货选择产品——搜索 如果是销售订单  需要计算待出库数量=订单数量-已出库数量  如果是通知单 则直接取接口返回的待出库数量
+    //  
     searchProductFun() {
-      this.deliveryDateArr = []
-      this.orderForm = {
-
-        orderNo: this.dataForm.sourceNo,
-        productClassAttributeList: this.productClassAttributeList,
-        pageNum: 1,
-        pageSize: 20,
-        productDrawingNo: "",
-        productCode: "",
-      }
-      this.orderForm.pickingFlag = true
-
-      WithdrawalmxList(this.orderForm).then(res => {
-        res.data.records.forEach(item => {
-          item.ordersNo = item.productionOrderNo
-        });
-        this.productList = res.data.records
-        this.productTotal = res.data.total
+      this.productForm.orderNo = this.dataForm.sourceNo
+      equRequisitionRecordsproducts(this.productForm).then(res => {
+        if (res.data.records.length) {
+          res.data.records.forEach(element => {
+            this.$set(item, 'num', this.jnpf.numberFormat(this.jnpf.math('subtract', [item.requisitionNum, item.incomingOutgoingNum]), 2))
+            this.$set(item, 'awitNum', this.jnpf.numberFormat(this.jnpf.math('subtract', [item.requisitionNum, item.incomingOutgoingNum]), 2))
+          });
+          this.productList = res.data.records
+          this.productTotal = this.res.data.total
+        }
       })
 
 
@@ -639,7 +673,17 @@ export default {
     },
     // 销售发货选择产品——重置
     resetProductFun() {
-      this.deliveryDateArr = []
+      this.productForm = {
+        orderNo: "",
+        productCode: "",
+        productDrawingNo: "",
+        orderItems: [{
+          "asc": false,
+          "column": ""
+        },],
+        pageNum: 1,
+        pageSize: 20,
+      }
       this.searchProductFun()
 
     },
@@ -650,10 +694,8 @@ export default {
       let arr = JSON.parse(JSON.stringify(this.selectSaleProductArr))
 
       arr.forEach(item => {
-        let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
-        item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
-        item.num = item.unReceiveQuantity
-        item.classAttribute = this.classAttribute
+        item.num = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.requisitionNum, item.incomingOutgoingNum]), 2)
+        this.$set(item, 'unReceiveQuantity', item.num)
         item.sourceNo = this.dataForm.sourceNo
         item.moveId = this.dataForm.id
         this.productData.push(item)
@@ -736,8 +778,8 @@ export default {
         }
       }
     },
-
-
+   
+    
 
 
 
@@ -791,11 +833,12 @@ export default {
     // { label: "外协收货", value: "inbound_external" },
     // { label: "外协退货", value: "outbound_external" },
     init(data, btnType, businessType, classAttributeList, warehouseCode) {
-      console.log("11", data, btnType, classAttributeList, businessType);
+      console.log("112", data, btnType, classAttributeList, businessType);
 
       // this.visible = true
+      this.oldData = data
       this.dataForm.businessType = businessType
-      this.productClassAttributeList = classAttributeList
+      this.classAttributeList = classAttributeList
       this.warehouseCode = warehouseCode
       this.oldType = JSON.parse(JSON.stringify(btnType))
       this.btnType = btnType
@@ -829,8 +872,10 @@ export default {
               item.sourceNo = this.dataForm.sourceNo
               item.ordersId = res.data.requisition.id
               item.ordersLineId = item.id
-              item.num = item.requisitionNum
+              item.num = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.requisitionNum, item.incomingOutgoingNum]), 2)
+              this.$set(item, 'unReceiveQuantity', item.num)
             });
+            console.log("this.productData", this.productData);
             this.productData = res.data.lines
           }
           this.formLoading = false
@@ -922,8 +967,8 @@ export default {
             this.copyLinesData = JSON.parse(JSON.stringify(this.productData))
             this.copyLinesData.forEach(element => {
               element.warehouseType = this.dataForm.warehouseType
-            });
-            this.dataForm.classAttribute = this.classAttribute
+            }); 
+            this.dataForm.classAttributeList = this.classAttributeList
             this.dataForm.sourceType = 'order'
             let dataObj = {
               stockMove: this.dataForm,

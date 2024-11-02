@@ -275,7 +275,8 @@ export default {
         ]
       },
       total: 0,
-      formVisible: false
+      formVisible: false,
+      exportFormVisible: false
     }
   },
   created() {

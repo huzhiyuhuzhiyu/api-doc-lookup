@@ -93,6 +93,8 @@
               <div v-if="scope.row.businessType == 'outbound_receive_material'">直接领料出库</div>
               <div v-if="scope.row.businessType == 'inbound_production'">生产入库</div>
               <div v-if="scope.row.businessType == 'inbound_order_production'">生产入库</div>
+              <div v-if="scope.row.businessType == 'outbound_use'">资产领用</div>
+              <div v-if="scope.row.businessType == 'inbound_return'">资产归还</div>
             </template>
           </el-table-column>
           <el-table-column prop="partnerName" label="客户/供应商" sortable="custom" min-width="160">
@@ -181,6 +183,8 @@
     </ExternalMaterOutboundForm>
     <ExternalInboundForm v-if="externalInboundFormVisible" ref="externalInboundREFForm" @close="closeForm">
     </ExternalInboundForm>
+    <outboundUseForm v-if="outboundUseVisible" ref="outboundUseREFForm" @close="closeForm">
+    </outboundUseForm>
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -209,6 +213,7 @@ import SaleOutboundForm from '../dbIncomAndOutInventory/saleOutboundForm.vue'
 import ExternalMaterOutboundForm from '../dbIncomAndOutInventory/externalMaterialsForm.vue'
 import PurchaseOrderInboundForm from '../dbIncomAndOutInventory/purchaseOrderInboundForm.vue'
 import ExternalInboundForm from '../dbIncomAndOutInventory/externalInboundForm.vue'
+import outboundUseForm from '../dbIncomAndOutInventory/equipmentOutboundForm.vue'
 import Form from './Form'
 export default {
   name: 'finishedProductWarehouseManagement',
@@ -217,13 +222,14 @@ export default {
     ProductInboundForm, OutboundSaleSendForm, InboundSaleReturnForm,
     InboundPurchaseForm, OutboundPurchaseForm, OutboundExternalSendForm,
     InboundExternalForm, OutboundPickOutForm, InboundReturnMaterialsForm,
-    Transfer, SaleOutboundForm, PurchaseOrderInboundForm, ExternalMaterOutboundForm, ExternalInboundForm
+    Transfer, SaleOutboundForm, PurchaseOrderInboundForm, ExternalMaterOutboundForm, ExternalInboundForm,outboundUseForm
   },
   props: {
     warehouseCode: "",
   },
   data() {
     return {
+      outboundUseVisible:false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -271,6 +277,7 @@ export default {
         { label: "直接领料出库", value: "outbound_receive_material" },
         { label: "调拨出库", value: "outbound_transfer" },
         { label: "调拨入库", value: "inbound_transfer" },
+        { label: "资产领用", value: "outbound_use" },
       ],
       superQueryVisible: false,
 
@@ -318,7 +325,8 @@ export default {
             { label: "直接出库", value: "outbound_other" },
             { label: "直接领料入库", value: "inbound_receive_material" },
             { label: "直接领料出库", value: "outbound_receive_material" },
-
+            { label: "资产领用", value: "outbound_use" },
+            { label: "资产归还", value: "inbound_return" },
           ],
         },
         {
@@ -408,6 +416,7 @@ export default {
       this.externalMaterOutboundFormVisible = false
       this.externalInboundFormVisible = false
       this.PurchaseOrderInboundFormVisible = false
+      this.outboundUseVisible=false
       if (isRefresh) {
         this.keyword = ''
         this.initData()
@@ -528,6 +537,11 @@ export default {
         this.transferFormVisible = true
         this.$nextTick(() => {
           this.$refs.transferREFForm.init(id, type,)
+        })
+      } else if (row.businessType == 'outbound_use') {
+        this.outboundUseVisible = true
+        this.$nextTick(() => {
+          this.$refs.outboundUseREFForm.init(id, type,)
         })
       }
       else {

@@ -57,7 +57,7 @@
           @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
           <el-table-column prop="orderNo" label="对账单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
-              <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">
+              <el-link type="primary" @click.native="handleUserRelation(scope.row.accountsReceivableId, 'look')">
                 {{ scope.row.orderNo }}
               </el-link>
             </template>
@@ -114,9 +114,9 @@
           <el-table-column prop="mainUnit" label="单位" width="80" />
           <el-table-column prop="reconciliationUnitPrice" label="数量" width="80" sortable="custom" />
           <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="120" />
-          <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="120" />
+          <el-table-column prop="totalExcludingTaxAmount" label="金额(不含税)" width="120" />
           <el-table-column prop="price" label="单价(含税)" width="100" />
-          <el-table-column prop="includingTaxAmount" label="金额(含税)" width="130" sortable="custom" />
+          <el-table-column prop="totalIncludingTaxAmount" label="金额(含税)" width="130" sortable="custom" />
           <el-table-column prop="stockMoveDate" label="出入库日期" sortable="custom" width="180" />
 
           <el-table-column label="操作" width="100" fixed="right">

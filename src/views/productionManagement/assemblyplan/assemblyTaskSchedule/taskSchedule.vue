@@ -369,16 +369,16 @@ export default {
     const style = document.createElement('style');
     style.innerHTML = `  
     .Noproduc{
-    background-color:"#ccc!important"
+    background-color:"#67c23a!important"
     }
       .low-progress {  
-      color:red!important; /*低进度颜色 */  
+      background-color:#67c23a; /*低进度颜色 */  
       }  
       .mid-progress {  
-      background-color: yellow; /* 中等进度颜色 */  
+      background-color: #67c23a; /* 中等进度颜色 */  
       }  
       .high-progress {  
-      background-color: green; /* 高进度颜色 */  
+      background-color: #67c23a; /* 高进度颜色 */  
       }  
       `;
     document.head.appendChild(style);
@@ -471,22 +471,31 @@ export default {
         });
 
         console.log(123, result);
-        this.workOrderData.forEach((items, index) => {
-          let bjs = {
-            id: items.id,
-            text: items.processName,
-            parent:"",
-            progress: result[index].progress / 100,
-            type: 'task',
-            start_date: new Date(items.planStartDate),
-            end_date: new Date(items.planEndDate),
-            qualifiedQuantity: items.qualifiedQuantity,
-            productionQuantity: items.productionQuantity,
-            orderNo: items.orderNo,
-            color: "#ccc",
-          }
-          arr.push(bjs)
-        })
+
+          this.workOrderData.forEach((itemss, index) => {
+              if (!itemss.actualStartDate||!itemss.actualEndDate) { 
+                itemss.actualStartDate = itemss.planStartDate
+                itemss.actualEndDate = itemss.planEndDate
+              } else {
+                itemss.actualStartDate = itemss.actualStartDate ? itemss.actualStartDate.substring(0, 10) : ""
+                itemss.actualEndDate = itemss.actualEndDate ? itemss.actualEndDate.substring(0, 10) : ""
+              }
+              let bjss = {
+                id: itemss.id,
+                text: result[index].name, 
+                progress: result[index].progress / 100,
+                type: 'task',
+                start_date: new Date(itemss.actualStartDate == itemss.actualEndDate ? itemss.actualStartDate + ' 00:00:00' : itemss.actualStartDate + ' 00:00:00'),
+                end_date: new Date(itemss.actualStartDate == itemss.actualEndDate ? itemss.actualEndDate + ' 23:59:59' : itemss.actualEndDate + ' 23:59:59'),
+                qualifiedQuantity: itemss.qualifiedQuantity,
+                productionQuantity: itemss.productionQuantity,
+                duration: 20,
+                color: "green",
+              }
+              arr.push(bjss)
+            })
+
+    
         console.log("arr", arr);
         this.gantttt.data = arr
         gantt.init(this.$refs.ganttRef);

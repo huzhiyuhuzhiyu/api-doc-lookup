@@ -1046,7 +1046,7 @@
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <el-button size="mini" type="text"
-                @click="incomAndOutInventFun(scope.row, 'add', 'Form')">出库</el-button>
+                @click="incomAndOutInventFun(scope.row, 'add', 'Form')">入库</el-button>
               <el-button size="mini" type="text"
                 @click="viewRepayFun(scope.row.id, 'look',scope.row)">查看详情</el-button>
             </template>
@@ -1352,7 +1352,9 @@
     <EquipmentOutboundForm v-if="equipmentOutboundVisible" ref="equipmentOutboundREFForm"
       @close="closeForm">
     </EquipmentOutboundForm>
-
+    <EquipmentInboundForm v-if="equipmentInboundVisible" ref="equipmentInboundREFForm"
+      @close="closeForm">
+    </EquipmentInboundForm>
 
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
@@ -1404,6 +1406,7 @@ import SparePartsForm from '@/views/dailyManagement/sparepartsmanagement/sparepa
 import EquipmentForm from '@/views/dailyManagement/equipmentrequisitionreturn/equipmentrequisition/Form.vue'
 import { CollectionandreturnList } from '@/api/dailyManagement/Maintenance'
 import EquipmentOutboundForm from './equipmentOutboundForm.vue'
+import EquipmentInboundForm from './equipmentInboundForm.vue'
 import ToolFormS from '@/views/dailyManagement/borrowingReturn/toolreturn/Form.vue'
 import EquipmentFormS from '@/views/dailyManagement/equipmentrequisitionreturn/equipmentreturn/Form.vue'
 import SparePartsFormS from '@/views/dailyManagement/sparepartsmanagement/sparepartsReturn/Form.vue'
@@ -1418,13 +1421,14 @@ export default {
     InboundSaleReturnForm, InboundPurchaseForm, OutboundPurchaseForm,
     OutboundExternalSendForm, InboundExternalForm, OutboundPickOutForm, InboundReturnMaterialsForm,
     SaleForm, SaleOutboundForm, PurchaseOrderInboundForm, PurchaseForm, ProductExternalForm, ExternalInboundForm,
-    ExternalMaterOutboundForm,ToolForm,SparePartsForm,EquipmentForm,EquipmentOutboundForm,ToolFormS,EquipmentFormS,SparePartsFormS
+    ExternalMaterOutboundForm,ToolForm,SparePartsForm,EquipmentForm,EquipmentOutboundForm,ToolFormS,EquipmentFormS,SparePartsFormS,EquipmentInboundForm
   },
   props: {
     warehouseCode: "",
   },
   data() {
     return {
+      equipmentInboundVisible:false,
       repayDateArr:[],
       toolSVisible:false,
       sparePartsSVisible:false,
@@ -2267,6 +2271,13 @@ export default {
           
             this.$refs.equipmentOutboundREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
           })
+        }else if (this.categoryType == 'inbound_return') {
+          console.log(555);
+          this.equipmentInboundVisible = true
+          this.$nextTick(() => {
+          
+            this.$refs.equipmentInboundREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
+          })
         }  else {
           this.formVisible = true
           this.$nextTick(() => {
@@ -2852,7 +2863,7 @@ export default {
         }
         this.listLoading = true
         this.inboundReturnForm.classAttributeList = this.classAttributeList
-        this.inboundReturnForm.approvalStatus = 'ok'
+        // this.inboundReturnForm.approvalStatus = 'ok'
 
         this.superForm = this.inboundReturnForm
         if (type === 'basic') {
@@ -3617,6 +3628,7 @@ export default {
       this.externalInboundFormVisible = false
       this.externalMaterOutboundFormVisible = false
       this.equipmentOutboundVisible=false
+      this.equipmentInboundVisible=false
       this.toolSVisible=false
       this.sparePartsSVisible=false
       this.equipmentSVisible=false

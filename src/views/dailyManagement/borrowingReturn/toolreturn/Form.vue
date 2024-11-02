@@ -25,6 +25,11 @@
                 <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="6" :xs="24">
+                      <el-form-item label="归还单号" prop="orderNo">
+                        <el-input v-model="dataForm.orderNo" placeholder="请输入归还单号" :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="工具待归还单号" prop="waitRequisitionNo">
                         <ComSelect-page v-model="dataForm.waitRequisitionNo" @change="waitRequisitionChange" :tableItems="waitRequisitionTableItems" dialogTitle="选择单号" placeholder="请选择待归还单号" :listMethod="CollectionandreturnList" :listRequestObj="waitRequisitionRequestObj" :searchList="waitRequisitionSearchList" :isdisabled="btnType === 'look'" :renderTree="false" />
                       </el-form-item>
@@ -55,11 +60,11 @@
                     <el-table-column type="index" width="60" label="序号" align="center" fixed='left' key="11" />
                     <el-table-column prop="productCode" label="工具编码" min-width="160" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="productName" label="工具名称" min-width="160" show-overflow-tooltip>
+                    <!-- <el-table-column prop="productName" label="工具名称" min-width="160" show-overflow-tooltip>
                       <template slot="header">
                         <span class="required">*</span>工具名称
                       </template>
-                    </el-table-column>
+                    </el-table-column> -->
                     <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="120" show-overflow-tooltip>
@@ -128,6 +133,7 @@ import { getProductList } from '@/api/basicData/materialFiles' // 工具列表
 export default {
   data() {
     return {
+      codeConfig: {},//单据规则配置
       equipmentsform: {},
       dialogFormVisible: false,
       submitmethodsTitle: '',
@@ -239,6 +245,16 @@ export default {
     ...mapGetters(['userInfo']),
   },
   methods: {
+    async fetchData(code) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code);
+        this.codeConfig = data
+        if (this.btnType == 'add') {
+          this.dataForm.orderNo = data.number
+        }
+      } catch (error) {
+      }
+    },
     areAllValuesEmpty(obj) {
       return Object.values(obj).every((value) => {
         return value !== null && value !== undefined && value !== '';
@@ -255,6 +271,7 @@ export default {
       this.$message.success('保存成功')
     },
     Setencoding(row, index) {
+      this.equipmentsform = {}
       this.inforow = row
       this.inforownum = row.requisitionNum * 1
       for (let i = 1; i <= row.requisitionNum * 1; i++) {
@@ -296,7 +313,10 @@ export default {
     waitRequisitionChange(val, data) {
       this.dataForm.waitRequisitionNo = data[0].all.orderNo
       detailCollectionandreturn(data[0].all.id).then(res => {
-        this.dataFormTwo.productData = res.data.lines
+        this.dataFormTwo.productData = res.data.lines.map(item => {
+          item.incomingOutgoingNum = 0
+          return item
+        })
       })
     },
     getBimBusinessDetail() {
@@ -384,6 +404,9 @@ export default {
     init(id, btnType) {
       this.dataForm.id = id || ''
       this.btnType = btnType
+      if (this.btnType === 'add' || this.btnType === 'edit') {
+        this.fetchData('LYDH')
+      }
       if (this.btnType == 'add') {
         this.dataForm.recipientId = this.userInfo.userId
         this.dataForm.collectionTime = this.jnpf.getToday()

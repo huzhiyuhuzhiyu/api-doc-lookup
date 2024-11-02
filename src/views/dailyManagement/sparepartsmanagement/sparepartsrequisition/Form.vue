@@ -81,27 +81,27 @@
                   </el-row>
                 </el-form>
               </el-collapse-item>
-              <el-collapse-item title="产品信息" name="sbxx">
+              <el-collapse-item title="备件信息" name="sbxx">
                 <div v-if="btnType !== 'look'">
-                  <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择产品</el-button>|
+                  <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择备件</el-button>|
                   <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important" :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
                 </div>
                 <el-form :model="dataFormTwo" ref="productForm" class="data-form">
                   <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" @selection-change="handeleProductInfoData">
                     <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType !== 'look'" key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed='left' key="11" />
-                    <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
+                    <el-table-column prop="productCode" label="备件编码" min-width="160" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
+                    <!-- <el-table-column prop="productName" label="备件名称" min-width="160" show-overflow-tooltip>
                       <template slot="header">
-                        <span class="required">*</span>产品名称
+                        <span class="required">*</span>备件名称
                       </template>
-                    </el-table-column>
+                    </el-table-column> -->
                     <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="120" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="availableQuantity" label="可用库存数量" width="160" show-overflow-tooltip>
+                    <el-table-column prop="availableQuantity" label="可用库存数量" width="160" show-overflow-tooltip v-if="btnType !== 'look'" key="24">
                     </el-table-column>
                     <el-table-column prop="requisitionNum" label="数量" width="160">
                       <template slot="header">
@@ -143,7 +143,7 @@
           <el-button type="primary" @click="continueAdd()"> 继续新增</el-button>
         </span>
       </el-dialog>
-      <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" title="选择产品" treeTitle="产品分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'spare_parts' } }" :listMethod="getProductList" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple />
+      <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" title="选择备件" treeTitle="备件分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'spare_parts' } }" :listMethod="getProductList" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple />
     </div>
   </transition>
 </template>
@@ -157,7 +157,7 @@ import { getBimBusinessDetail } from '@/api/basicData/index'
 import { mapGetters } from 'vuex'
 import { updateCollectionandreturn, detailCollectionandreturn, checkmaintenanceList, RepairRequestList, addCollectionandreturn } from '@/api/dailyManagement/Maintenance'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
-import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
+import { getProductList } from '@/api/basicData/materialFiles' // 备件列表
 export default {
   mixins: [busFlow, flowMixin],
   components: { Process, recordList },
@@ -327,14 +327,14 @@ export default {
       },
       index: '',
       ProductTableSearchList: [
-        { prop: "code", label: "产品编码", type: 'input' },
-        { prop: "name", label: "产品名称", type: 'input' },
+        { prop: "code", label: "备件编码", type: 'input' },
+        { prop: "name", label: "备件名称", type: 'input' },
       ],
       ProductTableItems: [
-        { prop: 'code', label: '产品编码' },
-        { prop: 'name', label: '产品名称' },
+        { prop: 'code', label: '备件编码' },
+        { prop: 'name', label: '备件名称' },
         { prop: 'drawingNo', label: '品名规格' },
-        { prop: 'productCategoryName', label: '产品分类' },
+        { prop: 'productCategoryName', label: '备件分类' },
         { prop: 'availableQuantity', label: '可用库存数量' },
       ],
       salesList: [],
@@ -352,7 +352,7 @@ export default {
         returnFlag: 0,
         requisitionType: 'requisition',
         useApplication: '',
-        equipmentType: 'spare_parts',
+        equipmentType: 'accessory',
         equipmentId: '',
         equipmentIdName: '',
         collectionTime: '',
@@ -361,9 +361,9 @@ export default {
       productRules: {
         // 数量
         requisitionNum: [
-          { validator: this.formValidate({ type: 'noEmtry', params: ["数量不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
+          { validator: this.formValidate({ type: 'noEmtry', params: ["数量不能为空", (errMsg, index) => { this.$message.error(`备件信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' },
-          { validator: this.formValidate('positiveNumber', '数量必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }
+          { validator: this.formValidate('positiveNumber', '数量必须大于0', (errMsg, index) => { this.$message.error(`备件信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }
         ]
       },
       dataRule: {
@@ -406,7 +406,7 @@ export default {
         returnFlag: 0,
         requisitionType: 'requisition',
         useApplication: '',
-        equipmentType: 'spare_parts',
+        equipmentType: 'accessory',
         equipmentId: '',
         equipmentIdName: '',
         collectionTime: '',
@@ -418,7 +418,7 @@ export default {
     //返回菜单
     goBackmenu() {
       this.$router.push({
-        path: "dailyManagement/sparepartsmanagement/sparepartsrequisition/index",
+        path: "dailyManagement/sparepartsmanagement/sparepartsrequisition",
       })
       this.tipsvisible = false
     },
@@ -498,7 +498,7 @@ export default {
           })
         } else {
           this.$message({
-            message: "所选产品重复",
+            message: "所选备件重复",
             type: 'error',
             duration: 1500,
           })
@@ -512,7 +512,7 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    // 产品列表选中 
+    // 备件列表选中 
     handeleProductInfoData(val) {
       console.log(val);
       this.selectRows = val
@@ -522,7 +522,7 @@ export default {
       // 遍历选中的行的数据
       if (!this.selectRows.length) {
         this.$message({
-          message: '请选择要删除的产品',
+          message: '请选择要删除的备件',
           type: 'error',
           duration: 1500,
         })
@@ -601,7 +601,7 @@ export default {
       }
       if (!this.dataFormTwo.productData.length) {
         this.$message({
-          message: '请添加产品',
+          message: '请添加备件',
           type: 'error',
           duration: 1500,
         })

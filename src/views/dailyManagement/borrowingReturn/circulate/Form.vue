@@ -61,16 +61,16 @@
                       <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
                       <el-table-column prop="productCode" label="工具编码" min-width="160" show-overflow-tooltip>
                       </el-table-column>
-                      <el-table-column prop="productName" label="工具名称" min-width="160" show-overflow-tooltip>
+                      <!-- <el-table-column prop="productName" label="工具名称" min-width="160" show-overflow-tooltip>
                         <template slot="header">
                           <span class="required">*</span>工具名称
                         </template>
-                      </el-table-column>
+                      </el-table-column> -->
                       <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                       </el-table-column>
                       <el-table-column prop="mainUnit" label="单位" width="120" show-overflow-tooltip>
                       </el-table-column>
-                      <el-table-column prop="availableQuantity" label="可用库存数量" width="160" show-overflow-tooltip>
+                      <el-table-column prop="availableQuantity" label="可用库存数量" width="160" show-overflow-tooltip v-if="btnType !== 'look'" key="24">
                       </el-table-column>
                       <el-table-column prop="requisitionNum" label="数量" width="160">
                         <template slot="header">

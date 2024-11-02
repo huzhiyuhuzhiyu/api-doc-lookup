@@ -3522,7 +3522,7 @@ export default {
 
     // 领用查看详情
     viewEquipmentFun(id,type,data){
-      if(data.equipmentType=='spare_parts'){
+      if(data.equipmentType=='accessory'){
         // 配件
         this.sparePartsVisible=true
         this.$nextTick(()=>{
@@ -3546,7 +3546,7 @@ export default {
     },
     // 归还查看详情
     viewRepayFun(id,type,data){
-      if(data.equipmentType=='spare_parts'){
+      if(data.equipmentType=='accessory'){
         // 配件
         this.sparePartsSVisible=true
         this.$nextTick(()=>{

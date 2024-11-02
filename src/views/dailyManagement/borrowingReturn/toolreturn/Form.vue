@@ -1,12 +1,19 @@
 <template>
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
-      <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
+      <div :class="['JNPF-common-page-header']" v-if="!dataForm.id">
+        <div class="pageTitle">工具归还</div>
+        <div class="options">
+          <el-button type="primary" size="mini" :loading="btnLoading" @click="handleConfirm('submit')">
+            保存并提交</el-button>
+        </div>
+      </div>
+      <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="dataForm.id">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add' ? '新建工具归还' : btnType == 'edit' ? '编辑工具归还' : '查看工具归还'" />
         <div class="options">
           <el-button type="primary" v-if="btnType != 'look'" :loading="btnLoading" @click="handleConfirm('submit')">
-            提交</el-button>
+            保存并提交</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
@@ -19,7 +26,7 @@
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="工具待归还单号" prop="waitRequisitionNo">
-                        <ComSelect-page v-model="dataForm.waitRequisitionNo" @change="waitRequisitionChange" :tableItems="waitRequisitionTableItems" dialogTitle="选择单号" placeholder="请选择待归还单号" :listMethod="CollectionandreturnList" :listRequestObj="waitRequisitionRequestObj" :searchList="waitRequisitionSearchList" :isdisabled="btntype === 'look'" :renderTree="false" />
+                        <ComSelect-page v-model="dataForm.waitRequisitionNo" @change="waitRequisitionChange" :tableItems="waitRequisitionTableItems" dialogTitle="选择单号" placeholder="请选择待归还单号" :listMethod="CollectionandreturnList" :listRequestObj="waitRequisitionRequestObj" :searchList="waitRequisitionSearchList" :isdisabled="btnType === 'look'" :renderTree="false" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
@@ -46,17 +53,6 @@
                   <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" @selection-change="handeleProductInfoData">
                     <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType !== 'look'" key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed='left' key="11" />
-                    <el-table-column prop="equipmentCode" label="工具编号" width="180">
-                      <template slot="header">
-                        <span class="required">*</span>工具编号
-                      </template>
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'productData.'+scope.$index+'.'+'equipmentCode'" :rules='productRules.equipmentCode'>
-                          <el-input v-model="scope.row.equipmentCode" placeholder="请输入工具编号" :disabled="btnType == 'look'" style="width: 155px;">
-                          </el-input>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
                     <el-table-column prop="productCode" label="工具编码" min-width="160" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="productName" label="工具名称" min-width="160" show-overflow-tooltip>
@@ -66,7 +62,7 @@
                     </el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="unit" label="单位" width="120" show-overflow-tooltip>
+                    <el-table-column prop="mainUnit" label="单位" width="120" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="requisitionNum" label="数量" width="160">
                       <template slot="header">
@@ -79,9 +75,10 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="30">
+                    <el-table-column label="操作" width="180" fixed="right" v-if="btnType != 'look'" key="30">
                       <template slot-scope="scope">
                         <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
+                        <el-button type="text" @click="Setencoding(scope.row,scope.$index)" :disabled="!scope.row.requisitionNum">设置工具编号</el-button>
                       </template>
                     </el-table-column>
                   </el-table>
@@ -94,6 +91,29 @@
           </el-tab-pane>
         </el-tabs>
       </div>
+      <el-dialog title="设置工具编号" :visible.sync="dialogFormVisible" :append-to-body="true" :close-on-click-modal="false">
+        <el-form :model="equipmentsform">
+          <el-row :gutter="30" class="custom-row">
+            <el-col :sm="6" :xs="24" v-for="item in inforownum" :key="item">
+              <el-form-item :prop="'equipmentCode'+item">
+                <el-input v-model="equipmentsform['equipmentCode'+item]" placeholder="请输入工具编号"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="confirmsolut">确 定</el-button>
+        </div>
+      </el-dialog>
+      <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
+        <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
+            {{ submitmethodsTitle }}啦！</span><span class="import_b">您还可以进行如下操作：</span></div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="goBackmenu">返回列表</el-button>
+          <el-button type="primary" @click="continueAdd()"> 继续新增</el-button>
+        </span>
+      </el-dialog>
       <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" title="选择工具" treeTitle="工具分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'spare_parts' } }" :listMethod="getProductList" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple />
     </div>
   </transition>
@@ -108,6 +128,10 @@ import { getProductList } from '@/api/basicData/materialFiles' // 工具列表
 export default {
   data() {
     return {
+      equipmentsform: {},
+      dialogFormVisible: false,
+      submitmethodsTitle: '',
+      tipsvisible: false,
       waitRequisitionSearchList: [
         { prop: 'orderNo', label: '领用单号', type: 'input' },
       ],
@@ -176,7 +200,8 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
-        waitRequisitionNo:'',
+        id: '',
+        waitRequisitionNo: '',
         requisitionType: 'back',
         equipmentType: 'tool',
         equipmentId: '',
@@ -190,10 +215,6 @@ export default {
           { validator: this.formValidate({ type: 'noEmtry', params: ["数量不能为空", (errMsg, index) => { this.$message.error(`工具信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' },
           { validator: this.formValidate('positiveNumber', '数量必须大于0', (errMsg, index) => { this.$message.error(`工具信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }
-        ],
-        equipmentCode: [
-          { validator: this.formValidate({ type: 'noEmtry', params: ["工具编号不能为空", (errMsg, index) => { this.$message.error(`工具信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
-          { required: true, trigger: 'blur' },
         ]
       },
       dataRule: {
@@ -204,17 +225,76 @@ export default {
           { required: true, message: '归还日期不能为空', trigger: 'blur' }
         ]
       },
-      selectRows: []
+      selectRows: [],
+      inforow: {},
+      _index: '',
+      inforownum: 0
     }
   },
   created() {
+    if (!this.dataForm.id) this.init('', 'add')
     this.getBimBusinessDetail()
   },
   computed: {
     ...mapGetters(['userInfo']),
   },
   methods: {
+    areAllValuesEmpty(obj) {
+      return Object.values(obj).every((value) => {
+        return value !== null && value !== undefined && value !== '';
+      });
+    },
+    confirmsolut() {
+      let arr = []
+      if (!this.areAllValuesEmpty(this.equipmentsform)) return this.$message.error('工具编号不能为空')
+      for (let key in this.equipmentsform) {
+        arr.push({ equipmentCode: this.equipmentsform[key], productId: this.inforow.productId })
+      }
+      this.$set(this.dataFormTwo.productData[this._index], 'equipments', arr)
+      this.dialogFormVisible = false
+      this.$message.success('保存成功')
+    },
+    Setencoding(row, index) {
+      this.inforow = row
+      this.inforownum = row.requisitionNum * 1
+      for (let i = 1; i <= row.requisitionNum * 1; i++) {
+        this.$set(this.equipmentsform, 'equipmentCode' + i, '')
+      }
+      this._index = index
+      if (row.equipments && row.equipments.length) {
+        row.equipments.map((item, index) => {
+          this.$set(this.equipmentsform, 'equipmentCode' + (index + 1), item.equipmentCode)
+        })
+      }
+      this.dialogFormVisible = true
+    },
+    // 继续新增
+    continueAdd() {
+      this.tipsvisible = false
+      this.btnLoading = false
+      this.datafilelist = []
+      this.dataForm = {
+        id: '',
+        waitRequisitionNo: '',
+        requisitionType: 'back',
+        equipmentType: 'tool',
+        equipmentId: '',
+        equipmentIdName: '',
+        collectionTime: '',
+        recipientId: ''
+      }
+      this.dataFormTwo.productData = []
+      this.init('', 'add')
+    },
+    //返回菜单
+    goBackmenu() {
+      this.$router.push({
+        path: "dailyManagement/borrowingReturn/toolreturn/index",
+      })
+      this.tipsvisible = false
+    },
     waitRequisitionChange(val, data) {
+      this.dataForm.waitRequisitionNo = data[0].all.orderNo
       detailCollectionandreturn(data[0].all.id).then(res => {
         this.dataFormTwo.productData = res.data.lines
       })
@@ -248,7 +328,7 @@ export default {
             productName: item.all.name,
             productCode: item.all.code,
             drawingNo: item.all.drawingNo,
-            unit: item.all.mainUnit,
+            mainUnit: item.all.mainUnit,
             incomingOutgoingNum: item.all.incomingOutgoingNum,
             productId: item.all.id,
             requisitionNum: '',
@@ -329,6 +409,7 @@ export default {
       }
     },
     async handleConfirm(value) {
+      this.dataForm.documentStatus = value
       let submitFlag = true
       const form_1 = this.$refs.dataForm
       const valid_1 = await form_1.validate().catch(err => false)
@@ -398,13 +479,18 @@ export default {
           } else if (value == 'submit') {
             msg = '提交成功'
           }
+          this.submitmethodsTitle = msg
           this.$message({
             message: msg,
             type: 'success',
             duration: 1500,
             onClose: () => {
               this.btnLoading = false
-              this.$emit('close', true)
+              if (this.dataForm.id) {
+                this.$emit('close', true)
+              } else {
+                this.tipsvisible = true
+              }
             }
           })
         }).catch(() => {

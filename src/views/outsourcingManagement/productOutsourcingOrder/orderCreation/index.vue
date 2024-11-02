@@ -92,12 +92,12 @@
                             <template slot-scope="scope">
                               <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
                                 :rules="productRules.productDrawingNo">
-                                <el-input v-model="scope.row.productDrawingNo" placeholder="请输入品名规格" />
+                                <el-input v-model="scope.row.productDrawingNo" placeholder="品名规格" />
                               </el-form-item>
                             </template>
                           </el-table-column>
 
-                          <el-table-column prop="deliveryDate" label="交货日期" min-width="200">
+                          <el-table-column prop="deliveryDate" label="交货日期" width="175">
                             <template slot="header">
                               <span class="required">*</span>
                               交货日期
@@ -106,12 +106,12 @@
                               <el-form-item :prop="'data.' + scope.$index + '.' + 'deliveryDate'"
                                 :rules="productRules.deliveryDate">
                                 <el-date-picker v-model="scope.row.deliveryDate" type="date" value-format="yyyy-MM-dd"
-                                  style="width: 100%;" placeholder="请选择交货日期"></el-date-picker>
+                                  style="width: 100%;" placeholder="交货日期"></el-date-picker>
                               </el-form-item>
                             </template>
                           </el-table-column>
 
-                          <el-table-column prop="mainUnit" label="单位" min-width="60" show-overflow-tooltip>
+                          <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip>
                             <template slot-scope="scope">
                               <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
                                 <div class="viewData">
@@ -120,7 +120,7 @@
                               </el-form-item>
                             </template>
                           </el-table-column>
-                          <el-table-column prop="purchaseQuantity" label="数量" min-width="100">
+                          <el-table-column prop="purchaseQuantity" label="数量" width="100">
                             <template slot="header">
                               <span class="required">*</span>
                               数量
@@ -130,23 +130,23 @@
                                 :rules="productRules.purchaseQuantity">
                                 <el-input v-model="scope.row.purchaseQuantity"
                                   @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)"
-                                  maxlength="20" placeholder="请输入数量"></el-input>
+                                  maxlength="20" placeholder="数量"></el-input>
                               </el-form-item>
                             </template>
                           </el-table-column>
 
-                          <el-table-column prop="price" label="含税单价" min-width="180">
+                          <el-table-column prop="price" label="含税单价" width="140">
                             <template slot="header">
                               <span class="required">*</span>
                               单价(含税)
                             </template>
                             <template slot-scope="scope">
                               <el-form-item :prop="'data.' + scope.$index + '.' + 'price'" :rules="productRules.price">
-                                <el-input v-model="scope.row.price" placeholder="请输入含税单价" />
+                                <el-input v-model="scope.row.price" placeholder="单价(含税)" />
                               </el-form-item>
                             </template>
                           </el-table-column>
-                          <el-table-column prop="totalAmount" label="金额" min-width="140">
+                          <el-table-column prop="totalAmount" label="金额" width="120">
                             <template slot="header">
                               <span class="required">*</span>
                               金额(含税)
@@ -159,7 +159,7 @@
                               </el-form-item>
                             </template>
                           </el-table-column>
-                          <el-table-column prop="taxRate" label="税率" min-width="140">
+                          <el-table-column prop="taxRate" label="税率" width="110">
                             <template slot="header">
                               <span class="required">*</span>
                               税率
@@ -174,7 +174,7 @@
                             </template>
                           </el-table-column>
 
-                          <el-table-column prop="excludingTaxPrice" label="单价(不含税)" min-width="150">
+                          <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="130">
                             <template slot-scope="scope">
                               <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxPrice'">
                                 <div class="viewData">
@@ -184,7 +184,7 @@
                             </template>
                           </el-table-column>
 
-                          <el-table-column prop="taxAmount" label="税额" min-width="100">
+                          <el-table-column prop="taxAmount" label="税额" width="100">
                             <template slot="header">
                               <span class="required">*</span>
                               税额
@@ -197,7 +197,7 @@
                               </el-form-item>
                             </template>
                           </el-table-column>
-                          <el-table-column prop="excludingTaxAmount" label="金额(不含税)" min-width="180">
+                          <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140">
                             <template slot="header">
                               <span class="required">*</span>
                               金额(不含税)
@@ -214,7 +214,7 @@
                           <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip>
                             <template slot-scope="scope">
                               <el-input :title="scope.row.remark" v-model="scope.row.remark" maxlength="20"
-                                placeholder="请输入备注">
+                                placeholder="备注">
                                 {{ scope.row.remark }}
                               </el-input>
                             </template>
@@ -364,69 +364,6 @@ export default {
       rules: {
         remark: [{ required: true, message: '请输入备注', trigger: ['blur'] }]
       },
-      productRules: {
-        productName: [{ required: true, trigger: ['change'] }],
-        planQuantity: [
-          { required: true, trigger: ['blur'] },
-          {
-            validator: this.formValidate({
-              type: 'decimal',
-              params: [
-                20,
-                4,
-                '',
-                (errMsg) => {
-                  this.$message.error('数量：' + errMsg)
-                }
-              ]
-            }),
-            trigger: 'blur'
-          },
-          {
-            validator: this.formValidate('positiveNumber', false, (errMsg) => {
-              this.$message.error(`数量：${errMsg}`)
-            }),
-            trigger: 'blur'
-          }
-        ],
-        planQuantity2: [
-          { required: true, trigger: ['blur'] },
-          {
-            validator: this.formValidate({
-              type: 'decimal',
-              params: [
-                20,
-                4,
-                '',
-                (errMsg) => {
-                  this.$message.error('副数量：' + errMsg)
-                }
-              ]
-            }),
-            trigger: 'blur'
-          },
-          {
-            validator: this.formValidate('positiveNumber', false, (errMsg) => {
-              this.$message.error(`数量(副)：${errMsg}`)
-            }),
-            trigger: 'blur'
-          }
-        ],
-        deliveryDate: [
-          {
-            validator: this.formValidate({
-              type: 'noEmtry',
-              params: [
-                '',
-                (errMsg, index) => {
-                  this.$message.error(`产品信息第${index + 1}行：交货日期${errMsg}`)
-                }
-              ]
-            }),
-            trigger: ['blur']
-          }
-        ]
-      },
       productArr: [],
       defaultProps: {
         children: 'children',
@@ -522,42 +459,7 @@ export default {
           },
           { required: true, trigger: ['blur'] }
         ],
-        purchaseQuantity2: [
-          // 副数量
-          {
-            validator: this.formValidate({
-              type: 'noEmtry',
-              params: [
-                '',
-                (errMsg, index) => {
-                  this.$message.error(`产品信息第${index + 1}行：数量(副)${errMsg}`)
-                }
-              ]
-            }),
-            trigger: ['blur']
-          },
-          {
-            validator: this.formValidate({
-              type: 'decimal',
-              params: [
-                20,
-                4,
-                '',
-                (errMsg, index) => {
-                  this.$message.error(`产品信息第${index + 1}行：数量(副)${errMsg}`)
-                }
-              ]
-            }),
-            trigger: ['blur']
-          },
-          {
-            validator: this.formValidate('positiveNumber', false, (errMsg, index) => {
-              this.$message.error(`产品信息第${index + 1}行：数量(副)${errMsg}`)
-            }),
-            trigger: 'blur'
-          },
-          { required: true, trigger: ['blur'] }
-        ],
+
         taxRate: [
           // 税率
           {
@@ -624,7 +526,21 @@ export default {
           // },
           { required: true, trigger: ['blur'] }
         ],
-        deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
+        deliveryDate: [
+          {
+            validator: this.formValidate({
+              type: 'noEmtry',
+              params: [
+                '',
+                (errMsg, index) => {
+                  this.$message.error(`产品信息第${index + 1}行：交货日期${errMsg}`)
+                }
+              ]
+            }),
+            trigger: ['blur']
+          },
+          { required: true, message: '请选择交货日期', trigger: ['change'] }
+        ]
       },
 
       taxRateList: [],
@@ -733,7 +649,7 @@ export default {
           item.purchaseQuantity = item.inventoryQuantity // 数量
           item.price = item.price // 含税单价
           item.totalAmount = item.totalAmount // 金额(含税)
-          item.taxRate = Number(item.taxRate)  // 税率
+          item.taxRate = Number(item.taxRate) // 税率
           item.excludingTaxPrice = item.excludingTaxPrice // 不含税单价
           item.taxAmount = item.taxAmount // 税额
           item.excludingTaxAmount = item.excludingTaxAmount // 金额(不含税)
@@ -753,7 +669,7 @@ export default {
   },
   methods: {
     deliveryDateChange(val) {
-      this.dataFormTwo.data.forEach(item => {
+      this.dataFormTwo.data.forEach((item) => {
         if (!item.deliveryDate) {
           this.$set(item, 'deliveryDate', val) // 总金额(不含税)
         }
@@ -916,7 +832,6 @@ export default {
           type: 'warning'
         })
           .then(() => {
-
             this.$message({
               type: 'success',
               message: '更换成功!'
@@ -1053,13 +968,12 @@ export default {
         // 通过需求池id 获取明细的数据
         getShipmentList(obj).then((res) => {
           this.dataFormTwo.data[index].outShipmentList = res.data
-          this.dataFormTwo.data[index].outShipmentList.forEach(item => {
+          this.dataFormTwo.data[index].outShipmentList.forEach((item) => {
             item.demandQuantity = this.dataFormTwo.data[index].purchaseQuantity
           })
           console.log(this.dataFormTwo.data[index].outShipmentList, 'o')
         })
       }
-
 
       if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
         this.dataFormTwo.data[index].purchaseQuantity2 = this.numberFormat(
@@ -1174,7 +1088,6 @@ export default {
       if (submitFlag) {
         this.request(type)
       }
-
     },
 
     async request(type) {

@@ -1,8 +1,10 @@
 <template>
-  <Balances :showLabel="showLabel" :showLabel2="showLabel2" :showLabel3="showLabel3" :reconciliationType="listRequestObj.reconciliationType" :listMethod="paymentBalanceReport"
-    :listRequestObj="listRequestObj" :tableItems="tableItems" :searchList="searchList" :searchListMore="searchListMore" />
+  <Balances :showLabel="showLabel" :showLabel2="showLabel2" :showLabel3="showLabel3"
+    :reconciliationType="listRequestObj.reconciliationType" :listMethod="paymentBalanceReport"
+    :listRequestObj="listRequestObj" :tableItems="tableItems" :searchList="searchList" :searchListMore="searchListMore"
+    :superQueryJson="superQueryJson" :columnList="columnList" />
 </template>
-  
+
 <script>
 import { paymentBalanceReport } from '@/api/balances/index'
 import Balances from '@/views/financialManagement/components/balances/index.vue'
@@ -32,21 +34,21 @@ export default {
         startTime: "",
         startUpdateTime: "",
         totalRowFlag: false,
-        reconciliationType:'receivable',
+        reconciliationType: 'receivable',
       },
       tableItems: [
         { prop: 'accountPeriod', label: '账期', minWidth: '120' },
         { prop: 'balanceState', label: '结存状态', minWidth: '120' },
-        { prop: 'partnerName', label: '客户名称',minWidth: '160' },
-        { prop: 'partnerCode', label: '客户编码',minWidth: '160' },
-        { prop: 'paymentCycle', label: '收款周期' },
-        { prop: 'initPaymentAmount', label: '期初应收金额' },
-        { prop: 'currentBillingAmount', label: '本期开票金额' },
-        { prop: 'currentInboundOutboundAmount', label: '本期出库金额' },
-        { prop: 'duePaymentAmount', label: '到期应收金额' },
-        { prop: 'currentActualAmount', label: '本期实收金额' },
-        { prop: 'overduePaymentAmount', label: '逾期收款金额' },
-        { prop: 'endPaymentAmount', label: '期末应收金额' },
+        { prop: 'partnerName', label: '客户名称', minWidth: '160', sortable: true },
+        { prop: 'partnerCode', label: '客户编码', minWidth: '160', sortable: true },
+        { prop: 'paymentCycle', label: '收款周期', sortable: true },
+        { prop: 'initPaymentAmount', label: '期初应收金额', sortable: true },
+        { prop: 'currentBillingAmount', label: '本期开票金额', sortable: true },
+        { prop: 'currentInboundOutboundAmount', label: '本期出库金额', sortable: true },
+        { prop: 'duePaymentAmount', label: '到期应收金额', sortable: true },
+        { prop: 'currentActualAmount', label: '本期实收金额', sortable: true },
+        { prop: 'overduePaymentAmount', label: '逾期收款金额', sortable: true },
+        { prop: 'endPaymentAmount', label: '期末应收金额', sortable: true },
       ],
       searchList: [
         { prop: 'accountPeriod', label: '账期', type: 'date' },
@@ -59,20 +61,49 @@ export default {
         { prop: 'partnerCode', label: '客户编码', type: 'input' },
         { prop: 'partnerName', label: '客户名称', type: 'input' },
       ],
+      superQueryJson: [
+        {
+          prop: 'accountPeriod',
+          label: '账期',
+          type: 'input'
+        },
+        {
+          prop: 'balanceState',
+          label: '结存状态',
+          type: 'select',
+          options: [{ label: '未结存 ', value: 'not_finished', }, { label: '已结存 ', value: 'finished', }]
+        },
+        {
+          prop: 'partnerName',
+          label: '客户名称',
+          type: 'input'
+        },
+        {
+          prop: 'partnerCode',
+          label: '客户编码',
+          type: 'input'
+        },
+        {
+          prop: 'paymentCycle',
+          label: '收款周期',
+          type: 'input'
+        },
+      ],
+      columnList: ['cooperativePartnerCode']
     }
   },
   created() {
   },
-  computed:{
-    showLabel(){
+  computed: {
+    showLabel() {
       let label = this.listRequestObj.reconciliationType !== 'receivable' ? '付' : '收'
       return label
     },
-    showLabel2(){
+    showLabel2() {
       let label = this.listRequestObj.reconciliationType !== 'receivable' ? '入' : '出'
       return label
     },
-    showLabel3(){
+    showLabel3() {
       let label = this.listRequestObj.reconciliationType !== 'receivable' ? '收' : '开'
       console.log(label);
       return label
@@ -80,5 +111,3 @@ export default {
   },
 }
 </script>
-
-  

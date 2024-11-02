@@ -50,6 +50,13 @@
               @click="exportForm">导出</el-button>
           </div>
           <div class="JNPF-common-head-right">
+            <el-tooltip content="高级查询" placement="top" v-if="true">
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
@@ -101,7 +108,9 @@
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
-
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <lineTables v-if="lineVisible" ref="lineForm" :reconciliationType="reconciliationType" :listMethod="lineMathods"
       :listRequestObj="lineRequestObj" :tableItems="lineTableItems" :searchList="lineSearchList"
       :searchListMore="lineSearchListMore" @close="closeForm" />
@@ -116,9 +125,10 @@ import { paymentBalanceCan, paymentStockLine } from '@/api/balances/index'
 import { excelExport } from '@/api/basicData/index'
 import { getfinInvoiceRecords, getfinPaymentRecords } from '@/api/financialManagement/index'
 import { getfinAccountsReport } from '@/api/ReconciliaRePayments/index'
+import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
   name: 'payment',
-  components: { Form, ExportForm, lineTables },
+  components: { Form, ExportForm, lineTables, SuperQuery },
   props: {
     reconciliationType: {
       type: String,
@@ -176,9 +186,18 @@ export default {
         }
       */
     },
+    superQueryJson: {
+      type: Array,
+      default: () => []
+    },
+    columnList: {
+      type: Array,
+      default: () => []
+    }
   },
   data() {
     return {
+      superQueryVisible: false,
       title: '更多查询',
       tableData: [],
       listLoading: false,
@@ -515,6 +534,9 @@ export default {
       });
       return sums;
 
+    },
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
     },
     initData() {
       this.visible = false

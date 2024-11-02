@@ -119,7 +119,6 @@
                       <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
-
                             <div class="viewData">
                               <span>{{ scope.row.mainUnit }}</span>
                             </div>
@@ -136,19 +135,18 @@
                         </template>
                       </el-table-column>
 
-
                       <el-table-column prop="excludingTaxAmount" label="不含税总金额" min-width="140">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'"
                             :rules="productFormRules.excludingTaxAmount">
                             <div :class="[
                               'viewData',
-                              scope.row.receiptReturnType === 'outbound_purchase' ? 'green' : 'red'
+                              scope.row.receiptReturnType === 'inbound_purchase' ? 'green' : 'red'
                             ]">
-                              <span v-if="scope.row.receiptReturnType === 'outbound_purchase'">
+                              <span v-if="scope.row.receiptReturnType === 'inbound_purchase'">
                                 +{{ scope.row.excludingTaxAmount }}
                               </span>
-                              <span v-else-if="scope.row.receiptReturnType === 'inbound_purchase'">
+                              <span v-else-if="scope.row.receiptReturnType === 'outbound_purchase'">
                                 {{ scope.row.excludingTaxAmount }}
                               </span>
                               <el-input v-if="!scope.row.receiptReturnType" disabled
@@ -166,12 +164,12 @@
                             :rules="productFormRules.taxAmount">
                             <div :class="[
                               'viewData',
-                              scope.row.receiptReturnType === 'outbound_purchase' ? 'green' : 'red'
+                              scope.row.receiptReturnType === 'inbound_purchase' ? 'green' : 'red'
                             ]">
-                              <span v-if="scope.row.receiptReturnType === 'outbound_purchase'">
+                              <span v-if="scope.row.receiptReturnType === 'inbound_purchase'">
                                 +{{ scope.row.taxAmount }}
                               </span>
-                              <span v-else-if="scope.row.receiptReturnType === 'inbound_purchase'">
+                              <span v-else-if="scope.row.receiptReturnType === 'outbound_purchase'">
                                 {{ scope.row.taxAmount }}
                               </span>
 
@@ -189,12 +187,12 @@
                             :rules="productFormRules.includingTaxAmount">
                             <div :class="[
                               'viewData',
-                              scope.row.receiptReturnType === 'outbound_purchase' ? 'green' : 'red'
+                              scope.row.receiptReturnType === 'inbound_purchase' ? 'green' : 'red'
                             ]">
-                              <span v-if="scope.row.receiptReturnType === 'outbound_purchase'">
+                              <span v-if="scope.row.receiptReturnType === 'inbound_purchase'">
                                 +{{ scope.row.includingTaxAmount }}
                               </span>
-                              <span v-else-if="scope.row.receiptReturnType === 'inbound_purchase'">
+                              <span v-else-if="scope.row.receiptReturnType === 'outbound_purchase'">
                                 {{ scope.row.includingTaxAmount }}
                               </span>
                               <el-input v-if="!scope.row.receiptReturnType" v-model="scope.row.includingTaxAmount">
@@ -226,12 +224,12 @@
                   </el-form>
                   <div class="text" style="height: 40px; line-height: 40px; background: #f5f7fa;">
                     <span style="font-weight:500;margin-right:10px">
-                      退货合计金额：
-                      <span class="red">{{ backComputedValue }}</span>
-                    </span>
-                    <span style="font-weight:500;margin-right:10px">
                       收货合计金额：
                       <span class="green">+{{ receiptComputedValue }}</span>
+                    </span>
+                    <span style="font-weight:500;margin-right:10px">
+                      退货合计金额：
+                      <span class="red">{{ backComputedValue }}</span>
                     </span>
                     <span style="font-weight:500;margin-right:10px">
                       不含税金额：
@@ -260,7 +258,7 @@
               <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
             </el-tab-pane>
             <el-tab-pane v-if="btnType == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
-              <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
+              <recordList :list="flowTaskOperatorRecordList" :endTime="endTime" />
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -276,7 +274,8 @@ import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 export default {
   components: {
-    Process, recordList
+    Process,
+    recordList
   },
   data() {
     return {
@@ -308,7 +307,7 @@ export default {
         backAmount: '', // 退货总金额
         receiptAmount: '', // 收货总金额
         brTotalAmount: '', // 收/退货总金额
-        approvalFlag: false,
+        approvalFlag: false
       },
       newArr: [],
       type: '',
@@ -361,7 +360,7 @@ export default {
       flowData: {},
       formLoading: false,
       flowTemplateJson: {},
-      approvalFlag: false,   // 待办事宜等页面 需要
+      approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
       endTime: 0
     }
@@ -380,6 +379,7 @@ export default {
         count += item.excludingTaxAmount * 1
       })
       this.dataForm.excludingTaxAmount = this.jnpf.numberFormat(count)
+
       return this.dataForm.excludingTaxAmount
     },
     computedValue2() {
@@ -394,7 +394,7 @@ export default {
     backComputedValue() {
       let count = 0
       this.dataFormTwo.data.forEach((item) => {
-        if (item.receiptReturnType == 'inbound_purchase') {
+        if (item.receiptReturnType == 'outbound_purchase') {
           count += item.includingTaxAmount * 1
         }
       })
@@ -404,7 +404,7 @@ export default {
     receiptComputedValue() {
       let count = 0
       this.dataFormTwo.data.forEach((item) => {
-        if (item.receiptReturnType === 'outbound_purchase') {
+        if (item.receiptReturnType === 'inbound_purchase') {
           count += item.includingTaxAmount * 1
         }
       })
@@ -416,7 +416,7 @@ export default {
       if (this.dataForm.excludingTaxAmount !== '' && this.dataForm.taxAmount !== '') {
         count = this.dataForm.excludingTaxAmount * 1 + this.dataForm.taxAmount * 1
       }
-      console.log('count', count)
+
       this.dataForm.includingTaxAmount = this.jnpf.numberFormat(count)
       return this.dataForm.includingTaxAmount
     }
@@ -425,7 +425,6 @@ export default {
     'dataFormTwo.data': {
       // immediate:true,
       handler: function (newVal, oldVal) {
-        console.log(111, newVal)
         newVal.forEach((item) => {
           if (item.receiptReturnType === 'outbound_purchase') {
             if (item.includingTaxAmount) {
@@ -458,6 +457,9 @@ export default {
                 2
               )
               item.taxAmount = this.jnpf.numberFormat(item.includingTaxAmount - item.excludingTaxAmount, 2)
+            } else {
+              item.excludingTaxAmount = ''
+              item.taxAmount = ''
             }
           }
         })
@@ -466,7 +468,6 @@ export default {
     },
     'dataForm.includingTaxAmount': {
       handler: function (newVal, oldVal) {
-        console.log(newVal, '// immediate:true,')
         this.dataForm.totalReconciliationAmount = newVal
       },
       immediate: true
@@ -474,7 +475,6 @@ export default {
   },
   methods: {
     addAdjustmentBtn() {
-      console.log(234, this.dataFormTwo.data)
       this.dataFormTwo.data.push({
         accountsReceivableId: '',
         calculationDirection: '',
@@ -502,7 +502,6 @@ export default {
         adjustmentLineFlag: true
       })
       this.newArr = this.dataFormTwo.data.filter((item) => item.adjustmentLineFlag === false)
-      console.log(' this.dataFormTwo.data', this.dataFormTwo.data)
     },
     clearData() {
       this.dataForm.id = ''
@@ -514,11 +513,11 @@ export default {
     init(data) {
       this.dataFormTwo.data = []
       // 避免传递过来的数据 输入框设置默认值后无法修改 因为内存地址的问题 指向了同一个
-      console.log(77777, data)
+
       let _data = JSON.parse(JSON.stringify(data))
       _data.forEach((item) => {
         let excludingTaxAmount =
-          item.businessType === 'outbound_purchase'
+          item.businessType === 'inbound_purchase'
             ? this.jnpf.numberFormat(
               item.num * this.jnpf.numberFormat(item.costPrice / (1 + (item.taxRate * 1) / 100), 2),
               2
@@ -527,7 +526,7 @@ export default {
               item.num * this.jnpf.numberFormat(item.costPrice / (1 + (item.taxRate * 1) / 100))
             )
         let includingTaxAmount =
-          item.businessType === 'inbound_purchase'
+          item.businessType === 'outbound_purchase'
             ? this.jnpf.numberFormat(Math.abs(excludingTaxAmount) * (1 + (item.taxRate * 1) / 100))
             : this.jnpf.numberFormat(excludingTaxAmount * (1 + (item.taxRate * 1) / 100))
         this.dataFormTwo.data.push({
@@ -554,7 +553,7 @@ export default {
           excludingTaxPrice: this.jnpf.numberFormat(item.costPrice / (1 + (item.taxRate * 1) / 100), 2),
           excludingTaxAmount: excludingTaxAmount,
           taxAmount:
-            item.businessType === 'outbound_purchase'
+            item.businessType === 'inbound_purchase'
               ? this.jnpf.numberFormat(includingTaxAmount - excludingTaxAmount)
               : this.jnpf.numberFormat(includingTaxAmount - excludingTaxAmount),
           taxRate: item.taxRate,
@@ -566,7 +565,7 @@ export default {
       this.listLoading = false
 
       this.dataFormTwo.data.forEach((item, index) => {
-        if (item.receiptReturnType === 'outbound_purchase') {
+        if (item.receiptReturnType === 'inbound_purchase') {
           item.includingTaxAmount = this.jnpf.numberFormat(item.reconciliationUnitPrice * item.price)
           this.includingTaxAmount += this.jnpf.numberFormat(item.reconciliationUnitPrice * item.price)
         } else {
@@ -574,7 +573,7 @@ export default {
           this.includingTaxAmount += this.jnpf.numberFormat(item.excludingTaxAmount + item.taxAmount)
         }
       })
-      console.log('this.dataFormTwo.data', this.dataFormTwo.data)
+
       this.dataForm.cooperativePartnerName = data[0].partnerName
       this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
       // 获取当前日期
@@ -593,7 +592,9 @@ export default {
       const formattedDate = `${year}-${month}-${date}`
       this.dataForm.reconciliationDate = formattedDate
       // // 审批
-      this.$nextTick(() => { this.getBusInfo() })
+      this.$nextTick(() => {
+        this.getBusInfo()
+      })
     },
     // 表单提交
     dataFormSubmit() {
@@ -606,13 +607,11 @@ export default {
 
       let form_2 = this.$refs['productForm']
       let valid_2 = await form_2.validate().catch((err) => false)
-      console.log(this.dataForm, '参数')
-      console.log(valid_2, '11111111111111111')
+
       // return
       this.$refs['elForm'].validate((valid) => {
         if (valid) {
           if (!valid_2) {
-            console.log(1)
             this.btnLoading = false
             // for (let i = 0; i < this.dataFormTwo.data.length; i++) {
             //   const item = this.dataFormTwo.data[i]
@@ -684,23 +683,25 @@ export default {
 
     // 测试审批流
     getBusInfo() {
-      getBusinessFlowInfo('b012').then(res => {
-        if (res.data) {
-          if (res.data.enabledMark) {
-            this.flowData = res.data
-            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
-            this.dataForm.approvalFlag = res.data.enabledMark
+      getBusinessFlowInfo('b012')
+        .then((res) => {
+          if (res.data) {
+            if (res.data.enabledMark) {
+              this.flowData = res.data
+              this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+              this.dataForm.approvalFlag = res.data.enabledMark
+            } else {
+              this.flowTemplateJson = {}
+              this.dataForm.approvalFlag = false
+              this.$message.error('未找到审批流程！')
+            }
           } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
-            this.$message.error('未找到审批流程！')
           }
-        } else {
-          this.flowTemplateJson = {}
-          this.dataForm.approvalFlag = false
-        }
-      }).catch(() => { })
-    },
+        })
+        .catch(() => { })
+    }
   }
 }
 </script>

@@ -1,12 +1,16 @@
 <template>
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
-      <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
-        <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
+      <div :class="['JNPF-common-page-header']" v-if="!dataForm.id">
+        <div class="pageTitle">工具领用</div>
+        <div class="options">
+          <el-button type="primary" size="mini" :loading="btnLoading" @click="handleConfirm('submit')">
+            保存并提交</el-button>
+        </div>
+      </div>
+      <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="dataForm.id&&!approvalFlag">
         <el-page-header @back="goBack" :content="btnType == 'add' ? '新建工具领用' : btnType == 'edit' ? '编辑工具领用' : '查看工具领用'" />
         <div class="options">
-          <!-- <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
-            保存草稿</el-button> -->
           <el-button type="primary" v-if="btnType != 'look'" :loading="btnLoading" @click="handleConfirm('submit')">
             保存并提交</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
@@ -57,16 +61,16 @@
                       <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
                       <el-table-column prop="productCode" label="工具编码" min-width="160" show-overflow-tooltip>
                       </el-table-column>
-                      <el-table-column prop="productName" label="工具名称" min-width="160" show-overflow-tooltip>
+                      <!-- <el-table-column prop="productName" label="工具名称" min-width="160" show-overflow-tooltip>
                         <template slot="header">
                           <span class="required">*</span>工具名称
                         </template>
-                      </el-table-column>
+                      </el-table-column> -->
                       <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                       </el-table-column>
-                      <el-table-column prop="unit" label="单位" width="120" show-overflow-tooltip>
+                      <el-table-column prop="mainUnit" label="单位" width="120" show-overflow-tooltip>
                       </el-table-column>
-                      <el-table-column prop="availableQuantity" label="可用库存数量" width="160" show-overflow-tooltip>
+                      <el-table-column prop="availableQuantity" label="可用库存数量" width="160" show-overflow-tooltip v-if="btnType !== 'look'" key="24">
                       </el-table-column>
                       <el-table-column prop="requisitionNum" label="数量" width="160">
                         <template slot="header">
@@ -101,6 +105,14 @@
           </el-tab-pane>
         </el-tabs>
       </div>
+      <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
+        <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
+            {{ submitmethodsTitle }}啦！</span><span class="import_b">您还可以进行如下操作：</span></div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="goBackmenu">返回列表</el-button>
+          <el-button type="primary" @click="continueAdd()"> 继续新增</el-button>
+        </span>
+      </el-dialog>
       <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" title="选择工具" treeTitle="工具分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'spare_parts' } }" :listMethod="getProductList" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple />
     </div>
   </transition>
@@ -121,6 +133,8 @@ export default {
   components: { Process, recordList },
   data() {
     return {
+      submitmethodsTitle: '',
+      tipsvisible: false,
       flowTemplateJson: {},
       flowData: {},
       approvalFlag: false,   // 待办事宜等页面 需要
@@ -166,6 +180,7 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
+        id: '',
         approvalFlag: false,
         orderNo: '',
         returnFlag: 0,
@@ -204,9 +219,40 @@ export default {
     ...mapGetters(['userInfo']),
   },
   created() {
+    if (!this.dataForm.id) this.init('', 'add')
     this.getBimBusinessDetail()
   },
   methods: {
+    // 继续新增
+    continueAdd() {
+      this.tipsvisible = false
+      this.btnLoading = false
+      this.datafilelist = []
+      this.dataForm = {
+        id: '',
+        approvalFlag: false,
+        orderNo: '',
+        returnFlag: 0,
+        equipmentType: 'tool',
+        requisitionType: 'requisition',
+        returnTime: '',
+        collectionTime: '',
+        recipientId: '',
+        maintainerIdText: '',
+        departmentId: '',
+        departmentIdText: '',
+        remark: ''
+      }
+      this.dataFormTwo.productData = []
+      this.init('', 'add')
+    },
+    //返回菜单
+    goBackmenu() {
+      this.$router.push({
+        path: "dailyManagement/borrowingReturn/circulate/index",
+      })
+      this.tipsvisible = false
+    },
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
@@ -246,7 +292,7 @@ export default {
             productName: item.all.name,
             productCode: item.all.code,
             drawingNo: item.all.drawingNo,
-            unit: item.all.mainUnit,
+            mainUnit: item.all.mainUnit,
             availableQuantity: item.all.availableQuantity,
             productId: item.all.id,
             requisitionNum: '',
@@ -384,13 +430,18 @@ export default {
               } else if (value == 'submit') {
                 msg = '提交成功'
               }
+              this.submitmethodsTitle = msg
               this.$message({
                 message: msg,
                 type: 'success',
                 duration: 1500,
                 onClose: () => {
                   this.btnLoading = false
-                  this.$emit('close', true)
+                  if (this.dataForm.id) {
+                    this.$emit('close', true)
+                  } else {
+                    this.tipsvisible = true
+                  }
                 }
               })
             }).catch(() => {

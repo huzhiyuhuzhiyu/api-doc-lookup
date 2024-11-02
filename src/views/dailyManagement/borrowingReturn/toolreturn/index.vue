@@ -40,7 +40,7 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="handleUserRelation('', 'add')" />
+          <div></div>
           <div class="JNPF-common-head-right" style="float: right">
             <el-tooltip content="高级查询" placement="top">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
@@ -54,6 +54,13 @@
           </div>
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" custom-column>
+          <el-table-column prop="orderNo" label="归还单号" min-width="200" sortable="custom">
+            <template slot-scope="scope">
+              <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
+                                scope.row.orderNo
+                            }}</el-link>
+            </template>
+          </el-table-column>
           <el-table-column prop="collectionTime" label="归还日期" min-width="180" sortable="custom"></el-table-column>
           <el-table-column prop="maintainerIdText" label="归还人" min-width="120"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" min-width="200" sortable="custom"></el-table-column>

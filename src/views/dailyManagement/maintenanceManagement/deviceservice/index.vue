@@ -142,6 +142,9 @@
                   <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'end')" :disabled="scope.row.state !== 'maintaining'||scope.row.reviewComments !== 'immediately'">
                     维修
                   </el-dropdown-item>
+                  <!-- <el-dropdown-item @click.native="outsourcedcompletion(scope.row.id)" v-if="scope.row.reviewComments == 'outsourcing'">
+                    委外维修完成
+                  </el-dropdown-item> -->
                   <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
                     查看详情
                   </el-dropdown-item>
@@ -394,6 +397,7 @@ export default {
     this.initData()
   },
   methods: {
+    outsourcedcompletion() { },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },

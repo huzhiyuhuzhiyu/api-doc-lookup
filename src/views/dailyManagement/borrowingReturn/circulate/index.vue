@@ -25,7 +25,7 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <el-button size="mini" type="primary" icon="el-icon-plus" @click="addSupplier('', 'add')">领用</el-button>
+          <div></div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />

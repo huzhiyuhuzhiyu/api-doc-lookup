@@ -28,7 +28,7 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
           <div>
-            <el-dropdown style="margin-right:10px;">
+            <!-- <el-dropdown style="margin-right:10px;">
               <el-button size="mini" type="primary" icon="el-icon-plus">
                 新建
                 <i class="el-icon-arrow-down el-icon--right"></i>
@@ -37,7 +37,7 @@
                 <el-dropdown-item @click.native="addOrUpdateHandle('', 'add','equipment')">设备</el-dropdown-item>
                 <el-dropdown-item @click.native="addOrUpdateHandle('','add','tool')">工具</el-dropdown-item>
               </el-dropdown-menu>
-            </el-dropdown>
+            </el-dropdown> -->
           </div>
           <div class="JNPF-common-head-right" style="float: right">
             <el-tooltip content="高级查询" placement="top">
@@ -63,9 +63,9 @@
           </el-table-column>
           <el-table-column prop="collectionTime" label="领用日期" width="180" sortable="custom"></el-table-column>
           <el-table-column prop="maintainerIdText" label="领用人" width="120"></el-table-column>
-          <el-table-column prop="workNo" label="单号" min-width="200">
+          <el-table-column prop="workNo" label="原单号/名称" min-width="200">
           </el-table-column>
-          <el-table-column prop="equipmentIdName" label="名称" min-width="200">
+          <el-table-column prop="equipmentIdName" label="设备/工具名称" min-width="200">
           </el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
@@ -196,7 +196,7 @@ export default {
       orderForm: {},
       orderFormone: {
         requisitionType: 'requisition',
-        equipmentType: 'spare_parts',
+        equipmentType: 'accessory',
         maintainerIdText: '',
         useApplication: '',
         pageNum: 1,

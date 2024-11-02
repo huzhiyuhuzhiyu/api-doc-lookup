@@ -186,7 +186,7 @@ export default {
         { label: "归还", value: 'back' }
       ],
       orderForm: {
-        equipmentType: 'spare_parts',
+        equipmentType: 'accessory',
         orderNo: '',
         maintainerIdText: '',
         requisitionType: '',
@@ -258,7 +258,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.orderForm = {
-        equipmentType: 'spare_parts',
+        equipmentType: 'accessory',
         orderNo: '',
         auditStatus: '',
         documentStatus: '',

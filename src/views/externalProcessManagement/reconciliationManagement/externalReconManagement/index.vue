@@ -43,8 +43,8 @@
         <div class="JNPF-common-head">
           <div>
             <el-button size="mini" type="primary" @click="addOrUpdateHandle()">生成外协对账</el-button>
-            <el-button v-has="'btn_export'" :disabled="tableDataList.length > 0 ? false : true" size="mini"
-              type="primary" icon="el-icon-download" @click="exportForm">
+            <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
+              icon="el-icon-download" @click="exportForm">
               导出
             </el-button>
           </div>
@@ -71,7 +71,7 @@
           <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
           <!-- <el-table-column prop="productName" label="产品名称" min-width="180" sortable="custom" /> -->
           <el-table-column prop="drawingNo" label="品名规格" min-width="180" sortable="custom" />
-          <el-table-column prop="businessType" label="收/退货类型" width="130" sortable="custom">
+          <el-table-column prop="businessType" label="收/退货类型" width="140" sortable="custom">
             <template slot-scope="scope">
               <div v-if="scope.row.businessType == 'outbound_external'">退货</div>
               <div v-else-if="scope.row.businessType == 'inbound_external'">收货</div>
@@ -87,16 +87,16 @@
           </el-table-column>
           <el-table-column prop="totalAmount" label="金额" width="120">
             <template slot-scope="scope">
-              <div v-if="scope.row.businessType == 'outbound_external'" style="color: #67C23A">
+              <div v-if="scope.row.businessType == 'inbound_external'" style="color: #67C23A">
                 +{{ scope.row.totalAmount }}
               </div>
-              <div v-else-if="scope.row.businessType == 'inbound_external'" style="color:red">
+              <div v-else-if="scope.row.businessType == 'outbound_external'" style="color:red">
                 -{{ scope.row.totalAmount }}
               </div>
             </template>
           </el-table-column>
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" min-width="180" sortable="custom" />
+          <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
           :limit.sync="listQuery.pageSize" @pagination="initData" />
@@ -203,11 +203,7 @@ export default {
           label: '产品编码',
           type: 'input'
         },
-        // {
-        //   prop: 'productName',
-        //   label: "产品名称",
-        //   type: 'input'
-        // },
+
         {
           prop: 'productDrawingNo',
           label: '品名规格',
@@ -218,26 +214,14 @@ export default {
           label: '单位',
           type: 'input'
         },
-        {
-          prop: 'num',
-          label: '出入库数量',
-          type: 'input'
-        },
-        {
-          prop: 'price',
-          label: '单价(含税)',
-          type: 'input'
-        },
+
+
         {
           prop: 'taxRate',
           label: '税率(%)',
           type: 'input'
         },
-        {
-          prop: 'excludingTaxAmount',
-          label: '金额',
-          type: 'input'
-        },
+
         {
           prop: 'createTime',
           label: '创建时间',

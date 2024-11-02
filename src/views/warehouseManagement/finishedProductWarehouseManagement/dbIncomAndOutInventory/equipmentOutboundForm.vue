@@ -127,11 +127,11 @@
 
                         <el-table-column prop="num" label="领用出库数量" width="160" :key="77">
                           <template slot="header">
-                            <span class="required">*</span>领用数量
+                            <span class="required">*</span>领用出库数量
                           </template>
                           <template slot-scope="scope">
                             <el-input :disabled="btnType == 'look'" @input="watchNum(scope.row, scope.$index)"
-                              v-model="scope.row.num" placeholder="领料数量"></el-input>
+                              v-model="scope.row.num" placeholder="领用出库数量"></el-input>
                           </template>
                         </el-table-column>
 
@@ -361,7 +361,7 @@
           <el-button type="primary" :loading="btnLoading" @click="submitAllProduct()">
             确定</el-button>
         </span>
-      </el-dialog> 
+      </el-dialog>
       <el-dialog title="设置资产编码" :close-on-click-modal="false" :close-on-press-escape="false"
         @close="setcodeVisible = false" :visible.sync="setcodeVisible" lock-scroll
         class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body>
@@ -562,7 +562,7 @@ export default {
       currentUseIndex: "",
       codeList: "",
       arr: [],
-      classAttributeList:[],
+      classAttributeList: [],
     }
   },
   created() {
@@ -579,7 +579,7 @@ export default {
     setCodeFun(row, index) {
       console.log(row);
       this.setcodeVisible = true
-      this.currentUseIndex=index
+      this.currentUseIndex = index
       this.arr = Array.from({ length: row.num }, () => ({
         assetCode: "",
         moveId: "",
@@ -590,11 +590,10 @@ export default {
     submitCodeFun() {
       console.log(this.arr);
       const hasEmptyAssetCode = this.arr.some(item => item.assetCode === "");
-      if(hasEmptyAssetCode)  return this.$message.error("资产编码不能为空，请检查") 
-      this.productData
-    this.$set(this.productData[this.currentUseIndex],'warehouseCodeLineList',this.arr)
-    this.setcodeVisible=false
-    console.log(this.productData);
+      if (hasEmptyAssetCode) return this.$message.error("资产编码不能为空，请检查")
+      this.productData[this.currentUseIndex].warehouseCodeLineList=this.arr
+      this.setcodeVisible = false
+      console.log(this.productData);
     },
     // 打开选择批次号弹框
     openSeleceBatchNumberDialog(data, index) {
@@ -654,12 +653,24 @@ export default {
       this.productForm.orderNo = this.dataForm.sourceNo
       equRequisitionRecordsproducts(this.productForm).then(res => {
         if (res.data.records.length) {
-          res.data.records.forEach(element => {
+          res.data.records.forEach(item => {
             this.$set(item, 'num', this.jnpf.numberFormat(this.jnpf.math('subtract', [item.requisitionNum, item.incomingOutgoingNum]), 2))
             this.$set(item, 'awitNum', this.jnpf.numberFormat(this.jnpf.math('subtract', [item.requisitionNum, item.incomingOutgoingNum]), 2))
+              this.$set(item,'warehouseCodeLineList',[])
+              item.equipments.forEach(equipment => {
+              // 创建新的对象并赋值  
+              const newObj = {
+                assetCode: equipment.equipmentCode, // 将 equipmentCode 赋值给 assetCode  
+                moveId: "", // 根据需要设置  
+                moveLineId: "" // 根据需要设置  
+              };
+              // 将新对象添加到 warehouseCodeLineList  
+              item.warehouseCodeLineList.push(newObj);
+            });
           });
+           console.log("res.data.records",res.data.records);
           this.productList = res.data.records
-          this.productTotal = this.res.data.total
+          this.productTotal = res.data.total
         }
       })
 
@@ -776,8 +787,8 @@ export default {
         }
       }
     },
-   
-    
+
+
 
 
 
@@ -869,6 +880,7 @@ export default {
               item.noticeLineId = ""
               item.sourceNo = this.dataForm.sourceNo
               item.ordersId = res.data.requisition.id
+              this.$set(item,'warehouseCodeLineList',[])
               item.ordersLineId = item.id
               item.num = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.requisitionNum, item.incomingOutgoingNum]), 2)
               this.$set(item, 'unReceiveQuantity', item.num)
@@ -940,7 +952,7 @@ export default {
                 break
               }
               if (!item.warehouseCodeLineList.length) {
-              
+
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行资产编码不能为空")
                 break
@@ -970,7 +982,7 @@ export default {
             this.copyLinesData = JSON.parse(JSON.stringify(this.productData))
             this.copyLinesData.forEach(element => {
               element.warehouseType = this.dataForm.warehouseType
-            }); 
+            });
             this.dataForm.classAttributeList = this.classAttributeList
             this.dataForm.sourceType = 'order'
             let dataObj = {

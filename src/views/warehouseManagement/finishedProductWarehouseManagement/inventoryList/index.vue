@@ -4,7 +4,7 @@
       <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
 
-        
+
           <template v-for="item in searchList">
             <el-col :span="item.searchType === 3 ? 6 : 4">
               <el-form-item>
@@ -23,7 +23,7 @@
               </el-form-item>
             </el-col>
           </template>
-      
+
           <el-col :span="4">
             <el-form-item>
               <el-select v-model="listQuery.businessType" placeholder="业务类型" style="width: 100%;" clearable>
@@ -185,6 +185,7 @@
     </ExternalInboundForm>
     <outboundUseForm v-if="outboundUseVisible" ref="outboundUseREFForm" @close="closeForm">
     </outboundUseForm>
+    <InboundReturnForm v-if="inboundReturnVisible" ref="inboundReturnREFForm" @close="closeForm"></InboundReturnForm>
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -213,8 +214,9 @@ import SaleOutboundForm from '../dbIncomAndOutInventory/saleOutboundForm.vue'
 import ExternalMaterOutboundForm from '../dbIncomAndOutInventory/externalMaterialsForm.vue'
 import PurchaseOrderInboundForm from '../dbIncomAndOutInventory/purchaseOrderInboundForm.vue'
 import ExternalInboundForm from '../dbIncomAndOutInventory/externalInboundForm.vue'
-import outboundUseForm from '../dbIncomAndOutInventory/equipmentOutboundForm.vue'
 import Form from './Form'
+import outboundUseForm from '../dbIncomAndOutInventory/equipmentOutboundForm.vue'
+import InboundReturnForm from '../dbIncomAndOutInventory/equipmentInboundForm.vue'
 export default {
   name: 'finishedProductWarehouseManagement',
   components: {
@@ -222,14 +224,15 @@ export default {
     ProductInboundForm, OutboundSaleSendForm, InboundSaleReturnForm,
     InboundPurchaseForm, OutboundPurchaseForm, OutboundExternalSendForm,
     InboundExternalForm, OutboundPickOutForm, InboundReturnMaterialsForm,
-    Transfer, SaleOutboundForm, PurchaseOrderInboundForm, ExternalMaterOutboundForm, ExternalInboundForm,outboundUseForm
+    Transfer, SaleOutboundForm, PurchaseOrderInboundForm, ExternalMaterOutboundForm, ExternalInboundForm, outboundUseForm, InboundReturnForm
   },
   props: {
     warehouseCode: "",
   },
   data() {
     return {
-      outboundUseVisible:false,
+      inboundReturnVisible: false,
+      outboundUseVisible: false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -278,6 +281,7 @@ export default {
         { label: "调拨出库", value: "outbound_transfer" },
         { label: "调拨入库", value: "inbound_transfer" },
         { label: "资产领用", value: "outbound_use" },
+        { label: "资产归还", value: "inbound_return" },
       ],
       superQueryVisible: false,
 
@@ -325,6 +329,8 @@ export default {
             { label: "直接出库", value: "outbound_other" },
             { label: "直接领料入库", value: "inbound_receive_material" },
             { label: "直接领料出库", value: "outbound_receive_material" },
+            { label: "调拨出库", value: "outbound_transfer" },
+            { label: "调拨入库", value: "inbound_transfer" },
             { label: "资产领用", value: "outbound_use" },
             { label: "资产归还", value: "inbound_return" },
           ],
@@ -381,7 +387,7 @@ export default {
     }
   },
   created() {
-   this.superForm= this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+    this.superForm = this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
 
     this.getclassAttributeList()
   },
@@ -416,7 +422,8 @@ export default {
       this.externalMaterOutboundFormVisible = false
       this.externalInboundFormVisible = false
       this.PurchaseOrderInboundFormVisible = false
-      this.outboundUseVisible=false
+      this.outboundUseVisible = false
+      this.inboundReturnVisible = false
       if (isRefresh) {
         this.keyword = ''
         this.initData()
@@ -445,7 +452,7 @@ export default {
           this.$nextTick(() => {
             this.$refs.outboundSaleSendREFForm.init(id, type, row.businessType, this.classAttributeList)
           })
-        }else{
+        } else {
           this.formVisible = true
           this.$nextTick(() => {
             this.$refs.Form.init(id, type)
@@ -490,7 +497,7 @@ export default {
           this.$nextTick(() => {
             this.$refs.outboundExternalSendREFForm.init(id, type, row.businessType, this.classAttributeList)
           })
-        }else{
+        } else {
           this.formVisible = true
           this.$nextTick(() => {
             this.$refs.Form.init(id, type)
@@ -504,7 +511,7 @@ export default {
         if (row.sourceType == 'order') {
           this.externalInboundFormVisible = true
           this.$nextTick(() => {
-            this.$refs.externalInboundREFForm.init(id, type, row.businessType, this.classAttributeList, this.warehouseCode,false)
+            this.$refs.externalInboundREFForm.init(id, type, row.businessType, this.classAttributeList, this.warehouseCode, false)
           })
         } else if (item.sourceType == 'notice') {
 
@@ -512,7 +519,7 @@ export default {
           this.$nextTick(() => {
             this.$refs.inboundExternalREFForm.init(id, type, row.businessType, this.classAttributeList)
           })
-        }else{
+        } else {
           this.formVisible = true
           this.$nextTick(() => {
             this.$refs.Form.init(id, type)
@@ -542,6 +549,11 @@ export default {
         this.outboundUseVisible = true
         this.$nextTick(() => {
           this.$refs.outboundUseREFForm.init(id, type,)
+        })
+      } else if (row.businessType == 'inbound_return') {
+        this.inboundReturnVisible = true
+        this.$nextTick(() => {
+          this.$refs.inboundReturnREFForm.init(id, type,)
         })
       }
       else {
@@ -573,7 +585,7 @@ export default {
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
       this.listQuery.classAttributeList = this.classAttributeList
-      this.listQuery.approvalStatus='ok'
+      this.listQuery.approvalStatus = 'ok'
       getWarehouseList(this.listQuery).then(res => {
 
         this.tableData = res.data.records ? res.data.records : []
@@ -652,7 +664,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop == 'partnerName'     || prop == 'partnerCode') {
+      if (prop == 'partnerName' || prop == 'partnerCode') {
         newProp = prop
       } else {
 
@@ -686,13 +698,13 @@ export default {
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.superForm=this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.superForm = this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.$refs.SuperQuery.conditionList = []
-      this.searchList=[
+      this.searchList = [
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'partnerName', fieldValue: '', label: '客户/供应商', symbol: 'like', searchType: 1, width: 120 },
       ],
-      this.initData()
+        this.initData()
     },
 
     addOrUpdateHandle(id, btntype) {

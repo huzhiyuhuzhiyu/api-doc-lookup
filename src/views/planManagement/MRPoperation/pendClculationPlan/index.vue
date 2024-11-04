@@ -86,9 +86,9 @@
                 <div v-if="scope.row.planType == 'safety_stock_plan'">安全库存计划</div>
               </template>
             </el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" sortable="custom" />
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
-            <el-table-column prop="productSource" label="产品来源" min-width="160" sortable="custom">
+            <el-table-column prop="productSource" label="产品来源" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.productSource == 'purchase'">采购</div>
                 <div v-if="scope.row.productSource == 'out'">外协</div>
@@ -96,7 +96,7 @@
                 <div v-if="scope.row.productSource == 'assemble'">组装</div>
               </template>
             </el-table-column>
-            <el-table-column prop="bomFlag" label="是否有BOM" min-width="160" sortable="custom">
+            <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.bomFlag">有BOM</div>
                 <div v-else>无BOM</div>
@@ -106,7 +106,7 @@
             <el-table-column prop="planEndDate" label="计划结束日期" min-width="160" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" min-width="80" />
             <el-table-column prop="planQuantity" label="计划数量" min-width="120" sortable="custom" />
-            <el-table-column prop="qualificationRate" label="合格率(%)" min-width="160" sortable="custom" />
+            <el-table-column prop="qualificationRate" label="合格率(%)" min-width="120" sortable="custom" />
             <el-table-column prop="relaxQuantity" label="宽放计划数量" min-width="160" sortable="custom" />
             <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="150" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
@@ -119,7 +119,7 @@
             <el-table-column prop="specialRequire" label="特殊要求" min-width="120" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
-            <el-table-column label="操作" width="180" fixed="right">
+            <el-table-column label="操作" width="120" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text" @click.native="handleUserRelation(scope.row, 'look')">查看详情</el-button>
 

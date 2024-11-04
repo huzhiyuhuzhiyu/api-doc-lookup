@@ -971,7 +971,7 @@ export default {
       const dateToStrss = gantt.date.date_to_str("%Y年");
       const dateToStrs = gantt.date.date_to_str("%M");
       // return dateToStrss(date)+dateToStrs(date)+dateToStr(date)+'日';
-      return dateToStrs(date) + dateToStr(date) + '日';
+      return dateToStr(date) + '日';
     },
 
     viewFinishExtendFun(id, type) {
@@ -1831,5 +1831,8 @@ $footerPadding: '10px';
   background: #fafafa;
   padding-left: 5px;
   font-weight: 700;
+}
+::v-deep .gantt_cell_tree{
+  border-right: 0.5px solid #e0e0e0;
 }
 </style>

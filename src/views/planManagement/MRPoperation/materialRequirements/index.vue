@@ -545,23 +545,23 @@
         <el-table-column prop="outputQuantity" label="生产数量" min-width="120" v-if="activeName == 'produce'" />
         <el-table-column prop="outputQuantity" label="采购数量" min-width="140" v-if="activeName == 'purchase'" />
         <el-table-column prop="outputQuantity" label="外协数量" min-width="120" v-if="activeName == 'out'" />
-        <el-table-column prop="planProductionQuantity" label="下达数量" width="120"
+        <el-table-column prop="planProductionQuantity" label="下达数量" width="120"  
           v-if="activeName == 'produce' || activeName == 'assemble'">
           <template slot="header">
             <span class="required">*</span>下达数量
           </template>
           <template slot-scope="scope">
-            <el-input v-model="scope.row.planProductionQuantity" :disabled="activeName == 'assemble'">{{
+            <el-input v-model="scope.row.planProductionQuantity" disabled>{{
               scope.row.planProductionQuantity }}</el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="planDemandQuantity" label="下达数量" width="160"
+        <el-table-column prop="planDemandQuantity" label="下达数量" width="160"  
           v-if="activeName == 'purchase' || activeName == 'out'">
           <template slot="header">
             <span class="required">*</span>下达数量
           </template>
           <template slot-scope="scope">
-            <el-input v-model="scope.row.planDemandQuantity">{{ scope.row.planDemandQuantity
+            <el-input v-model="scope.row.planDemandQuantity" disabled>{{ scope.row.planDemandQuantity
               }}</el-input>
           </template>
         </el-table-column>

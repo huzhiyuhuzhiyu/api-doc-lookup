@@ -69,7 +69,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
-            <el-table-column prop="productName" label="产品名称" width="120" sortable="custom" />
+            <!-- <el-table-column prop="productName" label="产品名称" width="120" sortable="custom" /> -->
             <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
             <el-table-column prop="planStartDate" label="计划开始日期" min-width="150" sortable="custom" />
             <el-table-column prop="planEndDate" label="计划结束日期" min-width="150" sortable="custom" />
@@ -94,7 +94,7 @@
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" width="120" sortable="custom" />
-            <el-table-column label="操作" width="180" fixed="right">
+            <el-table-column label="操作" width="120" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text" @click="handleUserRelation(scope.row, 'look')">查看详情</el-button>
               </template>

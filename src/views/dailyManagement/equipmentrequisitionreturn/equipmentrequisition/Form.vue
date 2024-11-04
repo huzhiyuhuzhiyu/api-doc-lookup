@@ -322,7 +322,7 @@ export default {
     //返回菜单
     goBackmenu() {
       this.$router.push({
-        path: "dailyManagement/equipmentrequisitionreturn/equipmentrequisition/index",
+        path: "/dailyManagement/equipmentrequisitionreturn/equipmentrequisition/index",
       })
       this.tipsvisible = false
     },

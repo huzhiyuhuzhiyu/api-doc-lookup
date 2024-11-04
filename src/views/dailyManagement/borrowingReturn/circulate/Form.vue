@@ -323,7 +323,7 @@ export default {
     //返回菜单
     goBackmenu() {
       this.$router.push({
-        path: "dailyManagement/borrowingReturn/circulate/index",
+        path: "/dailyManagement/borrowingReturn/circulate/index",
       })
       this.tipsvisible = false
     },

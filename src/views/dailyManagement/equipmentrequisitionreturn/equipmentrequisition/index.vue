@@ -70,8 +70,8 @@
           </el-table-column>
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <el-button type="text" @click="handleUserRelation(scope.row.id,'edit')" size="mini">编辑</el-button>
-              <el-button type="text" @click="handleDel(scope.row.id,)" class="JNPF-table-delBtn" size="mini">删除</el-button>
+              <el-button type="text" @click="handleUserRelation(scope.row.id,'edit')" size="mini" :disabled="scope.row.approvalStatus == 'ok'">编辑</el-button>
+              <el-button type="text" @click="handleDel(scope.row.id,)" class="JNPF-table-delBtn" size="mini" :disabled="scope.row.approvalStatus == 'ok'">删除</el-button>
               <el-dropdown hide-on-click>
                 <span class="el-dropdown-link">
                   <el-button type="text" size="mini">

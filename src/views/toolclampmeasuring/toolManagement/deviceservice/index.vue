@@ -141,6 +141,9 @@
                   <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'end')" :disabled="scope.row.state !== 'maintaining'||scope.row.reviewComments !== 'immediately'">
                     维修
                   </el-dropdown-item>
+                  <el-dropdown-item @click.native="outsourcedcompletion(scope.row.id)" v-if="scope.row.reviewComments == 'outsourcing'">
+                    委外维修完成
+                  </el-dropdown-item>
                   <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
                     查看详情
                   </el-dropdown-item>
@@ -163,7 +166,7 @@
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import depForm from './depForm'
 import sucForm from './sucForm'
-import { RepairRequestList, deleteRepairRequest } from '@/api/dailyManagement/Maintenance'
+import { RepairRequestList, deleteRepairRequest, equEquipmentRepairOutsourcing } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
 export default {
   name: 'deviceservice',
@@ -388,6 +391,11 @@ export default {
     this.initData()
   },
   methods: {
+    outsourcedcompletion(id) {
+      equEquipmentRepairOutsourcing(id).then(res => {
+        this.initData()
+      })
+    },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },

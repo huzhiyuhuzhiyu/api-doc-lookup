@@ -523,7 +523,7 @@ export default {
     //返回菜单
     goBackmenu() {
       this.$router.push({
-        path: "dailyManagement/sparepartsmanagement/sparepartsrequisition",
+        path: "/dailyManagement/sparepartsmanagement/sparepartsrequisition",
       })
       this.tipsvisible = false
     },

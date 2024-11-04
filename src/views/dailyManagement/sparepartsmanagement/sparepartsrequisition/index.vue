@@ -87,7 +87,7 @@
           </el-table-column>
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="handleUserRelation(scope.row, 'edit')" @del="handleDel(scope.row.id)" :editDisabled="scope.row.documentStatus === 'submit'" :delDisabled="scope.row.documentStatus === 'submit'">
+              <tableOpts @edit="handleUserRelation(scope.row, 'edit')" @del="handleDel(scope.row.id)" :editDisabled="scope.row.approvalStatus == 'ok'" :delDisabled="scope.row.approvalStatus == 'ok'">
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">

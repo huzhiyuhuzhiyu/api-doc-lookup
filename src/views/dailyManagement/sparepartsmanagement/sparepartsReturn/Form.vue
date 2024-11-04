@@ -308,7 +308,7 @@ export default {
     //返回菜单
     goBackmenu() {
       this.$router.push({
-        path: "dailyManagement/sparepartsmanagement/sparepartsReturn/index",
+        path: "/dailyManagement/sparepartsmanagement/sparepartsReturn/index",
       })
       this.tipsvisible = false
     },
@@ -399,7 +399,7 @@ export default {
       this.dataForm.id = id || ''
       this.btnType = btnType
       if (this.btnType === 'add' || this.btnType === 'edit') {
-        this.getBusInfo('b053')
+        this.getBusInfo('b056')
         this.fetchData('LYDH')
       }
       if (this.btnType == 'add') {

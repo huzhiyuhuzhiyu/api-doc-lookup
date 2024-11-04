@@ -470,3 +470,10 @@ export function equRequisitionRecordsproducts(data) {
     data
   })
 }
+// 维修申请单-委外完成
+export function equEquipmentRepairOutsourcing(id) {
+  return request({
+    url: `/api/mes/equEquipmentRepair/Outsourcing/${id}`,
+    method: 'put'
+  })
+}

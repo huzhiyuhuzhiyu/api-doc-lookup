@@ -127,19 +127,19 @@
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity'"
                               :rules="productRules.purchaseQuantity">
                               <el-input @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)"
-                                v-model="scope.row.purchaseQuantity" maxlength="20" placeholder="请输入数量"></el-input>
+                                v-model="scope.row.purchaseQuantity" maxlength="20" placeholder="数量"></el-input>
                             </el-form-item>
                           </template>
                         </el-table-column>
 
-                        <el-table-column prop="price" label="含税单价" width="120">
+                        <el-table-column prop="price" label="含税单价" width="130">
                           <template slot="header">
                             <span class="required">*</span>
                             单价(含税)
                           </template>
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'price'" :rules="productRules.price">
-                              <el-input v-model="scope.row.price" placeholder="请输入含税单价" />
+                              <el-input v-model="scope.row.price" placeholder="单价(含税)" />
                             </el-form-item>
                           </template>
                         </el-table-column>
@@ -325,7 +325,7 @@
                           <template slot-scope="scope">
                             <el-form-item>
                               <el-input :title="scope.row.remark" v-model="scope.row.remark" maxlength="20"
-                                placeholder="请输入备注">
+                                placeholder="备注">
                               </el-input>
                             </el-form-item>
                           </template>
@@ -1244,6 +1244,7 @@ export default {
         if (this.purchasingType == 'pool') {
           item.purchaseQuantity = item.planDemandQuantity
           this.customStyleData = 389
+
         } else {
           item.purchaseQuantity = Number(item.maxInventory) - Number(item.availableQuantity)
           this.customStyleData = 389

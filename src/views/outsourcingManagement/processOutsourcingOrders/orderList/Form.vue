@@ -87,13 +87,6 @@
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
                       <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
-                        <!-- <template slot-scope="scope">
-                            <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'">
-                              <div class="viewData">
-                                <span>{{ scope.row.productDrawingNo }}</span>
-                              </div>
-                            </el-form-item>
-                          </template> -->
                         <template slot="header">
                           <span class="required">*</span>
                           品名规格
@@ -102,7 +95,7 @@
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
                             :rules="productRules.productDrawingNo">
                             <el-input v-model="scope.row.productDrawingNo" :disabled="type == 'look' ? true : false"
-                              placeholder="请输入品名规格" />
+                              placeholder="品名规格" />
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -118,7 +111,7 @@
                             <!-- 工序选择弹窗  -->
                             <ComSelect-page :clearable="type !== 'look'" :isdisabled="type === 'look'"
                               :treeNodeClick="treeNodeClick" v-model="scope.row.processName"
-                              @change="onOrganizeChangeTwo" :tableItems="ProcessTableItems" :placeholder="'请选择工序名称'"
+                              @change="onOrganizeChangeTwo" :tableItems="ProcessTableItems" :placeholder="'工序名称'"
                               title="选择工序" treeTitle="工序分类" :methodArr="ProcessMethodArr"
                               :listMethod="getBimProcessList" :listRequestObj="ProcessListRequestObj"
                               :paramsObj="{ scope }" :searchList="ProcessTableSearchList" />
@@ -126,7 +119,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="deliveryDate" label="交货日期" min-width="200">
+                      <el-table-column prop="deliveryDate" label="交货日期" width="171">
                         <template slot="header">
                           <span class="required">*</span>
                           交货日期
@@ -160,12 +153,12 @@
                             :rules="productRules.purchaseQuantity">
                             <el-input v-model="scope.row.purchaseQuantity" :disabled="type == 'look' ? true : false"
                               @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)" maxlength="20"
-                              placeholder="请输入主数量"></el-input>
+                              placeholder="数量"></el-input>
                           </el-form-item>
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="price" label="含税单价" min-width="180">
+                      <el-table-column prop="price" label="含税单价" width="120">
                         <template slot="header">
                           <span class="required">*</span>
                           单价(含税)
@@ -177,7 +170,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="totalAmount" label="金额" min-width="140">
+                      <el-table-column prop="totalAmount" label="金额" width="120">
                         <template slot="header">
                           <span class="required">*</span>
                           金额(含税)
@@ -197,8 +190,7 @@
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :rules="productRules.taxRate">
-                            <!-- <el-input oninput="value = value.replace(/\D/g,'')" maxlength="2"
-                                v-model="scope.row.taxRate" placeholder="请输入税率"></el-input> -->
+                       
                             <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;"
                               :disabled="type == 'look' ? true : false">
                               <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
@@ -238,23 +230,21 @@
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'">
-                            <!-- <el-input v-model="scope.row.taxAmount" maxlength="20" placeholder="请输入税额">
-                          </el-input> -->
+                      
                             <div class="viewData">
                               <span>{{ scope.row.taxAmount ? scope.row.taxAmount : 0 }}</span>
                             </div>
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="excludingTaxAmount" label="金额(不含税)" min-width="180">
+                      <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140">
                         <template slot="header">
                           <span class="required">*</span>
                           金额(不含税)
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
-                            <!-- <el-input v-model="scope.row.excludingTaxAmount" maxlength="20"
-                                placeholder="请输入金额(不含税)"></el-input> -->
+                         
                             <div class="viewData">
                               <span>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</span>
                             </div>
@@ -262,10 +252,10 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip>
+                      <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-input :title="scope.row.remark" v-model="scope.row.remark" maxlength="20"
-                            :disabled="type == 'look' ? true : false" placeholder="请输入备注">
+                            :disabled="type == 'look' ? true : false" placeholder="备注">
                             {{ scope.row.remark }}
                           </el-input>
                         </template>

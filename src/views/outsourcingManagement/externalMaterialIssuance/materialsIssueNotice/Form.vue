@@ -139,7 +139,6 @@
                     <JNPF-table :hasC="btnType !== 'look'" hasNO fixedNO ref="product" :data="dataFormTwo.data"
                       @selection-change="handeleProductInfoData" v-loading="tableloading" @row-click="openDetails"
                       :row-style="rowStyle">
-
                       <el-table-column prop="drawingNo" label="品名规格" width="290" key="3"
                         show-overflow-tooltip></el-table-column>
                       <el-table-column v-if="btnType == 'look'" prop="productCode" label="产品编码" width="120" key="6"
@@ -166,7 +165,6 @@
                     </JNPF-table>
                     <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
                       <span style="font-weight:500;margin:0 10px">总订单数量：{{ totalOrdersNum }}</span>
-
                     </div>
                   </el-form>
                 </el-collapse-item>
@@ -190,16 +188,18 @@
                       v-if="btnType == 'look'"></el-table-column>
                   </el-table>
                   <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
-
-                    <span v-if="btnType !== 'look'" style="font-weight:500;margin:0 10px">需发料数量：{{ totalDemandQuantity
-                      }}</span>
-                    <span v-if="btnType == 'look'" style="font-weight:500;margin:0 10px">发料数量：{{ totalDeliveryQuantity
-                      }}</span>
-                    <span v-if="btnType == 'look'" style="font-weight:500;margin:0 10px">已出库数量：{{ totalIssuedQuantity
-                      }}</span>
-                    <span v-if="btnType == 'look'" style="font-weight:500;margin:0 10px">未出库数量：{{
-                      totalUndeliveredQuantity
-                    }}</span>
+                    <span v-if="btnType !== 'look'" style="font-weight:500;margin:0 10px">
+                      需发料数量：{{ totalDemandQuantity }}
+                    </span>
+                    <span v-if="btnType == 'look'" style="font-weight:500;margin:0 10px">
+                      发料数量：{{ totalDeliveryQuantity }}
+                    </span>
+                    <span v-if="btnType == 'look'" style="font-weight:500;margin:0 10px">
+                      已出库数量：{{ totalIssuedQuantity }}
+                    </span>
+                    <span v-if="btnType == 'look'" style="font-weight:500;margin:0 10px">
+                      未出库数量：{{ totalUndeliveredQuantity }}
+                    </span>
                   </div>
                 </el-collapse-item>
               </el-collapse>
@@ -323,7 +323,6 @@
               <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                 <el-table ref="product" :data="dataFormTwo.data" @selection-change="handeleProductInfoData"
                   v-loading="tableloading" @row-click="openDetails" :row-style="rowStyle">
-
                   <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
 
                   <el-table-column prop="drawingNo" label="品名规格" width="290" key="3"
@@ -352,7 +351,6 @@
                 </el-table>
                 <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
                   <span style="font-weight:500;margin:0 10px">总订单数量：{{ totalOrdersNum }}</span>
-
                 </div>
               </el-form>
             </el-collapse-item>
@@ -375,16 +373,18 @@
                   v-if="btnType == 'look'"></el-table-column>
               </el-table>
               <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
-
-                <span v-if="btnType !== 'look'" style="font-weight:500;margin:0 10px">需发料数量：{{ totalDemandQuantity
-                  }}</span>
-                <span v-if="btnType == 'look'" style="font-weight:500;margin:0 10px">发料数量：{{ totalDeliveryQuantity
-                  }}</span>
-                <span v-if="btnType == 'look'" style="font-weight:500;margin:0 10px">已出库数量：{{ totalIssuedQuantity
-                  }}</span>
-                <span v-if="btnType == 'look'" style="font-weight:500;margin:0 10px">未出库数量：{{
-                  totalUndeliveredQuantity
-                }}</span>
+                <span v-if="btnType !== 'look'" style="font-weight:500;margin:0 10px">
+                  需发料数量：{{ totalDemandQuantity }}
+                </span>
+                <span v-if="btnType == 'look'" style="font-weight:500;margin:0 10px">
+                  发料数量：{{ totalDeliveryQuantity }}
+                </span>
+                <span v-if="btnType == 'look'" style="font-weight:500;margin:0 10px">
+                  已出库数量：{{ totalIssuedQuantity }}
+                </span>
+                <span v-if="btnType == 'look'" style="font-weight:500;margin:0 10px">
+                  未出库数量：{{ totalUndeliveredQuantity }}
+                </span>
               </div>
             </el-collapse-item>
           </el-collapse>
@@ -400,7 +400,7 @@
           </div>
 
           <span slot="footer" class="dialog-footer">
-            <el-button @click="goBack">返回列表</el-button>
+            <el-button @click="goBackList">返回发料通知单列表</el-button>
             <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()">{{ btnText }}</el-button>
             <el-button v-else type="primary" @click="continueAdd()">{{ btnText }}</el-button>
           </span>
@@ -416,12 +416,7 @@
 </template>
 
 <script>
-import {
-  editQuotationMsendlist,
-  addQuotationsendlist,
-  getQuotationsendlist,
-  editReceiptnoticelist
-} from '@/api/salesManagement/index'
+import { editQuotationMsendlist, getQuotationsendlist } from '@/api/salesManagement/index'
 import { getsaleOrderList } from '@/api/salesManagement/assemblyOrders'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import {
@@ -438,6 +433,7 @@ import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowE
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
+import { addoutReceiptGoods } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 export default {
   components: {
     changeAddress,
@@ -506,7 +502,7 @@ export default {
         { prop: 'processName', label: '工序名称', sortable: 'custom2' },
 
         { prop: 'mainUnit', label: '单位', sortable: 'custom', width: 80 },
-        { prop: 'purchaseQuantity', label: '订单数量', sortable: 'custom', minWidth: 140 },
+        { prop: 'purchaseQuantity', label: '订单数量', sortable: 'custom', minWidth: 140 }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: 'orderNo', label: '订单号', type: 'input' },
@@ -818,7 +814,7 @@ export default {
         businessCode: 'attachment',
         configKey: 'fj_wxfltzd'
       }
-      getBimBusinessDetail(obj).then(res => {
+      getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
         this.categoryId = res.data.configValue2
       })
@@ -864,7 +860,6 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].validateField('partnerName')
         if (id) {
-
           getCooperativeInfo(id).then((res) => {
             console.log(res, 'res')
             this.customerData = res.data.cooperativePartner
@@ -1141,7 +1136,6 @@ export default {
           }
         }
         this.selectRows = [] // 清空选中的行的数据
-
       } else {
         this.$message({
           message: '已是最后一条数据',
@@ -1149,8 +1143,6 @@ export default {
           duration: 1500
         })
       }
-
-
     },
 
     // 单个删除
@@ -1159,7 +1151,6 @@ export default {
 
       if (this.dataFormTwo.data.length > 1) {
         this.dataFormTwo.data.splice(data.$index, 1)
-
       } else {
         this.$message({
           message: '已是最后一条数据',
@@ -1167,7 +1158,6 @@ export default {
           duration: 1500
         })
       }
-
     },
 
     // 监听主数量输入
@@ -1477,37 +1467,39 @@ export default {
     },
     // 继续修改
     continueEdit() {
-      this.init(this.oldId, this.oldType)
-      this.tipsvisible = false
+      this.visible = false
       this.btnLoading = false
+      this.$emit('close', true)
     },
     // 继续新增
     continueAdd() {
-      this.tipsvisible = false
+
+      // this.dataForm = {
+      //   exchangeGoodsFlag: false,
+      //   partnerName: '',
+      //   returnDeliveryType: 'delivery',
+      //   notifyType: 'external',
+      //   ordersId: '',
+      //   orderNo: '',
+      //   deliverDate: '',
+      //   recipient: '',
+      //   phone: '',
+      //   country: '',
+      //   province: '',
+      //   city: '',
+      //   area: '',
+      //   address: '',
+      //   delivery: 'deliver_goods',
+      //   // shipperId: '',
+      //   cooperativePartnerId: '',
+      //   remark: '',
+      //   approvalFlag: false
+      // }
+      // this.$refs.dataForm.resetFields()
+      // this.init('', 'add')
+      this.visible = false
       this.btnLoading = false
-      this.dataForm = {
-        exchangeGoodsFlag: false,
-        partnerName: '',
-        returnDeliveryType: 'delivery',
-        notifyType: 'external',
-        ordersId: '',
-        orderNo: '',
-        deliverDate: '',
-        recipient: '',
-        phone: '',
-        country: '',
-        province: '',
-        city: '',
-        area: '',
-        address: '',
-        delivery: 'deliver_goods',
-        // shipperId: '',
-        cooperativePartnerId: '',
-        remark: '',
-        approvalFlag: false
-      }
-      this.$refs.dataForm.resetFields()
-      this.init('', 'add')
+      this.$emit('close', true)
     },
     openDetails(row) {
       console.log(this.approvalFlag, '555555')
@@ -1529,6 +1521,11 @@ export default {
     },
     goBack() {
       this.$emit('close', true)
+    },
+    goBackList() {
+      this.tipsvisible = false
+      this.btnLoading = false
+      this.$router.push('/outsourcingManagement/externalMaterialIssuance/materialsIssueNotice')
     },
     handleConfirm(value) {
       this.$refs['productForm'].validate((valid) => {
@@ -1732,7 +1729,7 @@ export default {
                   formMethod = editQuotationMsendlist
                 } else if (this.btnType == 'add' || this.btnType == 'copy') {
                   obj.notice.deliveryStatus = 'undelivered'
-                  formMethod = addQuotationsendlist
+                  formMethod = addoutReceiptGoods
                 }
                 formMethod(obj)
                   .then((res) => {
@@ -1769,7 +1766,7 @@ export default {
               formMethod = editQuotationMsendlist
             } else if (this.btnType == 'add' || this.btnType == 'copy') {
               obj.notice.deliveryStatus = 'undelivered'
-              formMethod = addQuotationsendlist
+              formMethod = addoutReceiptGoods
             }
             console.log(obj, 'obj')
             formMethod(obj)
@@ -1986,7 +1983,7 @@ $footerPadding: '10px';
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 0 0 15px 0;
+  padding: 0 0 10px 0;
   border-top: none !important;
 }
 

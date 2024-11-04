@@ -12,9 +12,7 @@
               <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                 <template slot-scope="scope">
                   <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
-                    <!-- <div class="viewData">
-                      <span>{{ scope.row.drawingNo }}</span>
-                    </div> -->
+    
                     <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
                       v-model="scope.row.drawingNo" ref="ComSelect-page" @change="productChange"
                       :tableItems="ProductTableItems" :placeholder="'请选择产品'" title="选择产品" treeTitle="产品分类"
@@ -28,9 +26,7 @@
                 <template slot-scope="scope">
                   <!-- <el-input v-model="scope.row.productCode" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
                   <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'" :rules="productRule.productCode">
-                    <!-- <el-input v-model="scope.row.productCode" :disabled="type === 'look'" maxlength="5"
-                      placeholder="请输入产品编码">
-                    </el-input> -->
+                
                     <div class="viewData">
                       <span>{{ scope.row.productCode }}</span>
                     </div>

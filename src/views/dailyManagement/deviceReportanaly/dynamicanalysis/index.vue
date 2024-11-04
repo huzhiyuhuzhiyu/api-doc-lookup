@@ -1250,7 +1250,9 @@ export default {
     width: 100%;
     height: 100%;
     padding: 10px 0 10px 10px;
-    background-color: #fafafa;
+    // background-color: #8b2f2f;
+    background-image: url('./imgs/tjbjt.png');
+    background-size: 100% 100%;
     .rich-text-content {
       word-wrap: break-word;
       background: 0 0;
@@ -1262,7 +1264,7 @@ export default {
       line-height: 1.5;
       font-weight: bold;
       font-size: 28px;
-      color: #000;
+      color: #fff;
     }
   }
   .speedy-entry-wrapper {

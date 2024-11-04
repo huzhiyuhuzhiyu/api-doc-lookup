@@ -154,8 +154,8 @@ export default {
       listLoadingInspection: false,
       listQueryInspection: {},
       listQuerytwo: {
-        totalName:'',
-        totalCode:'',
+        totalName: '',
+        totalCode: '',
         classAttribute: "equipment",
         recordType: 'inspection',
         pageNum: 1,
@@ -460,7 +460,8 @@ export default {
   border-radius: 3px;
 }
 .group-container-body {
-  background-color: #fafafa;
+  background-image: url('../dynamicanalysis/imgs/tjbjt.png');
+  background-size: 100% 100%;
   .dash-rich-text {
     width: 100%;
     height: 100%;
@@ -475,7 +476,7 @@ export default {
       font-weight: bold;
       line-height: 1.6;
       font-size: 28px;
-      color: #000;
+      color: #fff;
     }
   }
 }

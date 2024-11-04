@@ -11,6 +11,9 @@
       <el-form-item label="分类名称" prop="name">
         <el-input v-model="dataForm.name" placeholder="请输入分类名称" maxlength="20" />
       </el-form-item>
+      <el-form-item label="分类编码" prop="code">
+        <el-input v-model="dataForm.code" placeholder="请输入分类编码" maxlength="20" />
+      </el-form-item>
       <el-form-item label="备注" prop="remark">
         <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" placeholder="请输入备注"/>
       </el-form-item>
@@ -36,6 +39,7 @@ export default {
       btnLoading: false,
       isdisabled: false,
       dataForm: {
+        code:'',
         name: '',
         remark: '',
         type: 'supplier',
@@ -50,6 +54,9 @@ export default {
           { required: true, message: '请输入分类名称', trigger: 'blur' },
           { max: 50, message: '分类名称最多为50个字符！', trigger: 'blur' }
         ],
+        code: [
+          { required: true, message: '请输入分类编码', trigger: 'blur' }
+        ]
       }
     }
   },

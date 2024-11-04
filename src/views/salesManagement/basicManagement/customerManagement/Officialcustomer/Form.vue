@@ -576,6 +576,7 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
+        provincecityarea:[],
         industry: '',
         nextTime: '',
         // 合作伙伴

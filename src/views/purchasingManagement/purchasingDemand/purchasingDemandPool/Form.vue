@@ -1243,10 +1243,10 @@ export default {
         }
         if (this.purchasingType == 'pool') {
           item.purchaseQuantity = item.planDemandQuantity
-          this.customStyleData = 254
+          this.customStyleData = 389
         } else {
           item.purchaseQuantity = Number(item.maxInventory) - Number(item.availableQuantity)
-          this.customStyleData = 254
+          this.customStyleData = 389
         }
 
 

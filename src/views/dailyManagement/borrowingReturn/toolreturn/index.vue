@@ -54,6 +54,13 @@
           </div>
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" custom-column>
+          <el-table-column prop="orderNo" label="归还单号" min-width="200" sortable="custom">
+            <template slot-scope="scope">
+              <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
+                                scope.row.orderNo
+                            }}</el-link>
+            </template>
+          </el-table-column>
           <el-table-column prop="collectionTime" label="归还日期" min-width="180" sortable="custom"></el-table-column>
           <el-table-column prop="maintainerIdText" label="归还人" min-width="120"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" min-width="200" sortable="custom"></el-table-column>

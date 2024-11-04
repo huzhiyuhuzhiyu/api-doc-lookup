@@ -1,14 +1,8 @@
 <template>
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
-      <div :class="['JNPF-common-page-header']" v-if="!dataForm.id">
-        <div class="pageTitle">工具归还</div>
-        <div class="options">
-          <el-button type="primary" size="mini" :loading="btnLoading" @click="handleConfirm('submit')">
-            保存并提交</el-button>
-        </div>
-      </div>
-      <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="dataForm.id">
+      
+      <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="dataForm.id&&!approvalFlag">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add' ? '新建工具归还' : btnType == 'edit' ? '编辑工具归还' : '查看工具归还'" />
         <div class="options">
@@ -17,13 +11,25 @@
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
+      <div :class="['JNPF-common-page-header']" v-else>
+        <div class="pageTitle">工具归还</div>
+        <div class="options">
+          <el-button type="primary" size="mini" :loading="btnLoading" @click="handleConfirm('submit')">
+            保存并提交</el-button>
+        </div>
+      </div>
       <div class="main" v-loading="formLoading">
-        <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
+        <el-tabs v-model="activeName" v-if="!approvalFlag" @tab-click="handleClick" class=".el-table">
           <el-tab-pane label="归还信息" name="orderInfo">
             <el-collapse v-model="activeNames">
               <el-collapse-item title="基本信息" name="basicInfo">
                 <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                   <el-row :gutter="30" class="custom-row">
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="归还单号" prop="orderNo">
+                        <el-input v-model="dataForm.orderNo" placeholder="请输入归还单号" :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="工具待归还单号" prop="waitRequisitionNo">
                         <ComSelect-page v-model="dataForm.waitRequisitionNo" @change="waitRequisitionChange" :tableItems="waitRequisitionTableItems" dialogTitle="选择单号" placeholder="请选择待归还单号" :listMethod="CollectionandreturnList" :listRequestObj="waitRequisitionRequestObj" :searchList="waitRequisitionSearchList" :isdisabled="btnType === 'look'" :renderTree="false" />
@@ -55,11 +61,11 @@
                     <el-table-column type="index" width="60" label="序号" align="center" fixed='left' key="11" />
                     <el-table-column prop="productCode" label="工具编码" min-width="160" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="productName" label="工具名称" min-width="160" show-overflow-tooltip>
+                    <!-- <el-table-column prop="productName" label="工具名称" min-width="160" show-overflow-tooltip>
                       <template slot="header">
                         <span class="required">*</span>工具名称
                       </template>
-                    </el-table-column>
+                    </el-table-column> -->
                     <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="120" show-overflow-tooltip>
@@ -89,14 +95,90 @@
           <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
             <UploadWj v-model="datafilelist" :disabled="btnType == 'look'" :detailed="btnType == 'look'"></UploadWj>
           </el-tab-pane>
+          <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
+            <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
+          </el-tab-pane>
+          <el-tab-pane v-if="btnType == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
+            <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
+          </el-tab-pane>
         </el-tabs>
+        <el-collapse v-model="activeNames" v-else>
+          <el-collapse-item title="基本信息" name="basicInfo">
+            <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+              <el-row :gutter="30" class="custom-row">
+                <el-col :sm="6" :xs="24">
+                  <el-form-item label="归还单号" prop="orderNo">
+                    <el-input v-model="dataForm.orderNo" placeholder="请输入归还单号" :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="6" :xs="24">
+                  <el-form-item label="工具待归还单号" prop="waitRequisitionNo">
+                    <ComSelect-page v-model="dataForm.waitRequisitionNo" @change="waitRequisitionChange" :tableItems="waitRequisitionTableItems" dialogTitle="选择单号" placeholder="请选择待归还单号" :listMethod="CollectionandreturnList" :listRequestObj="waitRequisitionRequestObj" :searchList="waitRequisitionSearchList" :isdisabled="btnType === 'look'" :renderTree="false" />
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="6" :xs="24">
+                  <el-form-item label="归还日期" prop="collectionTime">
+                    <el-date-picker v-model="dataForm.collectionTime" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择归还日期" :disabled="btnType == 'look'">
+                    </el-date-picker>
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="6" :xs="24">
+                  <el-form-item label="归还人" prop="recipientId">
+                    <user-select v-model="dataForm.recipientId" placeholder="请选择归还人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
+                    </user-select>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </el-form>
+          </el-collapse-item>
+          <el-collapse-item title="工具信息" name="sbxx">
+            <div v-if="btnType !== 'look'">
+              <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择工具</el-button>|
+              <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
+            </div>
+            <el-form :model="dataFormTwo" ref="productForm" class="data-form">
+              <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" @selection-change="handeleProductInfoData">
+                <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType !== 'look'" key="1" />
+                <el-table-column type="index" width="60" label="序号" align="center" fixed='left' key="11" />
+                <el-table-column prop="productCode" label="工具编码" min-width="160" show-overflow-tooltip>
+                </el-table-column>
+                <!-- <el-table-column prop="productName" label="工具名称" min-width="160" show-overflow-tooltip>
+                      <template slot="header">
+                        <span class="required">*</span>工具名称
+                      </template>
+                    </el-table-column> -->
+                <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
+                </el-table-column>
+                <el-table-column prop="mainUnit" label="单位" width="120" show-overflow-tooltip>
+                </el-table-column>
+                <el-table-column prop="requisitionNum" label="数量" width="160">
+                  <template slot="header">
+                    <span class="required">*</span>数量
+                  </template>
+                  <template slot-scope="scope">
+                    <el-form-item :prop="'productData.'+scope.$index+'.'+'requisitionNum'" :rules='productRules.requisitionNum'>
+                      <el-input v-model="scope.row.requisitionNum" placeholder="请输入数量" :disabled="btnType == 'look'" maxlength="11" style="width: 135px;">
+                      </el-input>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+                <el-table-column label="操作" width="180" fixed="right" v-if="btnType != 'look'" key="30">
+                  <template slot-scope="scope">
+                    <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
+                    <el-button type="text" @click="Setencoding(scope.row,scope.$index)" :disabled="!scope.row.requisitionNum">设置工具编号</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-form>
+          </el-collapse-item>
+        </el-collapse>
       </div>
       <el-dialog title="设置工具编号" :visible.sync="dialogFormVisible" :append-to-body="true" :close-on-click-modal="false">
-        <el-form :model="equipmentsform">
+        <el-form>
           <el-row :gutter="30" class="custom-row">
-            <el-col :sm="6" :xs="24" v-for="item in inforownum" :key="item">
-              <el-form-item :prop="'equipmentCode'+item">
-                <el-input v-model="equipmentsform['equipmentCode'+item]" placeholder="请输入工具编号"></el-input>
+            <el-col :span="6" :xs="24" v-for="(item, index) in inforownum" :key="index">
+              <el-form-item>
+                <el-input v-model="item.equipmentCode" placeholder="请输入工具编号" clearable />
               </el-form-item>
             </el-col>
           </el-row>
@@ -120,15 +202,26 @@
 </template>
     
 <script>
+import Process from '@/components/Process/Preview'
+import busFlow from '@/mixins/generator/busFlow';
+import recordList from '@/views/workFlow/components/RecordList.vue'
+import flowMixin from '@/mixins/generator/flowMixin'
 import { getBimBusinessDetail } from '@/api/basicData/index'
 import { mapGetters } from 'vuex'
 import { updateCollectionandreturn, detailCollectionandreturn, CollectionandreturnList, addCollectionandreturn } from '@/api/dailyManagement/Maintenance'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getProductList } from '@/api/basicData/materialFiles' // 工具列表
 export default {
+  mixins: [busFlow, flowMixin],
+  components: { Process, recordList },
   data() {
     return {
-      equipmentsform: {},
+      flowTemplateJson: {},
+      flowData: {},
+      approvalFlag: false,   // 待办事宜等页面 需要
+      flowTaskOperatorRecordList: [],
+      endTime: 0,
+      codeConfig: {},//单据规则配置
       dialogFormVisible: false,
       submitmethodsTitle: '',
       tipsvisible: false,
@@ -201,6 +294,7 @@ export default {
       formLoading: false,
       dataForm: {
         id: '',
+        approvalFlag: false,
         waitRequisitionNo: '',
         requisitionType: 'back',
         equipmentType: 'tool',
@@ -228,43 +322,44 @@ export default {
       selectRows: [],
       inforow: {},
       _index: '',
-      inforownum: 0
+      inforownum: []
     }
   },
-  created() {
-    if (!this.dataForm.id) this.init('', 'add')
-    this.getBimBusinessDetail()
+  mounted() {
+    this.$nextTick(() => {
+      if (!this.dataForm.id) this.init('', 'add')
+      this.getBimBusinessDetail()
+    });
   },
   computed: {
     ...mapGetters(['userInfo']),
   },
   methods: {
-    areAllValuesEmpty(obj) {
-      return Object.values(obj).every((value) => {
-        return value !== null && value !== undefined && value !== '';
-      });
+    async fetchData(code) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code);
+        this.codeConfig = data
+        if (this.btnType == 'add') {
+          this.dataForm.orderNo = data.number
+        }
+      } catch (error) {
+      }
     },
     confirmsolut() {
-      let arr = []
-      if (!this.areAllValuesEmpty(this.equipmentsform)) return this.$message.error('工具编号不能为空')
-      for (let key in this.equipmentsform) {
-        arr.push({ equipmentCode: this.equipmentsform[key], productId: this.inforow.productId })
-      }
-      this.$set(this.dataFormTwo.productData[this._index], 'equipments', arr)
+      if (this.inforownum.some(item => item.equipmentCode === "")) return this.$message.error('工具编号不能为空')
+      this.$set(this.dataFormTwo.productData[this._index], 'equipments', this.inforownum)
       this.dialogFormVisible = false
       this.$message.success('保存成功')
     },
     Setencoding(row, index) {
       this.inforow = row
-      this.inforownum = row.requisitionNum * 1
-      for (let i = 1; i <= row.requisitionNum * 1; i++) {
-        this.$set(this.equipmentsform, 'equipmentCode' + i, '')
-      }
       this._index = index
+      this.inforownum = Array.from({ length: row.requisitionNum }, () => ({
+        equipmentCode: "",
+        productId: this.inforow.productId
+      }));
       if (row.equipments && row.equipments.length) {
-        row.equipments.map((item, index) => {
-          this.$set(this.equipmentsform, 'equipmentCode' + (index + 1), item.equipmentCode)
-        })
+        this.inforownum = row.equipments
       }
       this.dialogFormVisible = true
     },
@@ -275,6 +370,7 @@ export default {
       this.datafilelist = []
       this.dataForm = {
         id: '',
+        approvalFlag: false,
         waitRequisitionNo: '',
         requisitionType: 'back',
         equipmentType: 'tool',
@@ -296,7 +392,10 @@ export default {
     waitRequisitionChange(val, data) {
       this.dataForm.waitRequisitionNo = data[0].all.orderNo
       detailCollectionandreturn(data[0].all.id).then(res => {
-        this.dataFormTwo.productData = res.data.lines
+        this.dataFormTwo.productData = res.data.lines.map(item => {
+          item.incomingOutgoingNum = 0
+          return item
+        })
       })
     },
     getBimBusinessDetail() {
@@ -381,9 +480,14 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
     },
-    init(id, btnType) {
+    init(id, btnType, approvalFlag) {
+      this.approvalFlag = approvalFlag
       this.dataForm.id = id || ''
       this.btnType = btnType
+      if (this.btnType === 'add' || this.btnType === 'edit') {
+        this.getBusInfo('b053')
+        this.fetchData('LYDH')
+      }
       if (this.btnType == 'add') {
         this.dataForm.recipientId = this.userInfo.userId
         this.dataForm.collectionTime = this.jnpf.getToday()
@@ -404,6 +508,13 @@ export default {
                 }
               )
             })
+          }
+          if (this.btnType == 'add') {
+            this.dataForm.id = ''
+          }
+          if (this.btnType === 'look') {
+            // 流程信息和流转记录
+            if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
           }
         })
       }
@@ -445,6 +556,14 @@ export default {
           }
         })
       }
+      for (let index = 0; index < this.dataFormTwo.productData.length; index++) {
+        const item = this.dataFormTwo.productData[index]
+        if (!item.equipments.length || item.equipments.some(o => o.equipmentCode === "")) {
+          submitFlag = false
+          this.$message.error("工具信息第" + (index + 1) + "行工具编号不能为空")
+          break
+        }
+      }
       if (submitFlag) {
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
@@ -461,7 +580,8 @@ export default {
         let obj = {
           attachmentList: this.datafilelist,
           requisition: this.dataForm,
-          lines: this.dataFormTwo.productData
+          lines: this.dataFormTwo.productData,
+          flowData: this.flowData
         }
         this.btnLoading = true
         let formMethod = null;
@@ -553,6 +673,14 @@ export default {
 }
 ::v-deep .JNPF-common-page-header {
   padding: 5px 10px !important;
+}
+.pageTitle {
+  display: inline-block;
+  font-size: 18px;
+  color: #303133;
+  height: 100%;
+  line-height: 36px;
+  font-weight: 700;
 }
 </style>
     

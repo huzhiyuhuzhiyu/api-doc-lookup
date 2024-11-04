@@ -5,17 +5,17 @@
         <div class="group-container-body section has-hover">
           <div style="height: 65px;width: 100%;padding: 10px;">
             <div class="dash-rich-text">
-              <div class="rich-text-content">点检统计分析</div>
+              <div class="rich-text-content">保养统计分析</div>
             </div>
           </div>
         </div>
         <div style="margin-top: 10px;">
           <el-tabs type="border-card" style="height: 100%;" v-model="activeName" @tab-click="handleClick">
-            <el-tab-pane label="点检概况" name="djgk">
+            <el-tab-pane label="保养概况" name="djgk">
               <div class="statistical">
                 <div class="analysis-content">
-                  <card class="card-item" bodyheight="240px" title="今日已检分布（台）" :datalist="datalistChecked"></card>
-                  <card class="card-item" bodyheight="240px" title="今日各设备点检次数" :datalist="datalistInspection"></card>
+                  <card class="card-item" bodyheight="240px" title="今日已保分布（台）" :datalist="datalistChecked"></card>
+                  <card class="card-item" bodyheight="240px" title="今日各工具保养次数" :datalist="datalistInspection"></card>
                 </div>
                 <div class="table-content">
                   <div style="margin-top: 15px;">
@@ -23,12 +23,12 @@
                       <el-form @submit.native.prevent>
                         <el-col :span="4">
                           <el-form-item>
-                            <el-input v-model="listQuery.equipmentIdCode" placeholder="请输入设备编码" clearable @keydown.enter.native="search()" />
+                            <el-input v-model="listQuery.equipmentIdCode" placeholder="请输入工具编码" clearable @keydown.enter.native="search()" />
                           </el-form-item>
                         </el-col>
                         <el-col :span="4">
                           <el-form-item>
-                            <el-input v-model="listQuery.equipmentIdName" placeholder="请输入设备名称" clearable @keydown.enter.native="search()" />
+                            <el-input v-model="listQuery.equipmentIdName" placeholder="请输入工具名称" clearable @keydown.enter.native="search()" />
                           </el-form-item>
                         </el-col>
                         <el-col :span="6">
@@ -44,29 +44,23 @@
                   </div>
                   <div style="height: 672px;" class="JNPF-flex-main">
                     <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column>
-                      <el-table-column prop="equipmentIdCode" label="设备编码" width="200" />
-                      <el-table-column prop="equipmentIdName" label="设备名称" width="200" sortable="custom" />
+                      <el-table-column prop="maintenanceTaskIdText" label="任务名称" min-width="180" />
+                      <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" />
+                      <el-table-column prop="equipmentIdName" label="工具名称" min-width="200" sortable="custom" />
                       <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
                       <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
+                      <el-table-column prop="level" label="保养等级" width="140" />
                       <el-table-column prop="cycle" label="周期" width="90" />
                       <el-table-column prop="unit" label="单位" width="90" />
-                      <el-table-column prop="departmentIdText" label="计划点检部门" width="150" />
-                      <el-table-column prop="maintainerIdText" label="计划点检人" width="120"></el-table-column>
-                      <el-table-column prop="planMaintenanceDate" label="计划点检日期" width="180" sortable="custom"></el-table-column>
-                      <el-table-column prop="actualDepartmentIdText" label="实际点检部门" width="150" />
-                      <el-table-column prop="actualMaintenanceIdText" label="实际点检人" width="120"></el-table-column>
-                      <el-table-column prop="actualMaintenanceDate" label="实际点检日期" width="180" sortable="custom"></el-table-column>
-                      <el-table-column prop="picList" label="点检拍照" min-width="160">
+                      <el-table-column prop="departmentIdText" label="计划保养部门" min-width="150" />
+                      <el-table-column prop="maintainerIdText" label="计划保养人" width="120"></el-table-column>
+                      <el-table-column prop="planMaintenanceDate" label="计划保养日期" width="180" sortable="custom"></el-table-column>
+                      <el-table-column prop="actualDepartmentIdText" label="实际保养部门" min-width="150" />
+                      <el-table-column prop="actualMaintenanceIdText" label="实际保养人" width="120"></el-table-column>
+                      <el-table-column prop="actualMaintenanceDate" label="实际保养日期" width="180" sortable="custom"></el-table-column>
+                      <el-table-column prop="picList" label="保养拍照" min-width="160">
                         <template slot-scope="scope">
                           <el-image @click="bigimg(define.comUrl+item.url)" style="width: 25px;height: 25px;margin-left: 5px;" v-for="item in scope.row.picList" :key="item.fileId" :src="define.comUrl+item.url" :preview-src-list="srcList"></el-image>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="inspectionResults" label="点检结果" width="120" fixed="right" align="center">
-                        <template slot-scope="scope">
-                          <div v-if="scope.row.inspectionResults == 'normal'"><el-tag type="success">正常</el-tag></div>
-                          <div v-else-if="scope.row.inspectionResults == 'abnormal'">
-                            <el-tag type="danger">异常</el-tag>
-                          </div>
                         </template>
                       </el-table-column>
                       <el-table-column prop="cycleType" label="周期类型" width="120" sortable="custom" fixed="right" align="center">
@@ -77,7 +71,7 @@
                           </div>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
+                      <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
                       <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
                       <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
                     </JNPF-table>
@@ -86,7 +80,7 @@
                 </div>
               </div>
             </el-tab-pane>
-            <el-tab-pane label="点检次数分析" name="djcsfx">
+            <el-tab-pane label="保养次数分析" name="djcsfx">
               <div class="inspectionnum">
                 <div class="frequencychart">
                   <div class="chart-line has-hover">
@@ -102,12 +96,12 @@
                       <el-form @submit.native.prevent>
                         <el-col :span="4">
                           <el-form-item>
-                            <el-input v-model="listQueryInspection.totalCode" placeholder="请输入设备编码" clearable @keydown.enter.native="search()" />
+                            <el-input v-model="listQueryInspection.totalCode" placeholder="请输入工具编码" clearable @keydown.enter.native="search()" />
                           </el-form-item>
                         </el-col>
                         <el-col :span="4">
                           <el-form-item>
-                            <el-input v-model="listQueryInspection.totalName" placeholder="请输入设备名称" clearable @keydown.enter.native="search()" />
+                            <el-input v-model="listQueryInspection.totalName" placeholder="请输入工具名称" clearable @keydown.enter.native="search()" />
                           </el-form-item>
                         </el-col>
                         <el-col :span="6">
@@ -123,8 +117,8 @@
                   </div>
                   <div style="height: 672px;" class="JNPF-flex-main">
                     <JNPF-table ref="dataTableInspection" v-loading="listLoadingInspection" :data="tableInspectionresults" fixedNO custom-column>
-                      <el-table-column prop="totalCode" label="设备编码" min-width="200" />
-                      <el-table-column prop="totalName" label="设备名称" min-width="200" />
+                      <el-table-column prop="totalCode" label="工具编码" min-width="200" />
+                      <el-table-column prop="totalName" label="工具名称" min-width="200" />
                       <el-table-column prop="normalNum" label="正常次数" min-width="140" />
                       <el-table-column prop="abnormalNum" label="异常次数" min-width="140" />
                     </JNPF-table>
@@ -154,10 +148,10 @@ export default {
       listLoadingInspection: false,
       listQueryInspection: {},
       listQuerytwo: {
-        totalName: '',
-        totalCode: '',
-        classAttribute: "equipment",
-        recordType: 'inspection',
+        totalName:'',
+        totalCode:'',
+        classAttribute: "tool",
+        recordType: 'maintenance',
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -180,7 +174,8 @@ export default {
       listQuery: {},
       activeName: 'djgk',
       listQueryone: {
-        recordType: 'inspection',
+        classAttribute: "tool",
+        recordType: 'maintenance',
         equipmentIdCode: '',
         equipmentIdName: '',
         actualMaintenanceIdText: '',
@@ -202,15 +197,15 @@ export default {
     this.initDatadjgk()
   },
   methods: {
-    //点检次数分析
+    //保养次数分析
     initDatachart() {
       let obj = {
-        classAttribute: "equipment"
+        classAttribute: "tool"
       }
       getdailyInspectionMonthTotal(obj).then(res => {
         this.djchartlineoption = {
           title: {
-            text: '每日点检次数',
+            text: '每日保养次数',
             textStyle: {
               fontWeight: '450',
               fontSize: 14
@@ -248,7 +243,7 @@ export default {
           color: ['#307deb'],
           series: [
             {
-              name: '点检次数',
+              name: '保养次数',
               type: 'line',
               label: {
                 show: true
@@ -286,7 +281,7 @@ export default {
             }
           },
           title: {
-            text: '本月各设备点检次数',
+            text: '本月各工具保养次数',
             textStyle: {
               fontWeight: '450',
               fontSize: 14
@@ -325,7 +320,7 @@ export default {
           series: [
             {
               barWidth: '30%',
-              name: '设备数量',
+              name: '工具数量',
               type: 'bar',
               label: {
                 show: true,
@@ -374,8 +369,8 @@ export default {
     },
     initDatadjgk() {
       let obj = {
-        classAttribute: "equipment",
-        recordType: 'inspection'
+        classAttribute: "tool",
+        recordType: 'maintenance'
       }
       dailyMaintenanceNum(obj).then(res => {
         this.datalistChecked = res.data
@@ -460,7 +455,7 @@ export default {
   border-radius: 3px;
 }
 .group-container-body {
-  background-image: url('../dynamicanalysis/imgs/tjbjt.png');
+  background-image: url('~@/views/dailyManagement/deviceReportanaly/dynamicanalysis/imgs/tjbjt.png');
   background-size: 100% 100%;
   .dash-rich-text {
     width: 100%;

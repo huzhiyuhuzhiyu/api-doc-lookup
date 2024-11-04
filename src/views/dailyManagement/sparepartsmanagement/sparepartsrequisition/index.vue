@@ -63,9 +63,9 @@
           </el-table-column>
           <el-table-column prop="collectionTime" label="领用日期" width="180" sortable="custom"></el-table-column>
           <el-table-column prop="maintainerIdText" label="领用人" width="120"></el-table-column>
-          <el-table-column prop="workNo" label="单号" min-width="200">
+          <el-table-column prop="workNo" label="原单号/名称" min-width="200">
           </el-table-column>
-          <el-table-column prop="equipmentIdName" label="名称" min-width="200">
+          <el-table-column prop="equipmentIdName" label="设备/工具名称" min-width="200">
           </el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
@@ -196,7 +196,7 @@ export default {
       orderForm: {},
       orderFormone: {
         requisitionType: 'requisition',
-        equipmentType: 'spare_parts',
+        equipmentType: 'accessory',
         maintainerIdText: '',
         useApplication: '',
         pageNum: 1,

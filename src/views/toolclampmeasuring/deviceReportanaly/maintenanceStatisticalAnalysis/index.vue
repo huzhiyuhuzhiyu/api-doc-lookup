@@ -23,7 +23,7 @@
                       </div>
                     </div>
                   </div>
-                  <card class="card-item" bodyheight="200px" title="设备维修工单数" :datalist="datalistobj"></card>
+                  <card class="card-item" bodyheight="200px" title="工具维修工单数" :datalist="datalistobj"></card>
                 </div>
                 <div class="table-content">
                   <div style="margin-top: 15px;">
@@ -31,12 +31,12 @@
                       <el-form @submit.native.prevent>
                         <el-col :span="4">
                           <el-form-item>
-                            <el-input v-model="listQuery.equipmentIdCode" placeholder="请输入设备编码" clearable @keydown.enter.native="search()" />
+                            <el-input v-model="listQuery.equipmentIdCode" placeholder="请输入工具编码" clearable @keydown.enter.native="search()" />
                           </el-form-item>
                         </el-col>
                         <el-col :span="4">
                           <el-form-item>
-                            <el-input v-model="listQuery.equipmentIdName" placeholder="请输入设备名称" clearable @keydown.enter.native="search()" />
+                            <el-input v-model="listQuery.equipmentIdName" placeholder="请输入工具名称" clearable @keydown.enter.native="search()" />
                           </el-form-item>
                         </el-col>
                         <el-col :span="6">
@@ -54,8 +54,8 @@
                     <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" custom-column>
                       <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" sortable="custom">
                       </el-table-column>
-                      <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" sortable="custom" />
-                      <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom"></el-table-column>
+                      <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" sortable="custom" />
+                      <el-table-column prop="equipmentIdName" label="工具名称" min-width="200" sortable="custom"></el-table-column>
                       <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
                       <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
                       <el-table-column prop="frontPicList" label="故障情况照片" min-width="140">
@@ -102,7 +102,7 @@
                       <el-table-column prop="startMaintenanceTime" label="开始维修时间" width="180"></el-table-column>
                       <el-table-column prop="repairCompletionTime" label="维修完成时间" width="180"></el-table-column>
                       <el-table-column prop="maintenanceDuration" label="维修时长" min-width="160" sortable="custom"></el-table-column>
-                      <el-table-column prop="equipmentState" label="设备状态" width="120">
+                      <el-table-column prop="equipmentState" label="工具状态" width="120">
                         <template slot-scope="scope">
                           <div v-if="scope.row.equipmentState == 'normal'"><el-tag type="success">正常</el-tag></div>
                           <div v-else-if="scope.row.equipmentState == 'repair'"><el-tag type="warning">维修</el-tag></div>
@@ -149,12 +149,12 @@
                       <el-form @submit.native.prevent>
                         <el-col :span="4">
                           <el-form-item>
-                            <el-input v-model="listQuery.equipmentIdCode" placeholder="请输入设备编码" clearable @keydown.enter.native="search()" />
+                            <el-input v-model="listQuery.equipmentIdCode" placeholder="请输入工具编码" clearable @keydown.enter.native="search()" />
                           </el-form-item>
                         </el-col>
                         <el-col :span="4">
                           <el-form-item>
-                            <el-input v-model="listQuery.equipmentIdName" placeholder="请输入设备名称" clearable @keydown.enter.native="search()" />
+                            <el-input v-model="listQuery.equipmentIdName" placeholder="请输入工具名称" clearable @keydown.enter.native="search()" />
                           </el-form-item>
                         </el-col>
                         <el-col :span="6">
@@ -175,8 +175,8 @@
                     <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" custom-column>
                       <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" sortable="custom">
                       </el-table-column>
-                      <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" sortable="custom" />
-                      <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom"></el-table-column>
+                      <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" sortable="custom" />
+                      <el-table-column prop="equipmentIdName" label="工具名称" min-width="200" sortable="custom"></el-table-column>
                       <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
                       <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
                       <el-table-column prop="frontPicList" label="故障情况照片" min-width="140">
@@ -223,7 +223,7 @@
                       <el-table-column prop="startMaintenanceTime" label="开始维修时间" width="180"></el-table-column>
                       <el-table-column prop="repairCompletionTime" label="维修完成时间" width="180"></el-table-column>
                       <el-table-column prop="maintenanceDuration" label="维修时长" min-width="160" sortable="custom"></el-table-column>
-                      <el-table-column prop="equipmentState" label="设备状态" width="120">
+                      <el-table-column prop="equipmentState" label="工具状态" width="120">
                         <template slot-scope="scope">
                           <div v-if="scope.row.equipmentState == 'normal'"><el-tag type="success">正常</el-tag></div>
                           <div v-else-if="scope.row.equipmentState == 'repair'"><el-tag type="warning">维修</el-tag></div>
@@ -307,7 +307,7 @@ export default {
       listQueryone: {
         reviewComments: '',
         state: 'maintained',
-        classAttribute: "equipment",
+        classAttribute: "tool",
         maintenanceNo: '',
         equipmentIdCode: '',
         equipmentIdName: '',
@@ -339,7 +339,7 @@ export default {
     //派工情况概览
     initDatapgqkgl() {
       let obj = {
-        classAttribute: "equipment"
+        classAttribute: "tool"
       }
       repairSupplierNum(obj).then(res => {
         this.supplieroption = {
@@ -614,7 +614,7 @@ export default {
     },
     initDatawxqkgl() {
       let obj = {
-        classAttribute: "equipment"
+        classAttribute: "tool"
       }
       repairNum(obj).then(res => {
         this.datalistobj = res.data
@@ -771,7 +771,7 @@ export default {
   border-radius: 3px;
 }
 .group-container-body {
-  background-image: url('../dynamicanalysis/imgs/tjbjt.png');
+  background-image: url('~@/views/dailyManagement/deviceReportanaly/dynamicanalysis/imgs/tjbjt.png');
   background-size: 100% 100%;
   .dash-rich-text {
     width: 100%;

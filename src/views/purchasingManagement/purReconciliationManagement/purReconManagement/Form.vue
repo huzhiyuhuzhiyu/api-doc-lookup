@@ -214,8 +214,7 @@
                       <el-table-column label="操作" width="120" fixed="right" v-if="dataFormTwo.data.length > 1">
                         <template slot-scope="scope">
                           <el-button type="text" class="JNPF-table-delBtn"
-                            @click="delequipment_process_relList(scope.$index)"
-                            :disabled="newArr.length <= 1 && (scope.row.productCode ? true : false)">
+                            @click="delequipment_process_relList(scope.$index)">
                             删除
                           </el-button>
                         </template>

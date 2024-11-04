@@ -55,11 +55,12 @@
               <i :class="[scope.row.childrenList.length>=1?'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']"></i>{{scope.row.name}}
             </template>
           </el-table-column>
+          <el-table-column prop="code" label="编码" />
           <el-table-column prop="parentName" label="上级分类" />
           <el-table-column prop="createTime" label="创建时间" width="180" ></el-table-column>
           <el-table-column prop="remark" label="备注" width="300" >
           </el-table-column>
-          <el-table-column label="操作" width="180">
+          <el-table-column label="操作" width="140">
             <template slot-scope="scope" >
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId)" @del="handleDel(scope.row.id,scope.row.parentId)"/>
               <!-- <el-button type="text" @click="addOrUpdateHandle(scope.row.id,scope.row.parentId)" >编辑</el-button>
@@ -91,7 +92,6 @@
 </template>
 
 <script>
-import { getOrganizeList, delOrganize } from '@/api/permission/organize'
 import {getcategoryTree,deleteCategory} from '@/api/basicData/materialSettings'
 import Form from './form'
 import DepForm from './depForm'

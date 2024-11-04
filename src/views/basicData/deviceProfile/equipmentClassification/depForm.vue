@@ -1,18 +1,17 @@
 <template>
-  <el-dialog :title="!dataForm.id ? '新建设备分类' : '编辑设备分类'" :close-on-click-modal="false" :close-on-press-escape="false"
-    :visible.sync="visible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
-    <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :type="dataForm.type" :rules="dataRule"
-      label-position="top" label-width="120px">
+  <el-dialog :title="!dataForm.id ? '新建设备分类' : '编辑设备分类'" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
+    <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :type="dataForm.type" :rules="dataRule" label-position="top" label-width="120px">
       <el-form-item label="上级分类" prop="parentName">
-        <ComSelect3 v-model="dataForm.parentName" :isdisabled="isdisabled" placeholder="请选择所属分类" auth
-          @change="onOrganizeChange" :currOrgId="dataForm.id" :type="dataForm.type"
-          :classAttribute="dataForm.classAttribute" />
+        <ComSelect3 v-model="dataForm.parentName" :isdisabled="isdisabled" placeholder="请选择所属分类" auth @change="onOrganizeChange" :currOrgId="dataForm.id" :type="dataForm.type" :classAttribute="dataForm.classAttribute" />
       </el-form-item>
       <el-form-item label="分类名称" prop="name">
         <el-input v-model="dataForm.name" placeholder="请输入分类名称" maxlength="20" />
       </el-form-item>
+      <el-form-item label="分类编码" prop="code">
+        <el-input v-model="dataForm.code" placeholder="请输入分类编码" maxlength="20" />
+      </el-form-item>
       <el-form-item label="备注" prop="remark">
-        <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" placeholder="请输入备注"/>
+        <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" placeholder="请输入备注" />
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -36,6 +35,7 @@ export default {
       btnLoading: false,
       isdisabled: false,
       dataForm: {
+        code: '',
         name: '',
         remark: '',
         type: 'supplier',
@@ -51,6 +51,7 @@ export default {
           { validator: this.formValidate('fullName', '分类名称不能含有特殊符号'), trigger: 'blur' },
           { max: 50, message: '分类名称最多为50个字符！', trigger: 'blur' }
         ],
+        code:[{ required: true, message: '请输入分类编码', trigger: 'blur' }]
       }
     }
   },

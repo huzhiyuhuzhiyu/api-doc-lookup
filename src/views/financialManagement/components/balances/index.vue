@@ -89,11 +89,11 @@
               v-else-if="['currentBillingAmount', 'currentInboundOutboundAmount', 'duePaymentAmount', 'currentActualAmount', 'overduePaymentAmount'].includes(item.prop)"
               :prop="item.prop" :key="item.prop" :label="item.label" :fixed="item.fixed || false"
               :min-width="item.minWidth || 120">
-              <template slot-scope="scope">
+              <!-- <template slot-scope="scope">
                 <el-link type="primary" @click.native="linesTable(item.prop, scope.row)">
                   {{ scope.row[item.prop] }}
                 </el-link>
-              </template>
+              </template> -->
             </el-table-column>
             <el-table-column v-else :key="item.prop" :prop="item.prop" :label="item.label" :fixed="item.fixed || false"
               :min-width="item.minWidth || 120" />

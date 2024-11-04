@@ -155,7 +155,7 @@
                       <el-input v-model="scope.row.description" placeholder="请输入说明" :disabled="btnType == 'look' ? true : false" maxlength="200" />
                     </template>
                   </el-table-column>
-                  <el-table-column prop="faultDescription" label="是否完成" width="90">
+                  <el-table-column prop="inspectionResult" label="是否完成" width="90">
                     <template slot-scope="scope">
                       <el-checkbox v-model="scope.row.inspectionResult" true-label="finished" false-label="not_finished" :disabled="btnType == 'look'"></el-checkbox>
                     </template>
@@ -419,6 +419,8 @@ export default {
             maintenanceItemCode: item.code,
             maintenanceItemRequirement: item.itemRequirements,
             inspectionMethod: item.inspectionMethod,
+            inspectionResult: 'not_finished',
+            description: '',
             id: ''
           })
         } else {
@@ -701,10 +703,12 @@ export default {
             this.salesList = res.data
           })
           res.data.lines.forEach((item) => {
-            item.maintenanceItemName = item.itemName,
-              item.maintenanceItemCode = item.itemCode,
-              item.maintenanceItemRequirement = item.itemRequirements,
-              this.dataFormTwo.productData.push(item)
+            item.maintenanceItemName = item.itemName
+            item.maintenanceItemCode = item.itemCode
+            item.maintenanceItemRequirement = item.itemRequirements
+            item.inspectionResult = 'not_finished'
+            item.description = ''
+            this.dataFormTwo.productData.push(item)
           })
           this.limittime(res.data.task.nextMaintenanceTime)
         })

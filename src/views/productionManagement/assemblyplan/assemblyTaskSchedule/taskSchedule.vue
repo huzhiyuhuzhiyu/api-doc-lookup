@@ -391,7 +391,7 @@ export default {
       const dateToStrss = gantt.date.date_to_str("%Y年");
       const dateToStrs = gantt.date.date_to_str("%M");
       // return dateToStrss(date)+dateToStrs(date)+dateToStr(date)+'日';
-      return dateToStrs(date) + dateToStr(date) + '日';
+      return  dateToStr(date) + '日';
     },
 
 
@@ -1015,5 +1015,8 @@ $footerPadding: '10px';
 ::v-deep .highlight-selected-row {
   background-color: #f2f2f2;
   /* 设置选中行的背景色 */
+}
+::v-deep .gantt_cell_tree{
+  border-right: 0.5px solid #e0e0e0;
 }
 </style>

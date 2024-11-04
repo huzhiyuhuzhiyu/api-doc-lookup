@@ -18,7 +18,7 @@
         </div>
       </div>
       <div class="main" v-loading="formLoading">
-        <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
+        <el-tabs v-model="activeName" v-if="!approvalFlag" @tab-click="handleClick" class=".el-table">
           <el-tab-pane label="领用信息" name="orderInfo">
             <el-collapse v-model="activeNames">
               <el-collapse-item title="基本信息" name="basicInfo">
@@ -134,6 +134,109 @@
             <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
           </el-tab-pane>
         </el-tabs>
+        <el-collapse v-model="activeNames" v-else>
+          <el-collapse-item title="基本信息" name="basicInfo">
+            <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+              <el-row :gutter="30" class="custom-row">
+                <el-col :sm="6" :xs="24">
+                  <el-form-item label="领用单号" prop="orderNo">
+                    <el-input v-model="dataForm.orderNo" placeholder="请输入领用单号" :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="6" :xs="24">
+                  <el-form-item label="领用目的" prop="useApplication">
+                    <el-select v-model="dataForm.useApplication" placeholder="请选择领用目的" style="width: 100%;" @change="useApplicationchange" :disabled="btnType == 'look'">
+                      <el-option v-for="(item, index) in [{label:'工具保养',value:'toolmaintain'},{label:'工具维修',value:'toolrepair'},{label:'设备保养',value:'equipmentmaintain'},{label:'设备维修',value:'equipmentrepair'}]" :key="index" :label="item.label" :value="item.value"></el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="6" :xs="24" v-if="dataForm.useApplication=='equipmentmaintain'">
+                  <el-form-item label="设备保养任务名称" prop="workNo">
+                    <ComSelect-page v-model="dataForm.workNo" @change="maintainChange" :tableItems="maintainTableItems" dialogTitle="选择设备保养" placeholder="请选择设备保养" :listMethod="checkmaintenanceList" :listRequestObj="maintainRequestObj" :searchList="maintainSearchList" :isdisabled="btnType === 'look'" :renderTree="false" />
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="6" :xs="24" v-if="dataForm.useApplication=='equipmentrepair'">
+                  <el-form-item label="设备维修单号" prop="workNo">
+                    <ComSelect-page v-model="dataForm.workNo" @change="repairChange" :tableItems="repairTableItems" dialogTitle="选择维修单号" placeholder="请选择维修单号" :listMethod="RepairRequestList" :listRequestObj="repairRequestObj" :searchList="repairSearchList" :isdisabled="btnType === 'look'" :renderTree="false" />
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="6" :xs="24" v-if="dataForm.useApplication=='equipmentrepair'||dataForm.useApplication=='equipmentmaintain'">
+                  <el-form-item label="设备名称" prop="equipmentIdName">
+                    <el-input v-model="dataForm.equipmentIdName" placeholder="请输入设备名称" :disabled="true" />
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="6" :xs="24" v-if="dataForm.useApplication=='toolmaintain'">
+                  <el-form-item label="工具保养任务名称" prop="workNo">
+                    <ComSelect-page v-model="dataForm.workNo" @change="maintainChange" :tableItems="maintainTableItemstool" dialogTitle="选择工具保养" placeholder="请选择工具保养" :listMethod="checkmaintenanceList" :listRequestObj="maintainRequestObjtool" :searchList="maintainSearchListtool" :isdisabled="btnType === 'look'" :renderTree="false" />
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="6" :xs="24" v-if="dataForm.useApplication=='toolrepair'">
+                  <el-form-item label="工具维修单号" prop="workNo">
+                    <ComSelect-page v-model="dataForm.workNo" @change="repairChange" :tableItems="repairTableItemstool" dialogTitle="选择维修单号" placeholder="请选择维修单号" :listMethod="RepairRequestList" :listRequestObj="repairRequestObjtool" :searchList="repairSearchListtool" :isdisabled="btnType === 'look'" :renderTree="false" />
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="6" :xs="24" v-if="dataForm.useApplication=='toolmaintain'||dataForm.useApplication=='toolrepair'">
+                  <el-form-item label="工具名称" prop="equipmentIdName">
+                    <el-input v-model="dataForm.equipmentIdName" placeholder="请输入工具名称" :disabled="true" />
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="6" :xs="24">
+                  <el-form-item label="领用日期" prop="collectionTime">
+                    <el-date-picker v-model="dataForm.collectionTime" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择领用日期" :disabled="btnType == 'look'">
+                    </el-date-picker>
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="6" :xs="24">
+                  <el-form-item label="领用人" prop="recipientId">
+                    <user-select v-model="dataForm.recipientId" placeholder="请选择领用人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
+                    </user-select>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </el-form>
+          </el-collapse-item>
+          <el-collapse-item title="备件信息" name="sbxx">
+            <div v-if="btnType !== 'look'">
+              <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择备件</el-button>|
+              <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important" :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
+            </div>
+            <el-form :model="dataFormTwo" ref="productForm" class="data-form">
+              <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" @selection-change="handeleProductInfoData">
+                <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType !== 'look'" key="1" />
+                <el-table-column type="index" width="60" label="序号" align="center" fixed='left' key="11" />
+                <el-table-column prop="productCode" label="备件编码" min-width="160" show-overflow-tooltip>
+                </el-table-column>
+                <!-- <el-table-column prop="productName" label="备件名称" min-width="160" show-overflow-tooltip>
+                      <template slot="header">
+                        <span class="required">*</span>备件名称
+                      </template>
+                    </el-table-column> -->
+                <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
+                </el-table-column>
+                <el-table-column prop="mainUnit" label="单位" width="120" show-overflow-tooltip>
+                </el-table-column>
+                <el-table-column prop="availableQuantity" label="可用库存数量" width="160" show-overflow-tooltip v-if="btnType !== 'look'" key="24">
+                </el-table-column>
+                <el-table-column prop="requisitionNum" label="数量" width="160">
+                  <template slot="header">
+                    <span class="required">*</span>数量
+                  </template>
+                  <template slot-scope="scope">
+                    <el-form-item :prop="'productData.'+scope.$index+'.'+'requisitionNum'" :rules='productRules.requisitionNum'>
+                      <el-input v-model="scope.row.requisitionNum" placeholder="请输入数量" :disabled="btnType == 'look'" maxlength="11" style="width: 135px;">
+                      </el-input>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+                <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="30">
+                  <template slot-scope="scope">
+                    <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-form>
+          </el-collapse-item>
+        </el-collapse>
       </div>
       <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
         <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
@@ -389,9 +492,11 @@ export default {
   computed: {
     ...mapGetters(['userInfo']),
   },
-  created() {
-    if (!this.dataForm.id) this.init('', 'add')
-    this.getBimBusinessDetail()
+  mounted() {
+    this.$nextTick(() => {
+      if (!this.dataForm.id) this.init('', 'add')
+      this.getBimBusinessDetail()
+    });
   },
   methods: {
     // 继续新增
@@ -544,8 +649,8 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
     },
-    init(id, btnType, type) {
-      // this.type = type
+    init(id, btnType, approvalFlag) {
+      this.approvalFlag = approvalFlag
       this.dataForm.id = id || ''
       this.btnType = btnType
       if (this.btnType === 'add' || this.btnType === 'edit') {
@@ -576,11 +681,11 @@ export default {
           if (this.btnType == 'add') {
             this.dataForm.id = ''
           }
+          if (this.btnType === 'look') {
+            // 流程信息和流转记录
+            if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+          }
         })
-        if (this.btnType === 'look') {
-          // 流程信息和流转记录
-          if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
-        }
       }
     },
     async handleConfirm(value) {

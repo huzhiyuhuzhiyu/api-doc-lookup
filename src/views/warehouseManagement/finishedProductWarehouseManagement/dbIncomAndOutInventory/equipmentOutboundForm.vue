@@ -117,8 +117,8 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-                        <el-table-column prop="availableBatchNumber" label="可用数量" width="140" v-if="btnType != 'look'"
-                          :key="7"></el-table-column>
+                        <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160" v-if="btnType != 'look'"
+                        :key="7"></el-table-column>
 
 
                         <el-table-column prop="unReceiveQuantity" label="待领用数量" width="140" :key="777"
@@ -250,8 +250,8 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-                    <el-table-column prop="availableBatchNumber" label="可用数量" width="140" v-if="btnType != 'look'"
-                      :key="7"></el-table-column>
+                    <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160" v-if="btnType != 'look'"
+                    :key="7"></el-table-column>
 
 
                     <el-table-column prop="unReceiveQuantity" label="待领用数量" width="140" :key="777"
@@ -612,8 +612,8 @@ export default {
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
       this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
       this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
-      let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [data.availableQuantity, data.occupancyQuantity]), 6)
-      this.$set(this.productData[index], 'availableBatchNumber', num)
+      this.$set(this.productData[index], 'availableBatchNumber', inventoryQuantity)
+
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
     },
     // 打开选择库位弹框
@@ -959,7 +959,7 @@ export default {
               }
               if (this.dataForm.businessType == 'outbound_sale_send' && item.num > item.availableBatchNumber) {
                 submitFlag = false
-                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次可用数量")
+                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次库存数量")
                 break
               }
 

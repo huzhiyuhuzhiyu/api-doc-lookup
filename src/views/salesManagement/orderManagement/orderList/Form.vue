@@ -1971,7 +1971,7 @@ export default {
     checkNum(row, index) {
       if (!row.num) {
         this.$message({
-          message: "请填写第" + (index + 1) + "行产品的主数量",
+          message: "请填写第" + (index + 1) + "行产品的数量",
           type: 'error',
           duration: 1500,
         })

@@ -118,7 +118,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-                        <el-table-column prop="availableBatchNumber" label="可用数量" width="140" v-if="btnType != 'look'"
+                        <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160" v-if="btnType != 'look'"
                           :key="7"></el-table-column>
 
 
@@ -262,8 +262,8 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-                    <el-table-column prop="availableBatchNumber" label="可用数量" width="140" v-if="btnType != 'look'"
-                      :key="7"></el-table-column>
+                    <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160" v-if="btnType != 'look'"
+                    :key="7"></el-table-column>
 
 
                     <el-table-column prop="unReceiveQuantity" label="待领料数量" width="140" :key="777"
@@ -359,13 +359,10 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
                 @selection-change="handleSelectionChangeAllPruduct" ref="form">
-                <el-table-column prop="orderNo" label="领料单号" width="190" sortable="custom"></el-table-column>
-                <el-table-column prop="orderNo" label="退货单号" width="190" sortable="custom"
-                  v-if="dataForm.businessType == 'inbound_sale_return' || dataForm.businessType == 'outbound_purchase'"></el-table-column>
+                <el-table-column prop="orderNo" label="领料单号" width="190" sortable="custom"></el-table-column> 
                 <el-table-column prop="operationDate" label="领料日期" width="180" sortable="custom" />
                 <el-table-column prop="ordersNo" label="任务单号" width="190" sortable="custom" />
-                <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom"
-                  v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'" />
+     
                 <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
                 <el-table-column prop="processName" label="工序" width="120" sortable="custom" />
@@ -579,9 +576,9 @@ export default {
 
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
       this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
-      this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
-      let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [data.availableQuantity, data.occupancyQuantity]), 6)
-      this.$set(this.productData[index], 'availableBatchNumber', num)
+      this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName) 
+       this.$set(this.productData[index], 'availableBatchNumber', inventoryQuantity)
+
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
     },
     // 打开选择库位弹框
@@ -1010,19 +1007,19 @@ export default {
                 break
               }
 
-              if (this.dataForm.businessType == 'outbound_sale_send' && item.num > item.availableBatchNumber) {
+              if (  item.num > item.availableBatchNumber) {
                 submitFlag = false
-                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次可用数量")
+                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次库存数量")
                 break
               }
-              if (!totals[item.ordersLineId]) {
-                totals[item.ordersLineId] = { totalNum: 0, ordersNum: item.ordersNum };
-              }
-              if (!totalNum[item.ordersLineId]) {
-                totalNum[item.ordersLineId] = { totalNum: 0, availableBatchNumber: item.availableBatchNumber };
-              }
-              totals[item.ordersLineId].totalNum += Number(item.num)
-              totalNum[item.ordersLineId].totalNum += Number(item.num);
+              // if (!totals[item.ordersLineId]) {
+              //   totals[item.ordersLineId] = { totalNum: 0, ordersNum: item.ordersNum };
+              // }
+              // if (!totalNum[item.ordersLineId]) {
+              //   totalNum[item.ordersLineId] = { totalNum: 0, availableBatchNumber: item.availableBatchNumber };
+              // }
+              // totals[item.ordersLineId].totalNum += Number(item.num)
+              // totalNum[item.ordersLineId].totalNum += Number(item.num);
             }
 
           }

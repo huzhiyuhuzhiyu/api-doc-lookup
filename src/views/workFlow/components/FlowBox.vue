@@ -347,6 +347,9 @@ export default {
         'b053': 'dailyManagement/sparepartsmanagement/sparepartsrequisition/Form.vue',
         'b054': 'dailyManagement/equipmentrequisitionreturn/equipmentrequisition/Form.vue',
         'b055': 'dailyManagement/borrowingReturn/circulate/Form.vue',
+        'b056': 'dailyManagement/sparepartsmanagement/sparepartsReturn/Form',
+        'b057': 'dailyManagement/equipmentrequisitionreturn/equipmentreturn/Form',
+        'b058': 'dailyManagement/borrowingReturn/toolreturn/Form',
       },
       inspectionTypeList: [
         // 不良品

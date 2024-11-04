@@ -157,7 +157,7 @@ export default {
       detailFlag: false,
 
       orderForm: {
-        orderType: 'external',
+        externalFlag: 1,
         receiptQueryFlag: 1,
         deliveryEndDate: '',
         deliveryStartDate: '',

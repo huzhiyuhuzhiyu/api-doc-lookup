@@ -37,7 +37,7 @@ export default {
         orderNo: "",
         pageNum: 1,
         pageSize: 20,
-        paymentStatus: "not_finished",
+        invoiceStatus: "not_finished",
         reconciliationEndDate: "",
         reconciliationStartDate: "",
         reconciliationType: "payable",
@@ -62,7 +62,7 @@ export default {
         { prop: 'createByName', label: '创建人' },
       ],
       searchList: [
-        { prop: 'paymentStatus', label: '付款状态', type: 'select', options: [{ label: '未完成 ', value: 'not_finished', }, { label: '已完成 ', value: 'finished', }] },
+        { prop: 'invoiceStatus', label: '付款状态', type: 'select', options: [{ label: '未完成 ', value: 'not_finished', }, { label: '已完成 ', value: 'finished', }] },
         { prop: 'reconciliationDateArr', label: '对账日期', type: 'date' },
         { prop: 'cooperativePartnerName', label: '供应商名称', type: 'input' },
       ],

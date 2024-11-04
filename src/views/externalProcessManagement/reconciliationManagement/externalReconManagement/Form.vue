@@ -589,13 +589,8 @@ export default {
     },
     // 表单提交
     dataFormSubmit() {
-      // this.request()
-      let _data = {
-        reconciliation: JSON.parse(JSON.stringify(this.dataForm)),
-        reconciliationLine: JSON.parse(JSON.stringify(this.dataFormTwo.data)),
-        flowData: this.flowData
-      }
-      console.log(_data, '_')
+      this.request()
+
     },
 
     async request() {

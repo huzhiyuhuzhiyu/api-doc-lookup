@@ -484,5 +484,13 @@ export default {
 ::v-deep .JNPF-common-page-header {
   padding: 5px 10px !important;
 }
+.pageTitle {
+  display: inline-block;
+  font-size: 18px;
+  color: #303133;
+  height: 100%;
+  line-height: 36px;
+  font-weight: 700;
+}
 </style>
     

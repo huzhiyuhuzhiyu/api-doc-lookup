@@ -385,7 +385,7 @@ export default {
     //返回菜单
     goBackmenu() {
       this.$router.push({
-        path: "dailyManagement/borrowingReturn/toolreturn/index",
+        path: "/dailyManagement/borrowingReturn/toolreturn/index",
       })
       this.tipsvisible = false
     },
@@ -485,7 +485,7 @@ export default {
       this.dataForm.id = id || ''
       this.btnType = btnType
       if (this.btnType === 'add' || this.btnType === 'edit') {
-        this.getBusInfo('b053')
+        this.getBusInfo('b058')
         this.fetchData('LYDH')
       }
       if (this.btnType == 'add') {

@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tabs v-model="activeName" @tab-click="handleClick" class="tabs">
         <el-tab-pane label="产品价格" name="latestprice">
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
@@ -80,7 +80,13 @@
               </div>
               <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm"
                 :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="columnLists">
-                <el-table-column prop="partnerName" label="客户名称" min-width="260" sortable="custom" />
+                <el-table-column prop="partnerName" label="客户名称" min-width="260" sortable="custom">
+                  <template slot-scope="scope">
+                    <el-link type="primary" @click.native="viewPartner(scope.row.cooperativePartnerId, 'look')">{{
+                      scope.row.partnerName
+                      }}</el-link>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="partnerCode" label="客户编码" min-width="160" sortable="custom" />
                 <el-table-column prop="customerProductNo" label="客户料号" min-width="180" />
                 <el-table-column prop="drawingNo" label="品名规格" min-width="400" />
@@ -122,7 +128,7 @@
                       @keyup.enter.native="search()" />
                   </el-form-item>
                 </el-col> -->
-                <template v-for="item in searchList">
+                <template v-for="item in searchList1">
                   <el-col :span="item.searchType === 3 ? 6 : 4">
                     <el-form-item>
                       <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label"
@@ -174,24 +180,23 @@
               </div>
               <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForms"
                 :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="columnLists">
-                <el-table-column prop="partnerName" label="客户名称" min-width="260" sortable="custom" />
-                <el-table-column prop="partnerCode" label="客户编码" min-width="160" sortable="custom" />
-                <el-table-column prop="customerProductNo" label="客户料号" min-width="180" />
-                <el-table-column prop="drawingNo" label="品名规格" min-width="400" />
+                <el-table-column prop="cooperativePartnerIdText" label="客户名称" min-width="260" sortable="custom" />
+                <el-table-column prop="cooperativePartnerCode" label="客户编码" min-width="160" sortable="custom" />
+                <el-table-column prop="customerDrawingNumber" label="客户料号" min-width="180" />
+                <el-table-column prop="productDrawingNo" label="品名规格" min-width="400" />
                 <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" min-width="160" />
-                <el-table-column prop="price" min-width="140" label="销售单价(含税)" />
+                <el-table-column prop="unitPrice" min-width="140" label="销售单价(含税)" />
 
-                <el-table-column prop="excludingTaxPrice" label="销售单价(不含税)" width="160" />
-                <el-table-column prop="dateOrderStart" label="有效日期起" sortable="custom" min-width="160" />
-                <el-table-column prop="dateOrderStop" label="有效日期止" sortable="custom" min-width="160" />
-                <el-table-column prop="dateOrderStop" label="要求" sortable="custom" min-width="160" />
+                <el-table-column prop="excludingTaxUnitPrice" label="销售单价(不含税)" width="160" />
+                <el-table-column prop="validEnd" label="有效日期止" sortable="custom" min-width="160" />
+                <el-table-column prop="ask" label="要求" sortable="custom" min-width="160" />
                 <el-table-column prop="remark" min-width="200" label="备注" />
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
 
               </JNPF-table>
-              <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
-                :limit.sync="listQuery.pageSize" @pagination="initData" />
+              <pagination :total="total" :page.sync="historyForm.pageNum" :background="background"
+                :limit.sync="historyForm.pageSize" @pagination="initData" />
             </div>
           </div>
         </el-tab-pane>
@@ -200,24 +205,33 @@
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+      <CustomerForm v-if="customerVisible" ref="customerForm" @close="closePage"></CustomerForm>
   </div>
 </template>
 
 <script>
+import { getQuotationLists, deleteQuotationData, getQuotationmxLists, exportSaleQuotation } from '@/api/salesManagement/index'
 import { getBimVehicleTypeData, deleteBimVehicleType, getPartnerOrProductData } from '@/api/basicData/index'
 import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-
+import CustomerForm from '../customerManagement/Officialcustomer/Form.vue'
 export default {
   name: 'PartnerProduct',
-  components: { ExportForm, SuperQuery },
+  components: { ExportForm, SuperQuery,CustomerForm },
   data() {
     return {
+      customerVisible:false,
       searchList: [
         { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+
+      ],
+      searchList1: [
+        { field: 'cooperativePartnerIdText', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'customerDrawingNumber', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
 
       ],
       superQueryVisible: false,
@@ -250,7 +264,20 @@ export default {
       superQuery: {},
       superForm: {},
       basicQuery: {},
-
+      historyForm: {
+        productDrawingNo: "",
+        cooperativePartnerIdText: "",
+        customerDrawingNumber: "",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "createTime"
+        }],
+        pageNum: 1,
+        pageSize: 20,
+      },
       total: 0,
       formVisible: false,
       activeName: 'latestprice',
@@ -265,11 +292,7 @@ export default {
           label: "客户编码",
           type: 'input'
         },
-        {
-          prop: 'cooperativePartnerName',
-          label: "客户名称",
-          type: 'input'
-        },
+
 
         {
           prop: 'customerProductNo',
@@ -330,6 +353,15 @@ export default {
     }
   },
   methods: {
+    closePage(){
+      this.customerVisible=false
+    },
+    viewPartner(id,type){
+      this.customerVisible=true
+      this.$nextTick(()=>{
+        this.$refs.customerForm.init(id,'',type)
+      })
+    },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false
@@ -406,38 +438,46 @@ export default {
       }
     },
 
-    dataFormSubmit() {
-      this.superForm.pageNum = 1
 
-      this.initData()
-    },
     initData() {
       this.listLoading = true
       if (this.activeName == "historicalprice") {
-        this.superForm.historyFlag = true
+        getQuotationmxLists(this.superForm).then(res => {
+          this.tableDataList = res.data.records
+          this.total = res.data.total
+          this.listLoading = false
+        })
       } else {
         this.superForm.historyFlag = false
 
+        getPartnerOrProductData(this.superForm).then(res => {
+          console.log(res, '客户产品列表');
+          this.tableDataList = res.data.records
+          this.total = res.data.total
+          this.listLoading = false
+        }).catch(() => {
+          this.listLoading = false
+        })
       }
-      getPartnerOrProductData(this.superForm).then(res => {
-        console.log(res, '客户产品列表');
-        this.tableDataList = res.data.records
-        this.total = res.data.total
-        this.listLoading = false
-      }).catch(() => {
-        this.listLoading = false
-      })
     },
     search(type) {
-      Object.keys(this.listQuery).forEach(key => {
-        let item = this.listQuery[key]
-        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
-      })
+      if (this.activeName == 'latestprice') {
+
+        Object.keys(this.listQuery).forEach(key => {
+          let item = this.listQuery[key]
+          this.listQuery[key] = typeof item === 'string' ? item.trim() : item
+        })
+      } else {
+        Object.keys(this.historyForm).forEach(key => {
+          let item = this.historyForm[key]
+          this.historyForm[key] = typeof item === 'string' ? item.trim() : item
+        })
+      }
       // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
       if (type === 'basic') {
         this.basicQuery = {
           matchLogic: 'AND',
-          condition: this.searchList
+          condition: this.activeName == 'latestprice' ? this.searchList : this.searchList1
             .filter((item) => item.fieldValue)
             .map((item) => {
               return {
@@ -455,33 +495,59 @@ export default {
       this.initData()
     },
     reset() {
-      this.$refs['tableForm'].$refs.JNPFTable.clearSort()
+      if (this.activeName == 'latestprice') {
 
-      this.listQuery = {
-        partnerType: "customer",
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time"
-        }],
-        partnerId: null,
-        historyFlag: false,
-        customerProductNo: "",
-        pageNum: 1,
-        pageSize: 20,
-        code: "",
-        name: "",
-      },
+        this.$refs['tableForm'].$refs.JNPFTable.clearSort()
+
+        this.superForm = this.listQuery = {
+          partnerType: "customer",
+          orderItems: [{
+            asc: false,
+            column: ""
+          }, {
+            asc: false,
+            column: "create_time"
+          }],
+          partnerId: null,
+          historyFlag: false,
+          customerProductNo: "",
+          pageNum: 1,
+          pageSize: 20,
+          code: "",
+          name: "",
+        },
+          this.searchList = [
+            { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+            { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
+            { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+
+          ]
+        this.$refs.SuperQuery.conditionList = []
+        this.search('basic')
+      } else {
+        this.superForm = this.historyForm = {
+          productDrawingNo: "",
+          cooperativePartnerIdText: "",
+          customerDrawingNumber: "",
+          pageNum: 1,
+          pageSize: 20,
+          orderItems: [{
+            asc: false,
+            column: ""
+          }, {
+            asc: false,
+            column: "createTime"
+          }],
+        }
         this.searchList = [
           { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
           { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
           { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
 
         ]
-      this.$refs.SuperQuery.conditionList = []
-      this.search('basic')
+        this.$refs.SuperQuery.conditionList = []
+        this.search('basic')
+      }
 
     },
     addSupplier(type) {
@@ -533,9 +599,7 @@ export default {
   padding: 0 10px;
 }
 
-::v-deep .el-tabs__header {
-  padding: 0 8px !important;
-}
+ 
 
 ::v-deep .el-tabs__nav-wrap {
   margin-bottom: 0px;
@@ -544,5 +608,8 @@ export default {
 .JNPF-common-search-box {
   padding: 8px 0 !important;
   margin-left: 0 !important;
+}
+.tabs ::v-deep .el-tabs__header{
+  padding: 0 8px;
 }
 </style>

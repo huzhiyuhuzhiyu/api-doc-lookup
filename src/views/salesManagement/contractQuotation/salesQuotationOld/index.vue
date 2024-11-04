@@ -353,7 +353,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp
-      if (prop == 'cooperativePartnerIdText') {
+      if (prop == 'cooperativePartnerIdText'||prop=='cooperativePartnerCode') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());

@@ -118,7 +118,8 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-
+                        <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160" v-if="btnType != 'look'"
+                        :key="7"></el-table-column>
                         <el-table-column prop="waitDeliverNum" label="待发料数量" width="140" :key="777"
                           v-if="btnType != 'look'">
 
@@ -259,7 +260,8 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-
+                        <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160" v-if="btnType != 'look'"
+                        :key="7"></el-table-column>
                         <el-table-column prop="waitDeliverNum" label="待发料数量" width="140" :key="777"
                           v-if="btnType != 'look'">
 
@@ -578,8 +580,8 @@ export default {
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
       this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
       this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
-      let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [data.availableQuantity, data.occupancyQuantity]), 6)
-      this.$set(this.productData[index], 'availableBatchNumber', num)
+      this.$set(this.productData[index], 'availableBatchNumber', inventoryQuantity)
+
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
     },
 
@@ -917,7 +919,11 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能为空")
                 break
               }
-
+              if (  item.num > item.availableBatchNumber) {
+                submitFlag = false
+                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次库存数量")
+                break
+              }
 
 
               if (Number(item.num) > Number(item.ordersNum)) {

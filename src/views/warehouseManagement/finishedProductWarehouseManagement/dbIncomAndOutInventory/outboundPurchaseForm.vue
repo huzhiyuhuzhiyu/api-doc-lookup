@@ -123,8 +123,8 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-                        <el-table-column prop="availableBatchNumber" label="可用数量" width="140" v-if="btnType != 'look'"
-                          :key="7"></el-table-column>
+                        <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160" v-if="btnType != 'look'"
+                        :key="7"></el-table-column>
 
 
                         <el-table-column prop="receivedQuantity" label="待退货数量" width="140" v-if="btnType != 'look'"
@@ -289,8 +289,8 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-                    <el-table-column prop="availableBatchNumber" label="可用数量" width="140" v-if="btnType != 'look'"
-                      :key="7"></el-table-column>
+                    <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160" v-if="btnType != 'look'"
+                          :key="7"></el-table-column>
 
 
                     <el-table-column prop="receivedQuantity" label="待退货数量" width="140" v-if="btnType != 'look'"
@@ -386,8 +386,7 @@
               <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
                 @selection-change="handleSelectionChangeAllPruduct" ref="form">
 
-                <el-table-column prop="orderNo" label="退货单号" width="180" sortable="custom"
-                  v-if="dataForm.businessType == 'inbound_sale_return' || dataForm.businessType == 'outbound_purchase'"></el-table-column>
+                <el-table-column prop="orderNo" label="退货单号" width="180" sortable="custom" ></el-table-column>
                 <el-table-column prop="deliverDate" label="退货日期" width="160" sortable="custom" />
                 <el-table-column prop="ordersNo" label="订单号" width="180" sortable="custom" />
                 <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
@@ -614,8 +613,9 @@ export default {
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
       this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
       this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
-      let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [data.availableQuantity, data.occupancyQuantity]), 6)
-      this.$set(this.productData[index], 'availableBatchNumber', num)
+      
+      this.$set(this.productData[index], 'availableBatchNumber', inventoryQuantity)
+
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
     },
 
@@ -1055,7 +1055,11 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能为空")
                 break
               }
-
+              if (  item.num > item.availableBatchNumber) {
+                submitFlag = false
+                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次库存数量")
+                break
+              }
 
 
               if (Number(item.num) > Number(item.receivedQuantity)) {
@@ -1088,7 +1092,7 @@ export default {
               for (let id in totalNum) {
                 if (totalNum[id].totalNum > totalNum[id].availableBatchNumber) {
                   submitFlag = false
-                  this.$message.error("同产品的总数量不能批次可用数量")
+                  this.$message.error("同产品的总数量不能批次库存数量")
                   break
                 }
               }

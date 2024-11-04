@@ -319,7 +319,7 @@ export default {
       const dateToStrss = gantt.date.date_to_str("%Y年");
       const dateToStrs = gantt.date.date_to_str("%M");
       // return dateToStrss(date)+dateToStrs(date)+dateToStr(date)+'日';
-      return dateToStrs(date) + dateToStr(date) + '日';
+      return  dateToStr(date) + '日';
     },
 
 
@@ -439,6 +439,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+::v-deep .gantt_cell_tree{
+  border-right: 0.5px solid #e0e0e0;
+}
 // .main {
 
 //   padding: 10px 30px 0;

@@ -109,7 +109,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-                        <el-table-column prop="availableBatchNumber" label="可用数量" width="140" v-if="btnType != 'look'"
+                        <el-table-column prop="availableBatchNumber" label="批次库存数量" width="140" v-if="btnType != 'look'"
                           :key="7"></el-table-column>
 
                         <el-table-column prop="undeliveredQuantity" label="待发货数量" width="140" :key="777"
@@ -257,7 +257,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-                        <el-table-column prop="availableBatchNumber" label="可用数量" width="140" v-if="btnType != 'look'"
+                        <el-table-column prop="availableBatchNumber" label="批次库存数量" width="140" v-if="btnType != 'look'"
                           :key="7"></el-table-column>
 
                         <el-table-column prop="undeliveredQuantity" label="待发货数量" width="140" :key="777"
@@ -576,9 +576,8 @@ export default {
 
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
       this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
-      this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
-      let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [data.availableQuantity, data.occupancyQuantity]), 6)
-      this.$set(this.productData[index], 'availableBatchNumber', num)
+      this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName) 
+      this.$set(this.productData[index], 'availableBatchNumber', inventoryQuantity)
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
     },
  

@@ -297,11 +297,11 @@
                   <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
                   <el-table-column prop="createByName" label="创建人" width="120" sortable="custom"></el-table-column>
                   <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
-                  <el-table-column label="操作" width="140" fixed="right">
+                  <!-- <el-table-column label="操作" width="140" fixed="right">
                     <template slot-scope="scope">
                       <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'look')">查看详情</el-button>
                     </template>
-                  </el-table-column>
+                  </el-table-column> -->
                 </JNPF-table>
                 <pagination :total="total" :page.sync="wxjlorderForm.pageNum" :limit.sync="wxjlorderForm.pageSize" @pagination="getwxjlinfo" />
               </div>
@@ -337,11 +337,11 @@
                   <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
                   <el-table-column prop="createByName" label="创建人" width="120" sortable="custom"></el-table-column>
                   <el-table-column prop="remark" label="备注" min-width="300"></el-table-column>
-                  <el-table-column label="操作" width="140" fixed="right">
+                  <!-- <el-table-column label="操作" width="140" fixed="right">
                     <template slot-scope="scope">
                       <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'look')">查看详情</el-button>
                     </template>
-                  </el-table-column>
+                  </el-table-column> -->
                 </JNPF-table>
                 <pagination :total="total" :page.sync="byrworderForm.pageNum" :limit.sync="byrworderForm.pageSize" @pagination="getbyrwinfo" />
               </div>
@@ -419,11 +419,11 @@
                   <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
                   <el-table-column prop="createByName" label="创建人" width="120" sortable="custom"></el-table-column>
                   <el-table-column prop="remark" label="备注" min-width="300"></el-table-column>
-                  <el-table-column label="操作" width="140" fixed="right">
+                  <!-- <el-table-column label="操作" width="140" fixed="right">
                     <template slot-scope="scope">
                       <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'look')">查看详情</el-button>
                     </template>
-                  </el-table-column>
+                  </el-table-column> -->
                 </JNPF-table>
                 <pagination :total="total" :page.sync="djrworderForm.pageNum" :limit.sync="djrworderForm.pageSize" @pagination="getdjrwinfo" />
               </div>
@@ -468,11 +468,11 @@
                   <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
                   <el-table-column prop="createByName" label="创建人" width="120" sortable="custom"></el-table-column>
                   <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
-                  <el-table-column label="操作" width="140" fixed="right">
+                  <!-- <el-table-column label="操作" width="140" fixed="right">
                     <template slot-scope="scope">
                       <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'look')">查看详情</el-button>
                     </template>
-                  </el-table-column>
+                  </el-table-column> -->
                 </JNPF-table>
                 <pagination :total="djjltotal" :page.sync="djjlorderForm.pageNum" :limit.sync="djjlorderForm.pageSize" @pagination="getdjjlinfo" />
               </div>

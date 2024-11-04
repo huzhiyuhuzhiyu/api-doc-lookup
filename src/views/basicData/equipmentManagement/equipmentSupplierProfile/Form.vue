@@ -84,6 +84,11 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24" v-if="dataForm.regionCode != 'foreign'">
+                      <el-form-item label="省/市/区" prop="provincecityarea">
+                        <JNPF-Address v-model="dataForm.provincecityarea" @change="actiompro" placeholder="请选择省/市/区" :disabled="btnType == 'look' ? true : false"></JNPF-Address>
+                      </el-form-item>
+                    </el-col>
+                    <!-- <el-col :sm="8" :xs="24" v-if="dataForm.regionCode != 'foreign'">
                       <el-form-item label="省" prop="province">
                         <el-select v-model="dataForm.province" placeholder="请选择省" style="width: 100%;" :disabled="btnType ? true : false">
                           <el-option v-for="item in provinces" size="small" :key="item.id" :label="item.fullName" :value="item.id" @click.native="changeProvince(item)"></el-option>
@@ -105,7 +110,7 @@
                           <el-option v-for="item in area" size="small" :key="item.id" :label="item.fullName" :value="item.id"></el-option>
                         </el-select>
                       </el-form-item>
-                    </el-col>
+                    </el-col> -->
 
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="地址" prop="address">
@@ -569,6 +574,7 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
+        provincecityarea:[],
         // 合作伙伴
         code: '',
         taxId: '',
@@ -647,6 +653,9 @@ export default {
           { validator: formValidate('iphone'), trigger: 'blur' },
           { validator: this.validateField2, trigger: 'blur' }
         ],
+        provincecityarea: [
+          { required: true, message: '省/市/区不能为空', trigger: 'change' }
+        ],
         regionCode: [{ required: true, message: '国家不能为空', trigger: 'change' }],
         country: [{ required: true, message: '请输入国家', trigger: 'change' }],
         province: [{ required: true, message: '省份不能为空', trigger: 'change' }],
@@ -671,6 +680,17 @@ export default {
     this.getbimProductAttributes()
   },
   methods: {
+    actiompro(value) {
+      if (value) {
+        this.dataForm.province = value[0]
+        this.dataForm.city = value[1]
+        this.dataForm.area = value[2]
+      } else {
+        this.dataForm.province = ''
+        this.dataForm.city = ''
+        this.dataForm.area = ''
+      }
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -1051,18 +1071,18 @@ export default {
             })
           }
 
-          if (res.data.cooperativePartner.province) {
-            let obj = {
-              id: res.data.cooperativePartner.province
-            }
-            this.changeProvince(obj)
-          }
-          if (res.data.cooperativePartner.city) {
-            let ooo = {
-              id: res.data.cooperativePartner.city
-            }
-            this.changeCity(ooo)
-          }
+          // if (res.data.cooperativePartner.province) {
+          //   let obj = {
+          //     id: res.data.cooperativePartner.province
+          //   }
+          //   this.changeProvince(obj)
+          // }
+          // if (res.data.cooperativePartner.city) {
+          //   let ooo = {
+          //     id: res.data.cooperativePartner.city
+          //   }
+          //   this.changeCity(ooo)
+          // }
 
           this.$nextTick(() => {
             this.contactsList = res.data.contactsList
@@ -1083,6 +1103,12 @@ export default {
               }
             })
             this.dataForm = res.data.cooperativePartner
+            this.dataForm.provincecityarea = []
+            if (res.data.cooperativePartner.province) {
+              this.dataForm.provincecityarea.push(res.data.cooperativePartner.province)
+              this.dataForm.provincecityarea.push(res.data.cooperativePartner.city)
+              this.dataForm.provincecityarea.push(res.data.cooperativePartner.area)
+            }
             if (res.data.attachmentList) {
               res.data.attachmentList.forEach((item) => {
                 this.datafilelist.push({

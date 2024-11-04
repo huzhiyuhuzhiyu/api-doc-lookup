@@ -96,11 +96,11 @@
         </el-tabs>
       </div>
       <el-dialog title="设置设备编号" :visible.sync="dialogFormVisible" :append-to-body="true" :close-on-click-modal="false">
-        <el-form :model="equipmentsform">
+        <el-form>
           <el-row :gutter="30" class="custom-row">
-            <el-col :sm="6" :xs="24" v-for="item in inforownum" :key="item">
-              <el-form-item :prop="'equipmentCode'+item">
-                <el-input v-model="equipmentsform['equipmentCode'+item]" placeholder="请输入设备编号"></el-input>
+            <el-col :span="6" :xs="24" v-for="(item, index) in inforownum" :key="index">
+              <el-form-item>
+                <el-input v-model="item.equipmentCode" placeholder="请输入设备编号" clearable />
               </el-form-item>
             </el-col>
           </el-row>
@@ -129,11 +129,11 @@ import { mapGetters } from 'vuex'
 import { updateCollectionandreturn, detailCollectionandreturn, CollectionandreturnList, addCollectionandreturn } from '@/api/dailyManagement/Maintenance'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getProductList } from '@/api/basicData/materialFiles' // 设备列表
+import { log } from 'mathjs'
 export default {
   data() {
     return {
       codeConfig: {},//单据规则配置
-      equipmentsform: {},
       dialogFormVisible: false,
       submitmethodsTitle: '',
       tipsvisible: false,
@@ -233,7 +233,7 @@ export default {
       selectRows: [],
       inforow: {},
       _index: '',
-      inforownum: 0
+      inforownum: []
     }
   },
   created() {
@@ -254,33 +254,21 @@ export default {
       } catch (error) {
       }
     },
-    areAllValuesEmpty(obj) {
-      return Object.values(obj).every((value) => {
-        return value !== null && value !== undefined && value !== '';
-      });
-    },
     confirmsolut() {
-      let arr = []
-      if (!this.areAllValuesEmpty(this.equipmentsform)) return this.$message.error('设备编号不能为空')
-      for (let key in this.equipmentsform) {
-        arr.push({ equipmentCode: this.equipmentsform[key], productId: this.inforow.productId })
-      }
-      this.$set(this.dataFormTwo.productData[this._index], 'equipments', arr)
+      if (this.inforownum.some(item => item.equipmentCode === "")) return this.$message.error('设备编号不能为空')
+      this.$set(this.dataFormTwo.productData[this._index], 'equipments', this.inforownum)
       this.dialogFormVisible = false
       this.$message.success('保存成功')
     },
     Setencoding(row, index) {
-      this.equipmentsform = {}
       this.inforow = row
-      this.inforownum = row.requisitionNum * 1
-      for (let i = 1; i <= row.requisitionNum * 1; i++) {
-        this.$set(this.equipmentsform, 'equipmentCode' + i, '')
-      }
       this._index = index
+      this.inforownum = Array.from({ length: row.requisitionNum }, () => ({
+        equipmentCode: "",
+        productId: this.inforow.productId
+      }));
       if (row.equipments && row.equipments.length) {
-        row.equipments.map((item, index) => {
-          this.$set(this.equipmentsform, 'equipmentCode' + (index + 1), item.equipmentCode)
-        })
+        this.inforownum = row.equipments
       }
       this.dialogFormVisible = true
     },
@@ -467,6 +455,14 @@ export default {
           }
         })
       }
+      for (let index = 0; index < this.dataFormTwo.productData.length; index++) {
+        const item = this.dataFormTwo.productData[index]
+        if (!item.equipments.length || item.equipments.some(o => o.equipmentCode === "")) {
+          submitFlag = false
+          this.$message.error("设备信息第" + (index + 1) + "行设备编号不能为空")
+          break
+        }
+      }
       if (submitFlag) {
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
@@ -575,6 +571,14 @@ export default {
 }
 ::v-deep .JNPF-common-page-header {
   padding: 5px 10px !important;
+}
+.pageTitle {
+  display: inline-block;
+  font-size: 18px;
+  color: #303133;
+  height: 100%;
+  line-height: 36px;
+  font-weight: 700;
 }
 </style>
     

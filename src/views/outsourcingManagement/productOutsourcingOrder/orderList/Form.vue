@@ -102,7 +102,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="deliveryDate" label="交货日期" min-width="200">
+                      <el-table-column prop="deliveryDate" label="交货日期" width="175">
                         <template slot="header">
                           <span class="required">*</span>
                           交货日期
@@ -111,12 +111,12 @@
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'deliveryDate'"
                             :rules="productRules.deliveryDate">
                             <el-date-picker v-model="scope.row.deliveryDate" type="date" value-format="yyyy-MM-dd"
-                              style="width: 100%;" placeholder="请选择交货日期" :disabled="type === 'look'"></el-date-picker>
+                              style="width: 100%;" placeholder="交货日期" :disabled="type === 'look'"></el-date-picker>
                           </el-form-item>
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="mainUnit" label="单位" min-width="60" show-overflow-tooltip>
+                      <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
                             <div class="viewData">
@@ -125,7 +125,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="purchaseQuantity" label="数量" min-width="100">
+                      <el-table-column prop="purchaseQuantity" label="数量" width="100">
                         <template slot="header">
                           <span class="required">*</span>
                           数量
@@ -135,23 +135,23 @@
                             :rules="productRules.purchaseQuantity">
                             <el-input v-model="scope.row.purchaseQuantity"
                               @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)" maxlength="20"
-                              placeholder="请输入数量" :disabled="type === 'look'"></el-input>
+                              placeholder="数量" :disabled="type === 'look'"></el-input>
                           </el-form-item>
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="price" label="含税单价" min-width="180">
+                      <el-table-column prop="price" label="含税单价" width="120">
                         <template slot="header">
                           <span class="required">*</span>
                           单价(含税)
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'price'" :rules="productRules.price">
-                            <el-input v-model="scope.row.price" placeholder="请输入含税单价" :disabled="type === 'look'" />
+                            <el-input v-model="scope.row.price" placeholder="含税单价" :disabled="type === 'look'" />
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="totalAmount" label="金额" min-width="140">
+                      <el-table-column prop="totalAmount" label="金额" width="120">
                         <template slot="header">
                           <span class="required">*</span>
                           金额(含税)
@@ -164,7 +164,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="taxRate" label="税率" min-width="140">
+                      <el-table-column prop="taxRate" label="税率" width="100">
                         <template slot="header">
                           <span class="required">*</span>
                           税率
@@ -181,7 +181,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="excludingTaxPrice" label="单价(不含税)" min-width="150">
+                      <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="120">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxPrice'">
                             <div class="viewData">
@@ -204,7 +204,7 @@
                       </template>
                     </el-table-column> -->
 
-                      <el-table-column prop="taxAmount" label="税额" min-width="100">
+                      <el-table-column prop="taxAmount" label="税额" width="100">
                         <template slot="header">
                           <span class="required">*</span>
                           税额
@@ -217,7 +217,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="excludingTaxAmount" label="金额(不含税)" min-width="180">
+                      <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140">
                         <template slot="header">
                           <span class="required">*</span>
                           金额(不含税)

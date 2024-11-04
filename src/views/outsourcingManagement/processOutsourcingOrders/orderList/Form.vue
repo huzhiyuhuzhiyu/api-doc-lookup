@@ -190,7 +190,7 @@
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :rules="productRules.taxRate">
-                       
+
                             <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;"
                               :disabled="type == 'look' ? true : false">
                               <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
@@ -200,7 +200,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="excludingTaxPrice" label="不含税单价" min-width="150">
+                      <el-table-column prop="excludingTaxPrice" label="单价(不含税)" min-width="150">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxPrice'">
                             <div class="viewData">
@@ -230,7 +230,7 @@
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'">
-                      
+
                             <div class="viewData">
                               <span>{{ scope.row.taxAmount ? scope.row.taxAmount : 0 }}</span>
                             </div>
@@ -244,7 +244,7 @@
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
-                         
+
                             <div class="viewData">
                               <span>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</span>
                             </div>

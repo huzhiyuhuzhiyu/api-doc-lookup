@@ -1045,6 +1045,7 @@ export default {
           mainUnit: item.externalMainUnit,
           purchaseQuantity: item.inventoryQuantity,
           productsId: item.externalProductsId,
+          classAttribute: item.externalClassAttribute,
           processName: '',
           processId: '',
           price: item.price,

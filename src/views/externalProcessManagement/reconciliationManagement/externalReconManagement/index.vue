@@ -24,8 +24,8 @@
           <el-col :span="5">
             <el-form-item>
               <el-date-picker v-model="createRequirementDate" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
-                :default-time="['00:00:00', '23:59:59']" style="width: 100%;" start-placeholder="请选择创建开始时间"
-                end-placeholder="请选择创建结束时间" clearable :picker-options="global.timePickerOptions"></el-date-picker>
+                :default-time="['00:00:00', '23:59:59']" style="width: 100%;" start-placeholder="创建开始时间"
+                end-placeholder="创建结束时间" clearable :picker-options="global.timePickerOptions"></el-date-picker>
             </el-form-item>
           </el-col>
 
@@ -129,9 +129,9 @@ export default {
       searchList: [
         { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
         {
-          field: 'cooperativePartnerName',
+          field: 'partnerName',
           fieldValue: '',
-          label: '客户名称',
+          label: '供应商名称',
           symbol: 'like',
           searchType: 1,
           width: 120

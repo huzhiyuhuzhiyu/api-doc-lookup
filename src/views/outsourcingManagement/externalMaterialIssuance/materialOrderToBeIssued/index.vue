@@ -154,16 +154,24 @@ export default {
       detailFlag: false,
       ordeDateArr: [],
       orderForm: {
-        externalFlag: 1,
+        approvalStatus: 'ok',
+        documentStatus: 'submit',
+        orderState: 'not_finish',
         shipmentStatus: 'not_finish',
-        deliveryEndDate: '',
+        deliveryEndTime: '',
         deliveryStartTime: '',
+        externalFlag: 1,
+        deliverQueryFlag: 1,
         pageNum: 1,
         pageSize: 20,
         orderItems: [
           {
             asc: false,
-            column: 'delivery_date'
+            column: ''
+          },
+          {
+            asc: false,
+            column: 't1.create_time'
           }
         ],
 
@@ -391,9 +399,10 @@ export default {
         approvalStatus: 'ok',
         documentStatus: 'submit',
         orderState: 'not_finish',
+        shipmentStatus: 'not_finish',
         deliveryEndTime: '',
         deliveryStartTime: '',
-        extensionFlag: 1,
+        externalFlag: 1,
         deliverQueryFlag: 1,
         pageNum: 1,
         pageSize: 20,

@@ -135,6 +135,16 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
+                      <el-table-column label="待外协数量" width="110">
+                        <template slot-scope="scope">
+                          <el-form-item>
+                            <div class="viewData">
+                              <span>{{ Number(scope.row.inventoryQuantity) - Number(scope.row.outsourcingQuantity)
+                                }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="purchaseQuantity" label="数量" min-width="100">
                         <template slot="header">
                           <span class="required">*</span>
@@ -145,7 +155,7 @@
                             :rules="productRules.purchaseQuantity">
                             <el-input v-model="scope.row.purchaseQuantity"
                               @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)" maxlength="20"
-                              placeholder="请输入数量"></el-input>
+                              placeholder="数量"></el-input>
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -1041,10 +1051,11 @@ export default {
         console.log(data, 'pp')
         return {
           productDrawingNo: item.externalProductDrawingNo,
+          stockInventoryLineId: item.id,
           deliveryDate: item.deliveryDate,
           mainUnit: item.externalMainUnit,
           deputyUnit: item.externalDeputyUnit,
-          purchaseQuantity: item.inventoryQuantity,
+          purchaseQuantity: Number(item.inventoryQuantity) - Number(item.outsourcingQuantity),
           productsId: item.externalProductsId,
           classAttribute: item.externalClassAttribute,
           calculationDirection: item.externalCalculationDirection,
@@ -1057,6 +1068,8 @@ export default {
           excludingTaxPrice: item.excludingTaxPrice,
           taxAmount: item.taxAmount,
           excludingTaxAmount: item.excludingTaxAmount,
+          inventoryQuantity: item.inventoryQuantity, //库存数量
+          outsourcingQuantity: item.outsourcingQuantity, //转外协数量
           remark: item.remark,
           outShipmentList: [
 
@@ -1124,6 +1137,11 @@ export default {
       let count = 0
       this.dataFormTwo.data.forEach((item) => {
         count += item.taxAmount * 1
+        if (Number(item.purchaseQuantity) + Number(item.outsourcingQuantity) > Number(item.inventoryQuantity)) {
+          this.$message.error('毛坯已全部外协完成，提交失败！');
+          this.btnLoading = false
+          throw Error();
+        }
       })
       this.dataForm.taxAmount = this.jnpf.numberFormat(count)
       if (this.type == 'add') {

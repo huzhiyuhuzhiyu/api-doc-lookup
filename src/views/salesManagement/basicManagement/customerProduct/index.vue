@@ -84,14 +84,20 @@
                   <template slot-scope="scope">
                     <el-link type="primary" @click.native="viewPartner(scope.row.cooperativePartnerId, 'look')">{{
                       scope.row.partnerName
-                      }}</el-link>
+                    }}</el-link>
                   </template>
                 </el-table-column>
                 <el-table-column prop="partnerCode" label="客户编码" min-width="160" sortable="custom" />
                 <el-table-column prop="customerProductNo" label="客户料号" min-width="180" />
                 <el-table-column prop="drawingNo" label="品名规格" min-width="400" />
-                <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
-                <el-table-column prop="productName" label="产品名称" min-width="160" />
+                <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom">
+                  <template slot-scope="scope">
+                    <el-link type="primary" @click.native="viewProduct(scope.row, 'look')">{{
+                      scope.row.productCode
+                    }}</el-link>
+                  </template>
+                </el-table-column>
+                <!-- <el-table-column prop="productName" label="产品名称" min-width="160" /> -->
                 <el-table-column prop="price" min-width="140" label="销售单价(含税)" />
                 <el-table-column prop="excludingTaxPrice" label="销售单价(不含税)" width="160" />
                 <el-table-column prop="dateOrderStart" label="有效日期起" sortable="custom" min-width="160" />
@@ -179,18 +185,24 @@
                 </div>
               </div>
               <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForms"
-                :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="columnLists"> 
+                :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="columnLists">
                 <el-table-column prop="cooperativePartnerIdText" label="客户名称" min-width="260" sortable="custom">
                   <template slot-scope="scope">
                     <el-link type="primary" @click.native="viewPartner(scope.row.cooperativePartnerId, 'look')">{{
                       scope.row.cooperativePartnerIdText
-                      }}</el-link>
+                    }}</el-link>
                   </template>
                 </el-table-column>
                 <el-table-column prop="cooperativePartnerCode" label="客户编码" min-width="160" sortable="custom" />
                 <el-table-column prop="customerDrawingNumber" label="客户料号" min-width="180" />
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="400" />
-                <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
+                <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom">
+                  <template slot-scope="scope">
+                    <el-link type="primary" @click.native="viewProduct(scope.row, 'look')">{{
+                      scope.row.productCode
+                    }}</el-link>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="productName" label="产品名称" min-width="160" />
                 <el-table-column prop="unitPrice" min-width="140" label="销售单价(含税)" />
 
@@ -209,11 +221,12 @@
       </el-tabs>
     </div>
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-    <!-- <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm"
-    :classAttribute="listQuery.classAttribute" :productName="productName" :busSetId="busSetId" /> -->
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :classAttribute="classAttribute"
+      :productName="productName" :busSetId="busSetId" />
+    <FinshForm v-if="finshVisible" ref="finshForm" @refreshDataList="initData" @close="closeForm"></FinshForm>
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-      <CustomerForm v-if="customerVisible" ref="customerForm" @close="closePage"></CustomerForm>
+    <CustomerForm v-if="customerVisible" ref="customerForm" @close="closePage"></CustomerForm>
   </div>
 </template>
 
@@ -224,13 +237,18 @@ import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import CustomerForm from '../customerManagement/Officialcustomer/Form.vue'
+import Form from '@/views/masterDataManagement/productManagement/components/Form.vue'
+import FinshForm from '@/views/masterDataManagement/productManagement/finished_product/Form.vue'
 export default {
   name: 'PartnerProduct',
-  components: { ExportForm, SuperQuery,CustomerForm },
+  components: { ExportForm, SuperQuery, CustomerForm, Form,FinshForm},
   data() {
     return {
-
-      customerVisible:false,
+      finshVisible: false,
+      classAttribute: "",
+      productName: "",
+      customerVisible: false,
+      busSetId: "CPBM",
       searchList: [
         { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
@@ -362,13 +380,29 @@ export default {
     }
   },
   methods: {
-    closePage(){
-      this.customerVisible=false
+    viewProduct(row, type) {
+      this.productName = row.productName
+      this.classAttribute = row.classAttribute
+      if (row.classAttribute == 'finish_product') {
+        this.finshVisible = true
+        this.$nextTick(() => {
+          this.$refs.finshForm.init(row.productsId, true)
+        })
+      } else {
+        this.formVisible = true
+        this.$nextTick(() => {
+          this.$refs.Form.init(row.productsId, true)
+        })
+      }
+
     },
-    viewPartner(id,type){
-      this.customerVisible=true
-      this.$nextTick(()=>{
-        this.$refs.customerForm.init(id,'',type)
+    closePage() {
+      this.customerVisible = false
+    },
+    viewPartner(id, type) {
+      this.customerVisible = true
+      this.$nextTick(() => {
+        this.$refs.customerForm.init(id, '', type)
       })
     },
     superQuerySearch(query) {
@@ -442,6 +476,7 @@ export default {
     // 关闭新建、编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
+      this.finshVisible=false
       if (isRefresh) {
         this.initData()
       }
@@ -608,7 +643,7 @@ export default {
   padding: 0 10px;
 }
 
- 
+
 
 ::v-deep .el-tabs__nav-wrap {
   margin-bottom: 0px;
@@ -618,7 +653,8 @@ export default {
   padding: 8px 0 !important;
   margin-left: 0 !important;
 }
-.tabs ::v-deep .el-tabs__header{
+
+.tabs ::v-deep .el-tabs__header {
   padding: 0 8px;
 }
 </style>

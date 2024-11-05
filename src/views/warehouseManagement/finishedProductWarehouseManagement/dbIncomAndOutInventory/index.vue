@@ -3592,7 +3592,7 @@ export default {
           // 设备领用查看详情
 
         } else {
-          this.$refs[ref].init(id, btnType, false, [])
+          this.$refs[ref].init(id, btnType, false)
 
         }
       })

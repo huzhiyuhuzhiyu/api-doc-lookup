@@ -3,20 +3,6 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-
-          <!-- <el-col :span="4">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.orderNo" placeholder="请输入对账单号" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="listQuery.cooperativePartnerName" placeholder="请输入客户名称" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col> -->
           <template v-for="item in searchList">
             <el-col :span="item.searchType === 3 ? 6 : 4">
               <el-form-item>
@@ -38,7 +24,7 @@
           <el-col :span="4">
             <el-form-item>
               <el-date-picker v-model="reconciliationDate" type="daterange" value-format="yyyy-MM-dd"
-                style="width: 100%;" start-placeholder="请选择对账开始日期" end-placeholder="请选择对账结束日期">
+                style="width: 100%;" start-placeholder="对账开始日期" end-placeholder="对账结束日期">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -214,7 +200,7 @@ export default {
       superQuery: {},
       searchList: [
         { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
       ],
       superForm: {},
       columnList: ['cooperativePartnerCode', 'createByName'],

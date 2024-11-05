@@ -84,7 +84,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="includingTaxAmount" label="含税总金额" width="140">
+          <el-table-column prop="includingTaxAmount" label="总金额(含税)" width="140">
             <template slot-scope="scope">
               <div :class="scope.row.includingTaxAmount > 0 ? 'green' : 'red'">
                 {{
@@ -224,7 +224,7 @@ export default {
       basicQuery: {},
       superQuery: {},
       searchList: [
-        { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '对账单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
       ],
       superForm: {},

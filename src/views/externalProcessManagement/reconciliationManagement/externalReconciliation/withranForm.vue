@@ -70,24 +70,16 @@
                       :data="dataFormTwo.data" id="table">
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                      <!-- <el-table-column prop="productCode" label="产品编码" min-width="200" show-overflow-tooltip>
+
+                      <el-table-column prop="orderNo" label="出入库单号" width="190" show-overflow-tooltip>
                         <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'orderNo'">
                             <div class="viewData">
-                              <span>{{ scope.row.productCode ? scope.row.productCode : '调价' }}</span>
+                              <span>{{ scope.row.orderNo }}</span>
                             </div>
                           </el-form-item>
                         </template>
-</el-table-column>
-<el-table-column prop="productName" label="产品名称" min-width="200" show-overflow-tooltip>
-  <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'">
-                            <div class="viewData">
-                              <span>{{ scope.row.productName ? scope.row.productName : '调价' }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-</el-table-column> -->
+                      </el-table-column>
 
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                         <template slot-scope="scope">
@@ -98,7 +90,16 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="receiptReturnType" label="收/退货类型" width="150" show-overflow-tooltip>
+                      <el-table-column prop="productCode" label="产品编码" width="140" show-overflow-tooltip>
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'">
+                            <div class="viewData">
+                              <span>{{ scope.row.productCode ? scope.row.productCode : '调价' }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="receiptReturnType" label="收/退货类型" width="110" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'receiptReturnType'">
                             <div class="viewData">
@@ -678,6 +679,7 @@ export default {
 
         this.dataFormTwo.data.push({
           accountsReceivableId: '',
+          orderNo: item.orderNo,
           calculationDirection: item.calculationDirection,
           confirmReceiptRecordsId: item.id,
           confirmReceiptRecordsLineId: item.noticeLineId,

@@ -209,8 +209,8 @@
       </el-tabs>
     </div>
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm"
-    :classAttribute="listQuery.classAttribute" :productName="productName" :busSetId="busSetId" />
+    <!-- <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm"
+    :classAttribute="listQuery.classAttribute" :productName="productName" :busSetId="busSetId" /> -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
       <CustomerForm v-if="customerVisible" ref="customerForm" @close="closePage"></CustomerForm>
@@ -229,6 +229,7 @@ export default {
   components: { ExportForm, SuperQuery,CustomerForm },
   data() {
     return {
+
       customerVisible:false,
       searchList: [
         { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },

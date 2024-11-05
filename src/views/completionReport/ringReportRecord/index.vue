@@ -75,11 +75,19 @@
             <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="120" sortable="custom" />
             <el-table-column prop="reworkQuantity" label="返工数量" min-width="120" sortable="custom" />
             <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
+            <el-table-column prop="orderStatus" label="任务状态" min-width="120">
+              <template slot-scope="scope">
+                <div v-if="scope.row.orderStatus == 'finish'"><el-tag type="success">已完成</el-tag></div>
+                <div v-else-if="scope.row.orderStatus == 'normal'"><el-tag >进行中</el-tag></div>
+                <div v-else-if="scope.row.orderStatus == 'closed'"><el-tag type="danger">已关闭</el-tag></div>
+              </template>
+            </el-table-column>
+            
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
             <el-table-column label="操作" width="100" fixed="right">
 
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click="withdrawFun(scope.row)">撤回</el-button>
+                <el-button size="mini" type="text" @click="withdrawFun(scope.row)" :disabled="scope.row.orderStatus!='normal'">撤回</el-button>
 
               </template>
             </el-table-column>

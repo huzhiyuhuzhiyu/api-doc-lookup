@@ -148,6 +148,7 @@ export default {
 
       orderForm: {
         orderType: 'external_process',
+        shipmentStatus: 'finish',
         deliveryEndDate: '',
         deliveryStartDate: '',
         receiptQueryFlag: 1,
@@ -644,6 +645,7 @@ export default {
         approvalStatus: 'ok',
         documentStatus: 'submit',
         orderState: 'not_finish',
+        shipmentStatus: 'finish',
         deliveryEndDate: this.dateFun(this.deliveryDateArr[1]),
         deliveryStartDate: '',
         extensionFlag: 1,

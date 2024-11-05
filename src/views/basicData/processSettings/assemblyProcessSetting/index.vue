@@ -114,7 +114,8 @@
           <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
           <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
-              <el-button type="text" @click="handleUserRelation(scope.row, 'look')">查看详情</el-button>
+              <el-button type="text" :disabled="!scope.row.routingFlag"
+                @click="handleUserRelation(scope.row, 'look')">查看详情</el-button>
             </template>
           </el-table-column>
         </JNPF-table>

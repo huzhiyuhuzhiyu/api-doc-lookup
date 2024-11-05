@@ -98,6 +98,7 @@ export default {
         packagingMethod:"",
         specialRequire:"",
         inspectStockFlag :true,
+        processId:"",
       },
       refreshTree: true,
       listLoading: false,
@@ -118,6 +119,7 @@ export default {
       this.form.vibrationLevel=data.vibrationLevel
       this.form.sealingCoverTyping=data.sealingCoverTyping
       this.form.oil=data.oil
+      this.form.processId=data.processId?data.processId:""
       this.form.clearance=data.clearance
       this.form.accuracyLevel=data.accuracyLevel
       this.form.warehouseId=data.warehouseId

@@ -118,7 +118,7 @@
                         </el-table-column>
                         <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
                         <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160" v-if="btnType != 'look'"
-                        :key="7"></el-table-column>
+                          :key="7"></el-table-column>
 
 
                         <el-table-column prop="unReceiveQuantity" label="待领用数量" width="140" :key="777"
@@ -251,7 +251,7 @@
                     </el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
                     <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160" v-if="btnType != 'look'"
-                    :key="7"></el-table-column>
+                      :key="7"></el-table-column>
 
 
                     <el-table-column prop="unReceiveQuantity" label="待领用数量" width="140" :key="777"
@@ -275,7 +275,7 @@
                     </el-table-column>
                     <el-table-column label="操作" width="160" v-if="productData.length && btnType != 'look'"
                       fixed="right">
-                      <template slot-scope="scope">
+                      <template slot-scope="scope" v-if="scope.row.equipmentType != 'accessory'">
                         <el-button type="text" @click="setCodeFun(scope.row, scope.$index)"
                           size="mini">设置资产编码</el-button>
                         <!-- <el-button type="text" @click="copyFun(scope.row, scope.$index)" size="mini">复制</el-button> -->
@@ -368,7 +368,7 @@
 
         <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
 
-          <div class="JNPF-common-layout-center JNPF-flex-main" style="background-color: #fff;">
+          <div class="JNPF-common-layout-center JNPF-flex-main" style="background-color: #fff;overflow-y:auto ;">
             <el-row class="JNPF-common-search-box" :gutter="16">
 
               <el-form @submit.native.prevent>
@@ -578,20 +578,51 @@ export default {
     // 设置编码
     setCodeFun(row, index) {
       console.log(row);
+      if (!row.num) return this.$message.error("请先输入领用数量")
       this.setcodeVisible = true
       this.currentUseIndex = index
-      this.arr = Array.from({ length: row.num }, () => ({
-        assetCode: "",
-        moveId: "",
-        moveLineId: "",
-      }));
+      if (row.warehouseCodeLineList.length) {
+        console.log("有数据", row.warehouseCodeLineList);
+
+        if (row.warehouseCodeLineList.length < row.num) {
+          let list = JSON.parse(JSON.stringify(row.warehouseCodeLineList))
+          let list2 = Array.from({ length: row.num }, () => ({
+            assetCode: "",
+            moveId: "",
+            moveLineId: "",
+          }));
+          let newArr2 = list2.map((item, index) => {
+            return index < list.length ? list[index] : item;
+          })
+
+          this.arr = newArr2
+        }
+        if (row.warehouseCodeLineList.length > row.num) {
+
+          this.arr = row.warehouseCodeLineList.splice(0, row.num)
+        }
+      } else {
+        console.log("没有数据");
+        this.arr = Array.from({ length: row.num }, () => ({
+          assetCode: "",
+          moveId: "",
+          moveLineId: "",
+        }));
+      }
+
     },
+
     // 提交编码设置
-    submitCodeFun() {
-      console.log(this.arr);
+    submitCodeFun() { 
+      let hasDuplicates = this.arr.filter((item, index) =>
+      this.arr.findIndex(innerItem => innerItem.assetCode === item.assetCode) !== index
+      ).length > 0;
+
+      if (hasDuplicates) return this.$message.error("存在相同的资产编码，请检查") 
       const hasEmptyAssetCode = this.arr.some(item => item.assetCode === "");
       if (hasEmptyAssetCode) return this.$message.error("资产编码不能为空，请检查")
-      this.productData[this.currentUseIndex].warehouseCodeLineList=this.arr
+      this.$set(this.productData[this.currentUseIndex], 'warehouseCodeLineList', this.arr)
+      // this.productData[this.currentUseIndex].warehouseCodeLineList = this.arr
       this.setcodeVisible = false
       console.log(this.productData);
     },
@@ -612,7 +643,7 @@ export default {
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
       this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
       this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
-      this.$set(this.productData[index], 'availableBatchNumber', data.inventoryQuantit)
+      this.$set(this.productData[index], 'availableBatchNumber', data.inventoryQuantity)
 
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
     },
@@ -656,8 +687,8 @@ export default {
           res.data.records.forEach(item => {
             this.$set(item, 'num', this.jnpf.numberFormat(this.jnpf.math('subtract', [item.requisitionNum, item.incomingOutgoingNum]), 2))
             this.$set(item, 'awitNum', this.jnpf.numberFormat(this.jnpf.math('subtract', [item.requisitionNum, item.incomingOutgoingNum]), 2))
-              this.$set(item,'warehouseCodeLineList',[])
-              item.equipments.forEach(equipment => {
+            this.$set(item, 'warehouseCodeLineList', [])
+            item.equipments.forEach(equipment => {
               // 创建新的对象并赋值  
               const newObj = {
                 assetCode: equipment.equipmentCode, // 将 equipmentCode 赋值给 assetCode  
@@ -668,7 +699,7 @@ export default {
               item.warehouseCodeLineList.push(newObj);
             });
           });
-           console.log("res.data.records",res.data.records);
+          console.log("res.data.records", res.data.records);
           this.productList = res.data.records
           this.productTotal = res.data.total
         }
@@ -880,7 +911,7 @@ export default {
               item.noticeLineId = ""
               item.sourceNo = this.dataForm.sourceNo
               item.ordersId = res.data.requisition.id
-              this.$set(item,'warehouseCodeLineList',[])
+              this.$set(item, 'warehouseCodeLineList', [])
               item.ordersLineId = item.id
               item.num = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.requisitionNum, item.incomingOutgoingNum]), 2)
               this.$set(item, 'unReceiveQuantity', item.num)
@@ -943,10 +974,8 @@ export default {
               }
 
 
+              if (Number(item.num) > Number(item.unReceiveQuantity)) {
 
-              if (Number(item.num) > Number(item.ordersNum)) {
-                console.log(item.num);
-                console.log(item.ordersNum);
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待领用数量")
                 break
@@ -957,7 +986,7 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行资产编码不能为空")
                 break
               }
-              if (this.dataForm.businessType == 'outbound_sale_send' && item.num > item.availableBatchNumber) {
+              if (item.num > item.availableBatchNumber) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次库存数量")
                 break

@@ -620,10 +620,7 @@ export default {
       if (!this.linesList.length && submitFlag) {
         submitFlag = false
         this.$message.error('请至少添加一个子产品')
-      } else if (!this.linesList.some((item) => item.reduceType === 'picking') && submitFlag) {
-        submitFlag = false
-        this.$message.error('至少有一个子产品的扣减料方式为生成领料单')
-      }
+      } 
 
       if (submitFlag) {
         let index = this.linesList.findIndex((line) => line.productId === this.dataForm.productId)

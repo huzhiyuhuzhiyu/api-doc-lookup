@@ -69,8 +69,8 @@
           </el-table-column>
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <el-button type="text" @click="handleUserRelation(scope.row.id,'edit')" size="mini">编辑</el-button>
-              <el-button type="text" @click="handleDel(scope.row.id,)" class="JNPF-table-delBtn" size="mini">删除</el-button>
+              <el-button type="text" @click="handleUserRelation(scope.row.id,'edit')" size="mini" :disabled="scope.row.approvalStatus == 'ok'">编辑</el-button>
+              <el-button type="text" @click="handleDel(scope.row.id,)" class="JNPF-table-delBtn" size="mini" :disabled="scope.row.approvalStatus == 'ok'">删除</el-button>
               <el-dropdown hide-on-click>
                 <span class="el-dropdown-link">
                   <el-button type="text" size="mini">
@@ -79,11 +79,11 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item v-if="(scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn') && showAppCodeFlag" @click.native="handleUserRelation(scope.row.id, 'add')">
-                      重新提交
-                    </el-dropdown-item>
-                    <el-dropdown-item v-if="scope.row.approvalStatus === 'ing' && showAppCodeFlag" @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
-                      审批撤回
-                    </el-dropdown-item>
+                    重新提交
+                  </el-dropdown-item>
+                  <el-dropdown-item v-if="scope.row.approvalStatus === 'ing' && showAppCodeFlag" @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
+                    审批撤回
+                  </el-dropdown-item>
                   <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
                     查看详情
                   </el-dropdown-item>

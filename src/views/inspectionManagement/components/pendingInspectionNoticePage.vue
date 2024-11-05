@@ -84,16 +84,16 @@
             <el-table-column prop="samplingQuantity" label="检验数量" width="110" sortable="custom" />
             <el-table-column prop="inspectionResults" label="检验结果" width="110" sortable="custom">
               <template slot-scope="scope">
-                <div v-if="scope.row.inspectionResults == 'qualified'">合格</div>
-                <div v-if="scope.row.inspectionResults == 'unqualified'">不合格</div>
+                <el-tag type="success" v-if="scope.row.inspectionResults == 'qualified'">合格</el-tag>
+                <el-tag type="danger" v-if="scope.row.inspectionResults == 'unqualified'">不合格</el-tag>
               </template>
             </el-table-column>
             <el-table-column prop="unqualifiedQuantity" label="不合格数量" width="130" sortable="custom" />
             <el-table-column prop="processingStatus" label="处理状态" width="110" sortable="custom">
               <template slot-scope="scope">
-                <div v-if="scope.row.processingStatus == 'untreated'">未处理</div>
-                <div v-if="scope.row.processingStatus == 'processing'">处理中</div>
-                <div v-if="scope.row.processingStatus == 'processed'">已处理</div>
+                <el-tag v-if="scope.row.processingStatus == 'untreated'">未处理</el-tag>
+                <el-tag type="warning" v-if="scope.row.processingStatus == 'processing'">处理中</el-tag>
+                <el-tag type="success" v-if="scope.row.processingStatus == 'processed'">已处理</el-tag>
               </template>
             </el-table-column>
             <!-- <el-table-column prop="samplingQuantity" label="处理结果" min-width="180" sortable="custom" /> -->

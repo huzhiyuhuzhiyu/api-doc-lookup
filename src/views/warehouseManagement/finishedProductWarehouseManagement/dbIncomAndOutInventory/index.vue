@@ -1007,10 +1007,12 @@
                 }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="receiveType" label="领用目的" min-width="120" sortable="custom">
+          <el-table-column prop="useApplication" label="领用目的" min-width="120" sortable="custom">
             <template slot-scope="scope">
-              <div v-if="scope.row.receiveType=='equipmentmaintain'">设备保养</div>
-              <div v-if="scope.row.receiveType=='equipmentrepair'">设备维修</div>
+              <div v-if="scope.row.useApplication=='equipmentmaintain'">设备保养</div>
+              <div v-if="scope.row.useApplication=='equipmentrepair'">设备维修</div>
+              <div v-if="scope.row.useApplication=='toolmaintain'">工具保养</div>
+              <div v-if="scope.row.useApplication=='toolrepair'">工具维修</div>
             </template>
           </el-table-column>
           <el-table-column prop="collectionTime" label="领用日期" min-width="160" sortable="custom" />

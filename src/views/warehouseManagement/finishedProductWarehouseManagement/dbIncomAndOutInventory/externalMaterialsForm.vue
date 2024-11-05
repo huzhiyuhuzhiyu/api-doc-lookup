@@ -580,7 +580,7 @@ export default {
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
       this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
       this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
-      this.$set(this.productData[index], 'availableBatchNumber', data.inventoryQuantit)
+      this.$set(this.productData[index], 'availableBatchNumber', data.inventoryQuantity)
 
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
     },

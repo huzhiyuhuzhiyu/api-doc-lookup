@@ -1556,17 +1556,7 @@ export default {
             this.iszhi = false
             return
           }
-          // let eve = this.dataFormTwo.data.some(({ deliveryQuantity }) => {
-          //   return deliveryQuantity < 1
-          // })
-          // if (eve) {
-          //   this.$message({
-          //     message: `发料数量需不能为'0'`,
-          //     type: 'error',
-          //     duration: 1500,
-          //   })
-          //   return
-          // }
+     
           if (value == 'submit') {
             this.dataForm.inspectionStatus = 'inspected'
           }
@@ -1593,39 +1583,8 @@ export default {
             attachmentList: this.datafilelist,
             notice: this.dataForm,
             noticeLineList: [],
-            sourceNoticeList:
-              this.btnType == 'add'
-                ? this.dataFormTwo.data.map((item) => {
-                  return {
-                    ordersId: item.ordersId,
-                    cooperativePartnerId: item.cooperativePartnerId,
-                    returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : ''
-                  }
-                })
-                : this.dataFormTwo.data
           }
           this.dataFormTwo.data.forEach((item, index) => {
-            let dep1 = {
-              billStatus: item.billStatus ? item.billStatus : '',
-              calculationDirection: item.calculationDirection ? item.calculationDirection : '',
-              deliveryQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
-              deputyUnit: item.deputyUnit ? item.deputyUnit : '',
-              mainUnit: item.mainUnit ? item.mainUnit : '',
-              ordersId: item.ordersId ? item.ordersId : item.purchaseOrderId,
-              notifyType: 'external',
-              id: item.id ? item.id : '',
-              classAttribute: item.classAttribute,
-              productsId: item.productsId,
-
-              // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-              ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
-              pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
-              ratio: item.ratio ? item.ratio : '',
-              receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
-              remark: item.remark ? item.remark : '',
-              returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : ''
-            }
-            obj1.receiptLineList.push(dep1)
             if (this.btnType == 'add' || this.btnType == 'copy') {
               console.log(item, 'ooooo78787')
               item.outShipmentVOList.forEach((it) => {
@@ -1648,27 +1607,14 @@ export default {
                   // demandQuantity: it.demandQuantity ? it.demandQuantity : '',
                   remark: it.remark ? it.remark : '',
                   returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
-                  sourceNoticeLineList: [
-                    {
-                      id: it.sourceNoticeLineList ? it.sourceNoticeLineList[0].id : '',
-                      deliveryQuantity: it.sourceNoticeLineList
-                        ? it.sourceNoticeLineList[0].deliveryQuantity
-                        : it.deliveryQuantity,
-                      ordersId: it.sourceNoticeLineList ? it.sourceNoticeLineList[0].ordersId : it.ordersId,
-                      ordersLineId: it.ordersLineId,
-                      returnDeliveryNoticeId: it.sourceNoticeLineList
-                        ? it.sourceNoticeLineList[0].returnDeliveryNoticeId
-                        : '',
-                      returnDeliveryNoticeLineId: it.sourceNoticeLineList
-                        ? it.sourceNoticeLineList[0].returnDeliveryNoticeLineId
-                        : ''
-                    }
-                  ]
+
                 }
                 obj.noticeLineList.push(dep)
               })
             } else {
+              console.log(item, 'pp')
               let dep2 = {
+
                 billStatus: item.billStatus ? item.billStatus : '',
                 calculationDirection: item.calculationDirection ? item.calculationDirection : '',
                 deliveryQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
@@ -1678,7 +1624,7 @@ export default {
                 notifyType: 'external',
                 inspectionResults: 'qualified',
                 qualifiedQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
-                id: '',
+                // id: item.id ? item.id : '',
                 classAttribute: item.classAttribute,
                 productsId: item.productsId,
 
@@ -1689,22 +1635,7 @@ export default {
                 receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
                 remark: item.remark ? item.remark : '',
                 returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
-                sourceNoticeLineList: [
-                  {
-                    id: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].id : '',
-                    deliveryQuantity: item.sourceNoticeLineList
-                      ? item.sourceNoticeLineList[0].deliveryQuantity
-                      : item.deliveryQuantity,
-                    ordersId: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].ordersId : item.ordersId,
-                    ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
-                    returnDeliveryNoticeId: item.sourceNoticeLineList
-                      ? item.sourceNoticeLineList[0].returnDeliveryNoticeId
-                      : '',
-                    returnDeliveryNoticeLineId: item.sourceNoticeLineList
-                      ? item.sourceNoticeLineList[0].returnDeliveryNoticeLineId
-                      : ''
-                  }
-                ]
+
               }
               obj.noticeLineList.push(dep2)
             }
@@ -1731,6 +1662,8 @@ export default {
                   obj.notice.deliveryStatus = 'undelivered'
                   formMethod = addoutReceiptGoods
                 }
+                console.log(obj, '333')
+
                 formMethod(obj)
                   .then((res) => {
                     let msg = ''
@@ -1769,6 +1702,7 @@ export default {
               formMethod = addoutReceiptGoods
             }
             console.log(obj, 'obj')
+            return
             formMethod(obj)
               .then((res) => {
                 let msg = ''

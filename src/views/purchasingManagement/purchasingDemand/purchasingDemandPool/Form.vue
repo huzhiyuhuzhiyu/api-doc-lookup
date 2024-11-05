@@ -7,7 +7,7 @@
           <div class="options">
             <!-- <el-button type="success" :loading="btnLoading" @click="dataFormSubmit('draft')">
               保存草稿</el-button> -->
-            <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
+            <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit('submit')">
               {{ $t('common.submitButton') }}
             </el-button>
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
@@ -1376,7 +1376,7 @@ export default {
     },
 
     // 表单提交
-    async dataFormSubmit() {
+    async dataFormSubmit(type) {
       this.btnLoading = true
       let submitFlag = true // 自动聚焦是否可用
 
@@ -1393,7 +1393,12 @@ export default {
         submitFlag = false
         this.jnpf.focusErrValidItem(form_2.fields)
       }
-
+      this.dataForm.documentStatus = type
+      if (this.dataForm.approvalFlag) {
+        this.dataForm.approvalStatus = 'ing'
+      } else {
+        this.dataForm.approvalStatus = 'ok'
+      }
       if (submitFlag) {
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {

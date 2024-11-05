@@ -377,7 +377,13 @@ export default {
         name: '',
         processType: 'heat_treatment',
         pageNum: 1,
-        pageSize: 20
+        pageSize: 20,
+        orderItems: [
+          {
+            asc: true,
+            column: 'create_time'
+          }
+        ]
       },
       loading: false,
       btnLoading: false,
@@ -1100,7 +1106,13 @@ export default {
           name: '',
           processType: 'heat_treatment',
           pageNum: 1,
-          pageSize: 20
+          pageSize: 20,
+          orderItems: [
+            {
+              asc: true,
+              column: 'create_time'
+            }
+          ]
         }
         getBimProcessList(ProcessListRequestObj).then(res => {
           console.log(res, 'pjj')

@@ -5,12 +5,12 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item label="">
-              <el-input v-model="listQuery.name" placeholder="分类名称" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.name" placeholder="项目名称" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item label="">
-              <el-input v-model="listQuery.code" placeholder="分类编码" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.code" placeholder="项目编码" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -49,17 +49,18 @@
         <JNPF-table v-loading="listLoading" :data="treeList" v-if="refreshTable" fixedNO
           :setColumnDisplayList="columnList" :default-expand-all="expands" @sort-change="sortChange" ref="dataTable"
           custom-column>
-          <el-table-column prop="name" label="分类名称" min-width="200" sortable="custom"></el-table-column>
-          <el-table-column prop="code" label="分类编码" min-width="120" sortable="custom" />
-
+          <el-table-column prop="name" label="项目名称" min-width="120" sortable="custom"></el-table-column>
+          <el-table-column prop="code" label="项目编码" min-width="120" sortable="custom" />
+          <el-table-column prop="remark" label="项目描述" min-width="200" />
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" width="180" />
-          <el-table-column prop="remark" label="备注" min-width="200" />
+          <el-table-column prop="createByName" label="创建人" width="100" />
+
 
           <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId)"
-                @del="handleDel(scope.row.id, scope.row.parentId)"></tableOpts>
+              <tableOpts @edit="addOrUpdateHandle(scope.row)" @del="handleDel(scope.row.id)"
+                :delDisabled="scope.row.code === 'common'">
+              </tableOpts>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -81,6 +82,7 @@ import { getcategoryList, deleteCategory, productPlmSync } from '@/api/basicData
 import DepForm from './depForm'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import { getProjectList } from '@/api/system/projectManagement'
 export default {
   components: { DepForm, ExportForm, SuperQuery },
   data() {
@@ -89,12 +91,22 @@ export default {
       superQueryJson: [
         {
           prop: 'name',
-          label: '分类名称',
+          label: '项目名称',
           type: 'input'
         },
         {
           prop: 'code',
-          label: '分类编码',
+          label: '项目编码',
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: '项目描述',
+          type: 'input'
+        },
+        {
+          prop: 'sort',
+          label: '排序值',
           type: 'input'
         },
         {
@@ -111,19 +123,15 @@ export default {
           label: '创建人',
           type: 'input'
         },
-        {
-          prop: 'remark',
-          label: '备注',
-          type: 'input'
-        }
+
       ],
       exportFormVisible: false,
       listQuery: {
         type: 'process',
         orderItems: [
           {
-            asc: false,
-            column: 'create_time'
+            asc: true,
+            column: 'sort'
           }
         ],
         pageNum: 1,
@@ -135,7 +143,7 @@ export default {
       btnLoading: false,
       listLoading: true,
       depFormVisible: false,
-      columnList: ['createByName', 'createTime']
+      columnList: ['createByName', 'createTime', 'sort']
     }
   },
   created() {
@@ -183,8 +191,8 @@ export default {
         }
         let _data = {
           ...this.listQuery,
-          exportType: '1028',
-          exportName: '工序分类信息',
+          exportType: '1227',
+          exportName: '项目管理',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
         }
@@ -199,7 +207,7 @@ export default {
     },
     initData() {
       this.loading = true
-      getcategoryList(this.listQuery)
+      getProjectList(this.listQuery)
         .then((res) => {
           this.treeList = res.data.records
           this.listLoading = false
@@ -250,15 +258,13 @@ export default {
       this.$refs.SuperQuery.conditionList = []
       this.initData()
     },
-    addOrUpdateHandle(id, parentId) {
-      this.addOrUpdateDep(id, parentId)
-    },
-    addOrUpdateDep(id, parentId) {
+    addOrUpdateHandle(row) {
       this.depFormVisible = true
       this.$nextTick(() => {
-        this.$refs.depForm.init(id, parentId)
+        this.$refs.depForm.init(row)
       })
     },
+
     closeDepForm(isRefresh) {
       this.depFormVisible = false
       if (isRefresh) {

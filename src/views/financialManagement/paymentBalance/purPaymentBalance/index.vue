@@ -37,18 +37,18 @@ export default {
         reconciliationType: 'payable'
       },
       tableItems: [
-        { prop: 'accountPeriod', label: '账期', minWidth: '180' },
+        { prop: 'accountPeriod', label: '账期', minWidth: '80' },
         { prop: 'balanceState', label: '结存状态', minWidth: '120' },
-        { prop: 'partnerCode', label: '供应商编码', sortable: true },
         { prop: 'partnerName', label: '供应商名称', minWidth: '260', sortable: true },
-        { prop: 'paymentCycle', label: '付款周期', sortable: true },
-        { prop: 'initPaymentAmount', label: '期初应付金额', sortable: true },
-        { prop: 'currentBillingAmount', label: '本期收票金额', sortable: true },
-        { prop: 'currentInboundOutboundAmount', label: '本期入库金额', sortable: true },
-        { prop: 'duePaymentAmount', label: '到期应付金额', sortable: true },
-        { prop: 'currentActualAmount', label: '本期实付金额', sortable: true },
-        { prop: 'overduePaymentAmount', label: '逾期付款金额', sortable: true },
-        { prop: 'endPaymentAmount', label: '期末应付金额', sortable: true }
+        { prop: 'partnerCode', label: '供应商编码', sortable: true },
+        { prop: 'paymentCycle', label: '付款周期',minWidth: '110', sortable: true },
+        { prop: 'initPaymentAmount', label: '期初应付金额', minWidth: '142', sortable: true },
+        { prop: 'currentBillingAmount', label: '本期收票金额', minWidth: '142', sortable: true },
+        { prop: 'currentInboundOutboundAmount', label: '本期入库金额', minWidth: '142', sortable: true },
+        { prop: 'duePaymentAmount', label: '到期应付金额', minWidth: '142', sortable: true },
+        { prop: 'currentActualAmount', label: '本期实付金额', minWidth: '142', sortable: true },
+        { prop: 'overduePaymentAmount', label: '逾期付款金额', minWidth: '142', sortable: true },
+        { prop: 'endPaymentAmount', label: '期末应付金额', minWidth: '142', sortable: true }
       ],
       searchList: [
         { prop: 'accountPeriod', label: '账期', type: 'date' },

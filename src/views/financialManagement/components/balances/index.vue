@@ -66,14 +66,15 @@
         <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO custom-column>
           <template v-for="item in tableItems">
             <el-table-column v-if="item.prop == 'balanceState'" :prop="item.prop" :key="item.prop" :label="item.label"
-              :fixed="item.fixed || false" :min-width="item.minWidth || 120" align="center">
+              :fixed="item.fixed || false" :min-width="item.minWidth || 130" align="center" :sortable="item.sortable">
               <template slot-scope="scope">
                 <el-tag type="warning" v-if="scope.row.balanceState === 'not_finished'">未完成</el-tag>
                 <el-tag type="success" v-else-if="scope.row.balanceState === 'finished'">已完成</el-tag>
               </template>
             </el-table-column>
             <el-table-column v-else-if="item.prop == 'paymentCycle'" :prop="item.prop" :key="item.prop"
-              :label="item.label" :fixed="item.fixed || false" :min-width="item.minWidth || 120">
+              :label="item.label" :fixed="item.fixed || false" :min-width="item.minWidth || 130"
+              :sortable="item.sortable">
               <template slot-scope="scope">
                 <div v-if="scope.row.paymentCycle === '30DAY'">30天</div>
                 <div v-else-if="scope.row.paymentCycle === '45DAY'">45天</div>
@@ -88,7 +89,7 @@
             <el-table-column
               v-else-if="['currentBillingAmount', 'currentInboundOutboundAmount', 'duePaymentAmount', 'currentActualAmount', 'overduePaymentAmount'].includes(item.prop)"
               :prop="item.prop" :key="item.prop" :label="item.label" :fixed="item.fixed || false"
-              :min-width="item.minWidth || 120">
+              :min-width="item.minWidth || 130" :sortable="item.sortable">
               <!-- <template slot-scope="scope">
                 <el-link type="primary" @click.native="linesTable(item.prop, scope.row)">
                   {{ scope.row[item.prop] }}
@@ -96,7 +97,7 @@
               </template> -->
             </el-table-column>
             <el-table-column v-else :key="item.prop" :prop="item.prop" :label="item.label" :fixed="item.fixed || false"
-              :min-width="item.minWidth || 120" />
+              :min-width="item.minWidth || 130" :sortable="item.sortable" />
 
           </template>
 

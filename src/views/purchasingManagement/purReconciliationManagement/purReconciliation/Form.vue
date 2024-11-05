@@ -86,26 +86,6 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'">
-                            <div class="viewData">
-                              <span>{{ scope.row.productCode ? scope.row.productCode : '调价' }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
-                      <!-- <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'">
-                            <div class="viewData">
-                              <span>
-                                {{ scope.row.productName ? scope.row.productName : scope.row.drawingNo ? '' : '调价' }}
-                              </span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column> -->
                       <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
@@ -115,7 +95,15 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-
+                      <el-table-column prop="productCode" label="产品编码" width="140" show-overflow-tooltip>
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'">
+                            <div class="viewData">
+                              <span>{{ scope.row.productCode ? scope.row.productCode : '调价' }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="reconciliationUnitPrice" label="对账数量" width="100">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'reconciliationUnitPrice'">

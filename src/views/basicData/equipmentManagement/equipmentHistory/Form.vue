@@ -19,6 +19,8 @@
               <img class="equipmentstatus" v-if="dataForm.state=='normal'" src="@/assets/images/zhengchang.png" alt="">
               <img class="equipmentstatus" v-if="dataForm.state=='repair'" src="@/assets/images/weixiuzhong.png" alt="">
               <img class="equipmentstatus" v-if="dataForm.state=='discard'" src="@/assets/images/baofei.png" alt="">
+              <img class="equipmentstatus" v-if="dataForm.state=='stop'" src="@/assets/images/tingyong.png" alt="">
+              <img class="equipmentstatus" v-if="dataForm.state=='spare'" src="@/assets/images/beiyong.png" alt="">
             </div>
             <!-- <el-tabs v-model="activeName" type="card" @tab-click="handleClick"> -->
             <div style="padding-left: 5px;border-bottom: 1px solid #dcdfe6;" ref="radio">
@@ -297,11 +299,11 @@
                   <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
                   <el-table-column prop="createByName" label="创建人" width="120" sortable="custom"></el-table-column>
                   <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
-                  <!-- <el-table-column label="操作" width="140" fixed="right">
+                  <el-table-column label="操作" width="140" fixed="right">
                     <template slot-scope="scope">
-                      <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'look')">查看详情</el-button>
+                      <el-button size="mini" type="text" @click="wxhandleUserRelation(scope.row.id, 'look')">查看详情</el-button>
                     </template>
-                  </el-table-column> -->
+                  </el-table-column>
                 </JNPF-table>
                 <pagination :total="total" :page.sync="wxjlorderForm.pageNum" :limit.sync="wxjlorderForm.pageSize" @pagination="getwxjlinfo" />
               </div>
@@ -337,11 +339,11 @@
                   <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
                   <el-table-column prop="createByName" label="创建人" width="120" sortable="custom"></el-table-column>
                   <el-table-column prop="remark" label="备注" min-width="300"></el-table-column>
-                  <!-- <el-table-column label="操作" width="140" fixed="right">
+                  <el-table-column label="操作" width="140" fixed="right">
                     <template slot-scope="scope">
-                      <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'look')">查看详情</el-button>
+                      <el-button size="mini" type="text" @click="byrwhandleUserRelation(scope.row.id, 'look')">查看详情</el-button>
                     </template>
-                  </el-table-column> -->
+                  </el-table-column>
                 </JNPF-table>
                 <pagination :total="total" :page.sync="byrworderForm.pageNum" :limit.sync="byrworderForm.pageSize" @pagination="getbyrwinfo" />
               </div>
@@ -382,7 +384,7 @@
                   <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
                   <el-table-column label="操作" width="140" fixed="right">
                     <template slot-scope="scope">
-                      <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'look')">查看详情</el-button>
+                      <el-button size="mini" type="text" @click="byjlhandleUserRelation(scope.row.id, 'look')">查看详情</el-button>
                     </template>
                   </el-table-column>
                 </JNPF-table>
@@ -419,11 +421,11 @@
                   <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
                   <el-table-column prop="createByName" label="创建人" width="120" sortable="custom"></el-table-column>
                   <el-table-column prop="remark" label="备注" min-width="300"></el-table-column>
-                  <!-- <el-table-column label="操作" width="140" fixed="right">
+                  <el-table-column label="操作" width="140" fixed="right">
                     <template slot-scope="scope">
-                      <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'look')">查看详情</el-button>
+                      <el-button size="mini" type="text" @click="djrwhandleUserRelation(scope.row.id, 'look')">查看详情</el-button>
                     </template>
-                  </el-table-column> -->
+                  </el-table-column>
                 </JNPF-table>
                 <pagination :total="total" :page.sync="djrworderForm.pageNum" :limit.sync="djrworderForm.pageSize" @pagination="getdjrwinfo" />
               </div>
@@ -468,11 +470,11 @@
                   <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
                   <el-table-column prop="createByName" label="创建人" width="120" sortable="custom"></el-table-column>
                   <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
-                  <!-- <el-table-column label="操作" width="140" fixed="right">
+                  <el-table-column label="操作" width="140" fixed="right">
                     <template slot-scope="scope">
-                      <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'look')">查看详情</el-button>
+                      <el-button size="mini" type="text" @click="djjlhandleUserRelation(scope.row.id, 'look')">查看详情</el-button>
                     </template>
-                  </el-table-column> -->
+                  </el-table-column>
                 </JNPF-table>
                 <pagination :total="djjltotal" :page.sync="djjlorderForm.pageNum" :limit.sync="djjlorderForm.pageSize" @pagination="getdjjlinfo" />
               </div>
@@ -481,16 +483,32 @@
           </el-collapse-item>
         </el-collapse>
       </div>
+      <wxForm v-if="wxformVisible" ref="wxForm" @close="closeForm" />
+      <byrwForm v-if="byrwformVisible" ref="byrwForm" @close="closeForm" />
+      <byjlForm v-if="byjlformVisible" ref="byjlForm" @close="closeForm" />
+      <djrwForm v-if="djrwformVisible" ref="djrwForm" @close="closeForm" />
+      <djjlForm v-if="djjlformVisible" ref="djjlForm" @close="closeForm" />
     </div>
   </transition>
 </template>
     
 <script>
+import wxForm from "@/views/dailyManagement/maintenanceManagement/deviceservice/Form.vue";
+import byrwForm from "@/views/dailyManagement/Maintenance/maintenanceTasks/Form.vue";
+import byjlForm from "@/views/dailyManagement/Maintenance/maintenanceRecords/Form.vue";
+import djrwForm from "@/views/dailyManagement/pointInspection/inspectionTask/Form.vue";
+import djjlForm from "@/views/dailyManagement/pointInspection/inspectionRecords/Form.vue";
 import { checkmaintenanceList, RepairRequestList, equMaintenanceList } from '@/api/dailyManagement/Maintenance'
 import { getEquEquipmentInfo } from '@/api/basicData/index'
 export default {
+  components: { wxForm, byrwForm, byjlForm, djrwForm, djjlForm },
   data() {
     return {
+      djjlformVisible: false,
+      djrwformVisible: false,
+      byjlformVisible: false,
+      byrwformVisible: false,
+      wxformVisible: false,
       height: 0,
       srcList: [
         'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg'
@@ -643,12 +661,50 @@ export default {
     this.switchStyle()
   },
   methods: {
+    djjlhandleUserRelation(id, btntype) {
+      this.djjlformVisible = true
+      this.$nextTick(() => {
+        this.$refs.djjlForm.init(id, btntype)
+      })
+    },
+    djrwhandleUserRelation(id, btntype) {
+      this.djrwformVisible = true
+      this.$nextTick(() => {
+        this.$refs.djrwForm.init(id, btntype)
+      })
+    },
+    byjlhandleUserRelation(id, btntype) {
+      this.byjlformVisible = true
+      this.$nextTick(() => {
+        this.$refs.byjlForm.init(id, btntype)
+      })
+    },
+    byrwhandleUserRelation(id, btntype) {
+      this.byrwformVisible = true
+      this.$nextTick(() => {
+        this.$refs.byrwForm.init(id, btntype)
+      })
+    },
+    wxhandleUserRelation(id, btntype) {
+      this.wxformVisible = true
+      this.$nextTick(() => {
+        this.$refs.wxForm.init(id, btntype)
+      })
+    },
+    // 关闭新建编辑页面
+    closeForm(isRefresh) {
+      this.djjlformVisible = false
+      this.djrwformVisible = false
+      this.byjlformVisible = false
+      this.byrwformVisible = false
+      this.wxformVisible = false
+    },
     //自适应窗口
     async switchStyle() {
       await this.$nextTick();
-      console.log(this.$refs.main,'this.$refs.main')
+      console.log(this.$refs.main, 'this.$refs.main')
       let allHeight = this.$refs.main.clientHeight
-      console.log(allHeight,'allHeight')
+      console.log(allHeight, 'allHeight')
       // let HeightstoclInfo = this.$refs.stoclInfo.clientHeight
       // let Heightradio = this.$refs.radio.clientHeight
       this.height = (allHeight - 340) < 500 ? 500 : (allHeight - 340)
@@ -825,16 +881,6 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-.axis-content {
-  .content-title {
-    padding: 8px;
-    font-size: 16px;
-    span {
-      margin-right: 3px;
-      font-weight: 700;
-    }
-  }
-}
 ::v-deep .el-radio-button--small .el-radio-button__inner {
   border-bottom: none;
 }
@@ -852,19 +898,31 @@ export default {
   font-size: 16px;
   line-height: 28px;
 }
-.stoclInfo {
-  position: relative;
-  padding: 5px;
-  .maintenancetitle {
-    font-size: 24px;
-    font-weight: bold;
+.main {
+  .stoclInfo {
+    position: relative;
+    padding: 5px;
+    .maintenancetitle {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .equipmentstatus {
+      width: 120px;
+      height: 120px;
+      position: absolute;
+      right: 10px;
+      bottom: 0;
+    }
   }
-  .equipmentstatus {
-    width: 120px;
-    height: 120px;
-    position: absolute;
-    right: 10px;
-    bottom: 0;
+  .axis-content {
+    .content-title {
+      padding: 8px;
+      font-size: 16px;
+      span {
+        margin-right: 3px;
+        font-weight: 700;
+      }
+    }
   }
 }
 .required {
@@ -879,6 +937,13 @@ export default {
 }
 .JNPF-preview-main .main {
   padding-top: 10px;
+  ::v-deep .el-collapse-item__wrap {
+    border: 1px solid #dcdfe6 !important;
+    border-top: none;
+    margin-bottom: 0;
+    padding: 0 0px 0px;
+    border-top: none !important;
+  }
 }
 ::v-deep .el-collapse-item__header {
   line-height: 33px;
@@ -889,14 +954,6 @@ export default {
   font-weight: 700;
   border-right: 1px solid #dcdfe6;
   border-left: 1px solid #dcdfe6;
-}
-
-::v-deep .el-collapse-item__wrap {
-  border: 1px solid #dcdfe6 !important;
-  border-top: none;
-  margin-bottom: 0;
-  padding: 0 0px 0px;
-  border-top: none !important;
 }
 
 ::v-deep .el-collapse-item__content {

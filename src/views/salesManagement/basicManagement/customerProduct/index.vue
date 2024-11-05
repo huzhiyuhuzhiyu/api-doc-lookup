@@ -179,8 +179,14 @@
                 </div>
               </div>
               <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForms"
-                :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="columnLists">
-                <el-table-column prop="cooperativePartnerIdText" label="客户名称" min-width="260" sortable="custom" />
+                :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="columnLists"> 
+                <el-table-column prop="cooperativePartnerIdText" label="客户名称" min-width="260" sortable="custom">
+                  <template slot-scope="scope">
+                    <el-link type="primary" @click.native="viewPartner(scope.row.cooperativePartnerId, 'look')">{{
+                      scope.row.cooperativePartnerIdText
+                      }}</el-link>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="cooperativePartnerCode" label="客户编码" min-width="160" sortable="custom" />
                 <el-table-column prop="customerDrawingNumber" label="客户料号" min-width="180" />
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="400" />

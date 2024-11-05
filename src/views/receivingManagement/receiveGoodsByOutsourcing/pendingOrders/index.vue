@@ -161,6 +161,7 @@ export default {
         documentStatus: 'submit',
         orderState: 'not_finish',
         externalFlag: 1,
+        receiptQueryFlag:1,
         deliveryEndDate: '',
         deliveryStartDate: '',
         deliverQueryFlag: 1,

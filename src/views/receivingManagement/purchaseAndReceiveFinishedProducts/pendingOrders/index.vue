@@ -502,6 +502,7 @@ export default {
         deliveryStartDate: '',
         extensionFlag: 1,
         deliverQueryFlag: 1,
+        receiptQueryFlag: 1,
         pageNum: 1,
         pageSize: 20,
         orderItems: [

@@ -498,12 +498,12 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].validateField('productCategoryName')
       })
-      if (!val && data.length) return
-      if (!data) return
-      if (data.length === 0) {
-      } else {
+      if (data && data.length) {
         this.dataForm.productCategoryName = data[0].name
         this.dataForm.productCategoryId = data[0].id
+      } else {
+        this.dataForm.productCategoryName = ''
+        this.dataForm.productCategoryId = ''
       }
     },
     hanglerepairUserId(e, r) {

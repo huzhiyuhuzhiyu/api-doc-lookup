@@ -1516,8 +1516,7 @@ export default {
         data.forEach((item) => {
           console.log('ooooooo', item)
           item.ordersNo = item.orderNo
-          item.receivedQuantity = item.waitReceiptNum
-
+          this.$set(item, 'receivedQuantity', item.waitReceiptNum)
         })
       }
       if (this.dataForm.id) {
@@ -1688,7 +1687,7 @@ export default {
             // notificationType: item.notificationType,
             oil: item.oil,
             oilQuantity: item.oilQuantity,
-   
+
             packagingMethod: item.packagingMethod,
             packingQuantity: item.packingQuantity,
             processId: item.processId,

@@ -157,13 +157,21 @@ export default {
       detailFlag: false,
 
       orderForm: {
+        approvalStatus: 'ok',
+        documentStatus: 'submit',
+        orderState: 'not_finish',
         externalFlag: 1,
-        receiptQueryFlag: 1,
         deliveryEndDate: '',
         deliveryStartDate: '',
+        deliverQueryFlag: 1,
+        shipmentStatus: 'finish',
         pageNum: 1,
         pageSize: 20,
         orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
           {
             asc: false,
             column: 't1.create_time'
@@ -492,6 +500,7 @@ export default {
         deliveryEndDate: this.dateFun(this.deliveryDateArr[1]),
         deliveryStartDate: '',
         deliverQueryFlag: 1,
+        shipmentStatus: 'finish',
         pageNum: 1,
         pageSize: 20,
         orderItems: [

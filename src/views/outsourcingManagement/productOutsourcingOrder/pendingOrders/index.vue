@@ -153,6 +153,7 @@ export default {
 
       orderForm: {
         orderType: 'external',
+        shipmentStatus: 'finish',
         receiptQueryFlag: 1,
         deliveryEndDate: '',
         deliveryStartDate: '',
@@ -412,23 +413,17 @@ export default {
       end.setDate(end.getDate() + 3)
       this.deliveryDateArr = [start, end]
       this.orderForm = {
-        approvalStatus: 'ok',
-        documentStatus: 'submit',
-        orderState: 'not_finish',
-        deliveryEndDate: this.dateFun(this.deliveryDateArr[1]),
+        orderType: 'external',
+        receiptQueryFlag: 1,
+        shipmentStatus: 'finish',
+        deliveryEndDate: '',
         deliveryStartDate: '',
-        extensionFlag: 1,
-        deliverQueryFlag: 1,
         pageNum: 1,
         pageSize: 20,
         orderItems: [
           {
             asc: false,
             column: ''
-          },
-          {
-            asc: false,
-            column: 't1.create_time'
           }
         ],
 

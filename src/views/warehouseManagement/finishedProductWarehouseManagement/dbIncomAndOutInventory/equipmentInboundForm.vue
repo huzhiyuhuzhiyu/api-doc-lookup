@@ -477,7 +477,7 @@ export default {
       },
 
       inspectionResultsList: [
-        { label: "待检验", value: "" },
+        { label: "待检验", value: "unInspect" },
         { label: "合格", value: "qualified" },
         { label: "不合格", value: "unqualified" },
         { label: "报废", value: "discard" },

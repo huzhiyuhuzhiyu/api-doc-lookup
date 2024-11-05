@@ -19,4 +19,6 @@ export const indAndoutTypeList = [
   { label: 'inbound_return_materials', value2: 'warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/inboundReturnMaterialsForm' },
   { label: 'inbound_production', value2: 'warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/productInboundForm' },
   { label: 'inbound_order_production', value2: 'warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/workInboundForm' },
+  { label: 'inbound_return', value2: 'warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/equipmentInboundForm' },
+  { label: 'outbound_use', value2: 'warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/equipmentOutboundForm' },
 ]

@@ -312,20 +312,14 @@ export default {
     },
     handleUserRelation(val, btnType) {
       this.formVisible = true
-      let type = ''
-      if (val.useApplication == 'equipmentmaintain' || val.useApplication == 'equipmentrepair') {
-        type = 'equipment'
-      } else {
-        type = 'tool'
-      }
       this.$nextTick(() => {
-        this.$refs.Form.init(val.id, btnType, type)
+        this.$refs.Form.init(val.id, btnType)
       })
     },
-    addOrUpdateHandle(id, btnType, type) {
+    addOrUpdateHandle(id, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType, type)
+        this.$refs.Form.init(id, btnType)
       })
     }
   }

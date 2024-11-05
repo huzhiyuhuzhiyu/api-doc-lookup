@@ -137,7 +137,7 @@
               </el-radio-group>
               <!-- 订单计划 -->
               <div v-if="categoryType == 'plan'">
-                <div class="stoclInfo">
+                <div class="stoclInfo" style="position: relative;">
                   <el-descriptions :column="1" class="orderNo">
                     <el-descriptions-item label="计划单号">{{ planData.planNo
                       }}</el-descriptions-item>
@@ -169,12 +169,13 @@
                     <el-descriptions-item label="计划日期">{{ planData.planStartDate }}至{{ planData.planEndDate
                       }}</el-descriptions-item>
                   </el-descriptions>
+                  <img src="@/assets/images/noPlan.png" alt="" v-if="!planFlag" class="noplan">
                 </div>
 
-                <div class="gantt">甘特图信息</div>
-                <div ref='ganttRef'>
+                <div class="gantt" v-if="planFlag">甘特图信息</div>
+                <div ref='ganttRef' v-if="planFlag" >
                 </div>
-                <section style='display: flex;justify-content: start;'>
+                <section style='display: flex;justify-content: start;' v-if="planFlag">
 
                 </section>
               </div>
@@ -820,6 +821,7 @@ export default {
         pageSize: -1,
         source: "",
       },
+      planFlag:null,
       gantttt: {
         data: [
 
@@ -1112,7 +1114,7 @@ export default {
         getPlanList(obj).then(res => {
           console.log("计划信息", res);
           if (res.data.records.length) {
-
+            this.planFlag=true
             this.planData = res.data.records[0]
             getPlanSchedule(this.planData.id).then(res => {
               console.log("计划进度", res);
@@ -1204,6 +1206,8 @@ export default {
                 });
               }, 500);
             })
+          }else{
+            this.planFlag=false
           }
         })
       } else if (this.categoryType == 'finishpurchase') {
@@ -1834,5 +1838,11 @@ $footerPadding: '10px';
 }
 ::v-deep .gantt_cell_tree{
   border-right: 0.5px solid #e0e0e0;
+}
+.noplan{
+  position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 </style>

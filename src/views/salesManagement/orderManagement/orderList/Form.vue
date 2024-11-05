@@ -133,12 +133,13 @@
                       @click="openSeleceProductDialog()">选择产品</el-button>|
                     <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                       icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="importProductFun()"
-                      v-if="dataForm.orderType == 'normal' || dataForm.orderType == 'urgent'">导入产品 </el-button><text
-                      v-if="dataForm.orderType == 'normal' || dataForm.orderType == 'urgent'">|</text>
+                      v-if="dataForm.orderType == 'normal' || dataForm.orderType == 'urgent'">导入产品 </el-button>|
                     <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                       :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
-                      @click="batchDelete">批量删除</el-button>
-
+                      @click="batchDelete">批量删除</el-button>|
+                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                      :disabled="btnType == 'look' ? true : false" icon="el-icon-plus"
+                      @click="addLinFun">新增一行</el-button>
                   </div>
                   <div style="height:530px;display:flex;" ref="boxresiz" v-if="btnType == 'look'">
 
@@ -532,21 +533,23 @@
 
             <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
               <div v-if="btnType !== 'look'">
-                <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                  icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
-                  @click="openSeleceCustomerProductDialog()">选择客户产品</el-button>|
-                <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                  icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
-                  @click="openSeleceProductDialog()">选择产品</el-button>|
-                <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                  icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="importProductFun()"
-                  v-if="dataForm.orderType == 'normal' || dataForm.orderType == 'urgent'">导入产品 </el-button><text
-                  v-if="dataForm.orderType == 'normal' || dataForm.orderType == 'urgent'">|</text>
-                <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                  :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
-                  @click="batchDelete">批量删除</el-button>
-
-              </div>
+                    <el-button type="text" style="margin-right:8px;margin-left:5px; font-size:14px!important"
+                      icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
+                      @click="openSeleceCustomerProductDialog()">选择客户产品</el-button>|
+                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                      icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
+                      @click="openSeleceProductDialog()">选择产品</el-button>|
+                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                      icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="importProductFun()"
+                      v-if="dataForm.orderType == 'normal' || dataForm.orderType == 'urgent'">导入产品 </el-button>|
+                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                      :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
+                      @click="batchDelete">批量删除</el-button>|
+                     
+                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                      :disabled="btnType == 'look' ? true : false" icon="el-icon-plus"
+                      @click="addLinFun">新增一行</el-button>
+                  </div>
               <div style="height:530px;display:flex;" ref="boxresiz" v-if="btnType == 'look'">
 
                 <el-table ref="product" :data="productData" :fixedNO="false" border height="100%" :key="191"
@@ -1156,8 +1159,11 @@ export default {
       // 选择全部产品参数
       allProVisible: false,
       ProductMethodArr: [
-        { label: "产品分类", classAttribute: "", method: productTree, requeseObj: { classAttribute: "",        type:"material",
-      } },
+        {
+          label: "产品分类", classAttribute: "", method: productTree, requeseObj: {
+            classAttribute: "", type: "material",
+          }
+        },
       ],
       allproductData: [],
       allProductTotal: 0,
@@ -1169,7 +1175,7 @@ export default {
         productDrawingNo: "",
         productCategoryId: "",
         queryType: 2,
-        saleFlag:true,
+        saleFlag: true,
         productStatus: 'enable',
         productCode: "",
         productName: "",
@@ -1350,7 +1356,7 @@ export default {
       approvalFlag: false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
       endTime: 0,
-      attachmentData:{}
+      attachmentData: {}
     }
   },
   computed: {
@@ -1424,6 +1430,26 @@ export default {
   beforeDestroy() {
   },
   methods: {
+    addLinFun() {
+      console.log(112);
+      let index = this.productData.findIndex(item =>
+        item.drawingNo === "" &&
+        item.productsId === "" &&
+        item.num === "" &&
+        item.price === "" &&
+        item.deliveryDate === ""
+      )
+      if (index !== -1) {
+        console.log(6666);
+        // 删除空行
+        this.$message.error("已存在相同数据")
+      } else {
+        console.log("不存在");
+        let obj = JSON.parse(JSON.stringify(this.createdData))
+      this.productData.push(obj)
+      }
+      
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -1431,7 +1457,7 @@ export default {
       }
       getBimBusinessDetail(obj).then(res => {
         this.isattachmentswitch = res.data.configValue1
-        this.attachmentData=res.data
+        this.attachmentData = res.data
       })
     },
     searchDrawingNoProduct(data, idx) {
@@ -2143,13 +2169,7 @@ export default {
     // 批量删除
     batchDelete() {
       // 遍历选中的行的数据
-      if (this.selectRows.length < 1) {
-        this.$message({
-          message: "请选择你要删除的数据",
-          type: "error",
-          duration: 1500,
-        })
-      }
+      if (this.selectRows.length < 1) return this.$message.error('请选择你要删除的数据')
       for (let i = 0; i < this.selectRows.length; i++) {
         const row = this.selectRows[i];
         const index = this.productData.indexOf(row);
@@ -2231,7 +2251,7 @@ export default {
         productDrawingNo: "",
         queryType: 2,
         productStatus: 'enable',
-        saleFlag:true,
+        saleFlag: true,
 
         productCategoryId: "",
         code: "",
@@ -2303,7 +2323,7 @@ export default {
         productDrawingNo: "",
         productCategoryId: "",
         queryType: 2,
-        saleFlag:true,
+        saleFlag: true,
 
         productCode: "",
         productName: "",
@@ -2331,7 +2351,7 @@ export default {
         item.productName = item.name
         item.productCode = item.code
         item.productsId = item.id
-        this.$set(item,'price',item.salesPrice)
+        this.$set(item, 'price', item.salesPrice)
         item.taxRate = item.taxRate * 1
         if (item.taxRate) {
           item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.salesPrice) / (1 + (Number(item.taxRate)) / 100), 2)
@@ -2905,7 +2925,7 @@ export default {
               item.bimAttachments = {
                 businessType: "system_attachment",
                 categoryId: this.attachmentData.configValue2,
-                configKey:this.attachmentData.configKey,
+                configKey: this.attachmentData.configKey,
                 documentId: item.id,
                 fileFlag: '',
                 sort: index

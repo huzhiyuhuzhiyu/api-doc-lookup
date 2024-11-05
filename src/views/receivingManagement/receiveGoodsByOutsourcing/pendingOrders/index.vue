@@ -501,6 +501,7 @@ export default {
         deliveryEndDate: this.dateFun(this.deliveryDateArr[1]),
         deliveryStartDate: '',
         deliverQueryFlag: 1,
+        receiptQueryFlag: 1,
         shipmentStatus: 'finish',
         pageNum: 1,
         pageSize: 20,

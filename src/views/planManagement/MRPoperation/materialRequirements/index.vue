@@ -539,19 +539,20 @@
         height="600">
         <el-table-column prop="productionPlanNo" label="生产计划单号" width="180"
           v-if="activeName != 'purchase' && activeName != 'out' && codeConfig.codeWay != 'auto'"></el-table-column>
-        <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" />
+        <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" />
         <el-table-column prop="productCode" label="产品编码" min-width="160" />
         <el-table-column prop="outputQuantity" label="组装数量" min-width="120" v-if="activeName == 'assemble'" />
         <el-table-column prop="outputQuantity" label="生产数量" min-width="120" v-if="activeName == 'produce'" />
         <el-table-column prop="outputQuantity" label="采购数量" min-width="140" v-if="activeName == 'purchase'" />
         <el-table-column prop="outputQuantity" label="外协数量" min-width="120" v-if="activeName == 'out'" />
+        <el-table-column prop="issuedQuantity" label="已下达数量" min-width="120" />
         <el-table-column prop="planProductionQuantity" label="下达数量" width="120"  
           v-if="activeName == 'produce' || activeName == 'assemble'">
           <template slot="header">
             <span class="required">*</span>下达数量
           </template>
           <template slot-scope="scope">
-            <el-input v-model="scope.row.planProductionQuantity" disabled>{{
+            <el-input v-model="scope.row.planProductionQuantity" >{{
               scope.row.planProductionQuantity }}</el-input>
           </template>
         </el-table-column>
@@ -1340,7 +1341,8 @@ export default {
         let tableData = res.data.page.records
         if (tableData.length) {
           tableData.forEach(item => {
-            item.planProductionQuantity = item.outputQuantity
+            this.$set(item,'urgentFlag',false)
+            this.$set(item,'planProductionQuantity',item.outputQuantity)
           });
           this.total1 = res.data.page.total
           this.assembleData = tableData
@@ -1422,7 +1424,8 @@ export default {
         let tableData = res.data.page.records
         if (tableData.length) {
           tableData.forEach(item => {
-            item.planProductionQuantity = item.outputQuantity
+            this.$set(item,'urgentFlag',false)
+            this.$set(item,'planProductionQuantity',item.outputQuantity)
           });
           this.produceData = tableData
           this.total2 = res.data.page.total
@@ -1502,7 +1505,10 @@ export default {
         if (tableData.length) {
           this.purchaseData = tableData
           this.total3 = res.data.page.total
-
+          tableData.forEach(item => {
+            this.$set(item,'urgentFlag',false)
+            this.$set(item,'planDemandQuantity',item.outputQuantity)
+          }); 
           this.totalDemandQuantity = totalData.demandQuantity
           this.outputQuantity = totalData.outputQuantity
           this.lossNum = totalData.lossNum
@@ -1584,7 +1590,10 @@ export default {
         if (tableData.length) {
           this.outData = tableData
           this.total4 = res.data.page.total
-
+          tableData.forEach(item => {
+            this.$set(item,'urgentFlag',false)
+            this.$set(item,'planDemandQuantity',item.outputQuantity)
+          }); 
           this.totalDemandQuantity = totalData.demandQuantity
           this.outputQuantity = totalData.outputQuantity
           this.lossNum = totalData.lossNum
@@ -1712,26 +1721,26 @@ export default {
     handleAssemble(val) {
       console.log("组装", val);
       this.assembleArr = val;
-      this.assembleArrList = JSON.parse(JSON.stringify(this.assembleArr));
+      // this.assembleArrList = JSON.parse(JSON.stringify(this.assembleArr));
     },
     // 生产 下达
     handleProduce(val) {
       console.log("生产", val);
       this.produceArr = val;
-      this.produceArrList = JSON.parse(JSON.stringify(this.produceArr));
+      // this.produceArrList = JSON.parse(JSON.stringify(this.produceArr));
     },
 
     // 采购 下达
     handlePurchase(val) {
       console.log("采购", val, this.purchaseArr);
       this.purchaseArr = val;
-      this.purchaseArrList = JSON.parse(JSON.stringify(this.purchaseArr));
+      // this.purchaseArrList = JSON.parse(JSON.stringify(this.purchaseArr));
     },
     // 外协 下达
     handleOut(val) {
       console.log("外协", val);
       this.outArr = val;
-      this.outArrList = JSON.parse(JSON.stringify(this.outArr));
+      // this.outArrList = JSON.parse(JSON.stringify(this.outArr));
     },
 
     // 提交下达数据
@@ -1764,28 +1773,33 @@ export default {
           }
         }
         if (flag === false) return;
-        this.btnLoading = true;
         let arr = [];
-        this.orderDetailData.forEach((item) => {
-          this.assembleArr.forEach((ids, index) => {
-            if (item.productsId === ids.productsId &&
-              item.sealingCoverTyping === ids.sealingCoverTyping &&
-              item.accuracyLevel === ids.accuracyLevel &&
-              item.vibrationLevel === ids.vibrationLevel &&
-              item.oil === ids.oil &&
-              item.oilQuantity === ids.oilQuantity &&
-              item.clearance === ids.clearance &&
-              item.packagingMethod === ids.packagingMethod &&
-              item.specialRequire === ids.specialRequire
+        // this.orderDetailData.forEach((item) => {
+        //   this.assembleArr.forEach((ids, index) => {
+        //     if (item.productsId === ids.productsId &&
+        //       item.sealingCoverTyping === ids.sealingCoverTyping &&
+        //       item.accuracyLevel === ids.accuracyLevel &&
+        //       item.vibrationLevel === ids.vibrationLevel &&
+        //       item.oil === ids.oil &&
+        //       item.oilQuantity === ids.oilQuantity &&
+        //       item.clearance === ids.clearance &&
+        //       item.packagingMethod === ids.packagingMethod &&
+        //       item.specialRequire === ids.specialRequire
 
-            ) {
-              ids.urgentFlag = item.urgentFlag
-              ids.planProductionQuantity = this.assembleArrList[index].planProductionQuantity;
-              ids.materialDemandId = this.assembleArrList[index].materialDemandId;
-            }
-          });
+        //     ) {
+        //       ids.urgentFlag = item.urgentFlag
+        //       ids.planProductionQuantity = this.assembleArrList[index].planProductionQuantity;
+        //       ids.materialDemandId = this.assembleArrList[index].materialDemandId;
+        //     }
+        //   });
+        // });
+        this.assembleArr.forEach(item => {
+          item.materialDemandId=item.id
         });
         arr = this.assembleArr;
+        console.log("arr",arr);
+        this.btnLoading = true;
+
         demandProduceissue(arr)
           .then((res) => {
             this.btnLoading = false;
@@ -1834,19 +1848,19 @@ export default {
         if (flag === false) return;
         this.btnLoading = true;
         let arr = [];
-        this.orderDetailData.forEach((item) => {
-          this.produceArr.forEach((ids, index) => {
-            if (
-              item.cooperativePartnerId === ids.cooperativePartnerId &&
-              item.productsId === ids.productsId
-            ) {
+        // this.orderDetailData.forEach((item) => {
+        //   this.produceArr.forEach((ids, index) => {
+        //     if (
+        //       item.cooperativePartnerId === ids.cooperativePartnerId &&
+        //       item.productsId === ids.productsId
+        //     ) {
 
-              ids.urgentFlag = item.urgentFlag
-              ids.planProductionQuantity = this.produceArrList[index].planProductionQuantity;
-              ids.materialDemandId = this.produceArrList[index].materialDemandId;
-            }
-          });
-        });
+        //       ids.urgentFlag = item.urgentFlag
+        //       ids.planProductionQuantity = this.produceArrList[index].planProductionQuantity;
+        //       ids.materialDemandId = this.produceArrList[index].materialDemandId;
+        //     }
+        //   });
+        // });
         arr = this.produceArr;
         demandProduceissue(arr)
           .then((res) => {
@@ -1906,20 +1920,20 @@ export default {
         if (flag === false) return;
         this.btnLoading = true;
         let arr = [];
-        this.orderDetailData.forEach((item) => {
-          this.outArr.forEach((ids, index) => {
-            if (
-              item.cooperativePartnerId === ids.cooperativePartnerId &&
-              item.productsId === ids.productsId
-            ) {
-              ids.planDemandQuantity =
-              item.planDemandQuantity;
-              ids.deliveryDate = item.deliveryDate;
-              ids.materialDemandId = this.outArrList[index].materialDemandId;
-              ids.poolType = item.poolType;
-            }
-          });
-        });
+        // this.orderDetailData.forEach((item) => {
+        //   this.outArr.forEach((ids, index) => {
+        //     if (
+        //       item.cooperativePartnerId === ids.cooperativePartnerId &&
+        //       item.productsId === ids.productsId
+        //     ) {
+        //       ids.planDemandQuantity =
+        //       item.planDemandQuantity;
+        //       ids.deliveryDate = item.deliveryDate;
+        //       ids.materialDemandId = this.outArrList[index].materialDemandId;
+        //       ids.poolType = item.poolType;
+        //     }
+        //   });
+        // });
         arr = this.outArr;
         demandProcureissue(arr)
           .then((res) => {
@@ -1978,20 +1992,20 @@ export default {
         this.btnLoading = true;
         let arr = [];
         console.log("purchaseArr", this.purchaseArr);
-        this.orderDetailData.forEach((item) => {
-          console.log("item", item);
-          this.purchaseArr.forEach((ids, index) => {
-            if (item.productsId === ids.productsId) {
-              ids.planDemandQuantity =
-                item.planDemandQuantity;
-              ids.materialDemandId =
-                this.purchaseArrList[index].materialDemandId;
-              ids.deliveryDate = item.deliveryDate;
-              ids.poolType = item.poolType;
+        // this.orderDetailData.forEach((item) => {
+        //   console.log("item", item);
+        //   this.purchaseArr.forEach((ids, index) => {
+        //     if (item.productsId === ids.productsId) {
+        //       ids.planDemandQuantity =
+        //         item.planDemandQuantity;
+        //       ids.materialDemandId =
+        //         this.purchaseArrList[index].materialDemandId;
+        //       ids.deliveryDate = item.deliveryDate;
+        //       ids.poolType = item.poolType;
 
-            }
-          });
-        });
+        //     }
+        //   });
+        // });
         arr = this.purchaseArr;
         console.log("arr", arr);
         demandProcureissue(arr)
@@ -2024,41 +2038,41 @@ export default {
           });
         } else {
           this.productVisible = true;
-          this.tableFlag = true;
-          console.log(222, this.assembleArr);
-          let arr = JSON.parse(JSON.stringify(this.assembleArr));
+          this.tableFlag = true; 
 
-          arr.forEach((item, index) => {
+          this.assembleArr.forEach((item, index) => {
             item.materialDemandId = item.id;
-            this.assembleArrList[index].materialDemandId = item.id;
+            // this.assembleArrList[index].materialDemandId = item.id;
             item.urgentFlag = false;
             item.insertOrderSort = "";
+            // item.outputQuantity = Number(item.outputQuantity);
+            // item.planProductionQuantity = item.outputQuantity 
+
             item.outputQuantity = Number(item.outputQuantity);
-            item.planProductionQuantity = item.outputQuantity
-            // item.issuedQuantity = Number(item.issuedQuantity);
-            // item.issuingQuantity = Number(item.issuingQuantity);
-            // this.$set(this.assembleArrList[index],'planProductionQuantity',item.outputQuantity)
-
+            item.issuedQuantity = Number(item.issuedQuantity); 
+              item.planProductionQuantity = this.jnpf.numberFormat(
+                item.outputQuantity - item.issuedQuantity,
+                4
+              );
           });
-          const mergedData = arr.reduce((acc, curr) => {
-            console.log("object");
-            const key = `${curr.sealingCoverTyping}-${curr.accuracyLevel}-${curr.vibrationLevel}-${curr.oil}-${curr.oilQuantity}-${curr.productsId}-${curr.clearance}-${curr.packagingMethod}-${curr.specialRequire}`;
-            if (!acc[key]) {
-              acc[key] = { ...curr };
-            } else {
-              acc[key].outputQuantity += curr.outputQuantity;
-              acc[key].planProductionQuantity += curr.planProductionQuantity;
-            }
-            return acc;
-          }, {});
+          // const mergedData = arr.reduce((acc, curr) => {
+          //   console.log("object");
+          //   const key = `${curr.sealingCoverTyping}-${curr.accuracyLevel}-${curr.vibrationLevel}-${curr.oil}-${curr.oilQuantity}-${curr.productsId}-${curr.clearance}-${curr.packagingMethod}-${curr.specialRequire}`;
+          //   if (!acc[key]) {
+          //     acc[key] = { ...curr };
+          //   } else {
+          //     acc[key].outputQuantity += curr.outputQuantity;
+          //     acc[key].planProductionQuantity += curr.planProductionQuantity;
+          //   }
+          //   return acc;
+          // }, {});
 
-          const result = Object.values(mergedData);
-          console.log("result", result);
-          result.forEach((item, index) => {
-            item.index = index
-          })
-          this.orderDetailData = JSON.parse(JSON.stringify(result));
-
+          // const result = Object.values(mergedData); 
+          // result.forEach((item, index) => {
+          //   item.index = index
+          // })
+          // this.orderDetailData = JSON.parse(JSON.stringify(result));
+          this.orderDetailData =this.assembleArr
         }
       }
       else if (type == "produce") {
@@ -2071,45 +2085,52 @@ export default {
         } else {
           this.productVisible = true;
           this.tableFlag = true;
-          let arr = JSON.parse(JSON.stringify(this.produceArr));
+          // let arr = JSON.parse(JSON.stringify(this.produceArr));
 
-          arr.forEach((item, index) => {
+          this.produceArr.forEach((item, index) => {
             item.materialDemandId = item.id;
-            this.produceArrList[index].materialDemandId = item.id;
+            // this.produceArrList[index].materialDemandId = item.id;
             item.urgentFlag = false;
-            item.insertOrderSort = "";
+            item.insertOrderSort = ""; 
             item.outputQuantity = Number(item.outputQuantity);
-            item.planProductionQuantity = item.outputQuantity
-
+            item.issuedQuantity = Number(item.issuedQuantity); 
+              item.planProductionQuantity = this.jnpf.numberFormat(
+                item.outputQuantity - item.issuedQuantity,
+                4
+              );
 
 
           });
 
-          const mergedData = arr.reduce((acc, curr) => {
-            console.log("object");
-            // const key = curr.bussinessCode === "complete" ? `${curr.bussinessCode}-${curr.productsId}-${curr.cooperativePartnerId}` : `${curr.bussinessCode}-${curr.productsId}`;
-            const key = `${curr.productsId}`;
-            if (!acc[key]) {
-              acc[key] = { ...curr };
-            } else {
-              acc[key].outputQuantity += curr.outputQuantity;
-              acc[key].planProductionQuantity += curr.planProductionQuantity;
-              let earliestDate = arr.reduce((earliest, current) => {
-                return earliest.deliveryDate < current.deliveryDate
-                  ? earliest
-                  : current;
-              });
+          // const mergedData = arr.reduce((acc, curr) => {
+          //   console.log("object");
+          //   // const key = curr.bussinessCode === "complete" ? `${curr.bussinessCode}-${curr.productsId}-${curr.cooperativePartnerId}` : `${curr.bussinessCode}-${curr.productsId}`;
+          //   const key = `${curr.productsId}`;
+          //   if (!acc[key]) {
+          //     acc[key] = { ...curr };
+          //   } else {
+          //     acc[key].outputQuantity += curr.outputQuantity;
+          //     acc[key].planProductionQuantity += curr.planProductionQuantity;
+          //     let earliestDate = arr.reduce((earliest, current) => {
+          //       return earliest.deliveryDate < current.deliveryDate
+          //         ? earliest
+          //         : current;
+          //     });
 
-            }
-            return acc;
-          }, {});
+          //   }
+          //   return acc;
+          // }, {});
 
-          const result = Object.values(mergedData);
-          console.log("result", result);
-          result.forEach((item, index) => {
+          // const result = Object.values(mergedData);
+          // console.log("result", result);
+          // result.forEach((item, index) => {
+          //   item.index = index
+          // })
+          this.produceArr.forEach((item, index) => {
             item.index = index
           })
-          this.orderDetailData = JSON.parse(JSON.stringify(result));
+          this.orderDetailData = this.produceArr;
+          // this.orderDetailData = JSON.parse(JSON.stringify(result));
 
         }
       } else if (type == "out") {
@@ -2120,53 +2141,53 @@ export default {
             duration: 1500,
           });
         } else {
-          let arr = JSON.parse(JSON.stringify(this.outArr));
+          // let arr = JSON.parse(JSON.stringify(this.outArr));
 
-          arr.forEach((item, index) => {
+          this.outArr.forEach((item, index) => {
             item.materialDemandId = item.id;
-            this.outArrList[index].materialDemandId = item.id;
+            // this.outArrList[index].materialDemandId = item.id;
             item.deliveryDates = item.deliveryDate;
             item.deliveryDate = "";
             item.poolType = "external";
             item.outputQuantity = Number(item.outputQuantity);
-            item.issuedQuantity = Number(item.issuedQuantity);
-            this.outArrList[index].planDemandQuantity =
+            item.issuedQuantity = Number(item.issuedQuantity); 
               item.planDemandQuantity = this.jnpf.numberFormat(
                 item.outputQuantity - item.issuedQuantity,
                 4
               );
           });
 
-          const mergedArr = arr.reduce((acc, curr) => {
-            const existingItem = acc.find(
-              (item) => item.productsId === curr.productsId
-            );
-            if (existingItem) {
-              existingItem.outputQuantity += Number(curr.outputQuantity);
-              existingItem.issuedQuantity += Number(curr.issuedQuantity);
-              existingItem.planDemandQuantity += this.jnpf.numberFormat(
-                Number(curr.planDemandQuantity),
-                4
-              );
-              let earliestDate = arr.reduce((earliest, current) => {
-                return earliest.deliveryDates < current.deliveryDates
-                  ? earliest
-                  : current;
-              });
-              existingItem.deliveryDates = earliestDate.deliveryDates;
-              // 如果productionQuantity是字符串，您可能需要进行适当的处理
-              // 例如，如果是数字，则可以使用parseInt将其转换为数字并相加
-            } else {
-              acc.push(curr);
-            }
-            return acc;
-          }, []);
+          // const mergedArr = arr.reduce((acc, curr) => {
+          //   const existingItem = acc.find(
+          //     (item) => item.productsId === curr.productsId
+          //   );
+          //   if (existingItem) {
+          //     existingItem.outputQuantity += Number(curr.outputQuantity);
+          //     existingItem.issuedQuantity += Number(curr.issuedQuantity);
+          //     existingItem.planDemandQuantity += this.jnpf.numberFormat(
+          //       Number(curr.planDemandQuantity),
+          //       4
+          //     );
+          //     let earliestDate = arr.reduce((earliest, current) => {
+          //       return earliest.deliveryDates < current.deliveryDates
+          //         ? earliest
+          //         : current;
+          //     });
+          //     existingItem.deliveryDates = earliestDate.deliveryDates; 
+          //   } else {
+          //     acc.push(curr);
+          //   }
+          //   return acc;
+          // }, []);
 
-          console.log(1111, mergedArr);
-          mergedArr.forEach((item, index) => {
+          // mergedArr.forEach((item, index) => {
+          //   item.index = index
+          // })
+          this.outArr.forEach((item, index) => {
             item.index = index
           })
-          this.orderDetailData = JSON.parse(JSON.stringify(mergedArr));
+          // this.orderDetailData = JSON.parse(JSON.stringify(mergedArr));
+          this.orderDetailData = this.outArr;
           this.productVisible = true;
           this.tableFlag = true;
 
@@ -2180,17 +2201,17 @@ export default {
             duration: 1500,
           });
         } else {
-          let arr = JSON.parse(JSON.stringify(this.purchaseArr));
+          // let arr = JSON.parse(JSON.stringify(this.purchaseArr));
 
-          arr.forEach((item, index) => {
+          this.purchaseArr.forEach((item, index) => {
             item.materialDemandId = item.id;
-            this.purchaseArrList[index].materialDemandId = item.id;
+            // this.purchaseArrList[index].materialDemandId = item.id;
             item.deliveryDates = item.deliveryDate;
             item.deliveryDate = "";
             item.poolType = "procure";
             item.outputQuantity = Number(item.outputQuantity);
             item.issuedQuantity = Number(item.issuedQuantity);
-            this.purchaseArrList[index].planDemandQuantity =
+          
               item.planDemandQuantity = this.jnpf.numberFormat(
                 item.outputQuantity - item.issuedQuantity,
                 4
@@ -2198,45 +2219,49 @@ export default {
           });
 
 
-          console.log("arr", arr);
-          const mergedArr = arr.reduce((acc, curr) => {
-            const existingItem = acc.find(
-              (item) => item.productCode === curr.productCode && item.colour === curr.colour && item.standardValue === curr.standardValue
-            );
-            if (existingItem) {
-              console.log(6);
-              existingItem.outputQuantity += Number(curr.outputQuantity);
-              existingItem.planDemandQuantity += this.jnpf.numberFormat(Number(curr.planDemandQuantity), 4);
-              console.log("curr", curr);
-              let earliestDate = arr.reduce((earliest, current) => {
-                return earliest.deliveryDates < current.deliveryDates ? earliest : current;
-              });
-              existingItem.deliveryDates = earliestDate.deliveryDates;
-              // 如果productionQuantity是字符串，您可能需要进行适当的处理
-              // 例如，如果是数字，则可以使用parseInt将其转换为数字并相加
-            } else {
-              console.log(7, curr);
-              acc.push(curr);
-            }
-            acc.forEach((item) => {
-              item.outputQuantity = this.jnpf.numberFormat(
-                item.outputQuantity,
-                4
-              );
-              item.planDemandQuantity = this.jnpf.numberFormat(
-                item.planDemandQuantity,
-                4
-              );
-            });
-            console.log("acc", acc);
-            return acc;
-          }, []);
+          // console.log("arr", arr);
+          // const mergedArr = arr.reduce((acc, curr) => {
+          //   const existingItem = acc.find(
+          //     (item) => item.productCode === curr.productCode && item.colour === curr.colour && item.standardValue === curr.standardValue
+          //   );
+          //   if (existingItem) {
+          //     console.log(6);
+          //     existingItem.outputQuantity += Number(curr.outputQuantity);
+          //     existingItem.planDemandQuantity += this.jnpf.numberFormat(Number(curr.planDemandQuantity), 4);
+          //     console.log("curr", curr);
+          //     let earliestDate = arr.reduce((earliest, current) => {
+          //       return earliest.deliveryDates < current.deliveryDates ? earliest : current;
+          //     });
+          //     existingItem.deliveryDates = earliestDate.deliveryDates;
+          //     // 如果productionQuantity是字符串，您可能需要进行适当的处理
+          //     // 例如，如果是数字，则可以使用parseInt将其转换为数字并相加
+          //   } else {
+          //     console.log(7, curr);
+          //     acc.push(curr);
+          //   }
+          //   acc.forEach((item) => {
+          //     item.outputQuantity = this.jnpf.numberFormat(
+          //       item.outputQuantity,
+          //       4
+          //     );
+          //     item.planDemandQuantity = this.jnpf.numberFormat(
+          //       item.planDemandQuantity,
+          //       4
+          //     );
+          //   });
+          //   console.log("acc", acc);
+          //   return acc;
+          // }, []);
 
           // console.log(1111, mergedArr);
-          mergedArr.forEach((item, index) => {
+          // mergedArr.forEach((item, index) => {
+          //   item.index = index
+          // })
+          this.purchaseArr.forEach((item, index) => {
             item.index = index
           })
-          this.orderDetailData = JSON.parse(JSON.stringify(mergedArr));
+          // this.orderDetailData = JSON.parse(JSON.stringify(mergedArr));
+          this.orderDetailData = this.purchaseArr;
 
           this.tableFlag = true;
           this.productVisible = true;

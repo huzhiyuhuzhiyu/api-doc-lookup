@@ -208,7 +208,7 @@ export default {
       }
     },
     async dataFormSubmit() {
-      if (!this.dataForm.id) {
+      if (this.dataForm.parentName) {
         this.dataForm.classAttribute = this.classAttribute
       }
       let valid = await this.$refs['dataForm'].validate().catch((err) => false)

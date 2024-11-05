@@ -447,7 +447,7 @@ export default {
         // documentStatus: 'submit',
         // orderState: 'not_finish',
         orderType: 'procure',
-        // receiptQueryFlag: 1,
+        receiptQueryFlag: 1,
         deliveryEndDate: '',
         deliveryStartDate: '',
         classAttribute: 'other',

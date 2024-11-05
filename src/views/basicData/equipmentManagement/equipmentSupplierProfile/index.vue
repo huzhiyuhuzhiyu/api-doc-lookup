@@ -21,12 +21,9 @@
       </div>
 
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
-        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
-          :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
-          v-if="refreshTree" :filter-node-method="filterNode">
+        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNode">
           <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
-            <i
-              :class="[data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
+            <i :class="[data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
             <span class="text" :title="data.name">{{ data.name }}</span>
           </span>
         </el-tree>
@@ -43,7 +40,7 @@
         <el-form @submit.native.prevent>
           <el-col :span="6">
             <el-form-item>
-              <el-input v-model="form.code" placeholder="供应商编码" clearable />
+              <el-input v-model="form.code" placeholder="编码" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
@@ -58,8 +55,6 @@
 
           </el-col>
 
-
-
           <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
@@ -70,7 +65,6 @@
             </el-form-item>
 
           </el-col>
-
 
         </el-form>
       </el-row>
@@ -90,8 +84,7 @@
                 </div> -->
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                @click="superQueryVisible = true" />
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
@@ -101,35 +94,33 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" :fixedNO="true"
-          @sort-change="sortChange" custom-column>
+        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
           <el-table-column prop="code" label="编码" width="140" sortable="custom">
             <template slot-scope="scope">
 
-              <el-link type="primary"
-                @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'true')">{{
+              <el-link type="primary" @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'true')">{{
                   scope.row.code
                 }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="taxId" label="税号" width="200" />
-          <el-table-column prop="name" label="名称" width="120" sortable="custom" />
+          <el-table-column prop="name" label="名称" min-width="180" sortable="custom" />
+          <el-table-column prop="contacts" label="联系人" width="160" />
+          <el-table-column prop="phone" label="电话" width="160" />
+          <el-table-column prop="mobilePhone" label="手机号" width="160" />
+          <el-table-column prop="email" label="邮箱" width="160" />
           <el-table-column prop="regionCodeText" label="地区" width="100" />
           <el-table-column prop="countryText" label="国家" min-width="150" />
           <el-table-column prop="provinceText" label="省" width="160" />
           <el-table-column prop="cityText" label="市" width="160" />
           <el-table-column prop="areaText" label="区" width="160" />
           <el-table-column prop="address" label="地址" width="160" />
-          <el-table-column prop="billingTypeText" label="开票类型" width="160" />
+          <el-table-column prop="taxId" label="税号" width="200" />
           <el-table-column prop="taxRate" label="税率%" width="100" sortable="custom" />
+          <el-table-column prop="billingTypeText" label="开票类型" width="160" />
           <!-- <el-table-column prop="customerRecognitionTime" label="认定日期" width="160" sortable="custom" /> -->
           <el-table-column prop="personResponsible" label="负责人" width="160" />
-          <el-table-column prop="contacts" label="联系人" width="160" />
-          <el-table-column prop="phone" label="电话" width="160" />
-          <el-table-column prop="mobilePhone" label="手机号" width="160" />
           <!-- <el-table-column prop="fax" label="传真" width="160" /> -->
           <!-- <el-table-column prop="zipCode" label="邮编" width="160" /> -->
-          <el-table-column prop="email" label="邮箱" width="160" />
           <el-table-column prop="bank" label="开户银行" width="160" />
           <el-table-column prop="bankInfo" label="银行账号" width="160" />
           <el-table-column prop="gradeText" label="等级" width="160"></el-table-column>
@@ -137,8 +128,7 @@
           <el-table-column prop="createByName" label="创建人" width="160" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)"
-                @del="handleDel(scope.row.id)">
+              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)" @del="handleDel(scope.row.id)">
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -146,8 +136,7 @@
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item
-                      @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'true')">
+                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'true')">
                       查看详情
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -156,16 +145,14 @@
             </template>
           </el-table-column>
         </JNPF-table>
-        <pagination :total="total" :page.sync="form.pageNum" :background="background" :limit.sync="form.pageSize"
-          @pagination="initData" />
+        <pagination :total="total" :page.sync="form.pageNum" :background="background" :limit.sync="form.pageSize" @pagination="initData" />
       </div>
     </div>
 
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
     <UserRelationList v-if="userRelationListVisible" ref="UserRelationList" @refreshDataList="getOrganizeList" />
     <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
@@ -181,7 +168,7 @@ import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
-  name: 'supplierProfile',
+  name: 'equipmentSupplierProfile',
   components: { Form, UserRelationList, SuperQuery },
   data() {
     return {
@@ -193,13 +180,28 @@ export default {
           type: 'input'
         },
         {
-          prop: 'taxId',
-          label: '税号',
+          prop: 'name',
+          label: '名称',
           type: 'input'
         },
         {
-          prop: 'name',
-          label: '名称',
+          prop: 'contacts',
+          label: '联系人',
+          type: 'input'
+        },
+        {
+          prop: 'phone',
+          label: '电话',
+          type: 'input'
+        },
+        {
+          prop: 'mobilePhone',
+          label: '手机号',
+          type: 'input'
+        },
+        {
+          prop: 'email',
+          label: '邮箱',
           type: 'input'
         },
         {
@@ -233,8 +235,8 @@ export default {
           type: 'input'
         },
         {
-          prop: 'billingTypeText',
-          label: '开票类型',
+          prop: 'taxId',
+          label: '税号',
           type: 'input'
         },
         {
@@ -244,23 +246,13 @@ export default {
           options: []
         },
         {
-          prop: 'contacts',
-          label: '联系人',
+          prop: 'billingTypeText',
+          label: '开票类型',
           type: 'input'
         },
         {
-          prop: 'phone',
-          label: '电话',
-          type: 'input'
-        },
-        {
-          prop: 'mobilePhone',
-          label: '手机号',
-          type: 'input'
-        },
-        {
-          prop: 'email',
-          label: '邮箱',
+          prop: 'personResponsible',
+          label: '负责人',
           type: 'input'
         },
         {
@@ -411,7 +403,7 @@ export default {
       this.toggleExpand(roleFlag)
     }
     this.getcategoryTree(true)
-    this.getDictionaryType()
+    // this.getDictionaryType()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
@@ -419,7 +411,7 @@ export default {
 
     },
     superQuerySearch(query) {
-      this.orderForm.superQuery = query
+      this.form.superQuery = query
       this.superQueryVisible = false
       this.search()
     },
@@ -655,12 +647,19 @@ export default {
 
 
       // 获取税率(数据字典)
-      getbimProductAttributes("585438081021126405").then(res => {
-        res.data.list.forEach(item => {
-          item.taxRate = item.enCode.replace('%', '') * 1
+      getbimProductAttributes("585438081021126405").then(response => {
+        // res.data.list.forEach(item => {
+        //   item.taxRate = item.enCode.replace('%', '') * 1
+        // })
+        // this.taxRateList = res.data.list
+        // console.log("税率", this.taxRateList);
+        this.superQueryJson.forEach(item => {
+          if (item.prop == 'taxRate') {
+            item.options = response.data.list.map(o => {
+              return { label: o.fullName, value: o.enCode }
+            })
+          }
         })
-        this.taxRateList = res.data.list
-        console.log("税率", this.taxRateList);
       })
 
     },

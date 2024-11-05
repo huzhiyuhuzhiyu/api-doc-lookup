@@ -85,7 +85,7 @@
                     </el-col>
                     <el-col :sm="8" :xs="24" v-if="dataForm.regionCode != 'foreign'">
                       <el-form-item label="省/市/区" prop="provincecityarea">
-                        <JNPF-Address v-model="dataForm.provincecityarea" @change="actiompro" placeholder="请选择省/市/区" :disabled="btnType == 'look' ? true : false"></JNPF-Address>
+                        <JNPF-Address v-model="dataForm.provincecityarea" @change="actiompro" placeholder="请选择省/市/区" :disabled="btnType ? true : false"></JNPF-Address>
                       </el-form-item>
                     </el-col>
                     <!-- <el-col :sm="8" :xs="24" v-if="dataForm.regionCode != 'foreign'">
@@ -184,7 +184,7 @@
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="税率%" prop="taxRate">
-                        <el-select v-model="dataForm.taxRate" placeholder="请选择税率" style="width: 100%;">
+                        <el-select v-model="dataForm.taxRate" placeholder="请选择税率" style="width: 100%;" :disabled="btnType ? true : false">
                           <el-option v-for="item in taxRateList" :key="item.id" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
@@ -983,16 +983,6 @@ export default {
                   this.paymentMethodList = response.data.list
                 })
               }
-              if (resp.enCode == 'billingType') {
-                let id = resp.id
-                let obj = {
-                  keyword: '',
-                  isTree: 0
-                }
-                getDictionaryDataList(id, obj).then((response) => {
-                  this.billingTypeList = response.data.list
-                })
-              }
               if (resp.enCode == 'paymentCycle') {
                 let id = resp.id
                 let obj = {
@@ -1021,6 +1011,20 @@ export default {
                 }
                 getDictionaryDataList(id, obj).then((response) => {
                   this.modeTransportList = response.data.list
+                })
+              }
+            })
+          }
+          if(item.enCode=='CWGL'){
+            item.children.forEach((resp)=>{
+              if (resp.enCode == 'billingType') {
+                let id = resp.id
+                let obj = {
+                  keyword: '',
+                  isTree: 0
+                }
+                getDictionaryDataList(id, obj).then((response) => {
+                  this.billingTypeList = response.data.list
                 })
               }
             })

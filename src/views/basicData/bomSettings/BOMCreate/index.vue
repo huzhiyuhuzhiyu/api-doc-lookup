@@ -143,7 +143,7 @@ export default {
           value: 'production_order',
           type: 'select',
           options: [
-            { label: '按生产任务领料', value: 'production_order' },
+            { label: '按生产订单领料', value: 'production_order' },
             { label: '按派工单领料', value: 'dispatch_list' }
           ],
           itemRules: [{ required: true, trigger: 'change' }],
@@ -696,11 +696,6 @@ export default {
       if (!this.linesList.length && submitFlag) {
         submitFlag = false
         this.$message.error('请至少添加一个子产品')
-      } else if (!this.linesList.some((item) => item.reduceType === 'picking') && submitFlag) {
-        submitFlag = false
-        this.btnLoading = false
-        this.btnDisabled = false;
-        this.$message.error('至少有一个子产品的扣减料方式为生成领料单')
       }
       if (this.dataForm.classAttribute == 'semi_finished') {
         if (this.linesList.length > 1) {

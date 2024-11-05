@@ -590,5 +590,21 @@ export default {
   line-height: 36px;
   font-weight: 700;
 }
+.import_t {
+  font-size: 22px;
+  color: rgb(103, 194, 58);
+  vertical-align: top;
+  margin-top: 40px;
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.import_b {
+  font-size: 18px;
+  /* color: #67c23a; */
+  vertical-align: top;
+  margin-top: 43px;
+  display: inline-block;
+}
 </style>
     

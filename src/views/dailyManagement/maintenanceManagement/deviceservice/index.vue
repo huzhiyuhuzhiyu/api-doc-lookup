@@ -400,6 +400,11 @@ export default {
     outsourcedcompletion(id) {
       equEquipmentRepairOutsourcing(id).then(res => {
         this.initData()
+        this.$message({
+          type: 'success',
+          message: "提交成功",
+          duration: 1500,
+        })
       })
     },
     columnSetFun() {

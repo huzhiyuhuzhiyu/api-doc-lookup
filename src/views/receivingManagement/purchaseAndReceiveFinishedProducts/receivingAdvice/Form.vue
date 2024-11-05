@@ -1473,7 +1473,7 @@ export default {
         data.forEach((item) => {
           console.log('ooooooo', item)
           item.ordersNo = item.orderNo
-          item.receivedQuantity = item.waitReceiptNum
+          this.$set(item, 'receivedQuantity', item.waitReceiptNum)
 
         })
       }

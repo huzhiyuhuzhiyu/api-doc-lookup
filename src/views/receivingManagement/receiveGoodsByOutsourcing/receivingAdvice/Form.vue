@@ -1199,7 +1199,7 @@ export default {
       if (data) {
         data.forEach(item => {
           item.ordersNo = item.orderNo
-          item.receivedQuantity = item.waitReceiptNum
+          this.$set(item, 'receivedQuantity', item.waitReceiptNum)
         })
         this.oldData = data
         this.dataFormTwo.productData = data

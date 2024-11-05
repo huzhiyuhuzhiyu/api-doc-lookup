@@ -1,7 +1,13 @@
 <template>
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
-      
+      <div :class="['JNPF-common-page-header']" v-if="!dataForm.id">
+        <div class="pageTitle">工具归还</div>
+        <div class="options">
+          <el-button type="primary" size="mini" :loading="btnLoading" @click="handleConfirm('submit')">
+            保存并提交</el-button>
+        </div>
+      </div>
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="dataForm.id&&!approvalFlag">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add' ? '新建工具归还' : btnType == 'edit' ? '编辑工具归还' : '查看工具归还'" />
@@ -9,13 +15,6 @@
           <el-button type="primary" v-if="btnType != 'look'" :loading="btnLoading" @click="handleConfirm('submit')">
             保存并提交</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
-        </div>
-      </div>
-      <div :class="['JNPF-common-page-header']" v-else>
-        <div class="pageTitle">工具归还</div>
-        <div class="options">
-          <el-button type="primary" size="mini" :loading="btnLoading" @click="handleConfirm('submit')">
-            保存并提交</el-button>
         </div>
       </div>
       <div class="main" v-loading="formLoading">
@@ -354,12 +353,22 @@ export default {
     Setencoding(row, index) {
       this.inforow = row
       this._index = index
-      this.inforownum = Array.from({ length: row.requisitionNum }, () => ({
-        equipmentCode: "",
-        productId: this.inforow.productId
-      }));
       if (row.equipments && row.equipments.length) {
-        this.inforownum = row.equipments
+        if (row.equipments.length > row.requisitionNum * 1) {
+          this.inforownum = row.equipments.slice(0, row.requisitionNum * 1)
+          row.equipments = [...this.inforownum]
+        } else {
+          let arr = Array.from({ length: ((row.requisitionNum * 1) - row.equipments.length) }, () => ({
+            equipmentCode: "",
+            productId: this.inforow.productId
+          }));
+          this.inforownum = [...row.equipments, ...arr]
+        }
+      } else {
+        this.inforownum = Array.from({ length: (row.requisitionNum * 1) }, () => ({
+          equipmentCode: "",
+          productId: this.inforow.productId
+        }));
       }
       this.dialogFormVisible = true
     },
@@ -681,6 +690,22 @@ export default {
   height: 100%;
   line-height: 36px;
   font-weight: 700;
+}
+.import_t {
+  font-size: 22px;
+  color: rgb(103, 194, 58);
+  vertical-align: top;
+  margin-top: 40px;
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.import_b {
+  font-size: 18px;
+  /* color: #67c23a; */
+  vertical-align: top;
+  margin-top: 43px;
+  display: inline-block;
 }
 </style>
     

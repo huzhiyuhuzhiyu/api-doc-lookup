@@ -24,13 +24,15 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="故障类型名称" prop="faultTypeId">
-                        <el-input v-model="dataForm.faultTypeName" placeholder="请选择故障类型名称" :disabled="btnType=='look'" @focus="openSeleceProductDialog" />
+                      <el-form-item label="故障类型名称" prop="faultTypeName">
+                        <ComSelect-page ref="ComSelect-page" v-model="dataForm.faultTypeName" @change="submitCustomerProduct" :isdisabled="btnType=='look'" :tableItems="ProductTableItems" title="故障类型" placeholder="请选择故障类型名称" :renderTree="false" :listMethod="parametersShelveslist" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" />
+                        <!-- <el-input v-model="dataForm.faultTypeName" placeholder="请选择故障类型名称" :disabled="btnType=='look'" @focus="openSeleceProductDialog" /> -->
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="故障部位名称" prop="faultLocationId">
-                        <el-input v-model="dataForm.faultLocationName" placeholder="请选择故障部位名称" :disabled="btnType=='look'" @focus="openSeleceProductDialogs" />
+                      <el-form-item label="故障部位名称" prop="faultLocationName">
+                        <ComSelect-page ref="ComSelect-pages" v-model="dataForm.faultLocationName" :isdisabled="btnType=='look'" @change="submitfaultLocationName" :tableItems="faultLocationNameItems" title="故障部位" placeholder="请选择故障部位名称" :renderTree="false" :listMethod="parametersShelveslist" :paramsObj="{ index }" :listRequestObj="faultLocationNameRequestObj" :searchList="ProductfaultLocationName" />
+                        <!-- <el-input v-model="dataForm.faultLocationName" placeholder="请选择故障部位名称" :disabled="btnType=='look'" @focus="openSeleceProductDialogs" /> -->
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
@@ -68,8 +70,6 @@
           </el-tab-pane>
         </el-tabs>
       </div>
-      <ComSelect-page ref="ComSelect-pages" @change="submitfaultLocationName" :tableItems="faultLocationNameItems" title="故障部位" placeholder="请选择故障部位名称" :renderTree="false" :listMethod="parametersShelveslist" :paramsObj="{ index }" :listRequestObj="faultLocationNameRequestObj" :searchList="ProductfaultLocationName" :elementShow="false" />
-      <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" title="故障类型" placeholder="请选择故障类型名称" :renderTree="false" :listMethod="parametersShelveslist" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" />
       <ComSelect-page ref="ComSelect-pagesb" @change="changeWarehouse" :tableItems="ProductTableItemss" title="选择工具" treeTitle="工具分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'tool' } }" :listMethod="getEquEquipmentList" :listRequestObj="ProductListRequestObjs" :searchList="ProductTableSearchLists" :elementShow="false" />
     </div>
   </transition>
@@ -207,10 +207,10 @@ export default {
         equipmentId: [
           { required: true, message: '工具不能为空', trigger: 'blur' }
         ],
-        faultTypeId: [
+        faultTypeName: [
           { required: true, message: '故障类型名称不能为空', trigger: 'blur' }
         ],
-        faultLocationId: [
+        faultLocationName: [
           { required: true, message: '故障部位名称不能为空', trigger: 'blur' }
         ],
         faultDescription: [
@@ -281,23 +281,23 @@ export default {
     submitfaultLocationName(selectedIds, selectedList) {
       this.dataForm.faultLocationId = selectedList[0].all.id
       this.dataForm.faultLocationName = selectedList[0].all.name
-      this.$nextTick(() => { this.$refs['dataForm'].validateField('faultLocationId') })
+      this.$nextTick(() => { this.$refs['dataForm'].validateField('faultLocationName') })
     },
     //故障类型选择
     submitCustomerProduct(selectedIds, selectedList) {
       this.dataForm.faultTypeId = selectedList[0].all.id
       this.dataForm.faultTypeName = selectedList[0].all.name
-      this.$nextTick(() => { this.$refs['dataForm'].validateField('faultTypeId') })
+      this.$nextTick(() => { this.$refs['dataForm'].validateField('faultTypeName') })
 
     },
-    // 打开故障部位
-    openSeleceProductDialogs() {
-      this.$refs['ComSelect-pages'].openDialog()
-    },
-    // 打开故障类型
-    openSeleceProductDialog() {
-      this.$refs['ComSelect-page'].openDialog()
-    },
+    // // 打开故障部位
+    // openSeleceProductDialogs() {
+    //   this.$refs['ComSelect-pages'].openDialog()
+    // },
+    // // 打开故障类型
+    // openSeleceProductDialog() {
+    //   this.$refs['ComSelect-page'].openDialog()
+    // },
     openSeleceProductDialogss() {
       this.$refs['ComSelect-pagesb'].openDialog()
     },

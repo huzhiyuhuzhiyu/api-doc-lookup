@@ -131,7 +131,7 @@
           <el-row :gutter="30">
             <el-col :sm="24">
               <el-form-item prop="routingId" label="工艺路线">
-                <el-select v-model="dataForm.routingId" placeholder="请选择工艺路线" clearable style="width: 100%;">
+                <el-select v-model="dataForm.routingId" filterable placeholder="请选择工艺路线" clearable style="width: 100%;">
                   <el-option v-for="(item, index) in routingIdOptions" :key="index" :label="item.name"
                     :value="item.id"></el-option>
                 </el-select>

@@ -179,6 +179,7 @@ export default {
         if (btntype == 'edit') {
           detailCategory(this.dataForm.id).then((res) => {
             this.dataForm = res.data
+            this.classAttribute = this.dataForm.classAttribute
             this.autoCode = res.data.code
             this.title = '编辑产品分类'
             this.formLoading = false
@@ -186,6 +187,7 @@ export default {
         } else if (btntype == 'copy') {
           detailCategory(this.dataForm.id).then((res) => {
             this.dataForm = res.data
+            this.classAttribute = this.dataForm.classAttribute
             this.autoCode = res.data.code
             this.title = '新建产品分类'
             delete this.dataForm.id //true

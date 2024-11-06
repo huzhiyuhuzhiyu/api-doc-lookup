@@ -372,7 +372,8 @@ export default {
           type: 'input',
           sm: 6,
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
-          itemDisabled: this.dataForm.inspectionResults == 'qualified' || this.openMode === '只读',
+          // itemDisabled: this.dataForm.inspectionResults == 'qualified' || this.openMode === '只读',
+          itemDisabled: this.openMode === '只读',
           itemRules: [
             { required: true, trigger: 'blur' },
             {
@@ -832,12 +833,12 @@ export default {
         !this.dataForm.itemList ? (this.dataForm.itemList = []) : ''
         !this.dataForm.causesList ? (this.dataForm.causesList = []) : ''
 
-        this.inspectionItems = [
-          { prop: 'name', label: '检验项目', value: '', type: 'view', minWidth: 120 },
-          { prop: 'unqualifiedQuantity', label: '不合格数量', value: '0', type: 'view', minWidth: 180 },
+        // this.inspectionItems = [
+        //   { prop: 'name', label: '检验项目', value: '', type: 'view', minWidth: 120 },
+        //   { prop: 'unqualifiedQuantity', label: '不合格数量', value: '0', type: 'view', minWidth: 180 },
 
-          { prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120 }
-        ]
+        //   { prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120 }
+        // ]
         this.activeNames = ['basicInfo', 'inspectionInfo', 'adverseCausesInfo']
         this.activeNames = ['inspectionItem', 'basicInfo', 'inspectionInfo', 'adverseCausesInfo']
       } else {

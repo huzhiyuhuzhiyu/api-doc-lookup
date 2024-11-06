@@ -14,7 +14,7 @@ export default () => [
     tabName: "基本信息",
     tabContent: [
 
-      { prop: "code", label: "产品编码", value: "", type: 'input', itemRules: [{ required: true, trigger: "blur" }, { validator: formValidate('enCode'), trigger: 'blur' }], render: true, itemDisabled: false },
+      { prop: "code", label: "产品编码", value: "", type: 'input', itemRules: [{ required: true, trigger: "blur" }], render: true, itemDisabled: false },
       {
         prop: "drawingNo", label: "品名规格", value: "", type: "input", maxlength: "1000", itemDisabled: false, itemRules: [{ required: true, trigger: "blur" }]
       },

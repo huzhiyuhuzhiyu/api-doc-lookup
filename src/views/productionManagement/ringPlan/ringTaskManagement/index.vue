@@ -5,8 +5,8 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-           
-            
+
+
             <template v-for="item in searchList">
               <el-col :span="item.searchType === 3 ? 6 : 4">
                 <el-form-item>
@@ -45,7 +45,8 @@
               </el-button>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click="addition2()">追加生产</el-button>
               <el-button size="mini" type="primary" icon="el-icon-edit" @click="reassignmentFun2()">改派</el-button>
-              <el-button size="mini" type="primary" icon="el-icon-printer" @click="printFlowCard('p023')">打印流转卡</el-button>
+              <el-button size="mini" type="primary" icon="el-icon-printer"
+                @click="printFlowCard('p023')">打印流转卡</el-button>
               <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"> 关单
               </el-button>
 
@@ -86,7 +87,7 @@
             <el-table-column prop="mainUnit" label="单位" width="80" />
             <el-table-column prop="productionQuantity" label="总生产数量" min-width="140" sortable="custom" />
             <el-table-column prop="completedQuantity" label="已完成数量" min-width="140" sortable="custom" />
-            <el-table-column prop="prodSchedule" label="完成进度" min-width="140"  >
+            <el-table-column prop="prodSchedule" label="完成进度" min-width="140">
               <template slot-scope="scope">
                 <el-progress
                   :percentage="Number((scope.row.completedQuantity / scope.row.productionQuantity * 100).toFixed(2)) || 0"></el-progress>
@@ -94,6 +95,11 @@
             </el-table-column>
             <el-table-column prop="routingName" label="工艺路线名称" min-width="160" sortable="custom" />
             <el-table-column prop="routingCode" label="工艺路线编码" min-width="160" sortable="custom" />
+            <el-table-column prop="taskMethod" label="编排任务方式" min-width="160" sortable="custom">
+              <template slot-scope="scope">
+                <div>{{ scope.row.taskMethod == 'appoint' ? "指定加工对象" : '不指定加工对象' }}</div>
+              </template>
+            </el-table-column>
             <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
             <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
             <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
@@ -132,7 +138,8 @@
                     <el-dropdown-item @click.native="addition1(scope.row)">
                       追加生产
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="updataDispatch(scope.row.id)" v-if="scope.row.taskMethod!='not_appoint'">
+                    <el-dropdown-item @click.native="updataDispatch(scope.row.id)"
+                      v-if="scope.row.taskMethod != 'not_appoint'">
                       改派
                     </el-dropdown-item>
                     <!-- <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'all')">
@@ -186,44 +193,49 @@
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ReworkForm v-if="reworkVisible" ref="reworkForm" @refreshDataList="initData" @close="closeForm"></ReworkForm>
-    <BatchDispatchForm  v-if="BatchDispatchVisible" ref="BatchDispatchForm" @refreshDataList="initData" @close="closeForm"></BatchDispatchForm>
-    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm" ref="printForm" :fullName="fullName" />
+    <BatchDispatchForm v-if="BatchDispatchVisible" ref="BatchDispatchForm" @refreshDataList="initData"
+      @close="closeForm">
+    </BatchDispatchForm>
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm"
+      ref="printForm" :fullName="fullName" />
     <TaskForm v-if="taskFormVisible" ref="taskForm" @refreshDataList="initData" @close="closeForm"></TaskForm>
     <!-- 打印流转卡弹窗选择工单数据 -->
-    <el-dialog title="工单信息" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="workOrderVisible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
-        <el-row :gutter="20">
-          <el-form ref="workOrderForm" :rules='workOrderRule' :model="workOrderForm" label-width="120px" label-position="left">
-            <el-col :span="12">
-              <el-form-item label="生产数量：" prop="productionQuantity">
-                <el-input v-model="workOrderForm.productionQuantity" placeholder="生产数量" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="打印模版：" prop="enCode">
-                <el-select v-model="workOrderForm.enCode" placeholder="选择打印模版">
-                  <el-option :key="item.id" :label="item.fullName" :value="item.id" v-for="item in printList" />
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-form>
-        </el-row>
-        <JNPF-table ref="work" :data="workOrderData" hasC @selection-change="handleSelectWork" fixedNo v-loading="tableloading" border :checkSelectable="row=>!row.selectFlag">
-            <el-table-column prop="orderNo" label="工单号" min-width="160" />
-            <el-table-column prop="processName" label="工序名称" min-width="120" />
-            <el-table-column prop="processCode" label="工序编码" min-width="120"></el-table-column>
-            <el-table-column prop="planStartDate" label="计划开始日期" min-width="150"></el-table-column>
-            <el-table-column prop="planEndDate" label="计划结束日期" min-width="150"></el-table-column>
-            <el-table-column prop="mainUnit" label="单位" min-width="80"></el-table-column>
-            <el-table-column prop="productionQuantity" label="生产数量" min-width="100"></el-table-column>
-            <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="100"></el-table-column>
-            <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="130"></el-table-column>
-        </JNPF-table>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="workOrderVisible = false">{{ $t('common.cancelButton') }}</el-button>
-          <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="printSubmit()">
-            打 印</el-button>
-        </span>
+    <el-dialog title="工单信息" :close-on-click-modal="false" :close-on-press-escape="false"
+      :visible.sync="workOrderVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
+      <el-row :gutter="20">
+        <el-form ref="workOrderForm" :rules='workOrderRule' :model="workOrderForm" label-width="120px"
+          label-position="left">
+          <el-col :span="12">
+            <el-form-item label="生产数量：" prop="productionQuantity">
+              <el-input v-model="workOrderForm.productionQuantity" placeholder="生产数量" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="打印模版：" prop="enCode">
+              <el-select v-model="workOrderForm.enCode" placeholder="选择打印模版">
+                <el-option :key="item.id" :label="item.fullName" :value="item.id" v-for="item in printList" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-form>
+      </el-row>
+      <JNPF-table ref="work" :data="workOrderData" hasC @selection-change="handleSelectWork" fixedNo
+        v-loading="tableloading" border :checkSelectable="row => !row.selectFlag">
+        <el-table-column prop="orderNo" label="工单号" min-width="160" />
+        <el-table-column prop="processName" label="工序名称" min-width="120" />
+        <el-table-column prop="processCode" label="工序编码" min-width="120"></el-table-column>
+        <el-table-column prop="planStartDate" label="计划开始日期" min-width="150"></el-table-column>
+        <el-table-column prop="planEndDate" label="计划结束日期" min-width="150"></el-table-column>
+        <el-table-column prop="mainUnit" label="单位" min-width="80"></el-table-column>
+        <el-table-column prop="productionQuantity" label="生产数量" min-width="100"></el-table-column>
+        <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="100"></el-table-column>
+        <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="130"></el-table-column>
+      </JNPF-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="workOrderVisible = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="printSubmit()">
+          打 印</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
@@ -245,7 +257,7 @@ import PrintBrowse from '@/components/PrintBrowse'
 import { getPrintList } from '@/api/system/printDev'
 export default {
   name: 'assemblyTaskManagement',
-  components: { SuperQuery, Form, ReworkForm,BatchDispatchForm ,PrintBrowse,TaskForm},
+  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, TaskForm },
   data() {
     return {
       taskFormVisible: false,
@@ -262,18 +274,18 @@ export default {
         productionQuantity: "",
         orderNo: ""
       },
-      fullName:'',
+      fullName: '',
       printBrowseVisible: false,
       workOrderVisible: false,
       workOrderForm: {
         productionQuantity: '',
         enCode: ''
       },
-      BatchDispatchVisible:false,
+      BatchDispatchVisible: false,
       reworkVisible: false,
       addOrderVisible: false,
       columnList: ["productCode", "routingCode", "planStartDate", "planEndDate", "createByName",],
- 
+
       superQueryVisible: false,
       btnLoading: false,
       title: "更多查询",
@@ -471,7 +483,7 @@ export default {
       },
       workOrderData: [],
       selectWorkOrder: [],
-      flowCardCode:'',
+      flowCardCode: '',
       workOrderRule: {
         productionQuantity: [{ required: true, message: '请输入生产数量', trigger: 'blur' }],
         enCode: [{ required: true, message: '请选择打印模版', trigger: 'change' }]
@@ -484,7 +496,7 @@ export default {
     }
   },
   created() {
-    this.superForm= this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+    this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search('basic')
   },
 
@@ -520,23 +532,24 @@ export default {
 
 
     },
-      // 改派
-      updataDispatch(id){
-      this.BatchDispatchVisible=true
-      this.$nextTick(()=>{
-        this.$refs.BatchDispatchForm.init(id,'all')
+    // 改派
+    updataDispatch(id) {
+      this.BatchDispatchVisible = true
+      this.$nextTick(() => {
+        this.$refs.BatchDispatchForm.init(id, 'all')
       })
     },
     reassignmentFun2() {
       console.log(this.selectArr);
       if (!this.selectArr.length) return this.$message.error("请选择您要改派的数据!")
       if (this.selectArr.length > 1) return this.$message.error("改派只支持单条数据操作")
-      this.BatchDispatchVisible=true
-      this.$nextTick(()=>{
-        this.$refs.BatchDispatchForm.init(this.selectArr[0].id,'all')
+      if (this.selectArr[0].taskMethod != 'taskMethod') return this.$message.error("改派只支持编排方式为指定加工对象的数据")
+      this.BatchDispatchVisible = true
+      this.$nextTick(() => {
+        this.$refs.BatchDispatchForm.init(this.selectArr[0].id, 'all')
       })
     },
-  
+
     // 追加生产数量 提交
     submitFun() {
       this.$refs['diaForm'].validate((valid) => {
@@ -562,12 +575,9 @@ export default {
     //禁用复选框
     checkSelectable(row) {
       if (row.orderStatus !== 'normal' || row.orderStatus == 'suspend' || row.documentStatus == 'draft') {
-        console.log(222);
         return false
       } else {
-        console.log(333);
         return true
-
       }
     },
 
@@ -639,7 +649,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName'||prop=='productDrawingNo'||prop=='productCode'||prop=='routingName'||prop=='routingCode') {
+      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'productDrawingNo' || prop == 'productCode' || prop == 'routingName' || prop == 'routingCode') {
         if (prop === 'createByName') {
           newProp = 'create_by'
         } else {
@@ -658,14 +668,14 @@ export default {
     closeForm(isRefresh) {
       this.formVisible = false
       this.reworkVisible = false
-      this.BatchDispatchVisible=false
+      this.BatchDispatchVisible = false
       this.taskFormVisible = false
       this.search('basic')
     },
     initData() {
       this.listLoading = true
 
-      
+
       ordershengchanList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -704,11 +714,11 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
 
-    this.superForm=  this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
- 
+      this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+
       this.$refs.SuperQuery.conditionList = []
-  
-      this.searchList= [
+
+      this.searchList = [
         { field: 'productionPlanNo', fieldValue: '', label: '生产计划单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
@@ -731,6 +741,7 @@ export default {
       }).catch(() => { })
     },
     handleUserRelation(id, btnType) {
+      console.log(id);
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.Form.init(id, btnType)
@@ -746,31 +757,31 @@ export default {
       if (this.selectArr.length > 1) return this.$message.error("打印只支持单条数据操作！")
       this.fullName = '套圈流程卡'
       this.workOrderVisible = true
-      this.$nextTick(()=>{
+      this.$nextTick(() => {
         console.log(this.$refs.work.$refs.JNPFTable);
-        
+
         this.workOrderForm.productionQuantity = this.selectArr[0].productionQuantity
-          detailordershengchan(this.selectArr[0].id).then(res => {
-            res.data.workOrderList.forEach(item => {
-              item.selectFlag = false
-            })
-            this.workOrderData = res.data.workOrderList
+        detailordershengchan(this.selectArr[0].id).then(res => {
+          res.data.workOrderList.forEach(item => {
+            item.selectFlag = false
           })
-          getPrintList(this.printQuery).then(res => {
-            if (res.data) {
-              if (res.data.hasOwnProperty(enCode)) {
-                this.printList = res.data[enCode]
-                this.printList && this.printList.forEach(item=>{
-                  if (item.enabledMark){
-                    this.workOrderForm.enCode = item.id
-                  }
-                })
-              }
+          this.workOrderData = res.data.workOrderList
+        })
+        getPrintList(this.printQuery).then(res => {
+          if (res.data) {
+            if (res.data.hasOwnProperty(enCode)) {
+              this.printList = res.data[enCode]
+              this.printList && this.printList.forEach(item => {
+                if (item.enabledMark) {
+                  this.workOrderForm.enCode = item.id
+                }
+              })
             }
-          }).catch(() => { })
+          }
+        }).catch(() => { })
       })
     },
-    handleSelectWork(val){
+    handleSelectWork(val) {
       if (val.length) {
         this.workOrderData.forEach(item => {
           if (item.id != val[0].id) {
@@ -784,7 +795,7 @@ export default {
         });
       }
     },
-    printSubmit(){
+    printSubmit() {
       if (!this.selectWorkOrder.length) return this.$message.error("请选择您要打印的数据!")
       if (this.selectWorkOrder.length > 1) return this.$message.error("打印只支持单条数据操作！")
       getPrintBusInfo(this.workOrderForm.enCode).then(res => {
@@ -798,7 +809,7 @@ export default {
       }).catch(() => {
         this.printBrowseVisible = false
       });
-    },    
+    },
   }
 }
 </script>

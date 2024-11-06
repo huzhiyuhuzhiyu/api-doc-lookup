@@ -173,10 +173,10 @@
           <el-table-column prop="remark" label="备注" width="120" />
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" />
-          <el-table-column label="操作" width="140" fixed="right">
+          <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId, configFlag)"
-                :hasDel="false">
+                :delDisabled="true">
                 <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.id, true)">
                   查看详情
                 </el-button>

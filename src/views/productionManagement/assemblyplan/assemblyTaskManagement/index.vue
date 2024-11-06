@@ -91,6 +91,11 @@
             </el-table-column>
             <el-table-column prop="routingName" label="工艺路线名称" min-width="160" sortable="custom" />
             <el-table-column prop="routingCode" label="工艺路线编码" min-width="160" sortable="custom" />
+            <el-table-column prop="taskMethod" label="编排任务方式" min-width="160" sortable="custom">
+              <template slot-scope="scope">
+                <div>{{ scope.row.taskMethod == 'appoint' ? "指定加工对象" : '不指定加工对象' }}</div>
+              </template>
+            </el-table-column>
             <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
             <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
             <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
@@ -798,13 +803,10 @@ export default {
 
 
     reassignmentFun2() {
-
       console.log(this.selectArr);
-
       if (!this.selectArr.length) return this.$message.error("请选择您要改派的数据!")
-
       if (this.selectArr.length > 1) return this.$message.error("改派只支持单条数据操作")
-
+      if (this.selectArr[0].taskMethod != 'taskMethod') return this.$message.error("改派只支持编排方式为指定加工对象的数据")
       this.BatchDispatchVisible = true
 
       this.$nextTick(() => {
@@ -876,19 +878,11 @@ export default {
     //禁用复选框
 
     checkSelectable(row) {
-
       if (row.orderStatus !== 'normal' || row.orderStatus == 'suspend' || row.documentStatus == 'draft') {
-
         return false
-
       } else {
-
         return true
-
-
-
       }
-
     },
 
 
@@ -1149,6 +1143,7 @@ export default {
       }).catch(() => { })
     },
     handleUserRelation(id, btnType) {
+      console.log(id,type);
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.Form.init(id, btnType)

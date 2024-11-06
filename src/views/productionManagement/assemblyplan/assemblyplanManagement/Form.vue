@@ -79,7 +79,7 @@
                       </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="6" :xs="24">
+                  <el-col :sm="6" :xs="24"  v-if="dataForm.taskMethod=='appoint'">
                     <el-form-item label="产线" prop="productionLineId">
                       <el-select v-model="dataForm.productionLineId" placeholder="产线" clearable style="width: 100%;"
                         @change="selectLine">
@@ -1086,7 +1086,7 @@ export default {
             ) {
               submitFlag = false;
               this.$message({
-                message: "第" + (index + 1) + "行班组、人员需要必填一项",
+                message: "第" + (index + 1) + "行班组、人员、设备需要必填一项",
                 type: "error",
               });
               break;

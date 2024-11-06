@@ -545,7 +545,7 @@
         <el-table-column prop="outputQuantity" label="生产数量" min-width="120" v-if="activeName == 'produce'" />
         <el-table-column prop="outputQuantity" label="采购数量" min-width="140" v-if="activeName == 'purchase'" />
         <el-table-column prop="outputQuantity" label="外协数量" min-width="120" v-if="activeName == 'out'" />
-        <el-table-column prop="issuedQuantity" label="已下达数量" min-width="120" />
+        <el-table-column prop="issuedQuantity" label="已下达数量" min-width="120" v-if="activeName == 'produce' || activeName == 'assemble'" />
         <el-table-column prop="planProductionQuantity" label="下达数量" width="120"  
           v-if="activeName == 'produce' || activeName == 'assemble'">
           <template slot="header">

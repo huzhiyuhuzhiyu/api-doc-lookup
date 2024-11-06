@@ -190,8 +190,8 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="保修截至时间" prop="warrantyDate">
-                        <el-date-picker v-model="dataForm.warrantyDate" type="datetime" placeholder="请选择保修截至时间" value-format="yyyy-MM-dd HH:mm:ss" :disabled="disabled" style="width: 100%;" />
+                      <el-form-item label="保修截止时间" prop="warrantyDate">
+                        <el-date-picker v-model="dataForm.warrantyDate" type="datetime" placeholder="请选择保修截止时间" value-format="yyyy-MM-dd HH:mm:ss" :disabled="disabled" style="width: 100%;" />
                       </el-form-item>
                     </el-col>
 

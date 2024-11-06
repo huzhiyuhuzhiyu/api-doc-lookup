@@ -168,6 +168,11 @@
                     </div>
                   </template>
                 </el-table-column>
+                <el-table-column prop="overdueTime" label="超期时间" min-width="160">
+                  <template slot-scope="scope">
+                    <div><el-tag type="danger">{{scope.row.overdueTime}}天</el-tag></div>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
                 <el-table-column prop="createByName" label="创建人" width="120" />
                 <el-table-column prop="remark" label="备注" min-width="200" />

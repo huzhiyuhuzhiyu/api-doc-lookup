@@ -308,7 +308,6 @@ export default {
           { validator: this.formValidate({ type: 'noEmtry', params: ["数量不能为空", (errMsg, index) => { this.$message.error(`设备信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' },
           { validator: this.formValidate('positiveNumber', '数量必须大于0', (errMsg, index) => { this.$message.error(`设备信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' },
-          { validator: this.formValidate({ type: 'calc', params: [(rowIndex, value) => this.dataFormTwo.productData[rowIndex].requisitionNum <= 999, "不能超过999", (errMsg) => { this.$message.error('数量：' + errMsg) }] }), trigger: 'blur' }
         ]
       },
       dataRule: {

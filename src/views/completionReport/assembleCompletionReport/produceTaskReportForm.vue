@@ -266,12 +266,12 @@
                     </el-descriptions-item>
                   </el-descriptions>
                   <el-descriptions :column="1">
-                    <el-descriptions-item label="完工数量" class="external_cotent">{{ currentProcess.qualifiedQuantity
+                    <el-descriptions-item label="完工数量" class="external_cotent">{{ currentProcess.qualifiedQuantity?currentProcess.qualifiedQuantity:0
                       }}</el-descriptions-item>
                   </el-descriptions>
                   <el-descriptions :column="1">
-                    <el-descriptions-item label="发料数量" class="external_cotent">
-                      <el-tag>{{ dataForm.productionQuantity }}</el-tag>
+                    <el-descriptions-item label="发料数量" class="external_cotent ">
+                      <span class="mater">{{ dataForm.productionQuantity }}</span>
 
                     </el-descriptions-item>
                   </el-descriptions>
@@ -353,8 +353,8 @@ export default {
           { validator: this.formValidate('noZero', '合格数量不能为0', (errMsg) => { this.$message.error(errMsg) }), trigger: 'blur' },
         ]
       },
-      iptLabelMargin: '18px',
-      producerMargin: '18px'
+      iptLabelMargin: '28px',
+      producerMargin: '28px'
     }
   },
 
@@ -410,21 +410,22 @@ export default {
         total = this.currentProcess.qualifiedQuantity
       }
       if (!this.currentProcess.vibrateReportFlag) {
-        if (!this.currentProcess.qualifiedQuantity || this.currentProcess.qualifiedQuantity == 0) {
-          this.iptLabelMargin = '38px'
-        } else {
-          this.iptLabelMargin = '18px'
-          if (!this.currentProcess.producerId) {
-            this.producerMargin = '38px'
-          } else {
-            this.producerMargin = '18px'
-          }
-          this.$nextTick(() => {
+        // if (!this.currentProcess.qualifiedQuantity || this.currentProcess.qualifiedQuantity == 0) {
+        //   this.iptLabelMargin = '24px'
+        // } else {
+        //   this.iptLabelMargin = '18px'
+        //   if (!this.currentProcess.producerId) {
+        //     this.producerMargin = '24px'
+        //   } else {
+        //     this.producerMargin = '18px'
+        //   }
+         
+
+        // }
+        this.$nextTick(() => {
           const height = this.$refs.mycol.$el.clientHeight
           this.targetHeight = height;
         });
-
-        }
       }
       this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [total, this.currentProcess.unqualifiedQuantity]), 6)
       this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
@@ -643,20 +644,20 @@ export default {
             this.init(this.id)
           })
         } else {
-          if (!this.currentProcess.vibrateReportFlag) {
-            if (!this.currentProcess.qualifiedQuantity || this.currentProcess.qualifiedQuantity == 0) {
-              this.iptLabelMargin = '38px'
-            } else {
-              this.iptLabelMargin = '18px'
+          // if (!this.currentProcess.vibrateReportFlag) {
+          //   if (!this.currentProcess.qualifiedQuantity || this.currentProcess.qualifiedQuantity == 0) {
+          //     this.iptLabelMargin = '24px'
+          //   } else {
+          //     this.iptLabelMargin = '24px'
 
-            }
-          }
-          if (!this.currentProcess.producerId) {
-            this.producerMargin = '38px'
-          } else {
-            this.producerMargin = '18px'
+          //   }
+          // }
+          // if (!this.currentProcess.producerId) {
+          //   this.producerMargin = '24px'
+          // } else {
+          //   this.producerMargin = '24px'
 
-          }
+          // }
           this.$nextTick(() => {
             const height = this.$refs.mycol.$el.clientHeight
             this.targetHeight = height;
@@ -1122,6 +1123,6 @@ box-card:nth-child(n+3) {
 
 ::v-deep .el-form-item__error {
   font-size: 16px !important;
-  margin: 15px 0
+  margin: 8px 0
 }
 </style>

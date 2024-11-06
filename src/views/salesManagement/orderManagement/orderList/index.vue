@@ -174,7 +174,7 @@ import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dicti
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
-  name: 'carrierProfile',
+  name: 'orderList',
   components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery,OrderInfoDetail },
   data() {
     return {

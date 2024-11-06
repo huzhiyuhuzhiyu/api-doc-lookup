@@ -158,7 +158,7 @@ export default {
           type: 'select',
           options: [
             { label: '按生产订单领料', value: 'production_order' },
-            { label: '按派工单领料', value: 'dispatch_list' }
+            { label: '按工单领料', value: 'dispatch_list' }
           ],
           itemRules: [{ required: true, trigger: 'change' }],
           sm: 12

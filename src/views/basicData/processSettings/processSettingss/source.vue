@@ -28,18 +28,18 @@
                 <!-- <div>{{ scope.row }}</div> -->
                 <!-- <user-select :disabled="type === 'look'" v-model="scope.row.resourceId" ref="resourceId"
                   placeholder="请选择人员" @change="changePerple" clearable style="width: 100%;"></user-select> -->
-                <el-input v-model="scope.row.resourceName" placeholder="请输入人员名称" disabled  />
+                <el-input v-model="scope.row.resourceName" placeholder="请输入人员名称" disabled />
               </template>
             </el-table-column>
             <el-table-column prop="resourceType" label="人员工号">
               <template slot-scope="scope">
-                <el-input v-model="scope.row.jobNumber" disabled placeholder=""  />
+                <el-input v-model="scope.row.jobNumber" disabled placeholder="" />
               </template>
             </el-table-column>
             <!-- 操作 -->
             <el-table-column label="操作" width="90" v-if="type != 'look'">
               <template slot-scope="scope">
-                <el-button type="text" disabled style="color:rgb(245,108,108)"
+                <el-button type="text" style="color:rgb(245,108,108)"
                   @click="handlerDelete(scope.$index, 'personnel')">删除</el-button>
               </template>
             </el-table-column>
@@ -61,7 +61,7 @@
             </el-table-column>
             <el-table-column label="操作" width="90" v-if="type != 'look'">
               <template slot-scope="scope">
-                <el-button type="text" disabled style="color:rgb(245,108,108)"
+                <el-button type="text" style="color:rgb(245,108,108)"
                   @click="handlerDelete(scope.$index, 'work_group')">删除</el-button>
               </template>
             </el-table-column>
@@ -77,7 +77,7 @@
                 <!-- <ComSelect-list :isdisabled="type === 'look'" v-model="scope.row.resourceName" placeholder="请选择设备" auth
                   @change="onOrganizeChangeTwo" :title="'选择设备'" :method="editEquEquipmentAll" :requestObj="requestObj3"
                   :paramsObj="{}" /> -->
-                <el-input disabled v-model="scope.row.resourceName" placeholder="请输入设备名称"  />
+                <el-input disabled v-model="scope.row.resourceName" placeholder="请输入设备名称" />
               </template>
             </el-table-column>
             <el-table-column prop="resourceType" label="设备编码">
@@ -87,7 +87,7 @@
             </el-table-column>
             <el-table-column label="操作" width="90" v-if="type != 'look'">
               <template slot-scope="scope">
-                <el-button type="text" :disabled="type === 'look'" style="color:rgb(245,108,108)"
+                <el-button type="text" style="color:rgb(245,108,108)"
                   @click="handlerDelete(scope.$index, 'device')">删除</el-button>
               </template>
             </el-table-column>
@@ -105,18 +105,18 @@
                 <!-- <ComSelect-list :isdisabled="type === 'look'" v-model="scope.row.resourceName" placeholder="请选择工具" auth
                   @change="onOrganizeChangeThree" :title="'选择工具'" :method="getEquEquipmentList" :requestObj="requestObj4"
                   :paramsObj="{}" /> -->
-                <el-input v-model="scope.row.resourceName" placeholder="请输入工具名称" disabled  />
+                <el-input v-model="scope.row.resourceName" placeholder="请输入工具名称" disabled />
 
               </template>
             </el-table-column>
             <el-table-column prop="resourceType" label="工具编码">
               <template slot-scope="scope">
-                <el-input v-model="scope.row.resourceCode" placeholder="请输入工具编码" disabled  />
+                <el-input v-model="scope.row.resourceCode" placeholder="请输入工具编码" disabled />
               </template>
             </el-table-column>
             <el-table-column label="操作" width="90" v-if="type != 'look'">
               <template slot-scope="scope">
-                <el-button type="text" :disabled="type === 'look'" style="color:rgb(245,108,108)"
+                <el-button type="text" style="color:rgb(245,108,108)"
                   @click="handlerDelete(scope.$index, 'tool')">删除</el-button>
               </template>
             </el-table-column>

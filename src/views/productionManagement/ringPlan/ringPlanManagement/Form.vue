@@ -79,6 +79,15 @@
                       </el-select>
                     </el-form-item>
                   </el-col>
+                  <el-col :sm="6" :xs="24" v-if="dataForm.taskMethod=='appoint'">
+                    <el-form-item label="产线" prop="productionLineId">
+                      <el-select v-model="dataForm.productionLineId" placeholder="产线" clearable style="width: 100%;"
+                        @change="selectLine">
+                        <el-option v-for="(item, index) in productionLineList" :key="index" :label="item.name"
+                          :value="item.id"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="计划生产开始—结束日期" prop="planDate">
                       <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
@@ -145,7 +154,7 @@
                       </div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="personId" label="人员" min-width="150">
+                  <el-table-column prop="personId" label="人员" min-width="150"  v-if="naturalResourcesFlag == true">
 
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.personId" placeholder="" clearable style="width: 60%; display: none"
@@ -160,7 +169,7 @@
                       </el-button>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="workGroupId" label="班组" min-width="150">
+                  <el-table-column prop="workGroupId" label="班组" min-width="150"  v-if="naturalResourcesFlag == true">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.workGroupId" placeholder="" class="applySelect" disabled
                         style="width: 70%; display: none">
@@ -174,7 +183,7 @@
                       </el-button>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="equipmentId" label="设备" min-width="150">
+                  <el-table-column prop="equipmentId" label="设备" min-width="150"  v-if="naturalResourcesFlag == true">
 
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.equipmentId" placeholder="请选择设备" clearable
@@ -623,6 +632,45 @@ export default {
 
   },
   methods: {
+    selectLine(e) {
+      console.log(e);
+      getProductionLineInfo(e).then(res => {
+        console.log("产线", res);
+        let list = res.data.workstationList
+        // 遍历 arr 数组  
+        this.dataFormTwo.data.forEach(item => {
+          // 在 arr2 中查找与当前 item 的 processId 相同的 item  
+          const match = list.find(el => el.processId === item.processId && item.processingType == "self_produced");
+          if (match) {
+            console.log(match);
+            // 如果匹配，更新 workstationResList 和 workstationResMap  
+            item.routingProResList = match.workstationResList;
+            item.routingProResMap = match.workstationResMap;
+          }
+        });
+        this.dataFormTwo.data.forEach(item => {
+          if (item.routingProResMap) {
+            if (item.routingProResMap.personnel) {
+              this.$set(item, 'personId', item.routingProResMap.personnel[0].resourceId)
+              this.$set(item, 'personName', item.routingProResMap.personnel[0].resourceName)
+            }
+            if (item.routingProResMap.work_group) {
+              this.$set(item, 'workGroupId', item.routingProResMap.work_group[0].resourceId)
+              this.$set(item, 'workGroupName', item.routingProResMap.work_group[0].resourceName)
+            }
+            if (item.routingProResMap.device) {
+
+              this.$set(item, 'equipmentId', item.routingProResMap.device[0].resourceId)
+              this.$set(item, 'equipmentName', item.routingProResMap.device[0].resourceName)
+
+            }
+          } else {
+          }
+          console.log(this.dataFormTwo.data);
+          this.$forceUpdate()
+        });
+      })
+    },
     // getBimBusinessDetail() {
     //   let obj = {
     //     businessCode: 'attachment',
@@ -1035,7 +1083,7 @@ export default {
             ) {
               submitFlag = false;
               this.$message({
-                message: "第" + (index + 1) + "行班组、人员需要必填一项",
+                message: "第" + (index + 1) + "行班组、人员、设备需要必填一项",
                 type: "error",
               });
               break;

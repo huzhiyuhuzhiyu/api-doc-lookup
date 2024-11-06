@@ -162,9 +162,9 @@ export default {
       detailFlag: false,
 
       orderForm: {
-        // approvalStatus: 'ok',
-        // documentStatus: 'submit',
-        // orderState: 'not_finish',
+        approvalStatus: 'ok',
+        documentStatus: 'submit',
+        orderState: 'not_finish',
         receiptQueryFlag: 1,
         orderType: 'procure',
         deliveryEndDate: '',
@@ -503,6 +503,8 @@ export default {
         extensionFlag: 1,
         deliverQueryFlag: 1,
         receiptQueryFlag: 1,
+        classAttribute: 'finish_product',
+        orderType: 'procure',
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -518,6 +520,7 @@ export default {
 
         superQuery: {}
       }
+      
       this.$refs.SuperQuery.conditionList = []
       this.search()
     },

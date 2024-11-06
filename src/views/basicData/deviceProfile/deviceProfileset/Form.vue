@@ -17,8 +17,8 @@
                 <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                   <el-row :gutter="20" class="custom-row">
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="所属分类" prop="productCategoryName" ref="productCategoryName">
-                        <ComSelect-list :isdisabled="disabled" v-model="dataForm.productCategoryName" placeholder="请选择设备类型" auth @change="onOrganizeChangeTwo" :title="'选择设备类型'" :method="getCategoryTrees" :requestObj="requestObjTwo" :paramsObj="{}" />
+                      <el-form-item label="所属分类" prop="productCategoryName">
+                        <ComSelect-list :isdisabled="disabled" v-model="dataForm.productCategoryName" placeholder="请选择设备类型" auth @change="onOrganizeChangeTwo" :title="'选择设备类型'" :method="getCategoryTrees" :requestObj="requestObj" :paramsObj="{}" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
@@ -341,7 +341,7 @@ export default {
         userId: '', //使用人
         attachmentList: [], //bim附件
         purchaserId: "",
-        productCategoryName: '', //设备名称
+        productCategoryName: null, //设备名称
         deviceType: 'normal',
         partnerName: '',
       },
@@ -388,7 +388,11 @@ export default {
           return time.getTime() > Date.now()
         }
       },
-      requestObjTwo: {
+      requestObj: {
+        orderItems: [{
+          asc: false,
+          column: 'create_time'
+        }],
         pageSize: -1,
         classAttribute: 'equipment'
       },
@@ -499,8 +503,8 @@ export default {
         this.$refs['dataForm'].validateField('productCategoryName')
       })
       if (data && data.length) {
-        this.dataForm.productCategoryName = data[0].name
-        this.dataForm.productCategoryId = data[0].id
+        this.dataForm.productCategoryName = data[0].all.name
+        this.dataForm.productCategoryId = data[0].all.id
       } else {
         this.dataForm.productCategoryName = ''
         this.dataForm.productCategoryId = ''
@@ -552,7 +556,7 @@ export default {
           this.$nextTick(() => {
             console.log("res", res.data)
             this.dataForm = res.data
-            this.dataForm.productCategoryName = res.data.categoryName
+            this.$set(this.dataForm, 'productCategoryName', res.data.categoryName)
             this.dataForm.userDepartmentId = [this.dataForm.userDepartmentId]
             // if (this.dataForm.attachmentList && this.dataForm.attachmentList.length) {
             //   this.picArr = res.data.attachmentList.map(item => ({

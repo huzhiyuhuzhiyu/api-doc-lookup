@@ -129,8 +129,7 @@
     </div> -->
 
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
-    <DetailForm v-if="detailFormVisible" ref="DetailForm" @close="closeForm" :startingStatusList="startingStatusList"
-      :workOrderStatusList="workOrderStatusList" />
+  
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -152,14 +151,13 @@
 
 <script>
 import { getWorkList } from '@/api/productOrdes/index'
-import Form from '../components/inspectionNoticeForm.vue'
-import DetailForm from '@/views/productionOrders/dispatchTicketInquiry/finish_product/Form.vue'
+import Form from '../components/inspectionNoticeForm.vue' 
 // import DetailForm from './DetailForm.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 export default {
-  components: { Form, DetailForm, SuperQuery, ExportForm },
+  components: { Form, SuperQuery, ExportForm },
   data() {
     return {
       columnList: [
@@ -474,17 +472,10 @@ export default {
       this.search()
     },
     addOrUpdateHandle(row, readOnly) {
-      if (readOnly) {
-        this.detailFormVisible = true
-        this.$nextTick(() => {
-          this.$refs.DetailForm.init(row.id, readOnly, false, [])
-        })
-      } else {
-        this.formVisible = true
+      this.formVisible = true
         this.$nextTick(() => {
           this.$refs.Form.init(row, readOnly, 'process', 'notice', 'QCDH')
         })
-      }
     },
     sortChange({ prop, order }) {
       let newProp

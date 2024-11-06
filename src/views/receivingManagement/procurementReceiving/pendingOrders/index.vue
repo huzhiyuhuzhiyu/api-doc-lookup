@@ -448,7 +448,7 @@ export default {
         // orderState: 'not_finish',
         orderType: 'procure',
         receiptQueryFlag: 1,
-        deliveryEndDate: '',
+        deliveryEndDate: this.dateFun(this.deliveryDateArr[1]),
         deliveryStartDate: '',
         classAttribute: 'other',
         // extensionFlag: 1,

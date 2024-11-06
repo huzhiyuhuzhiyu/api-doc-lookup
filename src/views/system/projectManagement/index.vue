@@ -48,7 +48,7 @@
         </div>
         <JNPF-table v-loading="listLoading" :data="treeList" v-if="refreshTable" fixedNO
           :setColumnDisplayList="columnList" :default-expand-all="expands" @sort-change="sortChange" ref="dataTable"
-          custom-column>
+          custom-column hasMove @changeMove="changeMove">
           <el-table-column prop="name" label="项目名称" min-width="120" sortable="custom"></el-table-column>
           <el-table-column prop="code" label="项目编码" min-width="120" sortable="custom" />
           <el-table-column prop="remark" label="项目描述" min-width="200" />
@@ -82,7 +82,7 @@ import { getcategoryList, deleteCategory, productPlmSync } from '@/api/basicData
 import DepForm from './depForm'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
-import { getProjectList } from '@/api/system/projectManagement'
+import { getProjectList,updateSortBatch } from '@/api/system/projectManagement'
 export default {
   components: { DepForm, ExportForm, SuperQuery },
   data() {
@@ -150,6 +150,16 @@ export default {
     this.initData()
   },
   methods: {
+    changeMove(data) {
+      console.log(data, 'iiiiii')
+      data.forEach(item => {
+        item.sort = item.sortCode
+      })
+      updateSortBatch(data).then(res => {
+        this.$message.success("排序修改成功")
+        this.initData()
+      })
+    },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false

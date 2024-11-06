@@ -115,7 +115,11 @@
           <el-table-column prop="areaText" label="区" width="160" />
           <el-table-column prop="address" label="地址" width="160" />
           <el-table-column prop="taxId" label="税号" width="200" />
-          <el-table-column prop="taxRate" label="税率%" width="100" sortable="custom" />
+          <el-table-column prop="taxRate" label="税率" width="100" sortable="custom">
+            <template slot-scope="scope">
+              <div>{{scope.row.taxRate}}%</div>
+            </template>
+          </el-table-column>
           <el-table-column prop="billingTypeText" label="开票类型" width="160" />
           <!-- <el-table-column prop="customerRecognitionTime" label="认定日期" width="160" sortable="custom" /> -->
           <el-table-column prop="personResponsible" label="负责人" width="160" />

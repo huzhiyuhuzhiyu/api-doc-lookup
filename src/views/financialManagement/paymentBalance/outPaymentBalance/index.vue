@@ -37,7 +37,7 @@ export default {
         reconciliationType: 'outside_processing',
       },
       tableItems: [
-        { prop: 'accountPeriod', label: '账期', minWidth: '80' },
+        { prop: 'accountPeriod', label: '账期', minWidth: '100' },
         { prop: 'balanceState', label: '结存状态', minWidth: '120' },
         { prop: 'partnerName', label: '外协供应商名称', minWidth: '180', sortable: true },
         { prop: 'partnerCode', label: '外协供应商编码', minWidth: '160', sortable: true },

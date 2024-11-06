@@ -260,12 +260,12 @@ export default {
         },
         {
           prop: 'cooperativePartnerName',
-          label: "客户名称",
+          label: "供应商名称",
           type: 'input'
         },
         {
           prop: 'cooperativePartnerCode',
-          label: "客户编码",
+          label: "供应商编码",
           type: 'input'
         },
         {
@@ -462,7 +462,7 @@ export default {
       this.createRequirementDate = []
       this.searchList = [
         { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
       ]
       this.superForm = JSON.parse(JSON.stringify(this.listQuery))
       this.$refs.SuperQuery.conditionList = []

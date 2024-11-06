@@ -35,3 +35,12 @@ export function updateProjectList(data) {
     data
   })
 }
+
+// 编辑项目管理列表
+export function updateSortBatch(data) {
+  return request({
+    url: `/api/zgt/project/update/sort/batch`,
+    method: 'put',
+    data
+  })
+}

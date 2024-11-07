@@ -11,7 +11,9 @@
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="dataForm.id&&!approvalFlag">
         <el-page-header @back="goBack" :content="btnType == 'add' ? '新建工具领用' : btnType == 'edit' ? '编辑工具领用' : '查看工具领用'" />
         <div class="options">
-          <el-button type="primary" v-if="btnType != 'look'" :loading="btnLoading" @click="handleConfirm('submit')">
+          <el-button size="mini" type="success" :loading="btnLoading" @click="handleConfirm('draft')" v-if="btnType !== 'look'">
+            保存草稿</el-button>
+          <el-button type="primary" v-if="btnType !== 'look'" :loading="btnLoading" @click="handleConfirm('submit')">
             保存并提交</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
@@ -197,7 +199,7 @@ import recordList from '@/views/workFlow/components/RecordList.vue'
 import flowMixin from '@/mixins/generator/flowMixin'
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import { mapGetters } from 'vuex'
-import { detailCollectionandreturn, addCollectionandreturn,updateCollectionandreturn } from '@/api/dailyManagement/Maintenance'
+import { detailCollectionandreturn, addCollectionandreturn, updateCollectionandreturn } from '@/api/dailyManagement/Maintenance'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getBimBusinessDetail } from '@/api/basicData/index'
 export default {

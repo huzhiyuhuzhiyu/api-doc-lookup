@@ -676,7 +676,7 @@ export default {
         delUser(id).then(res => {
           this.$message({
             type: 'success',
-            message: res.msg,
+            message: '删除成功',
             duration: 1500,
             onClose: () => {
               this.initData()

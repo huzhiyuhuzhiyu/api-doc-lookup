@@ -253,9 +253,11 @@ export default {
         if (this.dataForm.organizeIdTree && this.dataForm.organizeIdTree.length) {
           this.getOptionsByOrgIds(this.dataForm.organizeIdTree)
         }
+        this.dataForm.mobilePhone = data[0].all.mobileNumber
         this.dataForm.realName = data[0].all.name
       } else { // 不选择任何内容，置空绑定的值
         this.dataForm.organizeIdTree = []
+        this.dataForm.mobilePhone = ''
         this.dataForm.realName = ''
         this.dataForm.name = ''
       }

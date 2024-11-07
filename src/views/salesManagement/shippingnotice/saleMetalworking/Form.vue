@@ -863,14 +863,14 @@ export default {
         deliverDate: [
           { required: true, message: '发货日期不能为空', trigger: 'change' }
         ],
-        recipient: [
-          { required: true, message: '收件人不能为空', trigger: 'change' }
-        ],
-        phone: [{ required: true, message: '收件人电话不能为空', trigger: 'change' }, { validator: this.formValidate('iphone', '请输入正确的收件人电话'), trigger: 'blur' },],
+        // recipient: [
+        //   { required: true, message: '收件人不能为空', trigger: 'change' }
+        // ],
+        // phone: [{ required: true, message: '收件人电话不能为空', trigger: 'change' }, { validator: this.formValidate('iphone', '请输入正确的收件人电话'), trigger: 'blur' },],
         province: [{ required: true, message: '省份不能为空', trigger: 'change' }],
         city: [{ required: true, message: '市不能为空', trigger: 'change' }],
         area: [{ required: true, message: '地区不能为空', trigger: 'change' }],
-        address: [{ required: true, message: '地址不能为空', trigger: 'change' }],
+        // address: [{ required: true, message: '地址不能为空', trigger: 'change' }],
         delivery: [{ required: true, message: '发货方式不能为空', trigger: 'change' }],
         // shipperId: [{ required: true, message: '发货人不能为空', trigger: 'change' }],
         country: [{ required: true, message: '国家不能为空', trigger: 'change' }],
@@ -1123,6 +1123,7 @@ export default {
         item.ordersNum = item.num
         item.productDrawingNo = item.drawingNo
         item.ordersLineId = item.id
+          this.$set(item, 'deliveryQuantity', item.waitDeliverNum)
         this.dataFormTwo.data.push(item)
       });
       let uniqueArr = [];
@@ -1476,7 +1477,8 @@ export default {
         // this.seleceCustomer(data[0])
         data.forEach(item => {
           item.ordersNum = item.num
-          item.productDrawingNo = item.drawingNo
+          item.productDrawingNo = item.drawing
+          this.$set(item, 'deliveryQuantity', item.waitDeliverNum)
         });
         this.getAddressInfoFun(data[0].cooperativePartnerId)
         this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId

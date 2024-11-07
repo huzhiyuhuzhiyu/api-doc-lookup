@@ -543,7 +543,7 @@ export default {
       console.log(this.selectArr);
       if (!this.selectArr.length) return this.$message.error("请选择您要改派的数据!")
       if (this.selectArr.length > 1) return this.$message.error("改派只支持单条数据操作")
-      if (this.selectArr[0].taskMethod != 'taskMethod') return this.$message.error("改派只支持编排方式为指定加工对象的数据")
+      if (this.selectArr[0].taskMethod != 'appoint') return this.$message.error("改派只支持编排方式为指定加工对象的数据")
       this.BatchDispatchVisible = true
       this.$nextTick(() => {
         this.$refs.BatchDispatchForm.init(this.selectArr[0].id, 'all')

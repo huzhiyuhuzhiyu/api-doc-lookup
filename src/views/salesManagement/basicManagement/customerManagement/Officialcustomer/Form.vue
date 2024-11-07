@@ -576,7 +576,7 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
-        provincecityarea:[],
+        provincecityarea: [],
         industry: '',
         nextTime: '',
         // 合作伙伴
@@ -1038,7 +1038,6 @@ export default {
         this.provinces = res.data.list
         this.init(id, parentId)
       }).catch(() => {
-        this.btnLoading = false
         this.refreshTable = true
       })
     },
@@ -1291,6 +1290,7 @@ export default {
     },
     handleConfirm() {
       let flag = null;
+      this.btnLoading = true
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.contactsList.forEach((item, index) => {
@@ -1411,6 +1411,13 @@ export default {
               }
             }
           });
+          let start = Date.parse(this.dataForm.reconciliationStartDate)
+          let end = Date.parse(this.dataForm.reconciliationEndDate)
+          if (start > end) {
+            this.activeName = "jcInfo"
+            flag = false
+            this.$message.error('对账结束日期不能小于对账开始日期')
+          }
           if (this.dataForm.regionCode == "foreign") {
             this.dataForm.province = ""
             this.dataForm.city = ""
@@ -1434,11 +1441,7 @@ export default {
             deliveryAddressList: this.deliveryAddressList,
             contactsList: this.contactsList
           }
-          if (flag === false) return
-          let start = Date.parse(this.dataForm.reconciliationStartDate)
-          let end = Date.parse(this.dataForm.reconciliationEndDate)
-          if (start > end) return this.$message.error('对账结束日期不能小于对账开始日期')
-          this.btnLoading = true
+          if (flag === false) return this.btnLoading = false
           const formMethod = this.dataForm.id ? updatePartner : addPartner
           formMethod(obj).then(res => {
             let msg = "";
@@ -1462,7 +1465,7 @@ export default {
           })
 
         } else {
-
+          this.btnLoading = false
           this.activeName = "jcInfo"
         }
       })
@@ -1508,7 +1511,7 @@ export default {
 }
 ::v-deep .el-tabs__header {
   padding: 0 !important;
-  margin-bottom: 5px!important;
+  margin-bottom: 5px !important;
 }
 </style>
 <style scoped>

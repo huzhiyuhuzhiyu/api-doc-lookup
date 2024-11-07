@@ -1024,7 +1024,6 @@ export default {
         this.provinces = res.data.list
         this.init(id, parentId)
       }).catch(() => {
-        this.btnLoading = false
         this.refreshTable = true
       })
     },
@@ -1276,6 +1275,7 @@ export default {
       this.dataForm.partnerCategoryIdText = data ? data[0].name : ''
     },
     handleConfirm() {
+      this.btnLoading = true
       let flag = null;
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -1398,6 +1398,13 @@ export default {
               }
             }
           });
+          let start = Date.parse(this.dataForm.reconciliationStartDate)
+          let end = Date.parse(this.dataForm.reconciliationEndDate)
+          if (start > end) {
+            this.activeName = "jcInfo"
+            flag = false
+            this.$message.error('对账结束日期不能小于对账开始日期')
+          }
           if (this.dataForm.regionCode == "foreign") {
             this.dataForm.province = ""
             this.dataForm.city = ""
@@ -1421,8 +1428,8 @@ export default {
             deliveryAddressList: this.deliveryAddressList,
             contactsList: this.contactsList
           }
-          if (flag === false) return
-          this.btnLoading = true
+          if (flag === false) return this.btnLoading = false
+
           const formMethod = this.dataForm.id ? updatePartner : addPartner
           formMethod(obj).then(res => {
             let msg = "";
@@ -1446,7 +1453,7 @@ export default {
           })
 
         } else {
-
+          this.btnLoading = false
           this.activeName = "jcInfo"
         }
       })

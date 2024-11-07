@@ -86,6 +86,22 @@
                 <div v-if="scope.row.approvalStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
               </template>
             </el-table-column>
+            <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center">
+              <template slot-scope="scope">
+                <el-tag v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus !== 'draft'">审批中</el-tag>
+                <el-tag type="success"
+                  v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus !== 'draft'">
+                  审批通过
+                </el-tag>
+                <el-tag type="danger"
+                  v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus !== 'draft'">
+                  审批拒绝
+                </el-tag>
+                <div v-else-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus == 'submit'">
+                  <el-tag type="warning">审批撤回</el-tag>
+                </div>
+              </template>
+            </el-table-column>
             <el-table-column prop="remark" min-width="140" label="备注" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" />
@@ -129,72 +145,6 @@
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="procureForm" @refresh="refresh" @close="closeForm" />
-    <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
-      <el-row :gutter="20">
-        <el-form ref="diaForm" :model="listQuery" label-width="120px" label-position="top">
-          <el-col :span="12">
-            <el-form-item label="采购单号">
-              <el-input v-model.trim="listQuery.orderNo" placeholder="请输入采购单号" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="供应商名称">
-              <el-input v-model.trim="listQuery.cooperativePartnerName" placeholder="请输入供应商名称" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="供应商编码">
-              <el-input v-model.trim="listQuery.cooperativePartnerCode" placeholder="请输入供应商编码" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="审批状态">
-              <el-select v-model="listQuery.approvalStatus" placeholder="审批状态" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in statusList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="订单状态">
-              <el-select v-model="listQuery.receivingStatus" placeholder="订单状态" style="width: 100%;" clearable>
-                <el-option v-for="(item, index) in receiptReturnType" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="交货日期">
-              <el-date-picker v-model="deliveryDate" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                clearable start-placeholder="请选择交货开始日期" end-placeholder="请选择交货结束日期"
-                :picker-options="pickerOptions"></el-date-picker>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="创建时间">
-              <el-date-picker v-model="createRequirementDate" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
-                :default-time="['00:00:00', '23:59:59']" style="width: 100%;" start-placeholder="请选择创建开始时间"
-                end-placeholder="请选择创建结束时间" clearable :picker-options="global.timePickerOptions"></el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="search()">
-          {{ $t('common.search') }}
-        </el-button>
-      </span>
-    </el-dialog>
-
     <withdrawnForm v-if="withdrawnVisible" ref="withdrawnForm" @refresh="refresh" @close="closeForm" />
     <!-- <PrintForm ref="PrintForm" :value="printData" :dataValue="printForm" :pages="pages" /> -->
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
@@ -268,28 +218,24 @@ export default {
           pickerOptions: this.global.timePickerOptions
         },
         {
-          prop: 'excludingTaxTotalAmount',
-          label: '总金额(不含税)',
-          type: 'input'
-        },
-        {
-          prop: 'taxAmount',
-          label: '税额',
-          type: 'input'
-        },
-        {
-          prop: 'totalAmount',
-          label: '总金额(含税)',
-          type: 'input'
-        },
-        {
           prop: 'receivingStatus',
           label: '订单状态',
           type: 'select',
           options: [
-            { label: '待退货', value: 'receiving' },
-            { label: '已退货', value: 'received' },
-            { label: '已取消', value: 'stopped' }
+            { label: '未完成', value: 'not_finished' },
+            { label: '已完成', value: 'finished' },
+            { label: '已停止', value: 'stopped' }
+          ]
+        },
+        {
+          prop: 'approvalStatus',
+          label: '审批状态',
+          type: 'select',
+          options: [
+            { label: '审批中', value: 'ing' },
+            { label: '审批通过', value: 'ok' },
+            { label: '审批拒绝', value: 'rebut' },
+            { label: '审批撤回', value: 'withdrawn' }
           ]
         },
         {

@@ -37,7 +37,7 @@ export default {
         reconciliationType: 'receivable',
       },
       tableItems: [
-        { prop: 'accountPeriod', label: '账期', minWidth: '80' },
+        { prop: 'accountPeriod', label: '账期', minWidth: '100' },
         { prop: 'balanceState', label: '结存状态', minWidth: '120' },
         { prop: 'partnerName', label: '客户名称', minWidth: '160', sortable: true },
         { prop: 'partnerCode', label: '客户编码', minWidth: '160', sortable: true },

@@ -498,27 +498,31 @@ export default {
         approvalStatus: 'ok',
         documentStatus: 'submit',
         orderState: 'not_finish',
+        receiptQueryFlag: 1,
+        orderType: 'procure',
         deliveryEndDate: this.dateFun(this.deliveryDateArr[1]),
         deliveryStartDate: '',
-        extensionFlag: 1,
-        deliverQueryFlag: 1,
-        receiptQueryFlag: 1,
         classAttribute: 'finish_product',
-        orderType: 'procure',
+        // extensionFlag: 1,
+        // deliverQueryFlag: 1,
         pageNum: 1,
         pageSize: 20,
         orderItems: [
           {
             asc: false,
-            column: ''
-          },
-          {
-            asc: false,
             column: 't1.create_time'
           }
         ],
-
-        superQuery: {}
+        superQuery: {
+          condition: [
+            {
+              field: '',
+              fieldValue: '',
+              symbol: ''
+            }
+          ],
+          matchLogic: ''
+        }
       }
       
       this.$refs.SuperQuery.conditionList = []

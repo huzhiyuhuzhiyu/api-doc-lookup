@@ -23,8 +23,8 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24">
-                        <el-form-item label="客户名称" prop="supplierName" ref="supplierName">
-                          <el-input v-model="dataForm.cooperativePartnerName" placeholder="请输入客户名称"
+                        <el-form-item label="供应商名称" prop="supplierName" ref="supplierName">
+                          <el-input v-model="dataForm.cooperativePartnerName" placeholder="请输入供应商名称"
                             :disabled="type == 'look' ? true : false"></el-input>
                         </el-form-item>
                       </el-col>
@@ -231,8 +231,8 @@
                     </el-form-item>
                   </el-col>
                   <el-col :sm="8" :xs="24">
-                    <el-form-item label="客户名称" prop="supplierName" ref="supplierName">
-                      <el-input v-model="dataForm.cooperativePartnerName" placeholder="请输入客户名称"
+                    <el-form-item label="供应商名称" prop="supplierName" ref="supplierName">
+                      <el-input v-model="dataForm.cooperativePartnerName" placeholder="请输入供应商名称"
                         :disabled="type == 'look' ? true : false"></el-input>
                     </el-form-item>
                   </el-col>

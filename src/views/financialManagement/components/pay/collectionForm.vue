@@ -62,7 +62,7 @@
                 <el-col :span="6">
                   <el-form-item :label="Number(dataForm.totalReconciliationAmount) >= 0 ? showLabel + '款金额' : '退款金额'"
                     prop="paymentAmount">
-                    <el-input v-model="dataForm.paymentAmount"
+                    <el-input v-model="dataForm.paymentAmount" :disabled="!dataForm.paymentAmount"
                       :placeholder="Number(dataForm.totalReconciliationAmount) >= 0 ? '请输入' + showLabel + '款金额' : '请输入退款金额'"
                       maxlength="20" />
                   </el-form-item>
@@ -89,7 +89,7 @@
             </el-form>
           </el-collapse-item>
 
-          <el-collapse-item title="预收款信息" name="productInfo" v-if="payData.length !== 0">
+          <el-collapse-item title="预收款信息" name="productInfo" v-if="Number(dataForm.totalReconciliationAmount) >= 0">
             <div style="display: flex;flex-direction: column;" :style="{ height: height + 'px' }">
               <JNPF-table @selection-change="handeleProductInfoData" :hasC="type != 'look'" fixedNO
                 v-loading="formLoading" :data="payData" custom-column ref="payRef" :checkSelectable="checkSelectable">
@@ -270,7 +270,7 @@ export default {
             totalPaymentAmount: res.data.totalPaymentAmount ? res.data.totalPaymentAmount : 0,
             dueAmount: res.data.totalReconciliationAmount - (res.data.totalPaymentAmount ? res.data.totalPaymentAmount : 0),
             paymentMethod: '',
-            reconciliationType: "payable",
+            reconciliationType: res.data.reconciliationType,
             paymentDate: '',
             remark: '',
             paymentAmount: '',
@@ -279,6 +279,7 @@ export default {
           }
           this.dataForm.paymentAmount = this.dataForm.dueAmount
           this.payForm.partnerId = res.data.cooperativePartnerId
+          this.payForm.reconciliationType = res.data.reconciliationType
           this.orgainDataForm = JSON.parse(JSON.stringify(this.dataForm))
           if (Number(this.dataForm.totalReconciliationAmount) < 0) {
             this.dataRule.paymentMethod.message = '请选择退款方式'
@@ -392,7 +393,7 @@ export default {
         this.deductionAmount = 0
         this.dataForm.deductionAmount = this.deductionAmount
       }
-      this.dataForm.paymentAmount = Number(this.dataForm.totalReconciliationAmount) - Number(this.deductionAmount)
+      this.dataForm.paymentAmount = Number(this.dataForm.dueAmount) - Number(this.deductionAmount)
     },
   }
 }

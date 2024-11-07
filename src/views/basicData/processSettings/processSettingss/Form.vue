@@ -29,10 +29,10 @@
                           <el-form-item label="工艺路线编码" prop="code" ref="code">
                             <el-input v-model="dataForm.code" placeholder="请输入工艺路线编码" clearable
                               :style="{ width: '100%' }" maxlength="20" :disabled="type == 'look'
-                                ? true
-                                : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag
                                   ? true
-                                  : false
+                                  : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag
+                                    ? true
+                                    : false
                                 "></el-input>
                           </el-form-item>
                         </el-col>
@@ -117,11 +117,12 @@
                       |
                     </div>
 
-                    <el-table hasC hasNO fixedNO style="border: 1px solid #e3e7ee;" ref="processRef"
-                      v-loading="responseLoading" @selection-change="handeleProductInfoData" :data="dataFormTwo"
-                      size="mini" id="table">
-                      <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
-                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                    <JNPF-table :hasC="type !== 'look'" hasNO fixedNO style="border: 1px solid #e3e7ee;"
+                      ref="processRef" v-loading="responseLoading" @selection-change="handeleProductInfoData"
+                      :data="dataFormTwo" size="mini" id="table" row-key="code" :hasMove="type !== 'look'"
+                      @changeMove="changeMove">
+                      <!-- <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
+                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                       <el-table-column prop="name" label="工序名称" width="180" show-overflow-tooltip>
                         <template slot="header">
                           <span class="required">*</span>
@@ -200,7 +201,9 @@
                           <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
                             <el-form-item prop="pickingFlag" ref="pickingFlag">
                               <el-checkbox v-model="row.pickingFlag" :true-label="1" :disabled="type == 'look'"
-                                :false-label="0"> {{ row.pickingFlag ? '是' : '否' }}</el-checkbox>
+                                :false-label="0">
+                                {{ row.pickingFlag ? '是' : '否' }}
+                              </el-checkbox>
                             </el-form-item>
                           </el-form>
                         </template>
@@ -211,7 +214,9 @@
                             <el-form-item prop="firstInspection" ref="firstInspection">
                               <el-checkbox v-model="row.firstInspection" :true-label="1"
                                 :disabled="type == 'look' || row.processingType === 'external_production'"
-                                :false-label="0"> {{ row.firstInspection ? '是' : '否' }}</el-checkbox>
+                                :false-label="0">
+                                {{ row.firstInspection ? '是' : '否' }}
+                              </el-checkbox>
                             </el-form-item>
                           </el-form>
                         </template>
@@ -222,7 +227,9 @@
                             <el-form-item prop="checkFlag" ref="checkFlag">
                               <el-checkbox v-model="row.checkFlag" :true-label="1"
                                 :disabled="type == 'look' || row.processingType === 'external_production'"
-                                :false-label="0"> {{ row.checkFlag ? '是' : '否' }}</el-checkbox>
+                                :false-label="0">
+                                {{ row.checkFlag ? '是' : '否' }}
+                              </el-checkbox>
                             </el-form-item>
                           </el-form>
                         </template>
@@ -235,7 +242,9 @@
                                 scope.row.defaultFlag ||
                                 scope.$index === dataFormTwo.length - 1 ||
                                 type === 'look'
-                                " :false-label="0"> {{ scope.row.reportFlag ? '是' : '否' }}</el-checkbox>
+                                " :false-label="0">
+                                {{ scope.row.reportFlag ? '是' : '否' }}
+                              </el-checkbox>
                             </el-form-item>
                           </el-form>
                         </template>
@@ -260,7 +269,9 @@
                                 scope.$index === dataFormTwo.length - 1 ||
                                 type === 'look' ||
                                 scope.row.processingType === 'external_production'
-                                " :false-label="0"> {{ scope.row.lastFlag ? '是' : '否' }}</el-checkbox>
+                                " :false-label="0">
+                                {{ scope.row.lastFlag ? '是' : '否' }}
+                              </el-checkbox>
                             </el-form-item>
                           </el-form>
                         </template>
@@ -283,7 +294,8 @@
                             <el-form-item prop="workOrderFlag" ref="workOrderFlag">
                               <el-checkbox v-model="row.workOrderFlag" :true-label="1"
                                 :disabled="type == 'look' || row.processingType === 'self_produced'" :false-label="0">
-                                {{ row.workOrderFlag ? '是' : '否' }}</el-checkbox>
+                                {{ row.workOrderFlag ? '是' : '否' }}
+                              </el-checkbox>
                             </el-form-item>
                           </el-form>
                         </template>
@@ -301,7 +313,7 @@
                           </el-button>
                         </template>
                       </el-table-column>
-                    </el-table>
+                    </JNPF-table>
                     <!-- <div class="table-actions" @click="handlerOpenDialog(dataFormTwo.length, 'add')"
                           v-if="type != 'look'">
                           <el-button type="text" icon="el-icon-plus">添加</el-button>
@@ -332,10 +344,10 @@
                       <el-form-item label="工艺路线编码" prop="code" ref="code">
                         <el-input v-model="dataForm.code" placeholder="请输入工艺路线编码" clearable :style="{ width: '100%' }"
                           maxlength="20" :disabled="type == 'look'
-                            ? true
-                            : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag
                               ? true
-                              : false
+                              : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag
+                                ? true
+                                : false
                             "></el-input>
                       </el-form-item>
                     </el-col>
@@ -516,7 +528,8 @@
                         <el-form-item prop="workOrderFlag" ref="workOrderFlag">
                           <el-checkbox v-model="row.workOrderFlag" :true-label="1"
                             :disabled="type == 'look' || row.processingType === 'self_produced'" :false-label="0">
-                            {{ row.workOrderFlag ? '是' : '否' }}</el-checkbox>
+                            {{ row.workOrderFlag ? '是' : '否' }}
+                          </el-checkbox>
                         </el-form-item>
                       </el-form>
                     </template>
@@ -739,13 +752,18 @@ export default {
       flowTaskOperatorRecordList: [],
       endTime: 0,
       isattachmentswitch: '',
-      categoryId: '',
+      categoryId: ''
     }
   },
   created() {
     this.getBimBusinessDetail()
   },
   methods: {
+    changeMove(data) {
+      data.forEach((item) => {
+        item.sort = item.sortCode
+      })
+    },
     async fetchData(code, flag) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code)
@@ -760,7 +778,7 @@ export default {
         businessCode: 'attachment',
         configKey: 'fj_gylx'
       }
-      getBimBusinessDetail(obj).then(res => {
+      getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
         this.categoryId = res.data.configValue2
       })
@@ -899,6 +917,7 @@ export default {
               item.processType = item.processType
             })
             this.dataFormTwo = res.data.routingLineList
+
             this.dataFormTwo = this.dataFormTwo.map((item) => {
               return {
                 ...item,
@@ -910,11 +929,43 @@ export default {
                 it.jobNumber = it.resourceCode
               })
             })
+            if (this.dataFormTwo.length === 2) {
+              let newArr = []
+
+              this.dataFormTwo.forEach((item, index, arr) => {
+                if (item.firstFlag && !item.lastFlag) {
+                  newArr[0] = item
+                } else if (!item.firstFlag && item.lastFlag) {
+                  newArr[arr.length - 1] = item
+                }
+              })
+
+              // // 之后可以处理 otherItems，比如将它们插入到原数组的中间
+              this.dataFormTwo = [newArr[0], newArr[newArr.length - 1]]
+            } else if (this.dataFormTwo.length > 2) {
+              let otherItems = []
+              let newArr = []
+
+              this.dataFormTwo.forEach((item, index, arr) => {
+                if (item.firstFlag && !item.lastFlag) {
+                  newArr[0] = item
+                } else if (!item.firstFlag && item.lastFlag) {
+                  newArr[arr.length - 1] = item
+                } else if (!item.firstFlag && !item.lastFlag) {
+                  // 处理其他项
+                  otherItems.push(item) // 可以选择将这些项存储到另一个数组
+                }
+              })
+
+              // // 之后可以处理 otherItems，比如将它们插入到原数组的中间
+              this.dataFormTwo = [newArr[0], ...otherItems, newArr[newArr.length - 1]]
+            }
+
             if (this.type === 'edit') {
               this.getBusInfo()
             } else {
               // 流程信息和流转记录
-              console.log(this.dataForm.approvalFlag, 'this.dataForm.approvalFlag')
+
               if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             }
             this.loading = false
@@ -1036,23 +1087,43 @@ export default {
           }
         })
       }
+      if (this.dataFormTwo > 1) {
+        this.dataFormTwo = this.dataFormTwo.map((item, index) => {
+          // 复制当前的item
+          let newItem = { ...item }
+          newItem.sort = index
+          // 如果存在下一个元素，则添加 nextId
+          if (index === 0) {
+            newItem.previousId = ''
+            newItem.nextId = this.dataFormTwo[index + 1].processId
+            newItem.firstFlag = true
+            newItem.lastFlag = false
+          }
+          if (index === this.dataFormTwo.length - 1) {
+            newItem.previousId = this.dataFormTwo[index - 1].processId
+            newItem.nextId = ''
+            newItem.firstFlag = false
+            newItem.lastFlag = true
+          }
+          if (index < this.dataFormTwo.length - 1 && index !== 0) {
+            newItem.nextId = this.dataFormTwo[index + 1].processId
+            newItem.firstFlag = false
+            newItem.lastFlag = false
+          }
 
-      this.dataFormTwo = this.dataFormTwo.map((item, index) => {
-        // 复制当前的item
-        let newItem = { ...item }
-        newItem.sort = index
-        // 如果存在下一个元素，则添加 nextId
-        if (index < this.dataFormTwo.length - 1) {
-          newItem.nextId = this.dataFormTwo[index + 1].processId
-        }
+          // 如果存在上一个元素，则添加 previousId
+          if (index > 0 && index !== this.dataFormTwo.length - 1) {
+            newItem.previousId = this.dataFormTwo[index - 1].processId
+            newItem.firstFlag = false
+            newItem.lastFlag = false
+          }
 
-        // 如果存在上一个元素，则添加 previousId
-        if (index > 0) {
-          newItem.previousId = this.dataFormTwo[index - 1].processId
-        }
+          return newItem // 返回修改后的对象
+        })
+      }
 
-        return newItem // 返回修改后的对象
-      })
+      this.btnLoading = false
+      // return
       let newArr = []
       if (this.dataForm.id) {
         newArr = this.dataFormTwo.map((item) => {
@@ -1113,13 +1184,7 @@ export default {
           }
         })
       }
-      // newArr.forEach(item => {
-      //   console.log(item)
-      //   item.routingProcResList.forEach(it => {
-      //     console.log(it, ';;;;')
-      //     it.processId = item.routingLine.processId
-      //   })
-      // })
+
       this.dataForm.documentStatus = type
       let _data = {
         routing: this.dataForm,
@@ -1264,6 +1329,7 @@ export default {
             })
           })
         })
+
         this.dataFormTwo.forEach((item) => {
           getBimProcessDetail(item.processId)
             .then((res) => {

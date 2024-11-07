@@ -62,7 +62,8 @@
                   @click="columnSetFun()" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="detailData()" />
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
+                  @click="detailData()" />
               </el-tooltip>
             </div>
           </div>
@@ -83,7 +84,13 @@
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="60" />
             <el-table-column prop="purchaseQuantity" label="数量" width="80" sortable="custom" />
-            <el-table-column prop="receiptQuantity" label="已入库数量" width="130" sortable="custom" />
+            <el-table-column prop="receiptQuantity" label="已入库数量" width="130" sortable="custom">
+              <template slot-scope="scope">
+                <el-link type="primary" @click.native="viewFun(scope.row.moveId, 'look', scope.row)">
+                  {{ scope.row.receiptQuantity }}
+                </el-link>
+              </template>
+            </el-table-column>
             <el-table-column prop="price" label="单价(含税)" width="140" sortable="custom" />
             <el-table-column prop="taxRate" label="税率" width="80" sortable="custom">
               <template slot-scope="scope">
@@ -142,7 +149,7 @@
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="procureForm" @refresh="refresh" @close="closeForm" />
-
+    <InboundPurchaseForm v-if="inboundPurchaseFormVisible" ref="inboundPurchaseREFForm" @close="closeForm" />
     <withdrawnForm v-if="withdrawnVisible" ref="withdrawnForm" @refresh="refresh" @close="closeForm" />
     <PrintForm ref="PrintForm" :value="printData" :dataValue="printForm" :pages="pages" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
@@ -153,6 +160,7 @@
     <!-- 选择打印模版弹窗 -->
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
       :printQuery="printQuery" :enCode="enCode" ref="printTemplate" />
+
   </div>
 </template>
 
@@ -178,9 +186,11 @@ import { getbimProductAttributesList, getbimProductAttributes } from '@/api/mast
 import PrintBrowse from '@/components/PrintBrowse'
 import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintDialog from '@/components/no_mount/printDialog'
+import InboundPurchaseForm from '@/views/warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/inboundPurchaseForm.vue'
+
 export default {
   name: 'purchaseOrder',
-  components: { JNPFForm, withdrawnForm, PrintForm, ExportForm, SuperQuery, PrintBrowse, PrintDialog },
+  components: { JNPFForm, withdrawnForm, PrintForm, ExportForm, SuperQuery, PrintBrowse, PrintDialog, InboundPurchaseForm },
   data() {
     return {
       printBrowseVisible: false,
@@ -465,6 +475,134 @@ export default {
     this.detailData()
   },
   methods: {
+    viewFun(id, type, row) {
+      if (row.businessType == 'inbound_order_production') {
+        console.log(444);
+        this.productInboundFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.productInboundREFForm.init(id, type, this.classAttribute)
+        })
+      } else if (row.businessType == 'inbound_production') {
+        this.workInboundFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.workInboundREFForm.init(id, type, this.classAttribute)
+        })
+      } else if (row.businessType == 'inbound_sale_return') {
+        this.inboundSaleReturnFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.inboundSaleReturnREFForm.init(id, type, row.businessType, this.classAttribute)
+        })
+      } else if (row.businessType == 'outbound_purchase') {
+        this.outboundPurchaseFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.outboundPurchaseREFForm.init(id, type, row.businessType, this.classAttribute)
+        })
+      } else if (row.businessType == 'outbound_external_send') {
+        if (row.sourceType == 'order') {
+          this.externalMaterOutboundFormVisible = true
+          this.$nextTick(() => {
+            this.$refs.externalMaterOutboundREFForm.init(id, type, row.businessType, this.classAttributeList)
+          })
+        } else if (row.sourceType == 'notice') {
+          this.outboundExternalSendFormVisible = true
+          this.$nextTick(() => {
+            this.$refs.outboundExternalSendREFForm.init(id, type, row.businessType, this.classAttributeList)
+          })
+        } else {
+          this.formVisible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init(id, type)
+          })
+        }
+
+
+      } else if (row.businessType == 'inbound_purchase') {
+        if (row.sourceType == 'order') {
+          this.PurchaseOrderInboundFormVisible = true
+          this.$nextTick(() => {
+            this.$refs.PurchaseOrderInboundREFForm.init(id, type, row.businessType, this.classAttributeList)
+          })
+        } else if (row.sourceType == 'notice') {
+          this.inboundPurchaseFormVisible = true
+          this.$nextTick(() => {
+            this.$refs.inboundPurchaseREFForm.init(id, type, row.businessType, this.classAttributeList)
+          })
+        } else {
+          this.formVisible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init(id, type)
+          })
+        }
+
+      } else if (row.businessType == 'inbound_external') {
+
+        if (row.sourceType == 'order') {
+          this.externalInboundFormVisible = true
+          this.$nextTick(() => {
+            this.$refs.externalInboundREFForm.init(id, type, row.businessType, this.classAttributeList, this.warehouseCode, false)
+          })
+        } else if (row.sourceType == 'notice') {
+
+          this.inboundExternalFormVisible = true
+          this.$nextTick(() => {
+            this.$refs.inboundExternalREFForm.init(id, type, row.businessType, this.classAttributeList)
+          })
+        } else {
+          this.formVisible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init(id, type)
+          })
+        }
+      } else if (row.businessType == 'outbound_sale_send') {
+        if (row.sourceType == 'order') {
+          this.saleOutboundFormVisible = true
+          this.$nextTick(() => {
+            this.$refs.saleOutboundREFForm.init(id, type, row.businessType, this.classAttributeList)
+          })
+        } else if (row.sourceType == 'notice') {
+          this.outboundSaleSendFormVisible = true
+          this.$nextTick(() => {
+            this.$refs.outboundSaleSendREFForm.init(id, type, row.businessType, this.classAttributeList)
+          })
+        } else {
+          this.formVisible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init(id, type)
+          })
+        }
+      } else if (row.businessType == 'outbound_pick_out') {
+        this.outboundPickOutFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.outboundPickOutREFForm.init(id, type, row.businessType, this.classAttribute)
+        })
+      } else if (row.businessType == 'inbound_return_materials') {
+        this.inboundReturnMaterialsFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.inboundReturnMaterialsREFForm.init(id, type, row.businessType, this.classAttribute)
+        })
+      } else if (row.businessType == 'inbound_transfer' || row.businessType == 'outbound_transfer') {
+        this.transferFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.transferREFForm.init(id, type,)
+        })
+      } else if (row.businessType == 'outbound_use') {
+        this.outboundUseVisible = true
+        this.$nextTick(() => {
+          this.$refs.outboundUseREFForm.init(id, type,)
+        })
+      } else if (row.businessType == 'inbound_return') {
+        this.inboundReturnVisible = true
+        this.$nextTick(() => {
+          this.$refs.inboundReturnREFForm.init(id, type,)
+        })
+      } else {
+        console.log(555);
+        this.formVisible = true
+        this.$nextTick(() => {
+          this.$refs.Form.init(id, type)
+        })
+      }
+    },
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false

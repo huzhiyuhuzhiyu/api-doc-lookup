@@ -176,7 +176,7 @@
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId, configFlag)"
-                :delDisabled="true">
+                @del="handleDel(scope.row.id)">
                 <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.id, true)">
                   查看详情
                 </el-button>
@@ -233,7 +233,7 @@
       </span>
     </el-dialog>
     <el-dialog title="快速创建" :visible.sync="quickVisible" width="30%" :before-close="handleClose"
-      class="JNPF-dialog JNPF-dialog_center">
+      class="JNPF-dialog JNPF-dialog_center" :close-on-click-modal="false" :close-on-press-escape="false">
       <el-form :model="quickForm" :rules="quickRules" ref="quickForm" label-width="100px" labelPosition="top"
         hide-required-asterisk="fasle" :close-on-click-modal="false">
         <el-form-item label="产品编码" prop="code">

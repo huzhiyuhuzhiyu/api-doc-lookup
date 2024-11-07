@@ -148,4 +148,7 @@ export default {
 .selectProcess.JNPF-dialog_center ::v-deep .el-dialog .el-dialog__body {
   padding: 0 !important;
 }
+::v-deep .el-table__body-wrapper{
+  height: 100%;
+}
 </style>

@@ -46,9 +46,8 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="treeList" v-if="refreshTable" fixedNO
-          :setColumnDisplayList="columnList" :default-expand-all="expands" @sort-change="sortChange" ref="dataTable"
-          custom-column hasMove @changeMove="changeMove">
+        <JNPF-table v-loading="listLoading" :data="treeList" row-key="id" :setColumnDisplayList="columnList"
+          @sort-change="sortChange" ref="dataTable" custom-column hasMove @changeMove="changeMove">
           <el-table-column prop="name" label="项目名称" min-width="120" sortable="custom"></el-table-column>
           <el-table-column prop="code" label="项目编码" min-width="120" sortable="custom" />
           <el-table-column prop="remark" label="项目描述" min-width="200" />
@@ -59,7 +58,7 @@
           <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row)" @del="handleDel(scope.row.id)"
-                :delDisabled="scope.row.code === 'common'">
+                :editDisabled="scope.row.code === 'common'" :delDisabled="scope.row.code === 'common'">
               </tableOpts>
             </template>
           </el-table-column>
@@ -82,7 +81,7 @@ import { getcategoryList, deleteCategory, productPlmSync } from '@/api/basicData
 import DepForm from './depForm'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
-import { getProjectList,updateSortBatch } from '@/api/system/projectManagement'
+import { getProjectList, updateSortBatch } from '@/api/system/projectManagement'
 export default {
   components: { DepForm, ExportForm, SuperQuery },
   data() {
@@ -216,7 +215,7 @@ export default {
       }
     },
     initData() {
-      this.loading = true
+      this.listLoading = true
       getProjectList(this.listQuery)
         .then((res) => {
           this.treeList = res.data.records
@@ -281,13 +280,6 @@ export default {
         this.keyword = ''
         this.initData()
       }
-    },
-    toggleExpand() {
-      this.refreshTable = false
-      this.expands = !this.expands
-      this.$nextTick(() => {
-        this.refreshTable = true
-      })
     },
     PLMchange(id) {
       this.listLoading = true

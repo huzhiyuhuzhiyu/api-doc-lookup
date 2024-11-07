@@ -24,7 +24,11 @@
           <el-input v-model="dataForm.code" placeholder="请输入项目编码" maxlength="20" :disabled="btntype" />
         </el-form-item>
         <el-form-item label="排序">
-          <el-input v-model="dataForm.sort" type="textarea" maxlength="200" placeholder="请输入排序" />
+          <template slot="label">
+            排序
+            <span class="required">*</span>
+          </template>
+          <el-input v-model="dataForm.sort" @change="sortChange" placeholder="请输入排序" />
         </el-form-item>
         <el-form-item label="项目描述">
           <el-input v-model="dataForm.remark" type="textarea" maxlength="200" placeholder="请输入项目描述" />
@@ -104,6 +108,9 @@ export default {
           this.dataForm.code = data.number
         }
       } catch (error) { }
+    },
+    sortChange(val) {
+      console.log(val, 'klk')
     },
     init(row, parentId) {
       console.log(row, 'rr')

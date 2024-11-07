@@ -91,6 +91,23 @@
                 <div v-if="scope.row.receivingStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
               </template>
             </el-table-column>
+            <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center"
+            v-if="showAppCodeFlag">
+            <template slot-scope="scope">
+              <el-tag v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus !== 'draft'">审批中</el-tag>
+              <el-tag type="success"
+                v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus !== 'draft'">
+                审批通过
+              </el-tag>
+              <el-tag type="danger"
+                v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus !== 'draft'">
+                审批拒绝
+              </el-tag>
+              <div v-else-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus == 'submit'">
+                <el-tag type="warning">审批撤回</el-tag>
+              </div>
+            </template>
+          </el-table-column>
             <el-table-column prop="remark" min-width="140" label="备注" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" />
@@ -207,29 +224,32 @@ export default {
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
-        {
-          prop: 'excludingTaxTotalAmount',
-          label: '总金额(不含税)',
-          type: 'input'
-        },
-        {
-          prop: 'taxAmount',
-          label: '税额',
-          type: 'input'
-        },
-        {
-          prop: 'totalAmount',
-          label: '总金额(含税)',
-          type: 'input'
-        },
+   
+        // {
+        //   prop: 'taxAmount',
+        //   label: '税额',
+        //   type: 'input'
+        // },
+       
         {
           prop: 'receivingStatus',
-          label: '收货状态',
+          label: '订单状态',
           type: 'select',
           options: [
-            { label: '待退货', value: 'receiving' },
-            { label: '已退货', value: 'received' },
-            { label: '已取消', value: 'stopped' }
+            { label: '未完成', value: 'not_finished' },
+            { label: '已完成', value: 'finished' },
+            { label: '已停止', value: 'stopped' }
+          ]
+        },
+        {
+          prop: 'approvalStatus',
+          label: '审批状态',
+          type: 'select',
+          options: [
+            { label: '审批中', value: 'ing' },
+            { label: '审批通过', value: 'ok' },
+            { label: '审批拒绝', value: 'rebut' },
+            { label: '审批撤回', value: 'withdrawn' }
           ]
         },
         {

@@ -1,12 +1,12 @@
 <template>
   <div class="JNPF-common-layout">
 
-    <div class="JNPF-common-layout-center JNPF-flex-main"  v-if="!formVisible">
+    <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-           
-            
+
+
             <template v-for="item in searchList">
               <el-col :span="item.searchType === 3 ? 6 : 4">
                 <el-form-item>
@@ -26,7 +26,7 @@
               </el-col>
             </template>
             <el-col :span="4">
-            
+
               <el-form-item>
                 <el-date-picker v-model="orderForm.deliveryStartTime" type="date" value-format="yyyy-MM-dd"
                   style="width: 100%;" placeholder="交货开始日期" clearable>
@@ -104,6 +104,13 @@
             <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
             <el-table-column prop="num" label="数量" width="100" sortable="custom" />
             <el-table-column prop="waitDeliverNum" label="待发货数量" width="140" sortable="custom" />
+            <el-table-column prop="inventoryQuantity" label="库存数量" width="140" sortable="custom">
+              <template slot-scope="scope">
+                <el-link type="primary" @click.native="viewFun(scope.row.productsId, 'inventoryFlag')">
+                  {{ scope.row.inventoryQuantity }}
+                </el-link>
+              </template>
+            </el-table-column>
             <el-table-column prop="deliveryDate" label="交货日期" width="140" sortable="custom" />
 
             <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
@@ -146,6 +153,7 @@
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <AddForm v-if="addFormVisible" ref="addForm" @refreshDataList="initData" @close="closeForm"
       :customList="customList" />
+      <ViewForm v-if="formVisible" ref="ViewForm" ></ViewForm>
 
   </div>
 </template>
@@ -161,12 +169,13 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import AddForm from "../saleMetalworking/Form.vue"
 import ExportForm from '@/components/no_mount/ExportBox/index'
+import ViewForm from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue' 
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index"
 export default {
   name: 'carrierProfile',
-  components: { Form, UserRelationList, AddForm, ExportForm, OrderFollow, SuperQuery },
+  components: { Form, UserRelationList, AddForm, ExportForm, OrderFollow, SuperQuery,ViewForm },
   data() {
     return {
       superQuery: {},
@@ -175,7 +184,7 @@ export default {
       searchList: [
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
 
-      ], 
+      ],
       addFormVisible: false,
       btnsearchFlag: true,
       columnList: ["cooperativePartnerCode", "departmentName", "productName",],
@@ -296,7 +305,7 @@ export default {
           endPlaceholder: '结束日期',
         },
 
-        
+
         {
           prop: 'sealingCoverTyping',
           label: "打字内容",
@@ -351,7 +360,7 @@ export default {
           label: "备注",
           type: 'input'
         },
-    
+
         {
           prop: 'createTime',
           label: '创建时间',
@@ -388,11 +397,18 @@ export default {
     this.deliveryDateArr = ["", end];
     this.orderForm.deliveryStartTime = ""
     this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
-    this.superForm=this.orderForm
+    this.superForm = this.orderForm
     this.search('basic')
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+       // 查看库存明细
+       viewFun(id, type, warehouseId) {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.ViewForm.init(id, type, "",'product')
+      })
+    },
     getProductClassFun() {
       let obj0 = {
         pageNum: -1,
@@ -798,7 +814,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus'||prop=='cooperativePartnerName' || prop === 'cooperativePartnerCode'||prop=='salesName'||prop=='waitDeliverNum') {
+      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'cooperativePartnerName' || prop === 'cooperativePartnerCode' || prop == 'salesName' || prop == 'waitDeliverNum') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'
@@ -815,7 +831,7 @@ export default {
     },
 
 
-     
+
 
 
     // 关闭新建编辑页面
@@ -886,7 +902,7 @@ export default {
       this.deliveryDateArr = ["", end];
       this.orderForm.deliveryStartTime = ""
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
-      this.superForm=this.orderForm = {
+      this.superForm = this.orderForm = {
 
         approvalStatus: "ok",
         documentStatus: "submit",
@@ -909,9 +925,9 @@ export default {
           condition: [],
           matchLogic: ""
         },
-      } 
+      }
       this.$refs.SuperQuery.conditionList = []
-      this.searchList=[
+      this.searchList = [
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
 
       ]
@@ -933,13 +949,13 @@ export default {
       if (!this.list.length) return this.$message.error("请选择您要发货的产品")
       let flag = this.hasDifferentCooperativePartnerCode(this.list)
       if (flag) return this.$message.error("只能选择相同客户的明细订单")
-      console.log(111,this.list);
+      console.log(111, this.list);
       this.addFormVisible = true
       this.list.forEach(item => {
-        this.$set(item,'ordersNo',item.orderNo)
+        this.$set(item, 'ordersNo', item.orderNo)
       });
       this.$nextTick(() => {
-        this.$refs.addForm.init("", btntype,false, this.list)
+        this.$refs.addForm.init("", btntype, false, this.list)
       })
     },
     hasDifferentCooperativePartnerCode(arr) {
@@ -1041,7 +1057,7 @@ export default {
 
 .JNPF-common-search-box {
   padding: 8px 0 !important;
-    margin-left: 0!important; 
+  margin-left: 0 !important;
 
   margin-bottom: 5px;
 }
@@ -1085,7 +1101,8 @@ export default {
 .btnBox {
   padding: 7px 10px;
 }
-.JNPF-common-head{
-  padding: 8px!important;
+
+.JNPF-common-head {
+  padding: 8px !important;
 }
 </style>

@@ -197,7 +197,7 @@ import recordList from '@/views/workFlow/components/RecordList.vue'
 import flowMixin from '@/mixins/generator/flowMixin'
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import { mapGetters } from 'vuex'
-import { detailCollectionandreturn, addCollectionandreturn } from '@/api/dailyManagement/Maintenance'
+import { detailCollectionandreturn, addCollectionandreturn,updateCollectionandreturn } from '@/api/dailyManagement/Maintenance'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getBimBusinessDetail } from '@/api/basicData/index'
 export default {
@@ -496,6 +496,8 @@ export default {
             let formMethod = null;
             if (this.btnType == 'add') {
               formMethod = addCollectionandreturn
+            } else if (this.btnType == 'edit') {
+              formMethod = updateCollectionandreturn
             }
             formMethod(obj).then(res => {
               let msg = "";

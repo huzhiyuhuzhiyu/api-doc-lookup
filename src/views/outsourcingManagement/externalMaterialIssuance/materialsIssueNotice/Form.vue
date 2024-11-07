@@ -926,8 +926,9 @@ export default {
       console.log(data, 'ooo')
       if (data.length) {
         let selectArr = []
-
+        console.log('0000')
         let list = data.map((item) => item.all)
+        console.log(list,'lioo')
         list.forEach((item, index) => {
           selectArr.push({
             productSource: item.productSource, // 产品来源 采购
@@ -974,6 +975,15 @@ export default {
           })
         }
         this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
+        console.log(this.dataFormTwo.data,'this.dataFormTwo.data')
+        this.dataFormTwo.data.forEach((item) => {
+          console.log(item, 'dd')
+          purPurchaseOrderdetail(item.purchaseOrderId).then((res) => {
+            console.log(res, 'iiii')
+            this.linesList = [...this.linesList, ...res.data.purchaseOrderLineVOList[0].outShipmentVOList]
+            item.outShipmentVOList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
+          })
+        })
         // 审批
         // this.$nextTick(() => { this.getApproverData() })
       }
@@ -1556,7 +1566,7 @@ export default {
             this.iszhi = false
             return
           }
-     
+
           if (value == 'submit') {
             this.dataForm.inspectionStatus = 'inspected'
           }
@@ -1702,7 +1712,7 @@ export default {
               formMethod = addoutReceiptGoods
             }
             console.log(obj, 'obj')
-            return
+
             formMethod(obj)
               .then((res) => {
                 let msg = ''

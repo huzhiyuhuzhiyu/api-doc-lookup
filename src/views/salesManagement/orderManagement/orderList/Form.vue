@@ -956,7 +956,15 @@
                   <el-table-column prop="drawingNo" label="品名规格" />
                   <el-table-column prop="productCategoryName" label="所属分类" />
                   <el-table-column prop="mainUnit" label="单位" />
-
+                  <el-table-column prop="inventoryQuantity" label="库存数量" >
+                    <template slot-scope="scope">
+                      <el-link type="primary"
+                        @click.native="viewFun(scope.row.id, 'inventoryFlag')">
+                        {{ scope.row.inventoryQuantity }}
+                      </el-link>
+                    </template>
+                  </el-table-column>
+                  
                 </JNPF-table>
                 <pagination :total="allProductTotal" :page.sync="ProductListRequestObj.pageNum"
                   :limit.sync="ProductListRequestObj.pageSize" @pagination="initData2" />
@@ -1008,7 +1016,8 @@
         </el-dialog>
       </div>
       <!-- <productForm v-if="productFormVisible" ref="productForm" @refresh="refresh" /> -->
-    </div>
+       <Form v-if="formVisible" ref="Form" ></Form>
+    </div> 
   </transition>
 </template>
 
@@ -1041,14 +1050,15 @@ import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBimBusinessDetail } from '@/api/basicData/index'
-
+import Form from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue' 
 export default {
   mixins: [busFlow],
   components: {
-    changeAddress, VueDraggableResizable, ExportForm, Process, recordList
+    changeAddress, VueDraggableResizable, ExportForm, Process, recordList,Form
   },
   data() {
     return {
+      formVisible:false,
       isattachmentswitch: '',
       oldId: "",
       oldType: "",
@@ -1430,6 +1440,13 @@ export default {
   beforeDestroy() {
   },
   methods: {
+    // 查看库存明细
+    viewFun(id, type, warehouseId) {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(id, type, "",'product')
+      })
+    },
     addLinFun() {
       console.log(112);
       let index = this.productData.findIndex(item =>

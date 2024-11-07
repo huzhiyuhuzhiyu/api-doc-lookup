@@ -316,7 +316,7 @@ export default {
   created() {
     this.getBimBusinessDetail()
     this.getDictionaryType()
-    this.gettypeOptions()
+    // this.gettypeOptions()
     this.getUserList()
   },
   methods: {

@@ -84,7 +84,7 @@
             <el-table-column prop="orderDate" label="订单日期" min-width="140" sortable="custom"></el-table-column>
             <el-table-column prop="contractNo" label="客户合同号" min-width="140" sortable="custom"></el-table-column>
             <el-table-column prop="deliveryDate" label="交货日期" min-width="140" sortable="custom"></el-table-column>
-
+            <el-table-column prop="num" label="订单数量" min-width="140" sortable="custom"></el-table-column>
             <el-table-column prop="orderState" label="订单状态" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.orderState == 'not_finish'"><el-tag type="danger">未完成</el-tag></div>

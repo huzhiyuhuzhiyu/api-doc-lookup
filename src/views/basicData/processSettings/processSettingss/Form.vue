@@ -117,11 +117,12 @@
                       |
                     </div>
 
-                    <el-table hasC hasNO fixedNO style="border: 1px solid #e3e7ee;" ref="processRef"
-                      v-loading="responseLoading" @selection-change="handeleProductInfoData" :data="dataFormTwo"
-                      size="mini" id="table">
-                      <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
-                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                    <JNPF-table :hasC="type !== 'look'" hasNO fixedNO style="border: 1px solid #e3e7ee;"
+                      ref="processRef" v-loading="responseLoading" @selection-change="handeleProductInfoData"
+                      :data="dataFormTwo" size="mini" id="table" row-key="code" :hasMove="type !== 'look'"
+                      @changeMove="changeMove">
+                      <!-- <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
+                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                       <el-table-column prop="name" label="工序名称" width="180" show-overflow-tooltip>
                         <template slot="header">
                           <span class="required">*</span>
@@ -301,7 +302,7 @@
                           </el-button>
                         </template>
                       </el-table-column>
-                    </el-table>
+                    </JNPF-table>
                     <!-- <div class="table-actions" @click="handlerOpenDialog(dataFormTwo.length, 'add')"
                           v-if="type != 'look'">
                           <el-button type="text" icon="el-icon-plus">添加</el-button>
@@ -746,6 +747,13 @@ export default {
     this.getBimBusinessDetail()
   },
   methods: {
+    changeMove(data) {
+      console.log(data, 'iiiiii')
+      data.forEach(item => {
+        item.sort = item.sortCode
+      })
+
+    },
     async fetchData(code, flag) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code)
@@ -899,6 +907,7 @@ export default {
               item.processType = item.processType
             })
             this.dataFormTwo = res.data.routingLineList
+
             this.dataFormTwo = this.dataFormTwo.map((item) => {
               return {
                 ...item,
@@ -910,6 +919,27 @@ export default {
                 it.jobNumber = it.resourceCode
               })
             })
+            let otherItems = [];
+            let newArr = []
+            console.log(this.dataFormTwo, '[[[[]]]]')
+            this.dataFormTwo.forEach((item, index, arr) => {
+              if (item.firstFlag && !item.lastFlag) {
+                console.log(index, '1')
+                console.log(this.dataFormTwo[index], 'this.dataFormTwo[index]')
+                newArr[0] = item
+              } else if (!item.firstFlag && item.lastFlag) {
+                console.log(index, '2')
+                newArr[arr.length - 1] = item
+                console.log(this.dataFormTwo[index], 'this.dataFormTwo[index]2')
+              } else if (!item.firstFlag && !item.lastFlag) {
+                console.log(item, '其他')
+                // 处理其他项  
+                otherItems.push(item); // 可以选择将这些项存储到另一个数组  
+              }
+            })
+
+            // // 之后可以处理 otherItems，比如将它们插入到原数组的中间  
+            this.dataFormTwo = [newArr[0], ...otherItems, newArr[newArr.length - 1]];
             if (this.type === 'edit') {
               this.getBusInfo()
             } else {
@@ -935,6 +965,7 @@ export default {
     },
     // 表单提交
     handleSubmit(type) {
+
       this.request(type)
     },
     // 校验与聚焦
@@ -1038,24 +1069,49 @@ export default {
       }
 
       this.dataFormTwo = this.dataFormTwo.map((item, index) => {
+        console.log(item, 'itemM')
+        console.log(index, 'itemin')
         // 复制当前的item
         let newItem = { ...item }
         newItem.sort = index
         // 如果存在下一个元素，则添加 nextId
-        if (index < this.dataFormTwo.length - 1) {
+        if (index === 0) {
+          console.log(newItem, 'newItem33333')
+          newItem.previousId = ''
           newItem.nextId = this.dataFormTwo[index + 1].processId
+          newItem.firstFlag = true
+          newItem.lastFlag = false
+          console.log(newItem, 'newItem3333399999')
+        }
+        if (index === this.dataFormTwo.length - 1) {
+          newItem.previousId = this.dataFormTwo[index - 1].processId
+          newItem.nextId = ''
+          newItem.firstFlag = false
+          newItem.lastFlag = true
+        }
+        if (index < this.dataFormTwo.length - 1 && index !== 0) {
+          newItem.nextId = this.dataFormTwo[index + 1].processId
+          newItem.firstFlag = false
+          newItem.lastFlag = false
+
         }
 
         // 如果存在上一个元素，则添加 previousId
-        if (index > 0) {
+        if (index > 0 && index !== this.dataFormTwo.length - 1) {
           newItem.previousId = this.dataFormTwo[index - 1].processId
+          newItem.firstFlag = false
+          newItem.lastFlag = false
         }
 
         return newItem // 返回修改后的对象
       })
+      console.log(this.dataFormTwo, '[[[[9877]]]]')
+      this.btnLoading = false
+      // return
       let newArr = []
       if (this.dataForm.id) {
         newArr = this.dataFormTwo.map((item) => {
+          console.log(item, 'oii')
           // Create a new object with the routingLine and bimRoutingProcessResourceDTOList
           return {
             routingLine: {
@@ -1264,6 +1320,7 @@ export default {
             })
           })
         })
+        console.log(list, 'list')
         this.dataFormTwo.forEach((item) => {
           getBimProcessDetail(item.processId)
             .then((res) => {

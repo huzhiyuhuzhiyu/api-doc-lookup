@@ -344,8 +344,8 @@ export default {
           let att = []
           this.data.forEach((item, index) => {
             let obj = {
-              id: item.id,
               sortCode: index,
+              ...item
             }
             att.push(obj)
           });

@@ -13,7 +13,7 @@ export function getProjectList(data) {
 export function checkProjectCode(data) {
   return request({
     url: `/api/zgt/project/check/code/exist`,
-    method: 'post',
+    method: 'get',
     data
   })
 }

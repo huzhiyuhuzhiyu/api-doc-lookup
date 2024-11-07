@@ -458,7 +458,7 @@ export default {
         {
           field: 'cooperativePartnerName',
           fieldValue: '',
-          label: '客户名称',
+          label: '供应商名称',
           symbol: 'like',
           searchType: 1,
           width: 120

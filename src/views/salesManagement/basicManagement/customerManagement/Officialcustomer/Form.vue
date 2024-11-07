@@ -1413,7 +1413,11 @@ export default {
           });
           let start = Date.parse(this.dataForm.reconciliationStartDate)
           let end = Date.parse(this.dataForm.reconciliationEndDate)
-          if (start > end) return this.$message.error('对账结束日期不能小于对账开始日期')
+          if (start > end) {
+            this.activeName = "jcInfo"
+            flag = false
+            this.$message.error('对账结束日期不能小于对账开始日期')
+          }
           if (this.dataForm.regionCode == "foreign") {
             this.dataForm.province = ""
             this.dataForm.city = ""

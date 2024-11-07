@@ -960,7 +960,6 @@ export default {
         this.init(id, parentId)
       }).catch(() => {
         this.listLoading = false
-        this.btnLoading = false
         this.refreshTable = true
       })
     },
@@ -1210,6 +1209,7 @@ export default {
       this.dataForm.partnerCategoryIdText = data ? data[0].name : ''
     },
     handleConfirm() {
+      this.btnLoading = true
       let flag = null;
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -1355,8 +1355,8 @@ export default {
             deliveryAddressList: this.deliveryAddressList,
             contactsList: this.contactsList
           }
-          if (flag === false) return
-          this.btnLoading = true
+          if (flag === false) return this.btnLoading = false
+          
           const formMethod = this.dataForm.id ? updatePartner : addPartner
           formMethod(obj).then(res => {
             let msg = "";
@@ -1380,7 +1380,7 @@ export default {
           })
 
         } else {
-
+          this.btnLoading = false
           this.activeName = "jcInfo"
         }
       })

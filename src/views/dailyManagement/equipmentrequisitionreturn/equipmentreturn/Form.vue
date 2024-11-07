@@ -11,7 +11,9 @@
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="dataForm.id&&!approvalFlag">
         <el-page-header @back="goBack" :content="btnType == 'add' ? '新建设备归还' : btnType == 'edit' ? '编辑设备归还' : '查看设备归还'" />
         <div class="options">
-          <el-button type="primary" v-if="btnType != 'look'" :loading="btnLoading" @click="handleConfirm('submit')">
+          <el-button size="mini" type="success" :loading="btnLoading" @click="handleConfirm('draft')" v-if="btnType !== 'look'">
+            保存草稿</el-button>
+          <el-button type="primary" v-if="btnType !== 'look'" :loading="btnLoading" @click="handleConfirm('submit')">
             保存并提交</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
@@ -43,6 +45,11 @@
                       <el-form-item label="归还人" prop="recipientId">
                         <user-select v-model="dataForm.recipientId" placeholder="请选择归还人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
                         </user-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="备注" prop="remark">
+                        <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btnType == 'look'" type="textarea" maxlength="200" :rows="2" />
                       </el-form-item>
                     </el-col>
                   </el-row>
@@ -124,6 +131,11 @@
                   <el-form-item label="归还人" prop="recipientId">
                     <user-select v-model="dataForm.recipientId" placeholder="请选择归还人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
                     </user-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="12" :xs="24">
+                  <el-form-item label="备注" prop="remark">
+                    <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btnType == 'look'" type="textarea" maxlength="200" :rows="2" />
                   </el-form-item>
                 </el-col>
               </el-row>

@@ -11,7 +11,9 @@
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="dataForm.id&&!approvalFlag">
         <el-page-header @back="goBack" :content="btnType == 'add' ? '新建设备领用' : btnType == 'edit' ? '编辑设备领用' : '查看设备领用'" />
         <div class="options">
-          <el-button type="primary" v-if="btnType != 'look'" :loading="btnLoading" @click="handleConfirm('submit')">
+          <el-button size="mini" type="success" :loading="btnLoading" @click="handleConfirm('draft')" v-if="btnType !== 'look'">
+            保存草稿</el-button>
+          <el-button type="primary" v-if="btnType !== 'look'" :loading="btnLoading" @click="handleConfirm('submit')">
             保存并提交</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>

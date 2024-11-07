@@ -49,9 +49,16 @@
           </el-table-column>
           <el-table-column prop="maintainerIdText" label="领用人" min-width="120"></el-table-column>
           <el-table-column prop="collectionTime" label="领用日期" width="180" sortable="custom"></el-table-column>
+          <el-table-column prop="remark" label="备注" min-width="180"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
-          <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
+          <el-table-column prop="documentStatus" label="单据状态" sortable="custom" width="120" align="center">
+            <template slot-scope="scope">
+              <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag>
+              </div>
+              <div v-else-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
+            </template>
+          </el-table-column>
           <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center" v-if="showAppCodeFlag">
             <template slot-scope="scope">
               <div v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'">
@@ -70,8 +77,8 @@
           </el-table-column>
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <el-button type="text" @click="handleUserRelation(scope.row.id,'edit')" size="mini" :disabled="scope.row.approvalStatus == 'ok'">编辑</el-button>
-              <el-button type="text" @click="handleDel(scope.row.id,)" class="JNPF-table-delBtn" size="mini" :disabled="scope.row.approvalStatus == 'ok'">删除</el-button>
+              <el-button type="text" @click="handleUserRelation(scope.row.id,'edit')" size="mini" :disabled="scope.row.documentStatus == 'submit'">编辑</el-button>
+              <el-button type="text" @click="handleDel(scope.row.id,)" class="JNPF-table-delBtn" size="mini" :disabled="scope.row.documentStatus == 'submit'">删除</el-button>
               <el-dropdown hide-on-click>
                 <span class="el-dropdown-link">
                   <el-button type="text" size="mini">
@@ -131,6 +138,11 @@ export default {
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
+        {
+          prop: 'remark',
+          label: "备注",
+          type: 'input'
+        },
         { // 日期时间选择器（区间）
           prop: 'createTime',
           label: '创建时间',
@@ -146,9 +158,24 @@ export default {
           type: 'input'
         },
         {
-          prop: 'remark',
-          label: "备注",
-          type: 'input'
+          prop: 'documentStatus',
+          label: "单据状态",
+          type: 'select',
+          options: [
+            { label: '草稿', value: 'draft' },
+            { label: '提交', value: 'submit' }
+          ]
+        },
+        {
+          prop: 'approvalStatus',
+          label: "审批状态",
+          type: 'select',
+          options: [
+            { label: '审批中', value: 'ing' },
+            { label: '审批通过', value: 'ok' },
+            { label: '审批拒绝', value: 'rebut' },
+            { label: '审批撤回', value: 'withdrawn' },
+          ]
         }
       ],
       superQueryVisible: false,

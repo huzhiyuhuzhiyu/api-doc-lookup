@@ -262,6 +262,14 @@
             </el-table-column>
             <el-table-column prop="mainUnit" label="单位" width="120" />
             <el-table-column prop="purchaseTaxRate" label="采购税率" width="120" align="center">
+              <template slot="header" slot-scope="scope">
+                采购税率
+                <el-popover placement="bottom" width="200" trigger="click"
+                  content="采购税率：采购订单和采购收货入库默认从供应商产品价格中获取税率，如果供应商产品价格获取不到税率，则会从这里获取采购税率。">
+                  <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
+                    type="text"></el-button>
+                </el-popover>
+              </template>
               <template slot-scope="{ row }">
                 <el-select v-model="row.purchaseTaxRate" placeholder="请选择" @change="purchaseTaxRateChange(row)">
                   <el-option v-for="item in taxRateList" :key="item.taxRate" :label="item.fullName"
@@ -269,13 +277,38 @@
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column prop="purchasePrice" label="采购单价(含税)" width="150" align="center">
+            <el-table-column prop="purchasePrice" label="采购单价(含税)" width="160" align="center">
+              <template slot="header" slot-scope="scope">
+                采购单价(含税)
+                <el-popover placement="bottom" width="200" trigger="click"
+                  content="采购单价：采购订单和采购收货入库默认从供应商产品价格中获取单价，如果供应商产品价格获取不到单价，则会从这里获取采购单价。">
+                  <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
+                    type="text"></el-button>
+                </el-popover>
+              </template>
               <template slot-scope="{ row }">
                 <el-input v-model="row.purchasePrice" placeholder="请输入内容" @blur="purchasePriceChange(row)"></el-input>
               </template>
             </el-table-column>
-            <el-table-column prop="purchaseExcludingTaxPrice" label="采购单价(不含税)" width="160" />
+            <el-table-column prop="purchaseExcludingTaxPrice" label="采购单价(不含税)" width="175">
+              <template slot="header" slot-scope="scope">
+                采购单价(不含税)
+                <el-popover placement="bottom" width="200" trigger="click"
+                  content="采购单价：采购订单和采购收货入库默认从供应商产品价格中获取单价，如果供应商产品价格获取不到单价，则会从这里获取采购单价。">
+                  <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
+                    type="text"></el-button>
+                </el-popover>
+              </template>
+            </el-table-column>
             <el-table-column prop="salesTaxRate" label="销售税率" width="120" align="center">
+              <template slot="header" slot-scope="scope">
+                销售税率
+                <el-popover placement="bottom" width="200" trigger="click"
+                  content="销售税率：销售订单和销售发货出库默认从客户产品价格中获取税率，如果客户产品价格获取不到税率，则会从这里获取销售税率。">
+                  <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
+                    type="text"></el-button>
+                </el-popover>
+              </template>
               <template slot-scope="{ row }">
                 <el-select v-model="row.salesTaxRate" placeholder="请选择" @change="salesTaxRateChange(row)">
                   <el-option v-for="item in taxRateList" :key="item.taxRate" :label="item.fullName"
@@ -283,12 +316,29 @@
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column prop="salesPrice" label="销售单价(含税)" width="150" align="center">
+            <el-table-column prop="salesPrice" label="销售单价(含税)" width="160" align="center">
+              <template slot="header" slot-scope="scope">
+                销售单价(含税)
+                <el-popover placement="bottom" width="200" trigger="click"
+                  content="销售价格：销售订单和销售发货出库默认从客户产品价格中获取单价，如果客户产品价格获取不到单价，则会从这里获取销售单价。">
+                  <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
+                    type="text"></el-button>
+                </el-popover>
+              </template>
               <template slot-scope="{ row }">
                 <el-input v-model="row.salesPrice" placeholder="请输入内容" @blur="salesPriceChange(row)"></el-input>
               </template>
             </el-table-column>
-            <el-table-column prop="salesExcludingTaxPrice" label="销售单价(不含税)" width="160" />
+            <el-table-column prop="salesExcludingTaxPrice" label="销售单价(不含税)" width="175">
+              <template slot="header" slot-scope="scope">
+                销售单价(不含税)
+                <el-popover placement="bottom" width="200" trigger="click"
+                  content="销售价格：销售订单和销售发货出库默认从客户产品价格中获取单价，如果客户产品价格获取不到单价，则会从这里获取销售单价。">
+                  <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
+                    type="text"></el-button>
+                </el-popover>
+              </template>
+            </el-table-column>
 
             <el-table-column prop="remark" label="备注" width="120" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />

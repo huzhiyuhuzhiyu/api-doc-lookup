@@ -310,230 +310,280 @@
           </el-tabs>
           <el-collapse v-model="activeNames" v-else>
             <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-              <el-row :gutter="15" class="">
-                <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
-                  label-position="top">
-                  <el-col :span="6" v-if="type === 'look'">
-                    <el-form-item label="外协单号" prop="orderNo" ref="orderNo">
-                      <el-input :disabled="type == 'look'" type="text" v-model="dataForm.orderNo"
-                        placeholder="外协单号"></el-input>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="6">
-                    <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
+                  <el-row :gutter="15" class="">
+                    <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
+                      label-position="top">
+                      <el-col :span="6" v-if="type === 'look'">
+                        <el-form-item label="外协单号" prop="orderNo" ref="orderNo">
+                          <el-input :disabled="type == 'look'" type="text" v-model="dataForm.orderNo"
+                            placeholder="外协单号"></el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="6">
+                        <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
+                          <ComSelect-page :clearable="type !== 'look'" :isdisabled="type === 'look'"
+                            :treeNodeClick="treeNodeClick" v-model="dataForm.cooperativePartnerName"
+                            :beforeSubmit="beforeSubmit" ref="ComSelect-page" @change="supplierdata"
+                            :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商" treeTitle="供应商分类"
+                            :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
+                            :listRequestObj="PartnerListRequestObj" :paramsObj="{ oldData }"
+                            :searchList="PartnerTableSearchList" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="6">
+                        <el-form-item label="交货日期" prop="deliveryDate">
+                          <el-date-picker :disabled="type == 'look'" v-model="dataForm.deliveryDate" type="date"
+                            value-format="yyyy-MM-dd" style="width: 100%;" :picker-options="dataPickerOptions2"
+                            placeholder="请选择交货日期"></el-date-picker>
+                        </el-form-item>
+                      </el-col>
 
-                      <ComSelect-page :clearable="type !== 'look'" :isdisabled="type === 'look'"
-                        :treeNodeClick="treeNodeClick" v-model="dataForm.cooperativePartnerName"
-                        :beforeSubmit="beforeSubmit" ref="ComSelect-page" @change="supplierdata"
-                        :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商" treeTitle="供应商分类"
-                        :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
-                        :listRequestObj="PartnerListRequestObj" :paramsObj="{ oldData }"
-                        :searchList="PartnerTableSearchList" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="6">
-                    <el-form-item label="交货日期" prop="deliveryDate">
-                      <el-date-picker :disabled="type == 'look'" v-model="dataForm.deliveryDate" type="date"
-                        value-format="yyyy-MM-dd" style="width: 100%;" :picker-options="dataPickerOptions2"
-                        placeholder="请选择交货日期"></el-date-picker>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="12">
-                    <el-form-item label="备注" prop="remark" ref="remark">
-                      <el-input type="textarea" :row="3" v-model="dataForm.remark" placeholder="请输入备注" maxlength="200"
-                        :disabled="type == 'look' ? true : false"></el-input>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="6" v-if="type === 'look'">
-                    <el-form-item label="订单状态" prop="receivingStatus" ref="receivingStatus">
-                      <el-select v-model="value" placeholder="请选择" :disabled="type !== 'add' ? true : false">
-                        <el-option v-for="item in receivingStatusOptions" :key="item.value" :label="item.label"
-                          :value="item.value"></el-option>
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
-                </el-form>
-              </el-row>
-            </el-collapse-item>
+                      <el-col :span="6" v-if="type === 'look'">
+                        <el-form-item label="订单状态" prop="receivingStatus" ref="receivingStatus">
+                          <el-select v-model="dataForm.receivingStatus" style="width: 100%;" placeholder="请选择"
+                            :disabled="type !== 'add' ? true : false">
+                            <el-option v-for="item in receivingStatusOptions" :key="item.value" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="12">
+                        <el-form-item label="备注" prop="remark" ref="remark">
+                          <el-input type="textarea" :row="3" v-model="dataForm.remark" placeholder="请输入备注"
+                            maxlength="200" :disabled="type == 'look' ? true : false"></el-input>
+                        </el-form-item>
+                      </el-col>
+                    </el-form>
+                  </el-row>
+                </el-collapse-item>
 
-            <el-collapse-item title="产品信息" name="productInfo">
-              <div v-if="type !== 'look'">
-                <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                  icon="el-icon-plus" :disabled="type == 'look' ? true : false" @click="openSeleceProductDialog()">
-                  选择产品
-                </el-button>
-                |
-                <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                  :disabled="type == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
-                  批量删除
-                </el-button>
-                |
-              </div>
-              <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="dataFormTwo.data"
-                  :data="dataFormTwo.data" id="table" @row-click="openDetails">
-                  <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
-                  <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
-                        <div class="viewData">
-                          <span>{{ scope.row.drawingNo }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'">
-                        <div class="viewData">
-                          <span>{{ scope.row.productCode }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
+                <el-collapse-item title="产品信息" name="productInfo">
+                  <div v-if="type !== 'look'">
+                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                      icon="el-icon-plus" :disabled="type == 'look' ? true : false" @click="openSeleceProductDialog()">
+                      选择产品
+                    </el-button>
+                    |
+                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                      :disabled="type == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
+                      批量删除
+                    </el-button>
+                    |
+                  </div>
+                  <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
+                    <JNPF-table style="border: 1px solid #e3e7ee;" :hasC="type == 'edit'" hasNO fixedNO
+                      v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table" @row-click="openDetails">
+                      <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
+                      <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
+                      <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
+                        <template slot="header">
+                          <span class="required">*</span>
+                          品名规格
+                        </template>
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
+                            :rules="productRules.productDrawingNo">
+                            <el-input v-model="scope.row.productDrawingNo" :disabled="type == 'look' ? true : false"
+                              placeholder="品名规格" />
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="productName" label="工序名称" min-width="160" show-overflow-tooltip>
+                        <template slot="header">
+                          <span class="required">*</span>
+                          工序名称
+                        </template>
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'processName'"
+                            :rules="productRules.processName">
 
-                  <el-table-column prop="planDemandQuantity" label="计划需求数量" min-width="140" show-overflow-tooltip>
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'planDemandQuantity'">
-                        <div class="viewData">
-                          <span>{{ scope.row.planDemandQuantity ? scope.row.planDemandQuantity : 0 }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
+                            <!-- 工序选择弹窗  -->
+                            <ComSelect-page :clearable="type !== 'look'" :isdisabled="type === 'look'"
+                              :treeNodeClick="treeNodeClick" v-model="scope.row.processName"
+                              @change="onOrganizeChangeTwo" :tableItems="ProcessTableItems" :placeholder="'工序名称'"
+                              title="选择工序" treeTitle="工序分类" :methodArr="ProcessMethodArr"
+                              :listMethod="getBimProcessList" :listRequestObj="ProcessListRequestObj"
+                              :paramsObj="{ scope }" :searchList="ProcessTableSearchList" />
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
 
-                  <el-table-column prop="purchaseQuantity" label="订单数量" min-width="160">
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity'"
-                        :rules="productRules.purchaseQuantity">
-                        <div class="viewData">
-                          <span>{{ scope.row.purchaseQuantity ? scope.row.purchaseQuantity : 0 }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
+                      <el-table-column prop="deliveryDate" label="交货日期" width="171">
+                        <template slot="header">
+                          <span class="required">*</span>
+                          交货日期
+                        </template>
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'deliveryDate'"
+                            :rules="productRules.deliveryDate">
+                            <el-date-picker v-model="scope.row.deliveryDate" type="date" value-format="yyyy-MM-dd"
+                              :disabled="type == 'look' ? true : false" style="width: 100%;"
+                              placeholder="请选择交货日期"></el-date-picker>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
 
-                  <el-table-column prop="receiptQuantity" label="已入库数量" min-width="160">
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'receiptQuantity'"
-                        :rules="productRules.receiptQuantity">
-                        <div class="viewData">
-                          <span>{{ scope.row.receiptQuantity ? scope.row.receiptQuantity : 0 }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
+                      <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip>
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
+                            <div class="viewData">
+                              <span>{{ scope.row.mainUnit }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="purchaseQuantity" label="数量" min-width="100">
+                        <template slot="header">
+                          <span class="required">*</span>
+                          数量
+                        </template>
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity'"
+                            :rules="productRules.purchaseQuantity">
+                            <el-input v-model="scope.row.purchaseQuantity" :disabled="type == 'look' ? true : false"
+                              @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)" maxlength="20"
+                              placeholder="数量"></el-input>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
 
-                  <el-table-column prop="mainUnit" label="单位" min-width="140" show-overflow-tooltip>
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
-                        <div class="viewData">
-                          <span>{{ scope.row.mainUnit }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
+                      <el-table-column prop="price" label="含税单价" width="120">
+                        <template slot="header">
+                          <span class="required">*</span>
+                          单价(含税)
+                        </template>
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'price'" :rules="productRules.price">
+                            <el-input v-model="scope.row.price" placeholder="请输入含税单价"
+                              :disabled="type == 'look' ? true : false" />
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="totalAmount" label="金额" width="120">
+                        <template slot="header">
+                          <span class="required">*</span>
+                          金额(含税)
+                        </template>
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'totalAmount'">
+                            <div class="viewData">
+                              <span>{{ scope.row.totalAmount ? scope.row.totalAmount : 0 }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="taxRate" label="税率" min-width="140">
+                        <template slot="header">
+                          <span class="required">*</span>
+                          税率
+                        </template>
+                        <template slot-scope="scope">
+                          <el-form-item :rules="productRules.taxRate">
 
-                  <el-table-column prop="price" label="含税单价" min-width="120">
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'price'">
-                        <div class="viewData">
-                          <span>{{ scope.row.price ? scope.row.price : 0 }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
+                            <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;"
+                              :disabled="type == 'look' ? true : false">
+                              <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
+                                :value="item.taxRate"></el-option>
+                            </el-select>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
 
-                  <el-table-column prop="taxRate" label="税率%" min-width="100">
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'taxRate'">
-                        <div class="viewData">
-                          <span>{{ scope.row.taxRate }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
+                      <el-table-column prop="excludingTaxPrice" label="单价(不含税)" min-width="150">
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxPrice'">
+                            <div class="viewData">
+                              <span>{{ scope.row.excludingTaxPrice }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
 
-                  <el-table-column prop="taxAmount" label="税额" min-width="120">
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'">
-                        <div class="viewData">
-                          <span>{{ scope.row.taxAmount ? scope.row.taxAmount : 0 }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
+                      <!-- <el-table-column prop="excludingTaxAmount" label="总金额" min-width="160">
+                      <template slot="header">
+                        <span class="required">*</span>总金额
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
+                          <div class="viewData">
+                            <span>{{ scope.row.excludingTaxAmount }}</span>
+                          </div>
+                        </el-form-item>
+                      </template>
+                    </el-table-column> -->
 
-                  <el-table-column prop="totalAmount" label="价税合计" min-width="140">
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'totalAmount'">
-                        <div class="viewData">
-                          <span>{{ scope.row.totalAmount ? scope.row.totalAmount : 0 }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
+                      <el-table-column prop="taxAmount" label="税额" min-width="100">
+                        <template slot="header">
+                          <span class="required">*</span>
+                          税额
+                        </template>
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'">
 
-                  <el-table-column prop="deliveryDate" label="交货日期" min-width="240">
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'deliveryDate'">
-                        <el-date-picker v-model="scope.row.deliveryDate" type="date" value-format="yyyy-MM-dd"
-                          style="width: 100%;" disabled :picker-options="dataPickerOptions"
-                          placeholder="请选择交货日期"></el-date-picker>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="receivingStatus" label="订单状态" width="130">
-                    <template slot-scope="scope">
-                      <div v-if="scope.row.receivingStatus == 'receiving'"><el-tag>未完成</el-tag></div>
-                      <div v-if="scope.row.receivingStatus == 'received'">
-                        <el-tag type="success">已完成</el-tag>
-                      </div>
-                      <div v-if="scope.row.receivingStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="remark" label="备注" min-width="220">
-                    <template slot-scope="scope">
-                      <el-input v-model="scope.row.remark" disabled maxlength="20"
-                        :placeholder="type == 'look' ? '' : '请输入备注'">
-                        {{ scope.row.remark }}
-                      </el-input>
-                    </template>
-                  </el-table-column>
-                  <el-table-column label="操作" width="180" fixed="right">
-                    <template slot-scope="scope">
-                      <el-button size="mini" type="text" @click="handlerOpenSource(scope.$index, 'source')">
-                        配置发料清单
-                      </el-button>
-                      <el-button size="mini" type="text" class="JNPF-table-delBtn" v-if="dataFormTwo.data.length > 1"
-                        @click="delequipment_process_relList(scope.$index)">
-                        删除
-                      </el-button>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </el-form>
+                            <div class="viewData">
+                              <span>{{ scope.row.taxAmount ? scope.row.taxAmount : 0 }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140">
+                        <template slot="header">
+                          <span class="required">*</span>
+                          金额(不含税)
+                        </template>
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
 
-              <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
-                <span style="font-weight:500;margin-right:10px">总金额：{{ dataForm.excludingTaxTotalAmount }}</span>
-                <span style="font-weight:500;margin-right:10px">总税额：{{ dataForm.taxAmount }}</span>
-                <span style="font-weight:500;margin-right:10px">价税合计：{{ dataForm.totalAmount }}</span>
-              </div>
-            </el-collapse-item>
-            <el-collapse-item title="发料清单信息" name="materialInfo" v-if="type == 'look'">
-              <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="linesList" :data="linesList"
-                id="table">
-                <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
-                <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
-                <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
-                <el-table-column prop="mainUnit" label="单位" min-width="140"></el-table-column>
-                <el-table-column prop="qty" label="基本数量" min-width="140"></el-table-column>
-                <el-table-column prop="demandQuantity" label="发料数量" min-width="140"></el-table-column>
-                <el-table-column prop="undeliveredQuantity" label="待出库数量" min-width="140"></el-table-column>
-              </el-table>
-            </el-collapse-item>
+                            <div class="viewData">
+                              <span>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
+
+                      <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip>
+                        <template slot-scope="scope">
+                          <el-input :title="scope.row.remark" v-model="scope.row.remark" maxlength="20"
+                            :disabled="type == 'look' ? true : false" placeholder="备注">
+                            {{ scope.row.remark }}
+                          </el-input>
+                        </template>
+                      </el-table-column>
+                      <el-table-column label="操作" width="180" fixed="right" v-if="type == 'edit'">
+                        <template slot-scope="scope">
+                          <el-button size="mini" type="text" @click="handlerOpenSource(scope.$index, 'source')">
+                            配置发料清单
+                          </el-button>
+                          <el-button size="mini" type="text" class="JNPF-table-delBtn"
+                            v-if="dataFormTwo.data.length > 1" @click="delequipment_process_relList(scope.$index)">
+                            删除
+                          </el-button>
+                        </template>
+                      </el-table-column>
+                    </JNPF-table>
+                  </el-form>
+
+                  <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
+                    <span style="font-weight:500;margin-right:10px">
+                      总金额：{{ dataForm.excludingTaxTotalAmount }}
+                    </span>
+                    <span style="font-weight:500;margin-right:10px">总税额：{{ dataForm.taxAmount }}</span>
+                    <span style="font-weight:500;margin-right:10px">价税合计：{{ dataForm.totalAmount }}</span>
+                  </div>
+                </el-collapse-item>
+                <el-collapse-item title="发料清单信息" name="materialInfo" v-if="type == 'look'">
+                  <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="linesList" :data="linesList"
+                    id="table">
+                    <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                    <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
+                    <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
+                    <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
+                    <el-table-column prop="mainUnit" label="单位" min-width="140"></el-table-column>
+                    <el-table-column prop="qty" label="基本数量" min-width="140"></el-table-column>
+                    <el-table-column prop="demandQuantity" label="发料数量" min-width="140"></el-table-column>
+                    <el-table-column prop="undeliveredQuantity" label="待出库数量" min-width="140"></el-table-column>
+                  </el-table>
+                </el-collapse-item>
           </el-collapse>
         </div>
       </div>

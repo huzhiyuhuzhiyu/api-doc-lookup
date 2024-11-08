@@ -208,7 +208,7 @@
               <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
             </el-tab-pane>
             <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
-              <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
+              <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId || ''" />
             </el-tab-pane>
             <el-tab-pane v-if="btnType == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
               <recordList :list="flowTaskOperatorRecordList" :endTime="endTime" />
@@ -443,6 +443,7 @@ export default {
   mixins: [busFlow],
   data() {
     return {
+      flowTemplateJson:{},
       isattachmentswitch: '',
       categoryId: '',
       getCooperativeData,

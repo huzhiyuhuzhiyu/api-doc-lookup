@@ -1,5 +1,5 @@
 <template>
-  <el-drawer :title="!dataForm.id ? '新建产品分类' : '编辑产品分类'" :close-on-click-modal="false" :close-on-press-escape="false"
+  <el-drawer :title="!dataForm.id ? '新建产品分类' : '编辑产品分类'" :wrapperClosable="false" :close-on-press-escape="false"
     :visible.sync="visible" lock-scroll width="500px" @close="$emit('close')" class="JNPF-common-drawer">
     <template slot="title">
       <div class="custom_title">

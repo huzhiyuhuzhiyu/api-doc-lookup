@@ -173,7 +173,7 @@
                 </div>
 
                 <div class="gantt" v-if="planFlag">甘特图信息</div>
-                <div ref='ganttRef' v-if="planFlag" >
+                <div ref='ganttRef' v-if="planFlag">
                 </div>
                 <section style='display: flex;justify-content: start;' v-if="planFlag">
 
@@ -821,7 +821,7 @@ export default {
         pageSize: -1,
         source: "",
       },
-      planFlag:null,
+      planFlag: null,
       gantttt: {
         data: [
 
@@ -932,12 +932,13 @@ export default {
     // gantt.config.end_date = new Date(2023, 5, 26);
     gantt.config.columns = this.ganttColumns;
     gantt.config.scales = [
-      { unit: 'month', step: 1, format: '%Y年%F' },
+      { unit: 'month', step: 1, format: this.monthScaleTemplate },
       { unit: 'day', step: 1, format: this.formatWeekday },
     ];
     // gantt.getMarker(markerId);
     // 初始化甘特图
-
+  
+  
     gantt.templates.task_class = (start, end, task) => {
       console.log(task.progress);
       if (task.progress == 0) return 'Noproduc'
@@ -968,6 +969,12 @@ export default {
 
   },
   methods: {
+    monthScaleTemplate (date) {
+      const dateToStrss = gantt.date.date_to_str("%Y年");
+      const dateToStrs = gantt.date.date_to_str("%M");
+      // return dateToStrss(date)+dateToStrs(date)+dateToStr(date)+'日';
+      return dateToStrss(date) +  dateToStrs(date);
+    },
     formatWeekday(date) { //1号 周一
       const dateToStr = gantt.date.date_to_str("%d");
       const dateToStrss = gantt.date.date_to_str("%Y年");
@@ -1114,7 +1121,7 @@ export default {
         getPlanList(obj).then(res => {
           console.log("计划信息", res);
           if (res.data.records.length) {
-            this.planFlag=true
+            this.planFlag = true
             this.planData = res.data.records[0]
             getPlanSchedule(this.planData.id).then(res => {
               console.log("计划进度", res);
@@ -1174,7 +1181,7 @@ export default {
                       if (items.workOrderList.length) {
                         console.log("items.workOrderList", items.workOrderList);
                         items.workOrderList.forEach((itemss, index) => {
-                       
+
                           itemss.actualStartDate = itemss.actualStartDate ? itemss.actualStartDate.substring(0, 10) : ""
                           itemss.actualEndDate = itemss.actualEndDate ? itemss.actualEndDate.substring(0, 10) : ""
                           console.log("时间1", itemss.actualStartDate,);
@@ -1206,8 +1213,8 @@ export default {
                 });
               }, 500);
             })
-          }else{
-            this.planFlag=false
+          } else {
+            this.planFlag = false
           }
         })
       } else if (this.categoryType == 'finishpurchase') {
@@ -1836,13 +1843,15 @@ $footerPadding: '10px';
   padding-left: 5px;
   font-weight: 700;
 }
-::v-deep .gantt_cell_tree{
+
+::v-deep .gantt_cell_tree {
   border-right: 0.5px solid #e0e0e0;
 }
-.noplan{
+
+.noplan {
   position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>

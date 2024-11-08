@@ -349,7 +349,7 @@ export default {
     // gantt.config.end_date = new Date(2023, 5, 26);
     gantt.config.columns = this.ganttColumns;
     gantt.config.scales = [
-      { unit: 'month', step: 1, format: '%Y年%F' },
+      { unit: 'month', step: 1, format: this.monthScaleTemplate },
       { unit: 'day', step: 1, format: this.formatWeekday },
     ];
     // gantt.getMarker(markerId);
@@ -385,7 +385,12 @@ export default {
 
   },
   methods: {
-
+    monthScaleTemplate (date) {
+      const dateToStrss = gantt.date.date_to_str("%Y年");
+      const dateToStrs = gantt.date.date_to_str("%M");
+      // return dateToStrss(date)+dateToStrs(date)+dateToStr(date)+'日';
+      return dateToStrss(date) +  dateToStrs(date);
+    },
     formatWeekday(date) { //1号 周一
       const dateToStr = gantt.date.date_to_str("%d");
       const dateToStrss = gantt.date.date_to_str("%Y年");
@@ -1015,5 +1020,8 @@ $footerPadding: '10px';
 ::v-deep .highlight-selected-row {
   background-color: #f2f2f2;
   /* 设置选中行的背景色 */
+}
+::v-deep .gantt_cell_tree {
+  border-right: 0.5px solid #e0e0e0;
 }
 </style>

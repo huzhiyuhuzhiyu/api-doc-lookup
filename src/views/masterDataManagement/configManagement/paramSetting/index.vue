@@ -16,8 +16,8 @@
           <el-table v-if="tableRerender" :span-method="activeName === 'attachment' ? arraySpanMethod : undefined"
             :height="maxHeight" :data="tableData" stripe :row-style="{ height: '50px' }"
             :header-cell-style="{ background: '#FAFAFA', color: '#606266', 'text-align': 'center' }">
-            <el-table-column align="center" v-if="activeName === 'attachment'" prop="mainModule" label="所属模块"
-              width="250" />
+            <el-table-column align="left" v-if="activeName === 'attachment'" prop="mainModule" label="所属模块"
+              width="135" />
 
 
 
@@ -63,7 +63,9 @@
                     @change="(...args) => onOrganizeChange(...args, row)"
                     :selectClassifyType="FileCategoryType.SYSTEM_ATTACHMENT" />
                   <div v-else>
-                    <div style="width: 100%" v-if="row.configValue3">{{ row.configValue3 }}</div>
+                    <div style="width: 100%" v-if="row.configValue3">
+                        <el-link  type="primary" :underline="false">{{ row.configValue3 }}</el-link>
+                    </div>
                     <div style="width: 100%;visibility: hidden" v-else>1</div>
                   </div>
                 </div>

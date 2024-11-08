@@ -14,53 +14,57 @@
         <div class="main" v-loading="formLoading">
           <el-tabs v-model="activeName">
             <!-- <el-tab-pane label="基础信息" name="jcInfo"> -->
-              <el-collapse v-model="activeNames">
-                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                  <el-row :gutter="15">
-                    <el-form ref="elForm" :model="dataForm" :rules="dataRules" size="small" label-width="100px"
-                      label-position="top">
-                      <el-col :span="12">
-                        <el-form-item label="供应商名称" prop="partnerName" ref="partnerName">
-                          <ComSelect-page :treeNodeClick="treeNodeClick" :isdisabled="type === 'look'"
-                            v-model="dataForm.partnerName" ref="ComSelect-page" @change="supplierdata"
-                            :tableItems="PartnerTableItems" :placeholder="'请选择供应商'" title="选择供应商" treeTitle="供应商分类"
-                            :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
-                            :listRequestObj="PartnerListRequestObj" :paramsObj="{}"
-                            :searchList="PartnerTableSearchList" />
-                        </el-form-item>
-                      </el-col>
-                      <el-col :span="12">
-                        <el-form-item :label="showLabel + '款金额(元)'" prop="paymentAmount">
-                          <el-input v-model="dataForm.paymentAmount" :placeholder="'请输入' + showLabel + '款金额'"
-                            :disabled="type === 'look' ? true : false"></el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :span="12">
-                        <el-form-item :label="showLabel + '款方式'" prop="paymentMethod">
-                          <el-select v-model="dataForm.paymentMethod" :placeholder="'请选择' + showLabel + '款方式'"
-                            style="width: 100%;" :disabled="type === 'look' ? true : false">
-                            <el-option v-for="(item, index) in paymentMethodList" :key="index" :label="item.label"
-                              :value="item.value"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :span="12">
-                        <el-form-item :label="showLabel + '款日期'" prop="paymentDate">
-                          <el-date-picker v-model="dataForm.paymentDate" type="date" value-format="yyyy-MM-dd"
-                            style="width: 100%;" :placeholder="'请选择' + showLabel + '款日期'"
-                            :disabled="type == 'look' ? true : false"></el-date-picker>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :span="24">
-                        <el-form-item label="备注" prop="remark">
-                          <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200"
-                            :disabled="type === 'look' ? true : false" :placeholder="type === 'look' ? '' : '请输入备注'" />
-                        </el-form-item>
-                      </el-col>
-                    </el-form>
-                  </el-row>
-                </el-collapse-item>
-              </el-collapse>
+            <el-collapse v-model="activeNames">
+              <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                <el-row :gutter="15">
+                  <el-form ref="elForm" :model="dataForm" :rules="dataRules" size="small" label-width="100px"
+                    label-position="top">
+                    <el-col :span="12">
+                      <el-form-item :label="reconciliationType === 'receivable' ? '客户名称' : '供应商名称'" prop="partnerName"
+                        ref="partnerName">
+                        <ComSelect-page :treeNodeClick="treeNodeClick" :isdisabled="type === 'look'" X
+                          v-model="dataForm.partnerName" ref="ComSelect-page" @change="supplierdata"
+                          :tableItems="PartnerTableItems"
+                          :placeholder="reconciliationType === 'receivable' ? '请选择客户' : '请选择供应商'"
+                          :title="reconciliationType === 'receivable' ? '选择客户' : '选择供应商'"
+                          :treeTitle="reconciliationType === 'receivable' ? '客户分类' : '供应商分类'"
+                          :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
+                          :listRequestObj="PartnerListRequestObj" :paramsObj="{}"
+                          :searchList="PartnerTableSearchList" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                      <el-form-item :label="showLabel + '款金额(元)'" prop="paymentAmount">
+                        <el-input v-model="dataForm.paymentAmount" :placeholder="'请输入' + showLabel + '款金额'"
+                          :disabled="type === 'look' ? true : false"></el-input>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                      <el-form-item :label="showLabel + '款方式'" prop="paymentMethod">
+                        <el-select v-model="dataForm.paymentMethod" :placeholder="'请选择' + showLabel + '款方式'"
+                          style="width: 100%;" :disabled="type === 'look' ? true : false">
+                          <el-option v-for="(item, index) in paymentMethodList" :key="index" :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                      <el-form-item :label="showLabel + '款日期'" prop="paymentDate">
+                        <el-date-picker v-model="dataForm.paymentDate" type="date" value-format="yyyy-MM-dd"
+                          style="width: 100%;" :placeholder="'请选择' + showLabel + '款日期'"
+                          :disabled="type == 'look' ? true : false"></el-date-picker>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="24">
+                      <el-form-item label="备注" prop="remark">
+                        <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200"
+                          :disabled="type === 'look' ? true : false" :placeholder="type === 'look' ? '' : '请输入备注'" />
+                      </el-form-item>
+                    </el-col>
+                  </el-form>
+                </el-row>
+              </el-collapse-item>
+            </el-collapse>
             <!-- </el-tab-pane> -->
             <el-tab-pane :label="showLabel + '款抵扣'" name="pay" v-if="type === 'look' && showTab">
               <div style="display: flex;flex-direction: column;height: 100%;">

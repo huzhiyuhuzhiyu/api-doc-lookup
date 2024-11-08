@@ -1,5 +1,5 @@
 <template>
-  <el-drawer @closed="cancelFun" :title="!dataForm.id ? '新建类别属性' : '编辑类别属性'" :close-on-click-modal="false"
+  <el-drawer @closed="cancelFun" :title="!dataForm.id ? '新建类别属性' : '编辑类别属性'" :wrapperClosable="false"
     :close-on-press-escape="false" :visible.sync="visible" lock-scroll width="500px" class="JNPF-common-drawer">
     <template slot="title">
       <div class="custom_title">

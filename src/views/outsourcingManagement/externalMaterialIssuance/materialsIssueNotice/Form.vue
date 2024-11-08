@@ -928,7 +928,7 @@ export default {
         let selectArr = []
         console.log('0000')
         let list = data.map((item) => item.all)
-        console.log(list,'lioo')
+        console.log(list, 'lioo')
         list.forEach((item, index) => {
           selectArr.push({
             productSource: item.productSource, // 产品来源 采购
@@ -975,7 +975,7 @@ export default {
           })
         }
         this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
-        console.log(this.dataFormTwo.data,'this.dataFormTwo.data')
+        console.log(this.dataFormTwo.data, 'this.dataFormTwo.data')
         this.dataFormTwo.data.forEach((item) => {
           console.log(item, 'dd')
           purPurchaseOrderdetail(item.purchaseOrderId).then((res) => {
@@ -1146,12 +1146,6 @@ export default {
           }
         }
         this.selectRows = [] // 清空选中的行的数据
-      } else {
-        this.$message({
-          message: '已是最后一条数据',
-          type: 'error',
-          duration: 1500
-        })
       }
     },
 
@@ -1161,12 +1155,6 @@ export default {
 
       if (this.dataFormTwo.data.length > 1) {
         this.dataFormTwo.data.splice(data.$index, 1)
-      } else {
-        this.$message({
-          message: '已是最后一条数据',
-          type: 'error',
-          duration: 1500
-        })
       }
     },
 

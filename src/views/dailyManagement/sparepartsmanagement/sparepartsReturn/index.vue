@@ -64,8 +64,16 @@
           </el-table-column>
           <el-table-column prop="collectionTime" label="归还日期" min-width="180" sortable="custom"></el-table-column>
           <el-table-column prop="maintainerIdText" label="归还人" min-width="120"></el-table-column>
+          <el-table-column prop="remark" label="备注" min-width="180"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" min-width="200" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" min-width="120"></el-table-column>
+          <el-table-column prop="documentStatus" label="单据状态" sortable="custom" width="120" align="center">
+            <template slot-scope="scope">
+              <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag>
+              </div>
+              <div v-else-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
+            </template>
+          </el-table-column>
           <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center" v-if="showAppCodeFlag">
             <template slot-scope="scope">
               <div v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'">
@@ -84,7 +92,7 @@
           </el-table-column>
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="handleUserRelation(scope.row.id, 'edit')" @del="handleDel(scope.row.id)" :editDisabled="scope.row.approvalStatus === 'ok'" :delDisabled="scope.row.approvalStatus === 'ok'">
+              <tableOpts @edit="handleUserRelation(scope.row.id, 'edit')" @del="handleDel(scope.row.id)" :editDisabled="scope.row.documentStatus == 'submit'" :delDisabled="scope.row.documentStatus == 'submit'">
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -142,6 +150,11 @@ export default {
           label: "归还人",
           type: 'input'
         },
+        {
+          prop: 'remark',
+          label: "备注",
+          type: 'input'
+        },
         { // 日期时间选择器（区间）
           prop: 'createTime',
           label: '创建时间',
@@ -155,6 +168,26 @@ export default {
           prop: 'createByName',
           label: '创建人',
           type: 'input'
+        },
+        {
+          prop: 'documentStatus',
+          label: "单据状态",
+          type: 'select',
+          options: [
+            { label: '草稿', value: 'draft' },
+            { label: '提交', value: 'submit' }
+          ]
+        },
+        {
+          prop: 'approvalStatus',
+          label: "审批状态",
+          type: 'select',
+          options: [
+            { label: '审批中', value: 'ing' },
+            { label: '审批通过', value: 'ok' },
+            { label: '审批拒绝', value: 'rebut' },
+            { label: '审批撤回', value: 'withdrawn' },
+          ]
         }
       ],
       tableData: [],

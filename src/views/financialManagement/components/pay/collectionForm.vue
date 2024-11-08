@@ -62,7 +62,7 @@
                 <el-col :span="6">
                   <el-form-item :label="Number(dataForm.totalReconciliationAmount) >= 0 ? showLabel + '款金额' : '退款金额'"
                     prop="paymentAmount">
-                    <el-input v-model="dataForm.paymentAmount" :disabled="!dataForm.paymentAmount"
+                    <el-input v-model="paymentAmount" :disabled="paymentAmount === 0"
                       :placeholder="Number(dataForm.totalReconciliationAmount) >= 0 ? '请输入' + showLabel + '款金额' : '请输入退款金额'"
                       maxlength="20" />
                   </el-form-item>
@@ -184,6 +184,7 @@ export default {
         reconciliationType: "payable",
         remark: ""
       },
+      paymentAmount: 0,
       deductionAmount: 0,
       noZero: '',
       paymentMethodList: [
@@ -277,7 +278,7 @@ export default {
             duePayAmount: res.data.totalReconciliationAmount - (res.data.totalPaymentAmount ? res.data.totalPaymentAmount : 0),
             accountsReceivableReconciliationId: this.dataForm.accountsReceivableReconciliationId
           }
-          this.dataForm.paymentAmount = this.dataForm.dueAmount
+          this.paymentAmount = this.dataForm.dueAmount
           this.payForm.partnerId = res.data.cooperativePartnerId
           this.payForm.reconciliationType = res.data.reconciliationType
           this.orgainDataForm = JSON.parse(JSON.stringify(this.dataForm))
@@ -316,6 +317,7 @@ export default {
     dataFormSubmit() {
       this.btnLoading = true;
       this.dataForm.reconciliationType = this.reconciliationType
+      this.dataForm.paymentAmount = Number(this.paymentAmount) + Number(this.deductionAmount)
       let queryData = {
         paymentRecords: this.dataForm
       }
@@ -393,7 +395,7 @@ export default {
         this.deductionAmount = 0
         this.dataForm.deductionAmount = this.deductionAmount
       }
-      this.dataForm.paymentAmount = Number(this.dataForm.dueAmount) - Number(this.deductionAmount)
+      this.paymentAmount = Number(this.dataForm.dueAmount) - Number(this.deductionAmount)
     },
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <el-drawer :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
+  <el-drawer :title="title" :wrapperClosable="false" :close-on-press-escape="false" :visible.sync="visible"
     lock-scroll class="JNPF-common-drawer" width="500px" @close="$emit('close')">
     <template slot="title">
       <div class="custom_title">

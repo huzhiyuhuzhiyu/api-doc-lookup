@@ -281,7 +281,7 @@ export default {
                                         </el-col>
                                         <el-col :span="4" v-if="hasEnableMark">
                                             <el-form @submit.prevent :disabled="isView" style="padding-top: 0">
-                                                <el-form-item label="是否启用">
+                                                <el-form-item label="启用状态">
                                                     <div style="height: 32px;display: flex;align-items: center">
                                                         <el-switch
                                                             :active-value="true"

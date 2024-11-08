@@ -139,11 +139,11 @@
                     <JNPF-table :hasC="btnType !== 'look'" hasNO fixedNO ref="product" :data="dataFormTwo.data"
                       @selection-change="handeleProductInfoData" v-loading="tableloading" @row-click="openDetails"
                       :row-style="rowStyle">
-                      <el-table-column prop="drawingNo" label="品名规格" width="290" key="3"
+                      <el-table-column prop="drawingNo" label="品名规格" width="220" key="3"
                         show-overflow-tooltip></el-table-column>
-                      <el-table-column v-if="btnType == 'look'" prop="productCode" label="产品编码" width="120" key="6"
+                      <el-table-column v-if="btnType == 'look'" prop="productCode" label="产品编码" width="160" key="6"
                         show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="processName" label="工序名称" width="100" key="5"
+                      <el-table-column prop="processName" label="工序名称" width="160" key="5"
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="mainUnit" label="单位" width="80" key="13"
                         show-overflow-tooltip></el-table-column>
@@ -175,7 +175,7 @@
                     <el-table-column prop="drawingNo" label="品名规格" min-width="200"
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productCode" label="产品编码" width="200"></el-table-column>
-                    <el-table-column prop="processName" label="工序名称" width="100"></el-table-column>
+                    <el-table-column prop="processName" label="工序名称" width="200"></el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="80"></el-table-column>
                     <el-table-column prop="qty" label="基本数量" width="100" v-if="btnType !== 'look'"></el-table-column>
                     <el-table-column prop="demandQuantity" label="需发料数量" width="140"

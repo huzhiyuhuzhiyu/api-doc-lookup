@@ -156,7 +156,8 @@ export default {
         organizeId: '',
         pageNum: 1,
         pageSize: 20,
-        realName: ''
+        realName: '',
+        userFlag: false
       },
       // 客户列表字段
       partnerTableItems: [

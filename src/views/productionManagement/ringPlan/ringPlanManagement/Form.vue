@@ -102,7 +102,14 @@
                         @focus="openRoutingFun"></el-input>
                     </el-form-item>
                   </el-col>
-
+                  <el-col :sm="6" :xs="24" v-if="dataForm.autoMaterialFlag">
+                    <el-form-item label="线边仓库" prop="lineEdgeList" ref="organizeIdTree">
+                      <el-select v-model="dataForm.lineEdgeList" multiple placeholder="请选择" style="width: 100%;">
+                        <el-option v-for="item in warehouseList" :key="item.id" :label="item.name" :value="item.id">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
                   <el-col :sm="12" :xs="24">
                     <el-form-item label="备注" prop="remark">
                       <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" maxlength="200"
@@ -491,6 +498,7 @@ import RoutingForm from "./RoutingForm.vue"
 import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { getBimBusinessDetail } from '@/api/basicData/index'
+import { getWarehouseList  } from '@/api/basicData/index'
 
 export default {
   components: {
@@ -525,6 +533,7 @@ export default {
       dataForm: {
         taskMethod: "",
         planDate: [],
+        lineEdgeList: [],
         orderNo: "",
         productsDrawingNo: "",
         productsCode: "",
@@ -557,6 +566,7 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataRule: {
+        lineEdgeList: [{ required: true, message: '请选择线边仓库', trigger: 'blur' }],
         planDate: [
           { required: true, message: '计划生产日期不能为空', trigger: 'change' }
         ],
@@ -599,7 +609,9 @@ export default {
         fontWeight: 'bold'
       },
       naturalResourcesFlag: true,
-    }
+      warehouseList:[],
+    }      
+
   },
   computed: {
     totalProductionQuantity: function () {
@@ -628,10 +640,21 @@ export default {
     this.getPickingConfig()
   },
   mounted() {
-    // this.getBimBusinessDetail()
+
+    this.getWarehouseListFun()
 
   },
   methods: {
+    getWarehouseListFun(){
+      let obj={
+        type:"line_edge",
+        state:"enable"
+      }
+      getWarehouseList(obj).then(res=>{
+        console.log("线边仓库",res);
+        this.warehouseList=res.data
+      })
+    },
     selectLine(e) {
       console.log(e);
       getProductionLineInfo(e).then(res => {
@@ -1121,10 +1144,18 @@ export default {
         })
         this.$set(item, 'workOrderResList', item.routingProResList)
       });
+      let arr=[]
+      this.dataForm.lineEdgeList.forEach(item=>{
+        arr.push({
+          productionOrderId:"",
+          warehouseId:item
+        })
+      })
       let obj = {
         prodOrder: this.dataForm,
         workOrderList: this.dataFormTwo.data,
         collect: this.collectForm,
+        lineEdgeList:arr
       }
       addProdPlanArrange(obj).then(res => {
         this.btnLoading = false

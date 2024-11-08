@@ -163,6 +163,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
+                      <el-table-column prop="taxAmount" label="税额" width="140"></el-table-column>
                       <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column>
                       <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126">
                         <template slot-scope="scope">
@@ -266,7 +267,8 @@
                       </template>
 
                     </el-table-column>
-                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
+                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column> 
+                    <el-table-column prop="taxAmount" label="税额" width="140"></el-table-column>
 
                     <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column>
                     <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126">
@@ -581,6 +583,7 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
+                  <el-table-column prop="taxAmount" label="税额" width="140"></el-table-column>
 
                   <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column>
                   <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126">
@@ -2050,6 +2053,7 @@ export default {
       let productArr = [...this.productData]
       productArr[index].excludingTaxPrice = this.jnpf.numberFormat(row.price / (1 + (row.taxRate * 1 / 100)), 2)
       productArr[index].excludingTaxAmount = this.jnpf.numberFormat((row.excludingTaxPrice * row.num), 2)
+      productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
       this.productData = productArr
     },
     // 监听含税价格输入
@@ -2106,8 +2110,9 @@ export default {
       }
       productArr[index].excludingTaxPrice = this.jnpf.numberFormat(row.price / (1 + (row.taxRate * 1 / 100)), 2)
       productArr[index].excludingTaxAmount = this.jnpf.numberFormat((row.excludingTaxPrice * row.num), 2)
-      productArr[index].totalAmount = this.jnpf.numberFormat((row.price * row.num), 2)
+      productArr[index].totalAmount = this.jnpf.numberFormat((row.price * row.num), 2) 
 
+      productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
       this.productData = productArr
     },
     // 监听主数量输入
@@ -2167,12 +2172,15 @@ export default {
       if (row.calculationDirection == 'multiplication') {
         productArr[index].assistantNum = this.jnpf.numberFormat(row.num * row.ratio, 2)
         productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 2)
-        productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.excludingTaxPrice]), 2)
+        productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.excludingTaxPrice]), 2) 
+      productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
+
       } else {
         productArr[index].assistantNum = this.jnpf.numberFormat(row.num / row.ratio, 2)
         productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 2)
         productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.excludingTaxPrice]), 2)
-      }
+      productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
+       }
       console.log("productArr", productArr);
       this.productData = productArr
     },

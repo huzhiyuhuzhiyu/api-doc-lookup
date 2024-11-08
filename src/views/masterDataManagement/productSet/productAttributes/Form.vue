@@ -1,5 +1,5 @@
 <template>
-  <el-drawer @closed="cancelFun" :title="!dataForm.id ? '新建产品属性' : '编辑产品属性'" :close-on-click-modal="false"
+  <el-drawer @closed="cancelFun" :title="!dataForm.id ? '新建产品属性' : '编辑产品属性'" :wrapperClosable="false"
     :close-on-press-escape="false" :visible.sync="visible" lock-scroll class="JNPF-common-drawer" width="500px">
     <template slot="title">
       <div class="custom_title">
@@ -206,10 +206,12 @@ export default {
   color: #303133;
   margin-left: -12px;
 }
+
 .required {
   color: red;
   margin-left: 4px;
 }
+
 .button-bottom {
   position: fixed;
   bottom: 10px;

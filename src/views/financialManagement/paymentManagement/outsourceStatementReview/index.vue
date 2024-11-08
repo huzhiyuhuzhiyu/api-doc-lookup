@@ -192,7 +192,7 @@ export default {
     },
     closeForm(isRefresh) {
       this.formVisible = false
-      if (isRefresh) this.refresh()
+      if (isRefresh) this.initData()
     },
     refresh() {
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))

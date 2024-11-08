@@ -135,7 +135,7 @@
                                              fixed="right" width="200">
                                 <template slot-scope="scope">
                                     <el-button size="mini" type="text" @click="handleDownLoad(scope.row.documentId)">下载</el-button>
-                                    <el-button size="mini" type="text" @click="showDetail(scope.row)" >详情</el-button>
+                                    <el-button size="mini" type="text" @click="listItemClick(scope.row)" >详情</el-button>
                                     <template v-if="!isFileCheckPage">
                                         <el-button v-if="isFileTrashPage" size="mini" type="text" class="JNPF-table-successBtn" @click="handleRevert(scope.row.id)">还原</el-button>
                                         <el-button v-else size="mini" type="text" class="JNPF-table-delBtn" @click="handleDel(scope.row.id)">删除</el-button>
@@ -362,10 +362,10 @@ export default {
                     value:FILE_OPERATE.DOWNLOAD,
                 },
 
-                {
-                    text:'详情',
-                    value:FILE_OPERATE.DETAIL,
-                },
+                // {
+                //     text:'详情',
+                //     value:FILE_OPERATE.DETAIL,
+                // },
             ]
             if(this.isFileManagementPage){
                 res.push({

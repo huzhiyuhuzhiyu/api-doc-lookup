@@ -159,6 +159,9 @@ export default {
         password: '',
         remark: '',
         organizeIdTree: [],
+        employeeId: '',
+        employeeType: '',
+        employeeStatus: '',
         remark: ''
       },
       dataRule: {
@@ -249,6 +252,9 @@ export default {
     partnerChange(val, data, paramsObj) {
       if (data && data.length) { // 数据有效，进行更新
         this.dataForm.name = data[0].all.name
+        this.dataForm.employeeStatus = data[0].all.employeeStatus
+        this.dataForm.employeeType = data[0].all.employeeType
+        this.dataForm.employeeId = data[0].all.id
         if (data[0].all.postId) this.dataForm.organizeIdTree = data[0].all.organizeIdTree
         if (this.dataForm.organizeIdTree && this.dataForm.organizeIdTree.length) {
           this.getOptionsByOrgIds(this.dataForm.organizeIdTree)
@@ -256,6 +262,9 @@ export default {
         this.dataForm.mobilePhone = data[0].all.mobileNumber
         this.dataForm.realName = data[0].all.name
       } else { // 不选择任何内容，置空绑定的值
+        this.dataForm.employeeStatus = ''
+        this.dataForm.employeeType = ''
+        this.dataForm.employeeId = ''
         this.dataForm.organizeIdTree = []
         this.dataForm.mobilePhone = ''
         this.dataForm.realName = ''

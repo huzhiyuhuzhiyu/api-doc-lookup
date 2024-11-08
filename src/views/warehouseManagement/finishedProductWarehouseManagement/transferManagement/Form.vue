@@ -82,7 +82,7 @@
                             <span class="required">*</span>目标仓库
                           </template>
                           <template slot-scope="scope">
-                            <ComSelect-list :requestObj="{ type: 'normal' }" :dialogTitle="'选择仓库'"
+                            <ComSelect-list :requestObj="{ type: '',scrapFlag:false,virtuallyFlag:false,state:'enable' }" :dialogTitle="'选择仓库'"
                               :isdisabled="btnType == 'look'" v-model="scope.row.inWarehouseName" :method="getWarehouseList"
                               placeholder="请选择仓库" :paramsObj="{ index: scope.$index }"
                               @change="changeWarehousex"></ComSelect-list>
@@ -195,7 +195,7 @@
                             <span class="required">*</span>目标仓库
                           </template>
                           <template slot-scope="scope">
-                            <ComSelect-list :requestObj="{ type: 'normal' }" :dialogTitle="'选择仓库'"
+                            <ComSelect-list :requestObj="{ type: '',scrapFlag:false,virtuallyFlag:false,state:'enable' }" :dialogTitle="'选择仓库'"
                               :isdisabled="btnType == 'look'" v-model="scope.row.inWarehouseName" :method="getWarehouseList"
                               placeholder="请选择仓库" :paramsObj="{ index: scope.$index }"
                               @change="changeWarehousex"></ComSelect-list>

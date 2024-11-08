@@ -20,7 +20,6 @@
         </el-collapse>
 
       </div>
-      <user-select ref="userselect" v-show="false" :multiple="true" @change="hangleSelectSales"></user-select>
     </div>
   </transition>
 </template>
@@ -287,6 +286,7 @@ export default {
           this.dataForm.remark = res.data.remark
           this.dataForm.sort = res.data.sort
           this.dataForm.type = res.data.type
+          this.dataForm.warehouseManagementStatus = res.data.warehouseManagementStatus
 
           this.stockLimitsAuthorities = res.data.stockLimitsAuthorities
           this.dataForm.partnerCategoryIdText = res.data.parentName
@@ -388,42 +388,7 @@ export default {
     },
     goBack() {
       this.$emit('close')
-    },
-    // 对应套筒新增行
-    addSleeveList() {
-      this.$refs.userselect.openDialog()
-      return
-      this.visible = true
-      this.index = this.stockLimitsAuthorities.length
-      // this.stockLimitsAuthorities.push({
-      //   userName: "",
-      //   remark: "",
-      //   warehouseId: this.stockWarehouse.id,
-      //   userId: "",
-      //   orgName: ""
-      // })
-      if (this.selectType === 'all') {
-        this.activeNamerepson = 'all'
-        this.setDefault()
-      }
-    },
-    // 对应套筒删除当前行
-    deleteth(row, index) {
-      this.stockLimitsAuthorities.splice(row.$index, 1)
-    },
-    //批量选择人员
-    hangleSelectSales(val, data) {
-      if (!data.length) return
-      data.map((item) => {
-        item.fullName = item.fullName.split('/')[0]
-        this.stockLimitsAuthorities.push({
-          userName: item.fullName,
-          userId: item.id,
-          orgName: item.organize,
-          remark: ''
-        })
-      })
-    }
+    }, 
   }
 }
 </script>

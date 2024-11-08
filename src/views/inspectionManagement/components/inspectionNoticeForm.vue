@@ -697,7 +697,7 @@ export default {
         // dataObj.unqualifiedFlag = dataObj.lines.some(line => line.unqualifiedQuantity !== undefined && line.unqualifiedQuantity != '0')
         delete dataObj.active
         console.log(dataObj, 'obj')
-        return
+        
         formMethod(dataObj)
           .then((res) => {
             let msg = res.msg

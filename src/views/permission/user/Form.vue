@@ -117,9 +117,12 @@ import { getDepartmentSelectorByAuth } from '@/api/permission/department'
 import { getbaseEmployee } from '@/api/permission/user'
 import { createUser, updateUser, getUserInfo } from '@/api/permission/user'
 import { getProjectList } from '@/api/system/projectManagement'
+import { mapGetters } from "vuex"
 export default {
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
   created() {
-    // this.userInfo.projectId =1
     this.getProjectList()
   },
   data() {
@@ -153,7 +156,8 @@ export default {
         organizeId: '',
         pageNum: 1,
         pageSize: 20,
-        realName: ''
+        realName: '',
+        userFlag: false
       },
       // 客户列表字段
       partnerTableItems: [
@@ -178,7 +182,7 @@ export default {
         id: '',
         account: '',
         name: '',
-        projectId:'', //所属项目
+        projectId: '', //所属项目
         realName: '',
         mobilePhone: '',
         email: '',
@@ -335,23 +339,29 @@ export default {
         if (valid) {
           if (this.dataForm.submitpassword != this.dataForm.password) return this.$message.error('两次密码输入不一致')
           let submitFlag = false
-          if (this.dataForm.projectId !== this.projectId) {
-            this.$confirm('所属项目已更改是否确定修改, 是否继续?', '提示', {
-              confirmButtonText: '确定',
-              cancelButtonText: '取消',
-              type: 'warning'
-            })
-              .then(() => {
-                submitFlag = true
+          console.log(this.userInfo.projectId, 'this.userInfo.projectId123')
+          if (this.userInfo.projectId) {
+            if (this.dataForm.projectId !== this.projectId) {
+              this.$confirm('所属项目已更改是否确定修改, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
               })
-              .catch(() => {
-                submitFlag = false
-                this.$message({
-                  type: 'info',
-                  message: '已取消'
+                .then(() => {
+                  submitFlag = true
                 })
-              })
+                .catch(() => {
+                  submitFlag = false
+                  this.$message({
+                    type: 'info',
+                    message: '已取消'
+                  })
+                })
+            }
+          } else {
+            submitFlag = true
           }
+
           if (submitFlag) {
             this.btnLoading = true
             let obj = {

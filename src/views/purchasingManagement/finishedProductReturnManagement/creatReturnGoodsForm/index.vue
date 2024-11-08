@@ -364,7 +364,7 @@
 
 
         <span slot="footer" class="dialog-footer">
-          <el-button @click="goBack">返回列表</el-button>
+          <el-button @click="goLine">返回通知单列表</el-button>
           <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()"> {{ btnText }}</el-button>
           <el-button v-else type="primary" @click="continueAdd()"> {{ btnText }}</el-button>
         </span>
@@ -708,6 +708,11 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    goLine() {
+      this.$router.push({
+        path: '/purchasingManagement/finishedProductReturnManagement/purchaseReturnNote'
+      })
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -1460,9 +1465,9 @@ export default {
           .then((res) => {
             let msg = ''
             if (value == 'draft') {
-              msg = '保存成功'
+              this.submitmethodsTitle = "保存成功"
             } else if (value == 'submit') {
-              msg = '提交成功'
+              this.submitmethodsTitle = "提交成功"
             }
             this.tipsvisible = true
             // this.$message({

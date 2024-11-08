@@ -5,7 +5,8 @@
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!onlyRead"/> -->
         <el-page-header @back="goBack" :content="onlyRead ? '查看员工信息' : !this.dataForm.id ? '新建员工' : '编辑员工信息'" />
         <div class="options">
-          <el-button size="mini" type="primary" v-if="!onlyRead" :loading="btnLoading" @click="handleConfirm()">{{ $t('common.submitButton') }}</el-button>
+          <el-button size="mini" type="primary" v-if="!onlyRead" :loading="btnLoading" @click="handleConfirm()">{{
+            $t('common.submitButton') }}</el-button>
           <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
@@ -18,7 +19,9 @@
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="头像" prop="photo">
-                        <el-upload class="avatar-uploader" :headers="uploadHeaders" :disabled="onlyRead" placeholder="上传头像" :action="define.comUploadUrl + '/userAvatar'" :show-file-list="false" :on-success="handleAvatarSuccess" accept="image/*">
+                        <el-upload class="avatar-uploader" :headers="uploadHeaders" :disabled="onlyRead"
+                          placeholder="上传头像" :action="define.comUploadUrl + '/userAvatar'" :show-file-list="false"
+                          :on-success="handleAvatarSuccess" accept="image/*">
                           <img v-if="dataForm.photo" :src="define.comUrl + dataForm.photo" class="avatar">
                           <i v-else class="el-icon-plus avatar-uploader-icon" />
                         </el-upload>
@@ -26,7 +29,8 @@
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="工号" prop="jobNumber">
-                        <el-input v-model="dataForm.jobNumber" placeholder="请输入工号" maxlength="20" :disabled="onlyRead? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
+                        <el-input v-model="dataForm.jobNumber" placeholder="请输入工号" maxlength="20"
+                          :disabled="onlyRead ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
@@ -37,21 +41,37 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="性别" prop="sex" style="width: 100%;">
                         <el-select v-model="dataForm.sex" placeholder="请选择性别" :disabled="onlyRead" style="width: 100%;">
-                          <el-option v-for="item in genderTreeData" :key="item.id" :label="item.fullName" :value="item.enCode">
+                          <el-option v-for="item in genderTreeData" :key="item.id" :label="item.fullName"
+                            :value="item.enCode">
+                          </el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="userInfo.projectId">
+                      <el-form-item label="所属项目" prop="projectId" style="width: 100%;">
+                        <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" :disabled="onlyRead"
+                          style="width: 100%;">
+                          <el-option v-for="item in projectIdData" :key="item.id" :label="item.name" :value="item.id">
                           </el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="部门" prop="organizeIdTree" ref="organizeIdTree">
-                        <ComSelect v-model="dataForm.organizeIdTree" placeholder="请选择部门" :disabled="onlyRead || !!this.dataForm.id" multiple @change="onOrganizeChange" clearable auth />
+                        <ComSelect v-model="dataForm.organizeIdTree" placeholder="请选择部门"
+                          :disabled="onlyRead || !!this.dataForm.id" multiple @change="onOrganizeChange" clearable
+                          auth />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="岗位" prop="postId" ref="positionId">
-                        <el-select v-model="positionId" placeholder="请选择岗位" :disabled="onlyRead || !!this.dataForm.id" style="width: 100%;" @change="onChange('postId')" @visible-change="visibleChange" multiple filterable clearable>
-                          <el-option-group v-for="group in positionTreeData" :key="group.id" :label="group.fullName + (group.num ? '【' + group.num + '】' : '')">
-                            <el-option v-for="item in group.children" :key="group.id + item.id" :label="item.fullName" :value="item.id">
+                        <el-select v-model="positionId" placeholder="请选择岗位" :disabled="onlyRead || !!this.dataForm.id"
+                          style="width: 100%;" @change="onChange('postId')" @visible-change="visibleChange" multiple
+                          filterable clearable>
+                          <el-option-group v-for="group in positionTreeData" :key="group.id"
+                            :label="group.fullName + (group.num ? '【' + group.num + '】' : '')">
+                            <el-option v-for="item in group.children" :key="group.id + item.id" :label="item.fullName"
+                              :value="item.id">
                             </el-option>
                           </el-option-group>
                         </el-select>
@@ -64,31 +84,38 @@
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="出生日期" prop="birthday">
-                        <el-date-picker v-model="dataForm.birthday" type="date" :disabled="onlyRead" placeholder="请选择出生日期" style="width: 100%;" value-format="yyyy-MM-dd">
+                        <el-date-picker v-model="dataForm.birthday" type="date" :disabled="onlyRead"
+                          placeholder="请选择出生日期" style="width: 100%;" value-format="yyyy-MM-dd">
                         </el-date-picker>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="籍贯" prop="nativePlace">
-                        <el-input v-model="dataForm.nativePlace" :disabled="onlyRead" placeholder="请输入籍贯" maxlength="20" />
+                        <el-input v-model="dataForm.nativePlace" :disabled="onlyRead" placeholder="请输入籍贯"
+                          maxlength="20" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="民族" prop="nation">
-                        <el-select v-model="dataForm.nation" :disabled="onlyRead" placeholder="请选择民族" filterable style="width: 100%;">
-                          <el-option v-for="item in nationTreeData" :key="item.id" :label="item.fullName" :value="item.id" />
+                        <el-select v-model="dataForm.nation" :disabled="onlyRead" placeholder="请选择民族" filterable
+                          style="width: 100%;">
+                          <el-option v-for="item in nationTreeData" :key="item.id" :label="item.fullName"
+                            :value="item.id" />
                         </el-select>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="政治面貌" prop="politicalOutlook">
-                        <el-input v-model="dataForm.politicalOutlook" :disabled="onlyRead" placeholder="请输入政治面貌" maxlength="20" />
+                        <el-input v-model="dataForm.politicalOutlook" :disabled="onlyRead" placeholder="请输入政治面貌"
+                          maxlength="20" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="学历" prop="education">
-                        <el-select v-model="dataForm.education" :disabled="onlyRead" placeholder="请选择学历" style="width: 100%;">
-                          <el-option v-for="item in educationTreeData" :key="item.id" :label="item.fullName" :value="item.id" />
+                        <el-select v-model="dataForm.education" :disabled="onlyRead" placeholder="请选择学历"
+                          style="width: 100%;">
+                          <el-option v-for="item in educationTreeData" :key="item.id" :label="item.fullName"
+                            :value="item.id" />
                         </el-select>
                       </el-form-item>
                     </el-col>
@@ -99,7 +126,8 @@
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="婚姻状况" prop="maritalStatus">
-                        <el-select v-model="dataForm.maritalStatus" placeholder="请选择婚姻状况" style="width: 100%;" :disabled="onlyRead">
+                        <el-select v-model="dataForm.maritalStatus" placeholder="请选择婚姻状况" style="width: 100%;"
+                          :disabled="onlyRead">
                           <el-option label="未婚" value="未婚" />
                           <el-option label="已婚" value="已婚" />
                         </el-select>
@@ -107,7 +135,8 @@
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="有无刑事记录" prop="criminalRecords" style="width: 100%;">
-                        <el-select v-model="dataForm.criminalRecords" placeholder="请选择有无刑事记录" :disabled="onlyRead" style="width: 100%;">
+                        <el-select v-model="dataForm.criminalRecords" placeholder="请选择有无刑事记录" :disabled="onlyRead"
+                          style="width: 100%;">
                           <el-option label="无" value=0 />
                           <el-option label="有" value=1 />
                         </el-select>
@@ -115,7 +144,8 @@
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="有无传染病或职业病史" prop="infectiousDisease" style="width: 100%;">
-                        <el-select v-model="dataForm.infectiousDisease" placeholder="请选择有无传染病或职业病史" :disabled="onlyRead" style="width: 100%;">
+                        <el-select v-model="dataForm.infectiousDisease" placeholder="请选择有无传染病或职业病史" :disabled="onlyRead"
+                          style="width: 100%;">
                           <el-option label="无" value=0 />
                           <el-option label="有" value=1 />
                         </el-select>
@@ -123,17 +153,20 @@
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="驾照类型" prop="driverLicenseType">
-                        <el-input v-model="dataForm.driverLicenseType" :disabled="onlyRead" placeholder="请输入驾照类型" maxlength="20" />
+                        <el-input v-model="dataForm.driverLicenseType" :disabled="onlyRead" placeholder="请输入驾照类型"
+                          maxlength="20" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="驾照职称" prop="driverLicenseGrade">
-                        <el-input v-model="dataForm.driverLicenseGrade" :disabled="onlyRead" placeholder="请输入驾照职称" maxlength="20" />
+                        <el-input v-model="dataForm.driverLicenseGrade" :disabled="onlyRead" placeholder="请输入驾照职称"
+                          maxlength="20" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="语言能力" prop="languageProficiency">
-                        <el-input v-model="dataForm.languageProficiency" :disabled="onlyRead" placeholder="请输入语言能力" maxlength="20" />
+                        <el-input v-model="dataForm.languageProficiency" :disabled="onlyRead" placeholder="请输入语言能力"
+                          maxlength="20" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
@@ -143,12 +176,14 @@
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="特长" prop="speciality">
-                        <el-input v-model="dataForm.speciality" :disabled="onlyRead" placeholder="请输入特长" maxlength="20" />
+                        <el-input v-model="dataForm.speciality" :disabled="onlyRead" placeholder="请输入特长"
+                          maxlength="20" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="身份证号码" prop="idCardNo">
-                        <el-input v-model="dataForm.idCardNo" :disabled="onlyRead" placeholder="请输入身份证号码" maxlength="20" />
+                        <el-input v-model="dataForm.idCardNo" :disabled="onlyRead" placeholder="请输入身份证号码"
+                          maxlength="20" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
@@ -158,43 +193,51 @@
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="户口所在地" prop="registeredResidence">
-                        <el-input v-model="dataForm.registeredResidence" placeholder="请输入户口所在地" maxlength="20" :disabled="onlyRead" />
+                        <el-input v-model="dataForm.registeredResidence" placeholder="请输入户口所在地" maxlength="20"
+                          :disabled="onlyRead" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="户籍性质" prop="registeredResidenceNature">
-                        <el-input v-model="dataForm.registeredResidenceNature" placeholder="请输入户籍性质" maxlength="20" :disabled="onlyRead" />
+                        <el-input v-model="dataForm.registeredResidenceNature" placeholder="请输入户籍性质" maxlength="20"
+                          :disabled="onlyRead" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="手机号码" prop="mobileNumber">
-                        <el-input v-model="dataForm.mobileNumber" :disabled="onlyRead" placeholder="请输入手机号码" maxlength="20" />
+                        <el-input v-model="dataForm.mobileNumber" :disabled="onlyRead" placeholder="请输入手机号码"
+                          maxlength="20" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="居住地址" prop="residentialAddress">
-                        <el-input v-model="dataForm.residentialAddress" placeholder="请输入居住地址" maxlength="20" :disabled="onlyRead" />
+                        <el-input v-model="dataForm.residentialAddress" placeholder="请输入居住地址" maxlength="20"
+                          :disabled="onlyRead" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="家庭固定电话" prop="homeLandlineTelephone">
-                        <el-input v-model="dataForm.homeLandlineTelephone" placeholder="请输入家庭固定电话" maxlength="20" :disabled="onlyRead" />
+                        <el-input v-model="dataForm.homeLandlineTelephone" placeholder="请输入家庭固定电话" maxlength="20"
+                          :disabled="onlyRead" />
                       </el-form-item>
                     </el-col>
 
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="紧急联系人" prop="emergencyContact">
-                        <el-input v-model="dataForm.emergencyContact" :disabled="onlyRead" placeholder="请输入紧急联系人" maxlength="20" />
+                        <el-input v-model="dataForm.emergencyContact" :disabled="onlyRead" placeholder="请输入紧急联系人"
+                          maxlength="20" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="与你关系" prop="youRelationship">
-                        <el-input v-model="dataForm.youRelationship" :disabled="onlyRead" placeholder="请输入与你关系" maxlength="20" />
+                        <el-input v-model="dataForm.youRelationship" :disabled="onlyRead" placeholder="请输入与你关系"
+                          maxlength="20" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="紧急联系人电话" prop="emergencyPhoneNumber">
-                        <el-input v-model="dataForm.urgentTelePhone" :disabled="onlyRead" placeholder="请输入紧急联系人电话" maxlength="20" />
+                        <el-input v-model="dataForm.urgentTelePhone" :disabled="onlyRead" placeholder="请输入紧急联系人电话"
+                          maxlength="20" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
@@ -204,19 +247,23 @@
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="银行卡号" prop="bankinfo">
-                        <el-input v-model="dataForm.bankinfo" placeholder="请输入银行卡号" maxlength="30" :disabled="onlyRead" />
+                        <el-input v-model="dataForm.bankinfo" placeholder="请输入银行卡号" maxlength="30"
+                          :disabled="onlyRead" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="员工类型" prop="employeeType">
-                        <el-select v-model="dataForm.employeeType" placeholder="请选择员工类型" clearable style="width: 100%;" :disabled="onlyRead">
-                          <el-option v-for="item in employeeTypeList" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                        <el-select v-model="dataForm.employeeType" placeholder="请选择员工类型" clearable style="width: 100%;"
+                          :disabled="onlyRead">
+                          <el-option v-for="item in employeeTypeList" :key="item.value" :label="item.label"
+                            :value="item.value"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="员工状态" prop="employeeStatus" ref="employeeStatus">
-                        <el-select v-model="dataForm.employeeStatus" placeholder="请选择员工状态" style="width: 100%;" :disabled="onlyRead || !!this.dataForm.id">
+                        <el-select v-model="dataForm.employeeStatus" placeholder="请选择员工状态" style="width: 100%;"
+                          :disabled="onlyRead || !!this.dataForm.id">
                           <el-option label="在职" value="on_job" />
                           <el-option label="离职" value="off_job" />
                         </el-select>
@@ -224,38 +271,45 @@
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="离职日期" prop="resignationDate">
-                        <el-date-picker v-model="dataForm.resignationDate" type="date" :disabled="onlyRead || dataForm.employeeStatus == 'on_job'" placeholder="请选择离职日期" style="width: 100%;" value-format="yyyy-MM-dd">
+                        <el-date-picker v-model="dataForm.resignationDate" type="date"
+                          :disabled="onlyRead || dataForm.employeeStatus == 'on_job'" placeholder="请选择离职日期"
+                          style="width: 100%;" value-format="yyyy-MM-dd">
                         </el-date-picker>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="合同开始日期" prop="contractStartDate">
-                        <el-date-picker v-model="dataForm.contractStartDate" type="date" :disabled="onlyRead" placeholder="请选择合同开始日期" style="width: 100%;" value-format="yyyy-MM-dd">
+                        <el-date-picker v-model="dataForm.contractStartDate" type="date" :disabled="onlyRead"
+                          placeholder="请选择合同开始日期" style="width: 100%;" value-format="yyyy-MM-dd">
                         </el-date-picker>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="合同结束日期" prop="contractEndDate">
-                        <el-date-picker v-model="dataForm.contractEndDate" type="date" :disabled="onlyRead" placeholder="请选择合同结束日期" style="width: 100%;" value-format="yyyy-MM-dd">
+                        <el-date-picker v-model="dataForm.contractEndDate" type="date" :disabled="onlyRead"
+                          placeholder="请选择合同结束日期" style="width: 100%;" value-format="yyyy-MM-dd">
                         </el-date-picker>
                       </el-form-item>
                     </el-col>
 
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="社保起交日期" prop="socialSecurityStartDate">
-                        <el-date-picker v-model="dataForm.socialSecurityStartDate" type="date" :disabled="onlyRead" placeholder="请选择社保起交日期" style="width: 100%;" value-format="yyyy-MM-dd">
+                        <el-date-picker v-model="dataForm.socialSecurityStartDate" type="date" :disabled="onlyRead"
+                          placeholder="请选择社保起交日期" style="width: 100%;" value-format="yyyy-MM-dd">
                         </el-date-picker>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="社保断交日期" prop="socialSecurityEndDate">
-                        <el-date-picker v-model="dataForm.socialSecurityEndDate" type="date" :disabled="onlyRead" placeholder="请选择社保断交日期" style="width: 100%;" value-format="yyyy-MM-dd">
+                        <el-date-picker v-model="dataForm.socialSecurityEndDate" type="date" :disabled="onlyRead"
+                          placeholder="请选择社保断交日期" style="width: 100%;" value-format="yyyy-MM-dd">
                         </el-date-picker>
                       </el-form-item>
                     </el-col>
                     <el-col :span="24">
                       <el-form-item label="自我评价及主要业绩描述" prop="selfEvaluation">
-                        <el-input v-model="dataForm.selfEvaluation" type="textarea" :rows="3" placeholder="请输入" maxlength="200" :disabled="onlyRead" />
+                        <el-input v-model="dataForm.selfEvaluation" type="textarea" :rows="3" placeholder="请输入"
+                          maxlength="200" :disabled="onlyRead" />
                       </el-form-item>
                     </el-col>
                   </el-row>
@@ -270,7 +324,8 @@
                   <span class="required">*</span>开始日期
                 </template>
                 <template slot-scope="scope">
-                  <el-date-picker v-model="scope.row.startDate" type="date" :disabled="onlyRead" placeholder="请选择开始日期" style="width: 100%;" value-format="yyyy-MM-dd">
+                  <el-date-picker v-model="scope.row.startDate" type="date" :disabled="onlyRead" placeholder="请选择开始日期"
+                    style="width: 100%;" value-format="yyyy-MM-dd">
                   </el-date-picker>
                 </template>
               </el-table-column>
@@ -279,7 +334,8 @@
                   <span class="required">*</span>结束日期
                 </template>
                 <template slot-scope="scope">
-                  <el-date-picker v-model="scope.row.endDate" type="date" :disabled="onlyRead" placeholder="请选择结束日期" style="width: 100%;" value-format="yyyy-MM-dd">
+                  <el-date-picker v-model="scope.row.endDate" type="date" :disabled="onlyRead" placeholder="请选择结束日期"
+                    style="width: 100%;" value-format="yyyy-MM-dd">
                   </el-date-picker>
                 </template>
               </el-table-column>
@@ -288,7 +344,8 @@
                   <span class="required">*</span>学习院校/培训机构
                 </template>
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.studyInstitutions" :disabled="onlyRead" maxlength="200" placeholder="请输入学习院校/培训机构">{{
+                  <el-input v-model="scope.row.studyInstitutions" :disabled="onlyRead" maxlength="200"
+                    placeholder="请输入学习院校/培训机构">{{
                       scope.row.studyInstitutions }}
                   </el-input>
                 </template>
@@ -298,18 +355,20 @@
                   <span class="required">*</span>专业/证书名称
                 </template>
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.certificate" :disabled="onlyRead" maxlength="200" placeholder="请输入专业/证书名称">{{
+                  <el-input v-model="scope.row.certificate" :disabled="onlyRead" maxlength="200"
+                    placeholder="请输入专业/证书名称">{{
                       scope.row.certificate }}
                   </el-input>
                 </template>
               </el-table-column>
               <el-table-column label="操作" width="140">
                 <template slot-scope="scope">
-                  <el-button @click="deltable(scope)" v-if="btnType!=='look'" type="text" style="color:rgb(245,108,108)">删除</el-button>
+                  <el-button @click="deltable(scope)" v-if="btnType !== 'look'" type="text"
+                    style="color:rgb(245,108,108)">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
-            <div class="table-actions" @click="addtable()" v-if="btnType!=='look'">
+            <div class="table-actions" @click="addtable()" v-if="btnType !== 'look'">
               <el-button type="text" icon="el-icon-plus">添加</el-button>
             </div>
           </el-tab-pane>
@@ -320,7 +379,8 @@
                   <span class="required">*</span>开始日期
                 </template>
                 <template slot-scope="scope">
-                  <el-date-picker v-model="scope.row.startDate" type="date" :disabled="onlyRead" placeholder="请选择开始日期" style="width: 100%;" value-format="yyyy-MM-dd">
+                  <el-date-picker v-model="scope.row.startDate" type="date" :disabled="onlyRead" placeholder="请选择开始日期"
+                    style="width: 100%;" value-format="yyyy-MM-dd">
                   </el-date-picker>
                 </template>
               </el-table-column>
@@ -329,7 +389,8 @@
                   <span class="required">*</span>结束日期
                 </template>
                 <template slot-scope="scope">
-                  <el-date-picker v-model="scope.row.endDate" type="date" :disabled="onlyRead" placeholder="请选择结束日期" style="width: 100%;" value-format="yyyy-MM-dd">
+                  <el-date-picker v-model="scope.row.endDate" type="date" :disabled="onlyRead" placeholder="请选择结束日期"
+                    style="width: 100%;" value-format="yyyy-MM-dd">
                   </el-date-picker>
                 </template>
               </el-table-column>
@@ -338,7 +399,8 @@
                   <span class="required">*</span>工作单位及部门
                 </template>
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.companyName" :disabled="onlyRead" maxlength="300" placeholder="请输入工作单位及部门">{{
+                  <el-input v-model="scope.row.companyName" :disabled="onlyRead" maxlength="300"
+                    placeholder="请输入工作单位及部门">{{
                       scope.row.companyName }}
                   </el-input>
                 </template>
@@ -349,7 +411,7 @@
                 </template>
                 <template slot-scope="scope">
                   <el-input v-model="scope.row.post" :disabled="onlyRead" maxlength="50" placeholder="请输入职务">{{
-                      scope.row.post }}
+                    scope.row.post }}
                   </el-input>
                 </template>
               </el-table-column>
@@ -359,7 +421,7 @@
                 </template>
                 <template slot-scope="scope">
                   <el-input v-model="scope.row.salary" :disabled="onlyRead" maxlength="20" placeholder="请输入薪资">{{
-                      scope.row.salary }}
+                    scope.row.salary }}
                   </el-input>
                 </template>
               </el-table-column>
@@ -368,18 +430,20 @@
                   <span class="required">*</span>离职原因
                 </template>
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.reasonLeaving" :disabled="onlyRead" maxlength="50" placeholder="请输入离职原因">{{
+                  <el-input v-model="scope.row.reasonLeaving" :disabled="onlyRead" maxlength="50"
+                    placeholder="请输入离职原因">{{
                       scope.row.reasonLeaving }}
                   </el-input>
                 </template>
               </el-table-column>
               <el-table-column label="操作" width="140">
                 <template slot-scope="scope">
-                  <el-button @click="deltablegzjl(scope)" v-if="btnType!=='look'" type="text" style="color:rgb(245,108,108)">删除</el-button>
+                  <el-button @click="deltablegzjl(scope)" v-if="btnType !== 'look'" type="text"
+                    style="color:rgb(245,108,108)">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
-            <div class="table-actions" @click="addtablegzjl()" v-if="btnType!=='look'">
+            <div class="table-actions" @click="addtablegzjl()" v-if="btnType !== 'look'">
               <el-button type="text" icon="el-icon-plus">添加</el-button>
             </div>
           </el-tab-pane>
@@ -391,7 +455,7 @@
                 </template>
                 <template slot-scope="scope">
                   <el-input v-model="scope.row.name" :disabled="onlyRead" maxlength="20" placeholder="请输入姓名">{{
-                      scope.row.name }}
+                    scope.row.name }}
                   </el-input>
                 </template>
               </el-table-column>
@@ -401,7 +465,7 @@
                 </template>
                 <template slot-scope="scope">
                   <el-input v-model="scope.row.age" :disabled="onlyRead" placeholder="请输入年龄">{{
-                      scope.row.age }}
+                    scope.row.age }}
                   </el-input>
                 </template>
               </el-table-column>
@@ -411,7 +475,7 @@
                 </template>
                 <template slot-scope="scope">
                   <el-input v-model="scope.row.relationship" :disabled="onlyRead" maxlength="20" placeholder="请输入关系">{{
-                      scope.row.relationship }}
+                    scope.row.relationship }}
                   </el-input>
                 </template>
               </el-table-column>
@@ -420,7 +484,8 @@
                   <span class="required">*</span>工作单位及职务
                 </template>
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.companyName" :disabled="onlyRead" maxlength="300" placeholder="请输入工作单位及职务">{{
+                  <el-input v-model="scope.row.companyName" :disabled="onlyRead" maxlength="300"
+                    placeholder="请输入工作单位及职务">{{
                       scope.row.companyName }}
                   </el-input>
                 </template>
@@ -431,21 +496,22 @@
                 </template>
                 <template slot-scope="scope">
                   <el-input v-model="scope.row.tel" :disabled="onlyRead" maxlength="50" placeholder="请输入联系电话">{{
-                      scope.row.tel }}
+                    scope.row.tel }}
                   </el-input>
                 </template>
               </el-table-column>
               <el-table-column label="操作" width="140">
                 <template slot-scope="scope">
-                  <el-button @click="deltablejtcy(scope)" v-if="btnType!=='look'" type="text" style="color:rgb(245,108,108)">删除</el-button>
+                  <el-button @click="deltablejtcy(scope)" v-if="btnType !== 'look'" type="text"
+                    style="color:rgb(245,108,108)">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
-            <div class="table-actions" @click="addtablejtcy()" v-if="btnType!=='look'">
+            <div class="table-actions" @click="addtablejtcy()" v-if="btnType !== 'look'">
               <el-button type="text" icon="el-icon-plus">添加</el-button>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch=='1'">
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
             <UploadWj v-model="datafilelist" :disabled="onlyRead" :detailed="onlyRead"></UploadWj>
           </el-tab-pane>
         </el-tabs>
@@ -460,7 +526,8 @@ import { getRoleByOrganize } from '@/api/permission/role'
 import { getGroupSelector } from '@/api/permission/group'
 import { addbaseEmployee, updatebaseEmployee, getbaseEmployeeInfo } from '@/api/permission/user'
 import moment from 'moment'
-
+import { getProjectList } from '@/api/system/projectManagement'
+import { mapGetters } from "vuex"
 export default {
   data() {
     return {
@@ -478,6 +545,7 @@ export default {
         jobNumber: '', //工号
         name: '',//姓名
         sex: null, //性别
+        projectId:'', // 所属项目
         organizeIdTree: [], //组织id树
         postId: '', //岗位id
         managerId: '', //直属主管
@@ -519,6 +587,7 @@ export default {
       },
       positionId: [],
       positionTreeData: [],
+      projectIdData: [],
       roleTreeData: [],
       groupTreeData: [],
       genderTreeData: [],
@@ -544,6 +613,9 @@ export default {
         sex: [
           { required: true, message: '请选择性别', trigger: 'change' }
         ],
+        projectId: [
+          { required: true, message: '请选择所属项目', trigger: 'change' }
+        ],
         organizeIdTree: [
           { required: true, message: '请选择部门', trigger: 'blur' }
         ],
@@ -560,6 +632,12 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+  created() {
+    this.getProjectList()
+  },
   methods: {
     async fetchData(code) {
       try {
@@ -570,6 +648,20 @@ export default {
         }
       } catch (error) {
       }
+    },
+    getProjectList() {
+      let query = {
+        pageNum: 1,
+        pageSize: -1
+      }
+      getProjectList(query)
+        .then((res) => {
+          this.projectIdData = res.data.records
+
+        })
+        .catch(() => {
+
+        })
     },
     // 教育经历信息删除当前行
     deltable(row, index) {
@@ -903,7 +995,7 @@ export default {
 }
 </script>
 <style scoped lang="scss">
->>> .avatar-uploader {
+>>>.avatar-uploader {
   .el-upload {
     border: 1px dashed #dcdfe6;
     border-radius: 6px;
@@ -916,6 +1008,7 @@ export default {
     border-color: #409eff;
   }
 }
+
 .avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
@@ -930,12 +1023,15 @@ export default {
   height: 130px;
   display: block;
 }
+
 .JNPF-preview-main .main {
   padding-top: 0;
 }
+
 ::v-deep .el-tabs--top .el-tabs__item.is-top:last-child {
   padding-right: 0 !important;
 }
+
 ::v-deep .el-tabs__item {
   padding: 0 10px !important;
 }
@@ -943,6 +1039,7 @@ export default {
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
   padding-left: 0px !important;
 }
+
 ::v-deep .el-collapse-item__header {
   line-height: 33px;
   font-size: 18px;
@@ -965,6 +1062,7 @@ export default {
 ::v-deep .el-collapse-item__content {
   padding-bottom: 0px;
 }
+
 ::v-deep .el-tabs__header {
   padding: 0 !important;
 }

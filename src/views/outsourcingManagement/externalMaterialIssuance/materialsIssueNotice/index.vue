@@ -65,7 +65,7 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column
-            :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" hasC>
+            @selection-change="handleSelectionChange" hasC>
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">
@@ -398,16 +398,7 @@ export default {
         })
         .catch(() => { })
     },
-    //禁用复选框
-    checkSelectable(row) {
-      if (row.deliveryStatus !== 'not_finished' || row.documentStatus == 'draft') {
-        console.log(222)
-        return false
-      } else {
-        console.log(333)
-        return true
-      }
-    },
+
     // 选中得数据
     handleSelectionChange(val) {
       this.selectArr = val
@@ -415,10 +406,14 @@ export default {
     //批量取消发料
     Cancelshipment() {
       if (!this.selectArr.length) return this.$message.error('请先选择数据')
+
+      let hasDeliveryList = []
       let hasItemList = []
       this.selectArr.map((i) => {
+        if (i.deliveryStatus === 'not_finished') hasDeliveryList.push(i.orderNo)
         if (i.outboundQuantity > 0) hasItemList.push(i.orderNo)
       })
+      if (hasDeliveryList.length) return this.$message.error(`未发料的订单：${hasDeliveryList.join('、')}不能取消发料`)
       if (hasItemList.length) return this.$message.error(`已出库的订单：${hasItemList.join('、')}不能取消发料`)
       this.$confirm('您确认取消选中的发料通知单吗（已备货商品需手动处理）？', this.$t('common.tipTitle'), {
         type: 'warning'

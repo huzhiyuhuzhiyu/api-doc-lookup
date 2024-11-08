@@ -1138,25 +1138,24 @@ export default {
           duration: 1500
         })
       }
-      if (this.dataFormTwo.data.length > 1) {
-        for (let i = 0; i < this.selectRows.length; i++) {
-          const row = this.selectRows[i]
-          const index = this.dataFormTwo.data.indexOf(row)
-          if (index > -1) {
-            this.dataFormTwo.data.splice(index, 1) // 从tableData中删除选中的行
-          }
+
+      for (let i = 0; i < this.selectRows.length; i++) {
+        const row = this.selectRows[i]
+        const index = this.dataFormTwo.data.indexOf(row)
+        if (index > -1) {
+          this.dataFormTwo.data.splice(index, 1) // 从tableData中删除选中的行
+          this.linesList = []
         }
-        this.selectRows = [] // 清空选中的行的数据
       }
+      this.selectRows = [] // 清空选中的行的数据
+
     },
 
     // 单个删除
     handleDel(data) {
-      console.log(this.btnType, 'this.btnType')
 
-      if (this.dataFormTwo.data.length > 1) {
-        this.dataFormTwo.data.splice(data.$index, 1)
-      }
+      this.dataFormTwo.data.splice(data.$index, 1)
+      this.linesList = []
     },
 
     // 监听主数量输入
@@ -1505,11 +1504,13 @@ export default {
       console.log(row, 'ppop66666666666')
       this.autoId = row.id
       this.linesList = []
+      if (this.dataFormTwo.data.length) {
+        purPurchaseOrderdetail(row.purchaseOrderId).then((res) => {
+          console.log(res, 'iiii')
+          this.linesList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
+        })
+      }
 
-      purPurchaseOrderdetail(row.purchaseOrderId).then((res) => {
-        console.log(res, 'iiii')
-        this.linesList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
-      })
     },
     // 更改选中行背景色
     rowStyle({ row }) {

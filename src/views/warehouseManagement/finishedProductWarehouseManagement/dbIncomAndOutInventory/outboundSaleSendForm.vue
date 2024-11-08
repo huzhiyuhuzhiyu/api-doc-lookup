@@ -663,7 +663,6 @@ export default {
         item.taxRates= item.taxRate+"%"
         let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
         item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
-        item.ordersNum = JSON.parse(JSON.stringify(item.num))
         item.costPrice = item.price
         item.num = item.undeliveredQuantity
         item.classAttribute = item.classAttribute

@@ -139,11 +139,11 @@
                     <JNPF-table :hasC="btnType !== 'look'" hasNO fixedNO ref="product" :data="dataFormTwo.data"
                       @selection-change="handeleProductInfoData" v-loading="tableloading" @row-click="openDetails"
                       :row-style="rowStyle">
-                      <el-table-column prop="drawingNo" label="品名规格" width="290" key="3"
+                      <el-table-column prop="drawingNo" label="品名规格" width="220" key="3"
                         show-overflow-tooltip></el-table-column>
-                      <el-table-column v-if="btnType == 'look'" prop="productCode" label="产品编码" width="120" key="6"
+                      <el-table-column v-if="btnType == 'look'" prop="productCode" label="产品编码" width="160" key="6"
                         show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="processName" label="工序名称" width="100" key="5"
+                      <el-table-column prop="processName" label="工序名称" width="160" key="5"
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="mainUnit" label="单位" width="80" key="13"
                         show-overflow-tooltip></el-table-column>
@@ -175,7 +175,7 @@
                     <el-table-column prop="drawingNo" label="品名规格" min-width="200"
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productCode" label="产品编码" width="200"></el-table-column>
-                    <el-table-column prop="processName" label="工序名称" width="100"></el-table-column>
+                    <el-table-column prop="processName" label="工序名称" width="200"></el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="80"></el-table-column>
                     <el-table-column prop="qty" label="基本数量" width="100" v-if="btnType !== 'look'"></el-table-column>
                     <el-table-column prop="demandQuantity" label="需发料数量" width="140"
@@ -208,7 +208,7 @@
               <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
             </el-tab-pane>
             <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
-              <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
+              <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId || ''" />
             </el-tab-pane>
             <el-tab-pane v-if="btnType == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
               <recordList :list="flowTaskOperatorRecordList" :endTime="endTime" />
@@ -443,6 +443,7 @@ export default {
   mixins: [busFlow],
   data() {
     return {
+      flowTemplateJson:{},
       isattachmentswitch: '',
       categoryId: '',
       getCooperativeData,
@@ -1137,25 +1138,24 @@ export default {
           duration: 1500
         })
       }
-      if (this.dataFormTwo.data.length > 1) {
-        for (let i = 0; i < this.selectRows.length; i++) {
-          const row = this.selectRows[i]
-          const index = this.dataFormTwo.data.indexOf(row)
-          if (index > -1) {
-            this.dataFormTwo.data.splice(index, 1) // 从tableData中删除选中的行
-          }
+
+      for (let i = 0; i < this.selectRows.length; i++) {
+        const row = this.selectRows[i]
+        const index = this.dataFormTwo.data.indexOf(row)
+        if (index > -1) {
+          this.dataFormTwo.data.splice(index, 1) // 从tableData中删除选中的行
+          this.linesList = []
         }
-        this.selectRows = [] // 清空选中的行的数据
       }
+      this.selectRows = [] // 清空选中的行的数据
+
     },
 
     // 单个删除
     handleDel(data) {
-      console.log(this.btnType, 'this.btnType')
 
-      if (this.dataFormTwo.data.length > 1) {
-        this.dataFormTwo.data.splice(data.$index, 1)
-      }
+      this.dataFormTwo.data.splice(data.$index, 1)
+      this.linesList = []
     },
 
     // 监听主数量输入
@@ -1504,11 +1504,13 @@ export default {
       console.log(row, 'ppop66666666666')
       this.autoId = row.id
       this.linesList = []
+      if (this.dataFormTwo.data.length) {
+        purPurchaseOrderdetail(row.purchaseOrderId).then((res) => {
+          console.log(res, 'iiii')
+          this.linesList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
+        })
+      }
 
-      purPurchaseOrderdetail(row.purchaseOrderId).then((res) => {
-        console.log(res, 'iiii')
-        this.linesList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
-      })
     },
     // 更改选中行背景色
     rowStyle({ row }) {

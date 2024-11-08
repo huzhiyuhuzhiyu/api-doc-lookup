@@ -90,6 +90,8 @@
               <span>{{ genderTreeDatafun(scope.row.sex) }}</span>
             </template>
           </el-table-column>
+          <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="userInfo.projectId">
+          </el-table-column>
           <el-table-column prop="organizeName" label="所属部门" width="160" sortable="custom" />
           <el-table-column prop="birthday" label="出生日期" width="160" sortable="custom" />
           <el-table-column prop="nativePlace" label="籍贯" min-width="140" sortable="custom" />
@@ -225,7 +227,7 @@ import JobTransfer from './JobTransfer' // 岗位调动
 import JobQuit from './JobQuit' // 办理离职
 import JobCode from './JobCode' // 调岗记录
 // import JobEntry from './JobEntry' // 重新入职
-
+import { mapGetters } from "vuex"
 export default {
   name: 'permission-user',
   components: {
@@ -458,7 +460,11 @@ export default {
       deep: true,
     }
   },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
   created() {
+    console.log(this.userInfo.projectId)
     this.getOrganizeList()
     if (localStorage.getItem("userFlag")) {
       let userFlag = JSON.parse(localStorage.getItem('userFlag'))

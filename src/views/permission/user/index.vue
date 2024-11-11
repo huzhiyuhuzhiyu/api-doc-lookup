@@ -409,7 +409,6 @@ export default {
       this.toggleExpand(userFlag)
 
     }
-    console.log(this.userInfo,'for')
   },
   methods: {
     superQuerySearch(query) {

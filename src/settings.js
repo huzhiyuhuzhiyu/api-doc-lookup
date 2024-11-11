@@ -50,7 +50,7 @@ module.exports = {
     tagsIcon: false,
     showLanguage: true,
     showSearch: true,
-    useCache: false,
+    useCache: true,
     errorLog: "production",
     /**
      * 五个小方块样式

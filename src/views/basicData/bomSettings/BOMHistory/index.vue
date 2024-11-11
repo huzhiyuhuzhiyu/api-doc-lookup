@@ -168,6 +168,7 @@ import { excelExport } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 export default {
+  name: 'BOMHistory',
   components: { Form, ExportForm, SuperQuery },
   data() {
     return {

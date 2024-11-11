@@ -350,6 +350,8 @@ export default {
         'b056': 'dailyManagement/sparepartsmanagement/sparepartsReturn/Form',
         'b057': 'dailyManagement/equipmentrequisitionreturn/equipmentreturn/Form',
         'b058': 'dailyManagement/borrowingReturn/toolreturn/Form',
+        'b059': 'dailyManagement/scrapManagement/announceInvalidated/Form',
+        'b060': 'toolclampmeasuring/scrapManagement/announceInvalidated/Form',
       },
       inspectionTypeList: [
         // 不良品

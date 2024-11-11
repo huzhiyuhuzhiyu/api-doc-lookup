@@ -36,6 +36,7 @@ import { getCooperativeData, getcategoryTree as getcategoryCoop, getBimBusinessI
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getbimProductAttributesList, getbimProductsModelList } from '@/api/masterDataManagement/index'
 import formValidate from '@/utils/formValidate'
+import { getProjectList } from '@/api/system/projectManagement'
 export default {
   data() {
     return {
@@ -238,6 +239,15 @@ export default {
           itemDisabled: false
         },
         {
+          prop: 'projectId',
+          label: '所属项目',
+          value: '',
+          type: 'select',
+          options: [],
+          itemRules: [{ required: true, trigger: 'change' }],
+          itemDisabled: false
+        },
+        {
           prop: 'clearance',
           label: '游隙',
           value: '',
@@ -406,7 +416,7 @@ export default {
           itemDisabled: true,
           minWidth: 220,
           placeholder: '品名规格自动生成',
-          itemRules: [{ required: true, trigger: "blur" },]
+          itemRules: [{ required: true, trigger: 'blur' }]
         },
         {
           prop: 'code',
@@ -647,7 +657,6 @@ export default {
             }
           })
           tc.change = (val, data, paramsObj) => {
-
             // dom更新后重新校验此元素
             this.$nextTick(() => {
               this.$refs['dataForm'][0].$children[0].validateField('productCategoryName')
@@ -822,6 +831,17 @@ export default {
       ) {
         tc.render = false
       }
+      if (tc.prop === 'projectId') {
+        let obj = {
+          pageNum: 1,
+          pageSize: -1
+        }
+        getProjectList(obj).then((res) => {
+          tc.options = res.data.records.map((item) => {
+            return { label: item.name, value: item.name }
+          })
+        })
+      }
     })
   },
   computed: {
@@ -877,7 +897,7 @@ export default {
       console.log(data, paramsObj, 'paramsObj')
       if (data && data.length) {
         // 数据有效，进行更新
-        
+
         let index = paramsObj.scope.$index
         this.sleeveList[index].steelBallManufacturer = data[0].all.code
         this.sleeveList[index].steelBallManufacturerName = data[0].name

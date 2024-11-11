@@ -69,7 +69,7 @@
                     </el-table-column> -->
                     <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="unit" label="单位" width="120" show-overflow-tooltip>
+                    <el-table-column prop="mainUnit" label="单位" width="120" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="requisitionNum" label="数量" width="160">
                       <template slot="header">
@@ -149,7 +149,7 @@
                     </el-table-column> -->
                 <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                 </el-table-column>
-                <el-table-column prop="unit" label="单位" width="120" show-overflow-tooltip>
+                <el-table-column prop="mainUnit" label="单位" width="120" show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column prop="requisitionNum" label="数量" width="160">
                   <template slot="header">
@@ -353,7 +353,7 @@ export default {
             productName: item.all.name,
             productCode: item.all.code,
             drawingNo: item.all.drawingNo,
-            unit: item.all.mainUnit,
+            mainUnit: item.all.mainUnit,
             incomingOutgoingNum: item.all.incomingOutgoingNum,
             productId: item.all.id,
             requisitionNum: '',

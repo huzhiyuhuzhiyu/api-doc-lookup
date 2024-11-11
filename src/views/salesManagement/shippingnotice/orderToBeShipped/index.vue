@@ -791,7 +791,7 @@ export default {
       this.search('basic')
     },
     superQuerySearch(query) {
-      this.orderForm.superQuery = query
+      this.superQuery = query
       this.superQueryVisible = false
       this.search('super')
     },

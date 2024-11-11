@@ -198,7 +198,73 @@
                     </el-table-column>
                     <el-table-column prop="excludingTaxAmounts" label="金额(不含税)" width="150" show-overflow-tooltip>
                     </el-table-column>
+                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
+                          style="width: 100%;">
+                          <el-option v-for="(item, index) in list1" :key="index" :disabled="status" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
+                          <el-option v-for="(item, index) in list2" :key="index" :disabled="status" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list3" :key="index" :disabled="status" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="oil" label="油脂" width="120" :key="61">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list4" :key="index" :disabled="status" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list5" :key="index" :disabled="status" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="clearance" label="游隙" width="120" :key="100">
+                   
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list6" :key="index" :disabled="status" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101">
 
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list7" :key="index" :disabled="status" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="101">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list8" :key="index" :disabled="status" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
 
 
                     <el-table-column prop="remark" label="备注" min-width="200">
@@ -420,7 +486,73 @@
                 </el-table-column>
                 <el-table-column prop="excludingTaxAmounts" label="金额(不含税)" width="160" show-overflow-tooltip>
                 </el-table-column>
+                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
+                          style="width: 100%;">
+                          <el-option v-for="(item, index) in list1" :key="index" :disabled="status" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
+                          <el-option v-for="(item, index) in list2" :key="index" :disabled="status" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list3" :key="index" :disabled="status" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="oil" label="油脂" width="120" :key="61">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list4" :key="index" :disabled="status" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list5" :key="index" :disabled="status" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="clearance" label="游隙" width="120" :key="100">
+                   
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list6" :key="index" :disabled="status" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101">
 
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list7" :key="index" :disabled="status" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="101">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list8" :key="index" :disabled="status" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
 
 
                 <el-table-column prop="remark" label="备注" min-width="200">
@@ -554,14 +686,16 @@
 </template>
 
 <script>
+import {
+  getbimProductAttributesList, getbimProductAttributes
+} from "@/api/masterDataManagement/index"
 import { getQuotationmxLists, addQuotationData, editQuotationMData, getQuotationInfo, denerateQuotationMData, calculatequotationData, calculatequotationSpecData, saleUploadData, saleUploadAmountsCount, exportNoProduct } from "@/api/salesManagement/index";
 import { getCounryData, getPrivateList, deletePrivate, getcategoryTree, privateDetail } from '@/api/basicData/index'
 import { getcategoryTrees, getcooperativeProduct } from '@/api/salesManagement/assemblyOrders'
 import { getCooperativeInfo, getCooperativeData } from '@/api/basicData/index'
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表
-import { mapGetters, mapState } from 'vuex'
-import { getbimProductAttributes } from "@/api/masterDataManagement/index";
+import { mapGetters, mapState } from 'vuex' 
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
@@ -572,10 +706,18 @@ import flowMixin from '@/mixins/generator/flowMixin'
 import { getBimBusinessDetail } from '@/api/basicData/index'
 export default {
   components: { ExportForm, Process, recordList },
-  mixins: [busFlow,flowMixin],
+  mixins: [busFlow, flowMixin],
   data() {
     return {
-      enterFlag:false,
+      list1: [],
+      list2: [],
+      list3: [],
+      list4: [],
+      list5: [],
+      list6: [],
+      list7: [],
+      list8: [],
+      enterFlag: false,
       exportFormVisible: false,
       historyPriceTotal: 0,
       historyPriceData: [],
@@ -747,7 +889,7 @@ export default {
     totalNum: function () {
       var totalNum = 0;
       for (var i = 0; i < this.dataFormTwo.lines.length; i++) {
-        totalNum =  this.jnpf.numberFormat(this.jnpf.math('add', [totalNum, this.dataFormTwo.lines[i].num]), 2) 
+        totalNum = this.jnpf.numberFormat(this.jnpf.math('add', [totalNum, this.dataFormTwo.lines[i].num]), 2)
       }
       return totalNum
     },
@@ -755,7 +897,7 @@ export default {
       console.log(5555);
       var totalAmount = 0;
       for (var i = 0; i < this.dataFormTwo.lines.length; i++) {
-        totalAmount =  this.jnpf.numberFormat(this.jnpf.math('add', [totalAmount, this.dataFormTwo.lines[i].amounts]), 2)  
+        totalAmount = this.jnpf.numberFormat(this.jnpf.math('add', [totalAmount, this.dataFormTwo.lines[i].amounts]), 2)
       }
       return totalAmount
     },
@@ -765,8 +907,161 @@ export default {
   mounted() {
     this.getTaxRateFun()
     this.getBimBusinessDetail()
+    
   },
   methods: {
+    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
+    getProductClassFun() {
+
+      let obj1 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa007",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj1).then(res => {
+        this.list1 = res.data.records
+      })
+      let obj2 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa006",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj2).then(res => {
+        this.list2 = res.data.records
+      })
+      let obj3 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa005",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj3).then(res => {
+        this.list3 = res.data.records
+      })
+      let obj4 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa002",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj4).then(res => {
+        this.list4 = res.data.records
+      })
+      let obj5 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa003",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj5).then(res => {
+        this.list5 = res.data.records
+      })
+      let obj6 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa001",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+
+      getbimProductAttributesList(obj6).then(res => {
+        this.list6 = res.data.records
+      })
+      let obj7 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa015",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj7).then(res => {
+        this.list7 = res.data.records
+      })
+      let obj8 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa016",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj8).then(res => {
+        this.list8 = res.data.records
+      })
+
+
+
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -899,7 +1194,7 @@ export default {
 
     },
     handleSelect(row, index, item) {
-      console.log(666,item);
+      console.log(666, item);
       //返回的意见点击选择触发事件
       let customerDrawingNumber
       let obj = JSON.parse(JSON.stringify(this.createdData))
@@ -920,14 +1215,14 @@ export default {
         }
         getQuotationmxLists(objs).then(res => {
           if (res.data.records.length) {
-            console.log('有值',res.data.records[0]);
-             let data=res.data.records[0]
+            console.log('有值', res.data.records[0]);
+            let data = res.data.records[0]
 
             // res.data.records[0].customerProductDrawingNo = customerDrawingNumber ? customerDrawingNumber : res.data.records[0].customerProductDrawingNo
             res.data.records[0].taxRate = res.data.records[0].taxRate * 1
-            this.$set(this.dataFormTwo.lines,index,res.data.records[0])
+            this.$set(this.dataFormTwo.lines, index, res.data.records[0])
             // this.$set(this.dataFormTwo.lines, index, res.data.records[0])
-            console.log(111,this.dataFormTwo.lines);
+            console.log(111, this.dataFormTwo.lines);
             let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.records[0].taxRate));
             if (!exists && res.data.records[0].taxRate) {
               let obj = {
@@ -944,7 +1239,7 @@ export default {
             this.$set(item.data, 'unitPrice', "")
             this.$set(item.data, 'customerProductDrawingNo', customerDrawingNumber)
             item.data.productsId = item.data.id
-          
+
             this.$set(this.dataFormTwo.lines, index, item.data)
             // this.$set(this.dataFormTwo.lines, index, item.data)
             this.watchPrice(this.dataFormTwo.lines[index], index)
@@ -988,13 +1283,13 @@ export default {
       if (data.num || data.unitPrice) return
       getDetailByDrawNo(data.productDrawingNo).then(res => {
         if (res.data) {
-      this.dataFormTwo.lines.push(obj)
+          this.dataFormTwo.lines.push(obj)
           res.data.unitPrice = ""
           res.data.customerDrawingNumber = data.customerDrawingNumber
           res.data.productCode = res.data.code
           res.data.productDrawingNo = res.data.drawingNo
           res.data.productsId = res.data.id
-          res.data.taxRate = this.taxRate*1
+          res.data.taxRate = this.taxRate * 1
           this.$set(this.dataFormTwo.lines, idx, res.data)
           let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.taxRate));
           if (!exists && res.data.taxRate) {
@@ -1204,7 +1499,7 @@ export default {
     // 监听单价(含税)输入
     watchPrice(row, index) {
       let productArr = [...this.dataFormTwo.lines]
-      
+
       row.unitPrice = row.unitPrice ? row.unitPrice.replace(/[^\d.]/g, '') : ''
       // 单价处理
       if (row.unitPrice.length == 1 && row.unitPrice == '.') {
@@ -1253,12 +1548,12 @@ export default {
         row.excludingTaxUnitPrice = ''
       }
 
-    
-        let a = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.unitPrice, row.num]), 2)
-        console.log("aaa", a);
-        row.amounts = a ? a : '' // 含税金额 
-        productArr[index].amounts = a ? a : 0
-        console.log(this.dataFormTwo.lines);
+
+      let a = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.unitPrice, row.num]), 2)
+      console.log("aaa", a);
+      row.amounts = a ? a : '' // 含税金额 
+      productArr[index].amounts = a ? a : 0
+      console.log(this.dataFormTwo.lines);
 
       if (row.excludingTaxUnitPrice && row.num) {
         let c = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.excludingTaxUnitPrice, row.num]), 2)
@@ -1378,7 +1673,6 @@ export default {
       this.$nextTick(() => { this.switchStyle('onresize') });
       this.dataForm.id = id || ''
       this.approvalFlag = approvalFlag
-      console.log(id, 'id', btnType);
 
       // this.oldId = JSON.parse(JSON.stringify(id)) || ""
       // this.oldType = JSON.parse(JSON.stringify(btnType))
@@ -1387,6 +1681,7 @@ export default {
         this.iszt = false
         this.status = true
       } else {
+        this.getProductClassFun()
         this.iszt = true
         this.status = false
         let obj = JSON.parse(JSON.stringify(this.createdData))

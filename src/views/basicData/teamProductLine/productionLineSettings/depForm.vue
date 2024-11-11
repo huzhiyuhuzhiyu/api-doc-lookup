@@ -213,6 +213,7 @@ import {
   getDepartmentList
 } from '@/api/basicData/index'
 export default {
+  name: 'productionLineSettings',
   components: {
     ProcessDialog,
     SourceArea,

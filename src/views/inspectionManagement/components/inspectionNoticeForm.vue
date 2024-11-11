@@ -926,7 +926,9 @@ export default {
               ? 'b042'
               : this.inspectionType === 'process'
                 ? 'b043'
-                : 'b044'
+                : this.inspectionType === 'finished'
+                ? 'b044'
+                : 'b061'
       getBusinessFlowInfo(code)
         .then((res) => {
           if (res.data) {

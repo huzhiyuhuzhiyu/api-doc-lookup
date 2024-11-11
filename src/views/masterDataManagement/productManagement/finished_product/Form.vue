@@ -48,6 +48,7 @@ import { getbimProductAttributesList, getbimProductsModelList } from '@/api/mast
 import tabs from './params'
 import { getProjectList } from '@/api/system/projectManagement'
 export default {
+  name: 'finished_product',
   data() {
     return {
       datafilelist: [],

@@ -272,7 +272,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp
-      if (prop === 'productCode' || prop === 'productName' || prop === 'drawNo') {
+      if (prop === 'cooperativePartnerCode' || prop === 'cooperativePartnerName' || prop === 'drawNo') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())

@@ -13,8 +13,8 @@
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="基础信息" name="jcInfo">
             <el-collapse v-model="activeNames">
-              <el-collapse-item title="基本信息" name="basicInfo">
-                <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+              <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+                <el-collapse-item title="基本信息" name="basicInfo">
                   <el-row :gutter="20" class="custom-row">
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="所属分类" prop="productCategoryName">
@@ -66,26 +66,7 @@
                 </el-select>
               </el-form-item>
             </el-col> -->
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="额定使用年限" prop="serviceLife">
-                        <el-input maxlength="9" oninput="value = value.replace(/\D/g, '')" v-model.number="dataForm.serviceLife" placeholder="请输入额定使用年限" :disabled="disabled" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="额定电压V" prop="ratedVoltage">
-                        <el-input v-model="dataForm.ratedVoltage" placeholder="请输入额定电压V" :disabled="disabled" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="额定电流A" prop="ratedCurrent">
-                        <el-input v-model="dataForm.ratedCurrent" placeholder="请输入额定电流A" :disabled="disabled" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="额定功率KW" prop="power">
-                        <el-input v-model="dataForm.power" placeholder="请输入额定功率KW" :disabled="disabled" />
-                      </el-form-item>
-                    </el-col>
+
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="供应商" prop="partnerName">
                         <ComSelect-list :isdisabled="type === 'look'" v-model="dataForm.partnerName" placeholder="请选择供应商" auth @change="selectPartner" :title="'选择供应商'" :method="getCooperativeData" :requestObj="parentRequsetObj" :paramsObj="{}" />
@@ -132,16 +113,7 @@
                         </el-input>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="生产厂家" prop="supplier">
-                        <el-input maxlength="200" v-model="dataForm.supplier" placeholder="请输入生产厂家" :disabled="disabled" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="序列号" prop="serialNo">
-                        <el-input maxlength="100" v-model="dataForm.serialNo" placeholder="请输入序列号" :disabled="disabled" />
-                      </el-form-item>
-                    </el-col>
+
                     <el-col :sm="8" :xs="24" v-if="type !== 'add'">
                       <el-form-item label="设备状态" prop="state">
                         <el-select v-model="dataForm.state" placeholder="请选择设备状态" :disabled="type !== 'add'" style="width: 100%;">
@@ -159,6 +131,51 @@
                         <el-input maxlength="200" v-model="dataForm.usin" placeholder="请输入用途" :disabled="disabled" />
                       </el-form-item>
                     </el-col>
+
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="设备原值（万元）" prop="equipmentValue">
+                        <el-input v-model="dataForm.equipmentValue" placeholder="请输入设备原值" :disabled="disabled">
+                        </el-input>
+                      </el-form-item>
+                    </el-col>
+
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="保修截止时间" prop="warrantyDate">
+                        <el-date-picker v-model="dataForm.warrantyDate" type="datetime" placeholder="请选择保修截止时间" value-format="yyyy-MM-dd HH:mm:ss" :disabled="disabled" style="width: 100%;" />
+                      </el-form-item>
+                    </el-col>
+
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="采购人员" prop="purchaserId">
+                        <user-select v-model="dataForm.purchaserId" placeholder="请选择采购人员" style="width: 100%;" :disabled="disabled">
+                        </user-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="采购日期" prop="purchaseDate">
+                        <el-date-picker v-model="dataForm.purchaseDate" type="date" placeholder="请选择购买日期" value-format="yyyy-MM-dd HH:mm:ss" :disabled="disabled" style="width: 100%;" />
+                      </el-form-item>
+                    </el-col>
+
+                    <el-col :sm="24" :xs="24">
+                      <el-form-item label="备注" prop="remark">
+                        <el-input maxlength="200" class="shuru" v-model="dataForm.remark" placeholder="请输入备注" type="textarea" :disabled="disabled" style="width: 100%;" />
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+                </el-collapse-item>
+                <el-collapse-item title="设备参数" name="sbInfo">
+                  <el-row :gutter="20" class="custom-row">
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="生产厂家" prop="supplier">
+                        <el-input maxlength="200" v-model="dataForm.supplier" placeholder="请输入生产厂家" :disabled="disabled" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="序列号" prop="serialNo">
+                        <el-input maxlength="100" v-model="dataForm.serialNo" placeholder="请输入序列号" :disabled="disabled" />
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="重量（KG）" prop="weight">
                         <el-input v-model="dataForm.weight" placeholder="请输入重量" :disabled="disabled">
@@ -166,9 +183,18 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="设备原值（万元）" prop="equipmentValue">
-                        <el-input v-model="dataForm.equipmentValue" placeholder="请输入设备原值" :disabled="disabled">
-                        </el-input>
+                      <el-form-item label="额定电压（V）" prop="ratedVoltage">
+                        <el-input v-model="dataForm.ratedVoltage" placeholder="请输入额定电压" :disabled="disabled" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="额定电流（A）" prop="ratedCurrent">
+                        <el-input v-model="dataForm.ratedCurrent" placeholder="请输入额定电流" :disabled="disabled" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="额定功率（KW）" prop="power">
+                        <el-input v-model="dataForm.power" placeholder="请输入额定功率" :disabled="disabled" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
@@ -190,20 +216,8 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="保修截止时间" prop="warrantyDate">
-                        <el-date-picker v-model="dataForm.warrantyDate" type="datetime" placeholder="请选择保修截止时间" value-format="yyyy-MM-dd HH:mm:ss" :disabled="disabled" style="width: 100%;" />
-                      </el-form-item>
-                    </el-col>
-
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="采购人员" prop="purchaserId">
-                        <user-select v-model="dataForm.purchaserId" placeholder="请选择采购人员" style="width: 100%;" :disabled="disabled">
-                        </user-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="采购日期" prop="purchaseDate">
-                        <el-date-picker v-model="dataForm.purchaseDate" type="date" placeholder="请选择购买日期" value-format="yyyy-MM-dd HH:mm:ss" :disabled="disabled" style="width: 100%;" />
+                      <el-form-item label="额定使用年限" prop="serviceLife">
+                        <el-input maxlength="9" oninput="value = value.replace(/\D/g, '')" v-model.number="dataForm.serviceLife" placeholder="请输入额定使用年限" :disabled="disabled" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
@@ -216,14 +230,9 @@
                         <el-date-picker v-model="dataForm.scrapDate" type="date" placeholder="请选择报废日期" value-format="yyyy-MM-dd HH:mm:ss" :disabled="disabled" style="width: 100%;" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="24" :xs="24">
-                      <el-form-item label="备注" prop="remark">
-                        <el-input maxlength="200" class="shuru" v-model="dataForm.remark" placeholder="请输入备注" type="textarea" :disabled="disabled" style="width: 100%;" />
-                      </el-form-item>
-                    </el-col>
                   </el-row>
-                </el-form>
-              </el-collapse-item>
+                </el-collapse-item>
+              </el-form>
             </el-collapse>
           </el-tab-pane>
           <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
@@ -258,7 +267,7 @@ export default {
       factorylistLoading: false,
       mountedPlacesList: [],
       factoryFloorList: [],
-      activeNames: ["basicInfo"],
+      activeNames: ["basicInfo", "sbInfo"],
       getCooperativeData,
       datafilelist: [],
       activeName: "jcInfo",

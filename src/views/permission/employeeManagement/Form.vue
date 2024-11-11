@@ -622,6 +622,9 @@ export default {
         postId: [
           { required: true, message: '请选择所属岗位', trigger: 'change' }
         ],
+        employeeType: [
+          { required: true, message: '请选择员工类型', trigger: 'change' }
+        ],
         employeeStatus: [
           { required: true, message: '请选择员工状态', trigger: 'blur' }
         ],

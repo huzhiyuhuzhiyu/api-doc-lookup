@@ -174,9 +174,82 @@
                                 </el-form-item>
                               </template>
                             </el-table-column>
+                            <el-table-column prop="price" label="含税单价" width="130">
+                              <template slot="header">
+                                <span class="required">*</span>
+                                单价(含税)
+                              </template>
+                              <template slot-scope="scope">
+                                <el-form-item :prop="'data.' + scope.$index + '.' + 'price'"
+                                  :rules="productRules.price">
+                                  <el-input v-model="scope.row.price" placeholder="单价(含税)" />
+                                </el-form-item>
+                              </template>
+                            </el-table-column>
+                            <el-table-column prop="totalAmount" label="金额" width="140">
+                              <template slot="header">
+                                <span class="required">*</span>
+                                金额(含税)
+                              </template>
+                              <template slot-scope="scope">
+                                <el-form-item :prop="'data.' + scope.$index + '.' + 'totalAmount'">
+                                  <div class="viewData">
+                                    <span>{{ scope.row.totalAmount ? scope.row.totalAmount : 0 }}</span>
+                                  </div>
+                                </el-form-item>
+                              </template>
+                            </el-table-column>
+                            <el-table-column prop="taxRate" label="税率" width="140">
+                              <template slot="header">
+                                <span class="required">*</span>
+                                税率
+                              </template>
+                              <template slot-scope="scope">
+                                <el-form-item :rules="productRules.taxRate">
+                                  <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;">
+                                    <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
+                                      :value="item.enCode"></el-option>
+                                  </el-select>
+                                </el-form-item>
+                              </template>
+                            </el-table-column>
 
+                            <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150">
+                              <template slot-scope="scope">
+                                <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxPrice'">
+                                  <div class="viewData">
+                                    <span>{{ scope.row.excludingTaxPrice }}</span>
+                                  </div>
+                                </el-form-item>
+                              </template>
+                            </el-table-column>
 
-
+                            <el-table-column prop="taxAmount" label="税额" min-width="100">
+                              <template slot="header">
+                                <span class="required">*</span>
+                                税额
+                              </template>
+                              <template slot-scope="scope">
+                                <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'">
+                                  <div class="viewData">
+                                    <span>{{ scope.row.taxAmount ? scope.row.taxAmount : 0 }}</span>
+                                  </div>
+                                </el-form-item>
+                              </template>
+                            </el-table-column>
+                            <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180">
+                              <template slot="header">
+                                <span class="required">*</span>
+                                金额(不含税)
+                              </template>
+                              <template slot-scope="scope">
+                                <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
+                                  <div class="viewData">
+                                    <span>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</span>
+                                  </div>
+                                </el-form-item>
+                              </template>
+                            </el-table-column>
                             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
 
                             <el-table-column prop="remark" label="备注" min-width="200">
@@ -231,7 +304,9 @@
                         class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNode">
                         <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
                           <i :class="[
-                            data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm'
+                            data.childrenList.length > 0
+                              ? 'icon-ym icon-ym-tree-organization3'
+                              : 'icon-ym icon-ym-systemForm'
                           ]" />
                           <span class="text" :title="data.name">{{ data.name }}</span>
                         </span>
@@ -348,14 +423,16 @@
               <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
                 :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center"
                 width="500px">
-                <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
-                    {{ submitmethodsTitle }}啦！</span><span class="import_b">您还可以进行如下操作：</span></div>
-
+                <div>
+                  <img src="@/assets/images/importSuccess.gif" alt="" style="width:100px" />
+                  <span class="import_t">{{ submitmethodsTitle }}啦！</span>
+                  <span class="import_b">您还可以进行如下操作：</span>
+                </div>
 
                 <span slot="footer" class="dialog-footer">
                   <el-button @click="goLine">返回通知单列表</el-button>
-                  <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()"> {{ btnText }}</el-button>
-                  <el-button v-else type="primary" @click="continueAdd()"> {{ btnText }}</el-button>
+                  <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()">{{ btnText }}</el-button>
+                  <el-button v-else type="primary" @click="continueAdd()">{{ btnText }}</el-button>
                 </span>
               </el-dialog>
             </div>
@@ -363,7 +440,6 @@
         </div>
       </div>
     </div>
-
   </transition>
 </template>
 
@@ -389,6 +465,8 @@ import { getWarehouseList } from '@/api/basicData/index'
 import { mapGetters } from 'vuex'
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
+import { getbimProductAttributes } from '@/api/masterDataManagement/index'
+
 export default {
   components: { Process },
   data() {
@@ -665,7 +743,7 @@ export default {
       flowTemplateJson: {},
       flowData: {},
       isattachmentswitch: '',
-      categoryId: '',
+      categoryId: ''
     }
   },
   computed: {
@@ -682,6 +760,37 @@ export default {
   watch: {
     filterText(val) {
       this.$refs.treeBox.filter(val)
+    },
+    'dataFormTwo.data': {
+      // immediate:true,
+      handler: function (newVal, oldVal) {
+        newVal.forEach((item) => {
+          if ((item.price && item.taxRate) || (item.price && item.taxRate === 0)) {
+            item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
+          } else {
+            item.excludingTaxPrice = ''
+          }
+          if (item.purchaseQuantity && item.excludingTaxPrice) {
+            item.excludingTaxAmount = this.jnpf.numberFormat(item.purchaseQuantity * item.excludingTaxPrice)
+          } else {
+            item.excludingTaxAmount = ''
+          }
+          if (item.price && item.purchaseQuantity && item.excludingTaxAmount) {
+            item.taxAmount = this.jnpf.numberFormat(item.price * item.purchaseQuantity - item.excludingTaxAmount)
+          } else {
+            item.taxAmount = ''
+          }
+          if (item.excludingTaxAmount && item.taxAmount) {
+            item.totalAmount = this.jnpf.numberFormat(item.excludingTaxAmount * 1 + item.taxAmount * 1)
+          } else {
+            item.totalAmount = ''
+          }
+          // if (!item.price) {
+          //   this.$message.error('未找到供应商单价')
+          // }
+        })
+      },
+      deep: true
     }
   },
   created() {
@@ -694,11 +803,36 @@ export default {
   },
   mounted() {
     this.init()
+    this.getAttachmentswitch()
+    this.getProductClassFun()
     let tBody = document.querySelectorAll('.el-table')[1]
     tBody.style.height = 'auto'
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    getAttachmentswitch() {
+      let obj = {
+        businessCode: 'return',
+        pageSize: -1
+      }
+      getBimBusinessSwitchConfigList(obj).then((res) => {
+        res.data.attachment.forEach((item) => {
+          if (item.configKey == 'fj_cggysgl') {
+            this.isattachmentswitch = item.configValue1
+            this.categoryId = item.configValue2
+          }
+        })
+      })
+    },
+    getProductClassFun() {
+      // 获取税率(数据字典)
+      getbimProductAttributes('585438081021126405').then((res) => {
+        res.data.list.forEach((item) => {
+          item.taxRate = item.enCode.replace('%', '') * 1
+        })
+        this.taxRateList = res.data.list
+      })
+    },
     goLine() {
       this.$router.push({
         path: '/purchasingManagement/returnManagement/purchaseReturnNote'
@@ -709,7 +843,7 @@ export default {
         businessCode: 'attachment',
         configKey: 'fj_cgthtzd'
       }
-      getBimBusinessDetail(obj).then(res => {
+      getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
         this.categoryId = res.data.configValue2
       })
@@ -1409,9 +1543,9 @@ export default {
           .then((res) => {
             let msg = ''
             if (value == 'draft') {
-              this.submitmethodsTitle = "保存成功"
+              this.submitmethodsTitle = '保存成功'
             } else if (value == 'submit') {
-              this.submitmethodsTitle = "提交成功"
+              this.submitmethodsTitle = '提交成功'
             }
             this.tipsvisible = true
             // if (value == 'draft') {
@@ -1456,23 +1590,25 @@ export default {
     },
     // 测试审批流
     getBusInfo() {
-      getBusinessFlowInfo('b029').then(res => {
-        if (res.data) {
-          if (res.data.enabledMark) {
-            this.flowData = res.data
-            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
-            this.dataForm.approvalFlag = res.data.enabledMark
+      getBusinessFlowInfo('b029')
+        .then((res) => {
+          if (res.data) {
+            if (res.data.enabledMark) {
+              this.flowData = res.data
+              this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+              this.dataForm.approvalFlag = res.data.enabledMark
+            } else {
+              this.flowTemplateJson = {}
+              this.dataForm.approvalFlag = false
+              this.$message.error('未找到审批流程！')
+            }
           } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
-            this.$message.error('未找到审批流程！')
           }
-        } else {
-          this.flowTemplateJson = {}
-          this.dataForm.approvalFlag = false
-        }
-      }).catch(() => { })
-    },
+        })
+        .catch(() => { })
+    }
   }
 }
 </script>

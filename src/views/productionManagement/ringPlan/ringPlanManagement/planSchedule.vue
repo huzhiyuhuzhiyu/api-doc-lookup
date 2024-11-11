@@ -44,7 +44,6 @@
                   <el-descriptions-item label="计划日期">{{ dataForm.planStartDate }}至{{ dataForm.planEndDate
                     }}</el-descriptions-item>
                 </el-descriptions>
-
               </div>
             </el-collapse-item>
             <el-collapse-item title="甘特图信息" name="info">
@@ -95,7 +94,7 @@ export default {
       btnType: "",
 
       title: "",
-
+      planScheduleData:[],
       prodOrderId: "",
       gantttt: {
         data: [
@@ -299,7 +298,7 @@ export default {
     // gantt.config.end_date = new Date(2023, 5, 26);
     gantt.config.columns = this.ganttColumns;
     gantt.config.scales = [
-      { unit: 'month', step: 1, format: '%Y年%F' },
+      { unit: 'month', step: 1, format: this.monthScaleTemplate },
       { unit: 'day', step: 1, format: this.formatWeekday },
     ];
     // gantt.getMarker(markerId);
@@ -339,7 +338,12 @@ export default {
     gantt.clearAll() // 先清空，再添加，就不会有缓存
   },
   methods: {
-
+    monthScaleTemplate (date) {
+      const dateToStrss = gantt.date.date_to_str("%Y年");
+      const dateToStrs = gantt.date.date_to_str("%M");
+      // return dateToStrss(date)+dateToStrs(date)+dateToStr(date)+'日';
+      return dateToStrss(date) +  dateToStrs(date);
+    },
     formatWeekday(date) { //1号 周一
       const dateToStr = gantt.date.date_to_str("%d");
       const dateToStrss = gantt.date.date_to_str("%Y年");
@@ -372,6 +376,7 @@ export default {
     getPlanScheduleFun(id) {
       getPlanSchedule(id).then(res => {
         console.log("进度", res);
+        this.planScheduleData=res.data
         let arr = []
         res.data.forEach(item => {
           let obj = {
@@ -927,5 +932,17 @@ $footerPadding: '10px';
 .orderNo ::v-deep .el-descriptions-item__content {
   font-size: 20px;
   font-weight: bold;
+}
+.stoclInfo{
+  position: relative;
+}
+.arrange{
+  position: absolute;
+    top: 0px;
+    right: 10px;
+    width: 150px;
+}
+::v-deep .gantt_cell_tree {
+  border-right: 0.5px solid #e0e0e0;
 }
 </style>

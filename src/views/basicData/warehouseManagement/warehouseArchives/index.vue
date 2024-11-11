@@ -583,8 +583,8 @@ export default {
       this.$confirm("确定开启该仓库菜单吗", "提示", {
         type: 'warning'
       }).then(() => {
-      this.productClassAttribute = false
-      enableWarehouseMenu(obj).then(res => {
+        this.productClassAttribute = false
+        enableWarehouseMenu(obj).then(res => {
           this.$message.success("开启成功")
           setTimeout(() => {
             location.reload()
@@ -605,26 +605,29 @@ export default {
       }
       this.$confirm("确定" + msg + "该仓库吗", "提示", {
         type: 'warning'
-      })
-        .then(() => {
-          editWarehouseState(row).then((res) => {
-            this.initData()
-            this.$message({
-              type: 'success',
-              message: row.state == 'enable' ? '开启成功' : '禁用成功',
-              duration: 1500
-            })
+      }).then(() => {
+        editWarehouseState(scope.row).then((res) => {
+          console.log(5555);
+
+          this.initData()
+          this.$message({
+            type: 'success',
+            message: scope.row.state == 'enable' ? '开启成功' : '禁用成功',
+            duration: 1500
           })
-        })
-        .catch(() => {
-          if (scope.row.state == 'disabled') {
-            this.treeList[scope.$index].state = 'enable'
+        }).catch(error => {
+          this.initData()
 
-          } else {
-            this.treeList[scope.$index].state = 'disabled'
-
-          }
         })
+      }).catch(() => {
+        if (scope.row.state == 'disabled') {
+          this.treeList[scope.$index].state = 'enable'
+
+        } else {
+          this.treeList[scope.$index].state = 'disabled'
+
+        }
+      })
     },
     locationStatusChange(scope) {
       let msg;

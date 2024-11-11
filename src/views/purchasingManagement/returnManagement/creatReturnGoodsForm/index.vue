@@ -353,7 +353,7 @@
 
 
                 <span slot="footer" class="dialog-footer">
-                  <el-button @click="goBack">返回列表</el-button>
+                  <el-button @click="goLine">返回通知单列表</el-button>
                   <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()"> {{ btnText }}</el-button>
                   <el-button v-else type="primary" @click="continueAdd()"> {{ btnText }}</el-button>
                 </span>
@@ -699,6 +699,11 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    goLine() {
+      this.$router.push({
+        path: '/purchasingManagement/returnManagement/purchaseReturnNote'
+      })
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -1404,39 +1409,45 @@ export default {
           .then((res) => {
             let msg = ''
             if (value == 'draft') {
-              msg = '保存成功'
+              this.submitmethodsTitle = "保存成功"
             } else if (value == 'submit') {
-              msg = '提交成功'
+              this.submitmethodsTitle = "提交成功"
             }
+            this.tipsvisible = true
+            // if (value == 'draft') {
+            //   msg = '保存成功'
+            // } else if (value == 'submit') {
+            //   msg = '提交成功'
+            // }
 
-            this.$message({
-              message: msg,
-              type: 'success',
-              duration: 1500,
-              onClose: () => {
-                // this.visible = false
-                this.btnLoading = false
-                this.dataFormTwo.productData = []
-                this.dataForm = {
-                  exchangeGoodsFlag: false,
-                  inspectionStatus: '',
-                  receiptReturnType: 'back',
-                  notificationType: 'procure',
-                  notifyType: 'sale',
-                  logisticsCompany: '',
-                  ordersId: '',
-                  deliverDate: '',
-                  partnerName: '',
-                  orderNo: '',
-                  logisticsNumber: '',
+            // this.$message({
+            //   message: msg,
+            //   type: 'success',
+            //   duration: 1500,
+            //   onClose: () => {
+            //     // this.visible = false
+            //     this.btnLoading = false
+            //     this.dataFormTwo.productData = []
+            //     this.dataForm = {
+            //       exchangeGoodsFlag: false,
+            //       inspectionStatus: '',
+            //       receiptReturnType: 'back',
+            //       notificationType: 'procure',
+            //       notifyType: 'sale',
+            //       logisticsCompany: '',
+            //       ordersId: '',
+            //       deliverDate: '',
+            //       partnerName: '',
+            //       orderNo: '',
+            //       logisticsNumber: '',
 
-                  cooperativePartnerId: '',
-                  remark: ''
-                }
-                this.$refs.dataForm.resetFields()
-                this.init()
-              }
-            })
+            //       cooperativePartnerId: '',
+            //       remark: ''
+            //     }
+            //     this.$refs.dataForm.resetFields()
+            //     this.init()
+            //   }
+            // })
           })
           .catch(() => {
             this.btnLoading = false

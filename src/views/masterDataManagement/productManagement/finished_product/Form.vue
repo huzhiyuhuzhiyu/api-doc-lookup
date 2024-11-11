@@ -46,6 +46,7 @@ import { getCooperativeData, getcategoryTree as getcategoryCoop, getByCode } fro
 import { getcategoryTree, getUnitData, detailUnitData } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getbimProductAttributesList, getbimProductsModelList } from '@/api/masterDataManagement/index'
 import tabs from './params'
+import { getProjectList } from '@/api/system/projectManagement'
 export default {
   data() {
     return {
@@ -173,6 +174,15 @@ export default {
           type: 'select',
           options: [{ label: '是', value: true }, { label: '否', value: false }],
           clearable: false,
+          itemRules: [{ required: true, trigger: 'change' }],
+          itemDisabled: false
+        },
+        {
+          prop: 'projectId',
+          label: '所属项目',
+          value: '',
+          type: 'select',
+          options: [],
           itemRules: [{ required: true, trigger: 'change' }],
           itemDisabled: false
         }
@@ -549,6 +559,17 @@ export default {
             }
           }
         }
+      }
+      if (tc.prop === 'projectId') {
+        let obj = {
+          pageNum: 1,
+          pageSize: -1
+        }
+        getProjectList(obj).then((res) => {
+          tc.options = res.data.records.map((item) => {
+            return { label: item.name, value: item.id }
+          })
+        })
       }
     })
   },

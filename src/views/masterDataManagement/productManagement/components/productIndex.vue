@@ -134,6 +134,8 @@
               </template>
             </template>
           </el-table-column>
+          <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="userInfo.projectId">
+          </el-table-column>
           <el-table-column prop="productStatus" label="产品状态" width="120" align="center">
             <template slot-scope="{ row }">
               <el-tag type="success" disable-transitions v-if="row.productStatus == 'enable'">启用</el-tag>
@@ -283,7 +285,7 @@ import {
 import { getUnitData, detailUnitData } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getCooperativeData } from '@/api/basicData/index'
 import { getcategoryTree as getcategoryCoop } from '@/api/basicData/materialSettings'
-
+import { mapGetters } from "vuex"
 export default {
   components: { Form, ExportForm, SuperQuery },
   name: 'productCom',
@@ -611,7 +613,8 @@ export default {
     }
   },
   computed: {
-    ...mapState('user', ['token'])
+    ...mapState('user', ['token']),
+    ...mapGetters(['userInfo'])
   },
   methods: {
     quickAdd() {

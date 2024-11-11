@@ -50,9 +50,11 @@
 
           <el-table-column prop="status" label="启用状态" min-width="120" align="center">
               <template slot-scope="scope">
-                <el-switch @change="changeState(scope.row)" v-model="scope.row.status"
-                active-value="enable" inactive-value="disabled">
-                </el-switch>
+                <span @click.stop="">
+                  <el-switch @change="changeState(scope.row)" v-model="scope.row.status"
+                  active-value="enable" inactive-value="disabled">
+                  </el-switch>
+                </span>
               </template>
             </el-table-column>
           <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
@@ -179,7 +181,7 @@ export default {
         if (res.msg === 'Success') {
           this.initData()
         }
-      })
+      }).catch(()=>this.initData())
     },
     sortChange({ prop, order }) {
       let newProp = ''

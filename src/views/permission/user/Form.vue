@@ -5,30 +5,47 @@
         <el-page-header @back="goBack" :content="onlyRead ? '查看用户信息' : !this.dataForm.id ? '新建用户' : '编辑用户信息'" />
         <div class="options" v-if="!onlyRead">
           <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
-            提交</el-button>
+            提交
+          </el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
       <div class="main">
         <el-tabs v-model="activeName">
-          <el-alert title="注意：密码默认为123456" type="warning" :closable="false" show-icon style="margin-bottom: 3px;" v-if="!this.dataForm.id" />
+          <el-alert title="注意：密码默认为123456" type="warning" :closable="false" show-icon style="margin-bottom: 3px;"
+            v-if="!this.dataForm.id" />
           <el-collapse v-model="activeNames">
             <el-collapse-item title="基本信息" name="basicInfo">
-              <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top" label-width="120px">
+              <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
+                label-width="120px">
                 <el-row :gutter="30" class="custom-row">
                   <el-col :sm="8" :xs="24" v-if="isval">
                     <el-form-item label="所属员工" prop="name">
-                      <ComSelect-page :dataFormatting="dataFormatting" v-model="dataForm.name" @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择员工" treeTitle="部门" placeholder="请选择员工" :methodArr="ProductMethodArr" :listMethod="getbaseEmployee" :listRequestObj="partnerRequestObj" :searchList="partnerSearchList" :treeNodeClick="PartnerTreeNodeClick" :isdisabled="onlyRead" />
+                      <ComSelect-page :dataFormatting="dataFormatting" v-model="dataForm.name" @change="partnerChange"
+                        :tableItems="partnerTableItems" dialogTitle="选择员工" treeTitle="部门" placeholder="请选择员工"
+                        :methodArr="ProductMethodArr" :listMethod="getbaseEmployee" :listRequestObj="partnerRequestObj"
+                        :searchList="partnerSearchList" :treeNodeClick="PartnerTreeNodeClick" :isdisabled="onlyRead" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="isval?8:12" :xs="24">
+                  <el-col :sm="isval ? 8 : 12" :xs="24">
                     <el-form-item label="姓名" prop="realName">
                       <el-input v-model="dataForm.realName" placeholder="请输入姓名" :disabled="onlyRead || isval" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="isval?8:12" :xs="24">
+                  <el-col :sm="isval ? 8 : 12" :xs="24">
+                    <el-form-item label="所属项目" prop="projectId">
+                      <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" :disabled="onlyRead"
+                        style="width: 100%;">
+                        <el-option v-for="item in projectIdData" :key="item.id" :label="item.name"
+                          :value="item.id"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="isval ? 8 : 12" :xs="24">
                     <el-form-item label="所属组织" prop="organizeIdTree" ref="organizeIdTree">
-                      <ComSelect v-model="dataForm.organizeIdTree" placeholder="请选择所属组织" :disabled="onlyRead || !!this.dataForm.id || isval" multiple @change="onOrganizeChange" clearable auth />
+                      <ComSelect v-model="dataForm.organizeIdTree" placeholder="请选择所属组织"
+                        :disabled="onlyRead || !!this.dataForm.id || isval" multiple @change="onOrganizeChange"
+                        clearable auth />
                     </el-form-item>
                   </el-col>
                   <el-col :sm="8" :xs="24">
@@ -43,15 +60,18 @@
                   </el-col>
                   <el-col :sm="8" :xs="24" v-if="!dataForm.id">
                     <el-form-item label="确认密码" prop="submitpassword">
-                      <el-input placeholder="请输入确认密码" v-model="dataForm.submitpassword" show-password :disabled="onlyRead"></el-input>
+                      <el-input placeholder="请输入确认密码" v-model="dataForm.submitpassword" show-password
+                        :disabled="onlyRead"></el-input>
                     </el-form-item>
                   </el-col>
                   <el-col :sm="8" :xs="24">
                     <el-form-item label="角色" prop="roleId">
-                      <el-select v-model="roleId" placeholder="请选择角色" :disabled="onlyRead" @change="onChange('roleId')" style="width: 100%;" @visible-change="visibleChange" multiple filterable clearable>
-                        <el-option-group v-for="group in roleTreeData" :key="group.id" :label="group.fullName + (group.num ? '【' + group.num + '】' : '')">
-                          <el-option v-for="item in group.children" :key="group.id + item.id" :label="item.fullName" :value="item.id">
-                          </el-option>
+                      <el-select v-model="roleId" placeholder="请选择角色" :disabled="onlyRead" @change="onChange('roleId')"
+                        style="width: 100%;" @visible-change="visibleChange" multiple filterable clearable>
+                        <el-option-group v-for="group in roleTreeData" :key="group.id"
+                          :label="group.fullName + (group.num ? '【' + group.num + '】' : '')">
+                          <el-option v-for="item in group.children" :key="group.id + item.id" :label="item.fullName"
+                            :value="item.id"></el-option>
                         </el-option-group>
                       </el-select>
                     </el-form-item>
@@ -68,15 +88,17 @@
                   </el-col>
                   <el-col :sm="8" :xs="24">
                     <el-form-item label="状态" prop="enabledMark">
-                      <el-select v-model="dataForm.enabledMark" filterable placeholder="请选择状态" :disabled="onlyRead" clearable style="width: 100%;">
-                        <el-option v-for="item in enabledMarkList" :key="item.id" :label="item.label" :value="item.value">
-                        </el-option>
+                      <el-select v-model="dataForm.enabledMark" filterable placeholder="请选择状态" :disabled="onlyRead"
+                        clearable style="width: 100%;">
+                        <el-option v-for="item in enabledMarkList" :key="item.id" :label="item.label"
+                          :value="item.value"></el-option>
                       </el-select>
                     </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="备注" prop="remark">
-                      <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="onlyRead" type="textarea" maxlength="200" :rows="2" />
+                      <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="onlyRead" type="textarea"
+                        maxlength="200" :rows="2" />
                     </el-form-item>
                   </el-col>
                 </el-row>
@@ -92,21 +114,24 @@
 <script>
 import { getRoleByOrganize } from '@/api/permission/role'
 import { getDepartmentSelectorByAuth } from '@/api/permission/department'
-import {
-  getbaseEmployee
-} from '@/api/permission/user'
+import { getbaseEmployee } from '@/api/permission/user'
 import { createUser, updateUser, getUserInfo } from '@/api/permission/user'
+import { getProjectList } from '@/api/system/projectManagement'
+import { mapGetters } from "vuex"
 export default {
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+  created() {
+    this.getProjectList()
+  },
   data() {
     return {
-      enabledMarkList: [
-        { label: '启用', value: 1 },
-        { label: '锁定', value: 2 },
-        { label: '禁用', value: 0 }
-      ],
+      enabledMarkList: [{ label: '启用', value: 1 }, { label: '锁定', value: 2 }, { label: '禁用', value: 0 }],
       isval: false,
       roleTreeData: [],
       roleId: [],
+      projectIdData: [],
       ProductMethodArr: { method: getDepartmentSelectorByAuth, requestObj: 0 },
       getDepartmentSelectorByAuth,
       partnerSearchList: [
@@ -114,21 +139,25 @@ export default {
         { prop: 'name', label: '姓名', type: 'input' }
       ],
       partnerRequestObj: {
-        account: "",
+        account: '',
         userFlag: 1,
-        employeeStatus: "",
-        employeeType: "",
-        orderItems: [{
-          asc: true,
-          column: "job_number"
-        }, {
-          asc: false,
-          column: "create_time"
-        }],
+        employeeStatus: '',
+        employeeType: '',
+        orderItems: [
+          {
+            asc: true,
+            column: 'job_number'
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
         organizeId: '',
         pageNum: 1,
         pageSize: 20,
-        realName: ""
+        realName: '',
+        userFlag: false
       },
       // 客户列表字段
       partnerTableItems: [
@@ -137,12 +166,12 @@ export default {
         { prop: 'sex', label: '性别' },
         { prop: 'organizeName', label: '所属部门' }
       ],
-      activeNames: ["basicInfo"],
+      activeNames: ['basicInfo'],
       requestObj: {
-        customerStatus: 'private_sea',
+        customerStatus: 'private_sea'
       },
       getbaseEmployee,
-      activeName: "jcInfo",
+      activeName: 'jcInfo',
       visible: false,
       formLoading: false,
       btnLoading: false,
@@ -153,6 +182,7 @@ export default {
         id: '',
         account: '',
         name: '',
+        projectId: '', //所属项目
         realName: '',
         mobilePhone: '',
         email: '',
@@ -165,38 +195,34 @@ export default {
         remark: ''
       },
       dataRule: {
-        name: [
-          { required: true, message: '请选择所属员工', trigger: 'blur' },
-        ],
-        account: [
-          { required: true, message: '请输入账户', trigger: 'blur' },
-        ],
-        realName: [
-          { required: true, message: '请输入姓名', trigger: 'blur' },
-        ],
+        name: [{ required: true, message: '请选择所属员工', trigger: 'blur' }],
+        projectId: [{ required: true, message: '请选择所属项目', trigger: 'change' }],
+        account: [{ required: true, message: '请输入账户', trigger: 'blur' }],
+        realName: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
         mobilePhone: [
           { required: true, message: '请输入手机号', trigger: 'blur' },
           { validator: this.formValidate('iphone'), trigger: 'blur' }
         ],
-        organizeIdTree: [
-          { required: true, message: '请选择所属组织', trigger: 'blur' },
-        ],
-        roleId: [
-          { required: true, message: '请选择角色', trigger: 'blur' },
-        ],
-        enabledMark: [
-          { required: true, message: '请选择状态', trigger: 'blur' },
-        ],
-        password: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-        ],
-        submitpassword: [
-          { required: true, message: '请输入确认密码', trigger: 'blur' },
-        ]
-      },
+        organizeIdTree: [{ required: true, message: '请选择所属组织', trigger: 'blur' }],
+        roleId: [{ required: true, message: '请选择角色', trigger: 'blur' }],
+        enabledMark: [{ required: true, message: '请选择状态', trigger: 'blur' }],
+        password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+        submitpassword: [{ required: true, message: '请输入确认密码', trigger: 'blur' }]
+      }
     }
   },
   methods: {
+    getProjectList() {
+      let query = {
+        pageNum: 1,
+        pageSize: -1
+      }
+      getProjectList(query)
+        .then((res) => {
+          this.projectIdData = res.data.records
+        })
+        .catch(() => { })
+    },
     onChange(key) {
       this.dataForm[key] = this[key].join()
     },
@@ -206,16 +232,16 @@ export default {
       this.roleId = []
       this.roleTreeData = []
       this.$nextTick(() => {
-        this.$refs.dataForm.clearValidate(['organizeIdTree']);
+        this.$refs.dataForm.clearValidate(['organizeIdTree'])
       })
       if (!val || !val.length) return
       this.getOptionsByOrgIds(val)
     },
     getOptionsByOrgIds(organizeIdTree) {
-      const organizeIds = organizeIdTree.map(o => o[o.length - 1])
+      const organizeIds = organizeIdTree.map((o) => o[o.length - 1])
       this.dataForm.organizeId = organizeIds.join()
-      getRoleByOrganize(organizeIds).then(res => {
-        this.roleTreeData = res.data.list.filter(o => o.children && Array.isArray(o.children) && o.children.length)
+      getRoleByOrganize(organizeIds).then((res) => {
+        this.roleTreeData = res.data.list.filter((o) => o.children && Array.isArray(o.children) && o.children.length)
       })
     },
     visibleChange(val) {
@@ -227,22 +253,22 @@ export default {
       }
     },
     dataFormatting(res) {
-      let treeData = res.data.list.map(item => {
-        item.name = item.fullName;
+      let treeData = res.data.list.map((item) => {
+        item.name = item.fullName
         item.childrenList = this.transform(item.children)
-        return item;
-      });
+        return item
+      })
       return treeData
     },
     transform(nodes) {
-      return nodes.map(node => {
+      return nodes.map((node) => {
         if (node.children) {
-          node.childrenList = this.transform(node.children);
-          delete node.children; // 删除原来的children属性
+          node.childrenList = this.transform(node.children)
+          delete node.children // 删除原来的children属性
         }
-        node.name = node.fullName;
-        return node;
-      });
+        node.name = node.fullName
+        return node
+      })
     },
     PartnerTreeNodeClick(data, node, listQuery) {
       if (listQuery.organizeId === data.id) return listQuery
@@ -250,18 +276,23 @@ export default {
       return listQuery
     },
     partnerChange(val, data, paramsObj) {
-      if (data && data.length) { // 数据有效，进行更新
+      if (data && data.length) {
+        // 数据有效，进行更新
+        console.log(data, '[]')
         this.dataForm.name = data[0].all.name
         this.dataForm.employeeStatus = data[0].all.employeeStatus
         this.dataForm.employeeType = data[0].all.employeeType
         this.dataForm.employeeId = data[0].all.id
+        this.projectId = data[0].all.projectId
+        this.dataForm.projectId = data[0].all.projectId
         if (data[0].all.postId) this.dataForm.organizeIdTree = data[0].all.organizeIdTree
         if (this.dataForm.organizeIdTree && this.dataForm.organizeIdTree.length) {
           this.getOptionsByOrgIds(this.dataForm.organizeIdTree)
         }
         this.dataForm.mobilePhone = data[0].all.mobileNumber
         this.dataForm.realName = data[0].all.name
-      } else { // 不选择任何内容，置空绑定的值
+      } else {
+        // 不选择任何内容，置空绑定的值
         this.dataForm.employeeStatus = ''
         this.dataForm.employeeType = ''
         this.dataForm.employeeId = ''
@@ -286,14 +317,16 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {
-          getUserInfo(this.dataForm.id).then(res => {
-            this.dataForm = res.data
-            if (this.dataForm.roleId) this.roleId = this.dataForm.roleId.split(',')
-            if (this.dataForm.organizeIdTree && this.dataForm.organizeIdTree.length) {
-              this.getOptionsByOrgIds(this.dataForm.organizeIdTree)
-            }
-            this.formLoading = false
-          }).catch(() => this.formLoading = false)
+          getUserInfo(this.dataForm.id)
+            .then((res) => {
+              this.dataForm = res.data
+              if (this.dataForm.roleId) this.roleId = this.dataForm.roleId.split(',')
+              if (this.dataForm.organizeIdTree && this.dataForm.organizeIdTree.length) {
+                this.getOptionsByOrgIds(this.dataForm.organizeIdTree)
+              }
+              this.formLoading = false
+            })
+            .catch(() => (this.formLoading = false))
         } else {
           this.dataForm.password = '123456'
           this.dataForm.submitpassword = '123456'
@@ -305,31 +338,59 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           if (this.dataForm.submitpassword != this.dataForm.password) return this.$message.error('两次密码输入不一致')
-          this.btnLoading = true;
-          let obj = {
-            ...this.dataForm
-          }
-          let formMethod = this.dataForm.id ? updateUser : createUser
-          formMethod(obj).then(res => {
-            let msg = ""
-            if (formMethod == updateUser) {
-              msg = '修改成功'
-            } else {
-              msg = '新建成功'
+          let submitFlag = false
+          console.log(this.userInfo.projectId, 'this.userInfo.projectId123')
+          if (this.userInfo.projectId) {
+            if (this.dataForm.projectId !== this.projectId) {
+              this.$confirm('所属项目已更改是否确定修改, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+              })
+                .then(() => {
+                  submitFlag = true
+                })
+                .catch(() => {
+                  submitFlag = false
+                  this.$message({
+                    type: 'info',
+                    message: '已取消'
+                  })
+                })
             }
-            this.$message({
-              message: msg,
-              type: 'success',
-              duration: 1500,
-              onClose: () => {
-                this.visible = false
+          } else {
+            submitFlag = true
+          }
+
+          if (submitFlag) {
+            this.btnLoading = true
+            let obj = {
+              ...this.dataForm
+            }
+            let formMethod = this.dataForm.id ? updateUser : createUser
+            formMethod(obj)
+              .then((res) => {
+                let msg = ''
+                if (formMethod == updateUser) {
+                  msg = '修改成功'
+                } else {
+                  msg = '新建成功'
+                }
+                this.$message({
+                  message: msg,
+                  type: 'success',
+                  duration: 1500,
+                  onClose: () => {
+                    this.visible = false
+                    this.btnLoading = false
+                    this.$emit('close', true)
+                  }
+                })
+              })
+              .catch(() => {
                 this.btnLoading = false
-                this.$emit('close', true)
-              }
-            })
-          }).catch(() => {
-            this.btnLoading = false
-          })
+              })
+          }
         }
       })
     }
@@ -340,9 +401,11 @@ export default {
 .JNPF-preview-main .main {
   padding-top: 0;
 }
+
 ::v-deep .el-tabs--top .el-tabs__item.is-top:last-child {
   padding-right: 0 !important;
 }
+
 ::v-deep .el-tabs__item {
   padding: 0 10px !important;
 }
@@ -350,6 +413,7 @@ export default {
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
   padding-left: 0px !important;
 }
+
 ::v-deep .el-collapse-item__header {
   line-height: 33px;
   font-size: 18px;
@@ -372,9 +436,11 @@ export default {
 ::v-deep .el-collapse-item__content {
   padding-bottom: 0px;
 }
+
 ::v-deep .el-form-item__content p {
   border: none;
 }
+
 ::v-deep .JNPF-common-page-header {
   padding: 5px 10px !important;
 }

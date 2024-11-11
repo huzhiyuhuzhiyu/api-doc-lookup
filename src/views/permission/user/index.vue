@@ -128,7 +128,8 @@
             </template>
           </el-table-column>
           <!-- 这里的 width 会被转成 min-width -->
-
+          <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="userInfo.projectId">
+          </el-table-column>
           <el-table-column prop="mobilePhone" label="手机号码" width="160" />
           <el-table-column prop="organizeName" label="所属组织" min-width="280" />
           <el-table-column prop="roleName" label="角色" min-width="140" />
@@ -268,6 +269,7 @@ import {
   getUserToDing
 
 } from '@/api/system/sysConfig'
+import { mapGetters } from "vuex"
 export default {
   name: 'permission-user',
   components: {
@@ -394,6 +396,9 @@ export default {
       },
       deep: true,
     }
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   created() {
     this.getOrganizeList()

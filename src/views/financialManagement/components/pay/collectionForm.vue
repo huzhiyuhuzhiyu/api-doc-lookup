@@ -319,7 +319,8 @@ export default {
       this.dataForm.reconciliationType = this.reconciliationType
       this.dataForm.paymentAmount = Number(this.paymentAmount) + Number(this.deductionAmount)
       let queryData = {
-        paymentRecords: this.dataForm
+        paymentRecords: this.dataForm,
+        prePayIdList: this.prePayIdList
       }
       let msg = true
       this.$refs['dataForm'].validate((valid) => {

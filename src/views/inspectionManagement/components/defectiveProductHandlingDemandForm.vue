@@ -395,8 +395,8 @@ export default {
           value: '',
           type: 'input',
           sm: 6,
-          render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
-          // itemDisabled: this.qualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
+          // render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
+          itemDisabled: this.qualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
         },
         {
           prop: 'unqualifiedQuantity',
@@ -405,7 +405,7 @@ export default {
           type: 'input',
           sm: 6,
           // render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
-          // itemDisabled: this.unqualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
+          itemDisabled: this.unqualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
         },
         {
           prop: 'scrapQuantity',
@@ -414,9 +414,9 @@ export default {
           type: 'input',
           sm: 6,
           render:
-            !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType)
+            !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType),
           // render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
-          // itemDisabled: this.unqualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
+          // itemDisabled: this.scrapQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
         },
         {
           prop: 'repairQuantity',
@@ -425,13 +425,13 @@ export default {
           type: 'input',
           sm: 6,
           render:
-            !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType)
+            !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType),
           // render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
-          // itemDisabled: this.unqualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
+          // itemDisabled: this.repairQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
         },
 
 
-        { prop: "description", label: "备注", value: "", type: "textarea", itemRules: [{ required: true, trigger: 'blur' }], sm: 12 },
+        { prop: "description", label: "处理说明", value: "", type: "textarea", itemRules: [{ required: true, trigger: 'blur' }], sm: 12 },
       ],
         this.inspectionInfo = [
           {
@@ -1042,24 +1042,24 @@ export default {
       // repairQuantityDisabled      返工返修数量是否禁用
       if (val === 'qualified' || val === 'concessive_acceptance') {
         // 合格、让步接收
-        this.dataForm.qualifiedQuantity = this.dataForm.inspectionQuantity
+        this.dataForm.qualifiedQuantity = this.dataForm.inspectionUnqualifiedQuantity
         this.dataForm.unqualifiedQuantity = 0
         this.dataForm.scrapQuantity = 0
         this.dataForm.repairQuantity = 0
         this.qualifiedQuantityDisabled = true
         this.unqualifiedQuantityDisabled = true
-        this.dataForm.scrapQuantityDisabled = true
-        this.dataForm.repairQuantityDisabled = true
+        this.scrapQuantityDisabled = true
+        this.repairQuantityDisabled = true
       } else if (val === 'unqualified') {
         // 不合格
         this.dataForm.qualifiedQuantity = 0
-        this.dataForm.unqualifiedQuantity = this.dataForm.inspectionQuantity
+        this.dataForm.unqualifiedQuantity = this.dataForm.inspectionUnqualifiedQuantity
         this.dataForm.scrapQuantity = 0
         this.dataForm.repairQuantity = 0
         this.qualifiedQuantityDisabled = true
         this.unqualifiedQuantityDisabled = true
-        this.dataForm.scrapQuantityDisabled = true
-        this.dataForm.repairQuantityDisabled = true
+        this.scrapQuantityDisabled = true
+        this.repairQuantityDisabled = true
       } else if (val === 'select') {
         // 挑选
         this.dataForm.qualifiedQuantity = ''
@@ -1068,40 +1068,40 @@ export default {
         this.dataForm.repairQuantity = 0
         this.qualifiedQuantityDisabled = false
         this.unqualifiedQuantityDisabled = false
-        this.dataForm.scrapQuantityDisabled = true
-        this.dataForm.repairQuantityDisabled = true
+        this.scrapQuantityDisabled = true
+        this.repairQuantityDisabled = true
       } else if (val === 'discard') {
         // 报废
         console.log(this.dataForm, 'form')
         this.dataForm.qualifiedQuantity = 0
-        this.dataForm.unqualifiedQuantity = this.dataForm.inspectionQuantity
-        this.dataForm.scrapQuantity = this.dataForm.inspectionQuantity
+        this.dataForm.unqualifiedQuantity = this.dataForm.inspectionUnqualifiedQuantity
+        this.dataForm.scrapQuantity = this.dataForm.inspectionUnqualifiedQuantity
         this.dataForm.repairQuantity = 0
         this.qualifiedQuantityDisabled = true
         this.unqualifiedQuantityDisabled = true
-        this.dataForm.scrapQuantityDisabled = true
-        this.dataForm.repairQuantityDisabled = true
+        this.scrapQuantityDisabled = true
+        this.repairQuantityDisabled = true
       } else if (val === 'repair') {
         // 返工返修
         this.dataForm.qualifiedQuantity = 0
-        this.dataForm.unqualifiedQuantity = this.dataForm.inspectionQuantity
+        this.dataForm.unqualifiedQuantity = this.dataForm.inspectionUnqualifiedQuantity
         this.dataForm.scrapQuantity = 0
-        this.dataForm.repairQuantity = this.dataForm.inspectionQuantity
+        this.dataForm.repairQuantity = this.dataForm.inspectionUnqualifiedQuantity
         this.qualifiedQuantityDisabled = true
         this.unqualifiedQuantityDisabled = true
-        this.dataForm.scrapQuantityDisabled = true
-        this.dataForm.repairQuantityDisabled = true
+        this.scrapQuantityDisabled = true
+        this.repairQuantityDisabled = true
       } else if (val === 'discard_repair') {
         // 报废和返修
         this.dataForm.qualifiedQuantity = 0
-        this.dataForm.unqualifiedQuantity = this.dataForm.inspectionQuantity
+        this.dataForm.unqualifiedQuantity = this.dataForm.inspectionUnqualifiedQuantity
         this.dataForm.scrapQuantity = 0
         this.dataForm.repairQuantity = 0
 
         this.qualifiedQuantityDisabled = true
         this.unqualifiedQuantityDisabled = true
-        this.dataForm.scrapQuantityDisabled = false
-        this.dataForm.repairQuantityDisabled = false
+        this.scrapQuantityDisabled = false
+        this.repairQuantityDisabled = false
       }
 
       this.refeshDataFormItems()
@@ -1110,11 +1110,11 @@ export default {
     async handleConfirm(submitModel) {
       if (this.dataForm.treatmentResults == 'select') {
         console.log(Number(this.dataForm.unqualifiedQuantity) + Number(this.dataForm.qualifiedQuantity), 'oooppppp')
-        if (Number(this.dataForm.unqualifiedQuantity) + Number(this.dataForm.qualifiedQuantity) !== Number(this.dataForm.inspectionQuantity)) return this.$message.error('合格数量+不合格数量不等于检验单报检数量。');
+        if (Number(this.dataForm.unqualifiedQuantity) + Number(this.dataForm.qualifiedQuantity) !== Number(this.dataForm.inspectionUnqualifiedQuantity)) return this.$message.error('合格数量+不合格数量不等于检验不合格数量。');
       }
       if (this.dataForm.treatmentResults == 'discard_repair') {
         console.log(Number(this.dataForm.unqualifiedQuantity) + Number(this.dataForm.qualifiedQuantity), 'oooppppp')
-        if (Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !== Number(this.dataForm.inspectionQuantity)) return this.$message.error('报废数量+返修数量不等于不合格数量。');
+        if (Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !== Number(this.dataForm.inspectionUnqualifiedQuantity)) return this.$message.error('报废数量+返修数量不等于检验不合格数量。');
       }
 
 
@@ -1192,11 +1192,7 @@ export default {
           // 损失上报
           formMethod = lossQcUnqualifiedData
         }
-        let dataObj = {
-          attachmentList: this.datafilelist,
-          unqualified: this.dataForm,
-          flowData: this.flowData
-        }
+   
         console.log(this.dataForm, 'ooooooo')
         this.dataForm.treatmentDescription = this.dataForm.description
         this.dataForm.treatmentResults = this.dataForm.treatmentResults

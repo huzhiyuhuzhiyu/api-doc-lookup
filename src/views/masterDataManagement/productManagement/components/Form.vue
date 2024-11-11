@@ -17,9 +17,10 @@
           <template v-for="item in tabs">
             <!-- <el-tab-pane :label="item.tabName" :name="item.tabCode" :key="item.tabCode"> -->
             <el-collapse v-model="activeNames">
-              <el-collapse-item title="基本信息" name="basicInfo"
-                :class="['finish_product', 'semi_finished', 'raw_material', 'accessories'].includes(classAttribute) ? orderInfo : ''">
-
+              <el-collapse-item title="基本信息" name="basicInfo" :class="['finish_product', 'semi_finished', 'raw_material', 'accessories'].includes(classAttribute)
+                  ? orderInfo
+                  : ''
+                ">
                 <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
               </el-collapse-item>
               <el-collapse-item title="其他信息" name="otherInfo"
@@ -47,6 +48,7 @@ import { getByCode } from '@/api/basicData/index'
 import { getcategoryTree, getUnitData, detailUnitData } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getbimProductAttributesList, getbimProductsModelList } from '@/api/masterDataManagement/index'
 import tabs from './params'
+import { mapGetters } from "vuex"
 export default {
   props: {
     productName: {
@@ -101,6 +103,15 @@ export default {
           options: [{ label: '是', value: true }, { label: '否', value: false }],
           clearable: false,
           itemRules: [{ required: true, trigger: 'change' }]
+        },
+        {
+          prop: 'projectId',
+          label: '所属项目',
+          value: '',
+          type: 'select',
+          options: [],
+          itemRules: [{ required: true, trigger: 'change' }],
+          itemDisabled: false
         }
       ],
       unitRelList: []
@@ -119,14 +130,14 @@ export default {
           console.log(this.classAttribute, 'this.classAttribute666')
           if (tc.prop === 'productCategoryName') {
             tc.label = `${this.productName.slice(0, 2)}分类`
-            tc.itemRules = [{ required: true, message: `请选择${this.productName.slice(0, 2)}分类`, trigger: "no" }]
+            tc.itemRules = [{ required: true, message: `请选择${this.productName.slice(0, 2)}分类`, trigger: 'no' }]
           } else if (tc.prop === 'code') {
             tc.label = `${this.productName.slice(0, 2)}编码`
           } else if (tc.prop === 'name') {
             tc.label = `${this.productName.slice(0, 2)}名称`
           } else if (tc.prop === 'productSource') {
             tc.label = `${this.productName.slice(0, 2)}来源`
-            tc.options = [{ label: "采购", value: "purchase" }]
+            tc.options = [{ label: '采购', value: 'purchase' }]
             tc.value = 'purchase'
             tc.itemDisabled = true
           } else if (tc.prop === 'productStatus') {
@@ -210,7 +221,10 @@ export default {
                 callback()
               } else {
                 // this.jnpf.specialCodeUrl 对浏览器无法解析的url字符进行手动转码
-                checkDrawExist({ id: this.dataForm.id || '', drawingNo: this.jnpf.specialCodeUrl(this.dataForm.drawingNo) })
+                checkDrawExist({
+                  id: this.dataForm.id || '',
+                  drawingNo: this.jnpf.specialCodeUrl(this.dataForm.drawingNo)
+                })
                   .then((res) => {
                     if (!res.data) {
                       callback()
@@ -351,6 +365,17 @@ export default {
           }
         }
       }
+      if (tc.prop === 'projectId') {
+          let obj = {
+            pageNum: 1,
+            pageSize: -1
+          }
+          getProjectList(obj).then((res) => {
+            tc.options = res.data.records.map((item) => {
+              return { label: item.name, value: item.id }
+            })
+          })
+        }
     })
   },
   computed: {
@@ -360,20 +385,20 @@ export default {
         : this.title === `编辑${this.productName}档案`
           ? '编辑'
           : '只读'
-    }
+    },
+    ...mapGetters(['userInfo'])
   },
   methods: {
     async fetchData(code, flag) {
       try {
-        const data = await this.jnpf.getBillRuleConfigFun(code);
+        const data = await this.jnpf.getBillRuleConfigFun(code)
         this.codeConfig = data
         if (flag) {
           this.dataForm.code = data.number
           let target = this.tabs[0].tabContent.find((tc) => tc.prop === 'code')
           target.itemDisabled = !this.codeConfig.modifyFlag
         }
-      } catch (error) {
-      }
+      } catch (error) { }
     },
     init(id, btnType = false) {
       this.visible = true

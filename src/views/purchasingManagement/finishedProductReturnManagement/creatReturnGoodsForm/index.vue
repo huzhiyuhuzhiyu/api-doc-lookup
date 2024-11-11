@@ -166,7 +166,82 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
+                    <el-table-column prop="price" label="含税单价" width="130">
+                      <template slot="header">
+                        <span class="required">*</span>
+                        单价(含税)
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'price'" :rules="productRules.price">
+                          <el-input v-model="scope.row.price" placeholder="单价(含税)" :disabled="isReturnSwitch === '1'" />
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="totalAmount" label="金额" width="140">
+                      <template slot="header">
+                        <span class="required">*</span>
+                        金额(含税)
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'totalAmount'">
+                          <div class="viewData">
+                            <span>{{ scope.row.totalAmount ? scope.row.totalAmount : 0 }}</span>
+                          </div>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="taxRate" label="税率" width="140">
+                      <template slot="header">
+                        <span class="required">*</span>
+                        税率
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :rules="productRules.taxRate">
+                          <el-select v-model="scope.row.taxRate" :disabled="isReturnSwitch === '1'" placeholder="请选择"
+                            style="width: 100%;">
+                            <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
+                              :value="item.enCode"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
 
+                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150">
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxPrice'">
+                          <div class="viewData">
+                            <span>{{ scope.row.excludingTaxPrice }}</span>
+                          </div>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+
+                    <el-table-column prop="taxAmount" label="税额" min-width="100">
+                      <template slot="header">
+                        <span class="required">*</span>
+                        税额
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'taxAmount'">
+                          <div class="viewData">
+                            <span>{{ scope.row.taxAmount ? scope.row.taxAmount : 0 }}</span>
+                          </div>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180">
+                      <template slot="header">
+                        <span class="required">*</span>
+                        金额(不含税)
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxAmount'">
+                          <div class="viewData">
+                            <span>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</span>
+                          </div>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.remark" placeholder="请输入备注"
@@ -728,7 +803,7 @@ export default {
     this.getReturnswitch()
     this.getBimBusinessDetail()
     // this.handleChange()
-
+    this.getProductClassFun()
     this.getAttributeline()
     this.getClassAttribute()
     this.getWarehouseList()
@@ -740,6 +815,15 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    getProductClassFun() {
+      // 获取税率(数据字典)
+      getbimProductAttributes('585438081021126405').then((res) => {
+        res.data.list.forEach((item) => {
+          item.taxRate = item.enCode.replace('%', '') * 1
+        })
+        this.taxRateList = res.data.list
+      })
+    },
     getReturnswitch() {
       let obj = {
         businessCode: 'return',

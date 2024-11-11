@@ -147,6 +147,45 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
+                    <el-table-column prop="price" label="单价(含税)" width="120" :key="110" v-if="noticeswitch != 1">
+                      <template slot="header">
+                        <span class="required">*</span>单价(含税)
+                      </template>
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.price" :disabled="btnType == 'look' ? true : false"
+                          @input="watchPrice(scope.row, scope.$index)" placeholder="请输入"
+                          @blur="checkPrice(scope.row, scope.$index)">{{
+                            scope.row.price }}
+                        </el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="price" label="单价(含税)" width="120" :key="110" v-if="noticeswitch == 1">
+                    </el-table-column>
+
+                    <el-table-column prop="taxRate" label="税率" width="120" :key="171" v-if="noticeswitch == 1">
+                      <template slot-scope="scope">
+                        <div>{{ scope.row.taxRate + '%' }}</div>
+                      </template>
+
+                    </el-table-column>
+                    <el-table-column prop="taxRate" label="税率" width="120" :key="171" v-if="noticeswitch != 1" >
+                      <template slot="header">
+                        <span class="required">*</span>税率
+                      </template>
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;" :disabled="btnType == 'look' ? true : false"
+                          @change="changeTaxRate(scope.row, scope.$index)">
+                          <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
+                            :value="item.taxRate"></el-option>
+                        </el-select>
+                      </template>
+
+                    </el-table-column>
+                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
+                    <el-table-column prop="taxAmount" label="税额" width="140"></el-table-column>
+                    <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column>
+                    <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126">
+                    </el-table-column>
                     <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
                     <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
                     <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
@@ -178,7 +217,7 @@
 
 
           </el-tab-pane>
-          <el-tab-pane label="附件" name="annex"  v-if="isattachmentswitch == '1'">
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
             <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
           </el-tab-pane>
           <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
@@ -315,6 +354,45 @@
                       </el-input>
                     </el-form-item>
                   </template>
+                </el-table-column>
+                <el-table-column prop="price" label="单价(含税)" width="120" :key="110" v-if="noticeswitch != 1">
+                  <template slot="header">
+                    <span class="required">*</span>单价(含税)
+                  </template>
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.price" :disabled="btnType == 'look' ? true : false"
+                      @input="watchPrice(scope.row, scope.$index)" placeholder="请输入"
+                      @blur="checkPrice(scope.row, scope.$index)">{{
+                        scope.row.price }}
+                    </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="price" label="单价(含税)" width="120" :key="110" v-if="noticeswitch == 1">
+                </el-table-column>
+
+                <el-table-column prop="taxRate" label="税率" width="120" :key="171" v-if="noticeswitch == 1">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.taxRate + '%' }}</div>
+                  </template>
+
+                </el-table-column>
+                <el-table-column prop="taxRate" label="税率" width="120" :key="171" v-if="noticeswitch != 1">
+                  <template slot="header">
+                    <span class="required">*</span>税率
+                  </template>
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;" :disabled="btnType == 'look' ? true : false"
+                      @change="changeTaxRate(scope.row, scope.$index)">
+                      <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
+                        :value="item.taxRate"></el-option>
+                    </el-select>
+                  </template>
+
+                </el-table-column>
+                <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
+                <el-table-column prop="taxAmount" label="税额" width="140"></el-table-column>
+                <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column>
+                <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126">
                 </el-table-column>
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
                 <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
@@ -505,6 +583,92 @@
           <el-button v-else type="primary" @click="continueAdd()"> {{ btnText }}</el-button>
         </span>
       </el-dialog>
+      <el-dialog title="选择产品" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="allProVisible"
+        lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body>
+
+        <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
+          <div class="JNPF-common-layout-left">
+            <div class="JNPF-common-title">
+              <h2>产品分类</h2>
+              <span class="options">
+                <el-dropdown>
+                  <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
+                    <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
+                    <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </span>
+            </div>
+
+            <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
+              <el-tree ref="treeBox" :data="ProductTreeData" :props="defaultProps" :default-expand-all="expands"
+                highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
+                class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNodeAllProduct">
+                <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
+                  <i
+                    :class="[data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
+                  <span class="text" :title="data.name">{{ data.name }}</span>
+                </span>
+              </el-tree>
+            </el-scrollbar>
+          </div>
+          <div class="JNPF-common-layout-center JNPF-flex-main">
+            <el-row class="JNPF-common-search-box" :gutter="16">
+              <el-form @submit.native.prevent>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-input v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-input v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="searchAllProduct()">
+                      {{ $t('common.search') }}</el-button>
+                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetAllProduct()">{{
+                      $t('common.reset')
+                    }}
+                    </el-button>
+                  </el-form-item>
+                </el-col>
+
+              </el-form>
+            </el-row>
+            <div class="JNPF-common-layout-main JNPF-flex-main">
+              <JNPF-table v-loading="listLoading" :data="allproductData" hasC
+                @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
+                <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="drawingNo" label="品名规格" />
+                <el-table-column prop="productCategoryName" label="所属分类" />
+                <el-table-column prop="mainUnit" label="单位" />
+                <el-table-column prop="inventoryQuantity" label="库存数量">
+                  <template slot-scope="scope">
+                    <el-link type="primary" @click.native="viewFun(scope.row.id, 'inventoryFlag')">
+                      {{ scope.row.inventoryQuantity }}
+                    </el-link>
+                  </template>
+                </el-table-column>
+
+              </JNPF-table>
+              <pagination :total="allProductTotal" :page.sync="ProductListRequestObj.pageNum"
+                :limit.sync="ProductListRequestObj.pageSize" @pagination="initData2" />
+            </div>
+          </div>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="allProVisible = false">{{ $t('common.cancelButton') }}</el-button>
+          <el-button type="primary" :loading="btnLoading" @click="submitAllProduct()">
+            确定</el-button>
+        </span>
+      </el-dialog>
     </div>
   </transition>
 </template>
@@ -523,14 +687,18 @@ import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBimBusinessDetail } from '@/api/basicData/index'
-
+import { getProducts } from '@/api/masterDataManagement/index.js' // 产品列表
+import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
+import {
+  getbimProductAttributesList, getbimProductAttributes
+} from "@/api/masterDataManagement/index"
 export default {
   components: { Process, recordList },
   mixins: [busFlow],
   data() {
     return {
       isattachmentswitch: '',
-
+      noticeswitch: "",
       tipsvisible: false,
       submitmethodsTitle: "",
       btnText: "",
@@ -637,7 +805,11 @@ export default {
       // 选择全部产品参数
       allProVisible: false,
       ProductMethodArr: [
-        { label: "物料分类", classAttribute: "material", method: getcategoryTree, requestObj: { classAttribute: "material" } },
+        {
+          label: "物料分类", classAttribute: "material", method: getcategoryTree, requeseObj: {
+            classAttribute: "", type: "material",
+          }
+        },
       ],
       allproductData: [],
       allProductTotal: 0,
@@ -784,7 +956,9 @@ export default {
       flowData: {},
       approvalFlag: false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime: 0
+      endTime: 0,
+      taxRateList: [],
+      selectArr: [],
     }
   },
   computed: {
@@ -813,9 +987,114 @@ export default {
     let tBody = document.querySelectorAll('.el-table')[1]
     tBody.style.height = 'auto'
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
-
+    this.getAttachmentswitch()
   },
   methods: {
+    getAttachmentswitch() {
+      let obj = {
+        businessCode: 'return',
+        pageSize: -1
+      }
+      getBimBusinessSwitchConfigList(obj).then((res) => {
+        console.log(res);
+        res.data.return.forEach((item) => {
+          if (item.configKey == 'sale_order') {
+            this.noticeswitch = item.configValue1
+          }
+        })
+      })
+    },
+    // 含税价格输入失去焦点 检验不能为  0
+    checkPrice(row, index) {
+      if (!row.price) {
+        this.$message({
+          message: "请填写第" + (index + 1) + "行产品的单价(含税)",
+          type: 'error',
+          duration: 1500,
+        })
+      } else if (Number(row.price) == 0) {
+        this.$message({
+          message: "第" + (index + 1) + "行产品的单价(含税)必须大于0",
+          type: 'error',
+          duration: 1500,
+        })
+
+      }
+    },
+    // 监听含税价格输入
+    watchPrice(row, index) {
+      // 计算方向calculationDirection 转换系数ratio  副数量assistantNum
+      // 如果计算方向是乘 则副数量等于主数量*套数*转换系数
+      // 如果计算方向是除 则副数量等于主数量*套数/转换系数
+      // 使用正则表达式验证输入内容
+      row.price = row.price.replace(/[^\d.]/g, '');
+      let productArr = [...this.dataFormTwo.productData]
+
+      if (row.price.length == 1 && row.price == '.') {
+        // 如果第一位是小数点，则清空输入框
+        row.price = '';
+        row.assistantNum = '';
+      } else if (row.price.length == 2 && row.price[0] == '0' && row.price[1] != '.') {
+        // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
+        row.price = row.price.slice(0, 1) + '.' + row.price.slice(1);
+      } else if (row.price.length > 2 && row.price[0] == '0' && row.price[1] != '.') {
+        row.price = row.price.substring(1, row.price.length)
+      }
+
+
+      if (row.price.includes('.')) {
+        let dotCount = 0; // 小数点的数量
+        let result = ''; // 处理后的结果
+
+        for (let i = 0; i < row.price.length; i++) {
+          const char = row.price[i];
+          if (char === '.') {
+            if (dotCount === 0) {
+              // 第一个小数点保留
+              result += char;
+              dotCount++;
+            }
+          } else {
+            result += char;
+          }
+        }
+
+        row.price = result;
+        let arr = row.price.split('.')
+        if (arr[0].length > 8) {
+          arr[0] = arr[0].substring(0, 8)
+        }
+        if (arr[1].length > 4) {
+          arr[1] = arr[1].substring(0, 4)
+        }
+        row.price = arr[0] + '.' + arr[1]
+      } else {
+        if (row.price.length > 8) {
+          row.price = row.price.substring(0, 8);
+        }
+      }
+      productArr[index].excludingTaxPrice = this.jnpf.numberFormat(row.price / (1 + (row.taxRate * 1 / 100)), 2)
+      productArr[index].excludingTaxAmount = this.jnpf.numberFormat((row.excludingTaxPrice * row.deliveryQuantity), 2)
+      productArr[index].totalAmount = this.jnpf.numberFormat((row.price * row.deliveryQuantity), 2)
+
+      productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
+      this.dataFormTwo.productData = productArr
+    },
+    changeTaxRate(row, index) {
+      console.log(row, index);
+      let productArr = [...this.dataFormTwo.productData]
+      productArr[index].excludingTaxPrice = this.jnpf.numberFormat(row.price / (1 + (row.taxRate * 1 / 100)), 2)
+      productArr[index].excludingTaxAmount = this.jnpf.numberFormat((row.excludingTaxPrice * row.deliveryQuantity), 2)
+      productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
+      this.dataFormTwo.productData = productArr
+    },
+    // 查看库存明细
+    viewFun(id, type, warehouseId) {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(id, type, "", 'product')
+      })
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -836,6 +1115,7 @@ export default {
     // list 中 a 不能 operator b 的校验规则
     calcValidate() {
       return (rule, value, callback) => {
+        if (this.noticeswitch != 1) return
         let index = Number(rule.field.match(/\d+/)[0])
         let msg = this.dataForm.exchangeGoodsFlag ? `换货数量超过最大可换货数量` : `退货数量超过最大可退货数量`
         if (!value || value == 0) { callback() }
@@ -852,21 +1132,7 @@ export default {
         }
       };
     },
-    // 选完客户订单数据后 渲染在列表上
-    // submitAllProduct() {
-    //   this.allProVisible = false
-    //   console.log(" this.selectArr", this.selectArr);
-    //   this.selectArr.forEach(item => {
-    //     console.log('订单...', item);
-    //     this.dataFormTwo.productData = []
-    //     getOrderDetail(item.id).then(res => {
-    //       console.log('订单详情', res);
-    //       res.data.orderLines.map((item) => {
-    //         this.dataFormTwo.productData.push(item)
-    //       })
-    //     })
-    //   });
-    // },
+
     dateFormat(dateData) {
       var date = new Date(dateData)
       var y = date.getFullYear()
@@ -914,6 +1180,7 @@ export default {
       }
       getProvinceList(item.id).then(res => {
         this.areas = res.data.list
+
       })
     },
     // 获取省份数据
@@ -1050,15 +1317,80 @@ export default {
     },
     // 点击选择产品
     openSeleceProductDialog() {
-      if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
-      this.productVisible = true
-      this.searchProductFun()
+      if (this.noticeswitch == 1) {
+        if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
+        this.productVisible = true
+        this.searchProductFun()
+      } else {
+        // 获取税率(数据字典)
+        getbimProductAttributes("585438081021126405").then(res => {
+          res.data.list.forEach(item => {
+            item.taxRate = item.enCode.replace('%', '') * 1
+          })
+          this.taxRateList = res.data.list
+          console.log("税率", this.taxRateList);
+        })
+        this.allProVisible = true
+        let arr = [];
+        this.ProductListRequestObj = {
+          classAttributeList: [],
+          classAttribute: "",
+          productDrawingNo: "",
+          queryType: 2,
+          productStatus: 'enable',
+          saleFlag: true,
+
+          productCategoryId: "",
+          code: "",
+          name: "",
+          orderItems: [{
+            "asc": false,
+            "column": ""
+          }, {
+            "asc": false,
+            "column": "create_time"
+          }],
+          pageNum: 1,
+          pageSize: 20,
+        }
+        this.allproductData = []
+        let successTotal = 0;
+        let tempTreeData = [...this.ProductMethodArr]
+        this.ProductMethodArr.forEach((item, index) => {
+          item.method(item.requeseObj).then(res => {
+            if (Array.isArray(res.data)) {
+              tempTreeData[index] = {
+                id: item.label,
+                name: item.label,
+                classAttribute: item.classAttribute,
+                childrenList: res.data
+              }
+            } else {
+              tempTreeData[index] = {
+                id: item.label,
+                name: item.label,
+                classAttribute: item.classAttribute,
+                childrenList: res.data.records
+              }
+            }
+            if ((++successTotal) === this.ProductMethodArr.length) {
+              this.ProductTreeData = tempTreeData
+              this.initData2()
+            }
+          })
+        });
+      }
     },
     submitAllProduct() {
       if (!this.selectArr.length) return this.$message.error("请选择产品！")
       this.productVisible = false
       this.selectArr.forEach(item => {
         item.ordersNum = item.num
+        item.deliveryQuantity = item.num
+
+        item.productCode = item.code
+        item.productsId = item.id
+        item.taxRate = item.taxRate * 1
         this.dataFormTwo.productData.push(item)
       });
       let uniqueArr = [];
@@ -1071,19 +1403,27 @@ export default {
         }
       });
       this.dataFormTwo.productData = uniqueArr
+      this.allProVisible = false
       console.log("this.dataFormTwo", this.dataFormTwo.productData);
     },
     // },
-    // 获取所有订单列表数据
+    // 获取所有产品列表数据
     initData2() {
-      this.ProductListRequestObj.cooperativePartnerCode = this.code ? this.code : this.dataForm.partnerCode
       this.listLoading = true
-      getsaleOrderList(this.ProductListRequestObj).then(listRes => {
+      getProducts(this.ProductListRequestObj).then(listRes => {
         if (Array.isArray(listRes.data)) {
           this.allproductData = listRes.data
         } else {
           this.allproductData = listRes.data.records
         }
+        this.allproductData.forEach((item, index) => {
+          this.$set(item, 'deliveryQuantity', '')
+          this.$set(item, 'price', '')
+          this.$set(item, 'excludingTaxPrice', '')
+          this.$set(item, 'taxAmount', '')
+          this.$set(item, 'totalAmount', '')
+          this.$set(item, 'excludingTaxAmount', '')
+        });
         this.allProductTotal = listRes.data.total
         this.$forceUpdate()
         this.treeLoading = false
@@ -1104,23 +1444,29 @@ export default {
     },
     // 监听主数量输入
     watchnums(row, index) {
-      if (!row.deliveryQuantity) {
-        return
-      }
-      row.deliveryQuantity = row.deliveryQuantity.replace(/[^0-9.]/g, '');
+      // 计算方向calculationDirection 转换系数ratio  副数量assistantNum
+      // 如果计算方向是乘 则副数量等于主数量*套数*转换系数
+      // 如果计算方向是除 则副数量等于主数量*套数/转换系数
+      // 使用正则表达式验证输入内容
+      row.deliveryQuantity = row.deliveryQuantity.replace(/[^\d.]/g, '');
+      let productArr = [...this.dataFormTwo.productData]
 
       if (row.deliveryQuantity.length == 1 && row.deliveryQuantity == '.') {
         // 如果第一位是小数点，则清空输入框
         row.deliveryQuantity = '';
+        row.assistantNum = '';
       } else if (row.deliveryQuantity.length == 2 && row.deliveryQuantity[0] == '0' && row.deliveryQuantity[1] != '.') {
         // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
         row.deliveryQuantity = row.deliveryQuantity.slice(0, 1) + '.' + row.deliveryQuantity.slice(1);
       } else if (row.deliveryQuantity.length > 2 && row.deliveryQuantity[0] == '0' && row.deliveryQuantity[1] != '.') {
         row.deliveryQuantity = row.deliveryQuantity.substring(1, row.deliveryQuantity.length)
       }
+
+
       if (row.deliveryQuantity.includes('.')) {
         let dotCount = 0; // 小数点的数量
         let result = ''; // 处理后的结果
+
         for (let i = 0; i < row.deliveryQuantity.length; i++) {
           const char = row.deliveryQuantity[i];
           if (char === '.') {
@@ -1133,13 +1479,14 @@ export default {
             result += char;
           }
         }
+
         row.deliveryQuantity = result;
         let arr = row.deliveryQuantity.split('.')
         if (arr[0].length > 8) {
           arr[0] = arr[0].substring(0, 8)
         }
-        if (arr[1].length > 2) {
-          arr[1] = arr[1].substring(0, 2)
+        if (arr[1].length > 4) {
+          arr[1] = arr[1].substring(0, 4)
         }
         row.deliveryQuantity = arr[0] + '.' + arr[1]
       } else {
@@ -1147,49 +1494,22 @@ export default {
           row.deliveryQuantity = row.deliveryQuantity.substring(0, 8);
         }
       }
-      if (!row.receivedQuantity) {
-        return
-      }
-      row.receivedQuantity = row.receivedQuantity.replace(/[^0-9.]/g, '');
+      console.log("index", index);
+      console.log("row.deliveryQuantity", row.deliveryQuantity);
+      if (row.calculationDirection == 'multiplication') {
+        productArr[index].assistantNum = this.jnpf.numberFormat(row.deliveryQuantity * row.ratio, 2)
+        productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.price]), 2)
+        productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.excludingTaxPrice]), 2)
+        productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
 
-      if (row.receivedQuantity.length == 1 && row.receivedQuantity == '.') {
-        // 如果第一位是小数点，则清空输入框
-        row.receivedQuantity = '';
-      } else if (row.receivedQuantity.length == 2 && row.receivedQuantity[0] == '0' && row.receivedQuantity[1] != '.') {
-        // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
-        row.receivedQuantity = row.receivedQuantity.slice(0, 1) + '.' + row.receivedQuantity.slice(1);
-      } else if (row.receivedQuantity.length > 2 && row.receivedQuantity[0] == '0' && row.receivedQuantity[1] != '.') {
-        row.receivedQuantity = row.receivedQuantity.substring(1, row.receivedQuantity.length)
-      }
-      if (row.receivedQuantity.includes('.')) {
-        let dotCount = 0; // 小数点的数量
-        let result = ''; // 处理后的结果
-        for (let i = 0; i < row.receivedQuantity.length; i++) {
-          const char = row.receivedQuantity[i];
-          if (char === '.') {
-            if (dotCount === 0) {
-              // 第一个小数点保留
-              result += char;
-              dotCount++;
-            }
-          } else {
-            result += char;
-          }
-        }
-        row.receivedQuantity = result;
-        let arr = row.receivedQuantity.split('.')
-        if (arr[0].length > 8) {
-          arr[0] = arr[0].substring(0, 8)
-        }
-        if (arr[1].length > 2) {
-          arr[1] = arr[1].substring(0, 2)
-        }
-        row.receivedQuantity = arr[0] + '.' + arr[1]
       } else {
-        if (row.receivedQuantity.length > 8) {
-          row.receivedQuantity = row.receivedQuantity.substring(0, 8);
-        }
+        productArr[index].assistantNum = this.jnpf.numberFormat(row.deliveryQuantity / row.ratio, 2)
+        productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.price]), 2)
+        productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.excludingTaxPrice]), 2)
+        productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
       }
+      console.log("productArr", productArr);
+      this.dataFormTwo.productData = productArr
     },
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
@@ -1494,7 +1814,8 @@ export default {
             }
           }
           res.data.noticeLineList.forEach(item => {
-            item.drawingNo=item.productDrawingNo
+            item.drawingNo = item.productDrawingNo
+            item.taxRate = item.taxRate+"%"
           });
           this.dataFormTwo.productData = res.data.noticeLineList
         })
@@ -1635,6 +1956,12 @@ export default {
               remark: item.remark ? item.remark : '',
               returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
               receivingQuantity: item.receivingQuantity ? item.receivingQuantity : '',
+              excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
+              excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
+              price: item.price ? item.price : '',
+              taxAmount: item.taxAmount ? item.taxAmount : '',
+              taxRate: item.taxRate ? item.taxRate : '',
+              totalAmount: item.totalAmount ? item.totalAmount : '',
             }
             let dep1 = {
               billStatus: item.billStatus ? item.billStatus : '',
@@ -1655,6 +1982,12 @@ export default {
               remark: item.remark ? item.remark : '',
               returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
               receivingQuantity: item.receivingQuantity ? item.receivingQuantity : '',
+              excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
+              excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
+              price: item.price ? item.price : '',
+              taxAmount: item.taxAmount ? item.taxAmount : '',
+              taxRate: item.taxRate ? item.taxRate : '',
+              totalAmount: item.totalAmount ? item.totalAmount : '',
             }
             if (this.btnType == 'add' || this.btnType == 'copy') {
               obj.noticeLineList.push(dep)

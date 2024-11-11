@@ -352,6 +352,8 @@ export default {
         'b058': 'dailyManagement/borrowingReturn/toolreturn/Form',
         'b059': 'dailyManagement/scrapManagement/announceInvalidated/Form',
         'b060': 'toolclampmeasuring/scrapManagement/announceInvalidated/Form',
+        'b061': 'inspectionManagement/components/inspectionFormManagementDetail.vue',
+        'b062': 'inspectionManagement/components/defectiveProductHandlingForm.vue',
       },
       inspectionTypeList: [
         // 不良品

@@ -165,7 +165,7 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { excelExport } from '@/api/basicData/index'
 export default {
-  name: 'salesQuotation',
+  name: 'salesQuotationOld',
   components: { DepForm, SuperQuery, ExportForm },
   data() {
     return {
@@ -291,7 +291,7 @@ export default {
           prop: 'approvalStatus',
           label: "审批状态",
           type: 'input'
-        },
+        }, 
         {
           prop: 'reasonRejection',
           label: "驳回理由",
@@ -299,9 +299,12 @@ export default {
         },
         {
           prop: 'createTime',
-          label: "创建时间",
-          type: 'input'
-        },
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+        }, 
         {
           prop: 'createByName',
           label: "创建人",
@@ -343,7 +346,7 @@ export default {
   methods: {
 
     superQuerySearch(query) {
-      this.form.superQuery = query
+      this.superQuery = query
       this.superQueryVisible = false
       this.search('super')
     },

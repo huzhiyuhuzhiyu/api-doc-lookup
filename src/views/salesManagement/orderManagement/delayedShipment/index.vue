@@ -1,15 +1,31 @@
 <template>
   <div class="JNPF-common-layout">
 
-    <div class="JNPF-common-layout-center JNPF-flex-main"  v-if="!formVisible">
+    <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="3">
-              <el-form-item>
-                <el-input v-model="orderNoS" @keyup.enter.native="search()" placeholder="订单号" clearable />
-              </el-form-item>
-            </el-col>
+            <template v-for="item in searchList">
+              <el-col :span="item.searchType === 3 ? 6 : 4">
+                <el-form-item>
+                  <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                    @keyup.enter.native="search('basic')" />
+
+                  <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                    clearable>
+                    <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                      :value="item2.value"></el-option>
+                  </el-select>
+                  <el-date-picker v-else-if="item.searchType === 3" v-model="item.deliveryDateArr"
+                    :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                    :type="item.dateType"
+                    :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                </el-form-item>
+              </el-col>
+
+            </template>
+
+
             <el-col :span="4">
 
               <el-form-item>
@@ -39,7 +55,7 @@
 
             <el-col :span="4">
               <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
                   {{ $t('common.search') }}</el-button>
                 <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
                 </el-button>
@@ -146,6 +162,13 @@ export default {
   components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery },
   data() {
     return {
+      superQuery: {},
+      superForm: {},
+      basicQuery: {},
+      searchList: [
+        { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
+
+      ],
       columnList: ["cooperativePartnerCode", "departmentName", "productName", "createTime",],
       deliveryDateArr: [],
       orderFollowVisible: false,
@@ -365,6 +388,35 @@ export default {
 
 
       ],
+      requestArr: [
+        {
+          prop: "sealingCoverTyping",
+          typeCode: "pa007"
+        }, {
+          prop: "accuracyLevel",
+          typeCode: "pa006"
+        },
+        {
+          prop: "vibrationLevel",
+          typeCode: "pa005"
+        },
+        {
+          prop: "oil",
+          typeCode: "pa002"
+        }, {
+          prop: "oilQuantity",
+          typeCode: "pa003"
+        }, {
+          prop: "clearance",
+          typeCode: "pa001"
+        }, {
+          prop: "packagingMethod",
+          typeCode: "pa015"
+        }, {
+          prop: "specialRequire",
+          typeCode: "pa016"
+        }
+      ],
     }
   },
   watch: {
@@ -385,321 +437,49 @@ export default {
     this.deliveryDateArr = ["", end];
     this.orderForm.deliveryStartTime = ""
     this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
-    this.dataFormSubmit()
+    this.superForm = this.orderForm
+    this.search('basic')
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    // 获取打字内容等
     getProductClassFun() {
-      let obj0 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa008",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
+      this.requestArr.forEach((item, index) => {
+        let obj1 = {
+          pageNum: -1,
+          pageSize: 20,
+          typeCode: item.typeCode,
+          orderItems: [
+            {
+              asc: false,
+              column: "",
+            },
+            {
+              asc: false,
+              column: "code",
+            },
+          ],
+        };
+        getbimProductAttributesList(obj1).then(res => {
 
-      getbimProductAttributesList(obj0).then(res => {
-
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
+          let arr = []
+          res.data.records.forEach(items => {
+            let obj = {
+              label: items.name,
+              value: items.name,
+            }
+            arr.push(obj)
+          });
+          let oilObj = this.superQueryJson.find(rs => rs.prop === item.prop);
+          if (oilObj) {
+            // 将options赋值为5  
+            oilObj.options = JSON.parse(JSON.stringify(arr));
           }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'standardValue');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-      let obj1 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa007",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-
-      getbimProductAttributesList(obj1).then(res => {
-
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'sealingCoverTyping');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-      let obj2 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa006",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-
-
-      getbimProductAttributesList(obj2).then(res => {
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'accuracyLevel');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-      let obj3 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa005",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj3).then(res => {
-
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'vibrationLevel');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-      let obj4 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa002",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj4).then(res => {
-
-
-
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'oil');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-      let obj5 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa003",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj5).then(res => {
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'oilQuantity');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-      let obj6 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa001",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-
-      getbimProductAttributesList(obj6).then(res => {
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'clearance');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-      let obj7 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa015",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj7).then(res => {
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'packagingMethod');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-      let obj8 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa016",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj8).then(res => {
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'specialRequire');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-
-
-      // 获取税率(数据字典)
-      getbimProductAttributes("585438081021126405").then(res => {
-        let arr = []
-        res.data.list.forEach(item => {
-          item.taxRate = item.enCode.replace('%', '') * 1
-          let obj = {
-            label: item.taxRate,
-            value: item.taxRate,
-          }
-          arr.push(obj)
         })
-        let oilObj = this.superQueryJson.find(item => item.prop === 'taxRate');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
       })
+
+
+
 
     },
     // 获取合计数据
@@ -728,7 +508,8 @@ export default {
       this.deliveryDateArr = ["", end];
       this.orderForm.deliveryStartTime = ""
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
-      this.dataFormSubmit()
+      this.superForm=this.orderForm
+      this.search('basic')
     },
     // 为近3天  
     btnsearch2() {
@@ -767,9 +548,9 @@ export default {
       this.search()
     },
     superQuerySearch(query) {
-      this.orderForm.superQuery = query
+      this.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
@@ -790,7 +571,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus'||prop=='cooperativePartnerName' || prop === 'cooperativePartnerCode'||prop=='salesName') {
+      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'cooperativePartnerName' || prop === 'cooperativePartnerCode' || prop == 'salesName') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'
@@ -807,19 +588,6 @@ export default {
     },
 
 
-    dataFormSubmit() {
-      this.orderForm.pageNum = 1
-      Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
-        let item = this.orderForm[key]
-        this.orderForm[key] = typeof item === 'string' ? item.trim() : item
-      })
-
-
-
-      this.initData()
-
-    },
-
 
     // 关闭新建编辑页面
     closeForm(isRefresh) {
@@ -832,7 +600,7 @@ export default {
     },
     initData() {
       this.listLoading = true
-   
+
       if (this.orderNoS) {
 
         if (this.orderForm.superQuery.condition.length) {
@@ -850,7 +618,7 @@ export default {
 
 
 
-      if (this.orderNoS ) {
+      if (this.orderNoS) {
         this.$set(this.orderForm.superQuery, 'matchLogic', 'AND')
       } else {
         if (!this.orderForm.superQuery.condition.length) {
@@ -872,8 +640,32 @@ export default {
     },
 
 
-    search() {
-      this.dataFormSubmit()
+    search(type) {
+      this.orderForm.pageNum = 1
+      Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
+        let item = this.orderForm[key]
+        this.orderForm[key] = typeof item === 'string' ? item.trim() : item
+      })
+
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
+
+      this.initData()
     },
 
     reset() {
@@ -884,7 +676,7 @@ export default {
       end.setDate(end.getDate() + 3);
       this.deliveryDateArr = ["", end];
       this.orderForm.deliveryStartTime = ""
-      this.orderForm = {
+      this.superForm=this.orderForm = {
 
         approvalStatus: "ok",
         documentStatus: "submit",
@@ -907,10 +699,13 @@ export default {
           condition: [],
           matchLogic: ""
         },
-      }
-      this.orderNoS = ""
+      } 
+      this.searchList = [
+        { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 }, 
+
+      ]
       this.$refs.SuperQuery.conditionList = []
-      this.search()
+      this.search('basic')
     },
 
     // 订单跟踪

@@ -59,7 +59,7 @@
         </div>
         <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" :fixedNO="true"
           :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column>
-          <el-table-column prop="quotationNo" label="报价单号" min-width="160" sortable="custom">
+          <el-table-column prop="quotationNo" label="单号" min-width="160" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.salesQuotationId, 'look')">{{
                 scope.row.quotationNo
@@ -84,6 +84,14 @@
           <el-table-column prop="excludingTaxUnitPrice" label="单价(不含税)" width="140" sortable="custom" />
           <el-table-column prop="amounts" label="金额(含税)" width="140" sortable="custom" />
           <el-table-column prop="excludingTaxAmounts" label="金额(不含税)" width="140" sortable="custom" />
+          <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
+          <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
+          <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
+          <el-table-column prop="oil" label="油脂" width="100" sortable="custom" />
+          <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" />
+          <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
+          <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
+          <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" />
           <el-table-column prop="remark" label="备注" width="180" sortable="custom" />
           <el-table-column prop="documentStatus" label="单据状态" sortable="custom" width="120" align="center">
             <template slot-scope="scope">
@@ -171,10 +179,11 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { excelExport } from '@/api/basicData/index'
 export default {
-  name: 'salesQuotation',
+  name: 'salesQuotationDetail',
   components: { DepForm, SuperQuery, ExportForm },
   data() {
     return {
+      columnList: ["cooperativePartnerCode", "validEnd", "sealingCoverTyping", "accuracyLevel", "vibrationLevel", "oil", "oilQuantity", "clearance", "packagingMethod", "specialRequire", "createByName"],
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -186,8 +195,7 @@ export default {
       ],
 
 
- 
-      columnList: ["cooperativePartnerCode", "validEnd", "createByName"],
+
       superQueryVisible: false,
 
       deliveryDatefahuo: [],
@@ -222,14 +230,10 @@ export default {
       superQueryJson: [
         {
           prop: 'quotationNo',
-          label: "报价单号",
+          label: "单号",
           type: 'input'
         },
-        {
-          prop: 'deliver',
-          label: "致",
-          type: 'input'
-        },
+
         {
           prop: 'cooperativePartnerCode',
           label: "客户编码",
@@ -245,30 +249,90 @@ export default {
           label: "报价人",
           type: 'input'
         },
+
         {
           prop: 'quotationTime',
-          label: "报价时间",
-          type: 'input'
+          label: '报价时间',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
         },
+
         {
           prop: 'validEnd',
-          label: "有效时间止",
+          label: '有效时间止',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'customerDrawingNumber',
+          label: "客户料号",
           type: 'input'
         },
         {
-          prop: 'address',
-          label: "地址",
+          prop: 'productDrawingNo',
+          label: "品名规格",
           type: 'input'
         },
         {
-          prop: 'phone',
-          label: "电话",
+          prop: 'mainUnit',
+          label: "单位",
           type: 'input'
         },
+
         {
-          prop: 'fax',
-          label: "传真",
-          type: 'input'
+          prop: 'sealingCoverTyping',
+          label: "打字内容",
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'accuracyLevel',
+          label: "精度等级",
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'vibrationLevel',
+          label: "振动等级",
+          type: 'select',
+          options: []
+        },
+
+        {
+          prop: 'oil',
+          label: "油脂",
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'oilQuantity',
+          label: "油脂量",
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'clearance',
+          label: "游隙",
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'packagingMethod',
+          label: "包装方式",
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'specialRequire',
+          label: "特殊要求",
+          type: 'select',
+          options: []
         },
         // {
         //   prop: 'totalAmount',
@@ -278,22 +342,30 @@ export default {
         {
           prop: 'documentStatus',
           label: "单据状态",
-          type: 'input'
+          type: 'select',
+          options: [
+            { label: "草稿", value: "draft" },
+            { label: "提交", value: "submit" },
+          ]
         },
         {
           prop: 'approvalStatus',
           label: "审批状态",
-          type: 'input'
-        },
-        {
-          prop: 'reasonRejection',
-          label: "驳回理由",
-          type: 'input'
+          type: 'select',
+          options: [
+            { label: "审批中", value: "ing" },
+            { label: "审批通过", value: "ok" },
+            { label: "审批拒绝", value: "rebut" },
+            { label: "审批撤回", value: "withdrawn" },
+          ]
         },
         {
           prop: 'createTime',
-          label: "创建时间",
-          type: 'input'
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
         },
         {
           prop: 'createByName',
@@ -314,6 +386,35 @@ export default {
       listLoading: false,
       total: 0,
       formVisible: false,
+      requestArr: [
+        {
+          prop: "sealingCoverTyping",
+          typeCode: "pa007"
+        }, {
+          prop: "accuracyLevel",
+          typeCode: "pa006"
+        },
+        {
+          prop: "vibrationLevel",
+          typeCode: "pa005"
+        },
+        {
+          prop: "oil",
+          typeCode: "pa002"
+        }, {
+          prop: "oilQuantity",
+          typeCode: "pa003"
+        }, {
+          prop: "clearance",
+          typeCode: "pa001"
+        }, {
+          prop: "packagingMethod",
+          typeCode: "pa015"
+        }, {
+          prop: "specialRequire",
+          typeCode: "pa016"
+        }
+      ],
     }
   },
   created() {
@@ -325,7 +426,7 @@ export default {
   methods: {
 
     superQuerySearch(query) {
-      this.formlist.superQuery = query
+      this.superQuery = query
       this.superQueryVisible = false
       this.search('super')
     },
@@ -335,7 +436,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp
-      if (prop == 'cooperativePartnerIdText'||prop=='productDrawingNo'||prop=="documentStatus"||prop=='approvalStatus'||prop=='createTime') {
+      if (prop == 'cooperativePartnerIdText' || prop == 'productDrawingNo' || prop == "documentStatus" || prop == 'approvalStatus' || prop == 'createTime') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
@@ -347,7 +448,7 @@ export default {
     // 关闭新建、编辑页面
     closeForm(isRefresh) {
       this.depFormVisible = false
-        this.search('basic')
+      this.search('basic')
     },
     initData() {
       this.listLoading = true

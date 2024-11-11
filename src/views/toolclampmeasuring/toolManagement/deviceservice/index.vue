@@ -18,6 +18,13 @@
               <el-input v-model="orderForm.equipmentIdName" placeholder="请输入工具名称" clearable @keydown.enter.native="dataFormSubmit()" />
             </el-form-item>
           </el-col>
+          <el-col :span="4">
+            <el-form-item>
+              <el-select v-model="orderForm.state" placeholder="请选择状态" clearable style="width: 100%;">
+                <el-option v-for="(item, index) in [{label:'待维修',value:'toBeMaintain'},{label:'正在维修',value:'maintaining'}]" :key="index" :label="item.label" :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="dataFormSubmit()">
@@ -360,6 +367,7 @@ export default {
         { label: "已维修", value: "maintained" }
       ],
       orderForm: {
+        state: "",
         unState: 'maintained',
         classAttribute: "tool",
         maintenanceNo: '',

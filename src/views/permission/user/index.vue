@@ -8,7 +8,7 @@
             <el-dropdown>
               <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="getOrganizeList()">刷新数据</el-dropdown-item>
+                <el-dropdown-item @click.native="getOrganizeList(true)">刷新数据</el-dropdown-item>
                 <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
                 <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
                 <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
@@ -401,7 +401,7 @@ export default {
     ...mapGetters(['userInfo'])
   },
   created() {
-    this.getOrganizeList()
+    this.getOrganizeList(true)
     if (localStorage.getItem("userFlag")) {
       let userFlag = JSON.parse(localStorage.getItem('userFlag'))
       this.expands = userFlag
@@ -529,10 +529,6 @@ export default {
     },
     search() {
       this.visible = false
-      Object.keys(this.listQuery).forEach(key => {
-        let item = this.listQuery[key]
-        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
-      })
       this.listQuery.pageNum = 1
       this.initData()
     },
@@ -554,7 +550,7 @@ export default {
         pageSize: 20,
         realName: ""
       }
-      this.search()
+      this.getOrganizeList(true)
     },
     toggleExpand(expands) {
       this.refreshTree = false
@@ -595,7 +591,6 @@ export default {
       this.filterText = ''
       this.treeLoading = true
       this.listQuery.organizeId = ''
-      this.initData()
       getDepartmentSelectorByAuth().then(res => {
         this.treeData = res.data.list
         this.treeLoading = false
@@ -605,6 +600,10 @@ export default {
       })
     },
     initData() {
+      Object.keys(this.listQuery).forEach(key => {
+        let item = this.listQuery[key]
+        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
+      })
       this.listLoading = true
       getUserListPost(this.listQuery).then(res => {
         this.tableData = res.data.records

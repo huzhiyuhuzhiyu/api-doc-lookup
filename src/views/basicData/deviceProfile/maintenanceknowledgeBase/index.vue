@@ -241,27 +241,21 @@ export default {
       this.$nextTick(() => {
         this.$refs.Form.init(id, btntype,)
       })
-    }
-  },
-  handleDel(id) {
-    this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
-      type: 'warning'
-    }).then(() => {
-      deleteequEquipmentRepairKnowledge(id).then(res => {
-        this.initData()
-        this.$message({
-          type: 'success',
-          message: "删除成功",
-          duration: 1500,
+    },
+    handleDel(id) {
+      this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
+        type: 'warning'
+      }).then(() => {
+        deleteequEquipmentRepairKnowledge(id).then(res => {
+          this.initData()
+          this.$message({
+            type: 'success',
+            message: "删除成功",
+            duration: 1500,
+          })
         })
-      })
-    }).catch(() => { })
-  },
-  handleUserRelation(id, btnType) {
-    this.formVisible = true
-    this.$nextTick(() => {
-      this.$refs.Form.init(id, btnType)
-    })
+      }).catch(() => { })
+    }
   }
 }
 </script>

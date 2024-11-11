@@ -13,8 +13,8 @@
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="基础信息" name="jcInfo">
             <el-collapse v-model="activeNames">
-              <el-collapse-item title="基本信息" name="basicInfo">
-                <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="140px" label-position="top">
+              <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="140px" label-position="top">
+                <el-collapse-item title="基本信息" name="basicInfo">
                   <el-row :gutter="20" class="custom-row">
                     <el-col :sm="12" :xs="24">
                       <el-form-item label="工具类型" prop="categoryName" ref="comList1">
@@ -42,32 +42,7 @@
                         <el-input maxlength="50" v-model="dataForm.specModel" placeholder="请输入工具规格" :disabled="disabled" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="12" :xs="24">
-                      <el-form-item label="长" prop="equLong">
-                        <el-input v-model="dataForm.equLong" placeholder="请输入长" :disabled="disabled">
-                          <template #append>（cm）</template>
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="12" :xs="24">
-                      <el-form-item label="宽" prop="width">
-                        <el-input v-model="dataForm.width" placeholder="请输入宽" :disabled="disabled">
-                          <template #append>（cm）</template>
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="12" :xs="24">
-                      <el-form-item label="高" prop="height">
-                        <el-input v-model="dataForm.height" placeholder="请输入高" :disabled="disabled">
-                          <template #append>（cm）</template>
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="12" :xs="24">
-                      <el-form-item label="体积" prop="unitVolume">
-                        <el-input v-model="dataForm.unitVolume" placeholder="请输入体积" :disabled="disabled" />
-                      </el-form-item>
-                    </el-col>
+
                     <!-- <el-col :sm="12" :xs="24">
               <el-form-item label="使用人" prop="userId">
                 <el-select v-model="dataForm.userId" :disabled="disabled" filterable style="width: 100%;">
@@ -130,8 +105,35 @@
                       </el-form-item>
                     </el-col>
                   </el-row>
-                </el-form>
-              </el-collapse-item>
+                </el-collapse-item>
+                <el-collapse-item title="工具参数" name="gjInfo">
+                  <el-row :gutter="20" class="custom-row">
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="长（cm）" prop="equLong">
+                        <el-input v-model="dataForm.equLong" placeholder="请输入长" :disabled="disabled">
+                        </el-input>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="宽（cm）" prop="width">
+                        <el-input v-model="dataForm.width" placeholder="请输入宽" :disabled="disabled">
+                        </el-input>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="高（cm）" prop="height">
+                        <el-input v-model="dataForm.height" placeholder="请输入高" :disabled="disabled">
+                        </el-input>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="体积" prop="unitVolume">
+                        <el-input v-model="dataForm.unitVolume" placeholder="请输入体积" :disabled="disabled" />
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+                </el-collapse-item>
+              </el-form>
             </el-collapse>
           </el-tab-pane>
           <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
@@ -170,7 +172,7 @@ export default {
     return {
       isattachmentswitch: '',
       categoryId: '',
-      activeNames: ["basicInfo"],
+      activeNames: ["basicInfo", "gjInfo"],
       datafilelist: [],
       activeName: "jcInfo",
       getCategoryTrees,

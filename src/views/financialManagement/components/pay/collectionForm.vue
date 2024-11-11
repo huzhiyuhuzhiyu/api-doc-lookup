@@ -317,7 +317,7 @@ export default {
     dataFormSubmit() {
       this.btnLoading = true;
       this.dataForm.reconciliationType = this.reconciliationType
-      this.dataForm.paymentAmount = Number(this.paymentAmount) + Number(this.deductionAmount)
+      this.dataForm.paymentAmount = Number(this.paymentAmount) 
       this.dataForm.prePayIdList = this.prePayIdList
       let queryData = {
         paymentRecords: this.dataForm

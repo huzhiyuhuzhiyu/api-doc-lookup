@@ -281,7 +281,7 @@ export default {
         businessCode: 'attachment',
         configKey: `fj_${inspectionType}jyd`
       }
-      getBimBusinessDetail(obj).then(res => {
+      getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
       })
     },
@@ -951,7 +951,6 @@ export default {
                 })
               }
 
-
               this.dataForm = res.data.unqualified
               this.dataForm.inspectionMethod = res.data.inspection.inspectionMethod
 
@@ -1281,15 +1280,13 @@ export default {
         .then((res) => {
           if (res.data.attachmentList) {
             res.data.attachmentList.forEach((item) => {
-              this.datafilelist.push(
-                {
-                  name: item.document.fullName,
-                  fileSize: item.document.fileSize,
-                  filename: item.document.filePath,
-                  id: item.document.id,
-                  url: item.url
-                }
-              )
+              this.datafilelist.push({
+                name: item.document.fullName,
+                fileSize: item.document.fileSize,
+                filename: item.document.filePath,
+                id: item.document.id,
+                url: item.url
+              })
             })
           }
           let oldObj = { ...res.data.inspection, approvalFlag: false }
@@ -1343,7 +1340,14 @@ export default {
     },
     // 测试审批流
     getBusInfo() {
-      let code = this.inspectionType === 'procure' ? 'b003' : this.inspectionType === 'sale_back' ? 'b006' : 'b004'
+      let code =
+        this.inspectionType === 'procure'
+          ? 'b003'
+          : this.inspectionType === 'sale_back'
+            ? 'b006'
+            : this.inspectionType === 'produce'
+              ? 'b047'
+              : 'b004'
       getBusinessFlowInfo(code)
         .then((res) => {
           if (res.data) {

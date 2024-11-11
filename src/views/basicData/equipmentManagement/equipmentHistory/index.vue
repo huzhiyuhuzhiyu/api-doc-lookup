@@ -43,8 +43,8 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
-            <el-table-column prop="equipmentIdName" label="设备名称" min-width="180" sortable="custom" />
             <el-table-column prop="equipmentIdCode" label="设备编码" min-width="180" sortable="custom" />
+            <el-table-column prop="equipmentIdName" label="设备名称" min-width="180" sortable="custom" />
             <el-table-column prop="factoryFloor" label="车间" min-width="200" sortable="custom" />
             <el-table-column prop="mountedPlaces" label="安装地点" min-width="200" sortable="custom" />
             <el-table-column prop="partnerName" label="供应商" min-width="200" sortable="custom" />

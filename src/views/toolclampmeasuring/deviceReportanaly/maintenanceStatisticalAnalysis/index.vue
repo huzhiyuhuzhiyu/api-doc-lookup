@@ -771,7 +771,7 @@ export default {
   border-radius: 3px;
 }
 .group-container-body {
-  background-image: url('~@/views/dailyManagement/deviceReportanaly/dynamicanalysis/imgs/tjbjt.png');
+  background-image: url('~@/views/dailyManagement/deviceReportanaly/equipmenthome/imgs/tjbjt.png');
   background-size: 100% 100%;
   .dash-rich-text {
     width: 100%;

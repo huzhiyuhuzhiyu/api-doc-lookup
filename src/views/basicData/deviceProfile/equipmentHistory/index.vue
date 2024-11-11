@@ -43,8 +43,8 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
-            <el-table-column prop="equipmentIdName" label="工具名称" min-width="180" sortable="custom" />
             <el-table-column prop="equipmentIdCode" label="工具编码" min-width="180" sortable="custom" />
+            <el-table-column prop="equipmentIdName" label="工具名称" min-width="180" sortable="custom" />
             <el-table-column prop="equipmentIdState" label="工具状态" width="140" sortable="custom" fixed="right">
               <template slot-scope="{row}">
                 <el-tag type="success" disable-transitions v-if="row.equipmentIdState == 'normal'">正常</el-tag>

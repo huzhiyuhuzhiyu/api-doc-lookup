@@ -8,7 +8,7 @@
             <el-dropdown>
               <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="getOrganizeList()">刷新数据</el-dropdown-item>
+                <el-dropdown-item @click.native="getOrganizeList(true)">刷新数据</el-dropdown-item>
                 <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
                 <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
                 <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
@@ -43,7 +43,7 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.realName" placeholder="请输入姓名" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.name" placeholder="请输入姓名" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -419,7 +419,7 @@ export default {
         organizeId: "",
         pageNum: 1,
         pageSize: 20,
-        realName: "",
+        name: "",
         superQuery: {}
       },
       employeeTypeList: [{ label: "劳务派遣", value: "labor_dispatch" }, { label: "正式员工", value: "formal" }, { label: "兼职", value: "sideline" }, { label: "实习", value: "pratice" }, { label: "试用", value: "trial" }, { label: "学徒", value: "apprentice" }],
@@ -465,7 +465,7 @@ export default {
   },
   created() {
     console.log(this.userInfo.projectId)
-    this.getOrganizeList()
+    this.getOrganizeList(true)
     if (localStorage.getItem("userFlag")) {
       let userFlag = JSON.parse(localStorage.getItem('userFlag'))
       this.expands = userFlag
@@ -712,10 +712,6 @@ export default {
       })
     },
     search() {
-      Object.keys(this.listQuery).forEach(key => {
-        let item = this.listQuery[key]
-        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
-      })
       this.listQuery.pageNum = 1
       this.initData()
     },
@@ -735,9 +731,9 @@ export default {
         organizeId: this.listQuery.organizeId,
         pageNum: 1,
         pageSize: 20,
-        realName: ""
+        name: ""
       }
-      this.search()
+      this.getOrganizeList(true)
     },
     toggleExpand(expands) {
       this.refreshTree = false
@@ -778,7 +774,7 @@ export default {
       this.filterText = ''
       this.treeLoading = true
       this.listQuery.organizeId = ''
-      this.initData()
+      // this.initData()
       getDepartmentSelectorByAuth().then(res => {
         this.treeData = res.data.list
         this.treeLoading = false
@@ -788,6 +784,10 @@ export default {
       })
     },
     initData() {
+      Object.keys(this.listQuery).forEach(key => {
+        let item = this.listQuery[key]
+        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
+      })
       this.listLoading = true
       getbaseEmployee(this.listQuery).then(res => {
         this.tableData = res.data.records

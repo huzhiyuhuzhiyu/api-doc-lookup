@@ -168,7 +168,7 @@
       </div>
     </div>
     <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
-      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" drag :auto-upload="false" :limit="1" :on-change="handleFileChange" ref="uploadRef">
+      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" drag :auto-upload="false" :file-list="fileList" :limit="1" :on-exceed="handleFileexceed" :on-change="handleFileChange" ref="uploadRef">
         <i class="el-icon-upload"></i>
         <div class="el-upload__text"><em>点击选取文件上传</em></div>
         <div class="el-upload__tip" slot="tip">只能上传.xls/.xlsx文件 <el-button type="text" class="topButton" icon="el-icon-download" @click="downLoadTemplate">下载模板</el-button></div>
@@ -199,7 +199,7 @@
 </template>
 
 <script>
-import { getcategoryTree, getCooperativeData, deleteCooperative,supplierupload } from '@/api/basicData/index'
+import { getcategoryTree, getCooperativeData, deleteCooperative, supplierupload } from '@/api/basicData/index'
 import Form from './Form'
 import UserRelationList from './userRelation'
 import moment from 'moment'
@@ -208,11 +208,13 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import { log } from 'mathjs'
 export default {
   name: 'supplierProfile',
   components: { Form, UserRelationList, ExportForm, SuperQuery },
   data() {
     return {
+      fileList: [],
       loadingText: '',
       file: {},
       uploadVisib: false,
@@ -487,8 +489,19 @@ export default {
       this.uploadVisib = false
       this.$refs['uploadRef'].clearFiles();
     },
-    handleFileChange(file) {
+    // handleFileChange(file) {
+    //   this.file = file.raw
+    // },
+    handleFileChange(file, fileList) {
+      // 当文件状态变为成功时，表示上传成功，可以替换文件
+      console.log(file, fileList, '123123');
       this.file = file.raw
+    },
+    handleFileexceed(files) {
+      this.$refs['uploadRef'].clearFiles()
+      this.$nextTick(() => {
+        this.$refs['uploadRef'].handleStart(files[0])
+      })
     },
     // 导入产品
     importProductFun() {
@@ -507,7 +520,7 @@ export default {
       var formData = new FormData()
       formData.append("file", data)
       //调用上传文件接口
-      supplierupload(formData,'supplier').then(res => {
+      supplierupload(formData, 'supplier').then(res => {
         if (!res.data) {
           this.$message.success(`导入成功`)
           this.listLoading = false

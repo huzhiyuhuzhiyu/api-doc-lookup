@@ -310,14 +310,14 @@ export default {
       const valid_1 = await form_1.validate().catch(err => false)
       if (!valid_1 && submitFlag) {
         submitFlag = false
-        let formItems = form_1.fields
-        formItems.some(formItem => {
-          if (formItem.validateState === 'error') {
-            this.jnpf.focusItem(formItem.$children[1].$el)
-            this.$nextTick(() => { this.jnpf.formItemValidate(formItem) });
-            return true
-          }
-        })
+        // let formItems = form_1.fields
+        // formItems.some(formItem => {
+        //   if (formItem.validateState === 'error') {
+        //     this.jnpf.focusItem(formItem.$children[1].$el)
+        //     this.$nextTick(() => { this.jnpf.formItemValidate(formItem) });
+        //     return true
+        //   }
+        // })
       }
       if (submitFlag) {
         this.dataForm.frontPicList = Array.isArray(this.dataForm.frontPicList) ?

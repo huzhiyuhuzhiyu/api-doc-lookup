@@ -7,10 +7,12 @@
           <el-dropdown>
             <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
             <el-dropdown-menu slot="dropdown">
-              <!-- <el-dropdown-item @click.native="getOrganizeList()">刷新数据</el-dropdown-item> -->
+              <el-dropdown-item @click.native="getCategoryTrees(true)">刷新数据</el-dropdown-item>
               <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
               <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
               <!-- <el-dropdown-item @click.native="showDiagram">架构图</el-dropdown-item> -->
+              <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
+              <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </span>
@@ -405,11 +407,25 @@ export default {
     }
   },
   created() {
+    if (localStorage.getItem("deviceProfilesetFlag")) {
+      let roleFlag = JSON.parse(localStorage.getItem('deviceProfilesetFlag'))
+      this.expands = roleFlag
+      this.toggleExpand(roleFlag)
+    }
     this.getCategoryTrees(true)
     // this.getDictionaryType()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    //设置默认展开
+    setexpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        localStorage.setItem("deviceProfilesetFlag", expands)
+      })
+    },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },

@@ -18,6 +18,13 @@
               <el-input v-model="orderForm.actualMaintenanceIdText" placeholder="请输入实际点检人" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
+          <el-col :span="4">
+            <el-form-item>
+              <el-select v-model="orderForm.inspectionResults" placeholder="请选择点检结果" clearable style="width: 100%;">
+                <el-option v-for="(item, index) in [{label:'正常',value:'normal'},{label:'异常',value:'abnormal'}]" :key="index" :label="item.label" :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -116,7 +123,7 @@ import { equMaintenanceList, deleteequMaintenance } from '@/api/dailyManagement/
 import Form from './Form'
 export default {
   name: 'inspectionRecords',
-  components: { Form, SuperQuery},
+  components: { Form, SuperQuery },
   data() {
     return {
       srcList: [
@@ -229,6 +236,7 @@ export default {
       tableData: [],
       listLoading: false,
       orderForm: {
+        inspectionResults: '',
         recordType: 'inspection',
         equipmentIdCode: '',
         equipmentIdName: '',

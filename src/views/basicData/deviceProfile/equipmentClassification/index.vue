@@ -50,12 +50,12 @@
         </div>
         <JNPF-table v-loading="listLoading" :data="treeList" row-key="id" v-if="refreshTable"
           :default-expand-all="expands" :tree-props="{children: 'childrenList', hasChildren: ''}" custom-column>
+          <el-table-column prop="code" label="编码" />
           <el-table-column prop="name" label="名称">
             <template slot-scope="scope">
               <i :class="[scope.row.childrenList.length>=1?'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']"></i>{{scope.row.name}}
             </template>
           </el-table-column>
-          <el-table-column prop="code" label="编码" />
           <el-table-column prop="parentName" label="上级分类" />
           <el-table-column prop="createTime" label="创建时间" width="180" ></el-table-column>
           <el-table-column prop="remark" label="备注" width="300" >

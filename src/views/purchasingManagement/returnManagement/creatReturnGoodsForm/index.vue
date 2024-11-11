@@ -183,7 +183,8 @@
                               <template slot-scope="scope">
                                 <el-form-item :prop="'productData.' + scope.$index + '.' + 'price'"
                                   :rules="productRules.price">
-                                  <el-input v-model="scope.row.price" placeholder="单价(含税)" />
+                                  <el-input v-model="scope.row.price" placeholder="单价(含税)"
+                                    :disabled="isReturnSwitch === '1'" />
                                 </el-form-item>
                               </template>
                             </el-table-column>
@@ -207,7 +208,8 @@
                               </template>
                               <template slot-scope="scope">
                                 <el-form-item :rules="productRules.taxRate">
-                                  <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;">
+                                  <el-select v-model="scope.row.taxRate" :disabled="isReturnSwitch === '1'"
+                                    placeholder="请选择" style="width: 100%;">
                                     <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                                       :value="item.enCode"></el-option>
                                   </el-select>
@@ -341,26 +343,27 @@
                     <el-row class="JNPF-common-search-box" :gutter="16">
                       <el-form @submit.native.prevent>
                         <el-col :span="6" v-if="isReturnSwitch === '1'">
-                  <el-form-item>
-                    <el-input v-model="orderForm.drawingNo" placeholder="品名规格" clearable />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6" v-if="isReturnSwitch === '0'">
-                  <el-form-item>
-                    <el-input v-model="productForm.productCode" placeholder="产品编码" clearable />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6" v-if="isReturnSwitch === '0'">
-                  <el-form-item>
-                    <el-input v-model="productForm.productDrawingNo" placeholder="品名规格" clearable />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6" v-if="isReturnSwitch === '1'">
-                  <el-form-item label="交货日期">
-                    <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
-                      style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable></el-date-picker>
-                  </el-form-item>
-                </el-col>
+                          <el-form-item>
+                            <el-input v-model="orderForm.drawingNo" placeholder="品名规格" clearable />
+                          </el-form-item>
+                        </el-col>
+                        <el-col :span="6" v-if="isReturnSwitch === '0'">
+                          <el-form-item>
+                            <el-input v-model="productForm.productCode" placeholder="产品编码" clearable />
+                          </el-form-item>
+                        </el-col>
+                        <el-col :span="6" v-if="isReturnSwitch === '0'">
+                          <el-form-item>
+                            <el-input v-model="productForm.productDrawingNo" placeholder="品名规格" clearable />
+                          </el-form-item>
+                        </el-col>
+                        <el-col :span="6" v-if="isReturnSwitch === '1'">
+                          <el-form-item label="交货日期">
+                            <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
+                              style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期"
+                              clearable></el-date-picker>
+                          </el-form-item>
+                        </el-col>
 
                         <el-col :span="6">
                           <el-form-item>
@@ -587,7 +590,7 @@ export default {
       totalNum: 0,
       totalAssistantNum: 0,
       totalAmount: 0,
-     
+
       productVisible: false,
       cusPrototal: 0, //选择客户产品分页器的总条数
       cusProductData: [],
@@ -1391,7 +1394,7 @@ export default {
       if (!value) return true
       return data.name.indexOf(value) !== -1
     },
- 
+
     getNodePathProduct(node) {
       let fullPath = []
       const loop = (node) => {

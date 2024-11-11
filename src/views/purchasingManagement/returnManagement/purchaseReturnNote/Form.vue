@@ -369,7 +369,7 @@
                   </template>
                   <template slot-scope="scope">
                     <el-form-item :prop="'productData.' + scope.$index + '.' + 'price'" :rules="productRules.price">
-                      <el-input v-model="scope.row.price" placeholder="单价(含税)" />
+                      <el-input v-model="scope.row.price" placeholder="单价(含税)" :disabled="isReturnSwitch === '1'" />
                     </el-form-item>
                   </template>
                 </el-table-column>
@@ -393,7 +393,8 @@
                   </template>
                   <template slot-scope="scope">
                     <el-form-item :rules="productRules.taxRate">
-                      <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;">
+                      <el-select v-model="scope.row.taxRate" :disabled="isReturnSwitch === '1'" placeholder="请选择"
+                        style="width: 100%;">
                         <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                           :value="item.enCode"></el-option>
                       </el-select>
@@ -665,6 +666,7 @@ import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getProducts } from '@/api/masterDataManagement/index.js' // 产品列表
+import { getbimProductAttributes } from '@/api/masterDataManagement/index'
 export default {
   components: { Process, recordList },
   mixins: [busFlow],
@@ -982,6 +984,7 @@ export default {
   created() {
     // this.handleChange()
     // this.getProvinceList()
+    this.getProductClassFun()
     this.getReturnswitch()
     this.getBimBusinessDetail()
     this.getAttributeline()
@@ -993,6 +996,15 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    getProductClassFun() {
+      // 获取税率(数据字典)
+      getbimProductAttributes('585438081021126405').then((res) => {
+        res.data.list.forEach((item) => {
+          item.taxRate = item.enCode.replace('%', '') * 1
+        })
+        this.taxRateList = res.data.list
+      })
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',

@@ -184,6 +184,7 @@ import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
+  name: 'basicProcessSettings',
   components: { JNPFForm, ExportForm, SuperQuery },
   data() {
     return {

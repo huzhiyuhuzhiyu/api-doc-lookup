@@ -293,9 +293,6 @@
                     </el-table-column>
 
                     <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211">
-                      <!-- <template slot="header">
-                        <span class="required">*</span>打字内容
-                      </template> -->
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
                           style="width: 100%;">
@@ -305,9 +302,6 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123">
-                      <!-- <template slot="header">
-                        <span class="required">*</span>精度等级
-                      </template> -->
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
                           <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
@@ -315,11 +309,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-
                     <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
-                      <!-- <template slot="header">
-                        <span class="required">*</span>振动等级
-                      </template> -->
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
@@ -328,9 +318,6 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="oil" label="油脂" width="120" :key="61">
-                      <!-- <template slot="header">
-                        <span class="required">*</span>油脂
-                      </template> -->
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
@@ -339,7 +326,6 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51">
-
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
@@ -348,9 +334,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="clearance" label="游隙" width="120" :key="100">
-                      <!-- <template slot="header">
-                        <span class="required">*</span>游隙
-                      </template> -->
+                   
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list6" :key="index" :label="item.name"

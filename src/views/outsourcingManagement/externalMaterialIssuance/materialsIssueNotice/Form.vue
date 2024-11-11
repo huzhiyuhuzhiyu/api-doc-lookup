@@ -149,6 +149,83 @@
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="purchaseQuantity" label="订单数量" width="120" key="7"
                         show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="price" label="含税单价" width="130">
+                        <template slot="header">
+                          <span class="required">*</span>
+                          单价(含税)
+                        </template>
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'productData.' + scope.$index + '.' + 'price'"
+                            :rules="productRules.price">
+                            <div class="viewData">
+                              <span>{{ scope.row.price ? scope.row.price : 0 }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="totalAmount" label="金额" width="140">
+                        <template slot="header">
+                          <span class="required">*</span>
+                          金额(含税)
+                        </template>
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'productData.' + scope.$index + '.' + 'totalAmount'">
+                            <div class="viewData">
+                              <span>{{ scope.row.totalAmount ? scope.row.totalAmount : 0 }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="taxRate" label="税率" width="140">
+                        <template slot="header">
+                          <span class="required">*</span>
+                          税率
+                        </template>
+                        <template slot-scope="scope">
+                          <el-form-item>
+                            <div class="viewData">
+                              <span>{{ scope.row.taxRate ? scope.row.taxRate : 0 }}%</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
+
+                      <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150">
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxPrice'">
+                            <div class="viewData">
+                              <span>{{ scope.row.excludingTaxPrice }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
+
+                      <el-table-column prop="taxAmount" label="税额" min-width="100">
+                        <template slot="header">
+                          <span class="required">*</span>
+                          税额
+                        </template>
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'productData.' + scope.$index + '.' + 'taxAmount'">
+                            <div class="viewData">
+                              <span>{{ scope.row.taxAmount ? scope.row.taxAmount : 0 }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180">
+                        <template slot="header">
+                          <span class="required">*</span>
+                          金额(不含税)
+                        </template>
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxAmount'">
+                            <div class="viewData">
+                              <span>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="deliveryDate" label="交货日期" width="120" key="4" v-if="btnType == 'look'"
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip>
@@ -335,6 +412,82 @@
                     show-overflow-tooltip></el-table-column>
                   <el-table-column prop="purchaseQuantity" label="订单数量" width="120" key="7"
                     show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="price" label="含税单价" width="130">
+                    <template slot="header">
+                      <span class="required">*</span>
+                      单价(含税)
+                    </template>
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'productData.' + scope.$index + '.' + 'price'" :rules="productRules.price">
+                        <div class="viewData">
+                          <span>{{ scope.row.price ? scope.row.price : 0 }}</span>
+                        </div>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="totalAmount" label="金额" width="140">
+                    <template slot="header">
+                      <span class="required">*</span>
+                      金额(含税)
+                    </template>
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'productData.' + scope.$index + '.' + 'totalAmount'">
+                        <div class="viewData">
+                          <span>{{ scope.row.totalAmount ? scope.row.totalAmount : 0 }}</span>
+                        </div>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="taxRate" label="税率" width="140">
+                    <template slot="header">
+                      <span class="required">*</span>
+                      税率
+                    </template>
+                    <template slot-scope="scope">
+                      <el-form-item>
+                        <div class="viewData">
+                          <span>{{ scope.row.taxRate ? scope.row.taxRate : 0 }}%</span>
+                        </div>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+
+                  <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150">
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxPrice'">
+                        <div class="viewData">
+                          <span>{{ scope.row.excludingTaxPrice }}</span>
+                        </div>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+
+                  <el-table-column prop="taxAmount" label="税额" min-width="100">
+                    <template slot="header">
+                      <span class="required">*</span>
+                      税额
+                    </template>
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'productData.' + scope.$index + '.' + 'taxAmount'">
+                        <div class="viewData">
+                          <span>{{ scope.row.taxAmount ? scope.row.taxAmount : 0 }}</span>
+                        </div>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180">
+                    <template slot="header">
+                      <span class="required">*</span>
+                      金额(不含税)
+                    </template>
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxAmount'">
+                        <div class="viewData">
+                          <span>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</span>
+                        </div>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
                   <el-table-column prop="deliveryDate" label="交货日期" width="120" key="4" v-if="btnType == 'look'"
                     show-overflow-tooltip></el-table-column>
                   <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip>
@@ -443,7 +596,7 @@ export default {
   mixins: [busFlow],
   data() {
     return {
-      flowTemplateJson:{},
+      flowTemplateJson: {},
       isattachmentswitch: '',
       categoryId: '',
       getCooperativeData,
@@ -1607,6 +1760,12 @@ export default {
                   // demandQuantity: it.demandQuantity ? it.demandQuantity : '',
                   remark: it.remark ? it.remark : '',
                   returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
+                  price: item.price ? item.price : '',
+                  totalAmount: item.totalAmount ? item.totalAmount : '',
+                  taxRate: item.taxRate ? item.taxRate : '',
+                  excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
+                  taxAmount: item.taxAmount ? item.taxAmount : '',
+                  excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
 
                 }
                 obj.noticeLineList.push(dep)
@@ -1635,7 +1794,12 @@ export default {
                 receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
                 remark: item.remark ? item.remark : '',
                 returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
-
+                price: item.price ? item.price : '',
+                totalAmount: item.totalAmount ? item.totalAmount : '',
+                taxRate: item.taxRate ? item.taxRate : '',
+                excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
+                taxAmount: item.taxAmount ? item.taxAmount : '',
+                excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
               }
               obj.noticeLineList.push(dep2)
             }

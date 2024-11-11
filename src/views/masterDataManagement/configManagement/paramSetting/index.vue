@@ -7,6 +7,7 @@
           <el-radio-button label="product">产品设置</el-radio-button>
           <el-radio-button label="produce">生产设置</el-radio-button>
           <el-radio-button label="warehouse">仓库设置</el-radio-button>
+          <el-radio-button label="return">退货设置</el-radio-button>
           <el-radio-button label="attachment">附件开关</el-radio-button>
           <el-radio-button label="system">项目管理</el-radio-button>
         </el-radio-group>
@@ -40,9 +41,7 @@
                   </el-radio-group>
                 </div>
                 <div v-else>
-                  <el-checkbox v-model="scope.row.state"
-                    :disabled="(scope.row.state && scope.row.configKey == 'project')"
-                    @change="stateChange(scope.row)"></el-checkbox>
+                  <el-checkbox v-model="scope.row.state" @change="stateChange(scope.row)"></el-checkbox>
                   <el-input style="width: 150px;margin-left: 10px;" v-if="
                     (scope.row.state && scope.row.configKey == 'work_exceed_report') ||
                     (scope.row.state && scope.row.configKey == 'collect_exceed_picking')
@@ -64,7 +63,7 @@
                     :selectClassifyType="FileCategoryType.SYSTEM_ATTACHMENT" />
                   <div v-else>
                     <div style="width: 100%" v-if="row.configValue3">
-                        <el-link  type="primary" :underline="false">{{ row.configValue3 }}</el-link>
+                      <el-link type="primary" :underline="false">{{ row.configValue3 }}</el-link>
                     </div>
                     <div style="width: 100%;visibility: hidden" v-else>1</div>
                   </div>
@@ -239,6 +238,10 @@ export default {
         this.listQuery.pageSize = -1
         this.listQuery.businessCode = 'warehouse'
         this.getData(2)
+      } else if (this.activeName === 'return') {
+        this.listQuery.pageSize = -1
+        this.listQuery.businessCode = 'return'
+        this.getData(5)
       } else if (this.activeName === 'system') {
         this.listQuery.pageSize = -1
         this.listQuery.businessCode = 'system'
@@ -278,6 +281,8 @@ export default {
             list = res.data.attachment.filter((item) => item.configKey !== '' || item.configKey === 'fj_qzkh')
           } else if (this.activeName === 'system') {
             list = res.data.system
+          } else if (this.activeName === 'return') {
+            list = res.data.return
           }
 
           list.forEach((item) => {

@@ -23,26 +23,7 @@
                         :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
                     </el-form-item>
                   </el-col>
-                </template>
-
-                <!-- <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model.trim="listQuery.partnerName" placeholder="请输入客户名称" clearable
-                      @keyup.enter.native="search()" />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model.trim="listQuery.customerProductNo" placeholder="请输入客户料号" clearable
-                      @keyup.enter.native="search()" />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model.trim="listQuery.drawingNo" placeholder="请输入品名规格" clearable
-                      @keyup.enter.native="search()" />
-                  </el-form-item>
-                </el-col> -->
+                </template> 
 
 
 
@@ -66,7 +47,7 @@
                 <div class="JNPF-common-head-right">
                   <el-tooltip content="高级查询" placement="top" v-if="true">
                     <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                      @click="superQueryVisible = true" />
+                      @click="seniorFun" />
                   </el-tooltip>
                   <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                     <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
@@ -97,11 +78,18 @@
                     }}</el-link>
                   </template>
                 </el-table-column>
-                <!-- <el-table-column prop="productName" label="产品名称" min-width="160" /> -->
                 <el-table-column prop="price" min-width="140" label="销售单价(含税)" />
                 <el-table-column prop="excludingTaxPrice" label="销售单价(不含税)" width="160" />
                 <el-table-column prop="dateOrderStart" label="有效日期起" sortable="custom" min-width="160" />
                 <el-table-column prop="dateOrderStop" label="有效日期止" sortable="custom" min-width="160" />
+                <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
+                <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
+                <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
+                <el-table-column prop="oil" label="油脂" min-width="100" sortable="custom" />
+                <el-table-column prop="oilQuantity" label="油脂量" min-width="120" sortable="custom" />
+                <el-table-column prop="clearance" label="游隙" min-width="100" sortable="custom" />
+                <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
+                <el-table-column prop="specialRequire" label="特殊要求" min-width="160" sortable="custom" />
                 <el-table-column prop="remark" min-width="200" label="备注" />
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
 
@@ -114,26 +102,7 @@
         <el-tab-pane label="历史价格" name="historicalprice">
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
-              <el-form @submit.native.prevent>
-
-                <!-- <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model.trim="listQuery.partnerName" placeholder="请输入客户名称" clearable
-                      @keyup.enter.native="search()" />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model.trim="listQuery.customerProductNo" placeholder="请输入客户料号" clearable
-                      @keyup.enter.native="search()" />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model.trim="listQuery.drawingNo" placeholder="请输入品名规格" clearable
-                      @keyup.enter.native="search()" />
-                  </el-form-item>
-                </el-col> -->
+              <el-form @submit.native.prevent> 
                 <template v-for="item in searchList1">
                   <el-col :span="item.searchType === 3 ? 6 : 4">
                     <el-form-item>
@@ -172,7 +141,7 @@
                 <div class="JNPF-common-head-right">
                   <el-tooltip content="高级查询" placement="top" v-if="true">
                     <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                      @click="superQueryVisible = true" />
+                      @click="seniorFun" />
                   </el-tooltip>
                   <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                     <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
@@ -239,9 +208,12 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import CustomerForm from '../customerManagement/Officialcustomer/Form.vue'
 import Form from '@/views/masterDataManagement/productManagement/components/Form.vue'
 import FinshForm from '@/views/masterDataManagement/productManagement/finished_product/Form.vue'
+import {
+  getbimProductAttributesList, getbimProductAttributes
+} from "@/api/masterDataManagement/index";
 export default {
   name: 'PartnerProduct',
-  components: { ExportForm, SuperQuery, CustomerForm, Form,FinshForm},
+  components: { ExportForm, SuperQuery, CustomerForm, Form, FinshForm },
   data() {
     return {
       finshVisible: false,
@@ -308,8 +280,8 @@ export default {
       total: 0,
       formVisible: false,
       activeName: 'latestprice',
-      superQueryJson: [
-        {
+      superQueryJson1:[
+      {
           prop: 'partnerName',
           label: "客户名称",
           type: 'input'
@@ -319,8 +291,6 @@ export default {
           label: "客户编码",
           type: 'input'
         },
-
-
         {
           prop: 'customerProductNo',
           label: "客户料号",
@@ -336,37 +306,183 @@ export default {
           prop: 'productCode',
           label: "产品编码",
           type: 'input',
+        }, 
+        {
+          prop: 'dateOrderStart',
+          label: '有效日期起',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        }, 
+        {
+          prop: 'dateOrderStop',
+          label: '有效日期止',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'sealingCoverTyping',
+          label: "打字内容",
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'accuracyLevel',
+          label: "精度等级",
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'vibrationLevel',
+          label: "振动等级",
+          type: 'select',
+          options: []
+        },
+
+        {
+          prop: 'oil',
+          label: "油脂",
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'oilQuantity',
+          label: "油脂量",
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'clearance',
+          label: "游隙",
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'packagingMethod',
+          label: "包装方式",
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'specialRequire',
+          label: "特殊要求",
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'remark',
+          label: "备注",
+          type: 'input',
+
+        },
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+        },
+      ],
+      superQueryJson2:[ 
+      {
+          prop: 'cooperativePartnerIdText',
+          label: "客户名称",
+          type: 'input'
+        },
+        {
+          prop: 'cooperativePartnerCode',
+          label: "客户编码",
+          type: 'input'
+        },
+        {
+          prop: 'customerDrawingNumber',
+          label: "客户料号",
+          type: 'input',
+        },
+
+        {
+          prop: 'productDrawingNo',
+          label: "品名规格 ",
+          type: 'custom',
+        },
+        {
+          prop: 'productCode',
+          label: "产品编码",
+          type: 'input',
         },
         {
           prop: 'productName',
           label: "产品名称",
           type: 'input',
-        },
+        }, 
+      
+        
         {
-          prop: 'price',
-          label: "销售单价(含税)",
+          prop: 'validEnd',
+          label: '有效日期止',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+         
+        
+        {
+          prop: 'remark',
+          label: "备注",
           type: 'input',
+
         },
         {
-          prop: 'excludingTaxPrice',
-          label: "销售单价(不含税)",
-          type: 'input',
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+        },
+      ],
+      superQueryJson: [
+         
+
+
+
+      ],
+      requestArr: [
+        {
+          prop: "sealingCoverTyping",
+          typeCode: "pa007"
+        }, {
+          prop: "accuracyLevel",
+          typeCode: "pa006"
         },
         {
-          prop: 'workOrderNo',
-          label: "工作令号",
-          type: 'input'
+          prop: "vibrationLevel",
+          typeCode: "pa005"
         },
-
         {
-          prop: 'dateOrderStop',
-          label: "要求",
-          type: 'input'
-        },
-
-
-
-
+          prop: "oil",
+          typeCode: "pa002"
+        }, {
+          prop: "oilQuantity",
+          typeCode: "pa003"
+        }, {
+          prop: "clearance",
+          typeCode: "pa001"
+        }, {
+          prop: "packagingMethod",
+          typeCode: "pa015"
+        }, {
+          prop: "specialRequire",
+          typeCode: "pa016"
+        }
       ],
     }
   },
@@ -380,6 +496,16 @@ export default {
     }
   },
   methods: {
+    seniorFun(){
+      if(this.activeName=='historicalprice'){
+        this.superQueryJson=this.superQueryJson2
+      }else{
+        this.superQueryJson=this.superQueryJson1
+
+      }
+      console.log(this.superQueryJson);
+      this.superQueryVisible=true
+    },
     viewProduct(row, type) {
       this.productName = row.productName
       this.classAttribute = row.classAttribute
@@ -406,9 +532,10 @@ export default {
       })
     },
     superQuerySearch(query) {
-      this.listQuery.superQuery = query
+      this.superQuery = query
       this.superQueryVisible = false
       this.search('super')
+    
     },
     columnSetFun(ref) {
       this.$refs[ref].showDrawer()
@@ -456,33 +583,88 @@ export default {
       console.log(prop);
       // let newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
       // console.log(newProp);
-      if (prop === 'createTime') {
-        prop = "create_Time"
+      if (this.activeName == "historicalprice") {
+        let newProp;
+        if (prop === 'cooperativePartnerIdText'  || prop === 'cooperativePartnerCode' || prop === 'customerDrawingNumber' || prop === 'productDrawingNo'|| prop === 'productCode' || prop == 'productName' || prop == 'unitPrice'
+          || prop == 'excludingTaxUnitPrice'|| prop == 'validEnd'|| prop == 'ask'|| prop == 'remark'||prop=='createTime'
+        ) {
+          newProp = prop
+        } else {
+          newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+        } 
+
+
+        this.historyForm.orderItems[0].asc = order !== 'descending'
+        this.historyForm.orderItems[0].column = order === null ? "" : newProp
+        this.superForm = this.historyForm
+      } else {
+
+        let newProp;
+        if (prop === 'productCode' || prop === 'partnerName' || prop == 'oil' || prop == 'clearance') {
+          newProp = prop
+        } else {
+          newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+        }
+
+
+
+        this.listQuery.orderItems[0].asc = order !== 'descending'
+        this.listQuery.orderItems[0].column = order === null ? "" : newProp
+        this.superForm = this.listQuery
       }
-      if (prop === 'dateOrderStart') {
-        prop = "date_Order_Start"
-      }
-      if (prop === 'dateOrderStop') {
-        prop = "date_Order_Stop"
-      }
-      if (prop === 'customerProductDrawingNo') {
-        prop = "customer_Product_Drawing_No"
-      }
-      this.listQuery.orderItems[0].asc = order !== 'descending'
-      this.listQuery.orderItems[0].column = order === null ? "" : prop
+
+
       this.initData()
     },
-
     // 关闭新建、编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
-      this.finshVisible=false
+      this.finshVisible = false
       if (isRefresh) {
         this.initData()
       }
     },
 
+    // 获取打字内容等
+    getProductClassFun() {
+      this.requestArr.forEach((item, index) => {
+        let obj1 = {
+          pageNum: -1,
+          pageSize: 20,
+          typeCode: item.typeCode,
+          orderItems: [
+            {
+              asc: false,
+              column: "",
+            },
+            {
+              asc: false,
+              column: "code",
+            },
+          ],
+        };
+        getbimProductAttributesList(obj1).then(res => {
 
+          let arr = []
+          res.data.records.forEach(items => {
+            let obj = {
+              label: items.name,
+              value: items.name,
+            }
+            arr.push(obj)
+          });
+          let oilObj = this.superQueryJson.find(rs => rs.prop === item.prop);
+          if (oilObj) {
+            // 将options赋值为5  
+            oilObj.options = JSON.parse(JSON.stringify(arr));
+          }
+        })
+      })
+
+
+
+
+    },
     initData() {
       this.listLoading = true
       if (this.activeName == "historicalprice") {
@@ -493,7 +675,7 @@ export default {
         })
       } else {
         this.superForm.historyFlag = false
-
+        this.getProductClassFun()
         getPartnerOrProductData(this.superForm).then(res => {
           console.log(res, '客户产品列表');
           this.tableDataList = res.data.records
@@ -583,10 +765,10 @@ export default {
             column: "createTime"
           }],
         }
-        this.searchList = [
-          { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
-          { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
-          { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        this.searchList1 = [
+          { field: 'cooperativePartnerIdText', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+          { field: 'customerDrawingNumber', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
+          { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
 
         ]
         this.$refs.SuperQuery.conditionList = []

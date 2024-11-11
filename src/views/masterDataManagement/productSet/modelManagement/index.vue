@@ -141,6 +141,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 
 export default {
+  name: 'modelManagement',
   components: { JNPFForm, ExportForm, TableForm, SuperQuery },
   data() {
     return {

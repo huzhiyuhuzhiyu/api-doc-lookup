@@ -1346,7 +1346,7 @@ export default {
           : this.inspectionType === 'sale_back'
             ? 'b006'
             : this.inspectionType === 'produce'
-              ? 'b047'
+              ? 'b062'
               : 'b004'
       getBusinessFlowInfo(code)
         .then((res) => {

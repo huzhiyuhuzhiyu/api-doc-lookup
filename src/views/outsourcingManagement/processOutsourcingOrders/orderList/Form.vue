@@ -191,7 +191,7 @@
                         <template slot-scope="scope">
                           <el-form-item :rules="productRules.taxRate">
 
-                            <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;"
+                            <el-select v-model="scope.row.taxRate"  placeholder="请选择" style="width: 100%;"
                               :disabled="type == 'look' ? true : false">
                               <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                                 :value="item.taxRate"></el-option>

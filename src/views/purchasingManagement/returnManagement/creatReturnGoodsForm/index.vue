@@ -154,9 +154,10 @@
                             <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
                             <!-- </el-table-column> -->
                             <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
-                            <el-table-column prop="mainUnit" label="单位" width="160" />
+                            <el-table-column prop="mainUnit" label="单位" width="60" />
                             <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
-                            <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom" />
+                            <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom"
+                              v-if="isReturnSwitch === '1'" />
                             <el-table-column prop="receivedQuantity" label="退货数量" width="170"
                               v-if="!dataForm.exchangeGoodsFlag" key="789">
                               <template slot="header">
@@ -180,9 +181,10 @@
                                 单价(含税)
                               </template>
                               <template slot-scope="scope">
-                                <el-form-item :prop="'data.' + scope.$index + '.' + 'price'"
+                                <el-form-item :prop="'productData.' + scope.$index + '.' + 'price'"
                                   :rules="productRules.price">
-                                  <el-input v-model="scope.row.price" placeholder="单价(含税)" />
+                                  <el-input v-model="scope.row.price" placeholder="单价(含税)"
+                                    :disabled="isReturnSwitch === '1' || btnType == 'look'" />
                                 </el-form-item>
                               </template>
                             </el-table-column>
@@ -192,7 +194,7 @@
                                 金额(含税)
                               </template>
                               <template slot-scope="scope">
-                                <el-form-item :prop="'data.' + scope.$index + '.' + 'totalAmount'">
+                                <el-form-item :prop="'productData.' + scope.$index + '.' + 'totalAmount'">
                                   <div class="viewData">
                                     <span>{{ scope.row.totalAmount ? scope.row.totalAmount : 0 }}</span>
                                   </div>
@@ -206,7 +208,9 @@
                               </template>
                               <template slot-scope="scope">
                                 <el-form-item :rules="productRules.taxRate">
-                                  <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;">
+                                  <el-select v-model="scope.row.taxRate"
+                                    :disabled="isReturnSwitch === '1' || btnType == 'look'" placeholder="请选择"
+                                    style="width: 100%;">
                                     <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                                       :value="item.enCode"></el-option>
                                   </el-select>
@@ -216,7 +220,7 @@
 
                             <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150">
                               <template slot-scope="scope">
-                                <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxPrice'">
+                                <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxPrice'">
                                   <div class="viewData">
                                     <span>{{ scope.row.excludingTaxPrice }}</span>
                                   </div>
@@ -230,7 +234,7 @@
                                 税额
                               </template>
                               <template slot-scope="scope">
-                                <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'">
+                                <el-form-item :prop="'productData.' + scope.$index + '.' + 'taxAmount'">
                                   <div class="viewData">
                                     <span>{{ scope.row.taxAmount ? scope.row.taxAmount : 0 }}</span>
                                   </div>
@@ -243,7 +247,7 @@
                                 金额(不含税)
                               </template>
                               <template slot-scope="scope">
-                                <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
+                                <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxAmount'">
                                   <div class="viewData">
                                     <span>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</span>
                                   </div>
@@ -284,35 +288,6 @@
                 :visible.sync="customerVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="80%"
                 append-to-body @close="handleClose">
                 <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
-                  <div class="JNPF-common-layout-left">
-                    <div class="JNPF-common-title">
-                      <h2>客户分类</h2>
-                      <span class="options">
-                        <el-dropdown>
-                          <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
-                          <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
-                            <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
-                            <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
-                          </el-dropdown-menu>
-                        </el-dropdown>
-                      </span>
-                    </div>
-                    <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
-                      <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands"
-                        highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick"
-                        class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNode">
-                        <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
-                          <i :class="[
-                            data.childrenList.length > 0
-                              ? 'icon-ym icon-ym-tree-organization3'
-                              : 'icon-ym icon-ym-systemForm'
-                          ]" />
-                          <span class="text" :title="data.name">{{ data.name }}</span>
-                        </span>
-                      </el-tree>
-                    </el-scrollbar>
-                  </div>
                   <div class="JNPF-common-layout-center JNPF-flex-main">
                     <el-row class="JNPF-common-search-box" :gutter="16">
                       <el-form @submit.native.prevent>
@@ -368,13 +343,22 @@
                   <div class="JNPF-common-layout-center JNPF-flex-main">
                     <el-row class="JNPF-common-search-box" :gutter="16">
                       <el-form @submit.native.prevent>
-                        <el-col :span="6">
+                        <el-col :span="6" v-if="isReturnSwitch === '1'">
                           <el-form-item>
                             <el-input v-model="orderForm.drawingNo" placeholder="品名规格" clearable />
                           </el-form-item>
                         </el-col>
-
-                        <el-col :span="6">
+                        <el-col :span="6" v-if="isReturnSwitch === '0'">
+                          <el-form-item>
+                            <el-input v-model="productForm.productCode" placeholder="产品编码" clearable />
+                          </el-form-item>
+                        </el-col>
+                        <el-col :span="6" v-if="isReturnSwitch === '0'">
+                          <el-form-item>
+                            <el-input v-model="productForm.productDrawingNo" placeholder="品名规格" clearable />
+                          </el-form-item>
+                        </el-col>
+                        <el-col :span="6" v-if="isReturnSwitch === '1'">
                           <el-form-item label="交货日期">
                             <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
                               style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期"
@@ -394,22 +378,40 @@
                         </el-col>
                       </el-form>
                     </el-row>
+
                     <div class="JNPF-common-layout-main JNPF-flex-main">
                       <JNPF-table v-loading="listLoading" :data="productList" @row-dblclick="seleceCustomer" hasC
                         @selection-change="handleSelectionChangeAllPruduct">
-                        <el-table-column prop="orderNo" label="订单号" min-width="180" sortable="custom"></el-table-column>
 
-                        <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-                        <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom" />
-                        <el-table-column prop="mainUnit" label="单位" width="60" />
-                        <el-table-column prop="purchaseQuantity" label="数量" width="120" sortable="custom" />
-                        <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
-                        <el-table-column prop="processName" label="工序" width="160" sortable="custom" />
-                        <el-table-column prop="remark" label="备注" width="160" />
-                        <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+                        <el-table-column prop="orderNo" label="订单号" min-width="180" sortable="custom"
+                          v-if="isReturnSwitch === '1'"></el-table-column>
+
+                        <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom"
+                          v-if="isReturnSwitch === '1'" />
+                        <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom"
+                          v-if="isReturnSwitch === '1'" />
+                        <el-table-column prop="mainUnit" label="单位" width="60" v-if="isReturnSwitch === '1'" />
+                        <el-table-column prop="purchaseQuantity" label="数量" width="120" sortable="custom"
+                          v-if="isReturnSwitch === '1'" />
+                        <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom"
+                          v-if="isReturnSwitch === '1'" />
+                        <el-table-column prop="processName" label="工序" width="160" sortable="custom"
+                          v-if="isReturnSwitch === '1'" />
+                        <el-table-column prop="remark" label="备注" width="160" v-if="isReturnSwitch === '1'" />
+                        <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"
+                          v-if="isReturnSwitch === '1'" />
+                        <el-table-column prop="code" label="产品编码" show-overflow-tooltip
+                          v-if="isReturnSwitch === '0'"></el-table-column>
+                        <el-table-column prop="drawingNo" label="品名规格" v-if="isReturnSwitch === '0'" />
+                        <el-table-column prop="productCategoryName" label="所属分类" v-if="isReturnSwitch === '0'" />
+                        <el-table-column prop="mainUnit" label="单位" v-if="isReturnSwitch === '0'" />
+                        <el-table-column prop="inventoryQuantity" label="库存数量" v-if="isReturnSwitch === '0'">
+                        </el-table-column>
                       </JNPF-table>
-                      <pagination :total="productTotal" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
-                        @pagination="searchProductFun" />
+                      <pagination v-if="isReturnSwitch === '1'" :total="productTotal" :page.sync="orderForm.pageNum"
+                        :limit.sync="orderForm.pageSize" @pagination="searchProductFun" />
+                      <pagination v-if="isReturnSwitch === '0'" :total="productTotal" :page.sync="productForm.pageNum"
+                        :limit.sync="productForm.pageSize" @pagination="searchProductFun" />
                     </div>
                   </div>
                 </div>
@@ -453,7 +455,7 @@ import {
   getOrderDetail,
   getsaleOrderDetailList
 } from '@/api/salesManagement/assemblyOrders'
-import { getCooperativeInfo, getCooperativeData, getBimBusinessDetail } from '@/api/basicData/index'
+import { getCooperativeInfo, getCooperativeData, getBimBusinessDetail, getWarehouseList, getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { detailpurchaseOrderList } from '@/api/purchasingAndOutsourcingOrders/index'
 import {
   addpurPurchaseReceiptReturnGoods,
@@ -461,12 +463,11 @@ import {
   getpurPurchaseReceiptReturnGoodsdetail
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import { getclassAttributeList } from '@/api/masterDataManagement/index'
-import { getWarehouseList } from '@/api/basicData/index'
 import { mapGetters } from 'vuex'
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import { getbimProductAttributes } from '@/api/masterDataManagement/index'
-
+import { getProducts } from '@/api/masterDataManagement/index.js' // 产品列表
 export default {
   components: { Process },
   data() {
@@ -506,6 +507,25 @@ export default {
         productName: '',
 
         receivingStatus: 'received'
+      },
+      productForm: {
+        classAttribute: "other",
+        productSource: 'purchase',
+        productDrawingNo: "",
+        productStatus: 'enable',
+
+        productCategoryId: "",
+        code: "",
+        name: "",
+        orderItems: [{
+          "asc": false,
+          "column": ""
+        }, {
+          "asc": false,
+          "column": "create_time"
+        }],
+        pageNum: 1,
+        pageSize: 20,
       },
       // orderList: [
       //   { label: "外协通知", value: "external" },
@@ -571,25 +591,7 @@ export default {
       totalNum: 0,
       totalAssistantNum: 0,
       totalAmount: 0,
-      // 选择客户产品参数
-      productForm: {
-        //   drawingNo: "",
-        productCode: '',
-        productName: '',
-        partnerId: '',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20
-      },
+
       productVisible: false,
       cusPrototal: 0, //选择客户产品分页器的总条数
       cusProductData: [],
@@ -743,7 +745,8 @@ export default {
       flowTemplateJson: {},
       flowData: {},
       isattachmentswitch: '',
-      categoryId: ''
+      categoryId: '',
+      isReturnSwitch: ''
     }
   },
   computed: {
@@ -761,7 +764,7 @@ export default {
     filterText(val) {
       this.$refs.treeBox.filter(val)
     },
-    'dataFormTwo.data': {
+    'dataFormTwo.productData': {
       // immediate:true,
       handler: function (newVal, oldVal) {
         newVal.forEach((item) => {
@@ -770,13 +773,13 @@ export default {
           } else {
             item.excludingTaxPrice = ''
           }
-          if (item.purchaseQuantity && item.excludingTaxPrice) {
-            item.excludingTaxAmount = this.jnpf.numberFormat(item.purchaseQuantity * item.excludingTaxPrice)
+          if (item.receivedQuantity && item.excludingTaxPrice) {
+            item.excludingTaxAmount = this.jnpf.numberFormat(item.receivedQuantity * item.excludingTaxPrice)
           } else {
             item.excludingTaxAmount = ''
           }
-          if (item.price && item.purchaseQuantity && item.excludingTaxAmount) {
-            item.taxAmount = this.jnpf.numberFormat(item.price * item.purchaseQuantity - item.excludingTaxAmount)
+          if (item.price && item.receivedQuantity && item.excludingTaxAmount) {
+            item.taxAmount = this.jnpf.numberFormat(item.price * item.receivedQuantity - item.excludingTaxAmount)
           } else {
             item.taxAmount = ''
           }
@@ -796,6 +799,7 @@ export default {
   created() {
     // this.handleChange()
     // this.getProvinceList()
+    this.getReturnswitch()
     this.getBimBusinessDetail()
     this.getAttributeline()
     this.getClassAttribute()
@@ -803,23 +807,23 @@ export default {
   },
   mounted() {
     this.init()
-    this.getAttachmentswitch()
+
     this.getProductClassFun()
     let tBody = document.querySelectorAll('.el-table')[1]
     tBody.style.height = 'auto'
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
-    getAttachmentswitch() {
+    getReturnswitch() {
       let obj = {
         businessCode: 'return',
         pageSize: -1
       }
       getBimBusinessSwitchConfigList(obj).then((res) => {
-        res.data.attachment.forEach((item) => {
-          if (item.configKey == 'fj_cggysgl') {
-            this.isattachmentswitch = item.configValue1
-            this.categoryId = item.configValue2
+        console.log(res, 's')
+        res.data.return.forEach((item) => {
+          if (item.configKey == 'purchase_order') {
+            this.isReturnSwitch = item.configValue1
           }
         })
       })
@@ -871,17 +875,26 @@ export default {
     calcValidate() {
       return (rule, value, callback) => {
         let index = Number(rule.field.match(/\d+/)[0])
-        let msg = this.dataForm.exchangeGoodsFlag ? `换货数量超过最大可换货数量` : `退货数量超过最大可退货数量`
+        let msg = this.isReturnSwitch === 1 ? `退货数量超过最大可退货数量` : `退货数量超过订单数量`
         if (!value || value == 0) {
           callback()
         } else {
           let flag = false
           let list = this.dataFormTwo.productData
-          let num_1 = Number(list[index].receivedQuantity)
-          let num_2 = Number(list[index].receiptQuantity)
-          if (!(num_1 <= num_2)) {
-            flag = true
+          if (this.isReturnSwitch === '1') {
+            let num_1 = Number(list[index].receivedQuantity)
+            let num_2 = Number(list[index].receiptQuantity)
+            if (!(num_1 <= num_2)) {
+              flag = true
+            }
+          } else {
+            let num_1 = Number(list[index].receivedQuantity)
+            let num_2 = Number(list[index].purchaseQuantity)
+            if (!(num_1 <= num_2)) {
+              flag = true
+            }
           }
+
           if (flag) {
             this.$message.error(`第${index + 1}行${msg}`)
             callback(new Error(msg))
@@ -979,23 +992,38 @@ export default {
 
     // 选择产品——搜索
     searchProductFun() {
-      if (this.deliveryDateArr.length) {
-        this.orderForm.deliveryStarDate = this.deliveryDateArr[0]
-        this.orderForm.deliveryEndDate = this.deliveryDateArr[1]
+      console.log(this.isReturnSwitch, 'this.isReturnSwitch')
+      if (this.isReturnSwitch === '1') {
+        console.log(1)
+        if (this.deliveryDateArr.length) {
+          this.orderForm.deliveryStarDate = this.deliveryDateArr[0]
+          this.orderForm.deliveryEndDate = this.deliveryDateArr[1]
+        } else {
+          this.orderForm.deliveryStartDate = ''
+          this.orderForm.deliveryEndDate = ''
+        }
+        this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
+        detailpurchaseOrderList(this.orderForm)
+          .then((res) => {
+            this.productList = res.data.records
+            this.productTotal = res.data.total
+            this.listLoading = false
+          })
+          .catch(() => {
+            this.listLoading = false
+          })
       } else {
-        this.orderForm.deliveryStartDate = ''
-        this.orderForm.deliveryEndDate = ''
-      }
-      this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
-      detailpurchaseOrderList(this.orderForm)
-        .then((res) => {
+        console.log(3)
+        getProducts(this.productForm).then((res) => {
           this.productList = res.data.records
           this.productTotal = res.data.total
           this.listLoading = false
         })
-        .catch(() => {
-          this.listLoading = false
-        })
+          .catch(() => {
+            this.listLoading = false
+          })
+      }
+
     },
     // 选择产品——重置
     resetProductFun() {
@@ -1021,21 +1049,54 @@ export default {
           }
         ]
       }
+      this.productForm = {
+        classAttribute: 'other',
+        productSource: 'purchase',
+        productDrawingNo: "",
+        productStatus: 'enable',
+
+        productCategoryId: "",
+        code: "",
+        name: "",
+        orderItems: [{
+          "asc": false,
+          "column": ""
+        }, {
+          "asc": false,
+          "column": "create_time"
+        }],
+        pageNum: 1,
+        pageSize: 20,
+      }
       this.searchProductFun()
     },
     // 点击选择产品
     openSeleceProductDialog() {
-      if (!this.dataForm.cooperativePartnerId) return this.$message.error('请先选择供应商')
+      console.log(this.isReturnSwitch, ';')
+      if (this.isReturnSwitch === '1') {
+        if (!this.dataForm.cooperativePartnerId) return this.$message.error('请先选择供应商')
+      } else {
+
+      }
+
       this.productVisible = true
       this.searchProductFun()
     },
     submitAllProduct() {
       if (!this.selectArr.length) return this.$message.error('请选择产品！')
       this.productVisible = false
-      this.selectArr.forEach((item) => {
-        item.ordersNum = item.num
-        this.dataFormTwo.productData.push(item)
-      })
+      if (this.isReturnSwitch === '1') {
+        this.selectArr.forEach((item) => {
+          item.ordersNum = item.num
+          this.dataFormTwo.productData.push(item)
+        })
+      } else {
+        this.selectArr.forEach((item) => {
+          item.purchaseQuantity = item.inventoryQuantity
+          this.dataFormTwo.productData.push(item)
+        })
+      }
+
       let uniqueArr = []
       let idSet = new Set()
 
@@ -1046,6 +1107,7 @@ export default {
         }
       })
       this.dataFormTwo.productData = uniqueArr
+
     },
     // },
     // 获取所有订单列表数据
@@ -1333,14 +1395,7 @@ export default {
       if (!value) return true
       return data.name.indexOf(value) !== -1
     },
-    handleNodeAllProduct(data, node) {
-      if (this.ProductListRequestObj.productCategoryId === data.id) return
-      this.ProductListRequestObj.productCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
-      const nodePath = this.getNodePathProduct(node)
-      this.organizeIdTree = nodePath.map((o) => o.id)
-      this.ProductListRequestObj.classAttribute = data.classAttribute
-      this.searchAllProduct()
-    },
+
     getNodePathProduct(node) {
       let fullPath = []
       const loop = (node) => {
@@ -1504,7 +1559,13 @@ export default {
             receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
             remark: item.remark ? item.remark : '',
             returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
-            receivingQuantity: item.receivingQuantity ? item.receivingQuantity : ''
+            receivingQuantity: item.receivingQuantity ? item.receivingQuantity : '',
+            price: item.price ? item.price : '',
+            totalAmount: item.totalAmount ? item.totalAmount : '',
+            taxRate: item.taxRate ? item.taxRate : '',
+            excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
+            taxAmount: item.taxAmount ? item.taxAmount : '',
+            excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
           }
           let dep1 = {
             billStatus: item.billStatus ? item.billStatus : '',
@@ -1526,7 +1587,13 @@ export default {
             receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
             remark: item.remark ? item.remark : '',
             returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
-            receivingQuantity: item.receivingQuantity ? item.receivingQuantity : ''
+            receivingQuantity: item.receivingQuantity ? item.receivingQuantity : '',
+            price: item.price ? item.price : '',
+            totalAmount: item.totalAmount ? item.totalAmount : '',
+            taxRate: item.taxRate ? item.taxRate : '',
+            excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
+            taxAmount: item.taxAmount ? item.taxAmount : '',
+            excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
           }
           if (this.btnType == 'add' || this.btnType == 'copy') {
             obj.lines.push(dep)

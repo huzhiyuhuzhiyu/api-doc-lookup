@@ -244,7 +244,7 @@ export default {
       detailProcess(id).then(res => {
         this.listLoading = false
         console.log("工艺详情", res);
-        let linesData = res.data.routingLineList
+        let linesData = res.data.routingLineList.filter(item => item.workOrderFlag).sort((a, b) => a.sort - b.sort)
         linesData.forEach(item => {
           item.selectFlag = false
           item.personId = "";

@@ -23,7 +23,7 @@
                         :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
                     </el-form-item>
                   </el-col>
-                </template> 
+                </template>
 
 
 
@@ -43,7 +43,10 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <div class="JNPF-common-head">
-                <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm">导出</el-button>
+                <div>
+                  <!-- <el-button type="primary"  size="mini" icon="el-icon-download" @click="importProductFun()">导入产品 </el-button> -->
+                <el-button type="primary" size="mini" icon="el-icon-plus" @click="exportForm">导出</el-button>
+                </div>
                 <div class="JNPF-common-head-right">
                   <el-tooltip content="高级查询" placement="top" v-if="true">
                     <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -102,7 +105,7 @@
         <el-tab-pane label="历史价格" name="historicalprice">
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
-              <el-form @submit.native.prevent> 
+              <el-form @submit.native.prevent>
                 <template v-for="item in searchList1">
                   <el-col :span="item.searchType === 3 ? 6 : 4">
                     <el-form-item>
@@ -196,6 +199,23 @@
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <CustomerForm v-if="customerVisible" ref="customerForm" @close="closePage"></CustomerForm>
+    <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+      :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
+      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false" :limit="1"
+        :on-preview="handlePreview" drag :on-remove="handleRemove" :on-change="handleFileChange" ref="uploadRef">
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text"><em>点击选取文件上传</em></div>
+        <div class="el-upload__tip" slot="tip">只能上传.xls/.xlsx文件 <el-button type="text" class="topButton"
+            icon="el-icon-download" @click="downLoadTemplate">下载模板</el-button></div>
+
+      </el-upload>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" @click="submit()">
+          提交</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -280,8 +300,8 @@ export default {
       total: 0,
       formVisible: false,
       activeName: 'latestprice',
-      superQueryJson1:[
-      {
+      superQueryJson1: [
+        {
           prop: 'partnerName',
           label: "客户名称",
           type: 'input'
@@ -306,7 +326,7 @@ export default {
           prop: 'productCode',
           label: "产品编码",
           type: 'input',
-        }, 
+        },
         {
           prop: 'dateOrderStart',
           label: '有效日期起',
@@ -315,7 +335,7 @@ export default {
           startPlaceholder: '开始日期',
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
-        }, 
+        },
         {
           prop: 'dateOrderStop',
           label: '有效日期止',
@@ -389,8 +409,8 @@ export default {
           endPlaceholder: '结束日期',
         },
       ],
-      superQueryJson2:[ 
-      {
+      superQueryJson2: [
+        {
           prop: 'cooperativePartnerIdText',
           label: "客户名称",
           type: 'input'
@@ -420,9 +440,9 @@ export default {
           prop: 'productName',
           label: "产品名称",
           type: 'input',
-        }, 
-      
-        
+        },
+
+
         {
           prop: 'validEnd',
           label: '有效日期止',
@@ -432,8 +452,8 @@ export default {
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
-         
-        
+
+
         {
           prop: 'remark',
           label: "备注",
@@ -449,12 +469,9 @@ export default {
           endPlaceholder: '结束日期',
         },
       ],
-      superQueryJson: [
-         
+      superQueryJson: [],
+      uploadVisib: false,
 
-
-
-      ],
       requestArr: [
         {
           prop: "sealingCoverTyping",
@@ -496,15 +513,82 @@ export default {
     }
   },
   methods: {
-    seniorFun(){
-      if(this.activeName=='historicalprice'){
-        this.superQueryJson=this.superQueryJson2
-      }else{
-        this.superQueryJson=this.superQueryJson1
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    handlePreview(file) {
+      console.log(file);
+    },
+    submit() {
+      console.log(this.fileList);
+      this.UploadProduct(this.file)
+    },
+
+    handleFileChange(file) {
+      console.log("所选文件:", file);
+      this.file = file.raw
+    },
+     // 下载模板
+     downLoadTemplate() {
+      const a = document.createElement('a')
+      a.setAttribute('download', '')
+      a.setAttribute('href', location.origin + '/static/客户产品导入模板.xlsx')
+      a.click()
+    },
+    importProductFun() {
+      this.uploadVisib = true
+    },
+    cancelFun() {
+      this.uploadVisib = false
+      this.$refs['uploadRef'].clearFiles();
+    },
+    // 上传产品
+    UploadProduct(data) {
+      this.loadingText = '正在导入数据'
+      this.formLoading = true
+      var formData = new FormData()
+      formData.append("file", data)
+      formData.append("partnerId", this.dataForm.cooperativePartnerId)
+      //调用上传文件接口
+      uploadProduct(formData).then(res => {
+        if (!res.data.url) {
+          this.$message.success(`导入成功`)
+          if (res.data.list.length > 0) {
+            res.data.list.forEach(item => {
+              item.productCode = item.productsCode
+              item.totalAmount = item.amounts
+              item.excludingTaxAmount = item.excludingTaxAmounts
+              if (this.dataForm.deliveryDate) {
+                item.deliveryDate = this.dataForm.deliveryDate
+              }
+            });
+          }
+          this.productData = res.data.list
+          this.formLoading = false
+          this.loadingText = ''
+          this.uploadVisib = false
+        } else {
+          this.handleMessage(res.data)
+          this.$refs['uploadRef'].clearFiles();
+        }
+        // this.tipsvisible=true
+
+        this.$refs['uploadRef'].clearFiles();
+      }).catch(err => {
+        this.$message.error(`文件上传失败`)
+        this.formLoading = false
+        this.loadingText = ''
+      })
+    },
+    seniorFun() {
+      if (this.activeName == 'historicalprice') {
+        this.superQueryJson = this.superQueryJson2
+      } else {
+        this.superQueryJson = this.superQueryJson1
 
       }
       console.log(this.superQueryJson);
-      this.superQueryVisible=true
+      this.superQueryVisible = true
     },
     viewProduct(row, type) {
       this.productName = row.productName
@@ -535,7 +619,7 @@ export default {
       this.superQuery = query
       this.superQueryVisible = false
       this.search('super')
-    
+
     },
     columnSetFun(ref) {
       this.$refs[ref].showDrawer()
@@ -585,13 +669,13 @@ export default {
       // console.log(newProp);
       if (this.activeName == "historicalprice") {
         let newProp;
-        if (prop === 'cooperativePartnerIdText'  || prop === 'cooperativePartnerCode' || prop === 'customerDrawingNumber' || prop === 'productDrawingNo'|| prop === 'productCode' || prop == 'productName' || prop == 'unitPrice'
-          || prop == 'excludingTaxUnitPrice'|| prop == 'validEnd'|| prop == 'ask'|| prop == 'remark'||prop=='createTime'
+        if (prop === 'cooperativePartnerIdText' || prop === 'cooperativePartnerCode' || prop === 'customerDrawingNumber' || prop === 'productDrawingNo' || prop === 'productCode' || prop == 'productName' || prop == 'unitPrice'
+          || prop == 'excludingTaxUnitPrice' || prop == 'validEnd' || prop == 'ask' || prop == 'remark' || prop == 'createTime'
         ) {
           newProp = prop
         } else {
           newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-        } 
+        }
 
 
         this.historyForm.orderItems[0].asc = order !== 'descending'

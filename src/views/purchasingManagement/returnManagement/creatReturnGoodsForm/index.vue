@@ -184,7 +184,7 @@
                                 <el-form-item :prop="'productData.' + scope.$index + '.' + 'price'"
                                   :rules="productRules.price">
                                   <el-input v-model="scope.row.price" placeholder="单价(含税)"
-                                    :disabled="isReturnSwitch === '1'" />
+                                    :disabled="isReturnSwitch === '1' || btnType == 'look'" />
                                 </el-form-item>
                               </template>
                             </el-table-column>
@@ -208,8 +208,9 @@
                               </template>
                               <template slot-scope="scope">
                                 <el-form-item :rules="productRules.taxRate">
-                                  <el-select v-model="scope.row.taxRate" :disabled="isReturnSwitch === '1'"
-                                    placeholder="请选择" style="width: 100%;">
+                                  <el-select v-model="scope.row.taxRate"
+                                    :disabled="isReturnSwitch === '1' || btnType == 'look'" placeholder="请选择"
+                                    style="width: 100%;">
                                     <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                                       :value="item.enCode"></el-option>
                                   </el-select>
@@ -1558,7 +1559,13 @@ export default {
             receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
             remark: item.remark ? item.remark : '',
             returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
-            receivingQuantity: item.receivingQuantity ? item.receivingQuantity : ''
+            receivingQuantity: item.receivingQuantity ? item.receivingQuantity : '',
+            price: item.price ? item.price : '',
+            totalAmount: item.totalAmount ? item.totalAmount : '',
+            taxRate: item.taxRate ? item.taxRate : '',
+            excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
+            taxAmount: item.taxAmount ? item.taxAmount : '',
+            excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
           }
           let dep1 = {
             billStatus: item.billStatus ? item.billStatus : '',
@@ -1580,7 +1587,13 @@ export default {
             receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
             remark: item.remark ? item.remark : '',
             returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
-            receivingQuantity: item.receivingQuantity ? item.receivingQuantity : ''
+            receivingQuantity: item.receivingQuantity ? item.receivingQuantity : '',
+            price: item.price ? item.price : '',
+            totalAmount: item.totalAmount ? item.totalAmount : '',
+            taxRate: item.taxRate ? item.taxRate : '',
+            excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
+            taxAmount: item.taxAmount ? item.taxAmount : '',
+            excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
           }
           if (this.btnType == 'add' || this.btnType == 'copy') {
             obj.lines.push(dep)

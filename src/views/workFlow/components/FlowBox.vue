@@ -353,7 +353,7 @@ export default {
         'b059': 'dailyManagement/scrapManagement/announceInvalidated/Form',
         'b060': 'toolclampmeasuring/scrapManagement/announceInvalidated/Form',
         'b061': 'inspectionManagement/components/inspectionFormManagementDetail.vue',
-        'b062': 'inspectionManagement/components/defectiveProductHandlingForm.vue',
+        'b008': 'inspectionManagement/components/defectiveProductHandlingForm.vue',
       },
       inspectionTypeList: [
         // 不良品

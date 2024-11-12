@@ -47,10 +47,13 @@ import { getcategoryTree, getUnitData, detailUnitData } from '@/api/basicData/ma
 import { getbimProductAttributesList, getbimProductsModelList } from '@/api/masterDataManagement/index'
 import tabs from './params'
 import { getProjectList } from '@/api/system/projectManagement'
+import { mapGetters } from "vuex"
+import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 export default {
   name: 'finished_product',
   data() {
     return {
+      isProjectSwitch: '',
       datafilelist: [],
       activeName: 'basicInfo',
       activeNames: ['modelInfo', 'basicInfo', 'otherInfo'],
@@ -178,19 +181,12 @@ export default {
           itemRules: [{ required: true, trigger: 'change' }],
           itemDisabled: false
         },
-        {
-          prop: 'projectId',
-          label: '所属项目',
-          value: '',
-          type: 'select',
-          options: [],
-          itemRules: [{ required: true, trigger: 'change' }],
-          itemDisabled: false
-        }
+
       ]
     }
   },
   created() {
+    this.getProjectSwitch()
     this.tabs.forEach((tab, tabInd) => {
       tab.tabContent.forEach((tc) => {
         this.dataForm[tc.prop] = tc.value || '' // 设置默认value
@@ -498,6 +494,29 @@ export default {
         }
       }
     })
+    console.log(this.userInfo.projectId)
+    if (this.userInfo.projectId) {
+      this.otherItems.push({
+        prop: 'projectId',
+        label: '所属项目',
+        value: '',
+        type: 'select',
+        options: [],
+        itemRules: [{ required: true, trigger: 'change' }],
+        itemDisabled: false
+      })
+      // if (tc.prop === 'projectId') {
+      //   let obj = {
+      //     pageNum: 1,
+      //     pageSize: -1
+      //   }
+      //   getProjectList(obj).then((res) => {
+      //     tc.options = res.data.records.map((item) => {
+      //       return { label: item.name, value: item.id }
+      //     })
+      //   })
+      // }
+    }
     this.otherItems.forEach((tc) => {
       if (tc.prop == 'tradeFlag') {
         tc.change = (val, data) => {
@@ -512,7 +531,6 @@ export default {
                     'clearance',
                     'steelBallManufacturerName',
                     'oil',
-                    // 'oilQuantity',
                     'noise',
                     'holder'
                     // 'vibrationLevel',
@@ -561,25 +579,31 @@ export default {
           }
         }
       }
-      if (tc.prop === 'projectId') {
-        let obj = {
-          pageNum: 1,
-          pageSize: -1
-        }
-        getProjectList(obj).then((res) => {
-          tc.options = res.data.records.map((item) => {
-            return { label: item.name, value: item.id }
-          })
-        })
-      }
+
+
     })
   },
   computed: {
     openMode() {
       return this.title === '新建成品档案' ? '新建' : this.title === '编辑成品档案' ? '编辑' : '只读'
-    }
+    },
+    ...mapGetters(['userInfo'])
   },
   methods: {
+    getProjectSwitch() {
+      let obj = {
+        businessCode: 'system',
+        pageSize: -1
+      }
+      getBimBusinessSwitchConfigList(obj).then((res) => {
+        res.data.system.forEach((item) => {
+          if (item.configKey == 'project') {
+            this.isProjectSwitch = item.configValue1
+
+          }
+        })
+      })
+    },
     // 选择型号 带出 密封盖 结构 打字 结构类型 游隙 钢球厂家 油脂 噪音 保持架
     modelChange(val, data, paramsObj) {
       this.$nextTick(() => {

@@ -149,7 +149,7 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="userInfo.projectId">
+          <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="isProjectSwitch">
           </el-table-column>
           <el-table-column prop="productStatus" :label="classAttributeText + '状态'" width="120" align="center">
 
@@ -302,6 +302,7 @@ import { getUnitData, detailUnitData } from '@/api/basicData/materialSettings' /
 import { getCooperativeData } from '@/api/basicData/index'
 import { getcategoryTree as getcategoryCoop } from '@/api/basicData/materialSettings'
 import { mapGetters } from "vuex"
+import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 export default {
   components: { Form, ExportForm, SuperQuery },
   name: 'productCom',
@@ -347,6 +348,7 @@ export default {
   },
   data() {
     return {
+      isProjectSwitch: '',
       quickVisible: false,
       quickForm: {
         code: '',
@@ -620,6 +622,7 @@ export default {
     }
   },
   mounted() {
+    this.getProjectSwitch()
     this.getProductClassFun()
   },
   computed: {
@@ -627,6 +630,20 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
+    getProjectSwitch() {
+      let obj = {
+        businessCode: 'system',
+        pageSize: -1
+      }
+      getBimBusinessSwitchConfigList(obj).then((res) => {
+        res.data.system.forEach((item) => {
+          if (item.configKey == 'project') {
+            this.isProjectSwitch = item.configValue1
+
+          }
+        })
+      })
+    },
     quickAdd() {
       this.quickVisible = true
 

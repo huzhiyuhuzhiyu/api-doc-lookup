@@ -890,6 +890,8 @@ export default {
 
     },
     goBom() {
+      this.tipsvisible = false
+      this.btnLoading = false
       this.$router.push({
         path: '/basicData/bomSettings/productionBom'
       })

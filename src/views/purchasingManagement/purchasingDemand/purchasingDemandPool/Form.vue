@@ -439,16 +439,16 @@ export default {
         pageSize: 20
       },
       ProductTableItems: [
-        { prop: 'drawingNo', label: '品名规格', sortable: 'custom', width: 200 },
-        { prop: 'code', label: '产品编码', sortable: 'custom', width: 160 },
+        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
+        { prop: 'immediatelyBuyFlag', label: '立即采购', sortable: 'custom' },
         { prop: 'mainUnit', label: '单位' },
-        { prop: 'availableQuantity', label: '可用库存', sortable: 'custom', width: 150 },
-        { prop: 'safeInventory', label: '安全库存', sortable: 'custom', width: 150 },
-        { prop: 'maxInventory', label: '最高库存', sortable: 'custom', width: 150 },
+        // { prop: 'planDemandQuantity', label: '计划需求数', sortable: 'custom', width: 150 },
+        // { prop: 'orderedQuantity', label: '已下单数量', sortable: 'custom', width: 150 },
+        { prop: 'deliveryDate', label: '交货日期', sortable: 'custom' },
         { prop: 'createTime', label: '创建日期', sortable: 'custom', width: 180 }
       ],
       ProductPoolTableItems: [
-        { prop: 'productDrawingNo', label: '品名规格', sortable: 'custom', width: 200  },
+        { prop: 'productDrawingNo', label: '品名规格', sortable: 'custom' },
         { prop: 'immediatelyBuyFlag', label: '立即采购', sortable: 'custom' },
         { prop: 'mainUnit', label: '单位' },
         { prop: 'planDemandQuantity', label: '计划需求数', sortable: 'custom', width: 150 },
@@ -1107,6 +1107,7 @@ export default {
     // 打开选择供应商弹窗
     // 切换供应商后给的提示
     async beforeSubmit(data, paramsObj) {
+      // if (!this.dataForm.transferOutWarehouseName) return true
       let flag = true
       if (paramsObj.oldData.length) {
         flag = await this.$confirm('切换供应商将更新产品信息的含税单价和税率，是否继续？', '提示', {
@@ -1119,7 +1120,7 @@ export default {
               type: 'success',
               message: '更换成功!'
             })
-            this.$refs['productForm'].resetFields()
+            // this.$refs['productForm'].resetFields()
             return true
           })
           .catch(() => {

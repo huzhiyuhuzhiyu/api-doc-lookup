@@ -21,12 +21,15 @@
           </span>
         </div>
         <div v-if="!leftFlag">
-          <el-input placeholder="请输入" v-model="filterText" style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable></el-input>
+          <el-input placeholder="请输入" v-model="filterText" style="width:200px;margin:10px auto;display:block"
+            suffix-icon="el-icon-search" clearable></el-input>
         </div>
       </div>
 
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
-        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNode">
+        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
+          :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
+          v-if="refreshTree" :filter-node-method="filterNode">
           <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
             <i :class="[
               data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm'
@@ -63,12 +66,18 @@
           <template v-for="item in searchList">
             <el-col :span="item.searchType === 3 ? 6 : 4">
               <el-form-item>
-                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable @keyup.enter.native="search('basic')" />
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="search('basic')" />
 
-                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label" clearable>
-                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label" :value="item2.value"></el-option>
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
                 </el-select>
-                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue" :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable :type="item.dateType" :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
               </el-form-item>
             </el-col>
           </template>
@@ -88,16 +97,20 @@
         <div class="JNPF-common-head" style="padding:10px">
           <div style="display:flex;">
             <topOpts @add="addSupplier()">
-              <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary" icon="el-icon-download" @click="exportForm">
+              <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus"
+                @click="importProductFun">导入</el-button>
+              <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+                icon="el-icon-download" @click="exportForm">
                 导出
               </el-button>
-              <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus" @click="importProductFun">导入</el-button>
+
             </topOpts>
           </div>
 
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
@@ -107,10 +120,13 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList" :element-loading-text="loadingText">
+        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" :fixedNO="true"
+          @sort-change="sortChange" custom-column :setColumnDisplayList="columnList"
+          :element-loading-text="loadingText">
           <el-table-column prop="code" label="编码" width="140" sortable="custom">
             <template slot-scope="scope">
-              <el-link type="primary" @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'true')">
+              <el-link type="primary"
+                @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'true')">
                 {{ scope.row.code }}
               </el-link>
             </template>
@@ -146,7 +162,8 @@
           <el-table-column prop="createByName" label="创建人" width="100" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)" @del="handleDel(scope.row.id)">
+              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)"
+                @del="handleDel(scope.row.id)">
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -155,7 +172,8 @@
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'true')">
+                    <el-dropdown-item
+                      @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'true')">
                       查看详情
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -164,14 +182,18 @@
             </template>
           </el-table-column>
         </JNPF-table>
-        <pagination :total="total" :page.sync="form.pageNum" :background="background" :limit.sync="form.pageSize" @pagination="initData" />
+        <pagination :total="total" :page.sync="form.pageNum" :background="background" :limit.sync="form.pageSize"
+          @pagination="initData" />
       </div>
     </div>
-    <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
-      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" drag :auto-upload="false" :file-list="fileList" :limit="1" :on-exceed="handleFileexceed" :on-change="handleFileChange" ref="uploadRef">
+    <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+      :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
+      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" drag :auto-upload="false"
+        :file-list="fileList" :limit="1" :on-exceed="handleFileexceed" :on-change="handleFileChange" ref="uploadRef">
         <i class="el-icon-upload"></i>
         <div class="el-upload__text"><em>点击选取文件上传</em></div>
-        <div class="el-upload__tip" slot="tip">只能上传.xls/.xlsx文件 <el-button type="text" class="topButton" icon="el-icon-download" @click="downLoadTemplate">下载模板</el-button></div>
+        <div class="el-upload__tip" slot="tip">只能上传.xls/.xlsx文件 <el-button type="text" class="topButton"
+            icon="el-icon-download" @click="downLoadTemplate">下载模板</el-button></div>
 
       </el-upload>
 
@@ -194,7 +216,8 @@
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
@@ -977,6 +1000,7 @@ export default {
         this.form.customerRecognitionEndTime = ''
       }
       this.form.pageNum = 1
+      this.superForm = this.form
       // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
       if (type === 'basic') {
         this.basicQuery = {

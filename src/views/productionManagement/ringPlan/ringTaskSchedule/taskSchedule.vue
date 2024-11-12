@@ -59,7 +59,7 @@
                 <img class="JJ" v-if="dataForm.orderStatus == 'finish'" src="@/assets/images/successing.png" alt="">
               </div>
             </el-collapse-item>
-            <el-collapse-item title="工序甘特图" name="info">
+            <el-collapse-item title="生产进度" name="info">
               <div ref='ganttRef'></div>
               <section style='display: flex;justify-content: start;'>
 
@@ -369,16 +369,16 @@ export default {
     const style = document.createElement('style');
     style.innerHTML = `  
     .Noproduc{
-    background-color:"#67c23a!important"
+    background-color:"#FFbc00!important"
     }
       .low-progress {  
-      background-color:#67c23a; /*低进度颜色 */  
+      background-color:#FFbc00; /*低进度颜色 */  
       }  
       .mid-progress {  
-      background-color: #67c23a; /* 中等进度颜色 */  
+      background-color: #FFbc00; /* 中等进度颜色 */  
       }  
       .high-progress {  
-      background-color: #67c23a; /* 高进度颜色 */  
+      background-color: green!important; /* 高进度颜色 */  
       }  
       `;
     document.head.appendChild(style);
@@ -495,7 +495,7 @@ export default {
                 qualifiedQuantity: itemss.qualifiedQuantity,
                 productionQuantity: itemss.productionQuantity,
                 duration: 20,
-                color: "green",
+                // color: "green",
               }
               arr.push(bjss)
             })

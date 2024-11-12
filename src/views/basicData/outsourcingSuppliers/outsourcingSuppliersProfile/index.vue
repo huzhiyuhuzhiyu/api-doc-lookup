@@ -81,7 +81,8 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:10px">
           <topOpts @add="addSupplier()">
-            <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus" @click="importProductFun">导入</el-button>
+            <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus"
+              @click="importProductFun">导入</el-button>
           </topOpts>
 
           <!-- <div>
@@ -107,7 +108,8 @@
           </div>
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" :fixedNO="true"
-          @sort-change="sortChange" custom-column :setColumnDisplayList="columnList" :element-loading-text="loadingText">
+          @sort-change="sortChange" custom-column :setColumnDisplayList="columnList"
+          :element-loading-text="loadingText">
           <el-table-column prop="code" label="编码" width="160" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
@@ -171,11 +173,14 @@
           @pagination="initData" />
       </div>
     </div>
-    <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
-      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" drag :auto-upload="false" :limit="1" :on-change="handleFileChange" ref="uploadRef">
+    <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+      :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
+      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" drag :auto-upload="false"
+        :limit="1" :on-change="handleFileChange" ref="uploadRef">
         <i class="el-icon-upload"></i>
         <div class="el-upload__text"><em>点击选取文件上传</em></div>
-        <div class="el-upload__tip" slot="tip">只能上传.xls/.xlsx文件 <el-button type="text" class="topButton" icon="el-icon-download" @click="downLoadTemplate">下载模板</el-button></div>
+        <div class="el-upload__tip" slot="tip">只能上传.xls/.xlsx文件 <el-button type="text" class="topButton"
+            icon="el-icon-download" @click="downLoadTemplate">下载模板</el-button></div>
 
       </el-upload>
 
@@ -203,7 +208,7 @@
 </template>
 
 <script>
-import { getcategoryTree, getCooperativeData, deleteCooperative,supplierupload } from '@/api/basicData/index'
+import { getcategoryTree, getCooperativeData, deleteCooperative, supplierupload } from '@/api/basicData/index'
 import Form from './Form'
 import UserRelationList from './userRelation'
 import moment from 'moment'
@@ -506,7 +511,7 @@ export default {
       var formData = new FormData()
       formData.append("file", data)
       //调用上传文件接口
-      supplierupload(formData,'outsourcing_suppliers').then(res => {
+      supplierupload(formData, 'outsourcing_suppliers').then(res => {
         if (!res.data) {
           this.$message.success(`导入成功`)
           this.listLoading = false
@@ -671,10 +676,11 @@ export default {
     },
     search(type) {
       if (this.form.customerRecognitionTime && this.form.customerRecognitionTime.length > 0) {
-        this.superForm.customerRecognitionStartTime = this.form.customerRecognitionTime[0]
-        this.superForm.customerRecognitionEndTime = this.form.customerRecognitionTime[1]
+        this.form.customerRecognitionStartTime = this.form.customerRecognitionTime[0]
+        this.form.customerRecognitionEndTime = this.form.customerRecognitionTime[1]
       }
-      this.superForm.pageNum = 1
+      this.form.pageNum = 1
+      this.superForm = this.form
       // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
       if (type === 'basic') {
         this.basicQuery = {

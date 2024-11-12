@@ -46,7 +46,7 @@
                 </el-descriptions>
               </div>
             </el-collapse-item>
-            <el-collapse-item title="甘特图信息" name="info">
+            <el-collapse-item title="生产进度" name="info">
 
               <div ref='ganttRef'></div>
               <section style='display: flex;justify-content: start;'>
@@ -318,16 +318,16 @@ export default {
     const style = document.createElement('style');
     style.innerHTML = `  
     .Noproduc{
-    background-color:"#ccc!important"
+    background-color:"#FFbc00!important"
     }
       .low-progress {  
-      color:red!important; /*低进度颜色 */  
+      background-color:#FFbc00; /*低进度颜色 */  
       }  
       .mid-progress {  
-      background-color: yellow; /* 中等进度颜色 */  
+      background-color: #FFbc00; /* 中等进度颜色 */  
       }  
       .high-progress {  
-      background-color: green; /* 高进度颜色 */  
+      background-color: green!important; /* 高进度颜色 */  
       }  
       `;
     document.head.appendChild(style);
@@ -388,7 +388,7 @@ export default {
             start_date: new Date(item.planStartDate == item.planEndDate ? item.planStartDate + ' 00:00:00' : item.planStartDate + ' 00:00:00'),
             end_date: new Date(item.planStartDate == item.planEndDate ? item.planEndDate + ' 23:59:59' : item.planEndDate + ' 23:59:59'),
             open: item.productionOrderId ? false : true,
-            color: "green",
+            // color: "green",
             // color: '#67c23a',
             completedQuantity: item.completedQuantity,
             productionQuantity: item.productionQuantity,
@@ -428,7 +428,7 @@ export default {
                 qualifiedQuantity: itemss.qualifiedQuantity,
                 productionQuantity: itemss.productionQuantity,
                 duration: 20,
-                color: "green",
+                // color: "green",
               }
               arr.push(bjss)
             })

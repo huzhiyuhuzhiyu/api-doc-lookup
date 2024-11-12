@@ -39,7 +39,7 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <div class="JNPF-common-head">
-                <topOpts @add="addSupplier()">
+                <topOpts @add="addOrUpdateHandle('', 'add')">
                   <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus"
                     @click="importProductFun">导入</el-button>
                   <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
@@ -191,6 +191,7 @@
         </el-tab-pane>
       </el-tabs>
     </div>
+    <JNPF-Form v-if="formVisible" ref="JNPFForm" @refresh="refresh" @close="closeForm" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 高级查询 -->
     <SuperQuery :show="lastSuperQueryVisible" ref="SuperQuery" :columnOptions="lastSuperQueryJson"
@@ -206,9 +207,10 @@ import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { buyFixedPointPricingDetailList } from '@/api/purchasingManagement/purchaseInquirySheet'
+import JNPFForm from './Form'
 export default {
   name: 'PartnerProduct',
-  components: { ExportForm, SuperQuery },
+  components: { JNPFForm, ExportForm, SuperQuery },
   data() {
     return {
       basicQuery: {},
@@ -767,9 +769,7 @@ export default {
         this.initData()
       }
     },
-    moreQueries() {
-      this.visible = true
-    },
+   
     initData() {
       this.listLoading = true
       console.log(this.superForm, 'this.superForm')
@@ -904,14 +904,11 @@ export default {
       })
     },
     addOrUpdateHandle(id, type) {
-      this.depFormVisible = true
-      if (id) {
-        // setTimeout(() => {
-        this.$nextTick(() => {
-          this.$refs.depForm.init(id, type)
-        })
-        // }, 600);
-      }
+      console.log(this.superForm.classAttribute, 'this.listQuery.classAttribute')
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.JNPFForm.init(id, type, false, 'other')
+      })
     },
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {

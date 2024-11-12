@@ -41,7 +41,8 @@
                   </el-radio-group>
                 </div>
                 <div v-else>
-                  <el-checkbox v-model="scope.row.state" @change="stateChange(scope.row)"></el-checkbox>
+                  <el-checkbox v-model="scope.row.state" :disabled="scope.row.state && scope.row.configKey == 'project'"
+                    @change="stateChange(scope.row)"></el-checkbox>
                   <el-input style="width: 150px;margin-left: 10px;" v-if="
                     (scope.row.state && scope.row.configKey == 'work_exceed_report') ||
                     (scope.row.state && scope.row.configKey == 'collect_exceed_picking')

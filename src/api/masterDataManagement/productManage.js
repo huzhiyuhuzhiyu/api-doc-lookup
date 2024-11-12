@@ -103,6 +103,16 @@ export function uploadCpProductData(data) {
     data
   })
 }
+
+// 成品(没有型号) 导入 
+export function uploadUnCpProductData(data) {
+  return request({
+    url: `/api/zgt/product/un/cp/upload`,
+    method: 'post',
+    data
+  })
+}
+
 // 产品管理 导入 
 export function uploadProductData(data) {
   return request({

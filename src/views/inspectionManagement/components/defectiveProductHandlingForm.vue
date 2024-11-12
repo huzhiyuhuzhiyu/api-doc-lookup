@@ -381,7 +381,7 @@ export default {
           type: 'select',
           options: generateTreatmentResultsList(this.inspectionType),
           change: this.treatmentResultsChange,
-          render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
+          render: this.btnType !== 'add',
           itemRules: [{ required: true, trigger: 'change' }],
           sm: 6,
           itemDisabled: this.btnType === 'look' ? true : false
@@ -393,8 +393,8 @@ export default {
           value: '',
           type: 'input',
           sm: 6,
-          render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
-          itemDisabled: this.qualifiedQuantityDisabled || this.btnType === 'look' ? true : false
+          render: this.btnType !== 'add',
+          itemDisabled: this.btnType === 'look' ? true : false
         },
 
         {
@@ -403,8 +403,8 @@ export default {
           value: '',
           type: 'input',
           sm: 6,
-          render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
-          itemDisabled: this.unqualifiedQuantityDisabled || this.btnType === 'look' ? true : false
+          render: this.btnType !== 'add',
+          itemDisabled: this.btnType === 'look' ? true : false
         },
         {
           prop: 'scrapQuantity',
@@ -412,11 +412,10 @@ export default {
           value: '',
           type: 'input',
           sm: 6,
-          render:
-            this.userInfo.deptType === 'JSB'
-              ? !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType)
-              : false || this.dataForm.approvalStatus === 'ok'
-          // itemDisabled: this.unqualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
+          render: this.btnType !== 'add'
+            ? !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType)
+            : false || this.dataForm.approvalStatus === 'ok',
+          itemDisabled: this.btnType === 'look' ? true : false
         },
         {
           prop: 'repairQuantity',
@@ -424,18 +423,18 @@ export default {
           value: '',
           type: 'input',
           sm: 6,
-          render:
-            this.userInfo.deptType === 'JSB'
-              ? !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType)
-              : false || this.dataForm.approvalStatus === 'ok'
-          // itemDisabled: this.unqualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
+          render: this.btnType !== 'add'
+            ? !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType)
+            : false || this.dataForm.approvalStatus === 'ok',
+          itemDisabled: this.btnType === 'look' ? true : false
         },
         {
           prop: 'description',
           label: '处理说明',
           value: '',
           type: 'textarea',
-          render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok'
+          render: this.btnType !== 'add',
+          itemDisabled: this.btnType === 'look' ? true : false
         }
 
         // { prop: "description", label: "处理说明", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 6 },
@@ -1196,7 +1195,7 @@ export default {
           // 损失上报
           formMethod = lossQcUnqualifiedData
         }
-        if (this.userInfo.deptType === 'JSB') {
+        if (this.btnType !== 'add') {
           this.dataForm.treatmentDescription = this.dataForm.description
           this.dataForm.treatmentResults = this.dataForm.treatmentResults
           this.dataForm.treatmentQualifiedQuantity = this.dataForm.qualifiedQuantity
@@ -1346,7 +1345,7 @@ export default {
           : this.inspectionType === 'sale_back'
             ? 'b006'
             : this.inspectionType === 'produce'
-              ? 'b062'
+              ? 'b008'
               : 'b004'
       getBusinessFlowInfo(code)
         .then((res) => {

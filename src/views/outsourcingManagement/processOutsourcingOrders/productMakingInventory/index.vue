@@ -66,14 +66,21 @@
             <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="60" />
             <el-table-column prop="inventoryQuantity" label="库存数量" width="120" sortable="custom" />
-            <el-table-column prop="inventoryQuantity" label="可用数量" width="120" sortable="custom" />
-            <el-table-column prop="inventoryQuantity" label="占用数量" width="120" sortable="custom" />
-            <el-table-column prop="inventoryQuantity" label="仓库" width="120" sortable="custom" />
-            <el-table-column prop="inventoryQuantity" label="库位" width="120" sortable="custom" />
+            <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
+            <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom" />
+            <el-table-column prop="warehouseName" label="仓库" width="120" sortable="custom" />
+            <el-table-column prop="shelfSpaceName" label="库位" width="120" sortable="custom" />
             <el-table-column prop="latestStorageTime" label="最新入库时间" width="220" sortable="custom" />
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
-            :limit.sync="listQuery.pageSize" @pagination="initData"></pagination>
+            :limit.sync="listQuery.pageSize" @pagination="initData">
+            <div style="display: flex;">
+              <div class="text" style="margin-right: 10px;"><span>库存数量:{{ inventoryQuantityNum }}</span></div>
+              <div class="text" style="margin-right: 10px;"><span>可用数量:{{ occupancyQuantityNum }}</span></div>
+              <div class="text"><span>占用数量:{{ availableQuantityNum }}</span></div>
+            </div>
+
+          </pagination>
         </div>
       </div>
     </div>
@@ -89,10 +96,11 @@
 <script>
 import { inventoryList } from '@/api/purchasingAndOutsourcingOrders/index'
 import moment from 'moment'
-import Form from './Form.vue'
+import Form from '../../productOutsourcingOrder/ringBlankStock/Form.vue'
 import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import { getInventoryLineReport } from '@/api/basicData/index' // 仓库 
 export default {
   name: 'productMakingInventory',
   components: { ExportForm, Form, SuperQuery },
@@ -117,7 +125,7 @@ export default {
           label: '毛坯分类',
           type: 'input'
         },
-     
+
         {
           prop: 'batchNumber',
           label: '批次号',
@@ -128,7 +136,7 @@ export default {
           label: '单位',
           type: 'input'
         },
-       
+
         {
           prop: 'latestStorageTime',
           label: '入库日期',
@@ -138,7 +146,7 @@ export default {
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
-        
+
       ],
       printVisible: false,
       formVisible: false,
@@ -179,12 +187,11 @@ export default {
         deliveryDate: '',
         endTime: '',
         orderNo: '', //订单号
+        excludeProcessFlag: 0,
         // orderType: 'external', //	订单类型 采购 procure、外协 external
-        ringBlankQueryFlag: 1,
         pageNum: 1,
         pageSize: 20,
         startTime: '',
-        ringBlankQueryFlag: 1,
         orderItems: [
           {
             asc: false,
@@ -244,7 +251,10 @@ export default {
       printForm: {}, // 表单数据
       //	收货状态 待收货 receiving、已收货 received,可用值:received,receiving,returned,returning
       receiptReturnType: [{ label: '未完成', value: 'receiving' }, { label: '已完成', value: 'received' }],
-      columnList: ['cooperativePartnerCode', 'excludingTaxTotalAmount', 'taxAmount', 'receivingStatus', 'createByName']
+      columnList: [],
+      inventoryQuantityNum: 0,
+      occupancyQuantityNum: 0,
+      availableQuantityNum: 0
     }
   },
   created() {
@@ -255,6 +265,15 @@ export default {
     closeForm(isRefresh) {
       this.formVisible = false
       if (isRefresh) { this.initData() }
+    },
+    // 获取合计数据
+    getOrderLineReportFun() {
+      getInventoryLineReport(this.listQuery).then(res => {
+        console.log("合计", res);
+        this.inventoryQuantityNum = res.data.total ? res.data.total.inventoryQuantity : 0
+        this.occupancyQuantityNum = res.data.total ? res.data.total.occupancyQuantity : 0
+        this.availableQuantityNum = res.data.total ? res.data.total.availableQuantity : 0
+      })
     },
     // 导出
     exportForm(exportTableRef) {
@@ -278,7 +297,7 @@ export default {
       let _data = {
         ...targetListQuery,
         exportType: '1211',
-        exportName: '库存明细查询',
+        exportName: '产品在制库存查询',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }
@@ -330,7 +349,7 @@ export default {
         .then((res) => {
           console.log(res, '外协订单列表')
           this.tableDataList = res.data.records
-
+          this.getOrderLineReportFun()
           this.total = res.data.total
           this.listLoading = false
           this.visible = false
@@ -396,21 +415,13 @@ export default {
         let msg = true
         let tempList = JSON.parse(JSON.stringify(this.selectData))
         let hasItemList = []
-        for (let i = 0; i < this.selectData.length; i++) {
-          let item = this.selectData[i]
-          console.log(item.externalProductsId,'item.externalProductsId')
-          if (!item.externalProductsId) {
-            this.$message.error(`请配置毛坯产品所对就主产品的BOM！`)
-            msg = false
-          } else {
-            msg = true
-          }
-        }
+
+
         if (msg) {
           this.formVisible = true
           this.$nextTick(() => {
             console.log(this.$refs, 'this.$refs')
-            this.$refs.form.init(this.selectData, 'add')
+            this.$refs.form.init(this.selectData, 'add', 'making')
           })
         }
       }

@@ -90,7 +90,7 @@ import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
-  name: 'orderList',
+  name: 'ringBlankStock',
   components: { ExportForm, Form, SuperQuery },
   data() {
     return {
@@ -113,7 +113,7 @@ export default {
           label: '毛坯分类',
           type: 'input'
         },
-     
+
         {
           prop: 'batchNumber',
           label: '批次号',
@@ -124,7 +124,7 @@ export default {
           label: '单位',
           type: 'input'
         },
-       
+
         {
           prop: 'latestStorageTime',
           label: '入库日期',
@@ -134,7 +134,7 @@ export default {
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
-        
+
       ],
       printVisible: false,
       formVisible: false,
@@ -274,7 +274,7 @@ export default {
       let _data = {
         ...targetListQuery,
         exportType: '1211',
-        exportName: '库存明细查询',
+        exportName: '套圈毛坯库存查询',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }
@@ -394,7 +394,7 @@ export default {
         let hasItemList = []
         for (let i = 0; i < this.selectData.length; i++) {
           let item = this.selectData[i]
-          console.log(item.externalProductsId,'item.externalProductsId')
+          console.log(item.externalProductsId, 'item.externalProductsId')
           if (!item.externalProductsId) {
             this.$message.error(`请配置毛坯产品所对就主产品的BOM！`)
             msg = false
@@ -406,7 +406,7 @@ export default {
           this.formVisible = true
           this.$nextTick(() => {
             console.log(this.$refs, 'this.$refs')
-            this.$refs.form.init(this.selectData, 'add')
+            this.$refs.form.init(this.selectData, 'add', 'ring')
           })
         }
       }

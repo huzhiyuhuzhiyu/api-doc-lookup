@@ -383,9 +383,9 @@ export default {
           this.loadingText = ''
         })
         .catch((err) => {
+          console.log(err, 'err')
           this.uploadVisib = false
-          // this.$message.error(`导入数据超过最大限制：500`)
-          this.$message.error(`导入失败`)
+          console.log(err, 'err')
           this.formLoading = false
           this.loadingText = ''
         })
@@ -419,7 +419,7 @@ export default {
             style: 'padding-right:20px;display:flex;align-items:center;color:#f56c6c;'
           },
           [
-            h('p', { style: 'font-size:14px;' }, '导入成功，存在BOM导入错误！'),
+            h('p', { style: 'font-size:14px;' }, '导入成功，存在BOM相关信息错误！'),
             h(
               'el-button',
               {

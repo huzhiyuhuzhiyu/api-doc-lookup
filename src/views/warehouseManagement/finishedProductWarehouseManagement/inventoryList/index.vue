@@ -513,7 +513,7 @@ export default {
           this.$nextTick(() => {
             this.$refs.externalInboundREFForm.init(id, type, row.businessType, this.classAttributeList, this.warehouseCode, false)
           })
-        } else if (item.sourceType == 'notice') {
+        } else if (row.sourceType == 'notice') {
 
           this.inboundExternalFormVisible = true
           this.$nextTick(() => {
@@ -585,7 +585,7 @@ export default {
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
       this.listQuery.classAttributeList = this.classAttributeList
-      this.listQuery.approvalStatus = 'ok'
+      // this.listQuery.approvalStatus = 'ok'
       getWarehouseList(this.listQuery).then(res => {
 
         this.tableData = res.data.records ? res.data.records : []

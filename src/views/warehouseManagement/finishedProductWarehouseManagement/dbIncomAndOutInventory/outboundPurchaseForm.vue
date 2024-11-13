@@ -98,8 +98,7 @@
                       <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
                         @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
 
-                        <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
-                        </el-table-column>
+                       
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                           show-overflow-tooltip> </el-table-column>
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
@@ -263,8 +262,7 @@
                   <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
                     @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
 
-                    <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
-                    </el-table-column>
+                   
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                       show-overflow-tooltip>
                     </el-table-column>

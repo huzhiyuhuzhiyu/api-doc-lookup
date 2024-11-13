@@ -1495,13 +1495,13 @@ export function getPartnerOrProductData(data) {
 
 // 新增客户产品/供应商产品
 
-// export function addPartnerOrProductData(data) {
-//   return request({
-//     url: `/api/erp/cooperative/partner/product/insert`,
-//     method: 'post',
-//     data
-//   })
-// }
+export function addPartnerOrProductData(data) {
+  return request({
+    url: `/api/erp/cooperative/partner/product/insert`,
+    method: 'post',
+    data
+  })
+}
 
 // 批次列表
 export function getProductionLotList(data) {
@@ -1541,6 +1541,15 @@ export function excelExport(data) {
     data
   })
 }
+// 导入客户产品
+export function importCustomerProduct(data) {
+  return request({
+    url: `/api/erp/cooperative/partner/product/upload/Partner/data`,
+    method: 'POST',
+    data
+  })
+}
+
 // 检验报告-导出
 export function exportInspection(id) {
   return request({

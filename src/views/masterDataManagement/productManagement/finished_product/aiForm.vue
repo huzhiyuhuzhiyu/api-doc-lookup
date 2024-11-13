@@ -238,15 +238,7 @@ export default {
           ],
           itemDisabled: false
         },
-        {
-          prop: 'projectId',
-          label: '所属项目',
-          value: '',
-          type: 'select',
-          options: [],
-          itemRules: [{ required: true, trigger: 'change' }],
-          itemDisabled: false
-        },
+     
         {
           prop: 'clearance',
           label: '游隙',
@@ -831,17 +823,7 @@ export default {
       ) {
         tc.render = false
       }
-      if (tc.prop === 'projectId') {
-        let obj = {
-          pageNum: 1,
-          pageSize: -1
-        }
-        getProjectList(obj).then((res) => {
-          tc.options = res.data.records.map((item) => {
-            return { label: item.name, value: item.name }
-          })
-        })
-      }
+     
     })
   },
   computed: {

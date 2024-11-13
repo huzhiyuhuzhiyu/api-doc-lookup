@@ -103,15 +103,6 @@ export default {
           options: [{ label: '是', value: true }, { label: '否', value: false }],
           clearable: false,
           itemRules: [{ required: true, trigger: 'change' }]
-        },
-        {
-          prop: 'projectId',
-          label: '所属项目',
-          value: '',
-          type: 'select',
-          options: [],
-          itemRules: [{ required: true, trigger: 'change' }],
-          itemDisabled: false
         }
       ],
       unitRelList: []

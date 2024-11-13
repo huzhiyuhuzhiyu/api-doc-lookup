@@ -149,7 +149,7 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="isProjectSwitch">
+          <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="isProjectSwitch === '1'">
           </el-table-column>
           <el-table-column prop="productStatus" :label="classAttributeText + '状态'" width="120" align="center">
 

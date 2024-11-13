@@ -19,12 +19,15 @@
           </span>
         </div>
         <div>
-          <el-input placeholder="输入关键字" v-model="filterText" suffix-icon="el-icon-search" clearable style="width:200px;margin:10px auto;display:block" />
+          <el-input placeholder="输入关键字" v-model="filterText" suffix-icon="el-icon-search" clearable
+            style="width:200px;margin:10px auto;display:block" />
         </div>
       </div>
 
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
-        <el-tree ref="treeBox" :data="filteredTree" :props="defaultProps" :default-expand-all="expands" highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree" v-if="refreshTree">
+        <el-tree ref="treeBox" :data="filteredTree" :props="defaultProps" :default-expand-all="expands"
+          highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick"
+          class="JNPF-common-el-tree" v-if="refreshTree">
           <span class="custom-tree-node" slot-scope="{ data, node }" :title="data.fullName">
             <i :class="data.icon" />
             <span class="text" :title="data.fullName">{{ node.label }}</span>
@@ -58,14 +61,17 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:6px 10px">
           <topOpts @add="addOrUpdateHandle()">
-            <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" :disabled="!tableData.length" @click="exportForm">导出</el-button>
-            <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus" @click="uploadForm">导入</el-button>
+            <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download"
+              :disabled="!tableData.length" @click="exportForm">导出</el-button>
+            <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus"
+              @click="uploadForm">导入</el-button>
             <el-button size="mini" type="primary" icon="el-icon-printer" @click="printView('p041')">打印员工二维码</el-button>
             <el-button size="mini" type="primary" icon="el-icon-printer" @click="printView('p042')">打印员工工牌</el-button>
           </topOpts>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
@@ -75,8 +81,11 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" custom-column fixedNO @sort-change="sortChange" @selection-change="handleSelectionChange" hasC ref="dataTable" :setColumnDisplayList="columnList" row-key="id">
-          <el-table-column prop="jobNumber" label="工号" min-width="140" sortable="custom" /> <!-- 这里的 width 会被转成 min-width -->
+        <JNPF-table v-loading="listLoading" :data="tableData" custom-column fixedNO @sort-change="sortChange"
+          @selection-change="handleSelectionChange" hasC ref="dataTable" :setColumnDisplayList="columnList"
+          row-key="id">
+          <el-table-column prop="jobNumber" label="工号" min-width="140" sortable="custom" />
+          <!-- 这里的 width 会被转成 min-width -->
           <el-table-column prop="name" label="姓名" width="120" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">{{
@@ -90,7 +99,7 @@
               <span>{{ genderTreeDatafun(scope.row.sex) }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="userInfo.projectId">
+          <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="isProjectSwitch === '1'">
           </el-table-column>
           <el-table-column prop="organizeName" label="所属部门" width="160" sortable="custom" />
           <el-table-column prop="birthday" label="出生日期" width="160" sortable="custom" />
@@ -175,16 +184,21 @@
             </template>
           </el-table-column>
         </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData" />
+        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
+          @pagination="initData" />
       </div>
     </div>
     <!-- 选择打印模版弹窗 -->
-    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printOrder" :printQuery="printQuery" :enCode="enCode" ref="printTemplate" />
-    <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
-      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" drag :auto-upload="false" :limit="1" :on-change="handleFileChange" ref="uploadRef">
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printOrder"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" />
+    <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+      :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
+      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" drag :auto-upload="false"
+        :limit="1" :on-change="handleFileChange" ref="uploadRef">
         <i class="el-icon-upload"></i>
         <div class="el-upload__text"><em>点击选取文件上传</em></div>
-        <div class="el-upload__tip" slot="tip">只能上传.xls/.xlsx文件 <el-button type="text" class="topButton" icon="el-icon-download" @click="downLoadTemplate">下载模板</el-button></div>
+        <div class="el-upload__tip" slot="tip">只能上传.xls/.xlsx文件 <el-button type="text" class="topButton"
+            icon="el-icon-download" @click="downLoadTemplate">下载模板</el-button></div>
 
       </el-upload>
 
@@ -194,7 +208,8 @@
           提交</el-button>
       </span>
     </el-dialog>
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="getAdvancedQuery" />
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="getAdvancedQuery" />
     <Form v-if="formVisible" ref="Form" @close="removeForm" />
     <Diagram v-if="diagramVisible" ref="Diagram" @close="diagramVisible = false" />
     <!-- <ExportForm v-if="exportFormVisible" ref="exportForm" /> -->
@@ -211,7 +226,7 @@ import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import { excelExport, salecooperativepoolModel } from "@/api/basicData/index";
+import { excelExport, salecooperativepoolModel, getBimBusinessSwitchConfigList } from "@/api/basicData/index";
 import { getAdvancedQueryList } from "@/api/system/advancedQuery";
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getDepartmentSelectorByAuth } from '@/api/permission/department'
@@ -475,9 +490,24 @@ export default {
     }
   },
   mounted() {
+    this.getProjectSwitch()
     this.getAdvancedQuery()
   },
   methods: {
+    getProjectSwitch() {
+      let obj = {
+        businessCode: 'system',
+        pageSize: -1
+      }
+      getBimBusinessSwitchConfigList(obj).then((res) => {
+        res.data.system.forEach((item) => {
+          if (item.configKey == 'project') {
+            this.isProjectSwitch = item.configValue1
+
+          }
+        })
+      })
+    },
     //调岗记录
     jobtransferrecord(id) {
       this.JobCodeFormVisible = true

@@ -1493,6 +1493,16 @@ export function getPartnerOrProductData(data) {
   })
 }
 
+// 新增客户产品/供应商产品
+
+// export function addPartnerOrProductData(data) {
+//   return request({
+//     url: `/api/erp/cooperative/partner/product/insert`,
+//     method: 'post',
+//     data
+//   })
+// }
+
 // 批次列表
 export function getProductionLotList(data) {
   return request({

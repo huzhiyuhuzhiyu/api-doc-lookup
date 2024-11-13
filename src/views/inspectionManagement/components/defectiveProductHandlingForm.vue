@@ -381,10 +381,10 @@ export default {
           type: 'select',
           options: generateTreatmentResultsList(this.inspectionType),
           change: this.treatmentResultsChange,
-          render: this.btnType !== 'add',
+          render: this.btnType !== 'add' ,
           itemRules: [{ required: true, trigger: 'change' }],
           sm: 6,
-          itemDisabled: this.btnType === 'look' ? true : false
+          itemDisabled: this.btnType === 'view' ? true : false
         },
 
         {
@@ -394,7 +394,10 @@ export default {
           type: 'input',
           sm: 6,
           render: this.btnType !== 'add',
-          itemDisabled: this.btnType === 'look' ? true : false
+          // itemDisabled: this.btnType === 'view' ? true : false
+          itemDisabled:
+            this.btnType === 'view' ||
+            ['qualified', 'concessive_acceptance'].includes(this.dataForm.treatmentResults)
         },
 
         {
@@ -404,7 +407,7 @@ export default {
           type: 'input',
           sm: 6,
           render: this.btnType !== 'add',
-          itemDisabled: this.btnType === 'look' ? true : false
+          itemDisabled: this.btnType === 'view' ? true : false
         },
         {
           prop: 'scrapQuantity',
@@ -415,7 +418,7 @@ export default {
           render: this.btnType !== 'add'
             ? !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType)
             : false || this.dataForm.approvalStatus === 'ok',
-          itemDisabled: this.btnType === 'look' ? true : false
+          itemDisabled: this.btnType === 'view' ? true : false
         },
         {
           prop: 'repairQuantity',
@@ -426,7 +429,7 @@ export default {
           render: this.btnType !== 'add'
             ? !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType)
             : false || this.dataForm.approvalStatus === 'ok',
-          itemDisabled: this.btnType === 'look' ? true : false
+          itemDisabled: this.btnType === 'view' ? true : false
         },
         {
           prop: 'description',
@@ -434,7 +437,7 @@ export default {
           value: '',
           type: 'textarea',
           render: this.btnType !== 'add',
-          itemDisabled: this.btnType === 'look' ? true : false
+          itemDisabled: this.btnType === 'view' ? true : false
         }
 
         // { prop: "description", label: "处理说明", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 6 },
@@ -906,6 +909,7 @@ export default {
       this.visible = true
       this.formLoading = true
       this.btnType = btnType
+      console.log(this.btnType, 'p')
       let option = this.inspectionTypeList.find((o) => o.value === inspectionType)
       this.inspectionType = inspectionType
       this.approvalFlag = approvalFlag
@@ -931,6 +935,91 @@ export default {
         } else if (btnType === 'edit') {
           this.title = '编辑不良品处理单'
         } else if (btnType === 'look') {
+          this.fetchData('UQDH', false)
+          // this.refeshDataFormItems()
+          this.refeshLinesListItems()
+          this.title = '查看不良品处理单'
+          // 获取详情
+          detailQcUnqualifiedData(id)
+            .then(async (res) => {
+              if (res.data.attachmentList.length !== 0) {
+                res.data.attachmentList.forEach((item) => {
+                  this.datafilelist.push({
+                    name: item.document.fullName,
+                    fileSize: item.document.fileSize,
+                    filename: item.document.filePath,
+                    id: item.document.id,
+                    url: item.url
+                  })
+                })
+              }
+
+              this.dataForm = res.data.unqualified
+              this.dataForm.inspectionMethod = res.data.inspection.inspectionMethod
+
+              this.dataForm.inspectionResults = res.data.inspection.inspectionResults
+              this.dataForm.inspectionUnqualifiedQuantity = res.data.inspection.unqualifiedQuantity
+              this.inspectionList = res.data.itemList
+              this.linesListTwo = res.data.causesList
+              // 流程信息和流转记录
+              if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+              this.refeshDataFormItems()
+              this.refeshLinesListItems()
+              let tempLinesList = res.data.lines
+
+              tempLinesList.forEach((line) => {
+                if (
+                  line.treatmentResults === 'qualified' ||
+                  line.treatmentResults === 'concessive_acceptance' ||
+                  line.treatmentResults === 'unqualified'
+                ) {
+                  line.qualifiedQuantityDisabled = true
+                  line.unqualifiedQuantityDisabled = true
+                }
+
+                // 损失相关处理
+                if (this.inspectionType !== 'process') {
+                  line.lossAmount = this.jnpf.numberFormat(line.lossUnitPrice * line.unqualifiedQuantity, 6)
+                } else {
+                  line.lossUnitPrice = 0
+                  line.lossAmount = 0
+                }
+                if (line.treatmentResults === 'qualified' || line.treatmentResults === 'concessive_acceptance') {
+                  line.otherLossAmount = 0
+                  line.claimAmount = 0
+                } else {
+                  if (btnType === 'setLoss') {
+                    line.otherLossAmount = '' // 设置损失时，其他损失金额默认空，需要手动输入
+                  }
+                }
+              })
+
+              if (btnType === 'look') {
+                if (!this.dataForm.lossFlag) {
+                  // 没有设置过损失，查看时损失相关显示为空内容
+                  tempLinesList.forEach((line) => {
+                    line.lossUnitPrice = ' '
+                    line.lossAmount = ' '
+                    line.otherLossAmount = ' '
+                    line.totalLossAmount = ' '
+                    line.claimAmount = ' '
+                  })
+                }
+              } else if (btnType === 'anew') {
+                // 重新提交
+                this.$nextTick(() => {
+                  this.getBusInfo()
+                }) // 审批
+              }
+
+              this.linesList = tempLinesList
+
+              this.formLoading = false
+            })
+            .catch((err) => {
+              this.formLoading = false
+            })
+        } else if (btnType === 'view') {
           this.fetchData('UQDH', false)
           // this.refeshDataFormItems()
           this.refeshLinesListItems()

@@ -223,7 +223,7 @@
 </template>
 
 <script>
-import { getBimVehicleTypeData, deleteBimVehicleType, getPartnerOrProductData } from '@/api/basicData/index'
+import { getBimVehicleTypeData, deleteBimVehicleType, getPartnerOrProductData,uploadPartnerOrProductData } from '@/api/basicData/index'
 import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -717,7 +717,7 @@ export default {
       const a = document.createElement('a')
       a.setAttribute('download', '')
 
-      a.setAttribute('href', location.origin + '/static/成品导入模板.xlsx')
+      a.setAttribute('href', location.origin + '/static/供应商价格导入模板.xlsx')
 
 
       a.click()
@@ -728,11 +728,11 @@ export default {
       this.formLoading = true
       var formData = new FormData()
       formData.append('file', data)
-      formData.append('productCategoryId', this.listQuery.productCategoryId)
-      formData.append('classAttribute', this.listQuery.classAttribute)
+      // formData.append('productCategoryId', this.listQuery.productCategoryId)
+      // formData.append('classAttribute', this.listQuery.classAttribute)
       //调用上传文件接口
 
-      uploadCpProductData(formData)
+      uploadPartnerOrProductData(formData)
         .then((res) => {
           if (!res.data) {
             this.$message.success(`导入成功`)

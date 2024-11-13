@@ -62,7 +62,7 @@
             custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="处理单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row, 'look')">
+                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row, 'view')">
                   {{ scope.row.orderNo }}
                 </el-link>
               </template>
@@ -125,7 +125,7 @@
                       @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
                       审批撤回
                     </el-button>
-                    <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row, 'look')">
+                    <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row, 'view')">
                       查看详情
                     </el-button>
                   </template>
@@ -414,7 +414,7 @@ export default {
     },
     addOrUpdateHandle(row, btnType) {
       this.formVisible = true
-      if (btnType == 'look') {
+      if (btnType == 'view') {
         this.$nextTick(() => {
           this.$refs.Form.init(row.id, btnType, false, this.pageData.type, this.pageData.businessCode)
         })

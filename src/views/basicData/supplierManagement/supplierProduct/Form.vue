@@ -72,6 +72,24 @@
                         :disabled="type == 'look' ? true : false"></el-date-picker>
                     </el-form-item>
                   </el-col>
+                  <el-col :span="6">
+                    <el-form-item label="规值" prop="standardValue">
+                      <el-select v-model="dataForm.standardValue" placeholder="请选择规值" style="width: 100%;"
+                        :disabled="type === 'look' ? true : false">
+                        <el-option v-for="(item, index) in list0" size="small" :key="item.enCode" :label="item.name"
+                          :value="item.name"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="6">
+                    <el-form-item label="颜色" prop="colour">
+                      <el-select v-model="dataForm.colour" placeholder="请选择颜色" style="width: 100%;"
+                        :disabled="type === 'look' ? true : false">
+                        <el-option v-for="(item, index) in list9" size="small" :key="index" :label="item.name"
+                          :value="item.name"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
                   <el-col :span="12">
                     <el-form-item label="备注">
                       <el-input v-model="dataForm.remark" type="textarea" placeholder="备注"
@@ -495,6 +513,44 @@ export default {
 
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
+      // 规值
+      let obj0 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: 'pa008',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj0).then((res) => {
+        this.list0 = res.data.records
+      })
+
+      let obj9 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: 'pa010',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj9).then((res) => {
+        this.list9 = res.data.records
+      })
       // 获取税率(数据字典)
       getbimProductAttributes('585438081021126405').then((res) => {
         res.data.list.forEach((item) => {

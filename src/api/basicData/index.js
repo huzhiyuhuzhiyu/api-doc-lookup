@@ -1419,6 +1419,15 @@ export function addBomData(data) {
   })
 }
 
+// 生产BOM 导入
+export function uploadBomData(data) {
+  return request({
+    url: `/api/erp/bom/upload`,
+    method: 'POST',
+    data
+  })
+}
+
 // 生产BOM 修改
 export function updateBomData(data) {
   return request({
@@ -1495,13 +1504,23 @@ export function getPartnerOrProductData(data) {
 
 // 新增客户产品/供应商产品
 
-// export function addPartnerOrProductData(data) {
-//   return request({
-//     url: `/api/erp/cooperative/partner/product/insert`,
-//     method: 'post',
-//     data
-//   })
-// }
+export function addPartnerOrProductData(data) {
+  return request({
+    url: `/api/erp/cooperative/partner/product/insert`,
+    method: 'post',
+    data
+  })
+}
+
+// 导入客户产品/供应商产品
+
+export function uploadPartnerOrProductData(data) {
+  return request({
+    url: `/api/erp/cooperative/partner/product/upload/supplier/data`,
+    method: 'post',
+    data
+  })
+}
 
 // 批次列表
 export function getProductionLotList(data) {

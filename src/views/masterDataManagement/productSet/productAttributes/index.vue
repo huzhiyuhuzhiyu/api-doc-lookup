@@ -68,7 +68,9 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 8px">
-          <topOpts @add="addSupplier()" :isJudgePer="true" :addPerCode="'btn_add'" />
+          <topOpts @add="addSupplier()" :isJudgePer="true" :addPerCode="'btn_add'">
+            <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
+          </topOpts>
 
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -106,6 +108,30 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <!-- 导入产品 -->
+    <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
+      :http-request="UploadProduct" />
+    <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+      :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
+      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false" :limit="1"
+        :on-preview="handlePreview" drag :on-remove="handleRemove" :on-change="handleFileChange" ref="uploadRef">
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text"><em>点击选取文件上传</em></div>
+        <div class="el-upload__tip" slot="tip">
+          只能上传.xls/.xlsx文件
+          <el-button type="text" class="topButton" icon="el-icon-download" @click="downLoadTemplate">
+            下载模板
+          </el-button>
+        </div>
+      </el-upload>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" @click="saveSubmit()">
+          提交
+        </el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -116,7 +142,8 @@ import {
   delBimProductAttributes,
   addBimProductAttributes,
   getbimProductAttributesList,
-  getbimProductAttributes
+  getbimProductAttributes,
+  uploadbimProductsModelList
 } from '@/api/masterDataManagement/index'
 import Form from './Form'
 import moment from 'moment'
@@ -127,6 +154,7 @@ export default {
   components: { Form, SuperQuery },
   data() {
     return {
+      uploadVisib: false,
       superQueryVisible: false,
       superQueryJson: [
         {
@@ -192,6 +220,119 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    // 导入
+    importForm() {
+      if (!this.form.typeCode) {
+        this.$message.warning('请先选择产品属性分类')
+      } else {
+        // this.$refs.UploadProduct.$el.querySelector('input').click()
+        this.uploadVisib = true
+      }
+    },
+    handleRemove(file, fileList) { },
+    handlePreview(file) { },
+    handleFileChange(file) {
+      this.file = file.raw
+    },
+    // 下载模板
+    downLoadTemplate() {
+      const a = document.createElement('a')
+      a.setAttribute('download', '')
+
+      a.setAttribute('href', location.origin + '/static/产品属性导入模板.xlsx')
+
+
+      a.click()
+    },
+    // 上传产品
+    UploadProduct(data) {
+      this.loadingText = '正在导入数据'
+      this.formLoading = true
+      var formData = new FormData()
+      formData.append('file', data)
+      formData.append('typeCode', this.form.typeCode)
+      //调用上传文件接口
+
+      uploadbimProductsModelList(formData)
+        .then((res) => {
+          if (!res.data) {
+            this.$message.success(`导入成功`)
+            this.uploadVisib = false
+            this.$refs['UploadProduct']
+            this.initData()
+          } else {
+            this.uploadVisib = false
+            this.handleMessage(res.data)
+          }
+
+          this.formLoading = false
+          this.loadingText = ''
+        })
+        .catch((err) => {
+          this.uploadVisib = false
+          // this.$message.error(`导入数据超过最大限制：500`)
+          this.$message.error(`导入失败`)
+          this.formLoading = false
+          this.loadingText = ''
+        })
+
+
+    },
+    // 导入产品  下载导入错误数据
+    downNoProduct(res) {
+      this.jnpf.downloadFile(res.url, res.name)
+      this.uploadVisib = false
+      this.$refs['uploadRef'].clearFiles()
+    },
+    cancelFun() {
+      this.uploadVisib = false
+      this.$refs['uploadRef'].clearFiles()
+    },
+    saveSubmit() {
+      this.UploadProduct(this.file)
+    },
+    // 提示
+    handleMessage(data) {
+      const h = this.$createElement
+      this.$message({
+        type: 'error',
+        duration: 0,
+        showClose: true,
+        customClass: 'my-message', // 自定义类名，用于设置样式
+        message: h(
+          'div',
+          {
+            style: 'padding-right:20px;display:flex;align-items:center;color:#f56c6c;'
+          },
+          [
+            h('p', { style: 'font-size:14px;' }, '导入成功，存在产品属性错误！'),
+            h(
+              'el-button',
+              {
+                props: {
+                  type: 'text',
+                  size: 'mini',
+                  icon: 'el-icon-download'
+                },
+                on: {
+                  click: () => {
+                    this.downNoProduct(data)
+                  }
+                },
+                style: {
+                  border: 'none',
+                  textAlign: 'center',
+                  // width:"20%",
+                  margin: '0 5px 0 5px '
+                }
+              },
+              '下载导入错误数据'
+            )
+          ]
+        )
+      })
+      return
+    },
     superQuerySearch(query) {
       this.form.superQuery = query
       this.superQueryVisible = false

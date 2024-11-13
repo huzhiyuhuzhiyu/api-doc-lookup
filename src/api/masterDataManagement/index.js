@@ -53,6 +53,14 @@ export function getBimProductAttributesInfo(id) {
   })
 }
 
+// 产品属性-导入
+export function uploadbimProductsModelList(data) {
+  return request({
+      url: '/api/erp/bimProductAttributes/upload',
+      method: 'post',
+      data: data
+  })
+}
 
 
 // 型号管理——列表

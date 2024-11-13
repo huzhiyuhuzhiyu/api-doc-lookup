@@ -6,7 +6,7 @@
         <div class="options" v-if="btnType !== 'look'">
           <!-- <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')"
             v-if="btnType !== 'setLoss'">保存草稿</el-button> -->
-          <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">
+          <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')" v-if="btnType !== 'view'">
             {{ btnType === 'setLoss' ? $t('common.submitButton') : '保存并提交' }}
           </el-button>
           <el-button @click="$emit('close')">{{ $t('common.cancelButton') }}</el-button>
@@ -55,7 +55,7 @@
               <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
                 <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
               </el-tab-pane>
-              <el-tab-pane v-if="btnType == 'look' || btnType === 'setLoss'" label="流转记录" name="transferList">
+              <el-tab-pane label="流转记录" name="transferList">
                 <recordList :list="flowTaskOperatorRecordList" :endTime="endTime" />
               </el-tab-pane>
             </el-tabs>
@@ -381,10 +381,10 @@ export default {
           type: 'select',
           options: generateTreatmentResultsList(this.inspectionType),
           change: this.treatmentResultsChange,
-          render: this.btnType !== 'add' ,
+          render: this.btnType !== 'add',
           itemRules: [{ required: true, trigger: 'change' }],
           sm: 6,
-          itemDisabled: this.btnType === 'view' ? true : false
+          itemDisabled: this.btnType === 'view' ? true : this.dataForm.approvalStatus === 'ok' ? true : false
         },
 
         {
@@ -396,8 +396,11 @@ export default {
           render: this.btnType !== 'add',
           // itemDisabled: this.btnType === 'view' ? true : false
           itemDisabled:
-            this.btnType === 'view' ||
-            ['qualified', 'concessive_acceptance'].includes(this.dataForm.treatmentResults)
+            this.btnType === 'view'
+              ? true
+              : this.dataForm.approvalStatus === 'ok'
+                ? true
+                : false || ['qualified', 'unqualified', 'concessive_acceptance'].includes(this.dataForm.treatmentResults)
         },
 
         {
@@ -407,7 +410,12 @@ export default {
           type: 'input',
           sm: 6,
           render: this.btnType !== 'add',
-          itemDisabled: this.btnType === 'view' ? true : false
+          itemDisabled:
+            this.btnType === 'view'
+              ? true
+              : this.dataForm.approvalStatus === 'ok'
+                ? true
+                : false || ['qualified', 'unqualified', 'concessive_acceptance'].includes(this.dataForm.treatmentResults)
         },
         {
           prop: 'scrapQuantity',
@@ -415,10 +423,11 @@ export default {
           value: '',
           type: 'input',
           sm: 6,
-          render: this.btnType !== 'add'
-            ? !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType)
-            : false || this.dataForm.approvalStatus === 'ok',
-          itemDisabled: this.btnType === 'view' ? true : false
+          render:
+            this.btnType !== 'add'
+              ? !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType)
+              : false || this.dataForm.approvalStatus === 'ok',
+          itemDisabled: this.btnType === 'view' ? true : this.dataForm.approvalStatus === 'ok' ? true : false
         },
         {
           prop: 'repairQuantity',
@@ -426,10 +435,11 @@ export default {
           value: '',
           type: 'input',
           sm: 6,
-          render: this.btnType !== 'add'
-            ? !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType)
-            : false || this.dataForm.approvalStatus === 'ok',
-          itemDisabled: this.btnType === 'view' ? true : false
+          render:
+            this.btnType !== 'add'
+              ? !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType)
+              : false || this.dataForm.approvalStatus === 'ok',
+          itemDisabled: this.btnType === 'view' ? true : this.dataForm.approvalStatus === 'ok' ? true : false
         },
         {
           prop: 'description',
@@ -437,7 +447,7 @@ export default {
           value: '',
           type: 'textarea',
           render: this.btnType !== 'add',
-          itemDisabled: this.btnType === 'view' ? true : false
+          itemDisabled: this.btnType === 'view' ? true : this.dataForm.approvalStatus === 'ok' ? true : false
         }
 
         // { prop: "description", label: "处理说明", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 6 },

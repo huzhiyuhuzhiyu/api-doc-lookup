@@ -39,13 +39,14 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <div class="JNPF-common-head">
-                <topOpts @add="addOrUpdateHandle('', 'add')">
+                <!-- <topOpts @add="addOrUpdateHandle('', 'add')">
                   <el-button size="mini" type="primary" icon="el-icon-plus" @click="importProductFun">导入</el-button>
                   <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
                     icon="el-icon-download" @click="exportForm">
                     导出
                   </el-button>
-                </topOpts>
+                </topOpts> -->
+                <div></div>
                 <div class="JNPF-common-head-right">
                   <el-tooltip content="高级查询" placement="top" v-if="true">
                     <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -132,13 +133,14 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <div class="JNPF-common-head">
-                <topOpts @add="addOrUpdateHandle('', 'add')">
+                <!-- <topOpts @add="addOrUpdateHandle('', 'add')">
                   <el-button size="mini" type="primary" icon="el-icon-plus" @click="importProductFun">导入</el-button>
                   <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
                     icon="el-icon-download" @click="exportForm">
                     导出
                   </el-button>
-                </topOpts>
+                </topOpts> -->
+                <div></div>
                 <div class="JNPF-common-head-right">
                   <el-tooltip content="高级查询" placement="top" v-if="true">
                     <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"

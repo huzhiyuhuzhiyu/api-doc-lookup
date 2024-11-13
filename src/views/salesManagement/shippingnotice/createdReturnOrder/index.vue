@@ -494,6 +494,7 @@ import {
 } from "@/api/masterDataManagement/index"
 export default {
   components: { Process, Form },
+  name:"createdReturnOrder",
   data() {
     return {
       allProVisible: false,

@@ -43,10 +43,12 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <div class="JNPF-common-head">
-                <div>
-                  <!-- <el-button type="primary"  size="mini" icon="el-icon-download" @click="importProductFun()">导入产品 </el-button> -->
-                <el-button type="primary" size="mini" icon="el-icon-plus" @click="exportForm">导出</el-button>
-                </div>
+                <!-- <topOpts @add="addSupplier('', 'add')">
+                  <el-button type="primary" size="mini" icon="el-icon-download" @click="importProductFun()">导入产品
+                  </el-button>
+                  <el-button type="primary" size="mini" icon="el-icon-plus" @click="exportForm">导出</el-button>
+                </topOpts> -->
+                  <el-button type="primary" size="mini" icon="el-icon-plus" @click="exportForm">导出</el-button>
                 <div class="JNPF-common-head-right">
                   <el-tooltip content="高级查询" placement="top" v-if="true">
                     <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -216,24 +218,26 @@
           提交</el-button>
       </span>
     </el-dialog>
+    <DepForm v-if="depFormVisible" ref="depForm" @close="closeForm" />
   </div>
 </template>
 
 <script>
 import { getQuotationLists, deleteQuotationData, getQuotationmxLists, exportSaleQuotation } from '@/api/salesManagement/index'
 import { getBimVehicleTypeData, deleteBimVehicleType, getPartnerOrProductData } from '@/api/basicData/index'
-import { excelExport } from '@/api/basicData/index'
+import { excelExport, addPartnerOrProductData, importCustomerProduct } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import CustomerForm from '../customerManagement/Officialcustomer/Form.vue'
 import Form from '@/views/masterDataManagement/productManagement/components/Form.vue'
 import FinshForm from '@/views/masterDataManagement/productManagement/finished_product/Form.vue'
+import DepForm from './depForm'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'PartnerProduct',
-  components: { ExportForm, SuperQuery, CustomerForm, Form, FinshForm },
+  components: { ExportForm, SuperQuery, CustomerForm, Form, FinshForm,DepForm },
   data() {
     return {
       finshVisible: false,
@@ -505,7 +509,7 @@ export default {
   },
   created() {
     this.superForm = this.listQuery
-    this.initData()
+    this.search('basic')
   },
   watch: {
     activeName() {
@@ -528,11 +532,11 @@ export default {
       console.log("所选文件:", file);
       this.file = file.raw
     },
-     // 下载模板
-     downLoadTemplate() {
+    // 下载模板
+    downLoadTemplate() {
       const a = document.createElement('a')
       a.setAttribute('download', '')
-      a.setAttribute('href', location.origin + '/static/客户产品导入模板.xlsx')
+      a.setAttribute('href', location.origin + '/static/客户产品价格导入模板.xlsx')
       a.click()
     },
     importProductFun() {
@@ -548,30 +552,20 @@ export default {
       this.formLoading = true
       var formData = new FormData()
       formData.append("file", data)
-      formData.append("partnerId", this.dataForm.cooperativePartnerId)
+      formData.append("type", 'customer')
       //调用上传文件接口
-      uploadProduct(formData).then(res => {
+      importCustomerProduct(formData).then(res => {
         if (!res.data.url) {
           this.$message.success(`导入成功`)
-          if (res.data.list.length > 0) {
-            res.data.list.forEach(item => {
-              item.productCode = item.productsCode
-              item.totalAmount = item.amounts
-              item.excludingTaxAmount = item.excludingTaxAmounts
-              if (this.dataForm.deliveryDate) {
-                item.deliveryDate = this.dataForm.deliveryDate
-              }
-            });
-          }
-          this.productData = res.data.list
+
           this.formLoading = false
           this.loadingText = ''
-          this.uploadVisib = false
         } else {
           this.handleMessage(res.data)
           this.$refs['uploadRef'].clearFiles();
         }
-        // this.tipsvisible=true
+          this.uploadVisib = false
+          // this.tipsvisible=true
 
         this.$refs['uploadRef'].clearFiles();
       }).catch(err => {
@@ -579,6 +573,47 @@ export default {
         this.formLoading = false
         this.loadingText = ''
       })
+    },
+    // 提示
+    handleMessage(data) {
+      const h = this.$createElement
+      this.$message({
+        type: "error",
+        duration: 0,
+        showClose: true,
+        customClass: 'my-message', // 自定义类名，用于设置样式
+        message: h('div',
+          {
+            style: "padding-right:20px;display:flex;align-items:center;color:#f56c6c;"
+          },
+          [
+            h('p', { style: 'font-size:14px;' }, '导入成功，存在客户产品价格信息错误！'),
+            h('el-button', {
+              props: {
+                type: 'text',
+                size: "mini",
+                icon: 'el-icon-download'
+              },
+              on: {
+                click: () => {
+                  this.downNoProduct(data)
+                }
+              },
+              style: {
+                border: "none",
+                textAlign: "center",
+                // width:"20%",
+                margin: "0 5px 0 5px ",
+              },
+            }, '下载导入错误数据')
+          ]
+        ),
+      })
+      return
+    },
+    // 导入产品  下载导入错误数据
+    downNoProduct(res) {
+      this.jnpf.downloadFile(res.url, res.name)
     },
     seniorFun() {
       if (this.activeName == 'historicalprice') {
@@ -704,9 +739,8 @@ export default {
     closeForm(isRefresh) {
       this.formVisible = false
       this.finshVisible = false
-      if (isRefresh) {
+      this.depFormVisible=false
         this.initData()
-      }
     },
 
     // 获取打字内容等

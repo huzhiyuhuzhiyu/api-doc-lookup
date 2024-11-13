@@ -967,8 +967,7 @@
         <ComSelect-page ref="comSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems"
           dialogTitle="选择产品" :listMethod="getcooperativeProduct" :listRequestObj="ProductListRequestObjs"
           :searchList="ProductTableSearchList" :elementShow="false" :multiple="true" :renderTree="false" />
-
-        <changeAddress v-if="addressVisibled" ref="addressRef" @getChangeAddress="getChangeAddress"></changeAddress>
+ 
 
         <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
           :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
@@ -1008,9 +1007,7 @@
   </transition>
 </template>
 
-<script>
-import VueDraggableResizable from "vue-draggable-resizable"
-import "vue-draggable-resizable/dist/VueDraggableResizable.css"
+<script> 
 // import productForm from "./productForm"
 import { excelExport } from '@/api/basicData/index'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
@@ -1025,8 +1022,7 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import {
   getProvinceList,
 } from '@/api/system/province'
-import { getbomOrderDetail } from '@/api/salesManagement/assemblyOrders'
-import changeAddress from "./changeAddress.vue"
+import { getbomOrderDetail } from '@/api/salesManagement/assemblyOrders' 
 import { mapGetters, mapState } from 'vuex'
 import { BillNumber } from '@/api/system/billRule'
 import {
@@ -1040,8 +1036,7 @@ import { getBimBusinessDetail } from '@/api/basicData/index'
 import Form from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue' 
 export default {
   mixins: [busFlow],
-  components: {
-    changeAddress, VueDraggableResizable, ExportForm, Process, recordList,Form
+  components: {  ExportForm, Process, recordList,Form
   },
   data() {
     return {
@@ -1090,20 +1085,7 @@ export default {
       exportFormVisible: false,
       scheduleData: [],
       scheduleForm: {},
-      scheduleForm1: {
-        ordersId: '',
-        productsName: '',
-        productsCode: '',
-        customerProductNo: '',
-        customerProductDrawingNo: '',
-        productsDrawingNo: '',
-        orderItems: [{
-          "asc": true,
-          "column": ""
-        }],
-        pageNum: 1,
-        pageSize: 20,
-      },
+ 
       submitmethodsTitle: "",
       getProducts,
       getcooperativeProduct,
@@ -1142,7 +1124,6 @@ export default {
       ],
       datafilelist: [],
       getDepartmentSelectorByAuth,
-      addressVisibled: false,
       salesFlag: false,
       contractFlag: false,
       isdisabled: false,
@@ -1729,50 +1710,8 @@ export default {
       columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
       this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
     },
-    download(data) {
-      if (data) {
-        this.exportFormVisible = false
-        let includeFieldMap = {}
-        for (let i = 0; i < data.selectKey.length; i++) {
-          includeFieldMap[data.selectKey[i]] = data.selectVal[i];
-        }
-        let _data = {
-          ...this.scheduleForm,
-          exportType: '1105',
-          exportName: '销售订单进度跟踪',
-          includeFieldMap,
-          pageSize: data.dataType == 0 ? this.scheduleForm.pageSize : -1
-        }
-        excelExport(_data).then(res => {
-          this.exportFormVisible = false
-          if (!res.data.url) return
-          this.jnpf.downloadFile(res.data.url)
-        }).catch(() => { })
-      }
-    },
-    searchDetail() {
-      this.formLoading = true
-      this.scheduleForm.ordersId = this.dataForm.id
-      Object.keys(this.scheduleForm).forEach(key => {
-        let item = this.scheduleForm[key]
-        this.scheduleForm[key] = typeof item === 'string' ? item.trim() : item
-      })
-      this.total = 0
-      getscheduleList(this.scheduleForm).then(res => {
-        this.scheduleData = res.data.records
-        this.total = res.data.total
-        this.formLoading = false
-        this.visible = false
-      }).catch(() => {
-        this.visible = false
-        this.formLoading = false
-      })
-    },
-    resetDetail() {
-      this.scheduleForm = JSON.parse(JSON.stringify(this.scheduleForm1))
-      this.scheduleForm.pageNum = 1
-      this.searchDetail()
-    },
+ 
+ 
 
 
     // refresh () {
@@ -1929,35 +1868,8 @@ export default {
     },
 
 
-    // 接收传递的地址
-    getChangeAddress(data) {
-      if (data) {
-        this.dataForm.recipient = data.recipient
-        this.dataForm.phone = data.phone
-        this.dataForm.country = data.country === '中国' ? 'CN' : data.country
-        this.dataForm.province = data.province
-        this.dataForm.city = data.city
-        this.dataForm.area = data.area
-        this.dataForm.address = data.address
-        if (this.dataForm.country === 'CN') {
-
-          this.defaultAddress = data.countryText + data.provinceText + data.cityText + data.areaText + data.address
-        } else {
-          this.defaultAddress = data.countryText + data.address
-        }
-      }
-    },
-    // 更换地址
-    changeAddress() {
-      this.addressVisibled = true
-      if (!this.dataForm.cooperativePartnerId) {
-        this.$message.error('请先选择供应商')
-      } else {
-        this.$nextTick(() => {
-          this.$refs.addressRef.initData(this.dataForm.cooperativePartnerId)
-        })
-      }
-    },
+ 
+   
     selectsales(val) {
       console.log(111, val);
       this.$nextTick(() => {
@@ -2636,11 +2548,7 @@ export default {
       if (tab.index == 0) {
         this.$nextTick(() => {
         })
-      } else if (tab.name == "schedule") {
-        this.switchStyleheight()
-        this.scheduleForm = JSON.parse(JSON.stringify(this.scheduleForm1))
-        this.resetDetail()
-      }
+      }  
     },
 
 

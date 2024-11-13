@@ -1146,12 +1146,15 @@ export default {
         this.$set(item, 'workOrderResList', item.routingProResList)
       });
       let arr=[]
-      this.dataForm.lineEdgeList.forEach(item=>{
-        arr.push({
-          productionOrderId:"",
-          warehouseId:item
+      if(this.dataForm.autoMaterialFlag){
+
+        this.dataForm.lineEdgeList.forEach(item=>{
+          arr.push({
+            productionOrderId:"",
+            warehouseId:item
+          })
         })
-      })
+      }
       let obj = {
         prodOrder: this.dataForm,
         workOrderList: this.dataFormTwo.data,

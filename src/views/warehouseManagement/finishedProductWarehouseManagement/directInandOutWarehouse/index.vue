@@ -489,6 +489,7 @@ export default {
   props: {
     warehouseCode: "",
   },
+  name:"directInandOutWarehouse",
   data() {
     return {
       scanResult: "",

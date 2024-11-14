@@ -22,7 +22,7 @@
                   <el-row :gutter="15" class="">
                     <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
-                      <el-col :span="12">
+                      <el-col :span="8">
                         <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                           <ComSelect-page clearable :treeNodeClick="treeNodeClick" :isdisabled="type === 'look'"
                             :value="dataForm.cooperativePartnerName" ref="ComSelect-page" @change="supplierdata"
@@ -30,6 +30,20 @@
                             :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
                             :listRequestObj="PartnerListRequestObj" :paramsObj="{}"
                             :searchList="PartnerTableSearchList" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="8">
+                        <el-form-item label="有效起始时间" prop="dateOrderStart">
+                          <el-date-picker v-model="dataForm.dateOrderStart" type="date" value-format="yyyy-MM-dd"
+                            style="width: 100%;" placeholder="请选择有效起始时间"
+                            :disabled="type == 'look' ? true : false"></el-date-picker>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="8">
+                        <el-form-item label="有效结束时间" prop="dateOrderStop">
+                          <el-date-picker v-model="dataForm.dateOrderStop" type="date" value-format="yyyy-MM-dd"
+                            style="width: 100%;" placeholder="请选择有效结束时间"
+                            :disabled="type == 'look' ? true : false"></el-date-picker>
                         </el-form-item>
                       </el-col>
                       <el-col :span="12">
@@ -112,35 +126,6 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="dateOrderStart" key="dateOrderStart" label="有效起始时间" width="180">
-                        <template slot="header">
-                          <span class="required">*</span>
-                          有效起始时间
-                        </template>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'dateOrderStart'"
-                            :rules="productRules.dateOrderStart">
-                            <el-date-picker v-model="scope.row.dateOrderStart" type="date" value-format="yyyy-MM-dd"
-                              style="width: 100%;" placeholder="请选择有效起始时间"
-                              :disabled="type == 'look' ? true : false"></el-date-picker>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
-
-                      <el-table-column prop="dateOrderStop" key="dateOrderStop" label="有效结束时间" width="180">
-                        <template slot="header">
-                          <span class="required">*</span>
-                          有效结束时间
-                        </template>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'dateOrderStop'"
-                            :rules="productRules.dateOrderStop">
-                            <el-date-picker v-model="scope.row.dateOrderStop" type="date" value-format="yyyy-MM-dd"
-                              style="width: 100%;" placeholder="请选择有效结束时间"
-                              :disabled="type == 'look' ? true : false"></el-date-picker>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
                       <el-table-column prop="standardValue" label="规值" width="120" :key="211"
                         v-if="this.dataForm.classAttribute !== 'finish_product'">
                         <template slot-scope="scope">
@@ -341,6 +326,7 @@ export default {
         cooperativePartnerId: 0, //  供应商id
         cooperativePartnerName: '', //  供应商名称
         cooperativePartnerCode: '',
+        
         createBy: '', //
         documentStatus: '', //  单据状态:草稿 draft、提交 submit,可用值:draft,normal,submit
         id: 0, //
@@ -371,14 +357,7 @@ export default {
       },
       productRules: {
         productsName: [{ required: true, trigger: ['change'] }],
-        dateOrderStart: [
-          { required: true, message: '请选择有效起始日期', trigger: ['change'] },
-          { validator: this.checkDate(), trigger: 'change' }
-        ],
-        dateOrderStop: [
-          { required: true, message: '请选择有效结束日期', trigger: ['change'] },
-          { validator: this.checkDate2(), trigger: 'change' }
-        ],
+       
         materialPrice: [
           { required: true, trigger: ['blur'] },
           {
@@ -617,8 +596,7 @@ export default {
             // contrastProductsId:'',              // 对比物料id
             contrastProducts: '', // 对比物料
             costPrice: '', // 对比价格
-            dateOrderStart: this.jnpf.getToday(), // 有效时间起
-            dateOrderStop: '', // 有效时间止
+        
             standardValue: item.standardValue,
             colour: item.colour,
             sealingCoverTyping: item.sealingCoverTyping,

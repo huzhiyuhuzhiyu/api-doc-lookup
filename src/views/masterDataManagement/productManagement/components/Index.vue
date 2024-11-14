@@ -109,22 +109,34 @@
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           ref="dataTable" :setColumnDisplayList="columnList">
-
-          <el-table-column prop="code" :label="productName + '编码'" min-width="160" sortable="custom">
-            <template slot-scope="scope">
+          <template v-if="tableItems">
+            <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label"
+              :formatter="item.formatter || toFormatter" :sortable="item.sortable ? 'custom' : false"
+              :align="item.align || 'left'" v-bind="{ minWidth: item.hasOwnProperty('minWidth') ? item.width : 140 }">
+            </el-table-column>
+          </template>
+          <!-- <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
+            <template slot="header" slot-scope="scope">
+              {{ classAttributeText }}编码
+            </template>
+<template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">
                 {{ scope.row.code }}
               </el-link>
             </template>
+</el-table-column> -->
+          <!-- <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" /> -->
+          <el-table-column prop="name" :label="classAttributeText + '名称'" min-width="140" sortable="custom">
+            <!-- <template slot="header" slot-scope="scope">
+              {{ classAttributeText }}名称
+            </template> -->
           </el-table-column>
-          <el-table-column prop="drawingNo" :label="productName + '规格'" min-width="200" sortable="custom" />
-          <el-table-column prop="name" :label="productName + '名称'" min-width="160" sortable="custom">
-          </el-table-column>
-          <el-table-column prop="productCategoryName" :label="productName + '分类'" width="120">
+
+          <el-table-column prop="productCategoryName" :label="classAttributeText + '分类'" width="120">
 
           </el-table-column>
           <el-table-column prop="mainUnit" label="单位" width="120" />
-          <el-table-column prop="productSource" :label="productName + '来源'" width="120">
+          <el-table-column prop="productSource" :label="classAttributeText + '来源'" width="120">
             <template slot-scope="{ row }">
               <template v-if="row.productSource == 'produce'">
                 生产
@@ -139,7 +151,7 @@
           </el-table-column>
           <!-- <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="isProjectSwitch === '1'">
           </el-table-column> -->
-          <el-table-column prop="productStatus" :label="productName + '状态'" width="120" align="center">
+          <el-table-column prop="productStatus" :label="classAttributeText + '状态'" width="120" align="center">
 
             <template slot-scope="{ row }">
               <el-tag type="success" disable-transitions v-if="row.productStatus == 'enable'">启用</el-tag>
@@ -207,75 +219,56 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    <el-dialog title="快速创建" :visible.sync="quickVisible" width="60%" :before-close="handleClose"
+    <el-dialog title="快速创建" :visible.sync="quickVisible" width="30%" :before-close="handleClose"
       class="JNPF-dialog JNPF-dialog_center" :close-on-click-modal="false" :close-on-press-escape="false">
       <el-form :model="quickForm" :rules="quickRules" ref="quickForm" label-width="100px" labelPosition="top"
         hide-required-asterisk="fasle">
-        <el-row :gutter="30">
-          <el-col :span="12" v-if="isProductNameSwitch === '1'">
-            <el-form-item label="产品名称" prop="name">
-              <template slot="label">
-                产品名称
-                <span class="required">*</span>
-              </template>
-              <el-input v-model="quickForm.name" placeholder="请输入产品名称"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品编码" prop="code">
-              <template slot="label">
-                产品编码
-                <span class="required">*</span>
-              </template>
-              <el-input v-model="quickForm.code" placeholder="请输入产品编码"
-                :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="品名规格" prop="drawingNo">
-              <template slot="label">
-                品名规格
-                <span class="required">*</span>
-              </template>
-              <el-input v-model="quickForm.drawingNo" placeholder="请输入品名规格"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品分类" prop="productCategoryName">
-              <template slot="label">
-                产品分类
-                <span class="required">*</span>
-              </template>
-              <ComSelect-list v-model="quickForm.productCategoryName" placeholder="请选择产品分类" auth
-                @change="productCategoryChange" :title="'选择产品分类'" :method="getcategoryCoop"
-                :requestObj="quickRequestObj" :dataFormatting="dataFormatting" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="单位" prop="unit">
-              <template slot="label">
-                单位
-                <span class="required">*</span>
-              </template>
-              <el-select v-model="quickForm.unit" placeholder="请选择单位" style="width: 100%;" filterable>
-                <el-option v-for="item in unitOptions" :key="item.value" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品来源" prop="productSource">
-              <template slot="label">
-                产品来源
-                <span class="required">*</span>
-              </template>
-              <el-select v-model="quickForm.productSource" placeholder="请选择产品来源" style="width: 100%;">
-                <el-option v-for="item in productSourceOptions" :key="item.value" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
+        <el-form-item label="产品编码" prop="code">
+          <template slot="label">
+            产品编码
+            <span class="required">*</span>
+          </template>
+          <el-input v-model="quickForm.code" placeholder="请输入产品编码"
+            :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true"></el-input>
+        </el-form-item>
+
+        <el-form-item label="品名规格" prop="drawingNo">
+          <template slot="label">
+            品名规格
+            <span class="required">*</span>
+          </template>
+          <el-input v-model="quickForm.drawingNo" placeholder="请输入品名规格"></el-input>
+        </el-form-item>
+
+        <el-form-item label="产品分类" prop="productCategoryName">
+          <template slot="label">
+            产品分类
+            <span class="required">*</span>
+          </template>
+          <ComSelect-list v-model="quickForm.productCategoryName" placeholder="请选择产品分类" auth
+            @change="productCategoryChange" :title="'选择产品分类'" :method="getcategoryCoop" :requestObj="quickRequestObj"
+            :dataFormatting="dataFormatting" />
+        </el-form-item>
+        <el-form-item label="单位" prop="unit">
+          <template slot="label">
+            单位
+            <span class="required">*</span>
+          </template>
+          <el-select v-model="quickForm.unit" placeholder="请选择单位" style="width: 100%;" filterable>
+            <el-option v-for="item in unitOptions" :key="item.value" :label="item.label"
+              :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="产品来源" prop="productSource">
+          <template slot="label">
+            产品来源
+            <span class="required">*</span>
+          </template>
+          <el-select v-model="quickForm.productSource" placeholder="请选择产品来源" style="width: 100%;">
+            <el-option v-for="item in productSourceOptions" :key="item.value" :label="item.label"
+              :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
@@ -358,7 +351,6 @@ export default {
       isProjectSwitch: '',
       quickVisible: false,
       quickForm: {
-        name: '',
         code: '',
         drawingNo: '',
         unit: '',
@@ -367,7 +359,6 @@ export default {
       },
       codeConfig: {},
       quickRules: {
-        name: [{ required: true, message: '请输入产品名称', trigger: 'blur' }],
         code: [
           { required: true, message: '请输入产品编码', trigger: 'blur' },
           {
@@ -654,10 +645,6 @@ export default {
       })
     },
     quickAdd() {
-      console.log(this.classAttributeText, 'clll')
-      if (this.classAttribute) {
-
-      }
       this.quickVisible = true
 
       this.fetchData('CPBM', true)
@@ -714,17 +701,15 @@ export default {
         }
       } catch (error) { }
     },
-    init(initListQuery) {
+    init(initListQuery, tableItems) {
       this.quickVisible = false
       this.listQuery = JSON.parse(JSON.stringify(initListQuery))
-
+      this.tableItems = JSON.parse(tableItems)
       console.log(initListQuery, 'uuu')
-      console.log(this.listQuery, 'kkkk')
-
+      console.log(this.tableItems, 'this.tableItems')
       console.log(this.$refs.dataTable, 'dataTable9')
       this.classAttributeText = this.listQuery.classAttributeText
       console.log(this.classAttributeText, '[]')
-      console.log(this.productName, 'pppp')
       this.getcategoryTree()
       this.initData()
       if (localStorage.getItem(this.listQuery.classAttribute)) {

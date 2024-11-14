@@ -18,7 +18,7 @@ export default () => [
       {
         prop: "drawingNo", label: "品名规格", value: "", type: "input", maxlength: "1000", itemDisabled: false, itemRules: [{ required: true, trigger: "blur" }]
       },
-      { prop: "name", label: "产品名称", value: "", type: 'input', maxlength: 100, },
+      { prop: "name", label: "产品名称", value: "", type: 'input', itemRules: [{ required: true, trigger: "blur" }], maxlength: 100, },
       { prop: "productCategoryName", label: "产品分类", value: "", type: 'custom', customComponent: "ComSelect-list", itemRules: [{ required: true, message: "请选择产品分类", trigger: "no" }], itemDisabled: false },
       { prop: "mainUnit", label: "主单位", value: "", type: 'select', itemRules: [{ required: true, trigger: "blur" }], options: [], filterable: true },
       { prop: "deputyUnit", label: "副单位", value: "", type: 'select', itemRules: [{ required: true, trigger: "blur" }], options: [], filterable: true },

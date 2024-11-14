@@ -16,7 +16,10 @@
                 <div class="speedy-entry-wrapper">
                   <ul class="entry-lists">
                     <li v-for="item in o.list" :key="item.label" @click="navigationmenu(item.path)">
-                      <div class="node-wrapper text"><img :src="item.icon" alt=""><span style="margin-left: 10px;">{{item.label}}</span></div>
+                      <div class="node-wrapper text">
+                        <div style="-webkit-box-align: center;align-items: center;display: flex;"><img :src="item.icon" alt=""><span style="margin-left: 10px;">{{item.label}}</span></div>
+                        <div style="-webkit-box-align: center;align-items: center;display: flex;"><span>{{item.title}}：</span><span><el-tag type="danger" effect="dark" style="border-radius:50%">{{item.value}}</el-tag></span></div>
+                      </div>
                     </li>
                   </ul>
                 </div>
@@ -44,13 +47,11 @@
                     </el-col>
                     <el-col :span="4">
                       <el-form-item>
-                        <el-select v-model="listQuerysbtz.state" filterable placeholder="请选择安装地点" clearable>
+                        <el-select v-model="listQuerysbtz.state" filterable placeholder="请选择设备状态" clearable>
                           <el-option v-for="item in equipmentStateList" :key="item.value" :label="item.label" :value="item.value">
                           </el-option>
                         </el-select>
                       </el-form-item>
-                    </el-col>
-                    <el-col :span="6">
                     </el-col>
                     <el-col :span="6">
                       <el-form-item>
@@ -562,7 +563,7 @@
 <script>
 import { equMaintenanceList, RepairRequestList } from '@/api/dailyManagement/Maintenance'
 import { getEquEquipmentList } from '@/api/basicData/index'
-import { getequMountedPlaces, gettotalOverview, gettotalEquStats, getequReporttotalNum, getdailyInspectionNum, getdailyInspectionMonthTotal, gettotalMaintenance } from "@/api/basicData/materialSettings";
+import { getequMountedPlaces, gettotalOverview, gettotalEquStats, getequReporttotalNum, getdailyInspectionNum, getdailyInspectionMonthTotal, gettotalMaintenance, getTotalEquipmentVO } from "@/api/basicData/materialSettings";
 import chart from "@/views/dailyManagement/deviceReportanaly/components/chart.vue";
 export default {
   components: { chart },
@@ -700,20 +701,21 @@ export default {
         {
           list: [
             // { label: '设备档案', icon: require('./imgs/shebei.png'),path:'/basicData/deviceProfile/deviceProfileset' },
-            { label: '设备点检单', icon: require('./imgs/dianjian.png'), path: '/dailyManagement/pointInspection/checkQuery' },
+            { label: '设备点检单', title: '待点检', id: 'inspectionNum', value: '0', icon: require('./imgs/dianjian.png'), path: '/dailyManagement/pointInspection/checkQuery' },
             // { label: '设备报废单', icon: require('./imgs/xunjian.png'),path:'/dailyManagement/scrapManagement/announceInvalidated' },
-            { label: '设备维修单', icon: require('./imgs/weixiu.png'), path: '/dailyManagement/maintenanceManagement/deviceservice' },
-            { label: '保养计划表', icon: require('./imgs/baoyangbiao.png'), path: '/dailyManagement/Maintenance/maintenanceTasks' },
-            { label: '设备保养单', icon: require('./imgs/baoyangdan.png'), path: '/dailyManagement/Maintenance/taskQuery' }
+            { label: '设备维修单', title: '待维修', id: 'repairNum', value: '0', icon: require('./imgs/weixiu.png'), path: '/dailyManagement/maintenanceManagement/deviceservice' },
+            // { label: '保养计划表', title: '待保养', id: 'maintenanceNum', value: '0', icon: require('./imgs/baoyangbiao.png'), path: '/dailyManagement/Maintenance/maintenanceTasks' },
+            { label: '设备保养单', title: '待保养', id: 'maintenanceNum', value: '0', icon: require('./imgs/baoyangdan.png'), path: '/dailyManagement/Maintenance/taskQuery' },
+            { label: '设备报废单', title: '已报废', id: 'scrappingNum', value: '0', icon: require('./imgs/xunjian.png'), path: '/dailyManagement/scrapManagement/announceInvalidated' }
           ]
         },
         {
           list: [
-            { label: '设备动态看板', icon: require('./imgs/sbdt.png'), path: '/dailyManagement/deviceReportanaly/dynamicanalysis' },
-            { label: '点检统计看板', icon: require('./imgs/djtj.png'), path: '/dailyManagement/deviceReportanaly/pointCheckStatisticalAnalysis' },
+            { label: '设备动态看板', title: '运行设备', id: 'equNum', value: '0', icon: require('./imgs/sbdt.png'), path: '/dailyManagement/deviceReportanaly/dynamicanalysis' },
+            { label: '点检统计看板', title: '已点检', id: 'totalInspectionNum', value: '0', icon: require('./imgs/djtj.png'), path: '/dailyManagement/deviceReportanaly/pointCheckStatisticalAnalysis' },
             // { label: '巡检统计看板', icon: require('./imgs/xjtj.png'),path:'/dailyManagement/scrapManagement/announceInvalidated' },
-            { label: '维修统计看板', icon: require('./imgs/wxtj.png'), path: '/dailyManagement/deviceReportanaly/maintenanceStatisticalAnalysis' },
-            { label: '保养统计看板', icon: require('./imgs/bytj.png'), path: '/dailyManagement/deviceReportanaly/upkeepStatisticalAnalysis' },
+            { label: '维修统计看板', title: '已维修', id: 'totalRepairNum', value: '0', icon: require('./imgs/wxtj.png'), path: '/dailyManagement/deviceReportanaly/maintenanceStatisticalAnalysis' },
+            { label: '保养统计看板', title: '已保养', id: 'totalMaintenanceNum', value: '0', icon: require('./imgs/bytj.png'), path: '/dailyManagement/deviceReportanaly/upkeepStatisticalAnalysis' },
             // { label: '备件库存看板', icon: require('./imgs/bjtj.png'),path:'/dailyManagement/scrapManagement/announceInvalidated' }
           ]
         }
@@ -791,12 +793,30 @@ export default {
     this.listQuerydjfb = JSON.parse(JSON.stringify(this.listQuery3))
     this.listQuerywxfb = JSON.parse(JSON.stringify(this.listQuery4))
     this.listQuerybyfb = JSON.parse(JSON.stringify(this.listQuery5))
+    this.getTotalEquipmentVO()
     this.initequipmentledger()
   },
   methods: {
     //导航菜单
     navigationmenu(path) {
       this.$router.push({ path })
+    },
+    getTotalEquipmentVO() {
+      let obj = {
+        classAttribute: "equipment"
+      }
+      getTotalEquipmentVO(obj).then(res => {
+        this.flexlist[0].list.forEach(item => {
+          res.data.unList.map(o => {
+            if (item.id === o.totalName) item.value = o.totalNum
+          })
+        })
+        this.flexlist[1].list.forEach(item => {
+          res.data.totalList.map(o => {
+            if (item.id === o.totalName) item.value = o.totalNum
+          })
+        })
+      })
     },
     //设备台账
     initequipmentledger() {
@@ -1284,6 +1304,7 @@ export default {
         width: calc(50% - 12px);
         margin: 4px 6px;
         .node-wrapper {
+          justify-content: space-between;
           -webkit-box-align: center;
           align-items: center;
           border: 1px solid transparent;

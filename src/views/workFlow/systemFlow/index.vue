@@ -15,7 +15,7 @@
           <el-form @submit.native.prevent>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="keyword" placeholder="请输入关键词查询" clearable @keyup.enter.native="search()" />
+                <el-input v-model="listQuery.keyword" placeholder="请输入关键词查询" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
 

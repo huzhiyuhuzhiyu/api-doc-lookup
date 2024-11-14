@@ -39,6 +39,14 @@
                             <el-input v-model="listQuery.equipmentIdName" placeholder="请输入工具名称" clearable @keydown.enter.native="search()" />
                           </el-form-item>
                         </el-col>
+                        <el-col :span="4">
+                          <el-form-item>
+                            <el-select v-model="listQuery.state" filterable placeholder="请选择状态" clearable style="width: 100%;">
+                              <el-option v-for="item in StateList" :key="item.value" :label="item.label" :value="item.value">
+                              </el-option>
+                            </el-select>
+                          </el-form-item>
+                        </el-col>
                         <el-col :span="6">
                           <el-form-item>
                             <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -284,6 +292,9 @@ export default {
   components: { card, chart },
   data() {
     return {
+      StateList: [
+        { label: '待维修', value: 'toBeMaintain' }, { label: '正在维修', value: 'maintaining' },{ label: '已维修', value: 'maintained' }
+      ],
       datalistobj: {},
       trendtion: {},
       maintenancedurationtion: {},
@@ -293,7 +304,7 @@ export default {
       supplieroption: {},
       dispatchworkoption: {},
       datalistwx: [
-        { name: '代派工工单数', unit: '单', id: 'allNum', value: '0' },
+        { name: '待派工工单数', unit: '单', id: 'allNum', value: '0' },
         { name: '维修中工单数', unit: '单', id: 'maintainingNum', value: '0' },
         { name: '本月报修工单总数', unit: '单', id: 'mouthNum', value: '0' },
         { name: '维修工单总数', unit: '单', id: 'toBeMaintenanceNum', value: '0' },
@@ -306,7 +317,7 @@ export default {
       activeName: 'wxqkgl',
       listQueryone: {
         reviewComments: '',
-        state: 'maintained',
+        state: '',
         classAttribute: "tool",
         maintenanceNo: '',
         equipmentIdCode: '',

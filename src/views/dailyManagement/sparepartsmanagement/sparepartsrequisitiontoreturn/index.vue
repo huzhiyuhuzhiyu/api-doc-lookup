@@ -8,13 +8,6 @@
               <el-input v-model="orderForm.maintainerIdText" placeholder="请输入领用人" clearable @keydown.enter.native="search()" />
             </el-form-item>
           </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-select v-model="orderForm.useApplication" placeholder="请选择领用目的" clearable>
-                <el-option v-for="(item, index) in useApplicationlist" :key="index" :label="item.label" :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -27,18 +20,7 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <div>
-            <!-- <el-dropdown style="margin-right:10px;">
-              <el-button size="mini" type="primary" icon="el-icon-plus">
-                新建
-                <i class="el-icon-arrow-down el-icon--right"></i>
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="addOrUpdateHandle('', 'add','equipment')">设备</el-dropdown-item>
-                <el-dropdown-item @click.native="addOrUpdateHandle('','add','tool')">工具</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown> -->
-          </div>
+          <div></div>
           <div class="JNPF-common-head-right" style="float: right">
             <el-tooltip content="高级查询" placement="top">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
@@ -67,55 +49,12 @@
           </el-table-column>
           <el-table-column prop="equipmentIdName" label="设备/工具名称" min-width="200">
           </el-table-column>
-          <el-table-column prop="productName" label="备件名称" min-width="200"></el-table-column>
           <el-table-column prop="remark" label="备注" min-width="180"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
-          <el-table-column prop="documentStatus" label="单据状态" sortable="custom" width="120" align="center">
+          <el-table-column label="操作" width="140" fixed="right">
             <template slot-scope="scope">
-              <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag>
-              </div>
-              <div v-else-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center" v-if="showAppCodeFlag">
-            <template slot-scope="scope">
-              <div v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'">
-                <el-tag>审批中</el-tag>
-              </div>
-              <div v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus == 'submit'">
-                <el-tag type="success">审批通过</el-tag>
-              </div>
-              <div v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus == 'submit'">
-                <el-tag type="danger">审批拒绝</el-tag>
-              </div>
-              <div v-else-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus == 'submit'">
-                <el-tag type="warning">审批撤回</el-tag>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" width="180" fixed="right">
-            <template slot-scope="scope">
-              <tableOpts @edit="handleUserRelation(scope.row, 'edit')" @del="handleDel(scope.row.id)" :editDisabled="scope.row.documentStatus == 'submit'" :delDisabled="scope.row.documentStatus == 'submit'">
-                <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item v-if="(scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn') && showAppCodeFlag" @click.native="handleUserRelation(scope.row, 'add')">
-                      重新提交
-                    </el-dropdown-item>
-                    <el-dropdown-item v-if="scope.row.approvalStatus === 'ing' && showAppCodeFlag" @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
-                      审批撤回
-                    </el-dropdown-item>
-                    <el-dropdown-item @click.native="handleUserRelation(scope.row, 'look')">
-                      查看详情
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </tableOpts>
+              <el-button type="text" size="mini" @click.native="handleUserRelation(scope.row.id, 'look')">查看详情</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -127,25 +66,17 @@
   </div>
 </template>
 <script>
-import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { CollectionandreturnList, deleteCollectionandreturn } from '@/api/dailyManagement/Maintenance'
-import Form from './Form'
+import Form from '../sparepartsrequisition/Form.vue'
 export default {
-  name: 'announceInvalidated',
-  components: { Form, SuperQuery },
+  name: 'sparepartsrequisitiontoreturn',
+  components: { SuperQuery,Form },
   data() {
     return {
-      showAppCodeFlag: true,
-      useApplicationlist: [
-        { label: '设备保养', value: 'equipmentmaintain' },
-        { label: '设备维修', value: 'equipmentrepair' },
-        { label: '工具保养', value: 'toolmaintain' },
-        { label: '工具维修', value: 'toolrepair' }
-      ],
       superQueryVisible: false,
       superQueryJson: [
-        {
+      {
           prop: 'orderNo',
           label: "领用单号",
           type: 'input'
@@ -203,26 +134,6 @@ export default {
           prop: 'createByName',
           label: '创建人',
           type: 'input'
-        },
-        {
-          prop: 'documentStatus',
-          label: "单据状态",
-          type: 'select',
-          options: [
-            { label: '草稿', value: 'draft' },
-            { label: '提交', value: 'submit' }
-          ]
-        },
-        {
-          prop: 'approvalStatus',
-          label: "审批状态",
-          type: 'select',
-          options: [
-            { label: '审批中', value: 'ing' },
-            { label: '审批通过', value: 'ok' },
-            { label: '审批拒绝', value: 'rebut' },
-            { label: '审批撤回', value: 'withdrawn' },
-          ]
         }
       ],
       tableData: [],
@@ -231,8 +142,8 @@ export default {
       orderFormone: {
         requisitionType: 'requisition',
         equipmentType: 'accessory',
+        returnFlag: 0,
         maintainerIdText: '',
-        useApplication: '',
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -248,36 +159,11 @@ export default {
       superQuery: {}
     }
   },
-  async created() {
+  created() {
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormone))
-    const res = await this.jnpf.getBusInfo('b053')
-    if (res) {
-      this.showAppCodeFlag = res.enabledMark
-    } else {
-      this.showAppCodeFlag = false
-    }
     this.initData()
   },
   methods: {
-    withdrawnHandle(formId) {
-      let _data = {
-        formId
-      }
-      this.$confirm('此操作将撤回审批单，是否继续？', this.$t('common.tipTitle'), {
-        type: 'warning'
-      }).then(() => {
-        withdrawn(_data).then(res => {
-          this.$message({
-            type: 'success',
-            message: "撤回成功",
-            duration: 1500,
-            onClose: () => {
-              this.initData()
-            }
-          })
-        })
-      }).catch(() => { })
-    },
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
@@ -320,7 +206,6 @@ export default {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
-
       }).catch(() => {
         this.listLoading = false
       })
@@ -344,16 +229,16 @@ export default {
         })
       }).catch(() => { })
     },
-    handleUserRelation(val, btnType) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(val.id, btnType)
-      })
-    },
-    addOrUpdateHandle(id, btnType) {
+    handleUserRelation(id, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.Form.init(id, btnType)
+      })
+    },
+    addOrUpdateHandle(id, btnType, type) {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(id, btnType, type)
       })
     }
   }

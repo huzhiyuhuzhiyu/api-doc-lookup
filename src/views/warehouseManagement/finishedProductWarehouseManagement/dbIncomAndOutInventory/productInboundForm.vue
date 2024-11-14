@@ -37,8 +37,8 @@
                             </el-form-item>
                           </el-col>
                           <el-col :sm="6" :xs="24">
-                            <el-form-item label="业务类型" prop="businessTypes">
-                              <el-select v-model="businessTypes" placeholder="请选择业务类型" style="width: 100%;" disabled>
+                            <el-form-item label="业务类型" prop="businessType">
+                              <el-select v-model="dataForm.businessType" placeholder="请选择业务类型" style="width: 100%;" disabled>
                                 <el-option v-for="(item, index) in sourceTypeList" :key="index" :label="item.label"
                                   :value="item.value"></el-option>
                               </el-select>
@@ -257,8 +257,8 @@
                             </el-form-item>
                           </el-col>
                           <el-col :sm="6" :xs="24">
-                            <el-form-item label="业务类型" prop="businessTypes">
-                              <el-select v-model="businessTypes" placeholder="请选择业务类型" style="width: 100%;" disabled>
+                            <el-form-item label="业务类型" prop="businessType">
+                              <el-select v-model="dataForm.businessType" placeholder="请选择业务类型" style="width: 100%;" disabled>
                                 <el-option v-for="(item, index) in sourceTypeList" :key="index" :label="item.label"
                                   :value="item.value"></el-option>
                               </el-select>
@@ -604,7 +604,8 @@ export default {
         { label: "外协退料", value: "inbound_external_return" },
         { label: "外协收货", value: "inbound_external" },
         { label: "外协退货", value: "outbound_external" },
-        { label: "生产入库", value: "inbound_mock_production" },
+        { label: "生产产品入库", value: "inbound_order_production" },
+        { label: "生产工单入库", value: "inbound_production" },
 
       ],
 

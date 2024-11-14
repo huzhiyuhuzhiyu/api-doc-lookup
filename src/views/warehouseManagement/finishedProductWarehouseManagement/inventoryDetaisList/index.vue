@@ -89,8 +89,8 @@
               <div v-if="scope.row.businessType == 'inbound_transfer'">调拨入库</div>
               <div v-if="scope.row.businessType == 'inbound_receive_material'">直接领料入库</div>
               <div v-if="scope.row.businessType == 'outbound_receive_material'">直接领料出库</div>
-              <div v-if="scope.row.businessType == 'inbound_production'">生产入库</div>
-              <div v-if="scope.row.businessType == 'inbound_order_production'">生产入库</div>
+              <div v-if="scope.row.businessType == 'inbound_production'">生产工单入库</div>
+              <div v-if="scope.row.businessType == 'inbound_order_production'">生产产品入库</div>
               <div v-if="scope.row.businessType == 'outbound_use'">资产领用</div>
               <div v-if="scope.row.businessType == 'inbound_return'">资产归还</div>
             </template>
@@ -132,7 +132,22 @@
             </template>
 
           </el-table-column>
-
+          <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center" >
+            <template slot-scope="scope">
+              <div v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'">
+                <el-tag>审批中</el-tag>
+              </div>
+              <div v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus == 'submit'">
+                <el-tag type="success">审批通过</el-tag>
+              </div>
+              <div v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus == 'submit'">
+                <el-tag type="danger">审批拒绝</el-tag>
+              </div>
+              <div v-else-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus == 'submit'">
+                <el-tag type="warning">审批撤回</el-tag>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
           <el-table-column prop="createByName" label="创建人" min-width="120" />
           <el-table-column label="操作" min-width="200" fixed="right">
@@ -296,7 +311,8 @@ export default {
         { label: "采购退货", value: "outbound_purchase" },
         { label: "生产领料", value: "outbound_pick_out" },
         { label: "生产退料", value: "inbound_return_materials" },
-        { label: "生产入库", value: "inbound_mock_production" },
+        { label: "生产产品入库", value: "inbound_order_production" },
+        { label: "生产工单入库", value: "inbound_production" },
         { label: "外协发料", value: "outbound_external_send" },
         // { label: "外协退料", value: "inbound_external_return" },
         { label: "外协收货", value: "inbound_external" },
@@ -346,9 +362,9 @@ export default {
             { label: "采购退货", value: "outbound_purchase" },
             { label: "生产领料", value: "outbound_pick_out" },
             { label: "生产退料", value: "inbound_return_materials" },
-            { label: "生产入库", value: "inbound_mock_production" },
+            { label: "生产产品入库", value: "inbound_order_production" },
+            { label: "生产工单入库", value: "inbound_production" },
             { label: "外协发料", value: "outbound_external_send" },
-            { label: "外协退料", value: "inbound_external_return" },
             { label: "外协收货", value: "inbound_external" },
             { label: "直接入库", value: "inbound_other" },
             { label: "直接出库", value: "outbound_other" },
@@ -1036,7 +1052,7 @@ export default {
       this.totalList = []
       this.listQuery.pageNum = 1
       this.listQuery.classAttributeList = this.classAttributeList
-      this.listQuery.approvalStatus = 'ok'
+      // this.listQuery.approvalStatus = 'ok'
       getInventorySummaryData(this.listQuery).then(res => {
 
         this.tableData = res.data.page.records

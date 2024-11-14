@@ -43,12 +43,12 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <div class="JNPF-common-head">
-                <!-- <topOpts @add="addSupplier('', 'add')">
+                <topOpts @add="addSupplier('', 'add')">
                   <el-button type="primary" size="mini" icon="el-icon-download" @click="importProductFun()">导入产品
                   </el-button>
                   <el-button type="primary" size="mini" icon="el-icon-plus" @click="exportForm">导出</el-button>
-                </topOpts> -->
-                  <el-button type="primary" size="mini" icon="el-icon-plus" @click="exportForm">导出</el-button>
+                </topOpts>
+                  <!-- <el-button type="primary" size="mini" icon="el-icon-plus" @click="exportForm">导出</el-button> -->
                 <div class="JNPF-common-head-right">
                   <el-tooltip content="高级查询" placement="top" v-if="true">
                     <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -555,11 +555,12 @@ export default {
       formData.append("type", 'customer')
       //调用上传文件接口
       importCustomerProduct(formData).then(res => {
-        if (!res.data.url) {
+        if (!res.data) {
           this.$message.success(`导入成功`)
 
           this.formLoading = false
           this.loadingText = ''
+    this.search('basic')
         } else {
           this.handleMessage(res.data)
           this.$refs['uploadRef'].clearFiles();

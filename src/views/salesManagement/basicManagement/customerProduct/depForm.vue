@@ -64,14 +64,14 @@
                     <el-table-column type="selection" width="60" fixed='left' align="center"
                       v-if="this.btnType !== 'look'" key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
-                    <el-table-column prop="customerDrawingNumber" label=" 客户料号" min-width="120">
+                    <el-table-column prop="customerProductNo" label=" 客户料号" min-width="120">
                       <template slot="header">
                         <span class="required">*</span> 客户料号
                       </template>
                       <template slot-scope="scope">
-                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'customerDrawingNumber'"
-                          :rules='productRules.customerDrawingNumber'>
-                          <el-input :title="scope.row.customerDrawingNumber" v-model="scope.row.customerDrawingNumber"
+                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'customerProductNo'"
+                          :rules='productRules.customerProductNo'>
+                          <el-input :title="scope.row.customerProductNo" v-model="scope.row.customerProductNo"
                             placeholder="请输入" :disabled="status">
                           </el-input>
                         </el-form-item>
@@ -107,14 +107,14 @@
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="unitPrice" label="单价(含税)" width="120">
+                    <el-table-column prop="price" label="单价(含税)" width="120">
                       <template slot="header">
                         <span class="required">*</span>单价(含税)
                       </template>
                       <template slot-scope="scope">
-                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'unitPrice'"
-                          :rules='productRules.unitPrice'>
-                          <el-input v-model="scope.row.unitPrice" placeholder="单价" :disabled="status" maxlength="20"
+                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'price'"
+                          :rules='productRules.price'>
+                          <el-input v-model="scope.row.price" placeholder="单价" :disabled="status" maxlength="20"
                             @input="watchPrice(scope.row, scope.$index)" oninput="value=value.replace(/[^0-9.]/g,'')">
                           </el-input>
                         </el-form-item>
@@ -140,7 +140,7 @@
                       </template>
 
                     </el-table-column>
-                    <el-table-column prop="excludingTaxUnitPrice" label="单价(不含税)" width="150" show-overflow-tooltip>
+                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="totalTaxAmount" label="税额" width="150" show-overflow-tooltip>
                     </el-table-column>
@@ -299,14 +299,14 @@
                 <el-table-column type="selection" width="60" fixed='left' align="center" v-if="this.btnType !== 'look'"
                   key="1" />
                 <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
-                <el-table-column prop="customerDrawingNumber" label=" 客户料号" width="200">
+                <el-table-column prop="customerProductNo" label=" 客户料号" width="200">
                   <template slot="header">
                     <span class="required">*</span> 客户料号
                   </template>
                   <template slot-scope="scope">
-                    <el-form-item :prop="'lines.' + scope.$index + '.' + 'customerDrawingNumber'"
-                      :rules='productRules.customerDrawingNumber'>
-                      <el-input :title="scope.row.customerDrawingNumber" v-model="scope.row.customerDrawingNumber"
+                    <el-form-item :prop="'lines.' + scope.$index + '.' + 'customerProductNo'"
+                      :rules='productRules.customerProductNo'>
+                      <el-input :title="scope.row.customerProductNo" v-model="scope.row.customerProductNo"
                         placeholder="请输入" :disabled="status" style="width: 135px;">
                       </el-input>
                     </el-form-item>
@@ -342,13 +342,13 @@
                   </template>
                 </el-table-column>
 
-                <el-table-column prop="unitPrice" label="单价(含税)" width="160">
+                <el-table-column prop="price" label="单价(含税)" width="160">
                   <template slot="header">
                     <span class="required">*</span>单价(含税)
                   </template>
                   <template slot-scope="scope">
-                    <el-form-item :prop="'lines.' + scope.$index + '.' + 'unitPrice'" :rules='productRules.unitPrice'>
-                      <el-input v-model="scope.row.unitPrice" placeholder="请输入单价" :disabled="status" maxlength="20"
+                    <el-form-item :prop="'lines.' + scope.$index + '.' + 'price'" :rules='productRules.price'>
+                      <el-input v-model="scope.row.price" placeholder="请输入单价" :disabled="status" maxlength="20"
                         @input="watchPrice(scope.row, scope.$index)" style="width: 135px;"
                         oninput="value=value.replace(/[^0-9.]/g,'')">
                       </el-input>
@@ -377,7 +377,7 @@
                     <div>{{ scope.row.taxRate }}%</div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="excludingTaxUnitPrice" label="单价(不含税)" width="150" show-overflow-tooltip>
+                <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150" show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column prop="totalTaxAmount" label="税额" width="150" show-overflow-tooltip>
                 </el-table-column>
@@ -677,24 +677,10 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
-        quotationNo: "",
-        deliver: '',
-        publicPrivateSeaId: '',
-        cooperativePartnerId: '',
-        bidder: '',
-        quotationTime: '',
-        validEnd: '',
-        address: '',
-        phone: '',
-        fax: '',
-        totalAmount: 0,
-        validDateArr:[],
-        // approvalStatus: '',
-        // reasonRejection: '',
-        documentStatus: '',
-        // submitDate: '',
-        remark: '',
-        approvalFlag: false
+        partnerType:"customer",
+        dateOrderStart:"",
+        cooperativePartnerId:'',
+        validDateArr:[], 
       },
       taxRateList: [],
       pickerOptions: {
@@ -711,7 +697,7 @@ export default {
       productRules: {
 
         // 客户物料号
-        customerDrawingNumber: [
+        customerProductNo: [
           { validator: this.formValidate({ type: 'noEmtry', params: [" 客户料号不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' }
         ],
@@ -722,7 +708,7 @@ export default {
           { validator: this.formValidate('positiveNumber', '数量必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }
         ],
         // 单价（含税）
-        unitPrice: [
+        price: [
           { validator: this.formValidate({ type: 'noEmtry', params: ["单价(含税)不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' },
           { validator: this.formValidate('positiveNumber', '单价(含税)必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' },
@@ -742,13 +728,13 @@ export default {
       createdData: {
         salesQuotationId: '',
         customerProductDrawingNo: '',
-        customerDrawingNumber: '',
+        customerProductNo: '',
         materialDescription: "",
         productDrawingNo: "",
         num: "",
         listPrice: "",
-        unitPrice: "",
-        excludingTaxUnitPrice: "",
+        price: "",
+        excludingTaxPrice: "",
         discount: "",
         amounts: "",
         excludingTaxAmounts: "",
@@ -1093,7 +1079,7 @@ export default {
       let obj = JSON.parse(JSON.stringify(this.createdData))
       obj.taxRate = this.taxRate * 1
 
-      if (this.dataFormTwo.lines[index].customerDrawingNumber) customerDrawingNumber = JSON.parse(JSON.stringify(this.dataFormTwo.lines[index].customerDrawingNumber))
+      if (this.dataFormTwo.lines[index].customerProductNo) customerDrawingNumber = JSON.parse(JSON.stringify(this.dataFormTwo.lines[index].customerProductNo))
       if (item.value) {
         let objs = {
           productDrawingNo: item.value,
@@ -1129,8 +1115,8 @@ export default {
 
             item.data.taxRate = this.taxRate * 1
             this.$set(item.data, 'productDrawingNo', item.value)
-            this.$set(item.data, 'unitPrice', "")
-            this.$set(item.data, 'customerProductDrawingNo', customerDrawingNumber)
+            this.$set(item.data, 'price', "")
+            this.$set(item.data, 'customerProductNo', customerDrawingNumber)
             item.data.productsId = item.data.id
 
             this.$set(this.dataFormTwo.lines, index, item.data)
@@ -1150,8 +1136,8 @@ export default {
     changeTaxRate(row, index) {
       console.log(row, index);
       let productArr = [...this.dataFormTwo.lines]
-      productArr[index].excludingTaxUnitPrice = this.jnpf.numberFormat(row.unitPrice / (1 + (row.taxRate * 1 / 100)), 2)
-      productArr[index].excludingTaxAmounts = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 2)
+      productArr[index].excludingTaxPrice = this.jnpf.numberFormat(row.price / (1 + (row.taxRate * 1 / 100)), 2)
+      productArr[index].excludingTaxAmounts = this.jnpf.numberFormat((row.excludingTaxPrice * row.num), 2)
       productArr[index].totalTaxAmount = this.jnpf.numberFormat((row.amounts * 1 - row.excludingTaxAmounts), 2)
       this.dataFormTwo.lines = productArr
     },
@@ -1173,12 +1159,12 @@ export default {
       let obj = JSON.parse(JSON.stringify(this.createdData))
       obj.taxRate = this.taxRate * 1
       console.log(8989);
-      if (data.num || data.unitPrice) return
+      if (data.num || data.price) return
       getDetailByDrawNo(data.productDrawingNo).then(res => {
         if (res.data) {
           this.dataFormTwo.lines.push(obj)
-          res.data.unitPrice = ""
-          res.data.customerDrawingNumber = data.customerDrawingNumber
+          res.data.price = ""
+          res.data.customerProductNo = data.customerDrawingNumber
           res.data.productCode = res.data.code
           res.data.productDrawingNo = res.data.drawingNo
           res.data.productsId = res.data.id
@@ -1393,22 +1379,22 @@ export default {
     watchPrice(row, index) {
       let productArr = [...this.dataFormTwo.lines]
 
-      row.unitPrice = row.unitPrice ? row.unitPrice.replace(/[^\d.]/g, '') : ''
+      row.price = row.price ? row.price.replace(/[^\d.]/g, '') : ''
       // 单价处理
-      if (row.unitPrice.length == 1 && row.unitPrice == '.') {
+      if (row.price.length == 1 && row.price == '.') {
         // 如果第一位是小数点，则清空输入框
-        row.unitPrice = '';
-      } else if (row.unitPrice.length == 2 && row.unitPrice[0] == '0' && row.unitPrice[1] != '.') {
+        row.price = '';
+      } else if (row.price.length == 2 && row.price[0] == '0' && row.price[1] != '.') {
         // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
-        row.unitPrice = row.unitPrice.slice(0, 1) + '.' + row.unitPrice.slice(1);
-      } else if (row.unitPrice.length > 2 && row.unitPrice[0] == '0' && row.unitPrice[1] != '.') {
-        row.unitPrice = row.unitPrice.substring(1, row.unitPrice.length)
+        row.price = row.price.slice(0, 1) + '.' + row.price.slice(1);
+      } else if (row.price.length > 2 && row.price[0] == '0' && row.price[1] != '.') {
+        row.price = row.price.substring(1, row.price.length)
       }
-      if (row.unitPrice.includes('.')) {
+      if (row.price.includes('.')) {
         let dotCount = 0; // 小数点的数量
         let result = ''; // 处理后的结果
-        for (let i = 0; i < row.unitPrice.length; i++) {
-          const char = row.unitPrice[i];
+        for (let i = 0; i < row.price.length; i++) {
+          const char = row.price[i];
           if (char === '.') {
             if (dotCount === 0) {
               // 第一个小数点保留
@@ -1419,37 +1405,37 @@ export default {
             result += char;
           }
         }
-        row.unitPrice = result;
-        let arr = row.unitPrice.split('.')
+        row.price = result;
+        let arr = row.price.split('.')
         if (arr[0].length > 12) {
           arr[0] = arr[0].substring(0, 12)
         }
         if (arr[1].length > 6) {
           arr[1] = arr[1].substring(0, 6)
         }
-        row.unitPrice = arr[0] + '.' + arr[1]
+        row.price = arr[0] + '.' + arr[1]
       } else {
-        if (row.unitPrice.length > 20) {
-          row.unitPrice = row.unitPrice.substring(0, 20);
+        if (row.price.length > 20) {
+          row.price = row.price.substring(0, 20);
         }
       }
-      if (row.unitPrice && row.unitPrice != '0') {
-        let b = this.jnpf.numberFormat(this.jnpf.math('divide', [row.unitPrice, 1 + row.taxRate / 100]), 2)
-        row.excludingTaxUnitPrice = b ? b : 0
-        productArr[index].excludingTaxUnitPrice = b ? b : 0
+      if (row.price && row.price != '0') {
+        let b = this.jnpf.numberFormat(this.jnpf.math('divide', [row.price, 1 + row.taxRate / 100]), 2)
+        row.excludingTaxPrice = b ? b : 0
+        productArr[index].excludingTaxPrice = b ? b : 0
       } else {
-        row.excludingTaxUnitPrice = ''
+        row.excludingTaxPrice = ''
       }
 
 
-      let a = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.unitPrice, row.num]), 2)
+      let a = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.price, row.num]), 2)
       console.log("aaa", a);
       row.amounts = a ? a : '' // 含税金额 
       productArr[index].amounts = a ? a : 0
       console.log(this.dataFormTwo.lines);
 
-      if (row.excludingTaxUnitPrice && row.num) {
-        let c = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.excludingTaxUnitPrice, row.num]), 2)
+      if (row.excludingTaxPrice && row.num) {
+        let c = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.excludingTaxPrice, row.num]), 2)
         row.excludingTaxAmounts = c ? c : ''
         productArr[index].excludingTaxAmounts = c ? c : 0
       } else {
@@ -1513,19 +1499,19 @@ export default {
 
 
 
-      if (row.unitPrice && row.unitPrice != '0') {
-        let b = this.jnpf.numberFormat((row.unitPrice / (1 + row.taxRate / 100)), 2)
-        row.excludingTaxUnitPrice = b ? b : 0
+      if (row.price && row.price != '0') {
+        let b = this.jnpf.numberFormat((row.price / (1 + row.taxRate / 100)), 2)
+        row.excludingTaxPrice = b ? b : 0
       } else {
-        row.excludingTaxUnitPrice = ''
+        row.excludingTaxPrice = ''
       }
 
-      if (!row.num || !row.unitPrice) {
+      if (!row.num || !row.price) {
         row.amounts = ''
         row.totalTaxAmount = ''
         this.dataForm.totalAmount = 0
       } else {
-        let a = this.jnpf.numberFormat((row.unitPrice * row.num), 2)
+        let a = this.jnpf.numberFormat((row.price * row.num), 2)
         row.amounts = a ? a : '' // 含税金额
       }
       var totalPrice = 0;
@@ -1534,8 +1520,8 @@ export default {
         console.log("item", item.amounts);
         totalPrice = this.jnpf.math('add', [totalPrice, item.amounts])
       }
-      if (row.excludingTaxUnitPrice && row.num) {
-        let c = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 2)
+      if (row.excludingTaxPrice && row.num) {
+        let c = this.jnpf.numberFormat((row.excludingTaxPrice * row.num), 2)
         row.excludingTaxAmounts = c ? c : ''
       } else {
         row.excludingTaxAmounts = ''
@@ -1584,7 +1570,18 @@ export default {
     async handleConfirm(value) {
       this.dataForm.documentStatus = value
       let submitFlag = true
-
+      if (this.dataFormTwo.lines.length) {
+          let index = this.dataFormTwo.lines.findIndex(item =>
+            item.customerProductNo === "" &&
+            item.num === "" &&
+            item.price === "" &&
+            item.productDrawingNo == ""
+          )
+          console.log(index);
+          if (index !== -1) {
+            this.dataFormTwo.lines.splice(index, 1);
+          }
+        }
 
       // 校验主表
       const form_1 = this.$refs['dataForm']
@@ -1642,37 +1639,34 @@ export default {
       }
 
       if (submitFlag) {
-        if (this.dataFormTwo.lines.length) {
-          let index = this.dataFormTwo.lines.findIndex(item =>
-            item.customerDrawingNumber === "" &&
-            item.num === "" &&
-            item.unitPrice === "" &&
-            item.productDrawingNo == ""
-          )
-          console.log(index);
-          if (index !== -1) {
-            this.dataFormTwo.lines.splice(index, 1);
-          }
-        }
+     
         this.btnLoading = true
         this.dataForm.totalAmount = Number(this.dataForm.totalAmount = 0)
         this.dataForm.totalAmount = this.totalPrice
-        if (this.datafilelist.length) {
-          this.datafilelist.map((item, index) => {
-            item.bimAttachments = {
-              businessType: '',
-              documentId: item.id,
-              fileFlag: '',
-              sort: index
-            }
-          })
+        if(this.dataForm.validDateArr.length){
+          this.dataForm.dateOrderStart=this.dataForm.validDateArr[0]
+          this.dataForm.dateOrderStop=this.dataForm.validDateArr[1]
         }
+        // if (this.datafilelist.length) {
+        //   this.datafilelist.map((item, index) => {
+        //     item.bimAttachments = {
+        //       businessType: '',
+        //       documentId: item.id,
+        //       fileFlag: '',
+        //       sort: index
+        //     }
+        //   })
+        // }
         let filteredArr = this.dataFormTwo.lines.filter(item => item.productDrawingNo && item.productsId);
         let obj = {
-          attachmentList: this.datafilelist,
-          sale: this.dataForm,
-          lines: filteredArr,
-          flowData: this.flowData
+          // attachmentList: this.datafilelist,
+          // sale: this.dataForm,
+          cooperativePartnerId:this.dataForm.cooperativePartnerId,
+          dateOrderStart:this.dataForm.dateOrderStart,
+          dateOrderStop:this.dataForm.dateOrderStop,
+          list: filteredArr,
+          // flowData: this.flowData
+          partnerType:"customer",
         }
         console.log(obj, '参数');
         // return
@@ -1686,11 +1680,10 @@ export default {
 
           }
           if (this.btnType == 'edit') {
-            msg = "提交成功"
-            this.btnText = "继续修改"
+            msg = "提交成功" 
           } else if (this.btnType == 'add' || this.btnType == 'copy') {
             msg = "新建成功"
-            this.btnText = "继续新增"
+            
           } else {
             if (res.data) {
               this.btnLoading = false
@@ -1699,6 +1692,7 @@ export default {
             }
           }
           this.tipsvisible = true
+          this.btnText = "继续新增"
 
 
         }).catch(() => {

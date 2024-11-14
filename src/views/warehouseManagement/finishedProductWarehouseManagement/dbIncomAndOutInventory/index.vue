@@ -16,8 +16,7 @@
       <el-row class="JNPF-common-search-box  treeBox_bot" :gutter="16" style="margin-top: 5px;"
         v-if="categoryType != 'inbound_mock_production'">
         <!-- 销售待发/退货查询条件 通知单 -->
-        <el-form @submit.native.prevent
-          v-if="(categoryType == 'outbound_sale_send' && !saleFlag) || categoryType == 'inbound_sale_return'">
+        <el-form @submit.native.prevent v-if="(categoryType == 'outbound_sale_send' && !saleFlag) || categoryType == 'inbound_sale_return'">
           <template v-for="item in searchList1">
             <el-col :span="item.searchType === 3 ? 6 : 4">
               <el-form-item>
@@ -607,6 +606,7 @@
           <el-table-column prop="salesName" label="所属销售" min-width="160" sortable="custom" />
           <el-table-column prop="customerProductNo" label="客户料号" min-width="160" sortable="custom" />
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
+          <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" min-width="160" />
           <el-table-column prop="num" label="数量" min-width="160" sortable="custom" />
@@ -751,6 +751,7 @@
           <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="160" sortable="custom" />
           <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="160" sortable="custom" />
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
+          <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" min-width="80" />
           <el-table-column prop="num" label="数量" min-width="100" sortable="custom" />
@@ -832,6 +833,7 @@
           <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="160" sortable="custom" />
           <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="160" sortable="custom" />
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
+          <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
           <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" min-width="80" />
@@ -919,6 +921,7 @@
           <el-table-column prop="cooperativePartnerCode" label="供应商编码" width="200" sortable="custom" />
           <el-table-column prop="deliveryDate" label="交货日期" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
+          <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="processName" label="工序名称" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="mainUnit" label="单位" min-width="140" sortable="custom"></el-table-column>
@@ -1170,7 +1173,8 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
-                <el-table-column prop="mainUnit" label="单位" width="80" />
+          <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" sortable="custom" />
+          <el-table-column prop="mainUnit" label="单位" width="80" />
                 <el-table-column prop="productionQuantity" label="生产数量" width="120" />
                 <el-table-column prop="completedQuantity" label="已完成数量" width="130" />
                 <el-table-column prop="waitReceivedQuantity" label="待入库数量" width="160" />
@@ -1266,7 +1270,8 @@
                 <el-table-column prop="productionOrderNo" label="任务单号" min-width="180" />
                 <el-table-column prop="orderNo" label="工单号" width="200" />
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" />
-                <el-table-column prop="productCode" label="产品编码" min-width="160" />
+          <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" sortable="custom" />
+          <el-table-column prop="productCode" label="产品编码" min-width="160" />
                 <el-table-column prop="processName" label="工序名称" min-width="160" />
                 <el-table-column prop="mainUnit" label="单位" min-width="80" />
                 <el-table-column prop="productionQuantity" label="生产数量" min-width="120" />
@@ -1904,6 +1909,7 @@ export default {
       toolVisible: false,
       equipmentVisible: false,
       sparePartsVisible: false,
+      productNameFlag:null,
       requestArr: [
         {
           prop: "sealingCoverTyping",
@@ -2186,6 +2192,12 @@ export default {
           this.salecolumnList = ["cooperativePartnerCode",]
         }
         this.getclassAttributeList()
+      })
+      let objs = { "pageSize": -1, "businessCode": "product" }
+      getBimBusinessSwitchConfigList(objs).then(res => {
+        this.productNameFlag = res.data.product[1].configValue1 == '1' ? true : false
+       
+        
       })
     },
     getclassAttributeList() {

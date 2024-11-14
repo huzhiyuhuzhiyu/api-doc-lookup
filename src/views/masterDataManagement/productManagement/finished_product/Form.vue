@@ -47,13 +47,14 @@ import { getcategoryTree, getUnitData, detailUnitData } from '@/api/basicData/ma
 import { getbimProductAttributesList, getbimProductsModelList } from '@/api/masterDataManagement/index'
 import tabs from './params'
 import { getProjectList } from '@/api/system/projectManagement'
-import { mapGetters } from "vuex"
-import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
+import { mapGetters } from 'vuex'
+import { getBimBusinessSwitchConfigList, getBimBusinessDetail } from '@/api/basicData/index'
 export default {
   name: 'finished_product',
   data() {
     return {
       isProjectSwitch: '',
+      isProductNameSwitch: '',
       datafilelist: [],
       activeName: 'basicInfo',
       activeNames: ['modelInfo', 'basicInfo', 'otherInfo'],
@@ -180,13 +181,11 @@ export default {
           clearable: false,
           itemRules: [{ required: true, trigger: 'change' }],
           itemDisabled: false
-        },
-
+        }
       ]
     }
   },
   created() {
-    this.getProjectSwitch()
     this.tabs.forEach((tab, tabInd) => {
       tab.tabContent.forEach((tc) => {
         this.dataForm[tc.prop] = tc.value || '' // 设置默认value
@@ -450,6 +449,39 @@ export default {
             }
           }
         }
+        // 添加校验编码和图号唯一性的规则
+        if (tc.prop === 'name') {
+          console.log(this.isProductNameSwitch, 'isProductNameSwitch333')
+          if (this.isProductNameSwitch === '1') {
+            tc.render = false
+          } else {
+            if (!tc.itemRules) {
+              tc.itemRules = []
+            }
+            tc.itemRules.push({
+              validator: (rule, value, callback) => {
+                if (!value) {
+                  callback()
+                } else if (this.dataForm.code === this.autoCode) {
+                  callback()
+                } else {
+                  checkCodeExist({ id: this.dataForm.id || '', code: this.dataForm.code })
+                    .then((res) => {
+                      if (!res.data) {
+                        callback()
+                      } else {
+                        callback(new Error('此产品编码已存在'))
+                      }
+                    })
+                    .catch((err) => {
+                      callback(new Error(' '))
+                    })
+                }
+              },
+              trigger: 'blur'
+            })
+          }
+        }
       })
     })
     this.modelItems.forEach((tc) => {
@@ -579,8 +611,6 @@ export default {
           }
         }
       }
-
-
     })
   },
   computed: {
@@ -599,7 +629,6 @@ export default {
         res.data.system.forEach((item) => {
           if (item.configKey == 'project') {
             this.isProjectSwitch = item.configValue1
-
           }
         })
       })
@@ -703,11 +732,14 @@ export default {
         }
       } catch (error) { }
     },
-    async init(id, btnType = false, flag) {
+    async init(id, btnType = false, flag, isProductNameSwitch) {
       this.visible = true
       this.formLoading = true
       this.btnType = btnType
       this.flag = flag
+      this.isProductNameSwitch = isProductNameSwitch
+      console.log(this.isProductNameSwitch, 'this.isProductNameSwitch')
+      // 型号管理
       if (flag) {
         this.tabs[0].tabContent.forEach((ele) => {
           if (
@@ -773,6 +805,20 @@ export default {
           }
           if (ele.prop == 'model') {
             ele.render = false
+          }
+        })
+      }
+      // 产品名称
+      if (this.isProductNameSwitch === '1') {
+        this.tabs[0].tabContent.forEach((ele) => {
+          if (ele.prop == 'name') {
+            ele.itemRules[0].required = true
+          }
+        })
+      } else {
+        this.tabs[0].tabContent.forEach((ele) => {
+          if (ele.prop == 'name') {
+            ele.itemRules[0].required = false
           }
         })
       }

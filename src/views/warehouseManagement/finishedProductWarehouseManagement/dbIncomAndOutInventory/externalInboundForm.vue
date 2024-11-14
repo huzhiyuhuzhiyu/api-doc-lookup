@@ -108,6 +108,8 @@
                         </el-table-column>
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                           show-overflow-tooltip> </el-table-column>
+                        <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160"
+                          sortable="custom" />
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
 
 
@@ -181,7 +183,7 @@
                 </el-tab-pane>
               </el-tabs>
               <el-collapse v-model="activeNames" v-else>
-                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo"  style="margin-top: 5px;">
+                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" style="margin-top: 5px;">
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
                       <el-col :sm="6" :xs="24">
@@ -264,6 +266,8 @@
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                       show-overflow-tooltip>
                     </el-table-column>
+                    <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160"
+                      sortable="custom" />
                     <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
 
 
@@ -283,7 +287,8 @@
 
 
 
-                    <el-table-column prop="waitReceiptNum" label="待收货数量" width="140" :key="777" v-if="btnType != 'look'">
+                    <el-table-column prop="waitReceiptNum" label="待收货数量" width="140" :key="777"
+                      v-if="btnType != 'look'">
                     </el-table-column>
 
 
@@ -366,6 +371,8 @@
                 <el-table-column prop="orderNo" label="订单号" width="200" sortable="custom"> </el-table-column>
                 <el-table-column prop="cooperativePartnerName" label="供应商名称" width="160" sortable="custom" />
                 <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
+                <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160"
+                  sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
                 <el-table-column prop="processName" label="工序名称" width="120" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="80" />
@@ -551,10 +558,18 @@ export default {
       flowData: {},
       approvalFlag: false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime: 0
+      endTime: 0,
+      productNameFlag: null,
+
     }
   },
   created() {
+    let objs = { "pageSize": -1, "businessCode": "product" }
+    getBimBusinessSwitchConfigList(objs).then(res => {
+      this.productNameFlag = res.data.product[1].configValue1 == '1' ? true : false
+
+
+    })
   },
   watch: {
     "dataForm.warehouseId": {
@@ -948,7 +963,7 @@ export default {
           if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
         })
       } else {
-      this.getBusInfo('b045')
+        this.getBusInfo('b045')
 
 
 

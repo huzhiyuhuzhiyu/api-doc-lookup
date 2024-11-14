@@ -58,6 +58,8 @@
 
 
           <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
+          <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160"
+          sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
           <el-table-column prop="classAttribute" label="产品分类" width="120" sortable="custom">
             <template slot-scope="scope">
@@ -124,6 +126,7 @@ import { inventoryWarehouseList } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
+import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 
 import Form from './Form'
 
@@ -248,6 +251,7 @@ export default {
 
       ],
       classAttributeList:[],
+      productNameFlag:null,
     }
   },
   watch: {
@@ -256,6 +260,15 @@ export default {
     }
   },
   created() {
+    let objs = { "pageSize": -1, "businessCode": "product" }
+    getBimBusinessSwitchConfigList(objs).then(res => {
+      this.productNameFlag = res.data.product[1].configValue1 == '1' ? true : false
+      if(this.productNameFlag==true){
+    
+      this.searchList.push({ field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 })
+      }
+
+    })
     this.superForm=this.tableQuery
     this.getclassAttributeList()
 

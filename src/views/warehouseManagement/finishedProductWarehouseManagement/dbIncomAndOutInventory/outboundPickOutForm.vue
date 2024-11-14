@@ -94,6 +94,8 @@
 
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                           show-overflow-tooltip> </el-table-column>
+                        <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160"
+                          sortable="custom" />
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                         <el-table-column prop="processName" label="工序名称" width="160" :key="222">
                         </el-table-column>
@@ -238,6 +240,8 @@
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                       show-overflow-tooltip>
                     </el-table-column>
+                    <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160"
+                      sortable="custom" />
                     <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                     <el-table-column prop="processName" label="工序名称" width="160" :key="222">
                     </el-table-column>
@@ -263,7 +267,7 @@
                     </el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
                     <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160" v-if="btnType != 'look'"
-                    :key="7"></el-table-column>
+                      :key="7"></el-table-column>
 
 
                     <el-table-column prop="unReceiveQuantity" label="待领料数量" width="140" :key="777"
@@ -359,11 +363,13 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
                 @selection-change="handleSelectionChangeAllPruduct" ref="form">
-                <el-table-column prop="orderNo" label="领料单号" width="190" sortable="custom"></el-table-column> 
+                <el-table-column prop="orderNo" label="领料单号" width="190" sortable="custom"></el-table-column>
                 <el-table-column prop="operationDate" label="领料日期" width="180" sortable="custom" />
                 <el-table-column prop="ordersNo" label="任务单号" width="190" sortable="custom" />
-     
+
                 <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
+                <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160"
+                  sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
                 <el-table-column prop="processName" label="工序" width="120" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="90" sortable="custom" />
@@ -548,10 +554,18 @@ export default {
       flowData: {},
       approvalFlag: false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime: 0
+      endTime: 0,
+      productNameFlag: null,
+
     }
   },
   created() {
+    let objs = { "pageSize": -1, "businessCode": "product" }
+    getBimBusinessSwitchConfigList(objs).then(res => {
+      this.productNameFlag = res.data.product[1].configValue1 == '1' ? true : false
+
+
+    })
   },
   watch: {
     "dataForm.warehouseId": {
@@ -576,8 +590,8 @@ export default {
 
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
       this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
-      this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName) 
-       this.$set(this.productData[index], 'availableBatchNumber', data.inventoryQuantity)
+      this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
+      this.$set(this.productData[index], 'availableBatchNumber', data.inventoryQuantity)
 
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
     },
@@ -1007,7 +1021,7 @@ export default {
                 break
               }
 
-              if (  item.num > item.availableBatchNumber) {
+              if (item.num > item.availableBatchNumber) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次库存数量")
                 break

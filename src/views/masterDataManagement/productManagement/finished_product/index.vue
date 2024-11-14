@@ -649,6 +649,7 @@ export default {
     this.getProductClassFun()
   },
   created() {
+    this.getProductNameSwitch()
     this.getProjectSwitch()
     if (localStorage.getItem('finishedFlag')) {
       let roleFlag = JSON.parse(localStorage.getItem('finishedFlag'))
@@ -665,6 +666,15 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
+    getProductNameSwitch() {
+      let obj = {
+        businessCode: 'product',
+        configKey: 'enable_productName'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isProductNameSwitch = res.data.configValue1
+      })
+    },
     getProjectSwitch() {
       let obj = {
         businessCode: 'system',

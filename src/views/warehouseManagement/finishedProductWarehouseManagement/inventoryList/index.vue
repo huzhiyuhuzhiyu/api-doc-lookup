@@ -91,8 +91,8 @@
               <div v-if="scope.row.businessType == 'inbound_transfer'">调拨入库</div>
               <div v-if="scope.row.businessType == 'inbound_receive_material'">直接领料入库</div>
               <div v-if="scope.row.businessType == 'outbound_receive_material'">直接领料出库</div>
-              <div v-if="scope.row.businessType == 'inbound_production'">生产入库</div>
-              <div v-if="scope.row.businessType == 'inbound_order_production'">生产入库</div>
+              <div v-if="scope.row.businessType == 'inbound_production'">生产工单入库</div>
+              <div v-if="scope.row.businessType == 'inbound_order_production'">生产产品入库</div>
               <div v-if="scope.row.businessType == 'outbound_use'">资产领用</div>
               <div v-if="scope.row.businessType == 'inbound_return'">资产归还</div>
             </template>
@@ -116,6 +116,22 @@
               <el-tag type="success" v-else-if="scope.row.documentStatus == 'submit'">提交</el-tag>
             </template>
 
+          </el-table-column>
+          <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center" >
+            <template slot-scope="scope">
+              <div v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'">
+                <el-tag>审批中</el-tag>
+              </div>
+              <div v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus == 'submit'">
+                <el-tag type="success">审批通过</el-tag>
+              </div>
+              <div v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus == 'submit'">
+                <el-tag type="danger">审批拒绝</el-tag>
+              </div>
+              <div v-else-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus == 'submit'">
+                <el-tag type="warning">审批撤回</el-tag>
+              </div>
+            </template>
           </el-table-column>
           <el-table-column prop="remark" label="备注" min-width="180" />
           <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
@@ -270,7 +286,8 @@ export default {
         { label: "采购退货", value: "outbound_purchase" },
         { label: "生产领料", value: "outbound_pick_out" },
         { label: "生产退料", value: "inbound_return_materials" },
-        { label: "生产入库", value: "inbound_mock_production" },
+        { label: "生产产品入库", value: "inbound_order_production" },
+        { label: "生产工单入库", value: "inbound_production" },
         { label: "外协发料", value: "outbound_external_send" },
         { label: "外协退料", value: "inbound_external_return" },
         { label: "外协收货", value: "inbound_external" },
@@ -321,7 +338,8 @@ export default {
             { label: "采购退货", value: "outbound_purchase" },
             { label: "生产领料", value: "outbound_pick_out" },
             { label: "生产退料", value: "inbound_return_materials" },
-            { label: "生产入库", value: "inbound_mock_production" },
+            { label: "生产产品入库", value: "inbound_order_production" },
+            { label: "生产工单入库", value: "inbound_production" },
             { label: "外协发料", value: "outbound_external_send" },
             // { label: "外协退料", value: "inbound_external_return" },
             { label: "外协收货", value: "inbound_external" },

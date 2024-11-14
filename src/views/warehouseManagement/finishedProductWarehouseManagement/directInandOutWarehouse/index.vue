@@ -421,9 +421,13 @@
               <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"
                 v-if="dataForm.documentType == 'inbound'"  key="createTime"/>
             </JNPF-table>
-            <pagination :total="productTotal"
-              :page.sync="dataForm.documentType == 'outbound' ? orderForm.pageNum : listQuery.pageNum"
-              :limit.sync="dataForm.documentType == 'outbound' ? orderForm.pageSize : listQuery.pageSize"
+            <pagination :total="productTotal" v-if="dataForm.documentType == 'outbound'"
+              :page.sync=" orderForm.pageNum "
+              :limit.sync=" orderForm.pageSize "
+              @pagination="searchProductFun" />
+              <pagination :total="productTotal" v-if="dataForm.documentType == 'inbound'"
+              :page.sync="listQuery.pageNum"
+              :limit.sync="listQuery.pageSize"
               @pagination="searchProductFun" />
           </div>
         </div>
@@ -1257,11 +1261,15 @@ export default {
         this.dataForm.warehouseType = ""
         return
       }
+      console.log(data);
+      if(data[0].id){
       this.allocationFlag = data[0].all.locationStatus == 'disabled' ? false : true
 
       this.dataForm.warehouseId = data[0].id
       this.dataForm.warehouseName = data[0].name
       this.dataForm.warehouseType = data[0].all.type
+      }
+
     },
     goBack() {
       this.$router.push({

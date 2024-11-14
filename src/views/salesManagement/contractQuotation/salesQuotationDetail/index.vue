@@ -515,7 +515,7 @@ export default {
       this.depFormVisible = true
 
 
-      let id = res.id
+      let id = res.salesQuotationId
       if (id) {
         // setTimeout(() => {
         this.$nextTick(() => {

@@ -68,7 +68,7 @@
           <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
           <el-table-column label="操作" width="80">
             <template slot-scope="scope">
-              <el-button type="text" size="mini" @click.native="add(scope.row)">
+              <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row)">
                 新建
               </el-button>
             </template>
@@ -78,6 +78,7 @@
           :limit.sync="listQuery.pageSize" @pagination="initData" />
       </div>
     </div>
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
@@ -88,6 +89,7 @@
 <script>
 import { getProductWithOut } from '@/api/purchasingManagement/purchaseInquirySheet'
 import ExportForm from '@/components/no_mount/ExportBox/index'
+import Form from '../../basicData/bomSettings/productionBom/Form.vue'
 import { excelExport } from '@/api/basicData/index'
 // import productType from './productType.js'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -97,7 +99,7 @@ import { getLabel } from '@/utils/index'
 Vue.prototype.$getLabel = getLabel
 export default {
   name: 'purOrderNoPriceQuery',
-  components: { ExportForm, SuperQuery },
+  components: { Form, ExportForm, SuperQuery },
   props: {
     // 查询类型 区分 无价格 无bom 无工艺
     searchType: {
@@ -107,6 +109,7 @@ export default {
   },
   data() {
     return {
+      formVisible: false,
       superQueryVisible: false,
       superQueryJson: [
         {
@@ -454,18 +457,31 @@ export default {
         this.classAttributeList = arr
       })
     },
-    add(item) {
-      this.$router.push({
-        name: 'BOMCreate',
-        params: {
-          id: item.id,
-          content: '新建BOM',
-          name: item.name,
-          drawNo: item.drawingNo,
-          classAttribute: item.classAttribute,
-          productSource: item.productSource
-        }
+    // add(item) {
+    //   this.$router.push({
+    //     name: 'BOMCreate',
+    //     params: {
+    //       id: item.id,
+    //       content: '新建BOM',
+    //       name: item.name,
+    //       drawNo: item.drawingNo,
+    //       classAttribute: item.classAttribute,
+    //       productSource: item.productSource
+    //     }
+    //   })
+    // },
+    addOrUpdateHandle(row, btnType, approvalStatus) {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(row, 'waitAdd', false, approvalStatus)
       })
+    },
+    // 关闭新建、编辑页面
+    closeForm(isRefresh) {
+      this.formVisible = false
+      if (isRefresh) {
+        this.initData()
+      }
     },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()

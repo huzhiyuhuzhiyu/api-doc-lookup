@@ -131,9 +131,11 @@
           <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
           <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
-          <el-table-column label="操作" width="180" fixed="right">
+          <el-table-column label="操作" width="230" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" :disabled="scope.row.state != 'toBeMaintain'" @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑</el-button>
+              <el-button size="mini" type="text" v-if="scope.row.state == 'toBeMaintain'" @click="handleUserRelation(scope.row.id, 'start')">审核派工</el-button>
+              <el-button size="mini" type="text" v-if="scope.row.state == 'maintaining'&&scope.row.reviewComments == 'immediately'" @click="handleUserRelation(scope.row.id, 'end')">维修</el-button>
+              <el-button size="mini" type="text" v-if="scope.row.reviewComments == 'outsourcing'" @click="outsourcedcompletion(scope.row.id)">委外维修完成</el-button>
               <el-button size="mini" type="text" class="JNPF-table-delBtn" :disabled="scope.row.state === 'maintaining'" @click="handleDel(scope.row.id)">删除</el-button>
               <el-dropdown hide-on-click>
                 <span class="el-dropdown-link">
@@ -142,7 +144,10 @@
                   </el-button>
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'start')" :disabled="scope.row.state !== 'toBeMaintain'">
+                  <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'edit')" :disabled="scope.row.state != 'toBeMaintain'">
+                    编辑
+                  </el-dropdown-item>
+                  <!-- <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'start')" :disabled="scope.row.state !== 'toBeMaintain'">
                     审核派工
                   </el-dropdown-item>
                   <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'end')" :disabled="scope.row.state !== 'maintaining'||scope.row.reviewComments !== 'immediately'">
@@ -150,7 +155,7 @@
                   </el-dropdown-item>
                   <el-dropdown-item @click.native="outsourcedcompletion(scope.row.id)" v-if="scope.row.reviewComments == 'outsourcing'">
                     委外维修完成
-                  </el-dropdown-item>
+                  </el-dropdown-item> -->
                   <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
                     查看详情
                   </el-dropdown-item>
@@ -367,7 +372,7 @@ export default {
         { label: "已维修", value: "maintained" }
       ],
       orderForm: {
-        state: "",
+        state: "toBeMaintain",
         unState: 'maintained',
         classAttribute: "tool",
         maintenanceNo: '',
@@ -522,6 +527,7 @@ export default {
       this.faultStartTime = []
       this.orderDateArr = []
       this.orderForm = {
+        state: 'toBeMaintain',
         unState: 'maintained',
         classAttribute: "tool",
         maintenanceNo: '',

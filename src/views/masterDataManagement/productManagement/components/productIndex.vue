@@ -134,8 +134,8 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="userInfo.projectId">
-          </el-table-column>
+          <!-- <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="isProjectSwitch === '1'">
+          </el-table-column> -->
           <el-table-column prop="productStatus" label="产品状态" width="120" align="center">
             <template slot-scope="{ row }">
               <el-tag type="success" disable-transitions v-if="row.productStatus == 'enable'">启用</el-tag>
@@ -148,7 +148,7 @@
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
-                @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)"  @del="handleDel(scope.row.id)">
+                @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)" @del="handleDel(scope.row.id)">
                 <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.id, true)">
                   查看详情
                 </el-button>
@@ -286,6 +286,7 @@ import { getUnitData, detailUnitData } from '@/api/basicData/materialSettings' /
 import { getCooperativeData } from '@/api/basicData/index'
 import { getcategoryTree as getcategoryCoop } from '@/api/basicData/materialSettings'
 import { mapGetters } from "vuex"
+import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 export default {
   components: { Form, ExportForm, SuperQuery },
   name: 'productCom',
@@ -330,6 +331,7 @@ export default {
   },
   data() {
     return {
+      isProjectSwitch: '',
       quickVisible: false,
       quickForm: {
         code: '',
@@ -603,6 +605,7 @@ export default {
     this.getProductClassFun()
   },
   created() {
+    this.getProjectSwitch()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.getcategoryTree()
     this.initData()
@@ -617,6 +620,20 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
+    getProjectSwitch() {
+      let obj = {
+        businessCode: 'system',
+        pageSize: -1
+      }
+      getBimBusinessSwitchConfigList(obj).then((res) => {
+        res.data.system.forEach((item) => {
+          if (item.configKey == 'project') {
+            this.isProjectSwitch = item.configValue1
+
+          }
+        })
+      })
+    },
     quickAdd() {
       this.quickVisible = true
 

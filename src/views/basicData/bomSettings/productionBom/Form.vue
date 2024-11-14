@@ -110,13 +110,14 @@ import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowE
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
+import { getProductWithOut } from '@/api/purchasingManagement/purchaseInquirySheet'
 export default {
   components: { TableFormProduct, Process, recordList },
   mixins: [busFlow],
   data() {
     return {
       isattachmentswitch: '',
-      categoryId:'',
+      categoryId: '',
       activeNames: ['productInfo', 'basicInfo'],
       datafilelist: [],
       activeName: 'jcInfo',
@@ -262,19 +263,22 @@ export default {
         { prop: 'remark', label: '备注', value: '', type: 'input', maxlength: 200, minWidth: 160 }
       ],
       getProductList, // 产品选择弹出框树状列表请求api
+      getProductWithOut, // 产品选择弹出框树状列表请求api
       ProductMethodArr: [
-        {
-          label: '产品分类',
-          classAttribute: 'material',
-          method: getcategoryTree,
-          requestObj: { classAttribute: 'material' }
-        }
+        { label: '产品分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '', type: "material" } }
       ], // 产品选择弹出框树状列表
       ProductListRequestObj: {
-        classAttribute: '',
-        productCategoryId: '',
-        code: '',
-        name: '',
+        createByName: '',
+        keyword: '',
+        pageNum: 1,
+        pageSize: 20,
+        productDrawingNo: '',
+        productName: '',
+        productCode: '',
+        startTime: '',
+        endTime: '',
+        productWithout: 'price',
+        productWithout: 'bom',
         orderItems: [
           {
             asc: false,
@@ -285,21 +289,19 @@ export default {
             column: 'create_time'
           }
         ],
-        productStatus: 'enable',
-        pageNum: 1,
-        pageSize: 20
+        createTimeArr: []
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
         { prop: 'code', label: '产品编码', fixed: 'left' },
         // { prop: 'name', label: '产品名称', fixed: 'left' },
-        { prop: 'drawingNo', label: '图号' },
-        { prop: 'spec', label: '规格型号' },
-        { prop: 'classAttributeText', label: '产品分类' }
+        { prop: 'drawingNo', label: '品名规格' },
+        // { prop: 'spec', label: '规格型号' },
+        { prop: 'classAttributeName', label: '类别属性' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
-        { prop: 'code', label: '产品编码', type: 'input' },
-        // { prop: 'name', label: '产品名称', type: 'input' },
-        { prop: 'drawingNo', label: '品名规格', type: 'input' }
+        { prop: 'productCode', label: '产品编码', type: 'input' },
+        // { prop: "name", label: "产品名称", type: 'input', },
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' }
       ], // 产品选择弹出框搜索条件
       formLoading: false,
       isDoubleFlag: false,
@@ -324,17 +326,19 @@ export default {
       // 添加自定义表单元素方法和参数
       if (tc.type == 'custom') {
         // 若干需要选择的产品
-        if (tc.prop === 'productName') {
-          tc.dialogTitle = '选择产品'
+        if (tc.prop === 'drawNo') {
+          tc.dialogTitle = '选择品名规格'
           tc.placeholder = '请选择产品'
-          tc.treeTitle = '产品分类'
-          tc.methodArr = this.ProductMethodArr
-          tc.listMethod = getProductList
+          // tc.treeTitle = '产品分类'
+          // tc.methodArr = this.ProductMethodArr
+          tc.renderTree = false
+          tc.listMethod = getProductWithOut
           tc.listRequestObj = this.ProductListRequestObj
           tc.tableItems = this.ProductTableItems
           tc.searchList = this.ProductTableSearchList
+          tc.listDataFormatting = this.listDataFormatting
           tc.change = this.ProductChange
-          tc.paramsObj = { prop: tc.prop, oldVal: this.dataForm[tc.prop.slice(0, -4) + 'Id'] }
+          tc.paramsObj = { prop: tc.prop, oldVal: this.dataForm.drawNo }
           // if (!tc.itemRules) { line.itemRules = [] }
           // tc.itemRules.push({
           //   validator: (rule, value, callback) => {
@@ -415,7 +419,7 @@ export default {
           ? true
           : false
       let loadTotal = 0
-      if (id && this.btnType != 'add' && !this.statusFlag) {
+      if (id && this.btnType != 'add' && this.btnType != 'waitAdd' && !this.statusFlag) {
         console.log('12121212')
 
         this.title = btnType === 'look' ? '查看BOM' : '编辑BOM'
@@ -478,7 +482,7 @@ export default {
         } else {
           this.formLoading = false
         }
-      } else if (id && this.btnType != 'add' && this.statusFlag) {
+      } else if (id && this.btnType != 'add' && this.btnType != 'waitAdd' && this.statusFlag) {
 
         this.title = btnType === 'look' ? '查看BOM' : '编辑BOM'
         detailBomData(approvalStatus.id)
@@ -523,7 +527,7 @@ export default {
           })
 
       } else if (id && this.btnType == 'add') {
-
+        console.log(approvalStatus, 'jjjj')
         this.title = '新建BOM'
         this.isDoubleFlag = true
         // 获取详情
@@ -586,7 +590,23 @@ export default {
         } else {
           this.formLoading = false
         }
+      } else if (this.btnType == 'waitAdd') {
+        console.log(id, 'jjjj')
+        this.dataForm.classAttribute = id.classAttribute
+        this.dataForm.drawNo = id.drawingNo
+        this.dataForm.productSource = id.productSource
+        this.dataForm.productId = id.id
+        console.log(this.statusFlag, 'ppp')
+        this.title = '新建BOM'
+        this.treeLoading = false
+        this.formLoading = false
+        // 审批
+        //  this.$nextTick(() => { this.getApproverData() })
+        this.getBusInfo()
+
+
       } else {
+        console.log('oiii')
         this.title = '新建BOM'
         this.treeLoading = false
         this.formLoading = false
@@ -620,7 +640,7 @@ export default {
       if (!this.linesList.length && submitFlag) {
         submitFlag = false
         this.$message.error('请至少添加一个子产品')
-      } 
+      }
 
       if (submitFlag) {
         let index = this.linesList.findIndex((line) => line.productId === this.dataForm.productId)
@@ -761,9 +781,11 @@ export default {
         this.$refs['dataForm'].$children[0].validateField(paramsObj.prop)
       })
       if (!data || !data.length) return
-      this.dataForm[paramsObj.prop.slice(0, -4) + 'Id'] = data[0].id
       this.dataForm[paramsObj.prop] = data[0].name
+      this.dataForm.classAttribute = data[0].all.classAttribute
       this.dataForm.drawNo = data[0].all.drawingNo
+      this.dataForm.productSource = data[0].all.productSource
+      this.dataForm.productId = data[0].id
     },
     goBack() {
       this.$emit('close')

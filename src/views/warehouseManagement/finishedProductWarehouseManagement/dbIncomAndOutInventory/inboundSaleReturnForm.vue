@@ -127,7 +127,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-                        <el-table-column prop="undeliveredQuantity" label="待退货数量" width="140" :key="777">
+                        <el-table-column prop="undeliveredQuantity" label="待退货数量" width="140" :key="777" v-if="btnType != 'look'">
                         </el-table-column>
 
 
@@ -236,7 +236,7 @@
                           </el-col>
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="检验结果" prop="inspectionResults">
-                              <el-select v-model="dataForm.inspectionResults" placeholder="请选择检验结果"
+                              <el-select v-model="dataForm.inspectionResults" placeholder="请选择检验结果" :disabled="btnType == 'look'"
                                 style="width: 100%;">
                                 <el-option v-for="(item, index) in inspectionResultsList" :key="index"
                                   :label="item.label" :value="item.value"></el-option>
@@ -292,7 +292,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-                        <el-table-column prop="undeliveredQuantity" label="待退货数量" width="140" :key="777">
+                        <el-table-column prop="undeliveredQuantity" label="待退货数量" width="140" :key="777" v-if="btnType != 'look'">
                         </el-table-column>
 
 
@@ -723,14 +723,14 @@ export default {
 
       arr.forEach(item => {
         let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
-        item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
+        item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 2)
         item.num = item.undeliveredQuantity
         item.taxRates= item.taxRate+"%"
 
         item.costPrice = item.price
-        item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
-        item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
-        item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
+        item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 2)
+        item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 2)]), 2)
+        item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 2)
         item.noticeId = item.returnDeliveryNoticeId
         item.noticeLineId = item.id
         item.sourceNo = this.dataForm.sourceNo
@@ -842,15 +842,15 @@ export default {
       }
       console.log("row.excludingTaxPrice", row.excludingTaxPrice);
       console.log("row.price", row.price);
-      productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 6)
+      productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 2)
 
-      productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.price, row.excludingTaxPrice]), 6)]), 6)
+      productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.price, row.excludingTaxPrice]), 2)]), 2)
       console.log("productArr", productArr);
       let taxrate = 1 * 1 + (row.taxRate) / 100 * 1
-      row.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [row.price, taxrate]), 6)
-      row.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 6)
-      row.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.price, row.excludingTaxCostPrice]), 6)]), 6)
-      row.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [row.totalAmount, row.taxAmount]), 6)
+      row.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [row.price, taxrate]), 2)
+      row.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 2)
+      row.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.price, row.excludingTaxCostPrice]), 2)]), 2)
+      row.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [row.totalAmount, row.taxAmount]), 2)
       this.productData = productArr
       console.log(this.productData);
     },
@@ -1020,10 +1020,10 @@ export default {
               item.moveId = this.dataForm.id
               item.taxRates= item.taxRate+"%"
               let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
-              item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
-              item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
-              item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
-              item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
+              item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 2)
+              item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 2)
+              item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 2)]), 2)
+              item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 2)
 
 
             });
@@ -1111,7 +1111,7 @@ export default {
 
 
 
-              if (Number(item.num) > Number(item.ordersNum)) {
+              if (Number(item.num) > Number(item.undeliveredQuantity)) {
                 console.log(item.num);
                 console.log(item.ordersNum);
                 submitFlag = false
@@ -1120,23 +1120,9 @@ export default {
               }
 
 
-              if (!totals[item.ordersLineId]) {
-                totals[item.ordersLineId] = { totalNum: 0, ordersNum: item.ordersNum };
-              }
-              if (!totalNum[item.ordersLineId]) {
-                totalNum[item.ordersLineId] = { totalNum: 0, availableBatchNumber: item.availableBatchNumber };
-              }
-              totals[item.ordersLineId].totalNum += Number(item.num)
-              totalNum[item.ordersLineId].totalNum += Number(item.num);
+            
             }
-            for (let id in totals) {
-              if (totals[id].totalNum > totals[id].ordersNum) {
-                console.log(`同产品 ${id} 的总数量不能超过订单数量`);
-                submitFlag = false
-                this.$message.error("同产品的总数量不能超过订单数量")
-                break
-              }
-            }
+          
 
           }
 

@@ -172,7 +172,7 @@
                   <img src="@/assets/images/noPlan.png" alt="" v-if="!planFlag" class="noplan">
                 </div>
 
-                <div class="gantt" v-if="planFlag">甘特图信息</div>
+                <div class="gantt" v-if="planFlag">生产进度</div>
                 <div ref='ganttRef' v-if="planFlag">
                 </div>
                 <section style='display: flex;justify-content: start;' v-if="planFlag">
@@ -953,16 +953,16 @@ export default {
     const style = document.createElement('style');
     style.innerHTML = `  
     .Noproduc{
-    background-color:"#ccc!important"
+    background-color:"#FFbc00!important"
     }
       .low-progress {  
-      color:red!important; /*低进度颜色 */  
+      background-color:#FFbc00; /*低进度颜色 */  
       }  
       .mid-progress {  
-      background-color: #67c23a; /* 中等进度颜色 */  
+      background-color: #FFbc00; /* 中等进度颜色 */  
       }  
       .high-progress {  
-      background-color: #67c23a; /* 高进度颜色 */  
+      background-color: green!important; /* 高进度颜色 */  
       }  
       `;
     document.head.appendChild(style);
@@ -1143,7 +1143,7 @@ export default {
                     start_date: new Date(item.planStartDate == item.planEndDate ? item.planStartDate + ' 00:00:00' : item.planStartDate + " 00:00:00"),
                     end_date: new Date(item.planStartDate == item.planEndDate ? item.planEndDate + ' 23:59:59' : item.planEndDate + " 23:59:59"),
                     open: true,
-                    color: 'green',
+                    // color: 'green',
                     completedQuantity: item.completedQuantity,
                     productionQuantity: item.planProductionQuantity,
                   }
@@ -1167,7 +1167,7 @@ export default {
                         open: true,
                         qualifiedQuantity: items.completedQuantity,
                         productionQuantity: items.productionQuantity,
-                        color: "green",
+                        // color: "green",
                       }
                       arr.push(bjs)
                       // 2. 拆分成单个项目
@@ -1197,7 +1197,7 @@ export default {
                             qualifiedQuantity: itemss.qualifiedQuantity,
                             productionQuantity: itemss.productionQuantity,
                             duration: 20,
-                            color: "green",
+                            // color: "green",
                           }
                           arr.push(bjss)
                         })

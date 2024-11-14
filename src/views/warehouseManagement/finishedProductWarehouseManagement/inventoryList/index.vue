@@ -323,7 +323,7 @@ export default {
             { label: "生产退料", value: "inbound_return_materials" },
             { label: "生产入库", value: "inbound_mock_production" },
             { label: "外协发料", value: "outbound_external_send" },
-            { label: "外协退料", value: "inbound_external_return" },
+            // { label: "外协退料", value: "inbound_external_return" },
             { label: "外协收货", value: "inbound_external" },
             { label: "直接入库", value: "inbound_other" },
             { label: "直接出库", value: "outbound_other" },
@@ -513,7 +513,7 @@ export default {
           this.$nextTick(() => {
             this.$refs.externalInboundREFForm.init(id, type, row.businessType, this.classAttributeList, this.warehouseCode, false)
           })
-        } else if (item.sourceType == 'notice') {
+        } else if (row.sourceType == 'notice') {
 
           this.inboundExternalFormVisible = true
           this.$nextTick(() => {
@@ -585,7 +585,7 @@ export default {
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
       this.listQuery.classAttributeList = this.classAttributeList
-      this.listQuery.approvalStatus = 'ok'
+      // this.listQuery.approvalStatus = 'ok'
       getWarehouseList(this.listQuery).then(res => {
 
         this.tableData = res.data.records ? res.data.records : []

@@ -213,8 +213,11 @@ export default {
         orderItems: [{
           asc: false,
           column: ""
+        },{
+          asc: false,
+          column: "t1.create_time"
         }],
-
+        
         superQuery: {
           condition: [],
           matchLogic: ""

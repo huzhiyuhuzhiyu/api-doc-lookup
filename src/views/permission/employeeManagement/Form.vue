@@ -47,7 +47,7 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="userInfo.projectId">
+                    <el-col :sm="6" :xs="24" v-if="isProjectSwitch === '1'">
                       <el-form-item label="所属项目" prop="projectId" style="width: 100%;">
                         <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" :disabled="onlyRead"
                           style="width: 100%;">
@@ -527,6 +527,7 @@ import { getGroupSelector } from '@/api/permission/group'
 import { addbaseEmployee, updatebaseEmployee, getbaseEmployeeInfo } from '@/api/permission/user'
 import moment from 'moment'
 import { getProjectList } from '@/api/system/projectManagement'
+import { getBimBusinessSwitchConfigList } from "@/api/basicData/index";
 import { mapGetters } from "vuex"
 export default {
   data() {
@@ -545,7 +546,7 @@ export default {
         jobNumber: '', //工号
         name: '',//姓名
         sex: null, //性别
-        projectId:'', // 所属项目
+        projectId: '', // 所属项目
         organizeIdTree: [], //组织id树
         postId: '', //岗位id
         managerId: '', //直属主管
@@ -639,9 +640,24 @@ export default {
     ...mapGetters(['userInfo'])
   },
   created() {
+    this.getProjectSwitch()
     this.getProjectList()
   },
   methods: {
+    getProjectSwitch() {
+      let obj = {
+        businessCode: 'system',
+        pageSize: -1
+      }
+      getBimBusinessSwitchConfigList(obj).then((res) => {
+        res.data.system.forEach((item) => {
+          if (item.configKey == 'project') {
+            this.isProjectSwitch = item.configValue1
+
+          }
+        })
+      })
+    },
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);

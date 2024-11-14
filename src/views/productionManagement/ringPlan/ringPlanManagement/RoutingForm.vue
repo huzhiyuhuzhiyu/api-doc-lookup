@@ -30,8 +30,8 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true">
+        <div class="JNPF-common-layout-main JNPF-flex-main" > 
+          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @sort-change="sortChange">
             <el-table-column prop="code" label="工艺路线编码" sortable="custom" ></el-table-column>
             <el-table-column prop="name" label="工艺路线名称" sortable="custom" />
            
@@ -77,6 +77,20 @@ export default {
     }
   },
   methods: {
+    
+    sortChange({ prop, order }) {
+      console.log(prop);
+      let newProp;
+      if (prop === 'name' || prop === 'code' ) {
+        newProp = prop
+      }   else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+     
+      this.form.orderItems[0].asc = order === "ascending"
+      this.form.orderItems[0].column = order === null ? "" : newProp
+      this.getbatchNumList()
+    },
     init() {
       this.customerVisible = true
       this.getbatchNumList()

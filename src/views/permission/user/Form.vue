@@ -32,7 +32,7 @@
                       <el-input v-model="dataForm.realName" placeholder="请输入姓名" :disabled="onlyRead || isval" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="isval ? 8 : 12" :xs="24">
+                  <el-col :sm="isval ? 8 : 12" :xs="24" v-if="isProjectSwitch === '1'">
                     <el-form-item label="所属项目" prop="projectId">
                       <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" :disabled="onlyRead"
                         style="width: 100%;">
@@ -117,12 +117,14 @@ import { getDepartmentSelectorByAuth } from '@/api/permission/department'
 import { getbaseEmployee } from '@/api/permission/user'
 import { createUser, updateUser, getUserInfo } from '@/api/permission/user'
 import { getProjectList } from '@/api/system/projectManagement'
+import { getBimBusinessSwitchConfigList } from "@/api/basicData/index";
 import { mapGetters } from "vuex"
 export default {
   computed: {
     ...mapGetters(['userInfo'])
   },
   created() {
+    this.getProjectSwitch()
     this.getProjectList()
   },
   data() {
@@ -212,6 +214,20 @@ export default {
     }
   },
   methods: {
+    getProjectSwitch() {
+      let obj = {
+        businessCode: 'system',
+        pageSize: -1
+      }
+      getBimBusinessSwitchConfigList(obj).then((res) => {
+        res.data.system.forEach((item) => {
+          if (item.configKey == 'project') {
+            this.isProjectSwitch = item.configValue1
+
+          }
+        })
+      })
+    },
     getProjectList() {
       let query = {
         pageNum: 1,
@@ -340,7 +356,7 @@ export default {
           if (this.dataForm.submitpassword != this.dataForm.password) return this.$message.error('两次密码输入不一致')
           let submitFlag = false
           console.log(this.userInfo.projectId, 'this.userInfo.projectId123')
-          if (this.userInfo.projectId) {
+          if (this.isProjectSwitch === '1') {
             if (this.dataForm.projectId !== this.projectId) {
               this.$confirm('所属项目已更改是否确定修改, 是否继续?', '提示', {
                 confirmButtonText: '确定',

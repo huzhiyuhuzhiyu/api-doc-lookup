@@ -416,12 +416,12 @@
             </el-col>
           </template>
           <el-col :span="6">
-              <el-form-item>
-                <el-date-picker v-model="useDateArr" type="daterange" value-format="yyyy-MM-dd"
-                  style="width: 100%;" start-placeholder="领用开始日期" end-placeholder="领用结束日期" clearable>
-                </el-date-picker>
-              </el-form-item>
-            </el-col>
+            <el-form-item>
+              <el-date-picker v-model="useDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
+                start-placeholder="领用开始日期" end-placeholder="领用结束日期" clearable>
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList('basic')">
@@ -452,12 +452,12 @@
             </el-col>
           </template>
           <el-col :span="6">
-              <el-form-item>
-                <el-date-picker v-model="repayDateArr" type="daterange" value-format="yyyy-MM-dd"
-                  style="width: 100%;" start-placeholder="归还开始日期" end-placeholder="归还结束日期" clearable>
-                </el-date-picker>
-              </el-form-item>
-            </el-col>
+            <el-form-item>
+              <el-date-picker v-model="repayDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
+                start-placeholder="归还开始日期" end-placeholder="归还结束日期" clearable>
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList('basic')">
@@ -514,10 +514,10 @@
                 v-if="categoryType == 'outbound_pick_out'" @click="columnSetFun('picktabForm')" />
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                 v-if="categoryType == 'inbound_return_materials'" @click="columnSetFun('returnMatertabForm')" />
-                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                 v-if="categoryType == 'outbound_use'" @click="columnSetFun('outboundUseForm')" />
-                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                v-if="categoryType == 'outbound_use'" @click="columnSetFun('inboundReturnForm')" />
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                v-if="categoryType == 'inbound_return'" @click="columnSetFun('inboundReturnForm')" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
@@ -670,7 +670,7 @@
             </template>
           </el-table-column>
         </JNPF-table>
- 
+
 
         <!-- 采购 退货 通知单-->
         <JNPF-table :partentOrChild="'cgthtabForm'" v-loading="listLoading" @sort-change="sortChange"
@@ -964,15 +964,15 @@
           </el-table-column>
         </JNPF-table>
 
-        
-           <!-- 装配/套圈退料 outbound_pick_out -->
+
+        <!-- 装配/套圈退料 outbound_pick_out -->
         <JNPF-table :partentOrChild="'returnMatertabForm'" v-loading="listLoading" @sort-change="sortChange"
           :data="returnMaterTableList" v-show="categoryType == 'inbound_return_materials'" custom-column
           ref="returnMatertabForm" :fixedNo="true" :setColumnDisplayList="returnMatercolumnList">
           <el-table-column prop="orderNo" label="退料单号" min-width="160" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
-                @click.native="viewFun(scope.row.id, 'look', 'ReturnMaterREFForm', returnMaterFormVisible = true,scope.row)">{{
+                @click.native="viewFun(scope.row.id, 'look', 'ReturnMaterREFForm', returnMaterFormVisible = true, scope.row)">{{
                   scope.row.orderNo
                 }}</el-link>
             </template>
@@ -991,28 +991,27 @@
               <el-button size="mini" type="text"
                 @click="incomAndOutInventFun(scope.row, 'add', 'Form', 'returnMater')">入库</el-button>
               <el-button size="mini" type="text"
-                @click="viewFun(scope.row.id, 'look', 'ReturnMaterREFForm', returnMaterFormVisible = true,scope.row)">查看详情</el-button>
+                @click="viewFun(scope.row.id, 'look', 'ReturnMaterREFForm', returnMaterFormVisible = true, scope.row)">查看详情</el-button>
             </template>
           </el-table-column>
-        </JNPF-table> 
+        </JNPF-table>
         <!-- 设备领用 outbound_use -->
         <JNPF-table :partentOrChild="'outboundUseForm'" v-loading="listLoading" @sort-change="sortChange"
-          :data="outboundUseTableList" v-show="categoryType == 'outbound_use'" custom-column
-          ref="outboundUseForm" :fixedNo="true" :setColumnDisplayList="equipmentOutboundList">
+          :data="outboundUseTableList" v-show="categoryType == 'outbound_use'" custom-column ref="outboundUseForm"
+          :fixedNo="true" :setColumnDisplayList="equipmentOutboundList">
           <el-table-column prop="orderNo" label="领用单号" min-width="160" sortable="custom">
             <template slot-scope="scope">
-              <el-link type="primary"
-                @click.native="viewEquipmentFun(scope.row.id, 'look',scope.row)">{{
-                  scope.row.orderNo
-                }}</el-link>
+              <el-link type="primary" @click.native="viewEquipmentFun(scope.row.id, 'look', scope.row)">{{
+                scope.row.orderNo
+              }}</el-link>
             </template>
           </el-table-column>
           <el-table-column prop="useApplication" label="领用目的" min-width="120" sortable="custom">
             <template slot-scope="scope">
-              <div v-if="scope.row.useApplication=='equipmentmaintain'">设备保养</div>
-              <div v-if="scope.row.useApplication=='equipmentrepair'">设备维修</div>
-              <div v-if="scope.row.useApplication=='toolmaintain'">工具保养</div>
-              <div v-if="scope.row.useApplication=='toolrepair'">工具维修</div>
+              <div v-if="scope.row.useApplication == 'equipmentmaintain'">设备保养</div>
+              <div v-if="scope.row.useApplication == 'equipmentrepair'">设备维修</div>
+              <div v-if="scope.row.useApplication == 'toolmaintain'">工具保养</div>
+              <div v-if="scope.row.useApplication == 'toolrepair'">工具维修</div>
             </template>
           </el-table-column>
           <el-table-column prop="collectionTime" label="领用日期" min-width="160" sortable="custom" />
@@ -1021,36 +1020,32 @@
           <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
+              <el-button size="mini" type="text" @click="incomAndOutInventFun(scope.row, 'add', 'Form')">出库</el-button>
               <el-button size="mini" type="text"
-                @click="incomAndOutInventFun(scope.row, 'add', 'Form')">出库</el-button>
-              <el-button size="mini" type="text"
-                @click="viewEquipmentFun(scope.row.id, 'look',scope.row)">查看详情</el-button>
+                @click="viewEquipmentFun(scope.row.id, 'look', scope.row)">查看详情</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
-          <!-- 设备归还 inbound_return -->
-          <JNPF-table :partentOrChild="'inboundReturnForm'" v-loading="listLoading" @sort-change="sortChange"
-          :data="inboundReturnData" v-show="categoryType == 'inbound_return'" custom-column
-          ref="inboundReturnForm" :fixedNo="true" :setColumnDisplayList="inboundReturnList">
+        <!-- 设备归还 inbound_return -->
+        <JNPF-table :partentOrChild="'inboundReturnForm'" v-loading="listLoading" @sort-change="sortChange"
+          :data="inboundReturnData" v-show="categoryType == 'inbound_return'" custom-column ref="inboundReturnForm"
+          :fixedNo="true" :setColumnDisplayList="inboundReturnList">
           <el-table-column prop="orderNo" label="归还单号" min-width="160" sortable="custom">
             <template slot-scope="scope">
-              <el-link type="primary"
-                @click.native="viewRepayFun(scope.row.id, 'look',scope.row)">{{
-                  scope.row.orderNo
-                }}</el-link>
+              <el-link type="primary" @click.native="viewRepayFun(scope.row.id, 'look', scope.row)">{{
+                scope.row.orderNo
+              }}</el-link>
             </template>
           </el-table-column>
-      
+
           <el-table-column prop="collectionTime" label="归还日期" min-width="160" sortable="custom" />
           <el-table-column prop="maintainerIdText" label="归还人" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text"
-                @click="incomAndOutInventFun(scope.row, 'add', 'Form')">入库</el-button>
-              <el-button size="mini" type="text"
-                @click="viewRepayFun(scope.row.id, 'look',scope.row)">查看详情</el-button>
+              <el-button size="mini" type="text" @click="incomAndOutInventFun(scope.row, 'add', 'Form')">入库</el-button>
+              <el-button size="mini" type="text" @click="viewRepayFun(scope.row.id, 'look', scope.row)">查看详情</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -1087,11 +1082,11 @@
         <pagination :total="externalTotal" :page.sync="externalForm.pageNum" :limit.sync="externalForm.pageSize"
           @pagination="getTabdataList" v-if="categoryType == 'inbound_external' && externalFlag">
         </pagination>
-        <pagination :total="outboundUseTotal" :page.sync="outboundUseForm.pageNum" :limit.sync="outboundUseForm.pageSize"
-          @pagination="getTabdataList" v-if="categoryType == 'outbound_use'">
+        <pagination :total="outboundUseTotal" :page.sync="outboundUseForm.pageNum"
+          :limit.sync="outboundUseForm.pageSize" @pagination="getTabdataList" v-if="categoryType == 'outbound_use'">
         </pagination>
-        <pagination :total="inboundReturnTotal" :page.sync="inboundReturnForm.pageNum" :limit.sync="inboundReturnForm.pageSize"
-          @pagination="getTabdataList" v-if="categoryType == 'inbound_return'">
+        <pagination :total="inboundReturnTotal" :page.sync="inboundReturnForm.pageNum"
+          :limit.sync="inboundReturnForm.pageSize" @pagination="getTabdataList" v-if="categoryType == 'inbound_return'">
         </pagination>
       </div>
 
@@ -1308,12 +1303,12 @@
     <PurchaseForm v-if="purchaseFormVisible" ref="purchaseREFForm" @close="closeForm"></PurchaseForm>
     <ProductExternalForm v-if="productExternalVisible" ref="productExternalREFForm" @close="closeForm">
     </ProductExternalForm>
-    <EquipmentForm  v-if="equipmentVisible" ref="quipmentREFForm" @close="closeForm"></EquipmentForm>
-    <SparePartsForm  v-if="sparePartsVisible" ref="sparePartsREFForm" @close="closeForm"></SparePartsForm>
-    <ToolForm  v-if="toolVisible" ref="toolREFForm" @close="closeForm"></ToolForm>
-    <EquipmentFormS  v-if="equipmentSVisible" ref="quipmentSREFForm" @close="closeForm"></EquipmentFormS>
-    <SparePartsFormS  v-if="sparePartsSVisible" ref="sparePartsSREFForm" @close="closeForm"></SparePartsFormS>
-    <ToolFormS  v-if="toolSVisible" ref="toolSREFForm" @close="closeForm"></ToolFormS>
+    <EquipmentForm v-if="equipmentVisible" ref="quipmentREFForm" @close="closeForm"></EquipmentForm>
+    <SparePartsForm v-if="sparePartsVisible" ref="sparePartsREFForm" @close="closeForm"></SparePartsForm>
+    <ToolForm v-if="toolVisible" ref="toolREFForm" @close="closeForm"></ToolForm>
+    <EquipmentFormS v-if="equipmentSVisible" ref="quipmentSREFForm" @close="closeForm"></EquipmentFormS>
+    <SparePartsFormS v-if="sparePartsSVisible" ref="sparePartsSREFForm" @close="closeForm"></SparePartsFormS>
+    <ToolFormS v-if="toolSVisible" ref="toolSREFForm" @close="closeForm"></ToolFormS>
 
 
 
@@ -1351,11 +1346,9 @@
       @close="closeForm">
     </ExternalMaterOutboundForm>
 
-    <EquipmentOutboundForm v-if="equipmentOutboundVisible" ref="equipmentOutboundREFForm"
-      @close="closeForm">
+    <EquipmentOutboundForm v-if="equipmentOutboundVisible" ref="equipmentOutboundREFForm" @close="closeForm">
     </EquipmentOutboundForm>
-    <EquipmentInboundForm v-if="equipmentInboundVisible" ref="equipmentInboundREFForm"
-      @close="closeForm">
+    <EquipmentInboundForm v-if="equipmentInboundVisible" ref="equipmentInboundREFForm" @close="closeForm">
     </EquipmentInboundForm>
 
     <!-- 高级查询 -->
@@ -1412,6 +1405,9 @@ import EquipmentInboundForm from './equipmentInboundForm.vue'
 import ToolFormS from '@/views/dailyManagement/borrowingReturn/toolreturn/Form.vue'
 import EquipmentFormS from '@/views/dailyManagement/equipmentrequisitionreturn/equipmentreturn/Form.vue'
 import SparePartsFormS from '@/views/dailyManagement/sparepartsmanagement/sparepartsReturn/Form.vue'
+import {
+  getbimProductAttributesList, getbimProductAttributes
+} from "@/api/masterDataManagement/index"
 export default {
   name: 'dbIncomAndOutInventory',
   mixins: [mixin],
@@ -1423,34 +1419,34 @@ export default {
     InboundSaleReturnForm, InboundPurchaseForm, OutboundPurchaseForm,
     OutboundExternalSendForm, InboundExternalForm, OutboundPickOutForm, InboundReturnMaterialsForm,
     SaleForm, SaleOutboundForm, PurchaseOrderInboundForm, PurchaseForm, ProductExternalForm, ExternalInboundForm,
-    ExternalMaterOutboundForm,ToolForm,SparePartsForm,EquipmentForm,EquipmentOutboundForm,ToolFormS,EquipmentFormS,SparePartsFormS,EquipmentInboundForm
+    ExternalMaterOutboundForm, ToolForm, SparePartsForm, EquipmentForm, EquipmentOutboundForm, ToolFormS, EquipmentFormS, SparePartsFormS, EquipmentInboundForm
   },
   props: {
     warehouseCode: "",
   },
   data() {
     return {
-      equipmentInboundVisible:false,
-      repayDateArr:[],
-      toolSVisible:false,
-      sparePartsSVisible:false,
-      equipmentSVisible:false,
-      inboundReturnVisible:false,
-      inboundReturnList:["createByName"],
-      inboundReturnData:[],
-      inboundReturnTotal:0,
-      inboundReturnForm:{
-        documentStatus:"submit",
-        classAttributeList:[],
-        stockFlag:true,
-        equipmentType:"",
-        maintainerIdText:"",
-        orderNo:"",
-        pageNum:1,
-        pageSize:20,
-        collStartTime:"",
-        collEndTime:"",
-        requisitionType:"back",
+      equipmentInboundVisible: false,
+      repayDateArr: [],
+      toolSVisible: false,
+      sparePartsSVisible: false,
+      equipmentSVisible: false,
+      inboundReturnVisible: false,
+      inboundReturnList: ["createByName"],
+      inboundReturnData: [],
+      inboundReturnTotal: 0,
+      inboundReturnForm: {
+        documentStatus: "submit",
+        classAttributeList: [],
+        stockFlag: true,
+        equipmentType: "",
+        maintainerIdText: "",
+        orderNo: "",
+        pageNum: 1,
+        pageSize: 20,
+        collStartTime: "",
+        collEndTime: "",
+        requisitionType: "back",
         orderItems: [{
           asc: false,
           column: ""
@@ -1459,7 +1455,7 @@ export default {
           column: "create_time"
         }],
       },
- 
+
       visibleForm: false,
       superQuery: {},
       superForm: {},
@@ -1545,23 +1541,23 @@ export default {
           column: "delivery_date"
         }],
       },
-      useDateArr:[],
-      equipmentOutboundVisible:false,
-      outboundUseTableList:[],
-      outboundUseTotal:0,
-      outboundUseList:["createByName"],
-      outboundUseForm:{
-        classAttributeList:[],
-        documentStatus:"submit",
-        stockFlag:true,
-        equipmentType:"",
-        maintainerIdText:"",
-        orderNo:"",
-        pageNum:1,
-        pageSize:20,
-        collStartTime:"",
-        collEndTime:"",
-        requisitionType:"requisition",
+      useDateArr: [],
+      equipmentOutboundVisible: false,
+      outboundUseTableList: [],
+      outboundUseTotal: 0,
+      outboundUseList: ["createByName"],
+      outboundUseForm: {
+        classAttributeList: [],
+        documentStatus: "submit",
+        stockFlag: true,
+        equipmentType: "",
+        maintainerIdText: "",
+        orderNo: "",
+        pageNum: 1,
+        pageSize: 20,
+        collStartTime: "",
+        collEndTime: "",
+        requisitionType: "requisition",
         orderItems: [{
           asc: false,
           column: ""
@@ -1578,7 +1574,7 @@ export default {
       externalTotal: 0,
       externalcolumnList: ["cooperativePartnerCode", "createByName",],
       externalForm: {
-        documentStatus:"submit",
+        documentStatus: "submit",
         receiptQueryFlag: true,
         productDrawingNo: "",
         cooperativePartnerName: "",
@@ -1609,7 +1605,7 @@ export default {
       saleFormVisible: false,
       salecolumnList: ["cooperativePartnerCode",],
       saleOrderForm: {
-        documentStatus:"submit",
+        documentStatus: "submit",
         deliverQueryFlag: true,
         deliveryStartTime: "",
         deliveryEndTime: "",
@@ -1633,7 +1629,7 @@ export default {
       purchaserOrderDateArr: [],
       purchasecolumnList: ["cooperativePartnerCode", 'createByName'],
       purchaseForm: {
-        documentStatus:"submit",
+        documentStatus: "submit",
         cooperativePartnerName: "",
         productDrawingNo: "",
         deliveryStartDate: "",
@@ -1685,7 +1681,7 @@ export default {
       workTotal: 0,
       workData: [],
       workForm: {
-        documentStatus:"submit",
+        documentStatus: "submit",
         productionOrderNo: "",
         orderNo: "",
         processName: "",
@@ -1828,7 +1824,7 @@ export default {
       pickTotal: 0,
       pickFormVisible: false,
       pickForm: {
-        documentStatus:"submit",
+        documentStatus: "submit",
         pageNum: 1,
         pageSize: 20,
         productClassAttributeList: "",
@@ -1851,7 +1847,7 @@ export default {
       returnMaterTotal: 0,
       returnMaterTableList: [],
       returnMaterForm: {
-        documentStatus:"submit",
+        documentStatus: "submit",
         receiveType: "",
         orderNo: "",
         personName: "",
@@ -1905,9 +1901,49 @@ export default {
       selectPurchaseList: [],
       selectExternalList: [],
       selectExternalMaterList: [],
-      toolVisible:false,
-      equipmentVisible:false,
-      sparePartsVisible:false,
+      toolVisible: false,
+      equipmentVisible: false,
+      sparePartsVisible: false,
+      requestArr: [
+        {
+          prop: "sealingCoverTyping",
+          typeCode: "pa007"
+        }, {
+          prop: "accuracyLevel",
+          typeCode: "pa006"
+        },
+        {
+          prop: "vibrationLevel",
+          typeCode: "pa005"
+        },
+        {
+          prop: "oil",
+          typeCode: "pa002"
+        }, {
+          prop: "oilQuantity",
+          typeCode: "pa003"
+        }, {
+          prop: "clearance",
+          typeCode: "pa001"
+        }, {
+          prop: "packagingMethod",
+          typeCode: "pa015"
+        }, {
+          prop: "specialRequire",
+          typeCode: "pa016"
+        }
+        , {
+          prop: "specialRequire",
+          typeCode: "pa016"
+        }, {
+          prop: "colour",
+          typeCode: "pa010"
+        }, {
+          prop: "standardValue",
+          typeCode: "pa008"
+        }
+        
+      ],
     }
   },
   watch: {
@@ -1962,6 +1998,46 @@ export default {
 
   },
   methods: {
+     // 获取打字内容等
+     getProductClassFun() {
+      this.requestArr.forEach((item, index) => {
+        let obj1 = {
+          pageNum: -1,
+          pageSize: 20,
+          typeCode: item.typeCode,
+          orderItems: [
+            {
+              asc: false,
+              column: "",
+            },
+            {
+              asc: false,
+              column: "code",
+            },
+          ],
+        };
+        getbimProductAttributesList(obj1).then(res => {
+
+          let arr = []
+          res.data.records.forEach(items => {
+            let obj = {
+              label: items.name,
+              value: items.name,
+            }
+            arr.push(obj)
+          });
+          let oilObj = this.superQueryJson.find(rs => rs.prop === item.prop);
+          if (oilObj) {
+            // 将options赋值为5  
+            oilObj.options = JSON.parse(JSON.stringify(arr));
+          }
+        })
+      })
+
+
+
+
+    },
     handeleselectExternalMter(val) {
       this.selectExternalMaterList = val
     },
@@ -2165,7 +2241,7 @@ export default {
               item.fullName = '资产领用'
 
             }
-            if(item.businessType=='inbound_return'){
+            if (item.businessType == 'inbound_return') {
               item.fullName = '资产归还'
 
             }
@@ -2267,20 +2343,20 @@ export default {
           this.$nextTick(() => {
             this.$refs.inboundReturnMaterialsREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
           })
-        }else if (this.categoryType == 'outbound_use') {
+        } else if (this.categoryType == 'outbound_use') {
           this.equipmentOutboundVisible = true
           this.$nextTick(() => {
-          
+
             this.$refs.equipmentOutboundREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
           })
-        }else if (this.categoryType == 'inbound_return') {
+        } else if (this.categoryType == 'inbound_return') {
           console.log(555);
           this.equipmentInboundVisible = true
           this.$nextTick(() => {
-          
+
             this.$refs.equipmentInboundREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
           })
-        }  else {
+        } else {
           this.formVisible = true
           this.$nextTick(() => {
             this.$refs[ref].init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
@@ -2407,6 +2483,23 @@ export default {
         this.returnMaterForm.orderItems[0].asc = order === 'ascending'
         this.returnMaterForm.orderItems[0].column = newProp
       }
+      // 资产领用 排序
+      if (this.categoryType == 'outbound_use') {
+        let newProp
+        if (prop == 'orderNo' || prop == 'useApplication' || prop == 'collectionTime' || prop == 'maintainerIdText' || prop == 'createTime' || prop == 'createByName') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+        else newProp = prop
+        this.outboundUseForm.orderItems[0].asc = order === 'ascending'
+        this.outboundUseForm.orderItems[0].column = newProp
+      }
+      // 资产归还 排序
+      if (this.categoryType == 'inbound_return') {
+        let newProp
+        if (prop == 'orderNo' || prop == 'collectionTime' || prop == 'maintainerIdText' || prop == 'createTime' || prop == 'createByName') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+        else newProp = prop
+        this.outboundUseForm.orderItems[0].asc = order === 'ascending'
+        this.outboundUseForm.orderItems[0].column = newProp
+      }
+
 
       this.getTabdataList()
     },
@@ -2815,13 +2908,13 @@ export default {
         }
       }
       // 资产领用 
-       if (this.categoryType == 'outbound_use') {
-        if(this.useDateArr.length){
-          this.outboundUseForm.collStartTime=this.useDateArr[0]
-          this.outboundUseForm.collStartTime=this.useDateArr[1]
-        }else{
-          this.outboundUseFormcollStartTime=""
-          this.outboundUseForm.collEndTime=""
+      if (this.categoryType == 'outbound_use') {
+        if (this.useDateArr.length) {
+          this.outboundUseForm.collStartTime = this.useDateArr[0]
+          this.outboundUseForm.collStartTime = this.useDateArr[1]
+        } else {
+          this.outboundUseFormcollStartTime = ""
+          this.outboundUseForm.collEndTime = ""
         }
         this.listLoading = true
         this.outboundUseForm.classAttributeList = this.classAttributeList
@@ -2854,14 +2947,14 @@ export default {
           this.listLoading = false
         })
       }
-       // 资产归还
-       if (this.categoryType == 'inbound_return') {
-        if(this.repayDateArr.length){
-          this.inboundReturnForm.collStartTime=this.repayDateArr[0]
-          this.inboundReturnForm.collStartTime=this.repayDateArr[1]
-        }else{
-          this.inboundReturnForm.collStartTime=""
-          this.inboundReturnForm.collEndTime=""
+      // 资产归还
+      if (this.categoryType == 'inbound_return') {
+        if (this.repayDateArr.length) {
+          this.inboundReturnForm.collStartTime = this.repayDateArr[0]
+          this.inboundReturnForm.collEndTime = this.repayDateArr[1]
+        } else {
+          this.inboundReturnForm.collStartTime = ""
+          this.inboundReturnForm.collEndTime = ""
         }
         this.listLoading = true
         this.inboundReturnForm.classAttributeList = this.classAttributeList
@@ -2997,12 +3090,13 @@ export default {
         this.$refs.workInboundREFForm.init(arr, 'add', this.classAttributeList, this.warehouseCode)
       })
     },
- 
-  
+
+
 
     // 高级查询
     advancedQueryFun() {
-      if (this.categoryType == 'outbound_sale_send' || this.categoryType == 'outbound_external_send') {
+      // 销售发货通知单
+      if (this.categoryType == 'outbound_sale_send' && !this.saleFlag) {
         this.superQueryJson = [
           {
             prop: 'orderNo',
@@ -3014,6 +3108,8 @@ export default {
             label: "客户编码",
             type: 'input'
           },
+
+
           {
             prop: 'partnerName',
             label: "客户名称",
@@ -3039,7 +3135,7 @@ export default {
             type: 'input'
           },
           {
-            prop: 'outbound_sale_send',
+            prop: 'delivery',
             label: "发货方式",
             type: 'select',
 
@@ -3053,6 +3149,31 @@ export default {
 
           },
           {
+            prop: 'countryName',
+            label: "国家",
+            type: 'input'
+          },
+          {
+            prop: 'provinceName',
+            label: "省",
+            type: 'input'
+          },
+          {
+            prop: 'cityName',
+            label: "市",
+            type: 'input'
+          },
+          {
+            prop: 'areaName',
+            label: "区",
+            type: 'input'
+          },
+          {
+            prop: 'address',
+            label: "地址",
+            type: 'input'
+          },
+          {
             prop: 'exchangeGoodsFlag',
             label: "发货标识",
             type: 'select',
@@ -3063,22 +3184,162 @@ export default {
             ]
 
           },
-
           {
-            prop: 'documentStatus',
-            label: "单据状态",
-            type: 'select',
-            options: [
-              { label: "草稿", value: "draft" },
-              { label: "提交", value: "submit" },
-            ]
+            prop: 'createTime',
+            label: '创建时间',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd HH:mm:ss",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
           },
+          {
+            prop: 'createByName',
+            label: "创建人",
+            type: 'input'
+          }
 
 
 
         ]
       }
-      if (this.categoryType == "inbound_sale_return") {
+      // 销售发货订单
+      if (this.categoryType == 'outbound_sale_send' && this.saleFlag) {
+        this.superQueryJson = [
+          {
+            prop: 'orderNo',
+            label: "单号",
+            type: 'input'
+          },
+          {
+            prop: 'cooperativePartnerCode',
+            label: "客户编码",
+            type: 'input'
+          },
+
+
+          {
+            prop: 'cooperativePartnerName',
+            label: "客户名称",
+            type: 'input'
+          },
+          {
+            prop: 'departmentName',
+            label: "所属部门",
+            type: 'input'
+          },
+          {
+            prop: 'salesName',
+            label: "所属销售",
+            type: 'input'
+          },
+          {
+            prop: 'customerProductNo',
+            label: "客户料号",
+            type: 'input'
+          },
+          {
+            prop: 'drawingNo',
+            label: "品名规格",
+            type: 'input'
+          },
+          {
+            prop: 'productCode',
+            label: "产品编码",
+            type: 'input'
+          },
+          {
+            prop: 'mainUnit',
+            label: "单位",
+            type: 'input'
+          },
+          {
+            prop: 'drawingNo',
+            label: "品名规格",
+            type: 'input'
+          },
+          {
+            prop: 'deliveryDate',
+            label: '交货日期',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          {
+            prop: 'sealingCoverTyping',
+            label: "打字内容",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'accuracyLevel',
+            label: "精度等级",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'vibrationLevel',
+            label: "振动等级",
+            type: 'select',
+            options: []
+          },
+
+          {
+            prop: 'oil',
+            label: "油脂",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'oilQuantity',
+            label: "油脂量",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'clearance',
+            label: "游隙",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'packagingMethod',
+            label: "包装方式",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'specialRequire',
+            label: "特殊要求",
+            type: 'select',
+            options: []
+          },
+
+          {
+            prop: 'remark',
+            label: "备注",
+            type: 'input'
+          },
+          {
+            prop: 'createTime',
+            label: '创建时间',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd HH:mm:ss",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+
+
+
+
+        ]
+        this.getProductClassFun()
+      }
+      // 销售退货通知单
+      if (this.categoryType == 'inbound_sale_return') {
         this.superQueryJson = [
           {
             prop: 'orderNo',
@@ -3095,7 +3356,6 @@ export default {
             label: "客户编码",
             type: 'input'
           },
-
           {
             prop: 'deliverDate',
             label: '退货日期',
@@ -3105,45 +3365,934 @@ export default {
             endPlaceholder: '结束日期',
             pickerOptions: this.global.timePickerOptions
           },
-
-
           {
             prop: 'exchangeGoodsFlag',
             label: "退货标识",
             type: 'select',
 
             options: [
-              { label: "退货", value: false },
-              { label: "换货", value: true }
+              { label: "正常发货", value: false },
+              { label: "换货发货", value: true }
             ]
 
           },
           {
             prop: 'createTime',
             label: '创建时间',
-            type: 'datetimerange',
+            type: 'daterange',
             valueFormat: "yyyy-MM-dd HH:mm:ss",
-            startPlaceholder: '创建开始时间',
-            endPlaceholder: '创建结束时间',
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
             pickerOptions: this.global.timePickerOptions
-          }, {
+          },
+          {
             prop: 'createByName',
             label: "创建人",
-            type: 'input',
+            type: 'input'
           },
 
 
 
         ]
       }
+      // 采购 退货 通知单
+      if (this.categoryType == 'outbound_purchase') {
+        this.superQueryJson = [
+          {
+            prop: 'orderNo',
+            label: "单号",
+            type: 'input'
+          },
+          {
+            prop: 'partnerName',
+            label: "供应商名称",
+            type: 'input'
+          },
+          {
+            prop: 'partnerCode',
+            label: "供应商编码",
+            type: 'input'
+          },
+          {
+            prop: 'salesman',
+            label: "操作员",
+            type: 'input'
+          },
+          {
+            prop: 'deliverDate',
+            label: '退货日期',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          {
+            prop: 'remark',
+            label: "备注",
+            type: 'input'
+          },
+          {
+            prop: 'createTime',
+            label: '创建时间',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd HH:mm:ss",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          {
+            prop: 'createByName',
+            label: "创建人",
+            type: 'input'
+          },
+
+
+
+        ]
+      }
+      // 采购收货通知单
+      if (this.categoryType == 'inbound_purchase' && !this.purchaseFlag) {
+        this.superQueryJson = [
+          {
+            prop: 'orderNo',
+            label: "单号",
+            type: 'input'
+          },
+          {
+            prop: 'partnerName',
+            label: "供应商名称",
+            type: 'input'
+          },
+          {
+            prop: 'partnerCode',
+            label: "供应商编码",
+            type: 'input'
+          },
+          {
+            prop: 'salesman',
+            label: "操作员",
+            type: 'input'
+          },
+          {
+            prop: 'deliverDate',
+            label: '收货日期',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          {
+            prop: 'remark',
+            label: "备注",
+            type: 'input'
+          },
+          {
+            prop: 'createTime',
+            label: '创建时间',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd HH:mm:ss",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          {
+            prop: 'createByName',
+            label: "创建人",
+            type: 'input'
+          },
+
+
+
+        ]
+      }
+      // 采购收货订单
+      if (this.categoryType == 'inbound_purchase' && this.purchaseFlag) {
+        this.superQueryJson = [
+          {
+            prop: 'orderNo',
+            label: "单号",
+            type: 'input'
+          },
+          {
+            prop: 'cooperativePartnerName',
+            label: "供应商名称",
+            type: 'input'
+          },
+          {
+            prop: 'cooperativePartnerCode',
+            label: "供应商编码",
+            type: 'input'
+          },
+          {
+            prop: 'drawingNo',
+            label: "品名规格",
+            type: 'input'
+          },
+
+          {
+            prop: 'productCode',
+            label: "产品编码",
+            type: 'input'
+          }, {
+            prop: 'mainUnit',
+            label: "单位",
+            type: 'input'
+          },
+          {
+            prop: 'salesman',
+            label: "操作员",
+            type: 'input'
+          },
+          {
+            prop: 'deliveryDate',
+            label: '交货日期',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          {
+            prop: 'standardValue',
+            label: "规值",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'colour',
+            label: "颜色",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'processName',
+            label: "工序",
+            type: 'input',
+          },
+          {
+            prop: 'sealingCoverTyping',
+            label: "打字内容",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'accuracyLevel',
+            label: "精度等级",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'vibrationLevel',
+            label: "振动等级",
+            type: 'select',
+            options: []
+          },
+
+          {
+            prop: 'oil',
+            label: "油脂",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'oilQuantity',
+            label: "油脂量",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'clearance',
+            label: "游隙",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'packagingMethod',
+            label: "包装方式",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'specialRequire',
+            label: "特殊要求",
+            type: 'select',
+            options: []
+          },
+
+          {
+            prop: 'createTime',
+            label: '创建时间',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd HH:mm:ss",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          {
+            prop: 'createByName',
+            label: "创建人",
+            type: 'input'
+          },
+
+
+
+        ]
+        this.getProductClassFun()
+      }
+      // 外协收货通知单
+      if (this.categoryType == 'inbound_purchase' && !this.externalFlag) {
+        this.superQueryJson = [
+          {
+            prop: 'orderNo',
+            label: "单号",
+            type: 'input'
+          },
+          {
+            prop: 'partnerCode',
+            label: "供应商编码",
+            type: 'input'
+          },
+          {
+            prop: 'partnerName',
+            label: "供应商名称",
+            type: 'input'
+          },
+          {
+            prop: 'salesman',
+            label: "操作员",
+            type: 'input'
+          },
+
+          {
+            prop: 'deliverDate',
+            label: '收货日期',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          {
+            prop: 'remark',
+            label: "备注",
+            type: 'input'
+          },
+          {
+            prop: 'createTime',
+            label: '创建时间',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd HH:mm:ss",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          {
+            prop: 'createByName',
+            label: "创建人",
+            type: 'input'
+          },
+
+
+
+        ]
+      }
+      // 外协收货订单
+      if (this.categoryType == 'inbound_external' && this.externalFlag) {
+        this.superQueryJson = [
+          {
+            prop: 'orderNo',
+            label: "单号",
+            type: 'input'
+          },
+          {
+            prop: 'cooperativePartnerName',
+            label: "供应商名称",
+            type: 'input'
+          },
+          {
+            prop: 'cooperativePartnerCode',
+            label: "供应商编码",
+            type: 'input'
+          },
+
+          {
+            prop: 'drawingNo',
+            label: "品名规格",
+            type: 'input'
+          },
+
+          {
+            prop: 'productCode',
+            label: "产品编码",
+            type: 'input'
+          },
+          {
+            prop: 'processName',
+            label: "工序名称",
+            type: 'input'
+          },
+          {
+            prop: 'mainUnit',
+            label: "单位",
+            type: 'input'
+          },
+          {
+            prop: 'deliveryDate',
+            label: '交货日期',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+
+          {
+            prop: 'createTime',
+            label: '创建时间',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd HH:mm:ss",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          {
+            prop: 'createByName',
+            label: "创建人",
+            type: 'input'
+          },
+
+
+
+        ]
+      }
+      // 外协发料通知单    
+      if (this.categoryType == 'outbound_external_send' && !this.externalFlag) {
+        this.superQueryJson = [
+          {
+            prop: 'orderNo',
+            label: "单号",
+            type: 'input'
+          },
+          {
+            prop: 'partnerName',
+            label: "供应商名称",
+            type: 'input'
+          },
+          {
+            prop: 'partnerCode',
+            label: "供应商编码",
+            type: 'input'
+          },
+          {
+            prop: 'deliverDate',
+            label: '发料日期',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          {
+            prop: 'recipient',
+            label: "收件人",
+            type: 'input'
+          },
+          {
+            prop: 'phone',
+            label: "收件人电话",
+            type: 'input'
+          },
+          {
+            prop: 'delivery',
+            label: "发料方式",
+            type: 'select',
+
+            options: [
+              { label: "送货", value: "deliver_goods" },
+              { label: "自提", value: "self_pickup" },
+              { label: "快递", value: "express_delivery" },
+              { label: "货运", value: "freight_transport" },
+              { label: "到付", value: "collect_payment" },
+            ]
+          },
+          {
+            prop: 'countryName',
+            label: "国家",
+            type: 'input'
+          },
+          {
+            prop: 'provinceName',
+            label: "省",
+            type: 'input'
+          },
+          {
+            prop: 'cityName',
+            label: "市",
+            type: 'input'
+          },
+          {
+            prop: 'areaName',
+            label: "区",
+            type: 'input'
+          },
+          {
+            prop: 'address',
+            label: "地址",
+            type: 'input'
+          },
+          {
+            prop: 'exchangeGoodsFlag',
+            label: "发货标识",
+            type: 'select',
+
+            options: [
+              { label: "正常发货", value: false },
+              { label: "换货发货", value: true }
+            ]
+
+          },
+          {
+            prop: 'createTime',
+            label: '创建时间',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd HH:mm:ss",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          {
+            prop: 'createByName',
+            label: "创建人",
+            type: 'input'
+          }
+
+
+        ]
+      }
+
+      // 外协发料订单   
+      if (this.categoryType == 'outbound_external_send' && this.externalFlag) {
+        this.superQueryJson = [
+          {
+            prop: 'orderNo',
+            label: "单号",
+            type: 'input'
+          },
+          {
+            prop: 'cooperativePartnerName',
+            label: "供应商名称",
+            type: 'input'
+          },
+          {
+            prop: 'cooperativePartnerCode',
+            label: "供应商编码",
+            type: 'input'
+          },
+          {
+            prop: 'deliveryDate',
+            label: '交货日期',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          {
+            prop: 'drawingNo',
+            label: "品名规格",
+            type: 'input'
+          },
+          {
+            prop: 'productCode',
+            label: "产品编码",
+            type: 'input'
+          },
+          {
+            prop: 'processName',
+            label: "工序名称",
+            type: 'input'
+          },
+          {
+            prop: 'mainUnit',
+            label: "单位",
+            type: 'input'
+          },
+
+
+        ]
+      }
+      // 生产领料   
+      if (this.categoryType == 'outbound_pick_out') {
+        this.superQueryJson = [
+          {
+            prop: 'orderNo',
+            label: "领料单号",
+            type: 'input'
+          },
+          {
+            prop: 'receiveType',
+            label: "领料类型",
+            type: 'select',
+            options: [
+              { label: "订单物料", value: "order", },
+              { label: "工序物料", value: "process", }
+            ]
+          },
+          {
+            prop: 'productionOrderNo',
+            label: "任务单号",
+            type: 'input'
+          },
+          {
+            prop: 'personName',
+            label: "领料人",
+            type: 'input'
+          },
+          {
+            prop: 'createTime',
+            label: '创建时间',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd HH:mm:ss",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          {
+            prop: 'createByName',
+            label: "创建人",
+            type: 'input'
+          },
+
+
+
+
+        ]
+      }
+      // 生产退料   
+      if (this.categoryType == 'inbound_return_materials') {
+        this.superQueryJson = [
+          {
+            prop: 'orderNo',
+            label: "退料单号",
+            type: 'input'
+          },
+          {
+            prop: 'receiveType',
+            label: "退料类型",
+            type: 'select',
+            options: [
+              { label: "订单物料", value: "order", },
+              { label: "工序物料", value: "process", }
+            ]
+          },
+          {
+            prop: 'productionOrderNo',
+            label: "任务单号",
+            type: 'input'
+          },
+          {
+            prop: 'personName',
+            label: "退料人",
+            type: 'input'
+          },
+          {
+            prop: 'createTime',
+            label: '创建时间',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd HH:mm:ss",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          {
+            prop: 'createByName',
+            label: "创建人",
+            type: 'input'
+          },
+
+
+
+
+        ]
+      }
+      // 资产领用   
+      if (this.categoryType == 'outbound_use') {
+        this.superQueryJson = [
+          {
+            prop: 'orderNo',
+            label: "领用单号",
+            type: 'input'
+          },
+          {
+            prop: 'useApplication',
+            label: "领用目的",
+            type: 'select',
+            options: [
+              { label: "设备保养", value: "equipmentmaintain", },
+              { label: "设备维修", value: "equipmentrepair", },
+              { label: "工具保养", value: "toolmaintain", },
+              { label: "工具维修", value: "toolrepair", },
+            ]
+          },
+
+          {
+            prop: 'collectionTime',
+            label: '领用日期',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          {
+            prop: 'maintainerIdText',
+            label: "领用人",
+            type: 'input'
+          },
+
+          {
+            prop: 'createTime',
+            label: '创建时间',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd HH:mm:ss",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          {
+            prop: 'createByName',
+            label: "创建人",
+            type: 'input'
+          },
+
+
+
+
+        ]
+      }
+      // 资产归还  
+      if (this.categoryType == 'inbound_return') {
+        this.superQueryJson = [
+          {
+            prop: 'orderNo',
+            label: "归还单号",
+            type: 'input'
+          },
+
+
+          {
+            prop: 'collectionTime',
+            label: '归还日期',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          {
+            prop: 'maintainerIdText',
+            label: "归还人",
+            type: 'input'
+          },
+
+          {
+            prop: 'createTime',
+            label: '创建时间',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd HH:mm:ss",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          {
+            prop: 'createByName',
+            label: "创建人",
+            type: 'input'
+          },
+
+
+
+
+        ]
+      }
+
+       // 生产入库  
+       if (this.categoryType == 'inbound_mock_production') {
+        if(this.activeName=='product'){
+          this.superQueryJson = [
+          {
+            prop: 'orderNo',
+            label: "任务单号",
+            type: 'input'
+          },
+          {
+            prop: 'orderType',
+            label: "任务类型",
+            type: 'select',
+            options:[
+              {
+                label:"正常订单",value:"normal",
+              },
+              {
+                label:"返工订单",value:"rework",
+              }
+            ]
+          },
+          {
+            prop: 'productDrawingNo',
+            label: "品名规格",
+            type: 'input'
+          },
+          {
+            prop: 'mainUnit',
+            label: "单位",
+            type: 'input'
+          },
+          {
+            prop: 'productionPlanNo',
+            label: "计划单号",
+            type: 'input'
+          },
+          {
+            prop: 'aperture',
+            label: "孔径",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'sealingCoverTyping',
+            label: "打字内容",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'accuracyLevel',
+            label: "精度等级",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'vibrationLevel',
+            label: "振动等级",
+            type: 'select',
+            options: []
+          },
+
+          {
+            prop: 'oil',
+            label: "油脂",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'oilQuantity',
+            label: "油脂量",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'clearance',
+            label: "游隙",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'packagingMethod',
+            label: "包装方式",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'specialRequire',
+            label: "特殊要求",
+            type: 'select',
+            options: []
+          },
+         
+          {
+            prop: 'createTime',
+            label: '创建时间',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd HH:mm:ss",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          {
+            prop: 'createByName',
+            label: "创建人",
+            type: 'input'
+          },
+
+
+
+
+        ]
+        this.getProductClassFun()
+      }else{
+          this.superQueryJson = [
+          {
+            prop: 'productionOrderNo',
+            label: "任务单号",
+            type: 'input'
+          },
+          {
+            prop: 'orderNo',
+            label: "工单号",
+            type: 'input'
+          },
+          {
+            prop: 'productDrawingNo',
+            label: "品名规格",
+            type: 'input'
+          },
+          {
+            prop: 'productCode',
+            label: "产品编码",
+            type: 'input'
+          },
+          {
+            prop: 'processName',
+            label: "工序名称",
+            type: 'input'
+          },
+          {
+            prop: 'mainUnit',
+            label: "单位",
+            type: 'input'
+          },
+           
+          {
+            prop: 'createTime',
+            label: '创建时间',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd HH:mm:ss",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          
+
+
+
+
+        ]
+        }
+      
+      }
+
+
+
+
+      this.superQueryVisible = true
     },
     superQuerySearch(query) {
       this.superQueryVisible = false
-      if (this.categoryType == 'outbound_sale_send') {
-        this.fhForm.superQuery = query
+      this.superQuery = query
 
-      }
-      this.getTabdataList()
+      this.getTabdataList('super')
     },
     resetFun(type) {
       if (this.categoryType == 'outbound_sale_send' || this.categoryType == 'inbound_sale_return') {
@@ -3478,106 +4627,106 @@ export default {
         }
       }
       if (this.categoryType == 'outbound_use') {
-        this.useDateArr=[]
+        this.useDateArr = []
         this.superForm = this.outboundUseForm = {
-          stockFlag:true,
-          classAttributeList:this.classAttributeList,
-          equipmentType:"",
-        maintainerIdText:"",
-        orderNo:"",
-        pageNum:1,
-        pageSize:20,
-        requisitionType:"requisition",
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: true,
-          column: "create_time"
-        }],
-          superQuery: {}, 
+          stockFlag: true,
+          classAttributeList: this.classAttributeList,
+          equipmentType: "",
+          maintainerIdText: "",
+          orderNo: "",
+          pageNum: 1,
+          pageSize: 20,
+          requisitionType: "requisition",
+          orderItems: [{
+            asc: false,
+            column: ""
+          }, {
+            asc: true,
+            column: "create_time"
+          }],
+          superQuery: {},
         }
         this.$refs.SuperQuery.conditionList = []
-        this.searchList13=[
-        { field: 'orderNo', fieldValue: '', label: '领用单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'maintainerIdText', fieldValue: '', label: '领用人', symbol: 'like', searchType: 1, width: 120 },
-      ]
+        this.searchList13 = [
+          { field: 'orderNo', fieldValue: '', label: '领用单号', symbol: 'like', searchType: 1, width: 120 },
+          { field: 'maintainerIdText', fieldValue: '', label: '领用人', symbol: 'like', searchType: 1, width: 120 },
+        ]
         this.getTabdataList()
       }
       if (this.categoryType == 'inbound_return') {
-        this.useDateArr=[]
+        this.repayDateArr = []
         this.superForm = this.inboundReturnForm = {
-          stockFlag:true,
-          classAttributeList:this.classAttributeList,
-          equipmentType:"",
-        maintainerIdText:"",
-        orderNo:"",
-        pageNum:1,
-        pageSize:20,
-        requisitionType:"back",
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: true,
-          column: "create_time"
-        }],
-          superQuery: {}, 
+          stockFlag: true,
+          classAttributeList: this.classAttributeList,
+          equipmentType: "",
+          maintainerIdText: "",
+          orderNo: "",
+          pageNum: 1,
+          pageSize: 20,
+          requisitionType: "back",
+          orderItems: [{
+            asc: false,
+            column: ""
+          }, {
+            asc: true,
+            column: "create_time"
+          }],
+          superQuery: {},
         }
         this.$refs.SuperQuery.conditionList = []
-        this.searchList14=[
-        { field: 'orderNo', fieldValue: '', label: '归还单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'maintainerIdText', fieldValue: '', label: '归还人', symbol: 'like', searchType: 1, width: 120 },
-      ]
+        this.searchList14 = [
+          { field: 'orderNo', fieldValue: '', label: '归还单号', symbol: 'like', searchType: 1, width: 120 },
+          { field: 'maintainerIdText', fieldValue: '', label: '归还人', symbol: 'like', searchType: 1, width: 120 },
+        ]
         this.getTabdataList()
       }
     },
 
     // 领用查看详情
-    viewEquipmentFun(id,type,data){
-      if(data.equipmentType=='accessory'){
+    viewEquipmentFun(id, type, data) {
+      if (data.equipmentType == 'accessory') {
         // 配件
-        this.sparePartsVisible=true
-        this.$nextTick(()=>{
-          this.$refs.sparePartsREFForm.init(id,type)
+        this.sparePartsVisible = true
+        this.$nextTick(() => {
+          this.$refs.sparePartsREFForm.init(id, type)
         })
       }
-      if(data.equipmentType=='equipment'){
+      if (data.equipmentType == 'equipment') {
         // 设备
-        this.equipmentVisible=true
-        this.$nextTick(()=>{
-          this.$refs.quipmentREFForm.init(id,type)
+        this.equipmentVisible = true
+        this.$nextTick(() => {
+          this.$refs.quipmentREFForm.init(id, type)
         })
       }
-      if(data.equipmentType=='tool'){
+      if (data.equipmentType == 'tool') {
         // 工具
-        this.toolVisible=true
-        this.$nextTick(()=>{
-          this.$refs.toolREFForm.init(id,type)
+        this.toolVisible = true
+        this.$nextTick(() => {
+          this.$refs.toolREFForm.init(id, type)
         })
       }
     },
     // 归还查看详情
-    viewRepayFun(id,type,data){
-      if(data.equipmentType=='accessory'){
+    viewRepayFun(id, type, data) {
+      if (data.equipmentType == 'accessory') {
         // 配件
-        this.sparePartsSVisible=true
-        this.$nextTick(()=>{
-          this.$refs.sparePartsSREFForm.init(id,type)
+        this.sparePartsSVisible = true
+        this.$nextTick(() => {
+          this.$refs.sparePartsSREFForm.init(id, type)
         })
       }
-      if(data.equipmentType=='equipment'){
+      if (data.equipmentType == 'equipment') {
         // 设备
-        this.equipmentSVisible=true
-        this.$nextTick(()=>{
-          this.$refs.quipmentSREFForm.init(id,type)
+        this.equipmentSVisible = true
+        this.$nextTick(() => {
+          this.$refs.quipmentSREFForm.init(id, type)
         })
       }
-      if(data.equipmentType=='tool'){
+      if (data.equipmentType == 'tool') {
         // 工具
-        this.toolSVisible=true
-        this.$nextTick(()=>{
-          this.$refs.toolSREFForm.init(id,type)
+        this.toolSVisible = true
+        this.$nextTick(() => {
+          this.$refs.toolSREFForm.init(id, type)
         })
       }
     },
@@ -3588,7 +4737,7 @@ export default {
         if (ref == 'PickREFForm') {
           console.log(666);
           this.$refs[ref].init(id, btnType, false, 'pick')
-        } else if(ref=='OutbounduseREFForm'){
+        } else if (ref == 'OutbounduseREFForm') {
           // 设备领用查看详情
 
         } else {
@@ -3600,9 +4749,9 @@ export default {
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.visibleForm = false
-      this.toolVisible=false
-      this.equipmentVisible=false
-      this.sparePartsVisible=false
+      this.toolVisible = false
+      this.equipmentVisible = false
+      this.sparePartsVisible = false
       this.fhFormVisible = false
       this.thFormVisible = false
       this.formVisible = false
@@ -3629,11 +4778,11 @@ export default {
       this.productExternalVisible = false
       this.externalInboundFormVisible = false
       this.externalMaterOutboundFormVisible = false
-      this.equipmentOutboundVisible=false
-      this.equipmentInboundVisible=false
-      this.toolSVisible=false
-      this.sparePartsSVisible=false
-      this.equipmentSVisible=false
+      this.equipmentOutboundVisible = false
+      this.equipmentInboundVisible = false
+      this.toolSVisible = false
+      this.sparePartsSVisible = false
+      this.equipmentSVisible = false
       if (isRefresh) {
         // this.getStockMovelistFun()
         this.getPickingConfig()
@@ -3817,7 +4966,7 @@ export default {
   padding: 0 8px;
   background-color: #fff;
   margin-top: 5px;
-  margin-bottom:5px
+  margin-bottom: 5px
 }
 
 ::v-deep .el-tabs__item {

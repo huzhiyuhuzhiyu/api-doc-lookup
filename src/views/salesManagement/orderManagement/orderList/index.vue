@@ -131,11 +131,7 @@
                     </el-dropdown-item>
                     <el-dropdown-item @click.native="getCopyOrders(scope.row.id, 'copy')">
                       复制订单
-                    </el-dropdown-item>
-                    <!-- <el-dropdown-item @click.native="orderFollow(scope.row.id)"
-                      v-if="scope.row.documentStatus == 'submit'">
-                      订单跟踪
-                    </el-dropdown-item> -->
+                    </el-dropdown-item> 
                   </el-dropdown-menu>
                 </el-dropdown>
               </template>
@@ -153,8 +149,6 @@
 
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-    <OrderFollow v-if="orderFollowVisible" ref="orderFollow" @refreshDataList="initData" @close="closeForm" />
-    <OrderInfoDetail  v-if="OrderInfoDetailVisible" ref="OrderInfoDetailForm" @refreshDataList="initData" @close="closeForm" ></OrderInfoDetail>
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -164,21 +158,16 @@
 <script>
 import { UserListAll, } from '@/api/permission/user'
 import { excelExport } from '@/api/basicData/index'
-import OrderInfoDetail from './orderInfoDetail.vue'
 import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal,closeOrders } from '@/api/salesManagement/assemblyOrders'
 import Form from './Form'
-import OrderFollow from './orderFollow'
-import UserRelationList from './userRelation'
-import moment from 'moment'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
   name: 'orderList',
-  components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery,OrderInfoDetail },
+  components: { Form, ExportForm, SuperQuery },
   data() {
     return {
-      OrderInfoDetailVisible:false,
 
       superQuery: {},
       superForm: {},
@@ -192,7 +181,6 @@ export default {
 
       superQueryVisible: false,
       columnList: ["cooperativePartnerCode", "departmentName", "workOrderNo", "contractNo", "changesCount", "createByName",],
-      orderFollowVisible: false,
       productFormVisible: false,
       exportFormVisible: false,
       customList: [], // 列表中显示的自定义属性
@@ -412,13 +400,7 @@ export default {
   methods: {
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
-    },
-    viewScheduleFun(id){
-      this.OrderInfoDetailVisible=true
-      this.$nextTick(()=>{
-        this.$refs.OrderInfoDetailForm.init(id)
-      })
-    },
+    }, 
     closeOrdersFun(id){
       this.$confirm("您确定关闭该订单吗？", this.$t('提示'), {
         type: 'warning'
@@ -474,9 +456,7 @@ export default {
     },
     // 关闭新建编辑页面
     closeForm(isRefresh) {
-      this.formVisible = false
-      this.orderFollowVisible = false
-      this.OrderInfoDetailVisible=false
+      this.formVisible = false 
       if (isRefresh) {
         this.keyword = ''
         this.initData()
@@ -570,13 +550,7 @@ export default {
       this.search('basic')
     },
 
-    // 订单跟踪
-    orderFollow(id) {
-      this.orderFollowVisible = true
-      this.$nextTick(() => {
-        this.$refs.orderFollow.init(id)
-      })
-    },
+    
     addSupplier(id, btntype) {
       this.formVisible = true
       this.$nextTick(() => {

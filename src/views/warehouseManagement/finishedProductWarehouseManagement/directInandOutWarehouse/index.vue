@@ -489,6 +489,7 @@ export default {
   props: {
     warehouseCode: "",
   },
+  name:"directInandOutWarehouse",
   data() {
     return {
       scanResult: "",
@@ -506,7 +507,7 @@ export default {
         { label: "生产领料", value: "outbound_pick_out" },
         { label: "生产退料", value: "inbound_return_materials" },
         { label: "外协发料", value: "outbound_external_send" },
-        { label: "外协退料", value: "inbound_external_return" },
+        // { label: "外协退料", value: "inbound_external_return" },
         { label: "外协收货", value: "inbound_external" },
         { label: "直接入库", value: "inbound_other" },
         { label: "直接出库", value: "outbound_other" },
@@ -780,12 +781,16 @@ export default {
     },
     // 选择批次
     selectBatchNumberFun(data, index) {
+      console.log("data",data,index);
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
       this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
       this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
       let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [data.availableQuantity, data.occupancyQuantity]), 6)
       this.$set(this.productData[index], 'availableBatchNumber', num)
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
+      this.$set(this.productData[index], 'costPrice', data.price)
+      this.$set(this.productData[index], 'taxRate', data.taxRate*1)
+      this.$set(this.productData[index], 'excludingTaxCostPrice', data.excludingTaxPrice*1)
     },
     // 打开选择库位弹框
     openSeleceWareDialog(row, index) {
@@ -926,7 +931,9 @@ export default {
         item.ordersLineId = ""
         item.totalAmount = ""
         item.taxAmount = ""
-        item.taxRate = 13
+        item.taxRate = item.taxRate*1
+        item.costPrice = item.price
+        item.excludingTaxCostPrice = item.excludingTaxPrice 
         if (this.dataForm.documentType == 'inbound') {
         item.productCode = item.code
         item.productsId = item.id

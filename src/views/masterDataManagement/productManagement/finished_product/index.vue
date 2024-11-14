@@ -149,8 +149,8 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="userInfo.projectId">
-          </el-table-column>
+          <!-- <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="isProjectSwitch === '1'">
+          </el-table-column> -->
           <el-table-column prop="productStatus" label="产品状态" width="120" align="center">
             <template slot-scope="{ row }">
               <el-tag type="success" disable-transitions v-if="row.productStatus == 'enable'">启用</el-tag>
@@ -300,6 +300,7 @@ import {
   getProductList,
   deleteProduct,
   uploadCpProductData,
+  uploadUnCpProductData,
   cpAddProduct,
   checkCodeExist,
   checkDrawExist
@@ -635,7 +636,8 @@ export default {
       filterText: '',
       uploadVisib: false,
       configFlag: true,
-      unitOptions: []
+      unitOptions: [],
+      isProjectSwitch: ''
     }
   },
   watch: {
@@ -647,6 +649,7 @@ export default {
     this.getProductClassFun()
   },
   created() {
+    this.getProjectSwitch()
     if (localStorage.getItem('finishedFlag')) {
       let roleFlag = JSON.parse(localStorage.getItem('finishedFlag'))
       this.expands = roleFlag
@@ -662,6 +665,20 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
+    getProjectSwitch() {
+      let obj = {
+        businessCode: 'system',
+        pageSize: -1
+      }
+      getBimBusinessSwitchConfigList(obj).then((res) => {
+        res.data.system.forEach((item) => {
+          if (item.configKey == 'project') {
+            this.isProjectSwitch = item.configValue1
+
+          }
+        })
+      })
+    },
     dataFormatting(res) {
       return res.data[0].childrenList
     },
@@ -1431,7 +1448,12 @@ export default {
     downLoadTemplate() {
       const a = document.createElement('a')
       a.setAttribute('download', '')
-      a.setAttribute('href', location.origin + '/static/成品导入模板.xlsx')
+      if (this.configFlag) {
+        a.setAttribute('href', location.origin + '/static/成品导入模板.xlsx')
+      } else {
+        a.setAttribute('href', location.origin + '/static/成品(没有型号)导入模板.xlsx')
+      }
+
       a.click()
     },
     // 上传产品
@@ -1443,27 +1465,54 @@ export default {
       formData.append('productCategoryId', this.listQuery.productCategoryId)
       formData.append('classAttribute', this.listQuery.classAttribute)
       //调用上传文件接口
-      uploadCpProductData(formData)
-        .then((res) => {
-          if (!res.data) {
-            this.$message.success(`导入成功`)
-            this.uploadVisib = false
-            this.$refs['UploadProduct']
-            this.initData()
-          } else {
-            this.uploadVisib = false
-            this.handleMessage(res.data)
-          }
+      if (this.configFlag) {
+        uploadCpProductData(formData)
+          .then((res) => {
+            if (!res.data) {
+              this.$message.success(`导入成功`)
+              this.uploadVisib = false
+              this.$refs['UploadProduct']
+              this.initData()
+            } else {
+              this.uploadVisib = false
+              this.handleMessage(res.data)
+            }
 
-          this.formLoading = false
-          this.loadingText = ''
-        })
-        .catch((err) => {
-          this.uploadVisib = false
-          this.$message.error(`导入数据超过最大限制：500`)
-          this.formLoading = false
-          this.loadingText = ''
-        })
+            this.formLoading = false
+            this.loadingText = ''
+          })
+          .catch((err) => {
+            this.uploadVisib = false
+            // this.$message.error(`导入数据超过最大限制：500`)
+            this.$message.error(`导入失败`)
+            this.formLoading = false
+            this.loadingText = ''
+          })
+      } else {
+        uploadUnCpProductData(formData)
+          .then((res) => {
+            if (!res.data) {
+              this.$message.success(`导入成功`)
+              this.uploadVisib = false
+              this.$refs['UploadProduct']
+              this.initData()
+            } else {
+              this.uploadVisib = false
+              this.handleMessage(res.data)
+            }
+
+            this.formLoading = false
+            this.loadingText = ''
+          })
+          .catch((err) => {
+            this.uploadVisib = false
+            // this.$message.error(`导入数据超过最大限制：500`)
+            this.$message.error(`导入失败`)
+            this.formLoading = false
+            this.loadingText = ''
+          })
+      }
+
     },
     // 导入产品  下载导入错误数据
     downNoProduct(res) {

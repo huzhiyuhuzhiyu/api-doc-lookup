@@ -63,7 +63,7 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6"></el-table-column>
-                  <el-table-column prop="bomId" label="BOM" width="140" :key="444">
+                  <el-table-column prop="bomId" label="BOM" min-width="140" :key="444" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <div>{{ scope.row.bomId ? scope.row.drawingNo : "无BOM" }}</div>
                     </template>
@@ -713,6 +713,7 @@ export default {
 
 
     async fetchData(code) {
+      console.log(666);
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
@@ -749,7 +750,7 @@ export default {
           this.$set(item,'planQuantity',num)
           item.planType = 'safety_stock_plan'
           if (this.codeConfig.codeWay != 'auto') {
-            item.planNo = ""
+            item.planNo = null
           }
         })
         this.productData = data

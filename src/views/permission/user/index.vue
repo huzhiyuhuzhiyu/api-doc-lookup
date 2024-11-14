@@ -128,7 +128,7 @@
             </template>
           </el-table-column>
           <!-- 这里的 width 会被转成 min-width -->
-          <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="userInfo.projectId">
+          <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="isProjectSwitch === '1'">
           </el-table-column>
           <el-table-column prop="mobilePhone" label="手机号码" width="160" />
           <el-table-column prop="organizeName" label="所属组织" min-width="280" />
@@ -242,7 +242,7 @@
 </template>
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { excelExport, salecooperativeUsers } from '@/api/basicData/index'
+import { excelExport, salecooperativeUsers,getBimBusinessSwitchConfigList  } from '@/api/basicData/index'
 import { getDepartmentSelectorByAuth } from '@/api/permission/department'
 import {
   updateUserState,
@@ -401,6 +401,7 @@ export default {
     ...mapGetters(['userInfo'])
   },
   created() {
+    this.getProjectSwitch()
     this.getOrganizeList(true)
     if (localStorage.getItem("userFlag")) {
       let userFlag = JSON.parse(localStorage.getItem('userFlag'))
@@ -411,6 +412,20 @@ export default {
     }
   },
   methods: {
+    getProjectSwitch() {
+      let obj = {
+        businessCode: 'system',
+        pageSize: -1
+      }
+      getBimBusinessSwitchConfigList(obj).then((res) => {
+        res.data.system.forEach((item) => {
+          if (item.configKey == 'project') {
+            this.isProjectSwitch = item.configValue1
+
+          }
+        })
+      })
+    },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false

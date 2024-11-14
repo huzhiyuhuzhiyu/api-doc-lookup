@@ -360,7 +360,6 @@ export default {
   created() {
   },
   mounted() {
-    this.init()
     this.getProductClassFun()
     this.getBimBusinessDetail()
 
@@ -755,7 +754,7 @@ export default {
           this.$set(item,'planQuantity',num)
           item.planType = 'safety_stock_plan'
           if (this.codeConfig.codeWay != 'auto') {
-            item.planNo = ""
+            item.planNo = null
           }
         })
         this.productData = data

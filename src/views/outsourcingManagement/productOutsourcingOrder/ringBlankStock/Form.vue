@@ -35,8 +35,7 @@
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
-                          <!-- <el-input v-model="dataForm.cooperativePartnerName" placeholder="请选择供应商名称" @focus="openDialog">
-                      </el-input> -->
+
                           <!-- 供应商选择弹窗  -->
                           <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
                             v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
@@ -102,12 +101,13 @@
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'processName'"
                             :rules="productRules.processName">
-                            <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
-                              v-model="scope.row.processName" @change="onOrganizeChangeTwo"
-                              :tableItems="ProcessTableItems" :placeholder="'请选择工序名称'" title="选择工序" treeTitle="工序分类"
-                              :methodArr="ProcessMethodArr" :listMethod="getBimProcessList"
-                              :listRequestObj="ProcessListRequestObj" :paramsObj="{ scope }"
-                              :searchList="ProcessTableSearchList" />
+                            <ComSelect-page clearable :isdisabled="type === 'look'"
+                              :treeNodeClick="treeNodeProcessClick" v-model="scope.row.processName"
+                              @change="onOrganizeChangeTwo" :tableItems="ProcessTableItems" :placeholder="'请选择工序名称'"
+                              title="选择工序" treeTitle="工序分类" :methodArr="ProcessMethodArr"
+                              :listMethod="getBimProcessList" :listRequestObj="ProcessListRequestObj"
+                              :paramsObj="{ scope }" :searchList="ProcessTableSearchList"
+                              :listDataFormatting="listDataFormatting" />
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -363,8 +363,8 @@ export default {
       ProcessTableItems: [
         { prop: 'code', label: '工序编码' },
         { prop: 'name', label: '工序名称' },
-        { prop: 'nameEn', label: '英文名称' },
-        { prop: 'taxId', label: '税号' }
+        { prop: 'processTypeName', label: '工序类型' },
+        { prop: 'processingTypeName', label: '加工类型' }
       ],
       // 供应商搜索条件
       ProcessTableSearchList: [
@@ -766,6 +766,26 @@ export default {
         this.$set(this.dataForm, 'orderNo', data.number)
       } catch (error) { }
     },
+    listDataFormatting(res) {
+      let treeData = res.data.records.map((item) => {
+        if (item.processingType == 'self_produced') {
+          item.processingTypeName = '自制'
+        } else if (item.processingType == 'external_production') {
+          item.processingTypeName = '外协'
+        }
+        if (item.processType == 'normal') {
+          item.processTypeName = '正常工序'
+        } else if (item.processType == 'wait_assemble') {
+          item.processTypeName = '待装配工序'
+        } else if (item.processType == 'vibrate') {
+          item.processTypeName = '测振工序'
+        } else if (item.processType == 'heat_treatment') {
+          item.processTypeName = '热处理工序'
+        }
+        return item
+      })
+      return treeData
+    },
     // 产品组件回调
     addth(id, data) {
       if (data.length) {
@@ -857,7 +877,7 @@ export default {
     // 弹窗节点的点击
     treeNodeClick(data, node, listQuery) {
       if (listQuery.partnerCategoryId === data.id) return listQuery
-      listQuery.partnerCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
+      listQuery.partnerCategoryId = data.id
       listQuery.classAttribute = data.classAttribute
       return listQuery
     },
@@ -916,7 +936,15 @@ export default {
         }
       }
     },
-
+    // 弹窗节点的点击
+    treeNodeProcessClick(data, node, listQuery) {
+      console.log(data, 'ss')
+      console.log(listQuery, 'listQuery')
+      if (listQuery.productCategoryId === data.id) return listQuery
+      listQuery.productCategoryId = data.id
+      listQuery.classAttribute = data.classAttribute
+      return listQuery
+    },
     // 选择产品名称的弹框
     onOrganizeChangeTwo(val, data, paramsObj) {
       if (!data || !data.length) return
@@ -1052,36 +1080,96 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    init(data, type) {
-      let arr = data.map((item) => {
-        console.log(data, 'pp')
-        return {
-          productDrawingNo: item.externalProductDrawingNo,
-          stockInventoryLineId: item.id,
-          deliveryDate: item.deliveryDate,
-          mainUnit: item.externalMainUnit,
-          deputyUnit: item.externalDeputyUnit,
-          purchaseQuantity: Number(item.inventoryQuantity) - Number(item.outsourcingQuantity),
-          productsId: item.externalProductsId,
-          classAttribute: item.externalClassAttribute,
-          calculationDirection: item.externalCalculationDirection,
-          ratio: item.externalRatio,
-          processName: '',
-          processId: '',
-          price: item.price,
-          totalAmount: item.totalAmount,
-          taxRate: 13,
-          excludingTaxPrice: item.excludingTaxPrice,
-          taxAmount: item.taxAmount,
-          excludingTaxAmount: item.excludingTaxAmount,
-          inventoryQuantity: item.inventoryQuantity, //库存数量
-          outsourcingQuantity: item.outsourcingQuantity, //转外协数量
-          remark: item.remark,
-          outShipmentList: [
+    init(data, type, sourceType) {
+      let arr = []
+      if (sourceType === 'ring') {
+        arr = data.map((item) => {
+          console.log(data, 'pp')
+          return {
+            productDrawingNo: item.externalProductDrawingNo,
+            stockInventoryLineId: item.id,
+            deliveryDate: item.deliveryDate,
+            mainUnit: item.externalMainUnit,
+            deputyUnit: item.externalDeputyUnit,
+            purchaseQuantity: Number(item.inventoryQuantity) - Number(item.outsourcingQuantity),
+            productsId: item.externalProductsId,
+            classAttribute: item.externalClassAttribute,
+            calculationDirection: item.externalCalculationDirection,
+            ratio: item.externalRatio,
+            processName: '',
+            processId: '',
+            price: item.price,
+            totalAmount: item.totalAmount,
+            taxRate: 13,
+            excludingTaxPrice: item.excludingTaxPrice,
+            taxAmount: item.taxAmount,
+            excludingTaxAmount: item.excludingTaxAmount,
+            inventoryQuantity: item.inventoryQuantity, //库存数量
+            outsourcingQuantity: item.outsourcingQuantity, //转外协数量
+            remark: item.remark,
+            outShipmentList: [
 
+            ]
+          }
+        })
+        this.ProcessListRequestObj = {
+          code: '',
+          name: '',
+          processType: 'heat_treatment',
+          pageNum: 1,
+          pageSize: 20,
+          orderItems: [
+            {
+              asc: true,
+              column: 'create_time'
+            }
           ]
         }
-      })
+      } else {
+        arr = data.map((item) => {
+          console.log(data, 'pp')
+          return {
+            productDrawingNo: item.productDrawingNo,
+            stockInventoryLineId: item.id,
+            deliveryDate: item.deliveryDate,
+            mainUnit: item.mainUnit,
+            deputyUnit: item.deputyUnit,
+            purchaseQuantity: Number(item.inventoryQuantity),
+            productsId: item.productsId,
+            classAttribute: item.classAttribute,
+            calculationDirection: item.calculationDirection,
+            ratio: item.ratio,
+            processName: '',
+            processId: '',
+            price: item.price,
+            totalAmount: item.totalAmount,
+            taxRate: 13,
+            excludingTaxPrice: item.excludingTaxPrice,
+            taxAmount: item.taxAmount,
+            excludingTaxAmount: item.excludingTaxAmount,
+            inventoryQuantity: item.inventoryQuantity, //库存数量
+            outsourcingQuantity: item.outsourcingQuantity, //转外协数量
+            remark: item.remark,
+            outShipmentList: [
+
+            ]
+          }
+        })
+        this.ProcessListRequestObj = {
+          code: '',
+          name: '',
+          unProcessType: 'heat_treatment',
+          pageNum: 1,
+          pageSize: 20,
+          orderItems: [
+            {
+              asc: true,
+              column: 'create_time'
+            }
+          ]
+        }
+      }
+
 
       // this.fetchData('QGD')
       // 此处判断用户选择新增还是编辑
@@ -1100,27 +1188,50 @@ export default {
           })
           console.log(this.dataFormTwo.data[index].outShipmentList, 'o')
         })
-
-        let ProcessListRequestObj = {
-          code: '',
-          name: '',
-          processType: 'heat_treatment',
-          pageNum: 1,
-          pageSize: 20,
-          orderItems: [
-            {
-              asc: true,
-              column: 'create_time'
-            }
-          ]
+        if (sourceType === 'ring') {
+          let ProcessListRequestObj = {
+            code: '',
+            name: '',
+            processType: 'heat_treatment',
+            pageNum: 1,
+            pageSize: 20,
+            orderItems: [
+              {
+                asc: true,
+                column: 'create_time'
+              }
+            ]
+          }
+          getBimProcessList(ProcessListRequestObj).then(res => {
+            console.log(res, 'pjj')
+            let data = res.data.records
+            this.dataFormTwo.data[index].processName = data[0].name
+            this.dataFormTwo.data[index].processId = data[0].id
+            console.log(this.dataFormTwo.data, '[[this.dataFormTwo.data]]')
+          })
+        } else {
+          let ProcessListRequestObj = {
+            code: '',
+            name: '',
+            unProcessType: 'heat_treatment',
+            pageNum: 1,
+            pageSize: 20,
+            orderItems: [
+              {
+                asc: true,
+                column: 'create_time'
+              }
+            ]
+          }
+          getBimProcessList(ProcessListRequestObj).then(res => {
+            console.log(res, 'pjj')
+            let data = res.data.records
+            this.dataFormTwo.data[index].processName = data[0].name
+            this.dataFormTwo.data[index].processId = data[0].id
+            console.log(this.dataFormTwo.data, '[[this.dataFormTwo.data]]')
+          })
         }
-        getBimProcessList(ProcessListRequestObj).then(res => {
-          console.log(res, 'pjj')
-          let data = res.data.records
-          this.dataFormTwo.data[index].processName = data[0].name
-          this.dataFormTwo.data[index].processId = data[0].id
-          console.log(this.dataFormTwo.data, '[[this.dataFormTwo.data]]')
-        })
+
       })
 
       this.dialogTitle = type == 'add' ? '新建' : type == 'edit' ? '编辑' : `查看`

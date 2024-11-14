@@ -2,7 +2,7 @@
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="最新价格" name="latestprice">
+        <el-tab-pane label="产品价格" name="latestprice">
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
@@ -39,12 +39,13 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <div class="JNPF-common-head">
-                <div>
+                <topOpts @add="addOrUpdateHandle('', 'add')">
+                  <el-button size="mini" type="primary" icon="el-icon-plus" @click="importProductFun">导入</el-button>
                   <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
                     icon="el-icon-download" @click="exportForm">
                     导出
                   </el-button>
-                </div>
+                </topOpts>
                 <div class="JNPF-common-head-right">
                   <el-tooltip content="高级查询" placement="top" v-if="true">
                     <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -189,26 +190,50 @@
         </el-tab-pane>
       </el-tabs>
     </div>
+    <JNPF-Form v-if="formVisible" ref="JNPFForm" @refresh="refresh" @close="closeForm" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 高级查询 -->
     <SuperQuery :show="lastSuperQueryVisible" ref="SuperQuery" :columnOptions="lastSuperQueryJson"
       @superQuery="lastSuperQuerySearch" @close="lastSuperQueryVisible = false" />
     <SuperQuery :show="historySuperQueryVisible" ref="SuperQuery" :columnOptions="historySuperQueryJson"
       @superQuery="historySuperQuerySearch" @close="historySuperQueryVisible = false" />
+    <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+      :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
+      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false" :limit="1"
+        :on-preview="handlePreview" drag :on-remove="handleRemove" :on-change="handleFileChange" ref="uploadRef">
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text"><em>点击选取文件上传</em></div>
+        <div class="el-upload__tip" slot="tip">
+          只能上传.xls/.xlsx文件
+          <el-button type="text" class="topButton" icon="el-icon-download" @click="downLoadTemplate">
+            下载模板
+          </el-button>
+        </div>
+      </el-upload>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" @click="saveSubmit()">
+          提交
+        </el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getBimVehicleTypeData, deleteBimVehicleType, getPartnerOrProductData } from '@/api/basicData/index'
+import { getBimVehicleTypeData, deleteBimVehicleType, getPartnerOrProductData, uploadPartnerOrProductData } from '@/api/basicData/index'
 import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { buyFixedPointPricingDetailList } from '@/api/purchasingManagement/purchaseInquirySheet'
+import JNPFForm from './Form'
 export default {
   name: 'PartnerProduct',
-  components: { ExportForm, SuperQuery },
+  components: { JNPFForm, ExportForm, SuperQuery },
   data() {
     return {
+      uploadVisib: false,
       basicQuery: {},
       superQuery: {},
       lastSearchList: [
@@ -674,6 +699,118 @@ export default {
       this.historySuperQueryVisible = false
       this.search('super')
     },
+    // 导入
+    importProductFun() {
+
+      // this.$refs.UploadProduct.$el.querySelector('input').click()
+      this.uploadVisib = true
+
+    },
+    handleRemove(file, fileList) { },
+    handlePreview(file) { },
+    handleFileChange(file) {
+      this.file = file.raw
+    },
+    // 下载模板
+    downLoadTemplate() {
+      const a = document.createElement('a')
+      a.setAttribute('download', '')
+
+      a.setAttribute('href', location.origin + '/static/供应商价格导入模板.xlsx')
+
+
+      a.click()
+    },
+    // 上传产品
+    UploadProduct(data) {
+      this.loadingText = '正在导入数据'
+      this.formLoading = true
+      var formData = new FormData()
+      formData.append('file', data)
+      // formData.append('productCategoryId', this.listQuery.productCategoryId)
+      // formData.append('classAttribute', this.listQuery.classAttribute)
+      //调用上传文件接口
+
+      uploadPartnerOrProductData(formData)
+        .then((res) => {
+          if (!res.data) {
+            this.$message.success(`导入成功`)
+            this.uploadVisib = false
+            this.$refs['UploadProduct']
+            this.initData()
+          } else {
+            this.uploadVisib = false
+            this.handleMessage(res.data)
+          }
+
+          this.formLoading = false
+          this.loadingText = ''
+        })
+        .catch((err) => {
+          this.uploadVisib = false
+          // this.$message.error(`导入数据超过最大限制：500`)
+          this.$message.error(`导入失败`)
+          this.formLoading = false
+          this.loadingText = ''
+        })
+
+
+    },
+    // 导入产品  下载导入错误数据
+    downNoProduct(res) {
+      this.jnpf.downloadFile(res.url, res.name)
+      this.uploadVisib = false
+      this.$refs['uploadRef'].clearFiles()
+    },
+    cancelFun() {
+      this.uploadVisib = false
+      this.$refs['uploadRef'].clearFiles()
+    },
+    saveSubmit() {
+      this.UploadProduct(this.file)
+    },
+    // 提示
+    handleMessage(data) {
+      const h = this.$createElement
+      this.$message({
+        type: 'error',
+        duration: 0,
+        showClose: true,
+        customClass: 'my-message', // 自定义类名，用于设置样式
+        message: h(
+          'div',
+          {
+            style: 'padding-right:20px;display:flex;align-items:center;color:#f56c6c;'
+          },
+          [
+            h('p', { style: 'font-size:14px;' }, '导入成功，存在成品产品档案错误！'),
+            h(
+              'el-button',
+              {
+                props: {
+                  type: 'text',
+                  size: 'mini',
+                  icon: 'el-icon-download'
+                },
+                on: {
+                  click: () => {
+                    this.downNoProduct(data)
+                  }
+                },
+                style: {
+                  border: 'none',
+                  textAlign: 'center',
+                  // width:"20%",
+                  margin: '0 5px 0 5px '
+                }
+              },
+              '下载导入错误数据'
+            )
+          ]
+        )
+      })
+      return
+    },
     // 导出
     exportForm() {
       this.exportFormVisible = true
@@ -765,9 +902,7 @@ export default {
         this.initData()
       }
     },
-    moreQueries() {
-      this.visible = true
-    },
+
     initData() {
       this.listLoading = true
       console.log(this.superForm, 'this.superForm')
@@ -902,14 +1037,11 @@ export default {
       })
     },
     addOrUpdateHandle(id, type) {
-      this.depFormVisible = true
-      if (id) {
-        // setTimeout(() => {
-        this.$nextTick(() => {
-          this.$refs.depForm.init(id, type)
-        })
-        // }, 600);
-      }
+      console.log(this.superForm.classAttribute, 'this.listQuery.classAttribute')
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.JNPFForm.init(id, type, false, 'other')
+      })
     },
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {

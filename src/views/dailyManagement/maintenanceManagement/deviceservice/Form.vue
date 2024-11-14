@@ -264,7 +264,7 @@
                         <el-input v-model="scope.row.faultDescription" placeholder="请输入故障描述" :disabled="btnType == 'look' || btnType == 'start' || btnType == 'end'" maxlength="200" />
                       </template>
                     </el-table-column>
-                    <el-table-column prop="faultDescription" label="是否完成" width="90" v-if="(btnType == 'end'&&statesuc==='repair')||(btnType == 'look'&&statesuc==='repair')">
+                    <el-table-column prop="repairResult" label="是否完成" width="90" v-if="(btnType == 'end'&&statesuc==='repair')||(btnType == 'look'&&statesuc==='repair')">
                       <template slot-scope="scope">
                         <el-checkbox v-model="scope.row.repairResult" true-label="finished" false-label="not_finished" :disabled="btnType == 'look'"></el-checkbox>
                       </template>
@@ -728,10 +728,10 @@ export default {
       this.TablelistLoading = true
       RepairRequestList(obj).then(res => {
         this.tableDatalist = res.data.records.map(item => {
-          if (item.frontPic) {
+          if (item.frontPicList && item.frontPicList.length) {
             item.frontPicList = item.frontPicList.map(o => { return JSON.parse(`{${o}}`) })
           }
-          if (item.afterPic) {
+          if (item.afterPicList && item.afterPicList.length) {
             item.afterPicList = item.afterPicList.map(o => { return JSON.parse(`{${o}}`) })
           }
           item.waitDuration = this.getTimes(item.waitDuration)
@@ -775,10 +775,10 @@ export default {
       this.listLoading = true
       equEquipmentRepairKnowledgeList(obj).then(res => {
         this.tableData = res.data.records.map(item => {
-          if (item.frontPic) {
+          if (item.frontPicList && item.frontPicList.length) {
             item.frontPicList = item.frontPicList.map(o => { return JSON.parse(`{${o}}`) })
           }
-          if (item.afterPic) {
+          if (item.afterPicList && item.afterPicList.length) {
             item.afterPicList = item.afterPicList.map(o => { return JSON.parse(`{${o}}`) })
           }
           return item

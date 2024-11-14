@@ -224,6 +224,18 @@ export default {
   },
   mixins: [busFlow],
   data() {
+    var checkDateOrderStop = (rule, value, callback) => {
+      if (!this.dataForm.dateOrderStart) {
+        this.dataForm.dateOrderStop = ''
+        return callback(new Error('请先选择有效起始时间'))
+      } else {
+        if (!value) {
+          return callback(new Error('有效结束时间为空'))
+        } else {
+          callback();
+        }
+      }
+    }
     return {
       flowTemplateJson: {},
       flowData: {},
@@ -326,7 +338,8 @@ export default {
         cooperativePartnerId: 0, //  供应商id
         cooperativePartnerName: '', //  供应商名称
         cooperativePartnerCode: '',
-        
+        dateOrderStart: this.jnpf.getToday(),
+        dateOrderStop: '',
         createBy: '', //
         documentStatus: '', //  单据状态:草稿 draft、提交 submit,可用值:draft,normal,submit
         id: 0, //
@@ -351,13 +364,15 @@ export default {
       type: '',
       dataFormArr: [],
       rules: {
-        cooperativePartnerName: [{ required: true, message: '请选择供应商名称', trigger: ['change'] }]
+        cooperativePartnerName: [{ required: true, message: '请选择供应商名称', trigger: ['change'] }],
+        dateOrderStart: [{ required: true, message: '请选择有效起始时间', trigger: ['change'] }],
+        dateOrderStop: [{ required: true, validator: checkDateOrderStop, trigger: 'change' }]
         // inquiryDate: [{ required: true, message: '请选择询价日期', trigger: ['change'] }],
         // effectiveDate: [{ required: true, message: '请选择报价有效期', trigger: ['change'] }],
       },
       productRules: {
         productsName: [{ required: true, trigger: ['change'] }],
-       
+
         materialPrice: [
           { required: true, trigger: ['blur'] },
           {
@@ -596,7 +611,7 @@ export default {
             // contrastProductsId:'',              // 对比物料id
             contrastProducts: '', // 对比物料
             costPrice: '', // 对比价格
-        
+
             standardValue: item.standardValue,
             colour: item.colour,
             sealingCoverTyping: item.sealingCoverTyping,

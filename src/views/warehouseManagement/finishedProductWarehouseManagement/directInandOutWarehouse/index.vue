@@ -781,12 +781,16 @@ export default {
     },
     // 选择批次
     selectBatchNumberFun(data, index) {
+      console.log("data",data,index);
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
       this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
       this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
       let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [data.availableQuantity, data.occupancyQuantity]), 6)
       this.$set(this.productData[index], 'availableBatchNumber', num)
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
+      this.$set(this.productData[index], 'costPrice', data.price)
+      this.$set(this.productData[index], 'taxRate', data.taxRate*1)
+      this.$set(this.productData[index], 'excludingTaxCostPrice', data.excludingTaxPrice*1)
     },
     // 打开选择库位弹框
     openSeleceWareDialog(row, index) {
@@ -927,7 +931,9 @@ export default {
         item.ordersLineId = ""
         item.totalAmount = ""
         item.taxAmount = ""
-        item.taxRate = 13
+        item.taxRate = item.taxRate*1
+        item.costPrice = item.price
+        item.excludingTaxCostPrice = item.excludingTaxPrice 
         if (this.dataForm.documentType == 'inbound') {
         item.productCode = item.code
         item.productsId = item.id

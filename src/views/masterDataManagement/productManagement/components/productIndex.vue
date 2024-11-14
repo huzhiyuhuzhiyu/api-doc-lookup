@@ -134,8 +134,8 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="isProjectSwitch === '1'">
-          </el-table-column>
+          <!-- <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="isProjectSwitch === '1'">
+          </el-table-column> -->
           <el-table-column prop="productStatus" label="产品状态" width="120" align="center">
             <template slot-scope="{ row }">
               <el-tag type="success" disable-transitions v-if="row.productStatus == 'enable'">启用</el-tag>

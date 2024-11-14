@@ -311,40 +311,7 @@ export default {
     this.getclassAttributeList()
   },
   created() {
-    if (this.$route.query.alert) {
-      this.content = '新建BOM'
-    } else {
-      if (this.$route.params.content) {
-        this.content = this.$route.params.content
-      } else {
-        this.content = ''
-      }
-      if (this.$route.params.name) {
-        this.dataForm.productName = this.$route.params.name
-      } else {
-        this.dataForm.productName = ''
-      }
-      if (this.$route.params.id) {
-        this.dataForm.productId = this.$route.params.id
-      } else {
-        this.dataForm.productId = ''
-      }
-      if (this.$route.params.drawNo) {
-        this.dataForm.drawNo = this.$route.params.drawNo
-      } else {
-        this.dataForm.drawNo = ''
-      }
-      if (this.$route.params.classAttribute) {
-        this.dataForm.classAttribute = this.$route.params.classAttribute
-      } else {
-        this.dataForm.classAttribute = ''
-      }
-      if (this.$route.params.productSource) {
-        this.dataForm.productSource = this.$route.params.productSource
-      } else {
-        this.dataForm.productSource = ''
-      }
-    }
+   
     this.dataFormItems.forEach((tc) => {
       // 添加自定义表单元素方法和参数
       if (tc.type == 'custom') {

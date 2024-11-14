@@ -29,10 +29,10 @@
                           <el-form-item label="工艺路线编码" prop="code" ref="code">
                             <el-input v-model="dataForm.code" placeholder="请输入工艺路线编码" clearable
                               :style="{ width: '100%' }" maxlength="20" :disabled="type == 'look'
+                                ? true
+                                : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag
                                   ? true
-                                  : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag
-                                    ? true
-                                    : false
+                                  : false
                                 "></el-input>
                           </el-form-item>
                         </el-col>
@@ -117,10 +117,9 @@
                       |
                     </div>
 
-                    <JNPF-table :hasC="type !== 'look'" hasNO fixedNO style="border: 1px solid #e3e7ee;"
-                      ref="processRef" v-loading="responseLoading" @selection-change="handeleProductInfoData"
-                      :data="dataFormTwo" size="mini" id="table" row-key="code" :hasMove="type !== 'look'"
-                      @changeMove="changeMove">
+                    <JNPF-table :hasC="type !== 'look'" hasNO style="border: 1px solid #e3e7ee;" ref="processRef"
+                      v-loading="responseLoading" @selection-change="handeleProductInfoData" :data="dataFormTwo"
+                      size="mini" id="table" row-key="code" :hasMove="type !== 'look'" @changeMove="changeMove">
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                       <el-table-column prop="name" label="工序名称" width="180" show-overflow-tooltip>
@@ -344,10 +343,10 @@
                       <el-form-item label="工艺路线编码" prop="code" ref="code">
                         <el-input v-model="dataForm.code" placeholder="请输入工艺路线编码" clearable :style="{ width: '100%' }"
                           maxlength="20" :disabled="type == 'look'
+                            ? true
+                            : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag
                               ? true
-                              : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag
-                                ? true
-                                : false
+                              : false
                             "></el-input>
                       </el-form-item>
                     </el-col>
@@ -761,8 +760,50 @@ export default {
   methods: {
     changeMove(data) {
       data.forEach((item) => {
+        console.log(item, 'ooooo')
         item.sort = item.sortCode
+
       })
+      this.dataFormTwo = this.dataFormTwo.map((item, index) => {
+        console.log(index, 'in')
+        // 复制当前的item
+        let newItem = { ...item }
+        newItem.sort = index
+        // 如果存在下一个元素，则添加 nextId
+        if (index === 0) {
+
+          newItem.firstFlag = true
+          newItem.lastFlag = false
+          newItem.reportFlag = false
+          newItem.stockFlag = false
+        }
+        if (index === this.dataFormTwo.length - 1) {
+
+          newItem.firstFlag = false
+          newItem.lastFlag = true
+          newItem.reportFlag = true
+          newItem.stockFlag = true
+        }
+        if (index < this.dataFormTwo.length - 1 && index !== 0) {
+
+          newItem.firstFlag = false
+          newItem.lastFlag = false
+          newItem.reportFlag = false
+          newItem.stockFlag = false
+        }
+
+        // 如果存在上一个元素，则添加 previousId
+        if (index > 0 && index !== this.dataFormTwo.length - 1) {
+
+          newItem.firstFlag = false
+          newItem.lastFlag = false
+          newItem.reportFlag = false
+          newItem.stockFlag = false
+        }
+
+        return newItem // 返回修改后的对象
+      })
+      console.log(this.dataFormTwo)
     },
     async fetchData(code, flag) {
       try {

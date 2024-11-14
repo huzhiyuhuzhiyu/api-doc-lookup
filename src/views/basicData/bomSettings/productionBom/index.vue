@@ -71,7 +71,7 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:8px">
-          <topOpts @add="add()">
+          <topOpts @add="addOrUpdateHandle()">
             <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
             <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
               icon="el-icon-download" @click="exportForm">
@@ -383,9 +383,9 @@ export default {
           this.loadingText = ''
         })
         .catch((err) => {
+          console.log(err, 'err')
           this.uploadVisib = false
-          // this.$message.error(`导入数据超过最大限制：500`)
-          this.$message.error(`导入失败`)
+          console.log(err, 'err')
           this.formLoading = false
           this.loadingText = ''
         })
@@ -419,7 +419,7 @@ export default {
             style: 'padding-right:20px;display:flex;align-items:center;color:#f56c6c;'
           },
           [
-            h('p', { style: 'font-size:14px;' }, '导入成功，存在BOM导入错误！'),
+            h('p', { style: 'font-size:14px;' }, '导入成功，存在BOM相关信息错误！'),
             h(
               'el-button',
               {
@@ -579,8 +579,12 @@ export default {
       })
     },
     add() {
-      this.$router.push({
-        path: '/basicData/bomSettings/BOMCreate', query: { alert: "新建" }
+      // this.$router.push({
+      //   path: '/basicData/bomSettings/BOMCreate', query: { alert: "新建" }
+      // })
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(id, btnType || 'add', false, approvalStatus)
       })
     },
     handleDel(id) {

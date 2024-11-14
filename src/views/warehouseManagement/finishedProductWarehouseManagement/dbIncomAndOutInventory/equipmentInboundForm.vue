@@ -65,8 +65,8 @@
                           </el-col>
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="检验结果" prop="inspectionResults">
-                              <el-select v-model="dataForm.inspectionResults" placeholder="请选择检验结果" :disabled="btnType == 'look' ? true : false"
-                                style="width: 100%;">
+                              <el-select v-model="dataForm.inspectionResults" placeholder="请选择检验结果"
+                                :disabled="btnType == 'look' ? true : false" style="width: 100%;">
                                 <el-option v-for="(item, index) in inspectionResultsList" :key="index"
                                   :label="item.label" :value="item.value"></el-option>
                               </el-select>
@@ -104,8 +104,8 @@
 
                         <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6" show-overflow-tooltip>
                         </el-table-column>
-          <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" sortable="custom" />
-          <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
+                        <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" />
+                        <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
 
                         <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112"
                           v-if="allocationFlag">
@@ -203,7 +203,8 @@
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="检验结果" prop="inspectionResults">
-                          <el-select v-model="dataForm.inspectionResults" placeholder="请选择检验结果" style="width: 100%;" :disabled="btnType == 'look'"> 
+                          <el-select v-model="dataForm.inspectionResults" placeholder="请选择检验结果" style="width: 100%;"
+                            :disabled="btnType == 'look'">
                             <el-option v-for="(item, index) in inspectionResultsList" :key="index" :label="item.label"
                               :value="item.value"></el-option>
                           </el-select>
@@ -239,7 +240,7 @@
 
                     <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6" show-overflow-tooltip>
                     </el-table-column>
-          <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" sortable="custom" />
+                    <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
 
                     <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112" v-if="allocationFlag">
@@ -331,7 +332,7 @@
                 <el-table-column prop="collectionTime" label="领用日期" width="180" sortable="custom" />
 
                 <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
-          <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" sortable="custom" />
+                <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" sortable="custom"/>
                 <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="90" sortable="custom" />
                 <el-table-column prop="awitNum" label="待归还数量" width="150" sortable="custom" />
@@ -523,17 +524,17 @@ export default {
       approvalFlag: false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
       endTime: 0,
-      productNameFlag:null,
+      productNameFlag: null,
 
     }
   },
   created() {
     let objs = { "pageSize": -1, "businessCode": "product" }
-      getBimBusinessSwitchConfigList(objs).then(res => {
-        this.productNameFlag = res.data.product[1].configValue1 == '1' ? true : false
-       
-        
-      })
+    getBimBusinessSwitchConfigList(objs).then(res => {
+      this.productNameFlag = res.data.product[1].configValue1 == '1' ? true : false
+
+
+    })
   },
   watch: {
     "dataForm.warehouseId": {
@@ -601,7 +602,7 @@ export default {
       equRequisitionRecordsproducts(this.productForm).then(res => {
         if (res.data.records.length) {
           res.data.records.forEach(item => {
-            this.$set(item,'productsId',item.productId)
+            this.$set(item, 'productsId', item.productId)
             this.$set(item, 'num', this.jnpf.numberFormat(this.jnpf.math('subtract', [item.requisitionNum, item.incomingOutgoingNum]), 2))
             this.$set(item, 'awitNum', this.jnpf.numberFormat(this.jnpf.math('subtract', [item.requisitionNum, item.incomingOutgoingNum]), 2))
             this.$set(item, 'warehouseCodeLineList', [])
@@ -879,8 +880,8 @@ export default {
               item.noticeLineId = ""
               item.sourceNo = this.dataForm.sourceNo
               item.ordersId = res.data.requisition.id
-            this.$set(item,'productsId',item.productId)
-            item.ordersLineId = item.id
+              this.$set(item, 'productsId', item.productId)
+              item.ordersLineId = item.id
               item.num = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.requisitionNum, item.incomingOutgoingNum]), 2)
               this.$set(item, 'unReceiveQuantity', item.num)
               this.$set(item, 'warehouseCodeLineList', [])

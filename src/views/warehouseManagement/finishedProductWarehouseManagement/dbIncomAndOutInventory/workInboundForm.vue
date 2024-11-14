@@ -85,7 +85,7 @@
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                           show-overflow-tooltip> </el-table-column>
                         <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160"
-                          sortable="custom" />
+                           />
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                         <el-table-column prop="processName" label="工序" width="120" />
 
@@ -197,8 +197,7 @@
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                       show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160"
-                      sortable="custom" />
+                    <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160"  />
                     <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                     <el-table-column prop="processName" label="工序" width="120" />
 
@@ -296,8 +295,8 @@
                 <el-table-column prop="productionOrderNo" label="任务单号" width="180" />
                 <el-table-column prop="orderNo" label="工单号" width="180" />
                 <el-table-column prop="productDrawingNo" label="品名规格" width="300" />
-                <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160"
-                  sortable="custom" />
+                 <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160"
+                   />
                 <el-table-column prop="productName" label="产品编码" width="160" />
 
                 <el-table-column prop="processName" label="工序名称" width="160" />

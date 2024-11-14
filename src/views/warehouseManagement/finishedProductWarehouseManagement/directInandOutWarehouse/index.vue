@@ -98,9 +98,9 @@
 
                       <el-table-column prop="drawingNo" label="品名规格" min-width="300" :key="6"
                         v-if="dataForm.documentType == 'inbound'"> </el-table-column>
-                      <el-table-column prop="productName" label="产品名称" min-width="160" sortable="custom"
+                      <el-table-column prop="productName" label="产品名称" min-width="160" 
                         v-if="dataForm.documentType == 'outbound' && productNameFlag" />
-                      <el-table-column prop="name" label="产品名称" min-width="160" sortable="custom"
+                      <el-table-column prop="name" label="产品名称" min-width="160" 
                         v-if="dataForm.documentType == 'inbound' && productNameFlag" />
                       <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                       <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"

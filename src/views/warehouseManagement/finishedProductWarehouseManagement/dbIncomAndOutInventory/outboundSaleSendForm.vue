@@ -91,7 +91,7 @@
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                           show-overflow-tooltip> </el-table-column>
                         <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160"
-                          sortable="custom" />
+                           />
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
 
                         <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
@@ -236,8 +236,7 @@
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                       show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160"
-                      sortable="custom" />
+                    <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
 
                     <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
@@ -362,8 +361,8 @@
                 <el-table-column prop="ordersNo" label="订单号" width="180" sortable="custom" />
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
                 <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
-                <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160"
-                  sortable="custom" />
+                 <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" sortable="custom"
+                   />
                 <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
                 <el-table-column prop="ordersNum" label="数量" width="80" sortable="custom" />

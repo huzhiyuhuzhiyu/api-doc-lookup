@@ -101,7 +101,7 @@
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" :key="6"
                           show-overflow-tooltip> </el-table-column>
                         <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160"
-                          sortable="custom" />
+                           />
                         <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
 
                         <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112"
@@ -325,8 +325,7 @@
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" :key="6"
                       show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160"
-                      sortable="custom" />
+                    <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160"  />
                     <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
 
                     <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112" v-if="allocationFlag">
@@ -505,8 +504,8 @@
                 @selection-change="handleSelectionChangeAllPruduct" ref="form">
                 <el-table-column prop="orderNo" label="任务单号" width="180" />
                 <el-table-column prop="productDrawingNo" label="品名规格" width="300" />
-                <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160"
-                  sortable="custom" />
+                 <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" sortable="custom"
+                   />
                 <el-table-column v-if="classAttribute == 'finish_product'" prop="productCode" label="产品编码"
                   width="140" />
                 <el-table-column prop="mainUnit" label="单位" width="80" />

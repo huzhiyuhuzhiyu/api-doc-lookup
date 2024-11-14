@@ -234,75 +234,56 @@
         </el-button>
       </span>
     </el-dialog>
-    <el-dialog title="快速创建" :visible.sync="quickVisible" width="60%" :before-close="handleClose"
+    <el-dialog title="快速创建" :visible.sync="quickVisible" width="30%" :before-close="handleClose"
       class="JNPF-dialog JNPF-dialog_center" :close-on-click-modal="false" :close-on-press-escape="false">
       <el-form :model="quickForm" :rules="quickRules" ref="quickForm" label-width="100px" labelPosition="top"
         hide-required-asterisk="fasle" :close-on-click-modal="false">
-        <el-row :gutter="30">
-          <el-col :span="12" v-if="isProductNameSwitch === '1'">
-            <el-form-item label="产品名称" prop="name">
-              <template slot="label">
-                产品名称
-                <span class="required">*</span>
-              </template>
-              <el-input v-model="quickForm.name" placeholder="请输入产品名称"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品编码" prop="code">
-              <template slot="label">
-                产品编码
-                <span class="required">*</span>
-              </template>
-              <el-input v-model="quickForm.code" placeholder="请输入产品编码" :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true
-                "></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="品名规格" prop="drawingNo">
-              <template slot="label">
-                品名规格
-                <span class="required">*</span>
-              </template>
-              <el-input v-model="quickForm.drawingNo" placeholder="请输入品名规格"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品分类" prop="productCategoryName">
-              <template slot="label">
-                产品分类
-                <span class="required">*</span>
-              </template>
-              <ComSelect-list v-model="quickForm.productCategoryName" placeholder="请选择产品分类" auth
-                @change="productCategoryChange" :title="'选择产品分类'" :method="getcategoryCoop"
-                :requestObj="quickRequestObj" :dataFormatting="dataFormatting" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="单位" prop="unit">
-              <template slot="label">
-                单位
-                <span class="required">*</span>
-              </template>
-              <el-select v-model="quickForm.unit" placeholder="请选择单位" style="width: 100%;" filterable>
-                <el-option v-for="item in unitOptions" :key="item.value" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品来源" prop="productSource">
-              <template slot="label">
-                产品来源
-                <span class="required">*</span>
-              </template>
-              <el-select v-model="quickForm.productSource" placeholder="请选择产品来源" style="width: 100%;">
-                <el-option v-for="item in productSourceOptions" :key="item.value" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
+        <el-form-item label="产品编码" prop="code">
+          <template slot="label">
+            产品编码
+            <span class="required">*</span>
+          </template>
+          <el-input v-model="quickForm.code" placeholder="请输入产品编码"
+            :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true"></el-input>
+        </el-form-item>
+
+        <el-form-item label="品名规格" prop="drawingNo">
+          <template slot="label">
+            品名规格
+            <span class="required">*</span>
+          </template>
+          <el-input v-model="quickForm.drawingNo" placeholder="请输入品名规格"></el-input>
+        </el-form-item>
+
+        <el-form-item label="产品分类" prop="productCategoryName">
+          <template slot="label">
+            产品分类
+            <span class="required">*</span>
+          </template>
+          <ComSelect-list v-model="quickForm.productCategoryName" placeholder="请选择产品分类" auth
+            @change="productCategoryChange" :title="'选择产品分类'" :method="getcategoryCoop" :requestObj="quickRequestObj"
+            :dataFormatting="dataFormatting" />
+        </el-form-item>
+        <el-form-item label="单位" prop="unit">
+          <template slot="label">
+            单位
+            <span class="required">*</span>
+          </template>
+          <el-select v-model="quickForm.unit" placeholder="请选择单位" style="width: 100%;" filterable>
+            <el-option v-for="item in unitOptions" :key="item.value" :label="item.label"
+              :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="产品来源" prop="productSource">
+          <template slot="label">
+            产品来源
+            <span class="required">*</span>
+          </template>
+          <el-select v-model="quickForm.productSource" placeholder="请选择产品来源" style="width: 100%;">
+            <el-option v-for="item in productSourceOptions" :key="item.value" :label="item.label"
+              :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
@@ -337,8 +318,8 @@ import {
 } from '@/api/masterDataManagement/index'
 import { getUnitData, detailUnitData } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getCooperativeData } from '@/api/basicData/index'
-import { getBimBusinessSwitchConfigList, getBimBusinessDetail } from '@/api/basicData/index'
-import { mapGetters } from 'vuex'
+import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
+import { mapGetters } from "vuex"
 export default {
   components: { Form, ExportForm, aiForm, SuperQuery },
   name: 'finished_product',
@@ -347,7 +328,6 @@ export default {
       exportFormVisible: false,
       quickVisible: false,
       quickForm: {
-        name: '',
         code: '',
         drawingNo: '',
         unit: '',
@@ -356,36 +336,32 @@ export default {
       },
       codeConfig: {},
       quickRules: {
-        name: [{ required: true, message: '请输入产品名称', trigger: 'blur' }],
-        code: [
-          { required: true, message: '请输入产品编码', trigger: 'blur' },
-          {
-            validator: (rule, value, callback) => {
-              if (!value) {
-                callback()
-              } else if (this.quickForm.code === this.autoDrawingNo) {
-                callback()
-              } else {
-                // this.jnpf.specialCodeUrl 对浏览器无法解析的url字符进行手动转码
-                checkCodeExist({
-                  id: this.quickForm.id || '',
-                  code: this.jnpf.specialCodeUrl(this.quickForm.code)
+        code: [{ required: true, message: '请输入产品编码', trigger: 'blur' }, {
+          validator: (rule, value, callback) => {
+            if (!value) {
+              callback()
+            } else if (this.quickForm.code === this.autoDrawingNo) {
+              callback()
+            } else {
+              // this.jnpf.specialCodeUrl 对浏览器无法解析的url字符进行手动转码
+              checkCodeExist({
+                id: this.quickForm.id || '',
+                code: this.jnpf.specialCodeUrl(this.quickForm.code)
+              })
+                .then((res) => {
+                  if (!res.data) {
+                    callback()
+                  } else {
+                    callback(new Error('此产品编码已存在'))
+                  }
                 })
-                  .then((res) => {
-                    if (!res.data) {
-                      callback()
-                    } else {
-                      callback(new Error('此产品编码已存在'))
-                    }
-                  })
-                  .catch((err) => {
-                    callback(new Error(' '))
-                  })
-              }
-            },
-            trigger: 'blur'
-          }
-        ],
+                .catch((err) => {
+                  callback(new Error(' '))
+                })
+            }
+          },
+          trigger: 'blur'
+        }],
         drawingNo: [
           { required: true, message: '请输入品名规格', trigger: 'blur' },
           {
@@ -673,7 +649,6 @@ export default {
     this.getProductClassFun()
   },
   created() {
-    this.getProductNameSwitch()
     this.getProjectSwitch()
     if (localStorage.getItem('finishedFlag')) {
       let roleFlag = JSON.parse(localStorage.getItem('finishedFlag'))
@@ -690,15 +665,7 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
-    getProductNameSwitch() {
-      let obj = {
-        businessCode: 'product',
-        configKey: 'enable_productName'
-      }
-      getBimBusinessDetail(obj).then((res) => {
-        this.isProductNameSwitch = res.data.configValue1
-      })
-    },
+ 
     getProjectSwitch() {
       let obj = {
         businessCode: 'system',
@@ -708,6 +675,7 @@ export default {
         res.data.system.forEach((item) => {
           if (item.configKey == 'project') {
             this.isProjectSwitch = item.configValue1
+
           }
         })
       })
@@ -1444,7 +1412,7 @@ export default {
     addOrUpdateHandle(id, btnType, flag) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType, flag, this.isProductNameSwitch)
+        this.$refs.Form.init(id, btnType, flag)
       })
     },
     handleDel(id) {
@@ -1545,6 +1513,7 @@ export default {
             this.loadingText = ''
           })
       }
+
     },
     // 导入产品  下载导入错误数据
     downNoProduct(res) {

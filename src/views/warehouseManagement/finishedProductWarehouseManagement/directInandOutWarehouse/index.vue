@@ -507,7 +507,7 @@ export default {
         { label: "生产领料", value: "outbound_pick_out" },
         { label: "生产退料", value: "inbound_return_materials" },
         { label: "外协发料", value: "outbound_external_send" },
-        { label: "外协退料", value: "inbound_external_return" },
+        // { label: "外协退料", value: "inbound_external_return" },
         { label: "外协收货", value: "inbound_external" },
         { label: "直接入库", value: "inbound_other" },
         { label: "直接出库", value: "outbound_other" },

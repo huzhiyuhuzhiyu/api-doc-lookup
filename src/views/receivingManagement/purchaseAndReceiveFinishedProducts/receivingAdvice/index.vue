@@ -25,7 +25,7 @@
             </template>
             <el-col :span="6">
               <el-form-item>
-                <el-date-picker v-model="rdeDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
+                <el-date-picker v-model="deliverDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
                   start-placeholder="收货开始日期" end-placeholder="收货结束日期" clearable></el-date-picker>
               </el-form-item>
             </el-col>
@@ -166,7 +166,7 @@ export default {
       superForm: {},
       superQueryVisible: false,
       columnList: ['partnerCode', 'createByName'],
-      rdeDateArr: [],
+      deliverDateArr: [],
       exportFormVisible: false,
       qxbtnLoading: false,
       hbbtnLoading: false,
@@ -273,7 +273,7 @@ export default {
       },
       createTimeArr: [],
       deliveryDateArr: [],
-      orderDateArr: [],
+
       total: 0,
       diagramVisible: false,
       formVisible: false,
@@ -443,12 +443,12 @@ export default {
       this.search('super')
     },
     search(type) {
-      if (this.rdeDateArr.length > 0) {
-        this.superForm.rdsDate = this.rdeDateArr[0]
-        this.superForm.rdeDate = this.rdeDateArr[1]
+      if (this.deliverDateArr.length > 0) {
+        this.superForm.deliverDateStart = this.deliverDateArr[0]
+        this.superForm.deliverDateEnd = this.deliverDateArr[1]
       } else {
-        this.superForm.rdsDate = ''
-        this.superForm.rdeDate = ''
+        this.superForm.deliverDateStart = ''
+        this.superForm.deliverDateEnd = ''
       }
 
       Object.keys(this.superForm).forEach((key) => {
@@ -480,8 +480,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.createTimeArr = []
-      this.orderDateArr = []
-      this.deliveryDateArr = []
+      this.deliverDateArr = []
       this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
       this.searchList = [
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },

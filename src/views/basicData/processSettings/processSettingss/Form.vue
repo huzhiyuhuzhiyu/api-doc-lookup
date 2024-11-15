@@ -264,12 +264,10 @@
                         <template slot-scope="scope">
                           <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row" :rules="rulesTwo">
                             <el-form-item prop="stockFlag" ref="stockFlag">
-                              <el-checkbox v-model="scope.row.stockFlag" :true-label="1" :disabled="scope.row.defaultFlag ||
-                                scope.$index === dataFormTwo.length - 1 ||
-                                type === 'look' ||
-                                scope.row.processingType === 'external_production'
-                                " :false-label="0">
-                                {{ scope.row.lastFlag ? '是' : '否' }}
+                              <el-checkbox v-model="scope.row.stockFlag" :disabled="scope.$index === dataFormTwo.length - 1 ||
+                                type === 'look'
+                                ">
+                                {{ scope.row.stockFlag ? '是' : '否' }}
                               </el-checkbox>
                             </el-form-item>
                           </el-form>
@@ -497,18 +495,18 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop="stockFlag" label="是否入库" width="90">
-                    <template slot-scope="scope">
-                      <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row" :rules="rulesTwo">
-                        <el-form-item prop="stockFlag" ref="stockFlag">
-                          <el-checkbox v-model="scope.row.stockFlag" :true-label="1" :disabled="scope.row.defaultFlag ||
-                            scope.$index === dataFormTwo.length - 1 ||
-                            type === 'look' ||
-                            scope.row.processingType === 'external_production'
-                            " :false-label="0"></el-checkbox>
-                        </el-form-item>
-                      </el-form>
-                    </template>
-                  </el-table-column>
+                        <template slot-scope="scope">
+                          <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row" :rules="rulesTwo">
+                            <el-form-item prop="stockFlag" ref="stockFlag">
+                              <el-checkbox v-model="scope.row.stockFlag" :disabled="scope.$index === dataFormTwo.length - 1 ||
+                                type === 'look'
+                                ">
+                                {{ scope.row.stockFlag ? '是' : '否' }}
+                              </el-checkbox>
+                            </el-form-item>
+                          </el-form>
+                        </template>
+                      </el-table-column>
 
                   <el-table-column prop="lastFlag" label="是否末道工序" width="120">
                     <template slot-scope="scope">

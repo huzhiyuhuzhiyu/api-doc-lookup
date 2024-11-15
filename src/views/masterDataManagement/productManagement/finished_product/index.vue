@@ -1432,12 +1432,10 @@ export default {
     },
     // 导入
     importForm() {
-      if (!this.listQuery.productCategoryId) {
-        this.$message.warning('请先选择产品分类')
-      } else {
-        // this.$refs.UploadProduct.$el.querySelector('input').click()
-        this.uploadVisib = true
-      }
+
+      // this.$refs.UploadProduct.$el.querySelector('input').click()
+      this.uploadVisib = true
+
     },
     handleRemove(file, fileList) { },
     handlePreview(file) { },
@@ -1462,7 +1460,7 @@ export default {
       this.formLoading = true
       var formData = new FormData()
       formData.append('file', data)
-      formData.append('productCategoryId', this.listQuery.productCategoryId)
+      // formData.append('productCategoryId', this.listQuery.productCategoryId)
       formData.append('classAttribute', this.listQuery.classAttribute)
       //调用上传文件接口
       if (this.configFlag) {

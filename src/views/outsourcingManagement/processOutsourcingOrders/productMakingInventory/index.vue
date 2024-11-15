@@ -61,7 +61,7 @@
             custom-column :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" width="150" sortable="custom" />
-            <el-table-column prop="productName" label="工序名称" min-width="180" sortable="custom" />
+            <el-table-column prop="processName" label="工序名称" min-width="180" sortable="custom" />
             <el-table-column prop="productCategoryName" label="产品分类" width="120" sortable="custom" />
             <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="60" />

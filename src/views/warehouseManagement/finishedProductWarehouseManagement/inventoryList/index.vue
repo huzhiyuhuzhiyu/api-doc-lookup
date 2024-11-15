@@ -165,7 +165,7 @@
     </div>
 
 
-    <Form v-if="formVisible" ref="Form" @close="closeForm" />
+    <Form v-if="formVisible" ref="Form" @close="closeForm" :warehouseCode="warehouseCode"/>
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <ProductInboundForm v-if="productInboundFormVisible" ref="productInboundREFForm" @close="closeForm">
     </ProductInboundForm>
@@ -230,7 +230,7 @@ import SaleOutboundForm from '../dbIncomAndOutInventory/saleOutboundForm.vue'
 import ExternalMaterOutboundForm from '../dbIncomAndOutInventory/externalMaterialsForm.vue'
 import PurchaseOrderInboundForm from '../dbIncomAndOutInventory/purchaseOrderInboundForm.vue'
 import ExternalInboundForm from '../dbIncomAndOutInventory/externalInboundForm.vue'
-import Form from './Form'
+import Form from '../directInandOutWarehouse/index.vue' 
 import outboundUseForm from '../dbIncomAndOutInventory/equipmentOutboundForm.vue'
 import InboundReturnForm from '../dbIncomAndOutInventory/equipmentInboundForm.vue'
 export default {
@@ -448,7 +448,7 @@ export default {
       }
     },
     viewFun(id, type, row) {
-      console.log(row);
+    
       if (row.businessType == 'inbound_order_production') {
         this.productInboundFormVisible = true
         this.$nextTick(() => {
@@ -470,10 +470,10 @@ export default {
           this.$nextTick(() => {
             this.$refs.outboundSaleSendREFForm.init(id, type, row.businessType, this.classAttributeList)
           })
-        } else {
+        } else { 
           this.formVisible = true
           this.$nextTick(() => {
-            this.$refs.Form.init(id, type)
+            this.$refs.Form.init(id, type,this.warehouseCode)
           })
         }
       } else if (row.businessType == 'inbound_sale_return') {
@@ -495,7 +495,7 @@ export default {
         } else {
           this.formVisible = true
           this.$nextTick(() => {
-            this.$refs.Form.init(id, type)
+            this.$refs.Form.init(id, type,this.warehouseCode)
           })
         }
 
@@ -518,7 +518,7 @@ export default {
         } else {
           this.formVisible = true
           this.$nextTick(() => {
-            this.$refs.Form.init(id, type)
+            this.$refs.Form.init(id, type,this.warehouseCode)
           })
         }
 
@@ -540,7 +540,7 @@ export default {
         } else {
           this.formVisible = true
           this.$nextTick(() => {
-            this.$refs.Form.init(id, type)
+            this.$refs.Form.init(id, type,this.warehouseCode)
           })
         }
       } else if (row.businessType == 'outbound_pick_out') {
@@ -582,12 +582,7 @@ export default {
       }
 
     },
-    editFun(id, type) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, type)
-      })
-    },
+    
     addSupplier() {
       this.formVisible = true
       this.$nextTick(() => {

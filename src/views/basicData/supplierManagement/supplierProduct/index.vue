@@ -783,7 +783,7 @@ export default {
             style: 'padding-right:20px;display:flex;align-items:center;color:#f56c6c;'
           },
           [
-            h('p', { style: 'font-size:14px;' }, '导入成功，存在成品产品档案错误！'),
+            h('p', { style: 'font-size:14px;' }, '导入成功，存在供应商产品相关错误！'),
             h(
               'el-button',
               {

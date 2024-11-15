@@ -55,6 +55,7 @@ export default {
       tagsIcon: state => state.settings.tagsIcon,
     }),
     visitedViews() {
+      this.$store.state.tagsView.visitedViews = this.$store.state.tagsView.visitedViews.filter(item => item.path !== '/')
       return this.$store.state.tagsView.visitedViews
     },
     routes() {

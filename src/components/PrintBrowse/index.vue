@@ -150,8 +150,9 @@ export default {
           }
 
           if (this.$refs.tsPrint && this.data.pageType === 'custom') {
-            let upperMoneyList = this.$refs.tsPrint.querySelectorAll('[data-tag="T1.UpperMoney"]')
-            let totalList = this.$refs.tsPrint.querySelectorAll('[data-tag="T1.total"]')
+            let upperMoneyList = this.$refs.tsPrint.querySelectorAll('[data-tag="T1.大写子表金额合计"]')
+            let totalList = this.$refs.tsPrint.querySelectorAll('[data-tag="T1.小写子表金额合计"]')
+            let numList = this.$refs.tsPrint.querySelectorAll('[data-tag="T1.子表数量合计"]')
             let pageNumList = this.$refs.tsPrint.querySelectorAll('[data-tag="pageNum.pageNum"]')
             let pageSizeList = this.$refs.tsPrint.querySelectorAll('[data-tag="pageSize.pageSize"]')
             let TbarCodeEl = this.$refs.tsPrint.querySelectorAll('[data-tag="T1.bar_code"]')
@@ -161,8 +162,9 @@ export default {
               this.data.T1.forEach((e, i) => {
                 // pageSizeList[i].innerHTML = this.data.T1.length
                 pageSizeList && pageSizeList[i] && (pageSizeList[i].textContent = this.data.T1.length)
-                upperMoneyList && upperMoneyList[i] && (upperMoneyList[i].textContent = e.UpperMoney)
-                totalList && totalList[i] && (totalList[i].textContent = e.total)
+                upperMoneyList && upperMoneyList[i] && (upperMoneyList[i].textContent = e['大写子表金额合计'])
+                totalList && totalList[i] && (totalList[i].textContent = e['小写子表金额合计'])
+                numList && numList[i] && (numList[i].textContent = e['子表数量合计'])
                 pageNumList && pageNumList[i] && (pageNumList[i].textContent = i + 1)
                 if (TbarCodeEl && TbarCodeEl[i]) {
                   let str = TbarCodeEl[i].innerHTML
@@ -235,6 +237,8 @@ export default {
           tds.cells[j].style.height = '22px'
           tds.cells[j].style.border = '1px solid gray'
           let spanList = tds.cells[j].getElementsByTagName('span')
+          console.log(spanList,'spanList');
+          
           for (let i = 0; i < spanList.length; i++) {
             if (`{${key}}` === spanList[i].innerHTML) {
               spanList[i].innerHTML = data[key]
@@ -244,11 +248,32 @@ export default {
       }
       return tds
     },
+    getAttribute(element,dataName){
+      if (!element) return
+      const val= element.getAttribute(dataName)
+        if(val){return val}
+        if(element.children.length){
+            for(let item of element.children){
+                const v = this.getAttribute(item,dataName)
+                if(v){
+                    return v
+                }
+            }
+        }
+        return null
+    
+    },
     // 固定头尾分页使用
     retrieveData(dataTag, tableObj, tds, newTable, j) {
       if (dataTag == 'T1') {
         inner: for (let c = 0; c < this.data.T1[j].pagedata.length; c++) {
           newTable.push(this.shengchengtable(this.data.T1[j].pagedata[c], tds.cloneNode(true)))
+         
+          
+          if(this.getAttribute(tds,"data-tag") ==='T1.大写子表金额合计'){
+            console.log("单行生成 return")
+            return 
+          }
           if (c === this.data.T1[j].pagedata.length - 1) {
             newTable = []
           }
@@ -392,8 +417,9 @@ export default {
           if (pageNum === pageSize || ( i === data.length - 1)) {
 
             printTable.push({
-              total: pagedata.reduce((accumulator, currentValue) => (accumulator * 1 ? accumulator * 1 : '') + currentValue.total_amount * 1, 0),
-              UpperMoney: this.digitUppercase(pagedata.reduce((accumulator, currentValue) => accumulator + currentValue.total_amount * 1, 0).toFixed(2)),
+              '小写子表金额合计': pagedata.reduce((accumulator, currentValue) => (accumulator * 1 ? accumulator * 1 : '') + currentValue['子表金额'] * 1, 0),
+              '子表数量合计': pagedata.reduce((accumulator, currentValue) => (accumulator * 1 ? accumulator * 1 : '') + currentValue['子表数量'] * 1, 0),
+              '大写子表金额合计': this.digitUppercase(pagedata.reduce((accumulator, currentValue) => accumulator + currentValue['子表金额'] * 1, 0).toFixed(2)),
               pagedata: pagedata
             })
             pagedata = []
@@ -402,8 +428,9 @@ export default {
         }
         if (pageSize > data.length && pagedata && pagedata.length > 0) {
           printTable.push({
-            total: pagedata.reduce((accumulator, currentValue) => (accumulator * 1 ? accumulator * 1 : '') + currentValue.total_amount * 1, 0),
-            UpperMoney: this.digitUppercase(pagedata.reduce((accumulator, currentValue) => accumulator + currentValue.total_amount * 1, 0).toFixed(2)),
+            '小写子表金额合计': pagedata.reduce((accumulator, currentValue) => (accumulator * 1 ? accumulator * 1 : '') + currentValue['子表金额'] * 1, 0),
+            '子表数量合计': pagedata.reduce((accumulator, currentValue) => (accumulator * 1 ? accumulator * 1 : '') + currentValue['子表数量'] * 1, 0),
+            '大写子表金额合计': this.digitUppercase(pagedata.reduce((accumulator, currentValue) => accumulator + currentValue['子表金额'] * 1, 0).toFixed(2)),
             pagedata: pagedata
           })
         }

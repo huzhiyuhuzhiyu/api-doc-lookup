@@ -64,6 +64,7 @@
           </el-table-column>
           <el-table-column prop="collectionTime" label="归还日期" min-width="180" sortable="custom"></el-table-column>
           <el-table-column prop="maintainerIdText" label="归还人" min-width="120"></el-table-column>
+          <el-table-column prop="productName" label="备件名称" min-width="200"></el-table-column>
           <el-table-column prop="remark" label="备注" min-width="180"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" min-width="200" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" min-width="120"></el-table-column>

@@ -44,19 +44,21 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.productCode" :placeholder="productName + '编码'" clearable
+                @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" clearable
+              <el-input v-model="listQuery.productDrawingNo" :placeholder="productName + '规格'" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
 
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.productSource" placeholder="产品来源" clearable style="width: 100%;">
+              <el-select v-model="listQuery.productSource" :placeholder="productName + '来源'" clearable
+                style="width: 100%;">
                 <el-option v-for="(item, index) in productSourceList" :key="index" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -115,28 +117,24 @@
               :align="item.align || 'left'" v-bind="{ minWidth: item.hasOwnProperty('minWidth') ? item.width : 140 }">
             </el-table-column>
           </template>
-          <!-- <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
-            <template slot="header" slot-scope="scope">
-              {{ classAttributeText }}编码
-            </template>
-<template slot-scope="scope">
+          <el-table-column prop="code" :label="productName + '编码'" min-width="160" sortable="custom">
+
+            <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">
                 {{ scope.row.code }}
               </el-link>
             </template>
-</el-table-column> -->
-          <!-- <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" /> -->
-          <el-table-column prop="name" :label="classAttributeText + '名称'" min-width="140" sortable="custom">
-            <!-- <template slot="header" slot-scope="scope">
-              {{ classAttributeText }}名称
-            </template> -->
+          </el-table-column>
+          <el-table-column prop="drawingNo" :label="productName + '规格'" min-width="200" sortable="custom" />
+          <el-table-column prop="name" :label="productName + '名称'" min-width="160" sortable="custom">
+
           </el-table-column>
 
-          <el-table-column prop="productCategoryName" :label="classAttributeText + '分类'" width="120">
+          <el-table-column prop="productCategoryName" :label="productName + '分类'" width="120">
 
           </el-table-column>
           <el-table-column prop="mainUnit" label="单位" width="120" />
-          <el-table-column prop="productSource" :label="classAttributeText + '来源'" width="120">
+          <el-table-column prop="productSource" :label="productName + '来源'" width="120">
             <template slot-scope="{ row }">
               <template v-if="row.productSource == 'produce'">
                 生产
@@ -151,7 +149,7 @@
           </el-table-column>
           <!-- <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="isProjectSwitch === '1'">
           </el-table-column> -->
-          <el-table-column prop="productStatus" :label="classAttributeText + '状态'" width="120" align="center">
+          <el-table-column prop="productStatus" :label="productName + '状态'" width="120" align="center">
 
             <template slot-scope="{ row }">
               <el-tag type="success" disable-transitions v-if="row.productStatus == 'enable'">启用</el-tag>
@@ -1405,12 +1403,7 @@ export default {
     },
     // 导入
     importForm() {
-      if (!this.listQuery.productCategoryId) {
-        this.$message.warning('请先选择产品分类')
-      } else {
-        // this.$refs.UploadProduct.$el.querySelector('input').click()
-        this.uploadVisib = true
-      }
+      this.uploadVisib = true
     },
     // 下载模板
     downLoadTemplate() {
@@ -1425,7 +1418,7 @@ export default {
       this.formLoading = true
       var formData = new FormData()
       formData.append('file', data)
-      formData.append('productCategoryId', this.listQuery.productCategoryId)
+      // formData.append('productCategoryId', this.listQuery.productCategoryId)
       formData.append('classAttribute', this.listQuery.classAttribute)
       //调用上传文件接口
       uploadProductData(formData)

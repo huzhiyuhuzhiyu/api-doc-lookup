@@ -400,3 +400,11 @@ export function gettotalMaintenance(data) {
     data
   })
 }
+// 设备首页导航
+export function getTotalEquipmentVO(data) {
+  return request({
+    url: `/api/mes/equReport/TotalEquipmentVO`,
+    method: 'POST',
+    data
+  })
+}

@@ -1,7 +1,7 @@
 <template>
   <!-- 选择模版 -->
   <el-dialog title="选择打印模版" :close-on-click-modal="false" :close-on-press-escape="false" @close="$emit('closePrint')" :visible.sync="visible"
-    lock-scroll class="JNPF-dialog JNPF-dialog_center" width="600px">
+    lock-scroll class="JNPF-dialog JNPF-dialog_center" width="600px" append-to-body>
     <el-row :gutter="20">
       <el-form ref="printListForm" :model="printDataForm" :rules="dataRule" label-width="120px" label-position="left">
         <el-col :span="16">

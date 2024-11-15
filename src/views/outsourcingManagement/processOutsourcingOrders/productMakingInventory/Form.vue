@@ -858,6 +858,7 @@ export default {
         processName: '',
         processId: this.dataFormTwo.data[index].maniProcessId,
         purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity,
+        demandQuantity: this.dataFormTwo.data[index].purchaseQuantity, //库存数量
         demandQuantity1: this.dataFormTwo.data[index].purchaseQuantity, //库存数量
         qty: 1,
       }
@@ -1130,6 +1131,7 @@ export default {
           calculationDirection: item.calculationDirection,
           ratio: item.ratio,
           processName: '',
+          demandQuantity: item.purchaseQuantity, //库存数量
           demandQuantity1: item.purchaseQuantity, //库存数量
           qty: 1,
         }

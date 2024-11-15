@@ -143,20 +143,17 @@ export default {
 
       ],
       columnList: [], 
-
+      rdeDateArr:[],
 
 
       superQueryVisible: false, 
 
       orderFormlist: {
         orderNo: "",
-        partnerName: "",
         pageNum: 1,
-        notifyType: "sale",
         pageSize: 20,
-        returnDeliveryType: 'delivery',
-        rdeDate: "",
-        rdsDate: "",
+        endTime: "",
+        startTime: "",
         orderItems: [{
           asc: false,
           column: ""
@@ -170,8 +167,6 @@ export default {
         },
       },
 
-      detailTotal: 0,
-      salespersonList: [],
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now()
@@ -185,7 +180,6 @@ export default {
       total: 0,
       diagramVisible: false,
       formVisible: false,
-      selectArr: [],
       superQueryJson: [
         {
           prop: 'orderNo',
@@ -286,11 +280,11 @@ export default {
     search(type) {
 
       if (this.rdeDateArr.length > 0) {
-        this.orderForm.rdsDate = this.rdeDateArr[0]
-        this.orderForm.rdeDate = this.rdeDateArr[1]
+        this.orderForm.startTime = this.rdeDateArr[0]
+        this.orderForm.endTime = this.rdeDateArr[1]
       } else {
-        this.orderForm.rdsDate = ""
-        this.orderForm.rdeDate = ""
+        this.orderForm.startTime = ""
+        this.orderForm.endTime = ""
       }
 
       Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格

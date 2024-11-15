@@ -310,7 +310,7 @@ export default {
       } else {
         // 逆向minWidth
         this.$slots.default.forEach(item => {
-          if (item.componentOptions.propsData.hasOwnProperty("initialWidth")) {
+          if (item.componentOptions&&item.componentOptions.propsData.hasOwnProperty("initialWidth")) {
             item.componentOptions.propsData.width = item.componentOptions.propsData.initialWidth
             delete item.componentOptions.propsData.minWidth
             delete item.componentOptions.propsData.initialWidth

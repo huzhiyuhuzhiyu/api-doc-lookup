@@ -99,9 +99,9 @@
                       <el-table-column prop="drawingNo" label="品名规格" min-width="300" :key="6"
                         v-if="dataForm.documentType == 'inbound'"> </el-table-column>
                       <el-table-column prop="productName" label="产品名称" min-width="160" 
-                        v-if="dataForm.documentType == 'outbound' && productNameFlag" />
+                        v-if="dataForm.documentType == 'outbound' && productNameFlag=='1'" />
                       <el-table-column prop="name" label="产品名称" min-width="160" 
-                        v-if="dataForm.documentType == 'inbound' && productNameFlag" />
+                        v-if="dataForm.documentType == 'inbound' && productNameFlag=='1'" />
                       <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                       <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"
                         v-if="dataForm.documentType == 'outbound'">
@@ -333,7 +333,7 @@
                   <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable />
                 </el-form-item>
               </el-col>
-              <el-col :span="6" v-if="dataForm.documentType == 'outbound'">
+              <el-col :span="6" v-if="dataForm.documentType == 'outbound'&&productNameFlag=='1'">
                 <el-form-item>
                   <el-input v-model="orderForm.productName" placeholder="请输入产品名称" clearable />
                 </el-form-item>
@@ -349,7 +349,7 @@
                   <el-input v-model="listQuery.productDrawingNo" placeholder="请输入品名规格" clearable />
                 </el-form-item>
               </el-col>
-              <el-col :span="6" v-if="dataForm.documentType == 'inbound'">
+              <el-col :span="6" v-if="dataForm.documentType == 'inbound'&&productNameFlag=='1'">
                 <el-form-item>
                   <el-input v-model="listQuery.productName" placeholder="请输入产品名称" clearable />
                 </el-form-item>
@@ -385,9 +385,9 @@
                 v-if="dataForm.documentType == 'inbound'" key="drawingNo" />
 
               <el-table-column prop="productName" label="产品名称" min-width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound' && productNameFlag" />
+                v-if="dataForm.documentType == 'outbound' && productNameFlag=='1'" />
               <el-table-column prop="name" label="产品名称" min-width="160" sortable="custom"
-                v-if="dataForm.documentType == 'inbound' && productNameFlag" />
+                v-if="dataForm.documentType == 'inbound' && productNameFlag=='1'" />
               <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="productCode" />
               <el-table-column prop="code" label="产品编码" min-width="130" sortable="custom"
@@ -693,7 +693,7 @@ export default {
     this.getclassAttributeList()
     let objs = { "pageSize": -1, "businessCode": "product" }
     getBimBusinessSwitchConfigList(objs).then(res => {
-      this.productNameFlag = res.data.product[1].configValue1 == '1' ? true : false
+      this.productNameFlag = res.data.product[1].configValue1
 
 
     })

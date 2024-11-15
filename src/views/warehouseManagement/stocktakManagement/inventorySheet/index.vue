@@ -76,7 +76,7 @@
                 }}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="deliverDate" label="发货日期" min-width="160" sortable="custom"></el-table-column>
+            <el-table-column prop="deliverDate" label="日期" min-width="160" sortable="custom"></el-table-column>
             
          
             <el-table-column prop="deliveryStatus" label="制单人" min-width="120" sortable="custom" align="center">  </el-table-column>
@@ -129,8 +129,9 @@
 import Form from './Form'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
+import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
-  name: 'foreigntradenotice',
+  name: 'inventorySheet',
   components: { Form, SuperQuery, ExportForm },
   data() {
     return {

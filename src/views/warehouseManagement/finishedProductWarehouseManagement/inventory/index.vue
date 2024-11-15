@@ -58,7 +58,7 @@
 
 
           <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
-          <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160"
+          <el-table-column prop="productName" label="产品名称" v-show="productNameFlag==true" min-width="160"
           sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
           <el-table-column prop="classAttribute" label="产品分类" width="120" sortable="custom">

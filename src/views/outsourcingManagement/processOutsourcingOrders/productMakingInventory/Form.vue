@@ -838,6 +838,7 @@ export default {
     // 配置资源
     handlerOpenSource(index, type) {
       console.log(666666666666666)
+      console.log(this.dataFormTwo.data[index].maniProcessId,'pppjjjj')
       if (!this.dataFormTwo.data[index].purchaseQuantity) return this.$message.error('请先输入数量')
 
       this.sourceVisibled = true
@@ -855,9 +856,10 @@ export default {
         calculationDirection: this.dataFormTwo.data[index].calculationDirection,
         ratio: this.dataFormTwo.data[index].ratio,
         processName: '',
-        processId: '',
+        processId: this.dataFormTwo.data[index].maniProcessId,
         purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity,
         demandQuantity1: this.dataFormTwo.data[index].purchaseQuantity, //库存数量
+        qty: 1,
       }
       this.dataFormTwo.data[index].outShipmentList = [obj]
       this.sourceData = this.dataFormTwo.data[index].outShipmentList
@@ -1085,6 +1087,7 @@ export default {
           deliveryDate: item.deliveryDate,
           mainUnit: item.mainUnit,
           deputyUnit: item.deputyUnit,
+          maniProcessId: item.processId,
           purchaseQuantity: Number(item.inventoryQuantity),
           productsId: item.productsId,
           classAttribute: item.classAttribute,
@@ -1113,6 +1116,7 @@ export default {
       this.dataForm.id = data.id || ''
       this.dataFormTwo.data = arr
       this.dataFormTwo.data.forEach((item, index) => {
+        console.log(item,'pppp')
         let obj = {
           drawingNo: item.productDrawingNo,
           stockInventoryLineId: item.id,
@@ -1121,12 +1125,13 @@ export default {
           deputyUnit: item.deputyUnit,
           purchaseQuantity: Number(item.inventoryQuantity),
           productsId: item.productsId,
+          processId: item.maniProcessId,
           classAttribute: item.classAttribute,
           calculationDirection: item.calculationDirection,
           ratio: item.ratio,
           processName: '',
-          processId: '',
           demandQuantity1: item.purchaseQuantity, //库存数量
+          qty: 1,
         }
         this.dataFormTwo.data[index].outShipmentList = [obj]
       })

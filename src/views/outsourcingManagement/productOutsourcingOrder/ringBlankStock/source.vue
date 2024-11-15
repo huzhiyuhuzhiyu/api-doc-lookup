@@ -172,6 +172,7 @@ export default {
               deputyUnit: item.deputyUnit,
               mainUnit: item.mainUnit,
               productsId: item.productsId,
+              processId: item.processId,
               qty: item.qty,
               ratio: item.ratio,
               routingLineId: item.routingLineId,

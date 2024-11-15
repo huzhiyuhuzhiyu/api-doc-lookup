@@ -206,13 +206,11 @@ export default {
       } else {
         this.dataForm.parentId = data[0].id
         this.dataForm.parentName = data[0].name
-        this.classAttribute = data[0].all.classAttribute
+        this.dataForm.classAttribute = data[0].all.classAttribute
       }
     },
     async dataFormSubmit() {
-      if (this.dataForm.parentName) {
-        this.dataForm.classAttribute = this.classAttribute
-      }
+  
       let valid = await this.$refs['dataForm'].validate().catch((err) => false)
       this.btnLoading = true
       if (valid) {

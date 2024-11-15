@@ -54,11 +54,11 @@
           </div>
         </div>
         <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableData" custom-column row-key="id" :fixedNo="true"
-          @sort-change="sortChange">
+          @sort-change="sortChange" >
 
 
           <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
-          <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160"
+          <el-table-column prop="productName" label="产品名称" v-if="productNameFlag==='1'" min-width="160"
           sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
           <el-table-column prop="classAttribute" label="产品分类" width="120" sortable="custom">
@@ -251,7 +251,7 @@ export default {
 
       ],
       classAttributeList:[],
-      productNameFlag:null,
+      productNameFlag:null, 
     }
   },
   watch: {
@@ -260,18 +260,22 @@ export default {
     }
   },
   created() {
-    let objs = { "pageSize": -1, "businessCode": "product" }
+    
+    this.superForm=this.tableQuery
+    this.getclassAttributeList()
+    let objs = { "pageSize": -1, "businessCode": "product" } 
     getBimBusinessSwitchConfigList(objs).then(res => {
-      this.productNameFlag = res.data.product[1].configValue1 == '1' ? true : false
-      if(this.productNameFlag==true){
+      this.productNameFlag = res.data.product[1].configValue1 
+      console.log(this.productNameFlag);
+      if(this.productNameFlag=='1'){
     
       this.searchList.push({ field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 })
       }
-
+     
     })
-    this.superForm=this.tableQuery
-    this.getclassAttributeList()
-
+  },
+  mounted () {
+  
   },
   methods: {
     getclassAttributeList() {

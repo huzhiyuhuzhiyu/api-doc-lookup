@@ -337,7 +337,7 @@ export default {
     initData() {
       this.listLoading = true
       this.form.classAttributeList=this.classAttributeList
-      this.form.approvalStatus='ok'
+      // this.form.approvalStatus='ok'
 
       getTransferList(this.form).then(res => {
         this.tableData = res.data.records

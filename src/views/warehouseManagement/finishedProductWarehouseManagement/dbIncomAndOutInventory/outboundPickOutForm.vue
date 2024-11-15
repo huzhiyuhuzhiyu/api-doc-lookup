@@ -94,7 +94,7 @@
 
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                           show-overflow-tooltip> </el-table-column>
-                        <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160"
+                        <el-table-column prop="productName" label="产品名称"  v-if="productNameFlag==='1'" min-width="160"
                            />
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                         <el-table-column prop="processName" label="工序名称" width="160" :key="222">
@@ -240,7 +240,7 @@
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                       show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" />
+                    <el-table-column prop="productName" label="产品名称"  v-if="productNameFlag==='1'" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                     <el-table-column prop="processName" label="工序名称" width="160" :key="222">
                     </el-table-column>
@@ -367,7 +367,7 @@
                 <el-table-column prop="ordersNo" label="任务单号" width="190" sortable="custom" />
 
                 <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
-                 <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" sortable="custom"
+                 <el-table-column prop="productName" label="产品名称"  v-if="productNameFlag==='1'" min-width="160" sortable="custom"
                    />
                 <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
                 <el-table-column prop="processName" label="工序" width="120" sortable="custom" />
@@ -561,7 +561,7 @@ export default {
   created() {
     let objs = { "pageSize": -1, "businessCode": "product" }
     getBimBusinessSwitchConfigList(objs).then(res => {
-      this.productNameFlag = res.data.product[1].configValue1 == '1' ? true : false
+      this.productNameFlag = res.data.product[1].configValue1
 
 
     })

@@ -693,7 +693,7 @@ export default {
     this.getclassAttributeList()
     let objs = { "pageSize": -1, "businessCode": "product" }
     getBimBusinessSwitchConfigList(objs).then(res => {
-      this.productNameFlag = res.data.product[1].configValue1 == '1' ? true : false
+      this.productNameFlag = res.data.product[1].configValue1
 
 
     })

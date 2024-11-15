@@ -1776,7 +1776,9 @@ export default {
 ::v-deep.JNPF-dialog.JNPF-dialog_center .el-dialog .el-dialog__body {
   padding: 0 !important;
 }
-
+::v-deep.pintDevLog.JNPF-dialog_center .el-dialog .el-dialog__body {
+  padding: 10px 20px 10px!important;
+}
 .JNPF-preview-main .main {
   padding-top: 0;
 }

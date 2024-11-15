@@ -19,7 +19,7 @@
                 </template>
               </el-table-column>
 
-              <el-table-column prop="productCode" label="产品编码" min-width="120" show-overflow-tooltip>
+              <el-table-column prop="productCode" label="产品编码" min-width="150" show-overflow-tooltip>
                 <template slot-scope="scope">
                   <!-- <el-input v-model="scope.row.productCode" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
                   <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'" :rules="productRule.productCode">

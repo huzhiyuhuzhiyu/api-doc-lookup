@@ -96,7 +96,7 @@
 <script>
 import { inventoryList } from '@/api/purchasingAndOutsourcingOrders/index'
 import moment from 'moment'
-import Form from '../../productOutsourcingOrder/ringBlankStock/Form.vue'
+import Form from './Form.vue'
 import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -421,7 +421,7 @@ export default {
           this.formVisible = true
           this.$nextTick(() => {
             console.log(this.$refs, 'this.$refs')
-            this.$refs.form.init(this.selectData, 'add', 'making')
+            this.$refs.form.init(this.selectData, 'add')
           })
         }
       }

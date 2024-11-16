@@ -186,7 +186,7 @@ export default {
     }
   },
   created() {
-    this.getProjectSwitch()
+
     this.tabs.forEach((tab, tabInd) => {
       tab.tabContent.forEach((tc) => {
         this.dataForm[tc.prop] = tc.value || '' // 设置默认value
@@ -494,29 +494,6 @@ export default {
         }
       }
     })
-    console.log(this.userInfo.projectId)
-    if (this.userInfo.projectId) {
-      this.otherItems.push({
-        prop: 'projectId',
-        label: '所属项目',
-        value: '',
-        type: 'select',
-        options: [],
-        itemRules: [{ required: true, trigger: 'change' }],
-        itemDisabled: false
-      })
-      // if (tc.prop === 'projectId') {
-      //   let obj = {
-      //     pageNum: 1,
-      //     pageSize: -1
-      //   }
-      //   getProjectList(obj).then((res) => {
-      //     tc.options = res.data.records.map((item) => {
-      //       return { label: item.name, value: item.id }
-      //     })
-      //   })
-      // }
-    }
     this.otherItems.forEach((tc) => {
       if (tc.prop == 'tradeFlag') {
         tc.change = (val, data) => {
@@ -590,20 +567,6 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
-    getProjectSwitch() {
-      let obj = {
-        businessCode: 'system',
-        pageSize: -1
-      }
-      getBimBusinessSwitchConfigList(obj).then((res) => {
-        res.data.system.forEach((item) => {
-          if (item.configKey == 'project') {
-            this.isProjectSwitch = item.configValue1
-
-          }
-        })
-      })
-    },
     // 选择型号 带出 密封盖 结构 打字 结构类型 游隙 钢球厂家 油脂 噪音 保持架
     modelChange(val, data, paramsObj) {
       this.$nextTick(() => {
@@ -703,7 +666,8 @@ export default {
         }
       } catch (error) { }
     },
-    async init(id, btnType = false, flag) {
+    async init(id, btnType = false, flag, isProjectSwitch) {
+      this.isProjectSwitch = isProjectSwitch
       this.visible = true
       this.formLoading = true
       this.btnType = btnType
@@ -772,6 +736,32 @@ export default {
             ]
           }
           if (ele.prop == 'model') {
+            ele.render = false
+          }
+        })
+      }
+      if (this.isProjectSwitch === '1') {
+        this.tabs[0].tabContent.forEach((ele) => {
+          if (ele.prop == 'project') {
+            console.log(this.userInfo.project, 'pr')
+            if (this.userInfo.project) {
+
+            }
+            ele.render = true
+            let obj = {
+              pageNum: 1,
+              pageSize: -1
+            }
+            getProjectList(obj).then((res) => {
+              ele.options = res.data.records.map((item) => {
+                return { label: item.name, value: item.id }
+              })
+            })
+          }
+        })
+      } else {
+        this.tabs[0].tabContent.forEach((ele) => {
+          if (ele.prop == 'project') {
             ele.render = false
           }
         })

@@ -58,7 +58,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head" style="padding:6px 10px">
           <topOpts @add="addOrUpdateHandle()">
             <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download"
@@ -81,9 +81,9 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" custom-column fixedNO @sort-change="sortChange"
-          @selection-change="handleSelectionChange" hasC ref="dataTable" :setColumnDisplayList="columnList"
-          row-key="id">
+        <JNPF-table v-if="tableFlag"  :data="tableData" custom-column fixedNO
+          @sort-change="sortChange" @selection-change="handleSelectionChange" hasC ref="dataTable"
+          :setColumnDisplayList="columnList" row-key="id">
           <el-table-column prop="jobNumber" label="工号" min-width="140" sortable="custom" />
           <!-- 这里的 width 会被转成 min-width -->
           <el-table-column prop="name" label="姓名" width="120" sortable="custom">
@@ -259,6 +259,8 @@ export default {
   },
   data() {
     return {
+      tableFlag: false,
+      isProjectSwitch: '',
       JobCodeFormVisible: false,
       printQuery: {
         category: 'Humanresources'   // 对应数据字典 分类编码
@@ -490,22 +492,19 @@ export default {
     }
   },
   mounted() {
-    this.getProjectSwitch()
     this.getAdvancedQuery()
   },
   methods: {
-    getProjectSwitch() {
+    async getProjectSwitch() {
       let obj = {
         businessCode: 'system',
         pageSize: -1
       }
-      getBimBusinessSwitchConfigList(obj).then((res) => {
-        res.data.system.forEach((item) => {
-          if (item.configKey == 'project') {
-            this.isProjectSwitch = item.configValue1
-
-          }
-        })
+      const res = await getBimBusinessSwitchConfigList(obj)
+      res.data.system.forEach((item) => {
+        if (item.configKey == 'project') {
+          this.isProjectSwitch = item.configValue1
+        }
       })
     },
     //调岗记录
@@ -814,12 +813,14 @@ export default {
       })
     },
     initData() {
+      this.getProjectSwitch()
       Object.keys(this.listQuery).forEach(key => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
       this.listLoading = true
       getbaseEmployee(this.listQuery).then(res => {
+        this.tableFlag = true
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false

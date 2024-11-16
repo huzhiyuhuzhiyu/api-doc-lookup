@@ -67,7 +67,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head" style="padding:6px 10px">
           <div>
             <el-dropdown style="margin-right:10px;">
@@ -118,7 +118,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" custom-column fixedNO @sort-change="sortChange" @selection-change="handleSelectionChange" hasC ref="dataTable" :setColumnDisplayList="columnList">
+        <JNPF-table v-if="tableFlag"  :data="tableData" custom-column fixedNO @sort-change="sortChange" @selection-change="handleSelectionChange" hasC ref="dataTable" :setColumnDisplayList="columnList">
           <el-table-column prop="account" label="账户" width="100" fixed /> <!-- 这里的 width 会被转成 min-width -->
           <el-table-column prop="realName" label="姓名" width="100" fixed="left" sortable="custom">
             <template slot-scope="scope">
@@ -285,6 +285,8 @@ export default {
   },
   data() {
     return {
+      isProjectSwitch:'',
+      tableFlag:false,
       syncType:'',
       superQueryJson: [
         {
@@ -412,18 +414,16 @@ export default {
     }
   },
   methods: {
-    getProjectSwitch() {
+    async getProjectSwitch() {
       let obj = {
         businessCode: 'system',
         pageSize: -1
       }
-      getBimBusinessSwitchConfigList(obj).then((res) => {
-        res.data.system.forEach((item) => {
-          if (item.configKey == 'project') {
-            this.isProjectSwitch = item.configValue1
-
-          }
-        })
+      const res = await getBimBusinessSwitchConfigList(obj)
+      res.data.system.forEach((item) => {
+        if (item.configKey == 'project') {
+          this.isProjectSwitch = item.configValue1
+        }
       })
     },
     superQuerySearch(query) {
@@ -621,6 +621,7 @@ export default {
       })
       this.listLoading = true
       getUserListPost(this.listQuery).then(res => {
+        this.tableFlag = true
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false

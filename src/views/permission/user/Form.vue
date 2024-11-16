@@ -129,6 +129,7 @@ export default {
   },
   data() {
     return {
+      isProjectSwitch: '',
       enabledMarkList: [{ label: '启用', value: 1 }, { label: '锁定', value: 2 }, { label: '禁用', value: 0 }],
       isval: false,
       roleTreeData: [],
@@ -357,28 +358,79 @@ export default {
           let submitFlag = false
           console.log(this.userInfo.projectId, 'this.userInfo.projectId123')
           if (this.isProjectSwitch === '1') {
-            if (this.dataForm.projectId !== this.projectId) {
+
+            if (this.projectId && this.dataForm.projectId !== this.projectId) {
               this.$confirm('所属项目已更改是否确定修改, 是否继续?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
               })
                 .then(() => {
-                  submitFlag = true
+                  console.log(123)
+                  this.btnLoading = true
+                  let obj = {
+                    ...this.dataForm
+                  }
+                  let formMethod = this.dataForm.id ? updateUser : createUser
+                  formMethod(obj)
+                    .then((res) => {
+                      let msg = ''
+                      if (formMethod == updateUser) {
+                        msg = '修改成功'
+                      } else {
+                        msg = '新建成功'
+                      }
+                      this.$message({
+                        message: msg,
+                        type: 'success',
+                        duration: 1500,
+                        onClose: () => {
+                          this.visible = false
+                          this.btnLoading = false
+                          this.$emit('close', true)
+                        }
+                      })
+                    })
+                    .catch(() => {
+                      this.btnLoading = false
+                    })
                 })
                 .catch(() => {
-                  submitFlag = false
                   this.$message({
                     type: 'info',
                     message: '已取消'
                   })
                 })
+            } else {
+              this.btnLoading = true
+              let obj = {
+                ...this.dataForm
+              }
+              let formMethod = this.dataForm.id ? updateUser : createUser
+              formMethod(obj)
+                .then((res) => {
+                  let msg = ''
+                  if (formMethod == updateUser) {
+                    msg = '修改成功'
+                  } else {
+                    msg = '新建成功'
+                  }
+                  this.$message({
+                    message: msg,
+                    type: 'success',
+                    duration: 1500,
+                    onClose: () => {
+                      this.visible = false
+                      this.btnLoading = false
+                      this.$emit('close', true)
+                    }
+                  })
+                })
+                .catch(() => {
+                  this.btnLoading = false
+                })
             }
           } else {
-            submitFlag = true
-          }
-
-          if (submitFlag) {
             this.btnLoading = true
             let obj = {
               ...this.dataForm
@@ -407,6 +459,7 @@ export default {
                 this.btnLoading = false
               })
           }
+
         }
       })
     }

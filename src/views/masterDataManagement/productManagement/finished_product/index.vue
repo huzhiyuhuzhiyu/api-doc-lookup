@@ -73,7 +73,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head" style="padding:8px">
           <div>
             <el-dropdown style="margin-right:10px;" v-if="configFlag">
@@ -119,7 +119,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
+        <JNPF-table v-if="tableFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           ref="dataTable" :setColumnDisplayList="columnList">
           <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
             <template slot-scope="scope">
@@ -149,8 +149,8 @@
               </template>
             </template>
           </el-table-column>
-          <!-- <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="isProjectSwitch === '1'">
-          </el-table-column> -->
+          <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="isProjectSwitch === '1'">
+          </el-table-column>
           <el-table-column prop="productStatus" label="产品状态" width="120" align="center">
             <template slot-scope="{ row }">
               <el-tag type="success" disable-transitions v-if="row.productStatus == 'enable'">启用</el-tag>
@@ -637,7 +637,8 @@ export default {
       uploadVisib: false,
       configFlag: true,
       unitOptions: [],
-      isProjectSwitch: ''
+      isProjectSwitch: '',
+      tableFlag: false
     }
   },
   watch: {
@@ -665,19 +666,17 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
- 
-    getProjectSwitch() {
+
+    async getProjectSwitch() {
       let obj = {
         businessCode: 'system',
         pageSize: -1
       }
-      getBimBusinessSwitchConfigList(obj).then((res) => {
-        res.data.system.forEach((item) => {
-          if (item.configKey == 'project') {
-            this.isProjectSwitch = item.configValue1
-
-          }
-        })
+      const res = await getBimBusinessSwitchConfigList(obj)
+      res.data.system.forEach((item) => {
+        if (item.configKey == 'project') {
+          this.isProjectSwitch = item.configValue1
+        }
       })
     },
     dataFormatting(res) {
@@ -1390,6 +1389,7 @@ export default {
       this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
       getProductList(this.listQuery)
         .then((res) => {
+          this.tableFlag = true
           this.tableData = res.data.records
           this.total = res.data.total
           this.listLoading = false
@@ -1412,7 +1412,7 @@ export default {
     addOrUpdateHandle(id, btnType, flag) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType, flag)
+        this.$refs.Form.init(id, btnType, flag, this.isProjectSwitch)
       })
     },
     handleDel(id) {

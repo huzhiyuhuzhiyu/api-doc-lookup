@@ -266,15 +266,7 @@ export default {
       this.formVisible = false
       if (isRefresh) { this.initData() }
     },
-    // 获取合计数据
-    getOrderLineReportFun() {
-      getInventoryLineReport(this.listQuery).then(res => {
-        console.log("合计", res);
-        this.inventoryQuantityNum = res.data.total ? res.data.total.inventoryQuantity : 0
-        this.occupancyQuantityNum = res.data.total ? res.data.total.occupancyQuantity : 0
-        this.availableQuantityNum = res.data.total ? res.data.total.availableQuantity : 0
-      })
-    },
+  
     // 导出
     exportForm(exportTableRef) {
       this.exportTableRef = exportTableRef
@@ -345,12 +337,14 @@ export default {
         this.listQuery.lsSd = ''
         this.listQuery.lsEd = ''
       }
-      inventoryList(this.listQuery)
+      getInventoryLineReport(this.listQuery)
         .then((res) => {
           console.log(res, '外协订单列表')
-          this.tableDataList = res.data.records
-          this.getOrderLineReportFun()
-          this.total = res.data.total
+          this.tableDataList = res.data.page.records
+          this.total = res.data.page.total
+          this.inventoryQuantityNum = res.data.total ? res.data.total.inventoryQuantity : 0
+          this.occupancyQuantityNum = res.data.total ? res.data.total.occupancyQuantity : 0
+          this.availableQuantityNum = res.data.total ? res.data.total.availableQuantity : 0
           this.listLoading = false
           this.visible = false
         })

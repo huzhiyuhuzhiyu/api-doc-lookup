@@ -289,13 +289,14 @@
       </div>
     </transition>
     <ComSelect-page ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" title="选择产品" treeTitle="产品分类"
-      :methodArr="ProductMethodArr" :listMethod="getProductList" :listRequestObj="ProductListRequestObj"
-      :searchList="ProductTableSearchList" :elementShow="false" multiple />
+      :methodArr="ProductMethodArr" :listMethod="inventoryList" :listRequestObj="ProductListRequestObj"
+      :searchList="ProductTableSearchList" :elementShow="false" multiple :renderTree="false" />
     <source-area v-if="sourceVisibled" ref="sourceRef" @confirm="handlerConfirm"></source-area>
   </div>
 </template>
 <script>
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
+import { inventoryList } from '@/api/purchasingAndOutsourcingOrders/index'
 import SourceArea from './source.vue'
 import {
   getShipmentList,
@@ -466,39 +467,54 @@ export default {
         label: 'fullName'
       },
       getProductList, // 产品选择弹出框树状列表请求api
+      inventoryList,
       ProductMethodArr: [
         { label: '产品分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '' } }
         // { label: "其他分类", classAttribute: "other", method: getcategoryTree, requestObj: { classAttribute: "other" } }
       ], // 产品选择弹出框树状列表
       ProductListRequestObj: {
-        classAttribute: '',
-        productCategoryId: '',
-        code: '',
-        name: '',
+        approvalStatus: '', //审批状态:审批中ing 审批通过ok 审核未通过rebut,可用值:ing,no,ok,rebut,wait
+        cooperativePartnerCode: '', //供应商编码
+        cooperativePartnerName: '', // 	供应商名称
+        createByName: '',
+        delivery: '', //发货方式(外协) 送货 deliver_goods、自提 self_pickup、快递 express_delivery、货运 freight_transport、到付 collect_payment
+        deliveryEndDate: '', //交货结束日期
+        deliveryStartDate: '',
+        deliveryDate: '',
+        endTime: '',
+        orderNo: '', //订单号
+        // orderType: 'external', //	订单类型 采购 procure、外协 external
+        ringBlankQueryFlag: 1,
+        pageNum: 1,
+        pageSize: 20,
+        startTime: '',
+        ringBlankQueryFlag: 1,
         orderItems: [
           {
             asc: false,
-            column: 'create_time'
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'latest_storage_time'
           }
-        ],
-        productStatus: 'enable',
-        productSource: 'out',
-        pageNum: 1,
-        pageSize: 20
+        ]
         // queryType: 3
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
-        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
+        { prop: 'productDrawingNo', label: '毛坯规格', sortable: 'custom' },
         // { prop: 'name', label: '产品名称', sortable: 'custom' },
-        { prop: 'code', label: '产品编码', sortable: 'custom' },
-        { prop: 'classAttributeText', label: '产品分类', sortable: 'custom' },
+        { prop: 'productCode', label: '毛坯编码', sortable: 'custom' },
+        { prop: 'productCategoryName', label: '毛坯分类', sortable: 'custom' },
+        { prop: 'batchNumber', label: '批次号' },
         { prop: 'mainUnit', label: '单位' },
+        { prop: 'inventoryQuantity', label: '库存数量' },
         { prop: 'createTime', label: '创建日期', sortable: 'custom' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
-        { prop: 'drawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
         // { prop: 'name', label: '产品名称', type: 'input' },
-        { prop: 'code', label: '产品编码', type: 'input' }
+        { prop: 'productCode', label: '产品编码', type: 'input' }
       ], // 产品选择弹出框搜索条件
       formLoading: false,
       codeConfig: {},
@@ -791,37 +807,49 @@ export default {
       if (data.length) {
         let selectArr = []
         let list = data.map((item) => item.all)
+        for (let i = 0; i < list.length; i++) {
+          let item = list[i]
+          console.log(item.externalProductsId, 'item.externalProductsId')
+          if (!item.externalProductsId) {
+            this.$message.error(`请配置毛坯产品所对就主产品的BOM！`)
+            return false
+          }
+        }
         list.forEach((item, index) => {
           selectArr.push({
-            productSource: item.productSource, // 产品来源 采购
-            classAttribute: item.classAttribute,
-            productsId: item.id, // 产品id
-            productName: item.name, // 产品名称
-            productCode: item.code, // 产品编码
-            productDrawingNo: item.drawingNo, // 品名规格
-            ratio: item.ratio, // 转换系数
-            calculationDirection: item.calculationDirection, // 计算方向
-            mainUnit: item.mainUnit, // 主单位
-            purchaseQuantity: item.purchaseQuantity, // 数量
-            price: item.price, // 含税单价
-            totalAmount: item.totalAmount, // 金额(含税)
-            taxRate: item.taxRate, // 税率
-            excludingTaxPrice: item.excludingTaxPrice, // 不含税单价
-            taxAmount: item.taxAmount, // 税额
-            excludingTaxAmount: item.excludingTaxAmount, // 金额(不含税)
-            deputyUnit: item.deputyUnit, // 副单位
-            planQuantity: '', //计划数量主
-            planQuantity2: '', //计划数量副
+            productDrawingNo: item.externalProductDrawingNo,
+            stockInventoryLineId: item.id,
+            deliveryDate: item.deliveryDate,
+            mainUnit: item.externalMainUnit,
+            deputyUnit: item.externalDeputyUnit,
+            purchaseQuantity: Number(item.inventoryQuantity) - Number(item.outsourcingQuantity),
+            productsId: item.externalProductsId,
+            classAttribute: item.externalClassAttribute,
+            calculationDirection: item.externalCalculationDirection,
+            ratio: item.externalRatio,
+            processName: '',
+            processId: '',
+            price: item.price,
+            totalAmount: item.totalAmount,
+            taxRate: 13,
+            excludingTaxPrice: item.excludingTaxPrice,
+            taxAmount: item.taxAmount,
+            excludingTaxAmount: item.excludingTaxAmount,
+            inventoryQuantity: item.inventoryQuantity, //库存数量
+            outsourcingQuantity: item.outsourcingQuantity, //转外协数量
             remark: item.remark,
-            deliveryDate: '' // 交期
+            outShipmentList: [
+
+            ]
           })
         })
+
         if (this.dataFormTwo.data.length) {
           const deletedArray = []
           selectArr = selectArr.filter((item1) => {
             const index = this.dataFormTwo.data.findIndex((item2) => item2.productsId === item1.productsId)
             if (index !== -1) {
-              deletedArray.push(item1.productName)
+              deletedArray.push(item1.productDrawingNo)
               if (deletedArray.length) {
                 this.$message.error(`已经添加过的产品：${deletedArray.join('、')}`)
               }
@@ -830,6 +858,27 @@ export default {
             return true
           })
         }
+        selectArr.forEach((item, index) => {
+          let ProcessListRequestObj = {
+            code: '',
+            name: '',
+            processType: 'heat_treatment',
+            pageNum: 1,
+            pageSize: 20,
+            orderItems: [
+              {
+                asc: true,
+                column: 'create_time'
+              }
+            ]
+          }
+          getBimProcessList(ProcessListRequestObj).then(res => {
+            console.log(res, 'pjj')
+            let data = res.data.records
+            selectArr[index].processName = data[0].name
+            selectArr[index].processId = data[0].id
+          })
+        })
         this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
         // 审批
         // this.$nextTick(() => { this.getApproverData() })

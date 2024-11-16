@@ -433,9 +433,21 @@ export default {
     },
     async handleBatch() {
       if (!this.selectedData.length) return this.$message.error('请至少选择一条工序数据')
+
+      let flag = this.hasDifferentPricingType(this.selectedData)
+      if (flag) return this.$message.error('只能选择相同计价类型的工序数据')
       this.dataForm.pricingType = this.selectedData[0].pricingType
       this.btnLoading = false
       this.analyseDialog = true
+    },
+    hasDifferentPricingType(arr) {
+      const codes = new Set()
+
+      for (const item of arr) {
+        codes.add(item.pricingType)
+      }
+
+      return codes.size > 1 // 如果有多个不同的代码，则返回 true
     },
     async dataFormSubmit() {
       this.btnLoading = true

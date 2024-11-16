@@ -199,7 +199,7 @@ export default {
         businessCode: 'attachment',
         configKey: `fj_${inspectionType}jyd`
       }
-      getBimBusinessDetail(obj).then(res => {
+      getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
         this.categoryId = res.data.configValue2
       })
@@ -490,14 +490,7 @@ export default {
       option ? (this.title = readOnly ? `查看${option.label}检验单` : `检验${option.label}`) : ''
       this.title.includes('生产巡检') ? (this.title = this.title.replace('检验', '')) : ''
       this.setDataFormItems()
-      if (inspectionType === 'process') {
-        this.dataForm.submitMethod = 'add'
-        this.formLoading = false
-        // this.typeflag = true
-        // detailordershengchan(typeof id === 'object' ? id.productionOrderId : type.productionOrderId).then(res => {
-        //   this.flowCard = res.data.flowCard ? res.data.flowCard : {}
-        // })
-      }
+
       if (inspectionType === 'process') {
         // 生产巡检
 
@@ -540,28 +533,8 @@ export default {
       } else {
         res = await detailMethod(typeof id === 'string' ? id : id.id).catch((err) => false)
       }
-      if (res.data) {
-        if (res.data.attachmentList.length !== 0) {
-          res.data.attachmentList.forEach((item) => {
-            this.datafilelist.push({
-              name: item.document.fullName,
-              fileSize: item.document.fileSize,
-              filename: item.document.filePath,
-              id: item.document.id,
-              url: item.url
-            })
-          })
-        }
-        this.dataForm = { ...res.data, orderNo: res.data.originOrderNo, approvalStatus: '' }
-        this.linesList = res.data.lines
-        delete this.dataForm.lines
-        if (!this.dataForm.orderNo) {
-          this.batchFlag = true
-          this.setDataFormItems()
-        }
 
-        this.formLoading = false
-      } else if (inspectionType === 'procure' || inspectionType === 'external') {
+      if (inspectionType === 'procure' || inspectionType === 'external') {
         // 采购收货、外协收货
 
         this.dataForm.notificationType = inspectionType
@@ -697,7 +670,7 @@ export default {
         // dataObj.unqualifiedFlag = dataObj.lines.some(line => line.unqualifiedQuantity !== undefined && line.unqualifiedQuantity != '0')
         delete dataObj.active
         console.log(dataObj, 'obj')
-        
+
         formMethod(dataObj)
           .then((res) => {
             let msg = res.msg
@@ -927,8 +900,8 @@ export default {
               : this.inspectionType === 'process'
                 ? 'b043'
                 : this.inspectionType === 'finished'
-                ? 'b044'
-                : 'b061'
+                  ? 'b044'
+                  : 'b061'
       getBusinessFlowInfo(code)
         .then((res) => {
           if (res.data) {

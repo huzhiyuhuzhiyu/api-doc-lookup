@@ -49,7 +49,7 @@
                 </el-collapse-item>
                 <el-collapse-item title="维修信息" name="wxxx">
                   <el-row :gutter="30" class="custom-row">
-                    <el-col :sm="6" :xs="24">
+                    <el-col :sm="24" :xs="24">
                       <el-form-item label="解决措施" prop="solutionMeasures">
                         <el-input v-model="dataForm.solutionMeasures" placeholder="请输入解决措施" :disabled="btnType=='look'" type="textarea" :rows="2" />
                       </el-form-item>
@@ -107,7 +107,7 @@ export default {
         ],
         code: "",
         name: "",
-        state: 'normal',
+        unState: 'discard',
         deviceType: 'normal',
         classAttribute: "equipment",
       },

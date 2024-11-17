@@ -9,7 +9,7 @@
             </div>
           </div>
         </div>
-        <div style="margin-top: 10px;">
+        <div style="margin-top: 10px;min-width: 1080px;">
           <el-tabs type="border-card" style="height: 100%;" v-model="activeName" @tab-click="handleClick">
             <el-tab-pane label="点检概况" name="djgk">
               <div class="statistical">

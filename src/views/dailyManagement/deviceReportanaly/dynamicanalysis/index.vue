@@ -10,7 +10,7 @@
           </div>
         </div>
       </div>
-      <div style="margin-top: 10px;background-color: #fff;">
+      <div style="margin-top: 10px;background-color: #fff;min-width: 1080px;">
         <el-tabs type="border-card" style="height: 100%;" v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="设备台账" name="sbtz">
             <div class="table-content">

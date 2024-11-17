@@ -222,58 +222,59 @@
                   </el-col>
                 </el-row>
               </el-collapse-item>
+
+              <el-collapse-item title="故障信息" name="gzxx" v-if="statesuc==='report'||statesuc==='repair'">
+                <div v-if="btnType == 'edit' || btnType == 'add'">
+                  <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择故障类型</el-button>|
+                  <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important" :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
+                </div>
+                <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
+                  <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" @selection-change="handeleProductInfoData">
+                    <el-table-column type="selection" width="60" v-if="btnType == 'edit' || btnType == 'add'" key="1" align="center" />
+                    <el-table-column type="index" width="60" label="序号" align="center" />
+                    <el-table-column prop="faultTypeCode" label="故障类型编码" width="200" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="faultTypeName" label="故障类型名称" width="200" show-overflow-tooltip>
+                      <template slot="header">
+                        <span class="required">*</span>故障类型名称
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="faultLocationName" label="故障部位名称" width="200">
+                      <template slot="header">
+                        <span class="required">*</span>故障部位名称
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'faultLocationName'" :rules='productRules.faultLocationName'>
+                          <el-input v-model="scope.row.faultLocationName" placeholder="请选择故障部位名称" readonly @focus="openSeleceProductDialogs(scope.$index)" :disabled="btnType == 'look' || btnType == 'start' || btnType == 'end'">
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="faultLocationCode" label="故障部位编码" width="200" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="faultDescription" label="故障描述" min-width="230">
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.faultDescription" placeholder="请输入故障描述" :disabled="btnType == 'look' || btnType == 'start' || btnType == 'end'" maxlength="200" />
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="faultDescription" label="是否完成" width="90" v-if="(btnType == 'end'&&statesuc==='repair')||(btnType == 'look'&&statesuc==='repair')">
+                      <template slot-scope="scope">
+                        <el-checkbox v-model="scope.row.repairResult" true-label="finished" false-label="not_finished" :disabled="btnType == 'look'"></el-checkbox>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="操作" width="120" v-if="btnType == 'edit' || btnType == 'add'||btnType == 'end'||(btnType == 'look'&&dataForm.solutionMeasures)" key="30">
+                      <template slot-scope="scope">
+                        <el-button type="text" @click="handleDel(scope)" v-if="btnType == 'edit' || btnType == 'add'" style="color: #ff3a3a">删除</el-button>
+                        <el-button type="text" @click="solutionMeasuresfun(scope.row,scope.$index)" v-if="btnType == 'end'||(btnType == 'look'&&dataForm.solutionMeasures)">解决措施</el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </el-form>
+              </el-collapse-item>
               <el-collapse-item title="报修附件" name="bxfj" v-if="statesuc==='report'">
                 <UploadWj v-model="datafilelist" :disabled="btnType == 'look' || btnType == 'start' || btnType == 'end'" :detailed="btnType == 'look'"></UploadWj>
               </el-collapse-item>
             </el-form>
-            <el-collapse-item title="故障信息" name="gzxx" v-if="statesuc==='report'||statesuc==='repair'">
-              <div v-if="btnType == 'edit' || btnType == 'add'">
-                <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择故障类型</el-button>|
-                <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important" :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
-              </div>
-              <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" @selection-change="handeleProductInfoData">
-                  <el-table-column type="selection" width="60" v-if="btnType == 'edit' || btnType == 'add'" key="1" align="center" />
-                  <el-table-column type="index" width="60" label="序号" align="center" />
-                  <el-table-column prop="faultTypeCode" label="故障类型编码" width="200" show-overflow-tooltip>
-                  </el-table-column>
-                  <el-table-column prop="faultTypeName" label="故障类型名称" width="200" show-overflow-tooltip>
-                    <template slot="header">
-                      <span class="required">*</span>故障类型名称
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="faultLocationName" label="故障部位名称" width="200">
-                    <template slot="header">
-                      <span class="required">*</span>故障部位名称
-                    </template>
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'productData.' + scope.$index + '.' + 'faultLocationName'" :rules='productRules.faultLocationName'>
-                        <el-input v-model="scope.row.faultLocationName" placeholder="请选择故障部位名称" readonly @focus="openSeleceProductDialogs(scope.$index)" :disabled="btnType == 'look' || btnType == 'start' || btnType == 'end'">
-                        </el-input>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="faultLocationCode" label="故障部位编码" width="200" show-overflow-tooltip>
-                  </el-table-column>
-                  <el-table-column prop="faultDescription" label="故障描述" min-width="230">
-                    <template slot-scope="scope">
-                      <el-input v-model="scope.row.faultDescription" placeholder="请输入故障描述" :disabled="btnType == 'look' || btnType == 'start' || btnType == 'end'" maxlength="200" />
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="faultDescription" label="是否完成" width="90" v-if="(btnType == 'end'&&statesuc==='repair')||(btnType == 'look'&&statesuc==='repair')">
-                    <template slot-scope="scope">
-                      <el-checkbox v-model="scope.row.repairResult" true-label="finished" false-label="not_finished" :disabled="btnType == 'look'"></el-checkbox>
-                    </template>
-                  </el-table-column>
-                  <el-table-column label="操作" width="120" v-if="btnType == 'edit' || btnType == 'add'||btnType == 'end'||(btnType == 'look'&&dataForm.solutionMeasures)" key="30">
-                    <template slot-scope="scope">
-                      <el-button type="text" @click="handleDel(scope)" v-if="btnType == 'edit' || btnType == 'add'" style="color: #ff3a3a">删除</el-button>
-                      <el-button type="text" @click="solutionMeasuresfun(scope.row,scope.$index)" v-if="btnType == 'end'||(btnType == 'look'&&dataForm.solutionMeasures)">解决措施</el-button>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </el-form>
-            </el-collapse-item>
           </el-collapse>
         </el-tabs>
       </div>
@@ -403,7 +404,7 @@
 import { getBimBusinessDetail } from '@/api/basicData/index'
 import UploadImg from "@/components/Generator/components/Upload/UploadImg.vue";
 import { getcategoryTree } from '@/api/basicData/materialSettings'
-import { addRepairRequest, updateRepairRequest, detailRepairRequest, equEquipmentRepairKnowledgeList, RepairRequestList,equRequisitionRecordsproducts } from '@/api/dailyManagement/Maintenance'
+import { addRepairRequest, updateRepairRequest, detailRepairRequest, equEquipmentRepairKnowledgeList, RepairRequestList, equRequisitionRecordsproducts } from '@/api/dailyManagement/Maintenance'
 import { getOrganizeInfo } from '@/api/permission/organize'
 import { getEquEquipmentList, parametersShelveslist } from '@/api/basicData/index'
 import { getOrganization } from '@/api/permission/user'

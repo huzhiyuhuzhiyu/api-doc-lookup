@@ -88,7 +88,6 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { equEquipmentRepairKnowledgeList, deleteequEquipmentRepairKnowledge } from '@/api/dailyManagement/Maintenance'
 import Form from './Form.vue'
 export default {
-  name: 'maintenanceknowledgeBase',
   components: { SuperQuery, Form },
   data() {
     return {

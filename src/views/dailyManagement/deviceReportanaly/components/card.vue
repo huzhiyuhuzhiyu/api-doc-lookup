@@ -52,7 +52,7 @@ export default {
     line-height: 40px;
   }
   .line {
-    min-width: 300px;
+    min-width: 120px;
     display: flex;
     height: 45px;
     justify-content: space-between;

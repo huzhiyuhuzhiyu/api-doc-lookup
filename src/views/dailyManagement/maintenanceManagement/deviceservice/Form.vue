@@ -227,9 +227,6 @@
                   </el-col>
                 </el-row>
               </el-collapse-item>
-              <el-collapse-item title="报修附件" name="bxfj" v-if="statesuc==='report'">
-                <UploadWj v-model="datafilelist" :disabled="btnType == 'look' || btnType == 'start' || btnType == 'end'" :detailed="btnType == 'look'"></UploadWj>
-              </el-collapse-item>
               <el-collapse-item title="故障信息" name="gzxx" v-if="statesuc==='report'||statesuc==='repair'">
                 <div v-if="btnType == 'edit' || btnType == 'add'">
                   <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择故障类型</el-button>|
@@ -277,6 +274,9 @@
                     </el-table-column>
                   </el-table>
                 </el-form>
+              </el-collapse-item>
+              <el-collapse-item title="报修附件" name="bxfj" v-if="statesuc==='report'">
+                <UploadWj v-model="datafilelist" :disabled="btnType == 'look' || btnType == 'start' || btnType == 'end'" :detailed="btnType == 'look'"></UploadWj>
               </el-collapse-item>
             </el-form>
           </el-collapse>

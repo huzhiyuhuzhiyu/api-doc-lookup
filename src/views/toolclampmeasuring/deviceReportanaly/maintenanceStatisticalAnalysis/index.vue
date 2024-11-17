@@ -706,6 +706,7 @@ export default {
 
 <style lang="scss" scoped>
 .wx-content {
+  min-width: 1080px;
   .container-header {
     font-weight: 400;
     height: 30px;

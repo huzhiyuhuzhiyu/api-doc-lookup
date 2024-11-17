@@ -293,7 +293,7 @@ export default {
   data() {
     return {
       StateList: [
-        { label: '待维修', value: 'toBeMaintain' }, { label: '正在维修', value: 'maintaining' },{ label: '已维修', value: 'maintained' }
+        { label: '待维修', value: 'toBeMaintain' }, { label: '正在维修', value: 'maintaining' }, { label: '已维修', value: 'maintained' }
       ],
       datalistobj: {},
       trendtion: {},
@@ -706,6 +706,7 @@ export default {
 
 <style lang="scss" scoped>
 .wx-content {
+  min-width: 1080px;
   .container-header {
     font-weight: 400;
     height: 30px;

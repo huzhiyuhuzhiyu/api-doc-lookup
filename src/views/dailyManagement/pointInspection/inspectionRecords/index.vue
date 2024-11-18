@@ -58,8 +58,8 @@
           <el-table-column prop="equipmentIdName" label="设备名称" width="200" sortable="custom" />
           <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
           <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
-          <el-table-column prop="cycle" label="周期" width="90" />
-          <el-table-column prop="unit" label="单位" width="90" />
+          <!-- <el-table-column prop="cycle" label="周期" width="90" />
+          <el-table-column prop="unit" label="单位" width="90" /> -->
           <el-table-column prop="departmentIdText" label="计划点检部门" width="150" />
           <el-table-column prop="maintainerIdText" label="计划点检人" width="120"></el-table-column>
           <el-table-column prop="planMaintenanceDate" label="计划点检日期" width="180" sortable="custom"></el-table-column>

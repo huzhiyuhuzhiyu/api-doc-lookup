@@ -54,12 +54,12 @@
                         </el-date-picker>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24">
+                    <!-- <el-col :sm="6" :xs="24">
                       <el-form-item label="内勤人员" prop="internalStaffId" ref="euqPeople">
                         <user-select v-model="dataForm.internalStaffId" :disabled="btnType === 'look'" placeholder="请选择内勤人员" @change="changePerple" clearable style="width: 100%;">
                         </user-select>
                       </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <!-- <el-col :sm="6" :xs="24">
                   <el-form-item label="所属销售人员" prop="salesperssalesFlagonId">
                     <user-select v-model="dataForm.salespersonId" placeholder="请选择所属销售人员" style="width: 100%;"
@@ -203,7 +203,7 @@
                     </el-select>
                   </el-form-item>
                 </el-col> -->
-                    <el-col :sm="6" :xs="24" v-if="btnType">
+                    <!-- <el-col :sm="6" :xs="24" v-if="btnType">
                       <el-form-item label="是否禁止发货出库" prop="shipmentFreezeFlag">
                         <el-select v-model="dataForm.shipmentFreezeFlag" placeholder="请选择是否禁止发货" style="width: 100%;" :disabled="btnType === 'look' ? true : false">
                           <el-option v-for="(item, index) in shipmentFreezeFlagList" :key="index" :label="item.text" :value="item.value"></el-option>
@@ -221,7 +221,7 @@
                       <el-form-item label="运输时间(天)" prop="transportationTime">
                         <el-input v-model="dataForm.transportationTime" oninput="value = value.replace(/[^0-9]/g,'')" placeholder="请输入运输时间(天)" :disabled="btnType === 'look' ? true : false" maxlength="4" />
                       </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="行业类别" prop="industry">
                         <el-cascader placeholder="请选择/搜索行业类别" :show-all-levels="false" v-model="dataForm.industry" :disabled="btnType === 'look' ? true : false" :options="industryoptions" :props="{ value: 'enCode',label: 'fullName'}" filterable style="width: 100%;" @change="changeindustry"></el-cascader>
@@ -234,7 +234,7 @@
                     </el-col>
                   </el-row>
                 </el-collapse-item>
-                <el-collapse-item title="财务信息" name="FinanceInfo">
+                <!-- <el-collapse-item title="财务信息" name="FinanceInfo">
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="税号" prop="taxId">
@@ -296,7 +296,7 @@
                       </el-form-item>
                     </el-col>
                   </el-row>
-                </el-collapse-item>
+                </el-collapse-item> -->
               </el-collapse>
             </el-form>
           </el-tab-pane>

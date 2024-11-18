@@ -15,10 +15,10 @@ import directMaterialRequisition from "@/views/warehouseManagement/finishedProdu
 import awaitInspectionInventory from'@/views/warehouseManagement/finishedProductWarehouseManagement/awaitInspectionInventory'
 import modalShift from'@/views/warehouseManagement/finishedProductWarehouseManagement/modalShift'
 import InventoryAssembly from'@/views/warehouseManagement/finishedProductWarehouseManagement/InventoryAssembly'
-import InventoryDisassembly from'@/views/warehouseManagement/finishedProductWarehouseManagement/InventoryDisassembly'
+import lnventoryDisassembly from'@/views/warehouseManagement/finishedProductWarehouseManagement/lnventoryDisassembly'
 export default {
   name: 'quality',
-  components:{dbIncomAndOutInventory,directInandOutWarehouse,inventory,inventoryDetaisList,inventoryList,transferManagement,directMaterialRequisition,awaitInspectionInventory,modalShift,InventoryAssembly,InventoryDisassembly},
+  components:{dbIncomAndOutInventory,directInandOutWarehouse,inventory,inventoryDetaisList,inventoryList,transferManagement,directMaterialRequisition,awaitInspectionInventory,modalShift,InventoryAssembly,lnventoryDisassembly},
   data() {
     return {
       businessType:"",
@@ -83,8 +83,8 @@ export default {
     if(this.businessType=='InventoryAssembly'){
       this.listPageComponent=InventoryAssembly
     }
-    if(this.businessType=='InventoryDisassembly'){
-      this.listPageComponent=InventoryDisassembly
+    if(this.businessType=='lnventoryDisassembly'){
+      this.listPageComponent=lnventoryDisassembly
     }
     // if()
 

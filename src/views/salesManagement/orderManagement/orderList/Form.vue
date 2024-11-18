@@ -1451,6 +1451,7 @@ export default {
         if (res.data) {
           res.data.productCode = res.data.code
           res.data.productsId = res.data.id
+          res.data.taxRate = res.data.taxRate*1
           this.$set(this.productData, idx, res.data)
           console.log(this.productData);
           let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.taxRate));

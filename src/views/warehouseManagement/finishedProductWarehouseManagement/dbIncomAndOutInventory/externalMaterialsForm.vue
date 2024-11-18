@@ -787,10 +787,10 @@ export default {
           item.ordersId = item.purchaseOrderId
           item.ordersLineId = item.id
         });
-        this.productData = res.data.records
-        this.productList = res.data.records
-        this.productTotal = res.data.total
-        console.log("发料清单数据", res);
+        // this.productData=res.data.records
+        this.productList=res.data.records
+        this.productTotal=res.data.total
+        console.log("发料清单数据",res);
       })
     },
     //   { label: "销售发货", value: "outbound_sale_send" },
@@ -836,8 +836,8 @@ export default {
         data.forEach(item => {
           this.ordersLineIdList.push(item.id)
         });
-        this.getMaterialsFun()
-        this.getBusInfo('b045')
+      // this.getMaterialsFun()
+      this.getBusInfo('b045')
 
         console.log(66666);
         // this.refeshDataFormItems()

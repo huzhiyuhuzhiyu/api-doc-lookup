@@ -203,56 +203,79 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    <el-dialog title="快速创建" :visible.sync="quickVisible" width="30%" :before-close="handleClose"
+    <el-dialog title="快速创建" :visible.sync="quickVisible" width="50%" :before-close="handleClose"
       class="JNPF-dialog JNPF-dialog_center" :close-on-click-modal="false" :close-on-press-escape="false">
       <el-form :model="quickForm" :rules="quickRules" ref="quickForm" label-width="100px" labelPosition="top"
         hide-required-asterisk="fasle">
-        <el-form-item label="产品编码" prop="code">
-          <template slot="label">
-            产品编码
-            <span class="required">*</span>
-          </template>
-          <el-input v-model="quickForm.code" placeholder="请输入产品编码"
-            :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true"></el-input>
-        </el-form-item>
-
-        <el-form-item label="品名规格" prop="drawingNo">
-          <template slot="label">
-            品名规格
-            <span class="required">*</span>
-          </template>
-          <el-input v-model="quickForm.drawingNo" placeholder="请输入品名规格"></el-input>
-        </el-form-item>
-
-        <el-form-item label="产品分类" prop="productCategoryName">
-          <template slot="label">
-            产品分类
-            <span class="required">*</span>
-          </template>
-          <ComSelect-list v-model="quickForm.productCategoryName" placeholder="请选择产品分类" auth
-            @change="productCategoryChange" :title="'选择产品分类'" :method="getcategoryCoop" :requestObj="quickRequestObj"
-            :dataFormatting="dataFormatting" />
-        </el-form-item>
-        <el-form-item label="单位" prop="unit">
-          <template slot="label">
-            单位
-            <span class="required">*</span>
-          </template>
-          <el-select v-model="quickForm.unit" placeholder="请选择单位" style="width: 100%;" filterable>
-            <el-option v-for="item in unitOptions" :key="item.value" :label="item.label"
-              :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="产品来源" prop="productSource">
-          <template slot="label">
-            产品来源
-            <span class="required">*</span>
-          </template>
-          <el-select v-model="quickForm.productSource" placeholder="请选择产品来源" style="width: 100%;">
-            <el-option v-for="item in productSourceOptions" :key="item.value" :label="item.label"
-              :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
+        <el-row :gutter="15">
+          <el-col :span="12">
+            <el-form-item label="所属项目" prop="projectId" v-if="isProjectSwitch === '1'">
+              <template slot="label">
+                所属项目
+                <span class="required">*</span>
+              </template>
+              <el-select v-model="quickForm.projectId" placeholder="请选择所属项目" style="width: 100%;" filterable
+                :disabled="quickForm.projectId !== '1'">
+                <el-option v-for="item in projectIdOptions" :key="item.id" :label="item.name"
+                  :value="item.id"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="产品编码" prop="code">
+              <template slot="label">
+                产品编码
+                <span class="required">*</span>
+              </template>
+              <el-input v-model="quickForm.code" placeholder="请输入产品编码" :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true
+                "></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="品名规格" prop="drawingNo">
+              <template slot="label">
+                品名规格
+                <span class="required">*</span>
+              </template>
+              <el-input v-model="quickForm.drawingNo" placeholder="请输入品名规格"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="产品分类" prop="productCategoryName">
+              <template slot="label">
+                产品分类
+                <span class="required">*</span>
+              </template>
+              <ComSelect-list v-model="quickForm.productCategoryName" placeholder="请选择产品分类" auth
+                @change="productCategoryChange" :title="'选择产品分类'" :method="getcategoryCoop"
+                :requestObj="quickRequestObj" :dataFormatting="dataFormatting" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="单位" prop="unit">
+              <template slot="label">
+                单位
+                <span class="required">*</span>
+              </template>
+              <el-select v-model="quickForm.unit" placeholder="请选择单位" style="width: 100%;" filterable>
+                <el-option v-for="item in unitOptions" :key="item.value" :label="item.label"
+                  :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="产品来源" prop="productSource">
+              <template slot="label">
+                产品来源
+                <span class="required">*</span>
+              </template>
+              <el-select v-model="quickForm.productSource" placeholder="请选择产品来源" style="width: 100%;">
+                <el-option v-for="item in productSourceOptions" :key="item.value" :label="item.label"
+                  :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
@@ -287,6 +310,7 @@ import { getCooperativeData } from '@/api/basicData/index'
 import { getcategoryTree as getcategoryCoop } from '@/api/basicData/materialSettings'
 import { mapGetters } from "vuex"
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
+import { getProjectList } from '@/api/system/projectManagement'
 export default {
   components: { Form, ExportForm, SuperQuery },
   name: 'productCom',
@@ -334,6 +358,7 @@ export default {
       isProjectSwitch: '',
       quickVisible: false,
       quickForm: {
+        projectId: '',
         code: '',
         drawingNo: '',
         unit: '',
@@ -342,6 +367,7 @@ export default {
       },
       codeConfig: {},
       quickRules: {
+        projectId: [{ required: true, message: '请选择所属项目', trigger: 'change' }],
         code: [{ required: true, message: '请输入产品编码', trigger: 'blur' }, {
           validator: (rule, value, callback) => {
             if (!value) {
@@ -449,6 +475,12 @@ export default {
             { label: '采购', value: 'purchase' },
             { label: '外协', value: 'out' }
           ]
+        },
+        {
+          prop: 'projectName',
+          label: '所属项目',
+          type: 'select',
+          options: []
         },
         {
           prop: 'productStatus',
@@ -636,6 +668,7 @@ export default {
     },
     quickAdd() {
       this.quickVisible = true
+      this.quickForm.projectId = this.userInfo.projectId
 
       this.fetchData('CPBM', true)
       this.quickForm.productSource = 'produce'
@@ -1209,6 +1242,29 @@ export default {
         })
         this.taxRateList = res.data.list
       })
+      // 所属项目
+      let obj18 = {
+        pageNum: -1,
+        pageSize: -1
+      }
+      getProjectList(obj18).then((res) => {
+        let arr = []
+        res.data.records.forEach((item) => {
+          let obj = {
+            label: item.name,
+            value: item.name
+          }
+          arr.push(obj)
+        })
+        this.projectIdOptions = res.data.records
+        console.log(this.projectIdOptions, 'this.projectIdOptions')
+        let tcObj = this.superQueryJson.find((item) => item.prop === 'projectName')
+
+        if (tcObj) {
+          // 将options赋值为5
+          tcObj.options = arr
+        }
+      })
     },
     changeLeft() {
       this.leftFlag = !this.leftFlag
@@ -1357,7 +1413,7 @@ export default {
     addOrUpdateHandle(id, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType)
+        this.$refs.Form.init(id, btnType, this.isProjectSwitch)
       })
     },
     handleDel(id) {

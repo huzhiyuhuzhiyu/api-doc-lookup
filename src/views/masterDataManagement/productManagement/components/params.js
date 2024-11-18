@@ -13,6 +13,7 @@ export default () => [
     tabCode: "basicInfo",
     tabName: "基本信息",
     tabContent: [
+      { prop: "projectId", label: "所属项目", value: "", type: 'select', itemRules: [{ required: true, trigger: "blur" }],options: [], filterable: true, render: true, itemDisabled: false },
       { prop: "productCategoryName", label: "产品分类", value: "", type: 'custom', customComponent: "ComSelect-list", itemRules: [{ required: true, message: "请选择产品分类", trigger: "no" }], itemDisabled: false },
       { prop: "code", label: "产品编码", value: "", type: 'input', itemRules: [{ required: true, trigger: "blur" }], render: true, itemDisabled: false },
       { prop: "drawingNo", label: "品名规格", value: "", type: 'input', maxlength: 1000, itemRules: [{ required: true, trigger: "blur" },], itemDisabled: false },

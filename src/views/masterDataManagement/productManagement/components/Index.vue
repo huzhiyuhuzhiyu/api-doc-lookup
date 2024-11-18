@@ -222,14 +222,14 @@
       <el-form :model="quickForm" :rules="quickRules" ref="quickForm" label-width="100px" labelPosition="top"
         hide-required-asterisk="fasle">
         <el-row :gutter="15">
-          <el-col :span="12">
-            <el-form-item label="所属项目" prop="projectId" v-if="isProjectSwitch === '1'">
+          <el-col :span="12" v-if="isProjectSwitch === '1'">
+            <el-form-item label="所属项目" prop="projectId">
               <template slot="label">
                 所属项目
                 <span class="required">*</span>
               </template>
               <el-select v-model="quickForm.projectId" placeholder="请选择所属项目" style="width: 100%;" filterable
-                :disabled="quickForm.projectId !== '1'">
+                :disabled="!userInfo.projectId ? false : userInfo.projectId === '1' ? false : true">
                 <el-option v-for="item in projectIdOptions" :key="item.id" :label="item.name"
                   :value="item.id"></el-option>
               </el-select>
@@ -677,7 +677,9 @@ export default {
     },
     quickAdd() {
       this.quickVisible = true
-      this.quickForm.projectId = this.userInfo.projectId
+      if (this.listQuery.classAttribute !== 'semi_finished') {
+        this.quickForm.projectId = this.userInfo.projectId
+      }
 
       this.fetchData('CPBM', true)
       this.quickForm.productSource = 'produce'
@@ -736,12 +738,13 @@ export default {
     init(initListQuery, tableItems) {
       this.quickVisible = false
       this.listQuery = JSON.parse(JSON.stringify(initListQuery))
+      this.listQuery.projectId = this.userInfo.projectId
       this.tableItems = JSON.parse(tableItems)
       console.log(initListQuery, 'uuu')
       console.log(this.tableItems, 'this.tableItems')
       console.log(this.$refs.dataTable, 'dataTable9')
       this.classAttributeText = this.listQuery.classAttributeText
-      console.log(this.classAttributeText, '[]')
+      console.log(this.classAttribute, '[]')
       this.getcategoryTree()
       this.initData()
       if (localStorage.getItem(this.listQuery.classAttribute)) {
@@ -1283,12 +1286,19 @@ export default {
           arr.push(obj)
         })
         this.projectIdOptions = res.data.records
+        console.log(this.listQuery.classAttribute, 'this.listQuery.classAttribute33')
+        if (this.listQuery.classAttribute === 'semi_finished') {
+          this.projectIdOptions = this.projectIdOptions.filter(item => item.id !== '1')
+        }
         console.log(this.projectIdOptions, 'this.projectIdOptions')
         let tcObj = this.superQueryJson.find((item) => item.prop === 'projectName')
 
         if (tcObj) {
           // 将options赋值为5
           tcObj.options = arr
+          if (this.listQuery.classAttribute === 'semi_finished') {
+            tcObj.options = tcObj.options.filter(item => item.id !== '1')
+          }
         }
       })
     },
@@ -1393,7 +1403,12 @@ export default {
     },
 
     sortChange({ prop, order }) {
-      const newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+      let newProp
+      if (prop === 'projectName') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+      }
       this.listQuery.orderItems[0].asc = order === 'ascending'
       this.listQuery.orderItems[0].column = order === null ? '' : newProp
       this.initData()

@@ -74,7 +74,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head" style="padding:8px">
           <div>
             <el-dropdown style="margin-right:10px;">
@@ -109,7 +109,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
+        <JNPF-table v-if="tableFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           ref="dataTable" :setColumnDisplayList="columnList">
           <template v-if="tableItems">
             <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label"
@@ -147,8 +147,8 @@
               </template>
             </template>
           </el-table-column>
-          <!-- <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="isProjectSwitch === '1'">
-          </el-table-column> -->
+          <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="isProjectSwitch === '1'">
+          </el-table-column>
           <el-table-column prop="productStatus" :label="productName + '状态'" width="120" align="center">
 
             <template slot-scope="{ row }">
@@ -347,6 +347,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      tableFlag: false,
       quickVisible: false,
       quickForm: {
         code: '',
@@ -1360,6 +1361,7 @@ export default {
       this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
       getProductList(this.listQuery)
         .then((res) => {
+          this.tableFlag = true
           this.tableData = res.data.records
           this.total = res.data.total
           this.listLoading = false

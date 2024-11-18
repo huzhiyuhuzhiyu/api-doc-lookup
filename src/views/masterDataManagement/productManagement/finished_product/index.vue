@@ -17,17 +17,34 @@
         </span>
       </div>
       <div v-if="!leftFlag">
-        <el-input placeholder="请输入" v-model="filterText" style="width:200px;margin:10px auto;display:block"
-          suffix-icon="el-icon-search" clearable></el-input>
+        <el-input
+          placeholder="请输入"
+          v-model="filterText"
+          style="width:200px;margin:10px auto;display:block"
+          suffix-icon="el-icon-search"
+          clearable
+        ></el-input>
       </div>
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
-        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
-          :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
-          v-if="refreshTree" :filter-node-method="filterNode">
+        <el-tree
+          ref="treeBox"
+          :data="treeData"
+          :props="defaultProps"
+          :default-expand-all="expands"
+          highlight-current
+          :expand-on-click-node="false"
+          node-key="id"
+          @node-click="handleNodeClick"
+          class="JNPF-common-el-tree"
+          v-if="refreshTree"
+          :filter-node-method="filterNode"
+        >
           <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
-            <i :class="[
-              data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm'
-            ]" />
+            <i
+              :class="[
+                data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm'
+              ]"
+            />
             <span class="text" :title="data.name">{{ data.name }}</span>
           </span>
         </el-tree>
@@ -45,21 +62,34 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
+              <el-input
+                v-model="listQuery.productCode"
+                placeholder="产品编码"
+                clearable
+                @keyup.enter.native="search()"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" clearable
-                @keyup.enter.native="search()" />
+              <el-input
+                v-model="listQuery.productDrawingNo"
+                placeholder="品名规格"
+                clearable
+                @keyup.enter.native="search()"
+              />
             </el-form-item>
           </el-col>
 
           <el-col :span="4">
             <el-form-item>
               <el-select v-model="listQuery.productSource" placeholder="产品来源" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in productSourceList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
+                <el-option
+                  v-for="(item, index) in productSourceList"
+                  :key="index"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -99,16 +129,24 @@
             <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click="aiAdd">智能新建</el-button> -->
             <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
             <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
-            <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
-              icon="el-icon-download" @click="exportForm">
+            <el-button
+              :disabled="tableData.length > 0 ? false : true"
+              size="mini"
+              type="primary"
+              icon="el-icon-download"
+              @click="exportForm"
+            >
               导出
             </el-button>
           </div>
 
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                @click="superQueryVisible = true" />
+              <el-link
+                icon="icon-ym icon-ym-filter JNPF-common-head-icon"
+                :underline="false"
+                @click="superQueryVisible = true"
+              />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
@@ -119,8 +157,15 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-if="tableFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
-          ref="dataTable" :setColumnDisplayList="columnList">
+        <JNPF-table
+          v-if="tableFlag"
+          :data="tableData"
+          :fixedNO="true"
+          @sort-change="sortChange"
+          custom-column
+          ref="dataTable"
+          :setColumnDisplayList="columnList"
+        >
           <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">
@@ -149,8 +194,13 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="isProjectSwitch === '1'">
-          </el-table-column>
+          <el-table-column
+            prop="projectName"
+            label="所属项目"
+            width="140"
+            sortable="custom"
+            v-if="isProjectSwitch === '1'"
+          ></el-table-column>
           <el-table-column prop="productStatus" label="产品状态" width="120" align="center">
             <template slot-scope="{ row }">
               <el-tag type="success" disable-transitions v-if="row.productStatus == 'enable'">启用</el-tag>
@@ -177,8 +227,10 @@
           <el-table-column prop="createByName" label="创建人" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId, configFlag)"
-                @del="handleDel(scope.row.id)">
+              <tableOpts
+                @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId, configFlag)"
+                @del="handleDel(scope.row.id)"
+              >
                 <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.id, true)">
                   查看详情
                 </el-button>
@@ -199,8 +251,13 @@
             </template>
           </el-table-column>
         </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
-          :limit.sync="listQuery.pageSize" @pagination="initData" />
+        <pagination
+          :total="total"
+          :page.sync="listQuery.pageNum"
+          :background="background"
+          :limit.sync="listQuery.pageSize"
+          @pagination="initData"
+        />
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
@@ -208,15 +265,45 @@
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 导入产品 -->
-    <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
-      :http-request="UploadProduct" />
+    <el-upload
+      action="#"
+      v-show="false"
+      accept=".xls, .xlsx"
+      :headers="{ token }"
+      ref="UploadProduct"
+      :http-request="UploadProduct"
+    />
     <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
-      :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
-      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false" :limit="1"
-        :on-preview="handlePreview" drag :on-remove="handleRemove" :on-change="handleFileChange" ref="uploadRef">
+    <SuperQuery
+      :show="superQueryVisible"
+      ref="SuperQuery"
+      :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch"
+      @close="superQueryVisible = false"
+    />
+    <el-dialog
+      title="导入数据"
+      append-to-body
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="uploadVisib"
+      lock-scroll
+      class="JNPF-dialog JNPF-dialog_center"
+      width="400px"
+    >
+      <el-upload
+        cass="upload-demo"
+        action="#"
+        accept=".xls, .xlsx"
+        :multiple="false"
+        :auto-upload="false"
+        :limit="1"
+        :on-preview="handlePreview"
+        drag
+        :on-remove="handleRemove"
+        :on-change="handleFileChange"
+        ref="uploadRef"
+      >
         <i class="el-icon-upload"></i>
         <div class="el-upload__text"><em>点击选取文件上传</em></div>
         <div class="el-upload__tip" slot="tip">
@@ -234,56 +321,122 @@
         </el-button>
       </span>
     </el-dialog>
-    <el-dialog title="快速创建" :visible.sync="quickVisible" width="30%" :before-close="handleClose"
-      class="JNPF-dialog JNPF-dialog_center" :close-on-click-modal="false" :close-on-press-escape="false">
-      <el-form :model="quickForm" :rules="quickRules" ref="quickForm" label-width="100px" labelPosition="top"
-        hide-required-asterisk="fasle" :close-on-click-modal="false">
-        <el-form-item label="产品编码" prop="code">
-          <template slot="label">
-            产品编码
-            <span class="required">*</span>
-          </template>
-          <el-input v-model="quickForm.code" placeholder="请输入产品编码"
-            :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true"></el-input>
-        </el-form-item>
-
-        <el-form-item label="品名规格" prop="drawingNo">
-          <template slot="label">
-            品名规格
-            <span class="required">*</span>
-          </template>
-          <el-input v-model="quickForm.drawingNo" placeholder="请输入品名规格"></el-input>
-        </el-form-item>
-
-        <el-form-item label="产品分类" prop="productCategoryName">
-          <template slot="label">
-            产品分类
-            <span class="required">*</span>
-          </template>
-          <ComSelect-list v-model="quickForm.productCategoryName" placeholder="请选择产品分类" auth
-            @change="productCategoryChange" :title="'选择产品分类'" :method="getcategoryCoop" :requestObj="quickRequestObj"
-            :dataFormatting="dataFormatting" />
-        </el-form-item>
-        <el-form-item label="单位" prop="unit">
-          <template slot="label">
-            单位
-            <span class="required">*</span>
-          </template>
-          <el-select v-model="quickForm.unit" placeholder="请选择单位" style="width: 100%;" filterable>
-            <el-option v-for="item in unitOptions" :key="item.value" :label="item.label"
-              :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="产品来源" prop="productSource">
-          <template slot="label">
-            产品来源
-            <span class="required">*</span>
-          </template>
-          <el-select v-model="quickForm.productSource" placeholder="请选择产品来源" style="width: 100%;">
-            <el-option v-for="item in productSourceOptions" :key="item.value" :label="item.label"
-              :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
+    <el-dialog
+      title="快速创建"
+      :visible.sync="quickVisible"
+      width="50%"
+      :before-close="handleClose"
+      class="JNPF-dialog JNPF-dialog_center"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <el-form
+        :model="quickForm"
+        :rules="quickRules"
+        ref="quickForm"
+        label-width="100px"
+        labelPosition="top"
+        hide-required-asterisk="fasle"
+        :close-on-click-modal="false"
+      >
+        <el-row :gutter="15">
+          <el-col :span="12">
+            <el-form-item label="所属项目" prop="projectId" v-if="isProjectSwitch === '1'">
+              <template slot="label">
+                所属项目
+                <span class="required">*</span>
+              </template>
+              <el-select
+                v-model="quickForm.projectId"
+                placeholder="请选择所属项目"
+                style="width: 100%;"
+                filterable
+                :disabled="quickForm.projectId !== '1' || !quickForm.projectId"
+              >
+                <el-option
+                  v-for="item in projectIdOptions"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="产品编码" prop="code">
+              <template slot="label">
+                产品编码
+                <span class="required">*</span>
+              </template>
+              <el-input
+                v-model="quickForm.code"
+                placeholder="请输入产品编码"
+                :disabled="
+                  btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true
+                "
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="品名规格" prop="drawingNo">
+              <template slot="label">
+                品名规格
+                <span class="required">*</span>
+              </template>
+              <el-input v-model="quickForm.drawingNo" placeholder="请输入品名规格"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="产品分类" prop="productCategoryName">
+              <template slot="label">
+                产品分类
+                <span class="required">*</span>
+              </template>
+              <ComSelect-list
+                v-model="quickForm.productCategoryName"
+                placeholder="请选择产品分类"
+                auth
+                @change="productCategoryChange"
+                :title="'选择产品分类'"
+                :method="getcategoryCoop"
+                :requestObj="quickRequestObj"
+                :dataFormatting="dataFormatting"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="单位" prop="unit">
+              <template slot="label">
+                单位
+                <span class="required">*</span>
+              </template>
+              <el-select v-model="quickForm.unit" placeholder="请选择单位" style="width: 100%;" filterable>
+                <el-option
+                  v-for="item in unitOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="产品来源" prop="productSource">
+              <template slot="label">
+                产品来源
+                <span class="required">*</span>
+              </template>
+              <el-select v-model="quickForm.productSource" placeholder="请选择产品来源" style="width: 100%;">
+                <el-option
+                  v-for="item in productSourceOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
@@ -319,7 +472,8 @@ import {
 import { getUnitData, detailUnitData } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getCooperativeData } from '@/api/basicData/index'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
-import { mapGetters } from "vuex"
+import { getProjectList } from '@/api/system/projectManagement'
+import { mapGetters } from 'vuex'
 export default {
   components: { Form, ExportForm, aiForm, SuperQuery },
   name: 'finished_product',
@@ -336,32 +490,36 @@ export default {
       },
       codeConfig: {},
       quickRules: {
-        code: [{ required: true, message: '请输入产品编码', trigger: 'blur' }, {
-          validator: (rule, value, callback) => {
-            if (!value) {
-              callback()
-            } else if (this.quickForm.code === this.autoDrawingNo) {
-              callback()
-            } else {
-              // this.jnpf.specialCodeUrl 对浏览器无法解析的url字符进行手动转码
-              checkCodeExist({
-                id: this.quickForm.id || '',
-                code: this.jnpf.specialCodeUrl(this.quickForm.code)
-              })
-                .then((res) => {
-                  if (!res.data) {
-                    callback()
-                  } else {
-                    callback(new Error('此产品编码已存在'))
-                  }
+        projectId: [{ required: true, message: '请选择所属项目', trigger: 'change' }],
+        code: [
+          { required: true, message: '请输入产品编码', trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              if (!value) {
+                callback()
+              } else if (this.quickForm.code === this.autoDrawingNo) {
+                callback()
+              } else {
+                // this.jnpf.specialCodeUrl 对浏览器无法解析的url字符进行手动转码
+                checkCodeExist({
+                  id: this.quickForm.id || '',
+                  code: this.jnpf.specialCodeUrl(this.quickForm.code)
                 })
-                .catch((err) => {
-                  callback(new Error(' '))
-                })
-            }
-          },
-          trigger: 'blur'
-        }],
+                  .then((res) => {
+                    if (!res.data) {
+                      callback()
+                    } else {
+                      callback(new Error('此产品编码已存在'))
+                    }
+                  })
+                  .catch((err) => {
+                    callback(new Error(' '))
+                  })
+              }
+            },
+            trigger: 'blur'
+          }
+        ],
         drawingNo: [
           { required: true, message: '请输入品名规格', trigger: 'blur' },
           {
@@ -517,6 +675,12 @@ export default {
           ]
         },
         {
+          prop: 'projectName',
+          label: '所属项目',
+          type: 'select',
+          options: []
+        },
+        {
           prop: 'productStatus',
           label: '产品状态',
           type: 'select',
@@ -666,7 +830,6 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
-
     async getProjectSwitch() {
       let obj = {
         businessCode: 'system',
@@ -728,7 +891,7 @@ export default {
         if (flag) {
           this.quickForm.code = data.number
         }
-      } catch (error) { }
+      } catch (error) {}
     },
     getBimBusinessSwitchConfigList() {
       let obj = {
@@ -1274,6 +1437,29 @@ export default {
         })
         this.taxRateList = res.data.list
       })
+      // 所属项目
+      let obj18 = {
+        pageNum: -1,
+        pageSize: -1
+      }
+      getProjectList(obj18).then((res) => {
+        let arr = []
+        res.data.records.forEach((item) => {
+          let obj = {
+            label: item.name,
+            value: item.name
+          }
+          arr.push(obj)
+        })
+        this.projectIdOptions = res.data.records
+        console.log(this.projectIdOptions, 'this.projectIdOptions')
+        let tcObj = this.superQueryJson.find((item) => item.prop === 'projectName')
+
+        if (tcObj) {
+          // 将options赋值为5
+          tcObj.options = arr
+        }
+      })
     },
     changeLeft() {
       this.leftFlag = !this.leftFlag
@@ -1312,7 +1498,7 @@ export default {
             if (!res.data.url) return
             this.jnpf.downloadFile(res.data.url)
           })
-          .catch(() => { })
+          .catch(() => {})
       }
     },
     // 展开或折叠全部
@@ -1429,17 +1615,15 @@ export default {
             })
           })
         })
-        .catch(() => { })
+        .catch(() => {})
     },
     // 导入
     importForm() {
-
       // this.$refs.UploadProduct.$el.querySelector('input').click()
       this.uploadVisib = true
-
     },
-    handleRemove(file, fileList) { },
-    handlePreview(file) { },
+    handleRemove(file, fileList) {},
+    handlePreview(file) {},
     handleFileChange(file) {
       this.file = file.raw
     },
@@ -1511,7 +1695,6 @@ export default {
             this.loadingText = ''
           })
       }
-
     },
     // 导入产品  下载导入错误数据
     downNoProduct(res) {
@@ -1577,7 +1760,7 @@ export default {
     },
     quickAdd() {
       this.quickVisible = true
-
+      this.quickForm.projectId = this.userInfo.projectId
       this.fetchData('CPBM', true)
       this.quickForm.productSource = 'assemble'
     },

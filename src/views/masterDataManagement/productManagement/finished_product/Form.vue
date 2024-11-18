@@ -742,11 +742,9 @@ export default {
       }
       if (this.isProjectSwitch === '1') {
         this.tabs[0].tabContent.forEach((ele) => {
-          if (ele.prop == 'project') {
-            console.log(this.userInfo.project, 'pr')
-            if (this.userInfo.project) {
+          if (ele.prop == 'projectId') {
+            console.log(this.userInfo.projectId, 'pr')
 
-            }
             ele.render = true
             let obj = {
               pageNum: 1,
@@ -757,6 +755,16 @@ export default {
                 return { label: item.name, value: item.id }
               })
             })
+            if (!this.userInfo.projectId) {
+              this.dataForm.projectId = this.userInfo.projectId
+            } else {
+              if (this.userInfo.projectId === '1') {
+                this.dataForm.projectId = this.userInfo.projectId
+              } else {
+                this.dataForm.projectId = this.userInfo.projectId
+                ele.itemDisabled = true
+              }
+            }
           }
         })
       } else {

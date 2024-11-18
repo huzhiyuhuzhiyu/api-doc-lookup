@@ -853,9 +853,9 @@ export default {
       if (!this.selectSaleProductArr.length) return this.$message.error("请选择产品！")
       this.productVisible = false
       let arr = JSON.parse(JSON.stringify(this.selectSaleProductArr))
-      this.productData = arr
+      
 
-      this.productData.forEach(item => {
+      arr.forEach(item => {
         this.$set(item, 'stockNum', 0)
         this.$set(item, 'num', '')
         this.$set(item, 'diffNum', '')
@@ -869,7 +869,7 @@ export default {
           this.$set(item, 'warehouseId', this.dataForm.warehouseId)
         }
       });
-
+      this.productData=[...this.productData,...arr]
 
 
     },

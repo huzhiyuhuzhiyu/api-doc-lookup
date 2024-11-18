@@ -968,37 +968,8 @@ export default {
                 it.jobNumber = it.resourceCode
               })
             })
-            if (this.dataFormTwo.length === 2) {
-              let newArr = []
 
-              this.dataFormTwo.forEach((item, index, arr) => {
-                if (item.firstFlag && !item.lastFlag) {
-                  newArr[0] = item
-                } else if (!item.firstFlag && item.lastFlag) {
-                  newArr[arr.length - 1] = item
-                }
-              })
-
-              // // 之后可以处理 otherItems，比如将它们插入到原数组的中间
-              this.dataFormTwo = [newArr[0], newArr[newArr.length - 1]]
-            } else if (this.dataFormTwo.length > 2) {
-              let otherItems = []
-              let newArr = []
-
-              this.dataFormTwo.forEach((item, index, arr) => {
-                if (item.firstFlag && !item.lastFlag) {
-                  newArr[0] = item
-                } else if (!item.firstFlag && item.lastFlag) {
-                  newArr[arr.length - 1] = item
-                } else if (!item.firstFlag && !item.lastFlag) {
-                  // 处理其他项
-                  otherItems.push(item) // 可以选择将这些项存储到另一个数组
-                }
-              })
-
-              // // 之后可以处理 otherItems，比如将它们插入到原数组的中间
-              this.dataFormTwo = [newArr[0], ...otherItems, newArr[newArr.length - 1]]
-            }
+            this.dataFormTwo.sort((a, b) => a.sort - b.sort);
 
             if (this.type === 'edit') {
               this.getBusInfo()
@@ -1126,7 +1097,7 @@ export default {
           }
         })
       }
-      if (this.dataFormTwo > 1) {
+      if (this.dataFormTwo.length > 1) {
         this.dataFormTwo = this.dataFormTwo.map((item, index) => {
           // 复制当前的item
           let newItem = { ...item }

@@ -122,7 +122,7 @@
                         <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
                         <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160" v-if="btnType != 'look'"
                           :key="7"></el-table-column>
-                        <el-table-column prop="waitDeliverNum" label="待发料数量" width="140" :key="777"
+                        <el-table-column prop="waitReceiptNum" label="待发料数量" width="140" :key="777"
                           v-if="btnType != 'look'">
 
                         </el-table-column>
@@ -262,7 +262,7 @@
                     <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
                     <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160" v-if="btnType != 'look'"
                       :key="7"></el-table-column>
-                    <el-table-column prop="waitDeliverNum" label="待发料数量" width="140" :key="777"
+                    <el-table-column prop="waitReceiptNum" label="待发料数量" width="140" :key="777"
                       v-if="btnType != 'look'">
 
                     </el-table-column>
@@ -354,7 +354,7 @@
                 <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
                 <el-table-column prop="processName" label="工序名称" width="120" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="90" sortable="custom" />
-                <el-table-column prop="waitDeliverNum" label="待发料数量" min-width="140" sortable="custom" />
+                <el-table-column prop="waitReceiptNum" label="待发料数量" min-width="140" sortable="custom" />
                 <el-table-column prop="demandQuantity" label="订单数量" min-width="120" sortable="custom" />
 
 
@@ -644,7 +644,7 @@ export default {
 
       arr.forEach(item => {
 
-        item.num = item.waitDeliverNum
+        item.num = item.waitReceiptNum
 
         this.productData.push(item)
       });
@@ -783,11 +783,11 @@ export default {
       this.materialsForm.ordersLineIdList = this.ordersLineIdList
       shipmentList(this.materialsForm).then(res => {
         res.data.records.forEach(item => {
-          item.num = item.waitDeliverNum
+          item.num = item.waitReceiptNum
           item.ordersId = item.purchaseOrderId
           item.ordersLineId = item.id
         });
-        this.productData = res.data.records
+        // this.productData=res.data.records
         this.productList = res.data.records
         this.productTotal = res.data.total
         console.log("发料清单数据", res);
@@ -836,14 +836,14 @@ export default {
         data.forEach(item => {
           this.ordersLineIdList.push(item.id)
         });
-        this.getMaterialsFun()
+        // this.getMaterialsFun()
         this.getBusInfo('b045')
 
         console.log(66666);
         // this.refeshDataFormItems()
         data.forEach((item, index) => {
           item.productDrawingNo = item.drawingNo
-          item.num = item.waitReceiptNum
+          this.$set(item, 'num', item.waitReceiptNum)
           item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
           item.costPrice = item.price
           item.classAttribute = item.classAttribute

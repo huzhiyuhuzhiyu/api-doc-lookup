@@ -18,8 +18,8 @@
             <!-- <el-tab-pane :label="item.tabName" :name="item.tabCode" :key="item.tabCode"> -->
             <el-collapse v-model="activeNames">
               <el-collapse-item title="基本信息" name="basicInfo" :class="['finish_product', 'semi_finished', 'raw_material', 'accessories'].includes(classAttribute)
-                  ? orderInfo
-                  : ''
+                ? orderInfo
+                : ''
                 ">
                 <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
               </el-collapse-item>
@@ -47,6 +47,7 @@ import {
 import { getByCode } from '@/api/basicData/index'
 import { getcategoryTree, getUnitData, detailUnitData } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getbimProductAttributesList, getbimProductsModelList } from '@/api/masterDataManagement/index'
+import { getProjectList } from '@/api/system/projectManagement'
 import tabs from './params'
 import { mapGetters } from "vuex"
 export default {
@@ -357,16 +358,16 @@ export default {
         }
       }
       if (tc.prop === 'projectId') {
-          let obj = {
-            pageNum: 1,
-            pageSize: -1
-          }
-          getProjectList(obj).then((res) => {
-            tc.options = res.data.records.map((item) => {
-              return { label: item.name, value: item.id }
-            })
-          })
+        let obj = {
+          pageNum: 1,
+          pageSize: -1
         }
+        getProjectList(obj).then((res) => {
+          tc.options = res.data.records.map((item) => {
+            return { label: item.name, value: item.id }
+          })
+        })
+      }
     })
   },
   computed: {
@@ -391,11 +392,46 @@ export default {
         }
       } catch (error) { }
     },
-    init(id, btnType = false) {
+    init(id, btnType = false,isProjectSwitch) {
+      this.isProjectSwitch = isProjectSwitch
       this.visible = true
       this.formLoading = true
       this.btnType = btnType
       this.dataForm.id = id || ''
+      if (this.isProjectSwitch === '1') {
+        this.tabs[0].tabContent.forEach((ele) => {
+          if (ele.prop == 'projectId') {
+            console.log(this.userInfo.projectId, 'pr')
+
+            ele.render = true
+            let obj = {
+              pageNum: 1,
+              pageSize: -1
+            }
+            getProjectList(obj).then((res) => {
+              ele.options = res.data.records.map((item) => {
+                return { label: item.name, value: item.id }
+              })
+            })
+            if (!this.userInfo.projectId) {
+              this.dataForm.projectId = this.userInfo.projectId
+            } else {
+              if (this.userInfo.projectId === '1') {
+                this.dataForm.projectId = this.userInfo.projectId
+              } else {
+                this.dataForm.projectId = this.userInfo.projectId
+                ele.itemDisabled = true
+              }
+            }
+          }
+        })
+      } else {
+        this.tabs[0].tabContent.forEach((ele) => {
+          if (ele.prop == 'project') {
+            ele.render = false
+          }
+        })
+      }
       if (!!id) {
         this.title = btnType ? `查看${this.productName}档案` : `编辑${this.productName}档案`
         // 获取详情

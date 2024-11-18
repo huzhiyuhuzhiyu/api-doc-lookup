@@ -95,6 +95,8 @@
               <div v-if="scope.row.businessType == 'inbound_order_production'">生产产品入库</div>
               <div v-if="scope.row.businessType == 'outbound_use'">资产领用</div>
               <div v-if="scope.row.businessType == 'inbound_return'">资产归还</div>
+              <div v-if="scope.row.businessType == 'inbound_taking_adjust'">盘点调整入库</div>
+              <div v-if="scope.row.businessType == 'outbound_taking_adjust'">盘点调整出库</div>
             </template>
           </el-table-column>
           <el-table-column prop="partnerName" label="客户/供应商" sortable="custom" min-width="160">
@@ -154,7 +156,7 @@
                     </el-dropdown-item>
                    
                     <el-dropdown-item type="text"
-                      :disabled="!(scope.row.businessType == 'inbound_purchase' && scope.row.sourceType == 'io_other')"
+                      :disabled="!(scope.row.businessType == 'inbound_purchase' && scope.row.sourceType == 'direct')"
                       @click.native="PrintFun(scope.row.id)">打印</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -312,7 +314,9 @@ export default {
         { label: "调拨入库", value: "inbound_transfer" },
         { label: "资产领用", value: "outbound_use" },
         { label: "资产归还", value: "inbound_return" },
-      ],
+        { label: "盘点调整入库", value: "inbound_taking_adjust" },
+        { label: "盘点调整出库", value: "outbound_taking_adjust" },
+      ], 
       superQueryVisible: false,
 
       initListQuery: {
@@ -364,6 +368,8 @@ export default {
             { label: "调拨入库", value: "inbound_transfer" },
             { label: "资产领用", value: "outbound_use" },
             { label: "资产归还", value: "inbound_return" },
+            { label: "盘点调整入库", value: "inbound_taking_adjust" },
+            { label: "盘点调整出库", value: "outbound_taking_adjust" },
           ],
         },
         {

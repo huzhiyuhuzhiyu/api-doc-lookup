@@ -883,7 +883,7 @@ export default {
       if (this.dataForm.documentType == 'outbound') {
         this.orderForm.classAttributeList = this.classAttributeList
         this.orderForm.warehouseId = this.dataForm.warehouseId
-
+        this.orderForm.availableBatch=true
         getBatchNumber(this.orderForm).then(res => {
 
           this.productList = res.data.records

@@ -155,7 +155,7 @@
           <el-table-column label="操作" min-width="200" fixed="right">
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
-                :delDisabled="scope.row.documentStatus == 'submit'" :editDisabled="scope.row.documentStatus == 'submit'"
+                :delDisabled="scope.row.documentStatus == 'submit'" :editDisabled="scope.row.documentStatus == 'submit'||scope.row.documentStatus == 'back'"
                 @edit="viewFun(scope.row.moveId, 'edit', scope.row)" @del="handleDel(scope.row.moveId)">
                  
                 <el-dropdown hide-on-click>
@@ -167,8 +167,8 @@
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item @click.native="viewFun(scope.row.moveId, 'look', scope.row)">查看详情</el-dropdown-item>
                     <el-dropdown-item type="text"
-                      :disabled="!(scope.row.businessType == 'inbound_purchase' && scope.row.sourceType == 'direct')"
-                      @click.native="PrintFun(scope.row.moveId)">打印</el-dropdown-item>
+                      :disabled="!(scope.row.businessType == 'inbound_purchase' && scope.row.sourceType == 'direct'&&scope.row.documentStatus=='submit')"
+                      @click.native="PrintFun(scope.row.id)">打印</el-dropdown-item>
 
                   </el-dropdown-menu>
                 </el-dropdown>

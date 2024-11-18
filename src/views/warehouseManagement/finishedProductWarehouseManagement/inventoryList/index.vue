@@ -47,6 +47,8 @@
         <div class="JNPF-common-head">
           <div>
             <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+              icon="iconfont  icon-chehui1" @click="withdrawFun">撤回</el-button>
+            <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
               icon="el-icon-download" @click="exportForm">导出</el-button>
           </div>
 
@@ -65,7 +67,8 @@
           </div>
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" border :setColumnDisplayList="columnList"
-          :fixedNO="true" @sort-change="sortChange" custom-column>
+          hasC :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" :fixedNO="true"
+          @sort-change="sortChange" custom-column>
           <el-table-column prop="orderNo" label="单号" sortable="custom" min-width="180">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="viewFun(scope.row.id, 'look', scope.row)">{{
@@ -99,6 +102,15 @@
               <div v-if="scope.row.businessType == 'outbound_taking_adjust'">盘点调整出库</div>
             </template>
           </el-table-column>
+          <el-table-column prop="sourceType" label="来源" sortable="custom" min-width="120">
+            <template slot-scope="scope">
+              <div v-if="scope.row.sourceType == 'order'">订单</div>
+              <div v-if="scope.row.sourceType == 'notice'">通知单</div>
+              <div v-if="scope.row.sourceType == 'direct'">直接出入库</div>
+              <div v-if="scope.row.sourceType == 'outbound_purchase'">其他</div>
+
+            </template>
+          </el-table-column>
           <el-table-column prop="partnerName" label="客户/供应商" sortable="custom" min-width="160">
 
           </el-table-column>
@@ -116,8 +128,8 @@
             <template slot-scope="scope">
               <el-tag type="warning" v-if="scope.row.documentStatus == 'draft'">草稿</el-tag>
               <el-tag type="success" v-else-if="scope.row.documentStatus == 'submit'">提交</el-tag>
+              <el-tag type="danger" v-else-if="scope.row.documentStatus == 'back'">撤回</el-tag>
             </template>
-
           </el-table-column>
           <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center">
             <template slot-scope="scope">
@@ -141,7 +153,7 @@
           <el-table-column label="操作" width="200" fixed="right">
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
-                :delDisabled="scope.row.documentStatus == 'submit'" :editDisabled="scope.row.documentStatus == 'submit'"
+                :delDisabled="scope.row.documentStatus == 'submit'" :editDisabled="scope.row.documentStatus == 'submit'||scope.row.documentStatus == 'back'"
                 @edit="viewFun(scope.row.id, 'edit', scope.row)" @del="handleDel(scope.row.id)">
 
                 <el-dropdown hide-on-click>
@@ -154,9 +166,9 @@
                     <el-dropdown-item @click="viewFun(scope.row.id, 'look', scope.row)">
                       查看详情
                     </el-dropdown-item>
-                   
+
                     <el-dropdown-item type="text"
-                      :disabled="!(scope.row.businessType == 'inbound_purchase' && scope.row.sourceType == 'direct')"
+                      :disabled="!(scope.row.businessType == 'inbound_purchase' && scope.row.sourceType == 'direct'&&scope.row.documentStatus=='submit')"
                       @click.native="PrintFun(scope.row.id)">打印</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -219,7 +231,7 @@
 </template>
 
 <script>
-import { getInventoryDetailList, getInventorySummaryData } from '@/api/warehouseManagement/inventory'
+import { getInventoryDetailList, getInventorySummaryData, withdrawApi } from '@/api/warehouseManagement/inventory'
 import { getWarehouseList, deleteWarehouseData } from '@/api/warehouseManagement/inboundAndOutbound'
 import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -253,7 +265,7 @@ export default {
     ProductInboundForm, OutboundSaleSendForm, InboundSaleReturnForm,
     InboundPurchaseForm, OutboundPurchaseForm, OutboundExternalSendForm,
     InboundExternalForm, OutboundPickOutForm, InboundReturnMaterialsForm,
-    Transfer, SaleOutboundForm, PurchaseOrderInboundForm, ExternalMaterOutboundForm, ExternalInboundForm, outboundUseForm, InboundReturnForm, PrintBrowse, PrintDialog 
+    Transfer, SaleOutboundForm, PurchaseOrderInboundForm, ExternalMaterOutboundForm, ExternalInboundForm, outboundUseForm, InboundReturnForm, PrintBrowse, PrintDialog
   },
   props: {
     warehouseCode: "",
@@ -287,7 +299,7 @@ export default {
       saleOutboundFormVisible: false,
       externalInboundFormVisible: false,
 
-      columnList: ["partnerCode", "inspectionResults", "documentStatus", "remark", "createByName",],
+      columnList: ["partnerCode", "inspectionResults", "documentStatus", "remark", "createByName", 'sourceType'],
 
       exportFormVisible: false,
       visible: false,
@@ -316,7 +328,7 @@ export default {
         { label: "资产归还", value: "inbound_return" },
         { label: "盘点调整入库", value: "inbound_taking_adjust" },
         { label: "盘点调整出库", value: "outbound_taking_adjust" },
-      ], 
+      ],
       superQueryVisible: false,
 
       initListQuery: {
@@ -421,6 +433,7 @@ export default {
 
       ],
       classAttributeList: [],
+      selectArr: [],
     }
   },
   created() {
@@ -429,10 +442,44 @@ export default {
     this.getclassAttributeList()
   },
   methods: {
+    handleSelectionChange(val) {
+      this.selectArr = val
+
+    },
+    withdrawFun() {
+      if (!this.selectArr.length) return this.$message.error("请选择您要撤回的数据")
+      if (this.selectArr.length > 1) return this.$message.error("撤回操作只支持单条数据")
+      this.$confirm("您确定撤回该数据吗?", "提示", {
+        type: 'warning'
+      }).then(() => {
+        withdrawApi(this.selectArr[0].id).then(res => {
+          this.$message.success('撤回成功')
+          this.getclassAttributeList()
+        })
+      }).catch(() => {
+
+      })
+
+    },
+    //禁用复选框
+    checkSelectable(row) {
+      if (row.sourceType == 'direct') {
+        if (row.approvalStatus == 'ok') {
+          if (row.documentStatus != 'back') {
+            return true
+
+          }
+        }
+      } else {
+
+        return false
+      }
+    },
+
     printWarehouse(enCode) {
       getPrintBusInfo(enCode).then(res => {
         if (res.data) {
-          this.prindId = res.data.id 
+          this.prindId = res.data.id
           this.printBrowseVisible = true
         } else {
           this.$message.warning('未找到相应打印模版')

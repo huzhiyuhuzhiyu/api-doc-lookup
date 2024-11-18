@@ -778,7 +778,7 @@ export default {
           item.ordersId=item.purchaseOrderId
           item.ordersLineId=item.id
         });
-        this.productData=res.data.records
+        // this.productData=res.data.records
         this.productList=res.data.records
         this.productTotal=res.data.total
         console.log("发料清单数据",res);
@@ -827,7 +827,7 @@ export default {
         data.forEach(item => {
           this.ordersLineIdList.push(item.id)
         });
-      this.getMaterialsFun()
+      // this.getMaterialsFun()
       this.getBusInfo('b045')
 
         console.log(66666);

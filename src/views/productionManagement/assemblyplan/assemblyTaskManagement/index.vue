@@ -1143,7 +1143,6 @@ export default {
       }).catch(() => { })
     },
     handleUserRelation(id, btnType) {
-      console.log(id,type);
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.Form.init(id, btnType)

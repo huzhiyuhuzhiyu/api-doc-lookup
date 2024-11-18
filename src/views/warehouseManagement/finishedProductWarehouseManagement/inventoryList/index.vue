@@ -381,6 +381,17 @@ export default {
             { label: "草稿", value: "draft" },
             { label: "提交", value: "submit" }
           ]
+        },  
+        {
+          prop: 'documentStatus',
+          label: "审批状态",
+          type: 'select',
+          options: [
+            { label: "审批中", value: "ing" },
+            { label: "审批通过", value: "ok" },
+            { label: "审批拒绝", value: "rebut" },
+            { label: "审批撤回", value: "withdrawn" },
+          ]
         },
         {
           prop: 'createByName',

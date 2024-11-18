@@ -660,33 +660,33 @@ export default {
           { required: true, message: '请输入名称', trigger: 'blur' },
 
         ],
-        // regionCode: [
-        //   { required: true, message: '地区不能为空', trigger: 'change' }
+        regionCode: [
+          { validator: this.validatepass, trigger: 'change' }
 
-        // ],
-        // country: [
-        //   { required: true, message: '国家不能为空', trigger: 'change' },
+          // ],
+          // country: [
+          //   { required: true, message: '国家不能为空', trigger: 'change' },
 
-        // ],
-        // province: [
-        //   { required: true, message: '省份不能为空', trigger: 'change' }
+          // ],
+          // province: [
+          //   { required: true, message: '省份不能为空', trigger: 'change' }
 
-        // ],
-        // city: [
-        //   { required: true, message: '城市不能为空', trigger: 'change' }
+          // ],
+          // city: [
+          //   { required: true, message: '城市不能为空', trigger: 'change' }
 
-        // ],
-        // area: [
-        //   { required: true, message: '区不能为空', trigger: 'change' }
+          // ],
+          // area: [
+          //   { required: true, message: '区不能为空', trigger: 'change' }
 
-        // ],
-        // provincecityarea: [
-        //   { required: true, message: '省/市/区不能为空', trigger: 'change' }
-        // ],
-        // address: [
-        //   { required: true, message: '请输入地址', trigger: 'blur' },
+          // ],
+          // provincecityarea: [
+          //   { required: true, message: '省/市/区不能为空', trigger: 'change' }
+          // ],
+          // address: [
+          //   { required: true, message: '请输入地址', trigger: 'blur' },
 
-        // ],
+        ],
         taxRate: [
           { required: true, message: '请选择税率', trigger: 'blur' },
         ],
@@ -713,13 +713,21 @@ export default {
     }
   },
   created() {
-    // this.getSwitch()
+    this.getSwitch()
     this.getBimBusinessDetail()
     this.getAttachmentswitch()
     this.getProvinceList()
     this.getDictionaryType()
   },
   methods: {
+    validatepass(rule, value, callback) {
+      // console.log(rule, value, callback);
+      if (this.isaddressswitch && !value) {
+        callback(new Error("地区不能为空"));
+      } else {
+        callback()
+      }
+    },
     //地址是否必填
     getSwitch() {
       let obj = {

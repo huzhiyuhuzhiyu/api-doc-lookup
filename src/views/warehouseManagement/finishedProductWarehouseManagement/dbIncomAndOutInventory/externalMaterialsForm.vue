@@ -349,7 +349,7 @@
                 <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
                 <el-table-column prop="processName" label="工序名称" width="120" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="90" sortable="custom" />
-                <el-table-column prop="waitReceiptNum" label="待发料数量" min-width="140" sortable="custom" />
+                <el-table-column prop="waitDeliverNum" label="待发料数量" min-width="140" sortable="custom" />
                 <el-table-column prop="demandQuantity" label="订单数量" min-width="120" sortable="custom" />
 
 
@@ -631,8 +631,8 @@ export default {
 
       arr.forEach(item => {
 
-        item.num = item.waitReceiptNum
-
+        // item.num = item.waitDeliverNum
+        this.$set(item,'num',item.waitDeliverNum)
         this.productData.push(item)
       });
       console.log("this.dataFormTwo", this.productData);
@@ -915,7 +915,7 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能为空")
                 break
               }
-              if (item.num > item.availableBatchNumber) {
+              if (Number(item.num) > Number(item.availableBatchNumber)) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次库存数量")
                 break

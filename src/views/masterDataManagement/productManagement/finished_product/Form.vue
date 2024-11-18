@@ -47,7 +47,7 @@ import { getcategoryTree, getUnitData, detailUnitData } from '@/api/basicData/ma
 import { getbimProductAttributesList, getbimProductsModelList } from '@/api/masterDataManagement/index'
 import tabs from './params'
 import { getProjectList } from '@/api/system/projectManagement'
-import { mapGetters } from "vuex"
+import { mapGetters } from 'vuex'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 export default {
   name: 'finished_product',
@@ -180,13 +180,11 @@ export default {
           clearable: false,
           itemRules: [{ required: true, trigger: 'change' }],
           itemDisabled: false
-        },
-
+        }
       ]
     }
   },
   created() {
-
     this.tabs.forEach((tab, tabInd) => {
       tab.tabContent.forEach((tc) => {
         this.dataForm[tc.prop] = tc.value || '' // 设置默认value
@@ -556,8 +554,6 @@ export default {
           }
         }
       }
-
-
     })
   },
   computed: {
@@ -754,12 +750,14 @@ export default {
               ele.options = res.data.records.map((item) => {
                 return { label: item.name, value: item.id }
               })
+              ele.options = ele.options.filter((item) => item.value !== '1')
             })
             if (!this.userInfo.projectId) {
               this.dataForm.projectId = this.userInfo.projectId
+              ele.itemDisabled = false
             } else {
               if (this.userInfo.projectId === '1') {
-                this.dataForm.projectId = this.userInfo.projectId
+                ele.itemDisabled = false
               } else {
                 this.dataForm.projectId = this.userInfo.projectId
                 ele.itemDisabled = true
@@ -769,7 +767,7 @@ export default {
         })
       } else {
         this.tabs[0].tabContent.forEach((ele) => {
-          if (ele.prop == 'project') {
+          if (ele.prop == 'projectId') {
             ele.render = false
           }
         })

@@ -53,7 +53,7 @@
         </div>
       </div>
 
-      <div class="JNPF-common-layout-center JNPF-flex-main">
+      <div class="JNPF-common-layout-center JNPF-flex-main" v-loading="listLoading">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
             <el-col :span="4">
@@ -107,244 +107,247 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table v-show="dataTableFlag" v-loading="listLoading" :data="tableData" :fixedNO="true"
-            @sort-change="sortChange" custom-column ref="dataTable" :setColumnDisplayList="columnList">
-            <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
-            <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
-              <!-- <template slot-scope="scope">
+          <template v-if="tableFlag">
+            <JNPF-table v-show="dataTableFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
+              ref="dataTable" :setColumnDisplayList="columnList">
+              <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
+              <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
+                <!-- <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">
                   {{ scope.row.code }}
                 </el-link>
               </template> -->
-            </el-table-column>
+              </el-table-column>
+              <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom"
+                v-if="isProjectSwitch === '1'"></el-table-column>
+              <el-table-column prop="productCategoryName" label="产品分类" width="120" sortable="custom" />
+              <el-table-column prop="productSource" label="产品来源" width="120" sortable="custom">
+                <template slot-scope="{ row }">
+                  <template v-if="row.productSource == 'produce'">
+                    生产
+                  </template>
+                  <template v-else-if="row.productSource == 'purchase'">
+                    采购
+                  </template>
+                  <template v-else-if="row.productSource == 'out'">
+                    外协
+                  </template>
+                  <template v-else-if="row.productSource == 'assemble'">
+                    组装
+                  </template>
+                </template>
+              </el-table-column>
+              <el-table-column prop="mainUnit" label="单位" width="60" />
+              <el-table-column prop="purchaseTaxRate" label="采购税率" width="120" align="center">
+                <template slot="header" slot-scope="scope">
+                  采购税率
+                  <el-popover placement="bottom" width="200" trigger="click"
+                    content="采购税率：采购订单和采购收货入库默认从供应商产品价格中获取税率，如果供应商产品价格获取不到税率，则会从这里获取采购税率。">
+                    <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
+                      type="text"></el-button>
+                  </el-popover>
+                </template>
+                <template slot-scope="{ row }">
+                  <el-select v-model="row.purchaseTaxRate" placeholder="请选择" @change="purchaseTaxRateChange(row)">
+                    <el-option v-for="item in taxRateList" :key="item.taxRate" :label="item.fullName"
+                      :value="item.enCode"></el-option>
+                  </el-select>
+                </template>
+              </el-table-column>
+              <el-table-column prop="purchasePrice" label="采购单价(含税)" width="160" align="center">
+                <template slot="header" slot-scope="scope">
+                  采购单价(含税)
+                  <el-popover placement="bottom" width="200" trigger="click"
+                    content="采购单价：采购订单和采购收货入库默认从供应商产品价格中获取单价，如果供应商产品价格获取不到单价，则会从这里获取采购单价。">
+                    <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
+                      type="text"></el-button>
+                  </el-popover>
+                </template>
+                <template slot-scope="{ row }">
+                  <el-input v-model="row.purchasePrice" placeholder="请输入内容" @blur="purchasePriceChange(row)"></el-input>
+                </template>
+              </el-table-column>
+              <el-table-column prop="purchaseExcludingTaxPrice" label="采购单价(不含税)" width="180">
+                <template slot="header" slot-scope="scope">
+                  采购单价(不含税)
+                  <el-popover placement="bottom" width="200" trigger="click"
+                    content="采购单价：采购订单和采购收货入库默认从供应商产品价格中获取单价，如果供应商产品价格获取不到单价，则会从这里获取采购单价。">
+                    <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
+                      type="text"></el-button>
+                  </el-popover>
+                </template>
+              </el-table-column>
+              <el-table-column prop="salesTaxRate" label="销售税率" width="120" align="center">
+                <template slot="header" slot-scope="scope">
+                  销售税率
+                  <el-popover placement="bottom" width="200" trigger="click"
+                    content="销售税率：销售订单和销售发货出库默认从客户产品价格中获取税率，如果客户产品价格获取不到税率，则会从这里获取销售税率。">
+                    <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
+                      type="text"></el-button>
+                  </el-popover>
+                </template>
+                <template slot-scope="{ row }">
+                  <el-select v-model="row.salesTaxRate" placeholder="请选择" @change="salesTaxRateChange(row)">
+                    <el-option v-for="item in taxRateList" :key="item.taxRate" :label="item.fullName"
+                      :value="item.enCode"></el-option>
+                  </el-select>
+                </template>
+              </el-table-column>
+              <el-table-column prop="salesPrice" label="销售单价(含税)" width="160" align="center">
+                <template slot="header" slot-scope="scope">
+                  销售单价(含税)
+                  <el-popover placement="bottom" width="200" trigger="click"
+                    content="销售价格：销售订单和销售发货出库默认从客户产品价格中获取单价，如果客户产品价格获取不到单价，则会从这里获取销售单价。">
+                    <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
+                      type="text"></el-button>
+                  </el-popover>
+                </template>
+                <template slot-scope="{ row }">
+                  <el-input v-model="row.salesPrice" placeholder="请输入内容" @blur="salesPriceChange(row)"></el-input>
+                </template>
+              </el-table-column>
+              <el-table-column prop="salesExcludingTaxPrice" label="销售单价(不含税)" width="180">
+                <template slot="header" slot-scope="scope">
+                  销售单价(不含税)
+                  <el-popover placement="bottom" width="200" trigger="click"
+                    content="销售价格：销售订单和销售发货出库默认从客户产品价格中获取单价，如果客户产品价格获取不到单价，则会从这里获取销售单价。">
+                    <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
+                      type="text"></el-button>
+                  </el-popover>
+                </template>
+              </el-table-column>
+              <el-table-column prop="model" label="型号" width="120" sortable="custom" />
+              <el-table-column prop="sealingCoverStructure" label="密封盖-结构" width="140" sortable="custom" />
+              <el-table-column prop="sealingCoverTyping" label="密封盖-打字" width="140" sortable="custom" />
+              <el-table-column prop="structureType" label="结构类型" width="140" sortable="custom" />
+              <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
 
-            <el-table-column prop="productCategoryName" label="产品分类" width="120" sortable="custom" />
-            <el-table-column prop="productSource" label="产品来源" width="120" sortable="custom">
-              <template slot-scope="{ row }">
-                <template v-if="row.productSource == 'produce'">
-                  生产
-                </template>
-                <template v-else-if="row.productSource == 'purchase'">
-                  采购
-                </template>
-                <template v-else-if="row.productSource == 'out'">
-                  外协
-                </template>
-                <template v-else-if="row.productSource == 'assemble'">
-                  组装
-                </template>
-              </template>
-            </el-table-column>
-            <el-table-column prop="mainUnit" label="单位" width="60" />
-            <el-table-column prop="purchaseTaxRate" label="采购税率" width="120" align="center">
-              <template slot="header" slot-scope="scope">
-                采购税率
-                <el-popover placement="bottom" width="200" trigger="click"
-                  content="采购税率：采购订单和采购收货入库默认从供应商产品价格中获取税率，如果供应商产品价格获取不到税率，则会从这里获取采购税率。">
-                  <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
-                    type="text"></el-button>
-                </el-popover>
-              </template>
-              <template slot-scope="{ row }">
-                <el-select v-model="row.purchaseTaxRate" placeholder="请选择" @change="purchaseTaxRateChange(row)">
-                  <el-option v-for="item in taxRateList" :key="item.taxRate" :label="item.fullName"
-                    :value="item.enCode"></el-option>
-                </el-select>
-              </template>
-            </el-table-column>
-            <el-table-column prop="purchasePrice" label="采购单价(含税)" width="160" align="center">
-              <template slot="header" slot-scope="scope">
-                采购单价(含税)
-                <el-popover placement="bottom" width="200" trigger="click"
-                  content="采购单价：采购订单和采购收货入库默认从供应商产品价格中获取单价，如果供应商产品价格获取不到单价，则会从这里获取采购单价。">
-                  <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
-                    type="text"></el-button>
-                </el-popover>
-              </template>
-              <template slot-scope="{ row }">
-                <el-input v-model="row.purchasePrice" placeholder="请输入内容" @blur="purchasePriceChange(row)"></el-input>
-              </template>
-            </el-table-column>
-            <el-table-column prop="purchaseExcludingTaxPrice" label="采购单价(不含税)" width="180">
-              <template slot="header" slot-scope="scope">
-                采购单价(不含税)
-                <el-popover placement="bottom" width="200" trigger="click"
-                  content="采购单价：采购订单和采购收货入库默认从供应商产品价格中获取单价，如果供应商产品价格获取不到单价，则会从这里获取采购单价。">
-                  <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
-                    type="text"></el-button>
-                </el-popover>
-              </template>
-            </el-table-column>
-            <el-table-column prop="salesTaxRate" label="销售税率" width="120" align="center">
-              <template slot="header" slot-scope="scope">
-                销售税率
-                <el-popover placement="bottom" width="200" trigger="click"
-                  content="销售税率：销售订单和销售发货出库默认从客户产品价格中获取税率，如果客户产品价格获取不到税率，则会从这里获取销售税率。">
-                  <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
-                    type="text"></el-button>
-                </el-popover>
-              </template>
-              <template slot-scope="{ row }">
-                <el-select v-model="row.salesTaxRate" placeholder="请选择" @change="salesTaxRateChange(row)">
-                  <el-option v-for="item in taxRateList" :key="item.taxRate" :label="item.fullName"
-                    :value="item.enCode"></el-option>
-                </el-select>
-              </template>
-            </el-table-column>
-            <el-table-column prop="salesPrice" label="销售单价(含税)" width="160" align="center">
-              <template slot="header" slot-scope="scope">
-                销售单价(含税)
-                <el-popover placement="bottom" width="200" trigger="click"
-                  content="销售价格：销售订单和销售发货出库默认从客户产品价格中获取单价，如果客户产品价格获取不到单价，则会从这里获取销售单价。">
-                  <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
-                    type="text"></el-button>
-                </el-popover>
-              </template>
-              <template slot-scope="{ row }">
-                <el-input v-model="row.salesPrice" placeholder="请输入内容" @blur="salesPriceChange(row)"></el-input>
-              </template>
-            </el-table-column>
-            <el-table-column prop="salesExcludingTaxPrice" label="销售单价(不含税)" width="180">
-              <template slot="header" slot-scope="scope">
-                销售单价(不含税)
-                <el-popover placement="bottom" width="200" trigger="click"
-                  content="销售价格：销售订单和销售发货出库默认从客户产品价格中获取单价，如果客户产品价格获取不到单价，则会从这里获取销售单价。">
-                  <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
-                    type="text"></el-button>
-                </el-popover>
-              </template>
-            </el-table-column>
-            <el-table-column prop="model" label="型号" width="120" sortable="custom" />
-            <el-table-column prop="sealingCoverStructure" label="密封盖-结构" width="140" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" label="密封盖-打字" width="140" sortable="custom" />
-            <el-table-column prop="structureType" label="结构类型" width="140" sortable="custom" />
-            <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
-
-            <el-table-column prop="oil" label="油脂" width="100" sortable="custom" />
-            <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" />
-            <el-table-column prop="noise" label="噪音" width="100" sortable="custom" />
-            <el-table-column prop="holder" label="保持架" width="100" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
-            <el-table-column prop="colour" label="颜色" width="100" sortable="custom" />
-            <el-table-column prop="aperture" label="孔径" width="100" sortable="custom" />
-            <el-table-column prop="remark" label="备注" width="120" />
-            <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" />
-          </JNPF-table>
-          <JNPF-table v-show="!dataTableFlag" v-loading="listLoading" :data="tableData" :fixedNO="true"
-            @sort-change="sortChange" custom-column ref="otherTable" :setColumnDisplayList="columnList">
-            <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
-            <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
-              <!-- <template slot-scope="scope">
+              <el-table-column prop="oil" label="油脂" width="100" sortable="custom" />
+              <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" />
+              <el-table-column prop="noise" label="噪音" width="100" sortable="custom" />
+              <el-table-column prop="holder" label="保持架" width="100" sortable="custom" />
+              <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
+              <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
+              <el-table-column prop="colour" label="颜色" width="100" sortable="custom" />
+              <el-table-column prop="aperture" label="孔径" width="100" sortable="custom" />
+              <el-table-column prop="remark" label="备注" width="120" />
+              <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
+              <el-table-column prop="createByName" label="创建人" />
+            </JNPF-table>
+            <JNPF-table v-show="!dataTableFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange"
+              custom-column ref="otherTable" :setColumnDisplayList="columnList">
+              <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
+              <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
+                <!-- <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">
                   {{ scope.row.code }}
                 </el-link>
               </template> -->
-            </el-table-column>
+              </el-table-column>
+              <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom"
+                v-if="isProjectSwitch === '1'"></el-table-column>
+              <el-table-column prop="productCategoryName" label="产品分类" width="120" sortable="custom" />
+              <el-table-column prop="productSource" label="产品来源" width="120" sortable="custom">
+                <template slot-scope="{ row }">
+                  <template v-if="row.productSource == 'produce'">
+                    生产
+                  </template>
+                  <template v-else-if="row.productSource == 'purchase'">
+                    采购
+                  </template>
+                  <template v-else-if="row.productSource == 'out'">
+                    外协
+                  </template>
+                  <template v-else-if="row.productSource == 'assemble'">
+                    组装
+                  </template>
+                </template>
+              </el-table-column>
+              <el-table-column prop="mainUnit" label="单位" width="120" />
+              <el-table-column prop="purchaseTaxRate" label="采购税率" width="120" align="center">
+                <template slot="header" slot-scope="scope">
+                  采购税率
+                  <el-popover placement="bottom" width="200" trigger="click"
+                    content="采购税率：采购订单和采购收货入库默认从供应商产品价格中获取税率，如果供应商产品价格获取不到税率，则会从这里获取采购税率。">
+                    <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
+                      type="text"></el-button>
+                  </el-popover>
+                </template>
+                <template slot-scope="{ row }">
+                  <el-select v-model="row.purchaseTaxRate" placeholder="请选择" @change="purchaseTaxRateChange(row)">
+                    <el-option v-for="item in taxRateList" :key="item.taxRate" :label="item.fullName"
+                      :value="item.enCode"></el-option>
+                  </el-select>
+                </template>
+              </el-table-column>
+              <el-table-column prop="purchasePrice" label="采购单价(含税)" width="160" align="center">
+                <template slot="header" slot-scope="scope">
+                  采购单价(含税)
+                  <el-popover placement="bottom" width="200" trigger="click"
+                    content="采购单价：采购订单和采购收货入库默认从供应商产品价格中获取单价，如果供应商产品价格获取不到单价，则会从这里获取采购单价。">
+                    <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
+                      type="text"></el-button>
+                  </el-popover>
+                </template>
+                <template slot-scope="{ row }">
+                  <el-input v-model="row.purchasePrice" placeholder="请输入内容" @blur="purchasePriceChange(row)"></el-input>
+                </template>
+              </el-table-column>
+              <el-table-column prop="purchaseExcludingTaxPrice" label="采购单价(不含税)" width="175">
+                <template slot="header" slot-scope="scope">
+                  采购单价(不含税)
+                  <el-popover placement="bottom" width="200" trigger="click"
+                    content="采购单价：采购订单和采购收货入库默认从供应商产品价格中获取单价，如果供应商产品价格获取不到单价，则会从这里获取采购单价。">
+                    <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
+                      type="text"></el-button>
+                  </el-popover>
+                </template>
+              </el-table-column>
+              <el-table-column prop="salesTaxRate" label="销售税率" width="120" align="center">
+                <template slot="header" slot-scope="scope">
+                  销售税率
+                  <el-popover placement="bottom" width="200" trigger="click"
+                    content="销售税率：销售订单和销售发货出库默认从客户产品价格中获取税率，如果客户产品价格获取不到税率，则会从这里获取销售税率。">
+                    <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
+                      type="text"></el-button>
+                  </el-popover>
+                </template>
+                <template slot-scope="{ row }">
+                  <el-select v-model="row.salesTaxRate" placeholder="请选择" @change="salesTaxRateChange(row)">
+                    <el-option v-for="item in taxRateList" :key="item.taxRate" :label="item.fullName"
+                      :value="item.enCode"></el-option>
+                  </el-select>
+                </template>
+              </el-table-column>
+              <el-table-column prop="salesPrice" label="销售单价(含税)" width="160" align="center">
+                <template slot="header" slot-scope="scope">
+                  销售单价(含税)
+                  <el-popover placement="bottom" width="200" trigger="click"
+                    content="销售价格：销售订单和销售发货出库默认从客户产品价格中获取单价，如果客户产品价格获取不到单价，则会从这里获取销售单价。">
+                    <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
+                      type="text"></el-button>
+                  </el-popover>
+                </template>
+                <template slot-scope="{ row }">
+                  <el-input v-model="row.salesPrice" placeholder="请输入内容" @blur="salesPriceChange(row)"></el-input>
+                </template>
+              </el-table-column>
+              <el-table-column prop="salesExcludingTaxPrice" label="销售单价(不含税)" width="175">
+                <template slot="header" slot-scope="scope">
+                  销售单价(不含税)
+                  <el-popover placement="bottom" width="200" trigger="click"
+                    content="销售价格：销售订单和销售发货出库默认从客户产品价格中获取单价，如果客户产品价格获取不到单价，则会从这里获取销售单价。">
+                    <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
+                      type="text"></el-button>
+                  </el-popover>
+                </template>
+              </el-table-column>
 
-            <el-table-column prop="productCategoryName" label="产品分类" width="120" sortable="custom" />
-            <el-table-column prop="productSource" label="产品来源" width="120" sortable="custom">
-              <template slot-scope="{ row }">
-                <template v-if="row.productSource == 'produce'">
-                  生产
-                </template>
-                <template v-else-if="row.productSource == 'purchase'">
-                  采购
-                </template>
-                <template v-else-if="row.productSource == 'out'">
-                  外协
-                </template>
-                <template v-else-if="row.productSource == 'assemble'">
-                  组装
-                </template>
-              </template>
-            </el-table-column>
-            <el-table-column prop="mainUnit" label="单位" width="120" />
-            <el-table-column prop="purchaseTaxRate" label="采购税率" width="120" align="center">
-              <template slot="header" slot-scope="scope">
-                采购税率
-                <el-popover placement="bottom" width="200" trigger="click"
-                  content="采购税率：采购订单和采购收货入库默认从供应商产品价格中获取税率，如果供应商产品价格获取不到税率，则会从这里获取采购税率。">
-                  <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
-                    type="text"></el-button>
-                </el-popover>
-              </template>
-              <template slot-scope="{ row }">
-                <el-select v-model="row.purchaseTaxRate" placeholder="请选择" @change="purchaseTaxRateChange(row)">
-                  <el-option v-for="item in taxRateList" :key="item.taxRate" :label="item.fullName"
-                    :value="item.enCode"></el-option>
-                </el-select>
-              </template>
-            </el-table-column>
-            <el-table-column prop="purchasePrice" label="采购单价(含税)" width="160" align="center">
-              <template slot="header" slot-scope="scope">
-                采购单价(含税)
-                <el-popover placement="bottom" width="200" trigger="click"
-                  content="采购单价：采购订单和采购收货入库默认从供应商产品价格中获取单价，如果供应商产品价格获取不到单价，则会从这里获取采购单价。">
-                  <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
-                    type="text"></el-button>
-                </el-popover>
-              </template>
-              <template slot-scope="{ row }">
-                <el-input v-model="row.purchasePrice" placeholder="请输入内容" @blur="purchasePriceChange(row)"></el-input>
-              </template>
-            </el-table-column>
-            <el-table-column prop="purchaseExcludingTaxPrice" label="采购单价(不含税)" width="175">
-              <template slot="header" slot-scope="scope">
-                采购单价(不含税)
-                <el-popover placement="bottom" width="200" trigger="click"
-                  content="采购单价：采购订单和采购收货入库默认从供应商产品价格中获取单价，如果供应商产品价格获取不到单价，则会从这里获取采购单价。">
-                  <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
-                    type="text"></el-button>
-                </el-popover>
-              </template>
-            </el-table-column>
-            <el-table-column prop="salesTaxRate" label="销售税率" width="120" align="center">
-              <template slot="header" slot-scope="scope">
-                销售税率
-                <el-popover placement="bottom" width="200" trigger="click"
-                  content="销售税率：销售订单和销售发货出库默认从客户产品价格中获取税率，如果客户产品价格获取不到税率，则会从这里获取销售税率。">
-                  <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
-                    type="text"></el-button>
-                </el-popover>
-              </template>
-              <template slot-scope="{ row }">
-                <el-select v-model="row.salesTaxRate" placeholder="请选择" @change="salesTaxRateChange(row)">
-                  <el-option v-for="item in taxRateList" :key="item.taxRate" :label="item.fullName"
-                    :value="item.enCode"></el-option>
-                </el-select>
-              </template>
-            </el-table-column>
-            <el-table-column prop="salesPrice" label="销售单价(含税)" width="160" align="center">
-              <template slot="header" slot-scope="scope">
-                销售单价(含税)
-                <el-popover placement="bottom" width="200" trigger="click"
-                  content="销售价格：销售订单和销售发货出库默认从客户产品价格中获取单价，如果客户产品价格获取不到单价，则会从这里获取销售单价。">
-                  <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
-                    type="text"></el-button>
-                </el-popover>
-              </template>
-              <template slot-scope="{ row }">
-                <el-input v-model="row.salesPrice" placeholder="请输入内容" @blur="salesPriceChange(row)"></el-input>
-              </template>
-            </el-table-column>
-            <el-table-column prop="salesExcludingTaxPrice" label="销售单价(不含税)" width="175">
-              <template slot="header" slot-scope="scope">
-                销售单价(不含税)
-                <el-popover placement="bottom" width="200" trigger="click"
-                  content="销售价格：销售订单和销售发货出库默认从客户产品价格中获取单价，如果客户产品价格获取不到单价，则会从这里获取销售单价。">
-                  <el-button style="margin-left: -13px;color: black;" icon="el-icon-question" circle slot="reference"
-                    type="text"></el-button>
-                </el-popover>
-              </template>
-            </el-table-column>
-
-            <el-table-column prop="remark" label="备注" width="120" />
-            <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" />
-          </JNPF-table>
-
+              <el-table-column prop="remark" label="备注" width="120" />
+              <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
+              <el-table-column prop="createByName" label="创建人" />
+            </JNPF-table>
+          </template>
           <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
             :limit.sync="listQuery.pageSize" @pagination="initData" />
         </div>
@@ -379,11 +382,13 @@ import { getUnitData, detailUnitData } from '@/api/basicData/materialSettings' /
 import { getCooperativeData } from '@/api/basicData/index'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { getclassAttributeList } from '@/api/masterDataManagement/index'
+import { getProjectList } from '@/api/system/projectManagement'
 export default {
   components: { SuperQuery },
   name: 'productPriceSetting',
   data() {
     return {
+      isProjectSwitch: '',
       categoryList: [],
       exportFormVisible: false,
       quickVisible: false,
@@ -404,6 +409,7 @@ export default {
       },
       getcategoryCoop,
       dataTableFlag: true,
+      tableFlag: false,
       getbimProductsModelList, // 型号管理属性列表
       title: '更多查询',
       background: true, //分页器背景颜色
@@ -672,11 +678,11 @@ export default {
     'listQuery.classAttribute': function (newVal) {
       if (localStorage.getItem(`${this.listQuery.classAttribute}productPriceSettingFlag`)) {
         let roleFlag = JSON.parse(localStorage.getItem(`${this.listQuery.classAttribute}productPriceSettingFlag`))
-        console.log(roleFlag, 'fff')
+
         this.expands = roleFlag
         this.toggleExpand(roleFlag)
       }
-      console.log(newVal, '5')
+
       if (!newVal) {
         this.dataTableFlag = true
         this.superQueryJson = [
@@ -1166,13 +1172,11 @@ export default {
             item.purchaseExcludingTaxPrice = this.jnpf.numberFormat(
               item.purchasePrice / (1 + (item.purchaseTaxRate * 1) / 100)
             )
-            console.log(item.purchaseExcludingTaxPrice, 'l')
           } else {
             item.purchaseExcludingTaxPrice = ''
           }
           if ((item.salesPrice && item.salesTaxRate) || (item.salesPrice && item.salesTaxRate == 0)) {
             item.salesExcludingTaxPrice = this.jnpf.numberFormat(item.salesPrice / (1 + (item.salesTaxRate * 1) / 100))
-            console.log(item.salesExcludingTaxPrice, 'l')
           } else {
             item.salesExcludingTaxPrice = ''
           }
@@ -1201,14 +1205,16 @@ export default {
   created() {
     if (localStorage.getItem(`${this.listQuery.classAttribute}productPriceSettingFlag`)) {
       let roleFlag = JSON.parse(localStorage.getItem(`${this.listQuery.classAttribute}productPriceSettingFlag`))
-      console.log(roleFlag, 'fff')
+
       this.expands = roleFlag
       this.toggleExpand(roleFlag)
     }
     this.getcategoryTree()
+    this.getProjectSwitch()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-    console.log(this.listQuery, '1')
+
     this.getBimBusinessSwitchConfigList()
+
     this.initData()
   },
   computed: {
@@ -1221,42 +1227,29 @@ export default {
       }
       getclassAttributeList(obj).then((res) => {
         this.categoryList = res.data.records.filter((item) => item.code !== 'spare_parts')
-        console.log(this.categoryList, 'list')
       })
     },
     purchaseTaxRateChange(row) {
-      console.log(row)
-      updateProductPrice(row).then((res) => {
-        console.log(res, 'iiiF')
-      })
+      updateProductPrice(row).then((res) => { })
       this.initData()
     },
     purchasePriceChange(row) {
-      console.log(row, 'h')
       if (!row.purchasePrice) return this.$message.error('采购单价(含税)不能为空')
       if (Number(row.purchasePrice) < 0) return this.$message.error('采购单价(含税)不能小于0')
       if (!/^-?\d+\.?\d*$/.test(row.purchasePrice)) return this.$message.error('采购单价(含税)应该是数字')
-      updateProductPrice(row).then((res) => {
-        console.log(res, 'iiiF')
-      })
+      updateProductPrice(row).then((res) => { })
       this.initData()
     },
     salesTaxRateChange(row) {
-      console.log(row)
-      updateProductPrice(row).then((res) => {
-        console.log(res, 'iiiF')
-      })
+      updateProductPrice(row).then((res) => { })
       this.initData()
     },
     salesPriceChange(row) {
-      console.log(row, 'h')
       if (!row.salesPrice) return this.$message.error('销售单价(含税)不能为空')
       if (Number(row.salesPrice) < 0) return this.$message.error('销售单价(含税)不能小于0')
       if (!/^-?\d+\.?\d*$/.test(row.salesPrice)) return this.$message.error('销售单价(含税)应该是数字')
 
-      updateProductPrice(row).then((res) => {
-        console.log(res, 'iiiF')
-      })
+      updateProductPrice(row).then((res) => { })
       this.initData()
     },
 
@@ -1276,6 +1269,20 @@ export default {
         } else {
           this.configFlag = false
         }
+      })
+    },
+    getProjectSwitch() {
+      let obj = {
+        businessCode: 'system',
+        pageSize: -1
+      }
+      getBimBusinessSwitchConfigList(obj).then((res) => {
+        res.data.system.forEach((item) => {
+          if (item.configKey == 'project') {
+            this.isProjectSwitch = item.configValue1
+            console.log(this.isProjectSwitch, 'this.isProjectSwitch')
+          }
+        })
       })
     },
     superQuerySearch(query) {
@@ -1795,20 +1802,15 @@ export default {
           item.taxRate = item.enCode.replace('%', '') * 1
         })
         this.taxRateList = res.data.list
-        console.log(this.taxRateList, 'v')
       })
     },
     changeLeft() {
       this.leftFlag = !this.leftFlag
     },
     columnSetFun() {
-      console.log(this.dataTableFlag, 'this.dataTableFlag')
-      console.log(this.$refs, 'ff')
       if (this.dataTableFlag) {
-        console.log(1)
         this.$refs.dataTable.showDrawer()
       } else {
-        console.log(3)
         this.$refs.otherTable.showDrawer()
       }
     },
@@ -1887,7 +1889,7 @@ export default {
 
     initData() {
       this.listLoading = true
-      console.log(this.listQuery, '2')
+      console.log(this.listLoading, 'this.listLoading')
       Object.keys(this.listQuery).forEach((key) => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
@@ -1897,6 +1899,7 @@ export default {
       getProductList(this.listQuery)
         .then((res) => {
           this.tableData = res.data.records
+          this.tableFlag = true
           this.total = res.data.total
           this.listLoading = false
         })

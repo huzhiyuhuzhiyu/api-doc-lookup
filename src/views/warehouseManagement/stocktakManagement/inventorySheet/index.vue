@@ -169,6 +169,7 @@ export default {
       tableData:[],
       total:0,
       superQueryVisible: false, 
+      exportFormVisible:false,
 
       orderFormlist: {
         orderNo: "",
@@ -408,8 +409,8 @@ export default {
       const targetListQuery = this.orderForm
       let _data = {
         ...targetListQuery,
-        exportType: '1060',
-        exportName: '盘点单',
+        exportType: '1228',
+        exportName: '仓库库存盘点单',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }

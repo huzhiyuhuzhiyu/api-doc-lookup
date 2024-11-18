@@ -166,7 +166,7 @@ export default {
           matchLogic: ""
         },
       },
-
+      exportFormVisible:false,
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now()
@@ -381,8 +381,8 @@ export default {
       const targetListQuery = this.orderForm
       let _data = {
         ...targetListQuery,
-        exportType: '1060',
-        exportName: '盘点单',
+        exportType: '1229',
+        exportName: '仓库库存调整单',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }

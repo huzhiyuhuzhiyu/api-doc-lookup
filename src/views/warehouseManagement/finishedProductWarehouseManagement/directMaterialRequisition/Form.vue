@@ -366,7 +366,6 @@ export default {
     }
   },
   created() {
-    this.getWarehouseConfig()
   },
 
   methods: {
@@ -567,14 +566,7 @@ export default {
       }
       this.selectRows = []; // 清空选中的行的数据
     },
-    // 获取仓库设置 是否开启库位管理时
-    getWarehouseConfig() {
-
-      let obj = { "pageSize": -1, "businessCode": "warehouse" }
-      getBimBusinessSwitchConfigList(obj).then(res => {
-        this.allocationFlag = res.data.warehouse[0].configValue1 == '1' ? true : false
-      })
-    },
+ 
     currentIndexFun(index) {
       console.log(index);
     },
@@ -586,6 +578,7 @@ export default {
         this.productData[index.index].warehouseType = ""
         return
       }
+      this.allocationFlag=data[0].all.locationStatus=='disabled'?false:true
       this.$set(this.productData[index.index], 'inWarehouseId', data[0].id)
       this.$set(this.productData[index.index], 'inWarehouseName', data[0].name)
       this.$set(this.productData[index.index], 'warehouseType', data[0].all.type)

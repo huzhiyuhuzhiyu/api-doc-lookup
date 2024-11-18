@@ -73,32 +73,63 @@
                           工序名称
                         </template>
                         <template slot-scope="scope">
-                          <div class="viewData">
-                            <span>{{ scope.row.name }}</span>
-                          </div>
+                          {{ scope.row.name }}
                         </template>
                       </el-table-column>
                       <el-table-column prop="code" label="工序编码" min-width="140" />
 
-                      <el-table-column prop="processType" label="工序类型" width="180">
+                      <el-table-column prop="processType" label="工序类型" width="120">
                         <template slot-scope="scope">
-                          <div class="viewData">
-                            <div class="viewData" v-if="scope.row.processType == 'normal'">正常工序</div>
-                            <div class="viewData" v-if="scope.row.processType == 'forge'">锻打工序</div>
-                            <div class="viewData" v-if="scope.row.processType == 'plating'">电镀工序</div>
-                            <div class="viewData" v-if="scope.row.processType == 'drill'">钻孔工序</div>
-                          </div>
+                          <template v-if="scope.row.processType == 'normal'">
+                            正常工序
+                          </template>
+                          <template v-if="scope.row.processType == 'wait_assemble'">
+                            待装配工序
+                          </template>
+                          <template v-if="scope.row.processType == 'vibrate'">
+                            测振工序
+                          </template>
+                          <template v-if="scope.row.processType == 'heat_treatment'">
+                            热处理工序
+                          </template>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="processingType" label="加工类型" width="180">
+                      <el-table-column prop="processingType" label="加工类型" width="100">
                         <template slot-scope="scope">
-                          <div class="viewData">
-                            <span v-if="scope.row.processingType === 'self_produced'">自制</span>
-                            <span v-if="scope.row.processingType === 'external_production'">外协</span>
-                          </div>
+                          <template v-if="scope.row.processingType === 'self_produced'">
+                            自制
+                          </template>
+                          <template v-if="scope.row.processingType === 'external_production'">
+                            外协
+                          </template>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="firstFlag" label="是否首道工序" min-width="140">
+
+                      <!-- <el-table-column prop="departmentId" label="组织管理" width="340" fixed="left">
+                            <template slot-scope="{row}" v-if="row.processingType == 'self_produced'">
+                              <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
+                                <el-form-item prop="departmentId" ref="departmentId">
+                                  <ComSelect ref="department" v-model="row.departmentName" placeholder="请选择所属组织" auth
+                                    @change="onOrganizeChangeHandle" :currOrgId="row.departmentId || '0'"
+                                    :disabled="type == 'look' ? true : false" />
+
+                                </el-form-item>
+                              </el-form>
+                            </template>
+                          </el-table-column>
+                          <el-table-column prop="cooperativePartnerName" label="外协供应商"  width="120" fixed="left">
+                            <template slot-scope="{row}" v-if="row.processingType == 'external_production'">
+                              <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
+                                <el-form-item prop="cooperativePartnerName" ref="cooperativePartnerName">
+                                  <ComSelect-list :isdisabled="type == 'look' ? true : false"
+                                    v-model="row.cooperativePartnerName" placeholder="请选择外协供应商" auth
+                                    @change="onOrganizeChangeThree" :title="'选择外协供应商'" :method="getCooperativeData"
+                                    :requestObj="requestObj2" :paramsObj="{ row }" />
+                                </el-form-item>
+                              </el-form>
+                            </template>
+                          </el-table-column> -->
+                      <el-table-column prop="firstFlag" label="是否首道工序" width="120">
                         <template slot-scope="scope">
                           <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row">
                             <el-form-item prop="firstFlag" ref="firstFlag">
@@ -109,39 +140,45 @@
                           </el-form>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="pickingFlag" label="是否领料" min-width="130">
+                      <el-table-column prop="pickingFlag" label="是否领料" width="90">
                         <template slot-scope="{ row }">
                           <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
                             <el-form-item prop="pickingFlag" ref="pickingFlag">
                               <el-checkbox v-model="row.pickingFlag" :true-label="1" :disabled="type == 'look'"
-                                :false-label="0"></el-checkbox>
+                                :false-label="0">
+                                {{ row.pickingFlag ? '是' : '否' }}
+                              </el-checkbox>
                             </el-form-item>
                           </el-form>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="firstInspection" label="是否首检" min-width="130">
+                      <el-table-column prop="firstInspection" label="是否首检" width="90">
                         <template slot-scope="{ row }">
                           <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
                             <el-form-item prop="firstInspection" ref="firstInspection">
                               <el-checkbox v-model="row.firstInspection" :true-label="1"
                                 :disabled="type == 'look' || row.processingType === 'external_production'"
-                                :false-label="0"></el-checkbox>
+                                :false-label="0">
+                                {{ row.firstInspection ? '是' : '否' }}
+                              </el-checkbox>
                             </el-form-item>
                           </el-form>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="checkFlag" label="是否检验" min-width="130">
+                      <el-table-column prop="checkFlag" label="是否检验" width="90">
                         <template slot-scope="{ row }">
                           <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
                             <el-form-item prop="checkFlag" ref="checkFlag">
                               <el-checkbox v-model="row.checkFlag" :true-label="1"
                                 :disabled="type == 'look' || row.processingType === 'external_production'"
-                                :false-label="0"></el-checkbox>
+                                :false-label="0">
+                                {{ row.checkFlag ? '是' : '否' }}
+                              </el-checkbox>
                             </el-form-item>
                           </el-form>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="reportFlag" label="是否报工" min-width="130">
+                      <el-table-column prop="reportFlag" label="是否报工" width="90">
                         <template slot-scope="scope">
                           <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row" :rules="rulesTwo">
                             <el-form-item prop="reportFlag" ref="reportFlag">
@@ -149,32 +186,57 @@
                                 scope.row.defaultFlag ||
                                 scope.$index === dataFormTwo.length - 1 ||
                                 type === 'look'
-                                " :false-label="0"></el-checkbox>
+                                " :false-label="0">
+                                {{ scope.row.reportFlag ? '是' : '否' }}
+                              </el-checkbox>
                             </el-form-item>
                           </el-form>
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="stockFlag" label="是否入库" min-width="130">
+                      <!-- <el-table-column prop="checkFlag" label="是否检验工序" min-width="140">
+                          <template slot-scope="{row}">
+                            <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
+                              <el-form-item prop="checkFlag" ref="checkFlag">
+                                <el-checkbox v-model="row.checkFlag" :true-label="1" :disabled="type == 'look'"
+                                  :false-label="0"></el-checkbox>
+                              </el-form-item>
+                            </el-form>
+                          </template>
+                        </el-table-column> -->
+
+                      <el-table-column prop="stockFlag" label="是否入库" width="90">
                         <template slot-scope="scope">
                           <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row" :rules="rulesTwo">
                             <el-form-item prop="stockFlag" ref="stockFlag">
-                              <el-checkbox v-model="scope.row.stockFlag" :true-label="1" :disabled="scope.row.defaultFlag ||
-                                scope.$index === dataFormTwo.length - 1 ||
-                                type === 'look' ||
-                                scope.row.processingType === 'external_production'
-                                " :false-label="0"></el-checkbox>
+                              <el-checkbox v-model="scope.row.stockFlag" :disabled="scope.$index === dataFormTwo.length - 1 ||
+                                type === 'look'
+                                ">
+                                {{ scope.row.stockFlag ? '是' : '否' }}
+                              </el-checkbox>
                             </el-form-item>
                           </el-form>
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="lastFlag" label="是否末道工序" min-width="140">
+                      <el-table-column prop="lastFlag" label="是否末道工序" width="120">
                         <template slot-scope="scope">
                           <el-form :ref="`tableForm_1_${scope.row.index}`" :model="scope.row">
                             <el-form-item prop="lastFlag" ref="lastFlag">
                               <el-checkbox :label="true" v-model="scope.row.lastFlag" disabled>
                                 {{ scope.row.lastFlag ? '是' : '否' }}
+                              </el-checkbox>
+                            </el-form-item>
+                          </el-form>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="workOrderFlag" label="是否生成工单" width="130">
+                        <template slot-scope="{ row }">
+                          <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
+                            <el-form-item prop="workOrderFlag" ref="workOrderFlag">
+                              <el-checkbox v-model="row.workOrderFlag" :true-label="1"
+                                :disabled="type == 'look' || row.processingType === 'self_produced'" :false-label="0">
+                                {{ row.workOrderFlag ? '是' : '否' }}
                               </el-checkbox>
                             </el-form-item>
                           </el-form>
@@ -466,6 +528,7 @@ export default {
                 it.jobNumber = it.resourceCode
               })
             })
+            this.dataFormTwo.sort((a, b) => a.sort - b.sort);
             console.log(this.dataFormTwo, 'tttt')
             // this.dataFormTwo.forEach((item, index) => {
             //   if (item.departmentName) {

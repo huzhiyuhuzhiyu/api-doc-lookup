@@ -13,12 +13,12 @@ import inventoryDetaisList from "@/views/warehouseManagement/finishedProductWare
 import transferManagement from "@/views/warehouseManagement/finishedProductWarehouseManagement/transferManagement" 
 import directMaterialRequisition from "@/views/warehouseManagement/finishedProductWarehouseManagement/directMaterialRequisition" 
 import awaitInspectionInventory from'@/views/warehouseManagement/finishedProductWarehouseManagement/awaitInspectionInventory'
-import modalShift from'@/views/warehouseManagement/finishedProductWarehouseManagement/modalShift'
-import InventoryAssembly from'@/views/warehouseManagement/finishedProductWarehouseManagement/InventoryAssembly'
-import lnventoryDisassembly from'@/views/warehouseManagement/finishedProductWarehouseManagement/lnventoryDisassembly'
+// import modalShift from'@/views/warehouseManagement/finishedProductWarehouseManagement/modalShift'
+// import InventoryAssembly from'@/views/warehouseManagement/finishedProductWarehouseManagement/InventoryAssembly'
+// import lnventoryDisassembly from'@/views/warehouseManagement/finishedProductWarehouseManagement/lnventoryDisassembly'
 export default {
   name: 'quality',
-  components:{dbIncomAndOutInventory,directInandOutWarehouse,inventory,inventoryDetaisList,inventoryList,transferManagement,directMaterialRequisition,awaitInspectionInventory,modalShift,InventoryAssembly,lnventoryDisassembly},
+  components:{dbIncomAndOutInventory,directInandOutWarehouse,inventory,inventoryDetaisList,inventoryList,transferManagement,directMaterialRequisition,awaitInspectionInventory},
   data() {
     return {
       businessType:"",

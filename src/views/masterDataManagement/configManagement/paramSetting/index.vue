@@ -10,6 +10,7 @@
           <el-radio-button label="return">退货设置</el-radio-button>
           <el-radio-button label="attachment">附件开关</el-radio-button>
           <el-radio-button label="system">项目管理</el-radio-button>
+          <el-radio-button label="customersupplier">客户供应商管理</el-radio-button>
         </el-radio-group>
       </div>
       <div class="JNPF-common-layout-center JNPF-flex-main" style="background-color: #FFFFFF;margin-top: 5px">
@@ -247,6 +248,10 @@ export default {
         this.listQuery.pageSize = -1
         this.listQuery.businessCode = 'system'
         this.getData(4)
+      } else if (this.activeName === 'customersupplier') {
+        this.listQuery.pageSize = -1
+        this.listQuery.businessCode = 'customersupplier'
+        this.getData(6)
       }
       // else if (this.activeName === 'financialSet') {
       //   this.listQuery.codeFlag = 0
@@ -284,6 +289,8 @@ export default {
             list = res.data.system
           } else if (this.activeName === 'return') {
             list = res.data.return
+          } else if (this.activeName === 'customersupplier') {
+            list = res.data.customersupplier
           }
 
           list.forEach((item) => {

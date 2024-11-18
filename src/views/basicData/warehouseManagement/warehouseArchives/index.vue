@@ -572,69 +572,69 @@ export default {
           urlAddress:
             'warehouseManagement/${' + this.currentWarehouseInfo.code + '}/inventory' + '?' + this.currentWarehouseInfo.code
         },
-        {
-          category: 'Web',
-          description: '',
-          enCode: 'modalShift',
-          enabledMark: 1,
-          fullName: '形态转换',
-          icon: 'icon-ym icon-ym-webForm',
-          id: '',
-          isButtonAuthorize: 1,
-          isColumnAuthorize: 1,
-          isDataAuthorize: 1,
-          isFormAuthorize: 1,
-          linkTarget: '_self',
-          parentId: '',
-          propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-          sortCode: 80,
-          systemId: '309228585019769285',
-          type: 2,
-          urlAddress:
-            'warehouseManagement/${' + this.currentWarehouseInfo.code + '}/modalShift' + '?' + this.currentWarehouseInfo.code
-        },
-        {
-          category: 'Web',
-          description: '',
-          enCode: 'InventoryAssembly',
-          enabledMark: 1,
-          fullName: '存货组装',
-          icon: 'icon-ym icon-ym-webForm',
-          id: '',
-          isButtonAuthorize: 1,
-          isColumnAuthorize: 1,
-          isDataAuthorize: 1,
-          isFormAuthorize: 1,
-          linkTarget: '_self',
-          parentId: '',
-          propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-          sortCode: 90,
-          systemId: '309228585019769285',
-          type: 2,
-          urlAddress:
-            'warehouseManagement/${' + this.currentWarehouseInfo.code + '}/InventoryAssembly' + '?' + this.currentWarehouseInfo.code
-        },
-        {
-          category: 'Web',
-          description: '',
-          enCode: 'lnventoryDisassembly',
-          enabledMark: 1,
-          fullName: '存货拆卸',
-          icon: 'icon-ym icon-ym-webForm',
-          id: '',
-          isButtonAuthorize: 1,
-          isColumnAuthorize: 1,
-          isDataAuthorize: 1,
-          isFormAuthorize: 1,
-          linkTarget: '_self',
-          parentId: '',
-          propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-          sortCode: 100,
-          systemId: '309228585019769285',
-          type: 2,
-          urlAddress:
-            'warehouseManagement/${' + this.currentWarehouseInfo.code + '}/lnventoryDisassembly' + '?' + this.currentWarehouseInfo.code
-        }
+        // {
+        //   category: 'Web',
+        //   description: '',
+        //   enCode: 'modalShift',
+        //   enabledMark: 1,
+        //   fullName: '形态转换',
+        //   icon: 'icon-ym icon-ym-webForm',
+        //   id: '',
+        //   isButtonAuthorize: 1,
+        //   isColumnAuthorize: 1,
+        //   isDataAuthorize: 1,
+        //   isFormAuthorize: 1,
+        //   linkTarget: '_self',
+        //   parentId: '',
+        //   propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+        //   sortCode: 80,
+        //   systemId: '309228585019769285',
+        //   type: 2,
+        //   urlAddress:
+        //     'warehouseManagement/${' + this.currentWarehouseInfo.code + '}/modalShift' + '?' + this.currentWarehouseInfo.code
+        // },
+        // {
+        //   category: 'Web',
+        //   description: '',
+        //   enCode: 'InventoryAssembly',
+        //   enabledMark: 1,
+        //   fullName: '存货组装',
+        //   icon: 'icon-ym icon-ym-webForm',
+        //   id: '',
+        //   isButtonAuthorize: 1,
+        //   isColumnAuthorize: 1,
+        //   isDataAuthorize: 1,
+        //   isFormAuthorize: 1,
+        //   linkTarget: '_self',
+        //   parentId: '',
+        //   propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+        //   sortCode: 90,
+        //   systemId: '309228585019769285',
+        //   type: 2,
+        //   urlAddress:
+        //     'warehouseManagement/${' + this.currentWarehouseInfo.code + '}/InventoryAssembly' + '?' + this.currentWarehouseInfo.code
+        // },
+        // {
+        //   category: 'Web',
+        //   description: '',
+        //   enCode: 'lnventoryDisassembly',
+        //   enabledMark: 1,
+        //   fullName: '存货拆卸',
+        //   icon: 'icon-ym icon-ym-webForm',
+        //   id: '',
+        //   isButtonAuthorize: 1,
+        //   isColumnAuthorize: 1,
+        //   isDataAuthorize: 1,
+        //   isFormAuthorize: 1,
+        //   linkTarget: '_self',
+        //   parentId: '',
+        //   propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+        //   sortCode: 100,
+        //   systemId: '309228585019769285',
+        //   type: 2,
+        //   urlAddress:
+        //     'warehouseManagement/${' + this.currentWarehouseInfo.code + '}/lnventoryDisassembly' + '?' + this.currentWarehouseInfo.code
+        // }
       ]
       this.selectData.forEach(item => {
         let objs = {

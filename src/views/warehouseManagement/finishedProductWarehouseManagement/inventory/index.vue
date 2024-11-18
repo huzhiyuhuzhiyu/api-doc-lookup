@@ -34,7 +34,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading" >
         <div class="JNPF-common-head">
           <div>
             <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
@@ -53,7 +53,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableData" custom-column row-key="id" :fixedNo="true"
+        <JNPF-table ref="tabForm"  v-if="tableFlag==true"  :data="tableData" custom-column row-key="id" :fixedNo="true"
           @sort-change="sortChange" >
 
 
@@ -138,6 +138,7 @@ export default {
   },
   data() {
     return {
+      tableFlag:false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -267,6 +268,7 @@ export default {
     getBimBusinessSwitchConfigList(objs).then(res => {
       this.productNameFlag = res.data.product[1].configValue1 
       console.log(this.productNameFlag);
+      this.tableFlag=true
       if(this.productNameFlag=='1'){
     
       this.searchList.push({ field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 })
@@ -274,9 +276,7 @@ export default {
      
     })
   },
-  mounted () {
-  
-  },
+
   methods: {
     getclassAttributeList() {
       getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
@@ -339,7 +339,8 @@ export default {
 
     initData() {
       this.tableQuery.classAttributeList = this.classAttributeList
-      inventoryWarehouseList(this.tableQuery).then((res) => {
+        this.listLoading = true
+        inventoryWarehouseList(this.tableQuery).then((res) => {
         console.log(res);
         if (res.data.whPage.records.length) {
           this.tableData = res.data.whPage.records

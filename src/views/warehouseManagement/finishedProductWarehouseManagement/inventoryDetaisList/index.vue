@@ -155,19 +155,21 @@
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
                 :delDisabled="scope.row.documentStatus == 'submit'" :editDisabled="scope.row.documentStatus == 'submit'"
                 @edit="viewFun(scope.row.moveId, 'edit', scope.row)" @del="handleDel(scope.row.moveId)">
-                <el-button size="mini" type="text"
-                  @click="viewFun(scope.row.moveId, 'look', scope.row)">查看详情</el-button>
-                <!-- <el-dropdown hide-on-click>
+                 
+                <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
                       {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="viewFun(scope.row.moveId, 'look')">查看详情</el-dropdown-item>
+                    <el-dropdown-item @click.native="viewFun(scope.row.moveId, 'look', scope.row)">查看详情</el-dropdown-item>
+                    <el-dropdown-item type="text"
+                      :disabled="!(scope.row.businessType == 'inbound_purchase' && scope.row.sourceType == 'io_other')"
+                      @click.native="PrintFun(scope.row.moveId)">打印</el-dropdown-item>
 
                   </el-dropdown-menu>
-                </el-dropdown> -->
+                </el-dropdown>
               </tableOpts>
             </template>
           </el-table-column>
@@ -225,6 +227,9 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+      <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
   </div>
 </template>
 
@@ -254,19 +259,24 @@ import {
 } from "@/api/masterDataManagement/index";
 import outboundUseForm from '../dbIncomAndOutInventory/equipmentOutboundForm.vue'
 import InboundReturnForm from '../dbIncomAndOutInventory/equipmentInboundForm.vue'
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
+import { getPrintBusInfo } from '@/api/system/printDev'
 export default {
   name: 'inventoryDetaisList',
   components: {
     Form, SuperQuery, ExportForm, ProductInboundForm, WorkInboundForm, OutboundSaleSendForm, InboundSaleReturnForm,
     InboundPurchaseForm, OutboundPurchaseForm, OutboundExternalSendForm,
     InboundExternalForm, OutboundPickOutForm, InboundReturnMaterialsForm,
-    Transfer, SaleOutboundForm, ExternalMaterOutboundForm, PurchaseOrderInboundForm, ExternalInboundForm, outboundUseForm, InboundReturnForm
+    Transfer, SaleOutboundForm, ExternalMaterOutboundForm, PurchaseOrderInboundForm, ExternalInboundForm, outboundUseForm, InboundReturnForm, PrintBrowse, PrintDialog 
   },
   props: {
     warehouseCode: "",
   },
   data() {
     return {
+      printVisible: false,
+      printBrowseVisible: false,
       inboundReturnVisible: false,
       outboundUseVisible: false,
       superQuery: {},
@@ -506,6 +516,9 @@ export default {
         },
       ],
       classAttributeList: [],
+      prindId:"",
+      formId:"",
+      enCode:"",
     }
   },
   created() {
@@ -516,6 +529,38 @@ export default {
     this.getProductClassFun()
   },
   methods: {
+    printWarehouse(enCode) {
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id 
+          this.printBrowseVisible = true
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
+    // 打印
+    PrintFun(id) {
+      this.enCode = 'p017'
+      this.formId = id
+      this.fullName = '采购收货单'
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(this.enCode)
+      })
+    },
+    closePrint() {
+      this.printVisible = false
+    },
+    getclassAttributeList() {
+      getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
+        console.log("类别属性", res);
+        this.classAttributeList = res.data
+        this.search('basic')
+      })
+    },
     getclassAttributeList() {
       getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
         console.log("类别属性", res);

@@ -9,7 +9,7 @@
         <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
           @click="handleConfirm('submit')">保存并提交</el-button>
         <el-button v-if="btnType !== 'look' && dataForm.businessType == 'inbound_purchase'" type="primary"
-          :loading="btnLoading" @click="handleConfirm('submit', 'print')">保存并打印</el-button>
+          :loading="btnLoading" @click="handleConfirm('submit', 'print')">提交并打印</el-button>
         <el-button v-if="btnType == 'look' || btnType == 'edit'" @click="goBack">{{ $t('common.cancelButton')
           }}</el-button>
       </div>

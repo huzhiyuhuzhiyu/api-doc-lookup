@@ -110,3 +110,12 @@ export function batchInspect(data) {
     data
   })
 }
+
+// 直接出入库撤回功能
+export function withdrawApi(id) {
+  return request({
+    url: `/api/wms/stock/move/revoke/${id}`,
+    method: 'get',
+    
+  })
+}

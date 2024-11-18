@@ -127,6 +127,9 @@ export default {
   components: { SearchInput },
   name: 'ComSelect-list',
   props: {
+    currentIndex:{
+
+    },
     value: {
       /* 页面元素显示的内容 */
     },
@@ -253,6 +256,7 @@ export default {
     this.tagsList = []
   },
   mounted() {
+    console.log(11,this.currentIndex);
     addResizeListener(this.$el, this.handleResize);
 
     const reference = this.$refs.reference;
@@ -303,7 +307,6 @@ export default {
       let openFlag = true
       if (this.beforeOpen) openFlag = await this.beforeOpen(this.paramsObj)
       if (!openFlag) return
-
       this.keyword = ''
       this.treeData = []
       this.getData()
@@ -419,7 +422,7 @@ export default {
         if (!submitFlag) return this.btnLoading = false
         // this.innerValue = this.selectedData[0]
         this.selectedIds[0] ? this.$emit('input', this.selectedIds[0]) : ''
-        this.$emit('change', this.selectedIds[0], selectedData, this.paramsObj) // 注意：回显数据并不是完整数据，需要通过首个参数判断change的传值是否有效
+        this.$emit('change', this.selectedIds[0], selectedData, this.paramsObj,this.currentIndex) // 注意：回显数据并不是完整数据，需要通过首个参数判断change的传值是否有效
       }
       this.visible = false
     },

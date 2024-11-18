@@ -46,9 +46,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier('', 'add')">
-              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="mergeorderNo()">
-                转库存调整单
-              </el-button>
+              
               <el-button type="primary" size="mini" icon="el-icon-download"
                 @click="exportForm('dataTable')">导出</el-button>
             </topOpts>
@@ -68,7 +66,7 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
-            :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column  @selection-change="handleSelectionChange" hasC>
+            :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column  >
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
@@ -76,24 +74,39 @@
                 }}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="deliverDate" label="日期" min-width="160" sortable="custom"></el-table-column>
+            <el-table-column prop="orderDate" label="日期" min-width="160" sortable="custom"></el-table-column>
             
          
-            <el-table-column prop="deliveryStatus" label="制单人" min-width="120" sortable="custom" align="center">  </el-table-column>
+            <el-table-column prop="personName" label="制单人" min-width="120" sortable="custom" align="center">  </el-table-column>
             <el-table-column prop="documentStatus" label="单据状态" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag> </div>
                 <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
               </template>
             </el-table-column>
-            <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" />
+            <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center" >
+            <template slot-scope="scope">
+              <div v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'">
+                <el-tag>审批中</el-tag>
+              </div>
+              <div v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus == 'submit'">
+                <el-tag type="success">审批通过</el-tag>
+              </div>
+              <div v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus == 'submit'">
+                <el-tag type="danger">审批拒绝</el-tag>
+              </div>
+              <div v-else-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus == 'submit'">
+                <el-tag type="warning">审批撤回</el-tag>
+              </div>
+            </template>
+          </el-table-column>
+            <!-- <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column> -->
+            <!-- <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" /> -->
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true"
+                <el-button size="mini" type="text" :disabled="scope.row.takingState == 'finish'||scope.row.approvalStatus=='ok'"
                   @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑</el-button>
-                <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                  :disabled="scope.row.documentStatus == 'draft' || scope.row.deliveryStatus == 'canceled' ? false : true"
+                <el-button size="mini" type="text" class="JNPF-table-delBtn" :disabled="scope.row.takingState == 'finish'||scope.row.approvalStatus=='ok'"
                   @click="handleDel(scope.row.id)">删除</el-button>
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
@@ -105,6 +118,10 @@
                     <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
                       查看详情
                     </el-dropdown-item> 
+                    <el-dropdown-item :disabled="scope.row.approvalStatus!='ok'&&scope.row.takingState=='finish'" @click.native="mergeorderNo(scope.row.id, 'Form')">
+                      转库存调整单
+                    </el-dropdown-item> 
+                   
                   </el-dropdown-menu>
                 </el-dropdown>
               </template>
@@ -122,7 +139,8 @@
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-  </div>
+      <Adjust v-if="adjustVisible" ref="adjustForm" @close="closeForm"></Adjust>
+    </div>
 </template>
 
 <script> 
@@ -130,11 +148,14 @@ import Form from './Form'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-export default {
+import {getStocktak,stockTakingToAdjus} from '@/api/warehouseManagement/stocktak.js'
+import Adjust from '../inventoryAdjustmentSheet/Form.vue'
+export default { 
   name: 'inventorySheet',
-  components: { Form, SuperQuery, ExportForm },
+  components: { Form, SuperQuery, ExportForm,Adjust },
   data() {
     return {
+      adjustVisible:false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -144,8 +165,9 @@ export default {
       ],
       columnList: [], 
       rdeDateArr:[],
-
-
+      orderForm:{},
+      tableData:[],
+      total:0,
       superQueryVisible: false, 
 
       orderFormlist: {
@@ -176,8 +198,7 @@ export default {
       defaultProps: {
         children: 'childrenList',
         label: 'name'
-      },  
-      total: 0,
+      },   
       diagramVisible: false,
       formVisible: false,
       superQueryJson: [
@@ -210,7 +231,17 @@ export default {
             { label: "提交", value: "submit" },
           ]
         },
-
+        {
+          prop: 'documentStatus',
+          label: "审批状态",
+          type: 'select',
+          options: [
+            { label: "审批中", value: "ing" },
+            { label: "审批通过", value: "ok" },
+            { label: "审批拒绝", value: "rebut" },
+            { label: "审批撤回", value: "withdrawn" },
+          ]
+        },
 
 
       ],
@@ -219,31 +250,32 @@ export default {
   created() {
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.superForm=this.orderForm
-    this.search('basic')
-    this.getbimProductAttributesFun()
-    // this.getAttributeline()
-    // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
+    this.search('basic')  
   },
   
   methods: {
- 
+    mergeorderNo(id,type){
+      stockTakingToAdjus(id).then(res=>{
+        this.adjustVisible=true
+        this.$nextTick(()=>{
+          this.$refs.adjustForm.init(res.data,'Form')
+        })
+      }) 
+    },
     superQuerySearch(query) {
       this.superQuery = query
       this.superQueryVisible = false
       this.search('super')
     },
  
-    // 选中得数据
-    handleSelectionChange(val) {
-      this.selectArr = val
-    },
+    
    
    
     
     
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName') {
+      if (prop === 'personName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName') {
         if (prop === 'createByName') {
           newProp = 'create_by'
         } else {
@@ -261,14 +293,12 @@ export default {
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
-      if (isRefresh) {
-        this.keyword = ''
+      this.adjustVisible=false
         this.search('basic')
-      }
     },
     initData() {
       this.listLoading = true
-      getQuotationdatasendlist(this.orderForm).then(res => {
+      getStocktak(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
@@ -278,7 +308,6 @@ export default {
 
     },
     search(type) {
-
       if (this.rdeDateArr.length > 0) {
         this.orderForm.startTime = this.rdeDateArr[0]
         this.orderForm.endTime = this.rdeDateArr[1]
@@ -333,11 +362,9 @@ export default {
       this.formVisible = true
       if (id) {
         console.log(id);
-        // setTimeout(() => {
         this.$nextTick(() => {
           this.$refs.Form.init(id, btntype)
         })
-        // }, 600);
       }
     },
     handleDel(id) {

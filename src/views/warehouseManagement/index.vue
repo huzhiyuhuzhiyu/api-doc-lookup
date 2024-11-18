@@ -13,9 +13,12 @@ import inventoryDetaisList from "@/views/warehouseManagement/finishedProductWare
 import transferManagement from "@/views/warehouseManagement/finishedProductWarehouseManagement/transferManagement" 
 import directMaterialRequisition from "@/views/warehouseManagement/finishedProductWarehouseManagement/directMaterialRequisition" 
 import awaitInspectionInventory from'@/views/warehouseManagement/finishedProductWarehouseManagement/awaitInspectionInventory'
+import modalShift from'@/views/warehouseManagement/finishedProductWarehouseManagement/modalShift'
+import InventoryAssembly from'@/views/warehouseManagement/finishedProductWarehouseManagement/InventoryAssembly'
+import InventoryDisassembly from'@/views/warehouseManagement/finishedProductWarehouseManagement/InventoryDisassembly'
 export default {
   name: 'quality',
-  components:{dbIncomAndOutInventory,directInandOutWarehouse,inventory,inventoryDetaisList,inventoryList,transferManagement,directMaterialRequisition,awaitInspectionInventory},
+  components:{dbIncomAndOutInventory,directInandOutWarehouse,inventory,inventoryDetaisList,inventoryList,transferManagement,directMaterialRequisition,awaitInspectionInventory,modalShift,InventoryAssembly,InventoryDisassembly},
   data() {
     return {
       businessType:"",
@@ -73,6 +76,15 @@ export default {
     }
     if(this.businessType=='awaitInspectionInventory'){
       this.listPageComponent=awaitInspectionInventory
+    }
+    if(this.businessType=='modalShift'){
+      this.listPageComponent=modalShift
+    }
+    if(this.businessType=='InventoryAssembly'){
+      this.listPageComponent=InventoryAssembly
+    }
+    if(this.businessType=='InventoryDisassembly'){
+      this.listPageComponent=InventoryDisassembly
     }
     // if()
 

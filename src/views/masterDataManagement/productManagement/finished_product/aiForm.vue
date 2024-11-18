@@ -37,9 +37,11 @@ import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分�
 import { getbimProductAttributesList, getbimProductsModelList } from '@/api/masterDataManagement/index'
 import formValidate from '@/utils/formValidate'
 import { getProjectList } from '@/api/system/projectManagement'
+import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
+      isProjectSwitch: '',
       datafilelist: [],
       activeName: 'basicInfo',
       btnType: false,
@@ -238,7 +240,7 @@ export default {
           ],
           itemDisabled: false
         },
-     
+        { prop: "projectId", label: "所属项目", value: "", type: 'select', minWidth: 180, itemRules: [{ required: true, trigger: "blur" }], options: [], filterable: true, render: true, itemDisabled: false },
         {
           prop: 'clearance',
           label: '游隙',
@@ -823,13 +825,14 @@ export default {
       ) {
         tc.render = false
       }
-     
+
     })
   },
   computed: {
     openMode() {
       return this.title === '新建成品档案' ? '新建' : this.title === '编辑成品档案' ? '编辑' : '只读'
-    }
+    },
+    ...mapGetters(['userInfo'])
   },
   methods: {
     async fetchData(code) {
@@ -903,10 +906,10 @@ export default {
         this.dataForm[paramsObj.prop] = ''
       }
     },
-    init(id, btnType = false) {
+    init(isProjectSwitch) {
+      this.isProjectSwitch = isProjectSwitch
       this.visible = true
       this.formLoading = true
-      this.btnType = btnType
       // getBimBusinessInfo('460907390338859014').then(res => {
       //   this.businessType = res.data.configValue1
       //   if (this.businessType === '1') {
@@ -915,6 +918,44 @@ export default {
       //   }
       // })
       this.fetchData('bm_cp_cp')
+      console.log(this.isProjectSwitch, 'this.isProjectSwitch')
+      if (this.isProjectSwitch === '1') {
+        this.sleeveItems.forEach((ele) => {
+          if (ele.prop == 'projectId') {
+            console.log(this.userInfo.projectId, 'pr')
+
+            ele.render = true
+            let obj = {
+              pageNum: 1,
+              pageSize: -1
+            }
+            getProjectList(obj).then((res) => {
+              ele.options = res.data.records.map((item) => {
+                return { label: item.name, value: item.id }
+              })
+              console.log(ele.options, 'ele.options')
+              ele.options = ele.options.filter((item) => item.value !== '1')
+            })
+            if (!this.userInfo.projectId) {
+              this.dataForm.projectId = this.userInfo.projectId
+              ele.itemDisabled = false
+            } else {
+              if (this.userInfo.projectId === '1') {
+                ele.itemDisabled = false
+              } else {
+                this.dataForm.projectId = this.userInfo.projectId
+                ele.itemDisabled = true
+              }
+            }
+          }
+        })
+      } else {
+        this.sleeveItems.forEach((ele) => {
+          if (ele.prop == 'projectId') {
+            ele.render = false
+          }
+        })
+      }
       this.title = '新建成品档案'
       this.formLoading = false
     },

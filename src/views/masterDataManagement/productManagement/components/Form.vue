@@ -357,17 +357,6 @@ export default {
           }
         }
       }
-      if (tc.prop === 'projectId') {
-        let obj = {
-          pageNum: 1,
-          pageSize: -1
-        }
-        getProjectList(obj).then((res) => {
-          tc.options = res.data.records.map((item) => {
-            return { label: item.name, value: item.id }
-          })
-        })
-      }
     })
   },
   computed: {
@@ -392,7 +381,7 @@ export default {
         }
       } catch (error) { }
     },
-    init(id, btnType = false,isProjectSwitch) {
+    init(id, btnType = false, isProjectSwitch) {
       this.isProjectSwitch = isProjectSwitch
       this.visible = true
       this.formLoading = true
@@ -412,12 +401,19 @@ export default {
               ele.options = res.data.records.map((item) => {
                 return { label: item.name, value: item.id }
               })
+              if (this.dataForm.classAttribute === 'semi_finished') {
+                ele.options = ele.options.filter(item => item.value !== '1')
+              }
             })
             if (!this.userInfo.projectId) {
               this.dataForm.projectId = this.userInfo.projectId
+              ele.itemDisabled = false
             } else {
               if (this.userInfo.projectId === '1') {
-                this.dataForm.projectId = this.userInfo.projectId
+                if (this.dataForm.classAttribute !== 'semi_finished') {
+                  this.dataForm.projectId = this.userInfo.projectId
+                }
+                ele.itemDisabled = false
               } else {
                 this.dataForm.projectId = this.userInfo.projectId
                 ele.itemDisabled = true
@@ -427,7 +423,7 @@ export default {
         })
       } else {
         this.tabs[0].tabContent.forEach((ele) => {
-          if (ele.prop == 'project') {
+          if (ele.prop == 'projectId') {
             ele.render = false
           }
         })

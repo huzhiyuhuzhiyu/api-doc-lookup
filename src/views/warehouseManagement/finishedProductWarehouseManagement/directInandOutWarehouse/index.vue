@@ -65,8 +65,16 @@
                             </el-select>
                           </el-form-item>
                         </el-col>
-
-
+                        <el-col :sm="6" :xs="24"
+                          v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'inbound_external'">
+                          <el-form-item label="是否显示比重折扣" prop="weightFlag">
+                            <el-select v-model="dataForm.weightFlag" placeholder="是否显示比重折扣" style="width: 100%;"
+                              :disabled="btnType == 'look' ? true : false">
+                              <el-option v-for="(item, index) in weightFlagList" :key="index" :label="item.label"
+                                :value="item.value"></el-option>
+                            </el-select>
+                          </el-form-item>
+                        </el-col>
                         <el-col :sm="12" :xs="24">
                           <el-form-item label="备注" prop="remark">
                             <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" :rows="2"
@@ -124,7 +132,38 @@
                           <div v-if="dataForm.documentType == 'outbound'"> {{ scope.row.shelfSpaceName }}</div>
                         </template>
                       </el-table-column>
+
                       <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
+                      <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
+                        v-if="dataForm.weightFlag == true">
+                        <template slot="header">
+                          <span class="required">*</span>重量(kg)
+                        </template>
+                        <template slot-scope="scope">
+                          <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                            v-model="scope.row.weight" placeholder="重量"></el-input>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="proportion" label="比重" width="140" :key="727"
+                        v-if="dataForm.weightFlag == true">
+                        <template slot="header">
+                          <span class="required">*</span>比重
+                        </template>
+                        <template slot-scope="scope">
+                          <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                            v-model="scope.row.proportion" placeholder="比重"></el-input>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="discount" label="折扣折扣(0~1)" width="140" :key="717"
+                        v-if="dataForm.weightFlag == true">
+                        <template slot="header">
+                          <span class="required">*</span>折扣(0~1)
+                        </template>
+                        <template slot-scope="scope">
+                          <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                            v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="num" label="数量" width="140" :key="77">
                         <template slot="header">
                           <span class="required">*</span>数量
@@ -373,62 +412,58 @@
             </el-form>
           </el-row>
           <div class="JNPF-common-layout-main JNPF-flex-main">
-            <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true" 
+            <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
               @selection-change="handleSelectionChangeAllPruduct" @sort-change="sortChange">
               <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" key="productDrawingNo"/>
+                v-if="dataForm.documentType == 'outbound'" key="productDrawingNo" />
               <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom"
-                v-if="dataForm.documentType == 'inbound'"  key="drawingNo"/>
+                v-if="dataForm.documentType == 'inbound'" key="drawingNo" />
               <!-- <el-table-column prop="productName" label="产品名称" min-width="160" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" /> -->
               <!-- <el-table-column prop="name" label="产品名称" min-width="160" sortable="custom"
                 v-if="dataForm.documentType == 'inbound'" /> -->
               <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" key="productCode"/>
+                v-if="dataForm.documentType == 'outbound'" key="productCode" />
               <el-table-column prop="code" label="产品编码" min-width="130" sortable="custom"
-                v-if="dataForm.documentType == 'inbound'"  key="code"/>
+                v-if="dataForm.documentType == 'inbound'" key="code" />
               <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'"  key="mainUnit"/>
+                v-if="dataForm.documentType == 'outbound'" key="mainUnit" />
               <el-table-column prop="availableQuantity" label="可用库存数量" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'"  key="availableQuantity"/>
+                v-if="dataForm.documentType == 'outbound'" key="availableQuantity" />
               <el-table-column prop="batchNumber" label="批次号" width="180" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'"  key="batchNumber"/>
+                v-if="dataForm.documentType == 'outbound'" key="batchNumber" />
               <el-table-column prop="standardValue" label="规值" width="80" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'"  key="standardValue"/>
+                v-if="dataForm.documentType == 'outbound'" key="standardValue" />
               <el-table-column prop="colour" label="颜色" width="80" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'"  key="colour"/>
+                v-if="dataForm.documentType == 'outbound'" key="colour" />
               <el-table-column prop="sealingCoverTyping" label="打字内容" width="110" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'"  key="sealingCoverTyping"/>
+                v-if="dataForm.documentType == 'outbound'" key="sealingCoverTyping" />
               <el-table-column prop="accuracyLevel" label="精度等级" width="110" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'"  key="accuracyLevel"/>
+                v-if="dataForm.documentType == 'outbound'" key="accuracyLevel" />
               <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'"  key="vibrationLevel"/>
+                v-if="dataForm.documentType == 'outbound'" key="vibrationLevel" />
               <el-table-column prop="oil" label="油脂" width="80" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'"  key="oil"/>
+                v-if="dataForm.documentType == 'outbound'" key="oil" />
 
               <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'"  key="oilQuantity"/>
+                v-if="dataForm.documentType == 'outbound'" key="oilQuantity" />
               <el-table-column prop="clearance" label="游隙" width="80" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'"  key="clearance"/>
+                v-if="dataForm.documentType == 'outbound'" key="clearance" />
               <el-table-column prop="aperture" label="孔径" width="80" :key="102" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'"  key="aperture"></el-table-column>
+                v-if="dataForm.documentType == 'outbound'" key="aperture"></el-table-column>
               <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'"  key="packagingMethod"/>
+                v-if="dataForm.documentType == 'outbound'" key="packagingMethod" />
               <el-table-column prop="specialRequire" label="特殊要求" width="110" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'"  key="specialRequire"/>
+                v-if="dataForm.documentType == 'outbound'" key="specialRequire" />
               <el-table-column prop="remark" label="备注" width="100" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'"  key="remark"/>
+                v-if="dataForm.documentType == 'outbound'" key="remark" />
               <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"
-                v-if="dataForm.documentType == 'inbound'"  key="createTime"/>
+                v-if="dataForm.documentType == 'inbound'" key="createTime" />
             </JNPF-table>
-            <pagination :total="productTotal" v-if="dataForm.documentType == 'outbound'"
-              :page.sync=" orderForm.pageNum "
-              :limit.sync=" orderForm.pageSize "
-              @pagination="searchProductFun" />
-              <pagination :total="productTotal" v-if="dataForm.documentType == 'inbound'"
-              :page.sync="listQuery.pageNum"
-              :limit.sync="listQuery.pageSize"
-              @pagination="searchProductFun" />
+            <pagination :total="productTotal" v-if="dataForm.documentType == 'outbound'" :page.sync="orderForm.pageNum"
+              :limit.sync="orderForm.pageSize" @pagination="searchProductFun" />
+            <pagination :total="productTotal" v-if="dataForm.documentType == 'inbound'" :page.sync="listQuery.pageNum"
+              :limit.sync="listQuery.pageSize" @pagination="searchProductFun" />
           </div>
         </div>
       </div>
@@ -493,9 +528,13 @@ export default {
   props: {
     warehouseCode: "",
   },
-  name:"directInandOutWarehouse",
+  name: "directInandOutWarehouse",
   data() {
     return {
+      weightFlagList: [
+        { label: "是", value: true },
+        { label: "否", value: false },
+      ],
       scanResult: "",
       scanDialog: false,
       processList: [],
@@ -551,7 +590,12 @@ export default {
         partnerName: "",
         cooperativePartnerId: "",
         approvalFlag: false,
+        weightFlag: false,
       },
+      weightFlagList: [
+        { label: "是", value: true },
+        { label: "否", value: false },
+      ],
       customerInfo: {},//所选客户信息
       getWarehouseList,
 
@@ -570,6 +614,9 @@ export default {
         ],
         warehouseName: [
           { required: true, message: '仓库不能为空', trigger: 'change' }
+        ],
+        weightFlag: [
+          { required: true, message: '是否显示比重折扣不能为空', trigger: 'change' }
         ],
       },
       orderForm: { //获取产品数据 
@@ -696,6 +743,13 @@ export default {
     }
   },
   methods: {
+    computedNumFun(data, index) {
+      if (data.discount && data.proportion && data.weight) {
+        if (Number(data.discount) > 1 || Number(data.discount) < 0) return this.$message.error("请输入合理的折扣值，0~1范围内")
+        this.productData[index].num = Math.floor(this.jnpf.numberFormat(this.jnpf.math('multiply', [data.discount, data.proportion, data.weight]), 2)) + ''
+        this.watchNum(data, index)
+      }
+    },
     getclassAttributeList() {
       getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
         console.log("类别属性", res);
@@ -703,7 +757,7 @@ export default {
       })
     },
     getProductFun() {
-       
+
       if (!this.scanResult) return
       let obj = {
         productName: "",
@@ -728,6 +782,12 @@ export default {
           item.productCode = item.code
           item.productDrawingNo = item.drawingNo
           this.$set(item, 'num', '')
+          if (this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'outbound_purchase' || this.dataForm.businessType == 'outbound_external_send' || this.dataForm.businessType == 'inbound_external') {
+            this.$set(item, 'discount', '')
+            this.$set(item, 'proportion', '')
+            this.$set(item, 'weight', '')
+          }
+
         });
         this.$nextTick(() => {
           if (res.data.records.length) {
@@ -785,7 +845,7 @@ export default {
     },
     // 选择批次
     selectBatchNumberFun(data, index) {
-      console.log("data",data,index);
+      console.log("data", data, index);
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
       this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
       this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
@@ -793,8 +853,13 @@ export default {
       this.$set(this.productData[index], 'availableBatchNumber', num)
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
       this.$set(this.productData[index], 'costPrice', data.price)
-      this.$set(this.productData[index], 'taxRate', data.taxRate*1)
-      this.$set(this.productData[index], 'excludingTaxCostPrice', data.excludingTaxPrice*1)
+      this.$set(this.productData[index], 'taxRate', data.taxRate * 1)
+      this.$set(this.productData[index], 'excludingTaxCostPrice', data.excludingTaxPrice * 1)
+      if (this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'outbound_purchase' || this.dataForm.businessType == 'outbound_external_send' || this.dataForm.businessType == 'inbound_external') {
+        this.$set(item, 'discount', '')
+        this.$set(item, 'proportion', '')
+        this.$set(item, 'weight', '')
+      }
     },
     // 打开选择库位弹框
     openSeleceWareDialog(row, index) {
@@ -831,7 +896,7 @@ export default {
     searchProductFun() {
       if (this.dataForm.documentType == 'outbound') {
         this.orderForm.classAttributeList = this.classAttributeList
-        this.orderForm.warehouseId=this.dataForm.warehouseId
+        this.orderForm.warehouseId = this.dataForm.warehouseId
         getBatchNumber(this.orderForm).then(res => {
 
           this.productList = res.data.records
@@ -873,7 +938,7 @@ export default {
         productDrawingNo: "",        // customerProductNo: "",
         productName: "",
         productCode: "",
-        warehouseId:"",
+        warehouseId: "",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -922,7 +987,11 @@ export default {
       this.productVisible = false
       let arr = JSON.parse(JSON.stringify(this.selectSaleProductArr))
       arr.forEach(item => {
-
+        if (this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'outbound_purchase' || this.dataForm.businessType == 'outbound_external_send' || this.dataForm.businessType == 'inbound_external') {
+        this.$set(item, 'discount', '')
+        this.$set(item, 'proportion', '')
+        this.$set(item, 'weight', '')
+      }
         item.classAttribute = item.classAttribute
         item.ordersId = ""
         item.ordersLineId = ""
@@ -935,17 +1004,17 @@ export default {
         item.ordersLineId = ""
         item.totalAmount = ""
         item.taxAmount = ""
-        item.taxRate = item.taxRate*1
+        item.taxRate = item.taxRate * 1
         item.costPrice = item.price
-        item.excludingTaxCostPrice = item.excludingTaxPrice 
+        item.excludingTaxCostPrice = item.excludingTaxPrice
         if (this.dataForm.documentType == 'inbound') {
-        item.productCode = item.code
-        item.productsId = item.id
+          item.productCode = item.code
+          item.productsId = item.id
         }
         // item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
 
         this.productData.push(item)
-      }); 
+      });
     },
     // 产品信息列表多选
     handeleProductInfoData(val) {
@@ -1262,12 +1331,12 @@ export default {
         return
       }
       console.log(data);
-      if(data[0].id){
-      this.allocationFlag = data[0].all.locationStatus == 'disabled' ? false : true
+      if (data[0].id) {
+        this.allocationFlag = data[0].all.locationStatus == 'disabled' ? false : true
 
-      this.dataForm.warehouseId = data[0].id
-      this.dataForm.warehouseName = data[0].name
-      this.dataForm.warehouseType = data[0].all.type
+        this.dataForm.warehouseId = data[0].id
+        this.dataForm.warehouseName = data[0].name
+        this.dataForm.warehouseType = data[0].all.type
       }
 
     },

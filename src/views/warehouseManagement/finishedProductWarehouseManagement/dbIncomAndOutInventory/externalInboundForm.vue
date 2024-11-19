@@ -74,8 +74,16 @@
                               </el-select>
                             </el-form-item>
                           </el-col>
-
-                          <el-col :sm="12" :xs="24">
+                          <el-col :sm="6" :xs="24">
+                            <el-form-item label="是否显示比重折扣" prop="weightFlag">
+                              <el-select v-model="dataForm.weightFlag" placeholder="是否显示比重折扣" style="width: 100%;"
+                                :disabled="btnType == 'look' ? true : false">
+                                <el-option v-for="(item, index) in weightFlagList" :key="index" :label="item.label"
+                                  :value="item.value"></el-option>
+                              </el-select>
+                            </el-form-item>
+                          </el-col>
+                          <el-col :sm="6" :xs="24">
                             <el-form-item label="备注" prop="remark">
                               <el-input v-model="dataForm.remark" placeholder="请输入备注"
                                 :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2"
@@ -132,7 +140,36 @@
                           v-if="btnType != 'look'">
                         </el-table-column>
 
-
+                        <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
+                          v-if="dataForm.weightFlag == true">
+                          <template slot="header">
+                            <span class="required">*</span>重量(kg)
+                          </template>
+                          <template slot-scope="scope">
+                            <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                              v-model="scope.row.weight" placeholder="重量"></el-input>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="proportion" label="比重" width="140" :key="727"
+                          v-if="dataForm.weightFlag == true">
+                          <template slot="header">
+                            <span class="required">*</span>比重
+                          </template>
+                          <template slot-scope="scope">
+                            <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                              v-model="scope.row.proportion" placeholder="比重"></el-input>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
+                          v-if="dataForm.weightFlag == true">
+                          <template slot="header">
+                            <span class="required">*</span>折扣(0~1)
+                          </template>
+                          <template slot-scope="scope">
+                            <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                              v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
+                          </template>
+                        </el-table-column>
                         <el-table-column prop="num" label="收货数量" width="140" :key="77">
                           <template slot="header">
                             <span class="required">*</span>收货数量
@@ -181,7 +218,7 @@
                 </el-tab-pane>
               </el-tabs>
               <el-collapse v-model="activeNames" v-else>
-                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo"  style="margin-top: 5px;">
+                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" style="margin-top: 5px;">
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
                       <el-col :sm="6" :xs="24">
@@ -231,7 +268,15 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="是否显示比重折扣" prop="weightFlag">
+                          <el-select v-model="dataForm.weightFlag" placeholder="是否显示比重折扣" style="width: 100%;"
+                            :disabled="btnType == 'look' ? true : false">
+                            <el-option v-for="(item, index) in weightFlagList" :key="index" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
                       <el-col :sm="12" :xs="24">
                         <el-form-item label="备注" prop="remark">
                           <el-input v-model="dataForm.remark" placeholder="请输入备注"
@@ -283,10 +328,40 @@
 
 
 
-                    <el-table-column prop="waitReceiptNum" label="待收货数量" width="140" :key="777" v-if="btnType != 'look'">
+                    <el-table-column prop="waitReceiptNum" label="待收货数量" width="140" :key="777"
+                      v-if="btnType != 'look'">
                     </el-table-column>
 
-
+                    <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
+                      v-if="dataForm.weightFlag == true">
+                      <template slot="header">
+                        <span class="required">*</span>重量(kg)
+                      </template>
+                      <template slot-scope="scope">
+                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                          v-model="scope.row.weight" placeholder="重量"></el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="proportion" label="比重" width="140" :key="727"
+                      v-if="dataForm.weightFlag == true">
+                      <template slot="header">
+                        <span class="required">*</span>比重
+                      </template>
+                      <template slot-scope="scope">
+                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                          v-model="scope.row.proportion" placeholder="比重"></el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
+                      v-if="dataForm.weightFlag == true">
+                      <template slot="header">
+                        <span class="required">*</span>折扣(0~1)
+                      </template>
+                      <template slot-scope="scope">
+                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                          v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
+                      </template>
+                    </el-table-column>
                     <el-table-column prop="num" label="收货数量" width="140" :key="77">
                       <template slot="header">
                         <span class="required">*</span>收货数量
@@ -431,6 +506,10 @@ export default {
   mixins: [flowMixin, busFlow],
   data() {
     return {
+      weightFlagList: [
+        { label: "是", value: true },
+        { label: "否", value: false },
+      ],
       shelfSpaceName: "",
       shelfSpaceId: "",
       warehouseRequestObj: {
@@ -473,6 +552,7 @@ export default {
         warehouseType: "",
         approvalFlag: false,
         inspectionResults: '',
+        weightFlag: false,
       },
       approvalFlag: false,   // 待办事宜等页面 需要
       customerInfo: {},//所选客户信息
@@ -504,6 +584,9 @@ export default {
         orderNo: [{ required: true, message: "请输入单号", trigger: 'blur' }],
         warehouseName: [
           { required: true, message: '仓库不能为空', trigger: 'change' }
+        ],
+        weightFlag: [
+          { required: true, message: '是否显示比重折扣不能为空', trigger: 'change' }
         ],
       },
       inspectionResultsList: [
@@ -564,6 +647,12 @@ export default {
     }
   },
   methods: {
+    computedNumFun(data, index) {
+      if (data.discount && data.proportion && data.weight) {
+        this.productData[index].num = Math.floor(this.jnpf.numberFormat(this.jnpf.math('multiply', [data.discount, data.proportion, data.weight]), 2))
+        this.watchNum(data, index)
+      }
+    },
     // 打开选择批次号弹框
     openSeleceBatchNumberDialog(data, index) {
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库")
@@ -583,6 +672,9 @@ export default {
       let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [data.availableQuantity, data.occupancyQuantity]), 6)
       this.$set(this.productData[index], 'availableBatchNumber', num)
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
+      this.$set(this.productData[index], 'discount', data.discount)
+      this.$set(this.productData[index], 'proportion', data.proportion)
+      this.$set(this.productData[index], 'weight', data.weight)
     },
     // 打开选择库位弹框
     openSeleceWareDialog(row, index, type) {
@@ -701,6 +793,9 @@ export default {
           item.processName = ""
           item.processCode = ""
         }
+        this.$set(item, 'discount', '')
+        this.$set(item, 'proportion', '')
+        this.$set(item, 'weight', '')
         item.num = item.requiredReceivedQuantity
         item.ordersId = item.purchaseOrderId
         item.noticeId = item.purchaseReceiptReturnGoodsId
@@ -948,7 +1043,7 @@ export default {
           if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
         })
       } else {
-      this.getBusInfo('b045')
+        this.getBusInfo('b045')
 
 
 
@@ -978,6 +1073,9 @@ export default {
           item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
           item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
           item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
+          this.$set(item, 'discount', '')
+          this.$set(item, 'proportion', '')
+          this.$set(item, 'weight', '')
         });
         this.productData = data
       }
@@ -1053,10 +1151,26 @@ export default {
               const item = this.productData[index];
               if (!item.num) {
                 submitFlag = false
-                this.$message.error("产品信息第" + (index + 1) + "行数量不能为空")
+                this.$message.error("产品信息第" + (index + 1) + "行数量不能为空或为0")
                 break
               }
-
+              if (this.dataForm.weightFlag) {
+                if (!item.discount) {
+                  submitFlag = false
+                  this.$message.error("产品信息第" + (index + 1) + "行折扣不能为空")
+                  break
+                }
+                if (!item.proportion) {
+                  submitFlag = false
+                  this.$message.error("产品信息第" + (index + 1) + "行比重不能为空")
+                  break
+                }
+                if (!item.discount) {
+                  submitFlag = false
+                  this.$message.error("产品信息第" + (index + 1) + "行重量不能为空")
+                  break
+                }
+              }
 
 
               if (Number(item.num) > Number(item.ordersNum)) {

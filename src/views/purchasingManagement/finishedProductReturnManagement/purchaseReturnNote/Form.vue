@@ -119,7 +119,8 @@
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                     <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
                     <!-- </el-table-column> -->
-                    <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+                    <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom"
+                      show-overflow-tooltip />
                     <el-table-column prop="mainUnit" label="单位" width="160" />
                     <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
                     <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom"
@@ -526,12 +527,12 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="form.code" placeholder="请输入客户编码" clearable />
+                    <el-input v-model="form.code" placeholder="请输入供应商编码" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="form.name" placeholder="请输入客户名称" clearable />
+                    <el-input v-model="form.name" placeholder="请输入供应商名称" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">

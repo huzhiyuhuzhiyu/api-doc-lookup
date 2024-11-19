@@ -153,7 +153,8 @@
                             <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                             <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
                             <!-- </el-table-column> -->
-                            <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+                            <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom"
+                              show-overflow-tooltip />
                             <el-table-column prop="mainUnit" label="单位" width="60" />
                             <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
                             <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom"
@@ -284,7 +285,7 @@
                   </el-tab-pane>
                 </el-tabs>
               </div>
-              <el-dialog title="选择客户" :close-on-click-modal="false" :close-on-press-escape="false"
+              <el-dialog title="选择供应商" :close-on-click-modal="false" :close-on-press-escape="false"
                 :visible.sync="customerVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="80%"
                 append-to-body @close="handleClose">
                 <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
@@ -293,12 +294,12 @@
                       <el-form @submit.native.prevent>
                         <el-col :span="6">
                           <el-form-item>
-                            <el-input v-model="form.code" placeholder="请输入客户编码" clearable />
+                            <el-input v-model="form.code" placeholder="请输入供应商编码" clearable />
                           </el-form-item>
                         </el-col>
                         <el-col :span="6">
                           <el-form-item>
-                            <el-input v-model="form.name" placeholder="请输入客户名称" clearable />
+                            <el-input v-model="form.name" placeholder="请输入供应商名称" clearable />
                           </el-form-item>
                         </el-col>
                         <el-col :span="6">
@@ -321,8 +322,8 @@
                     </el-row>
                     <div class="JNPF-common-layout-main JNPF-flex-main">
                       <JNPF-table v-loading="listLoading" :data="tableDataCustomer" @row-dblclick="seleceCustomer">
-                        <el-table-column prop="code" label="客户编码" show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="name" label="客户名称" />
+                        <el-table-column prop="code" label="供应商编码" show-overflow-tooltip></el-table-column>
+                        <el-table-column prop="name" label="供应商名称" />
                         <el-table-column prop="taxId" label="税号" />
                         <el-table-column label="操作" width="100">
                           <template slot-scope="scope">

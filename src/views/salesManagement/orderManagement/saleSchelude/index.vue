@@ -145,7 +145,7 @@ import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dicti
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
-  name: 'carrierProfile',
+  name: 'saleSchelude',
   components: {  ExportForm, SuperQuery,OrderInfoDetail },
   data() {
     return {
@@ -362,6 +362,9 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
+
+  beforeUpdate(){
+  },
   computed: {
     totalNum: function () {
       var totalNum = 0;
@@ -374,7 +377,10 @@ export default {
 
 
   },
+  activated(){
+    console.log(6767);
 
+  },
   created() {
     this.getUserList()
     this.superForm = this.orderForm

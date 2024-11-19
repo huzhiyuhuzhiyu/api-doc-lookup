@@ -1,28 +1,43 @@
 <template>
   <div class="JNPF-common-layout">
 
+
+
     <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
+
       <div class="JNPF-common-layout-center JNPF-flex-main">
+
         <el-row class="JNPF-common-search-box" :gutter="16">
+
           <el-form @submit.native.prevent>
+
             <template v-for="item in searchList">
+
               <el-col :span="item.searchType === 3 ? 6 : 4">
+
                 <el-form-item>
+
                   <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
                     @keyup.enter.native="search('basic')" />
 
+
+
                   <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
                     clearable>
+
                     <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
                       :value="item2.value"></el-option>
+
                   </el-select>
+
                   <el-date-picker v-else-if="item.searchType === 3" v-model="item.deliveryDateArr"
                     :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
                     :type="item.dateType"
                     :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
-                </el-form-item>
-              </el-col>
 
+                </el-form-item>
+
+              </el-col>
             </template>
 
 
@@ -64,7 +79,7 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier('', 'add')">
               <el-button type="primary" size="mini" icon="el-icon-download"
@@ -84,13 +99,15 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
+          <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true" v-if="tableDataFlag"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column>
             <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="handleUserRelation(scope.row.ordersId, 'look')">{{
-                  scope.row.orderNo
-                }}</el-link>
+                <el-link type="primary" @click.native="handleUserRelation(scope.row.ordersId, 'look')">
+
+                  {{ scope.row.orderNo }}
+
+                </el-link>
               </template>
             </el-table-column>
             <el-table-column prop="cooperativePartnerCode" label="客户编码" width="160" sortable="custom" />
@@ -100,8 +117,11 @@
             <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
             <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" width="160" sortable="custom" />
-            <el-table-column prop="num" label="数量" width="160" sortable="custom" />
+            <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+            <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
+            </el-table-column>
+            <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+            <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
             <el-table-column prop="deliveryDate" label="交货日期" width="160" sortable="custom" />
 
             <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
@@ -117,9 +137,9 @@
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column label="操作" width="120" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text"
-                  @click.native="handleUserRelation(scope.row.ordersId, 'look')">查看详情</el-button>
+                <el-button size="mini" type="text" @click.native="handleUserRelation(scope.row.ordersId, 'look')">
 
+                  查看详情</el-button>
               </template>
             </el-table-column>
           </JNPF-table>
@@ -155,7 +175,8 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import {
-  getbimProductAttributesList, getbimProductAttributes
+  getbimProductAttributesList,
+  getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'delayedShipment',
@@ -222,201 +243,201 @@ export default {
       filterText: '',
       totalDataForm: {},
       dateRange: [null, new Date()], //
-      superQueryJson: [
-        {
-          prop: 'orderNo',
-          label: "订单号",
-          type: 'input'
-        },
-        {
-          prop: 'cooperativePartnerCode',
-          label: "客户编码",
-          type: 'input'
-        },
-        {
-          prop: 'cooperativePartnerName',
-          label: "客户名称",
-          type: 'input'
-        },
+      superQueryJson: [{
+        prop: 'orderNo',
+        label: "订单号",
+        type: 'input'
+      },
+      {
+        prop: 'cooperativePartnerCode',
+        label: "客户编码",
+        type: 'input'
+      },
+      {
+        prop: 'cooperativePartnerName',
+        label: "客户名称",
+        type: 'input'
+      },
 
-        {
-          prop: 'departmentName',
-          label: "所属部门",
-          type: 'input'
-        },
+      {
+        prop: 'departmentName',
+        label: "所属部门",
+        type: 'input'
+      },
 
-        {
-          prop: 'salesName',
-          label: "所属销售人员",
-          type: 'custom',
-          component: 'user-select',
-        },
-        {
-          prop: 'customerProductNo',
-          label: "客户料号",
-          type: 'input'
-        },
-        {
-          prop: 'productCode',
-          label: "产品编码",
-          type: 'input'
-        },
-        {
-          prop: 'productName',
-          label: "产品名称",
-          type: 'input'
-        },
-        {
-          prop: 'drawingNo',
-          label: "品名规格",
-          type: 'input'
-        },
-        {
-          prop: 'mainUnit',
-          label: "单位",
-          type: 'input'
-        },
-        {
-          prop: 'num',
-          label: "数量",
-          type: 'input'
-        },
+      {
+        prop: 'salesName',
+        label: "所属销售人员",
+        type: 'custom',
+        component: 'user-select',
+      },
+      {
+        prop: 'customerProductNo',
+        label: "客户料号",
+        type: 'input'
+      },
+      {
+        prop: 'productCode',
+        label: "产品编码",
+        type: 'input'
+      },
+      {
+        prop: 'productName',
+        label: "产品名称",
+        type: 'input'
+      },
+      {
+        prop: 'drawingNo',
+        label: "品名规格",
+        type: 'input'
+      },
+      {
+        prop: 'mainUnit',
+        label: "单位",
+        type: 'input'
+      },
+      {
+        prop: 'num',
+        label: "数量",
+        type: 'input'
+      },
 
-        {
-          prop: 'deliveryDate',
-          label: "交货日期",
-          type: 'input'
-        },
+      {
+        prop: 'deliveryDate',
+        label: "交货日期",
+        type: 'input'
+      },
 
-        {
-          prop: 'price',
-          label: "单价(含税)",
-          type: 'input'
-        },
-        {
-          prop: 'taxRate',
-          label: "税率",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'totalAmount',
-          label: "金额(含税)",
-          type: 'input'
-        },
-        {
-          prop: 'excludingTaxPrice',
-          label: "单价(不含税)",
-          type: 'input'
-        },
-        {
-          prop: 'excludingTaxAmount',
-          label: "金额(不含税)",
-          type: 'input'
-        },
-        {
-          prop: 'sealingCoverTyping',
-          label: "打字内容",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'accuracyLevel',
-          label: "精度等级",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'vibrationLevel',
-          label: "振动等级",
-          type: 'select',
-          options: []
-        },
+      {
+        prop: 'price',
+        label: "单价(含税)",
+        type: 'input'
+      },
+      {
+        prop: 'taxRate',
+        label: "税率",
+        type: 'select',
+        options: []
+      },
+      {
+        prop: 'totalAmount',
+        label: "金额(含税)",
+        type: 'input'
+      },
+      {
+        prop: 'excludingTaxPrice',
+        label: "单价(不含税)",
+        type: 'input'
+      },
+      {
+        prop: 'excludingTaxAmount',
+        label: "金额(不含税)",
+        type: 'input'
+      },
+      {
+        prop: 'sealingCoverTyping',
+        label: "打字内容",
+        type: 'select',
+        options: []
+      },
+      {
+        prop: 'accuracyLevel',
+        label: "精度等级",
+        type: 'select',
+        options: []
+      },
+      {
+        prop: 'vibrationLevel',
+        label: "振动等级",
+        type: 'select',
+        options: []
+      },
 
-        {
-          prop: 'oil',
-          label: "油脂",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'oilQuantity',
-          label: "油脂量",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'clearance',
-          label: "游隙",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'packagingMethod',
-          label: "包装方式",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'specialRequire',
-          label: "特殊要求",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'ordersRemark',
-          label: "备注",
-          type: 'input'
-        },
-        {
-          prop: 'documentStatus',
-          label: "单据状态",
-          type: 'select',
-          options: [{ label: "草稿", value: "draft" }, { label: "提交", value: "submit" }]
-        },
-        {
-          prop: 'createTime',
-          label: '创建时间',
-          type: 'daterange',
-          valueFormat: "yyyy-MM-dd HH:mm:ss",
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-        },
+      {
+        prop: 'oil',
+        label: "油脂",
+        type: 'select',
+        options: []
+      },
+      {
+        prop: 'oilQuantity',
+        label: "油脂量",
+        type: 'select',
+        options: []
+      },
+      {
+        prop: 'clearance',
+        label: "游隙",
+        type: 'select',
+        options: []
+      },
+      {
+        prop: 'packagingMethod',
+        label: "包装方式",
+        type: 'select',
+        options: []
+      },
+      {
+        prop: 'specialRequire',
+        label: "特殊要求",
+        type: 'select',
+        options: []
+      },
+      {
+        prop: 'ordersRemark',
+        label: "备注",
+        type: 'input'
+      },
+      {
+        prop: 'documentStatus',
+        label: "单据状态",
+        type: 'select',
+        options: [{ label: "草稿", value: "draft" }, { label: "提交", value: "submit" }]
+      },
+      {
+        prop: 'createTime',
+        label: '创建时间',
+        type: 'daterange',
+        valueFormat: "yyyy-MM-dd HH:mm:ss",
+        startPlaceholder: '开始日期',
+        endPlaceholder: '结束日期',
+      },
 
 
 
 
 
       ],
-      requestArr: [
-        {
-          prop: "sealingCoverTyping",
-          typeCode: "pa007"
-        }, {
-          prop: "accuracyLevel",
-          typeCode: "pa006"
-        },
-        {
-          prop: "vibrationLevel",
-          typeCode: "pa005"
-        },
-        {
-          prop: "oil",
-          typeCode: "pa002"
-        }, {
-          prop: "oilQuantity",
-          typeCode: "pa003"
-        }, {
-          prop: "clearance",
-          typeCode: "pa001"
-        }, {
-          prop: "packagingMethod",
-          typeCode: "pa015"
-        }, {
-          prop: "specialRequire",
-          typeCode: "pa016"
-        }
+      requestArr: [{
+        prop: "sealingCoverTyping",
+        typeCode: "pa007"
+      }, {
+        prop: "accuracyLevel",
+        typeCode: "pa006"
+      },
+      {
+        prop: "vibrationLevel",
+        typeCode: "pa005"
+      },
+      {
+        prop: "oil",
+        typeCode: "pa002"
+      }, {
+        prop: "oilQuantity",
+        typeCode: "pa003"
+      }, {
+        prop: "clearance",
+        typeCode: "pa001"
+      }, {
+        prop: "packagingMethod",
+        typeCode: "pa015"
+      }, {
+        prop: "specialRequire",
+        typeCode: "pa016"
+      }
       ],
+      mainUnitFlag: null,
+      tableDataFlag: false,
     }
   },
   watch: {
@@ -427,6 +448,7 @@ export default {
 
   mounted() {
     this.getProductClassFun()
+    this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
 
   },
   created() {
@@ -442,6 +464,16 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    async getMainUnitFun(code, type) {
+      this.listLoading = true
+      try {
+        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+        this.tableDataFlag = true
+        this.listLoading = false
+
+
+      } catch (error) { }
+    },
     // 获取打字内容等
     getProductClassFun() {
       this.requestArr.forEach((item, index) => {
@@ -449,15 +481,14 @@ export default {
           pageNum: -1,
           pageSize: 20,
           typeCode: item.typeCode,
-          orderItems: [
-            {
-              asc: false,
-              column: "",
-            },
-            {
-              asc: false,
-              column: "code",
-            },
+          orderItems: [{
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
           ],
         };
         getbimProductAttributesList(obj1).then(res => {
@@ -508,7 +539,7 @@ export default {
       this.deliveryDateArr = ["", end];
       this.orderForm.deliveryStartTime = ""
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
-      this.superForm=this.orderForm
+      this.superForm = this.orderForm
       this.search('basic')
     },
     // 为近3天  
@@ -599,7 +630,6 @@ export default {
       }
     },
     initData() {
-      this.listLoading = true
 
       if (this.orderNoS) {
 
@@ -608,9 +638,7 @@ export default {
           filteredData.push({ "field": "orderNo", "fieldValue": this.orderNoS, "symbol": "like" })
           this.orderForm.superQuery.condition = filteredData
         } else {
-          this.orderForm.superQuery.condition.push(
-            { "field": "orderNo", "fieldValue": this.orderNoS, "symbol": "like" }
-          )
+          this.orderForm.superQuery.condition.push({ "field": "orderNo", "fieldValue": this.orderNoS, "symbol": "like" })
         }
       }
 
@@ -629,10 +657,20 @@ export default {
         }
       }
       getsaleOrderDetailList(this.orderForm).then(res => {
-        this.tableData = res.data.records
+        setTimeout(() => {
+          res.data.records.forEach(item => {
+            if (this.mainUnitFlag == 1) {
+              if (item.calculationDirection == 'multiplication') {
+                this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+              } else {
+                this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+              }
+            }
+          });
+          this.tableData = res.data.records
+        }, 600);
         this.getOrderLineReportFun()
         this.total = res.data.total
-        this.listLoading = false
       }).catch(() => {
         this.listLoading = false
       })
@@ -676,7 +714,7 @@ export default {
       end.setDate(end.getDate() + 3);
       this.deliveryDateArr = ["", end];
       this.orderForm.deliveryStartTime = ""
-      this.superForm=this.orderForm = {
+      this.superForm = this.orderForm = {
 
         approvalStatus: "ok",
         documentStatus: "submit",
@@ -699,9 +737,9 @@ export default {
           condition: [],
           matchLogic: ""
         },
-      } 
+      }
       this.searchList = [
-        { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 }, 
+        { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
 
       ]
       this.$refs.SuperQuery.conditionList = []
@@ -807,12 +845,9 @@ export default {
   padding-left: 10px;
 }
 
-
-
 .JNPF-common-search-box {
   padding: 8px 0 !important;
   margin-left: 0 !important;
-
   margin-bottom: 5px;
 }
 

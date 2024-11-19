@@ -106,7 +106,8 @@
 
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                           show-overflow-tooltip> </el-table-column>
-                        <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
+                        <el-table-column prop="productName" label="产品名称"  v-if="productNameFlag==='1'" min-width="160"
+                           />
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
 
 
@@ -126,82 +127,80 @@
                         <el-table-column prop="requiredReceivedQuantity" label="待收货数量" width="140" :key="525"
                           v-if="btnType != 'look'">
                         </el-table-column>
-                        <<<<<<< HEAD=======>>>>>>> feature_合作伙伴
 
-                          <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
-                            v-if="dataForm.weightFlag == true">
-                            <template slot="header">
-                              <span class="required">*</span>重量(kg)
-                            </template>
-                            <template slot-scope="scope">
-                              <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
-                                v-model="scope.row.weight" placeholder="重量"></el-input>
-                            </template>
-                          </el-table-column>
-                          <el-table-column prop="proportion" label="比重" width="140" :key="727"
-                            v-if="dataForm.weightFlag == true">
-                            <template slot="header">
-                              <span class="required">*</span>比重
-                            </template>
-                            <template slot-scope="scope">
-                              <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
-                                v-model="scope.row.proportion" placeholder="比重"></el-input>
-                            </template>
-                          </el-table-column>
-                          <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
-                            v-if="dataForm.weightFlag == true">
-                            <template slot="header">
-                              <span class="required">*</span>折扣(0~1)
-                            </template>
-                            <template slot-scope="scope">
-                              <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
-                                v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
-                            </template>
-                          </el-table-column>
-                          <el-table-column prop="num" label="收货数量" width="140" :key="77">
-                            <template slot="header">
-                              <span class="required">*</span>收货数量
-                            </template>
-                            <template slot-scope="scope">
-                              <el-input :disabled="btnType == 'look'" @input="watchNum(scope.row, scope.$index)"
-                                v-model="scope.row.num" placeholder="收货数量"></el-input>
-                            </template>
-                          </el-table-column>
+                        <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
+                          v-if="dataForm.weightFlag == true">
+                          <template slot="header">
+                            <span class="required">*</span>重量(kg)
+                          </template>
+                          <template slot-scope="scope">
+                            <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                              v-model="scope.row.weight" placeholder="重量"></el-input>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="proportion" label="比重" width="140" :key="727"
+                          v-if="dataForm.weightFlag == true">
+                          <template slot="header">
+                            <span class="required">*</span>比重
+                          </template>
+                          <template slot-scope="scope">
+                            <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                              v-model="scope.row.proportion" placeholder="比重"></el-input>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
+                          v-if="dataForm.weightFlag == true">
+                          <template slot="header">
+                            <span class="required">*</span>折扣(0~1)
+                          </template>
+                          <template slot-scope="scope">
+                            <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                              v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="num" label="收货数量" width="140" :key="77">
+                          <template slot="header">
+                            <span class="required">*</span>收货数量
+                          </template>
+                          <template slot-scope="scope">
+                            <el-input :disabled="btnType == 'look'" @input="watchNum(scope.row, scope.$index)"
+                              v-model="scope.row.num" placeholder="收货数量"></el-input>
+                          </template>
+                        </el-table-column>
 
-                          <el-table-column prop="price" label="单价(含税)" width="120" :key="110"></el-table-column>
-                          <el-table-column prop="taxRates" label="税率" width="100" :key="171"></el-table-column>
-                          <el-table-column prop="taxAmount" label="税额" width="100" :key="1721"></el-table-column>
-                          <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column>
-                          <el-table-column prop="originalBatchNumber" label="原批次号" width="170" :key="1255">
-                            <template slot-scope="scope">
-                              <el-input :disabled="btnType == 'look'" v-model="scope.row.originalBatchNumber"
-                                placeholder="原批次号"></el-input>
-                            </template>
-                          </el-table-column>
+                        <el-table-column prop="price" label="单价(含税)" width="120" :key="110"></el-table-column>
+                        <el-table-column prop="taxRates" label="税率" width="100" :key="171"></el-table-column>
+                        <el-table-column prop="taxAmount" label="税额" width="100" :key="1721"></el-table-column>
+                        <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column>
+                        <el-table-column prop="originalBatchNumber" label="原批次号" width="170" :key="1255">
+                          <template slot-scope="scope">
+                            <el-input :disabled="btnType == 'look'" v-model="scope.row.originalBatchNumber"
+                              placeholder="原批次号"></el-input>
+                          </template>
+                        </el-table-column>
 
-                          <el-table-column prop="standardValue" label="规值" width="100" />
-                          <el-table-column prop="colour" label="颜色" width="100" />
-                          <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" />
-                          <el-table-column prop="accuracyLevel" label="精度等级" width="160" />
-                          <el-table-column prop="vibrationLevel" label="振动等级" width="160" />
-                          <el-table-column prop="oil" label="油脂" width="160" />
-                          <el-table-column prop="oilQuantity" label="油脂量" width="160" />
-                          <el-table-column prop="clearance" label="游隙" width="160" />
-                          <el-table-column prop="packagingMethod" label="包装方式" width="120"></el-table-column>
-                          <el-table-column prop="specialRequire" label="特殊要求" width="120"></el-table-column>
-                          <el-table-column prop="remark" label="备注" width="200" :key="128">
-                            <template slot-scope="scope">
-                              <el-input v-model="scope.row.remark" :disabled="btnType == 'look'"
-                                placeholder="备注"></el-input>
-                            </template>
-                          </el-table-column>
-                          <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'"
-                            fixed="right">
-                            <template slot-scope="scope">
-                              <el-button type="text" @click="copyFun(scope.row, scope.$index)"
-                                size="mini">复制</el-button>
-                            </template>
-                          </el-table-column>
+                        <el-table-column prop="standardValue" label="规值" width="100" />
+                        <el-table-column prop="colour" label="颜色" width="100" />
+                        <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" />
+                        <el-table-column prop="accuracyLevel" label="精度等级" width="160" />
+                        <el-table-column prop="vibrationLevel" label="振动等级" width="160" />
+                        <el-table-column prop="oil" label="油脂" width="160" />
+                        <el-table-column prop="oilQuantity" label="油脂量" width="160" />
+                        <el-table-column prop="clearance" label="游隙" width="160" />
+                        <el-table-column prop="packagingMethod" label="包装方式" width="120"></el-table-column>
+                        <el-table-column prop="specialRequire" label="特殊要求" width="120"></el-table-column>
+                        <el-table-column prop="remark" label="备注" width="200" :key="128">
+                          <template slot-scope="scope">
+                            <el-input v-model="scope.row.remark" :disabled="btnType == 'look'"
+                              placeholder="备注"></el-input>
+                          </template>
+                        </el-table-column>
+                        <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'"
+                          fixed="right">
+                          <template slot-scope="scope">
+                            <el-button type="text" @click="copyFun(scope.row, scope.$index)" size="mini">复制</el-button>
+                          </template>
+                        </el-table-column>
                       </JNPF-table>
 
 
@@ -299,7 +298,7 @@
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                       show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
+                    <el-table-column prop="productName" label="产品名称"  v-if="productNameFlag==='1'" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
 
 
@@ -447,8 +446,8 @@
                 <el-table-column prop="orderNo" label="收货单号" width="180" sortable="custom"></el-table-column>
                 <el-table-column prop="deliverDate" label="收货日期" width="130" sortable="custom" />
                 <el-table-column prop="ordersNo" label="订单号" width="160" sortable="custom" />
-                <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
-                  sortable="custom" />
+                 <el-table-column prop="productName" label="产品名称"  v-if="productNameFlag==='1'" min-width="160" sortable="custom"
+                   />
                 <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
@@ -499,859 +498,859 @@
   </transition>
 </template>
 
-  <script>
-  import { getQuotationdatasenddatalist } from '@/api/salesManagement'
-  import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
-  import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
-  import { getQuotationsendlist } from "@/api/salesManagement/index";
+<script>
+import { getQuotationdatasenddatalist } from '@/api/salesManagement'
+import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
+import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
+import { getQuotationsendlist } from "@/api/salesManagement/index";
 
-  import CustomerForm from './customerForm.vue'
-  import WareHouseForm from './wareHouseForm.vue'
-  import { getpurPurchaseReceiptReturnGoodsdetail, addpurPurchaseReceiptReturnGoods, editpurPurchaseReceiptReturnGoods, detailpurPurchaseReceiptReturnGoods } from '@/api/purchasingManagement/purchaseInquirySheet'  // 询价单
-  import { purPurchaseReceiptReturnGoodsDetailList } from '@/api/purchasingManagement/purchaseInquirySheet'
-  import { detailordershengchan, detailWithdrawal, addWithdrawal, updateWithdrawal, getWorkList, WithdrawalmxList } from '@/api/productOrdes/index.js'
-  import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
-  import Process from '@/components/Process/Preview'
-  import flowMixin from '@/mixins/generator/flowMixin'
-  import recordList from '@/views/workFlow/components/RecordList.vue'
-  import busFlow from '@/mixins/generator/busFlow';
-  export default {
-    components: { CustomerForm, WareHouseForm, Process, recordList },
-    mixins: [flowMixin, busFlow],
-    data() {
-      return {
-        weightFlagList: [
-          { label: "是", value: true },
-          { label: "否", value: false },
-        ],
+import CustomerForm from './customerForm.vue'
+import WareHouseForm from './wareHouseForm.vue'
+import { getpurPurchaseReceiptReturnGoodsdetail, addpurPurchaseReceiptReturnGoods, editpurPurchaseReceiptReturnGoods, detailpurPurchaseReceiptReturnGoods } from '@/api/purchasingManagement/purchaseInquirySheet'  // 询价单
+import { purPurchaseReceiptReturnGoodsDetailList } from '@/api/purchasingManagement/purchaseInquirySheet'
+import { detailordershengchan, detailWithdrawal, addWithdrawal, updateWithdrawal, getWorkList, WithdrawalmxList } from '@/api/productOrdes/index.js'
+import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
+import Process from '@/components/Process/Preview'
+import flowMixin from '@/mixins/generator/flowMixin'
+import recordList from '@/views/workFlow/components/RecordList.vue'
+import busFlow from '@/mixins/generator/busFlow';
+export default {
+  components: { CustomerForm, WareHouseForm, Process, recordList },
+  mixins: [flowMixin, busFlow],
+  data() {
+    return {
+      weightFlagList: [
+        { label: "是", value: true },
+        { label: "否", value: false },
+      ],
+      shelfSpaceName: "",
+      shelfSpaceId: "",
+      warehouseRequestObj: {
+        type: 'normal', state: 'enable'
+      },
+      inOroundTitle: "",
+      numTitle: "",
+      batchNumVisible: false,
+      wareHouseVisible: false,
+      // 选择批次号请求条件
+      batchNOForm: {
+        batchNumber: "",
         shelfSpaceName: "",
-        shelfSpaceId: "",
-        warehouseRequestObj: {
-          type: 'normal', state: 'enable'
-        },
-        inOroundTitle: "",
-        numTitle: "",
-        batchNumVisible: false,
-        wareHouseVisible: false,
-        // 选择批次号请求条件
-        batchNOForm: {
-          batchNumber: "",
-          shelfSpaceName: "",
-          orderItems: [{
-            "asc": false,
-            "column": ""
-          },],
-          productsId: "",
-          pageNum: 1,
-          pageSize: 20,
-          warehouseId: "",
-          sourceNo: "",
-        },
-        btnText: "",
-        submitmethodsTitle: "",
-        tipsvisible: false,
-        CustomerForm: false,
-        activeNames: ["productInfo", "basicInfo"],
-        jyFlag: false,//是否显示检验标志
-        codeConfig: {},//单号配置信息(单据规则)
-        dataForm: {  //表单信息
-          orderNo: "",
-          businessType: "",
-          warehouseName: "",
-          warehouseId: "",
-          cooperativePartnerId: "",
-          partnerName: "",
-          documentType: "",
-          id: "",
-          warehouseType: "",
-          approvalFlag: false,
-          weightFlag: false,
-        },
-        customerInfo: {},//所选客户信息
-        getWarehouseList,
-        sourceTypeList: [ //业务类型
-          { label: "销售发货", value: "outbound_sale_send" },
-          { label: "销售退货", value: "inbound_sale_return" },
-          { label: "采购收货", value: "inbound_purchase" },
-          { label: "采购退货", value: "outbound_purchase" },
-          { label: "生产领料", value: "outbound_pick_out" },
-          { label: "生产退料", value: "inbound_return_materials" },
-          { label: "外协发料", value: "outbound_external_send" },
-          { label: "外协退料", value: "inbound_external_return" },
-          { label: "外协收货", value: "inbound_external" },
-          { label: "外协退货", value: "outbound_external" },
-          { label: "生产入库", value: "inbound_mock_production" },
+        orderItems: [{
+          "asc": false,
+          "column": ""
+        },],
+        productsId: "",
+        pageNum: 1,
+        pageSize: 20,
+        warehouseId: "",
+        sourceNo: "",
+      },
+      btnText: "",
+      submitmethodsTitle: "",
+      tipsvisible: false,
+      CustomerForm: false,
+      activeNames: ["productInfo", "basicInfo"],
+      jyFlag: false,//是否显示检验标志
+      codeConfig: {},//单号配置信息(单据规则)
+      dataForm: {  //表单信息
+        orderNo: "",
+        businessType: "",
+        warehouseName: "",
+        warehouseId: "",
+        cooperativePartnerId: "",
+        partnerName: "",
+        documentType: "",
+        id: "",
+        warehouseType: "",
+        approvalFlag: false,
+        weightFlag:false,
+      },
+      customerInfo: {},//所选客户信息
+      getWarehouseList,
+      sourceTypeList: [ //业务类型
+        { label: "销售发货", value: "outbound_sale_send" },
+        { label: "销售退货", value: "inbound_sale_return" },
+        { label: "采购收货", value: "inbound_purchase" },
+        { label: "采购退货", value: "outbound_purchase" },
+        { label: "生产领料", value: "outbound_pick_out" },
+        { label: "生产退料", value: "inbound_return_materials" },
+        { label: "外协发料", value: "outbound_external_send" },
+        { label: "外协退料", value: "inbound_external_return" },
+        { label: "外协收货", value: "inbound_external" },
+        { label: "外协退货", value: "outbound_external" },
+        { label: "生产入库", value: "inbound_mock_production" },
 
+      ],
+
+      dataRule: {
+        cooperativePartnerId: [
+          { required: true, message: '客户不能为空', trigger: 'change' }
         ],
+        businessType: [
+          { required: true, message: '业务类型不能为空', trigger: 'change' }
+        ],
+        inspectionResults: [{ required: true, message: "检验标志不能为空", trigger: 'change' }],
 
-        dataRule: {
-          cooperativePartnerId: [
-            { required: true, message: '客户不能为空', trigger: 'change' }
-          ],
-          businessType: [
-            { required: true, message: '业务类型不能为空', trigger: 'change' }
-          ],
-          inspectionResults: [{ required: true, message: "检验标志不能为空", trigger: 'change' }],
+        orderNo: [{ required: true, message: "请输入单号", trigger: 'blur' }],
+        warehouseName: [
+          { required: true, message: '仓库不能为空', trigger: 'change' }
+        ],
+        weightFlag: [
+          { required: true, message: '是否显示比重折扣不能为空', trigger: 'change' }
+        ],
+      },
 
-          orderNo: [{ required: true, message: "请输入单号", trigger: 'blur' }],
-          warehouseName: [
-            { required: true, message: '仓库不能为空', trigger: 'change' }
-          ],
-          weightFlag: [
-            { required: true, message: '是否显示比重折扣不能为空', trigger: 'change' }
-          ],
-        },
-
-        productList: [],
-        productTotal: 0,
-        deliveryDateArr: [],
-        productVisible: false,
-        selectSaleProductArr: [],
-        productData: [],
-        selectRows: [],
-        listLoading: false,
-        currentProductIndex: "",
+      productList: [],
+      productTotal: 0,
+      deliveryDateArr: [],
+      productVisible: false,
+      selectSaleProductArr: [],
+      productData: [],
+      selectRows: [],
+      listLoading: false,
+      currentProductIndex: "",
 
 
 
-        title: "",
-        visible: true,
-        btnType: false,
-        wareVisibled: false,
-        btnLoading: false,
-        formLoading: false,
-        allocationFlag: false,
+      title: "",
+      visible: true,
+      btnType: false,
+      wareVisibled: false,
+      btnLoading: false,
+      formLoading: false,
+      allocationFlag: false,
 
-        dataFormItems: [/* 通过 this.refeshDataFormItems() 动态更改 */],
-        selectcustomerObj: {
-          type: ""
-        },
-        linesList: [],
-        linesListItems: [/* 通过 this.refeshLinesListItems() 动态更改 */],
-        spaceLines: [],
-        productionLotList: [],
-        loadingText: '',
-        copyLinesData: [],
-        previousValue: "",
-        orderForm: {},
-        activeName: "orderInfo",
-        classAttributeList: [],
-        warehouseCode: "",
-        flowTemplateJson: {},
-        flowData: {},
-        approvalFlag: false,   // 待办事宜等页面 需要
-        flowTaskOperatorRecordList: [],
-        endTime: 0,
-        productNameFlag: null,
+      dataFormItems: [/* 通过 this.refeshDataFormItems() 动态更改 */],
+      selectcustomerObj: {
+        type: ""
+      },
+      linesList: [],
+      linesListItems: [/* 通过 this.refeshLinesListItems() 动态更改 */],
+      spaceLines: [],
+      productionLotList: [],
+      loadingText: '',
+      copyLinesData: [],
+      previousValue: "",
+      orderForm: {},
+      activeName: "orderInfo",
+      classAttributeList: [],
+      warehouseCode: "",
+      flowTemplateJson: {},
+      flowData: {},
+      approvalFlag: false,   // 待办事宜等页面 需要
+      flowTaskOperatorRecordList: [],
+      endTime: 0,
+      productNameFlag: null,
 
+    }
+  },
+  created() {
+    let objs = { "pageSize": -1, "businessCode": "product" }
+    getBimBusinessSwitchConfigList(objs).then(res => {
+      this.productNameFlag = res.data.product[1].configValue1
+
+
+    })
+  },
+  watch: {
+    "dataForm.warehouseId": {
+      handler: function (newVal, oldVal) {
+        if (oldVal) this.spaceLines = []
+      },
+    }
+  },
+  methods: {
+    computedNumFun(data, index) {
+      if (data.discount && data.proportion && data.weight) {
+        this.productData[index].num = Math.floor(this.jnpf.numberFormat(this.jnpf.math('multiply', [data.discount, data.proportion, data.weight]), 2))
+        this.watchNum(data, index)
       }
     },
-    created() {
-      let objs = { "pageSize": -1, "businessCode": "product" }
-      getBimBusinessSwitchConfigList(objs).then(res => {
-        this.productNameFlag = res.data.product[1].configValue1
 
-
+    // 打开选择库位弹框
+    openSeleceWareDialog(row, index, type) {
+      if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库!")
+      this.wareHouseVisible = true
+      this.$nextTick(() => {
+        this.$refs.WareHouseForms.initData(this.dataForm.warehouseId, type)
       })
+      if (index) this.currentProductIndex = index
     },
-    watch: {
-      "dataForm.warehouseId": {
-        handler: function (newVal, oldVal) {
-          if (oldVal) this.spaceLines = []
-        },
+    // 所选的库位信息
+    selectWareHouseFun(data, type) {
+      console.log("库位信息", data);
+      let index = this.currentProductIndex
+      if (!type) {
+        this.shelfSpaceId = data.id
+        this.shelfSpaceName = data.name
       }
-    },
-    methods: {
-      computedNumFun(data, index) {
-        if (data.discount && data.proportion && data.weight) {
-          this.productData[index].num = Math.floor(this.jnpf.numberFormat(this.jnpf.math('multiply', [data.discount, data.proportion, data.weight]), 2))
-          this.watchNum(data, index)
-        }
-      },
 
-      // 打开选择库位弹框
-      openSeleceWareDialog(row, index, type) {
-        if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库!")
-        this.wareHouseVisible = true
-        this.$nextTick(() => {
-          this.$refs.WareHouseForms.initData(this.dataForm.warehouseId, type)
-        })
-        if (index) this.currentProductIndex = index
-      },
-      // 所选的库位信息
-      selectWareHouseFun(data, type) {
-        console.log("库位信息", data);
-        let index = this.currentProductIndex
-        if (!type) {
-          this.shelfSpaceId = data.id
-          this.shelfSpaceName = data.name
-        }
-
-        if (this.productData.length) {
-          this.productData.forEach(item => {
-            if (!item.shelfSpaceId) {
-              this.$set(item, 'shelfSpaceName', data.name)
-              this.$set(item, 'warehouseId', data.warehouseId)
-              this.$set(item, 'shelfSpaceId', data.id)
-            }
-          });
-          if (index) {
-            this.$set(this.productData[index], 'shelfSpaceName', data.name)
-            this.$set(this.productData[index], 'warehouseId', data.warehouseId)
-            this.$set(this.productData[index], 'shelfSpaceId', data.id)
-          }
-        }
-        this.index = ""
-      },
-
-
-      // 产品信息列表复制功能
-      copyFun(row, index) {
-        let data = JSON.parse(JSON.stringify(row))
-        this.productData.splice(index + 1, 0, data);
-
-      },
-
-      // 点击选择产品 销售发货 
-      openSeleceProductDialog() {
-        if (this.dataForm.businessType != 'inbound_return_materials' && this.dataForm.businessType != 'outbound_pick_out') {
-          if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
-
-        }
-        this.productVisible = true
-        this.searchProductFun()
-      },
-      // 选择产品——搜索
-      searchProductFun() {
-        this.deliveryDateArr = []
-
-        this.orderForm = { //获取产品数据
-          cooperativePartnerId: "",
-          drawingNo: "",        // customerProductNo: "",
-          customerProductDrawingNo: "",
-          deliveryEndDate: "",
-          deliveryStartDate: "",
-          classAttributeList: this.classAttributeList,
-          receiptInboundFlag: true,
-
-          pageNum: 1,
-          pageSize: 20,
-          orderNo: this.dataForm.sourceNo,
-          receivingStatus: "not_finished",
-          orderItems: [{
-            asc: false,
-            column: ""
-          }, {
-            asc: false,
-            column: ""
-          }],
-        }
-        if (this.deliveryDateArr.length) {
-          this.orderForm.deliveryStartDate = this.deliveryDateArr[0]
-          this.orderForm.deliveryEndDate = this.deliveryDateArr[1]
-        } else {
-          this.orderForm.deliveryStartDate = ""
-          this.orderForm.deliveryEndDate = ""
-        }
-        purPurchaseReceiptReturnGoodsDetailList(this.orderForm).then(res => {
-          console.log("采购明细",);
-          this.productList = res.data.records
-          this.productTotal = res.data.total
-          this.listLoading = false
-        })
-
-      },
-      // 选择产品 (销售发货——多选)
-      handleSelectionChangeAllPruduct(val) {
-        this.selectSaleProductArr = val
-      },
-      // 销售发货选择产品——重置
-      resetProductFun() {
-        this.deliveryDateArr = []
-        this.searchProductFun()
-
-      },
-      // 选完产品后  渲染在产品信息列表
-      submitAllProduct() {
-        if (!this.selectSaleProductArr.length) return this.$message.error("请选择产品！")
-        this.productVisible = false
-        let arr = JSON.parse(JSON.stringify(this.selectSaleProductArr))
-
-        arr.forEach(item => {
-          let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
-          item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
-          item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
-          item.costPrice = item.price
-          item.num = item.requiredReceivedQuantity
-          item.taxRates = item.taxRate + "%"
-
-
-
-
-          item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
-          item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
-          item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
-          item.ordersId = item.purchaseOrderId
-          item.noticeId = item.purchaseReceiptReturnGoodsId
-          item.noticeLineId = item.id
-          this.$set(item, 'discount', '')
-          this.$set(item, 'proportion', '')
-          this.$set(item, 'weight', '')
-
-
-          item.sourceNo = this.dataForm.sourceNo
-          item.moveId = this.dataForm.id
-
-
-          this.productData.push(item)
-        });
+      if (this.productData.length) {
         this.productData.forEach(item => {
           if (!item.shelfSpaceId) {
-            this.$set(item, 'shelfSpaceName', this.shelfSpaceName)
-            this.$set(item, 'warehouseId', this.dataForm.warehouseId)
-            this.$set(item, 'shelfSpaceId', this.shelfSpaceId)
+            this.$set(item, 'shelfSpaceName', data.name)
+            this.$set(item, 'warehouseId', data.warehouseId)
+            this.$set(item, 'shelfSpaceId', data.id)
           }
         });
-        console.log("this.dataFormTwo", this.productData);
-      },
-      // 产品信息列表多选
-      handeleProductInfoData(val) {
-        this.selectRows = val
-      },
-      // 产品信息列表 批量删除
-      batchDelete() {
-        // 遍历选中的行的数据
-        if (this.selectRows.length < 1) {
-          this.$message({
-            message: "请选择你要删除的数据",
-            type: "error",
-            duration: 1500,
-          })
+        if (index) {
+          this.$set(this.productData[index], 'shelfSpaceName', data.name)
+          this.$set(this.productData[index], 'warehouseId', data.warehouseId)
+          this.$set(this.productData[index], 'shelfSpaceId', data.id)
         }
-        for (let i = 0; i < this.selectRows.length; i++) {
-          const row = this.selectRows[i];
-          const index = this.productData.indexOf(row);
-          if (index > -1) {
-            this.productData.splice(index, 1); // 从tableData中删除选中的行
-          }
-        }
-        this.selectRows = []; // 清空选中的行的数据
-      },
-
-      // 主数量输入失去焦点 检验不能为  0
-      checkNum(row, index) {
-        if (!row.num) {
-          this.$message({
-            message: "请填写第" + (index + 1) + "行产品的主数量",
-            type: 'error',
-            duration: 1500,
-          })
-        } else if (Number(row.num) == 0) {
-          this.$message({
-            message: "第" + (index + 1) + "行产品的数量必须大于0",
-            type: 'error',
-            duration: 1500,
-          })
-
-        }
-      },
-      // 监听主数量输入
-      watchNum(row, index) {
-        // 计算方向calculationDirection 转换系数ratio  副数量assistantNum
-        // 如果计算方向是乘 则副数量等于主数量*套数*转换系数
-        // 如果计算方向是除 则副数量等于主数量*套数/转换系数
-        // 使用正则表达式验证输入内容
-        row.num = row.num.replace(/[^\d.]/g, '');
-        let productArr = [...this.productData]
-
-        if (row.num.length == 1 && row.num == '.') {
-          // 如果第一位是小数点，则清空输入框
-          row.num = '';
-        } else if (row.num.length == 2 && row.num[0] == '0' && row.num[1] != '.') {
-          // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
-          row.num = row.num.slice(0, 1) + '.' + row.num.slice(1);
-        } else if (row.num.length > 2 && row.num[0] == '0' && row.num[1] != '.') {
-          row.num = row.num.substring(1, row.num.length)
-        }
+      }
+      this.index = ""
+    },
 
 
-        if (row.num.includes('.')) {
-          let dotCount = 0; // 小数点的数量
-          let result = ''; // 处理后的结果
-
-          for (let i = 0; i < row.num.length; i++) {
-            const char = row.num[i];
-            if (char === '.') {
-              if (dotCount === 0) {
-                // 第一个小数点保留
-                result += char;
-                dotCount++;
-              }
-            } else {
-              result += char;
-            }
-          }
-
-          row.num = result;
-          let arr = row.num.split('.')
-          if (arr[0].length > 8) {
-            arr[0] = arr[0].substring(0, 8)
-          }
-          if (arr[1].length > 4) {
-            arr[1] = arr[1].substring(0, 4)
-          }
-          row.num = arr[0] + '.' + arr[1]
-        } else {
-          if (row.num.length > 8) {
-            row.num = row.num.substring(0, 8);
-          }
-        }
-        console.log("row.excludingTaxPrice", row.excludingTaxPrice);
-        console.log("row.price", row.price);
-        productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 6)
-
-        productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.price, row.excludingTaxPrice]), 6)]), 6)
-        console.log("productArr", productArr);
-        let taxrate = 1 * 1 + (row.taxRate) / 100 * 1
-        row.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [row.price, taxrate]), 6)
-        row.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 6)
-        row.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.price, row.excludingTaxCostPrice]), 6)]), 6)
-        row.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [row.totalAmount, row.taxAmount]), 6)
-        this.productData = productArr
-        console.log(this.productData);
-      },
-
-
-
-
-
-
-
-
-
-
-      // 选择业务类型
-      selectSourceTypeFun(val) {
-        console.log(val);
-        // 判断当前所选的业务类型是否与上一次一样 不一样 则清空产品列表数据及客户/供应商信息
-
-        if (val != this.previousValue) {
-          this.productData = []
-          this.dataForm['cooperativePartnerId'] = ""
-          this.dataForm['partnerName'] = ""
-          this.customerInfo = {}
-          this.previousValue = val
-          this.$refs.dataForm.clearValidate(['cooperativePartnerId'])
-        } else {
-
-        }
-
-        this.$forceUpdate()
-
-
-      },
-
-
-      // 切换仓库
-      changeWarehousex(val, data) {
-        console.log("data", data);
-        if (!val && !data.length) {
-          this.dataForm.warehouseId = ''
-          this.dataForm.warehouseName = ''
-          this.dataForm.warehouseType = ""
-          return
-        }
-        this.allocationFlag = data[0].all.locationStatus == 'disabled' ? false : true
-        this.dataForm.warehouseId = data[0].id
-        this.dataForm.warehouseName = data[0].name
-        this.dataForm.warehouseType = data[0].all.type
-      },
-      // 获取仓库id
-      getWarehouseListFun() {
-        getWarehouseList({ code: this.warehouseCode }).then(res => {
-          this.dataForm.warehouseName = res.data[0].name
-          this.dataForm.warehouseId = res.data[0].id
-          // 获取仓库详情信息
-          getWarehouseInfo(res.data[0].id).then(response => {
-            this.wareHouseInfo = response.data
-            this.dataForm.warehouseType = response.data.type
-            this.allocationFlag = response.data.locationStatus == 'disabled' ? false : true
-          })
-        })
-      },
-      goBack() {
-        this.$emit('close', true)
-      },
-
-
-
-
-      //   { label: "销售发货", value: "outbound_sale_send" },
-      // { label: "销售退货", value: "inbound_sale_return" },
-      // { label: "采购收货", value: "inbound_purchase" },
-      // { label: "采购退货", value: "outbound_purchase" },
-      // { label: "生产领料", value: "outbound_pick_out" },
-      // { label: "生产退料", value: "inbound_return_materials" },
-      // { label: "外协发料", value: "outbound_external_send" },
-      // { label: "外协退料", value: "inbound_external_return" },
-      // { label: "外协收货", value: "inbound_external" },
-      // { label: "外协退货", value: "outbound_external" },
-      init(data, btnType, businessType, classAttributeList, warehouseCode) {
-        console.log("11", data, btnType, businessType, classAttributeList, warehouseCode);
-        // this.visible = true
-        this.dataForm.businessType = businessType
-        this.warehouseCode = warehouseCode
-        this.selectcustomerObj.type = 'supplier'
-        this.$set(this.orderForm, 'receivingStatus', 'not_finished')
-        this.classAttributeList = classAttributeList
-        this.btnType = btnType
-        if (btnType == 'look') {
-          this.title = '查看入库单'
-          detailWarehouseData(data).then(res => {
-            res.data.spaceLines.forEach(item => {
-              this.$set(item, 'productDrawingNo', item.drawingNo)
-              this.$set(item, 'price', item.costPrice)
-            });
-            res.data.spaceLines.forEach(item => {
-              item.taxRates = item.taxRate + "%"
-
-            });
-            this.dataForm = res.data.stockMove
-            this.productData = res.data.spaceLines
-            // 流程信息和流转记录
-            if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
-          })
-        } else {
-          this.dataForm.cooperativePartnerId = data.cooperativePartnerId
-          this.dataForm.partnerName = data.partnerName
-          this.$set(this.dataForm, 'sourceNo', data.orderNo)
-          this.fetchData("RKDH", true)
-          this.getBusInfo('b045')
-          this.title = '新建入库单'
-          getpurPurchaseReceiptReturnGoodsdetail(data.id).then(res => {
-            let filteredArray = res.data.noticeLineList.filter(item => classAttributeList.includes(item.classAttribute) && item.qualifiedQuantity > item.receiptQuantity);
-
-            console.log("filteredArray", filteredArray);
-
-            // if(businessType == 'inbound_purchase'){
-            //   filteredArray=filteredArray.filter(item => item.qualifiedQuantity>item.receiptQuantity);
-            // }
-            if (filteredArray.length) {
-              filteredArray.forEach(item => {
-                item.sourceNo = this.dataForm.sourceNo
-                item.moveId = this.dataForm.id
-                item.num = item.requiredReceivedQuantity
-                item.ordersId = item.purchaseOrderId
-                item.noticeId = item.purchaseReceiptReturnGoodsId
-                item.noticeLineId = item.id
-                item.taxRates = item.taxRate + "%"
-
-                item.costPrice = item.price
-                item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
-                let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
-                item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
-                item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
-                item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
-                item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
-                this.$set(item, 'discount', '')
-                this.$set(item, 'proportion', '')
-                this.$set(item, 'weight', '')
-              });
-            }
-
-            this.productData = filteredArray
-            this.dataForm.id = this.productData[0].returnDeliveryNoticeId
-            this.formLoading = false
-          }).catch(() => { this.formLoading = false })
-        }
-      },
-
-
-      // 继续新增
-      continueAdd() {
-        this.init('', 'add')
-        this.tipsvisible = false
-        this.btnLoading = false
-        this.dataForm = {  //表单信息
-          orderNo: "",
-          businessType: "",
-          warehouseName: "",
-          warehouseId: "",
-          cooperativePartnerId: "",
-          partnerName: "",
-          documentType: "",
-          id: "",
-          warehouseType: "",
-          approvalFlag: false,
-        }
-        this.productData = []
-        this.$refs.dataForm.resetFields()
-        this.init('', 'add')
-      },
-      async fetchData(code, flag) {
-        try {
-          const data = await this.jnpf.getBillRuleConfigFun(code);
-          this.codeConfig = data
-          if (flag) {
-            this.dataForm.orderNo = data.number
-          }
-
-        } catch (error) {
-        }
-      },
-      async handleConfirm(submitModel) {
-        console.log(this.productData);
-        let submitFlag = true // 自动聚焦是否可用
-        this.$refs['dataForm'].validate((valid) => {
-          if (valid) {
-
-            // 判断子表是否有效
-            if (!this.productData.length && submitFlag) {
-              submitFlag = false
-              this.$message.error('请至少选择一个产品')
-            }
-            if (this.allocationFlag) {
-              this.productData.forEach((item, index) => {
-                if (!item.shelfSpaceId) {
-                  submitFlag = false
-                  this.$message.error("产品信息第" + (index + 1) + "行库位不能为空")
-                }
-              })
-            }
-
-            if (this.productData.length) {
-              console.log(this.productData);
-              let totals = {};
-              let totalNum = {};
-              for (let index = 0; index < this.productData.length; index++) {
-                const item = this.productData[index];
-                if (!item.num) {
-                  submitFlag = false
-                  this.$message.error("产品信息第" + (index + 1) + "行数量不能为空或为0")
-                  break
-                }
-                if (this.dataForm.weightFlag) {
-                  if (!item.discount) {
-                    submitFlag = false
-                    this.$message.error("产品信息第" + (index + 1) + "行折扣不能为空")
-                    break
-                  }
-                  if (!item.proportion) {
-                    submitFlag = false
-                    this.$message.error("产品信息第" + (index + 1) + "行比重不能为空")
-                    break
-                  }
-                  if (!item.discount) {
-                    submitFlag = false
-                    this.$message.error("产品信息第" + (index + 1) + "行重量不能为空")
-                    break
-                  }
-                }
-
-
-                if (Number(item.num) > Number(item.ordersNum)) {
-                  console.log(item.num);
-                  console.log(item.ordersNum);
-                  submitFlag = false
-                  this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待收货数量")
-                  break
-                }
-
-                if (this.dataForm.businessType == 'outbound_sale_send' && item.num > item.availableBatchNumber) {
-                  submitFlag = false
-                  this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次可用数量")
-                  break
-                }
-                if (!totals[item.ordersLineId]) {
-                  totals[item.ordersLineId] = { totalNum: 0, ordersNum: item.ordersNum };
-                }
-                if (!totalNum[item.ordersLineId]) {
-                  totalNum[item.ordersLineId] = { totalNum: 0, availableBatchNumber: item.availableBatchNumber };
-                }
-                totals[item.ordersLineId].totalNum += Number(item.num)
-                totalNum[item.ordersLineId].totalNum += Number(item.num);
-              }
-
-
-            }
-
-
-
-
-            // 自动聚焦未使用则提交
-            if (submitFlag) {
-              this.dataForm.documentType = "inbound"
-              this.btnLoading = true
-
-              this.dataForm.documentStatus = submitModel
-              // const formMethod = this.dataForm.id ? updateInboundOutbound : addInboundOutbound
-              const formMethod = addWarehouseData
-              // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号
-
-              this.copyLinesData = JSON.parse(JSON.stringify(this.productData))
-              this.copyLinesData.forEach(element => {
-                element.warehouseType = this.dataForm.warehouseType
-              });
-              this.dataForm.classAttributeList = this.classAttributeList
-              this.dataForm.sourceType = 'notice'
-              let dataObj = {
-                stockMove: this.dataForm,
-                lines: this.productData,
-                spaceLines: this.copyLinesData,
-                flowData: this.flowData
-              }
-              console.log("this.dataForm", this.dataForm);
-              // // 提交确认
-              // if (submitModel === 'submit') {
-              //   let flag = await this.$confirm('请确认信息是否正确，提交后不允许修改，是否提交！', '提交确认', { type: 'warning' }).catch(err => false)
-              //   if (!flag) {
-              //     console.log(dataObj)
-              //     return this.btnLoading = false
-              //   }
-              // }
-              console.log("this.productData", this.productData);
-              formMethod(dataObj).then(res => {
-                let msg = res.msg
-                if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
-                if (submitModel == "draft") {
-                  this.submitmethodsTitle = "保存成功"
-                } else {
-                  this.submitmethodsTitle = "提交成功"
-
-                }
-
-                this.tipsvisible = true
-
-
-              }).catch(() => {
-                this.btnLoading = false
-              })
-            } else {
-              this.btnLoading = false
-            }
-          }
-        })
-
-      },
+    // 产品信息列表复制功能
+    copyFun(row, index) {
+      let data = JSON.parse(JSON.stringify(row))
+      this.productData.splice(index + 1, 0, data);
 
     },
-  }
+
+    // 点击选择产品 销售发货 
+    openSeleceProductDialog() {
+      if (this.dataForm.businessType != 'inbound_return_materials' && this.dataForm.businessType != 'outbound_pick_out') {
+        if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
+
+      }
+      this.productVisible = true
+      this.searchProductFun()
+    },
+    // 选择产品——搜索
+    searchProductFun() {
+      this.deliveryDateArr = []
+
+      this.orderForm = { //获取产品数据
+        cooperativePartnerId: "",
+        drawingNo: "",        // customerProductNo: "",
+        customerProductDrawingNo: "",
+        deliveryEndDate: "",
+        deliveryStartDate: "",
+        classAttributeList: this.classAttributeList,
+        receiptInboundFlag: true,
+
+        pageNum: 1,
+        pageSize: 20,
+        orderNo: this.dataForm.sourceNo,
+        receivingStatus: "not_finished",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: ""
+        }],
+      }
+      if (this.deliveryDateArr.length) {
+        this.orderForm.deliveryStartDate = this.deliveryDateArr[0]
+        this.orderForm.deliveryEndDate = this.deliveryDateArr[1]
+      } else {
+        this.orderForm.deliveryStartDate = ""
+        this.orderForm.deliveryEndDate = ""
+      }
+      purPurchaseReceiptReturnGoodsDetailList(this.orderForm).then(res => {
+        console.log("采购明细",);
+        this.productList = res.data.records
+        this.productTotal = res.data.total
+        this.listLoading = false
+      })
+
+    },
+    // 选择产品 (销售发货——多选)
+    handleSelectionChangeAllPruduct(val) {
+      this.selectSaleProductArr = val
+    },
+    // 销售发货选择产品——重置
+    resetProductFun() {
+      this.deliveryDateArr = []
+      this.searchProductFun()
+
+    },
+    // 选完产品后  渲染在产品信息列表
+    submitAllProduct() {
+      if (!this.selectSaleProductArr.length) return this.$message.error("请选择产品！")
+      this.productVisible = false
+      let arr = JSON.parse(JSON.stringify(this.selectSaleProductArr))
+
+      arr.forEach(item => {
+        let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
+        item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
+        item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
+        item.costPrice = item.price
+        item.num = item.requiredReceivedQuantity
+        item.taxRates = item.taxRate + "%"
+
+
+
+
+        item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
+        item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
+        item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
+        item.ordersId = item.purchaseOrderId
+        item.noticeId = item.purchaseReceiptReturnGoodsId
+        item.noticeLineId = item.id
+        this.$set(item, 'discount', '')
+        this.$set(item, 'proportion', '')
+        this.$set(item, 'weight', '')
+
+
+        item.sourceNo = this.dataForm.sourceNo
+        item.moveId = this.dataForm.id
+
+
+        this.productData.push(item)
+      });
+      this.productData.forEach(item => {
+        if (!item.shelfSpaceId) {
+          this.$set(item, 'shelfSpaceName', this.shelfSpaceName)
+          this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+          this.$set(item, 'shelfSpaceId', this.shelfSpaceId)
+        }
+      });
+      console.log("this.dataFormTwo", this.productData);
+    },
+    // 产品信息列表多选
+    handeleProductInfoData(val) {
+      this.selectRows = val
+    },
+    // 产品信息列表 批量删除
+    batchDelete() {
+      // 遍历选中的行的数据
+      if (this.selectRows.length < 1) {
+        this.$message({
+          message: "请选择你要删除的数据",
+          type: "error",
+          duration: 1500,
+        })
+      }
+      for (let i = 0; i < this.selectRows.length; i++) {
+        const row = this.selectRows[i];
+        const index = this.productData.indexOf(row);
+        if (index > -1) {
+          this.productData.splice(index, 1); // 从tableData中删除选中的行
+        }
+      }
+      this.selectRows = []; // 清空选中的行的数据
+    },
+
+    // 主数量输入失去焦点 检验不能为  0
+    checkNum(row, index) {
+      if (!row.num) {
+        this.$message({
+          message: "请填写第" + (index + 1) + "行产品的主数量",
+          type: 'error',
+          duration: 1500,
+        })
+      } else if (Number(row.num) == 0) {
+        this.$message({
+          message: "第" + (index + 1) + "行产品的数量必须大于0",
+          type: 'error',
+          duration: 1500,
+        })
+
+      }
+    },
+    // 监听主数量输入
+    watchNum(row, index) {
+      // 计算方向calculationDirection 转换系数ratio  副数量assistantNum
+      // 如果计算方向是乘 则副数量等于主数量*套数*转换系数
+      // 如果计算方向是除 则副数量等于主数量*套数/转换系数
+      // 使用正则表达式验证输入内容
+      row.num = row.num.replace(/[^\d.]/g, '');
+      let productArr = [...this.productData]
+
+      if (row.num.length == 1 && row.num == '.') {
+        // 如果第一位是小数点，则清空输入框
+        row.num = '';
+      } else if (row.num.length == 2 && row.num[0] == '0' && row.num[1] != '.') {
+        // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
+        row.num = row.num.slice(0, 1) + '.' + row.num.slice(1);
+      } else if (row.num.length > 2 && row.num[0] == '0' && row.num[1] != '.') {
+        row.num = row.num.substring(1, row.num.length)
+      }
+
+
+      if (row.num.includes('.')) {
+        let dotCount = 0; // 小数点的数量
+        let result = ''; // 处理后的结果
+
+        for (let i = 0; i < row.num.length; i++) {
+          const char = row.num[i];
+          if (char === '.') {
+            if (dotCount === 0) {
+              // 第一个小数点保留
+              result += char;
+              dotCount++;
+            }
+          } else {
+            result += char;
+          }
+        }
+
+        row.num = result;
+        let arr = row.num.split('.')
+        if (arr[0].length > 8) {
+          arr[0] = arr[0].substring(0, 8)
+        }
+        if (arr[1].length > 4) {
+          arr[1] = arr[1].substring(0, 4)
+        }
+        row.num = arr[0] + '.' + arr[1]
+      } else {
+        if (row.num.length > 8) {
+          row.num = row.num.substring(0, 8);
+        }
+      }
+      console.log("row.excludingTaxPrice", row.excludingTaxPrice);
+      console.log("row.price", row.price);
+      productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 6)
+
+      productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.price, row.excludingTaxPrice]), 6)]), 6)
+      console.log("productArr", productArr);
+      let taxrate = 1 * 1 + (row.taxRate) / 100 * 1
+      row.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [row.price, taxrate]), 6)
+      row.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 6)
+      row.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.price, row.excludingTaxCostPrice]), 6)]), 6)
+      row.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [row.totalAmount, row.taxAmount]), 6)
+      this.productData = productArr
+      console.log(this.productData);
+    },
+
+
+
+
+
+
+
+
+
+
+    // 选择业务类型
+    selectSourceTypeFun(val) {
+      console.log(val);
+      // 判断当前所选的业务类型是否与上一次一样 不一样 则清空产品列表数据及客户/供应商信息
+
+      if (val != this.previousValue) {
+        this.productData = []
+        this.dataForm['cooperativePartnerId'] = ""
+        this.dataForm['partnerName'] = ""
+        this.customerInfo = {}
+        this.previousValue = val
+        this.$refs.dataForm.clearValidate(['cooperativePartnerId'])
+      } else {
+
+      }
+
+      this.$forceUpdate()
+
+
+    },
+
+
+    // 切换仓库
+    changeWarehousex(val, data) {
+      console.log("data", data);
+      if (!val && !data.length) {
+        this.dataForm.warehouseId = ''
+        this.dataForm.warehouseName = ''
+        this.dataForm.warehouseType = ""
+        return
+      }
+      this.allocationFlag = data[0].all.locationStatus == 'disabled' ? false : true
+      this.dataForm.warehouseId = data[0].id
+      this.dataForm.warehouseName = data[0].name
+      this.dataForm.warehouseType = data[0].all.type
+    },
+    // 获取仓库id
+    getWarehouseListFun() {
+      getWarehouseList({ code: this.warehouseCode }).then(res => {
+        this.dataForm.warehouseName = res.data[0].name
+        this.dataForm.warehouseId = res.data[0].id
+        // 获取仓库详情信息
+        getWarehouseInfo(res.data[0].id).then(response => {
+          this.wareHouseInfo = response.data
+          this.dataForm.warehouseType = response.data.type
+          this.allocationFlag = response.data.locationStatus == 'disabled' ? false : true
+        })
+      })
+    },
+    goBack() {
+      this.$emit('close', true)
+    },
+
+
+
+
+    //   { label: "销售发货", value: "outbound_sale_send" },
+    // { label: "销售退货", value: "inbound_sale_return" },
+    // { label: "采购收货", value: "inbound_purchase" },
+    // { label: "采购退货", value: "outbound_purchase" },
+    // { label: "生产领料", value: "outbound_pick_out" },
+    // { label: "生产退料", value: "inbound_return_materials" },
+    // { label: "外协发料", value: "outbound_external_send" },
+    // { label: "外协退料", value: "inbound_external_return" },
+    // { label: "外协收货", value: "inbound_external" },
+    // { label: "外协退货", value: "outbound_external" },
+    init(data, btnType, businessType, classAttributeList, warehouseCode) {
+      console.log("11", data, btnType, businessType, classAttributeList, warehouseCode);
+      // this.visible = true
+      this.dataForm.businessType = businessType
+      this.warehouseCode = warehouseCode
+      this.selectcustomerObj.type = 'supplier'
+      this.$set(this.orderForm, 'receivingStatus', 'not_finished')
+      this.classAttributeList = classAttributeList
+      this.btnType = btnType
+      if (btnType == 'look') {
+        this.title = '查看入库单'
+        detailWarehouseData(data).then(res => {
+          res.data.spaceLines.forEach(item => {
+            this.$set(item, 'productDrawingNo', item.drawingNo)
+            this.$set(item, 'price', item.costPrice)
+          });
+          res.data.spaceLines.forEach(item => {
+            item.taxRates = item.taxRate + "%"
+
+          });
+          this.dataForm = res.data.stockMove
+          this.productData = res.data.spaceLines
+          // 流程信息和流转记录
+          if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+        })
+      } else {
+        this.dataForm.cooperativePartnerId = data.cooperativePartnerId
+        this.dataForm.partnerName = data.partnerName
+        this.$set(this.dataForm, 'sourceNo', data.orderNo)
+        this.fetchData("RKDH", true)
+        this.getBusInfo('b045')
+        this.title = '新建入库单'
+        getpurPurchaseReceiptReturnGoodsdetail(data.id).then(res => {
+          let filteredArray = res.data.noticeLineList.filter(item => classAttributeList.includes(item.classAttribute) && item.qualifiedQuantity > item.receiptQuantity);
+
+          console.log("filteredArray", filteredArray);
+
+          // if(businessType == 'inbound_purchase'){
+          //   filteredArray=filteredArray.filter(item => item.qualifiedQuantity>item.receiptQuantity);
+          // }
+          if (filteredArray.length) {
+            filteredArray.forEach(item => {
+              item.sourceNo = this.dataForm.sourceNo
+              item.moveId = this.dataForm.id
+              item.num = item.requiredReceivedQuantity
+              item.ordersId = item.purchaseOrderId
+              item.noticeId = item.purchaseReceiptReturnGoodsId
+              item.noticeLineId = item.id
+              item.taxRates = item.taxRate + "%"
+
+              item.costPrice = item.price
+              item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
+              let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
+              item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
+              item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
+              item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
+              item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
+              this.$set(item, 'discount', '')
+              this.$set(item, 'proportion', '')
+              this.$set(item, 'weight', '')
+            });
+          }
+
+          this.productData = filteredArray
+          this.dataForm.id = this.productData[0].returnDeliveryNoticeId
+          this.formLoading = false
+        }).catch(() => { this.formLoading = false })
+      }
+    },
+
+
+    // 继续新增
+    continueAdd() {
+      this.init('', 'add')
+      this.tipsvisible = false
+      this.btnLoading = false
+      this.dataForm = {  //表单信息
+        orderNo: "",
+        businessType: "",
+        warehouseName: "",
+        warehouseId: "",
+        cooperativePartnerId: "",
+        partnerName: "",
+        documentType: "",
+        id: "",
+        warehouseType: "",
+        approvalFlag: false,
+      }
+      this.productData = []
+      this.$refs.dataForm.resetFields()
+      this.init('', 'add')
+    },
+    async fetchData(code, flag) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code);
+        this.codeConfig = data
+        if (flag) {
+          this.dataForm.orderNo = data.number
+        }
+
+      } catch (error) {
+      }
+    },
+    async handleConfirm(submitModel) {
+      console.log(this.productData);
+      let submitFlag = true // 自动聚焦是否可用
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+
+          // 判断子表是否有效
+          if (!this.productData.length && submitFlag) {
+            submitFlag = false
+            this.$message.error('请至少选择一个产品')
+          }
+          if (this.allocationFlag) {
+            this.productData.forEach((item, index) => {
+              if (!item.shelfSpaceId) {
+                submitFlag = false
+                this.$message.error("产品信息第" + (index + 1) + "行库位不能为空")
+              }
+            })
+          }
+
+          if (this.productData.length) {
+            console.log(this.productData);
+            let totals = {};
+            let totalNum = {};
+            for (let index = 0; index < this.productData.length; index++) {
+              const item = this.productData[index];
+              if (!item.num) {
+                submitFlag = false
+                this.$message.error("产品信息第" + (index + 1) + "行数量不能为空或为0")
+                break
+              }
+              if (this.dataForm.weightFlag) {
+                if (!item.discount) {
+                  submitFlag = false
+                  this.$message.error("产品信息第" + (index + 1) + "行折扣不能为空")
+                  break
+                }
+                if (!item.proportion) {
+                  submitFlag = false
+                  this.$message.error("产品信息第" + (index + 1) + "行比重不能为空")
+                  break
+                }
+                if (!item.discount) {
+                  submitFlag = false
+                  this.$message.error("产品信息第" + (index + 1) + "行重量不能为空")
+                  break
+                }
+              }
+
+
+              if (Number(item.num) > Number(item.ordersNum)) {
+                console.log(item.num);
+                console.log(item.ordersNum);
+                submitFlag = false
+                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待收货数量")
+                break
+              }
+
+              if (this.dataForm.businessType == 'outbound_sale_send' && item.num > item.availableBatchNumber) {
+                submitFlag = false
+                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次可用数量")
+                break
+              }
+              if (!totals[item.ordersLineId]) {
+                totals[item.ordersLineId] = { totalNum: 0, ordersNum: item.ordersNum };
+              }
+              if (!totalNum[item.ordersLineId]) {
+                totalNum[item.ordersLineId] = { totalNum: 0, availableBatchNumber: item.availableBatchNumber };
+              }
+              totals[item.ordersLineId].totalNum += Number(item.num)
+              totalNum[item.ordersLineId].totalNum += Number(item.num);
+            }
+
+
+          }
+
+
+
+
+          // 自动聚焦未使用则提交
+          if (submitFlag) {
+            this.dataForm.documentType = "inbound"
+            this.btnLoading = true
+
+            this.dataForm.documentStatus = submitModel
+            // const formMethod = this.dataForm.id ? updateInboundOutbound : addInboundOutbound
+            const formMethod = addWarehouseData
+            // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号
+
+            this.copyLinesData = JSON.parse(JSON.stringify(this.productData))
+            this.copyLinesData.forEach(element => {
+              element.warehouseType = this.dataForm.warehouseType
+            });
+            this.dataForm.classAttributeList = this.classAttributeList
+            this.dataForm.sourceType = 'notice'
+            let dataObj = {
+              stockMove: this.dataForm,
+              lines: this.productData,
+              spaceLines: this.copyLinesData,
+              flowData: this.flowData
+            }
+            console.log("this.dataForm", this.dataForm);
+            // // 提交确认
+            // if (submitModel === 'submit') {
+            //   let flag = await this.$confirm('请确认信息是否正确，提交后不允许修改，是否提交！', '提交确认', { type: 'warning' }).catch(err => false)
+            //   if (!flag) {
+            //     console.log(dataObj)
+            //     return this.btnLoading = false
+            //   }
+            // }
+            console.log("this.productData", this.productData);
+            formMethod(dataObj).then(res => {
+              let msg = res.msg
+              if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
+              if (submitModel == "draft") {
+                this.submitmethodsTitle = "保存成功"
+              } else {
+                this.submitmethodsTitle = "提交成功"
+
+              }
+
+              this.tipsvisible = true
+
+
+            }).catch(() => {
+              this.btnLoading = false
+            })
+          } else {
+            this.btnLoading = false
+          }
+        }
+      })
+
+    },
+
+  },
+}
 </script>
-  <style lang="scss" scoped>
-  .contain {
-    position: relative;
-    height: calc(100% - 47px);
-    overflow-y: auto;
-  }
+<style lang="scss" scoped>
+.contain {
+  position: relative;
+  height: calc(100% - 47px);
+  overflow-y: auto;
+}
 
-  ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
-    padding: 10px 10px;
-    padding-top: 0;
-  }
+::v-deep .JNPF-common-layout-main.JNPF-flex-main {
+  padding: 10px 10px;
+  padding-top: 0;
+}
 
-  ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
-    overflow: auto;
-  }
+::v-deep .JNPF-common-layout-main.JNPF-flex-main {
+  overflow: auto;
+}
 
-  ::v-deep .JNPF-common-page-header {
-    padding: 5px 10px;
-  }
-
-
-
-  .required {
-    color: red;
-    margin-right: 4px;
-  }
-
-  .subtitle {
-    line-height: 33px;
-    font-size: 18px;
-    border-bottom: 1px solid #dcdfe6;
-    background: #fafafa;
-    padding-left: 5px;
-  }
-
-  ::v-deep.JNPF-dialog.JNPF-dialog_center .el-dialog .el-dialog__body {
-    padding: 0 !important;
-  }
-
-  .JNPF-preview-main .main {
-    padding-top: 0;
-  }
-
-  ::v-deep .el-tabs__item {
-    padding: 0 10px !important
-  }
-
-  ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
-    padding-left: 0px !important
-  }
-
-  ::v-deep .el-collapse-item__header {
-    line-height: 33px;
-    font-size: 18px;
-    border-top: 1px solid rgb(220, 223, 230);
-    // background: #dcdfe6;
-    background: rgb(250, 250, 250);
-    padding-left: 5px;
-    font-weight: 700;
-    // border-bottom:none;
-    border-right: 1px solid #dcdfe6;
-    border-left: 1px solid #dcdfe6;
-  }
-
-  ::v-deep .el-collapse-item__wrap {
-    border: 1px solid #dcdfe6 !important;
-    border-top: none;
-    margin-bottom: 0;
-    padding: 0 10px 0px;
-    border-top: none !important;
-
-  }
-
-  ::v-deep .el-collapse-item__content {
-    padding-bottom: 0px
-  }
+::v-deep .JNPF-common-page-header {
+  padding: 5px 10px;
+}
 
 
-  .import_t {
-    font-size: 22px;
-    color: rgb(103, 194, 58);
-    vertical-align: top;
-    margin-top: 40px;
-    display: inline-block;
-    margin-left: 20px;
-  }
 
-  .import_b {
-    font-size: 18px;
-    /* color: #67c23a; */
-    vertical-align: top;
-    margin-top: 43px;
-    display: inline-block;
-  }
+.required {
+  color: red;
+  margin-right: 4px;
+}
 
-  .JNPF-common-search-box {
-    margin-bottom: 5px;
-  }
+.subtitle {
+  line-height: 33px;
+  font-size: 18px;
+  border-bottom: 1px solid #dcdfe6;
+  background: #fafafa;
+  padding-left: 5px;
+}
 
-  // .orderInfo ::v-deep .el-collapse-item__wrap {
-  //   border-bottom: none !important
-  // }
-  .JNPF-common-table {
-    border: 1px solid #ebeef5 !important;
-  }
+::v-deep.JNPF-dialog.JNPF-dialog_center .el-dialog .el-dialog__body {
+  padding: 0 !important;
+}
 
-  .JNPF-common-layout-main {
-    padding-top: 0;
-  }
+.JNPF-preview-main .main {
+  padding-top: 0;
+}
 
-  ::v-deep .el-tabs__header {
-    margin-bottom: 5px !important;
-  }
+::v-deep .el-tabs__item {
+  padding: 0 10px !important
+}
 
-  .productInfo ::v-deep.el-collapse-item__wrap {
-    padding: 0;
-  }
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important
+}
+
+::v-deep .el-collapse-item__header {
+  line-height: 33px;
+  font-size: 18px;
+  border-top: 1px solid rgb(220, 223, 230);
+  // background: #dcdfe6;
+  background: rgb(250, 250, 250);
+  padding-left: 5px;
+  font-weight: 700;
+  // border-bottom:none;
+  border-right: 1px solid #dcdfe6;
+  border-left: 1px solid #dcdfe6;
+}
+
+::v-deep .el-collapse-item__wrap {
+  border: 1px solid #dcdfe6 !important;
+  border-top: none;
+  margin-bottom: 0;
+  padding: 0 10px 0px;
+  border-top: none !important;
+
+}
+
+::v-deep .el-collapse-item__content {
+  padding-bottom: 0px
+}
+
+
+.import_t {
+  font-size: 22px;
+  color: rgb(103, 194, 58);
+  vertical-align: top;
+  margin-top: 40px;
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.import_b {
+  font-size: 18px;
+  /* color: #67c23a; */
+  vertical-align: top;
+  margin-top: 43px;
+  display: inline-block;
+}
+
+.JNPF-common-search-box {
+  margin-bottom: 5px;
+}
+
+// .orderInfo ::v-deep .el-collapse-item__wrap {
+//   border-bottom: none !important
+// }
+.JNPF-common-table {
+  border: 1px solid #ebeef5 !important;
+}
+
+.JNPF-common-layout-main {
+  padding-top: 0;
+}
+
+::v-deep .el-tabs__header {
+  margin-bottom: 5px !important;
+}
+
+.productInfo ::v-deep.el-collapse-item__wrap {
+  padding: 0;
+}
 </style>

@@ -94,8 +94,9 @@
 
                         <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6" show-overflow-tooltip>
                         </el-table-column>
-          <el-table-column prop="productName" label="产品名称"  v-if="productNameFlag==='1'" min-width="160" />
-          <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
+                        <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
+                          min-width="160" />
+                        <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
 
 
 
@@ -117,7 +118,6 @@
                             <div> {{ scope.row.shelfSpaceName }}</div>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
                         <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160" v-if="btnType != 'look'"
                           :key="7"></el-table-column>
 
@@ -126,15 +126,23 @@
                           v-if="btnType != 'look'">
                         </el-table-column>
 
-                        <el-table-column prop="num" label="领用出库数量" width="160" :key="77">
+
+
+                        <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                        <el-table-column prop="num" :label="mainUnitFlag == 1 ? '领用出库数量(主)' : '领用出库数量'" min-width="160">
                           <template slot="header">
-                            <span class="required">*</span>领用出库数量
+                            <span class="required">*</span>{{ mainUnitFlag == 1 ? '领用出库数量(主)' : '领用出库数量' }}
                           </template>
                           <template slot-scope="scope">
-                            <el-input :disabled="btnType == 'look'" @input="watchNum(scope.row, scope.$index)"
-                              v-model="scope.row.num" placeholder="领用出库数量"></el-input>
+                            <el-input v-model="scope.row.num" placeholder="领用出库数量(主)" :disabled="btnType == 'look'"
+                              @input="watchNum(scope.row, scope.$index)">
+                            </el-input>
                           </template>
                         </el-table-column>
+                        <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                        <el-table-column prop="deputyNum" label="领用出库数量(副)" min-width="160" v-if="mainUnitFlag == 1" />
+
+
 
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">
@@ -228,7 +236,7 @@
 
                     <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6" show-overflow-tooltip>
                     </el-table-column>
-          <el-table-column prop="productName" label="产品名称"  v-if="productNameFlag==='1'" min-width="160"   />
+                    <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
 
 
@@ -251,7 +259,6 @@
                         <div> {{ scope.row.shelfSpaceName }}</div>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
                     <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160" v-if="btnType != 'look'"
                       :key="7"></el-table-column>
 
@@ -260,15 +267,19 @@
                       v-if="btnType != 'look'">
                     </el-table-column>
 
-                    <el-table-column prop="num" label="领用数量" width="140" :key="77">
+                    <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                    <el-table-column prop="num" :label="mainUnitFlag == 1 ? '领用出库数量(主)' : '领用出库数量'" min-width="160">
                       <template slot="header">
-                        <span class="required">*</span>领用数量
+                        <span class="required">*</span>{{ mainUnitFlag == 1 ? '领用出库数量(主)' : '领用出库数量' }}
                       </template>
                       <template slot-scope="scope">
-                        <el-input :disabled="btnType == 'look'" @input="watchNum(scope.row, scope.$index)"
-                          v-model="scope.row.num" placeholder="领用数量"></el-input>
+                        <el-input v-model="scope.row.num" placeholder="领用出库数量(主)" :disabled="btnType == 'look'"
+                          @input="watchNum(scope.row, scope.$index)">
+                        </el-input>
                       </template>
                     </el-table-column>
+                    <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                    <el-table-column prop="deputyNum" label="领用出库数量(副)" min-width="160" v-if="mainUnitFlag == 1" />
 
                     <el-table-column prop="remark" label="备注" width="200" :key="128">
                       <template slot-scope="scope">
@@ -347,12 +358,16 @@
                 <el-table-column prop="collectionTime" label="领用日期" width="180" sortable="custom" />
 
                 <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
-          <el-table-column prop="productName" label="产品名称"  v-if="productNameFlag==='1'" min-width="160"   sortable="custom"/>
+                <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
+                  sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
-                <el-table-column prop="mainUnit" label="单位" width="90" sortable="custom" />
                 <el-table-column prop="awitNum" label="待领用数量" width="150" sortable="custom" />
-                <el-table-column prop="num" label="领用数量" width="120" sortable="custom" />
+                <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                <el-table-column prop="num" :label="mainUnitFlag == 1 ? '领用数量(主)' : '领用数量'" min-width="160">
 
+                </el-table-column>
+                <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                <el-table-column prop="deputyNum" label="领用数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
               </JNPF-table>
               <pagination :total="productTotal" :page.sync="productForm.pageNum" :limit.sync="productForm.pageSize"
                 @pagination="searchProductFun" />
@@ -566,17 +581,22 @@ export default {
       codeList: "",
       arr: [],
       classAttributeList: [],
-      productNameFlag:null,
+      productNameFlag: null,
+      tableDataFlag: false,
 
     }
   },
+  mounted() {
+    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
+
+  },
   created() {
     let objs = { "pageSize": -1, "businessCode": "product" }
-      getBimBusinessSwitchConfigList(objs).then(res => {
-        this.productNameFlag = res.data.product[1].configValue1
-       
-        
-      })
+    getBimBusinessSwitchConfigList(objs).then(res => {
+      this.productNameFlag = res.data.product[1].configValue1
+
+
+    })
   },
   watch: {
     "dataForm.warehouseId": {
@@ -586,6 +606,17 @@ export default {
     }
   },
   methods: {
+    async getMainUnitFun(code, type) {
+      this.listLoading = true
+      try {
+        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+        this.tableDataFlag = true
+        this.listLoading = false
+
+
+      } catch (error) {
+      }
+    },
     // 设置编码
     setCodeFun(row, index) {
       console.log(row);
@@ -624,12 +655,12 @@ export default {
     },
 
     // 提交编码设置
-    submitCodeFun() { 
+    submitCodeFun() {
       let hasDuplicates = this.arr.filter((item, index) =>
-      this.arr.findIndex(innerItem => innerItem.assetCode === item.assetCode) !== index
+        this.arr.findIndex(innerItem => innerItem.assetCode === item.assetCode) !== index
       ).length > 0;
 
-      if (hasDuplicates) return this.$message.error("存在相同的资产编码，请检查") 
+      if (hasDuplicates) return this.$message.error("存在相同的资产编码，请检查")
       const hasEmptyAssetCode = this.arr.some(item => item.assetCode === "");
       if (hasEmptyAssetCode) return this.$message.error("资产编码不能为空，请检查")
       this.$set(this.productData[this.currentUseIndex], 'warehouseCodeLineList', this.arr)
@@ -709,6 +740,13 @@ export default {
               // 将新对象添加到 warehouseCodeLineList  
               item.warehouseCodeLineList.push(newObj);
             });
+              if (this.mainUnitFlag == 1) {
+                if (item.calculationDirection == 'multiplication') {
+                  this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+                } else {
+                  this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+                }
+              }
           });
           console.log("res.data.records", res.data.records);
           this.productList = res.data.records
@@ -749,6 +787,13 @@ export default {
         this.$set(item, 'unReceiveQuantity', item.num)
         item.sourceNo = this.dataForm.sourceNo
         item.moveId = this.dataForm.id
+          if (this.mainUnitFlag == 1) {
+            if (item.calculationDirection == 'multiplication') {
+              this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+            } else {
+              this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+            }
+          }
         this.productData.push(item)
       });
       console.log("this.dataFormTwo", this.productData);
@@ -826,6 +871,13 @@ export default {
       } else {
         if (row.num.length > 8) {
           row.num = row.num.substring(0, 8);
+        }
+      }
+      if (this.mainUnitFlag == 1) {
+        if (row.calculationDirection == 'multiplication') {
+          this.$set(row, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.ratio]), 6))
+        } else {
+          this.$set(row, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [row.num, row.ratio]), 6))
         }
       }
     },
@@ -926,6 +978,13 @@ export default {
               item.ordersLineId = item.id
               item.num = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.requisitionNum, item.incomingOutgoingNum]), 2)
               this.$set(item, 'unReceiveQuantity', item.num)
+              if (this.mainUnitFlag == 1) {
+                if (item.calculationDirection == 'multiplication') {
+                  this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+                } else {
+                  this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+                }
+              }
             });
             console.log("this.productData", this.productData);
             this.productData = res.data.lines

@@ -164,43 +164,50 @@
                       <el-table-column prop="productDrawingNo" label="品名规格" width="290" key="3" show-overflow-tooltip>
                       </el-table-column>
 
-                      <el-table-column prop="mainUnit" label="单位" width="80" key="13" show-overflow-tooltip>
-                      </el-table-column>
+
+                      <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+
+
                       <el-table-column prop="ordersNum" label="订单数量" width="120" key="4"
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="waitDeliverNum" label="待发货数量" v-if="btnType != 'look'" width="120" key="6"
                         show-overflow-tooltip>
                       </el-table-column>
-                      <el-table-column prop="deliveryQuantity" label="发货数量" width="170"
-                        v-if="!dataForm.exchangeGoodsFlag" key="21">
+
+                      <el-table-column prop="num" :label="mainUnitFlag == 1 ? '发货数量(主)' : '发货数量'" min-width="150"
+                        v-if="!dataForm.exchangeGoodsFlag">
                         <template slot="header">
-                          <span class="required">*</span>发货数量
+                          <span class="required">*</span>发货数量(主)
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'deliveryQuantity'"
                             :rules='productRules.deliveryQuantity'>
                             <el-input v-model="scope.row.deliveryQuantity" placeholder="请输入发货数量"
-                              :disabled="btnType == 'look' || btnType == 'qrsh'" maxlength="11" @blur="checkNum(scope.row, scope.$index)"
-                              @input="watchnums(scope.row, scope.$index)" style="width: 145px;">
+                              :disabled="btnType == 'look' || btnType == 'qrsh'" maxlength="11"
+                              @blur="checkNum(scope.row, scope.$index)" @input="watchnums(scope.row, scope.$index)"
+                              style="width: 145px;">
                             </el-input>
                           </el-form-item>
                         </template>
                       </el-table-column>
+                      <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                      <el-table-column prop="deputyNum" label="发货数量(副)" min-width="150" v-if="mainUnitFlag == 1" />
                       <el-table-column prop="price" label="单价(含税)" width="120" :key="110"> </el-table-column>
-                        <el-table-column prop="taxRate" label="税率" width="120" :key="171">
-                          <template slot="header">
-                            <span class="required">*</span>税率
-                          </template>
-                          <template slot-scope="scope">
-                            <div>{{ scope.row.taxRate+'%' }}</div>
-                          </template>
+                      <el-table-column prop="taxRate" label="税率" width="120" :key="171">
+                        <template slot="header">
+                          <span class="required">*</span>税率
+                        </template>
+                        <template slot-scope="scope">
+                          <div>{{ scope.row.taxRate + '%' }}</div>
+                        </template>
 
-                        </el-table-column>
-                        <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
-                        <el-table-column prop="taxAmount" label="税额" width="140"></el-table-column>
+                      </el-table-column>
+                      <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
+                      <el-table-column prop="taxAmount" label="税额" width="140"></el-table-column>
 
-                        <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column>
-                        <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126"> </el-table-column>
+                      <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column>
+                      <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126">
+                      </el-table-column>
                       <el-table-column prop="deliveryDate" label="交货日期" width="160" />
                       <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" />
                       <el-table-column prop="accuracyLevel" label="精度等级" width="160" />
@@ -387,34 +394,34 @@
                   <el-table-column prop="productDrawingNo" label="品名规格" width="290" key="3" show-overflow-tooltip>
                   </el-table-column>
 
-                  <el-table-column prop="mainUnit" label="单位" width="80" key="13" show-overflow-tooltip>
-                  </el-table-column>
+                  <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+
+
                   <el-table-column prop="ordersNum" label="订单数量" width="120" key="4"
                     show-overflow-tooltip></el-table-column>
                   <el-table-column prop="waitDeliverNum" label="待发货数量" v-if="btnType != 'look'" width="120" key="6"
                     show-overflow-tooltip>
                   </el-table-column>
-                  <el-table-column prop="deliveryQuantity" label="发货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
-                    key="21">
+
+                  <el-table-column prop="num" :label="mainUnitFlag == 1 ? '发货数量(主)' : '发货数量'" min-width="150"
+                    v-if="!dataForm.exchangeGoodsFlag">
                     <template slot="header">
-                      <span class="required">*</span>发货数量
+                      <span class="required">*</span>发货数量(主)
                     </template>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'deliveryQuantity'"
                         :rules='productRules.deliveryQuantity'>
                         <el-input v-model="scope.row.deliveryQuantity" placeholder="请输入发货数量"
-                          :disabled="btnType == 'look' || btnType == 'qrsh'" maxlength="11" @blur="checkNum(scope.row, scope.$index)"
-                          @input="watchnums(scope.row, scope.$index)" style="width: 145px;">
+                          :disabled="btnType == 'look' || btnType == 'qrsh'" maxlength="11"
+                          @blur="checkNum(scope.row, scope.$index)" @input="watchnums(scope.row, scope.$index)"
+                          style="width: 145px;">
                         </el-input>
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip>
-                    <template slot-scope="scope">
-                      <el-input v-model="scope.row.remark" placeholder="请输入备注"
-                        :disabled="btnType == 'look' ? true : false" maxlength="200" />
-                    </template>
-                  </el-table-column>
+                  <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                  <el-table-column prop="deputyNum" label="发货数量(副)" min-width="150" v-if="mainUnitFlag == 1" />
+
                   <el-table-column prop="deliveryDate" label="交货日期" width="160" />
                   <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" />
                   <el-table-column prop="accuracyLevel" label="精度等级" width="160" />
@@ -426,6 +433,12 @@
                   <el-table-column prop="specialRequire" label="特殊要求" width="160" />
                   <el-table-column prop="ordersNo" label="订单号" width="160" />
                   <el-table-column prop="workOrderNo" label="工作令号" width="160" />
+                  <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip>
+                    <template slot-scope="scope">
+                      <el-input v-model="scope.row.remark" placeholder="请输入备注"
+                        :disabled="btnType == 'look' ? true : false" maxlength="200" />
+                    </template>
+                  </el-table-column>
                   <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
                     <template slot-scope="scope">
                       <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
@@ -568,8 +581,11 @@
                   <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
                   <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
-                  <el-table-column prop="mainUnit" label="单位" width="160" sortable="custom" />
-                  <el-table-column prop="num" label="数量" width="160" sortable="custom" />
+                  <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                  <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
+                  </el-table-column>
+                  <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                  <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                   <el-table-column prop="waitDeliverNum" label="待发货数量" width="160" sortable="custom" />
                   <el-table-column prop="deliveryDate" label="交货日期" width="160" sortable="custom" />
                   <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
@@ -918,7 +934,9 @@ export default {
       flowData: {},
       approvalFlag: false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime: 0
+      endTime: 0,
+      tableDataFlag: false,
+      mainUnitFlag: null,
     }
   },
   computed: {
@@ -954,11 +972,22 @@ export default {
   },
   mounted() {
     console.log(5555);
+    this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
 
     this.getBimBusinessDetail()
 
   },
   methods: {
+    async getMainUnitFun(code, type) {
+      this.listLoading = true
+      try {
+        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+        this.tableDataFlag = true
+        this.listLoading = false
+
+
+      } catch (error) { }
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -994,6 +1023,15 @@ export default {
       this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
       getsaleOrderDetailList(this.orderForm).then(res => {
         console.log("产品", res);
+        res.data.records.forEach(item => {
+          if (this.mainUnitFlag == 1) {
+          if (item.calculationDirection == 'multiplication') {
+            this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+          } else {
+            this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+          }
+        }
+        });
         this.productList = res.data.records
         this.productTotal = res.data.total
         this.listLoading = false
@@ -1138,7 +1176,14 @@ export default {
         item.ordersNum = item.num
         item.productDrawingNo = item.drawingNo
         item.ordersLineId = item.id
-          this.$set(item, 'deliveryQuantity', item.waitDeliverNum)
+        this.$set(item, 'deliveryQuantity', item.waitDeliverNum)
+        if (this.mainUnitFlag == 1) {
+          if (item.calculationDirection == 'multiplication') {
+            this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+          } else {
+            this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+          }
+        }
         this.dataFormTwo.data.push(item)
       });
       let uniqueArr = [];
@@ -1264,19 +1309,21 @@ export default {
       if (row.calculationDirection == 'multiplication') {
         productArr[index].assistantNum = this.jnpf.numberFormat(row.deliveryQuantity * row.ratio, 2)
         productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.price]), 2)
-        productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.excludingTaxPrice]), 2) 
-      productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
+        productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.excludingTaxPrice]), 2)
+        productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
+        this.$set(productArr[index], 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.ratio]), 6))
 
       } else {
         productArr[index].assistantNum = this.jnpf.numberFormat(row.deliveryQuantity / row.ratio, 2)
         productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.price]), 2)
         productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.excludingTaxPrice]), 2)
-      productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
-       }
+        productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
+        this.$set(productArr[index], 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [row.num, row.ratio]), 6))
+      }
       console.log("productArr", productArr);
       this.dataFormTwo.data = productArr
     },
-      // 主数量输入失去焦点 检验不能为  0
+    // 主数量输入失去焦点 检验不能为  0
     checkNum(row, index) {
       if (!row.deliveryQuantity) {
         this.$message({
@@ -1299,7 +1346,7 @@ export default {
 
 
 
- 
+
 
     handleSelectionChangeAllPruduct(val) {
       this.selectArr = val
@@ -1773,11 +1820,11 @@ export default {
                 pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
                 ratio: item.ratio ? item.ratio : '',
                 excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
-              excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
-              price: item.price ? item.price : '',
-              taxAmount: item.taxAmount ? item.taxAmount : '',
-              taxRate: item.taxRate ? item.taxRate : '',
-              totalAmount: item.totalAmount ? item.totalAmount : '',
+                excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
+                price: item.price ? item.price : '',
+                taxAmount: item.taxAmount ? item.taxAmount : '',
+                taxRate: item.taxRate ? item.taxRate : '',
+                totalAmount: item.totalAmount ? item.totalAmount : '',
                 // receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
                 remark: item.remark ? item.remark : '',
                 returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
@@ -1813,11 +1860,11 @@ export default {
                 receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
                 remark: item.remark ? item.remark : '',
                 excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
-              excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
-              price: item.price ? item.price : '',
-              taxAmount: item.taxAmount ? item.taxAmount : '',
-              taxRate: item.taxRate ? item.taxRate : '',
-              totalAmount: item.totalAmount ? item.totalAmount : '',
+                excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
+                price: item.price ? item.price : '',
+                taxAmount: item.taxAmount ? item.taxAmount : '',
+                taxRate: item.taxRate ? item.taxRate : '',
+                totalAmount: item.totalAmount ? item.totalAmount : '',
                 returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
                 sourceNoticeLineList: [
                   {

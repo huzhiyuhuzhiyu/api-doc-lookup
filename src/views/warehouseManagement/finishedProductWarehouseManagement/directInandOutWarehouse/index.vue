@@ -174,15 +174,32 @@
                             v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="num" label="数量" width="140" :key="77">
+                      <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                      <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="160">
+                        <template slot="header">
+                          <span class="required">*</span>{{ mainUnitFlag == 1 ? '数量(主)' : '数量' }}
+                        </template>
+                        <template slot-scope="scope">
+                          <el-input v-model="scope.row.num" placeholder="数量(主)" :disabled="btnType == 'look'"
+                            @input="watchNum(scope.row, scope.$index)">
+                          </el-input>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                      <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
+
+
+
+                      <!-- <el-table-column prop="mainUnit" label="单位" width="80" key="8" />
+                      <el-table-column prop="num" label="数量" width="140" key="77">
                         <template slot="header">
                           <span class="required">*</span>数量
                         </template>
                         <template slot-scope="scope">
-                          <el-input :disabled="btnType == 'look'" @input="watchNum(scope.row, scope.$index)"
+                          <el-input :disabled="btnType == 'look'" 
                             v-model="scope.row.num" placeholder="数量"></el-input>
                         </template>
-                      </el-table-column>
+                      </el-table-column> -->
                       <el-table-column prop="costPrice" label="单价(含税)" width="120" key="110">
                         <template slot="header">
                           <span class="required">*</span>单价(含税)
@@ -445,8 +462,10 @@
                 v-if="dataForm.documentType == 'outbound'" key="productCode" />
               <el-table-column prop="code" label="产品编码" min-width="130" sortable="custom"
                 v-if="dataForm.documentType == 'inbound'" key="code" />
-              <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom"
+              <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" width="80" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="mainUnit" />
+              <el-table-column prop="mainUnit" label="单位(副)" width="80" sortable="custom"
+                v-if="dataForm.documentType == 'outbound' && mainUnitFlag == 1" key="mainUnit" />
               <el-table-column prop="availableQuantity" label="可用库存数量" width="160" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="availableQuantity" />
               <el-table-column prop="batchNumber" label="批次号" width="180" sortable="custom"
@@ -757,7 +776,8 @@ export default {
       partnerPlaceholder: '',
       productNameFlag: null,
       printBrowseVisible: false,
-
+      mainUnitFlag: null,
+      tableDataFlag: false,
     }
   },
   created() {
@@ -778,8 +798,23 @@ export default {
       },
     }
   },
+  mounted() {
+    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
+
+  },
   methods: {
 
+    async getMainUnitFun(code, type) {
+      this.listLoading = true
+      try {
+        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+        this.tableDataFlag = true
+        this.listLoading = false
+
+
+      } catch (error) {
+      }
+    },
     printWarehouse(enCode) {
       getPrintBusInfo(enCode).then(res => {
         if (res.data) {
@@ -1053,6 +1088,10 @@ export default {
         item.ordersLineId = ""
         item.noticeId = ""
         item.num = ''
+        if (this.mainUnitFlag == 1) {
+          this.$set(item, 'deputyNum', '')
+          this.$set(item, 'deputyUnit', item.deputyUnit)
+        }
         item.costPrice = ""
         item.excludingTaxCostPrice = ""
         item.excludingTaxTotalAmount = ""
@@ -1248,6 +1287,13 @@ export default {
           row.num = row.num.substring(0, 8);
         }
       }
+      if (this.mainUnitFlag == 1) {
+        if (row.calculationDirection == 'multiplication') {
+         productArr[index].deputyNum = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.ratio]), 6)
+        } else {
+         productArr[index].deputyNum = this.jnpf.numberFormat(this.jnpf.math('divide', [row.num, row.ratio]), 6)
+        }
+      }
       productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.costPrice]), 6)
 
       productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.costPrice, row.excludingTaxCostPrice]), 6)]), 6)
@@ -1430,6 +1476,9 @@ export default {
         // 获取详情
         detailWarehouseData(id).then(res => {
           this.dataForm = res.data.stockMove
+          res.data.spaceLines.forEach(item => {
+            this.$set(item,'productDrawingNo',item.drawingNo)
+          });
           this.productData = res.data.spaceLines
           this.spaceLines = res.data.spaceLines
 

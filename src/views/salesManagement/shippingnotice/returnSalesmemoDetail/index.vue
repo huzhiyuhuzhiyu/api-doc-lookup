@@ -1,6 +1,6 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-center JNPF-flex-main"  v-if="!formVisible">
+    <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
@@ -22,7 +22,7 @@
                 </el-form-item>
               </el-col>
             </template>
-           
+
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
@@ -34,7 +34,7 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
@@ -61,7 +61,7 @@
             </div>
           </div>
 
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="false"
+          <JNPF-table ref="dataTable"  :data="tableData" :fixedNO="false"  v-if="tableDataFlag"
             @sort-change="sortChange" custom-column :checkSelectable="checkSelectable"
             @selection-change="handleSelectionChange" hasC>
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
@@ -77,8 +77,12 @@
             <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
             <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" width="80" />
-            <el-table-column prop="deliveryQuantity" label="退货数量" width="120" sortable="custom" />
+
+            <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+            <el-table-column prop="deliveryQuantity" :label="mainUnitFlag == 1 ? '退货数量(主)' : '退货数量'" min-width="120">
+            </el-table-column>
+            <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+            <el-table-column prop="deputyNum" label="退货数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
             <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
             <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
             <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
@@ -183,7 +187,7 @@ export default {
 
       ],
 
-      
+
 
 
       superQueryVisible: false,
@@ -202,7 +206,7 @@ export default {
       listLoading: false,
       authorizeFormVisible: false,
       userRelationListVisible: false,
-     
+
       orderForm: {},
       initOrderForm: {
         notifyType: 'sale',
@@ -230,8 +234,8 @@ export default {
         }],
       },
 
-      detailTotal: 0, 
-     
+      detailTotal: 0,
+
       // deliveryDateArr: [],
       orderDateArr: [],
       total: 0,
@@ -240,6 +244,8 @@ export default {
       btnLoading: false,
       selectArr: [],
 
+      tableDataFlag: false,
+      mainUnitFlag: null,
 
       superQueryJson: [
         {
@@ -385,14 +391,25 @@ export default {
     }
   },
   created() {
-    this.superForm=this.orderForm = JSON.parse(JSON.stringify(this.initOrderForm))
+    this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.initOrderForm))
     this.search('basic')
   },
-   
+
   mounted() {
     this.getProductClassFun()
+    this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
   },
   methods: {
+    async getMainUnitFun(code, type) {
+      this.listLoading = true
+      try {
+        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+        this.tableDataFlag = true
+        this.listLoading = false
+
+
+      } catch (error) { }
+    },
     superQuerySearch(query) {
       this.superQuery = query
       this.superQueryVisible = false
@@ -426,7 +443,7 @@ export default {
         })
       }).catch(() => { })
     },
- 
+
     //   sortChange({ prop, order }) {
     //   const newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
     //   this.listQuery.orderItems[0].asc = order !== 'descending'
@@ -458,11 +475,20 @@ export default {
       }
     },
     initData() {
-      this.listLoading = true
       getQuotationdatasenddatalist(this.orderForm).then(res => {
-        this.tableData = res.data.records
+        setTimeout(() => {
+          res.data.records.forEach(item => {
+            if (this.mainUnitFlag == 1) {
+              if (item.calculationDirection == 'multiplication') {
+                this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.deliveryQuantity, item.ratio]), 6))
+              } else {
+                this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.deliveryQuantity, item.ratio]), 6))
+              }
+            }
+          });
+          this.tableData = res.data.records
+        }, 600);
         this.total = res.data.total
-        this.listLoading = false
         this.visible = false
       }).catch(() => {
         this.listLoading = false
@@ -470,8 +496,8 @@ export default {
 
     },
     search(type) {
-   
-       
+
+
       Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
         let item = this.orderForm[key]
         this.orderForm[key] = typeof item === 'string' ? item.trim() : item
@@ -498,15 +524,15 @@ export default {
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮 
-      this.superForm=this.orderForm = JSON.parse(JSON.stringify(this.initOrderForm))
-      this.searchList=[
+      this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.initOrderForm))
+      this.searchList = [
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],
 
-      this.$refs.SuperQuery.conditionList = []
+        this.$refs.SuperQuery.conditionList = []
       this.search('basic')
     },
     addSupplier(id, btntype) {
@@ -563,8 +589,8 @@ export default {
       const targetListQuery = this.orderForm
       let _data = {
         ...targetListQuery,
-        exportType:  '1061',
-        exportName:  '销售退货通知单明细',
+        exportType: '1061',
+        exportName: '销售退货通知单明细',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }
@@ -863,9 +889,10 @@ export default {
 :v-deep .el-table__body-wrapper {
   height: auto !important;
 }
+
 .JNPF-common-search-box {
   padding: 8px 0 !important;
-  margin-left: 0!important;
+  margin-left: 0 !important;
 
   margin-bottom: 5px;
 }

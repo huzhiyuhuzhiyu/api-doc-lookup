@@ -130,25 +130,26 @@
                         </el-table-column>
                         <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
                         </el-table-column>
-                        <el-table-column prop="mainUnit" label="单位" min-width="160" show-overflow-tooltip>
-                        </el-table-column>
 
-                        <el-table-column prop="deliveryQuantity" label="退货数量" width="170"
-                          v-if="!dataForm.exchangeGoodsFlag" key="789">
+                        <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                        <el-table-column prop="num" :label="mainUnitFlag == 1 ? '退货数量(主)' : '退货数量'" min-width="150"
+                          v-if="!dataForm.exchangeGoodsFlag">
                           <template slot="header">
-                            <span class="required">*</span>退货数量
+                            <span class="required">*</span>退货数量(主)
                           </template>
                           <template slot-scope="scope">
-                            <el-form-item :prop="'productData.' + scope.$index + '.' + 'deliveryQuantity'"
+                            <el-form-item :prop="'data.' + scope.$index + '.' + 'deliveryQuantity'"
                               :rules='productRules.deliveryQuantity'>
-                              <el-input v-model="scope.row.deliveryQuantity" placeholder="请输入退货数量"
-                                :disabled="btnType == 'look'" maxlength="11" @input="watchnums(scope.row, scope.$index)"
-                                style="width: 145px;">
-                                {{ scope.row.deliveryQuantity }}
+                              <el-input v-model="scope.row.deliveryQuantity" placeholder="请输入发货数量"
+                                :disabled="btnType == 'look' || btnType == 'qrsh'" maxlength="11"
+                                @blur="checkNum(scope.row, scope.$index)" @input="watchnums(scope.row, scope.$index)" >
                               </el-input>
                             </el-form-item>
                           </template>
                         </el-table-column>
+                        <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                        <el-table-column prop="deputyNum" label="退货数量(副)" min-width="150" v-if="mainUnitFlag == 1" />
+
                         <el-table-column prop="price" label="单价(含税)" width="120" :key="110"
                           v-if="isattachmentswitch != 1">
                           <template slot="header">
@@ -347,8 +348,11 @@
                     <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
                     <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
                     <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
-                    <el-table-column prop="mainUnit" label="单位" width="160" />
-                    <el-table-column prop="num" label="数量" width="160" sortable="custom" />
+                    <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                    <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
+                    </el-table-column>
+                    <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                    <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                     <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
                     <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
                     <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
@@ -492,7 +496,7 @@ import {
 } from "@/api/masterDataManagement/index"
 export default {
   components: { Process, Form },
-  name:"createdReturnOrder",
+  name: "createdReturnOrder",
   data() {
     return {
       allProVisible: false,
@@ -752,6 +756,8 @@ export default {
       flowData: {},
       isattachmentswitch: "",
       formVisible: false,
+      tableDataFlag: false,
+      mainUnitFlag: null,
     }
   },
   computed: {
@@ -777,12 +783,23 @@ export default {
   },
   mounted() {
     this.init()
+    this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
     this.getAttachmentswitch()
     let tBody = document.querySelectorAll('.el-table')[1]
     tBody.style.height = 'auto'
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    async getMainUnitFun(code, type) {
+      this.listLoading = true
+      try {
+        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+        this.tableDataFlag = true
+        this.listLoading = false
+
+
+      } catch (error) { }
+    },
     // 含税价格输入失去焦点 检验不能为  0
     checkPrice(row, index) {
       if (!row.price) {
@@ -899,7 +916,7 @@ export default {
     // list 中 a 不能 operator b 的校验规则
     calcValidate() {
       return (rule, value, callback) => {
-        if(this.isattachmentswitch!=1) return
+        if (this.isattachmentswitch != 1) return
         let index = Number(rule.field.match(/\d+/)[0])
         let msg = this.dataForm.exchangeGoodsFlag ? `换货数量超过最大可换货数量` : `退货数量超过最大可退货数量`
         if (!value || value == 0) { callback() }
@@ -999,6 +1016,7 @@ export default {
     getcooperativeProduct() {
       this.productForm.partnerId = this.dataForm.cooperativePartnerId
       getcooperativeProduct(this.productForm).then(res => {
+
         this.cusProductData = res.data.records
       })
     },
@@ -1015,6 +1033,15 @@ export default {
       this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
       getsaleOrderDetailList(this.orderForm).then(res => {
         console.log("产品", res);
+        res.data.records.forEach(item => {
+          if (this.mainUnitFlag == 1) {
+          if (item.calculationDirection == 'multiplication') {
+            this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+          } else {
+            this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+          }
+        }
+        });
         this.productList = res.data.records
         this.productTotal = res.data.total
         this.listLoading = false
@@ -1235,12 +1262,14 @@ export default {
         productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.price]), 2)
         productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.excludingTaxPrice]), 2)
         productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
+        this.$set(productArr[index], 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.ratio]), 6))
 
       } else {
         productArr[index].assistantNum = this.jnpf.numberFormat(row.deliveryQuantity / row.ratio, 2)
         productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.price]), 2)
         productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.excludingTaxPrice]), 2)
         productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
+        this.$set(productArr[index], 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [row.num, row.ratio]), 6))
       }
       console.log("productArr", productArr);
       this.dataFormTwo.productData = productArr
@@ -1567,7 +1596,7 @@ export default {
               })
             } else if (item.outboundQuantity && item.deliveryQuantity * 1 > (item.outboundQuantity * 1 - item.returnQuantity * 1)) {
               this.iszhi = true
-              if(this.isattachmentswitch!=1)return
+              if (this.isattachmentswitch != 1) return
               this.$message({
                 message: this.dataForm.exchangeGoodsFlag ? `换货数量超过最大可换货数量` : `退货数量超过最大可退货数量`,
                 type: 'error',

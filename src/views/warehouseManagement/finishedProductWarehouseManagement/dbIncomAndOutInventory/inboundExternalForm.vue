@@ -108,11 +108,11 @@
                       <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
                         @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
 
-                      
+
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                           show-overflow-tooltip> </el-table-column>
-                        <el-table-column prop="productName" label="产品名称"  v-if="productNameFlag==='1'" min-width="160"
-                           />
+                        <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
+                          min-width="160" />
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
 
 
@@ -128,7 +128,6 @@
 
                           </template>
                         </el-table-column>
-                        <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
 
 
 
@@ -167,15 +166,20 @@
                               v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="num" label="收货数量" width="140" :key="77">
+
+                        <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                        <el-table-column prop="num" :label="mainUnitFlag == 1 ? '收货数量(主)' : '收货数量'" min-width="160">
                           <template slot="header">
-                            <span class="required">*</span>收货数量
+                            <span class="required">*</span>{{ mainUnitFlag == 1 ? '收货数量(主)' : '收货数量' }}
                           </template>
                           <template slot-scope="scope">
-                            <el-input :disabled="btnType == 'look'" @input="watchNum(scope.row, scope.$index)"
-                              v-model="scope.row.num" placeholder="收货数量"></el-input>
+                            <el-input v-model="scope.row.num" placeholder="收货数量(主)" :disabled="btnType == 'look'"
+                              @input="watchNum(scope.row, scope.$index)">
+                            </el-input>
                           </template>
                         </el-table-column>
+                        <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                        <el-table-column prop="deputyNum" label="收货数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="price" label="单价(含税)" width="120" :key="110"></el-table-column>
                         <el-table-column prop="taxRates" label="税率" width="100" :key="171"></el-table-column>
                         <el-table-column prop="taxAmount" label="税额" width="100" :key="1721"></el-table-column>
@@ -297,11 +301,11 @@
                   <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
                     @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
 
-              
+
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                       show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="productName" label="产品名称"  v-if="productNameFlag==='1'" min-width="160" />
+                    <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
 
 
@@ -316,7 +320,6 @@
 
                       </template>
                     </el-table-column>
-                    <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
 
 
 
@@ -355,15 +358,20 @@
                           v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="num" label="收货数量" width="140" :key="77">
+
+                    <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                    <el-table-column prop="num" :label="mainUnitFlag == 1 ? '收货数量(主)' : '收货数量'" min-width="160">
                       <template slot="header">
-                        <span class="required">*</span>收货数量
+                        <span class="required">*</span>{{ mainUnitFlag == 1 ? '收货数量(主)' : '收货数量' }}
                       </template>
                       <template slot-scope="scope">
-                        <el-input :disabled="btnType == 'look'" @input="watchNum(scope.row, scope.$index)"
-                          v-model="scope.row.num" placeholder="收货数量"></el-input>
+                        <el-input v-model="scope.row.num" placeholder="收货数量(主)" :disabled="btnType == 'look'"
+                          @input="watchNum(scope.row, scope.$index)">
+                        </el-input>
                       </template>
                     </el-table-column>
+                    <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                    <el-table-column prop="deputyNum" label="收货数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                     <el-table-column prop="price" label="单价(含税)" width="120" :key="110"></el-table-column>
                     <el-table-column prop="taxRates" label="税率" width="100" :key="171"></el-table-column>
                     <el-table-column prop="taxAmount" label="税额" width="100" :key="1721"></el-table-column>
@@ -469,12 +477,14 @@
                 <el-table-column prop="deliverDate" label="收货日期" width="130" sortable="custom" />
                 <el-table-column prop="ordersNo" label="订单号" width="160" sortable="custom" />
                 <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
-                 <el-table-column prop="productName" label="产品名称"  v-if="productNameFlag==='1'" min-width="160"
-                   />
+                <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
                 <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
-                <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
-                <el-table-column prop="purchaseQuantity" label="数量" width="80" sortable="custom" />
 
+                <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                <el-table-column prop="purchaseQuantity" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="160">
+                </el-table-column>
+                <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                 <el-table-column prop="requiredReceivedQuantity" label="待收货数量" width="130" sortable="custom" />
 
                 <!-- { label: "销售发货", value: "outbound_sale_send" },
@@ -671,7 +681,7 @@ export default {
       flowTaskOperatorRecordList: [],
       endTime: 0,
       productNameFlag: null,
-
+      mainUnitFlag: null,
     }
   },
   created() {
@@ -681,6 +691,10 @@ export default {
 
 
     })
+  },
+  mounted() {
+    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
+
   },
   watch: {
     "dataForm.warehouseId": {
@@ -694,6 +708,17 @@ export default {
       if (data.discount && data.proportion && data.weight) {
         this.productData[index].num = Math.floor(this.jnpf.numberFormat(this.jnpf.math('multiply', [data.discount, data.proportion, data.weight]), 2))
         this.watchNum(data, index)
+      }
+    },
+    async getMainUnitFun(code, type) {
+      this.listLoading = true
+      try {
+        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+        this.tableDataFlag = true
+        this.listLoading = false
+
+
+      } catch (error) {
       }
     },
     // 打开选择批次号弹框
@@ -804,6 +829,15 @@ export default {
       }
       purPurchaseReceiptReturnGoodsDetailList(this.orderForm).then(res => {
         console.log("采购明细",);
+        res.data.records.forEach(item => {
+          if (this.mainUnitFlag == 1) {
+            if (item.calculationDirection == 'multiplication') {
+              this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.purchaseQuantity, item.ratio]), 6))
+            } else {
+              this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.purchaseQuantity, item.ratio]), 6))
+            }
+          }
+        });
         this.productList = res.data.records
         this.productTotal = res.data.total
         this.listLoading = false
@@ -968,6 +1002,13 @@ export default {
       row.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 6)
       row.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.price, row.excludingTaxCostPrice]), 6)]), 6)
       row.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [row.totalAmount, row.taxAmount]), 6)
+      if (this.mainUnitFlag == 1) {
+        if (item.calculationDirection == 'multiplication') {
+          this.$set(row, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.ratio]), 6))
+        } else {
+          this.$set(row, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [row.num, row.ratio]), 6))
+        }
+      }
       this.productData = productArr
       console.log(this.productData);
     },
@@ -1119,6 +1160,14 @@ export default {
               this.$set(item, 'discount', '')
               this.$set(item, 'proportion', '')
               this.$set(item, 'weight', '')
+              if (this.mainUnitFlag == 1) {
+                if (item.calculationDirection == 'multiplication') {
+                  this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+                } else {
+                  this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+                }
+                this.$set(item, 'deputyUnit', item.deputyUnit)
+              }
             });
           }
 

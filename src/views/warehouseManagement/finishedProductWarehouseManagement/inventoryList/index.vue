@@ -102,12 +102,12 @@
               <div v-if="scope.row.businessType == 'outbound_taking_adjust'">盘点调整出库</div>
             </template>
           </el-table-column>
-          <el-table-column prop="sourceType" label="来源" sortable="custom" min-width="120">
+          <el-table-column prop="sourceType" label="来源类型" sortable="custom" min-width="120">
             <template slot-scope="scope">
               <div v-if="scope.row.sourceType == 'order'">订单</div>
               <div v-if="scope.row.sourceType == 'notice'">通知单</div>
               <div v-if="scope.row.sourceType == 'direct'">直接出入库</div>
-              <div v-if="scope.row.sourceType == 'outbound_purchase'">其他</div>
+              <div v-if="scope.row.sourceType == 'io_other'">其他</div>
 
             </template>
           </el-table-column>
@@ -163,7 +163,7 @@
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click="viewFun(scope.row.id, 'look', scope.row)">
+                    <el-dropdown-item @click.native="viewFun(scope.row.id, 'look', scope.row)">
                       查看详情
                     </el-dropdown-item>
 

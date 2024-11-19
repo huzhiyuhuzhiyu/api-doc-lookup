@@ -19,7 +19,7 @@
               :element-loading-text="loadingText">
               <el-tabs v-model="activeName" v-if="!approvalFlag && dataForm.approvalFlag" class="JNPF-el_tabs">
                 <el-tab-pane label="基础信息" name="orderInfo" class="orderInfo">
-                  <el-collapse v-model="activeNames">
+                  <el-collapse v-model="activeNames" v-loading="listLoading">
                     <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                       <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px"
                         label-position="top">
@@ -48,7 +48,7 @@
                       </el-form>
                     </el-collapse-item>
                     <el-collapse-item title="产品信息" name="productInfo">
-                      <div  v-if="btnType!='look'">
+                      <div v-if="btnType != 'look'">
                         <el-button type="text" style="margin-right:8px;font-size:14px!important"
                           :disabled="btnType == 'look' ? true : false" @click="scanFun()"><i
                             class="iconfont icon-saoma"></i>扫码录入</el-button>|
@@ -60,24 +60,29 @@
                           @click="batchDelete">批量删除</el-button>
                       </div>
 
-                      <JNPF-table ref="product" :data="productData" :fixedNO="true" hasC
+                      <JNPF-table ref="product" :data="productData" :fixedNO="true" hasC v-if="tableDataFlag"
                         @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
                         <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                         <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"></el-table-column>
-                        <el-table-column prop="mainUnit" label="单位" width="80" :key="88" />
                         <el-table-column prop="inventoryQuantity" label="批次库存数量" width="180" :key="8"
                           v-if="btnType != 'look'" />
-                        <el-table-column prop="num" label="调拨数量" width="140" :key="8088">
+                        <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                        <el-table-column prop="num" :label="mainUnitFlag == 1 ? '调拨数量(主)' : '调拨数量'" min-width="160">
                           <template slot="header">
-                            <span class="required">*</span>调拨数量
+                            <span class="required">*</span>{{ mainUnitFlag == 1 ? '调拨数量(主)' : '调拨数量' }}
                           </template>
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.num" placeholder="调拨数量" :disabled="btnType == 'look'"
-                              oninput="value=value.replace(/^(0+)|[^\d]+/g,'')">
+                              oninput="value=value.replace(/^(0+)|[^\d]+/g,'')"
+                              @blur="tranNumFun(scope.row, scope.$index)">
                             </el-input>
                           </template>
                         </el-table-column>
+                        <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                        <el-table-column prop="deputyNum" label="调拨数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
+
+
                         <el-table-column prop="inWarehouseName" label="目标仓库" width="160" :key="1888">
                           <template slot="header">
                             <span class="required">*</span>目标仓库
@@ -163,7 +168,7 @@
                   </el-form>
                 </el-collapse-item>
                 <el-collapse-item title="产品信息" name="productInfo">
-                  <div v-if="btnType!='look'">
+                  <div v-if="btnType != 'look'">
                     <el-button type="text" style="margin-right:8px;font-size:14px!important"
                       :disabled="btnType == 'look' ? true : false" @click="scanFun()"><i
                         class="iconfont icon-saoma"></i>扫码录入</el-button>|
@@ -175,30 +180,33 @@
                       @click="batchDelete">批量删除</el-button>
                   </div>
 
-                  <JNPF-table ref="product" :data="productData" :fixedNO="true" 
+                  <JNPF-table ref="product" :data="productData" :fixedNO="true"
                     @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                     <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"></el-table-column>
-                    <el-table-column prop="mainUnit" label="单位" width="80" :key="88" />
                     <el-table-column prop="inventoryQuantity" label="批次库存数量" width="180" :key="8"
                       v-if="btnType != 'look'" />
-                    <el-table-column prop="num" label="调拨数量" width="140" :key="8088">
+                    <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                    <el-table-column prop="num" :label="mainUnitFlag == 1 ? '调拨数量(主)' : '调拨数量'" min-width="160">
                       <template slot="header">
-                        <span class="required">*</span>调拨数量
+                        <span class="required">*</span>{{ mainUnitFlag == 1 ? '调拨数量(主)' : '调拨数量' }}
                       </template>
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.num" placeholder="调拨数量" :disabled="btnType == 'look'"
-                          oninput="value=value.replace(/^(0+)|[^\d]+/g,'')">
+                          oninput="value=value.replace(/^(0+)|[^\d]+/g,'')" @blur="tranNumFun(scope.row, scope.$index)">
                         </el-input>
                       </template>
                     </el-table-column>
+                    <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                    <el-table-column prop="deputyNum" label="调拨数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                     <el-table-column prop="inWarehouseName" label="目标仓库" width="160" :key="1888">
                       <template slot="header">
                         <span class="required">*</span>目标仓库
                       </template>
                       <template slot-scope="scope">
-                        <ComSelect-list :requestObj="{ type: '', scrapFlag: false, virtuallyFlag: false, state: 'enable' }"
+                        <ComSelect-list
+                          :requestObj="{ type: '', scrapFlag: false, virtuallyFlag: false, state: 'enable' }"
                           :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'" v-model="scope.row.inWarehouseName"
                           :method="getWarehouseList" placeholder="请选择仓库" :paramsObj="{ index: scope.$index }"
                           @change="changeWarehousex"></ComSelect-list>
@@ -292,7 +300,9 @@
                 <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
                 <el-table-column prop="productCategoryName" label="产品分类" sortable="custom" min-width="120" />
                 <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="180" />
-                <el-table-column prop="mainUnit" label="单位" min-width="80" />
+                <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+
                 <el-table-column prop="inventoryQuantity" label="批次库存数量" sortable="custom" min-width="160"
                   v-if="btnType != 'look'" />
                 <el-table-column prop="inspectionResults" label="检验结果" sortable="custom" min-width="120">
@@ -467,7 +477,9 @@ export default {
       flowData: {},
       approvalFlag: false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime: 0
+      endTime: 0,
+      tableDataFlag: false,
+      mainUnitFlag: null,
     }
   },
   created() {
@@ -475,8 +487,29 @@ export default {
     console.log(this);
 
   },
+  mounted() {
+    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
 
+  },
   methods: {
+    async getMainUnitFun(code, type) {
+      this.listLoading = true
+      try {
+        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+        this.tableDataFlag = true
+        this.listLoading = false
+
+
+      } catch (error) {
+      }
+    },
+    tranNumFun(row, index) {
+      if (row.calculationDirection == 'multiplication') {
+        this.productData[index].deputyNum = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.ratio]), 6)
+      } else {
+        this.productData[index].deputyNum = this.jnpf.numberFormat(this.jnpf.math('divide', [row.num, row.ratio]), 6)
+      }
+    },
     getProductFun() {
       console.log(21341234);
       console.log(this.scanResult);
@@ -627,6 +660,12 @@ export default {
       this.allProVisible = false
       this.selectArr.forEach(item => {
         this.$set(item, 'num', JSON.parse(JSON.stringify(item.inventoryQuantity)))
+        if (item.calculationDirection == 'multiplication') {
+          this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+        } else {
+          this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+        }
+
       })
       this.productData = [...this.productData, ...this.selectArr]
       console.log(this.productData);

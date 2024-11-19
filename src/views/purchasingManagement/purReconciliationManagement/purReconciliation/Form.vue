@@ -114,15 +114,9 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
-                            <div class="viewData">
-                              <span>{{ scope.row.mainUnit }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
+                      <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+                        :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
+                      <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
 
                       <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="120">
                         <template slot-scope="scope">
@@ -334,15 +328,9 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip>
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
-                        <div class="viewData">
-                          <span>{{ scope.row.mainUnit }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
+                  <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+                    :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
+                  <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
 
                   <el-table-column prop="excludingTaxAmount" label="不含税金额" width="120">
                     <template slot-scope="scope">
@@ -441,6 +429,7 @@ import Process from '@/components/Process/Preview'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import busFlow from '@/mixins/generator/busFlow';
+import { getBimBusinessDetail } from '@/api/basicData/index'
 export default {
   components: {
     Process, recordList
@@ -448,6 +437,8 @@ export default {
   mixins: [busFlow],
   data() {
     return {
+      isDeputyUnitSwitch: '',
+      tableFlag: false,
       activeNames: ['productInfo', 'basicInfo'],
       activeName: 'jcInfo',
       dialogTitle: '',
@@ -488,8 +479,20 @@ export default {
   computed: {
     ...mapGetters(['userInfo'])
   },
-  created() { },
+  created() {
+    this.getDeputyUnit()
+  },
   methods: {
+    getDeputyUnit() {
+      let obj = {
+        businessCode: 'deputyUnit',
+        configKey: `procureDeputyUnit`
+      }
+      getBimBusinessDetail(obj).then((res) => {
+        this.isDeputyUnitSwitch = res.data.configValue1
+        console.log(this.isDeputyUnitSwitch, '99999999999')
+      })
+    },
     clearData() {
       this.dataForm.id = ''
       this.dataFormTwo.data = []

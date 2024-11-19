@@ -121,28 +121,13 @@
                     <!-- </el-table-column> -->
                     <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom"
                       show-overflow-tooltip />
-                    <el-table-column prop="mainUnit" label="单位" width="60" />
-                    <el-table-column prop="deputyUnit" label="副单位" width="80" show-overflow-tooltip
-                      v-if="isDeputyUnitSwitch === '1'">
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
-                          <div class="viewData">
-                            <span>{{ scope.row.deputyUnit }}</span>
-                          </div>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
-                    <el-table-column prop="purchaseQuantity2" label="副数量" width="90" v-if="isDeputyUnitSwitch === '1'">
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity2'"
-                          :rules="productRules.purchaseQuantity2">
-                          <div class="viewData">
-                            <span>{{ scope.row.purchaseQuantity2 ? scope.row.purchaseQuantity2 : 0 }}</span>
-                          </div>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
+                    <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+                      :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
+                    <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
+                    <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom"
+                      v-if="isReturnSwitch === '1'" />
+                    <el-table-column prop="purchaseQuantity2" label="数量(副)" width="160" sortable="custom"
+                      v-if="isDeputyUnitSwitch === '1' && isReturnSwitch === '1'" />
                     <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom"
                       v-if="isReturnSwitch === '1'" />
                     <el-table-column prop="receivedQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
@@ -365,11 +350,13 @@
                 <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
                 <!-- </el-table-column> -->
                 <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" show-overflow-tooltip />
-                <el-table-column prop="mainUnit" label="单位" width="60" />
-                <el-table-column prop="deputyUnit" label="副单位" width="80" v-if="isDeputyUnitSwitch === '1'" />
-                <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
-                <el-table-column prop="purchaseQuantity2" label="副数量" width="160" sortable="custom"
-                  v-if="isDeputyUnitSwitch === '1'" />
+                <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+                  :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
+                <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
+                <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom"
+                  v-if="isReturnSwitch === '1'" />
+                <el-table-column prop="purchaseQuantity2" label="数量(副)" width="160" sortable="custom"
+                  v-if="isDeputyUnitSwitch === '1' && isReturnSwitch === '1'" />
                 <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom"
                   v-if="isReturnSwitch === '1'" />
                 <el-table-column prop="receivedQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
@@ -617,9 +604,9 @@
                   v-if="isReturnSwitch === '1'" />
                 <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom"
                   v-if="isReturnSwitch === '1'" />
-                <el-table-column prop="mainUnit" label="单位" width="60" v-if="isReturnSwitch === '1'" />
-                <el-table-column prop="purchaseQuantity" label="数量" width="120" sortable="custom"
-                  v-if="isReturnSwitch === '1'" />
+                <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+                  :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
+                <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
                 <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom"
                   v-if="isReturnSwitch === '1'" />
                 <el-table-column prop="processName" label="工序" width="160" sortable="custom"
@@ -631,7 +618,6 @@
                   v-if="isReturnSwitch === '0'"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" v-if="isReturnSwitch === '0'" />
                 <el-table-column prop="productCategoryName" label="所属分类" v-if="isReturnSwitch === '0'" />
-                <el-table-column prop="mainUnit" label="单位" v-if="isReturnSwitch === '0'" />
                 <el-table-column prop="inventoryQuantity" label="库存数量" v-if="isReturnSwitch === '0'">
                 </el-table-column>
               </JNPF-table>

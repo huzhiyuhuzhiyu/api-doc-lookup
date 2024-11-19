@@ -112,15 +112,9 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
-                            <div class="viewData">
-                              <span>{{ scope.row.mainUnit }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
+                      <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+                        :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
+                      <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
                       <el-table-column prop="reconciliationUnitPrice" label="数量" width="100">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'reconciliationUnitPrice'">
@@ -268,6 +262,7 @@ import { mapGetters, mapState } from 'vuex'
 import Process from '@/components/Process/Preview'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
+import { getBimBusinessDetail } from '@/api/basicData/index'
 export default {
   components: {
     Process,
@@ -275,6 +270,8 @@ export default {
   },
   data() {
     return {
+      isDeputyUnitSwitch: '',
+      tableFlag: false,
       activeNames: ['productInfo', 'basicInfo'],
       activeName: 'jcInfo',
       dialogTitle: '',
@@ -363,6 +360,7 @@ export default {
     }
   },
   created() {
+    this.getDeputyUnit()
     this.fetchData('DZDH')
   },
   computed: {
@@ -469,6 +467,15 @@ export default {
     }
   },
   methods: {
+    getDeputyUnit() {
+      let obj = {
+        businessCode: 'deputyUnit',
+        configKey: `outDeputyUnit`
+      }
+      getBimBusinessDetail(obj).then((res) => {
+        this.isDeputyUnitSwitch = res.data.configValue1
+      })
+    },
     addAdjustmentBtn() {
       console.log(234, this.dataFormTwo.data)
       this.dataFormTwo.data.push({

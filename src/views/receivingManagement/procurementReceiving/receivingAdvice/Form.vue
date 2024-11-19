@@ -115,33 +115,17 @@
                     @selection-change="handeleProductInfoData">
                     <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
                       key="1" />
-                    <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                    <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="2" />
                     <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom"
-                      show-overflow-tooltip />
-                    <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
-                    <el-table-column prop="mainUnit" label="单位" width="60" />
-                    <el-table-column prop="deputyUnit" label="副单位" width="80" show-overflow-tooltip
-                        v-if="isDeputyUnitSwitch === '1'">
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
-                            <div class="viewData">
-                              <span>{{ scope.row.deputyUnit }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
-                    <el-table-column prop="purchaseQuantity" label="订单数量" width="120" sortable="custom" />
-                    <el-table-column prop="purchaseQuantity2" label="副数量" width="90"
-                        v-if="isDeputyUnitSwitch === '1'">
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity2'"
-                            :rules="productRules.purchaseQuantity2">
-                            <div class="viewData">
-                              <span>{{ scope.row.purchaseQuantity2 ? scope.row.purchaseQuantity2 : 0 }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
+                      show-overflow-tooltip key="3" />
+                    <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" key="4" />
+                    <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+                      :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
+                    <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
+                    <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
+                      width="110" sortable="custom" />
+                    <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" sortable="custom"
+                      v-if="isDeputyUnitSwitch === '1'" />
                     <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
                       sortable="custom" />
                     <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
@@ -360,11 +344,17 @@
                 @selection-change="handeleProductInfoData">
                 <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
                   key="1" />
-                <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                <el-table-column prop="drawingNo" label="品名规格" width="200" sortable="custom" show-overflow-tooltip />
-                <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
-                <el-table-column prop="mainUnit" label="单位" width="60" />
-                <el-table-column prop="purchaseQuantity" label="订单数量" width="110" sortable="custom" />
+                <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="2" />
+                <el-table-column prop="drawingNo" label="品名规格" width="200" sortable="custom" show-overflow-tooltip
+                  key="3" />
+                <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" key="4" />
+                <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+                  :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
+                <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
+                <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
+                  width="110" sortable="custom" />
+                <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" sortable="custom"
+                  v-if="isDeputyUnitSwitch === '1'" />
                 <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="120"
                   sortable="custom" />
                 <el-table-column prop="receivedQuantity" label="收货数量" width="130" v-if="!dataForm.exchangeGoodsFlag"
@@ -384,81 +374,81 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="price" label="含税单价" width="130">
-                      <template slot="header">
-                        <span class="required">*</span>
-                        单价(含税)
-                      </template>
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'price'" :rules="productRules.price">
-                          <div class="viewData">
-                            <span>{{ scope.row.price ? scope.row.price : 0 }}</span>
-                          </div>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="totalAmount" label="金额" width="140">
-                      <template slot="header">
-                        <span class="required">*</span>
-                        金额(含税)
-                      </template>
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'totalAmount'">
-                          <div class="viewData">
-                            <span>{{ scope.row.totalAmount ? scope.row.totalAmount : 0 }}</span>
-                          </div>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="taxRate" label="税率" width="140">
-                      <template slot="header">
-                        <span class="required">*</span>
-                        税率
-                      </template>
-                      <template slot-scope="scope">
-                        <el-form-item>
-                          <div class="viewData">
-                            <span>{{ scope.row.taxRate ? scope.row.taxRate : 0 }}%</span>
-                          </div>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
+                  <template slot="header">
+                    <span class="required">*</span>
+                    单价(含税)
+                  </template>
+                  <template slot-scope="scope">
+                    <el-form-item :prop="'productData.' + scope.$index + '.' + 'price'" :rules="productRules.price">
+                      <div class="viewData">
+                        <span>{{ scope.row.price ? scope.row.price : 0 }}</span>
+                      </div>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="totalAmount" label="金额" width="140">
+                  <template slot="header">
+                    <span class="required">*</span>
+                    金额(含税)
+                  </template>
+                  <template slot-scope="scope">
+                    <el-form-item :prop="'productData.' + scope.$index + '.' + 'totalAmount'">
+                      <div class="viewData">
+                        <span>{{ scope.row.totalAmount ? scope.row.totalAmount : 0 }}</span>
+                      </div>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="taxRate" label="税率" width="140">
+                  <template slot="header">
+                    <span class="required">*</span>
+                    税率
+                  </template>
+                  <template slot-scope="scope">
+                    <el-form-item>
+                      <div class="viewData">
+                        <span>{{ scope.row.taxRate ? scope.row.taxRate : 0 }}%</span>
+                      </div>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
 
-                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150">
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxPrice'">
-                          <div class="viewData">
-                            <span>{{ scope.row.excludingTaxPrice }}</span>
-                          </div>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
+                <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150">
+                  <template slot-scope="scope">
+                    <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxPrice'">
+                      <div class="viewData">
+                        <span>{{ scope.row.excludingTaxPrice }}</span>
+                      </div>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
 
-                    <el-table-column prop="taxAmount" label="税额" min-width="100">
-                      <template slot="header">
-                        <span class="required">*</span>
-                        税额
-                      </template>
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'taxAmount'">
-                          <div class="viewData">
-                            <span>{{ scope.row.taxAmount ? scope.row.taxAmount : 0 }}</span>
-                          </div>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180">
-                      <template slot="header">
-                        <span class="required">*</span>
-                        金额(不含税)
-                      </template>
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxAmount'">
-                          <div class="viewData">
-                            <span>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</span>
-                          </div>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
+                <el-table-column prop="taxAmount" label="税额" min-width="100">
+                  <template slot="header">
+                    <span class="required">*</span>
+                    税额
+                  </template>
+                  <template slot-scope="scope">
+                    <el-form-item :prop="'productData.' + scope.$index + '.' + 'taxAmount'">
+                      <div class="viewData">
+                        <span>{{ scope.row.taxAmount ? scope.row.taxAmount : 0 }}</span>
+                      </div>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180">
+                  <template slot="header">
+                    <span class="required">*</span>
+                    金额(不含税)
+                  </template>
+                  <template slot-scope="scope">
+                    <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxAmount'">
+                      <div class="viewData">
+                        <span>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</span>
+                      </div>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="processName" label="工序" width="110" />
                 <el-table-column prop="ordersNo" label="订单号" width="180" sortable="custom" />
                 <el-table-column prop="remark" label="备注" min-width="200">
@@ -684,7 +674,7 @@ export default {
   mixins: [busFlow],
   data() {
     return {
-      isDeputyUnitSwitch:'',
+      isDeputyUnitSwitch: '',
       isattachmentswitch: '',
       categoryId: '',
       scanDialog: false,
@@ -1721,7 +1711,7 @@ export default {
       console.log(btnType, 'iiiiii')
       this.approvalFlag = approvalFlag
       console.log(data, 'ddd')
-      if (data&&data.length) {
+      if (data && data.length) {
         this.dataFormTwo.productData = data
         this.dataForm.partnerName = data[0].cooperativePartnerName
         this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId

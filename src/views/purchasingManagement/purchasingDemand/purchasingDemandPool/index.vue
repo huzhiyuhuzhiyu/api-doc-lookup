@@ -36,7 +36,7 @@
             icon="icon-ym icon-ym-report-icon-search-setting" @click="moreQueries()">更多查询</el-button> -->
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head">
           <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
           <div>
@@ -58,7 +58,7 @@
           </div>
         </div>
 
-        <JNPF-table v-loading="listLoading" @selection-change="handeleProductInfoData" hasC highlight-current-row
+        <JNPF-table v-if="tableFlag" @selection-change="handeleProductInfoData" hasC highlight-current-row
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
           :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
@@ -76,7 +76,9 @@
               <div v-else>否</div>
             </template>
           </el-table-column>
-          <el-table-column prop="mainUnit" label="单位" min-width="80" />
+          <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+            :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
+          <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
           <el-table-column prop="planDemandQuantity" label="计划需求数量" min-width="150" sortable="custom" />
           <!-- <el-table-column prop="hasPrice" label="有无价格" width="90">
             <template slot-scope="scope">
@@ -168,6 +170,7 @@ import QuiryForm from '@/views/purchasingManagement/priceAdjustmentInquiry/purch
 import fixedForm from '@/views/purchasingManagement/priceAdjustmentInquiry/fixedPointPricing/Form.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getclassAttributeList } from '@/api/masterDataManagement/index'
+import { getBimBusinessDetail } from '@/api/basicData/index'
 import { getLabel } from '@/utils/index'
 Vue.prototype.$getLabel = getLabel
 export default {
@@ -175,6 +178,8 @@ export default {
   components: { JNPFForm, QuiryForm, fixedForm, SuperQuery },
   data() {
     return {
+      isDeputyUnitSwitch: '',
+      tableFlag: false,
       superQueryVisible: false,
       superQueryJson: [
         {
@@ -280,7 +285,7 @@ export default {
           type: 'input'
         }
       ],
-      columnList: ['productCode', 'mainUnit'],
+      columnList: ['productCode', 'source', 'createByName'],
       deliveryDateArr: [],
       sourceDialog: false,
       sourceList: [],
@@ -410,9 +415,20 @@ export default {
     this.getProductClassFun()
   },
   created() {
+    this.getDeputyUnit()
     this.initData()
   },
   methods: {
+    getDeputyUnit() {
+      let obj = {
+        businessCode: 'deputyUnit',
+        configKey: `procureDeputyUnit`
+      }
+      getBimBusinessDetail(obj).then((res) => {
+        this.isDeputyUnitSwitch = res.data.configValue1
+        console.log(this.isDeputyUnitSwitch, 'this.isDeputyUnitSwitch')
+      })
+    },
     columnSetFun() {
       this.$refs.tableForm.showDrawer()
     },
@@ -497,6 +513,7 @@ export default {
       purProcurementDemandPoolList(this.listQuery)
         .then((res) => {
           this.tableDataList = res.data.records
+          this.tableFlag = true
           // res.data.records.forEach(item => {
           //   if (item.planDemandQuantity * 1 <= item.orderedQuantity * 1) {
           //     item.disabled = true
@@ -774,4 +791,3 @@ export default {
   }
 }
 </script>
-

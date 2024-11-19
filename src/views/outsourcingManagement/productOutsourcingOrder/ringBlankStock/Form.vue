@@ -35,7 +35,6 @@
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
-
                           <!-- 供应商选择弹窗  -->
                           <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
                             v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
@@ -75,13 +74,14 @@
                     |
                   </div>
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                    <el-table style="border: 1px solid #e3e7ee;" :fixedNO="true"
+                    <el-table style="border: 1px solid #e3e7ee;" :fixedNO="true" ref="multipleTable"
                       @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
                       id="table" border height="460">
                       <el-table-column type="selection" width="55" align="center" fixed="left"
                         :key="2"></el-table-column>
-                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                      <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
+                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" :key="3" />
+                      <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
+                        :key="4">
                         <template slot="header">
                           <span class="required">*</span>
                           品名规格
@@ -93,7 +93,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="productName" label="工序名称" min-width="190" show-overflow-tooltip>
+                      <el-table-column prop="productName" label="工序名称" min-width="190" show-overflow-tooltip :key="5">
                         <template slot="header">
                           <span class="required">*</span>
                           工序名称
@@ -112,7 +112,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="deliveryDate" label="交货日期" width="195">
+                      <el-table-column prop="deliveryDate" label="交货日期" width="195" :key="6">
                         <template slot="header">
                           <span class="required">*</span>
                           交货日期
@@ -126,21 +126,17 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
-                            <div class="viewData">
-                              <span>{{ scope.row.mainUnit }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
+                      <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+                        :width="isDeputyUnitSwitch === '1' ? 85 : 60" :key="7" />
+                      <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'"
+                        :key="8" />
                       <el-table-column label="待外协数量" width="110">
                         <template slot-scope="scope">
                           <el-form-item>
                             <div class="viewData">
-                              <span>{{ Number(scope.row.inventoryQuantity) - Number(scope.row.outsourcingQuantity)
-                                }}</span>
+                              <span>
+                                {{ Number(scope.row.inventoryQuantity) - Number(scope.row.outsourcingQuantity) }}
+                              </span>
                             </div>
                           </el-form-item>
                         </template>
@@ -148,7 +144,7 @@
                       <el-table-column prop="purchaseQuantity" label="数量" min-width="100">
                         <template slot="header">
                           <span class="required">*</span>
-                          数量
+                          {{ isDeputyUnitSwitch === '1' ? '数量(主)' : '数量' }}
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity'"
@@ -159,7 +155,8 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-
+                      <el-table-column prop="purchaseQuantity2" label="数量(副)" width="85"
+                        v-if="isDeputyUnitSwitch === '1'" />
                       <el-table-column prop="price" label="含税单价" width="180">
                         <template slot="header">
                           <span class="required">*</span>
@@ -325,6 +322,8 @@ export default {
   },
   data() {
     return {
+      isDeputyUnitSwitch: '',
+      tableFlag: false,
       isattachmentswitch: '',
       datafilelist: [],
       activeName: 'jcInfo',
@@ -747,16 +746,26 @@ export default {
   },
   created() {
     this.getBimBusinessDetail()
+    this.getDeputyUnit()
     this.fetchData('EPDH')
     this.getBusInfo()
   },
   methods: {
+    getDeputyUnit() {
+      let obj = {
+        businessCode: 'deputyUnit',
+        configKey: `outDeputyUnit`
+      }
+      getBimBusinessDetail(obj).then((res) => {
+        this.isDeputyUnitSwitch = res.data.configValue1
+      })
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
         configKey: 'fj_wxdd'
       }
-      getBimBusinessDetail(obj).then(res => {
+      getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
       })
     },
@@ -838,9 +847,7 @@ export default {
             inventoryQuantity: item.inventoryQuantity, //库存数量
             outsourcingQuantity: item.outsourcingQuantity, //转外协数量
             remark: item.remark,
-            outShipmentList: [
-
-            ]
+            outShipmentList: []
           })
         })
 
@@ -872,12 +879,17 @@ export default {
               }
             ]
           }
-          getBimProcessList(ProcessListRequestObj).then(res => {
+          getBimProcessList(ProcessListRequestObj).then((res) => {
             console.log(res, 'pjj')
             let data = res.data.records
             selectArr[index].processName = data[0].name
             selectArr[index].processId = data[0].id
           })
+          if (item.calculationDirection === 'multiplication') {
+            item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
+          } else {
+            item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
+          }
         })
         this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
         // 审批
@@ -1156,9 +1168,7 @@ export default {
             inventoryQuantity: item.inventoryQuantity, //库存数量
             outsourcingQuantity: item.outsourcingQuantity, //转外协数量
             remark: item.remark,
-            outShipmentList: [
-
-            ]
+            outShipmentList: []
           }
         })
         this.ProcessListRequestObj = {
@@ -1199,9 +1209,7 @@ export default {
             inventoryQuantity: item.inventoryQuantity, //库存数量
             outsourcingQuantity: item.outsourcingQuantity, //转外协数量
             remark: item.remark,
-            outShipmentList: [
-
-            ]
+            outShipmentList: []
           }
         })
         this.ProcessListRequestObj = {
@@ -1219,7 +1227,6 @@ export default {
         }
       }
 
-
       // this.fetchData('QGD')
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = data.id || ''
@@ -1232,7 +1239,7 @@ export default {
         // 通过需求池id 获取明细的数据
         getShipmentList(obj).then((res) => {
           this.dataFormTwo.data[index].outShipmentList = res.data
-          this.dataFormTwo.data[index].outShipmentList.forEach(item => {
+          this.dataFormTwo.data[index].outShipmentList.forEach((item) => {
             item.demandQuantity = this.dataFormTwo.data[index].purchaseQuantity
           })
           console.log(this.dataFormTwo.data[index].outShipmentList, 'o')
@@ -1251,7 +1258,7 @@ export default {
               }
             ]
           }
-          getBimProcessList(ProcessListRequestObj).then(res => {
+          getBimProcessList(ProcessListRequestObj).then((res) => {
             console.log(res, 'pjj')
             let data = res.data.records
             this.dataFormTwo.data[index].processName = data[0].name
@@ -1272,7 +1279,7 @@ export default {
               }
             ]
           }
-          getBimProcessList(ProcessListRequestObj).then(res => {
+          getBimProcessList(ProcessListRequestObj).then((res) => {
             console.log(res, 'pjj')
             let data = res.data.records
             this.dataFormTwo.data[index].processName = data[0].name
@@ -1280,8 +1287,13 @@ export default {
             console.log(this.dataFormTwo.data, '[[this.dataFormTwo.data]]')
           })
         }
-
+        if (item.calculationDirection === 'multiplication') {
+          item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
+        } else {
+          item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
+        }
       })
+      console.log(this.dataFormTwo.data, '')
 
       this.dialogTitle = type == 'add' ? '新建' : type == 'edit' ? '编辑' : `查看`
       this.type = type
@@ -1310,9 +1322,9 @@ export default {
       this.dataFormTwo.data.forEach((item) => {
         count += item.taxAmount * 1
         if (Number(item.purchaseQuantity) + Number(item.outsourcingQuantity) > Number(item.inventoryQuantity)) {
-          this.$message.error('毛坯已全部外协完成，提交失败！');
+          this.$message.error('毛坯已全部外协完成，提交失败！')
           this.btnLoading = false
-          throw Error();
+          throw Error()
         }
       })
       this.dataForm.taxAmount = this.jnpf.numberFormat(count)
@@ -1483,6 +1495,9 @@ export default {
         })
         .catch(() => { })
     }
+  },
+  updated() {
+    this.$refs['multipleTable'].doLayout()
   }
 }
 </script>

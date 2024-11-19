@@ -79,8 +79,12 @@
             <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
             <!-- <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" /> -->
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" width="60" />
-            <el-table-column prop="purchaseQuantity" label="数量" min-width="100" sortable="custom" />
+            <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+              :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
+            <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
+            <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
+              :width="isDeputyUnitSwitch === '1' ? 100 : 80" />
+            <el-table-column prop="purchaseQuantity2" label="数量(副)" width="100" v-if="isDeputyUnitSwitch === '1'" />
             <el-table-column prop="waitReceiptNum" label="待收货数量" min-width="130" sortable="custom" />
 
             <el-table-column prop="deliveryDate" label="交货日期" min-width="120" sortable="custom" />
@@ -144,11 +148,14 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import { getBimBusinessDetail } from '@/api/basicData/index'
 export default {
   name: 'pendingOrders',
   components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery, Detail },
   data() {
     return {
+      isDeputyUnitSwitch: '',
+      tableFlag: false,
       columnList: ['cooperativePartnerCode', 'departmentName', 'productName', 'createTime'],
       deliveryDateArr: [],
       orderFollowVisible: false,
@@ -337,6 +344,7 @@ export default {
     this.getProductClassFun()
   },
   created() {
+    this.getDeputyUnit()
     // 默认设置为近3天
     const end = new Date()
     const start = new Date()
@@ -348,6 +356,15 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    getDeputyUnit() {
+      let obj = {
+        businessCode: 'deputyUnit',
+        configKey: `procureDeputyUnit`
+      }
+      getBimBusinessDetail(obj).then((res) => {
+        this.isDeputyUnitSwitch = res.data.configValue1
+      })
+    },
     selectCustomerFun(val) {
       this.list = val
     },
@@ -524,7 +541,7 @@ export default {
           matchLogic: ''
         }
       }
-      
+
       this.$refs.SuperQuery.conditionList = []
       this.search()
     },

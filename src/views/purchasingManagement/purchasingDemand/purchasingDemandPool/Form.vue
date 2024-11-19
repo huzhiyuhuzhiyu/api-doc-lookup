@@ -87,7 +87,8 @@
                           </template>
                         </el-table-column>
 
-                        <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip :key="3">
+                        <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+                          :width="isDeputyUnitSwitch === '1' ? 100 : 60" show-overflow-tooltip :key="3">
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
                               <div class="viewData">
@@ -96,7 +97,8 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="deputyUnit" label="副单位" width="80" show-overflow-tooltip :key="4">
+                        <el-table-column prop="deputyUnit" label="单位(副)" width="100" show-overflow-tooltip :key="4"
+                          v-if="isDeputyUnitSwitch === '1'">
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
                               <div class="viewData">
@@ -128,7 +130,7 @@
                         <el-table-column prop="purchaseQuantity" label="数量" width="100" :key="7">
                           <template slot="header">
                             <span class="required">*</span>
-                            数量
+                            {{ isDeputyUnitSwitch === '1' ? '数量(主)' : '数量' }}
                           </template>
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity'"
@@ -138,12 +140,8 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="purchaseQuantity2" label="副数量" width="120"
+                        <el-table-column prop="purchaseQuantity2" label="数量(副)" width="120"
                           v-if="isDeputyUnitSwitch === '1'" :key="8">
-                          <template slot="header">
-                            <span class="required">*</span>
-                            副数量
-                          </template>
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity2'"
                               :rules="productRules.purchaseQuantity2">
@@ -154,7 +152,7 @@
                           </template>
                         </el-table-column>
 
-                        <el-table-column prop="price" label="含税单价" width="130">
+                        <el-table-column prop="price" label="含税单价" width="140">
                           <template slot="header">
                             <span class="required">*</span>
                             单价(含税)
@@ -178,7 +176,7 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="taxRate" label="税率" width="140">
+                        <el-table-column prop="taxRate" label="税率" min-width="120">
                           <template slot="header">
                             <span class="required">*</span>
                             税率
@@ -186,7 +184,7 @@
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'taxRate'"
                               :rules="productRules.taxRate">
-                              <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;">
+                              <el-select v-model="scope.row.taxRate" placeholder="请选择">
                                 <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                                   :value="item.taxRate"></el-option>
                               </el-select>
@@ -243,7 +241,7 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="colour" label="颜色" width="120"
+                        <el-table-column prop="colour" label="颜色" min-width="120"
                           v-if="this.dataForm.classAttribute !== 'finish_product'">
                           <template slot-scope="scope">
                             <el-form-item>
@@ -254,7 +252,7 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="processId" label="工序" width="120"
+                        <el-table-column prop="processId" label="工序" min-width="120"
                           v-if="this.dataForm.classAttribute !== 'finish_product'">
                           <template slot-scope="scope">
                             <el-form-item>
@@ -267,7 +265,7 @@
                         </el-table-column>
 
                         <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'"
-                          prop="sealingCoverTyping" label="打字内容" width="120">
+                          prop="sealingCoverTyping" label="打字内容" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
                               style="width: 100%;">
@@ -277,7 +275,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="accuracyLevel"
-                          label="精度等级" width="120">
+                          label="精度等级" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
                               <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
@@ -287,7 +285,7 @@
                         </el-table-column>
 
                         <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="vibrationLevel"
-                          label="振动等级" width="120">
+                          label="振动等级" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable
                               style="width: 100%;">
@@ -297,7 +295,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="oil" label="油脂"
-                          width="120">
+                          min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
@@ -306,7 +304,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="oilQuantity"
-                          label="油脂量" width="160">
+                          label="油脂量" min-width="160">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
@@ -315,7 +313,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="clearance"
-                          label="游隙" width="120">
+                          label="游隙" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
@@ -324,7 +322,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="packagingMethod"
-                          label="包装方式" width="120">
+                          label="包装方式" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
                               style="width: 100%;">
@@ -333,7 +331,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="specialRequire" label="特殊要求" width="120"
+                        <el-table-column prop="specialRequire" label="特殊要求" min-width="120"
                           v-if="this.dataForm.classAttribute == 'finish_product'">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable

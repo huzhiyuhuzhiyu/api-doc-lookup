@@ -208,7 +208,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import Form from '@/views/toolclampmeasuring/verification/inspectionRecords/Form.vue'
 import { verificationList } from '@/api/dailyManagement/Maintenance'
 export default {
-  name: 'verificationQuery',
+  // name: 'verificationQuery',
   components: { Form, SuperQuery },
   data() {
     return {

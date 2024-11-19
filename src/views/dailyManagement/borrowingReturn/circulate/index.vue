@@ -113,7 +113,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { CollectionandreturnList, deleteCollectionandreturn, guihuanCollectionandreturn } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
 export default {
-  name: 'circulate',
+  // name: 'circulate',
   components: { Form, SuperQuery },
   data() {
     return {

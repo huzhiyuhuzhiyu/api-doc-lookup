@@ -48,7 +48,7 @@
                       </el-form>
                     </el-collapse-item>
                     <el-collapse-item title="产品信息" name="productInfo">
-                      <div>
+                      <div  v-if="btnType!='look'">
                         <el-button type="text" style="margin-right:8px;font-size:14px!important"
                           :disabled="btnType == 'look' ? true : false" @click="scanFun()"><i
                             class="iconfont icon-saoma"></i>扫码录入</el-button>|
@@ -163,7 +163,7 @@
                   </el-form>
                 </el-collapse-item>
                 <el-collapse-item title="产品信息" name="productInfo">
-                  <!-- <div>
+                  <div v-if="btnType!='look'">
                     <el-button type="text" style="margin-right:8px;font-size:14px!important"
                       :disabled="btnType == 'look' ? true : false" @click="scanFun()"><i
                         class="iconfont icon-saoma"></i>扫码录入</el-button>|
@@ -173,7 +173,7 @@
                     <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                       :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
                       @click="batchDelete">批量删除</el-button>
-                  </div> -->
+                  </div>
 
                   <JNPF-table ref="product" :data="productData" :fixedNO="true" 
                     @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">

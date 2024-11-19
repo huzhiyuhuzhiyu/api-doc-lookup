@@ -109,7 +109,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { equMaintenanceList, deleteequMaintenance } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
 export default {
-  name: 'maintenanceRecords',
+  // name: 'maintenanceRecords',
   components: { Form, SuperQuery },
   data() {
     return {

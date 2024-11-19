@@ -47,7 +47,7 @@
                         </el-select>
                       </el-form-item>
                     </el-col> -->
-                    <el-col :sm="6" :xs="24">
+                    <!-- <el-col :sm="6" :xs="24">
                       <el-form-item label="仓库" prop="warehouseId">
                         <el-select v-model="dataForm.warehouseId" placeholder="请选择仓库" style="width: 100%;"
                           :disabled="btnType == 'look' ? true : false" clearable>
@@ -55,7 +55,7 @@
                             :value="item.id"></el-option>
                         </el-select>
                       </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="供应商名称" prop="partnerName">
                         <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
@@ -119,11 +119,11 @@
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                     <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
                     <!-- </el-table-column> -->
-                    <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+                    <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom"
+                      show-overflow-tooltip />
                     <el-table-column prop="mainUnit" label="单位" width="160" />
-                    <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
-                    <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom"
-                      v-if="isReturnSwitch === '1'" />
+                    <!-- <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" /> -->
+                    <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom" />
                     <el-table-column prop="receivedQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
@@ -286,7 +286,7 @@
                         </el-select>
                       </el-form-item>
                     </el-col> -->
-                <el-col :sm="6" :xs="24">
+                <!-- <el-col :sm="6" :xs="24">
                   <el-form-item label="仓库" prop="warehouseId">
                     <el-select v-model="dataForm.warehouseId" placeholder="请选择仓库" style="width: 100%;"
                       :disabled="btnType == 'look' ? true : false" clearable>
@@ -294,7 +294,7 @@
                         :value="item.id"></el-option>
                     </el-select>
                   </el-form-item>
-                </el-col>
+                </el-col> -->
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="供应商名称" prop="partnerName">
                     <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
@@ -359,9 +359,8 @@
                 <!-- </el-table-column> -->
                 <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="160" />
-                <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
-                <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom"
-                  v-if="isReturnSwitch === '1'" />
+                <!-- <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" /> -->
+                <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom" />
                 <el-table-column prop="receivedQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                   key="789">
                   <template slot="header">
@@ -526,12 +525,12 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="form.code" placeholder="请输入客户编码" clearable />
+                    <el-input v-model="form.code" placeholder="请输入供应商编码" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="form.name" placeholder="请输入客户名称" clearable />
+                    <el-input v-model="form.name" placeholder="请输入供应商名称" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -1011,6 +1010,37 @@ export default {
   watch: {
     filterText(val) {
       this.$refs.treeBox.filter(val)
+    },
+    'dataFormTwo.productData': {
+      // immediate:true,
+      handler: function (newVal, oldVal) {
+        newVal.forEach((item) => {
+          if ((item.price && item.taxRate) || (item.price && item.taxRate === 0)) {
+            item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
+          } else {
+            item.excludingTaxPrice = ''
+          }
+          if (item.receivedQuantity && item.excludingTaxPrice) {
+            item.excludingTaxAmount = this.jnpf.numberFormat(item.receivedQuantity * item.excludingTaxPrice)
+          } else {
+            item.excludingTaxAmount = ''
+          }
+          if (item.price && item.receivedQuantity && item.excludingTaxAmount) {
+            item.taxAmount = this.jnpf.numberFormat(item.price * item.receivedQuantity - item.excludingTaxAmount)
+          } else {
+            item.taxAmount = ''
+          }
+          if (item.excludingTaxAmount && item.taxAmount) {
+            item.totalAmount = this.jnpf.numberFormat(item.excludingTaxAmount * 1 + item.taxAmount * 1)
+          } else {
+            item.totalAmount = ''
+          }
+          // if (!item.price) {
+          //   this.$message.error('未找到供应商单价')
+          // }
+        })
+      },
+      deep: true
     }
   },
   created() {
@@ -1083,7 +1113,7 @@ export default {
     calcValidate() {
       return (rule, value, callback) => {
         let index = Number(rule.field.match(/\d+/)[0])
-        let msg = this.dataForm.exchangeGoodsFlag ? `换货数量超过最大可换货数量` : `退货数量超过最大可退货数量`
+        let msg = `换货数量超过最大可换货数量`
         if (!value || value == 0) {
           callback()
         } else {
@@ -1293,12 +1323,14 @@ export default {
       this.productVisible = false
       if (this.isReturnSwitch === '1') {
         this.selectArr.forEach((item) => {
+          item.receiptQuantity = item.purchaseQuantity
           item.ordersNum = item.num
           this.dataFormTwo.productData.push(item)
         })
       } else {
         this.selectArr.forEach((item) => {
-          item.purchaseQuantity = item.inventoryQuantity
+          item.receiptQuantity = item.inventoryQuantity
+          item.productsId = item.id
           this.dataFormTwo.productData.push(item)
         })
       }
@@ -1831,7 +1863,7 @@ export default {
         this.dataFormTwo.productData.forEach((item, index) => {
           let dep = {
             calculationDirection: item.calculationDirection ? item.calculationDirection : '',
-            purchaseQuantity: item.purchaseQuantity ? item.purchaseQuantity : '',
+            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
             receiptQuantity: item.receiptQuantity ? item.receiptQuantity : '',
             deputyUnit: item.deputyUnit ? item.deputyUnit : '',
             mainUnit: item.mainUnit ? item.mainUnit : '',
@@ -1859,7 +1891,7 @@ export default {
           let dep1 = {
             billStatus: item.billStatus ? item.billStatus : '',
             calculationDirection: item.calculationDirection ? item.calculationDirection : '',
-            purchaseQuantity: item.purchaseQuantity ? item.purchaseQuantity : '',
+            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
             receiptQuantity: item.receiptQuantity ? item.receiptQuantity : '',
             deputyUnit: item.deputyUnit ? item.deputyUnit : '',
             mainUnit: item.mainUnit ? item.mainUnit : '',

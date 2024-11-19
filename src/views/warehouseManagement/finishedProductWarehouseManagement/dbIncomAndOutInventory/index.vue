@@ -1950,6 +1950,7 @@ export default {
         }
         
       ],
+      mainUnitFlag:null,
     }
   },
   watch: {
@@ -1998,12 +1999,21 @@ export default {
   },
   created() {
     this.getPickingConfig()
-
+    this.getMainUnitFun('deputyUnit','warehouseDeputyUnit')
   },
   mounted() {
 
   },
   methods: {
+    async getMainUnitFun(code, type) {
+      try {
+         this.mainUnitFlag = await this.jnpf.getMainUnitFun(code,type);
+    console.log("单位配置",this.mainUnitFlag);
+        
+
+      } catch (error) {
+      }
+    },
      // 获取打字内容等
      getProductClassFun() {
       this.requestArr.forEach((item, index) => {

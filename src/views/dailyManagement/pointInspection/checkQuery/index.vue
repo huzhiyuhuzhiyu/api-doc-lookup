@@ -204,7 +204,7 @@ import Form from '@/views/dailyManagement/pointInspection/inspectionRecords/Form
 import { checkmaintenanceList, deletecheckmaintenance } from '@/api/dailyManagement/Maintenance'
 import deForm from './Form'
 export default {
-  name: 'taskQuery',
+  // name: 'taskQuery',
   components: { Form, deForm, SuperQuery },
   data() {
     return {

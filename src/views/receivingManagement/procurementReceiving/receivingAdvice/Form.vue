@@ -120,7 +120,28 @@
                       show-overflow-tooltip />
                     <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
                     <el-table-column prop="mainUnit" label="单位" width="60" />
+                    <el-table-column prop="deputyUnit" label="副单位" width="80" show-overflow-tooltip
+                        v-if="isDeputyUnitSwitch === '1'">
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
+                            <div class="viewData">
+                              <span>{{ scope.row.deputyUnit }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
                     <el-table-column prop="purchaseQuantity" label="订单数量" width="120" sortable="custom" />
+                    <el-table-column prop="purchaseQuantity2" label="副数量" width="90"
+                        v-if="isDeputyUnitSwitch === '1'">
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity2'"
+                            :rules="productRules.purchaseQuantity2">
+                            <div class="viewData">
+                              <span>{{ scope.row.purchaseQuantity2 ? scope.row.purchaseQuantity2 : 0 }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
                     <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
                       sortable="custom" />
                     <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
@@ -663,6 +684,7 @@ export default {
   mixins: [busFlow],
   data() {
     return {
+      isDeputyUnitSwitch:'',
       isattachmentswitch: '',
       categoryId: '',
       scanDialog: false,
@@ -998,6 +1020,7 @@ export default {
   },
   created() {
     this.getBimBusinessDetail()
+    this.getDeputyUnit()
     // this.handleChange()
     // this.getProvinceList()
     this.getAttributeline()
@@ -1009,6 +1032,15 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    getDeputyUnit() {
+      let obj = {
+        businessCode: 'deputyUnit',
+        configKey: `procureDeputyUnit`
+      }
+      getBimBusinessDetail(obj).then((res) => {
+        this.isDeputyUnitSwitch = res.data.configValue1
+      })
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -1868,6 +1900,7 @@ export default {
             productsId: item.productsId ? item.productsId : '',
             purchaseOrderId: item.purchaseOrderId,
             purchaseQuantity: item.purchaseQuantity,
+            purchaseQuantity2: item.purchaseQuantity2,
             purchaseReceiptReturnGoodsId: item.purchaseReceiptReturnGoodsId,
             qualifiedQuantity: item.qualifiedQuantity,
             ratio: item.ratio,
@@ -1908,6 +1941,7 @@ export default {
             classAttribute: item.classAttribute,
             id: item.id ? item.id : '',
             purchaseQuantity: item.purchaseQuantity,
+            purchaseQuantity2: item.purchaseQuantity2,
             productsId: item.productsId ? item.productsId : '',
             waitReceiptNum: item.waitReceiptNum ? item.waitReceiptNum : '',
             // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',

@@ -47,7 +47,7 @@
                         </el-select>
                       </el-form-item>
                     </el-col> -->
-                    <el-col :sm="6" :xs="24">
+                    <!-- <el-col :sm="6" :xs="24">
                       <el-form-item label="仓库" prop="warehouseId">
                         <el-select v-model="dataForm.warehouseId" placeholder="请选择仓库" style="width: 100%;"
                           :disabled="btnType == 'look' ? true : false" clearable>
@@ -55,7 +55,7 @@
                             :value="item.id"></el-option>
                         </el-select>
                       </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="供应商名称" prop="partnerName">
                         <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
@@ -119,9 +119,17 @@
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                     <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
                     <!-- </el-table-column> -->
-                    <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+                    <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom"
+                      show-overflow-tooltip />
                     <el-table-column prop="mainUnit" label="单位" width="160" />
+                    <el-table-column prop="deputyUnit" label="副单位" width="80" show-overflow-tooltip
+                      v-if="isDeputyUnitSwitch === '1'">
+
+                    </el-table-column>
                     <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
+                    <el-table-column prop="purchaseQuantity2" label="副数量" width="90" v-if="isDeputyUnitSwitch === '1'">
+
+                    </el-table-column>
                     <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom"
                       v-if="isReturnSwitch === '1'" />
                     <el-table-column prop="receivedQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
@@ -357,9 +365,29 @@
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                 <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
                 <!-- </el-table-column> -->
-                <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+                <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" show-overflow-tooltip />
                 <el-table-column prop="mainUnit" label="单位" width="160" />
+                <el-table-column prop="deputyUnit" label="副单位" width="80" show-overflow-tooltip
+                  v-if="isDeputyUnitSwitch === '1'">
+                  <template slot-scope="scope">
+                    <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
+                      <div class="viewData">
+                        <span>{{ scope.row.deputyUnit }}</span>
+                      </div>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
+                <el-table-column prop="purchaseQuantity2" label="副数量" width="90" v-if="isDeputyUnitSwitch === '1'">
+                  <template slot-scope="scope">
+                    <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity2'"
+                      :rules="productRules.purchaseQuantity2">
+                      <div class="viewData">
+                        <span>{{ scope.row.purchaseQuantity2 ? scope.row.purchaseQuantity2 : 0 }}</span>
+                      </div>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom"
                   v-if="isReturnSwitch === '1'" />
                 <el-table-column prop="receivedQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
@@ -717,6 +745,7 @@ export default {
   mixins: [busFlow],
   data() {
     return {
+      isDeputyUnitSwitch:'',
       isattachmentswitch: '',
       categoryId: '',
       tipsvisible: false,
@@ -1017,6 +1046,7 @@ export default {
     this.getReturnswitch()
     this.getProductClassFun()
     // this.handleChange()
+    this.getDeputyUnit()
     this.getBimBusinessDetail()
     this.getAttributeline()
     this.getWarehouseList()
@@ -1027,6 +1057,15 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    getDeputyUnit() {
+      let obj = {
+        businessCode: 'deputyUnit',
+        configKey: `procureDeputyUnit`
+      }
+      getBimBusinessDetail(obj).then((res) => {
+        this.isDeputyUnitSwitch = res.data.configValue1
+      })
+    },
     getProductClassFun() {
       // 获取税率(数据字典)
       getbimProductAttributes('585438081021126405').then((res) => {

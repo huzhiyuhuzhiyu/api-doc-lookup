@@ -72,12 +72,33 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
+                      <el-table-column prop="purchaseQuantity2" label="副数量" width="90"
+                        v-if="isDeputyUnitSwitch === '1'">
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity2'"
+                            :rules="productRules.purchaseQuantity2">
+                            <div class="viewData">
+                              <span>{{ scope.row.purchaseQuantity2 ? scope.row.purchaseQuantity2 : 0 }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
 
                       <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
                             <div class="viewData">
                               <span>{{ scope.row.mainUnit }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="deputyUnit" label="副单位" width="80" show-overflow-tooltip
+                        v-if="isDeputyUnitSwitch === '1'">
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
+                            <div class="viewData">
+                              <span>{{ scope.row.deputyUnit }}</span>
                             </div>
                           </el-form-item>
                         </template>
@@ -113,7 +134,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="totalAmount" label="价税合计" width="100">
+                      <el-table-column prop="totalAmount" label="金额(含税)" width="100">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'totalAmount'">
                             <div class="viewData">
@@ -400,7 +421,7 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="totalAmount" label="价税合计" width="100">
+                  <el-table-column prop="totalAmount" label="金额(含税)" width="100">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'totalAmount'">
                         <div class="viewData">
@@ -572,6 +593,7 @@ export default {
   mixins: [busFlow],
   data() {
     return {
+      isDeputyUnitSwitch: '',
       datafilelist: [],
       activeName: 'jcInfo',
       activeNames: ['productInfo', 'basicInfo'],
@@ -642,6 +664,7 @@ export default {
     }
   },
   created() {
+    this.getDeputyUnit()
     this.getBimBusinessDetail()
   },
   computed: {
@@ -696,6 +719,15 @@ export default {
     }
   },
   methods: {
+    getDeputyUnit() {
+      let obj = {
+        businessCode: 'deputyUnit',
+        configKey: `procureDeputyUnit`
+      }
+      getBimBusinessDetail(obj).then((res) => {
+        this.isDeputyUnitSwitch = res.data.configValue1
+      })
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -960,7 +992,7 @@ export default {
       }
       getBimProcessList(obj8).then((res) => {
         this.list8 = res.data.records
-        console.log(this.list8,'8')
+        console.log(this.list8, '8')
       })
 
       let obj9 = {

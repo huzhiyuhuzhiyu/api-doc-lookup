@@ -72,7 +72,17 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-
+                      <el-table-column prop="purchaseQuantity2" label="副数量" width="90"
+                        v-if="isDeputyUnitSwitch === '1'">
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity2'"
+                            :rules="productRules.purchaseQuantity2">
+                            <div class="viewData">
+                              <span>{{ scope.row.purchaseQuantity2 ? scope.row.purchaseQuantity2 : 0 }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
@@ -82,7 +92,16 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-
+                      <el-table-column prop="deputyUnit" label="副单位" width="80" show-overflow-tooltip
+                        v-if="isDeputyUnitSwitch === '1'">
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
+                            <div class="viewData">
+                              <span>{{ scope.row.deputyUnit }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="price" label="单价(含税)" width="100">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'price'">
@@ -572,6 +591,7 @@ export default {
   mixins: [busFlow],
   data() {
     return {
+      isDeputyUnitSwitch:'',
       datafilelist: [],
       activeName: 'jcInfo',
       activeNames: ['productInfo', 'basicInfo'],
@@ -642,6 +662,7 @@ export default {
     }
   },
   created() {
+    this.getDeputyUnit()
     this.getBimBusinessDetail()
   },
   computed: {
@@ -696,6 +717,15 @@ export default {
     }
   },
   methods: {
+    getDeputyUnit() {
+      let obj = {
+        businessCode: 'deputyUnit',
+        configKey: `procureDeputyUnit`
+      }
+      getBimBusinessDetail(obj).then((res) => {
+        this.isDeputyUnitSwitch = res.data.configValue1
+      })
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',

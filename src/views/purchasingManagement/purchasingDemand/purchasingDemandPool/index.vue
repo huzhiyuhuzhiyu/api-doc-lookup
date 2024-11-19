@@ -171,7 +171,7 @@ import { getclassAttributeList } from '@/api/masterDataManagement/index'
 import { getLabel } from '@/utils/index'
 Vue.prototype.$getLabel = getLabel
 export default {
-  name: 'fixedPointPricing',
+  name: 'purchasingDemandPool',
   components: { JNPFForm, QuiryForm, fixedForm, SuperQuery },
   data() {
     return {

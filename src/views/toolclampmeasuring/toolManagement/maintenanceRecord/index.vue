@@ -139,7 +139,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { RepairRequestList, deleteRepairRequest } from '@/api/dailyManagement/Maintenance'
 import Form from '@/views/dailyManagement/maintenanceManagement/deviceservice/Form.vue'
 export default {
-  name: 'maintenanceRecord',
+  // name: 'maintenanceRecord',
   components: { Form, SuperQuery },
   data() {
     return {

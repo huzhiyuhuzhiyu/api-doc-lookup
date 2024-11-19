@@ -85,7 +85,7 @@ import { getequLifeCyclelist } from "@/api/basicData/materialSettings";
 import Form from './Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
-  name: 'maintenancelevel',
+  // name: 'maintenancelevel',
   components: { SuperQuery, Form },
   data() {
     return {

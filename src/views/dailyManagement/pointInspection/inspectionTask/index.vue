@@ -124,7 +124,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { checkmaintenanceList, deletecheckmaintenance } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
 export default {
-  name: 'inspectionTask',
+  // name: 'inspectionTask',
   components: { Form, SuperQuery },
   data() {
     return {

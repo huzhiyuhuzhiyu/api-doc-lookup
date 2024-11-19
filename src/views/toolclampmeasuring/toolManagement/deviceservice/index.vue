@@ -181,7 +181,7 @@ import sucForm from './sucForm'
 import { RepairRequestList, deleteRepairRequest, equEquipmentRepairOutsourcing } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
 export default {
-  name: 'deviceservice',
+  // name: 'deviceservice',
   components: { Form, depForm, sucForm, SuperQuery },
   data() {
     return {

@@ -102,7 +102,7 @@ import { CollectionandreturnList } from '@/api/dailyManagement/Maintenance'
 import Form from '../equipmentrequisition/Form.vue'
 import Form1 from '../equipmentreturn/Form.vue'
 export default {
-  name: 'circulate',
+  // name: 'circulate',
   components: { Form, SuperQuery, Form1 },
   data() {
     return {

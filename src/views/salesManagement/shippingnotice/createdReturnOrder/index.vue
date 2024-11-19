@@ -313,7 +313,7 @@
                   <el-form @submit.native.prevent>
                     <el-col :span="4">
                       <el-form-item>
-                        <el-input v-model="orderForm.partnerName" placeholder="客户名称" clearable />
+                        <el-input v-model="orderForm.orderNo" placeholder="订单号" clearable />
                       </el-form-item>
                     </el-col>
                     <el-col :span="6">
@@ -322,11 +322,9 @@
                       </el-form-item>
                     </el-col>
 
-                    <el-col :span="8">
+                    <el-col :span="6">
                       <el-form-item>
-                        <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
-                          style="width: 100%;" start-placeholder="交货开始日期" end-placeholder="交货结束日期" clearable>
-                        </el-date-picker>
+                        <el-input v-model="orderForm.drawingNo" placeholder="品名规格" clearable />
                       </el-form-item>
                     </el-col>
 

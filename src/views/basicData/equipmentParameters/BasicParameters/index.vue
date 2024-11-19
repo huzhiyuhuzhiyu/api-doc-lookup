@@ -336,7 +336,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { parametersShelveslist, deleteparametersShelves } from '@/api/basicData/index'
 import DepForm from './depForm'
 export default {
-  name: 'BasicParameters',
+  // name: 'BasicParameters',
   components: { DepForm, SuperQuery },
   data() {
     return {

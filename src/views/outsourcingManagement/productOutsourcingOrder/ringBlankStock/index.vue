@@ -65,6 +65,9 @@
             <el-table-column prop="productCategoryName" label="毛坯分类" width="120" sortable="custom" />
             <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="60" />
+            <el-table-column prop="weight" label="重量(kg)" width="90" />
+            <el-table-column prop="proportion" label="比重" width="80" />
+            <el-table-column prop="discount" label="折扣" width="80" />
             <el-table-column prop="inventoryQuantity" label="库存数量" width="120" sortable="custom" />
             <el-table-column prop="latestStorageTime" label="入库日期" width="220" sortable="custom" />
           </JNPF-table>
@@ -124,7 +127,7 @@ export default {
           label: '单位',
           type: 'input'
         },
-
+        
         {
           prop: 'latestStorageTime',
           label: '入库日期',
@@ -133,8 +136,7 @@ export default {
           startPlaceholder: '开始日期',
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
-        },
-
+        }
       ],
       printVisible: false,
       formVisible: false,
@@ -240,7 +242,16 @@ export default {
       printForm: {}, // 表单数据
       //	收货状态 待收货 receiving、已收货 received,可用值:received,receiving,returned,returning
       receiptReturnType: [{ label: '未完成', value: 'receiving' }, { label: '已完成', value: 'received' }],
-      columnList: ['cooperativePartnerCode', 'excludingTaxTotalAmount', 'taxAmount', 'receivingStatus', 'createByName']
+      columnList: [
+        'cooperativePartnerCode',
+        'excludingTaxTotalAmount',
+        'taxAmount',
+        'receivingStatus',
+        'createByName',
+        'weight',
+        'proportion',
+        'discount'
+      ]
     }
   },
   created() {
@@ -250,7 +261,9 @@ export default {
   methods: {
     closeForm(isRefresh) {
       this.formVisible = false
-      if (isRefresh) { this.initData() }
+      if (isRefresh) {
+        this.initData()
+      }
     },
     // 导出
     exportForm(exportTableRef) {
@@ -302,11 +315,11 @@ export default {
       this.$refs.tableForm.showDrawer()
     },
     sortChange({ prop, order }) {
-      let newProp;
+      let newProp
       if (prop === 'productDrawingNo' || prop === 'productCode' || prop === 'productCategoryName') {
         newProp = prop
       } else {
-        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
       this.listQuery.orderItems[0].asc = order !== 'descending'
       this.listQuery.orderItems[0].column = order === null ? '' : newProp

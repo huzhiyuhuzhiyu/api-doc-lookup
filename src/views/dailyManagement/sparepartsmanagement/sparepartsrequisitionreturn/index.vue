@@ -102,7 +102,7 @@ import { CollectionandreturnList } from '@/api/dailyManagement/Maintenance'
 import Form from '../sparepartsrequisition/Form.vue'
 import Form1 from '../sparepartsReturn/Form.vue'
 export default {
-  name: 'sparepartsrequisitionreturn',
+  // name: 'sparepartsrequisitionreturn',
   components: { Form, SuperQuery, Form1 },
   data() {
     return {

@@ -102,7 +102,7 @@
 import { VerificationrecordsList, deleteVerificationrecords, updateVerificationrecords } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
 export default {
-    name: 'verificationrecords',
+    // name: 'verificationrecords',
     components: { Form, },
     data() {
         return {

@@ -234,7 +234,7 @@ import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 
 export default {
-  name: 'PartnerProduct',
+  // name: 'PartnerProduct',
   components: { ExportForm },
   data() {
     return {

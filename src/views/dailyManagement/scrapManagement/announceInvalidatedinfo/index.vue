@@ -138,7 +138,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { ScrapApplicationFormListinfo, deleteScrapApplicationForm } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
 export default {
-  name: 'announceInvalidated',
+  // name: 'announceInvalidated',
   components: { Form, SuperQuery },
   data() {
     return {

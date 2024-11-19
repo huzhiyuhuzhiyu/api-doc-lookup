@@ -112,7 +112,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { verificationList, deleteverification } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
 export default {
-  name: 'verification',
+  // name: 'verification',
   components: { Form, SuperQuery },
   data() {
     return {

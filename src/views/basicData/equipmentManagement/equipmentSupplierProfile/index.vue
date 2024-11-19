@@ -172,7 +172,7 @@ import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
-  name: 'equipmentSupplierProfile',
+  // name: 'equipmentSupplierProfile',
   components: { Form, UserRelationList, SuperQuery },
   data() {
     return {

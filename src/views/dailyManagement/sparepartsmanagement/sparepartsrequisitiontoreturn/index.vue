@@ -70,7 +70,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { CollectionandreturnList, deleteCollectionandreturn } from '@/api/dailyManagement/Maintenance'
 import Form from '../sparepartsrequisition/Form.vue'
 export default {
-  name: 'sparepartsrequisitiontoreturn',
+  // name: 'sparepartsrequisitiontoreturn',
   components: { SuperQuery,Form },
   data() {
     return {

@@ -90,14 +90,14 @@
                     </el-col>
 
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="地区" prop="regionCode">
+                      <el-form-item label="地区" prop="regionCode" :rules="isaddressswitch?{required: true, message: '地区不能为空', trigger: 'change'}:{}">
                         <el-select v-model="dataForm.regionCode" placeholder="请选择地区" style="width: 100%;" @change="handleChange" :disabled="btnType=='look' ? true : false">
                           <el-option v-for="(item, index) in areaList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="国家" prop="country">
+                      <el-form-item label="国家" prop="country" :rules="isaddressswitch?{required: true, message: '国家不能为空', trigger: 'change'}:{}">
 
                         <el-select v-model="dataForm.country" placeholder="请选择国家" style="width: 100%;" :disabled="btnType=='look' ? true : false">
                           <el-option v-for="(item, index) in countryList" :key="index" :label="item.name" :value="item.code"></el-option>
@@ -105,7 +105,7 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24" v-if="dataForm.regionCode != 'foreign'">
-                      <el-form-item label="省/市/区" prop="provincecityarea">
+                      <el-form-item label="省/市/区" prop="provincecityarea" :rules="isaddressswitch?{required: true, message: '省/市/区不能为空', trigger: 'change'}:{required: false}">
                         <JNPF-Address v-model="dataForm.provincecityarea" @change="actiompro" placeholder="请选择省/市/区" :disabled="btnType == 'look' ? true : false"></JNPF-Address>
                       </el-form-item>
                     </el-col>
@@ -140,7 +140,7 @@
                 </el-col> -->
 
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="详细地址" prop="address">
+                      <el-form-item label="详细地址" prop="address" :rules="isaddressswitch?{required: true, message: '详细地址不能为空', trigger: 'blur'}:{}">
                         <el-input v-model="dataForm.address" placeholder="请输入详细地址" :disabled="btnType=='look' ? true : false" maxlength="300" />
                       </el-form-item>
                     </el-col>
@@ -660,33 +660,18 @@ export default {
           { required: true, message: '请输入名称', trigger: 'blur' },
 
         ],
-        regionCode: [
-          { validator: this.validatepass, trigger: 'change' }
+        // province: [
+        //   { required: true, message: '省份不能为空', trigger: 'change' }
 
-          // ],
-          // country: [
-          //   { required: true, message: '国家不能为空', trigger: 'change' },
+        // ],
+        // city: [
+        //   { required: true, message: '城市不能为空', trigger: 'change' }
 
-          // ],
-          // province: [
-          //   { required: true, message: '省份不能为空', trigger: 'change' }
+        // ],
+        // area: [
+        //   { required: true, message: '区不能为空', trigger: 'change' }
 
-          // ],
-          // city: [
-          //   { required: true, message: '城市不能为空', trigger: 'change' }
-
-          // ],
-          // area: [
-          //   { required: true, message: '区不能为空', trigger: 'change' }
-
-          // ],
-          // provincecityarea: [
-          //   { required: true, message: '省/市/区不能为空', trigger: 'change' }
-          // ],
-          // address: [
-          //   { required: true, message: '请输入地址', trigger: 'blur' },
-
-        ],
+        // ],
         taxRate: [
           { required: true, message: '请选择税率', trigger: 'blur' },
         ],
@@ -720,14 +705,6 @@ export default {
     this.getDictionaryType()
   },
   methods: {
-    validatepass(rule, value, callback) {
-      // console.log(rule, value, callback);
-      if (this.isaddressswitch && !value) {
-        callback(new Error("地区不能为空"));
-      } else {
-        callback()
-      }
-    },
     //地址是否必填
     getSwitch() {
       let obj = {

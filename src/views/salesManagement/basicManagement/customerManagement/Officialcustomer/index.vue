@@ -169,7 +169,7 @@ import Form from './Form'
 import { mapGetters, mapState } from 'vuex'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
-  name: 'formalCustomer',
+  // name: 'formalCustomer',
   components: { Form, ExportForm, RecordForm, SuperQuery, programme },
   data() {
     return {

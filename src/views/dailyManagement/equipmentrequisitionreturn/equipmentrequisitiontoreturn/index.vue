@@ -57,7 +57,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { CollectionandreturnList, deleteCollectionandreturn } from '@/api/dailyManagement/Maintenance'
 import Form from '../equipmentrequisition/Form.vue'
 export default {
-  name: 'equipmentrequisitiontoreturn',
+  // name: 'equipmentrequisitiontoreturn',
   components: { SuperQuery,Form },
   data() {
     return {

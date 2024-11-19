@@ -42,7 +42,7 @@
 
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head">
           <div>
             <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
@@ -62,13 +62,13 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" border :setColumnDisplayList="columnList"
-          :fixedNO="true" @sort-change="sortChange" custom-column>
+        <JNPF-table ref="dataTable"  :data="tableData" border :setColumnDisplayList="columnList"
+          :fixedNO="true" @sort-change="sortChange" custom-column v-if="tableDataFlag">
           <el-table-column prop="orderNo" label="单号" sortable="custom" min-width="180">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="viewFun(scope.row.moveId, 'look', scope.row)">{{
                 scope.row.orderNo
-              }}</el-link>
+                }}</el-link>
             </template>
           </el-table-column>
           <el-table-column prop="businessType" label="业务类型" sortable="custom" min-width="120">
@@ -105,13 +105,20 @@
           </el-table-column>
           <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="300" />
           <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
-          <el-table-column prop="mainUnit" label="单位" min-width="140" />
-          <el-table-column prop="num" label="数量" sortable="custom" min-width="140" />
-
+          <!-- <el-table-column prop="mainUnit" label="单位" min-width="140" />
+          <el-table-column prop="num" label="数量" sortable="custom" min-width="140" /> -->
+          <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+          <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'"  min-width="120" />
+          <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+          <el-table-column prop="deputyNum" label="数量(副)"  min-width="120" v-if="mainUnitFlag == 1" />
           <el-table-column prop="costPrice" label="单价(含税)" sortable="custom" min-width="160" />
           <el-table-column prop="totalAmount" label="总金额(含税)" sortable="custom" min-width="180" />
 
-          <el-table-column prop="taxRate" label="税率(%)" sortable="custom" min-width="140" />
+          <el-table-column prop="taxRate" label="税率" sortable="custom" min-width="140" >
+            <template slot-scope="scope">
+              <div>{{ scope.row.taxRate+'%' }}</div>
+            </template>
+          </el-table-column>
           <el-table-column prop="excludingTaxCostPrice" label="单价(不含税)" sortable="custom" min-width="180" />
           <el-table-column prop="taxAmount" label="税额" sortable="custom" min-width="120" />
           <el-table-column prop="excludingTaxAmount" label="总金额(不含税)" sortable="custom" min-width="180" />
@@ -131,10 +138,11 @@
             <template slot-scope="scope">
               <el-tag type="warning" v-if="scope.row.documentStatus == 'draft'">草稿</el-tag>
               <el-tag type="success" v-else-if="scope.row.documentStatus == 'submit'">提交</el-tag>
+              <el-tag type="danger" v-else-if="scope.row.documentStatus == 'back'">撤回</el-tag>
             </template>
 
           </el-table-column>
-          <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center" >
+          <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center">
             <template slot-scope="scope">
               <div v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'">
                 <el-tag>审批中</el-tag>
@@ -155,9 +163,10 @@
           <el-table-column label="操作" min-width="200" fixed="right">
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
-                :delDisabled="scope.row.documentStatus == 'submit'" :editDisabled="scope.row.documentStatus == 'submit'||scope.row.documentStatus == 'back'"
+                :delDisabled="scope.row.documentStatus == 'submit'"
+                :editDisabled="scope.row.documentStatus == 'submit'||scope.row.documentStatus == 'back'"
                 @edit="viewFun(scope.row.moveId, 'edit', scope.row)" @del="handleDel(scope.row.moveId)">
-                 
+
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -165,7 +174,8 @@
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="viewFun(scope.row.moveId, 'look', scope.row)">查看详情</el-dropdown-item>
+                    <el-dropdown-item
+                      @click.native="viewFun(scope.row.moveId, 'look', scope.row)">查看详情</el-dropdown-item>
                     <el-dropdown-item type="text"
                       :disabled="!(scope.row.businessType == 'inbound_purchase' && scope.row.sourceType == 'direct'&&scope.row.documentStatus=='submit')"
                       @click.native="PrintFun(scope.row.id)">打印</el-dropdown-item>
@@ -189,7 +199,7 @@
     </div>
 
 
-    <Form v-if="formVisible" ref="Form" @close="closeForm" />
+    <Form v-if="formVisible" ref="Form" @close="closeForm" :warehouseCode="warehouseCode"/>
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <ProductInboundForm v-if="productInboundFormVisible" ref="productInboundREFForm" @close="closeForm">
     </ProductInboundForm>
@@ -229,7 +239,7 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-      <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
       :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
   </div>
@@ -238,7 +248,7 @@
 <script>
 import { getInventoryDetailList, getInventorySummaryData } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import Form from '../inventoryList/Form.vue'
+import Form from '../directInandOutWarehouse/index.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import ProductInboundForm from '../dbIncomAndOutInventory/productInboundForm.vue'
 import WorkInboundForm from '../dbIncomAndOutInventory/workInboundForm.vue'
@@ -270,7 +280,7 @@ export default {
     Form, SuperQuery, ExportForm, ProductInboundForm, WorkInboundForm, OutboundSaleSendForm, InboundSaleReturnForm,
     InboundPurchaseForm, OutboundPurchaseForm, OutboundExternalSendForm,
     InboundExternalForm, OutboundPickOutForm, InboundReturnMaterialsForm,
-    Transfer, SaleOutboundForm, ExternalMaterOutboundForm, PurchaseOrderInboundForm, ExternalInboundForm, outboundUseForm, InboundReturnForm, PrintBrowse, PrintDialog 
+    Transfer, SaleOutboundForm, ExternalMaterOutboundForm, PurchaseOrderInboundForm, ExternalInboundForm, outboundUseForm, InboundReturnForm, PrintBrowse, PrintDialog
   },
   props: {
     warehouseCode: "",
@@ -522,9 +532,11 @@ export default {
         },
       ],
       classAttributeList: [],
-      prindId:"",
-      formId:"",
-      enCode:"",
+      prindId: "",
+      formId: "",
+      enCode: "",
+      mainUnitFlag:null,
+      tableDataFlag:false,
     }
   },
   created() {
@@ -533,12 +545,25 @@ export default {
   },
   mounted() {
     this.getProductClassFun()
+    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
+
   },
   methods: {
+    async getMainUnitFun(code, type) {
+      this.listLoading = true
+      try {
+        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+        this.tableDataFlag = true
+        this.listLoading = false
+
+
+      } catch (error) {
+      }
+    },
     printWarehouse(enCode) {
       getPrintBusInfo(enCode).then(res => {
         if (res.data) {
-          this.prindId = res.data.id 
+          this.prindId = res.data.id
           this.printBrowseVisible = true
         } else {
           this.$message.warning('未找到相应打印模版')
@@ -999,7 +1024,7 @@ export default {
         } else {
           this.formVisible = true
           this.$nextTick(() => {
-            this.$refs.Form.init(id, type)
+            this.$refs.Form.init(id, type, this.warehouseCode)
           })
         }
 
@@ -1018,7 +1043,7 @@ export default {
         } else {
           this.formVisible = true
           this.$nextTick(() => {
-            this.$refs.Form.init(id, type)
+            this.$refs.Form.init(id, type, this.warehouseCode)
           })
         }
 
@@ -1038,7 +1063,7 @@ export default {
         } else {
           this.formVisible = true
           this.$nextTick(() => {
-            this.$refs.Form.init(id, type)
+            this.$refs.Form.init(id, type, this.warehouseCode)
           })
         }
       } else if (row.businessType == 'outbound_sale_send') {
@@ -1055,7 +1080,7 @@ export default {
         } else {
           this.formVisible = true
           this.$nextTick(() => {
-            this.$refs.Form.init(id, type)
+            this.$refs.Form.init(id, type, this.warehouseCode)
           })
         }
       } else if (row.businessType == 'outbound_pick_out') {
@@ -1073,7 +1098,7 @@ export default {
         this.$nextTick(() => {
           this.$refs.transferREFForm.init(id, type,)
         })
-      }else if (row.businessType == 'outbound_use') {
+      } else if (row.businessType == 'outbound_use') {
         this.outboundUseVisible = true
         this.$nextTick(() => {
           this.$refs.outboundUseREFForm.init(id, type,)
@@ -1087,7 +1112,7 @@ export default {
         console.log(555);
         this.formVisible = true
         this.$nextTick(() => {
-          this.$refs.Form.init(id, type)
+          this.$refs.Form.init(id, type, this.warehouseCode)
         })
       }
     },
@@ -1207,8 +1232,8 @@ export default {
       this.externalMaterOutboundFormVisible = false
       this.externalInboundFormVisible = false
       this.PurchaseOrderInboundFormVisible = false
-      this.outboundUseVisible=false
-      this.inboundReturnVisible=false
+      this.outboundUseVisible = false
+      this.inboundReturnVisible = false
       if (isRefresh) {
         this.keyword = ''
         this.initData()

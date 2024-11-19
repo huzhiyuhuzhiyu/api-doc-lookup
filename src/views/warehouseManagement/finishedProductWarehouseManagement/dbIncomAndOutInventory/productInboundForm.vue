@@ -100,8 +100,8 @@
 
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" :key="6"
                           show-overflow-tooltip> </el-table-column>
-                        <el-table-column prop="productName" label="产品名称"  v-if="productNameFlag==='1'" min-width="160"
-                           />
+                        <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
+                          min-width="160" />
                         <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
 
                         <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112"
@@ -116,20 +116,25 @@
 
                           </template>
                         </el-table-column>
-                        <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
                         <el-table-column prop="waitReceivedQuantity" label="待入库数量" width="140"
                           v-if="btnType != 'look'"></el-table-column>
 
-                        <el-table-column prop="num" label="入库数量" width="140" :key="77">
+
+
+
+                        <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                        <el-table-column prop="num" :label="mainUnitFlag == 1 ? '入库数量(主)' : '入库数量'" min-width="160">
                           <template slot="header">
-                            <span class="required">*</span>入库数量
+                            <span class="required">*</span>{{ mainUnitFlag == 1 ? '入库数量(主)' : '入库数量' }}
                           </template>
                           <template slot-scope="scope">
-                            <el-input :disabled="btnType == 'look'" @input="watchNum(scope.row, scope.$index)"
-                              v-model="scope.row.num" placeholder="入库数量"></el-input>
+                            <el-input v-model="scope.row.num" placeholder="入库数量(主)" :disabled="btnType == 'look'"
+                              @input="watchNum(scope.row, scope.$index)">
+                            </el-input>
                           </template>
                         </el-table-column>
-
+                        <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                        <el-table-column prop="deputyNum" label="入库数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
 
                         <!-- <el-table-column prop="aperture" label="孔径" width="100"
                           v-if="classAttribute != 'finish_product'">
@@ -140,8 +145,7 @@
                             </el-select>
                           </template>
                         </el-table-column> -->
-                        <el-table-column prop="sealingCoverTyping" label="打字内容" width="120"
-                          v-if="classAttribute == 'finish_product'" :key="12">
+                        <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="12">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="打字内容" clearable
                               :disabled="btnType == 'look'" style="width: 100%;">
@@ -150,8 +154,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="1"
-                          v-if="classAttribute == 'finish_product'">
+                        <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="1">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.accuracyLevel" placeholder="精度等级" clearable
                               :disabled="btnType == 'look'">
@@ -161,8 +164,7 @@
                           </template>
                         </el-table-column>
 
-                        <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="2"
-                          v-if="classAttribute == 'finish_product'">
+                        <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="2">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.vibrationLevel" placeholder="振动等级" clearable
                               :disabled="btnType == 'look'" style="width: 100%;">
@@ -171,8 +173,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="oil" label="油脂" width="120" v-if="classAttribute == 'finish_product'"
-                          :key="3">
+                        <el-table-column prop="oil" label="油脂" width="120" :key="3">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;"
                               :disabled="btnType == 'look'">
@@ -181,8 +182,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="4"
-                          v-if="classAttribute == 'finish_product'">
+                        <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="4">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;"
                               :disabled="btnType == 'look'">
@@ -191,8 +191,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="clearance" label="游隙" width="120" :key="5"
-                          v-if="classAttribute == 'finish_product'">
+                        <el-table-column prop="clearance" label="游隙" width="120" :key="5">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;"
                               :disabled="btnType == 'look'">
@@ -201,8 +200,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="6"
-                          v-if="classAttribute == 'finish_product'">
+                        <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="6">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
                               :disabled="btnType == 'look'" style="width: 100%;">
@@ -211,8 +209,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="7"
-                          v-if="classAttribute == 'finish_product'">
+                        <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="7">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
                               :disabled="btnType == 'look'" style="width: 100%;">
@@ -325,7 +322,7 @@
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" :key="6"
                       show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="productName" label="产品名称"  v-if="productNameFlag==='1'" min-width="160"  />
+                    <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
 
                     <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112" v-if="allocationFlag">
@@ -339,19 +336,23 @@
 
                       </template>
                     </el-table-column>
-                    <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
                     <el-table-column prop="waitReceivedQuantity" label="待入库数量" width="140"
                       v-if="btnType != 'look'"></el-table-column>
 
-                    <el-table-column prop="num" label="入库数量" width="140" :key="77">
+
+                    <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                    <el-table-column prop="num" :label="mainUnitFlag == 1 ? '入库数量(主)' : '入库数量'" min-width="160">
                       <template slot="header">
-                        <span class="required">*</span>入库数量
+                        <span class="required">*</span>{{ mainUnitFlag == 1 ? '入库数量(主)' : '入库数量' }}
                       </template>
                       <template slot-scope="scope">
-                        <el-input :disabled="btnType == 'look'" @input="watchNum(scope.row, scope.$index)"
-                          v-model="scope.row.num" placeholder="入库数量"></el-input>
+                        <el-input v-model="scope.row.num" placeholder="入库数量(主)" :disabled="btnType == 'look'"
+                          @input="watchNum(scope.row, scope.$index)">
+                        </el-input>
                       </template>
                     </el-table-column>
+                    <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                    <el-table-column prop="deputyNum" label="入库数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
 
 
                     <!-- <el-table-column prop="aperture" label="孔径" width="100"
@@ -363,8 +364,7 @@
                             </el-select>
                           </template>
                         </el-table-column> -->
-                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="120"
-                      v-if="classAttribute == 'finish_product'" :key="12">
+                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="12">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.sealingCoverTyping" placeholder="打字内容" clearable
                           :disabled="btnType == 'look'" style="width: 100%;">
@@ -373,8 +373,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="1"
-                      v-if="classAttribute == 'finish_product'">
+                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="1">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.accuracyLevel" placeholder="精度等级" clearable
                           :disabled="btnType == 'look'">
@@ -384,8 +383,7 @@
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="2"
-                      v-if="classAttribute == 'finish_product'">
+                    <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="2">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.vibrationLevel" placeholder="振动等级" clearable
                           :disabled="btnType == 'look'" style="width: 100%;">
@@ -394,8 +392,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="oil" label="油脂" width="120" v-if="classAttribute == 'finish_product'"
-                      :key="3">
+                    <el-table-column prop="oil" label="油脂" width="120" :key="3">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;"
                           :disabled="btnType == 'look'">
@@ -404,8 +401,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="4"
-                      v-if="classAttribute == 'finish_product'">
+                    <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="4">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;"
                           :disabled="btnType == 'look'">
@@ -414,8 +410,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="clearance" label="游隙" width="120" :key="5"
-                      v-if="classAttribute == 'finish_product'">
+                    <el-table-column prop="clearance" label="游隙" width="120" :key="5">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;"
                           :disabled="btnType == 'look'">
@@ -424,8 +419,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="6"
-                      v-if="classAttribute == 'finish_product'">
+                    <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="6">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
                           :disabled="btnType == 'look'" style="width: 100%;">
@@ -434,8 +428,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="7"
-                      v-if="classAttribute == 'finish_product'">
+                    <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="7">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
                           :disabled="btnType == 'look'" style="width: 100%;">
@@ -504,30 +497,23 @@
                 @selection-change="handleSelectionChangeAllPruduct" ref="form">
                 <el-table-column prop="orderNo" label="任务单号" width="180" />
                 <el-table-column prop="productDrawingNo" label="品名规格" width="300" />
-                 <el-table-column prop="productName" label="产品名称"  v-if="productNameFlag==='1'" min-width="160" sortable="custom"
-                   />
-                <el-table-column v-if="classAttribute == 'finish_product'" prop="productCode" label="产品编码"
-                  width="140" />
+                <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
+                  sortable="custom" />
+                <el-table-column prop="productCode" label="产品编码" width="140" />
                 <el-table-column prop="mainUnit" label="单位" width="80" />
                 <el-table-column prop="productionQuantity" label="生产数量" width="120" />
                 <el-table-column prop="completedQuantity" label="已完成数量" width="130" />
                 <el-table-column prop="waitReceivedQuantity" label="待入库数量" width="130" />
-                <el-table-column v-if="classAttribute == 'semi_finished'" prop="aperture" label="孔径" width="80" />
-                <el-table-column v-if="classAttribute == 'semi_finished'" prop="productionPlanNo" label="计划单号"
-                  width="160" />
-                <el-table-column v-if="classAttribute == 'finish_product'" prop="sealingCoverTyping" label="打字内容"
-                  width="110" />
-                <el-table-column v-if="classAttribute == 'finish_product'" prop="accuracyLevel" label="精度等级"
-                  width="110" />
-                <el-table-column v-if="classAttribute == 'finish_product'" prop="vibrationLevel" label="振动等级"
-                  width="110" />
-                <el-table-column v-if="classAttribute == 'finish_product'" prop="oil" label="油脂" width="80" />
-                <el-table-column v-if="classAttribute == 'finish_product'" prop="oilQuantity" label="油脂量" width="110" />
-                <el-table-column v-if="classAttribute == 'finish_product'" prop="clearance" label="游隙" width="80" />
-                <el-table-column v-if="classAttribute == 'finish_product'" prop="packagingMethod" label="包装方式"
-                  width="110"></el-table-column>
-                <el-table-column v-if="classAttribute == 'finish_product'" prop="specialRequire" label="特殊要求"
-                  width="110"></el-table-column>
+                <el-table-column prop="aperture" label="孔径" width="80" />
+                <el-table-column prop="productionPlanNo" label="计划单号" width="160" />
+                <el-table-column prop="sealingCoverTyping" label="打字内容" width="110" />
+                <el-table-column prop="accuracyLevel" label="精度等级" width="110" />
+                <el-table-column prop="vibrationLevel" label="振动等级" width="110" />
+                <el-table-column prop="oil" label="油脂" width="80" />
+                <el-table-column prop="oilQuantity" label="油脂量" width="110" />
+                <el-table-column prop="clearance" label="游隙" width="80" />
+                <el-table-column prop="packagingMethod" label="包装方式" width="110"></el-table-column>
+                <el-table-column prop="specialRequire" label="特殊要求" width="110"></el-table-column>
                 <el-table-column prop="createTime" label="创建时间" width="180" />
                 <el-table-column prop="createByName" label="创建人" width="180" />
               </JNPF-table>
@@ -696,7 +682,8 @@ export default {
       flowTaskOperatorRecordList: [],
       endTime: 0,
       productNameFlag: null,
-
+      tableDataFlag: false,
+      mainUnitFlag: null,
     }
   },
   created() {
@@ -715,7 +702,23 @@ export default {
       },
     }
   },
+  mounted() {
+    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
+
+  },
   methods: {
+    async getMainUnitFun(code, type) {
+      this.listLoading = true
+      try {
+        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+      console.log(11111);
+      this.tableDataFlag = true
+        this.listLoading = false
+
+
+      } catch (error) {
+      }
+    },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
 
@@ -947,6 +950,15 @@ export default {
 
       ordershengchanList(this.orderForm).then(res => {
         console.log("生产产品", res);
+        res.data.records.forEach(item => {
+          if (this.mainUnitFlag == 1) {
+            if (item.calculationDirection == 'multiplication') {
+              this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.productionQuantity, item.ratio]), 6))
+            } else {
+              this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.productionQuantity, item.ratio]), 6))
+            }
+          }
+        });
         this.productList = res.data.records
         this.productTotal = res.data.total
         this.listLoading = false
@@ -992,6 +1004,13 @@ export default {
         this.$set(item, 'num', item.waitReceivedQuantity)
         this.$set(item, 'sourceNo', item.orderNo)
         item.ordersId = item.id
+        if (this.mainUnitFlag == 1) {
+          if (item.calculationDirection == 'multiplication') {
+            this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+          } else {
+            this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+          }
+        }
       })
       this.productData = [...this.productData, ...arr]
       this.productData.forEach(item => {
@@ -1095,6 +1114,13 @@ export default {
           row.num = row.num.substring(0, 8);
         }
       }
+      if (this.mainUnitFlag == 1) {
+        if (row.calculationDirection == 'multiplication') {
+          this.$set(row, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.ratio]), 6))
+        } else {
+          this.$set(row, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [row.num, row.ratio]), 6))
+        }
+      }
       this.productData = productArr
     },
 
@@ -1178,13 +1204,27 @@ export default {
         this.getBusInfo('b045')
 
 
-        data.forEach(item => {
+        setTimeout(() => {
+          data.forEach(item => {
+          console.log(4444);
           this.$set(item, 'num', item.waitReceivedQuantity)
           this.$set(item, 'sourceNo', item.orderNo)
+          if (this.mainUnitFlag == 1) {
+            console.log(33333);
+            if (item.calculationDirection == 'multiplication') {
+              console.log(5555);
+              this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.waitReceivedQuantity, item.ratio]), 6))
+            } else {
+              console.log(6666);
+              this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.waitReceivedQuantity, item.ratio]), 6))
+            }
+          }
 
           item.ordersId = item.id
         });
         this.productData = data
+        }, 800);
+        console.log("shit", this.productData);
       }
 
 

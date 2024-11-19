@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
 
-    <div class="JNPF-common-layout-center JNPF-flex-main"  v-if="!formVisible">
+    <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
@@ -22,7 +22,7 @@
                     :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
                 </el-form-item>
               </el-col>
-            </template> 
+            </template>
 
             <el-col :span="6">
               <el-form-item>
@@ -35,7 +35,7 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
@@ -62,9 +62,8 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
-            @sort-change="sortChange" custom-column :checkSelectable="checkSelectable"
-            @selection-change="handleSelectionChange" hasC>
+          <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column v-if="tableDataFlag"
+            :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" hasC>
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.returnDeliveryNoticeId, 'look')">{{
@@ -78,9 +77,14 @@
             <el-table-column prop="phone" label="收件人电话" width="160" sortable="custom" />
             <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
             <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
-            <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" width="80" />
-            <el-table-column prop="deliveryQuantity" label="发货数量" width="160" sortable="custom" />
+            <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" /> 
+
+            <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+            <el-table-column prop="deliveryQuantity" :label="mainUnitFlag == 1 ? '发货数量(主)' : '发货数量'" min-width="120">
+            </el-table-column>
+            <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+            <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
+
             <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
             <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
             <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
@@ -188,8 +192,9 @@ export default {
       ],
 
 
- 
-      
+      tableDataFlag: false,
+      mainUnitFlag: null,
+
       superQueryVisible: false,
       exportFormVisible: false,
       qxbtnLoading: false,
@@ -241,7 +246,7 @@ export default {
         { label: "审批拒绝", value: "rebut" },
       ],
 
-       
+
       paymentMethodList: [],
       paymentCycleList: [],
       orderForm: {},
@@ -436,17 +441,28 @@ export default {
   },
   created() {
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-    this.superForm=this.orderForm
+    this.superForm = this.orderForm
     this.search('basic')
     // this.getAttributeline()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
-  
+
   mounted() {
-    this.getProductClassFun() 
+    this.getProductClassFun()
+    this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
+
   },
   methods: {
-  
+    async getMainUnitFun(code, type) {
+      this.listLoading = true
+      try {
+        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+        this.tableDataFlag = true
+        this.listLoading = false
+
+
+      } catch (error) { }
+    },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
 
@@ -819,8 +835,8 @@ export default {
     sortChange({ prop, order }) {
       let newProp;
       if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName'
-      ||prop=='ordersNo'||prop=='oilQuantity'||prop=='vibrationLevel'||prop=='accuracyLevel'||prop=='sealingCoverTyping'||
-      prop=='productCode'||prop=='productDrawingNo') {
+        || prop == 'ordersNo' || prop == 'oilQuantity' || prop == 'vibrationLevel' || prop == 'accuracyLevel' || prop == 'sealingCoverTyping' ||
+        prop == 'productCode' || prop == 'productDrawingNo') {
         if (prop === 'createByName') {
           newProp = 'create_by'
         } else {
@@ -844,20 +860,30 @@ export default {
       }
     },
     initData() {
-      this.listLoading = true
-     
-     
+
+
       getQuotationdatasenddatalist(this.orderForm).then(res => {
+        setTimeout(() => {
+          res.data.records.forEach(item => {
+            if (this.mainUnitFlag == 1) {
+              if (item.calculationDirection == 'multiplication') {
+                this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.deliveryQuantity, item.ratio]), 6))
+              } else {
+                this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.deliveryQuantity, item.ratio]), 6))
+              }
+            }
+          });
+          this.tableData = res.data.records
+        }, 600);
         this.tableData = res.data.records
         this.total = res.data.total
-        this.listLoading = false
       }).catch(() => {
         this.listLoading = false
       })
 
     },
     search(type) {
-       
+
       Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
         let item = this.orderForm[key]
         this.orderForm[key] = typeof item === 'string' ? item.trim() : item
@@ -885,9 +911,9 @@ export default {
     reset() {
 
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-     
-      this.superForm=this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-      this.searchList=[
+
+      this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+      this.searchList = [
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
@@ -977,9 +1003,9 @@ export default {
 }
 </script>
 <style scoped>
-  .JNPF-common-search-box {
+.JNPF-common-search-box {
   padding: 8px 0 !important;
-  margin-left: 0!important;
+  margin-left: 0 !important;
 
   margin-bottom: 5px;
 }

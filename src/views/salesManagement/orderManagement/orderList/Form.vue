@@ -155,6 +155,11 @@
                       <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
                       <el-table-column prop="num" label="数量" width="100" :key="7">
                       </el-table-column>
+                      <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                      <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
+                      </el-table-column>
+                      <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                      <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                       <el-table-column prop="price" label="单价(含税)" width="120" :key="11">
                       </el-table-column>
                       <el-table-column prop="taxRate" label="税率" width="120" :key="171">
@@ -222,17 +227,11 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
-                    <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-                    <!-- <el-table-column prop="availableQuantity" label="可用库存" width="100" :key="121">
-                      <template slot-scope="scope">
-                        <div> {{ scope.row.availableQuantity ? scope.row.availableQuantity : 0 }}</div>
-
-                      </template>
-                    </el-table-column> -->
-
-                    <el-table-column prop="num" label="数量" width="100" :key="7">
+                  
+                    <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                    <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
                       <template slot="header">
-                        <span class="required">*</span>数量
+                        <span class="required">*</span>数量(主)
                       </template>
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.num" :disabled="btnType == 'look' ? true : false"
@@ -242,6 +241,9 @@
                         </el-input>
                       </template>
                     </el-table-column>
+                
+                    <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                    <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                     <el-table-column prop="price" label="单价(含税)" width="120" :key="110">
                       <template slot="header">
                         <span class="required">*</span>单价(含税)
@@ -267,7 +269,7 @@
                       </template>
 
                     </el-table-column>
-                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column> 
+                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
                     <el-table-column prop="taxAmount" label="税额" width="140"></el-table-column>
 
                     <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column>
@@ -334,7 +336,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="clearance" label="游隙" width="120" :key="100">
-                   
+
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
@@ -519,23 +521,22 @@
 
             <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
               <div v-if="btnType !== 'look'">
-                    <el-button type="text" style="margin-right:8px;margin-left:5px; font-size:14px!important"
-                      icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
-                      @click="openSeleceCustomerProductDialog()">选择客户产品</el-button>|
-                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                      icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
-                      @click="openSeleceProductDialog()">选择产品</el-button>|
-                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                      icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="importProductFun()"
-                      v-if="dataForm.orderType == 'normal' || dataForm.orderType == 'urgent'">导入产品 </el-button>|
-                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                      :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
-                      @click="batchDelete">批量删除</el-button>|
-                     
-                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                      :disabled="btnType == 'look' ? true : false" icon="el-icon-plus"
-                      @click="addLinFun">新增一行</el-button>
-                  </div>
+                <el-button type="text" style="margin-right:8px;margin-left:5px; font-size:14px!important"
+                  icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
+                  @click="openSeleceCustomerProductDialog()">选择客户产品</el-button>|
+                <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                  icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
+                  @click="openSeleceProductDialog()">选择产品</el-button>|
+                <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                  icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="importProductFun()"
+                  v-if="dataForm.orderType == 'normal' || dataForm.orderType == 'urgent'">导入产品 </el-button>|
+                <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                  :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
+                  @click="batchDelete">批量删除</el-button>|
+
+                <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                  :disabled="btnType == 'look' ? true : false" icon="el-icon-plus" @click="addLinFun">新增一行</el-button>
+              </div>
               <div style="height:530px;display:flex;" ref="boxresiz" v-if="btnType == 'look'">
 
                 <el-table ref="product" :data="productData" :fixedNO="false" border height="100%" :key="191"
@@ -551,12 +552,12 @@
 
                   </el-table-column>
                   <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
-                  <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
 
-
-                  <el-table-column prop="num" label="数量" width="100" :key="7">
-
+                  <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                  <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
                   </el-table-column>
+                  <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                  <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                   <el-table-column prop="price" label="单价(含税)" width="120" :key="11">
 
                   </el-table-column>
@@ -636,10 +637,8 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
-                <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-
-
-                <el-table-column prop="num" label="数量" width="100" :key="7">
+                <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" width="80" :key="8" />
+                <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" width="100" :key="7">
                   <template slot="header">
                     <span class="required">*</span>数量
                   </template>
@@ -651,6 +650,8 @@
                     </el-input>
                   </template>
                 </el-table-column>
+                <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                 <el-table-column prop="price" label="单价(含税)" width="120" :key="110">
                   <template slot="header">
                     <span class="required">*</span>单价(含税)
@@ -943,15 +944,14 @@
                   <el-table-column prop="drawingNo" label="品名规格" />
                   <el-table-column prop="productCategoryName" label="所属分类" />
                   <el-table-column prop="mainUnit" label="单位" />
-                  <el-table-column prop="inventoryQuantity" label="库存数量" >
+                  <el-table-column prop="inventoryQuantity" label="库存数量">
                     <template slot-scope="scope">
-                      <el-link type="primary"
-                        @click.native="viewFun(scope.row.id, 'inventoryFlag')">
+                      <el-link type="primary" @click.native="viewFun(scope.row.id, 'inventoryFlag')">
                         {{ scope.row.inventoryQuantity }}
                       </el-link>
                     </template>
                   </el-table-column>
-                  
+
                 </JNPF-table>
                 <pagination :total="allProductTotal" :page.sync="ProductListRequestObj.pageNum"
                   :limit.sync="ProductListRequestObj.pageSize" @pagination="initData2" />
@@ -967,7 +967,7 @@
         <ComSelect-page ref="comSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems"
           dialogTitle="选择产品" :listMethod="getcooperativeProduct" :listRequestObj="ProductListRequestObjs"
           :searchList="ProductTableSearchList" :elementShow="false" :multiple="true" :renderTree="false" />
- 
+
 
         <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
           :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
@@ -1002,12 +1002,12 @@
         </el-dialog>
       </div>
       <!-- <productForm v-if="productFormVisible" ref="productForm" @refresh="refresh" /> -->
-       <Form v-if="formVisible" ref="Form" ></Form>
-    </div> 
+      <Form v-if="formVisible" ref="Form"></Form>
+    </div>
   </transition>
 </template>
 
-<script> 
+<script>
 // import productForm from "./productForm"
 import { excelExport } from '@/api/basicData/index'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
@@ -1022,7 +1022,7 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import {
   getProvinceList,
 } from '@/api/system/province'
-import { getbomOrderDetail } from '@/api/salesManagement/assemblyOrders' 
+import { getbomOrderDetail } from '@/api/salesManagement/assemblyOrders'
 import { mapGetters, mapState } from 'vuex'
 import { BillNumber } from '@/api/system/billRule'
 import {
@@ -1033,14 +1033,15 @@ import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBimBusinessDetail } from '@/api/basicData/index'
-import Form from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue' 
+import Form from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
 export default {
   mixins: [busFlow],
-  components: {  ExportForm, Process, recordList,Form
+  components: {
+    ExportForm, Process, recordList, Form
   },
   data() {
     return {
-      formVisible:false,
+      formVisible: false,
       isattachmentswitch: '',
       oldId: "",
       oldType: "",
@@ -1085,7 +1086,7 @@ export default {
       exportFormVisible: false,
       scheduleData: [],
       scheduleForm: {},
- 
+
       submitmethodsTitle: "",
       getProducts,
       getcooperativeProduct,
@@ -1334,7 +1335,8 @@ export default {
       approvalFlag: false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
       endTime: 0,
-      attachmentData: {}
+      attachmentData: {},
+      mainUnitFlag: null,
     }
   },
   computed: {
@@ -1380,6 +1382,8 @@ export default {
     // this.getProvinceList() 
   },
   mounted() {
+    this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
+
     console.log("this.userInfo", this.userInfo);
     this.getBimBusinessDetail()
     this.dataForm.departmentId = this.userInfo.departmentId
@@ -1408,11 +1412,22 @@ export default {
   beforeDestroy() {
   },
   methods: {
+    async getMainUnitFun(code, type) {
+      this.listLoading = true
+      try {
+        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+        this.tableDataFlag = true
+        this.listLoading = false
+
+
+      } catch (error) {
+      }
+    },
     // 查看库存明细
     viewFun(id, type, warehouseId) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, type, "",'product')
+        this.$refs.Form.init(id, type, "", 'product')
       })
     },
     addLinFun() {
@@ -1431,9 +1446,9 @@ export default {
       } else {
         console.log("不存在");
         let obj = JSON.parse(JSON.stringify(this.createdData))
-      this.productData.push(obj)
+        this.productData.push(obj)
       }
-      
+
     },
     getBimBusinessDetail() {
       let obj = {
@@ -1710,8 +1725,8 @@ export default {
       columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
       this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
     },
- 
- 
+
+
 
 
     // refresh () {
@@ -1868,8 +1883,8 @@ export default {
     },
 
 
- 
-   
+
+
     selectsales(val) {
       console.log(111, val);
       this.$nextTick(() => {
@@ -2006,7 +2021,7 @@ export default {
       }
       productArr[index].excludingTaxPrice = this.jnpf.numberFormat(row.price / (1 + (row.taxRate * 1 / 100)), 2)
       productArr[index].excludingTaxAmount = this.jnpf.numberFormat((row.excludingTaxPrice * row.num), 2)
-      productArr[index].totalAmount = this.jnpf.numberFormat((row.price * row.num), 2) 
+      productArr[index].totalAmount = this.jnpf.numberFormat((row.price * row.num), 2)
 
       productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
       this.productData = productArr
@@ -2068,15 +2083,16 @@ export default {
       if (row.calculationDirection == 'multiplication') {
         productArr[index].assistantNum = this.jnpf.numberFormat(row.num * row.ratio, 2)
         productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 2)
-        productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.excludingTaxPrice]), 2) 
-      productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
-
+        productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.excludingTaxPrice]), 2)
+        productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
+        this.$set(productArr[index], 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.ratio]), 6))
       } else {
+        this.$set(productArr[index], 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [row.num, row.ratio]), 6))
         productArr[index].assistantNum = this.jnpf.numberFormat(row.num / row.ratio, 2)
         productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 2)
         productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.excludingTaxPrice]), 2)
-      productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
-       }
+        productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
+      }
       console.log("productArr", productArr);
       this.productData = productArr
     },
@@ -2548,7 +2564,7 @@ export default {
       if (tab.index == 0) {
         this.$nextTick(() => {
         })
-      }  
+      }
     },
 
 

@@ -34,7 +34,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head">
           <div>
             <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
@@ -55,13 +55,14 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableData" custom-column row-key="id" :fixedNO="true"
+        <JNPF-table ref="tabForm" v-if="tableDataFlag" :data="tableData" custom-column row-key="id" :fixedNO="true"
           @sort-change="sortChange" :setColumnDisplayList="columnList" hasC @selection-change="handeleselectFun">
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" sortable="custom" />
 
           <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
           <el-table-column prop="processName" label="工序名称" width="120" sortable="custom" />
-          <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
+          <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+          <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
           <el-table-column prop="inventoryQuantity" label="库存数量" width="120" sortable="custom" />
           <el-table-column prop="safeInventory" label="安全库存" min-width="120" sortable="custom" />
           <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
@@ -137,7 +138,7 @@ export default {
   },
   data() {
     return {
-      btnLoading:false,
+      btnLoading: false,
 
       inventoryVisible: false,
       dataRule: {
@@ -355,7 +356,9 @@ export default {
           typeCode: "pa010",
         }
 
-      ]
+      ],
+      mainUnitFlag: null,
+      tableDataFlag: null,
 
     }
   },
@@ -369,7 +372,22 @@ export default {
     this.getProductClassFun()
 
   },
+  mounted() {
+    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
+
+  },
   methods: {
+    async getMainUnitFun(code, type) {
+      this.listLoading=true
+      try {
+        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+        this.tableDataFlag = true
+        this.listLoading=false
+        
+
+      } catch (error) {
+      }
+    },
     // 提交批量设置
     dataFormSubmit() {
       this.$refs['dataForm'].validate((valid) => {
@@ -379,7 +397,7 @@ export default {
           batchInspect(this.dataForm).then(res => {
             this.$message.success("批量检验成功")
             this.btnLoading = false
-            this.inventoryVisible=false
+            this.inventoryVisible = false
             this.initData()
           })
         }
@@ -588,7 +606,8 @@ export default {
 
   margin-bottom: 5px;
 }
-.JNPF-dialog.JNPF-dialog_center  ::v-deep.el-dialog .el-dialog__body{
-  padding-top: 43px!important;
+
+.JNPF-dialog.JNPF-dialog_center ::v-deep.el-dialog .el-dialog__body {
+  padding-top: 43px !important;
 }
 </style>

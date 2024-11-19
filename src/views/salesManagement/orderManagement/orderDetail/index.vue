@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
 
-    <div class="JNPF-common-layout-center JNPF-flex-main"  v-if="!formVisible">
+    <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
@@ -36,7 +36,7 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier('', 'add')">
               <el-button type="primary" size="mini" icon="el-icon-download"
@@ -56,7 +56,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
+          <JNPF-table ref="dataTable"  :data="tableData" :fixedNO="true" v-if="tableDataFlag"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column>
             <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom">
               <template slot-scope="scope">
@@ -72,8 +72,11 @@
             <el-table-column prop="customerProductNo" label=" 客户料号" width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
             <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
-            <el-table-column prop="num" label="数量" width="80" sortable="custom" />
+            <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+            <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
+            </el-table-column>
+            <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+            <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
             <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
             <el-table-column prop="price" label="单价(含税)" width="140" sortable="custom"></el-table-column>
             <el-table-column prop="taxRate" label="税率" width="120" sortable="custom"></el-table-column>
@@ -169,7 +172,7 @@ import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
-  name: 'orderDetail',
+  name: 'orderDetails',
   components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery },
   data() {
     return {
@@ -186,7 +189,7 @@ export default {
 
 
       totalNum: 0,
-      columnList: ["cooperativePartnerCode", "departmentName", "productName", "deputyUnit", "assistantNum", "taxRate", "createTime",],
+      columnList: ["cooperativePartnerCode", "departmentName", "productName", , "assistantNum", "taxRate", "createTime",],
       orderFollowVisible: false,
       superQueryVisible: false,
       productFormVisible: false,
@@ -412,6 +415,8 @@ export default {
 
 
       ],
+      mainUnitFlag:null,
+      tableDataFlag:false,
     }
   },
   watch: {
@@ -421,21 +426,28 @@ export default {
   },
   mounted() {
     this.getProductClassFun()
+    this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
   },
 
-  created() {
-    let endDate = new Date().toISOString().slice(0, 10);
-    let startDate = new Date(new Date().setMonth(new Date().getMonth() - 3)).toISOString().slice(0, 10);
-    this.orderDateArr[0] = startDate
-    this.orderDateArr[1] = endDate
-    this.orderForm.orderStartDate = startDate
-    this.orderForm.orderEndDate = endDate
+  created() { 
+
+    console.log(55555);
     this.superForm = this.orderForm
     this.search('basic')
-    this.initData()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    async getMainUnitFun(code, type) {
+      this.listLoading = true
+      try {
+        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+        this.tableDataFlag = true
+        this.listLoading = false
+
+
+      } catch (error) {
+      }
+    },
     getProductClassFun() {
       let obj0 = {
         pageNum: -1,
@@ -782,7 +794,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus'||prop=='cooperativePartnerName' || prop === 'cooperativePartnerCode'||prop=='salesName') {
+      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'cooperativePartnerName' || prop === 'cooperativePartnerCode' || prop == 'salesName') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'
@@ -798,7 +810,7 @@ export default {
       this.initData()
     },
 
- 
+
 
 
     // 关闭新建编辑页面
@@ -811,12 +823,23 @@ export default {
       }
     },
     initData() {
-      this.listLoading = true
 
       getsaleOrderDetailList(this.orderForm).then(res => {
-        this.tableData = res.data.records
+        console.log("5555");
+    
+       setTimeout(() => {
+        res.data.records.forEach(item => {
+          if (this.mainUnitFlag == 1) {
+            if (item.calculationDirection == 'multiplication') {
+              this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+            } else {
+              this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+            }
+          }
+        });
+         this.tableData = res.data.records
+       }, 600);
         this.total = res.data.total
-        this.listLoading = false
         this.getOrderLineReportFun()
       }).catch(() => {
         this.listLoading = false
@@ -826,7 +849,7 @@ export default {
 
 
     search(type) {
-
+      console.log(66666);
       this.orderForm.pageNum = 1
       Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
         let item = this.orderForm[key]

@@ -6,11 +6,29 @@ import { message } from '@/utils/message';
 import { create, all } from "mathjs"
 import { BillNumber, getBillRuleConfig } from '@/api/system/billRule'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
+import {  getBimBusinessDetail } from '@/api/basicData/index'
 const STORAGEPREFIX = 'jnpf_'
 const STORAGETYPE = window.localStorage
 const mathjs = create(all, { number: "BigNumber", precision: 20 });
 
 const jnpf = {
+  // 获取主副单位配置
+  getMainUnitFun(code, type) {
+    console.log(code, type);
+    let obj = {
+      businessCode: code,
+      configKey: type
+    }
+
+    return new Promise((resolve, reject) => {
+      getBimBusinessDetail(obj).then(res => {
+        resolve(res.data.configValue1)
+      }).catch(error => {
+        reject(error)
+      })
+
+    })
+  },
   getBillRuleConfigFun(code) {
     let obj = {
       code: code
@@ -537,13 +555,13 @@ const jnpf = {
     let planTime = ''
     switch (unit) {
       case 'd':
-      return planTime = time * 24 * 60
+        return planTime = time * 24 * 60
 
       case 'h':
-      return planTime =  time * 60
+        return planTime = time * 60
 
       default:
-        return planTime =  time
+        return planTime = time
     }
   },
 }

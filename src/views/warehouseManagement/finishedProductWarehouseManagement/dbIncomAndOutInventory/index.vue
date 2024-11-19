@@ -16,7 +16,8 @@
       <el-row class="JNPF-common-search-box  treeBox_bot" :gutter="16" style="margin-top: 5px;"
         v-if="categoryType != 'inbound_mock_production'">
         <!-- 销售待发/退货查询条件 通知单 -->
-        <el-form @submit.native.prevent v-if="(categoryType == 'outbound_sale_send' && !saleFlag) || categoryType == 'inbound_sale_return'">
+        <el-form @submit.native.prevent
+          v-if="(categoryType == 'outbound_sale_send' && !saleFlag) || categoryType == 'inbound_sale_return'">
           <template v-for="item in searchList1">
             <el-col :span="item.searchType === 3 ? 6 : 4">
               <el-form-item>
@@ -468,7 +469,8 @@
         </el-form>
       </el-row>
 
-      <div class="JNPF-common-layout-main JNPF-flex-main" v-if="categoryType != 'inbound_mock_production'">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading"
+        v-if="categoryType != 'inbound_mock_production'">
         <div class="JNPF-common-head">
           <div>
             <el-button type="primary" size="mini" icon="el-icon-plus" style="margin-left: 8px;"
@@ -589,7 +591,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 销售发货 订单列表 -->
-        <JNPF-table :key='1' v-loading="listLoading" :data="saleList" @sort-change="sortChange"
+        <JNPF-table :key='1' :data="saleList" @sort-change="sortChange" v-if="tableDataFlag"
           v-show="categoryType == 'outbound_sale_send' && saleFlag" custom-column ref="salestabForm" :fixedNO="true"
           :setColumnDisplayList="salecolumnList" hasC @selection-change="handeleselectSale">
           <el-table-column prop="orderNo" label="订单号" min-width="180" sortable="custom">
@@ -606,10 +608,14 @@
           <el-table-column prop="salesName" label="所属销售" min-width="160" sortable="custom" />
           <el-table-column prop="customerProductNo" label="客户料号" min-width="160" sortable="custom" />
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
-          <el-table-column prop="productName" label="产品名称"  v-if="productNameFlag==='1'" min-width="160" sortable="custom" />
+          <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
+            sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
-          <el-table-column prop="mainUnit" label="单位" min-width="160" />
-          <el-table-column prop="num" label="数量" min-width="160" sortable="custom" />
+          <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+          <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="160">
+          </el-table-column>
+          <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+          <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
           <el-table-column prop="waitDeliverNum" label="待发货数量" min-width="160" sortable="custom" />
           <el-table-column prop="deliveryDate" label="交货日期" min-width="160" sortable="custom" />
           <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="160" sortable="custom" />
@@ -751,10 +757,14 @@
           <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="160" sortable="custom" />
           <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="160" sortable="custom" />
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
-          <el-table-column prop="productName" label="产品名称"  v-if="productNameFlag==='1'" min-width="160" sortable="custom" />
+          <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
+            sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
-          <el-table-column prop="mainUnit" label="单位" min-width="80" />
-          <el-table-column prop="num" label="数量" min-width="100" sortable="custom" />
+          <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+          <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
+          </el-table-column>
+          <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+          <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
           <el-table-column prop="waitReceiptNum" label="待收货数量" min-width="160" sortable="custom" />
           <el-table-column prop="deliveryDate" label="交货日期" min-width="160" sortable="custom" />
           <el-table-column prop="standardValue" label="规值" min-width="160" sortable="custom" />
@@ -833,11 +843,16 @@
           <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="160" sortable="custom" />
           <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="160" sortable="custom" />
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
-          <el-table-column prop="productName" label="产品名称"  v-if="productNameFlag==='1'" min-width="160" sortable="custom" />
+          <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
+            sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
           <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom" />
-          <el-table-column prop="mainUnit" label="单位" min-width="80" />
-          <el-table-column prop="purchaseQuantity" label="数量" min-width="100" sortable="custom" />
+
+          <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+          <el-table-column prop="purchaseQuantity" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
+          </el-table-column>
+          <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+          <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
           <el-table-column prop="waitReceiptNum" label="待收货数量" min-width="160" sortable="custom" />
           <el-table-column prop="deliveryDate" label="交货日期" min-width="160" sortable="custom" />
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
@@ -921,12 +936,15 @@
           <el-table-column prop="cooperativePartnerCode" label="供应商编码" width="200" sortable="custom" />
           <el-table-column prop="deliveryDate" label="交货日期" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
-          <el-table-column prop="productName" label="产品名称"  v-if="productNameFlag==='1'" min-width="160" sortable="custom" />
+          <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
+            sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="processName" label="工序名称" min-width="140" sortable="custom"></el-table-column>
-          <el-table-column prop="mainUnit" label="单位" min-width="140" sortable="custom"></el-table-column>
-          <el-table-column prop="purchaseQuantity" label="订单数量" min-width="140" sortable="custom"></el-table-column>
-
+          <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+          <el-table-column prop="purchaseQuantity" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
+          </el-table-column>
+          <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+          <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <el-button size="mini" type="text"
@@ -1173,8 +1191,9 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
-          <el-table-column prop="productName" label="产品名称"  v-if="productNameFlag==='1'" min-width="160" sortable="custom" />
-          <el-table-column prop="mainUnit" label="单位" width="80" />
+                <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
+                  sortable="custom" />
+                <el-table-column prop="mainUnit" label="单位" width="80" />
                 <el-table-column prop="productionQuantity" label="生产数量" width="120" />
                 <el-table-column prop="completedQuantity" label="已完成数量" width="130" />
                 <el-table-column prop="waitReceivedQuantity" label="待入库数量" width="160" />
@@ -1270,8 +1289,9 @@
                 <el-table-column prop="productionOrderNo" label="任务单号" min-width="180" />
                 <el-table-column prop="orderNo" label="工单号" width="200" />
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" />
-          <el-table-column prop="productName" label="产品名称"  v-if="productNameFlag==='1'" min-width="160" sortable="custom" />
-          <el-table-column prop="productCode" label="产品编码" min-width="160" />
+                <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
+                  sortable="custom" />
+                <el-table-column prop="productCode" label="产品编码" min-width="160" />
                 <el-table-column prop="processName" label="工序名称" min-width="160" />
                 <el-table-column prop="mainUnit" label="单位" min-width="80" />
                 <el-table-column prop="productionQuantity" label="生产数量" min-width="120" />
@@ -1909,7 +1929,7 @@ export default {
       toolVisible: false,
       equipmentVisible: false,
       sparePartsVisible: false,
-      productNameFlag:null,
+      productNameFlag: null,
       requestArr: [
         {
           prop: "sealingCoverTyping",
@@ -1948,8 +1968,10 @@ export default {
           prop: "standardValue",
           typeCode: "pa008"
         }
-        
+
       ],
+      mainUnitFlag: null,
+      tableDataFlag: false,
     }
   },
   watch: {
@@ -2001,11 +2023,23 @@ export default {
 
   },
   mounted() {
+    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
 
   },
   methods: {
-     // 获取打字内容等
-     getProductClassFun() {
+    async getMainUnitFun(code, type) {
+      this.listLoading = true
+      try {
+        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+        this.tableDataFlag = true
+        this.listLoading = false
+
+
+      } catch (error) {
+      }
+    },
+    // 获取打字内容等
+    getProductClassFun() {
       this.requestArr.forEach((item, index) => {
         let obj1 = {
           pageNum: -1,
@@ -2088,6 +2122,15 @@ export default {
         this.superForm.superQuery = this.superQuery
       }
       detailpurchaseOrderList(this.exterMaterForm).then(res => {
+        res.data.records.forEach(item => {
+          if (this.mainUnitFlag == 1) {
+            if (item.calculationDirection == 'multiplication') {
+              this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+            } else {
+              this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+            }
+          }
+        });
         this.exterMaterTotal = res.data.total
         this.exterMaterList = res.data.records
       })
@@ -2133,6 +2176,15 @@ export default {
         this.superForm.superQuery = this.superQuery
       }
       detailpurchaseOrderList(this.externalForm).then(res => {
+        res.data.records.forEach(item => {
+          if (this.mainUnitFlag == 1) {
+            if (item.calculationDirection == 'multiplication') {
+              this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+            } else {
+              this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+            }
+          }
+        });
         this.externalList = res.data.records
         this.externalTotal = res.data.total
         console.log("外协订单列表", res);
@@ -2196,8 +2248,8 @@ export default {
       let objs = { "pageSize": -1, "businessCode": "product" }
       getBimBusinessSwitchConfigList(objs).then(res => {
         this.productNameFlag = res.data.product[1].configValue1
-       
-        
+
+
       })
     },
     getclassAttributeList() {
@@ -2552,6 +2604,15 @@ export default {
           getsaleOrderDetailList(this.saleOrderForm).then(res => {
             this.listLoading = false
             console.log("销售明细", res);
+            res.data.records.forEach(item => {
+              if (this.mainUnitFlag == 1) {
+                if (item.calculationDirection == 'multiplication') {
+                  this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+                } else {
+                  this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+                }
+              }
+            });
             this.saleList = res.data.records
             this.saleTotal = res.data.total
           }).catch(error => {
@@ -2672,6 +2733,13 @@ export default {
           }
           detailpurchaseOrderList(this.purchaseForm).then(res => {
             console.log("采购明细", res);
+            if (this.mainUnitFlag == 1) {
+              if (item.calculationDirection == 'multiplication') {
+                this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+              } else {
+                this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+              }
+            }
             this.purchaseTotal = res.data.total
             this.purchaseList = res.data.records
           })
@@ -2792,6 +2860,15 @@ export default {
           }
           this.listLoading = true
           getQuotationdatasendlist(this.wxflForm).then(res => {
+            res.data.records.forEach(item => {
+              if (this.mainUnitFlag == 1) {
+                if (item.calculationDirection == 'multiplication') {
+                  this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+                } else {
+                  this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+                }
+              }
+            });
             this.wxflTableList = res.data.records
             this.wxflTotal = res.data.total
             this.listLoading = false
@@ -4130,169 +4207,169 @@ export default {
         ]
       }
 
-       // 生产入库  
-       if (this.categoryType == 'inbound_mock_production') {
-        if(this.activeName=='product'){
+      // 生产入库  
+      if (this.categoryType == 'inbound_mock_production') {
+        if (this.activeName == 'product') {
           this.superQueryJson = [
-          {
-            prop: 'orderNo',
-            label: "任务单号",
-            type: 'input'
-          },
-          {
-            prop: 'orderType',
-            label: "任务类型",
-            type: 'select',
-            options:[
-              {
-                label:"正常订单",value:"normal",
-              },
-              {
-                label:"返工订单",value:"rework",
-              }
-            ]
-          },
-          {
-            prop: 'productDrawingNo',
-            label: "品名规格",
-            type: 'input'
-          },
-          {
-            prop: 'mainUnit',
-            label: "单位",
-            type: 'input'
-          },
-          {
-            prop: 'productionPlanNo',
-            label: "计划单号",
-            type: 'input'
-          },
-          {
-            prop: 'aperture',
-            label: "孔径",
-            type: 'select',
-            options: []
-          },
-          {
-            prop: 'sealingCoverTyping',
-            label: "打字内容",
-            type: 'select',
-            options: []
-          },
-          {
-            prop: 'accuracyLevel',
-            label: "精度等级",
-            type: 'select',
-            options: []
-          },
-          {
-            prop: 'vibrationLevel',
-            label: "振动等级",
-            type: 'select',
-            options: []
-          },
+            {
+              prop: 'orderNo',
+              label: "任务单号",
+              type: 'input'
+            },
+            {
+              prop: 'orderType',
+              label: "任务类型",
+              type: 'select',
+              options: [
+                {
+                  label: "正常订单", value: "normal",
+                },
+                {
+                  label: "返工订单", value: "rework",
+                }
+              ]
+            },
+            {
+              prop: 'productDrawingNo',
+              label: "品名规格",
+              type: 'input'
+            },
+            {
+              prop: 'mainUnit',
+              label: "单位",
+              type: 'input'
+            },
+            {
+              prop: 'productionPlanNo',
+              label: "计划单号",
+              type: 'input'
+            },
+            {
+              prop: 'aperture',
+              label: "孔径",
+              type: 'select',
+              options: []
+            },
+            {
+              prop: 'sealingCoverTyping',
+              label: "打字内容",
+              type: 'select',
+              options: []
+            },
+            {
+              prop: 'accuracyLevel',
+              label: "精度等级",
+              type: 'select',
+              options: []
+            },
+            {
+              prop: 'vibrationLevel',
+              label: "振动等级",
+              type: 'select',
+              options: []
+            },
 
-          {
-            prop: 'oil',
-            label: "油脂",
-            type: 'select',
-            options: []
-          },
-          {
-            prop: 'oilQuantity',
-            label: "油脂量",
-            type: 'select',
-            options: []
-          },
-          {
-            prop: 'clearance',
-            label: "游隙",
-            type: 'select',
-            options: []
-          },
-          {
-            prop: 'packagingMethod',
-            label: "包装方式",
-            type: 'select',
-            options: []
-          },
-          {
-            prop: 'specialRequire',
-            label: "特殊要求",
-            type: 'select',
-            options: []
-          },
-         
-          {
-            prop: 'createTime',
-            label: '创建时间',
-            type: 'daterange',
-            valueFormat: "yyyy-MM-dd HH:mm:ss",
-            startPlaceholder: '开始日期',
-            endPlaceholder: '结束日期',
-            pickerOptions: this.global.timePickerOptions
-          },
-          {
-            prop: 'createByName',
-            label: "创建人",
-            type: 'input'
-          },
+            {
+              prop: 'oil',
+              label: "油脂",
+              type: 'select',
+              options: []
+            },
+            {
+              prop: 'oilQuantity',
+              label: "油脂量",
+              type: 'select',
+              options: []
+            },
+            {
+              prop: 'clearance',
+              label: "游隙",
+              type: 'select',
+              options: []
+            },
+            {
+              prop: 'packagingMethod',
+              label: "包装方式",
+              type: 'select',
+              options: []
+            },
+            {
+              prop: 'specialRequire',
+              label: "特殊要求",
+              type: 'select',
+              options: []
+            },
 
-
+            {
+              prop: 'createTime',
+              label: '创建时间',
+              type: 'daterange',
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
+              startPlaceholder: '开始日期',
+              endPlaceholder: '结束日期',
+              pickerOptions: this.global.timePickerOptions
+            },
+            {
+              prop: 'createByName',
+              label: "创建人",
+              type: 'input'
+            },
 
 
-        ]
-        this.getProductClassFun()
-      }else{
+
+
+          ]
+          this.getProductClassFun()
+        } else {
           this.superQueryJson = [
-          {
-            prop: 'productionOrderNo',
-            label: "任务单号",
-            type: 'input'
-          },
-          {
-            prop: 'orderNo',
-            label: "工单号",
-            type: 'input'
-          },
-          {
-            prop: 'productDrawingNo',
-            label: "品名规格",
-            type: 'input'
-          },
-          {
-            prop: 'productCode',
-            label: "产品编码",
-            type: 'input'
-          },
-          {
-            prop: 'processName',
-            label: "工序名称",
-            type: 'input'
-          },
-          {
-            prop: 'mainUnit',
-            label: "单位",
-            type: 'input'
-          },
-           
-          {
-            prop: 'createTime',
-            label: '创建时间',
-            type: 'daterange',
-            valueFormat: "yyyy-MM-dd HH:mm:ss",
-            startPlaceholder: '开始日期',
-            endPlaceholder: '结束日期',
-            pickerOptions: this.global.timePickerOptions
-          },
-          
+            {
+              prop: 'productionOrderNo',
+              label: "任务单号",
+              type: 'input'
+            },
+            {
+              prop: 'orderNo',
+              label: "工单号",
+              type: 'input'
+            },
+            {
+              prop: 'productDrawingNo',
+              label: "品名规格",
+              type: 'input'
+            },
+            {
+              prop: 'productCode',
+              label: "产品编码",
+              type: 'input'
+            },
+            {
+              prop: 'processName',
+              label: "工序名称",
+              type: 'input'
+            },
+            {
+              prop: 'mainUnit',
+              label: "单位",
+              type: 'input'
+            },
+
+            {
+              prop: 'createTime',
+              label: '创建时间',
+              type: 'daterange',
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
+              startPlaceholder: '开始日期',
+              endPlaceholder: '结束日期',
+              pickerOptions: this.global.timePickerOptions
+            },
 
 
 
 
-        ]
+
+          ]
         }
-      
+
       }
 
 

@@ -134,16 +134,33 @@
                           <div v-if="dataForm.documentType == 'outbound'"> {{ scope.row.shelfSpaceName }}</div>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="mainUnit" label="单位" width="80" key="8" />
+
+                      <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                      <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="160">
+                        <template slot="header">
+                          <span class="required">*</span>{{ mainUnitFlag == 1 ? '数量(主)' : '数量' }}
+                        </template>
+                        <template slot-scope="scope">
+                          <el-input v-model="scope.row.num" placeholder="数量(主)" :disabled="btnType == 'look'"
+                            @input="watchNum(scope.row, scope.$index)">
+                          </el-input>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                      <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
+
+
+
+                      <!-- <el-table-column prop="mainUnit" label="单位" width="80" key="8" />
                       <el-table-column prop="num" label="数量" width="140" key="77">
                         <template slot="header">
                           <span class="required">*</span>数量
                         </template>
                         <template slot-scope="scope">
-                          <el-input :disabled="btnType == 'look'" @input="watchNum(scope.row, scope.$index)"
+                          <el-input :disabled="btnType == 'look'" 
                             v-model="scope.row.num" placeholder="数量"></el-input>
                         </template>
-                      </el-table-column>
+                      </el-table-column> -->
                       <el-table-column prop="costPrice" label="单价(含税)" width="120" key="110">
                         <template slot="header">
                           <span class="required">*</span>单价(含税)
@@ -406,8 +423,10 @@
                 v-if="dataForm.documentType == 'outbound'" key="productCode" />
               <el-table-column prop="code" label="产品编码" min-width="130" sortable="custom"
                 v-if="dataForm.documentType == 'inbound'" key="code" />
-              <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom"
+              <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" width="80" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="mainUnit" />
+              <el-table-column prop="mainUnit" label="单位(副)" width="80" sortable="custom"
+                v-if="dataForm.documentType == 'outbound' && mainUnitFlag == 1" key="mainUnit" />
               <el-table-column prop="availableQuantity" label="可用库存数量" width="160" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="availableQuantity" />
               <el-table-column prop="batchNumber" label="批次号" width="180" sortable="custom"
@@ -483,7 +502,7 @@
     <BatchNumberForm v-if="batchNumVisible" ref="BatchNumberForms" @selectBatchNumberFun="selectBatchNumberFun">
     </BatchNumberForm>
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
-      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body/>
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
   </div>
 </template>
@@ -519,7 +538,7 @@ export default {
     return {
       prindId: '',
       formId: '',
-      enCode:"",
+      enCode: "",
       scanResult: "",
       scanDialog: false,
       processList: [],
@@ -706,7 +725,8 @@ export default {
       partnerPlaceholder: '',
       productNameFlag: null,
       printBrowseVisible: false,
-
+      mainUnitFlag: null,
+      tableDataFlag: false,
     }
   },
   created() {
@@ -727,12 +747,27 @@ export default {
       },
     }
   },
+  mounted() {
+    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
+
+  },
   methods: {
 
+    async getMainUnitFun(code, type) {
+      this.listLoading = true
+      try {
+        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+        this.tableDataFlag = true
+        this.listLoading = false
+
+
+      } catch (error) {
+      }
+    },
     printWarehouse(enCode) {
       getPrintBusInfo(enCode).then(res => {
         if (res.data) {
-          this.prindId = res.data.id 
+          this.prindId = res.data.id
           this.printBrowseVisible = true
         } else {
           this.$message.warning('未找到相应打印模版')
@@ -883,7 +918,7 @@ export default {
       if (this.dataForm.documentType == 'outbound') {
         this.orderForm.classAttributeList = this.classAttributeList
         this.orderForm.warehouseId = this.dataForm.warehouseId
-        this.orderForm.availableBatch=true
+        this.orderForm.availableBatch = true
         getBatchNumber(this.orderForm).then(res => {
 
           this.productList = res.data.records
@@ -980,6 +1015,10 @@ export default {
         item.ordersLineId = ""
         item.noticeId = ""
         item.num = ''
+        if (this.mainUnitFlag == 1) {
+          this.$set(item, 'deputyNum', '')
+          this.$set(item, 'deputyUnit', item.deputyUnit)
+        }
         item.costPrice = ""
         item.excludingTaxCostPrice = ""
         item.excludingTaxTotalAmount = ""
@@ -1175,6 +1214,13 @@ export default {
           row.num = row.num.substring(0, 8);
         }
       }
+      if (this.mainUnitFlag == 1) {
+        if (row.calculationDirection == 'multiplication') {
+         productArr[index].deputyNum = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.ratio]), 6)
+        } else {
+         productArr[index].deputyNum = this.jnpf.numberFormat(this.jnpf.math('divide', [row.num, row.ratio]), 6)
+        }
+      }
       productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.costPrice]), 6)
 
       productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.costPrice, row.excludingTaxCostPrice]), 6)]), 6)
@@ -1357,6 +1403,9 @@ export default {
         // 获取详情
         detailWarehouseData(id).then(res => {
           this.dataForm = res.data.stockMove
+          res.data.spaceLines.forEach(item => {
+            this.$set(item,'productDrawingNo',item.drawingNo)
+          });
           this.productData = res.data.spaceLines
           this.spaceLines = res.data.spaceLines
 
@@ -1473,15 +1522,15 @@ export default {
 
               if (type) {
                 this.enCode = 'p017'
-                this.formId=res.data.id
+                this.formId = res.data.id
                 this.fullName = '采购收货单'
                 this.printVisible = true
                 this.$nextTick(() => {
                   this.$refs.printTemplate.init(this.enCode)
                 })
               } else {
-              this.btnLoading = false
-              this.tipsvisible = true
+                this.btnLoading = false
+                this.tipsvisible = true
 
               }
 
@@ -1776,9 +1825,11 @@ export default {
 ::v-deep.JNPF-dialog.JNPF-dialog_center .el-dialog .el-dialog__body {
   padding: 0 !important;
 }
+
 ::v-deep.pintDevLog.JNPF-dialog_center .el-dialog .el-dialog__body {
-  padding: 10px 20px 10px!important;
+  padding: 10px 20px 10px !important;
 }
+
 .JNPF-preview-main .main {
   padding-top: 0;
 }

@@ -53,7 +53,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="tabForm"  v-if="tableFlag==true"  :data="tableData" custom-column row-key="id" :fixedNo="true"
+        <JNPF-table ref="tabForm"  v-if="tableDataFlag==true"  :data="tableData" custom-column row-key="id" :fixedNo="true"
           @sort-change="sortChange" >
 
 
@@ -69,7 +69,9 @@
               <div v-if="scope.row.classAttribute == 'accessories'">配件</div>
             </template>
           </el-table-column>
-          <el-table-column prop="mainUnit" label="单位" min-width="80" />
+          <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" /> 
+          <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" /> 
+
           <el-table-column prop="inventoryQuantity" label="库存数量" min-width="120" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
@@ -253,6 +255,8 @@ export default {
       ],
       classAttributeList:[],
       productNameFlag:null, 
+      tableDataFlag:false,
+
     }
   },
   watch: {
@@ -274,10 +278,26 @@ export default {
       this.searchList.push({ field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 })
       }
      
+    }).catch(error=>{
+      this.tableFlag=true
     })
   },
+  mounted () {
+    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
 
+  },
   methods: {
+    async getMainUnitFun(code, type) {
+      this.listLoading=true
+      try {
+        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+        this.tableDataFlag = true
+        this.listLoading=false
+        
+
+      } catch (error) {
+      }
+    },
     getclassAttributeList() {
       getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
         console.log("类别属性", res);

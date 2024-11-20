@@ -567,13 +567,7 @@ export default {
         this.search('basic')
       })
     },
-    getclassAttributeList() {
-      getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
-        console.log("类别属性", res);
-        this.classAttributeList = res.data
-        this.search('basic')
-      })
-    },
+  
     getProductClassFun() {
       // 孔径
       let objO = {
@@ -959,7 +953,7 @@ export default {
 
     },
     superQuerySearch(query) {
-      this.listQuery.superQuery = query
+      this.superQuery = query
       this.superQueryVisible = false
       this.search('super')
     },

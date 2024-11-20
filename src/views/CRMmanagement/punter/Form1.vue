@@ -505,9 +505,9 @@
 <script>
 import { getOrganization } from '@/api/permission/user'
 import { getOrganizeInfo } from '@/api/permission/organize'
-import { getBimBusinessDetail, getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
+import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import {
-  getCounryData, getBimBusinessInfo, getcategoryTree
+  getCounryData, getBimBusinessInfo, getcategoryTree, getBimBusinessDetail
 } from '@/api/basicData/index'
 import { updatePartner, addPartner, detailPartner, checkPartner } from "@/api/customerManagement/index";
 import {
@@ -764,16 +764,6 @@ export default {
     this.getDictionaryType()
   },
   methods: {
-    getBimBusinessDetail() {
-      let obj = {
-        businessCode: 'attachment',
-        configKey: 'fj_wdkh'
-      }
-      getBimBusinessDetail(obj).then(res => {
-        this.isattachmentswitch = res.data.configValue1
-        this.categoryId = res.data.configValue2
-      })
-    },
     changeindustry(val) {
       this.dataForm.industry = val[val.length - 1]
     },
@@ -786,6 +776,16 @@ export default {
         }
       } catch (error) {
       }
+    },
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_wdkh'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
+      })
     },
     actiompro(value) {
       if (value) {

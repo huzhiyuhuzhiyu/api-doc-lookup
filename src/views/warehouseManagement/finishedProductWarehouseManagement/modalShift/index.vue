@@ -52,36 +52,42 @@
                 </div>
               </div>
               <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
-                <el-table-column prop="orderNo" label="转换单号" width="190" fixed="left" sortable="custom">
+                <el-table-column prop="orderNo" label="转换单号" width="190" sortable="custom">
                   <template slot-scope="scope">
                     <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
                       scope.row.orderNo
                     }}</el-link>
                   </template>
                 </el-table-column>
-                <el-table-column prop="warehouseName" label="仓库名称" fixed="left" width="240" />
-                <!-- <el-table-column prop="approvalCompletionDate" label="审批完成日期" width="180" sortable="custom"></el-table-column> -->
+                <el-table-column prop="warehouseName" label="仓库名称" min-width="240" />
+                <el-table-column prop="approvalCompletionDate" label="审批完成时间" width="180" sortable="custom"></el-table-column>
                 <el-table-column prop="documentStatus" label="单据状态" width="120" fixed="right" align="center">
                   <template slot-scope="scope">
                     <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
                     <div v-else-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
                   </template>
                 </el-table-column>
-                <!-- <el-table-column prop="approvalStatus" label="审批状态" width="120" fixed="right" align="center">
+                <el-table-column prop="approvalStatus" label="审批状态" width="120" fixed="right" align="center">
                   <template slot-scope="scope">
-                    <div v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'"><el-tag
-                        type="warning">审批中</el-tag></div>
-                    <div v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus == 'submit'"><el-tag
-                        type="success">审批通过</el-tag></div>
-                    <div v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus == 'submit'"><el-tag
-                        type="danger">审批拒绝</el-tag></div>
+                    <div v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'">
+                      <el-tag>审批中</el-tag>
+                    </div>
+                    <div v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus == 'submit'">
+                      <el-tag type="success">审批通过</el-tag>
+                    </div>
+                    <div v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus == 'submit'">
+                      <el-tag type="danger">审批拒绝</el-tag>
+                    </div>
+                    <div v-else-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus == 'submit'">
+                      <el-tag type="warning">审批撤回</el-tag>
+                    </div>
                   </template>
-                </el-table-column> -->
-                <!-- <el-table-column prop="submitDate" label="提交时间" width="180" sortable="custom"></el-table-column> -->
+                </el-table-column>
+                <el-table-column prop="submitDate" label="提交时间" width="180" sortable="custom"></el-table-column>
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
                 <el-table-column prop="createByName" label="创建人" width="160"></el-table-column>
-                <!-- <el-table-column prop="reasonRejection" label="驳回理由" width="300" /> -->
-                <el-table-column prop="remark" label="备注" width="300"></el-table-column>
+                <el-table-column prop="reasonRejection" label="驳回理由" min-width="300" />
+                <el-table-column prop="remark" label="备注" min-width="300"></el-table-column>
                 <el-table-column label="操作" width="180" fixed="right">
                   <template slot-scope="scope">
                     <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true" @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑</el-button>
@@ -93,6 +99,12 @@
                         </el-button>
                       </span>
                       <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item v-if="(scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn') && showAppCodeFlag" @click.native="handleUserRelation(scope.row.id, 'add')">
+                          重新提交
+                        </el-dropdown-item>
+                        <el-dropdown-item v-if="scope.row.approvalStatus === 'ing' && showAppCodeFlag" @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
+                          审批撤回
+                        </el-dropdown-item>
                         <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
                           查看详情
                         </el-dropdown-item>
@@ -123,7 +135,7 @@
                 </el-col>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="linesQuery.productName" placeholder="请输入原产品名称" clearable @keyup.enter.native="search()" />
+                    <el-input v-model="linesQuery.drawingNo" placeholder="请输入原品名规格" clearable @keyup.enter.native="search()" />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -153,21 +165,21 @@
                 </div>
               </div>
               <JNPF-table ref="linesTableData" v-loading="listLoading" :data="linesTableData" :fixedNO="true" custom-column @sort-change="sortChange" :partentOrChild="'child'">
-                <el-table-column prop="orderNo" label="转换单号" width="200" sortable="custom" fixed="left">
+                <el-table-column prop="orderNo" label="转换单号" width="200" sortable="custom">
                   <template slot-scope="scope">
                     <el-link type="primary" @click.native="handleUserRelation(scope.row.modalShiftId, 'look')">
                       {{ scope.row.orderNo }}
                     </el-link>
                   </template>
                 </el-table-column>
-                <el-table-column prop="warehouseName" label="仓库名称" width="200" sortable="custom" fixed="left">
+                <el-table-column prop="warehouseName" label="仓库名称" min-width="200" sortable="custom">
                 </el-table-column>
-                <el-table-column prop="productName" label="原产品名称" width="200" sortable="custom" fixed="left" />
+                <el-table-column prop="drawingNo" label="原品名规格" min-width="200" sortable="custom" />
                 <el-table-column prop="shelfSpaceName" label="原库位" width="200" />
                 <el-table-column prop="originBatchNumber" label="原批次号" width="200" sortable="custom" />
                 <el-table-column prop="mainUnit" label="原单位" width="120" />
                 <el-table-column prop="num" label="转换数量" width="140" />
-                <el-table-column prop="targetProductsName" label="目标产品名称" width="200" sortable="custom" />
+                <el-table-column prop="targetProductDrawingNo" label="目标品名规格" min-width="200" sortable="custom" />
                 <el-table-column prop="targetShelfSpaceName" label="目标库位" width="200" />
                 <el-table-column prop="targetBatchNumber" label="目标批次号" width="200" sortable="custom" />
                 <el-table-column prop="targetProductsMainUnit" label="目标单位" width="120" />
@@ -206,15 +218,17 @@
 </template>
 
 <script>
+import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getWarehouseList } from '@/api/basicData/index'// 仓库树
 import { InventorymodalShiftlist, InventorymodalShiftdele, InventorymodalShiftmxlist } from '@/api/warehouseManagement/modalShift'
 import Form from './Form'
 export default {
-  name: 'modalShift',
+  // name: 'modalShift',
   components: { Form, SuperQuery },
   data() {
     return {
+      showAppCodeFlag: true,
       superQueryJson1: [
         {
           prop: 'orderNo',
@@ -227,8 +241,8 @@ export default {
           type: 'input'
         },
         {
-          prop: 'productName',
-          label: "原产品名称",
+          prop: 'drawingNo',
+          label: "原品名规格",
           type: 'input'
         },
         {
@@ -252,8 +266,8 @@ export default {
           type: 'input'
         },
         {
-          prop: 'targetProductsName',
-          label: "目标产品名称",
+          prop: 'targetProductDrawingNo',
+          label: "目标品名规格",
           type: 'input'
         },
         {
@@ -303,6 +317,15 @@ export default {
           label: "仓库名称",
           type: 'input'
         },
+        { // 日期时间选择器（区间）
+          prop: 'approvalCompletionDate',
+          label: '审批完成时间',
+          type: 'datetimerange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '开始时间',
+          endPlaceholder: '结束时间',
+          pickerOptions: this.global.timePickerOptions
+        },
         { // 下拉选
           prop: 'documentStatus',
           label: '单据状态',
@@ -312,7 +335,26 @@ export default {
             { label: "提交", value: "submit" }
           ] // 注意，此options从接口异步获取，改变值时注意内存地址
         },
-
+        {
+          prop: 'approvalStatus',
+          label: "审批状态",
+          type: 'select',
+          options: [
+            { label: '审批中', value: 'ing' },
+            { label: '审批通过', value: 'ok' },
+            { label: '审批拒绝', value: 'rebut' },
+            { label: '审批撤回', value: 'withdrawn' },
+          ]
+        },
+        { // 日期时间选择器（区间）
+          prop: 'submitDate',
+          label: '提交时间',
+          type: 'datetimerange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '开始时间',
+          endPlaceholder: '结束时间',
+          pickerOptions: this.global.timePickerOptions
+        },
         { // 日期时间选择器（区间）
           prop: 'createTime',
           label: '创建时间',
@@ -325,6 +367,11 @@ export default {
         {
           prop: 'createByName',
           label: '创建人',
+          type: 'input'
+        },
+        {
+          prop: 'reasonRejection',
+          label: "驳回理由",
           type: 'input'
         },
         {
@@ -399,7 +446,13 @@ export default {
       formVisible: false,
     }
   },
-  created() {
+  async created() {
+    const res = await this.jnpf.getBusInfo('b060')
+    if (res) {
+      this.showAppCodeFlag = res.enabledMark
+    } else {
+      this.showAppCodeFlag = false
+    }
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.linesQuery = JSON.parse(JSON.stringify(this.linesQuerylist))
     this.search()
@@ -410,6 +463,25 @@ export default {
     }
   },
   methods: {
+    withdrawnHandle(formId) {
+      let _data = {
+        formId
+      }
+      this.$confirm('此操作将撤回审批单，是否继续？', this.$t('common.tipTitle'), {
+        type: 'warning'
+      }).then(() => {
+        withdrawn(_data).then(res => {
+          this.$message({
+            type: 'success',
+            message: "撤回成功",
+            duration: 1500,
+            onClose: () => {
+              this.initData()
+            }
+          })
+        })
+      }).catch(() => { })
+    },
     columnSetFun() {
       this.$refs['dataTable'].showDrawer()
     },
@@ -423,7 +495,7 @@ export default {
     },
     superQuerySearch1(query) {
       this.linesQuery.superQuery = query
-      this.superQueryVisible = false
+      this.superQueryVisible1 = false
       this.search()
     },
     handleClick(e) {

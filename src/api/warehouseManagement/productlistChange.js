@@ -71,7 +71,7 @@ export function stockDisassembly(id) {
 //产品库位
 export function stockDisassemblykw(data) {
     return request({
-        url: `/api/wms/stockGoodsShelves/list/condition`,
+        url: `/api/wms/stockGoodsShelves/list`,
         method: 'POST',
         data
     })

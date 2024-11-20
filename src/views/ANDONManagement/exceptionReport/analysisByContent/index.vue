@@ -41,7 +41,10 @@ import {
     analysisByContent,
     exportAnalysisByContent,
 } from "@/api/abnormalManagement";
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
+  mixins:[getProjectList],
   components: {
     ExportForm,
     selectdate,
@@ -55,14 +58,17 @@ export default {
         startTime: "",
         endTime: "",
         type: "year",
-        userIds: []
+        userIds: [],
+        projectId:''
       },
       tableList: [],
       chartInstance: null,
-      option: {}
+      option: {},
+      isProjectSwitch:''
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.dataForm.userIds = []
     this.initData()
   },
@@ -88,6 +94,9 @@ export default {
       },
       deep: true
     }
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     // 导出
@@ -137,6 +146,7 @@ export default {
        this.chartLoading = true
        this.listLoading = true
        try {
+           this.dataForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
            const res1 =  await  analysisByContent(this.dataForm)
            const legendData =  Object.keys(res1.data[0]).filter(item=>item !== dataField)
            this.tableColumns =legendData

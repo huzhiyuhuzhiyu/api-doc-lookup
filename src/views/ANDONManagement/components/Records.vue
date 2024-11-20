@@ -96,9 +96,12 @@
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import JNPFForm from '../processProcessing/Form.vue'
+import { mapGetters, mapState } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   name: 'cancelsAndHistoryRecord',
   components: { SuperQuery ,JNPFForm},
+  mixins:[getProjectList],
   props: {
     tableItems: {
       type: Array,
@@ -205,10 +208,15 @@ export default {
       formVisible: false,
       basicQuery: {},
       superQuery: {},
+      isProjectSwitch:''
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.getData()
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     superQuerySearch(query) {
@@ -249,6 +257,7 @@ export default {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
+      this.listQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       this.listMethod(this.listQuery).then((res) => {
         this.tableData = res.data.records
         this.total = res.data.total

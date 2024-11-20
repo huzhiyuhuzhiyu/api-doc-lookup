@@ -51,7 +51,8 @@ export default {
         startUpdateTime: "",
         superQuery: {},
         totalRowFlag: false,
-        type: ""
+        type: "",
+        projectId:''
       },
       searchList: [
         { fieldValue: '', field: 'orderNo', label: '申请单号', prop: 'orderNo', symbol: 'like', searchType: 1 },

@@ -65,7 +65,7 @@
                   :btnType="btnType === 'setLoss' ? 'look' : btnType" />
               </el-collapse-item>
               <el-collapse-item title="检验信息" name="inspectionInfo" class="orderInfo">
-                <JNPF-col v-model="dataForm" :tabContent="inspectionInfo" ref="dataForm" :openMode="openMode" />
+                <JNPF-col v-model="dataForm" :tabContent="inspectionInfo"  :openMode="openMode" />
               </el-collapse-item>
               <el-collapse-item title="检验项目" name="inspectionItem">
                 <el-row :gutter="30" style="padding: 0 0 10px 0;">
@@ -131,6 +131,16 @@ export default {
   components: { TableFormProduct, workFlow, WareSide, Preview, TableFormWare, TableFormWareTwo, Process, recordList },
   mixins: [busFlow],
   data() {
+    var checkQualifiedQuantity = (rule, value, callback) => {
+      // if (value === '') {
+      //   callback(new Error('请输入密码'));
+      // } else {
+      //   if (this.dataForm.qualifiedQuantity !== '') {
+      //     this.$refs.ruleForm.validateField('checkPass');
+      //   }
+      //   callback();
+      // }
+    }
     return {
       isattachmentswitch: '',
       datafilelist: [],
@@ -395,6 +405,35 @@ export default {
           sm: 6,
           render: this.btnType !== 'add',
           // itemDisabled: this.btnType === 'view' ? true : false
+          itemRules: [
+            {
+              validator: this.formValidate({
+                type: 'noEmtry',
+                params: [
+                  '',
+                  (errMsg) => {
+                    this.$message.error(`合格数量${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            },
+            { required: true, trigger: 'blur' },
+            {
+              validator: (rule, value, callback) => {
+                console.log(value, 'val')
+                if (!value) {
+                  callback()
+                } else if (
+                  Number(this.dataForm.qualifiedQuantity) + Number(this.dataForm.unqualifiedQuantity) !==
+                  Number(this.dataForm.inspectionUnqualifiedQuantity)
+                ) {
+                  callback(new Error('合格数量+不合格数量要等于检验不合格数量'))
+                }
+              },
+              trigger: 'blur'
+            }
+          ],
           itemDisabled:
             this.btnType === 'view'
               ? true
@@ -410,6 +449,35 @@ export default {
           type: 'input',
           sm: 6,
           render: this.btnType !== 'add',
+          itemRules: [
+            {
+              validator: this.formValidate({
+                type: 'noEmtry',
+                params: [
+                  '',
+                  (errMsg) => {
+                    this.$message.error(`不合格数量${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            },
+            { required: true, trigger: 'blur' },
+            {
+              validator: (rule, value, callback) => {
+                console.log(value, 'val')
+                if (!value) {
+                  callback()
+                } else if (
+                  Number(this.dataForm.qualifiedQuantity) + Number(this.dataForm.unqualifiedQuantity) !==
+                  Number(this.dataForm.inspectionUnqualifiedQuantity)
+                ) {
+                  callback(new Error('合格数量+不合格数量要等于检验不合格数量'))
+                }
+              },
+              trigger: 'blur'
+            }
+          ],
           itemDisabled:
             this.btnType === 'view'
               ? true
@@ -427,6 +495,35 @@ export default {
             this.btnType !== 'add'
               ? !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType)
               : false || this.dataForm.approvalStatus === 'ok',
+          itemRules: [
+            {
+              validator: this.formValidate({
+                type: 'noEmtry',
+                params: [
+                  '',
+                  (errMsg) => {
+                    this.$message.error(`报废数量${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            },
+            { required: true, trigger: 'blur' },
+            {
+              validator: (rule, value, callback) => {
+                console.log(value, 'val')
+                if (!value) {
+                  callback()
+                } else if (
+                  Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !==
+                  Number(this.dataForm.inspectionUnqualifiedQuantity)
+                ) {
+                  callback(new Error('报废数量+返修数量要等于检验不合格数量'))
+                }
+              },
+              trigger: 'blur'
+            }
+          ],
           itemDisabled: this.btnType === 'view' ? true : this.dataForm.approvalStatus === 'ok' ? true : false
         },
         {
@@ -439,6 +536,34 @@ export default {
             this.btnType !== 'add'
               ? !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType)
               : false || this.dataForm.approvalStatus === 'ok',
+          itemRules: [
+            {
+              validator: this.formValidate({
+                type: 'noEmtry',
+                params: [
+                  '',
+                  (errMsg) => {
+                    this.$message.error(`返修数量${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            },
+            {
+              validator: (rule, value, callback) => {
+                console.log(value, 'val')
+                if (!value) {
+                  callback()
+                } else if (
+                  Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !==
+                  Number(this.dataForm.inspectionUnqualifiedQuantity)
+                ) {
+                  callback(new Error('报废数量+返修数量要等于检验不合格数量'))
+                }
+              },
+              trigger: 'blur'
+            }
+          ],
           itemDisabled: this.btnType === 'view' ? true : this.dataForm.approvalStatus === 'ok' ? true : false
         },
         {

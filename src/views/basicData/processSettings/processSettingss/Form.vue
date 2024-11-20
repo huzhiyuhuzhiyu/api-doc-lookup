@@ -42,14 +42,14 @@
                               :style="{ width: '100%' }" maxlength="20" :disabled="type == 'look'"></el-input>
                           </el-form-item>
                         </el-col>
-                        <el-col :span="12">
+                        <!-- <el-col :span="12">
                           <el-form-item label="按工艺顺序报工" prop="reportRulesFlag">
                             <el-select v-model="dataForm.reportRulesFlag" style="width:100%" :disabled="type == 'look'">
                               <el-option v-for="item in options" :key="item.value" :label="item.label"
                                 :value="item.value"></el-option>
                             </el-select>
                           </el-form-item>
-                        </el-col>
+                        </el-col> -->
                         <!-- <el-col :span="12">
                       <el-form-item label="工艺状态" prop="state">
                         <el-select v-model="dataForm.state" style="width:100%" :disabled="type == 'look'">
@@ -354,14 +354,14 @@
                           maxlength="20" :disabled="type == 'look'"></el-input>
                       </el-form-item>
                     </el-col>
-                    <el-col :span="12">
+                    <!-- <el-col :span="12">
                       <el-form-item label="按工艺顺序报工" prop="reportRulesFlag">
                         <el-select v-model="dataForm.reportRulesFlag" style="width:100%" :disabled="type == 'look'">
                           <el-option v-for="item in options" :key="item.value" :label="item.label"
                             :value="item.value"></el-option>
                         </el-select>
                       </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <el-col :span="24">
                       <el-form-item label="驳回理由" prop="documentStatus" v-if="dataForm.status === 'review_failed'">
                         <el-input v-model="dataForm.reasonRejection" placeholder="请输入驳回理由" clearable type="textarea"

@@ -48,7 +48,7 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="交货日期" prop="deliveryDate">
                           <el-date-picker v-model="dataForm.deliveryDate" type="date" value-format="yyyy-MM-dd"
-                            style="width: 100%;" placeholder="请选择交货日期"></el-date-picker>
+                            style="width: 100%;" placeholder="请选择交货日期" @change="deliveryDateChange"></el-date-picker>
                         </el-form-item>
                       </el-col>
                       <el-col :span="24">
@@ -155,7 +155,7 @@
                             :rules="productRules.purchaseQuantity">
                             <el-input v-model="scope.row.purchaseQuantity"
                               @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)" maxlength="20"
-                              placeholder="数量"></el-input>
+                              placeholder="数量" disabled></el-input>
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -359,7 +359,7 @@ export default {
       // 工序
       getBimProcessList,
       //  供应商 树请求
-      ProcessMethodArr: { method: getcategoryTree, requestObj: { classAttribute: 'process' } },
+      ProcessMethodArr: { method: getcategoryTree, requestObj: { type: 'process' } },
       // 供应商 列表
       ProcessTableItems: [
         { prop: 'code', label: '工序编码' },
@@ -751,6 +751,13 @@ export default {
     this.getBusInfo()
   },
   methods: {
+    deliveryDateChange(val) {
+      this.dataFormTwo.data.forEach(item => {
+        if (!item.deliveryDate) {
+          this.$set(item, 'deliveryDate', val) // 总金额(不含税)
+        }
+      })
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',

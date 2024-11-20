@@ -48,7 +48,7 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="交货日期" prop="deliveryDate">
                           <el-date-picker v-model="dataForm.deliveryDate" type="date" value-format="yyyy-MM-dd"
-                            style="width: 100%;" placeholder="请选择交货日期"></el-date-picker>
+                            style="width: 100%;" placeholder="请选择交货日期" @change="deliveryDateChange"></el-date-picker>
                         </el-form-item>
                       </el-col>
                       <el-col :span="24">
@@ -296,7 +296,7 @@
 </template>
 <script>
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
-import SourceArea from '../../productOutsourcingOrder/ringBlankStock/source.vue'
+import SourceArea from './source.vue'
 import {
   getShipmentList,
   getpurProcurementRequireDetail,
@@ -359,7 +359,7 @@ export default {
       // 工序
       getBimProcessList,
       //  供应商 树请求
-      ProcessMethodArr: { method: getcategoryTree, requestObj: { classAttribute: 'process' } },
+      ProcessMethodArr: { method: getcategoryTree, requestObj: { type: 'process' } },
       // 供应商 列表
       ProcessTableItems: [
         { prop: 'code', label: '工序编码' },
@@ -377,6 +377,7 @@ export default {
         code: '',
         name: '',
         unProcessType: 'heat_treatment',
+        processingType: 'external_production',
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -753,6 +754,13 @@ export default {
     this.getBusInfo()
   },
   methods: {
+    deliveryDateChange(val) {
+      this.dataFormTwo.data.forEach(item => {
+        if (!item.deliveryDate) {
+          this.$set(item, 'deliveryDate', val) // 总金额(不含税)
+        }
+      })
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -814,16 +822,18 @@ export default {
             productDrawingNo: item.productDrawingNo,
             productCode: item.productCode,
             deliveryDate: item.deliveryDate,
+            stockInventoryLineId: item.id,
             mainUnit: item.mainUnit,
             deputyUnit: item.deputyUnit,
             maniProcessId: item.processId,
+            mainProcessName: item.processName,
             purchaseQuantity: Number(item.inventoryQuantity),
             productsId: item.productsId,
             classAttribute: item.classAttribute,
             calculationDirection: item.calculationDirection,
             ratio: item.ratio,
-            processName: '',
             processId: '',
+            processName: '',
             price: item.price,
             totalAmount: item.totalAmount,
             taxRate: 13,
@@ -857,17 +867,16 @@ export default {
           console.log(item, 'pppp')
           let obj = {
             drawingNo: item.productDrawingNo,
-            stockInventoryLineId: item.id,
             deliveryDate: item.deliveryDate,
             mainUnit: item.mainUnit,
             deputyUnit: item.deputyUnit,
             purchaseQuantity: Number(item.inventoryQuantity),
             productsId: item.productsId,
             processId: item.maniProcessId,
+            processName: item.mainProcessName,
             classAttribute: item.classAttribute,
             calculationDirection: item.calculationDirection,
             ratio: item.ratio,
-            processName: '',
             demandQuantity: item.purchaseQuantity, //库存数量
             demandQuantity1: item.purchaseQuantity, //库存数量
             qty: 1,
@@ -898,8 +907,8 @@ export default {
         classAttribute: this.dataFormTwo.data[index].classAttribute,
         calculationDirection: this.dataFormTwo.data[index].calculationDirection,
         ratio: this.dataFormTwo.data[index].ratio,
-        processName: '',
         processId: this.dataFormTwo.data[index].maniProcessId,
+        processName: this.dataFormTwo.data[index].mainProcessName,
         purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity,
         demandQuantity: this.dataFormTwo.data[index].purchaseQuantity, //库存数量
         demandQuantity1: this.dataFormTwo.data[index].purchaseQuantity, //库存数量
@@ -1128,16 +1137,17 @@ export default {
         return {
           productDrawingNo: item.productDrawingNo,
           productCode: item.productCode,
+          stockInventoryLineId: item.id,
           deliveryDate: item.deliveryDate,
           mainUnit: item.mainUnit,
           deputyUnit: item.deputyUnit,
           maniProcessId: item.processId,
+          mainProcessName: item.processName,
           purchaseQuantity: Number(item.inventoryQuantity),
           productsId: item.productsId,
           classAttribute: item.classAttribute,
           calculationDirection: item.calculationDirection,
           ratio: item.ratio,
-          processName: '',
           processId: '',
           price: item.price,
           totalAmount: item.totalAmount,
@@ -1163,17 +1173,16 @@ export default {
         console.log(item, 'pppp')
         let obj = {
           drawingNo: item.productDrawingNo,
-          stockInventoryLineId: item.id,
           deliveryDate: item.deliveryDate,
           mainUnit: item.mainUnit,
           deputyUnit: item.deputyUnit,
           purchaseQuantity: Number(item.inventoryQuantity),
           productsId: item.productsId,
           processId: item.maniProcessId,
+          processName: item.mainProcessName,
           classAttribute: item.classAttribute,
           calculationDirection: item.calculationDirection,
           ratio: item.ratio,
-          processName: '',
           demandQuantity: item.purchaseQuantity, //库存数量
           demandQuantity1: item.purchaseQuantity, //库存数量
           qty: 1,

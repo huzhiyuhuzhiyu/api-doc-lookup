@@ -1706,7 +1706,7 @@ export default {
           if (this.btnType == 'copy') {
             this.dataForm.inspectionStatus = ''
             this.dataForm.id = ''
-            this.dataForm.deliverDate = ''
+            this.dataForm.deliverDate = this.jnpf.getToday()
             this.datafilelist = []
             this.dataForm.approvalStatus = ''
             this.dataForm.packingStatus = 'unboxed'
@@ -1747,7 +1747,7 @@ export default {
         })
       } else {
         this.dataForm.salesman = this.userInfo.userName
-
+        this.dataForm.deliverDate = this.jnpf.getToday()
         this.fetchData('CGSH')
         this.getBusInfo()
       }

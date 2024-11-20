@@ -735,7 +735,7 @@ export default {
           fullName:"采购收货单"
         },
         {
-          businessType: 'inbound_purchase',
+          businessType: 'outbound_purchase',
           code: "p008",
           fullName:"采购退货"
         },

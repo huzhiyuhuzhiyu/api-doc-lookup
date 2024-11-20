@@ -461,7 +461,12 @@ export default {
       })
     },
     sortChange({ prop, order }) {
-      let newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      let newProp;
+      if (prop === 'factoryFloor' || prop === 'mountedPlaces' || prop === 'partnerName' || prop === 'createByName') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
       if (newProp === 'create_name') { newProp = 'create_by' }
       this.listQuery.orderItems[0].asc = order === "ascending"
       this.listQuery.orderItems[0].column = order === null ? "" : newProp

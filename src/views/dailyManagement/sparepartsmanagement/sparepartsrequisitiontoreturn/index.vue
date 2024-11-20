@@ -54,6 +54,7 @@
           <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
           <el-table-column label="操作" width="140" fixed="right">
             <template slot-scope="scope">
+              <el-button type="text" size="mini" @click.native="handleUserRelation(scope.row.id, 'look')">归还</el-button>
               <el-button type="text" size="mini" @click.native="handleUserRelation(scope.row.id, 'look')">查看详情</el-button>
             </template>
           </el-table-column>

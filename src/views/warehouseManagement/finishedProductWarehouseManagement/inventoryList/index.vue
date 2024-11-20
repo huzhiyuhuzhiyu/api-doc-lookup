@@ -453,7 +453,7 @@ export default {
           fullName: "采购收货单"
         },
         {
-          businessType: 'inbound_purchase',
+          businessType: 'outbound_purchase',
           code: "p008",
           fullName:"采购退货"
         },
@@ -462,7 +462,9 @@ export default {
           code: "p013",
           fullName: "外协发料单"
         },
-      ]
+      ],
+      enCode:"",
+
     }
   },
   created() {
@@ -522,7 +524,7 @@ export default {
       console.log(this.arr,row);
       this.enCode = this.arr.find(item => item.businessType === row.businessType).code // 筛选出 businessType 等于 type 的项  
         console.log("this.encode",this.enCode); 
-      this.formId = row.moveId
+      this.formId = row.id
       this.fullName = this.arr.find(item => item.businessType === row.businessType).fullName // 筛选出 businessType 等于 type 的项  
       console.log("this.fullName",this.fullName);
       this.printVisible = true
@@ -530,6 +532,7 @@ export default {
         this.$refs.printTemplate.init(this.enCode)
       })
     },
+
     closePrint() {
       this.printVisible = false
     },

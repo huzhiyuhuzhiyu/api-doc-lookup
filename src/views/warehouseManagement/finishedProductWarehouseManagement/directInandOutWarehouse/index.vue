@@ -8,8 +8,9 @@
           @click="handleConfirm('draft')">保存草稿</el-button>
         <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
           @click="handleConfirm('submit')">保存并提交</el-button>
-        <el-button v-if="btnType !== 'look' && dataForm.businessType == 'inbound_purchase'" type="primary"
-          :loading="btnLoading" @click="handleConfirm('submit', 'print')">提交并打印</el-button>
+        <el-button
+          v-if="btnType !== 'look' && (dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_external_send'||dataForm.businessType == 'outbound_purchase')"
+          type="primary" :loading="btnLoading" @click="handleConfirm('submit', 'print')">提交并打印</el-button>
         <el-button v-if="btnType == 'look' || btnType == 'edit'" @click="goBack">{{ $t('common.cancelButton')
           }}</el-button>
       </div>
@@ -727,6 +728,23 @@ export default {
       printBrowseVisible: false,
       mainUnitFlag: null,
       tableDataFlag: false,
+      arr: [
+        {
+          businessType: 'inbound_purchase',
+          code: "p017",
+          fullName:"采购收货单"
+        },
+        {
+          businessType: 'inbound_purchase',
+          code: "p008",
+          fullName:"采购退货"
+        },
+        {
+          businessType: 'outbound_external_send',
+          code: "p013",
+          fullName:"外协发料单"
+        },
+      ]
     }
   },
   created() {
@@ -1216,9 +1234,9 @@ export default {
       }
       if (this.mainUnitFlag == 1) {
         if (row.calculationDirection == 'multiplication') {
-         productArr[index].deputyNum = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.ratio]), 6)
+          productArr[index].deputyNum = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.ratio]), 6)
         } else {
-         productArr[index].deputyNum = this.jnpf.numberFormat(this.jnpf.math('divide', [row.num, row.ratio]), 6)
+          productArr[index].deputyNum = this.jnpf.numberFormat(this.jnpf.math('divide', [row.num, row.ratio]), 6)
         }
       }
       productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.costPrice]), 6)
@@ -1404,7 +1422,7 @@ export default {
         detailWarehouseData(id).then(res => {
           this.dataForm = res.data.stockMove
           res.data.spaceLines.forEach(item => {
-            this.$set(item,'productDrawingNo',item.drawingNo)
+            this.$set(item, 'productDrawingNo', item.drawingNo)
           });
           this.productData = res.data.spaceLines
           this.spaceLines = res.data.spaceLines
@@ -1521,9 +1539,14 @@ export default {
               }
 
               if (type) {
-                this.enCode = 'p017'
+                let codes = this.arr
+                  .filter(item => item.businessType === this.dataForm.businessType) // 筛选出 businessType 等于 type 的项  
+                  .map(item => item.code); // 提取满足条件的 code 值  
+                this.enCode = codes
                 this.formId = res.data.id
-                this.fullName = '采购收货单'
+                this.fullName = this.arr
+                  .filter(item => item.businessType === this.dataForm.businessType) // 筛选出 businessType 等于 type 的项  
+                  .map(item => item.fullName);
                 this.printVisible = true
                 this.$nextTick(() => {
                   this.$refs.printTemplate.init(this.enCode)

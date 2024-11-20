@@ -55,6 +55,8 @@ export default {
   },
   methods: {
     init() {
+      this.printDataForm.enCode=""
+      this.printList=[]
       getPrintList(this.printQuery).then(res => {
         if (res.data) {
           if (res.data.hasOwnProperty(this.enCode)) {

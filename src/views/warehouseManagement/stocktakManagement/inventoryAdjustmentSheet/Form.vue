@@ -31,20 +31,20 @@
                             </el-form-item>
                           </el-col>
                           <el-col :sm="6" :xs="24">
-                            <el-form-item label="盘点日期" prop="orderDate">
+                            <el-form-item label="调整日期" prop="orderDate">
                               <el-date-picker v-model="dataForm.orderDate" type="date" value-format="yyyy-MM-dd"
                                 style="width: 100%;" :picker-options="pickerOptions" placeholder="请选择盘点日期" disabled>
                               </el-date-picker>
                             </el-form-item>
                           </el-col>
                           <el-col :sm="6" :xs="24">
-                            <el-form-item label="盘点人员" prop="personName">
+                            <el-form-item label="调整人员" prop="personName">
                               <el-input v-model="dataForm.personName" placeholder="请选择盘点人员" disabled maxlength="300" />
                             </el-form-item>
                           </el-col>
 
                           <el-col :sm="6" :xs="24">
-                            <el-form-item label="盘点仓库" prop="warehouseName">
+                            <el-form-item label="仓库" prop="warehouseName">
                               <ComSelect-list :requestObj="warehouseRequestObj" :dialogTitle="'选择盘点仓库'" isdisabled
                                 v-model="dataForm.warehouseName" :method="getWarehouseList" placeholder="请选择仓库"
                                 @change="changeWarehousex"></ComSelect-list>
@@ -81,16 +81,16 @@
                         <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
                         <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6" show-overflow-tooltip>
                         </el-table-column>
-                        <el-table-column prop="stockNum" label="当前库存" width="120" :key="6" show-overflow-tooltip>
+                        <el-table-column prop="stockNum" label="调整前库存" width="150" :key="6" show-overflow-tooltip>
                         </el-table-column>
 
-                        <el-table-column prop="num" label="盘点数量" width="120" :key="10112">
+                        <el-table-column prop="num" label="调整数量" width="120" :key="10112">
                           <template slot="header">
-                            <span class="required">*</span>盘点数量
+                            <span class="required">*</span>调整数量
                           </template>
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.num" disabled @blur="computedDiffNum(scope.row, scope.$index,)"
-                              placeholder="盘点数量">
+                              placeholder="调整数量">
                             </el-input>
 
                           </template>

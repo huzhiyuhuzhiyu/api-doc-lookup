@@ -962,9 +962,9 @@ export default {
       this.$set(this.productData[index], 'taxRate', data.taxRate * 1)
       this.$set(this.productData[index], 'excludingTaxCostPrice', data.excludingTaxPrice * 1)
       if (this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'outbound_purchase' || this.dataForm.businessType == 'outbound_external_send' || this.dataForm.businessType == 'inbound_external') {
-        this.$set(item, 'discount', '')
-        this.$set(item, 'proportion', '')
-        this.$set(item, 'weight', '')
+        this.$set(this.productData[index], 'discount', '')
+        this.$set(this.productData[index], 'proportion', '')
+        this.$set(this.productData[index], 'weight', '')
       }
     },
     // 打开选择库位弹框

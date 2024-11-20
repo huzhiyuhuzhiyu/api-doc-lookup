@@ -184,8 +184,8 @@
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item
                       @click.native="viewFun(scope.row.moveId, 'look', scope.row)">查看详情</el-dropdown-item>
-                      <el-dropdown-item type="text"
-                      :disabled="!((scope.row.businessType == 'inbound_purchase' || scope.row.businessType == 'outbound_external_send'||scope.row.businessType=='outbound_purchase') && scope.row.sourceType == 'direct' && scope.row.documentStatus == 'submit')"
+                    <el-dropdown-item type="text"
+                      :disabled="!((scope.row.businessType == 'inbound_purchase' || scope.row.businessType == 'outbound_external_send' || scope.row.businessType == 'outbound_purchase') && scope.row.sourceType == 'direct' && scope.row.documentStatus == 'submit')"
                       @click.native="PrintFun(scope.row)">打印</el-dropdown-item>
 
                   </el-dropdown-menu>
@@ -244,6 +244,7 @@
     <outboundUseForm v-if="outboundUseVisible" ref="outboundUseREFForm" @close="closeForm">
     </outboundUseForm>
     <InboundReturnForm v-if="inboundReturnVisible" ref="inboundReturnREFForm" @close="closeForm"></InboundReturnForm>
+    <TakingAdjustForm v-if="takingAdjustVisible" ref="takingAdjustREFForm" @close="closeForm"></TakingAdjustForm>
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -283,19 +284,21 @@ import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
+import TakingAdjustForm from '@/views/warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/adjust.vue'
 export default {
   name: 'inventoryDetaisList',
   components: {
     Form, SuperQuery, ExportForm, ProductInboundForm, WorkInboundForm, OutboundSaleSendForm, InboundSaleReturnForm,
     InboundPurchaseForm, OutboundPurchaseForm, OutboundExternalSendForm,
     InboundExternalForm, OutboundPickOutForm, InboundReturnMaterialsForm,
-    Transfer, SaleOutboundForm, ExternalMaterOutboundForm, PurchaseOrderInboundForm, ExternalInboundForm, outboundUseForm, InboundReturnForm, PrintBrowse, PrintDialog
+    Transfer, SaleOutboundForm, ExternalMaterOutboundForm, PurchaseOrderInboundForm, ExternalInboundForm, outboundUseForm, InboundReturnForm, PrintBrowse, PrintDialog,TakingAdjustForm
   },
   props: {
     warehouseCode: "",
   },
   data() {
     return {
+      takingAdjustVisible:false,
       printVisible: false,
       printBrowseVisible: false,
       inboundReturnVisible: false,
@@ -559,7 +562,7 @@ export default {
         {
           businessType: 'outbound_purchase',
           code: "p008",
-          fullName:"采购退货单"
+          fullName: "采购退货单"
         },
         {
           businessType: 'outbound_external_send',
@@ -590,9 +593,9 @@ export default {
         getBimBusinessSwitchConfigList(objs).then(res => {
           this.productNameFlag = res.data.product[1].configValue1
           console.log(1111, this.productNameFlag);
-        this.listLoading = false
-        this.tableDataFlag = true
-        if (this.productNameFlag == '1') {
+          this.listLoading = false
+          this.tableDataFlag = true
+          if (this.productNameFlag == '1') {
 
             this.searchList.push({ field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 })
           }
@@ -618,12 +621,12 @@ export default {
     },
     // 打印
     PrintFun(row) {
-      console.log(this.arr,row);
+      console.log(this.arr, row);
       this.enCode = this.arr.find(item => item.businessType === row.businessType).code // 筛选出 businessType 等于 type 的项  
-        console.log("this.encode",this.enCode); 
+      console.log("this.encode", this.enCode);
       this.formId = row.moveId
       this.fullName = this.arr.find(item => item.businessType === row.businessType).fullName // 筛选出 businessType 等于 type 的项  
-      console.log("this.fullName",this.fullName);
+      console.log("this.fullName", this.fullName);
       this.printVisible = true
       this.$nextTick(() => {
         this.$refs.printTemplate.init(this.enCode)
@@ -639,7 +642,7 @@ export default {
         this.search('basic')
       })
     },
-  
+
     getProductClassFun() {
       // 孔径
       let objO = {
@@ -1042,15 +1045,31 @@ export default {
           this.$refs.workInboundREFForm.init(id, type, this.classAttribute)
         })
       } else if (row.businessType == 'inbound_sale_return') {
-        this.inboundSaleReturnFormVisible = true
-        this.$nextTick(() => {
-          this.$refs.inboundSaleReturnREFForm.init(id, type, row.businessType, this.classAttribute)
-        })
+
+        if (row.sourceType == 'notice') {
+          this.inboundSaleReturnFormVisible = true
+          this.$nextTick(() => {
+            this.$refs.inboundSaleReturnREFForm.init(id, type, row.businessType, this.classAttribute)
+          })
+        } else {
+          this.formVisible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init(id, type, this.warehouseCode)
+          })
+        }
       } else if (row.businessType == 'outbound_purchase') {
-        this.outboundPurchaseFormVisible = true
-        this.$nextTick(() => {
-          this.$refs.outboundPurchaseREFForm.init(id, type, row.businessType, this.classAttribute)
-        })
+
+        if (row.sourceType == 'notice') {
+          this.outboundPurchaseFormVisible = true
+          this.$nextTick(() => {
+            this.$refs.outboundPurchaseREFForm.init(id, type, row.businessType, this.classAttribute)
+          })
+        } else {
+          this.formVisible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init(id, type, this.warehouseCode)
+          })
+        }
       } else if (row.businessType == 'outbound_external_send') {
         if (row.sourceType == 'order') {
           this.externalMaterOutboundFormVisible = true
@@ -1125,15 +1144,31 @@ export default {
           })
         }
       } else if (row.businessType == 'outbound_pick_out') {
-        this.outboundPickOutFormVisible = true
+        
+        if (row.sourceType == 'notice') {
+          this.outboundPickOutFormVisible = true
         this.$nextTick(() => {
           this.$refs.outboundPickOutREFForm.init(id, type, row.businessType, this.classAttribute)
         })
+        } else {
+          this.formVisible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init(id, type, this.warehouseCode)
+          })
+        }
       } else if (row.businessType == 'inbound_return_materials') {
-        this.inboundReturnMaterialsFormVisible = true
+        
+        if (row.sourceType == 'notice') {
+          this.inboundReturnMaterialsFormVisible = true
         this.$nextTick(() => {
           this.$refs.inboundReturnMaterialsREFForm.init(id, type, row.businessType, this.classAttribute)
         })
+        } else {
+          this.formVisible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init(id, type, this.warehouseCode)
+          })
+        }
       } else if (row.businessType == 'inbound_transfer' || row.businessType == 'outbound_transfer') {
         this.transferFormVisible = true
         this.$nextTick(() => {
@@ -1148,6 +1183,11 @@ export default {
         this.inboundReturnVisible = true
         this.$nextTick(() => {
           this.$refs.inboundReturnREFForm.init(id, type,)
+        })
+      }else if (row.businessType == 'inbound_taking_adjust') {
+        this.takingAdjustVisible = true
+        this.$nextTick(() => {
+          this.$refs.takingAdjustREFForm.init(id, type,)
         })
       } else {
         console.log(555);
@@ -1280,6 +1320,8 @@ export default {
       this.PurchaseOrderInboundFormVisible = false
       this.outboundUseVisible = false
       this.inboundReturnVisible = false
+      this.takingAdjustVisible=false
+
       if (isRefresh) {
         this.keyword = ''
         this.initData()

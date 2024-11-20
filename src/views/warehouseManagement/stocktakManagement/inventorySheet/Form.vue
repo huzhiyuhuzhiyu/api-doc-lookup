@@ -153,7 +153,7 @@
                   <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
                 </el-tab-pane>
               </el-tabs>
-              <el-collapse v-model="activeNames" style="margin-top: 5px;">
+              <el-collapse v-model="activeNames" style="margin-top: 5px;" v-else>
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">

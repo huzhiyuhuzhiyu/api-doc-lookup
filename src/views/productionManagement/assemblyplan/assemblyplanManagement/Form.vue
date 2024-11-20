@@ -1050,6 +1050,7 @@ export default {
           } else {
           }
         });
+        res.data.routingLineList.sort((a, b) => a.sort - b.sort);
         this.dataFormTwo.data = res.data.routingLineList
         this.processList = JSON.parse(JSON.stringify(res.data.routingLineList))
       })

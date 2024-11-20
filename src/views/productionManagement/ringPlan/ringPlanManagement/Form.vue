@@ -1030,9 +1030,8 @@ export default {
       detailProcess(id).then(res => {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
         console.log("工艺详情", res);
-        this.dataFormTwo.data = res.data.routingLineList
         res.data.routingLineList.forEach((item) => {
-
+          
           if (item.routingProResMap) {
             if (item.routingProResMap.personnel) {
               this.$set(item, 'personId', item.routingProResMap.personnel[0].resourceId)
@@ -1051,6 +1050,8 @@ export default {
           } else {
           }
         });
+        res.data.routingLineList.sort((a, b) => a.sort - b.sort); 
+        this.dataFormTwo.data = res.data.routingLineList
       })
     },
     init(data) {

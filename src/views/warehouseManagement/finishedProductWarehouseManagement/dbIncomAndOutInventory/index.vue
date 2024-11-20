@@ -2756,6 +2756,7 @@ export default {
             this.cgForm.deliverDateEnd = ""
           }
           this.cgForm.approvalStatus = 'ok'
+          
           this.superForm = this.cgForm
           if (type === 'basic') {
             this.basicQuery = {
@@ -2790,7 +2791,8 @@ export default {
         this.listLoading = true
         this.cgForm.receiptReturnType = 'back'
         this.cgForm.receiptInboundFlag = null
-        this.cgForm.classAttributeList = this.classAttributeList
+          this.cgForm.stockFlag = true
+          this.cgForm.classAttributeList = this.classAttributeList
         if (this.cgDateArr.length) {
           this.cgForm.deliverDateStart = this.cgDateArr[0]
           this.cgForm.deliverDateEnd = this.cgDateArr[1]

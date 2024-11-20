@@ -329,10 +329,8 @@ export default {
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
-      if (isRefresh) {
-        this.keyword = ''
         this.initData()
-      }
+       
     },
     initData() {
       this.listLoading = true

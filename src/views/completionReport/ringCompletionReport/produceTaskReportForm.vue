@@ -149,7 +149,13 @@
                 </div>
 
               </el-col>
+              <el-col :sm="24" :xs="24" v-if="materialList[0].reduceType=='picking'">
+                <div class="info">
+                  <span class="left-title">已领料数量：</span>
+                  <span class="left-title">{{ materialList[0].receivedQuantity }}</span>
+                </div>
 
+              </el-col>
             </el-row>
           </el-col>
           <el-col :span="12" class="rightInfo"  ref="mycol"
@@ -354,7 +360,8 @@ export default {
         ]
       },
       iptLabelMargin:'30px',
-      producerMargin: '30px'
+      producerMargin: '30px',
+      materialList:[],
     }
   },
 
@@ -379,6 +386,7 @@ export default {
       detailordershengchan(id).then(res => {
         this.dataForm = res.data.prodOrder
         this.workList = res.data.workOrderList
+        this.materialList=res.data.materialList
         this.currentProcessId = res.data.workOrderList[0].processId
         this.currentProcess = res.data.workOrderList[0]
         this.$set(this.currentProcess, 'reportingQuantity', 0)

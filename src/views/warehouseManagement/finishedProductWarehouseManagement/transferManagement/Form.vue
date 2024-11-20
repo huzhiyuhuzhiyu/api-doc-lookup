@@ -842,7 +842,7 @@ export default {
         pickingDate: "",
         remark: "",
       }
-      this.fetchData("DBDH")
+      this.fetchData("DBDH",true)
       this.getBusInfo('b051')
       this.productData = []
       this.$refs.dataForm.resetFields()
@@ -876,7 +876,7 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行目标仓库不能为空")
                 break
               }
-              if (!item.inShelfSpaceId && allocationFlag) {
+              if (!item.inShelfSpaceId && this.allocationFlag) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行目标库位不能为空")
                 break

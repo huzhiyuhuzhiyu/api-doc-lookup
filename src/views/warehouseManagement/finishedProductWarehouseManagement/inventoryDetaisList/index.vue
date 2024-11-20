@@ -93,6 +93,8 @@
               <div v-if="scope.row.businessType == 'inbound_order_production'">生产产品入库</div>
               <div v-if="scope.row.businessType == 'outbound_use'">资产领用</div>
               <div v-if="scope.row.businessType == 'inbound_return'">资产归还</div>
+              <div v-if="scope.row.businessType == 'inbound_taking_adjust'">盘点调整入库</div>
+              <div v-if="scope.row.businessType == 'outbound_taking_adjust'">盘点调整出库</div>
             </template>
           </el-table-column>
           <el-table-column prop="partnerName" label="客户/供应商" sortable="custom" min-width="160">
@@ -153,21 +155,23 @@
           <el-table-column label="操作" min-width="200" fixed="right">
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
-                :delDisabled="scope.row.documentStatus == 'submit'" :editDisabled="scope.row.documentStatus == 'submit'"
+                :delDisabled="scope.row.documentStatus == 'submit'" :editDisabled="scope.row.documentStatus == 'submit'||scope.row.documentStatus == 'back'"
                 @edit="viewFun(scope.row.moveId, 'edit', scope.row)" @del="handleDel(scope.row.moveId)">
-                <el-button size="mini" type="text"
-                  @click="viewFun(scope.row.moveId, 'look', scope.row)">查看详情</el-button>
-                <!-- <el-dropdown hide-on-click>
+                 
+                <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
                       {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="viewFun(scope.row.moveId, 'look')">查看详情</el-dropdown-item>
+                    <el-dropdown-item @click.native="viewFun(scope.row.moveId, 'look', scope.row)">查看详情</el-dropdown-item>
+                    <el-dropdown-item type="text"
+                      :disabled="!(scope.row.businessType == 'inbound_purchase' && scope.row.sourceType == 'direct'&&scope.row.documentStatus=='submit')"
+                      @click.native="PrintFun(scope.row.id)">打印</el-dropdown-item>
 
                   </el-dropdown-menu>
-                </el-dropdown> -->
+                </el-dropdown>
               </tableOpts>
             </template>
           </el-table-column>
@@ -225,6 +229,9 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+      <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
   </div>
 </template>
 
@@ -254,19 +261,24 @@ import {
 } from "@/api/masterDataManagement/index";
 import outboundUseForm from '../dbIncomAndOutInventory/equipmentOutboundForm.vue'
 import InboundReturnForm from '../dbIncomAndOutInventory/equipmentInboundForm.vue'
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
+import { getPrintBusInfo } from '@/api/system/printDev'
 export default {
   name: 'inventoryDetaisList',
   components: {
     Form, SuperQuery, ExportForm, ProductInboundForm, WorkInboundForm, OutboundSaleSendForm, InboundSaleReturnForm,
     InboundPurchaseForm, OutboundPurchaseForm, OutboundExternalSendForm,
     InboundExternalForm, OutboundPickOutForm, InboundReturnMaterialsForm,
-    Transfer, SaleOutboundForm, ExternalMaterOutboundForm, PurchaseOrderInboundForm, ExternalInboundForm, outboundUseForm, InboundReturnForm
+    Transfer, SaleOutboundForm, ExternalMaterOutboundForm, PurchaseOrderInboundForm, ExternalInboundForm, outboundUseForm, InboundReturnForm, PrintBrowse, PrintDialog 
   },
   props: {
     warehouseCode: "",
   },
   data() {
     return {
+      printVisible: false,
+      printBrowseVisible: false,
       inboundReturnVisible: false,
       outboundUseVisible: false,
       superQuery: {},
@@ -324,6 +336,8 @@ export default {
         { label: "调拨入库", value: "inbound_transfer" },
         { label: "资产领用", value: "outbound_use" },
         { label: "资产归还", value: "inbound_return" },
+        { label: "盘点调整入库", value: "inbound_taking_adjust" },
+        { label: "盘点调整出库", value: "outbound_taking_adjust" },
       ],
 
       initListQuery: {
@@ -374,6 +388,8 @@ export default {
             { label: "调拨入库", value: "inbound_transfer" },
             { label: "资产领用", value: "outbound_use" },
             { label: "资产归还", value: "inbound_return" },
+            { label: "盘点调整入库", value: "inbound_taking_adjust" },
+            { label: "盘点调整出库", value: "outbound_taking_adjust" },
           ],
         },
         {
@@ -506,6 +522,9 @@ export default {
         },
       ],
       classAttributeList: [],
+      prindId:"",
+      formId:"",
+      enCode:"",
     }
   },
   created() {
@@ -516,6 +535,31 @@ export default {
     this.getProductClassFun()
   },
   methods: {
+    printWarehouse(enCode) {
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id 
+          this.printBrowseVisible = true
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
+    // 打印
+    PrintFun(id) {
+      this.enCode = 'p017'
+      this.formId = id
+      this.fullName = '采购收货单'
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(this.enCode)
+      })
+    },
+    closePrint() {
+      this.printVisible = false
+    },
     getclassAttributeList() {
       getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
         console.log("类别属性", res);
@@ -523,6 +567,7 @@ export default {
         this.search('basic')
       })
     },
+  
     getProductClassFun() {
       // 孔径
       let objO = {
@@ -908,7 +953,7 @@ export default {
 
     },
     superQuerySearch(query) {
-      this.listQuery.superQuery = query
+      this.superQuery = query
       this.superQueryVisible = false
       this.search('super')
     },

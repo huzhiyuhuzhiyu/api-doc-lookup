@@ -47,7 +47,7 @@
                         </el-select>
                       </el-form-item>
                     </el-col> -->
-                    <el-col :sm="6" :xs="24">
+                    <!-- <el-col :sm="6" :xs="24">
                       <el-form-item label="仓库" prop="warehouseId">
                         <el-select v-model="dataForm.warehouseId" placeholder="请选择仓库" style="width: 100%;"
                           :disabled="btnType == 'look' ? true : false" clearable>
@@ -55,7 +55,7 @@
                             :value="item.id"></el-option>
                         </el-select>
                       </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="供应商名称" prop="partnerName">
                         <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
@@ -119,11 +119,11 @@
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                     <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
                     <!-- </el-table-column> -->
-                    <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" show-overflow-tooltip />
+                    <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom"
+                      show-overflow-tooltip />
                     <el-table-column prop="mainUnit" label="单位" width="60" />
-                    <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
-                    <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom"
-                      v-if="isReturnSwitch === '1'" />
+                    <!-- <el-table-column prop="receivedQuantity" label="订单数量" width="160" sortable="custom" /> -->
+                    <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom" />
                     <el-table-column prop="receivedQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
@@ -272,7 +272,7 @@
                         </el-select>
                       </el-form-item>
                     </el-col> -->
-                <el-col :sm="6" :xs="24">
+                <!-- <el-col :sm="6" :xs="24">
                   <el-form-item label="仓库" prop="warehouseId">
                     <el-select v-model="dataForm.warehouseId" placeholder="请选择仓库" style="width: 100%;"
                       :disabled="btnType == 'look' ? true : false" clearable>
@@ -280,7 +280,7 @@
                         :value="item.id"></el-option>
                     </el-select>
                   </el-form-item>
-                </el-col>
+                </el-col> -->
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="供应商名称" prop="partnerName">
                     <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
@@ -345,9 +345,8 @@
                 <!-- </el-table-column> -->
                 <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="60" />
-                <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
-                <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom"
-                  v-if="isReturnSwitch === '1'" />
+                <!-- <el-table-column prop="receivedQuantity" label="订单数量" width="160" sortable="custom" /> -->
+                <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom" />
                 <el-table-column prop="receivedQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                   key="789">
                   <template slot="header">
@@ -1055,25 +1054,19 @@ export default {
     calcValidate() {
       return (rule, value, callback) => {
         let index = Number(rule.field.match(/\d+/)[0])
-        let msg = this.isReturnSwitch === 1 ? `退货数量超过最大可退货数量` : `退货数量超过订单数量`
+        let msg = `退货数量超过最大可退货数量`
         if (!value || value == 0) {
           callback()
         } else {
           let flag = false
           let list = this.dataFormTwo.productData
-          if (this.isReturnSwitch === '1') {
-            let num_1 = Number(list[index].receivedQuantity)
-            let num_2 = Number(list[index].receiptQuantity)
-            if (!(num_1 <= num_2)) {
-              flag = true
-            }
-          } else {
-            let num_1 = Number(list[index].receivedQuantity)
-            let num_2 = Number(list[index].purchaseQuantity)
-            if (!(num_1 <= num_2)) {
-              flag = true
-            }
+
+          let num_1 = Number(list[index].receivedQuantity)
+          let num_2 = Number(list[index].receiptQuantity)
+          if (!(num_1 <= num_2)) {
+            flag = true
           }
+
 
           if (flag) {
             this.$message.error(`第${index + 1}行${msg}`)
@@ -1296,11 +1289,13 @@ export default {
       if (this.isReturnSwitch === '1') {
         this.selectArr.forEach((item) => {
           item.ordersNum = item.num
+          item.receiptQuantity = item.purchaseQuantity
           this.dataFormTwo.productData.push(item)
         })
       } else {
         this.selectArr.forEach((item) => {
-          item.purchaseQuantity = item.inventoryQuantity
+          item.receiptQuantity = item.inventoryQuantity
+          item.productsId = item.id
           this.dataFormTwo.productData.push(item)
         })
       }
@@ -1883,7 +1878,7 @@ export default {
         this.dataFormTwo.productData.forEach((item, index) => {
           let dep = {
             calculationDirection: item.calculationDirection ? item.calculationDirection : '',
-            purchaseQuantity: item.purchaseQuantity ? item.purchaseQuantity : '',
+            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
             receiptQuantity: item.receiptQuantity ? item.receiptQuantity : '',
             deputyUnit: item.deputyUnit ? item.deputyUnit : '',
             mainUnit: item.mainUnit ? item.mainUnit : '',
@@ -1911,7 +1906,7 @@ export default {
           let dep1 = {
             billStatus: item.billStatus ? item.billStatus : '',
             calculationDirection: item.calculationDirection ? item.calculationDirection : '',
-            purchaseQuantity: item.purchaseQuantity ? item.purchaseQuantity : '',
+            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
             receiptQuantity: item.receiptQuantity ? item.receiptQuantity : '',
             deputyUnit: item.deputyUnit ? item.deputyUnit : '',
             mainUnit: item.mainUnit ? item.mainUnit : '',

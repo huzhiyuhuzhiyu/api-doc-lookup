@@ -18,9 +18,7 @@
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-date-picker v-model="quotationTime" type="daterange" value-format="yyyy-MM-dd" clearable
-                      :picker-options="global.timePickerOptions" style="width: 100%;" start-placeholder="请输入拆卸开始日期"
-                      end-placeholder="请输入拆卸结束日期">
+                    <el-date-picker v-model="quotationTime" type="daterange" value-format="yyyy-MM-dd" clearable :picker-options="global.timePickerOptions" style="width: 100%;" start-placeholder="请输入拆卸开始日期" end-placeholder="请输入拆卸结束日期">
                     </el-date-picker>
                   </el-form-item>
                 </el-col>
@@ -36,8 +34,6 @@
                   </el-form-item>
 
                 </el-col>
-                <el-button style="float: right;margin-right: 20px;" size="mini" type="primary"
-                  icon="icon-ym icon-ym-report-icon-search-setting" @click="moreQueries()">更多查询</el-button>
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -46,14 +42,18 @@
                   新建
                 </el-button>
                 <div class="JNPF-common-head-right">
+                  <el-tooltip content="高级查询" placement="top">
+                    <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
+                  </el-tooltip>
+                  <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                    <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+                  </el-tooltip>
                   <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                    <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                      @click="initData()" />
+                    <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" :fixedNO="true"
-                @sort-change="sortChange" custom-column>
+              <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" :fixedNO="true" @sort-change="sortChange" custom-column>
                 <el-table-column prop="transferNo" label="拆卸单号" width="200" sortable="custom">
                   <template slot-scope="scope">
                     <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
@@ -63,44 +63,46 @@
                 </el-table-column>
                 <el-table-column prop="transferByName" label="拆卸人" width="120" sortable="custom" />
                 <el-table-column prop="transferDate" label="拆卸日期" width="140" sortable="custom" />
-                <el-table-column prop="warehouseName" label="仓库" width="200" />
+                <el-table-column prop="warehouseName" label="仓库" min-width="200" />
                 <el-table-column prop="shelfSpaceName" label="库位" width="200" />
                 <el-table-column prop="batchNumber" label="批次号" width="200" />
                 <el-table-column prop="productCode" label="产品编码" width="200" />
-                <el-table-column prop="productName" label="产品名称" width="200" />
+                <el-table-column prop="drawingNo" label="品名规格" min-width="200" />
                 <el-table-column prop="num" label="数量" width="160" />
                 <el-table-column prop="mainUnit" label="单位(主)" width="160" />
 
-                <el-table-column prop="reasonRejection" label="驳回理由" width="300" />
+                <el-table-column prop="reasonRejection" label="驳回理由" min-width="300" />
                 <el-table-column prop="approvalCompletionDate" label="审批完成时间" width="180" sortable="custom" />
                 <el-table-column prop="submitDate" label="提交时间" width="180" sortable="custom" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
                 <el-table-column prop="createByName" label="创建人" width="120" />
-                <el-table-column prop="documentStatus" label="单据状态" sortable="custom" width="120" fixed="right"
-                  align="center">
+                <el-table-column prop="documentStatus" label="单据状态" sortable="custom" width="120" fixed="right" align="center">
                   <template slot-scope="scope">
                     <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
                     <div v-else-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
                   </template>
                 </el-table-column>
-                <!-- <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" fixed="right"
-                  align="center">
+                <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" fixed="right" align="center">
                   <template slot-scope="scope">
-                    <div v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'"><el-tag
-                        type="warning">审批中</el-tag></div>
-                    <div v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus == 'submit'"><el-tag
-                        type="success">审批通过</el-tag></div>
-                    <div v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus == 'submit'"><el-tag
-                        type="danger">审批拒绝</el-tag></div>
+                    <div v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'">
+                      <el-tag>审批中</el-tag>
+                    </div>
+                    <div v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus == 'submit'">
+                      <el-tag type="success">审批通过</el-tag>
+                    </div>
+                    <div v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus == 'submit'">
+                      <el-tag type="danger">审批拒绝</el-tag>
+                    </div>
+                    <div v-else-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus == 'submit'">
+                      <el-tag type="warning">审批撤回</el-tag>
+                    </div>
                   </template>
-                </el-table-column> -->
-                <el-table-column prop="remark" label="备注" width="300" />
+                </el-table-column>
+                <el-table-column prop="remark" label="备注" min-width="300" />
                 <el-table-column label="操作" width="180" fixed="right">
                   <template slot-scope="scope">
-                    <el-button type="text" @click="addOrUpdateHandle(scope.row, 'edit')" size="mini"
-                      :disabled="scope.row.documentStatus == 'draft' ? false : true">编辑</el-button>
-                    <el-button type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true" size="mini"
-                      @click="handleDel(scope.row.id,)" class="JNPF-table-delBtn">删除</el-button>
+                    <el-button type="text" @click="addOrUpdateHandle(scope.row, 'edit')" size="mini" :disabled="scope.row.documentStatus == 'draft' ? false : true">编辑</el-button>
+                    <el-button type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true" size="mini" @click="handleDel(scope.row.id,)" class="JNPF-table-delBtn">删除</el-button>
                     <el-dropdown hide-on-click>
                       <span class="el-dropdown-link">
                         <el-button type="text" size="mini">
@@ -108,6 +110,12 @@
                         </el-button>
                       </span>
                       <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item v-if="(scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn') && showAppCodeFlag" @click.native="handleUserRelation(scope.row.id, 'add')">
+                          重新提交
+                        </el-dropdown-item>
+                        <el-dropdown-item v-if="scope.row.approvalStatus === 'ing' && showAppCodeFlag" @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
+                          审批撤回
+                        </el-dropdown-item>
                         <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
                           查看详情
                         </el-dropdown-item>
@@ -116,9 +124,10 @@
                   </template>
                 </el-table-column>
               </JNPF-table>
-              <pagination :total="total" :page.sync="form.pageNum" :background="background" :limit.sync="form.pageSize"
-                @pagination="initData" />
+              <pagination :total="total" :page.sync="form.pageNum" :background="background" :limit.sync="form.pageSize" @pagination="initData" />
             </div>
+            <!-- 高级查询 -->
+            <SuperQuery :partentOrChild="activeName" :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
           </div>
         </el-tab-pane>
         <el-tab-pane label="明细列表" name="detailList">
@@ -127,21 +136,17 @@
               <el-form @submit.native.prevent>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="linesQuery.transferNo" placeholder="请输入拆卸单号" @keyup.enter.native="search()"
-                      clearable />
+                    <el-input v-model="linesQuery.transferNo" placeholder="请输入拆卸单号" @keyup.enter.native="search()" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="linesQuery.transferByName" placeholder="请输入拆卸人" @keyup.enter.native="search()"
-                      clearable />
+                    <el-input v-model="linesQuery.transferByName" placeholder="请输入拆卸人" @keyup.enter.native="search()" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-date-picker v-model="deliveryDatefahuo" type="daterange" value-format="yyyy-MM-dd" clearable
-                      :picker-options="global.timePickerOptions" style="width: 100%;" start-placeholder="请输入拆卸开始日期"
-                      end-placeholder="请输入拆卸结束日期">
+                    <el-date-picker v-model="deliveryDatefahuo" type="daterange" value-format="yyyy-MM-dd" clearable :picker-options="global.timePickerOptions" style="width: 100%;" start-placeholder="请输入拆卸开始日期" end-placeholder="请输入拆卸结束日期">
                     </el-date-picker>
                   </el-form-item>
                 </el-col>
@@ -153,22 +158,24 @@
                     </el-button>
                   </el-form-item>
                 </el-col>
-                <el-button style="float: right;margin-right: 20px;" size="mini" type="primary" icon="el-icon-search"
-                  @click="visible = true">更多查询</el-button>
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <div class="JNPF-common-head">
                 <topOpts @add="addSupplier('add')" />
                 <div class="JNPF-common-head-right">
+                  <el-tooltip content="高级查询" placement="top">
+                    <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible1 = true" />
+                  </el-tooltip>
+                  <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                    <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun1()" />
+                  </el-tooltip>
                   <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                    <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                      @click="initData()" />
+                    <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table ref="linesTableData" v-loading="listLoading" :data="linesTableData" fixedNO custom-column
-                @sort-change="sortChange" :partentOrChild="'child'">
+              <JNPF-table ref="linesTableData" v-loading="listLoading" :data="linesTableData" fixedNO custom-column @sort-change="sortChange" :partentOrChild="'child'">
                 <el-table-column prop="transferNo" label="拆卸单号" width="200" sortable="custom">
                   <template slot-scope="scope">
                     <el-link type="primary" @click.native="handleUserRelation(scope.row.transferId, 'look')">
@@ -179,20 +186,18 @@
                 <el-table-column prop="transferByName" label="拆卸人" width="120">
                 </el-table-column>
                 <el-table-column prop="transferDate" label="拆卸日期" width="180" sortable="custom" />
-                <el-table-column prop="masterWarehouseName" label="原仓库" width="200" />
+                <el-table-column prop="masterWarehouseName" label="原仓库" min-width="200" />
                 <el-table-column prop="masterShelfSpaceName" label="原库位" width="200" />
                 <el-table-column prop="masterBatchNumber" label="原批次号" width="200" sortable="custom" />
                 <el-table-column prop="masterProductCode" label="原产品编码" width="200" sortable="custom" />
-                <el-table-column prop="masterProductName" label="原产品名称" width="200" sortable="custom" />
-                <el-table-column prop="masterProductDrawingNo" label="原产品图号" min-width="400" />
-                <el-table-column prop="masterProductSpec" label="原产品规格型号" width="200" />
+                <el-table-column prop="masterProductDrawingNo" label="原品名规格" min-width="400" />
+                <!-- <el-table-column prop="masterProductSpec" label="原产品规格型号" width="200" /> -->
                 <el-table-column prop="masterNum" label="原数量" width="140" />
                 <el-table-column prop="masterMainUnit" label="原单位" width="120" />
                 <el-table-column prop="productCode" label="目标产品编码" width="200" sortable="custom" />
-                <el-table-column prop="productName" label="目标产品名称" width="200" sortable="custom" />
-                <el-table-column prop="productDrawingNo" label="目标产品图号" min-width="400" />
-                <el-table-column prop="productSpec" label="目标产品规格型号" width="200" />
-                <el-table-column prop="warehouseName" label="目标仓库" width="200" />
+                <el-table-column prop="productDrawingNo" label="目标品名规格" min-width="400" />
+                <!-- <el-table-column prop="productSpec" label="目标产品规格型号" width="200" /> -->
+                <el-table-column prop="warehouseName" label="目标仓库" min-width="200" />
                 <el-table-column prop="shelfSpaceName" label="目标库位" min-width="200" />
                 <el-table-column prop="batchNumber" label="目标批次号" width="200" sortable="custom" />
                 <el-table-column prop="num" label="目标数量" width="140" />
@@ -202,10 +207,8 @@
                 <el-table-column prop="createByName" label="创建人" width="120" />
                 <el-table-column label="操作" width="180" fixed="right">
                   <template slot-scope="scope">
-                    <el-button type="text" @click="addOrUpdateHandlemx(scope.row, 'edit')" size="mini"
-                      :disabled="scope.row.documentStatus == 'draft' ? false : true">编辑</el-button>
-                    <el-button type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true" size="mini"
-                      @click="handleDel(scope.row.transferId,)" class="JNPF-table-delBtn">删除</el-button>
+                    <el-button type="text" @click="addOrUpdateHandlemx(scope.row, 'edit')" size="mini" :disabled="scope.row.documentStatus == 'draft' ? false : true">编辑</el-button>
+                    <el-button type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true" size="mini" @click="handleDel(scope.row.transferId,)" class="JNPF-table-delBtn">删除</el-button>
                     <el-dropdown hide-on-click>
                       <span class="el-dropdown-link">
                         <el-button type="text" size="mini">
@@ -221,155 +224,259 @@
                   </template>
                 </el-table-column>
               </JNPF-table>
-              <pagination :total="linesTotal" :page.sync="linesQuery.pageNum" :limit.sync="linesQuery.pageSize"
-                @pagination="initData" />
+              <pagination :total="linesTotal" :page.sync="linesQuery.pageNum" :limit.sync="linesQuery.pageSize" @pagination="initData" />
             </div>
+            <!-- 高级查询 -->
+            <SuperQuery :partentOrChild="activeName" :show="superQueryVisible1" ref="SuperQuery1" :columnOptions="superQueryJson1" @superQuery="superQuerySearch1" @close="superQueryVisible1 = false" />
           </div>
         </el-tab-pane>
       </el-tabs>
     </div>
     <Form v-if="depFormVisible" ref="depForm" @close="closeForm" />
-    <el-dialog title="更多查询" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
-      <el-row :gutter="20" v-if="activeName === 'orderList'">
-
-        <el-form ref="diaForm" :model="form" label-width="120px" label-position="top">
-          <el-col :span="12">
-            <el-form-item label="拆卸单号">
-              <el-input v-model="form.transferNo" placeholder="请输入组装单号" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="拆卸人">
-              <el-input v-model="form.transferByName" placeholder="请输入组装人" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="拆卸日期">
-              <el-date-picker v-model="quotationTime" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                :picker-options="global.timePickerOptions" start-placeholder="请输入拆卸开始日期" end-placeholder="请输入拆卸结束日期">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="批次号">
-              <el-input v-model="form.batchNumber" placeholder="请输入批次号" clearable />
-            </el-form-item>
-
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品编码">
-              <el-input v-model="form.productCode" placeholder="请输入产品编码" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品名称">
-              <el-input v-model="form.productName" placeholder="请输入产品名称" clearable />
-            </el-form-item>
-          </el-col>
-          <!-- <el-col :span="12">
-            <el-form-item label="审批状态">
-              <el-select v-model="form.approvalStatus" placeholder="请选择审批状态" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in approvalStatusList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col> -->
-          <el-col :span="12">
-            <el-form-item label="单据状态">
-              <el-select v-model="form.documentStatus" placeholder="请选择单据状态" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in documentStatusList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="创建时间">
-              <el-date-picker v-model="submitDate" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
-                start-placeholder="请选择创建开始时间" end-placeholder="请选择创建结束时间" style="width: 100%;" clearable
-                :picker-options="global.timePickerOptions" :default-time="['00:00:00', '23:59:59']">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-      <el-row :gutter="20" v-else>
-        <el-form ref="diaForm" :model="linesQuery" label-width="120px" label-position="top">
-          <el-col :span="12">
-            <el-form-item label="拆卸单号">
-              <el-input v-model="linesQuery.transferNo" placeholder="请输入拆卸单号" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="拆卸人">
-              <el-input v-model="linesQuery.transferByName" placeholder="请输入拆卸人" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="拆卸日期">
-              <el-date-picker v-model="deliveryDatefahuo" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                :picker-options="global.timePickerOptions" clearable start-placeholder="请选择拆卸开始日期"
-                end-placeholder="请选择拆卸结束日期">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="原产品编码">
-              <el-input v-model="linesQuery.masterProductCode" placeholder="请输入原产品编码" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="原产品名称">
-              <el-input v-model="linesQuery.masterProductName" placeholder="请输入原产品名称" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="原批次号">
-              <el-input v-model="linesQuery.masterBatchNumber" placeholder="请输入原批次号" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="目标产品编码">
-              <el-input v-model="linesQuery.productCode" placeholder="请输入目标产品编码" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="目标产品名称">
-              <el-input v-model="linesQuery.productName" placeholder="请输入目标产品名称" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="目标批次号">
-              <el-input v-model="linesQuery.batchNumber" placeholder="请输入目标批次号" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="创建时间">
-              <el-date-picker v-model="createTimeArrfahuo" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
-                :default-time="['00:00:00', '23:59:59']" style="width: 100%;" start-placeholder="请选择创建开始时间"
-                end-placeholder="请选择创建结束时间" clearable :picker-options="global.timePickerOptions">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="search()">
-          搜索</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
 <script>
+import { withdrawn } from '@/api/basicData/approvalAdministrator'
+import SuperQuery from '@/components/SuperQuery/index.vue'
 import { InventoryDisassemblylist, InventoryDisassemblydele, InventoryDisassemblymxlist } from '@/api/warehouseManagement/productlistChange'
 import Form from './Form'
 export default {
-  name: 'InventoryDisassembly',
-  components: { Form, },
+  // name: 'InventoryDisassembly',
+  components: { Form, SuperQuery },
   data() {
     return {
+      showAppCodeFlag: true,
+      superQueryVisible1: false,
+      superQueryVisible: false,
+      superQueryJson: [
+        {
+          prop: 'transferNo',
+          label: "拆卸单号",
+          type: 'input'
+        },
+        {
+          prop: 'transferByName',
+          label: "拆卸人",
+          type: 'input'
+        },
+        { // 日期选择器（区间）
+          prop: 'transferDate',
+          label: '拆卸日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'warehouseName',
+          label: "仓库",
+          type: 'input'
+        },
+        {
+          prop: 'shelfSpaceName',
+          label: "库位",
+          type: 'input'
+        },
+        {
+          prop: 'batchNumber',
+          label: "批次号",
+          type: 'input'
+        },
+        {
+          prop: 'productCode',
+          label: "产品编码",
+          type: 'input'
+        },
+        {
+          prop: 'drawingNo',
+          label: "品名规格",
+          type: 'input'
+        },
+        {
+          prop: 'num',
+          label: "数量",
+          type: 'input'
+        },
+        {
+          prop: 'mainUnit',
+          label: "单位(主)",
+          type: 'input'
+        },
+        {
+          prop: 'reasonRejection',
+          label: "驳回理由",
+          type: 'input'
+        },
+        { // 日期时间选择器（区间）
+          prop: 'approvalCompletionDate',
+          label: '审批完成时间',
+          type: 'datetimerange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '开始时间',
+          endPlaceholder: '结束时间',
+          pickerOptions: this.global.timePickerOptions
+        },
+        { // 日期时间选择器（区间）
+          prop: 'submitDate',
+          label: '提交时间',
+          type: 'datetimerange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '开始时间',
+          endPlaceholder: '结束时间',
+          pickerOptions: this.global.timePickerOptions
+        },
+        { // 日期时间选择器（区间）
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'datetimerange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '创建开始时间',
+          endPlaceholder: '创建结束时间',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        },
+        { // 下拉选
+          prop: 'documentStatus',
+          label: '单据状态',
+          type: 'select',
+          options: [
+            { label: "草稿", value: "draft" },
+            { label: "提交", value: "submit" }
+          ]
+        },
+        {
+          prop: 'approvalStatus',
+          label: "审批状态",
+          type: 'select',
+          options: [
+            { label: '审批中', value: 'ing' },
+            { label: '审批通过', value: 'ok' },
+            { label: '审批拒绝', value: 'rebut' },
+            { label: '审批撤回', value: 'withdrawn' },
+          ]
+        },
+        {
+          prop: 'remark',
+          label: "备注",
+          type: 'input'
+        }
+      ],
+      superQueryJson1: [
+        {
+          prop: 'transferNo',
+          label: "拆卸单号",
+          type: 'input'
+        },
+        {
+          prop: 'transferByName',
+          label: "拆卸人",
+          type: 'input'
+        },
+        { // 日期选择器（区间）
+          prop: 'transferDate',
+          label: '拆卸日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'masterWarehouseName',
+          label: "原仓库",
+          type: 'input'
+        },
+        {
+          prop: 'masterShelfSpaceName',
+          label: "原库位",
+          type: 'input'
+        },
+        {
+          prop: 'masterBatchNumber',
+          label: "原批次号",
+          type: 'input'
+        },
+        {
+          prop: 'masterProductCode',
+          label: "原产品编码",
+          type: 'input'
+        },
+        {
+          prop: 'masterProductDrawingNo',
+          label: "原品名规格",
+          type: 'input'
+        },
+        {
+          prop: 'masterNum',
+          label: "原数量",
+          type: 'input'
+        },
+        {
+          prop: 'masterMainUnit',
+          label: "原单位",
+          type: 'input'
+        },
+        {
+          prop: 'productCode',
+          label: "目标产品编码",
+          type: 'input'
+        },
+        {
+          prop: 'productDrawingNo',
+          label: "目标品名规格",
+          type: 'input'
+        },
+        {
+          prop: 'warehouseName',
+          label: "目标仓库",
+          type: 'input'
+        },
+        {
+          prop: 'shelfSpaceName',
+          label: "目标库位",
+          type: 'input'
+        },
+        {
+          prop: 'batchNumber',
+          label: "目标批次号",
+          type: 'input'
+        },
+        {
+          prop: 'num',
+          label: "目标数量",
+          type: 'input'
+        },
+        {
+          prop: 'mainUnit',
+          label: "目标单位",
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: "备注",
+          type: 'input'
+        },
+        { // 日期时间选择器（区间）
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'datetimerange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '创建开始时间',
+          endPlaceholder: '创建结束时间',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        }
+      ],
       linesTotal: 0,
       linesTableData: [],
       createTimeArrfahuo: [],
@@ -449,7 +556,13 @@ export default {
       formVisible: false,
     }
   },
-  created() {
+  async created() {
+    const res = await this.jnpf.getBusInfo('b062')
+    if (res) {
+      this.showAppCodeFlag = res.enabledMark
+    } else {
+      this.showAppCodeFlag = false
+    }
     this.form = JSON.parse(JSON.stringify(this.formlist))
     this.linesQuery = JSON.parse(JSON.stringify(this.linesQuerylist))
     this.search()
@@ -460,6 +573,41 @@ export default {
     }
   },
   methods: {
+    withdrawnHandle(formId) {
+      let _data = {
+        formId
+      }
+      this.$confirm('此操作将撤回审批单，是否继续？', this.$t('common.tipTitle'), {
+        type: 'warning'
+      }).then(() => {
+        withdrawn(_data).then(res => {
+          this.$message({
+            type: 'success',
+            message: "撤回成功",
+            duration: 1500,
+            onClose: () => {
+              this.initData()
+            }
+          })
+        })
+      }).catch(() => { })
+    },
+    columnSetFun() {
+      this.$refs['tableForm'].showDrawer()
+    },
+    columnSetFun1() {
+      this.$refs['linesTableData'].showDrawer()
+    },
+    superQuerySearch(query) {
+      this.form.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
+    superQuerySearch1(query) {
+      this.linesQuery.superQuery = query
+      this.superQueryVisible1 = false
+      this.search()
+    },
     handleClick(e) {
       this.activeName = e.name
       // this.reset()

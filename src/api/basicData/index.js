@@ -1777,3 +1777,11 @@ export function supplierupload(data, type) {
     data
   })
 }
+// 线索转客户
+export function Transfercustomer(data) {
+  return request({
+    url: `/api/zgt/bimClue/turn/customer`,
+    method: 'put',
+    data
+  })
+}

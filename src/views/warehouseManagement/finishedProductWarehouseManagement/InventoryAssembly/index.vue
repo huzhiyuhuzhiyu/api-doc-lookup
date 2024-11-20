@@ -63,18 +63,18 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="transferByName" label="组装人" width="120" sortable="custom" />
-                <el-table-column prop="transferDate" label="组装日期" width="130" sortable="custom" />
-                <el-table-column prop="warehouseName" label="仓库" width="200" />
-                <el-table-column prop="shelfSpaceName" label="库位" width="200" />
+                <el-table-column prop="transferDate" label="组装日期" width="160" sortable="custom" />
+                <el-table-column prop="warehouseName" label="仓库" min-width="200" />
+                <el-table-column prop="shelfSpaceName" label="库位" min-width="200" />
                 <el-table-column prop="batchNumber" label="批次号" width="200" />
                 <el-table-column prop="productCode" label="产品编码" width="200" />
-                <el-table-column prop="productName" label="产品名称" width="200" />
+                <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" />
                 <el-table-column prop="num" label="数量" width="160" />
                 <el-table-column prop="mainUnit" label="单位(主)" width="160" />
 
-                <!-- <el-table-column prop="reasonRejection" label="驳回理由" width="300" /> -->
-                <!-- <el-table-column prop="approvalCompletionDate" label="审批完成时间" width="180" sortable="custom" /> -->
-                <!-- <el-table-column prop="submitDate" label="提交时间" width="180" sortable="custom" /> -->
+                <el-table-column prop="reasonRejection" label="驳回理由" min-width="300" />
+                <el-table-column prop="approvalCompletionDate" label="审批完成时间" width="180" sortable="custom" />
+                <el-table-column prop="submitDate" label="提交时间" width="180" sortable="custom" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
                 <el-table-column prop="createByName" label="创建人" width="120" />
                 <el-table-column prop="documentStatus" label="单据状态" sortable="custom" width="120" fixed="right" align="center">
@@ -83,18 +83,23 @@
                     <div v-else-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
                   </template>
                 </el-table-column>
-                <!-- <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" fixed="right"
-                  align="center">
+                <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" fixed="right" align="center">
                   <template slot-scope="scope">
-                    <div v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'"><el-tag
-                        type="warning">审批中</el-tag></div>
-                    <div v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus == 'submit'"><el-tag
-                        type="success">审批通过</el-tag></div>
-                    <div v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus == 'submit'"><el-tag
-                        type="danger">审批拒绝</el-tag></div>
+                    <div v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'">
+                      <el-tag>审批中</el-tag>
+                    </div>
+                    <div v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus == 'submit'">
+                      <el-tag type="success">审批通过</el-tag>
+                    </div>
+                    <div v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus == 'submit'">
+                      <el-tag type="danger">审批拒绝</el-tag>
+                    </div>
+                    <div v-else-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus == 'submit'">
+                      <el-tag type="warning">审批撤回</el-tag>
+                    </div>
                   </template>
-                </el-table-column> -->
-                <el-table-column prop="remark" label="备注" width="300" />
+                </el-table-column>
+                <el-table-column prop="remark" label="备注" min-width="300" />
                 <el-table-column label="操作" width="180" fixed="right">
                   <template slot-scope="scope">
                     <el-button type="text" @click="addOrUpdateHandle(scope.row, 'edit')" size="mini" :disabled="scope.row.documentStatus == 'draft' ? false : true">编辑</el-button>
@@ -106,6 +111,12 @@
                         </el-button>
                       </span>
                       <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item v-if="(scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn') && showAppCodeFlag" @click.native="handleUserRelation(scope.row.id, 'add')">
+                          重新提交
+                        </el-dropdown-item>
+                        <el-dropdown-item v-if="scope.row.approvalStatus === 'ing' && showAppCodeFlag" @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
+                          审批撤回
+                        </el-dropdown-item>
                         <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
                           查看详情
                         </el-dropdown-item>
@@ -152,7 +163,7 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <div class="JNPF-common-head">
-                <topOpts @add="addSupplier('', 'add')" />
+                <topOpts @add="addSupplier('add')" />
                 <div class="JNPF-common-head-right">
                   <el-tooltip content="高级查询" placement="top">
                     <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible1 = true" />
@@ -176,20 +187,18 @@
                 <el-table-column prop="transferByName" label="组装人" width="120">
                 </el-table-column>
                 <el-table-column prop="transferDate" label="组装日期" width="180" sortable="custom" />
-                <el-table-column prop="masterWarehouseName" label="目标仓库" width="200" />
+                <el-table-column prop="masterWarehouseName" label="目标仓库" min-width="200" />
                 <el-table-column prop="masterShelfSpaceName" label="目标库位" width="200" />
                 <el-table-column prop="masterBatchNumber" label="目标批次号" width="200" sortable="custom" />
                 <el-table-column prop="masterProductCode" label="目标产品编码" width="200" sortable="custom" />
-                <el-table-column prop="masterProductName" label="目标产品名称" width="200" sortable="custom" />
-                <el-table-column prop="masterProductDrawingNo" label="目标产品图号" min-width="400" />
-                <el-table-column prop="masterProductSpec" label="目标产品规格型号" width="200" />
+                <el-table-column prop="masterProductDrawingNo" label="目标品名规格" min-width="400" />
+                <!-- <el-table-column prop="masterProductSpec" label="目标产品规格型号" width="200" /> -->
                 <el-table-column prop="masterNum" label="目标数量" width="140" />
                 <el-table-column prop="masterMainUnit" label="目标单位" width="120" />
                 <el-table-column prop="productCode" label="原产品编码" width="200" sortable="custom" />
-                <el-table-column prop="productName" label="原产品名称" width="200" sortable="custom" />
-                <el-table-column prop="productDrawingNo" label="原产品图号" min-width="400" />
-                <el-table-column prop="productSpec" label="原产品规格型号" width="200" />
-                <el-table-column prop="warehouseName" label="原仓库" width="200" />
+                <el-table-column prop="productDrawingNo" label="原品名规格" min-width="400" />
+                <!-- <el-table-column prop="productSpec" label="原产品规格型号" width="200" /> -->
+                <el-table-column prop="warehouseName" label="原仓库" min-width="200" />
                 <el-table-column prop="shelfSpaceName" label="原库位" min-width="200" />
                 <el-table-column prop="batchNumber" label="原批次号" width="200" sortable="custom" />
                 <el-table-column prop="num" label="原数量" width="140" />
@@ -229,6 +238,7 @@
 </template>
 
 <script>
+import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { InventoryDisassemblylist, InventoryDisassemblydele, InventoryDisassemblymxlist } from '@/api/warehouseManagement/productlistChange'
 import Form from './Form'
@@ -237,8 +247,9 @@ export default {
   components: { Form, SuperQuery },
   data() {
     return {
+      showAppCodeFlag: true,
       superQueryJson1: [
-      {
+        {
           prop: 'transferNo',
           label: "组装单号",
           type: 'input'
@@ -278,18 +289,8 @@ export default {
           type: 'input'
         },
         {
-          prop: 'masterProductName',
-          label: "目标产品名称",
-          type: 'input'
-        },
-        {
           prop: 'masterProductDrawingNo',
-          label: "目标产品图号",
-          type: 'input'
-        },
-        {
-          prop: 'masterProductSpec',
-          label: "目标产品规格型号",
+          label: "目标品名规格",
           type: 'input'
         },
         {
@@ -308,18 +309,8 @@ export default {
           type: 'input'
         },
         {
-          prop: 'productName',
-          label: "原产品名称",
-          type: 'input'
-        },
-        {
           prop: 'productDrawingNo',
-          label: "原产品图号",
-          type: 'input'
-        },
-        {
-          prop: 'productSpec',
-          label: "原产品规格型号",
+          label: "原品名规格",
           type: 'input'
         },
         {
@@ -409,8 +400,8 @@ export default {
           type: 'input'
         },
         {
-          prop: 'productName',
-          label: "产品名称",
+          prop: 'productDrawingNo',
+          label: "品名规格",
           type: 'input'
         },
         {
@@ -422,6 +413,29 @@ export default {
           prop: 'mainUnit',
           label: "单位(主)",
           type: 'input'
+        },
+        {
+          prop: 'reasonRejection',
+          label: "驳回理由",
+          type: 'input'
+        },
+        { // 日期时间选择器（区间）
+          prop: 'approvalCompletionDate',
+          label: '审批完成时间',
+          type: 'datetimerange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '开始时间',
+          endPlaceholder: '结束时间',
+          pickerOptions: this.global.timePickerOptions
+        },
+        { // 日期时间选择器（区间）
+          prop: 'submitDate',
+          label: '提交时间',
+          type: 'datetimerange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '开始时间',
+          endPlaceholder: '结束时间',
+          pickerOptions: this.global.timePickerOptions
         },
         { // 日期时间选择器（区间）
           prop: 'createTime',
@@ -532,7 +546,13 @@ export default {
       formVisible: false,
     }
   },
-  created() {
+  async created() {
+    const res = await this.jnpf.getBusInfo('b061')
+    if (res) {
+      this.showAppCodeFlag = res.enabledMark
+    } else {
+      this.showAppCodeFlag = false
+    }
     this.form = JSON.parse(JSON.stringify(this.formlist))
     this.linesQuery = JSON.parse(JSON.stringify(this.linesQuerylist))
     this.search()
@@ -543,6 +563,25 @@ export default {
     }
   },
   methods: {
+    withdrawnHandle(formId) {
+      let _data = {
+        formId
+      }
+      this.$confirm('此操作将撤回审批单，是否继续？', this.$t('common.tipTitle'), {
+        type: 'warning'
+      }).then(() => {
+        withdrawn(_data).then(res => {
+          this.$message({
+            type: 'success',
+            message: "撤回成功",
+            duration: 1500,
+            onClose: () => {
+              this.initData()
+            }
+          })
+        })
+      }).catch(() => { })
+    },
     columnSetFun() {
       this.$refs['tableForm'].showDrawer()
     },

@@ -29,7 +29,7 @@
                     </el-col>
                     <el-col :span="4">
                       <el-form-item>
-                        <el-select v-model="listQuerysbtz.state" filterable placeholder="请选择安装地点" clearable>
+                        <el-select v-model="listQuerysbtz.state" filterable placeholder="请选择设备状态" clearable style="width: 100%;">
                           <el-option v-for="item in equipmentStateList" :key="item.value" :label="item.label" :value="item.value">
                           </el-option>
                         </el-select>

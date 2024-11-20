@@ -36,7 +36,7 @@
           <div class="JNPF-common-head" style="display: block;line-height:34px">
             <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addOrUpdateHandle('','add')">
               <el-button size="mini" type="success" @click="DemandPoolaction">放入线索池</el-button>
-              <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
+              <el-button size="mini" type="primary" icon="el-icon-s-custom" @click="Transfercustomers">转客户</el-button>
               <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus" @click="importProductFun">导入</el-button>
               <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" @click="exportForm" :disabled="!tableList.length">导出</el-button>
             </topOpts>
@@ -135,6 +135,7 @@
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="getAdvancedQuery" />
     <Form v-if="formVisible" ref="Form" @close="refreshDataList" />
     <depForm v-if="clueVisible" ref="depForm" @close="cluerefreshDataList" />
+    <customerForm v-if="customerVisible" ref="customerForm" @close="cluerefreshDataList" />
     <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct" :http-request="UploadProduct" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
@@ -151,7 +152,7 @@ import programme from "../../components/programme.vue";
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import Form from './Form'
 import depForm from './depForm'
-import Sortable from 'sortablejs'
+import customerForm from './customerForm'
 export default {
   name: 'cluemanagement',
   components: {
@@ -159,7 +160,8 @@ export default {
     depForm,
     ExportForm,
     SuperQuery,
-    programme
+    programme,
+    customerForm
   },
   data() {
     return {
@@ -292,7 +294,8 @@ export default {
       levellist: [],
       selectArr: [],
       fanganheight: 0,
-      datalist: []
+      datalist: [],
+      customerVisible: false
     }
   },
   computed: {
@@ -316,6 +319,14 @@ export default {
     window.onresize = null
   },
   methods: {
+    Transfercustomers() {
+      if (!this.selectArr.length) return this.$message.error('请选择数据')
+      let idlist = this.selectArr.map(item => item.id)
+      this.customerVisible = true
+      this.$nextTick(() => {
+        this.$refs.customerForm.init(idlist)
+      })
+    },
     getAdvancedQuery() {
       getAdvancedQueryList(this.currMenuId).then(row => {
         this.datalist = row.data.list
@@ -566,6 +577,7 @@ export default {
     cluerefreshDataList(val) {
       this.clueVisible = false
       this.clueVisiblefp = false
+      this.customerVisible = false
       if (val) this.initData()
     },
     superQuerySearch(query) {

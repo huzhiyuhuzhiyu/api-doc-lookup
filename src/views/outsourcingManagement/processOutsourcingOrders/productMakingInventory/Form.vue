@@ -316,7 +316,7 @@ import {
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
-import { getBimProcessList } from '@/api/bimProcess/index'
+import { getBimProcessList, getNextBimProcess } from '@/api/bimProcess/index'
 import { inventoryList } from '@/api/purchasingAndOutsourcingOrders/index'
 export default {
   components: {
@@ -1188,6 +1188,18 @@ export default {
           qty: 1,
         }
         this.dataFormTwo.data[index].outShipmentList = [obj]
+        let ProcessListRequestObj = {
+          productsId: item.productsId,
+          processId: item.maniProcessId,
+
+        }
+        getNextBimProcess(item.productsId,item.maniProcessId).then(res => {
+          // console.log(res, 'pjj')
+          // let data = res.data.records
+          // this.dataFormTwo.data[index].processName = data[0].name
+          // this.dataFormTwo.data[index].processId = data[0].id
+          // console.log(this.dataFormTwo.data, '[[this.dataFormTwo.data]]')
+        })
       })
 
       this.dialogTitle = type == 'add' ? '新建' : type == 'edit' ? '编辑' : `查看`

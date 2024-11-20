@@ -126,11 +126,8 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
-                        :width="isDeputyUnitSwitch === '1' ? 85 : 60" :key="7" />
-                      <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'"
-                        :key="8" />
-                      <el-table-column label="待外协数量" width="110">
+                      
+                      <el-table-column label="待外协数量" width="110" :key="7">
                         <template slot-scope="scope">
                           <el-form-item>
                             <div class="viewData">
@@ -141,7 +138,9 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="purchaseQuantity" label="数量" min-width="100">
+                      <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+                        :width="isDeputyUnitSwitch === '1' ? 85 : 60" :key="8" />
+                      <el-table-column prop="purchaseQuantity" label="数量" min-width="100" :key="9">
                         <template slot="header">
                           <span class="required">*</span>
                           {{ isDeputyUnitSwitch === '1' ? '数量(主)' : '数量' }}
@@ -155,6 +154,8 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
+                      <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'"
+                        :key="10" />
                       <el-table-column prop="purchaseQuantity2" label="数量(副)" width="85"
                         v-if="isDeputyUnitSwitch === '1'" />
                       <el-table-column prop="price" label="含税单价" width="180">

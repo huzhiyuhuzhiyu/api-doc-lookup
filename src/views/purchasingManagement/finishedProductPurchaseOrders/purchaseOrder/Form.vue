@@ -64,9 +64,10 @@
 
                       <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                         :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
-                      <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
+
                       <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
                         width="110" sortable="custom" />
+                      <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
                       <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" sortable="custom"
                         v-if="isDeputyUnitSwitch === '1'" />
                       <el-table-column prop="price" label="单价(含税)" width="100">
@@ -326,9 +327,9 @@
 
                   <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                     :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
-                  <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
                   <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
                     width="110" sortable="custom" />
+                  <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
                   <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" sortable="custom"
                     v-if="isDeputyUnitSwitch === '1'" />
                   <el-table-column prop="receiptQuantity" label="已入库数量" width="110">

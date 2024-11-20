@@ -43,7 +43,7 @@
             </el-col>
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier('', 'add')" :addText="'新建收货单'">
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
@@ -64,7 +64,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
+          <JNPF-table v-if="tableFlag" ref="dataTable" :data="tableData" :fixedNO="true"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column hasC
             @selection-change="selectCustomerFun">
             <el-table-column prop="orderNo" label="订单号" width="220" sortable="custom">
@@ -81,12 +81,11 @@
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
             <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
               :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
-            <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
             <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
               :width="isDeputyUnitSwitch === '1' ? 100 : 80" />
+            <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
             <el-table-column prop="purchaseQuantity2" label="数量(副)" width="100" v-if="isDeputyUnitSwitch === '1'" />
             <el-table-column prop="waitReceiptNum" label="待收货数量" min-width="130" sortable="custom" />
-
             <el-table-column prop="deliveryDate" label="交货日期" min-width="120" sortable="custom" />
             <el-table-column prop="standardValue" label="规值" min-width="100" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" min-width="120" label="打字内容" sortable="custom" />
@@ -490,7 +489,248 @@ export default {
       purchaseOrderReport(this.orderForm)
         .then((res) => {
           this.tableData = res.data.page.records
+          this.tableFlag = true
+          if (this.isDeputyUnitSwitch === '1') {
+            this.superQueryJson = [
+              {
+                prop: 'orderNo',
+                label: '订单号',
+                type: 'input'
+              },
+              {
+                prop: 'cooperativePartnerCode',
+                label: '供应商编码',
+                type: 'input'
+              },
+              {
+                prop: 'cooperativePartnerName',
+                label: '供应商名称',
+                type: 'input'
+              },
 
+              {
+                prop: 'drawingNo',
+                label: '品名规格',
+                type: 'input'
+              },
+
+              // {
+              //   prop: 'productName',
+              //   label: '产品名称',
+              //   type: 'input',
+              // },
+              {
+                prop: 'productCode',
+                label: '产品编码',
+                type: 'input'
+              },
+              {
+                prop: 'mainUnit',
+                label: '单位(主)',
+                type: 'input'
+              },
+              {
+                prop: 'deputyUnit',
+                label: '单位(副)',
+                type: 'input'
+              },
+              {
+                prop: 'deliveryDate',
+                label: '交货日期',
+                type: 'daterange',
+                valueFormat: 'yyyy-MM-dd HH:mm:ss',
+                startPlaceholder: '开始日期',
+                endPlaceholder: '结束日期',
+                pickerOptions: this.global.timePickerOptions
+              },
+
+              {
+                prop: 'standardValue',
+                label: '规值',
+                type: 'input'
+              },
+              {
+                prop: 'sealingCoverTyping',
+                label: '打字内容',
+                type: 'select',
+                options: []
+              },
+              {
+                prop: 'accuracyLevel',
+                label: '精度等级',
+                type: 'select',
+                options: []
+              },
+              {
+                prop: 'vibrationLevel',
+                label: '振动等级',
+                type: 'select',
+                options: []
+              },
+
+              {
+                prop: 'oil',
+                label: '油脂',
+                type: 'select',
+                options: []
+              },
+              {
+                prop: 'oilQuantity',
+                label: '油脂量',
+                type: 'select',
+                options: []
+              },
+              {
+                prop: 'clearance',
+                label: '游隙',
+                type: 'select',
+                options: []
+              },
+              {
+                prop: 'packagingMethod',
+                label: '包装方式',
+                type: 'select',
+                options: []
+              },
+              {
+                prop: 'createTime',
+                label: '创建时间',
+                type: 'daterange',
+                valueFormat: 'yyyy-MM-dd HH:mm:ss',
+                startPlaceholder: '开始日期',
+                endPlaceholder: '结束日期',
+                pickerOptions: this.global.timePickerOptions
+              },
+              {
+                prop: 'createByName',
+                label: '创建人',
+                type: 'input'
+              },
+              {
+                prop: 'remark',
+                label: '备注',
+                type: 'input'
+              }
+            ]
+          } else {
+            this.superQueryJson = [
+              {
+                prop: 'orderNo',
+                label: '订单号',
+                type: 'input'
+              },
+              {
+                prop: 'cooperativePartnerCode',
+                label: '供应商编码',
+                type: 'input'
+              },
+              {
+                prop: 'cooperativePartnerName',
+                label: '供应商名称',
+                type: 'input'
+              },
+
+              {
+                prop: 'drawingNo',
+                label: '品名规格',
+                type: 'input'
+              },
+
+              // {
+              //   prop: 'productName',
+              //   label: '产品名称',
+              //   type: 'input',
+              // },
+              {
+                prop: 'productCode',
+                label: '产品编码',
+                type: 'input'
+              },
+              {
+                prop: 'mainUnit',
+                label: '单位',
+                type: 'input'
+              },
+
+              {
+                prop: 'deliveryDate',
+                label: '交货日期',
+                type: 'daterange',
+                valueFormat: 'yyyy-MM-dd HH:mm:ss',
+                startPlaceholder: '开始日期',
+                endPlaceholder: '结束日期',
+                pickerOptions: this.global.timePickerOptions
+              },
+
+              {
+                prop: 'standardValue',
+                label: '规值',
+                type: 'input'
+              },
+              {
+                prop: 'sealingCoverTyping',
+                label: '打字内容',
+                type: 'select',
+                options: []
+              },
+              {
+                prop: 'accuracyLevel',
+                label: '精度等级',
+                type: 'select',
+                options: []
+              },
+              {
+                prop: 'vibrationLevel',
+                label: '振动等级',
+                type: 'select',
+                options: []
+              },
+
+              {
+                prop: 'oil',
+                label: '油脂',
+                type: 'select',
+                options: []
+              },
+              {
+                prop: 'oilQuantity',
+                label: '油脂量',
+                type: 'select',
+                options: []
+              },
+              {
+                prop: 'clearance',
+                label: '游隙',
+                type: 'select',
+                options: []
+              },
+              {
+                prop: 'packagingMethod',
+                label: '包装方式',
+                type: 'select',
+                options: []
+              },
+              {
+                prop: 'createTime',
+                label: '创建时间',
+                type: 'daterange',
+                valueFormat: 'yyyy-MM-dd HH:mm:ss',
+                startPlaceholder: '开始日期',
+                endPlaceholder: '结束日期',
+                pickerOptions: this.global.timePickerOptions
+              },
+              {
+                prop: 'createByName',
+                label: '创建人',
+                type: 'input'
+              },
+              {
+                prop: 'remark',
+                label: '备注',
+                type: 'input'
+              }
+            ]
+          }
           this.total = res.data.page.total
           this.listLoading = false
         })

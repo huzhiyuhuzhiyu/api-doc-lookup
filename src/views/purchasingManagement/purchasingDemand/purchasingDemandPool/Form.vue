@@ -87,26 +87,7 @@
                           </template>
                         </el-table-column>
 
-                        <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
-                          :width="isDeputyUnitSwitch === '1' ? 100 : 60" show-overflow-tooltip :key="3">
-                          <template slot-scope="scope">
-                            <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
-                              <div class="viewData">
-                                <span>{{ scope.row.mainUnit }}</span>
-                              </div>
-                            </el-form-item>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="deputyUnit" label="单位(副)" width="100" show-overflow-tooltip :key="4"
-                          v-if="isDeputyUnitSwitch === '1'">
-                          <template slot-scope="scope">
-                            <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
-                              <div class="viewData">
-                                <span>{{ scope.row.deputyUnit }}</span>
-                              </div>
-                            </el-form-item>
-                          </template>
-                        </el-table-column>
+                 
                         <el-table-column prop="availableQuantity" label="可用库存" width="100" show-overflow-tooltip
                           v-if="this.purchasingType === 'safe'" :key="5">
                           <template slot-scope="scope">
@@ -127,6 +108,16 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
+                        <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+                          :width="isDeputyUnitSwitch === '1' ? 100 : 60" show-overflow-tooltip :key="3">
+                          <template slot-scope="scope">
+                            <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
+                              <div class="viewData">
+                                <span>{{ scope.row.mainUnit }}</span>
+                              </div>
+                            </el-form-item>
+                          </template>
+                        </el-table-column>
                         <el-table-column prop="purchaseQuantity" label="数量" width="100" :key="7">
                           <template slot="header">
                             <span class="required">*</span>
@@ -137,6 +128,16 @@
                               :rules="productRules.purchaseQuantity">
                               <el-input @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)"
                                 v-model="scope.row.purchaseQuantity" maxlength="20" placeholder="数量"></el-input>
+                            </el-form-item>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="deputyUnit" label="单位(副)" width="100" show-overflow-tooltip :key="4"
+                          v-if="isDeputyUnitSwitch === '1'">
+                          <template slot-scope="scope">
+                            <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
+                              <div class="viewData">
+                                <span>{{ scope.row.deputyUnit }}</span>
+                              </div>
                             </el-form-item>
                           </template>
                         </el-table-column>

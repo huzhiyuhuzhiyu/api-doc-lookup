@@ -153,7 +153,8 @@
           <el-table-column label="操作" width="200" fixed="right">
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
-                :delDisabled="scope.row.documentStatus == 'submit'" :editDisabled="scope.row.documentStatus == 'submit'||scope.row.documentStatus == 'back'"
+                :delDisabled="scope.row.documentStatus == 'submit'"
+                :editDisabled="scope.row.documentStatus == 'submit' || scope.row.documentStatus == 'back'"
                 @edit="viewFun(scope.row.id, 'edit', scope.row)" @del="handleDel(scope.row.id)">
 
                 <el-dropdown hide-on-click>
@@ -168,8 +169,8 @@
                     </el-dropdown-item>
 
                     <el-dropdown-item type="text"
-                      :disabled="!(scope.row.businessType == 'inbound_purchase' && scope.row.sourceType == 'direct'&&scope.row.documentStatus=='submit')"
-                      @click.native="PrintFun(scope.row.id)">打印</el-dropdown-item>
+                      :disabled="!((scope.row.businessType == 'inbound_purchase' || scope.row.businessType == 'outbound_external_send'||scope.row.businessType=='outbound_purchase') && scope.row.sourceType == 'direct' && scope.row.documentStatus == 'submit')"
+                      @click.native="PrintFun(scope.row)">打印</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </tableOpts>
@@ -445,6 +446,23 @@ export default {
       ],
       classAttributeList: [],
       selectArr: [],
+      arr: [
+        {
+          businessType: 'inbound_purchase',
+          code: "p017",
+          fullName: "采购收货单"
+        },
+        {
+          businessType: 'inbound_purchase',
+          code: "p008",
+          fullName:"采购退货"
+        },
+        {
+          businessType: 'outbound_external_send',
+          code: "p013",
+          fullName: "外协发料单"
+        },
+      ]
     }
   },
   created() {
@@ -499,11 +517,14 @@ export default {
         this.printBrowseVisible = false
       });
     },
-    // 打印
-    PrintFun(id) {
-      this.enCode = 'p017'
-      this.formId = id
-      this.fullName = '采购收货单'
+      // 打印
+      PrintFun(row) {
+      console.log(this.arr,row);
+      this.enCode = this.arr.find(item => item.businessType === row.businessType).code // 筛选出 businessType 等于 type 的项  
+        console.log("this.encode",this.enCode); 
+      this.formId = row.moveId
+      this.fullName = this.arr.find(item => item.businessType === row.businessType).fullName // 筛选出 businessType 等于 type 的项  
+      console.log("this.fullName",this.fullName);
       this.printVisible = true
       this.$nextTick(() => {
         this.$refs.printTemplate.init(this.enCode)

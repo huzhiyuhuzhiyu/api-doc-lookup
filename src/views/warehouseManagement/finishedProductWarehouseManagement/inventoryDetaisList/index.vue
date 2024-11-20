@@ -25,13 +25,19 @@
 
           <el-col :span="4">
             <el-form-item>
+              <el-date-picker v-model="createTimeArr" type="datetimerange" :default-time="['00:00:00', '23:59:59']"
+                style="width: 100%" start-placeholder="创建开始时间" end-placeholder="创建结束时间" clearable></el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
               <el-select v-model="listQuery.businessType" placeholder="业务类型" style="width: 100%;" clearable>
                 <el-option v-for="(item, index) in list" :key="index" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="4">
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
                 {{ $t('common.search') }}</el-button>
@@ -62,13 +68,13 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable"  :data="tableData" border :setColumnDisplayList="columnList"
-          :fixedNO="true" @sort-change="sortChange" custom-column v-if="tableDataFlag">
+        <JNPF-table ref="dataTable" :data="tableData" border :setColumnDisplayList="columnList" :fixedNO="true"
+          @sort-change="sortChange" custom-column v-if="tableDataFlag">
           <el-table-column prop="orderNo" label="单号" sortable="custom" min-width="180">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="viewFun(scope.row.moveId, 'look', scope.row)">{{
                 scope.row.orderNo
-                }}</el-link>
+              }}</el-link>
             </template>
           </el-table-column>
           <el-table-column prop="businessType" label="业务类型" sortable="custom" min-width="120">
@@ -104,19 +110,21 @@
 
           </el-table-column>
           <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="300" />
+          <el-table-column prop="productName" label="产品名称" v-if="productNameFlag == '1'" min-width="160"
+            sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
           <!-- <el-table-column prop="mainUnit" label="单位" min-width="140" />
           <el-table-column prop="num" label="数量" sortable="custom" min-width="140" /> -->
           <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
-          <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'"  min-width="120" />
+          <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120" />
           <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
-          <el-table-column prop="deputyNum" label="数量(副)"  min-width="120" v-if="mainUnitFlag == 1" />
+          <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
           <el-table-column prop="costPrice" label="单价(含税)" sortable="custom" min-width="160" />
           <el-table-column prop="totalAmount" label="总金额(含税)" sortable="custom" min-width="180" />
 
-          <el-table-column prop="taxRate" label="税率" sortable="custom" min-width="140" >
+          <el-table-column prop="taxRate" label="税率" sortable="custom" min-width="140">
             <template slot-scope="scope">
-              <div>{{ scope.row.taxRate+'%' }}</div>
+              <div>{{ scope.row.taxRate + '%' }}</div>
             </template>
           </el-table-column>
           <el-table-column prop="excludingTaxCostPrice" label="单价(不含税)" sortable="custom" min-width="180" />
@@ -164,7 +172,7 @@
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
                 :delDisabled="scope.row.documentStatus == 'submit'"
-                :editDisabled="scope.row.documentStatus == 'submit'||scope.row.documentStatus == 'back'"
+                :editDisabled="scope.row.documentStatus == 'submit' || scope.row.documentStatus == 'back'"
                 @edit="viewFun(scope.row.moveId, 'edit', scope.row)" @del="handleDel(scope.row.moveId)">
 
                 <el-dropdown hide-on-click>
@@ -176,9 +184,9 @@
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item
                       @click.native="viewFun(scope.row.moveId, 'look', scope.row)">查看详情</el-dropdown-item>
-                    <el-dropdown-item type="text"
-                      :disabled="!(scope.row.businessType == 'inbound_purchase' && scope.row.sourceType == 'direct'&&scope.row.documentStatus=='submit')"
-                      @click.native="PrintFun(scope.row.id)">打印</el-dropdown-item>
+                      <el-dropdown-item type="text"
+                      :disabled="!((scope.row.businessType == 'inbound_purchase' || scope.row.businessType == 'outbound_external_send'||scope.row.businessType=='outbound_purchase') && scope.row.sourceType == 'direct' && scope.row.documentStatus == 'submit')"
+                      @click.native="PrintFun(scope.row)">打印</el-dropdown-item>
 
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -199,7 +207,7 @@
     </div>
 
 
-    <Form v-if="formVisible" ref="Form" @close="closeForm" :warehouseCode="warehouseCode"/>
+    <Form v-if="formVisible" ref="Form" @close="closeForm" :warehouseCode="warehouseCode" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <ProductInboundForm v-if="productInboundFormVisible" ref="productInboundREFForm" @close="closeForm">
     </ProductInboundForm>
@@ -274,6 +282,7 @@ import InboundReturnForm from '../dbIncomAndOutInventory/equipmentInboundForm.vu
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
+import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 export default {
   name: 'inventoryDetaisList',
   components: {
@@ -295,9 +304,9 @@ export default {
       superForm: {},
       basicQuery: {},
       searchList: [
-        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'approvalStatus', fieldValue: 'ok', label: '', symbol: 'like', searchType: 2, width: 0 },
+        // { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '客户/供应商', symbol: 'like', searchType: 1, width: 120 },
+        // { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],
       PurchaseOrderInboundFormVisible: false,
       outboundSaleSendFormVisible: false,
@@ -314,7 +323,7 @@ export default {
       saleOutboundFormVisible: false,
       externalInboundFormVisible: false,
       externalMaterOutboundFormVisible: false,
-      columnList: ["partnerCode", 'productCode', "productName", "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxAmount", "createByName", "taxAmount"],
+      columnList: ["partnerCode", 'productCode', "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxAmount", "createByName", "taxAmount"],
       num: 0,
       superQueryVisible: false,
       taxAmount: 0,
@@ -351,6 +360,8 @@ export default {
       ],
 
       initListQuery: {
+        startTime: "",
+        endTime: "",
         productDrawingNo: "",
         businessType: "",
         orderNo: "",
@@ -531,30 +542,63 @@ export default {
           type: 'input',
         },
       ],
+      createTimeArr: [],
       classAttributeList: [],
       prindId: "",
       formId: "",
       enCode: "",
-      mainUnitFlag:null,
-      tableDataFlag:false,
+      mainUnitFlag: null,
+      tableDataFlag: false,
+      productNameFlag: null,
+      arr: [
+        {
+          businessType: 'inbound_purchase',
+          code: "p017",
+          fullName: "采购收货单"
+        },
+        {
+          businessType: 'outbound_purchase',
+          code: "p008",
+          fullName:"采购退货单"
+        },
+        {
+          businessType: 'outbound_external_send',
+          code: "p013",
+          fullName: "外协发料单"
+        },
+      ]
     }
   },
   created() {
     this.superForm = this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.getclassAttributeList()
+
   },
   mounted() {
     this.getProductClassFun()
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
 
+
   },
   methods: {
+
     async getMainUnitFun(code, type) {
       this.listLoading = true
       try {
         this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
-        this.tableDataFlag = true
+        let objs = { "pageSize": -1, "businessCode": "product" }
+        getBimBusinessSwitchConfigList(objs).then(res => {
+          this.productNameFlag = res.data.product[1].configValue1
+          console.log(1111, this.productNameFlag);
         this.listLoading = false
+        this.tableDataFlag = true
+        if (this.productNameFlag == '1') {
+
+            this.searchList.push({ field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 })
+          }
+
+        }).catch(error => {
+        })
 
 
       } catch (error) {
@@ -573,10 +617,13 @@ export default {
       });
     },
     // 打印
-    PrintFun(id) {
-      this.enCode = 'p017'
-      this.formId = id
-      this.fullName = '采购收货单'
+    PrintFun(row) {
+      console.log(this.arr,row);
+      this.enCode = this.arr.find(item => item.businessType === row.businessType).code // 筛选出 businessType 等于 type 的项  
+        console.log("this.encode",this.enCode); 
+      this.formId = row.moveId
+      this.fullName = this.arr.find(item => item.businessType === row.businessType).fullName // 筛选出 businessType 等于 type 的项  
+      console.log("this.fullName",this.fullName);
       this.printVisible = true
       this.$nextTick(() => {
         this.$refs.printTemplate.init(this.enCode)
@@ -1114,7 +1161,6 @@ export default {
 
 
     getInventorySummaryDataFun() {
-      this.listLoading = true
       Object.keys(this.listQuery).forEach(key => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
@@ -1122,6 +1168,13 @@ export default {
       this.totalList = []
       this.listQuery.pageNum = 1
       this.listQuery.classAttributeList = this.classAttributeList
+      if (this.createTimeArr.length) {
+        this.listQuery.startTime = this.createTimeArr[0]
+        this.listQuery.endTime = this.createTimeArr[1]
+      } else {
+        this.listQuery.startTime = ""
+        this.listQuery.endTime = ""
+      }
       // this.listQuery.approvalStatus = 'ok'
       getInventorySummaryData(this.listQuery).then(res => {
 
@@ -1134,7 +1187,6 @@ export default {
         this.totalAmount = res.data.total ? res.data.total.totalAmount : 0
         this.excludingTaxTotalAmount = res.data.total ? res.data.total.excludingTaxTotalAmount : 0
 
-        this.listLoading = false
         this.visible = false
       }).catch(() => {
         this.listLoading = false
@@ -1255,12 +1307,14 @@ export default {
       this.initData()
     },
     reset() {
+      this.createTimeArr = []
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.superForm = this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
-        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        // { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '客户/供应商', symbol: 'like', searchType: 1, width: 120 },
+        // { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],
         this.initData()
     },

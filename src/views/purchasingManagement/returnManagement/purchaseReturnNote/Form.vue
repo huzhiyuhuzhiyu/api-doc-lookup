@@ -38,6 +38,15 @@
                           "></el-input>
                       </el-form-item>
                     </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="是否出库" prop="stockFlag">
+                        <el-select v-model="dataForm.stockFlag" placeholder="请选择是否出库" style="width: 100%;"
+                          :disabled="btnType == 'look' ? true : false">
+                          <el-option v-for="(item, index) in stockFlagList" :key="index" :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
                     <!-- <el-col :sm="6" :xs="24">
                       <el-form-item label="退货标识" prop="exchangeGoodsFlag">
                         <el-select v-model="dataForm.exchangeGoodsFlag" placeholder="请选择状态" style="width: 100%;"
@@ -267,6 +276,15 @@
                         ? false
                         : true
                       "></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="6" :xs="24">
+                  <el-form-item label="是否出库" prop="stockFlag">
+                    <el-select v-model="dataForm.stockFlag" placeholder="请选择是否出库" style="width: 100%;"
+                      :disabled="btnType == 'look' ? true : false">
+                      <el-option v-for="(item, index) in stockFlagList" :key="index" :label="item.label"
+                        :value="item.value"></el-option>
+                    </el-select>
                   </el-form-item>
                 </el-col>
                 <!-- <el-col :sm="6" :xs="24">
@@ -751,6 +769,7 @@ export default {
         { label: '已完成', value: 'returned' },
         { label: '已取消', value: 'canceled' }
       ],
+      stockFlagList: [{ label: '是', value: 1 }, { label: '否', value: 0 }],
       documentStatusList: [{ label: '退货', value: false }, { label: '换货', value: true }],
       approvalStatusList: [
         { label: '审批中', value: 'ing' },
@@ -902,6 +921,7 @@ export default {
         classAttribute: 'other',
         receiptReturnType: 'back',
         notificationType: 'procure',
+        stockFlag: 1,
         salesman: '',
         logisticsCompany: '',
         ordersId: '',

@@ -17,6 +17,14 @@ export function getBimProcessDetail (id) {
   })
 }
 
+// 获取下道工序详情
+export function getNextBimProcess (productsId,processId) {
+  return request({
+    url: `/api/mes/bimProcess/next/detail?productsId=` + productsId + '&processId=' + processId,
+    method: 'post',
+  })
+}
+
 // 新增工序
 export function addBimProcess (data) {
   return request({

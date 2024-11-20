@@ -36,6 +36,15 @@
                                   "></el-input>
                               </el-form-item>
                             </el-col>
+                            <el-col :sm="6" :xs="24">
+                              <el-form-item label="是否出库" prop="stockFlag">
+                                <el-select v-model="dataForm.stockFlag" placeholder="请选择是否出库" style="width: 100%;"
+                                  :disabled="btnType == 'look' ? true : false">
+                                  <el-option v-for="(item, index) in stockFlagList" :key="index" :label="item.label"
+                                    :value="item.value"></el-option>
+                                </el-select>
+                              </el-form-item>
+                            </el-col>
                             <!-- <el-col :sm="6" :xs="24">
                       <el-form-item label="退货标识" prop="exchangeGoodsFlag">
                         <el-select v-model="dataForm.exchangeGoodsFlag" placeholder="请选择状态" style="width: 100%;"
@@ -550,6 +559,7 @@ export default {
         { label: '已完成', value: 'returned' },
         { label: '已取消', value: 'canceled' }
       ],
+      stockFlagList: [{ label: '是', value: 1 }, { label: '否', value: 0 }],
       documentStatusList: [{ label: '退货', value: false }, { label: '换货', value: true }],
       approvalStatusList: [
         { label: '审批中', value: 'ing' },
@@ -710,6 +720,7 @@ export default {
         exchangeGoodsFlag: false,
         inspectionStatus: '',
         // orderCategory: "assembly",
+        stockFlag: 1,
         salesman: '',
         receiptReturnType: 'back',
         notificationType: 'procure',
@@ -894,7 +905,7 @@ export default {
     calcValidate() {
       return (rule, value, callback) => {
         let index = Number(rule.field.match(/\d+/)[0])
-        let msg = `退货数量超过最大可退货数量` 
+        let msg = `退货数量超过最大可退货数量`
         if (!value || value == 0) {
           callback()
         } else {

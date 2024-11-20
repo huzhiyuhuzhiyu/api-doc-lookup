@@ -67,7 +67,8 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="地区" prop="regionCode" :rules="isaddressswitch?{required: true, message: '地区不能为空', trigger: 'change'}:{}">
+                      <el-form-item label="地区" prop="regionCode"
+                        :rules="isaddressswitch ? { required: true, message: '地区不能为空', trigger: 'change' } : {}">
                         <el-select v-model="dataForm.regionCode" placeholder="请选择地区" style="width: 100%;"
                           :disabled="btnType ? true : false" @change="handleChange">
                           <el-option v-for="(item, index) in areaList" :key="index" :label="item.fullName"
@@ -76,7 +77,8 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="国家" prop="country" :rules="isaddressswitch?{required: true, message: '国家不能为空', trigger: 'change'}:{}">
+                      <el-form-item label="国家" prop="country"
+                        :rules="isaddressswitch ? { required: true, message: '国家不能为空', trigger: 'change' } : {}">
                         <el-select v-model="dataForm.country" placeholder="请选择国家" style="width: 100%;"
                           :disabled="btnType ? true : false">
                           <el-option v-for="(item, index) in countryList" :key="index" :label="item.name"
@@ -85,7 +87,8 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24" v-if="dataForm.regionCode != 'foreign'">
-                      <el-form-item label="省" prop="province" :rules="isaddressswitch?{required: true, message: '省不能为空', trigger: 'change'}:{}">
+                      <el-form-item label="省" prop="province"
+                        :rules="isaddressswitch ? { required: true, message: '省不能为空', trigger: 'change' } : {}">
                         <el-select v-model="dataForm.province" placeholder="请选择省" style="width: 100%;"
                           :disabled="btnType ? true : false">
                           <el-option v-for="item in provinces" size="small" :key="item.id" :label="item.fullName"
@@ -94,7 +97,8 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24" v-if="dataForm.regionCode != 'foreign'">
-                      <el-form-item label="市" prop="city" :rules="isaddressswitch?{required: true, message: '市不能为空', trigger: 'change'}:{}">
+                      <el-form-item label="市" prop="city"
+                        :rules="isaddressswitch ? { required: true, message: '市不能为空', trigger: 'change' } : {}">
                         <el-select v-model="dataForm.city" placeholder="请选择市" style="width: 100%;"
                           @focus="focusfoundation(dataForm.province)" :loading="foundationloadingcity"
                           :disabled="btnType ? true : false || !dataForm.province">
@@ -106,7 +110,8 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24" v-if="dataForm.regionCode != 'foreign'">
-                      <el-form-item label="区" prop="area" :rules="isaddressswitch?{required: true, message: '区不能为空', trigger: 'change'}:{}">
+                      <el-form-item label="区" prop="area"
+                        :rules="isaddressswitch ? { required: true, message: '区不能为空', trigger: 'change' } : {}">
                         <el-select v-model="dataForm.area" placeholder="请选择区" style="width: 100%;"
                           @focus="foundationfocusactionarea(dataForm.city)" :loading="loadingareafoundation"
                           :disabled="btnType ? true : false || !dataForm.city">
@@ -117,7 +122,8 @@
                     </el-col>
 
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="地址" prop="address" :rules="isaddressswitch?{required: true, message: '地址不能为空', trigger: 'blur'}:{}">
+                      <el-form-item label="地址" prop="address"
+                        :rules="isaddressswitch ? { required: true, message: '地址不能为空', trigger: 'blur' } : {}">
                         <el-input v-model="dataForm.address" placeholder="请输入地址" :disabled="btnType ? true : false"
                           maxlength="300" />
                       </el-form-item>
@@ -125,7 +131,7 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="电话" prop="phone">
                         <el-input v-model="dataForm.phone" placeholder="请输入电话" :disabled="btnType ? true : false"
-                          maxlength="20" />
+                          maxlength="20" @blur="phoneBlur(dataForm.phone)" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
@@ -513,7 +519,7 @@ import {
 import formValidate from '@/utils/formValidate'
 import { getProvinceList } from '@/api/system/province'
 import { getbimProductAttributes } from '@/api/masterDataManagement/index'
-import { getBimBusinessSwitchConfigList,getBimBusinessDetail } from '@/api/basicData/index'
+import { getBimBusinessSwitchConfigList, getBimBusinessDetail } from '@/api/basicData/index'
 export default {
   data() {
     var checkReconciliationEndDate = (rule, value, callback) => {
@@ -731,6 +737,17 @@ export default {
     }
   },
   methods: {
+    phoneBlur(val) {
+      if (val) {
+        this.$refs.dataForm.clearValidate('mobilePhone'); // field---要清除校验的表单字段
+      } else {
+        this.$refs.dataForm.validateField(['mobilePhone'], err => {
+          if (err) {
+            return;
+          }
+        })
+      }
+    },
     //地址是否必填
     getSwitch() {
       let obj = {

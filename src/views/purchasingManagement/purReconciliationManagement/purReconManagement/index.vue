@@ -40,7 +40,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head">
           <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
           <div>
@@ -64,7 +64,7 @@
           </div>
         </div>
 
-        <JNPF-table v-loading="listLoading" @selection-change="handeleProductInfoData" hasC highlight-current-row
+        <JNPF-table v-if="tableFlag" @selection-change="handeleProductInfoData" hasC highlight-current-row
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
           :setColumnDisplayList="columnList" :checkSelectable="checkSelectable">
           <el-table-column prop="orderNo" label="出入库单号" min-width="240" sortable="custom" />
@@ -79,7 +79,9 @@
               <div v-else-if="scope.row.businessType == 'inbound_purchase'">收货</div>
             </template>
           </el-table-column>
-          <el-table-column prop="mainUnit" label="单位" width="60" />
+          <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+            :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
+          <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
           <el-table-column prop="num" label="出入库数量" width="120" />
           <el-table-column prop="costPrice" label="单价(含税)" width="120" />
           <el-table-column prop="taxRate" label="税率" width="60">
@@ -121,11 +123,14 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import JNPFForm from './Form'
 import moment from 'moment'
 import { excelExport } from '@/api/basicData/index'
+import { getBimBusinessDetail } from '@/api/basicData/index'
 export default {
   name: 'salefinAccount',
   components: { JNPFForm, ExportForm, SuperQuery },
   data() {
     return {
+      isDeputyUnitSwitch: '',
+      tableFlag: false,
       basicQuery: {},
       superQuery: {},
       searchList: [
@@ -252,10 +257,19 @@ export default {
     }
   },
   created() {
+    this.getDeputyUnit()
     this.initData()
   },
   methods: {
-
+    getDeputyUnit() {
+      let obj = {
+        businessCode: 'deputyUnit',
+        configKey: `procureDeputyUnit`
+      }
+      getBimBusinessDetail(obj).then((res) => {
+        this.isDeputyUnitSwitch = res.data.configValue1
+      })
+    },
     superQuerySearch(query) {
       this.superQuery = query
       this.superQueryVisible = false
@@ -376,7 +390,160 @@ export default {
           })
 
           this.tableDataList = res.data.records
+          this.tableFlag = true
           console.log('this.tableDataList ', this.tableDataList)
+          if (this.isDeputyUnitSwitch) {
+            this.superQueryJson = [
+              {
+                prop: 'orderNo',
+                label: '出入库单号',
+                type: 'input'
+              },
+              {
+                prop: 'partnerName',
+                label: '供应商名称',
+                type: 'input'
+              },
+              {
+                prop: 'partnerCode',
+                label: '供应商编码',
+                type: 'input'
+              },
+              {
+                prop: 'productCode',
+                label: '产品编码',
+                type: 'input'
+              },
+              // {
+              //   prop: 'productName',
+              //   label: "产品名称",
+              //   type: 'input'
+              // },
+              {
+                prop: 'productDrawingNo',
+                label: '品名规格',
+                type: 'input'
+              },
+              {
+                prop: 'mainUnit',
+                label: '单位(主)',
+                type: 'input'
+              },
+              {
+                prop: 'deputyUnit',
+                label: '单位(副)',
+                type: 'input'
+              },
+              {
+                prop: 'num',
+                label: '出入库数量',
+                type: 'input'
+              },
+              {
+                prop: 'price',
+                label: '单价(含税)',
+                type: 'input'
+              },
+              {
+                prop: 'taxRate',
+                label: '税率(%)',
+                type: 'input'
+              },
+              {
+                prop: 'excludingTaxAmount',
+                label: '金额',
+                type: 'input'
+              },
+              {
+                prop: 'createTime',
+                label: '创建时间',
+                type: 'datetimerange',
+                valueFormat: 'yyyy-MM-dd HH:mm:ss',
+                startPlaceholder: '创建开始时间',
+                endPlaceholder: '创建结束时间',
+                pickerOptions: this.global.timePickerOptions
+              },
+
+              {
+                prop: 'createByName',
+                label: '创建人',
+                type: 'input'
+              }
+            ]
+          } else {
+            this.superQueryJson = [
+              {
+                prop: 'orderNo',
+                label: '出入库单号',
+                type: 'input'
+              },
+              {
+                prop: 'partnerName',
+                label: '供应商名称',
+                type: 'input'
+              },
+              {
+                prop: 'partnerCode',
+                label: '供应商编码',
+                type: 'input'
+              },
+              {
+                prop: 'productCode',
+                label: '产品编码',
+                type: 'input'
+              },
+              // {
+              //   prop: 'productName',
+              //   label: "产品名称",
+              //   type: 'input'
+              // },
+              {
+                prop: 'productDrawingNo',
+                label: '品名规格',
+                type: 'input'
+              },
+              {
+                prop: 'mainUnit',
+                label: '单位',
+                type: 'input'
+              },
+              {
+                prop: 'num',
+                label: '出入库数量',
+                type: 'input'
+              },
+              {
+                prop: 'price',
+                label: '单价(含税)',
+                type: 'input'
+              },
+              {
+                prop: 'taxRate',
+                label: '税率(%)',
+                type: 'input'
+              },
+              {
+                prop: 'excludingTaxAmount',
+                label: '金额',
+                type: 'input'
+              },
+              {
+                prop: 'createTime',
+                label: '创建时间',
+                type: 'datetimerange',
+                valueFormat: 'yyyy-MM-dd HH:mm:ss',
+                startPlaceholder: '创建开始时间',
+                endPlaceholder: '创建结束时间',
+                pickerOptions: this.global.timePickerOptions
+              },
+
+              {
+                prop: 'createByName',
+                label: '创建人',
+                type: 'input'
+              }
+            ]
+          }
           this.total = res.data.total
           this.listLoading = false
           this.visible = false

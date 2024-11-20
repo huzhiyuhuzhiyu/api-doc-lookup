@@ -100,6 +100,16 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
+                      <el-table-column prop="deputyUnit" key="deputyUnit" label="副单位" width="100">
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'"
+                            :rules="productRules.deputyUnit">
+                            <div class="viewData">
+                              <span>{{ scope.row.deputyUnit }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
 
                       <el-table-column prop="price" key="price" label="协议价" min-width="140">
                         <template slot="header">
@@ -968,6 +978,7 @@ export default {
   },
   created() {
     this.getBimBusinessDetail()
+    this.getDeputyUnit()
   },
   computed: {
     ...mapGetters(['userInfo']),
@@ -987,6 +998,15 @@ export default {
     }
   },
   methods: {
+    getDeputyUnit() {
+      let obj = {
+        businessCode: 'deputyUnit',
+        configKey: `procureDeputyUnit`
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isDeputyUnitSwitch = res.data.configValue1
+      })
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',

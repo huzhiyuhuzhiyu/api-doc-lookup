@@ -121,9 +121,15 @@
                     <!-- </el-table-column> -->
                     <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom"
                       show-overflow-tooltip />
-                    <el-table-column prop="mainUnit" label="单位" width="160" />
-                    <!-- <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" /> -->
-                    <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom" />
+                    <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+                      :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
+                    <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
+                    <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
+                      width="160" sortable="custom" v-if="isReturnSwitch === '1'" />
+                    <el-table-column prop="purchaseQuantity2" label="数量(副)" width="160" sortable="custom"
+                      v-if="isDeputyUnitSwitch === '1' && isReturnSwitch === '1'" />
+                    <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom"
+                      v-if="isReturnSwitch === '1'" />
                     <el-table-column prop="receivedQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
@@ -357,10 +363,16 @@
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                 <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
                 <!-- </el-table-column> -->
-                <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
-                <el-table-column prop="mainUnit" label="单位" width="160" />
-                <!-- <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" /> -->
-                <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom" />
+                <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" show-overflow-tooltip />
+                <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+                  :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
+                <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
+                <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom"
+                  v-if="isReturnSwitch === '1'" />
+                <el-table-column prop="purchaseQuantity2" label="数量(副)" width="160" sortable="custom"
+                  v-if="isDeputyUnitSwitch === '1' && isReturnSwitch === '1'" />
+                <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom"
+                  v-if="isReturnSwitch === '1'" />
                 <el-table-column prop="receivedQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                   key="789">
                   <template slot="header">
@@ -716,6 +728,7 @@ export default {
   mixins: [busFlow],
   data() {
     return {
+      isDeputyUnitSwitch: '',
       isattachmentswitch: '',
       categoryId: '',
       tipsvisible: false,
@@ -1047,6 +1060,7 @@ export default {
     this.getReturnswitch()
     this.getProductClassFun()
     // this.handleChange()
+    this.getDeputyUnit()
     this.getBimBusinessDetail()
     this.getAttributeline()
     this.getWarehouseList()
@@ -1057,6 +1071,15 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    getDeputyUnit() {
+      let obj = {
+        businessCode: 'deputyUnit',
+        configKey: `procureDeputyUnit`
+      }
+      getBimBusinessDetail(obj).then((res) => {
+        this.isDeputyUnitSwitch = res.data.configValue1
+      })
+    },
     getProductClassFun() {
       // 获取税率(数据字典)
       getbimProductAttributes('585438081021126405').then((res) => {

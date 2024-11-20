@@ -40,7 +40,7 @@
             </el-col>
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier('', 'add')" :addText="'创建发料'">
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
@@ -61,7 +61,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" hasC
+          <JNPF-table v-if="tableFlag" ref="dataTable" :data="tableData" :fixedNO="true" hasC
             @selection-change="selectCustomerFun" :setColumnDisplayList="columnList" @sort-change="sortChange"
             custom-column>
             <el-table-column prop="orderNo" label="订单号" min-width="200" sortable="custom">
@@ -77,8 +77,12 @@
             <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
-            <el-table-column prop="purchaseQuantity" label="订单数量" width="120" sortable="custom" />
+            <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+              :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
+            <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
+            <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
+              :width="isDeputyUnitSwitch === '1' ? 100 : 80" />
+            <el-table-column prop="purchaseQuantity2" label="数量(副)" width="100" v-if="isDeputyUnitSwitch === '1'" />
 
             <el-table-column label="操作" width="100" fixed="right">
               <template slot-scope="scope">
@@ -128,6 +132,7 @@ import moment from 'moment'
 import AddForm from '../materialsIssueNotice/Form.vue'
 import Form from "../../processOutsourcingOrders/orderList/Form.vue";
 import ExportForm from '@/components/no_mount/ExportBox/index'
+import { getBimBusinessDetail } from '@/api/basicData/index'
 export default {
   name: 'materialOrderToBeIssued',
   components: {
@@ -139,6 +144,8 @@ export default {
   },
   data() {
     return {
+      isDeputyUnitSwitch: '',
+      tableFlag: false,
       addFormVisible: false,
       btnsearchFlag: true,
       columnList: ['cooperativePartnerCode', 'productCode'],
@@ -239,6 +246,7 @@ export default {
 
   mounted() { },
   created() {
+    this.getDeputyUnit()
     // 默认设置为近3天
     const end = new Date()
     const start = ''
@@ -250,6 +258,15 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    getDeputyUnit() {
+      let obj = {
+        businessCode: 'deputyUnit',
+        configKey: `outDeputyUnit`
+      }
+      getBimBusinessDetail(obj).then((res) => {
+        this.isDeputyUnitSwitch = res.data.configValue1
+      })
+    },
     selectCustomerFun(val) {
       this.list = val
     },
@@ -375,6 +392,98 @@ export default {
       detailpurchaseOrderList(this.orderForm)
         .then((res) => {
           this.tableData = res.data.records
+          this.tableFlag = true
+          if (this.isDeputyUnitSwitch === '1') {
+            this.superQueryJson = [
+              {
+                prop: 'orderNo',
+                label: '订单号',
+                type: 'input'
+              },
+              {
+                prop: 'cooperativePartnerName',
+                label: '供应商名称',
+                type: 'input'
+              },
+              {
+                prop: 'cooperativePartnerCode',
+                label: '供应商编码',
+                type: 'input'
+              },
+              {
+                prop: 'deliveryDate',
+                label: '交货日期',
+                type: 'input'
+              },
+              {
+                prop: 'mainUnit',
+                label: '单位(主)',
+                type: 'input'
+              },
+              {
+                prop: 'deputyUnit',
+                label: '单位(副)',
+                type: 'input'
+              },
+              {
+                prop: 'createTime',
+                label: '创建时间',
+                type: 'daterange',
+                valueFormat: 'yyyy-MM-dd HH:mm:ss',
+                startPlaceholder: '开始日期',
+                endPlaceholder: '结束日期',
+                pickerOptions: this.global.timePickerOptions
+              },
+              {
+                prop: 'createByName',
+                label: '创建人',
+                type: 'input'
+              },
+            ]
+          } else {
+            this.superQueryJson = [
+              {
+                prop: 'orderNo',
+                label: '订单号',
+                type: 'input'
+              },
+              {
+                prop: 'cooperativePartnerName',
+                label: '供应商名称',
+                type: 'input'
+              },
+              {
+                prop: 'cooperativePartnerCode',
+                label: '供应商编码',
+                type: 'input'
+              },
+              {
+                prop: 'deliveryDate',
+                label: '交货日期',
+                type: 'input'
+              },
+              {
+                prop: 'mainUnit',
+                label: '单位',
+                type: 'input'
+              },
+
+              {
+                prop: 'createTime',
+                label: '创建时间',
+                type: 'daterange',
+                valueFormat: 'yyyy-MM-dd HH:mm:ss',
+                startPlaceholder: '开始日期',
+                endPlaceholder: '结束日期',
+                pickerOptions: this.global.timePickerOptions
+              },
+              {
+                prop: 'createByName',
+                label: '创建人',
+                type: 'input'
+              },
+            ]
+          }
           this.total = res.data.total
           this.listLoading = false
         })

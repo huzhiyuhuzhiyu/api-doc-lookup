@@ -17,7 +17,6 @@
         <div class="main" ref="main">
           <el-tabs v-model="activeName">
             <el-tab-pane label="基础信息" name="jcInfo" ref="orderInfos">
-
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                   <el-row :gutter="15" class="" style="margin: 0 5px;">
@@ -42,7 +41,6 @@
                       </el-col>
                     </el-form>
                   </el-row>
-
                 </el-collapse-item>
 
                 <el-collapse-item title="产品信息" name="productInfo">
@@ -56,7 +54,7 @@
                         批量删除
                       </el-button>
                       |
-                      <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true" hasC
+                      <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true" hasC ref="multipleTable"
                         @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
                         border :height="customStyleData">
                         <!-- <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column>
@@ -75,7 +73,7 @@
                           </template>
                         </el-table-column>
 
-                        <el-table-column prop="deliveryDate" label="交货日期" width="175">
+                        <el-table-column prop="deliveryDate" label="交货日期" width="175" :key="2">
                           <template slot="header">
                             <span class="required">*</span>
                             交货日期
@@ -89,7 +87,8 @@
                           </template>
                         </el-table-column>
 
-                        <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip>
+                        <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+                          :width="isDeputyUnitSwitch === '1' ? 100 : 60" show-overflow-tooltip :key="3">
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
                               <div class="viewData">
@@ -98,8 +97,18 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
+                        <el-table-column prop="deputyUnit" label="单位(副)" width="100" show-overflow-tooltip :key="4"
+                          v-if="isDeputyUnitSwitch === '1'">
+                          <template slot-scope="scope">
+                            <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
+                              <div class="viewData">
+                                <span>{{ scope.row.deputyUnit }}</span>
+                              </div>
+                            </el-form-item>
+                          </template>
+                        </el-table-column>
                         <el-table-column prop="availableQuantity" label="可用库存" width="100" show-overflow-tooltip
-                          v-if="this.purchasingType === 'safe'">
+                          v-if="this.purchasingType === 'safe'" :key="5">
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'availableQuantity'">
                               <div class="viewData">
@@ -109,7 +118,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="maxInventory" label="最高库存" width="100" show-overflow-tooltip
-                          v-if="this.purchasingType === 'safe'">
+                          v-if="this.purchasingType === 'safe'" :key="6">
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'maxInventory'">
                               <div class="viewData">
@@ -118,10 +127,10 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="purchaseQuantity" label="数量" width="100">
+                        <el-table-column prop="purchaseQuantity" label="数量" width="100" :key="7">
                           <template slot="header">
                             <span class="required">*</span>
-                            数量
+                            {{ isDeputyUnitSwitch === '1' ? '数量(主)' : '数量' }}
                           </template>
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity'"
@@ -131,8 +140,19 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
+                        <el-table-column prop="purchaseQuantity2" label="数量(副)" width="120"
+                          v-if="isDeputyUnitSwitch === '1'" :key="8">
+                          <template slot-scope="scope">
+                            <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity2'"
+                              :rules="productRules.purchaseQuantity2">
+                              <div class="viewData">
+                                <span>{{ scope.row.purchaseQuantity2 ? scope.row.purchaseQuantity2 : 0 }}</span>
+                              </div>
+                            </el-form-item>
+                          </template>
+                        </el-table-column>
 
-                        <el-table-column prop="price" label="含税单价" width="130">
+                        <el-table-column prop="price" label="含税单价" width="140">
                           <template slot="header">
                             <span class="required">*</span>
                             单价(含税)
@@ -156,16 +176,17 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="taxRate" label="税率" width="140">
+                        <el-table-column prop="taxRate" label="税率" min-width="120">
                           <template slot="header">
                             <span class="required">*</span>
                             税率
                           </template>
                           <template slot-scope="scope">
-                            <el-form-item :rules="productRules.taxRate">
-                              <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;">
+                            <el-form-item :prop="'data.' + scope.$index + '.' + 'taxRate'"
+                              :rules="productRules.taxRate">
+                              <el-select v-model="scope.row.taxRate" placeholder="请选择">
                                 <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
-                                  :value="item.enCode"></el-option>
+                                  :value="item.taxRate"></el-option>
                               </el-select>
                             </el-form-item>
                           </template>
@@ -208,7 +229,7 @@
                           </template>
                         </el-table-column>
 
-                        <el-table-column prop="standardValue" label="规值" width="120" :key="211"
+                        <el-table-column prop="standardValue" label="规值" width="120"
                           v-if="this.dataForm.classAttribute !== 'finish_product'">
                           <template slot-scope="scope">
                             <el-form-item>
@@ -220,7 +241,7 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="colour" label="颜色" width="120" :key="211"
+                        <el-table-column prop="colour" label="颜色" min-width="120"
                           v-if="this.dataForm.classAttribute !== 'finish_product'">
                           <template slot-scope="scope">
                             <el-form-item>
@@ -231,12 +252,12 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="processId" label="工序" width="120" :key="102"
+                        <el-table-column prop="processId" label="工序" min-width="120"
                           v-if="this.dataForm.classAttribute !== 'finish_product'">
                           <template slot-scope="scope">
                             <el-form-item>
                               <el-select v-model="scope.row.processId" placeholder="请选择" clearable>
-                                <el-option v-for=" (item, index) in list8" :key="index" :label="item.name"
+                                <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
                                   :value="item.id"></el-option>
                               </el-select>
                             </el-form-item>
@@ -244,7 +265,7 @@
                         </el-table-column>
 
                         <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'"
-                          prop="sealingCoverTyping" label="打字内容" width="120" :key="212">
+                          prop="sealingCoverTyping" label="打字内容" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
                               style="width: 100%;">
@@ -254,7 +275,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="accuracyLevel"
-                          label="精度等级" width="120" :key="123">
+                          label="精度等级" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
                               <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
@@ -264,7 +285,7 @@
                         </el-table-column>
 
                         <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="vibrationLevel"
-                          label="振动等级" width="120" :key="17">
+                          label="振动等级" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable
                               style="width: 100%;">
@@ -274,7 +295,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="oil" label="油脂"
-                          width="120" :key="61">
+                          min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
@@ -283,7 +304,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="oilQuantity"
-                          label="油脂量" width="160" :key="51">
+                          label="油脂量" min-width="160">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
@@ -292,7 +313,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="clearance"
-                          label="游隙" width="120" :key="100">
+                          label="游隙" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
@@ -301,7 +322,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="packagingMethod"
-                          label="包装方式" width="120" :key="101">
+                          label="包装方式" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
                               style="width: 100%;">
@@ -310,7 +331,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="102"
+                        <el-table-column prop="specialRequire" label="特殊要求" min-width="120"
                           v-if="this.dataForm.classAttribute == 'finish_product'">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
@@ -325,8 +346,7 @@
                           <template slot-scope="scope">
                             <el-form-item>
                               <el-input :title="scope.row.remark" v-model="scope.row.remark" maxlength="20"
-                                placeholder="备注">
-                              </el-input>
+                                placeholder="备注"></el-input>
                             </el-form-item>
                           </template>
                         </el-table-column>
@@ -342,13 +362,13 @@
                       </JNPF-table>
                     </el-form>
                     <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
-                      <span style="font-weight:500;margin-right:10px;margin-left: 5px;">总金额：{{ computedValue }}</span>
+                      <span style="font-weight:500;margin-right:10px;margin-left: 5px;">
+                        总金额：{{ computedValue }}
+                      </span>
                       <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue2 }}</span>
                     </div>
                   </div>
-
                 </el-collapse-item>
-
               </el-collapse>
             </el-tab-pane>
             <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
@@ -402,6 +422,7 @@ export default {
   data() {
     return {
       purProcurementDemandPoolList,
+      isDeputyUnitSwitch: '',
       getProductList,
       activeNames: ['productInfo', 'basicInfo'],
       datafilelist: [],
@@ -574,7 +595,7 @@ export default {
               params: [
                 '',
                 (errMsg, index) => {
-                  this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`)
+                  this.$message.error(`产品信息第${index + 1}行：副数量${errMsg}`)
                 }
               ]
             }),
@@ -604,6 +625,7 @@ export default {
         ],
         taxRate: [
           // 税率
+          { required: true, trigger: ['change'] },
           {
             validator: this.formValidate({
               type: 'noEmtry',
@@ -614,15 +636,9 @@ export default {
                 }
               ]
             }),
-            trigger: ['blur']
+            trigger: ['change']
           },
-          {
-            validator: this.formValidate('noZero', '', (errMsg, index) => {
-              this.$message.error(`产品信息第${index + 1}行：税率${errMsg}`)
-            }),
-            trigger: 'blur'
-          },
-          { required: true, trigger: ['blur'] }
+
         ],
         price: [
           // 含税单价
@@ -763,9 +779,17 @@ export default {
     }
   },
   methods: {
-
+    getDeputyUnit() {
+      let obj = {
+        businessCode: 'deputyUnit',
+        configKey: `procureDeputyUnit`
+      }
+      getBimBusinessDetail(obj).then((res) => {
+        this.isDeputyUnitSwitch = res.data.configValue1
+      })
+    },
     deliveryDateChange(val) {
-      this.dataFormTwo.data.forEach(item => {
+      this.dataFormTwo.data.forEach((item) => {
         if (!item.deliveryDate) {
           this.$set(item, 'deliveryDate', val) // 总金额(不含税)
         }
@@ -1000,6 +1024,7 @@ export default {
           item.taxRate = item.enCode.replace('%', '') * 1
         })
         this.taxRateList = res.data.list
+        console.log(this.taxRateList, 'LOOO')
       })
     },
     // 根据订单类型  打开不同的选择产品弹框
@@ -1014,10 +1039,20 @@ export default {
         const item = i.all
         console.log(item, 'oooo')
         if (this.purchasingType == 'pool') {
-          item.purchaseQuantity = item.planDemandQuantity
+          this.$set(item, 'purchaseQuantity', item.planDemandQuantity)
+          if (item.calculationDirection === 'multiplication') {
+            item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
+          } else {
+            item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
+          }
         } else {
-          item.purchaseQuantity = Number(item.maxInventory) - Number(item.availableQuantity)
+          this.$set(item, 'purchaseQuantity', Number(item.maxInventory) - Number(item.availableQuantity))
           item.productDrawingNo = item.drawingNo
+          if (item.calculationDirection === 'multiplication') {
+            item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
+          } else {
+            item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
+          }
         }
         if (item.taxRate) {
           item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.price) / (1 + Number(item.taxRate) / 100), 6)
@@ -1165,9 +1200,8 @@ export default {
               console.log(item, 'p[[[]]]')
               item.price = item.purchasePrice
               item.fixedPrice = item.purchasePrice
-              item.taxRate = item.purchaseTaxRate
+              this.$set(item, 'taxRate', Number(item.purchaseTaxRate))
             })
-
           } else {
             res.data.forEach((item) => {
               const targetList = this.dataFormTwo.data.filter((line) => line.productsId === item.productId)
@@ -1231,7 +1265,7 @@ export default {
       this.$emit('close')
     },
     init(data, classAttributeFlag, type) {
-
+      this.getDeputyUnit()
       console.log(data, 'uuuu')
       console.log(classAttributeFlag, 'classAttributeFlag')
       this.purchasingType = type
@@ -1243,15 +1277,23 @@ export default {
           item.productDrawingNo = item.drawingNo
         }
         if (this.purchasingType == 'pool') {
+          console.log(333)
           item.purchaseQuantity = item.planDemandQuantity
+          if (item.calculationDirection === 'multiplication') {
+            item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
+          } else {
+            item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
+          }
           this.customStyleData = 389
-
         } else {
           item.purchaseQuantity = Number(item.maxInventory) - Number(item.availableQuantity)
+          if (item.calculationDirection === 'multiplication') {
+            item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
+          } else {
+            item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
+          }
           this.customStyleData = 389
         }
-
-
       })
 
       this.dataForm.classAttribute = classAttributeFlag
@@ -1514,6 +1556,9 @@ export default {
     }
     window.addEventListener('resize', this.clientResize)
   },
+  updated() {
+    this.$refs['multipleTable'].doLayout()
+  },
   beforeDestroy() {
     window.removeEventListener('resize', this.clientResize)
   }
@@ -1623,7 +1668,7 @@ export default {
 }
 
 ::v-deep .el-collapse-item__content {
-  padding-bottom: 0px;
+  padding-bottom: -1px;
 }
 
 .JNPF-preview-main .main {

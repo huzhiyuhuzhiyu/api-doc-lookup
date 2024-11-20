@@ -34,7 +34,7 @@
             </el-col>
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
@@ -62,9 +62,9 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
-            @sort-change="sortChange" custom-column :checkSelectable="checkSelectable"
-            @selection-change="handleSelectionChange" hasC :setColumnDisplayList="columnList">
+          <JNPF-table v-if="tableFlag" ref="dataTable" :data="tableData" :fixedNO="true" @sort-change="sortChange"
+            custom-column :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" hasC
+            :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.returnDeliveryNoticeId, 'look')">
@@ -78,7 +78,9 @@
             <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" width="160" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" width="80" />
+            <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+              :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
+            <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
             <el-table-column prop="deliveryQuantity" label="订单数量" width="160" sortable="custom" />
             <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
@@ -146,11 +148,14 @@ import { UserListAll } from '@/api/permission/user'
 import Form from '../materialsIssueNotice/Form'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import { getBimBusinessDetail } from '@/api/basicData/index'
 export default {
   name: 'foreigntradenotice',
   components: { Form, SuperQuery, ExportForm },
   data() {
     return {
+      isDeputyUnitSwitch: '',
+      tableFlag: false,
       columnList: ['partnerCode', 'productCode'],
       superQueryVisible: false,
       exportFormVisible: false,
@@ -313,6 +318,7 @@ export default {
   },
   created() {
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+    this.getDeputyUnit()
     this.search()
     // this.getAttributeline()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
@@ -326,6 +332,15 @@ export default {
     this.getProductClassFun()
   },
   methods: {
+    getDeputyUnit() {
+      let obj = {
+        businessCode: 'deputyUnit',
+        configKey: `outDeputyUnit`
+      }
+      getBimBusinessDetail(obj).then((res) => {
+        this.isDeputyUnitSwitch = res.data.configValue1
+      })
+    },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
       let obj1 = {
@@ -698,6 +713,147 @@ export default {
       getOutlineDatalist(this.orderForm)
         .then((res) => {
           this.tableData = res.data.records
+          this.tableFlag = true
+          if (this.isDeputyUnitSwitch === '1') {
+            this.superQueryJson = [
+              {
+                prop: 'orderNo',
+                label: '单号',
+                type: 'input'
+              },
+              {
+                prop: 'partnerName',
+                label: '供应商名称',
+                type: 'input'
+              },
+              {
+                prop: 'partnerCode',
+                label: '供应商编码',
+                type: 'input'
+              },
+              {
+                prop: 'deliverDate',
+                label: '发料日期',
+                type: 'daterange',
+                valueFormat: 'yyyy-MM-dd',
+                startPlaceholder: '开始日期',
+                endPlaceholder: '结束日期',
+                pickerOptions: this.global.timePickerOptions
+              },
+              {
+                prop: 'productDrawingNo',
+                label: '品名规格',
+                type: 'input'
+              },
+              {
+                prop: 'productCode',
+                label: '产品编码',
+                type: 'input'
+              },
+              {
+                prop: 'processName',
+                label: '工序名称',
+                type: 'input'
+              },
+              {
+                prop: 'mainUnit',
+                label: '单位(主)',
+                type: 'input'
+              },
+              {
+                prop: 'deputyUnit',
+                label: '单位(副)',
+                type: 'input'
+              },
+              {
+                prop: 'deliveryQuantity',
+                label: '订单数量',
+                type: 'input'
+              },
+              {
+                prop: 'deliveryDate',
+                label: '交货日期',
+                type: 'daterange',
+                valueFormat: 'yyyy-MM-dd HH:mm:ss',
+                startPlaceholder: '开始日期',
+                endPlaceholder: '结束日期',
+                pickerOptions: this.global.timePickerOptions
+              },
+              {
+                prop: 'documentStatus',
+                label: '单据状态',
+                type: 'select',
+                options: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }]
+              }
+            ]
+          } else {
+            this.superQueryJson = [
+              {
+                prop: 'orderNo',
+                label: '单号',
+                type: 'input'
+              },
+              {
+                prop: 'partnerName',
+                label: '供应商名称',
+                type: 'input'
+              },
+              {
+                prop: 'partnerCode',
+                label: '供应商编码',
+                type: 'input'
+              },
+              {
+                prop: 'deliverDate',
+                label: '发料日期',
+                type: 'daterange',
+                valueFormat: 'yyyy-MM-dd',
+                startPlaceholder: '开始日期',
+                endPlaceholder: '结束日期',
+                pickerOptions: this.global.timePickerOptions
+              },
+              {
+                prop: 'productDrawingNo',
+                label: '品名规格',
+                type: 'input'
+              },
+              {
+                prop: 'productCode',
+                label: '产品编码',
+                type: 'input'
+              },
+              {
+                prop: 'processName',
+                label: '工序名称',
+                type: 'input'
+              },
+              {
+                prop: 'mainUnit',
+                label: '单位',
+                type: 'input'
+              },
+              {
+                prop: 'deliveryQuantity',
+                label: '订单数量',
+                type: 'input'
+              },
+              {
+                prop: 'deliveryDate',
+                label: '交货日期',
+                type: 'daterange',
+                valueFormat: 'yyyy-MM-dd HH:mm:ss',
+                startPlaceholder: '开始日期',
+                endPlaceholder: '结束日期',
+                pickerOptions: this.global.timePickerOptions
+              },
+              {
+                prop: 'documentStatus',
+                label: '单据状态',
+                type: 'select',
+                options: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }]
+              }
+            ]
+          }
           this.total = res.data.total
           this.listLoading = false
         })

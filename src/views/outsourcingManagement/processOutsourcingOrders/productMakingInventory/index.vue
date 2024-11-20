@@ -64,7 +64,9 @@
             <el-table-column prop="processName" label="工序名称" min-width="180" sortable="custom" />
             <el-table-column prop="productCategoryName" label="产品分类" width="120" sortable="custom" />
             <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" width="60" />
+            <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+              :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
+            <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
             <el-table-column prop="inventoryQuantity" label="库存数量" width="120" sortable="custom" />
             <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
             <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom" />
@@ -101,11 +103,14 @@ import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getInventoryLineReport } from '@/api/basicData/index' // 仓库 
+import { getBimBusinessDetail } from '@/api/basicData/index'
 export default {
   name: 'productMakingInventory',
   components: { ExportForm, Form, SuperQuery },
   data() {
     return {
+      isDeputyUnitSwitch: '',
+      tableFlag: false,
       exportFormVisible: false,
       superQueryVisible: false,
       superQueryJson: [
@@ -258,15 +263,25 @@ export default {
     }
   },
   created() {
+    this.getDeputyUnit()
     this.initData()
   },
 
   methods: {
+    getDeputyUnit() {
+      let obj = {
+        businessCode: 'deputyUnit',
+        configKey: `outDeputyUnit`
+      }
+      getBimBusinessDetail(obj).then((res) => {
+        this.isDeputyUnitSwitch = res.data.configValue1
+      })
+    },
     closeForm(isRefresh) {
       this.formVisible = false
       if (isRefresh) { this.initData() }
     },
-  
+
     // 导出
     exportForm(exportTableRef) {
       this.exportTableRef = exportTableRef
@@ -341,6 +356,94 @@ export default {
         .then((res) => {
           console.log(res, '外协订单列表')
           this.tableDataList = res.data.page.records
+          this.tableFlag = true
+          if (this.isDeputyUnitSwitch === '1') {
+            this.superQueryJson = [
+              {
+                prop: 'productDrawingNo',
+                label: '品名规格',
+                type: 'input'
+              },
+              {
+                prop: 'productCode',
+                label: '产品编码',
+                type: 'input'
+              },
+
+              {
+                prop: 'productCategoryName',
+                label: '产品分类',
+                type: 'input'
+              },
+
+              {
+                prop: 'batchNumber',
+                label: '批次号',
+                type: 'input'
+              },
+              {
+                prop: 'mainUnit',
+                label: '单位(主)',
+                type: 'input'
+              },
+              {
+                prop: 'deputyUnit',
+                label: '单位(副)',
+                type: 'input'
+              },
+
+              {
+                prop: 'latestStorageTime',
+                label: '入库日期',
+                type: 'daterange',
+                valueFormat: 'yyyy-MM-dd HH:mm:ss',
+                startPlaceholder: '开始日期',
+                endPlaceholder: '结束日期',
+                pickerOptions: this.global.timePickerOptions
+              },
+
+            ]
+          } else {
+            this.superQueryJson = [
+              {
+                prop: 'productDrawingNo',
+                label: '品名规格',
+                type: 'input'
+              },
+              {
+                prop: 'productCode',
+                label: '产品编码',
+                type: 'input'
+              },
+
+              {
+                prop: 'productCategoryName',
+                label: '产品分类',
+                type: 'input'
+              },
+
+              {
+                prop: 'batchNumber',
+                label: '批次号',
+                type: 'input'
+              },
+              {
+                prop: 'mainUnit',
+                label: '单位',
+                type: 'input'
+              },
+              {
+                prop: 'latestStorageTime',
+                label: '入库日期',
+                type: 'daterange',
+                valueFormat: 'yyyy-MM-dd HH:mm:ss',
+                startPlaceholder: '开始日期',
+                endPlaceholder: '结束日期',
+                pickerOptions: this.global.timePickerOptions
+              },
+
+            ]
+          }
           this.total = res.data.page.total
           this.inventoryQuantityNum = res.data.total ? res.data.total.inventoryQuantity : 0
           this.occupancyQuantityNum = res.data.total ? res.data.total.occupancyQuantity : 0

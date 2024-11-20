@@ -89,19 +89,13 @@
                           </template>
                         </el-table-column>
 
-                        <el-table-column prop="mainUnit" label="单位" min-width="60" show-overflow-tooltip>
-                          <template slot-scope="scope">
-                            <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
-                              <div class="viewData">
-                                <span>{{ scope.row.mainUnit }}</span>
-                              </div>
-                            </el-form-item>
-                          </template>
-                        </el-table-column>
+                        <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+                          :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
+                        <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
                         <el-table-column prop="purchaseQuantity" label="数量" min-width="100">
                           <template slot="header">
                             <span class="required">*</span>
-                            数量
+                            {{ isDeputyUnitSwitch === '1' ? '数量(主)' : '数量' }}
                           </template>
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity'"
@@ -111,7 +105,8 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-
+                        <el-table-column prop="purchaseQuantity2" label="数量(副)" width="85"
+                          v-if="isDeputyUnitSwitch === '1'" />
                         <el-table-column prop="price" label="含税单价" min-width="180">
                           <template slot="header">
                             <span class="required">*</span>
@@ -312,6 +307,8 @@ export default {
   },
   data() {
     return {
+      isDeputyUnitSwitch: '',
+      tableFlag: false,
       isattachmentswitch: '',
       categoryId: '',
       sourceVisibled: false,
@@ -587,7 +584,9 @@ export default {
       flowData: {}
     }
   },
-  created() { },
+  created() {
+    this.getDeputyUnit()
+  },
   computed: {
     ...mapGetters(['userInfo']),
     computedValue() {
@@ -651,6 +650,15 @@ export default {
     }
   },
   methods: {
+    getDeputyUnit() {
+      let obj = {
+        businessCode: 'deputyUnit',
+        configKey: `outDeputyUnit`
+      }
+      getBimBusinessDetail(obj).then((res) => {
+        this.isDeputyUnitSwitch = res.data.configValue1
+      })
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',

@@ -68,7 +68,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head" style="padding:10px">
           <div>
             <el-button size="mini" type="primary" @click="addOrUpdateHandle()">生成采购订单</el-button>
@@ -91,8 +91,8 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" hasC @sort-change="sortChange"
-          custom-column ref="dataTable" :setColumnDisplayList="columnList" @selection-change="handeleProductInfoData">
+        <JNPF-table v-if="tableFlag" :data="tableData" :fixedNO="true" hasC @sort-change="sortChange" custom-column
+          ref="dataTable" :setColumnDisplayList="columnList" @selection-change="handeleProductInfoData">
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
           <el-table-column prop="code" label="产品编码" width="140" sortable="custom"></el-table-column>
           <el-table-column prop="classAttribute" label="类别属性" width="120" sortable="custom">
@@ -101,7 +101,9 @@
             </template>
           </el-table-column>
           <el-table-column prop="productCategoryName" label="产品分类" width="120" sortable="custom" />
-          <el-table-column prop="mainUnit" label="单位" width="60" />
+          <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+            :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
+          <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
           <el-table-column prop="availableQuantity" label="可用库存" min-width="130" sortable="custom" />
           <el-table-column prop="safeInventory" label="安全库存" min-width="130" sortable="custom" />
           <el-table-column prop="maxInventory" label="最高库存" min-width="130" sortable="custom" />
@@ -153,6 +155,7 @@ import Form from '@/views/purchasingManagement/purchasingDemand/purchasingDemand
 import { mapState } from 'vuex'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getclassAttributeList } from '@/api/masterDataManagement/index'
+import { getBimBusinessDetail } from '@/api/basicData/index'
 import { getLabel } from '@/utils/index'
 Vue.prototype.$getLabel = getLabel
 export default {
@@ -160,6 +163,8 @@ export default {
   name: 'safetyInventoryWarning',
   data() {
     return {
+      isDeputyUnitSwitch: '',
+      tableFlag: '',
       columnList: [
         // 'code',
         'productCategoryName'
@@ -289,6 +294,7 @@ export default {
       this.expands = roleFlag
       this.toggleExpand(roleFlag)
     }
+    this.getDeputyUnit()
     this.getcategoryTree()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
 
@@ -298,6 +304,15 @@ export default {
     ...mapState('user', ['token'])
   },
   methods: {
+    getDeputyUnit() {
+      let obj = {
+        businessCode: 'deputyUnit',
+        configKey: `procureDeputyUnit`
+      }
+      getBimBusinessDetail(obj).then((res) => {
+        this.isDeputyUnitSwitch = res.data.configValue1
+      })
+    },
     // 选中列表的数据 将其带到生成订单下面表单表格中
     handeleProductInfoData(val) {
       this.selectData = val
@@ -423,6 +438,7 @@ export default {
       getProductList(this.listQuery)
         .then((res) => {
           this.tableData = res.data.records
+          this.tableFlag = true
           this.total = res.data.total
           this.listLoading = false
           this.visible = false

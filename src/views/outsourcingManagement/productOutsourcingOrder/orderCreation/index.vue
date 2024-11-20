@@ -78,7 +78,7 @@
                         |
                       </div>
                       <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                        <el-table style="border: 1px solid #e3e7ee;" :fixedNO="true"
+                        <el-table style="border: 1px solid #e3e7ee;" :fixedNO="true" ref="multipleTable"
                           @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
                           id="table" border height="460">
                           <el-table-column type="selection" width="55" fixed="left" align="center"
@@ -111,30 +111,26 @@
                             </template>
                           </el-table-column>
 
-                          <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip>
-                            <template slot-scope="scope">
-                              <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
-                                <div class="viewData">
-                                  <span>{{ scope.row.mainUnit }}</span>
-                                </div>
-                              </el-form-item>
-                            </template>
-                          </el-table-column>
+                          <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+                            :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
+                          <el-table-column prop="deputyUnit" label="单位(副)" width="85"
+                            v-if="isDeputyUnitSwitch === '1'" />
                           <el-table-column prop="purchaseQuantity" label="数量" width="100">
                             <template slot="header">
                               <span class="required">*</span>
-                              数量
+                              {{ isDeputyUnitSwitch === '1' ? '数量(主)' : '数量' }}
                             </template>
                             <template slot-scope="scope">
                               <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity'"
                                 :rules="productRules.purchaseQuantity">
                                 <el-input v-model="scope.row.purchaseQuantity"
                                   @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)"
-                                  maxlength="20" placeholder="数量"></el-input>
+                                  maxlength="20" :placeholder="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"></el-input>
                               </el-form-item>
                             </template>
                           </el-table-column>
-
+                          <el-table-column prop="purchaseQuantity2" label="数量(副)" width="85"
+                            v-if="isDeputyUnitSwitch === '1'" />
                           <el-table-column prop="price" label="含税单价" width="140">
                             <template slot="header">
                               <span class="required">*</span>
@@ -307,6 +303,8 @@ export default {
   },
   data() {
     return {
+      isDeputyUnitSwitch: '',
+      tableFlag: false,
       isattachmentswitch: '',
       categoryId: '',
       datafilelist: [],
@@ -626,6 +624,7 @@ export default {
   },
   mounted() { },
   created() {
+    this.getDeputyUnit()
     this.getBimBusinessDetail()
     this.fetchData('WXDH')
     if (this.$route.query.alert) {
@@ -668,6 +667,15 @@ export default {
     this.getBusInfo()
   },
   methods: {
+    getDeputyUnit() {
+      let obj = {
+        businessCode: 'deputyUnit',
+        configKey: `outDeputyUnit`
+      }
+      getBimBusinessDetail(obj).then((res) => {
+        this.isDeputyUnitSwitch = res.data.configValue1
+      })
+    },
     deliveryDateChange(val) {
       this.dataFormTwo.data.forEach((item) => {
         if (!item.deliveryDate) {
@@ -1276,7 +1284,10 @@ export default {
         })
         .catch(() => { })
     }
-  }
+  },
+  updated() {
+    this.$refs['multipleTable'].doLayout()
+  },
 }
 </script>
 <style scoped>

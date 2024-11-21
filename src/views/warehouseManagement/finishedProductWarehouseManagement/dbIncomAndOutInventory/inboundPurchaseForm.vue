@@ -1070,6 +1070,7 @@ export default {
           if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
         })
       } else {
+        this.getWarehouseListFun()
         this.dataForm.cooperativePartnerId = data.cooperativePartnerId
         this.dataForm.partnerName = data.partnerName
         this.$set(this.dataForm, 'sourceNo', data.orderNo)

@@ -1133,6 +1133,7 @@ export default {
         this.$set(this.dataForm, 'sourceNo', data.orderNo)
         this.title = '新建入库单'
         this.fetchData("RKDH", true)
+        this.getWarehouseListFun()
         this.getBusInfo('b045')
         getpurPurchaseReceiptReturnGoodsdetail(data.id).then(res => {
           console.log("详情", res);

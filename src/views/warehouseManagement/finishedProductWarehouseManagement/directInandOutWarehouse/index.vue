@@ -129,6 +129,10 @@
                           </el-input>
                         </template>
                       </el-table-column>
+                      <el-table-column prop="inventoryQuantity" label="批次库存" width="200" key="inventoryQuantity"
+                        v-if="dataForm.documentType == 'outbound'&&btnType!='look'">
+                         
+                      </el-table-column>
                       <el-table-column prop="shelfSpaceName" label="库位" width="140" key="shelfSpaceName"
                         v-if="allocationFlag">
 
@@ -144,7 +148,6 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
                       <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
                         v-if="dataForm.weightFlag == true">
                         <template slot="header">
@@ -181,7 +184,7 @@
                           <span class="required">*</span>{{ mainUnitFlag == 1 ? '数量(主)' : '数量' }}
                         </template>
                         <template slot-scope="scope">
-                          <el-input v-model="scope.row.num" placeholder="数量(主)" :disabled="btnType == 'look'"
+                          <el-input v-model="scope.row.num" placeholder="数量" :disabled="btnType == 'look'"
                             @input="watchNum(scope.row, scope.$index)">
                           </el-input>
                         </template>
@@ -467,8 +470,12 @@
                 v-if="dataForm.documentType == 'outbound'" key="mainUnit" />
               <el-table-column prop="mainUnit" label="单位(副)" width="80" sortable="custom"
                 v-if="dataForm.documentType == 'outbound' && mainUnitFlag == 1" key="mainUnit" />
-              <el-table-column prop="availableQuantity" label="可用库存数量" width="160" sortable="custom"
+              <el-table-column prop="inventoryQuantity" label="库存数量" width="160" sortable="custom"
+                v-if="dataForm.documentType == 'outbound'" key="inventoryQuantity" />
+                <el-table-column prop="availableQuantity" label="可用库存数量" width="160" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="availableQuantity" />
+                <el-table-column prop="occupancyQuantity" label="占用库存数量" width="160" sortable="custom"
+                v-if="dataForm.documentType == 'outbound'" key="occupancyQuantity" />
               <el-table-column prop="batchNumber" label="批次号" width="180" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="batchNumber" />
               <el-table-column prop="standardValue" label="规值" width="80" sortable="custom"
@@ -799,8 +806,11 @@ export default {
     }
   },
   created() {
+    console.log("this.",this.warehouseCode);
     this.getProductClassFun()
     this.getprocessList()
+    this.getWarehouseListFun()
+    this.getclassAttributeList()
     this.getBusInfo('b046')
     let objs = { "pageSize": -1, "businessCode": "product" }
     getBimBusinessSwitchConfigList(objs).then(res => {
@@ -958,6 +968,7 @@ export default {
       let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [data.availableQuantity, data.occupancyQuantity]), 6)
       this.$set(this.productData[index], 'availableBatchNumber', num)
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
+      this.$set(this.productData[index], 'inventoryQuantity', data.inventoryQuantity)
       this.$set(this.productData[index], 'costPrice', data.price)
       this.$set(this.productData[index], 'taxRate', data.taxRate * 1)
       this.$set(this.productData[index], 'excludingTaxCostPrice', data.excludingTaxPrice * 1)
@@ -1367,6 +1378,10 @@ export default {
         this.partnerDialogTitle = '选择采购供应商'
         this.partnerTreeTitle = '采购供应商分类'
         this.partnerPlaceholder = '请选择采购供应商'
+
+        
+
+
         this.getCooperativeMethodArr = { method: getcategoryTrees, requestObj: { type: 'supplier' } }
         this.partnerRequestObj = {
           code: "",
@@ -1445,6 +1460,7 @@ export default {
 
 
     changeWarehousex(val, data) {
+      console.log(val,data);
       if (!val && !data.length) {
         this.dataForm.warehouseId = ''
         this.dataForm.warehouseName = ''
@@ -1494,6 +1510,7 @@ export default {
         // 获取详情
         detailWarehouseData(id).then(res => {
           this.dataForm = res.data.stockMove
+          this.selectDocutementType(this.dataForm.businessType)
           res.data.spaceLines.forEach(item => {
             this.$set(item, 'productDrawingNo', item.drawingNo)
           });
@@ -1513,12 +1530,21 @@ export default {
     continueAdd() {
       this.tipsvisible = false
       this.btnLoading = false
+      if (this.dataForm.businessType == 'outbound_sale_send' || this.dataForm.businessType == 'outbound_purchase' || this.dataForm.businessType == 'outbound_pick_out' || this.dataForm.businessType == 'outbound_external_send' || this.dataForm.businessType == 'outbound_other') {
+        this.dataForm.documentType = 'outbound'
+        this.fetchData("CKDH")
+      }
+      if (this.dataForm.businessType == 'inbound_sale_return' || this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'inbound_return_materials' || this.dataForm.businessType == 'inbound_external_return' || this.dataForm.businessType == 'inbound_external' || this.dataForm.businessType == 'inbound_other') {
+        this.dataForm.documentType = 'inbound'
+        this.fetchData("RKDH")
+
+      }
       this.dataForm = {  //表单信息
         orderNo: "",
         warehouseName: "",
-        warehouseId: "",
-        documentType: "",
-        businessType: "",
+        businessType:this.dataForm.businessType,
+        documentType:this.dataForm.documentType,
+        warehouseId: "", 
         sourceType: "direct",
         id: "",
         warehouseType: "",
@@ -1526,6 +1552,7 @@ export default {
         approvalFlag: false
       }
       this.productData = []
+      
       this.$refs.dataForm.resetFields()
     },
     async fetchData(code) {

@@ -53,6 +53,12 @@
                                 @change="changeWarehousex"></ComSelect-list>
                             </el-form-item>
                           </el-col>
+                          <el-col :sm="6" :xs="24">
+                            <el-form-item label="单据日期" prop="orderDate">
+                              <el-date-picker v-model="dataForm.orderDate" type="date" :clearable="false" :disabled="btnType == 'look' ? true : false" value-format="yyyy-MM-dd"
+                                style="width: 100%;" placeholder="请选择单据日期"></el-date-picker>
+                            </el-form-item>
+                          </el-col>
                           <el-col :sm="12" :xs="24">
                             <el-form-item label="备注" prop="remark">
                               <el-input v-model="dataForm.remark" placeholder="请输入备注"
@@ -163,6 +169,12 @@
                                 :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName"
                                 :method="getWarehouseList" placeholder="请选择仓库"
                                 @change="changeWarehousex"></ComSelect-list>
+                            </el-form-item>
+                          </el-col>
+                          <el-col :sm="6" :xs="24">
+                            <el-form-item label="单据日期" prop="orderDate">
+                              <el-date-picker v-model="dataForm.orderDate" type="date" :clearable="false" :disabled="btnType == 'look' ? true : false" value-format="yyyy-MM-dd"
+                                style="width: 100%;" placeholder="请选择单据日期"></el-date-picker>
                             </el-form-item>
                           </el-col>
                           <el-col :sm="12" :xs="24">
@@ -371,6 +383,7 @@ export default {
         approvalFlag: false,
         remark: "",
         sourceNo: "",
+        orderDate:this.jnpf.getToday()
       }, 
       getWarehouseList,
       sourceTypeList: [ //业务类型
@@ -394,7 +407,9 @@ export default {
         businessType: [
           { required: true, message: '业务类型不能为空', trigger: 'change' }
         ],
-
+        orderDate: [
+          { required: true, message: '单据日期不能为空', trigger: 'change' }
+        ],
         orderNo: [{ required: true, message: "请输入单号", trigger: 'blur' }],
         warehouseName: [
           { required: true, message: '仓库不能为空', trigger: 'blur' }

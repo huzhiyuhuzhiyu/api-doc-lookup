@@ -86,6 +86,12 @@
                             </el-form-item>
                           </el-col>
                           <el-col :sm="6" :xs="24">
+                            <el-form-item label="单据日期" prop="orderDate">
+                              <el-date-picker v-model="dataForm.orderDate" type="date" :clearable="false" :disabled="btnType == 'look' ? true : false" value-format="yyyy-MM-dd"
+                                style="width: 100%;" placeholder="请选择单据日期"></el-date-picker>
+                            </el-form-item>
+                          </el-col>
+                          <el-col :sm="6" :xs="24">
                             <el-form-item label="备注" prop="remark">
                               <el-input v-model="dataForm.remark" placeholder="请输入备注"
                                 :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2"
@@ -285,6 +291,12 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
+                      <el-col :sm="6" :xs="24">
+                            <el-form-item label="单据日期" prop="orderDate">
+                              <el-date-picker v-model="dataForm.orderDate" type="date" :clearable="false" :disabled="btnType == 'look' ? true : false" value-format="yyyy-MM-dd"
+                                style="width: 100%;" placeholder="请选择单据日期"></el-date-picker>
+                            </el-form-item>
+                          </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="备注" prop="remark">
                           <el-input v-model="dataForm.remark" placeholder="请输入备注"
@@ -579,6 +591,7 @@ export default {
         warehouseType: "",
         approvalFlag: false,
         weightFlag: false,
+        orderDate:this.jnpf.getToday()
       },
       customerInfo: {},//所选客户信息
       getWarehouseList,
@@ -603,6 +616,9 @@ export default {
         ],
         businessType: [
           { required: true, message: '业务类型不能为空', trigger: 'change' }
+        ],
+        orderDate: [
+          { required: true, message: '单据日期不能为空', trigger: 'change' }
         ],
         weightFlag: [
           { required: true, message: '是否显示比重折扣不能为空', trigger: 'change' }
@@ -1059,6 +1075,7 @@ export default {
         id: "",
         warehouseType: "",
         approvalFlag: false,
+        orderDate:this.jnpf.getToday()
       }
       this.productData = []
       this.$refs.dataForm.resetFields()

@@ -322,6 +322,7 @@ export default {
     }
   },
   async created() {
+    this.tableDataFlag = true
     this.getcategoryTree()
     if (localStorage.getItem("productionBomFlag")) {
       let roleFlag = JSON.parse(localStorage.getItem('productionBomFlag'))

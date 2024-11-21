@@ -1,5 +1,9 @@
 import { getProjectList } from '@/api/system/projectManagement'
+import { mapGetters } from 'vuex'
 export default {
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
   methods: {
     async getProjectSwitch(code, type) {
       try {

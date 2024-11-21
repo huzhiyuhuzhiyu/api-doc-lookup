@@ -128,6 +128,8 @@
                         </el-table-column>
                         <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                         </el-table-column>
+                        <el-table-column prop="projectName" label="所属项目" min-width="120"  
+                        v-if="isProjectSwitch == 1" />
                         <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
                         </el-table-column>
 
@@ -348,6 +350,8 @@
                     <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
                     <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
                     <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+                    <el-table-column prop="projectName" label="所属项目" min-width="120"  
+                    v-if="isProjectSwitch == 1" />
                     <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                     <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
                     </el-table-column>
@@ -452,6 +456,8 @@
                     <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" />
                     <el-table-column prop="productCategoryName" label="所属分类" />
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" 
+                    v-if="isProjectSwitch == 1" />
                     <el-table-column prop="mainUnit" label="单位" />
                     <el-table-column prop="inventoryQuantity" label="库存数量">
                       <template slot-scope="scope">
@@ -491,12 +497,15 @@ import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import { editSwitch, getBimBusinessSwitchConfigList, editBimBusinessData } from '@/api/basicData/index'
 import Form from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
+import { mapGetters, mapState } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index"
 export default {
   components: { Process, Form },
   name: "createdReturnOrder",
+  mixins: [getProjectList],
   data() {
     return {
       allProVisible: false,
@@ -758,9 +767,12 @@ export default {
       formVisible: false,
       tableDataFlag: false,
       mainUnitFlag: null,
+      isProjectSwitch: '',
     }
   },
   computed: {
+    ...mapGetters(['userInfo']),
+
     // 总发货数量
     totalDeliveryQuantity: function () {
       var totalNum = 0;
@@ -776,9 +788,10 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
-  created() {
+ async created() {
     // this.handleChange()
     // this.getProvinceList()
+    await this.getProjectSwitch('system', 'project')
     this.getAttributeline()
   },
   mounted() {

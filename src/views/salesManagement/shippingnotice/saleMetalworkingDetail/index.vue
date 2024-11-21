@@ -78,7 +78,8 @@
             <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
             <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" /> 
-
+            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+              v-if="isProjectSwitch == 1" />
             <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
             <el-table-column prop="deliveryQuantity" :label="mainUnitFlag == 1 ? '发货数量(主)' : '发货数量'" min-width="120">
             </el-table-column>
@@ -172,12 +173,15 @@ import Form from '../saleMetalworking/Form'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { excelExport } from '@/api/basicData/index'
+import { mapGetters, mapState } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'foreigntradenotice',
   components: { Form, SuperQuery, ExportForm },
+  mixins: [getProjectList],
   data() {
     return {
       superQuery: {},
@@ -437,16 +441,19 @@ export default {
           pickerOptions: this.global.timePickerOptions
         },
       ],
+      isProjectSwitch: '',
     }
   },
-  created() {
+ 
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.superForm = this.orderForm
     this.search('basic')
-    // this.getAttributeline()
-    // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
-
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
   mounted() {
     this.getProductClassFun()
     this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')

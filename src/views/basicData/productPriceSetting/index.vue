@@ -371,7 +371,7 @@ import {
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getcategoryTree as getcategoryCoop } from '@/api/basicData/materialSettings'
 
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {
   getbimProductAttributesList,
@@ -1218,7 +1218,8 @@ export default {
     this.initData()
   },
   computed: {
-    ...mapState('user', ['token'])
+    ...mapState('user', ['token']),
+    ...mapGetters(['userInfo'])
   },
   methods: {
     getclassAttributeList() {
@@ -1889,6 +1890,9 @@ export default {
 
     initData() {
       this.listLoading = true
+      if (this.isProjectSwitch === '1') {
+        this.listQuery.projectId = this.userInfo.projectId
+      }
       console.log(this.listLoading, 'this.listLoading')
       Object.keys(this.listQuery).forEach((key) => {
         let item = this.listQuery[key]

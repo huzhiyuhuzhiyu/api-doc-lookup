@@ -115,9 +115,12 @@ import ExceptForm from './ExceptForm'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getAbnoramlData , getRecordData} from '@/api/abnormalManagement/index.js'
 import { Reject, batchReject } from '@/api/workFlow/FlowBefore'
+import { mapGetters, mapState } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   name:'processProcessing',
   components: { SuperQuery, JNPFForm ,ExceptForm},
+  mixins:[getProjectList],
   data() {
     return {
       superQueryVisible: false,
@@ -209,7 +212,8 @@ export default {
         superQuery: {},
         totalRowFlag: false,
         type: "",
-        module: ''
+        module: '',
+        projectId:''
       },
       typeList: [
         { label: '自定义异常', value: 'custom' },
@@ -231,9 +235,11 @@ export default {
       batchId: '',
       exceptionData:[],
       tableItems: [],
+      isProjectSwitch:''
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.initData()
   },
@@ -250,6 +256,9 @@ export default {
       },
       deep: true
     },
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     superQuerySearch(query) {
@@ -278,6 +287,7 @@ export default {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
+      this.listQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getAbnoramlData(this.listQuery).then((res) => {
         this.list = res.data.records || []
         this.total = res.data.total

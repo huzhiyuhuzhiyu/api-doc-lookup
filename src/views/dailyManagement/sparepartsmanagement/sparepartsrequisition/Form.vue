@@ -273,11 +273,13 @@ import { mapGetters } from 'vuex'
 import { updateCollectionandreturn, detailCollectionandreturn, checkmaintenanceList, RepairRequestList, addCollectionandreturn } from '@/api/dailyManagement/Maintenance'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getProductList } from '@/api/basicData/materialFiles' // 备件列表
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
-  mixins: [busFlow, flowMixin],
+  mixins: [busFlow, flowMixin,getProjectList],
   components: { Process, recordList },
   data() {
     return {
+      isProjectSwitch: '',
       submitmethodsTitle: '',
       tipsvisible: false,
       flowTemplateJson: {},
@@ -369,6 +371,7 @@ export default {
         { prop: 'equipmentIdName', label: '工具名称', type: 'input' }
       ],
       maintainRequestObj: {
+        projectId: '',
         classAttribute: "equipment",
         name: "",
         taskType: 'maintenance',
@@ -391,6 +394,7 @@ export default {
         }],
       },
       maintainRequestObjtool: {
+        projectId: '',
         classAttribute: "tool",
         name: "",
         taskType: 'maintenance',
@@ -430,6 +434,7 @@ export default {
       getcategoryTree,
       getProductList,
       ProductListRequestObj: {
+        projectId:'',
         classAttribute: "spare_parts",
         code: "",
         drawingNo: "",
@@ -504,8 +509,13 @@ export default {
   computed: {
     ...mapGetters(['userInfo']),
   },
+  async created(){
+    await this.getProjectSwitch('system', 'project')
+  },
   mounted() {
     this.$nextTick(() => {
+      this.maintainRequestObjtool.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      this.maintainRequestObj.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       if (!this.dataForm.id) this.init('', 'add')
       this.getBimBusinessDetail()
     });
@@ -624,6 +634,7 @@ export default {
     },
     // 打开备件
     openSeleceProductDialog() {
+      this.ProductListRequestObj.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       this.$refs['ComSelect-page'].openDialog()
     },
     goBack() {

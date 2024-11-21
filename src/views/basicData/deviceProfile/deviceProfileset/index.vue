@@ -64,7 +64,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head">
           <div>
             <topOpts @add="addOrUpdateHandle('', false, 'add')">
@@ -84,9 +84,10 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" ref="dataTable" @sort-change="sortChange" custom-column hasC @selection-change="handleSelectionChange">
+        <JNPF-table v-if="istable" :data="tableData" ref="dataTable" @sort-change="sortChange" custom-column hasC @selection-change="handleSelectionChange">
           <el-table-column prop="code" label="设备编码" min-width="200" sortable="custom" />
           <el-table-column prop="name" label="设备名称" min-width="200" sortable="custom" />
+          <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName"/>
           <el-table-column prop="deviceType" label="设备类型" width="140" sortable="custom">
             <template slot-scope="scope">
               <el-tag type="success" disable-transitions v-if="scope.row.deviceType == 'normal'">正常设备</el-tag>
@@ -163,11 +164,16 @@ import share from './share'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters } from 'vuex'
 export default {
+  mixins: [getProjectList],
   name: 'deviceProfileSet',
   components: { Form, PrintBrowse, share, SuperQuery },
   data() {
     return {
+      istable: false,
+      isProjectSwitch: '',
       superQueryJson: [
         {
           prop: 'code',
@@ -340,6 +346,7 @@ export default {
       listLoading: false,
       organizeIdTree: [],
       listQuery: {
+        projectId: '',
         name: "", // 设备名称
         code: "",
         orderItems: [{
@@ -406,7 +413,8 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     if (localStorage.getItem("deviceProfilesetFlag")) {
       let roleFlag = JSON.parse(localStorage.getItem('deviceProfilesetFlag'))
       this.expands = roleFlag
@@ -415,6 +423,9 @@ export default {
     this.getCategoryTrees(true)
     // this.getDictionaryType()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     //设置默认展开
@@ -541,8 +552,9 @@ export default {
         ...this.listQuery,
         ...this.form
       }
+      this.listQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getEquEquipmentList(this.listQuery).then(res => {
-        console.log("res++", res)
+        this.istable = true
         this.tableData = res.data.records
         // this.tableData.forEach(item=>{
         //   if (item.state === 'normal'){

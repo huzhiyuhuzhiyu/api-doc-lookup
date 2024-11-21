@@ -30,7 +30,7 @@
         </el-form>
       </el-row>
 
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head" style="padding: 8px">
           <!-- <el-dropdown> -->
           <div>
@@ -53,12 +53,12 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="dataTable" :data="tableDataList"
+        <JNPF-table v-if="tableDataFlag" highlight-current-row :fixedNO="true" ref="dataTable" :data="tableDataList"
           @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
           <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom" />
           <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom" />
           <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" />
-          <!-- <el-table-column prop="spec" label="规格型号" min-width="140" sortable="custom" /> -->
+          <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="classAttributeList" label="类别属性" min-width="120" sortable="custom">
             <template slot-scope="scope">
               {{ $getLabel(classAttributeList, scope.row.classAttribute, 'value', 'label') }}
@@ -97,9 +97,12 @@ import { getbimProductAttributesList, getbimProductAttributes } from '@/api/mast
 import { getclassAttributeList } from '@/api/masterDataManagement/index'
 import { getLabel } from '@/utils/index'
 Vue.prototype.$getLabel = getLabel
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters } from 'vuex'
 export default {
   name: 'purOrderNoPriceQuery',
   components: { Form, ExportForm, SuperQuery },
+  mixins: [getProjectList],
   props: {
     // 查询类型 区分 无价格 无bom 无工艺
     searchType: {
@@ -109,6 +112,8 @@ export default {
   },
   data() {
     return {
+      isProjectSwitch: '',
+      tableFlag: false,
       formVisible: false,
       superQueryVisible: false,
       superQueryJson: [
@@ -191,7 +196,11 @@ export default {
   mounted() {
     this.getProductClassFun()
   },
-  created() {
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     // 查询类型 区分 无价格 无bom 无工艺
     this.listQuery.productWithout = this.searchType
@@ -542,6 +551,12 @@ export default {
     },
 
     initData() {
+      console.log(this.isProjectSwitch, 'this.isProjectSwitch')
+      console.log(this.userInfo, 'this.userInfo.projectId')
+      if (this.isProjectSwitch === '1') {
+        this.listQuery.projectId = this.userInfo.projectId
+      }
+      console.log(this.listQuery, 'list')
       Object.keys(this.listQuery).forEach((key) => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item

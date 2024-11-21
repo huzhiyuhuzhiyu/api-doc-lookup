@@ -69,9 +69,12 @@ import { getAbnoramlTypeData, detailAbnoramlTypeData, addAbnoramlData, deleteAbn
 import TypeIndex from './TypeIndex.vue'
 import JNPFForm from './Form'
 import FlowForm from './FlowForm'
+import { mapGetters, mapState } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   name: 'customExceptionSettings',
   components: { TypeIndex, JNPFForm, FlowForm },
+  mixins:[getProjectList],
   data() {
     return {
       flowFormVisible: false,
@@ -108,12 +111,17 @@ export default {
       },
       tabCode: '',
       currentCard: '',
-      parentId: ''
+      parentId: '',
+      isProjectSwitch:''
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.initData()
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     // 新增数据
@@ -141,7 +149,8 @@ export default {
       this.parentId = current.id
       if (!this.parentId) return
       this.listLoading = true
-      detailAbnoramlTypeData(current.id).then((res) => {
+      let projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      detailAbnoramlTypeData(current.id,projectId).then((res) => {
         this.dataDetail = res.data.contentList || []
         this.listLoading = false
       }).catch(() => this.listLoading = false)
@@ -155,7 +164,8 @@ export default {
         this.total = res.data.total
         if (this.list.length !== 0) {
           this.parentId = this.parentId ? this.parentId : this.list[0].id
-          detailAbnoramlTypeData(this.parentId).then((res) => {
+          let projectId =this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+          detailAbnoramlTypeData(this.parentId, projectId).then((res) => {
             this.dataDetail = res.data.contentList || []
             this.activeName =this.tabCode ? this.tabCode :  this.list[0].code
           })

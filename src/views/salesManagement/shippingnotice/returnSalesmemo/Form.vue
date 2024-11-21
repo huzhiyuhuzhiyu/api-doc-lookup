@@ -126,6 +126,8 @@
                     </el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                     </el-table-column>
+                    <el-table-column prop="projectName" label="所属项目" min-width="120"  
+                    v-if="isProjectSwitch == 1" />
                     <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="mainUnit" label="单位" min-width="160" show-overflow-tooltip>
@@ -337,6 +339,8 @@
                 </el-table-column>
                 <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
                 </el-table-column>
+                <el-table-column prop="projectName" label="所属项目" min-width="120"  
+                v-if="isProjectSwitch == 1" />
                 <el-table-column prop="mainUnit" label="单位" min-width="160" show-overflow-tooltip>
                 </el-table-column>
 
@@ -546,6 +550,8 @@
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
                 <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                v-if="isProjectSwitch == 1" />
                 <el-table-column prop="mainUnit" label="单位" width="160" />
                 <el-table-column prop="num" label="数量" width="160" sortable="custom" />
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
@@ -648,6 +654,8 @@
                 <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" />
                 <el-table-column prop="productCategoryName" label="所属分类" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                v-if="isProjectSwitch == 1" />
                 <el-table-column prop="mainUnit" label="单位" />
                 <el-table-column prop="inventoryQuantity" label="库存数量">
                   <template slot-scope="scope">
@@ -689,14 +697,17 @@ import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBimBusinessDetail } from '@/api/basicData/index'
 import { getProducts } from '@/api/masterDataManagement/index.js' // 产品列表
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
+import { mapGetters, mapState } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index"
 export default {
   components: { Process, recordList },
-  mixins: [busFlow],
+  mixins: [busFlow,getProjectList],
   data() {
     return {
+      isProjectSwitch:"",
       isattachmentswitch: '',
       noticeswitch: "",
       tipsvisible: false,
@@ -962,6 +973,8 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['userInfo']),
+
     // 总发货数量
     totalDeliveryQuantity: function () {
       var totalNum = 0;
@@ -977,9 +990,10 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
-  created() {
+  async created() {
     // this.handleChange()
     // this.getProvinceList()
+    await this.getProjectSwitch('system', 'project')
     this.getAttributeline()
   },
   mounted() {

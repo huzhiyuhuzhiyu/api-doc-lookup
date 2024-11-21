@@ -37,7 +37,7 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading" >
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier()" :addText="'生成计划'">
               <el-button type="primary" size="mini" icon="el-icon-download"
@@ -57,12 +57,13 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
+          <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true" v-if="isProjectSwitchFlag"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column
             @selection-change="handleSelectionChange" hasC>
             <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom" />
             <el-table-column prop="code" label="产品编码" min-width="120" sortable="custom" />
             <el-table-column prop="productCategoryName" label="产品分类" min-width="120" sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom" v-if="isProjectSwitch==1"/>
             <el-table-column prop="mainUnit" label="单位" min-width="80" />
             <el-table-column prop="availableQuantity" label="可用库存" min-width="120" />
             <el-table-column prop="safeInventory" label="安全库存" min-width="120" />
@@ -97,14 +98,18 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表 
+import getProjectList from '@/mixins/generator/getProjectList'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
+import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'salesOrderCreation',
   components: { Form, ExportForm, SuperQuery },
+  mixins:[getProjectList],
   data() {
     return {
+      isProjectSwitch:'',
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -187,6 +192,7 @@ export default {
 
       ],
       selectList: [],
+      isProjectSwitchFlag:false,
     }
   },
   watch: {
@@ -194,11 +200,15 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
 
-
-  created() {
+  async created() {
     this.superForm=this.form
-    this.search('basic')
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag=true
+      this.search('basic')
   },
   methods: {
     handleSelectionChange(val) {
@@ -250,7 +260,8 @@ export default {
     },
     initData() {
       this.listLoading = true
-     
+      console.log("this.isProjectSwitch",this.isProjectSwitch);
+     this.form.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getProducts(this.form).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total

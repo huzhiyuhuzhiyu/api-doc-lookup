@@ -41,14 +41,14 @@
 
               </el-form>
             </el-row>
-            <div class="JNPF-common-layout-main JNPF-flex-main">
+            <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
               <div class="JNPF-common-head">
                 <topOpts @add="addSupplier('', 'add')">
                   <el-button type="primary" size="mini" icon="el-icon-download" @click="importProductFun()">导入产品
                   </el-button>
                   <el-button type="primary" size="mini" icon="el-icon-plus" @click="exportForm">导出</el-button>
                 </topOpts>
-                  <!-- <el-button type="primary" size="mini" icon="el-icon-plus" @click="exportForm">导出</el-button> -->
+                <!-- <el-button type="primary" size="mini" icon="el-icon-plus" @click="exportForm">导出</el-button> -->
                 <div class="JNPF-common-head-right">
                   <el-tooltip content="高级查询" placement="top" v-if="true">
                     <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -64,7 +64,7 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm"
+              <JNPF-table highlight-current-row :fixedNO="true" ref="tableForm" v-if="isProjectSwitchFlag"
                 :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="columnLists">
                 <el-table-column prop="partnerName" label="客户名称" min-width="260" sortable="custom">
                   <template slot-scope="scope">
@@ -83,6 +83,9 @@
                     }}</el-link>
                   </template>
                 </el-table-column>
+                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                  v-if="isProjectSwitch == 1" />
+
                 <el-table-column prop="price" min-width="140" label="销售单价(含税)" />
                 <el-table-column prop="excludingTaxPrice" label="销售单价(不含税)" width="160" />
                 <el-table-column prop="dateOrderStart" label="有效日期起" sortable="custom" min-width="160" />
@@ -140,7 +143,7 @@
 
               </el-form>
             </el-row>
-            <div class="JNPF-common-layout-main JNPF-flex-main">
+            <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading" >
               <div class="JNPF-common-head">
                 <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm">导出</el-button>
                 <div class="JNPF-common-head-right">
@@ -158,8 +161,9 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForms"
-                :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="columnLists">
+              <JNPF-table highlight-current-row :fixedNO="true" ref="tableForms"
+                v-if="isProjectSwitchFlag" :data="tableDataList" @sort-change="sortChange" custom-column
+                :setColumnDisplayList="columnLists">
                 <el-table-column prop="cooperativePartnerIdText" label="客户名称" min-width="260" sortable="custom">
                   <template slot-scope="scope">
                     <el-link type="primary" @click.native="viewPartner(scope.row.cooperativePartnerId, 'look')">{{
@@ -177,7 +181,8 @@
                     }}</el-link>
                   </template>
                 </el-table-column>
-                <el-table-column prop="productName" label="产品名称" min-width="160" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                  v-if="isProjectSwitch == 1" />
                 <el-table-column prop="unitPrice" min-width="140" label="销售单价(含税)" />
 
                 <el-table-column prop="excludingTaxUnitPrice" label="销售单价(不含税)" width="160" />
@@ -232,12 +237,16 @@ import CustomerForm from '../customerManagement/Officialcustomer/Form.vue'
 import Form from '@/views/masterDataManagement/productManagement/components/Form.vue'
 import FinshForm from '@/views/masterDataManagement/productManagement/finished_product/Form.vue'
 import DepForm from './depForm'
+import { mapGetters, mapState } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'PartnerProduct',
-  components: { ExportForm, SuperQuery, CustomerForm, Form, FinshForm,DepForm },
+  mixins: [getProjectList],
+
+  components: { ExportForm, SuperQuery, CustomerForm, Form, FinshForm, DepForm },
   data() {
     return {
       finshVisible: false,
@@ -505,9 +514,19 @@ export default {
           typeCode: "pa016"
         }
       ],
+      isProjectSwitchFlag: false,
+      isProjectSwitch: '',
     }
   },
-  created() {
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+
+
+
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag = true
     this.superForm = this.listQuery
     this.search('basic')
   },
@@ -561,13 +580,13 @@ export default {
 
           this.formLoading = false
           this.loadingText = ''
-    this.search('basic')
+          this.search('basic')
         } else {
           this.handleMessage(res.data)
           this.$refs['uploadRef'].clearFiles();
         }
-          this.uploadVisib = false
-          // this.tipsvisible=true
+        this.uploadVisib = false
+        // this.tipsvisible=true
 
         this.$refs['uploadRef'].clearFiles();
       }).catch(err => {
@@ -706,7 +725,7 @@ export default {
       // console.log(newProp);
       if (this.activeName == "historicalprice") {
         let newProp;
-        if (prop === 'cooperativePartnerIdText' || prop === 'cooperativePartnerCode' || prop === 'customerDrawingNumber' || prop === 'productDrawingNo' || prop === 'productCode' || prop == 'productName' || prop == 'unitPrice'
+        if (prop === 'cooperativePartnerIdText'||prop=='projectName' || prop === 'cooperativePartnerCode' || prop === 'customerDrawingNumber' || prop === 'productDrawingNo' || prop === 'productCode' || prop == 'productName' || prop == 'unitPrice'
           || prop == 'excludingTaxUnitPrice' || prop == 'validEnd' || prop == 'ask' || prop == 'remark' || prop == 'createTime'
         ) {
           newProp = prop
@@ -721,7 +740,7 @@ export default {
       } else {
 
         let newProp;
-        if (prop === 'productCode' || prop === 'partnerName' || prop == 'oil' || prop == 'clearance') {
+        if (prop === 'productCode' || prop === 'partnerName'||prop=='projectName' || prop == 'oil' || prop == 'clearance') {
           newProp = prop
         } else {
           newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
@@ -741,8 +760,8 @@ export default {
     closeForm(isRefresh) {
       this.formVisible = false
       this.finshVisible = false
-      this.depFormVisible=false
-        this.initData()
+      this.depFormVisible = false
+      this.initData()
     },
 
     // 获取打字内容等

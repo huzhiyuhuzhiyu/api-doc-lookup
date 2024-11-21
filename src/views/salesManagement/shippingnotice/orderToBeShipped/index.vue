@@ -101,6 +101,8 @@
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="160" sortable="custom" />
             <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+            v-if="isProjectSwitch == 1" />
             <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
             <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
             </el-table-column>
@@ -173,12 +175,16 @@ import moment from 'moment'
 import AddForm from "../saleMetalworking/Form.vue"
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import ViewForm from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
+import { mapGetters, mapState } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index"
 export default {
   name: 'carrierProfile',
-  components: { Form, UserRelationList, AddForm, ExportForm, OrderFollow, SuperQuery, ViewForm },
+  components: { Form, UserRelationList, AddForm, ExportForm, OrderFollow, SuperQuery, ViewForm }, 
+  mixins: [getProjectList],
+
   data() {
     return {
       superQuery: {},
@@ -385,6 +391,8 @@ export default {
       list: [],
       tableDataFlag: false,
       mainUnitFlag:null,
+      isProjectSwitch: '',
+
     }
   },
   watch: {
@@ -392,23 +400,27 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
-
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
   mounted() {
     this.getProductClassFun()
     this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
 
   },
-  created() {
+ 
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag = true
     // 默认设置为近3天  
     const end = new Date();
-    const start = "";
+    const start = new Date();
     end.setDate(end.getDate() + 3);
     this.deliveryDateArr = ["", end];
     this.orderForm.deliveryStartTime = ""
     this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
     this.superForm = this.orderForm
     this.search('basic')
-    // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
     async getMainUnitFun(code, type) {
@@ -833,7 +845,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'cooperativePartnerName' || prop === 'cooperativePartnerCode' || prop == 'salesName' || prop == 'waitDeliverNum') {
+      if (prop === 'productName'||prop=='projectName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'cooperativePartnerName' || prop === 'cooperativePartnerCode' || prop == 'salesName' || prop == 'waitDeliverNum') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'

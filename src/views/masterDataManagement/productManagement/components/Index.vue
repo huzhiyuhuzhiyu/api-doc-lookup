@@ -147,8 +147,7 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="isProjectSwitch === '1'">
-          </el-table-column>
+          <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="productStatus" :label="productName + '状态'" width="120" align="center">
 
             <template slot-scope="{ row }">
@@ -496,12 +495,6 @@ export default {
           ]
         },
         {
-          prop: 'projectName',
-          label: '所属项目',
-          type: 'select',
-          options: []
-        },
-        {
           prop: 'productStatus',
           label: '产品状态',
           type: 'select',
@@ -738,7 +731,6 @@ export default {
     init(initListQuery, tableItems) {
       this.quickVisible = false
       this.listQuery = JSON.parse(JSON.stringify(initListQuery))
-      this.listQuery.projectId = this.userInfo.projectId
       this.tableItems = JSON.parse(tableItems)
       console.log(initListQuery, 'uuu')
       console.log(this.tableItems, 'this.tableItems')
@@ -1424,6 +1416,9 @@ export default {
 
     initData() {
       this.listLoading = true
+      if (this.isProjectSwitch === '1') {
+        this.listQuery.projectId = this.userInfo.projectId
+      }
       Object.keys(this.listQuery).forEach((key) => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
@@ -1432,8 +1427,8 @@ export default {
       this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
       getProductList(this.listQuery)
         .then((res) => {
-          this.tableFlag = true
           this.tableData = res.data.records
+          this.tableFlag = true
           this.total = res.data.total
           this.listLoading = false
         })

@@ -72,7 +72,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head" style="padding:8px">
           <div>
             <el-dropdown style="margin-right:10px;">
@@ -107,7 +107,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
+        <JNPF-table v-if="tableFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           ref="dataTable" :setColumnDisplayList="columnList">
           <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
             <template slot-scope="scope">
@@ -134,8 +134,7 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="isProjectSwitch === '1'">
-          </el-table-column>
+          <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="productStatus" label="产品状态" width="120" align="center">
             <template slot-scope="{ row }">
               <el-tag type="success" disable-transitions v-if="row.productStatus == 'enable'">启用</el-tag>
@@ -356,6 +355,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      tableFlag: false,
       quickVisible: false,
       quickForm: {
         projectId: '',
@@ -475,12 +475,6 @@ export default {
             { label: '采购', value: 'purchase' },
             { label: '外协', value: 'out' }
           ]
-        },
-        {
-          prop: 'projectName',
-          label: '所属项目',
-          type: 'select',
-          options: []
         },
         {
           prop: 'productStatus',
@@ -639,7 +633,6 @@ export default {
   created() {
     this.getProjectSwitch()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-    this.listQuery.projectId = this.userInfo.projectId
     this.getcategoryTree()
     this.initData()
     if (localStorage.getItem(this.listQuery.classAttribute)) {
@@ -662,7 +655,7 @@ export default {
         res.data.system.forEach((item) => {
           if (item.configKey == 'project') {
             this.isProjectSwitch = item.configValue1
-
+            this.tableFlag = true
           }
         })
       })
@@ -1396,6 +1389,9 @@ export default {
 
     initData() {
       this.listLoading = true
+      if (this.isProjectSwitch === '1') {
+        this.listQuery.projectId = this.userInfo.projectId
+      }
       Object.keys(this.listQuery).forEach((key) => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
@@ -1405,6 +1401,7 @@ export default {
       getProductList(this.listQuery)
         .then((res) => {
           this.tableData = res.data.records
+
           this.total = res.data.total
           this.listLoading = false
         })

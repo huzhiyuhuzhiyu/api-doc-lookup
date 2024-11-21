@@ -72,6 +72,7 @@
             <el-table-column prop="customerProductNo" label=" 客户料号" width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
             <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom" v-if="isProjectSwitch==1"/>
             <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
             <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
             </el-table-column>
@@ -168,14 +169,18 @@ import UserRelationList from '../orderList/userRelation'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
+import { mapGetters, mapState } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'orderDetails',
   components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery },
+  mixins:[getProjectList],
   data() {
     return {
+      isProjectSwitch:'',
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -428,13 +433,15 @@ export default {
     this.getProductClassFun()
     this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
   },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
 
-  created() { 
-
-    console.log(55555);
-    this.superForm = this.orderForm
+  
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.superForm=this.orderForm
     this.search('basic')
-    // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
     async getMainUnitFun(code, type) {
@@ -794,7 +801,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'cooperativePartnerName' || prop === 'cooperativePartnerCode' || prop == 'salesName') {
+      if (prop === 'productName'||prop=='projectName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'cooperativePartnerName' || prop === 'cooperativePartnerCode' || prop == 'salesName') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'

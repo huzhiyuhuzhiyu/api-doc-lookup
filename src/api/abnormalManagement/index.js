@@ -33,9 +33,9 @@ export function  updateAbnoramlTypeData(data) {
   })
 }
 // 异常类型-详情
-export function  detailAbnoramlTypeData(id) {
+export function  detailAbnoramlTypeData(id,projectId) {
   return request({
-    url: `/api/mes/ab/abnormal/type/detail/${id}`,
+    url: `/api/mes/ab/abnormal/type/detail?id=${id}&projectId=${projectId}`,
     method: 'GET'
   })
 }
@@ -129,11 +129,10 @@ export function  delSystemData(id) {
   })
 }
 // 异常申请记录-工具
-export function  getAbnoramlModule(data) {
+export function  getAbnoramlModule(id) {
   return request({
-    url: '/api/mes/ab/apply/record/stats/module',
+    url: `/api/mes/ab/apply/record/stats/module?projectId=${id}`,
     method: 'GET',
-    data
   })
 }
 // 异常申请记录-新增

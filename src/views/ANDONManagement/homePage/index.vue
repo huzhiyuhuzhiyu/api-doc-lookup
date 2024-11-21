@@ -91,8 +91,11 @@ import { getAbnoramlData, getAbnoramlModule ,getRecordData} from '@/api/abnormal
 import JNPFForm from '../processProcessing/Form'
 import ExceptForm from '../processProcessing/ExceptForm.vue'
 import { batchReject } from '@/api/workFlow/FlowBefore'
+import { mapGetters, mapState } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   components: { JNPFForm ,ExceptForm},
+  mixins:[getProjectList],
   data() {
     return {
       superQueryVisible: false,
@@ -178,7 +181,8 @@ export default {
         startUpdateTime: "",
         superQuery: {},
         totalRowFlag: false,
-        type: ""
+        type: "",
+        projectId:''
       },
       typeList: [
         { label: '自定义异常', value: 'custom' },
@@ -201,11 +205,16 @@ export default {
       sourceDialog:false,
       exceptionData:[],
       tableItems: [],
+      isProjectSwitch:''
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.initData()
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     superQuerySearch(query) {
@@ -229,11 +238,12 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.listQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       Object.keys(this.listQuery).forEach((key) => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
-      getAbnoramlModule().then(res => {
+      getAbnoramlModule(this.listQuery.projectId).then(res => {
         if (res.data) {
           this.cardList = res.data.map(item=>{
             return {

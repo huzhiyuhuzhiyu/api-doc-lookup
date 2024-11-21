@@ -31,8 +31,10 @@
 <script>
 import iconBox from '@/components/JNPF-iconBox'
 import { addAbnoramlTypeData, updateAbnoramlTypeData, detailAbnoramlTypeData, checkAbnoramlTypeCode } from '@/api/abnormalManagement/index.js'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   components: { iconBox },
+  mixins:[getProjectList],
   props: {
     parentId: {
       type: String,
@@ -56,6 +58,8 @@ export default {
       dataFormTwo: [],
       linesListItems: [],
       codeConfig: {},
+      isProjectSwitch:'',
+      projectIdData:[]
     }
   },
   computed: {
@@ -66,9 +70,21 @@ export default {
   created() {
   },
   methods: {
+    async getProjectSwitch(code, type) {
+      try {
+        this.isProjectSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     handleDrawerClose(done) {
       done();
       this.$emit('refresh', true)
+    },
+    async getProject(){
+      await this.getProjectSwitch('system', 'project')
+      if (this.isProjectSwitch === '1') {
+        await this.getProjectList()
+        this.setDataFormItems()
+      }
     },
     async fetchData(code, flag) {
       try {
@@ -117,6 +133,10 @@ export default {
           sm: 24, itemDisabled: this.btnType === 'look' ? true : false,clearable:false,change:this.selectPlanPerson, render: this.category === 'type' ? false : true
         },
         {
+          prop: "projectId", label: "所属项目", value: '', type: "select",itemRules:[{ required: true, message: '所属项目不能为空', trigger: 'blur' }],
+          sm: 24, itemDisabled: this.btnType === 'look' || this.projectId !== '1' ? true : false,clearable:false,options:this.projectIdData, render: this.isProjectSwitch === '1' ? true : false
+        },
+        {
           prop: "enName", label: "类型英文名称", value: "", type: "input", itemRules: [{ required: true, message: '类型英文名称不能为空', trigger: "blur" }],
           sm: 12, itemDisabled: this.btnType === 'look' ? true : false, render: this.category === 'type' ? true : false
         },
@@ -147,7 +167,7 @@ export default {
     clearData() {
       this.dataForm = {}
     },
-    init(id, btntype) {
+    async init(id, btntype) {
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = id || ''
       this.visible = true
@@ -159,18 +179,21 @@ export default {
           this.dialogTitle = this.category === 'type' ? '新建异常类型' : '新建异常内容'
           this.clearData()
           this.fetchData(code, true)
+          this.getProject()
           // this.setDataFormItems()
           // this.setLinesListItems()
           console.log(this.dataForm);
 
         } else {
-          detailAbnoramlTypeData(id).then(res => {
+          let projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+          detailAbnoramlTypeData(id,projectId).then(res => {
             this.dialogTitle = this.category === 'type' ? '编辑异常类型' : '编辑异常内容'
             this.dataForm = res.data.type
             // this.dataFormTwo = res.data.contentList
             this.loading = false
             // this.setDataFormItems()
             this.fetchData(code, false)
+            this.getProject()
             // this.setLinesListItems()
           }).catch(error => { })
         }

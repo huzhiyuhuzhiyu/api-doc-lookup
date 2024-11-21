@@ -31,7 +31,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head">
           <div>
             <el-button v-has="'btn_export'" :disabled="tableDataList.length > 0 ? false : true" size="mini"
@@ -53,7 +53,7 @@
           </div>
         </div>
 
-        <JNPF-table v-loading="listLoading" highlight-current-row ref="tableForm" :data="tableDataList"
+        <JNPF-table  highlight-current-row ref="tableForm" :data="tableDataList" v-if="isProjectSwitchFlag==true"
           @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
           <el-table-column prop="orderNo" label="对账单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
@@ -111,6 +111,8 @@
           <el-table-column prop="stockMoveOrderNo" label="出入库单号" width="180" sortable="custom" />
           <el-table-column prop="drawingNo" label="品名规格" width="180" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" width="180" sortable="custom" />
+          <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+          v-if="isProjectSwitch == 1" />
           <el-table-column prop="mainUnit" label="单位" width="80" />
           <el-table-column prop="reconciliationUnitPrice" label="数量" width="80" sortable="custom" />
           <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="120" />
@@ -148,11 +150,17 @@ import JNPFForm from '../salesReconManagement/Form.vue'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import withdrawnForm from '../salesReconManagement/withranForm.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import { mapGetters, mapState } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   name: 'purchaseInquirySheet',
   components: { JNPFForm, withdrawnForm, SuperQuery, ExportForm },
+  mixins: [getProjectList],
+
   data() {
     return {
+      isProjectSwitch:"",
+      isProjectSwitchFlag:false,
       superQueryVisible: false,
       superQueryJson: [
         {
@@ -278,9 +286,14 @@ export default {
       formVisible: false
     }
   },
-  created() {
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+ async created() {
     this.superForm = this.listQuery
     this.search('basic')
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag=true
   },
   methods: {
     sortChange({ prop, order }) {

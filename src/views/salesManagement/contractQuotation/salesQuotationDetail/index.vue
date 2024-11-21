@@ -36,7 +36,7 @@
         </el-form>
       </el-row>
 
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main"  v-loading="listLoading">
         <div class="JNPF-common-head">
           <!-- <el-dropdown> -->
           <topOpts @add="addSupplier('', 'add')">
@@ -57,7 +57,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" :fixedNO="true"
+        <JNPF-table ref="tableForm" :data="tableDataList" :fixedNO="true" v-if="isProjectSwitchFlag"
           :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column>
           <el-table-column prop="quotationNo" label="单号" min-width="160" sortable="custom">
             <template slot-scope="scope">
@@ -73,7 +73,8 @@
           <el-table-column prop="validEnd" label="有效时间止" width="130" sortable="custom" />
           <el-table-column prop="customerDrawingNumber" label=" 客户料号" width="150" sortable="custom" />
           <el-table-column prop="productDrawingNo" label="品名规格" width="180" sortable="custom" />
-          <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom" v-if="isProjectSwitch==1"/>
+            <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
           <el-table-column prop="num" label="数量" width="80" sortable="custom" />
           <el-table-column prop="unitPrice" label="单价(含税)" width="130" sortable="custom" />
           <el-table-column prop="taxRate" label="税率" width="110" sortable="custom">
@@ -178,9 +179,12 @@ import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { excelExport } from '@/api/basicData/index'
+import { mapGetters, mapState } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   name: 'salesQuotationDetail',
   components: { DepForm, SuperQuery, ExportForm },
+  mixins:[getProjectList],
   data() {
     return {
       columnList: ["cooperativePartnerCode", "validEnd", "sealingCoverTyping", "accuracyLevel", "vibrationLevel", "oil", "oilQuantity", "clearance", "packagingMethod", "specialRequire", "createByName"],
@@ -415,14 +419,22 @@ export default {
           typeCode: "pa016"
         }
       ],
+      isProjectSwitchFlag:false,
+      isProjectSwitch:'',
+
     }
   },
-  created() {
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag=true
     this.form = JSON.parse(JSON.stringify(this.formlist))
     this.superForm = this.form
     this.search('basic')
   },
-
   methods: {
 
     superQuerySearch(query) {

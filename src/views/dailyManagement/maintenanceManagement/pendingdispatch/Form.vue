@@ -17,30 +17,30 @@
       </div>
       <div class="main" v-loading="formLoading">
         <div class="vux-flexbox stage-state vux-flex-row">
-          <a href="#" @click="stateaction('report')" style="width: 33.3%;">
+          <el-button @click="stateaction('report')" class="button-info">
             <div class="stage-state-item state-undo is-center" :class="{'state-suc':statesuc==='report'}">
               <div class="stage-name text-one-ellipsis">报修信息</div>
               <!-- <div class="stage-value">20%</div> -->
               <div class="state-arrow arrow-left"></div>
               <div class="state-arrow arrow-right" :class="{'state-suc':statesuc==='report'}"></div>
             </div>
-          </a>
-          <a href="#" @click="stateaction('examine')" style="width: 33.3%;" v-if="btnType == 'start' || btnType == 'end' || (dataForm.state == 'maintaining' && btnType == 'look') || (dataForm.state == 'maintained' && btnType == 'look')">
+          </el-button>
+          <el-button @click="stateaction('examine')" class="button-info" :disabled="(dataForm.state == 'toBeMaintain'&&btnType == 'edit')||(dataForm.state == 'toBeMaintain'&&btnType == 'look')||(dataForm.state == 'maintaining'&&!dataForm.reviewComments)">
             <div class="stage-state-item state-undo is-center" :class="{'state-suc':statesuc==='examine'}">
               <div class="stage-name text-one-ellipsis">审核信息</div>
               <!-- <div class="stage-value">30%</div> -->
               <div class="state-arrow arrow-left"></div>
               <div class="state-arrow arrow-right" :class="{'state-suc':statesuc==='examine'}"></div>
             </div>
-          </a>
-          <a href="#" @click="stateaction('repair')" style="width: 33.3%;" v-if="btnType == 'end' || (dataForm.state == 'maintained' && btnType == 'look')">
+          </el-button>
+          <el-button @click="stateaction('repair')" class="button-info" :disabled="dataForm.state == 'toBeMaintain'||(dataForm.state == 'maintaining'&&btnType == 'look')">
             <div class="stage-state-item state-undo is-center" :class="{'state-suc':statesuc==='repair'}">
               <div class="stage-name text-one-ellipsis">维修信息</div>
               <!-- <div class="stage-value">50%</div> -->
               <div class="state-arrow arrow-left"></div>
               <div class="state-arrow arrow-right" :class="{'state-suc':statesuc==='repair'}"></div>
             </div>
-          </a>
+          </el-button>
         </div>
         <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
           <el-collapse v-model="activeNames">
@@ -349,7 +349,7 @@
           <el-table-column prop="applicationDate" label="申请日期" width="180"></el-table-column>
           <el-table-column prop="state" label="状态" width="120" fixed="right" align="center">
             <template slot-scope="scope">
-              <div v-if="scope.row.state == 'toBeMaintain'"><el-tag type="danger">待维修</el-tag></div>
+              <div v-if="scope.row.state == 'toBeMaintain'"><el-tag type="danger">待派工</el-tag></div>
               <div v-else-if="scope.row.state == 'maintaining'"><el-tag type="warning">正在维修</el-tag></div>
               <div v-else-if="scope.row.state == 'maintained'"><el-tag type="success">已维修</el-tag></div>
             </template>
@@ -418,6 +418,7 @@ export default {
   components: { UploadImg },
   data() {
     return {
+      isApprovalwitch: false,
       sparepartRequestObj: {
         pageNum: 1,
         pageSize: 20,
@@ -499,7 +500,7 @@ export default {
         { prop: 'specModel', label: '设备规格' },
       ],
       stateList: [
-        { label: "待维修", value: "toBeMaintain" },
+        { label: "待派工", value: "toBeMaintain" },
         { label: "正在维修", value: "maintaining" },
         { label: "已维修", value: "maintained" }
       ],
@@ -663,10 +664,19 @@ export default {
       _index: ''
     }
   },
-  // created() {
-  //   this.getBimBusinessDetail()
-  // },
+  created() {
+    // this.getSwitch()
+  },
   methods: {
+    getSwitch() {
+      let obj = {
+        businessCode: 'maintenance',
+        configKey: `pg_maintenance`
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isApprovalwitch = res.data.configValue1 == '1' ? true : false
+      })
+    },
     //备件选择
     submitsparepart(selectedIds, selectedList) {
       selectedList.map(item => {
@@ -1194,6 +1204,19 @@ export default {
 </script>
 <style scoped lang="scss">
 .stage-state {
+  .button-info {
+    width: calc(33.3% - 14px);
+    border: none;
+    background-color: #fff;
+    padding: 0 !important;
+  }
+  v-deep .el-button:focus,
+  .el-button:hover {
+    background-color: #fff;
+  }
+  v-deep .el-button:active {
+    background-color: #fff;
+  }
   position: relative;
   z-index: 1;
   flex-wrap: wrap;

@@ -12,6 +12,7 @@
           <el-radio-button label="system">项目管理</el-radio-button>
           <el-radio-button label="customersupplier">客户供应商管理</el-radio-button>
           <el-radio-button label="deputyUnit">副单位设置</el-radio-button>
+          <el-radio-button label="maintenance">维修设置</el-radio-button>
         </el-radio-group>
       </div>
       <div class="JNPF-common-layout-center JNPF-flex-main" style="background-color: #FFFFFF;margin-top: 5px">
@@ -257,6 +258,10 @@ export default {
         this.listQuery.pageSize = -1
         this.listQuery.businessCode = 'deputyUnit'
         this.getData(7)
+      } else if (this.activeName === 'maintenance') {
+        this.listQuery.pageSize = -1
+        this.listQuery.businessCode = 'maintenance'
+        this.getData(8)
       } 
       // else if (this.activeName === 'financialSet') {
       //   this.listQuery.codeFlag = 0
@@ -298,6 +303,8 @@ export default {
             list = res.data.customersupplier
           }else if (this.activeName === 'deputyUnit') {
             list = res.data.deputyUnit
+          }else if (this.activeName === 'maintenance') {
+            list = res.data.maintenance
           }
 
           list.forEach((item) => {

@@ -54,7 +54,7 @@
           <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
           <el-table-column label="操作" width="140" fixed="right">
             <template slot-scope="scope">
-              <!-- <el-button type="text" size="mini" @click.native="handleUserRelation(scope.row.id, 'look')">归还</el-button> -->
+              <el-button type="text" size="mini" @click.native="handlereturn(scope.row.id, 'return')">归还</el-button>
               <el-button type="text" size="mini" @click.native="handleUserRelation(scope.row.id, 'look')">查看详情</el-button>
             </template>
           </el-table-column>
@@ -64,20 +64,23 @@
     </div>
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
+    <returnForm v-if="returnformVisible" ref="returnForm" @refreshDataList="initData" @close="closeForm" />
   </div>
 </template>
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { CollectionandreturnList, deleteCollectionandreturn } from '@/api/dailyManagement/Maintenance'
 import Form from '../sparepartsrequisition/Form.vue'
+import returnForm from '../sparepartsReturn/Form.vue'
 export default {
   // name: 'sparepartsrequisitiontoreturn',
-  components: { SuperQuery,Form },
+  components: { SuperQuery, Form, returnForm },
   data() {
     return {
+      returnformVisible: false,
       superQueryVisible: false,
       superQueryJson: [
-      {
+        {
           prop: 'orderNo',
           label: "领用单号",
           type: 'input'
@@ -195,6 +198,7 @@ export default {
     },
     // 关闭新建编辑页面
     closeForm(isRefresh) {
+      this.returnformVisible = false
       this.formVisible = false
       if (isRefresh) {
         this.keyword = ''
@@ -236,10 +240,10 @@ export default {
         this.$refs.Form.init(id, btnType)
       })
     },
-    addOrUpdateHandle(id, btnType, type) {
-      this.formVisible = true
+    handlereturn(id, btnType) {
+      this.returnformVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType, type)
+        this.$refs.returnForm.init(id, btnType)
       })
     }
   }

@@ -137,7 +137,7 @@
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { RepairRequestList, deleteRepairRequest } from '@/api/dailyManagement/Maintenance'
-import Form from '@/views/dailyManagement/maintenanceManagement/deviceservice/Form.vue'
+import Form from '@/views/dailyManagement/maintenanceManagement/pendingdispatch/Form.vue'
 export default {
   // name: 'maintenanceRecord',
   components: { Form, SuperQuery },

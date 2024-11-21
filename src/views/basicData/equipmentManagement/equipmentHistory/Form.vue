@@ -493,7 +493,7 @@
 </template>
     
 <script>
-import wxForm from "@/views/dailyManagement/maintenanceManagement/deviceservice/Form.vue";
+import wxForm from "@/views/dailyManagement/maintenanceManagement/pendingdispatch/Form.vue";
 import byrwForm from "@/views/dailyManagement/Maintenance/maintenanceTasks/Form.vue";
 import byjlForm from "@/views/dailyManagement/Maintenance/maintenanceRecords/Form.vue";
 import djrwForm from "@/views/dailyManagement/pointInspection/inspectionTask/Form.vue";

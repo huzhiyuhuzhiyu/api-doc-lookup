@@ -16,6 +16,13 @@
               <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                 <el-collapse-item title="基本信息" name="basicInfo">
                   <el-row :gutter="20" class="custom-row">
+                    <el-col :sm="8" :xs="24" v-if="isProjectSwitch=='1'">
+                      <el-form-item label="所属项目" prop="projectId">
+                        <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" :loading="loadingprojectId" :disabled="userInfo.projectId!='1'||disabled ? true : false" style="width: 100%;">
+                          <el-option v-for="item in projectIdList" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="所属分类" prop="productCategoryName">
                         <ComSelect-list :isdisabled="disabled" v-model="dataForm.productCategoryName" placeholder="请选择设备类型" auth @change="onOrganizeChangeTwo" :title="'选择设备类型'" :method="getCategoryTrees" :requestObj="requestObj" :paramsObj="{}" />
@@ -255,13 +262,20 @@ import singleImg from '@/components/Upload/SingleImg'
 import UploadImg from '@/components/upload-img/index.vue'
 import axios from 'axios'
 import formValidate from "@/utils/formValidate";
+import getProjectLists from '@/mixins/generator/getProjectList'
+import { getProjectList } from '@/api/system/projectManagement'
+import { mapGetters } from 'vuex'
 export default {
+  mixins: [getProjectLists],
   components: {
     singleImg,
     UploadImg
   },
   data() {
     return {
+      isProjectSwitch: '',
+      loadingprojectId: false,
+      projectIdList: [],
       isattachmentswitch: '',
       categoryId: '',
       factorylistLoading: false,
@@ -459,11 +473,27 @@ export default {
       }
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.getProjectListdata()
     this.getBimBusinessDetail()
     this.getfactoryFloor()
   },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
   methods: {
+    getProjectListdata() {
+      let query = {
+        pageNum: 1,
+        pageSize: -1
+      }
+      this.loadingprojectId = true
+      getProjectList(query).then((res) => {
+        this.loadingprojectId = false
+        this.projectIdList = res.data.records
+      }).catch(() => { })
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',

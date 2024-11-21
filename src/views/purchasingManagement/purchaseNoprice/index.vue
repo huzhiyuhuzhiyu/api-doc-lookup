@@ -53,7 +53,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-if="tableFlag" highlight-current-row :fixedNO="true" ref="dataTable" :data="tableDataList"
+        <JNPF-table v-if="tableDataFlag" highlight-current-row :fixedNO="true" ref="dataTable" :data="tableDataList"
           @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
           <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom" />
           <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom" />
@@ -97,10 +97,12 @@ import { getbimProductAttributesList, getbimProductAttributes } from '@/api/mast
 import { getclassAttributeList } from '@/api/masterDataManagement/index'
 import { getLabel } from '@/utils/index'
 Vue.prototype.$getLabel = getLabel
+import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters } from 'vuex'
 export default {
   name: 'purOrderNoPriceQuery',
   components: { Form, ExportForm, SuperQuery },
+  mixins: [getProjectList],
   props: {
     // 查询类型 区分 无价格 无bom 无工艺
     searchType: {
@@ -206,14 +208,6 @@ export default {
     this.initData()
   },
   methods: {
-    async getProjectSwitch(code, type) {
-      this.listLoading = true
-      try {
-        this.isProjectSwitch = await this.jnpf.getMainUnitFun(code, type);
-        this.tableFlag = true
-        this.listLoading = false
-      } catch (error) { }
-    },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false

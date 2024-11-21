@@ -202,7 +202,10 @@ export default {
       // 允许切换表格样式
       type: Boolean,
       default: false
-    }
+    },
+    projectId: {
+      type: String
+    },
   },
   watch: {
     value: {
@@ -285,6 +288,11 @@ export default {
 
     openSeleceProductDialog() {
       this.$refs['ComSelect-page'].openDialog()
+      if (this.projectId) {
+        this.ProductListRequestObj.projectId = this.projectId
+      }else {
+
+      }
     },
     isRequire(data) {
       return data.hasOwnProperty('itemRules') && data.itemRules.some((item) => item.required === true)

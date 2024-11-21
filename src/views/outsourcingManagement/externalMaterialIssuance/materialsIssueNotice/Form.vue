@@ -587,6 +587,7 @@ import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { addoutReceiptGoods } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
+import { shipmentList } from '@/api/purchasingAndOutsourcingOrders/index'
 export default {
   components: {
     changeAddress,
@@ -1587,11 +1588,15 @@ export default {
           })
           this.dataFormTwo.data = data
           this.dataFormTwo.data.forEach((item) => {
-            console.log(item, 'dd')
-            purPurchaseOrderdetail(item.purchaseOrderId).then((res) => {
-              console.log(res, 'iiii')
-              this.linesList = [...this.linesList, ...res.data.purchaseOrderLineVOList[0].outShipmentVOList]
-              item.outShipmentVOList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
+            let obj = {
+              ordersLineIdList: [item.id],
+              pageNum: 1,
+              pageSize: -1
+            }
+            shipmentList(obj).then(res => {
+              console.log(res, 'ooo')
+              this.linesList = [...this.linesList, ...res.data.records]
+              item.outShipmentVOList = res.data.records
             })
           })
         } else {
@@ -1658,9 +1663,14 @@ export default {
       this.autoId = row.id
       this.linesList = []
       if (this.dataFormTwo.data.length) {
-        purPurchaseOrderdetail(row.purchaseOrderId).then((res) => {
-          console.log(res, 'iiii')
-          this.linesList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
+        let obj = {
+          ordersLineIdList: [row.id],
+          pageNum: 1,
+          pageSize: -1
+        }
+        shipmentList(obj).then(res => {
+          console.log(res, 'ooo')
+          this.linesList = [...this.linesList, ...res.data.records]
         })
       }
 

@@ -1704,17 +1704,10 @@ export default {
     selectDate(data, row) {
       this.orderDetailData.forEach((item) => {
         if (!item.deliveryDate) {
-          item.deliveryDate = data;
+          this.$set(item,'deliveryDate',data)
         }
       });
-      let arr = JSON.parse(JSON.stringify(this.purchaseArr));
-      arr.forEach((item) => {
-        if (!item.deliveryDate) {
-          this.$set(item, "deliveryDate", data);
-        }
-      });
-      this.purchaseArr = arr;
-      console.log("purchaseArr", this.purchaseArr, this.orderDetailData);
+    
     },
 
     // 组装下达

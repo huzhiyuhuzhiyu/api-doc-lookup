@@ -25,8 +25,8 @@
 
           <el-col :span="4">
             <el-form-item>
-              <el-date-picker v-model="createTimeArr" type="datetimerange" :default-time="['00:00:00', '23:59:59']"
-                style="width: 100%" start-placeholder="创建开始时间" end-placeholder="创建结束时间" clearable></el-date-picker>
+              <el-date-picker v-model="createTimeArr" type="daterange" 
+                style="width: 100%" start-placeholder="单据开始日期" end-placeholder="单据结束日期" clearable></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="4">
@@ -166,6 +166,7 @@
               </div>
             </template>
           </el-table-column>
+          <el-table-column prop="orderDate" label="单据日期" sortable="custom" min-width="180" />
           <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
           <el-table-column prop="createByName" label="创建人" min-width="120" />
           <el-table-column label="操作" min-width="200" fixed="right">
@@ -1209,11 +1210,11 @@ export default {
       this.listQuery.pageNum = 1
       this.listQuery.classAttributeList = this.classAttributeList
       if (this.createTimeArr.length) {
-        this.listQuery.startTime = this.createTimeArr[0]
-        this.listQuery.endTime = this.createTimeArr[1]
+        this.listQuery.orderStartDate = this.createTimeArr[0]
+        this.listQuery.orderEndDate = this.createTimeArr[1]
       } else {
-        this.listQuery.startTime = ""
-        this.listQuery.endTime = ""
+        this.listQuery.orderStartDate = ""
+        this.listQuery.orderEndDate = ""
       }
       // this.listQuery.approvalStatus = 'ok'
       getInventorySummaryData(this.listQuery).then(res => {

@@ -345,3 +345,12 @@ export function exportNoProduct (data) {
     data
   })
 }
+
+//明细取消发货
+export function CancelshipmentlineOutlist (data) {
+  return request({
+    url: `/api/erp/sale/orders/notice/out/batch/`,
+    method: 'put',
+    data
+  })
+}

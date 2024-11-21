@@ -176,6 +176,7 @@ import {
   getQuotationdatasenddatalist,
   Cancelshipmentlist,
   Cancelshipmentlinelist,
+  CancelshipmentlineOutlist,
   mergelist,
   splitlist
 } from '@/api/salesManagement'
@@ -410,12 +411,12 @@ export default {
       let hasDeliveryList = []
       let hasItemList = []
       this.selectArr.map((i) => {
-        if (i.deliveryStatus === 'not_finished') hasDeliveryList.push(i.orderNo)
+        if (i.deliveryStatus === 'finished') hasDeliveryList.push(i.orderNo)
         if (i.outboundQuantity > 0) hasItemList.push(i.orderNo)
       })
-      if (hasDeliveryList.length) return this.$message.error(`未发料的订单：${hasDeliveryList.join('、')}不能取消发料`)
+      if (hasDeliveryList.length) return this.$message.error(`已发料的订单：${hasDeliveryList.join('、')}不能取消发料`)
       if (hasItemList.length) return this.$message.error(`已出库的订单：${hasItemList.join('、')}不能取消发料`)
-      this.$confirm('您确认取消选中的发料通知单吗（已备货商品需手动处理）？', this.$t('common.tipTitle'), {
+      this.$confirm('您确认取消选中的发料通知单吗？', this.$t('common.tipTitle'), {
         type: 'warning'
       })
         .then(() => {
@@ -423,7 +424,7 @@ export default {
             return item.id
           })
           this.qxbtnLoading = true
-          Cancelshipmentlist(a)
+          CancelshipmentlineOutlist(a)
             .then((res) => {
               this.qxbtnLoading = false
               this.$message.success('取消成功')

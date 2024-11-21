@@ -44,7 +44,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main"  v-loading="listLoading">
         <div class="JNPF-common-head">
           <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
           <div>
@@ -68,7 +68,7 @@
           </div>
         </div>
 
-        <JNPF-table v-loading="listLoading" @selection-change="handeleProductInfoData" hasC highlight-current-row
+        <JNPF-table @selection-change="handeleProductInfoData" hasC highlight-current-row v-if="isProjectSwitchFlag"
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
           :setColumnDisplayList="columnList" :checkSelectable="checkSelectable">
           <el-table-column prop="orderNo" label="出入库单号" min-width="200" sortable="custom" />
@@ -76,6 +76,8 @@
           <el-table-column prop="partnerCode" label="客户编码" min-width="180" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
           <el-table-column prop="drawingNo" label="品名规格" min-width="180" sortable="custom" />
+          <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+          v-if="isProjectSwitch == 1" />
           <el-table-column prop="businessType" label="发/退货类型" min-width="150" sortable="custom">
             <template slot-scope="scope">
               <div v-if="scope.row.businessType == 'outbound_sale_send'">发货</div>
@@ -128,8 +130,12 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import JNPFForm from './Form'
 import moment from 'moment'
 import { excelExport } from '@/api/basicData/index'
+import { mapGetters, mapState } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   name: 'salefinAccount',
+  mixins: [getProjectList],
+
   components: { JNPFForm, ExportForm, SuperQuery },
   data() {
     return {
@@ -232,12 +238,20 @@ export default {
 
 
       ],
+      isProjectSwitch:"",
+      isProjectSwitchFlag:false,
     }
   },
-  created() {
+  async created() {
     this.superForm = this.listQuery
     this.search('basic')
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag=true
   },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+
   methods: {
     superQuerySearch(query) {
       this.listQuery.superQuery = query
@@ -317,6 +331,10 @@ export default {
         newProp = 'createTime'
       }
       
+      if(newprop=='project_name'){
+        newProp = 'projectName'
+
+      }
       this.listQuery.orderItems[0].asc = order !== 'descending'
       this.listQuery.orderItems[0].column = order === null ? "" : newProp
       this.initData()

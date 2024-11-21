@@ -77,7 +77,8 @@
             <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
             <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-
+            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+              v-if="isProjectSwitch == 1" />
             <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
             <el-table-column prop="deliveryQuantity" :label="mainUnitFlag == 1 ? '退货数量(主)' : '退货数量'" min-width="120">
             </el-table-column>
@@ -169,11 +170,15 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import Form from '../returnSalesmemo/Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { excelExport } from '@/api/basicData/index'
+import { mapGetters, mapState } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
-  components: { Form, ExportForm, SuperQuery },
+  components: { Form, ExportForm, SuperQuery }, 
+  mixins: [getProjectList],
+
   data() {
     return {
       superQuery: {},
@@ -388,13 +393,18 @@ export default {
 
 
       ],
+      isProjectSwitch:"",
     }
   },
-  created() {
+
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.initOrderForm))
     this.search('basic')
   },
-
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
   mounted() {
     this.getProductClassFun()
     this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
@@ -453,7 +463,7 @@ export default {
     //排序
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'createByName' || prop === 'productCode' || prop === 'productName' || prop === 'productDrawingNo') {
+      if (prop === 'partnerCode'||prop=='projectName' || prop === 'partnerName' || prop === 'createByName' || prop === 'productCode' || prop === 'productName' || prop === 'productDrawingNo') {
         if (prop === 'createByName') {
           newProp = 'create_by'
         } else {
@@ -462,7 +472,7 @@ export default {
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
       }
-      this.orderForm.orderItems[0].asc = order !== "descending"
+      this.superForm.orderItems[0].asc = order !== "descending"
 
       this.initData()
     },
@@ -475,7 +485,7 @@ export default {
       }
     },
     initData() {
-      getQuotationdatasenddatalist(this.orderForm).then(res => {
+      getQuotationdatasenddatalist(this.superForm).then(res => {
         setTimeout(() => {
           res.data.records.forEach(item => {
             if (this.mainUnitFlag == 1) {

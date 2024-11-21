@@ -134,7 +134,7 @@ export default {
         },
         {
           prop: "projectId", label: "所属项目", value: '', type: "select",itemRules:[{ required: true, message: '所属项目不能为空', trigger: 'blur' }],
-          sm: 24, itemDisabled: this.btnType === 'look' ? true : false,clearable:false,options:this.projectIdData, render: this.isProjectSwitch === '1' ? true : false
+          sm: 24, itemDisabled: this.btnType === 'look' || this.projectId !== '1' ? true : false,clearable:false,options:this.projectIdData, render: this.isProjectSwitch === '1' ? true : false
         },
         {
           prop: "enName", label: "类型英文名称", value: "", type: "input", itemRules: [{ required: true, message: '类型英文名称不能为空', trigger: "blur" }],

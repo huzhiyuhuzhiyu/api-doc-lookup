@@ -142,6 +142,8 @@
                           style="width: 100%;"  /> -->
                       </template>
                     </el-table-column>
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==1"/>
+
                     <el-table-column prop="mainUnit" label="单位" width="80" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="num" label="数量" width="120">
                       <template slot="header">
@@ -428,7 +430,8 @@
                           style="width: 100%;"  /> -->
                   </template>
                 </el-table-column>
-                <el-table-column prop="mainUnit" label="单位" width="160" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==1"/>
+                    <el-table-column prop="mainUnit" label="单位" width="160" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="num" label="数量" width="160">
                   <template slot="header">
                     <span class="required">*</span>数量
@@ -657,7 +660,8 @@
                 <el-table-column prop="cooperativePartnerIdText" label="客户名称" sortable="custom" width="200" />
                 <el-table-column prop="customerDrawingNumber" label=" 客户料号" width="150" sortable="custom" />
                 <el-table-column prop="productDrawingNo" label="品名规格" width="180" sortable="custom" />
-                <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==1"/>
+                    <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
                 <el-table-column prop="num" label="数量" width="80" sortable="custom" />
                 <el-table-column prop="unitPrice" label="单价(含税)" width="130" sortable="custom" />
                 <el-table-column prop="taxRate" label="税率" width="110" sortable="custom">
@@ -704,11 +708,14 @@ import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import flowMixin from '@/mixins/generator/flowMixin'
 import { getBimBusinessDetail } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   components: { ExportForm, Process, recordList },
-  mixins: [busFlow, flowMixin],
+  mixins: [busFlow, flowMixin,getProjectList],
+  
   data() {
     return {
+      isProjectSwitch:'',
       list1: [],
       list2: [],
       list3: [],
@@ -875,7 +882,7 @@ export default {
       endTime: 0,
       isattachmentswitch: '',
     }
-  },
+  }, 
   watch: {
     activeName(val) {
       // 如果切换到订单信息tab并且表格表单处于适配模式，触发计算高度
@@ -903,11 +910,15 @@ export default {
     },
     ...mapGetters(['userInfo']),
     ...mapState('user', ['token']),
+    
   },
   mounted() {
     this.getTaxRateFun()
     this.getBimBusinessDetail()
     
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
   },
   methods: {
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)

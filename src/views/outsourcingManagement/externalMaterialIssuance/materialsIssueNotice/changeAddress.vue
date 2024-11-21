@@ -1,64 +1,65 @@
 <template>
-  <el-dialog title="收货地址" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible" lock-scroll
-    class="JNPF-dialog JNPF-dialog_center" width="1000px">
+  <el-dialog title="收货地址" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
+    lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
     <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
-   
-        <div class="JNPF-common-layout-center JNPF-flex-main">
 
-          <div class="JNPF-common-layout-main JNPF-flex-main">
-            <div class="JNPF-common-head">
-              <topOpts @add="addSupplier('', 'add')" />
-              <div class="JNPF-common-head-right">
-                <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                  <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
-                </el-tooltip>
-              </div>
+      <div class="JNPF-common-layout-center JNPF-flex-main">
+
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
+          <div class="JNPF-common-head">
+            <topOpts @add="addSupplier('', 'add')" />
+            <div class="JNPF-common-head-right">
+              <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
+                  @click="initData(id)" />
+              </el-tooltip>
             </div>
+          </div>
 
-            <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column>
-              <!-- <el-table-column prop="orderNo" label="发货单号" width="190" fixed="left" sortable="custom">
+          <el-table v-if="tableFlag" ref="dataTable" :data="tableData" :fixedNO="true" custom-column>
+            <el-table-column type="index" width="50" fixed="left" align="center">
+            </el-table-column>
+            <!-- <el-table-column prop="orderNo" label="发货单号" width="190" fixed="left" sortable="custom">
                   <template slot-scope="scope">
                     <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
                       scope.row.orderNo
                     }}</el-link>
                   </template>
-                </el-table-column> -->
+</el-table-column> -->
 
-              <el-table-column prop="recipient" label="收件人"  width="160"  />
-              <el-table-column prop="phone" label="收件人电话"  width="160"  />
-              <el-table-column prop="countryText" label="国家"  width="160"  />
-              <el-table-column prop="provinceText" label="省"  width="160"  />
-              <el-table-column prop="cityText" label="市" width="160"  />
-              <el-table-column prop="areaText" label="区" width="160" />
-              <el-table-column prop="defaultFlag" label="是否默认" width="160">
-                <template slot-scope="scope">
-                    <div v-if="scope.row.defaultFlag == '1'">
-                      <span>是</span>
-                    </div>
-                    <div v-else-if="scope.row.defaultFlag == '0'">
-                      <span>否</span>
-                    </div>
-              
-                  </template>
-              </el-table-column>
-              <el-table-column prop="address" label="地址" width="310" />
+            <el-table-column prop="recipient" label="收件人" width="160" />
+            <el-table-column prop="phone" label="收件人电话" width="160" />
+            <el-table-column prop="countryText" label="国家" width="160" />
+            <el-table-column prop="provinceText" label="省" width="160" />
+            <el-table-column prop="cityText" label="市" width="160" />
+            <el-table-column prop="areaText" label="区" width="160" />
+            <el-table-column prop="defaultFlag" label="是否默认" width="160">
+              <template slot-scope="scope">
+                <div v-if="scope.row.defaultFlag == '1'">
+                  <span>是</span>
+                </div>
+                <div v-else-if="scope.row.defaultFlag == '0'">
+                  <span>否</span>
+                </div>
 
-              <el-table-column label="操作" width="180" fixed="right">
-                <template slot-scope="scope">
-                  <el-button size="mini" type="text" @click="changeVal(scope.row)">选择</el-button>
-                  <el-button size="mini" type="text" 
-                    @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑</el-button>
-                  <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                    
-                    @click="handleDel(scope.row.id)">删除</el-button>
-                </template>
-              </el-table-column>
-            </JNPF-table>
-            <!-- <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
+              </template>
+            </el-table-column>
+            <el-table-column prop="address" label="地址" width="310" />
+
+            <el-table-column label="操作" width="180" fixed="right">
+              <template slot-scope="scope">
+                <el-button size="mini" type="text" @click="changeVal(scope.row)">选择</el-button>
+                <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑</el-button>
+                <el-button size="mini" type="text" class="JNPF-table-delBtn"
+                  @click="handleDel(scope.row.id)">删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <!-- <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
               @pagination="initData" /> -->
-          </div>
         </div>
-   
+      </div>
+
     </div>
     <addressForm v-if="depFormVisibled" ref="depFormRef" @initData="initData(id)"></addressForm>
 
@@ -67,16 +68,17 @@
 
 <script>
 import { getCooperativeInfo } from '@/api/basicData/index'
-import { addPartnerAddress, editaddress, getAddressInfo, deleteAddress,detailAddress } from '@/api/basicData/index'
+import { addPartnerAddress, editaddress, getAddressInfo, deleteAddress, detailAddress } from '@/api/basicData/index'
 import addressForm from './addressForm.vue'
 export default {
-  components:{
+  components: {
     addressForm
   },
   data() {
     return {
-      depFormVisibled:false,
+      depFormVisibled: false,
       listLoading: false,
+      tableFlag: false,
       visible: false,
       tableData: [],
       orderForm: {
@@ -87,7 +89,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
       },
-      id:'',
+      id: '',
       cooperativePartnerId: '',
       total: 0,
     }
@@ -96,31 +98,34 @@ export default {
     // 获取列表数据
     initData(id) {
       this.visible = true
+      this.listLoading = true
       this.id = id
       this.cooperativePartnerId = id
       getAddressInfo(id).then(res => {
-     
+
         // this.listLoading  = true
         this.tableData = res.data
-        
+        this.tableFlag = true
+        this.listLoading = false
+        console.log(this.tableData, 'dd')
       })
     },
     changeVal(val) {
       if (val) {
         this.visible = false
-        this.$emit('getChangeAddress',val)
+        this.$emit('getChangeAddress', val)
       }
     },
-    addSupplier(id,type){
+    addSupplier(id, type) {
       this.depFormVisibled = true
-      this.$nextTick(()=>{
-        this.$refs.depFormRef.init(id,type,this.cooperativePartnerId)
+      this.$nextTick(() => {
+        this.$refs.depFormRef.init(id, type, this.cooperativePartnerId)
       })
     },
-    addOrUpdateHandle(id,type) {
+    addOrUpdateHandle(id, type) {
       this.depFormVisibled = true
-      this.$nextTick(()=>{
-        this.$refs.depFormRef.init(id,type,this.cooperativePartnerId)
+      this.$nextTick(() => {
+        this.$refs.depFormRef.init(id, type, this.cooperativePartnerId)
       })
     },
     handleDel(id) {

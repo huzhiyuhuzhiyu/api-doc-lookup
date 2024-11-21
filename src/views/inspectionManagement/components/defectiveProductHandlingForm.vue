@@ -1070,6 +1070,7 @@ export default {
         } else if (btnType === 'edit') {
           this.title = '编辑不良品处理单'
         } else if (btnType === 'look') {
+          console.log(3333)
           this.fetchData('UQDH', false)
           // this.refeshDataFormItems()
           this.refeshLinesListItems()
@@ -1077,9 +1078,12 @@ export default {
           // 获取详情
           detailQcUnqualifiedData(id)
             .then(async (res) => {
+              console.log(res,'res.data.attachmentList')
               if (res.data.attachmentList.length !== 0) {
                 res.data.attachmentList.forEach((item) => {
+                  console.log(item,'ooo')
                   this.datafilelist.push({
+                    bimAttachments:item.bimAttachments,
                     name: item.document.fullName,
                     fileSize: item.document.fileSize,
                     filename: item.document.filePath,
@@ -1088,7 +1092,7 @@ export default {
                   })
                 })
               }
-
+              console.log(this.datafilelist,'this.datafilelist')
               this.dataForm = res.data.unqualified
               this.dataForm.inspectionMethod = res.data.inspection.inspectionMethod
 
@@ -1165,6 +1169,7 @@ export default {
               if (res.data.attachmentList.length !== 0) {
                 res.data.attachmentList.forEach((item) => {
                   this.datafilelist.push({
+                    bimAttachments:item.bimAttachments,
                     name: item.document.fullName,
                     fileSize: item.document.fileSize,
                     filename: item.document.filePath,

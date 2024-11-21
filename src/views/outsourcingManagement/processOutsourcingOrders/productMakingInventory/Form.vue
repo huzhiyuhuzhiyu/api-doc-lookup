@@ -1215,11 +1215,14 @@ export default {
 
         }
         getNextBimProcess(item.productsId, item.maniProcessId).then(res => {
-          // console.log(res, 'pjj')
-          // let data = res.data.records
-          // this.dataFormTwo.data[index].processName = data[0].name
-          // this.dataFormTwo.data[index].processId = data[0].id
-          // console.log(this.dataFormTwo.data, '[[this.dataFormTwo.data]]')
+          console.log(res, 'pjj')
+          let data = res.data.process
+          if (data.processingType === 'external_production') {
+            this.$set(item, 'processName', data.name)
+            this.$set(item, 'processId', data.id)
+          }
+
+          console.log(this.dataFormTwo.data, '[[this.dataFormTwo.data]]')
         })
       })
 

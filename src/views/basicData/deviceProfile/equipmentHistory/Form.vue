@@ -421,7 +421,7 @@
 <script>
 import lyForm from "@/views/dailyManagement/borrowingReturn/circulate/Form.vue";
 import ghForm from "@/views/dailyManagement/borrowingReturn/toolreturn/Form.vue";
-import wxForm from "@/views/toolclampmeasuring/toolManagement/deviceservice/Form.vue";
+import wxForm from "@/views/toolclampmeasuring/toolManagement/pendingdispatch/Form.vue";
 import byrwForm from "@/views/toolclampmeasuring/Maintenance/maintenanceTasks/Form.vue";
 import byjlForm from "@/views/toolclampmeasuring/Maintenance/maintenanceRecords/Form.vue";
 import jdrwForm from "@/views/toolclampmeasuring/verification/inspectionTask/Form.vue";

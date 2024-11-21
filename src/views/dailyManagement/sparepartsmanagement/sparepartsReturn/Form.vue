@@ -4,13 +4,15 @@
       <div :class="['JNPF-common-page-header']" v-if="!dataForm.id">
         <div class="pageTitle">备件归还</div>
         <div class="options">
+          <el-button size="mini" type="success" :loading="btnLoading" @click="handleConfirm('draft')">
+            保存草稿</el-button>
           <el-button type="primary" size="mini" :loading="btnLoading" @click="handleConfirm('submit')">
             保存并提交</el-button>
         </div>
       </div>
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="dataForm.id&&!approvalFlag">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-        <el-page-header @back="goBack" :content="btnType == 'add' ? '新建备件归还' : btnType == 'edit' ? '编辑备件归还' : '查看备件归还'" />
+        <el-page-header @back="goBack" :content="btnType == 'add'|| btnType === 'return' ? '新建备件归还' : btnType == 'edit' ? '编辑备件归还' : '查看备件归还'" />
         <div class="options">
           <el-button size="mini" type="success" :loading="btnLoading" @click="handleConfirm('draft')" v-if="btnType !== 'look'">
             保存草稿</el-button>
@@ -293,7 +295,7 @@ export default {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        if (this.btnType == 'add') {
+        if (this.btnType == 'add' || this.btnType == 'return') {
           this.dataForm.orderNo = data.number
         }
       } catch (error) {
@@ -410,39 +412,46 @@ export default {
       this.approvalFlag = approvalFlag
       this.dataForm.id = id || ''
       this.btnType = btnType
-      if (this.btnType === 'add' || this.btnType === 'edit') {
+      if (this.btnType === 'add' || this.btnType === 'edit' || this.btnType === 'return') {
         this.getBusInfo('b056')
         this.fetchData('LYDH')
       }
-      if (this.btnType == 'add') {
+      if (this.btnType == 'add' || this.btnType === 'return') {
         this.dataForm.recipientId = this.userInfo.userId
         this.dataForm.collectionTime = this.jnpf.getToday()
       }
       if (this.dataForm.id) {
-        detailCollectionandreturn(this.dataForm.id).then(res => {
-          this.dataForm = res.data.requisition
-          this.dataFormTwo.productData = res.data.lines
-          if (res.data.attachmentList) {
-            res.data.attachmentList.forEach((item) => {
-              this.datafilelist.push(
-                {
-                  name: item.document.fullName,
-                  fileSize: item.document.fileSize,
-                  filename: item.document.filePath,
-                  id: item.document.id,
-                  url: item.url
-                }
-              )
-            })
-          }
-          if (this.btnType == 'add') {
+        if (this.btnType == 'return') {
+          detailCollectionandreturn(this.dataForm.id).then(res => {
+            this.dataFormTwo.productData = res.data.lines
             this.dataForm.id = ''
-          }
-          if (this.btnType === 'look') {
-            // 流程信息和流转记录
-            if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
-          }
-        })
+          })
+        } else {
+          detailCollectionandreturn(this.dataForm.id).then(res => {
+            this.dataForm = res.data.requisition
+            this.dataFormTwo.productData = res.data.lines
+            if (res.data.attachmentList) {
+              res.data.attachmentList.forEach((item) => {
+                this.datafilelist.push(
+                  {
+                    name: item.document.fullName,
+                    fileSize: item.document.fileSize,
+                    filename: item.document.filePath,
+                    id: item.document.id,
+                    url: item.url
+                  }
+                )
+              })
+            }
+            if (this.btnType == 'add') {
+              this.dataForm.id = ''
+            }
+            if (this.btnType === 'look') {
+              // 流程信息和流转记录
+              if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            }
+          })
+        }
       }
     },
     async handleConfirm(value) {

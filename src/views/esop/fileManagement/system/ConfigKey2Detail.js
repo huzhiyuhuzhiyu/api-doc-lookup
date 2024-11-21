@@ -281,7 +281,7 @@ export default {
     },
     "fj_gjbx": {
       title: "工具报修",
-      path: "toolclampmeasuring/toolManagement/deviceservice/Form.vue", //需要调用的组件路径
+      path: "toolclampmeasuring/toolManagement/pendingdispatch/Form.vue", //需要调用的组件路径
       params: {
 
       },

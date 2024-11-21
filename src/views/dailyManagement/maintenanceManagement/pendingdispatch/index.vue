@@ -18,6 +18,13 @@
               <el-input v-model="orderForm.equipmentIdName" placeholder="请输入设备名称" clearable @keydown.enter.native="dataFormSubmit()" />
             </el-form-item>
           </el-col>
+          <!-- <el-col :span="4">
+            <el-form-item>
+              <el-select v-model="orderForm.state" placeholder="请选择状态" clearable style="width: 100%;">
+                <el-option v-for="(item, index) in [{label:'待派工',value:'toBeMaintain'},{label:'正在维修',value:'maintaining'}]" :key="index" :label="item.label" :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col> -->
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="dataFormSubmit()">
@@ -30,7 +37,10 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <div></div>
+          <div>
+            <el-button size="mini" type="success" icon="el-icon-s-claim" @click="handleBatchreview">批量审核派工</el-button>
+            <!-- <el-button size="mini" type="primary" icon="icon-ym icon-ym-system" @click="Batchrepair">批量完成维修</el-button> -->
+          </div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
@@ -43,7 +53,8 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" custom-column>
+
+        <JNPF-table ref="dataTable" hasC @selection-change="handeleInfoData" v-loading="listLoading" :data="tableData" @sort-change="sortChange" custom-column>
           <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
@@ -121,10 +132,38 @@
           <el-table-column prop="createTime" label="创建时间" width="200" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
           <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
-          <el-table-column label="操作" width="140" fixed="right">
+          <el-table-column label="操作" width="200" fixed="right">
             <template slot-scope="scope">
+              <el-button size="mini" type="text" v-if="scope.row.state == 'toBeMaintain'" @click="handleUserRelation(scope.row.id, 'start')">审核派工</el-button>
+              <!-- <el-button size="mini" type="text" v-if="scope.row.state == 'maintaining'&&scope.row.reviewComments == 'immediately'" @click="handleUserRelation(scope.row.id, 'end')">维修</el-button> -->
+              <!-- <el-button size="mini" type="text" v-if="scope.row.reviewComments == 'outsourcing'" @click="outsourcedcompletion(scope.row.id)">委外维修完成</el-button> -->
+              <!-- <el-button size="mini" type="text" :disabled="scope.row.state != 'toBeMaintain'" @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑</el-button> -->
               <el-button size="mini" type="text" class="JNPF-table-delBtn" :disabled="scope.row.state === 'maintaining'" @click="handleDel(scope.row.id)">删除</el-button>
-              <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'look')">查看详情</el-button>
+              <el-dropdown hide-on-click>
+                <span class="el-dropdown-link">
+                  <el-button type="text" size="mini">
+                    {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                  </el-button>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'edit')" :disabled="scope.row.state != 'toBeMaintain'">
+                    编辑
+                  </el-dropdown-item>
+                  <!-- <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'start')" :disabled="scope.row.state !== 'toBeMaintain'">
+                    审核派工
+                  </el-dropdown-item> -->
+                  <!-- <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'end')" :disabled="scope.row.state !== 'maintaining'||scope.row.reviewComments !== 'immediately'">
+                    维修
+                  </el-dropdown-item> -->
+                  <!-- <el-dropdown-item @click.native="outsourcedcompletion(scope.row.id)" v-if="scope.row.reviewComments == 'outsourcing'">
+                    委外维修完成
+                  </el-dropdown-item> -->
+                  <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
+                    查看详情
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+
             </template>
           </el-table-column>
         </JNPF-table>
@@ -132,16 +171,20 @@
       </div>
     </div>
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <depForm v-if="shareVisible" ref="depForm" @close="closeForm"></depForm>
+    <sucForm v-if="sucFormVisible" ref="sucForm" @close="closeForm"></sucForm>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
   </div>
 </template>
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { RepairRequestList, deleteRepairRequest } from '@/api/dailyManagement/Maintenance'
-import Form from '@/views/dailyManagement/maintenanceManagement/pendingdispatch/Form.vue'
+import depForm from './depForm'
+import sucForm from './sucForm'
+import { RepairRequestList, deleteRepairRequest, equEquipmentRepairOutsourcing } from '@/api/dailyManagement/Maintenance'
+import Form from './Form'
 export default {
-  // name: 'maintenanceRecord',
-  components: { Form, SuperQuery },
+  // name: 'deviceservice',
+  components: { Form, depForm, sucForm, SuperQuery },
   data() {
     return {
       superQueryVisible: false,
@@ -319,6 +362,9 @@ export default {
           type: 'input'
         }
       ],
+      shareVisible: false,
+      sucFormVisible: false,
+      selectData: [],
       srcList: [
         'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg'
       ],
@@ -333,7 +379,8 @@ export default {
         { label: "已维修", value: "maintained" }
       ],
       orderForm: {
-        state: 'maintained',
+        state: 'toBeMaintain',
+        // unState: 'maintained',
         classAttribute: "equipment",
         maintenanceNo: '',
         equipmentIdCode: '',
@@ -364,6 +411,16 @@ export default {
     this.initData()
   },
   methods: {
+    outsourcedcompletion(id) {
+      equEquipmentRepairOutsourcing(id).then(res => {
+        this.initData()
+        this.$message({
+          type: 'success',
+          message: "提交成功",
+          duration: 1500,
+        })
+      })
+    },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
@@ -371,6 +428,25 @@ export default {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
       this.dataFormSubmit()
+    },
+    handleBatchreview() {
+      if (!this.selectData.length) return this.$message.error("请先选择你要审核的设备")
+      let idList = this.selectData.map(item => item.id);
+      this.shareVisible = true
+      this.$nextTick(() => {
+        this.$refs.depForm.init(idList)
+      })
+    },
+    Batchrepair() {
+      if (!this.selectData.length) return this.$message.error("请先选择你要完成的设备")
+      let idList = this.selectData.map(item => item.id);
+      this.sucFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.sucForm.init(idList)
+      })
+    },
+    handeleInfoData(val) {
+      this.selectData = val
     },
     bigimg(url) {
       this.srcList[0] = url
@@ -418,6 +494,8 @@ export default {
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
+      this.shareVisible = false
+      this.sucFormVisible = false
       if (isRefresh) {
         this.keyword = ''
         this.initData()
@@ -445,8 +523,8 @@ export default {
           if (item.afterPic) {
             item.afterPicList = item.afterPicList.map(o => { return JSON.parse(`{${o}}`) })
           }
-          item.waitDuration = this.getTimes(item.waitDuration)
           item.maintenanceDuration = this.getTimes(item.maintenanceDuration)
+          item.waitDuration = this.getTimes(item.waitDuration)
           return item
         })
         this.total = res.data.total
@@ -461,7 +539,8 @@ export default {
       this.faultStartTime = []
       this.orderDateArr = []
       this.orderForm = {
-        state: 'maintained',
+        state: 'toBeMaintain',
+        // unState: 'maintained',
         classAttribute: "equipment",
         maintenanceNo: '',
         equipmentIdCode: '',

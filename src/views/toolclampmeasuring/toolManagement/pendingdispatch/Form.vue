@@ -17,30 +17,30 @@
       </div>
       <div class="main" v-loading="formLoading">
         <div class="vux-flexbox stage-state vux-flex-row">
-          <a href="#" @click="stateaction('report')" style="width: 33.3%;">
+          <el-button @click="stateaction('report')" class="button-info">
             <div class="stage-state-item state-undo is-center" :class="{'state-suc':statesuc==='report'}">
               <div class="stage-name text-one-ellipsis">报修信息</div>
               <!-- <div class="stage-value">20%</div> -->
               <div class="state-arrow arrow-left"></div>
               <div class="state-arrow arrow-right" :class="{'state-suc':statesuc==='report'}"></div>
             </div>
-          </a>
-          <a href="#" @click="stateaction('examine')" style="width: 33.3%;" v-if="btnType == 'start' || btnType == 'end' || (dataForm.state == 'maintaining' && btnType == 'look') || (dataForm.state == 'maintained' && btnType == 'look')">
+          </el-button>
+          <el-button @click="stateaction('examine')" class="button-info" :disabled="(dataForm.state == 'toBeMaintain'&&btnType == 'edit')||(dataForm.state == 'toBeMaintain'&&btnType == 'look')||(dataForm.state == 'maintaining'&&!dataForm.reviewComments)">
             <div class="stage-state-item state-undo is-center" :class="{'state-suc':statesuc==='examine'}">
               <div class="stage-name text-one-ellipsis">审核信息</div>
               <!-- <div class="stage-value">30%</div> -->
               <div class="state-arrow arrow-left"></div>
               <div class="state-arrow arrow-right" :class="{'state-suc':statesuc==='examine'}"></div>
             </div>
-          </a>
-          <a href="#" @click="stateaction('repair')" style="width: 33.3%;" v-if="btnType == 'end' || (dataForm.state == 'maintained' && btnType == 'look')">
+          </el-button>
+          <el-button @click="stateaction('repair')" class="button-info" :disabled="dataForm.state == 'toBeMaintain'||(dataForm.state == 'maintaining'&&btnType == 'look')">
             <div class="stage-state-item state-undo is-center" :class="{'state-suc':statesuc==='repair'}">
               <div class="stage-name text-one-ellipsis">维修信息</div>
               <!-- <div class="stage-value">50%</div> -->
               <div class="state-arrow arrow-left"></div>
               <div class="state-arrow arrow-right" :class="{'state-suc':statesuc==='repair'}"></div>
             </div>
-          </a>
+          </el-button>
         </div>
         <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
           <el-collapse v-model="activeNames">
@@ -222,7 +222,6 @@
                   </el-col>
                 </el-row>
               </el-collapse-item>
-
               <el-collapse-item title="故障信息" name="gzxx" v-if="statesuc==='report'||statesuc==='repair'">
                 <div v-if="btnType == 'edit' || btnType == 'add'">
                   <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择故障类型</el-button>|
@@ -257,7 +256,7 @@
                         <el-input v-model="scope.row.faultDescription" placeholder="请输入故障描述" :disabled="btnType == 'look' || btnType == 'start' || btnType == 'end'" maxlength="200" />
                       </template>
                     </el-table-column>
-                    <el-table-column prop="faultDescription" label="是否完成" width="90" v-if="(btnType == 'end'&&statesuc==='repair')||(btnType == 'look'&&statesuc==='repair')">
+                    <el-table-column prop="repairResult" label="是否完成" width="90" v-if="(btnType == 'end'&&statesuc==='repair')||(btnType == 'look'&&statesuc==='repair')">
                       <template slot-scope="scope">
                         <el-checkbox v-model="scope.row.repairResult" true-label="finished" false-label="not_finished" :disabled="btnType == 'look'"></el-checkbox>
                       </template>
@@ -344,7 +343,7 @@
           <el-table-column prop="applicationDate" label="申请日期" width="180"></el-table-column>
           <el-table-column prop="state" label="状态" width="120" fixed="right" align="center">
             <template slot-scope="scope">
-              <div v-if="scope.row.state == 'toBeMaintain'"><el-tag type="danger">待维修</el-tag></div>
+              <div v-if="scope.row.state == 'toBeMaintain'"><el-tag type="danger">待派工</el-tag></div>
               <div v-else-if="scope.row.state == 'maintaining'"><el-tag type="warning">正在维修</el-tag></div>
               <div v-else-if="scope.row.state == 'maintained'"><el-tag type="success">已维修</el-tag></div>
             </template>
@@ -413,6 +412,7 @@ export default {
   components: { UploadImg },
   data() {
     return {
+      isApprovalwitch: false,
       sparepartRequestObj: {
         pageNum: 1,
         pageSize: 20,
@@ -461,7 +461,7 @@ export default {
         { label: '转委外', value: 'outsourcing' }
       ],
       activeNameinfo: ["lbjInfo"],
-      activeNames: ["basicInfo", "gzxx", 'bxInfo', 'wxInfo', 'ghlbjxx', 'bxfj'],
+      activeNames: ["basicInfo", "gzxx", 'tool', 'bxInfo', 'wxInfo', 'ghlbjxx', 'bxfj'],
       datafilelist: [],
       getcategoryTree,
       ProductTableSearchLists: [
@@ -488,24 +488,17 @@ export default {
         classAttribute: "tool",
       },
       ProductTableItemss: [
-        { prop: 'code', label: '工具编码' },
-        { prop: 'name', label: '工具名称' },
+        { prop: 'code', label: '工具编码', fixed: 'left' },
+        { prop: 'name', label: '工具名称', fixed: 'left' },
         { prop: 'categoryName', label: '工具分类' },
         { prop: 'specModel', label: '工具规格' },
       ],
       stateList: [
-        { label: "待维修", value: "toBeMaintain" },
+        { label: "待派工", value: "toBeMaintain" },
         { label: "正在维修", value: "maintaining" },
         { label: "已维修", value: "maintained" }
       ],
       formLoading: false,
-      productRulesling: {
-        num: [
-          { validator: this.formValidate({ type: 'noEmtry', params: ["数量不能为空", (errMsg, index) => { this.$message.error(`备件信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
-          { required: true, trigger: 'blur' },
-          { validator: this.formValidate('positiveNumber', '数量必须大于0', (errMsg, index) => { this.$message.error(`备件信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }
-        ]
-      },
       dataForms: {
         lines: []
       },
@@ -552,8 +545,8 @@ export default {
         { prop: "name", label: "故障类型名称", type: 'input' },
       ],
       ProductTableItems: [
-        { prop: 'code', label: '故障类型编码', fixed: 'left' },
-        { prop: 'name', label: '故障类型名称', fixed: 'left' },
+        { prop: 'code', label: '故障类型编码' },
+        { prop: 'name', label: '故障类型名称' },
         { prop: 'createTime', label: '创建时间' },
         { prop: 'createByName', label: '创建人' },
       ],
@@ -562,8 +555,8 @@ export default {
         { prop: "name", label: "故障部位名称", type: 'input' },
       ],
       faultLocationNameItems: [
-        { prop: 'code', label: '故障部位编码', fixed: 'left' },
-        { prop: 'name', label: '故障部位名称', fixed: 'left' },
+        { prop: 'code', label: '故障部位编码' },
+        { prop: 'name', label: '故障部位名称' },
         { prop: 'createTime', label: '创建时间' },
         { prop: 'createByName', label: '创建人' },
       ],
@@ -578,7 +571,6 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
-        usin: '',
         maintenanceNo: '',
         rejectReason: '',
         frontPicList: [],
@@ -603,6 +595,13 @@ export default {
         }
       },
       organizeIdTrees: [],
+      productRulesling: {
+        num: [
+          { validator: this.formValidate({ type: 'noEmtry', params: ["数量不能为空", (errMsg, index) => { this.$message.error(`备件信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
+          { required: true, trigger: 'blur' },
+          { validator: this.formValidate('positiveNumber', '数量必须大于0', (errMsg, index) => { this.$message.error(`备件信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }
+        ]
+      },
       productRules: {
         faultLocationName: [
           { required: true, trigger: 'change' }
@@ -659,10 +658,19 @@ export default {
       _index: ''
     }
   },
-  // created() {
-  //   this.getBimBusinessDetail()
-  // },
+  created() {
+    // this.getSwitch()
+  },
   methods: {
+    getSwitch() {
+      let obj = {
+        businessCode: 'maintenance',
+        configKey: `gjpg_maintenance`
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isApprovalwitch = res.data.configValue1 == '1' ? true : false
+      })
+    },
     //备件选择
     submitsparepart(selectedIds, selectedList) {
       selectedList.map(item => {
@@ -724,10 +732,10 @@ export default {
       this.TablelistLoading = true
       RepairRequestList(obj).then(res => {
         this.tableDatalist = res.data.records.map(item => {
-          if (item.frontPic) {
+          if (item.frontPicList && item.frontPicList.length) {
             item.frontPicList = item.frontPicList.map(o => { return JSON.parse(`{${o}}`) })
           }
-          if (item.afterPic) {
+          if (item.afterPicList && item.afterPicList.length) {
             item.afterPicList = item.afterPicList.map(o => { return JSON.parse(`{${o}}`) })
           }
           item.waitDuration = this.getTimes(item.waitDuration)
@@ -771,10 +779,10 @@ export default {
       this.listLoading = true
       equEquipmentRepairKnowledgeList(obj).then(res => {
         this.tableData = res.data.records.map(item => {
-          if (item.frontPic) {
+          if (item.frontPicList && item.frontPicList.length) {
             item.frontPicList = item.frontPicList.map(o => { return JSON.parse(`{${o}}`) })
           }
-          if (item.afterPic) {
+          if (item.afterPicList && item.afterPicList.length) {
             item.afterPicList = item.afterPicList.map(o => { return JSON.parse(`{${o}}`) })
           }
           return item
@@ -902,6 +910,7 @@ export default {
     },
     //申请部门
     changedepartment(val) {
+      console.log("val,val", val);
       this.dataForm.departmentIdName = ""
       this.dataForm.departmentId = ""
       this.$forceUpdate()
@@ -909,6 +918,7 @@ export default {
       this.dataForm.departmentId = val[val.length - 1]
       this.$nextTick(() => { this.$refs['dataForm'].validateField('departmentId') })
       getOrganization({ keyword: "", organizeId: this.dataForm.departmentId }).then(res => {
+        console.log("用户", res);
         if (res.data.length > 0) {
           res.data.forEach(item => {
             item.name = item.fullName.split('/')[0]
@@ -1087,6 +1097,7 @@ export default {
       let valid_2
       let valid_1 = await this.$refs.dataForm.validate().catch(err => false)
       if (!valid_1) {
+        // this.activeName = "orderInfo",
         submitFlag = true
       }
       if (!this.dataFormTwo.productData.length) {
@@ -1097,12 +1108,21 @@ export default {
           duration: 1500,
         })
       } else {
+        // this.dataFormTwo.productData.map((item, index) => {
+        //   if (!item.faultLocationName) {
+        //     // this.activeName = "orderInfo",
+        //       this.$message.error(`第${index + 1}行故障部位名称不能为空`)
+        //     submitFlag = true
+        //     return
+        //   }
+        // })
         // valid_2 = await this.$refs.productForm.validate().catch(err => false)
       }
       // if (!valid_2) return submitFlag = true
       if (['look', 'end'].includes(this.btnType)) {
         let valid_3 = await this.$refs.productForms.validate().catch(err => false)
         if (!valid_3) {
+          // this.activeName = "replacecomponents",
           this.$message.error('更换零部件信息请填写完整')
           submitFlag = true
           return
@@ -1178,6 +1198,19 @@ export default {
 </script>
 <style scoped lang="scss">
 .stage-state {
+  .button-info {
+    width: calc(33.3% - 14px);
+    border: none;
+    background-color: #fff;
+    padding: 0 !important;
+  }
+  v-deep .el-button:focus,
+  .el-button:hover {
+    background-color: #fff;
+  }
+  v-deep .el-button:active {
+    background-color: #fff;
+  }
   position: relative;
   z-index: 1;
   flex-wrap: wrap;

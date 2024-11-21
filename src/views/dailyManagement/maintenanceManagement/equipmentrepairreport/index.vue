@@ -39,6 +39,13 @@
                             <el-input v-model="dataForm.mountedPlaces" placeholder="请输入安装地点" :disabled="true" />
                           </el-form-item>
                         </el-col>
+                        <el-col :sm="6" :xs="24" v-if="!isApprovalwitch">
+                          <el-form-item label="紧急程度" prop="degree">
+                            <el-select v-model="dataForm.degree" placeholder="请选择紧急程度" clearable style="width: 100%;" :disabled="btnType == 'look'|| btnType == 'end'">
+                              <el-option v-for="(item, index) in degreeList" :key="index" :label="item.label" :value="item.value"></el-option>
+                            </el-select>
+                          </el-form-item>
+                        </el-col>
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="申请部门" prop="departmentId">
                             <ComSelect v-model="organizeIdTrees" placeholder="请选择申请部门" auth :dialogTitle="'请选择申请部门'" @change="changedepartment" :currOrgId="dataForm.departmentId || '0'" />
@@ -155,6 +162,12 @@ export default {
   components: { UploadImg },
   data() {
     return {
+      degreeList: [
+        { label: '特别紧急', value: '1' },
+        { label: '紧急', value: '2' },
+        { label: '一般', value: '3' },
+        { label: '不急', value: '4' }
+      ],
       submitmethodsTitle: '',
       categoryId: '',
       isattachmentswitch: '',
@@ -256,6 +269,7 @@ export default {
       activeName: "orderInfo",
       datafilelist: [],
       dataForm: {
+        degree: '',
         maintenanceNo: '',
         frontPicList: [],
         factoryFloor: '',
@@ -297,6 +311,9 @@ export default {
         equipmentId: [
           { required: true, message: '设备不能为空', trigger: 'change' }
         ],
+        degree: [
+          { required: true, message: '紧急程度不能为空', trigger: 'change' }
+        ],
         departmentId: [
           { required: true, message: '申请部门不能为空', trigger: 'change' }
         ],
@@ -310,17 +327,28 @@ export default {
           { required: true, message: '故障开始时间不能为空', trigger: 'change' }
         ],
       },
-      tipsvisible: false
+      tipsvisible: false,
+      isApprovalwitch: false
     }
   },
   computed: {
     ...mapGetters(['userInfo'])
   },
   created() {
+    this.getSwitch()
     this.getBimBusinessDetail()
     this.init()
   },
   methods: {
+    getSwitch() {
+      let obj = {
+        businessCode: 'maintenance',
+        configKey: `pg_maintenance`
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isApprovalwitch = res.data.configValue1 == '1' ? true : false
+      })
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -498,9 +526,15 @@ export default {
       this.init()
     },
     goBack() {
-      this.$router.push({
-        path: "/dailyManagement/maintenanceManagement/deviceservice",
-      })
+      if (this.isApprovalwitch) {
+        this.$router.push({
+          path: "/dailyManagement/maintenanceManagement/pendingdispatch",
+        })
+      } else {
+        this.$router.push({
+          path: "/dailyManagement/maintenanceManagement/deviceservice",
+        })
+      }
       this.tipsvisible = false
     },
     async handleConfirm() {
@@ -554,6 +588,7 @@ export default {
             }
           })
         }
+        if (!this.isApprovalwitch) this.dataForm.state = 'maintaining'
         let obj = {
           attachmentList: this.datafilelist,
           equLine: [],

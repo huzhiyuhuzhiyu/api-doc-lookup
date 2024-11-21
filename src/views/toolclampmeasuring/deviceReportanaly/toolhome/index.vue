@@ -635,7 +635,7 @@ export default {
             // { label: '工具档案', icon: require('./imgs/shebei.png'),path:'/basicData/deviceProfile/deviceProfileset' },
             { label: '工具检定单', title: '待检定', id: 'inspectionNum', value: '0', icon: require('./imgs/dianjian.png'), path: '/toolclampmeasuring/verification/checkQuery' },
             // { label: '工具报废单', icon: require('./imgs/xunjian.png'),path:'/dailyManagement/scrapManagement/announceInvalidated' },
-            { label: '工具维修单', title: '待维修', id: 'repairNum', value: '0', icon: require('./imgs/weixiu.png'), path: '/toolclampmeasuring/toolManagement/deviceservice' },
+            { label: '工具维修单', title: '待维修', id: 'repairNum', value: '0', icon: require('./imgs/weixiu.png'), path: '/toolclampmeasuring/toolManagement/pendingdispatch' },
             // { label: '保养计划表', title: '待保养', id: 'maintenanceNum', value: '0', icon: require('./imgs/baoyangbiao.png'), path: '/dailyManagement/Maintenance/maintenanceTasks' },
             { label: '工具保养单', title: '待保养', id: 'maintenanceNum', value: '0', icon: require('./imgs/baoyangdan.png'), path: '/toolclampmeasuring/Maintenance/taskQuery' },
             { label: '工具报废单', title: '已报废', id: 'scrappingNum', value: '0', icon: require('./imgs/xunjian.png'), path: '/toolclampmeasuring/scrapManagement/announceInvalidated' }

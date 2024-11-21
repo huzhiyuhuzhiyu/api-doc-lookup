@@ -27,7 +27,7 @@
             </el-col>
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div></div>
             <div class="JNPF-common-head-right">
@@ -42,9 +42,10 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+          <JNPF-table ref="dataTable" v-if="istable" :data="tableData" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="equipmentIdCode" label="设备编码" min-width="180" sortable="custom" />
             <el-table-column prop="equipmentIdName" label="设备名称" min-width="180" sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
             <el-table-column prop="factoryFloor" label="车间" min-width="200" sortable="custom" />
             <el-table-column prop="mountedPlaces" label="安装地点" min-width="200" sortable="custom" />
             <el-table-column prop="partnerName" label="供应商" min-width="200" sortable="custom" />
@@ -84,11 +85,16 @@
 import { getequLifeCyclelist } from "@/api/basicData/materialSettings";
 import Form from './Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters } from 'vuex'
 export default {
-  name: 'maintenancelevel',
+  mixins: [getProjectList],
+  // name: 'maintenancelevel',
   components: { SuperQuery, Form },
   data() {
     return {
+      istable: false,
+      isProjectSwitch: '',
       columnList: ["code", "partsReplacementRecord", "createByName"],
       maintenanceTypeList: [
         { label: "正常", value: "normal" },
@@ -102,6 +108,7 @@ export default {
       tableData: [],
       superQueryVisible: false,
       initListQuery: {
+        projectId: '',
         classAttribute: "equipment",
         equipmentIdName: '',
         equipmentIdState: '',
@@ -181,7 +188,11 @@ export default {
       ]
     }
   },
-  created() {
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.initData()
   },
@@ -238,7 +249,9 @@ export default {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
+      this.listQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getequLifeCyclelist(this.listQuery).then(res => {
+        this.istable = true
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false

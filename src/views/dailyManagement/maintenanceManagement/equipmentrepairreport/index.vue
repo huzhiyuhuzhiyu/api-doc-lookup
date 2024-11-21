@@ -29,6 +29,11 @@
                             </el-input>
                           </el-form-item>
                         </el-col>
+                        <el-col :sm="6" :xs="24" v-if="isProjectSwitch==='1'">
+                          <el-form-item label="所属项目" prop="projectName">
+                            <el-input v-model="dataForm.projectName" placeholder="请输入所属项目" maxlength="20" :disabled="true" />
+                          </el-form-item>
+                        </el-col>
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="使用车间" prop="factoryFloor">
                             <el-input v-model="dataForm.factoryFloor" placeholder="请输入使用车间" :disabled="true" />
@@ -151,10 +156,13 @@ import { getOrganization } from '@/api/permission/user'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { mapGetters } from 'vuex'
 import { getEquEquipmentList, parametersShelveslist } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
+  mixins: [getProjectList],
   components: { UploadImg },
   data() {
     return {
+      isProjectSwitch: '',
       submitmethodsTitle: '',
       categoryId: '',
       isattachmentswitch: '',
@@ -166,6 +174,7 @@ export default {
         { prop: "name", label: "设备名称", type: 'input' },
       ],
       ProductListRequestObjs: {
+        projectId:'',
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -256,6 +265,7 @@ export default {
       activeName: "orderInfo",
       datafilelist: [],
       dataForm: {
+        projectName:'',
         maintenanceNo: '',
         frontPicList: [],
         factoryFloor: '',
@@ -316,7 +326,8 @@ export default {
   computed: {
     ...mapGetters(['userInfo'])
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.getBimBusinessDetail()
     this.init()
   },
@@ -414,11 +425,13 @@ export default {
         this.dataForm.equipmentIdName = data[0].name
         this.dataForm.factoryFloor = data[0].all.factoryFloor
         this.dataForm.mountedPlaces = data[0].all.mountedPlaces
+        this.dataForm.projectName = data[0].all.projectName
       } else {
         this.dataForm.factoryFloor = ''
         this.dataForm.mountedPlaces = ''
         this.dataForm.equipmentId = ''
         this.dataForm.equipmentIdName = ''
+        this.dataForm.projectName = ''
       }
     },
     //故障部位选择
@@ -467,6 +480,7 @@ export default {
       this.$refs['ComSelect-page'].openDialog()
     },
     openSeleceProductDialogss() {
+      this.ProductListRequestObjs.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       this.$refs['ComSelect-pagesb'].openDialog()
     },
     // 继续新增

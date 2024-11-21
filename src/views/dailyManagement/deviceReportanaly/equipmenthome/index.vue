@@ -32,7 +32,7 @@
         <el-tabs type="border-card" style="height: 100%;" v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="设备台账" name="sbtz">
             <div class="JNPF-common-layout">
-              <div class="JNPF-common-layout-center JNPF-flex-main">
+              <div class="JNPF-common-layout-center JNPF-flex-main" v-loading="listLoading">
                 <el-row class="JNPF-common-search-box" :gutter="16">
                   <el-form @submit.native.prevent>
                     <el-col :span="4">
@@ -64,9 +64,10 @@
                   </el-form>
                 </el-row>
                 <div style="height: 835px;" class="JNPF-flex-main">
-                  <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableDatasbtz" @sort-change="sortChangesbtz" fixedNO custom-column>
+                  <JNPF-table v-if="istable" ref="dataTable" :data="tableDatasbtz" @sort-change="sortChangesbtz" fixedNO custom-column>
                     <el-table-column prop="code" label="设备编码" min-width="200" sortable="custom" />
                     <el-table-column prop="name" label="设备名称" min-width="200" sortable="custom" />
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                     <el-table-column prop="deviceType" label="设备类型" width="140" sortable="custom">
                       <template slot-scope="scope">
                         <el-tag type="success" disable-transitions v-if="scope.row.deviceType == 'normal'">正常设备</el-tag>
@@ -294,6 +295,7 @@
                       </el-table-column>
                       <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" sortable="custom" />
                       <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom"></el-table-column>
+                      <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                       <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
                       <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
                       <el-table-column prop="frontPicList" label="故障情况照片" min-width="140">
@@ -402,6 +404,7 @@
                   </el-table-column>
                   <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" sortable="custom" />
                   <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom"></el-table-column>
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                   <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
                   <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
                   <el-table-column prop="frontPicList" label="故障情况照片" min-width="140">
@@ -522,6 +525,7 @@
                   <el-table-column prop="maintenanceTaskIdText" label="任务名称" min-width="180" />
                   <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" />
                   <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom" />
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                   <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
                   <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
                   <el-table-column prop="level" label="保养等级" width="140" />
@@ -565,10 +569,15 @@ import { equMaintenanceList, RepairRequestList } from '@/api/dailyManagement/Mai
 import { getEquEquipmentList } from '@/api/basicData/index'
 import { getequMountedPlaces, gettotalOverview, gettotalEquStats, getequReporttotalNum, getdailyInspectionNum, getdailyInspectionMonthTotal, gettotalMaintenance, getTotalEquipmentVO } from "@/api/basicData/materialSettings";
 import chart from "@/views/dailyManagement/deviceReportanaly/components/chart.vue";
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters } from 'vuex'
 export default {
+  mixins: [getProjectList],
   components: { chart },
   data() {
     return {
+      istable: false,
+      isProjectSwitch: '',
       tableDatawxfbcl: [],
       listLoadingwxfbcl: false,
       srcList: [
@@ -579,6 +588,7 @@ export default {
       tableDatabyfb: [],
       listQuerybyfb: {},
       listQuery5: {
+        projectId: '',
         classAttribute: "equipment",
         recordType: 'maintenance',
         equipmentIdCode: '',
@@ -598,6 +608,7 @@ export default {
       listLoadingwxfb: false,
       tableDatawxfb: [],
       listQuerywxfbcl: {
+        projectId: '',
         state: 'maintaining',
         classAttribute: "equipment",
         pageNum: 1,
@@ -612,6 +623,7 @@ export default {
       },
       listQuerywxfb: {},
       listQuery4: {
+        projectId: '',
         state: 'maintained',
         classAttribute: "equipment",
         maintenanceNo: '',
@@ -656,6 +668,7 @@ export default {
       },
       listQuerysbtz: {},
       listQuery1: {
+        projectId: '',
         name: '',
         code: '',
         state: '',
@@ -787,7 +800,8 @@ export default {
       deep: true
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.listQuerysbtz = JSON.parse(JSON.stringify(this.listQuery1))
     this.listQuerysbgk = JSON.parse(JSON.stringify(this.listQuery2))
     this.listQuerydjfb = JSON.parse(JSON.stringify(this.listQuery3))
@@ -795,6 +809,9 @@ export default {
     this.listQuerybyfb = JSON.parse(JSON.stringify(this.listQuery5))
     this.getTotalEquipmentVO()
     this.initequipmentledger()
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     //导航菜单
@@ -824,8 +841,10 @@ export default {
         let item = this.listQuerysbtz[key]
         this.listQuerysbtz[key] = typeof item === 'string' ? item.trim() : item
       })
+      this.listQuerysbtz.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       this.listLoading = true
       getEquEquipmentList(this.listQuerysbtz).then(res => {
+        this.istable = true
         this.tableDatasbtz = res.data.records
         this.total = res.data.total
         this.listLoading = false
@@ -1118,6 +1137,7 @@ export default {
     },
     getlistdatawxfbcl() {
       this.listLoadingwxfbcl = true
+      this.listQuerywxfbcl.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       RepairRequestList(this.listQuerywxfbcl).then(res => {
         this.tableDatawxfbcl = res.data.records.map(item => {
           if (item.frontPic) {
@@ -1153,6 +1173,7 @@ export default {
         let item = this.listQuerywxfb[key]
         this.listQuerywxfb[key] = typeof item === 'string' ? item.trim() : item
       })
+      this.listQuerywxfb.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       this.listLoadingwxfb = true
       RepairRequestList(this.listQuerywxfb).then(res => {
         this.tableDatawxfb = res.data.records.map(item => {
@@ -1219,6 +1240,7 @@ export default {
         this.listQuerybyfb[key] = typeof item === 'string' ? item.trim() : item
       })
       this.listLoadingbyfb = true
+      this.listQuerybyfb.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       equMaintenanceList(this.listQuerybyfb).then(res => {
         this.tableDatabyfb = res.data.records.map(item => {
           if (item.picList && item.picList.length) item.picList = item.picList.map(o => { return JSON.parse(`{${o}}`) })

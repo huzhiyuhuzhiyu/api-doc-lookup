@@ -42,6 +42,11 @@
                         <ComSelect-list :isdisabled="true" v-model="dataForm.productCategoryName" placeholder="请选择设备类型" auth :title="'选择设备类型'" :method="getCategoryTrees" :requestObj="requestObjTwo" :paramsObj="{}" />
                       </el-form-item>
                     </el-col>
+                    <el-col :sm="8" :xs="24" v-if="isProjectSwitch==='1'">
+                      <el-form-item label="所属项目" prop="projectName">
+                        <el-input v-model="dataForm.projectName" placeholder="请输入所属项目" maxlength="20" :disabled="true" />
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="设备编码" prop="code">
                         <el-input v-model="dataForm.code" placeholder="请输入设备编码" maxlength="20" :disabled="true" />
@@ -231,6 +236,7 @@
                   </el-table-column>
                   <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" sortable="custom" />
                   <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom"></el-table-column>
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                   <el-table-column prop="factoryFloor" label="使用车间" min-width="140" sortable="custom" />
                   <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" sortable="custom" />
                   <el-table-column prop="frontPicList" label="故障情况照片" min-width="140">
@@ -316,6 +322,7 @@
                   </el-table-column>
                   <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" fixed="left" sortable="custom" />
                   <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" fixed="left" sortable="custom"></el-table-column>
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                   <el-table-column prop="level" label="保养等级" min-width="140" sortable="custom"></el-table-column>
                   <el-table-column prop="cycle" label="周期" width="90" sortable="custom"></el-table-column>
                   <el-table-column prop="unit" label="单位" width="90" sortable="custom"></el-table-column>
@@ -355,6 +362,7 @@
                   <el-table-column prop="maintenanceTaskIdText" label="任务名称" min-width="180" sortable="custom" />
                   <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" sortable="custom" />
                   <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom" />
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                   <el-table-column prop="factoryFloor" label="使用车间" min-width="140" sortable="custom" />
                   <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" sortable="custom" />
                   <el-table-column prop="level" label="保养等级" width="140" sortable="custom" />
@@ -397,6 +405,7 @@
                 <JNPF-table ref="djrwdataTable" v-loading="djrwlistLoading" :data="djrwdataTable" @sort-change="djrwsortChange" fixedNO custom-column :height=height>
                   <el-table-column prop="name" label="任务名称" width="200" sortable="custom">
                   </el-table-column>
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                   <el-table-column prop="cycle" label="周期" width="120" sortable="custom"></el-table-column>
                   <el-table-column prop="unit" label="单位" width="110" sortable="custom"></el-table-column>
                   <el-table-column prop="equipmentIdCode" label="设备编码" width="200" sortable="custom" />
@@ -436,6 +445,7 @@
                 <JNPF-table ref="djjldataTable" v-loading="djjllistLoading" :data="djjldataTable" @sort-change="djjlsortChange" fixedNO custom-column :height=height>
                   <el-table-column prop="equipmentIdCode" label="设备编码" width="200" sortable="custom" />
                   <el-table-column prop="equipmentIdName" label="设备名称" width="200" sortable="custom" />
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                   <el-table-column prop="factoryFloor" label="使用车间" min-width="140" sortable="custom" />
                   <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" sortable="custom" />
                   <el-table-column prop="cycle" label="周期" width="90" sortable="custom" />
@@ -500,10 +510,14 @@ import djrwForm from "@/views/dailyManagement/pointInspection/inspectionTask/For
 import djjlForm from "@/views/dailyManagement/pointInspection/inspectionRecords/Form.vue";
 import { checkmaintenanceList, RepairRequestList, equMaintenanceList } from '@/api/dailyManagement/Maintenance'
 import { getEquEquipmentInfo } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters } from 'vuex'
 export default {
+  mixins: [getProjectList],
   components: { wxForm, byrwForm, byjlForm, djrwForm, djjlForm },
   data() {
     return {
+      isProjectSwitch: '',
       djjlformVisible: false,
       djrwformVisible: false,
       byjlformVisible: false,
@@ -657,8 +671,14 @@ export default {
       // deep: true
     }
   },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+  },
   mounted() {
     this.switchStyle()
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     djjlhandleUserRelation(id, btntype) {
@@ -735,6 +755,7 @@ export default {
     getwxjlinfo() {
       this.wxjllistLoading = true
       this.wxjlorderForm.equipmentId = this.id
+      this.wxjlorderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       RepairRequestList(this.wxjlorderForm).then(res => {
         this.wxjldataTable = res.data.records.map(item => {
           if (item.frontPic) {
@@ -757,6 +778,7 @@ export default {
     getbyrwinfo() {
       this.byrwlistLoading = true
       this.byrworderForm.equipmentId = this.id
+      this.byrworderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       checkmaintenanceList(this.byrworderForm).then(res => {
         this.byrwdataTable = res.data.records
         this.byrwtotal = res.data.total
@@ -769,6 +791,7 @@ export default {
     getbyjlinfo() {
       this.byjllistLoading = true
       this.byjlorderForm.equipmentId = this.id
+      this.byjlorderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       equMaintenanceList(this.byjlorderForm).then(res => {
         this.byjldataTable = res.data.records.map(item => {
           if (item.picList && item.picList.length) item.picList = item.picList.map(o => { return JSON.parse(`{${o}}`) })
@@ -784,6 +807,7 @@ export default {
     getdjrwinfo() {
       this.djrwlistLoading = true
       this.djrworderForm.equipmentId = this.id
+      this.djrworderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       checkmaintenanceList(this.djrworderForm).then(res => {
         this.djrwdataTable = res.data.records
         this.djrwtotal = res.data.total
@@ -796,6 +820,7 @@ export default {
     getdjjlinfo() {
       this.djjllistLoading = true
       this.djjlorderForm.equipmentId = this.id
+      this.djjlorderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       equMaintenanceList(this.djjlorderForm).then(res => {
         this.djjldataTable = res.data.records.map(item => {
           if (item.picList && item.picList.length) item.picList = item.picList.map(o => { return JSON.parse(`{${o}}`) })

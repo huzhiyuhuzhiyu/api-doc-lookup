@@ -23,6 +23,11 @@
                         </el-input>
                       </el-form-item>
                     </el-col>
+                    <el-col :sm="8" :xs="24" v-if="isProjectSwitch==='1'">
+                      <el-form-item label="所属项目" prop="projectName">
+                        <el-input v-model="dataForm.projectName" placeholder="请输入所属项目" maxlength="20" :disabled="true" />
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="故障类型名称" prop="faultTypeName">
                         <ComSelect-page ref="ComSelect-page" v-model="dataForm.faultTypeName" :isdisabled="btnType=='look'" @change="submitCustomerProduct" :tableItems="ProductTableItems" title="故障类型" placeholder="请选择故障类型名称" :renderTree="false" :listMethod="parametersShelveslist" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" />
@@ -80,10 +85,14 @@ import UploadImg from "@/components/Generator/components/Upload/UploadImg.vue";
 import { addequEquipmentRepairKnowledge, updateequEquipmentRepairKnowledge, detailequEquipmentRepairKnowledge } from '@/api/dailyManagement/Maintenance'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getEquEquipmentList, parametersShelveslist } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters } from 'vuex'
 export default {
+  mixins: [getProjectList],
   components: { UploadImg },
   data() {
     return {
+      isProjectSwitch: '',
       isattachmentswitch: '',
       categoryId: '',
       formLoading: false,
@@ -93,6 +102,7 @@ export default {
         { prop: "name", label: "设备名称", type: 'input' },
       ],
       ProductListRequestObjs: {
+        projectId:'',
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -223,8 +233,12 @@ export default {
       tipsvisible: false
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.getBimBusinessDetail()
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     getBimBusinessDetail() {
@@ -272,9 +286,11 @@ export default {
       if (data && data.length) {
         this.dataForm.equipmentId = data[0].id
         this.dataForm.equipmentIdName = data[0].name
+        this.dataForm.projectName = data[0].all.projectName
       } else {
         this.dataForm.equipmentId = ''
         this.dataForm.equipmentIdName = ''
+        this.dataForm.projectName = ''
       }
     },
     //故障部位选择
@@ -299,6 +315,7 @@ export default {
     //   this.$refs['ComSelect-page'].openDialog()
     // },
     openSeleceProductDialogss() {
+      this.ProductListRequestObjs.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       this.$refs['ComSelect-pagesb'].openDialog()
     },
     goBack() {

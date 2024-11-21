@@ -65,7 +65,7 @@
                   :btnType="btnType === 'setLoss' ? 'look' : btnType" />
               </el-collapse-item>
               <el-collapse-item title="检验信息" name="inspectionInfo" class="orderInfo">
-                <JNPF-col v-model="dataForm" :tabContent="inspectionInfo"  :openMode="openMode" />
+                <JNPF-col v-model="dataForm" :tabContent="inspectionInfo" :openMode="openMode" />
               </el-collapse-item>
               <el-collapse-item title="检验项目" name="inspectionItem">
                 <el-row :gutter="30" style="padding: 0 0 10px 0;">
@@ -429,6 +429,8 @@ export default {
                   Number(this.dataForm.inspectionUnqualifiedQuantity)
                 ) {
                   callback(new Error('合格数量+不合格数量要等于检验不合格数量'))
+                } else {
+                  callback()
                 }
               },
               trigger: 'blur'
@@ -473,6 +475,8 @@ export default {
                   Number(this.dataForm.inspectionUnqualifiedQuantity)
                 ) {
                   callback(new Error('合格数量+不合格数量要等于检验不合格数量'))
+                } else {
+                  callback()
                 }
               },
               trigger: 'blur'
@@ -519,6 +523,8 @@ export default {
                   Number(this.dataForm.inspectionUnqualifiedQuantity)
                 ) {
                   callback(new Error('报废数量+返修数量要等于检验不合格数量'))
+                }else {
+                  callback()
                 }
               },
               trigger: 'blur'
@@ -559,6 +565,8 @@ export default {
                   Number(this.dataForm.inspectionUnqualifiedQuantity)
                 ) {
                   callback(new Error('报废数量+返修数量要等于检验不合格数量'))
+                }else {
+                  callback()
                 }
               },
               trigger: 'blur'
@@ -1078,12 +1086,12 @@ export default {
           // 获取详情
           detailQcUnqualifiedData(id)
             .then(async (res) => {
-              console.log(res,'res.data.attachmentList')
+              console.log(res, 'res.data.attachmentList')
               if (res.data.attachmentList.length !== 0) {
                 res.data.attachmentList.forEach((item) => {
-                  console.log(item,'ooo')
+                  console.log(item, 'ooo')
                   this.datafilelist.push({
-                    bimAttachments:item.bimAttachments,
+                    bimAttachments: item.bimAttachments,
                     name: item.document.fullName,
                     fileSize: item.document.fileSize,
                     filename: item.document.filePath,
@@ -1092,7 +1100,7 @@ export default {
                   })
                 })
               }
-              console.log(this.datafilelist,'this.datafilelist')
+              console.log(this.datafilelist, 'this.datafilelist')
               this.dataForm = res.data.unqualified
               this.dataForm.inspectionMethod = res.data.inspection.inspectionMethod
 
@@ -1169,7 +1177,7 @@ export default {
               if (res.data.attachmentList.length !== 0) {
                 res.data.attachmentList.forEach((item) => {
                   this.datafilelist.push({
-                    bimAttachments:item.bimAttachments,
+                    bimAttachments: item.bimAttachments,
                     name: item.document.fullName,
                     fileSize: item.document.fileSize,
                     filename: item.document.filePath,

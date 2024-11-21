@@ -211,7 +211,7 @@
                         <el-select v-model="scope.row.personId" placeholder="" clearable
                           style="width: 60%; display: none" class="applySelect" disabled>
                           <el-option
-                            v-for="(item, index) in scope.row.routingProResMap ? scope.row.routingProResMap.personnel : []"
+                            v-for="(item, index) in scope.row.workOrderResMap ? scope.row.workOrderResMap.personnel : []"
                             :key="index" :label="item.resourceName" :value="item.resourceId"></el-option>
                         </el-select>
                         <el-button @click="selectPersonnelFun(scope)" type="text" class="underline-button"
@@ -225,7 +225,7 @@
                         <el-select v-model="scope.row.workGroupId" placeholder="" class="applySelect" disabled
                           style="width: 70%; display: none">
                           <el-option
-                            v-for="(item, index) in scope.row.routingProResMap ? scope.row.routingProResMap.work_group : []"
+                            v-for="(item, index) in scope.row.workOrderResMap ? scope.row.workOrderResMap.work_group : []"
                             :key="index" :label="item.resourceName" :value="item.resourceId"></el-option>
                         </el-select>
                         <el-button @click="selectWorkgroupFun(scope)" type="text" class="underline-button"
@@ -240,7 +240,7 @@
                         <el-select v-model="scope.row.equipmentId" placeholder="请选择设备" clearable
                           style="width:70%;display:none" class="applySelect" disabled>
                           <el-option
-                            v-for="(item, index) in scope.row.routingProResMap ? scope.row.routingProResMap.device : []"
+                            v-for="(item, index) in scope.row.workOrderResMap ? scope.row.workOrderResMap.device : []"
                             :key="index" :label="item.resourceName + '(' + item.resourceCode + ')'"
                             :value="item.resourceId"></el-option>
                         </el-select>
@@ -733,11 +733,11 @@ export default {
     selectDeviceFun(scope) {
       console.log("设备", scope);
       this.totalData = []
-      if (scope.row.routingProResMap) {
-        if (scope.row.routingProResMap.device) {
+      if (scope.row.workOrderResMap) {
+        if (scope.row.workOrderResMap.device) {
           this.index = scope.$index
           this.currentDeviceId = scope.row.equipmentId
-          let deviceDataData = scope.row.routingProResMap.device
+          let deviceDataData = scope.row.workOrderResMap.device
           this.routingProResMapDiaFlag = true
           this.routingProResMapDiaTitle = "设备资源"
           let resIdList = []

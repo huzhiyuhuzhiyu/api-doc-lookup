@@ -167,7 +167,8 @@
                           </div>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="personId" v-if="dataForm.taskMethod != 'not_appoint'" label="人员" min-width="150">
+                      <el-table-column prop="personId" v-if="dataForm.taskMethod != 'not_appoint'" label="人员"
+                        min-width="150">
 
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.personId" placeholder="" clearable
@@ -182,7 +183,8 @@
                           </el-button>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="workGroupId" v-if="dataForm.taskMethod != 'not_appoint'" label="班组" min-width="150">
+                      <el-table-column prop="workGroupId" v-if="dataForm.taskMethod != 'not_appoint'" label="班组"
+                        min-width="150">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.workGroupId" placeholder="" class="applySelect" disabled
                             style="width: 70%; display: none">
@@ -196,7 +198,8 @@
                           </el-button>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="equipmentId" v-if="dataForm.taskMethod != 'not_appoint'" label="设备" min-width="150">
+                      <el-table-column prop="equipmentId" v-if="dataForm.taskMethod != 'not_appoint'" label="设备"
+                        min-width="150">
 
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.equipmentId" placeholder="请选择设备" clearable
@@ -261,10 +264,10 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="workOrderFlag" label="是否生成工单" min-width="100">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.workOrderFlag ? "是" : "否" }}</div>
-                    </template>
-                  </el-table-column>
+                        <template slot-scope="scope">
+                          <div>{{ scope.row.workOrderFlag ? "是" : "否" }}</div>
+                        </template>
+                      </el-table-column>
                     </JNPF-table>
 
                   </el-form>
@@ -988,7 +991,7 @@ export default {
     selectProductFun(data) {
       console.log("所选返工产品", data);
       this.dataForm = data
-      this.$set(this.dataForm,'taskMethod','appoint')
+      this.$set(this.dataForm, 'taskMethod', 'appoint')
       this.$set(this.dataForm, 'planDate', [])
       this.$set(this.dataForm, 'orderNo', this.codeConfig.number)
     },
@@ -1442,25 +1445,25 @@ export default {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
         this.dataFormTwo.data = res.data.routingLineList;
         res.data.routingLineList.forEach((item) => {
-         
-         if (item.routingProResMap) {
-           if (item.routingProResMap.personnel) {
-             this.$set(item,'personId',item.routingProResMap.personnel[0].resourceId)
-             this.$set(item,'personName',item.routingProResMap.personnel[0].resourceName)
-           }
-           if (item.routingProResMap.work_group) {
-             this.$set(item,'workGroupId',item.routingProResMap.work_group[0].resourceId)
-             this.$set(item,'workGroupName',item.routingProResMap.work_group[0].resourceName) 
-           }
-           if (item.routingProResMap.device) {
 
-             this.$set(item,'equipmentId',item.routingProResMap.device[0].resourceId)
-             this.$set(item,'equipmentName',item.routingProResMap.device[0].resourceName) 
+          if (item.routingProResMap) {
+            if (item.routingProResMap.personnel) {
+              this.$set(item, 'personId', item.routingProResMap.personnel[0].resourceId)
+              this.$set(item, 'personName', item.routingProResMap.personnel[0].resourceName)
+            }
+            if (item.routingProResMap.work_group) {
+              this.$set(item, 'workGroupId', item.routingProResMap.work_group[0].resourceId)
+              this.$set(item, 'workGroupName', item.routingProResMap.work_group[0].resourceName)
+            }
+            if (item.routingProResMap.device) {
 
-           }
-         } else {
-         }
-       });
+              this.$set(item, 'equipmentId', item.routingProResMap.device[0].resourceId)
+              this.$set(item, 'equipmentName', item.routingProResMap.device[0].resourceName)
+
+            }
+          } else {
+          }
+        });
       })
     },
     init(id, btnType) {
@@ -1531,32 +1534,42 @@ export default {
             this.dataForm.materialFlag = false
 
           }
-          for (let index = 0; index < this.dataFormTwo.data.length; index++) {
-            const item = this.dataFormTwo.data[index];
-            if(item.reportFlag){
+          if (this.naturalResourcesFlag) {
 
-              if (
-                !item.workGroupId &&
-                !item.personId &&item.processingType == "self_produced"
-              ) {
-                submitFlag = false;
-                this.$message({
-                  message: "第" + (index + 1) + "行班组、人员需要必填一项",
-                  type: "error",
-                });
-                break;
-              }
-            }else{
-              if(!item.personId && item.processingType == "self_produced"){
-                submitFlag = false;
-                this.$message({
-                  message: "第" + (index + 1) + "行工序需配置人员信息",
-                  type: "error",
-                });
-                break;
+            for (let index = 0; index < this.dataFormTwo.data.length; index++) {
+              const item = this.dataFormTwo.data[index];
+              if (item.reportFlag) {
+
+                if (
+                  !item.workGroupId &&
+                  !item.personId && item.processingType == "self_produced"
+                ) {
+                  submitFlag = false;
+                  this.$message({
+                    message: "第" + (index + 1) + "行班组、人员、设备需要必填一项",
+                    type: "error",
+                  });
+                  break;
+                }
+              } else {
+                if (!item.personId && item.processingType == "self_produced") {
+                  submitFlag = false;
+                  this.$message({
+                    message: "第" + (index + 1) + "行工序需配置人员信息",
+                    type: "error",
+                  });
+                  break;
+                }
               }
             }
+          } else {
+            this.dataFormTwo.data.forEach(item => {
+              item.personId = ""
+              item.equipmentId = ""
+              item.workGroupId = ""
+            });
           }
+
           this.dataFormTwo.data.forEach(item => {
             this.$set(item, 'productionQuantity', this.dataForm.productionQuantity)
             this.$set(item, 'planEndDate', this.dataForm.planEndDate)
@@ -1823,10 +1836,12 @@ $footerPadding: '10px';
   background-color: #5d9bd5;
   color: #fff;
 }
-::v-deep .el-range-editor{
-  height: 34px!important;
+
+::v-deep .el-range-editor {
+  height: 34px !important;
 }
-::v-deep .el-range-editor{
-  height: 34px!important;
+
+::v-deep .el-range-editor {
+  height: 34px !important;
 }
 </style>

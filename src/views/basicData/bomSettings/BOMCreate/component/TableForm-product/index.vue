@@ -245,6 +245,12 @@ export default {
           item.classTypeName = '内圈毛坯'
         } else if (item.classType === 'outer_ring_blank') {
           item.classTypeName = '外圈毛坯'
+        } else if (item.classType === 'inner_ring') {
+          item.classTypeName = '内圈'
+        } else if (item.classType === 'outer_ring') {
+          item.classTypeName = '外圈'
+        } else {
+
         }
       })
 

@@ -113,7 +113,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
-      tableFlag: false,
+      tableDataFlag: false,
       formVisible: false,
       superQueryVisible: false,
       superQueryJson: [
@@ -201,6 +201,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    this.tableDataFlag = true
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     // 查询类型 区分 无价格 无bom 无工艺
     this.listQuery.productWithout = this.searchType

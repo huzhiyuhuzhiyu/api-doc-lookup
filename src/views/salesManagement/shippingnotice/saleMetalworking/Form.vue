@@ -163,7 +163,8 @@
 
                       <el-table-column prop="productDrawingNo" label="品名规格" width="290" key="3" show-overflow-tooltip>
                       </el-table-column>
-
+                      <el-table-column prop="projectName" label="所属项目" min-width="120"  
+                      v-if="isProjectSwitch == 1" />
 
                       <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
 
@@ -393,7 +394,8 @@
 
                   <el-table-column prop="productDrawingNo" label="品名规格" width="290" key="3" show-overflow-tooltip>
                   </el-table-column>
-
+                  <el-table-column prop="projectName" label="所属项目" min-width="120"  
+                  v-if="isProjectSwitch == 1" />
                   <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
 
 
@@ -581,6 +583,8 @@
                   <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
                   <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                  v-if="isProjectSwitch == 1" />
                   <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                   <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
                   </el-table-column>
@@ -643,9 +647,10 @@ import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBimBusinessDetail } from '@/api/basicData/index'
-
+import { mapGetters, mapState } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
-  mixins: [busFlow],
+  mixins: [busFlow,getProjectList],
   components: {
     changeAddress, Process, recordList
   },
@@ -937,9 +942,11 @@ export default {
       endTime: 0,
       tableDataFlag: false,
       mainUnitFlag: null,
+      isProjectSwitch:null,
     }
   },
-  computed: {
+  computed: { 
+    ...mapGetters(['userInfo']),
     // 总发货数量
     totalDeliveryQuantity: function () {
       var totalNum = 0;
@@ -965,10 +972,12 @@ export default {
       return totalNum
     },
   },
-  created() {
-    // this.handleChange()
-    // this.getProvinceList() 
+ 
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag = true
     this.getbimProductAttributesFun()
+ 
   },
   mounted() {
     console.log(5555);

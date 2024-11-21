@@ -28,8 +28,17 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
+                    <el-col :sm="6" :xs="24" v-if="isProjectSwitch==1">
+                      <el-form-item label="所属项目" prop="projectId">
+                        <el-select v-model="planForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;" :disabled="userInfo.projectId!='1'"
+                          >
+                          <el-option v-for="(item, index) in projectIdData" :key="index" :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="计划日期" prop="planDate">
+                      <el-form-item label="计划日期" prop="planDate" class="date" style="margin-bottom: 20px;">
                         <el-date-picker v-model="planForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                           style="width: 100%;" start-placeholder="开始日期" @change="changDateFun" end-placeholder="结束日期"
                           clearable>
@@ -68,7 +77,8 @@
                       <div>{{ scope.row.bomId ? scope.row.drawingNo : "无BOM" }}</div>
                     </template>
                   </el-table-column>
-
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" 
+                  v-if="isProjectSwitch == 1" />
                   <el-table-column prop="mainUnit" label="单位" width="80" :key="89" />
                   <el-table-column prop="inventoryQuantity" label="可用库存数量" width="140" :key="8" />
                   <el-table-column prop="planQuantity" label="计划数量" width="140" :key="7">
@@ -218,6 +228,8 @@
                 <el-table-column prop="drawingNo" label="品名规格" sortable="custom" />
                 <el-table-column prop="name" label="产品名称" sortable="custom" />
                 <el-table-column prop="code" label="产品编码" sortable="custom" width="140"></el-table-column>
+                <el-table-column prop="projectName" label="所属项目" min-width="120" 
+                v-if="isProjectSwitch == 1" />
                 <el-table-column prop="mainUnit" label="单位" width="80"></el-table-column>
                 <el-table-column prop="inventoryQuantity" label="可用库存数量" sortable="custom"></el-table-column>
                 <el-table-column prop="bomId" label="是否有BOM" sortable="custom">
@@ -261,6 +273,7 @@ import { getCounryData, getCooperativeInfo, getCooperativeData, getscheduleList 
 import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表 
 import { mapGetters, mapState } from 'vuex'
 import { getBimBusinessDetail } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
 
 import {
   getbimProductAttributesList, getbimProductAttributes
@@ -268,6 +281,7 @@ import {
 import { log } from 'mathjs'
 
 export default {
+  mixins: [getProjectList],
 
 
   data() {
@@ -284,6 +298,7 @@ export default {
         planDate: [],
         planStartDate: "",
         planEndDate: "",
+        projectId:"",
       },
       codeConfig: {},//单据规则配置
       list1: [],
@@ -349,6 +364,9 @@ export default {
       selectRows: [],
       selectArr: [],
       customStyleData: 0,
+      isProjectSwitch:"",
+      isProjectSwitchFlag:null,
+      projectIdData:[],
     }
   },
   computed: {
@@ -357,7 +375,14 @@ export default {
 
   },
 
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
+    this.isProjectSwitchFlag=true
+    if(this.isProjectSwitch==1){
+      console.log(this.projectIdData);
+      this.planForm.projectId=this.userInfo.projectId
+    }
   },
   mounted() {
     this.getProductClassFun()
@@ -619,8 +644,9 @@ export default {
     },
     // 获取所有产品列表数据
     initData() {
-      this.listLoading = true
-      getProducts(this.ProductListRequestObj).then(listRes => {
+      this.listLoading = true 
+     this.ProductListRequestObj.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+     getProducts(this.ProductListRequestObj).then(listRes => {
         if (Array.isArray(listRes.data)) {
           this.allproductData = listRes.data
         } else {

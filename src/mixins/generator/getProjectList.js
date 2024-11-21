@@ -15,7 +15,8 @@ export default {
       this.projectIdData = res.data.records.map(item => {
         return {
           ...item,
-          label: item.name
+          label: item.name,
+          value: item.id,
         }
       })
     },

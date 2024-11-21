@@ -126,7 +126,7 @@
                     </el-button>
                   </el-form-item>
                 </el-col>
-                <el-button style="float: right;margin-right: 20px;" size="mini" type="primary" icon="icon-ym icon-ym-report-icon-search-setting" @click="detailVisible = true">更多查询</el-button>
+                <!-- <el-button style="float: right;margin-right: 20px;" size="mini" type="primary" icon="icon-ym icon-ym-report-icon-search-setting" @click="detailVisible = true">更多查询</el-button> -->
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -147,6 +147,11 @@
               <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="detailTableData" :data="detailTableData" @sort-change="sortChangeDetail" custom-column>
 
                 <el-table-column prop="name" label="任务名称" width="200" sortable="custom">
+                </el-table-column>
+                <el-table-column prop="overdueTime" label="超期时间" min-width="160">
+                  <template slot-scope="scope">
+                    <div><el-tag type="danger">{{scope.row.overdueTime||0}}天</el-tag></div>
+                  </template>
                 </el-table-column>
                 <el-table-column prop="cycleType" label="周期类型" width="120" fixed="right" align="center" sortable="custom">
                   <template slot-scope="scope">
@@ -176,11 +181,7 @@
                     </div>
                   </template>
                 </el-table-column> -->
-                <el-table-column prop="overdueTime" label="超期时间" min-width="160">
-                  <template slot-scope="scope">
-                    <div><el-tag type="danger">{{scope.row.overdueTime}}天</el-tag></div>
-                  </template>
-                </el-table-column>
+
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="200" />
                 <el-table-column prop="createByName" label="创建人" width="120" />
                 <el-table-column prop="remark" label="备注" min-width="300" />

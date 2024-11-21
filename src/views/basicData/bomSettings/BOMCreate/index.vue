@@ -10,7 +10,9 @@
               <div class="options" v-if="btnType !== 'look'">
                 <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">保存草稿</el-button>
                 <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')"
-                  :disabled="btnDisabled">保存并提交</el-button>
+                  :disabled="btnDisabled">
+                  保存并提交
+                </el-button>
                 <el-button @click="goBack" v-if="content">{{ $t('common.cancelButton') }}</el-button>
               </div>
             </div>
@@ -29,7 +31,7 @@
                           <el-collapse-item title="子件信息" name="productInfo">
                             <TableForm-product :value="linesList" @input="contentChanges" ref="tableForm"
                               :tableItems="linesListItems" :btnType="btnType" @addth="addOrDelLinesItem"
-                              @deleteth="addOrDelLinesItem" customStyle />
+                              @deleteth="addOrDelLinesItem" customStyle :projectId="this.dataForm.projectId" />
                           </el-collapse-item>
                         </el-collapse>
                       </el-tab-pane>
@@ -97,11 +99,15 @@ import { getLabel } from '@/utils/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 Vue.prototype.$getLabel = getLabel
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   name: 'BOMCreate',
   components: { TableFormProduct, Process },
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      projectIdData: [],
       btnDisabled: false,
       activeNames: ['productInfo', 'basicInfo'],
       datafilelist: [],
@@ -122,11 +128,23 @@ export default {
       },
       expands: true,
       firstId: '',
-      dataForm: {},
+      dataForm: {
+        projectId: ''
+      },
       documentStatus: '',
       dataFormItems: [
         // { prop: "code", label: "BOM编码", value: "", type: "input", itemRules: [{ required: true, trigger: "blur" }, { validator: this.formValidate('enCode'), trigger: 'blur' }], sm: 12 },
-        // { prop: "name", label: "BOM名称", value: "", type: "input", itemRules: [{ required: true, trigger: "blur" }], sm: 12 },
+        {
+          prop: 'projectId',
+          label: '所属项目',
+          value: '',
+          type: 'select',
+          options: [],
+          itemRules: [],
+          sm: 12,
+          itemDisabled: false,
+          render: true
+        },
         {
           prop: 'drawNo',
           label: '品名规格',
@@ -156,7 +174,7 @@ export default {
 
       linesListItems: [
         { prop: 'drawingNo', label: '子件规格', value: '', type: 'view', minWidth: 340 },
-        { prop: "classTypeName", label: "子件类型", value: "", type: 'view', minWidth: 160 },
+        { prop: 'classTypeName', label: '子件类型', value: '', type: 'view', minWidth: 160 },
         { prop: 'productCode', label: '子件编码', value: '', type: 'view', minWidth: 160 },
         {
           prop: 'qty',
@@ -249,7 +267,12 @@ export default {
       ],
       getProductWithOut, // 产品选择弹出框树状列表请求api
       ProductMethodArr: [
-        { label: '产品分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '', type: "material" } }
+        {
+          label: '产品分类',
+          classAttribute: '',
+          method: getcategoryTree,
+          requestObj: { classAttribute: '', type: 'material' }
+        }
       ], // 产品选择弹出框树状列表
       ProductListRequestObj: {
         createByName: '',
@@ -310,13 +333,47 @@ export default {
   mounted() {
     this.getclassAttributeList()
   },
-  created() {
-   
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
     this.dataFormItems.forEach((tc) => {
+      // 添加所属项目
+      if (tc.prop === 'projectId') {
+        console.log(this.isProjectSwitch, 'ojjj')
+        tc.options = this.projectIdData
+        if (this.isProjectSwitch === '1') {
+          console.log(this.userInfo.projectId, 'this.userInfo.projectId')
+          if (this.userInfo.projectId === '1') {
+            tc.options = tc.options.filter((item) => item.value !== '1')
+            tc.itemDisabled = false
+          } else {
+            this.dataForm.projectId = this.userInfo.projectId
+            this.ProductListRequestObj.projectId = this.dataForm.projectId
+            this.dataForm.drawNo = ''
+            this.linesList = []
+            tc.itemDisabled = true
+          }
+          tc.change = (val) => {
+            this.ProductListRequestObj.projectId = this.dataForm.projectId
+            this.dataForm.drawNo = ''
+            this.linesList = []
+          }
+
+          console.log(this.ProductListRequestObj, '4')
+          tc.itemRules.push({ required: true, trigger: 'change' })
+          console.log(tc, 'this.projectIdData')
+
+          console.log('000')
+        } else {
+          tc.render = false
+        }
+      }
       // 添加自定义表单元素方法和参数
       if (tc.type == 'custom') {
         // 若干需要选择的产品
         if (tc.prop === 'drawNo') {
+          console.log(tc, '1')
+          console.log(this.ProductListRequestObj, '3')
           tc.dialogTitle = '选择品名规格'
           tc.placeholder = '请选择产品'
           // tc.treeTitle = '产品分类'
@@ -329,6 +386,7 @@ export default {
           tc.listDataFormatting = this.listDataFormatting
           tc.change = this.ProductChange
           tc.paramsObj = { prop: tc.prop, oldVal: this.dataForm.drawNo }
+          tc.beforeOpen = this.ProductBeforeOpen
           // if (!tc.itemRules) { line.itemRules = [] }
           // tc.itemRules.push({
           //   validator: (rule, value, callback) => {
@@ -380,8 +438,8 @@ export default {
     this.getBimBusinessDetail()
   },
   methods: {
-
     async init(productId, btnType, approvalStatus, nodeData) {
+      console.log(666)
       this.visible = true
       this.formLoading = true
       this.btnType = btnType
@@ -630,7 +688,7 @@ export default {
         businessCode: 'attachment',
         configKey: 'fj_bomgl'
       }
-      getBimBusinessDetail(obj).then(res => {
+      getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
         this.categoryId = res.data.configValue2
       })
@@ -638,7 +696,7 @@ export default {
     async handleConfirm(submitModel) {
       this.btnLoading = true
       let submitFlag = true
-      this.btnDisabled = true;
+      this.btnDisabled = true
       // 校验表单
       let form_1 = this.$refs['dataForm'].$refs.main
       let valid_1 = await form_1.validate().catch(() => false)
@@ -646,7 +704,7 @@ export default {
         submitFlag = false
         this.jnpf.focusErrValidItem(form_1.fields)
         this.btnLoading = false
-        this.btnDisabled = false;
+        this.btnDisabled = false
       }
 
       // 校验表单表格（子数据列表）
@@ -656,7 +714,7 @@ export default {
         submitFlag = false
         this.jnpf.focusErrValidItem(form_2.fields)
         this.btnLoading = false
-        this.btnDisabled = false;
+        this.btnDisabled = false
       }
 
       // 判断是否有子件
@@ -666,20 +724,18 @@ export default {
       }
       if (this.dataForm.classAttribute == 'semi_finished') {
         if (this.linesList.length > 1) {
-          this.linesList.forEach(item => {
+          this.linesList.forEach((item) => {
             console.log(item, 'p')
 
             if (item.classType === 'inner_ring_blank' || item.classType === 'outer_ring_blank') {
               submitFlag = false
               this.btnLoading = false
-              this.btnDisabled = false;
+              this.btnDisabled = false
 
               return this.$message.error('半成品产品，创建BOM的子件，子件选择内外圈毛坯，只能有一个子件')
             }
           })
         }
-
-
       }
       if (submitFlag) {
         let index = this.linesList.findIndex((line) => line.productId === this.dataForm.productId)
@@ -720,7 +776,7 @@ export default {
         let loopBugRes = await checkLoopBug(dataObj).catch((err) => { })
         if (!loopBugRes) {
           this.btnLoading = false
-          this.btnDisabled = false;
+          this.btnDisabled = false
         } else if (loopBugRes.data.length) {
           let loopArr = []
           loopBugRes.data.forEach((item) => {
@@ -729,7 +785,7 @@ export default {
             temp ? loopArr.push(temp.name) : ''
           })
           this.$message.error('子件与BOM树产生冲突：' + loopArr.join('、'))
-          this.btnDisabled = false;
+          this.btnDisabled = false
           this.btnLoading = false
         } else {
           console.log(dataObj, 'dataObj')
@@ -756,16 +812,15 @@ export default {
                 this.submitmethodsTitle = '提交成功'
               }
               this.tipsvisible = true
-              this.btnDisabled = false;
+              this.btnDisabled = false
             })
             .catch(() => {
               this.btnLoading = false
-              this.btnDisabled = false;
+              this.btnDisabled = false
             })
         }
       } else {
         this.btnLoading = false
-
       }
       this.btnLoading = false
     },
@@ -800,9 +855,7 @@ export default {
       if (type === 'Object') {
         this.linesList.splice(data.$index, 1)
       } else {
-
         if (this.dataForm.classAttribute == 'semi_finished' && this.dataForm.productSource == 'out') {
-
           if (this.linesList.length == 0) {
             if (data.length > 1) return this.$message.error('半成品产品来源是外协时，创建BOM的子件，只能选择一个子件')
           } else {
@@ -832,7 +885,6 @@ export default {
       }
     },
     ProductChange(val, data, paramsObj) {
-
       this.$nextTick(() => {
         this.$refs['dataForm'].$children[0].validateField(paramsObj.prop)
       })
@@ -854,7 +906,6 @@ export default {
           path: '/basicData/bomSettings/productNoBomQuery'
         })
       }
-
     },
     goBom() {
       this.tipsvisible = false

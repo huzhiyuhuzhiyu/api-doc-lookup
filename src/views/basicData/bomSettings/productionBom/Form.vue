@@ -57,7 +57,7 @@
                     <el-collapse-item title="子件信息" name="productInfo">
                       <TableForm-product :value="linesList" @input="contentChanges" ref="tableForm"
                         :tableItems="linesListItems" :btnType="btnType" @addth="addOrDelLinesItem"
-                        @deleteth="addOrDelLinesItem" customStyle />
+                        @deleteth="addOrDelLinesItem" customStyle :projectId="dataForm.projectId" />
                     </el-collapse-item>
                   </el-collapse>
                 </el-tab-pane>
@@ -111,11 +111,13 @@ import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getProductWithOut } from '@/api/purchasingManagement/purchaseInquirySheet'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   components: { TableFormProduct, Process, recordList },
-  mixins: [busFlow],
+  mixins: [busFlow, getProjectList],
   data() {
     return {
+
       isattachmentswitch: '',
       categoryId: '',
       activeNames: ['productInfo', 'basicInfo'],
@@ -141,7 +143,7 @@ export default {
       documentStatus: '',
       dataFormItems: [
         // { prop: "code", label: "BOM编码", value: "", type: "input", itemRules: [{ required: true, trigger: "blur" }, { validator: this.formValidate('enCode'), trigger: 'blur' }], sm: 12 },
-        // { prop: "name", label: "BOM名称", value: "", type: "input", itemRules: [{ required: true, trigger: "blur" }], sm: 12 },
+        { prop: "projectId", label: "所属项目", value: "", type: "select", options: [], itemRules: [], sm: 12, itemDisabled: false, render: true },
         {
           prop: 'drawNo',
           label: '品名规格',
@@ -315,6 +317,7 @@ export default {
     }
   },
   created() {
+
     if (localStorage.getItem("productionBomFormFlag")) {
       let roleFlag = JSON.parse(localStorage.getItem('productionBomFormFlag'))
       console.log(roleFlag, 'roleFlag')
@@ -323,6 +326,7 @@ export default {
     }
     this.dataFormItems.forEach((tc) => {
       this.dataForm[tc.prop] = tc.value || '' // 设置默认value
+
       // 添加自定义表单元素方法和参数
       if (tc.type == 'custom') {
         // 若干需要选择的产品
@@ -406,6 +410,41 @@ export default {
       })
     },
     async init(id, btnType, approvalFlag, approvalStatus) {
+      await this.getProjectSwitch('system', 'project')
+      await this.getProjectList()
+      this.dataFormItems.forEach((tc) => {
+        // 添加所属项目
+        if (tc.prop === 'projectId') {
+          console.log(this.isProjectSwitch, 'ojjj')
+          tc.options = this.projectIdData
+          if (this.isProjectSwitch === '1') {
+            console.log(this.userInfo.projectId, 'this.userInfo.projectId')
+            if (this.userInfo.projectId === '1') {
+              tc.options = tc.options.filter((item) => item.value !== '1')
+              tc.itemDisabled = false
+            } else {
+              this.dataForm.projectId = this.userInfo.projectId
+              this.ProductListRequestObj.projectId = this.dataForm.projectId
+              this.dataForm.drawNo = ''
+              this.linesList = []
+              tc.itemDisabled = true
+            }
+            tc.change = (val) => {
+              this.ProductListRequestObj.projectId = this.dataForm.projectId
+              this.dataForm.drawNo = ''
+              this.linesList = []
+            }
+
+            console.log(this.ProductListRequestObj, '4')
+            tc.itemRules.push({ required: true, trigger: 'change' })
+            console.log(tc, 'this.projectIdData')
+
+            console.log('000')
+          } else {
+            tc.render = false
+          }
+        }
+      })
       console.log(approvalFlag, 'p')
       console.log(approvalStatus, 'approvalStatus')
       this.visible = true
@@ -592,6 +631,11 @@ export default {
         }
       } else if (this.btnType == 'waitAdd') {
         console.log(id, 'jjjj')
+        if (id.projectId) {
+          this.dataForm.projectId = id.projectId
+          this.ProductListRequestObj.projectId = this.dataForm.projectId
+        }
+
         this.dataForm.classAttribute = id.classAttribute
         this.dataForm.drawNo = id.drawingNo
         this.dataForm.productSource = id.productSource

@@ -112,10 +112,8 @@
 
                       <el-table-column prop="drawingNo" label="品名规格" min-width="300" key="drawingNo"
                         v-if="dataForm.documentType == 'inbound'"> </el-table-column>
-                      <el-table-column prop="productName" label="产品名称" min-width="160"
-                        v-if="dataForm.documentType == 'outbound' && productNameFlag == '1'" />
-                      <el-table-column prop="name" label="产品名称" min-width="160"
-                        v-if="dataForm.documentType == 'inbound' && productNameFlag == '1'" />
+                      <el-table-column prop="productName" label="产品名称" min-width="160" key="productName"
+                        v-if=" productNameFlag == '1'" /> 
                       <el-table-column prop="productCode" label="产品编码" width="140" key="productCode" />
                       <el-table-column prop="batchNumber" label="批次号" width="200" key="batchNumber"
                         v-if="dataForm.documentType == 'outbound'">

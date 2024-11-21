@@ -1688,6 +1688,14 @@ export default {
         this.dataForm.documentStatus = value
         console.log(valid, '[]')
         if (valid) {
+          if (!this.defaultAddress) {
+            this.$message({
+              message: '地址为空',
+              type: 'error',
+              duration: 1500
+            })
+            return
+          }
           if (!this.dataFormTwo.data.length) {
             this.$message({
               message: '至少有一条产品',

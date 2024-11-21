@@ -145,6 +145,11 @@
               <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="detailTableData" :data="detailTableData" @sort-change="sortChangeDetail" custom-column>
                 <el-table-column prop="name" label="任务名称" min-width="200" sortable="custom">
                 </el-table-column>
+                <el-table-column prop="overdueTime" label="超期时间" min-width="160">
+                  <template slot-scope="scope">
+                    <div><el-tag type="danger">{{scope.row.overdueTime||0}}天</el-tag></div>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="cycleType" label="周期类型" min-width="120" fixed="right" align="center" sortable="custom">
                   <template slot-scope="scope">
                     <div v-if="scope.row.cycleType == 'cycle'"><el-tag type="success">周期</el-tag></div>
@@ -168,11 +173,6 @@
                     <div v-if="scope.row.state == 'disabled'"><el-tag type="danger">禁用</el-tag></div>
                     <div v-else-if="scope.row.state == 'enable'"><el-tag type="success">启用</el-tag>
                     </div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="overdueTime" label="超期时间" min-width="160">
-                  <template slot-scope="scope">
-                    <div><el-tag type="danger">{{scope.row.overdueTime}}天</el-tag></div>
                   </template>
                 </el-table-column>
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />

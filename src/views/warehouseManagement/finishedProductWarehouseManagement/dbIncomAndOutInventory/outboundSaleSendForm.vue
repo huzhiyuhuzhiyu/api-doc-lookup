@@ -61,6 +61,12 @@
                                 @change="changeWarehousex"></ComSelect-list>
                             </el-form-item>
                           </el-col>
+                          <el-col :sm="6" :xs="24">
+                            <el-form-item label="单据日期" prop="orderDate">
+                              <el-date-picker v-model="dataForm.orderDate" type="date" :clearable="false" :disabled="btnType == 'look' ? true : false" value-format="yyyy-MM-dd"
+                                style="width: 100%;" placeholder="请选择单据日期"></el-date-picker>
+                            </el-form-item>
+                          </el-col>
                           <el-col :sm="12" :xs="24">
                             <el-form-item label="备注" prop="remark">
                               <el-input v-model="dataForm.remark" placeholder="请输入备注"
@@ -174,52 +180,62 @@
                 </el-tab-pane>
               </el-tabs>
               <el-collapse v-model="activeNames" v-else>
-                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" style="margin-top: 5px;">
-                  <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
-                    <el-row :gutter="30" class="custom-row">
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="单号" prop="orderNo">
-                          <el-input v-model="dataForm.orderNo" placeholder="请输入单号"
-                            :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false"
-                            maxlength="300" />
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="业务单号" prop="sourceNo">
-                          <el-input v-model="dataForm.sourceNo" placeholder="请输入业务单号" disabled maxlength="300" />
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="业务类型" prop="businessType">
-                          <el-select v-model="dataForm.businessType" placeholder="请选择业务类型" style="width: 100%;"
-                            @change="selectSourceTypeFun" disabled>
-                            <el-option v-for="(item, index) in sourceTypeList" :key="index" :label="item.label"
-                              :value="item.value"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="客户" prop="cooperativePartnerId">
-                          <el-input v-model="dataForm.partnerName" placeholder="请选择所属客户" disabled @focus="openDialog">
-                          </el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="仓库" prop="warehouseName">
-                          <ComSelect-list :requestObj="warehouseRequestObj" :dialogTitle="'选择仓库'"
-                            :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName" :method="getWarehouseList"
-                            placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="12" :xs="24">
-                        <el-form-item label="备注" prop="remark">
-                          <el-input v-model="dataForm.remark" placeholder="请输入备注"
-                            :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2" maxlength="200" />
-                        </el-form-item>
-                      </el-col>
-                    </el-row>
-                  </el-form>
-                </el-collapse-item>
+                    <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo"  style="margin-top: 5px;">
+                      <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px"
+                        label-position="top">
+                        <el-row :gutter="30" class="custom-row">
+                          <el-col :sm="6" :xs="24">
+                            <el-form-item label="单号" prop="orderNo">
+                              <el-input v-model="dataForm.orderNo" placeholder="请输入单号"
+                                :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false"
+                                maxlength="300" />
+                            </el-form-item>
+                          </el-col>
+                          <el-col :sm="6" :xs="24">
+                            <el-form-item label="业务单号" prop="sourceNo">
+                              <el-input v-model="dataForm.sourceNo" placeholder="请输入业务单号" disabled maxlength="300" />
+                            </el-form-item>
+                          </el-col>
+                          <el-col :sm="6" :xs="24">
+                            <el-form-item label="业务类型" prop="businessType">
+                              <el-select v-model="dataForm.businessType" placeholder="请选择业务类型" style="width: 100%;"
+                                @change="selectSourceTypeFun" disabled>
+                                <el-option v-for="(item, index) in sourceTypeList" :key="index" :label="item.label"
+                                  :value="item.value"></el-option>
+                              </el-select>
+                            </el-form-item>
+                          </el-col>
+                          <el-col :sm="6" :xs="24">
+                            <el-form-item label="客户" prop="cooperativePartnerId">
+                              <el-input v-model="dataForm.partnerName" placeholder="请选择所属客户" disabled
+                                @focus="openDialog">
+                              </el-input>
+                            </el-form-item>
+                          </el-col>
+                          <el-col :sm="6" :xs="24">
+                            <el-form-item label="仓库" prop="warehouseName">
+                              <ComSelect-list :requestObj="warehouseRequestObj" :dialogTitle="'选择仓库'"
+                                :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName"
+                                :method="getWarehouseList" placeholder="请选择仓库"
+                                @change="changeWarehousex"></ComSelect-list>
+                            </el-form-item>
+                          </el-col>
+                          <el-col :sm="6" :xs="24">
+                            <el-form-item label="单据日期" prop="orderDate">
+                              <el-date-picker v-model="dataForm.orderDate" type="date" :clearable="false" :disabled="btnType == 'look' ? true : false" value-format="yyyy-MM-dd"
+                                style="width: 100%;" placeholder="请选择单据日期"></el-date-picker>
+                            </el-form-item>
+                          </el-col>
+                          <el-col :sm="12" :xs="24">
+                            <el-form-item label="备注" prop="remark">
+                              <el-input v-model="dataForm.remark" placeholder="请输入备注"
+                                :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2"
+                                maxlength="200" />
+                            </el-form-item>
+                          </el-col>
+                        </el-row>
+                      </el-form>
+                    </el-collapse-item>
 
 
 
@@ -485,7 +501,8 @@ export default {
         documentType: "",
         id: "",
         warehouseType: "",
-        approvalFlag: false
+        approvalFlag: false,
+        orderDate:this.jnpf.getToday()
       },
       customerInfo: {},//所选客户信息
       getWarehouseList,
@@ -510,6 +527,9 @@ export default {
         ],
         businessType: [
           { required: true, message: '业务类型不能为空', trigger: 'change' }
+        ],
+        orderDate: [
+          { required: true, message: '单据日期不能为空', trigger: 'change' }
         ],
         inspectionResults: [{ required: true, message: "检验标志不能为空", trigger: 'change' }],
 
@@ -1050,6 +1070,7 @@ export default {
         id: "",
         warehouseType: "",
         approvalFlag: false,
+        orderDate:this.jnpf.getToday()
       }
       this.productData = []
       this.$refs.dataForm.resetFields()

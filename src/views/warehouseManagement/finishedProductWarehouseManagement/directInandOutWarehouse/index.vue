@@ -81,6 +81,12 @@
                             </el-select>
                           </el-form-item>
                         </el-col>
+                        <el-col :sm="6" :xs="24">
+                            <el-form-item label="单据日期" prop="orderDate">
+                              <el-date-picker v-model="dataForm.orderDate" type="date" :clearable="false" :disabled="btnType == 'look' ? true : false" value-format="yyyy-MM-dd"
+                                style="width: 100%;" placeholder="请选择单据日期"></el-date-picker>
+                            </el-form-item>
+                          </el-col>
                         <el-col :sm="12" :xs="24">
                           <el-form-item label="备注" prop="remark">
                             <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" :rows="2"
@@ -644,6 +650,7 @@ export default {
         cooperativePartnerId: "",
         approvalFlag: false,
         weightFlag: false,
+        orderDate:this.jnpf.getToday()
       },
       weightFlagList: [
         { label: "是", value: true },
@@ -660,7 +667,9 @@ export default {
         documentType: [{ required: true, message: "单据类型不能为空", trigger: 'change' }],
 
         inspectionResults: [{ required: true, message: "检验结果不能为空", trigger: 'change' }],
-
+        orderDate: [
+          { required: true, message: '单据日期不能为空', trigger: 'change' }
+        ],
         orderNo: [{ required: true, message: "请输入单号", trigger: 'blur' }],
         cooperativePartnerIdText: [
           { required: true, message: '客户不能为空', trigger: 'change' }
@@ -1547,7 +1556,8 @@ export default {
         id: "",
         warehouseType: "",
         inspectionResults: "",
-        approvalFlag: false
+        approvalFlag: false,
+        orderDate:this.jnpf.getToday()
       }
       this.productData = []
       

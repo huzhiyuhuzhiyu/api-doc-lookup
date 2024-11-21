@@ -123,7 +123,7 @@
             </template>
 
           </el-table-column>
-
+          <el-table-column prop="orderDate" label="单据日期" min-width="120" />
           <el-table-column prop="documentStatus" label="单据状态" min-width="120">
             <template slot-scope="scope">
               <el-tag type="warning" v-if="scope.row.documentStatus == 'draft'">草稿</el-tag>
@@ -346,7 +346,7 @@ export default {
           column: ""
         }, {
           asc: false,
-          column: "create_time"
+          column: "order_date"
         }],
       },
       listQuery: {},
@@ -359,6 +359,14 @@ export default {
           prop: 'orderNo',
           label: "单号",
           type: 'input'
+        },
+        {
+          prop: 'orderDate',
+          label: '单据日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '单据开始日期',
+          endPlaceholder: '单据结束日期',
         },
         {
           prop: 'businessType',

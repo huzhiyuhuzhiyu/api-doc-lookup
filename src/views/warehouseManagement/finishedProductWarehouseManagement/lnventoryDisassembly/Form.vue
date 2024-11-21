@@ -16,7 +16,7 @@
               <el-collapse-item title="基本信息" name="basicInfo">
                 <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                   <el-row :gutter="30" class="custom-row">
-                    <el-col :sm="6" :xs="24">
+                    <el-col :sm="8" :xs="24">
                       <el-form-item label="拆卸单号" prop="orderNo">
                         <el-input v-model="dataForm.orderNo" placeholder="请输入拆卸单号" :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
                       </el-form-item>
@@ -183,7 +183,7 @@
           <el-collapse-item title="基本信息" name="basicInfo">
             <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
               <el-row :gutter="30" class="custom-row">
-                <el-col :sm="6" :xs="24">
+                <el-col :sm="8" :xs="24">
                   <el-form-item label="拆卸单号" prop="orderNo">
                     <el-input v-model="dataForm.orderNo" placeholder="请输入拆卸单号" :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
                   </el-form-item>

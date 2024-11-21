@@ -2146,8 +2146,8 @@ export default {
           this.outArr.forEach((item, index) => {
             item.materialDemandId = item.id;
             // this.outArrList[index].materialDemandId = item.id;
-            item.deliveryDates = item.deliveryDate;
-            item.deliveryDate = "";
+            this.$set(item,'deliveryDates',item.deliveryDate)
+            // item.deliveryDate = "";
             item.poolType = "external";
             item.outputQuantity = Number(item.outputQuantity);
             item.issuedQuantity = Number(item.issuedQuantity); 
@@ -2205,9 +2205,9 @@ export default {
 
           this.purchaseArr.forEach((item, index) => {
             item.materialDemandId = item.id;
-            // this.purchaseArrList[index].materialDemandId = item.id;
-            item.deliveryDates = item.deliveryDate;
-            item.deliveryDate = "";
+            // this.purchaseArrList[index].materialDemandId = item.id; 
+            this.$set(item,'deliveryDates',item.deliveryDate)
+            // item.deliveryDate = "";
             item.poolType = "procure";
             item.outputQuantity = Number(item.outputQuantity);
             item.issuedQuantity = Number(item.issuedQuantity);

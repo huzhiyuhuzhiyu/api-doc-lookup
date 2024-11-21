@@ -147,6 +147,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         orderState: "not_finish",
+        approvalStatus:'ok',
         orderItems: [{
           asc: false,
           column: ""

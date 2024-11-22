@@ -9,6 +9,8 @@
         <JNPF-table ref="popupTitleData" v-loading="listLoading" border :data="popupList">
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" />
           <el-table-column prop="productCode" label="产品编码" width="130"></el-table-column>
+          <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+          v-if="isProjectSwitch == 1" />
           <el-table-column prop="mainUnit" label="单位" width="80" />
           <el-table-column prop="qty" label="数量" />
           <el-table-column prop="lossRate" label="损耗率(%)" />
@@ -25,17 +27,27 @@ import {
   BOMLineList,
   getDemandList
 } from "@/api/calculationList/MRPOperation";
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
+  mixins:[getProjectList],
+
   data() {
     return {
       pageTitle: "",
       popupList: [],
       listLoading: false,
+      isProjectSwitch:'',
+
     }
   },
-  watch: {
+  computed: {
+    ...mapGetters(['userInfo'])
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project') 
+  
+   
   },
   mounted() {
 

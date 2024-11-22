@@ -71,7 +71,7 @@
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head" style="padding:8px">
+        <div class="JNPF-common-head" style="padding:8px" v-loading="listLoading">
 
           <div>
             <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
@@ -92,7 +92,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableData" @sort-change="sortChange" custom-column
+        <JNPF-table v-if="tableDataFlag" ref="tableForm" :data="tableData" @sort-change="sortChange" custom-column
           fixedNO @selection-change="selectionChange" :element-loading-text="loadingText"
           :setColumnDisplayList="columnList">
           <el-table-column prop="drawNo" label="品名规格" min-width="600" sortable="custom" />
@@ -103,6 +103,7 @@
               </el-link>
             </template>
           </el-table-column>
+          <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="pickingWay" label="领料方式" min-width="180">
             <template slot-scope="{ row }">
               <template v-if="row.pickingWay == 'production_order'">
@@ -167,11 +168,15 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   name: 'BOMHistory',
   components: { Form, ExportForm, SuperQuery },
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      tableFlag: false,
       filterText: '',
       superQueryVisible: false,
       superQueryJson: [
@@ -274,7 +279,9 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.tableDataFlag = true
     this.getcategoryTree()
     if (localStorage.getItem("BOMHistoryFlag")) {
       let roleFlag = JSON.parse(localStorage.getItem('BOMHistoryFlag'))
@@ -351,6 +358,10 @@ export default {
     },
     initData() {
       this.listLoading = true
+      console.log(this.isProjectSwitch)
+      if (this.isProjectSwitch === '1') {
+        this.listQuery.projectId = this.userInfo.projectId
+      }
       if (this.listQuery.startAndEndTime && this.listQuery.startAndEndTime.length > 0) {
         this.listQuery.startTime = this.listQuery.startAndEndTime[0].replace(/ 0(?!0)/g, ' ')
         this.listQuery.endTime = this.listQuery.startAndEndTime[1].replace(/ 0(?!0)/g, ' ')

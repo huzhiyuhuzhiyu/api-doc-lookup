@@ -1040,11 +1040,10 @@ import { getBimBusinessDetail } from '@/api/basicData/index'
 import Form from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
-  mixins: [busFlow],
+  mixins: [busFlow,getProjectList],
   components: {
     ExportForm, Process, recordList, Form
   },
-  mixins: [getProjectList],
   data() {
     return {
       formVisible: false,

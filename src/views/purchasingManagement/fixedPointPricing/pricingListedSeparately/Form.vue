@@ -78,6 +78,8 @@
                       id="table">
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" /> -->
                       <!-- <el-table-column type="index" key="index" width="60" label="序号" align="center" fixed="left" /> -->
+                      <el-table-column prop="projectName" label="所属项目" width="120"
+                        v-if="isProjectSwitch === '1'"></el-table-column>
                       <el-table-column prop="drawingNo" key="drawingNo" label="品名规格" min-width="180">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'"
@@ -100,16 +102,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="deputyUnit" key="deputyUnit" label="副单位" width="100">
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'"
-                            :rules="productRules.deputyUnit">
-                            <div class="viewData">
-                              <span>{{ scope.row.deputyUnit }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
+
 
                       <el-table-column prop="price" key="price" label="协议价" min-width="140">
                         <template slot="header">
@@ -372,6 +365,8 @@
               <el-form :model="dataFormTwo" ref="productForm" style="margin: 0 -12px;">
                 <JNPF-table style="border: 1px solid #e3e7ee;" @selection-change="handeleProductInfoData"
                   :hasC="type != 'look'" hasNO fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table">
+                  <el-table-column prop="projectName" label="所属项目" width="120"
+                    v-if="isProjectSwitch === '1'"></el-table-column>
                   <el-table-column prop="drawingNo" key="drawingNo" label="品名规格" min-width="180">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'" :rules="productRules.drawingNo">
@@ -674,15 +669,17 @@ import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowE
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
-
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   components: {
     Process,
     recordList
   },
-  mixins: [busFlow],
+  mixins: [busFlow, getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       flowTemplateJson: {},
       flowData: {},
       approvalFlag: false, // 待办事宜等页面 需要
@@ -976,7 +973,29 @@ export default {
   mounted() {
     this.getclassAttributeList()
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
+    this.tableDataFlag = true
+    console.log(this.isProjectSwitch)
+    if (this.isProjectSwitch === '1') {
+      this.ProductTableItems = [
+        { prop: 'drawingNo', label: '品名规格', minWidth: 140 },
+        { prop: 'code', label: '产品编码', minWidth: 140 },
+        { prop: 'projectName', label: '所属项目', minWidth: 140 },
+        { prop: 'classAttributeName', label: '所属分类', minWidth: 140 },
+        { prop: 'mainUnit', label: '单位' },
+        { prop: 'colour', label: '颜色' }
+      ]
+    } else {
+      this.ProductTableItems = [
+        { prop: 'drawingNo', label: '品名规格', minWidth: 140 },
+        { prop: 'code', label: '产品编码', minWidth: 140 },
+        { prop: 'classAttributeName', label: '所属分类', minWidth: 140 },
+        { prop: 'mainUnit', label: '单位' },
+        { prop: 'colour', label: '颜色' }
+      ]
+    }
     this.getBimBusinessDetail()
     this.getDeputyUnit()
   },
@@ -1063,6 +1082,7 @@ export default {
         let list = data.map((item) => item.all)
         list.forEach((item, index) => {
           selectArr.push({
+            projectName: item.projectName, // 所属项目
             productSource: item.productSource, // 产品来源 采购
             productsId: item.id, // 产品id
             productsName: item.name, // 产品名称

@@ -61,6 +61,7 @@
         <JNPF-table v-if="tableFlag" @selection-change="handeleProductInfoData" hasC highlight-current-row
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
           :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
+          <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
           <!-- <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" /> -->
           <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
@@ -173,11 +174,17 @@ import { getclassAttributeList } from '@/api/masterDataManagement/index'
 import { getBimBusinessDetail } from '@/api/basicData/index'
 import { getLabel } from '@/utils/index'
 Vue.prototype.$getLabel = getLabel
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   name: 'purchasingDemandPool',
   components: { JNPFForm, QuiryForm, fixedForm, SuperQuery },
+  mixins: [getProjectList],
+
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
       superQueryVisible: false,
@@ -414,7 +421,11 @@ export default {
   mounted() {
     this.getProductClassFun()
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
+    this.tableDataFlag = true
+   
     this.getDeputyUnit()
     this.initData()
   },

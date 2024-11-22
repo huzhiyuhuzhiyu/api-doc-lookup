@@ -1,6 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-left treeBox" v-if="!formVisible" :style="leftFlag ? 'width:15px;background:#fff' : ''">
+    <div class="JNPF-common-layout-left treeBox" v-if="!formVisible"
+      :style="leftFlag ? 'width:15px;background:#fff' : ''">
       <div class="JNPF-common-title" v-if="!leftFlag">
         <h2>工序分类</h2>
         <span class="options">
@@ -87,7 +88,7 @@
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head" style="padding:8px">
+        <div class="JNPF-common-head" style="padding:8px" v-loading="listLoading">
           <topOpts @add="addOrUpdateHandle('', 'add')">
             <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
               icon="el-icon-download" @click="exportForm">
@@ -107,7 +108,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
+        <JNPF-table v-if="tableDataFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           :hasNO="true" ref="listTable" :setColumnDisplayList="columnList">
           <el-table-column prop="code" label="工序编码" width="120" sortable="custom">
             <template slot-scope="scope">
@@ -118,6 +119,7 @@
           </el-table-column>
           <el-table-column prop="name" label="工序名称" width="140" sortable="custom" />
           <el-table-column prop="productCategoryIdText" label="工序分类" width="130" sortable="custom" />
+          <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="unitPrice" label="正品单价" width="100" />
           <el-table-column prop="rejectUnitPrice" label="次品单价" width="100" />
           <el-table-column prop="scrapUnitPrice" label="废品单价" width="100" />
@@ -183,11 +185,15 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   name: 'basicProcessSettings',
   components: { JNPFForm, ExportForm, SuperQuery },
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       searchList: [
         { field: 'code', fieldValue: '', label: '工序编码', symbol: 'like', searchType: 1, width: 120 },
         { field: 'name', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
@@ -314,7 +320,9 @@ export default {
   mounted() {
     this.getProductClassFun()
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.tableDataFlag = true
     this.superForm = this.listQuery
     // this.initData()
     this.getcategoryTree()
@@ -693,6 +701,9 @@ export default {
     },
     initData() {
       this.listLoading = true
+      if (this.isProjectSwitch === '1') {
+        this.superForm.projectId = this.userInfo.projectId
+      }
       getBimProcessList(this.superForm)
         .then((res) => {
           console.log(res);

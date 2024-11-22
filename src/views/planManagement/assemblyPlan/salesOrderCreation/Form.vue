@@ -30,11 +30,21 @@
                             maxlength="300" />
                         </el-form-item>
                       </el-col>
+
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="计划类型" prop="planType">
                           <el-select v-model="planForm.planType" placeholder="请选择计划类型" clearable style="width: 100%;"
                             disabled>
                             <el-option v-for="(item, index) in planTypeList" :key="index" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24" v-if="isProjectSwitch == 1">
+                        <el-form-item label="所属项目" prop="projectId">
+                          <el-select v-model="planForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;"
+                            :disabled="userInfo.projectId != '1'" @change="changeProject">
+                            <el-option v-for="(item, index) in projectIdDataList" :key="index" :label="item.label"
                               :value="item.value"></el-option>
                           </el-select>
                         </el-form-item>
@@ -145,11 +155,12 @@
                               oninput="value=value.replace(/^(0+)|[^\d]+/g,'')">
                             </el-input>
 
-                            <span class="lab_t" v-if="btnType!='look'">可用库存数量</span>
-                            <span v-if="btnType!='look'" class="pointer" @click="viewAvailableQuantity()">{{ planForm.availableQuantity
+                            <span class="lab_t" v-if="btnType != 'look'">可用库存数量</span>
+                            <span v-if="btnType != 'look'" class="pointer" @click="viewAvailableQuantity()">{{
+                              planForm.availableQuantity
                               }}</span>
 
-                            <span 
+                            <span
                               :style="planForm.productSource == 'assemble' || planForm.productSource == 'produce' ? 'background:#3fb9f8;color:#fff' : ''"
                               class="lab_t">生产数量</span>
                             <el-input class="ipt2" v-model="planForm.productionQuantity" @blur="watchProduce"
@@ -172,7 +183,7 @@
                           </el-form-item>
                         </div>
                       </el-col>
-                 
+
 
                     </el-row>
 
@@ -194,6 +205,7 @@
                       </el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="360" :key="4"
                         show-overflow-tooltip />
+                      <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                       <el-table-column prop="deliveryDate" label="交货日期" width="150"
                         v-if="planForm.planType == 'order_plan'" :key="8" />
                       <el-table-column prop="mainUnit" label="单位" width="100" :key="121"></el-table-column>
@@ -250,7 +262,6 @@ import {
   getProvinceList,
 } from '@/api/system/province'
 import { getbomOrderDetail } from '@/api/salesManagement/assemblyOrders'
-import { mapGetters, mapState } from 'vuex'
 import { BillNumber } from '@/api/system/billRule'
 import { addPlanList, updatePlanList } from '@/api/calculationList/calculationList.js'
 import Form from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
@@ -258,8 +269,10 @@ import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 import { getBimBusinessDetail } from '@/api/basicData/index'
-
+import { mapGetters, mapState } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
+  mixins: [getProjectList],
 
   components: {
     BomForm,
@@ -360,6 +373,9 @@ export default {
         planDate: [
           { required: true, message: '计划日期不能为空', trigger: 'change' }
         ],
+        projectId: [
+          { required: true, message: '所属项目不能为空', trigger: 'change' }
+        ],
         qualificationRate: [
           { required: true, message: '合格率不能为空', trigger: 'blur' }
         ],
@@ -376,14 +392,31 @@ export default {
         deliveryDate: [{ required: true, message: '交货日期不能为空', trigger: 'change' }],
         // paymentMethod: [{ required: true, message: '付款方式不能为空', trigger: 'change' }],
         // paymentCycle: [{ required: true, message: '付款周期不能为空', trigger: 'change' }],
+
       },
+      isProjectSwitch: "",
+      isProjectSwitchFlag: null,
+      projectIdDataList: [],
 
-
+      originalData: [],
     }
   },
 
 
-  created() {
+  computed: {
+    ...mapGetters(['userInfo']),
+    ...mapState('user', ['token']),
+
+  },
+
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
+    this.isProjectSwitchFlag = true
+    if (this.isProjectSwitch == 1) {
+
+      this.planForm.projectId = this.userInfo.projectId == 1 ? "" : this.userInfo.projectId
+    }
   },
   mounted() {
     this.getBimBusinessDetail()
@@ -391,6 +424,15 @@ export default {
   beforeDestroy() {
   },
   methods: {
+    changeProject() {
+      console.log(this.dataForm.projectId);
+      this.productData = this.originalData.filter(item => item.id === this.planForm.projectId);
+      this.planForm.planQuantity = this.productData.reduce((acc, item) => {
+        return acc + Number(item.num); // 使用 Number() 将字符串转换为数字  
+      }, 0);
+      this.planForm.relaxQuantity = this.jnpf.numberFormat(this.jnpf.math('multiply', [100, this.jnpf.numberFormat(this.jnpf.math('divide', [this.planForm.planQuantity, this.planForm.qualificationRate]), 6)]), 6)
+
+    },
     // 查看库存信息
     viewAvailableQuantity() {
       this.formVisible = true
@@ -524,8 +566,8 @@ export default {
           this.planForm.finalPlanQuantity = this.planForm.productionQuantity = 0
         } else {
         }
-          this.planForm.utilizationQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity]))
-          if (this.planForm.utilizationQuantity < 0) {
+        this.planForm.utilizationQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity]))
+        if (this.planForm.utilizationQuantity < 0) {
           this.planForm.utilizationQuantity = 0
           this.planForm.finalPlanQuantity = this.planForm.productionQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity, this.planForm.utilizationQuantity]), 6)
         }
@@ -547,12 +589,12 @@ export default {
       if (this.planForm.productSource == 'out') {
 
         if (this.planForm.availableQuantity >= this.planForm.relaxQuantity) {
-          this.planForm.utilizationQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity,  this.planForm.purchaseQuantity,this.planForm.outsourcingQuantity]))
+          this.planForm.utilizationQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity]))
           this.planForm.outsourcingQuantity = 0
         } else {
         }
-          this.planForm.utilizationQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity,  this.planForm.purchaseQuantity,this.planForm.outsourcingQuantity]))
-          if (this.planForm.utilizationQuantity < 0) {
+        this.planForm.utilizationQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity]))
+        if (this.planForm.utilizationQuantity < 0) {
           this.planForm.utilizationQuantity = 0
           this.planForm.outsourcingQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
         }
@@ -629,19 +671,19 @@ export default {
       } else {
         if (this.planForm.productSource == 'assemble' || this.planForm.productSource == 'produce') {
 
-     
-            this.planForm.finalPlanQuantity = this.planForm.productionQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity, this.planForm.utilizationQuantity]), 6)
+
+          this.planForm.finalPlanQuantity = this.planForm.productionQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity, this.planForm.utilizationQuantity]), 6)
         }
 
         if (this.planForm.productSource == 'purchase') {
 
-        
-            this.planForm.purchaseQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.utilizationQuantity]), 6)
+
+          this.planForm.purchaseQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.utilizationQuantity]), 6)
         }
         if (this.planForm.productSource == 'out') {
 
-         
-            this.planForm.outsourcingQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+
+          this.planForm.outsourcingQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
         }
       }
     },
@@ -752,6 +794,8 @@ export default {
         });
         console.log(obj);
         this.productData = productData
+        this.originalData = JSON.parse(JSON.stringify(productData))
+
         getProductInventory(obj).then(res => {
           console.log("产品库存", res);
           this.planForm.availableQuantity = res.data.availableQuantity
@@ -890,8 +934,8 @@ export default {
             obj.plan.relaxQuantity = this.planForm.relaxQuantity
             obj.plan.remark = this.planForm.remark
             obj.plan.id = this.planForm.id
-            obj.plan.outsourcingQuantity=this.planForm.outsourcingQuantity
-            obj.plan.productionQuantity=this.planForm.productionQuantity
+            obj.plan.outsourcingQuantity = this.planForm.outsourcingQuantity
+            obj.plan.productionQuantity = this.planForm.productionQuantity
             obj.plan.utilizationQuantity = this.planForm.utilizationQuantity
             obj.plan.sealingCoverTyping = this.productData[0].sealingCoverTyping
             obj.plan.vibrationLevel = this.productData[0].vibrationLevel

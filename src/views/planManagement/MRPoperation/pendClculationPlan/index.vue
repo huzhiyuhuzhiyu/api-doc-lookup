@@ -41,7 +41,7 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main"  v-loading="listLoading">
           <div class="JNPF-common-head">
             <topOpts @add="calculationFun()" :addText="'计算'">
               <el-button type="primary" size="mini" icon="el-icon-download"
@@ -61,7 +61,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
+          <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true"   v-if="isProjectSwitchFlag"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column
             @selection-change="handleSelectionChange" hasC>
             <el-table-column prop="planNo" label="计划单号" min-width="180" sortable="custom"> 
@@ -88,6 +88,8 @@
             </el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+            v-if="isProjectSwitch == 1" />
             <el-table-column prop="productSource" label="产品来源" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.productSource == 'purchase'">采购</div>
@@ -161,9 +163,12 @@ import { addPlanList, updatePlanList, deletePlanList, getPlanList, detailPlanLis
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'pendClculationPlan',
   components: { PlanForm,Form, ExportForm, SuperQuery },
+  mixins:[getProjectList],
   data() {
     return { 
       superQuery: {},
@@ -371,6 +376,8 @@ export default {
         },
       ],
       selectList: [],
+      isProjectSwitch:'',
+      isProjectSwitchFlag:false,
     }
   },
   watch: {
@@ -378,12 +385,18 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
-
-
-  created() {
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+ 
+ 
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag=true
     this.superForm=this.orderForm
     this.search('basic')
     this.getProductClassFun()
+   
   },
   methods: {
     calculationFun() {
@@ -714,7 +727,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus'||prop=='productDrawingNo') {
+      if (prop === 'productName'||prop=='projectName' || prop === 'productCode' || prop === 'documentStatus'||prop=='productDrawingNo') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'
@@ -744,6 +757,8 @@ export default {
     },
     initData() {
       this.listLoading = true
+     this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+
       getPlanList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total

@@ -87,7 +87,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head" style="padding:10px">
           <el-button type="primary" @click="handleBatch">批量设置价格</el-button>
           <div class="JNPF-common-head-right">
@@ -103,10 +103,11 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
+        <JNPF-table v-if="tableDataFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           ref="dataTable" hasC @selection-change="currentChange" :setColumnDisplayList="columnList">
           <el-table-column prop="name" label="工序名称" min-width="180" sortable="custom" />
           <el-table-column prop="code" label="工序编码" min-width="160" sortable="custom"></el-table-column>
+          <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="pricingType" label="计价类型" width="120" sortable="custom">
             <template slot-scope="{ row }">
               <template v-if="row.pricingType == 'by_time'">
@@ -180,10 +181,14 @@ import { getBimProcessList, updatebimProcessPrice } from '@/api/bimProcess/index
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   components: { SuperQuery },
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       searchList: [
         { field: 'code', fieldValue: '', label: '工序编码', symbol: 'like', searchType: 1, width: 120 },
         { field: 'name', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
@@ -298,7 +303,9 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.tableDataFlag = true
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.superForm = this.listQuery
     this.getcategoryTree()
@@ -366,6 +373,9 @@ export default {
     },
     initData() {
       this.listLoading = true
+      if (this.isProjectSwitch === '1') {
+        this.superForm.projectId = this.userInfo.projectId
+      }
       getBimProcessList(this.superForm)
         .then((res) => {
           this.tableData = res.data.records

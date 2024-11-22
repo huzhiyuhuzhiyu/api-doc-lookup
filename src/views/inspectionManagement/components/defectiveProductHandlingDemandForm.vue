@@ -467,7 +467,16 @@ export default {
             itemRules: [{ required: true, trigger: 'change' }],
             sm: 6
           },
-
+          {
+            prop: 'projectName',
+            label: '所属项目',
+            value: '',
+            type: 'input',
+            itemRules: [{ required: true, trigger: 'blur' }],
+            sm: 6,
+            render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
+            itemDisabled: true
+          },
           {
             prop: 'productDrawingNo',
             label: '品名规格',
@@ -1192,7 +1201,7 @@ export default {
           // 损失上报
           formMethod = lossQcUnqualifiedData
         }
-   
+
         console.log(this.dataForm, 'ooooooo')
         this.dataForm.treatmentDescription = this.dataForm.description
         this.dataForm.treatmentResults = this.dataForm.treatmentResults

@@ -33,7 +33,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head">
           <div>
             <el-button size="mini" type="primary" @click="scanFun">
@@ -58,7 +58,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange"
+        <JNPF-table v-if="tableDataFlag" ref="dataTable" :data="tableData" :fixedNO="true" @sort-change="sortChange"
           custom-column :setColumnDisplayList="columnList">
           <el-table-column prop="productionOrderNo" label="任务单号" min-width="200" sortable="custom">
             <!-- <template slot-scope="scope">
@@ -75,6 +75,7 @@
               </el-link>
             </template>
           </el-table-column> -->
+          <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="120" sortable="custom" />
           <el-table-column prop="processName" label="工序名称" min-width="120" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" width="60" />
@@ -129,7 +130,7 @@
     </div> -->
 
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
-  
+
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -151,15 +152,21 @@
 
 <script>
 import { getWorkList } from '@/api/productOrdes/index'
-import Form from '../components/inspectionNoticeForm.vue' 
+import Form from '../components/inspectionNoticeForm.vue'
 // import DetailForm from './DetailForm.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   components: { Form, SuperQuery, ExportForm },
+  mixins: [getProjectList],
+
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       columnList: [
         'sealingCoverTyping',
         'accuracyLevel',
@@ -356,7 +363,11 @@ export default {
       scanResult: ''
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+
+    this.tableDataFlag = true
+
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.initData()
   },
@@ -473,13 +484,13 @@ export default {
     },
     addOrUpdateHandle(row, readOnly) {
       this.formVisible = true
-        this.$nextTick(() => {
-          this.$refs.Form.init(row, readOnly, 'process', 'notice', 'QCDH')
-        })
+      this.$nextTick(() => {
+        this.$refs.Form.init(row, readOnly, 'process', 'notice', 'QCDH')
+      })
     },
     sortChange({ prop, order }) {
       let newProp
-      if (prop === 'productionOrderNo'  ||prop === 'productDrawingNo' || prop === 'processName' ||prop === 'workGroupName' || prop === 'personName') {
+      if (prop === 'productionOrderNo' || prop === 'productDrawingNo' || prop === 'processName' || prop === 'workGroupName' || prop === 'personName') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())

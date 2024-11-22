@@ -34,7 +34,7 @@
             </el-col>
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head" style="padding:10px">
             <div>
               <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
@@ -56,8 +56,8 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
-            @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+          <JNPF-table v-if="tableDataFlag" ref="dataTable" :data="tableData" :fixedNO="true" @sort-change="sortChange"
+            custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="检验单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row, 'look')">
@@ -68,6 +68,8 @@
             <el-table-column prop="docNo" label="业务单号" min-width="200" sortable="custom" />
             <el-table-column prop="inspectorName" label="检验人" min-width="100" sortable="custom" />
             <el-table-column prop="inspectionDate" label="检验日期" width="120" sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" width="120"
+              v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
 
@@ -140,8 +142,12 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   components: { Form, DemandForm, ExportForm, DetailForm, SuperQuery },
+  mixins: [getProjectList],
+
   props: {
     pageData: {
       // 页面配置
@@ -157,6 +163,8 @@ export default {
   },
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       superQueryVisible: false,
       superQueryJson: [
         {
@@ -289,7 +297,10 @@ export default {
       linesTotal: 0
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.tableDataFlag = true
+
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.initData()
   },
@@ -351,6 +362,9 @@ export default {
       } else {
         this.listQuery.inspectionStartDate = ''
         this.listQuery.inspectionEndDate = ''
+      }
+      if (this.isProjectSwitch === '1') {
+        this.listQuery.projectId = this.userInfo.projectId
       }
       getInspectionList(this.listQuery)
         .then((res) => {

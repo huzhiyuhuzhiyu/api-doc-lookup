@@ -7,12 +7,14 @@
           <!-- 人员配置 -->
           <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
             <JNPF-table hasNO fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" size="mini" id="table"
-              :style="{ height: height + 'px' }">
+              :style="{ height: height + 'px' }" ref="sourceTable">
               <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
+              <el-table-column prop="projectName" label="所属项目" width="120"
+                v-if="isProjectSwitch === '1'"></el-table-column>
               <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                 <template slot-scope="scope">
                   <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
-    
+
                     <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
                       v-model="scope.row.drawingNo" ref="ComSelect-page" @change="productChange"
                       :tableItems="ProductTableItems" :placeholder="'请选择产品'" title="选择产品" treeTitle="产品分类"
@@ -26,7 +28,7 @@
                 <template slot-scope="scope">
                   <!-- <el-input v-model="scope.row.productCode" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
                   <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'" :rules="productRule.productCode">
-                
+
                     <div class="viewData">
                       <span>{{ scope.row.productCode }}</span>
                     </div>
@@ -116,10 +118,16 @@ import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import { getclassAttributeList } from '@/api/masterDataManagement/index'
 import { getLabel } from '@/utils/index'
 Vue.prototype.$getLabel = getLabel
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   components: {},
+  mixins: [getProjectList],
+
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       height: 700,
       classAttributeList: [],
       types: '',
@@ -219,6 +227,33 @@ export default {
   mounted() {
     this.switchStyle()
     this.getclassAttributeList()
+
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
+    this.tableDataFlag = true
+    console.log(this.isProjectSwitch)
+    if (this.isProjectSwitch === '1') {
+      this.ProductTableItems = [
+        { prop: 'projectName', label: '所属项目' },
+        { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'code', label: '产品编码' },
+        // { prop: 'name', label: '产品名称', fixed: 'left' },
+
+        // { prop: 'spec', label: '规格型号' },
+        { prop: 'classAttributeName', label: '类别属性' }
+      ]
+    } else {
+      this.ProductTableItems = [
+        { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'code', label: '产品编码' },
+        // { prop: 'name', label: '产品名称', fixed: 'left' },
+
+        // { prop: 'spec', label: '规格型号' },
+        { prop: 'classAttributeName', label: '类别属性' }
+      ]
+    }
 
   },
   methods: {
@@ -341,6 +376,7 @@ export default {
 
       console.log(index, '索引')
       if (data.length) {
+        this.dataFormTwo.data[index].projectName = data[0].all.projectName
         this.dataFormTwo.data[index].drawingNo = data[0].all.drawingNo
         this.dataFormTwo.data[index].productCode = data[0].all.code
         this.dataFormTwo.data[index].productsId = data[0].all.id
@@ -399,7 +435,10 @@ export default {
         }
       })
     }
-  }
+  },
+  updated() {
+    this.$refs['sourceTable'].doLayout()
+  },
 }
 </script>
 <style lang="scss" scoped>

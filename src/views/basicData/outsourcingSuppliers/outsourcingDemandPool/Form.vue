@@ -62,6 +62,8 @@
                         id="table" border>
                         <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column>
                         <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                        <el-table-column prop="projectName" label="所属项目" width="120"
+                          v-if="isProjectSwitch === '1'"></el-table-column>
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                           <template slot="header">
                             <span class="required">*</span>
@@ -299,14 +301,19 @@ import { getbimProductAttributesList, getbimProductAttributes } from '@/api/mast
 import { getBimProcessList } from '@/api/bimProcess/index'
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
+import getProjectList from '@/mixins/generator/getProjectList'
 
 export default {
   components: {
     SourceArea,
     Process
   },
+  mixins: [getProjectList],
+
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
       isattachmentswitch: '',
@@ -584,7 +591,39 @@ export default {
       flowData: {}
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
+    this.tableDataFlag = true
+    console.log(this.isProjectSwitch)
+    if (this.isProjectSwitch === '1') {
+      this.ProductTableItems = [
+        { prop: 'projectName', label: '所属项目' },
+        { prop: 'productDrawingNo', label: '品名规格', sortable: 'custom' },
+
+        { prop: 'productName', label: '产品名称', sortable: 'custom' },
+        { prop: 'immediatelyBuyFlag', label: '立即外协', sortable: 'custom' },
+
+        { prop: 'mainUnit', label: '单位', width: 60 },
+        { prop: 'planDemandQuantity', label: '计划需求数', sortable: 'custom', minWidth: 130 },
+        { prop: 'orderedQuantity', label: '已下单数量', sortable: 'custom', minWidth: 130 },
+        { prop: 'deliveryDate', label: '交货日期', sortable: 'custom' },
+        { prop: 'createTime', label: '创建日期', sortable: 'custom', minWidth: 180 }
+      ]
+    } else {
+      this.ProductTableItems = [
+        { prop: 'productDrawingNo', label: '品名规格', sortable: 'custom' },
+
+        { prop: 'productName', label: '产品名称', sortable: 'custom' },
+        { prop: 'immediatelyBuyFlag', label: '立即外协', sortable: 'custom' },
+
+        { prop: 'mainUnit', label: '单位', width: 60 },
+        { prop: 'planDemandQuantity', label: '计划需求数', sortable: 'custom', minWidth: 130 },
+        { prop: 'orderedQuantity', label: '已下单数量', sortable: 'custom', minWidth: 130 },
+        { prop: 'deliveryDate', label: '交货日期', sortable: 'custom' },
+        { prop: 'createTime', label: '创建日期', sortable: 'custom', minWidth: 180 }
+      ]
+    }
     this.getDeputyUnit()
   },
   computed: {

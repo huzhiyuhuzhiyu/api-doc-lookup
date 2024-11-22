@@ -71,6 +71,8 @@
             <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
             <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" />
             <el-table-column prop="deliverDate" label="发料日期" width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="projectName" label="所属项目" width="120"
+              v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" width="160" sortable="custom" />
@@ -145,11 +147,17 @@ import Form from '../materialsIssueNotice/Form'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getBimBusinessDetail } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   name: 'foreigntradenotice',
   components: { Form, SuperQuery, ExportForm },
+  mixins: [getProjectList],
+
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
       columnList: ['partnerCode', 'productCode'],
@@ -312,7 +320,9 @@ export default {
       ]
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+  
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.getDeputyUnit()
     this.search()

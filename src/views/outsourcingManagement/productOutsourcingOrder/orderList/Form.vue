@@ -87,6 +87,8 @@
                       id="table" border height="460" @row-click="openDetails" :row-style="rowStyle">
                       <!-- <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column> -->
                       <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
+                      <el-table-column prop="projectName" label="所属项目" width="120"
+                        v-if="isProjectSwitch === '1'"></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
 
                         <template slot="header">
@@ -262,6 +264,8 @@
                   <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="linesList" :data="linesList"
                     id="table">
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                    <el-table-column prop="projectName" label="所属项目" width="120"
+                      v-if="isProjectSwitch === '1'"></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
                     <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
                     <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
@@ -352,6 +356,8 @@
                   id="table" border height="460" @row-click="openDetails" :row-style="rowStyle">
                   <!-- <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column> -->
                   <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
+                  <el-table-column prop="projectName" label="所属项目" width="120"
+                    v-if="isProjectSwitch === '1'"></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
 
                     <template slot="header">
@@ -527,6 +533,8 @@
               <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="linesList" :data="linesList"
                 id="table">
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                <el-table-column prop="projectName" label="所属项目" width="120"
+                  v-if="isProjectSwitch === '1'"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
                 <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
                 <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
@@ -578,11 +586,15 @@ import {
   purProcurementRequirementsList
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import SourceArea from '../orderCreation/source.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   components: { Process, recordList, SourceArea },
-  mixins: [busFlow],
+  mixins: [busFlow, getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       tipsvisible: false,
       btnText: '继续新建',
       isattachmentswitch: '',
@@ -757,7 +769,8 @@ export default {
       return this.dataForm.purchaseQuantity
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.getDeputyUnit()
     this.getBimBusinessDetail()
   },

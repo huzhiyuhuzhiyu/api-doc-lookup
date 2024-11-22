@@ -74,6 +74,8 @@
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="160" sortable="custom" />
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="160" sortable="custom" />
             <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" width="120"
+              v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom" />
@@ -133,6 +135,8 @@ import AddForm from '../materialsIssueNotice/Form.vue'
 import Form from "../../processOutsourcingOrders/orderList/Form.vue";
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { getBimBusinessDetail } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   name: 'materialOrderToBeIssued',
   components: {
@@ -142,8 +146,12 @@ export default {
     //  OrderFollow,
     SuperQuery
   },
+  mixins: [getProjectList],
+
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
       addFormVisible: false,
@@ -245,7 +253,9 @@ export default {
   },
 
   mounted() { },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+
     this.getDeputyUnit()
     // 默认设置为近3天
     const end = new Date()

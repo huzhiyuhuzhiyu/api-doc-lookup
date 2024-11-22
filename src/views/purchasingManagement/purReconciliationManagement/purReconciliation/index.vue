@@ -549,6 +549,7 @@ export default {
       getfinAccountDetail(id).then((res) => {
         console.log(res, '详情')
         row = {
+          projectName: res.data.projectName,
           cooperativePartnerName: res.data.cooperativePartnerName,
           cooperativePartnerId: res.data.cooperativePartnerId,
           excludingTaxAmount: res.data.excludingTaxAmount,

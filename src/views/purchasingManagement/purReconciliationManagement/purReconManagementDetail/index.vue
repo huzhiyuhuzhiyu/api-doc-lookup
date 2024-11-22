@@ -55,6 +55,7 @@
 
         <JNPF-table v-if="tableFlag" highlight-current-row ref="tableForm" :data="tableDataList"
           @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+          <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="orderNo" label="对账单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.accountsReceivableId, 'look')">
@@ -151,11 +152,17 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import { getBimBusinessDetail } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   name: 'purchaseInquirySheet',
   components: { JNPFForm, withdrawnForm, SuperQuery, ExportForm },
+  mixins: [getProjectList],
+
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
       superQueryVisible: false,
@@ -283,7 +290,8 @@ export default {
       exportFormVisible: false
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.superForm = this.listQuery
     this.getDeputyUnit()
     this.search('basic')

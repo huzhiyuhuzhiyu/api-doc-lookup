@@ -53,7 +53,7 @@
           </el-form>
         </el-row>
 
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <topOpts @add="addOrUpdateHandle('', 'add')">
               <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
@@ -74,8 +74,8 @@
             </div>
           </div>
 
-          <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="dataTable"
-            :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+          <JNPF-table v-if="tableDataFlag" highlight-current-row :fixedNO="true" ref="dataTable" :data="tableDataList"
+            @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.fixedPointPricingId, 'look')">
@@ -85,6 +85,8 @@
             </el-table-column>
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="150" sortable="custom" />
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="150" sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" width="120"
+              v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="drawingNo" label="品名规格" width="150" sortable="custom" />
             <el-table-column prop="productsCode" label="产品编码" width="150" sortable="custom" />
             <el-table-column prop="price" label="协议价(含税)" width="140" sortable="custom" />
@@ -171,9 +173,11 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   name: 'fixedPointPricing',
   components: { JNPFForm, SuperQuery, ExportForm },
+  mixins: [getProjectList],
   data() {
     return {
       columnList: ['cooperativePartnerCode', 'productsCode', 'remark', 'createByName'],
@@ -413,7 +417,11 @@ export default {
   mounted() {
     this.getProductClassFun()
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
+    this.tableDataFlag = true
+    console.log(this.isProjectSwitch)
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.superForm = this.listQuery
     this.initData()

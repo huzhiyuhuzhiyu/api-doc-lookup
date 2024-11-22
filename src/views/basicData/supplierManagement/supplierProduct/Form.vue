@@ -73,6 +73,8 @@
                     <JNPF-table style="border: 1px solid #e3e7ee;" @selection-change="handeleProductInfoData"
                       :hasC="type != 'look'" hasNO fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data"
                       id="table">
+                      <el-table-column prop="projectName" label="所属项目" width="120"
+                        v-if="isProjectSwitch === '1'"></el-table-column>
                       <el-table-column prop="drawingNo" key="drawingNo" label="品名规格" min-width="180">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'"
@@ -622,6 +624,7 @@ export default {
         let list = data.map((item) => item.all)
         list.forEach((item, index) => {
           selectArr.push({
+            projectName: item.projectName, // 所属项目
             productSource: item.productSource, // 产品来源 采购
             productsId: item.id, // 产品id
             productsName: item.name, // 产品名称

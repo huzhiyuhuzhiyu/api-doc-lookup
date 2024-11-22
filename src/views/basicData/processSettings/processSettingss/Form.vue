@@ -42,6 +42,15 @@
                               :style="{ width: '100%' }" maxlength="20" :disabled="type == 'look'"></el-input>
                           </el-form-item>
                         </el-col>
+                        <el-col :span="12">
+                          <el-form-item label="所属项目" prop="projectId">
+                            <el-select v-model="dataForm.projectId" placeholder="请选择所属项目"
+                              :disabled="type === 'look' || userInfo.projectId !== '1'" style="width:100%">
+                              <el-option v-for="item in projectIdData" :key="item.id" :label="item.label"
+                                :value="item.id"></el-option>
+                            </el-select>
+                          </el-form-item>
+                        </el-col>
                         <!-- <el-col :span="12">
                           <el-form-item label="按工艺顺序报工" prop="reportRulesFlag">
                             <el-select v-model="dataForm.reportRulesFlag" style="width:100%" :disabled="type == 'look'">
@@ -132,7 +141,8 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="code" label="工序编码" min-width="140" />
-
+                      <el-table-column prop="projectName" label="所属项目" width="120"
+                        v-if="isProjectSwitch === '1'"></el-table-column>
                       <el-table-column prop="processType" label="工序类型" width="120">
                         <template slot-scope="scope">
                           <template v-if="scope.row.processType == 'normal'">
@@ -411,6 +421,8 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop="code" label="工序编码" min-width="140" />
+                  <el-table-column prop="projectName" label="所属项目" width="120"
+                    v-if="isProjectSwitch === '1'"></el-table-column>
 
                   <el-table-column prop="processType" label="工序类型" width="120">
                     <template slot-scope="scope">
@@ -495,18 +507,18 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop="stockFlag" label="是否入库" width="90">
-                        <template slot-scope="scope">
-                          <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row" :rules="rulesTwo">
-                            <el-form-item prop="stockFlag" ref="stockFlag">
-                              <el-checkbox v-model="scope.row.stockFlag" :disabled="scope.$index === dataFormTwo.length - 1 ||
-                                type === 'look'
-                                ">
-                                {{ scope.row.stockFlag ? '是' : '否' }}
-                              </el-checkbox>
-                            </el-form-item>
-                          </el-form>
-                        </template>
-                      </el-table-column>
+                    <template slot-scope="scope">
+                      <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row" :rules="rulesTwo">
+                        <el-form-item prop="stockFlag" ref="stockFlag">
+                          <el-checkbox v-model="scope.row.stockFlag" :disabled="scope.$index === dataFormTwo.length - 1 ||
+                            type === 'look'
+                            ">
+                            {{ scope.row.stockFlag ? '是' : '否' }}
+                          </el-checkbox>
+                        </el-form-item>
+                      </el-form>
+                    </template>
+                  </el-table-column>
 
                   <el-table-column prop="lastFlag" label="是否末道工序" width="120">
                     <template slot-scope="scope">
@@ -570,6 +582,7 @@ import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowE
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   components: {
     ProcessDialog,
@@ -577,10 +590,12 @@ export default {
     Process,
     recordList
   },
-  mixins: [busFlow],
+  mixins: [busFlow, getProjectList],
   props: [],
   data() {
     return {
+      isProjectSwitch: '',
+      projectIdData: [],
       activeName: 'jcInfo',
       activeNames: ['modelInfo', 'processInfo'],
       datafilelist: [],
@@ -598,9 +613,9 @@ export default {
       ProductMethodArr: [
         {
           label: '工序分类',
-          classAttribute: 'process',
+          type: 'process',
           method: getcategoryTree,
-          requestObj: { classAttribute: 'process' }
+          requestObj: { type: 'process' }
         }
       ], // 产品选择弹出框树状列表
       ProductListRequestObj: {
@@ -624,6 +639,7 @@ export default {
       ProductTableItems: [
         { prop: 'code', label: '工序编码', fixed: 'left' },
         { prop: 'name', label: '工序名称', fixed: 'left' },
+        { prop: 'projectName', label: '所属项目', fixed: 'left' },
         { prop: 'processTypeName', label: '工序类型', fixed: 'left' },
         { prop: 'processingTypeName', label: '加工类型', fixed: 'left' }
       ], // 产品选择弹出框表单展示字段
@@ -752,7 +768,23 @@ export default {
       categoryId: ''
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
+    console.log(this.isProjectSwitch)
+    if (this.userInfo.projectId === '1') {
+      console.log(this.projectIdData, 'lllljj')
+      this.projectIdData = this.projectIdData.filter(item => item.id !== '1')
+      this.ProductTableItems = [
+        { prop: 'code', label: '工序编码', fixed: 'left' },
+        { prop: 'name', label: '工序名称', fixed: 'left' },
+        { prop: 'projectName', label: '所属项目', fixed: 'left' },
+        { prop: 'processTypeName', label: '工序类型', fixed: 'left' },
+        { prop: 'processingTypeName', label: '加工类型', fixed: 'left' }
+      ]
+    } else {
+      this.dataForm.projectId = this.userInfo.projectId
+    }
     this.getBimBusinessDetail()
   },
   methods: {

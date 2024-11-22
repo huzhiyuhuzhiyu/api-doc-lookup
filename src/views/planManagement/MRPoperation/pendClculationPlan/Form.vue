@@ -28,10 +28,20 @@
           <el-collapse-item title="运算公式" name="basicInfo" class="orderInfo">
             <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="120px" label-position="left">
               <el-row style="height: 100%;">
-                <el-col :span="24">
+                <el-col :span="10">
                   <el-form-item label="运算单号">
                     <el-input v-model="dataForm.arithmeticNo" placeholder="运算单号" style="width: auto;" clearable
                       :disabled="codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
+                  </el-form-item>
+
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item label="所属项目" prop="projectId">
+                    <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;"
+                      :disabled="userInfo.projectId != '1'" @change="changeProject">
+                      <el-option v-for="(item, index) in projectIdDataList" :key="index" :label="item.label"
+                        :value="item.value"></el-option>
+                    </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :span="24">
@@ -86,7 +96,7 @@
             </div>
 
             <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true" @selection-change="handleSelectionChange" hasC
-              style="height: auto;" class="planBox">
+              style="height: auto;" class="planBox" v-if="isProjectSwitchFlag">
               <el-table-column prop="planNo" label="计划单号" min-width="180">
                 <template slot-scope="scope">
                   <el-link type="primary" @click.native="handleUserRelation(scope.row, 'look')">{{
@@ -96,6 +106,8 @@
               </el-table-column>
               <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" />
               <el-table-column prop="productCode" label="产品编码" min-width="180" />
+              <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
+
               <el-table-column prop="productSource" label="产品来源" min-width="160">
                 <template slot-scope="scope">
                   <div v-if="scope.row.productSource == 'purchase'">采购</div>
@@ -155,10 +167,12 @@
                     </el-tooltip>
                   </div>
                 </div>
-                <JNPF-table @sort-change="sortChange" :partentOrChild="'assemble'" :data="assembleData" :setColumnDisplayList="columnList1"
-                  highlight-current-row :fixedNO="true" class="dataTable" border ref="assembleRef">
+                <JNPF-table @sort-change="sortChange" :partentOrChild="'assemble'" :data="assembleData"
+                  :setColumnDisplayList="columnList1" highlight-current-row :fixedNO="true" class="dataTable" border
+                  ref="assembleRef">
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                     <template slot-scope="scope">
                       <div :style="scope.row.bomFlag ? 'color:#85ce60' : 'color:#f56c6c'">{{ scope.row.bomFlag ? "有BOM"
@@ -188,7 +202,8 @@
                   <el-table-column prop="specialRequire" label="特殊要求" min-width="120" sortable="custom" />
                   <el-table-column label="操作" width="120" fixed="right" :key="15">
                     <template slot-scope="scope">
-                      <el-button type="text" :disabled="!scope.row.bomFlag" @click="QTsearch(scope.row.id, 'assemble')">齐套查询</el-button>
+                      <el-button type="text" :disabled="!scope.row.bomFlag"
+                        @click="QTsearch(scope.row.id, 'assemble')">齐套查询</el-button>
                     </template>
                   </el-table-column>
 
@@ -217,11 +232,12 @@
                     </el-tooltip>
                   </div>
                 </div>
-                <JNPF-table  :partentOrChild="'produce'" @sort-change="sortChange" :data="produceData"
+                <JNPF-table :partentOrChild="'produce'" @sort-change="sortChange" :data="produceData"
                   :setColumnDisplayList="columnList2" highlight-current-row :fixedNO="true" class="dataTable" border
                   ref="produceRef">
-                  <el-table-column prop="productDrawingNo" label="品名规格"  min-width="330" sortable="custom" />
+                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                     <template slot-scope="scope">
                       <div :style="scope.row.bomFlag ? 'color:#85ce60' : 'color:#f56c6c'">{{ scope.row.bomFlag ? "有BOM"
@@ -277,8 +293,9 @@
                   <el-table-column label="操作" width="180" fixed="right" :key="15">
                     <template slot-scope="scope">
                       <el-button type="text" @click="tracMainProduct(scope.row.id, 'produce')"
-                        :disabled="scope.row.outputQuantity == 0 || scope.row.mainProductFlag  ">追溯主产品</el-button>
-                      <el-button :disabled="!scope.row.bomFlag" type="text" @click="QTsearch(scope.row.id, 'produce')">齐套查询</el-button>
+                        :disabled="scope.row.outputQuantity == 0 || scope.row.mainProductFlag">追溯主产品</el-button>
+                      <el-button :disabled="!scope.row.bomFlag" type="text"
+                        @click="QTsearch(scope.row.id, 'produce')">齐套查询</el-button>
                     </template>
                   </el-table-column>
 
@@ -311,11 +328,12 @@
                     </el-tooltip>
                   </div>
                 </div>
-                <JNPF-table  :partentOrChild="'purchase'" @sort-change="sortChange" :data="purchaseData"
+                <JNPF-table :partentOrChild="'purchase'" @sort-change="sortChange" :data="purchaseData"
                   :setColumnDisplayList="columnList3" highlight-current-row :fixedNO="true" class="dataTable" border
                   ref="purchaseRef">
-                  <el-table-column prop="productDrawingNo" label="品名规格"  min-width="330" sortable="custom" />
+                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="immediatelyBuyFlag" label="立即采购" width="140" sortable="custom">
                     <template slot-scope="scope">
                       <div>{{ scope.row.immediatelyBuyFlag ? "是" : "否" }}</div>
@@ -396,11 +414,13 @@
                     </el-tooltip>
                   </div>
                 </div>
-                <JNPF-table custom-column  :partentOrChild="'out'" @sort-change="sortChange" :data="outData" highlight-current-row
-                  :setColumnDisplayList="columnList4" :fixedNO="true" class="dataTable" border ref="outRef">
-                  
-                  <el-table-column prop="productDrawingNo" label="品名规格"  min-width="330" sortable="custom" />
+                <JNPF-table custom-column :partentOrChild="'out'" @sort-change="sortChange" :data="outData"
+                  highlight-current-row :setColumnDisplayList="columnList4" :fixedNO="true" class="dataTable" border
+                  ref="outRef">
+
+                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                     <template slot-scope="scope">
                       <div :style="scope.row.bomFlag ? 'color:#85ce60' : 'color:#f56c6c'">{{ scope.row.bomFlag ? "有BOM"
@@ -457,7 +477,8 @@
                     <template slot-scope="scope">
                       <el-button type="text" @click="tracMainProduct(scope.row.id, 'out')"
                         :disabled="scope.row.outputQuantity == 0 || scope.row.mainProductFlag">追溯主产品</el-button>
-                      <el-button :disabled="!scope.row.bomFlag" type="text" @click="QTsearch(scope.row.id, 'out')">齐套查询</el-button>
+                      <el-button :disabled="!scope.row.bomFlag" type="text"
+                        @click="QTsearch(scope.row.id, 'out')">齐套查询</el-button>
                     </template>
                   </el-table-column>
 
@@ -524,6 +545,8 @@
                 <el-table-column prop="planNo" label="计划单号" min-width="180" sortable="custom"> </el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                  v-if="isProjectSwitch == 1" />
                 <el-table-column prop="productSource" label="产品来源" min-width="160" sortable="custom">
                   <template slot-scope="scope">
                     <div v-if="scope.row.productSource == 'purchase'">采购</div>
@@ -579,12 +602,14 @@ import { addPlanList, updatePlanList, deletePlanList, getPlanList, detailPlanLis
 import PlanForm from '@/views/planManagement/assemblyPlan/salesOrderCreation/Form.vue'
 import { analyseMRP, getMaterialDemandReport, submitMRP } from "@/api/calculationList/MRPOperation.js"
 import ComplateSetForm from './complateSetForm.vue'
-import { mapState } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 import DBForm from './dbForm.vue'
 export default {
   components: {
-    PlanForm, ComplateSetForm,DBForm
+    PlanForm, ComplateSetForm, DBForm
   },
+  mixins: [getProjectList],
   data() {
     return {
       columnList1: ["productCode", "planNo", "sealingCoverTyping", "accuracyLevel", "vibrationLevel", "oil", "oilQuantity", "clearance", "packagingMethod", "specialRequire", "planEndDate"],
@@ -593,7 +618,7 @@ export default {
       columnList4: ["productCode", "planNo", "planEndDate"],
       // ---------运算结果相关字段
       complateSetFormVisible: false,
-      dbformVisible:false,
+      dbformVisible: false,
       total1: 0,
       total2: 0,
       total3: 0,
@@ -615,7 +640,7 @@ export default {
         }],
         pageSize: 20,
         pageNum: 1,
-        documentStatus:"draft",
+        documentStatus: "draft",
       },
       produceForm: {
         demandType: "produce",
@@ -629,7 +654,7 @@ export default {
         }],
         pageSize: 20,
         pageNum: 1,
-        documentStatus:"draft",
+        documentStatus: "draft",
       },
       purchaseForm: {
         demandType: "purchase",
@@ -643,7 +668,7 @@ export default {
         }],
         pageSize: 20,
         pageNum: 1,
-        documentStatus:"draft",
+        documentStatus: "draft",
       },
       outForm: {
         demandType: "out",
@@ -657,7 +682,7 @@ export default {
         }],
         pageSize: 20,
         pageNum: 1,
-        documentStatus:"draft",
+        documentStatus: "draft",
       },
       totalDemandQuantity: 0,//需求数量
       outputQuantity: 0,//需组装/生产/采购/外协数量
@@ -700,6 +725,7 @@ export default {
         schemeNames: "",
         calcSchemeId: "",
         arithmeticNo: "",
+        projectId: "",
       },
       formVisible: false,
       btnLoading: false,
@@ -729,14 +755,36 @@ export default {
         ]
       },
       selectArr: [],
+      isProjectSwitch: '',
+      isProjectSwitchFlag: false,
+      originalData: [],
+      projectIdDataList: [],
+
     }
   },
-  mounted() {
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
+    console.log("下拉项", this.projectIdDataList);
+    this.isProjectSwitchFlag = true
     this.getMrpCalcSchemeListFun()
+    if (this.isProjectSwitch == 1) {
+      console.log(1111);
+      this.dataForm.projectId = this.userInfo.projectId == 1 ? "" : this.userInfo.projectId
+    }
+
+  },
+  mounted() {
     this.fetchData("AMDH")
   },
   methods: {
-
+    changeProject() {
+      console.log(this.dataForm.projectId);
+      this.tableData = this.originalData.filter(item => item.id === this.dataForm.projectId);
+    },
     // ----------------------------------------运算结果相关逻辑处理开始
     // table切换
     handleClick() {
@@ -772,85 +820,92 @@ export default {
 
     // 组装列表数据
     getassembleData() {
+      this.assembleForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+
       getMaterialDemandReport(this.assembleForm).then(res => {
         console.log("组装res", res);
-        let totalData = res.data.total||0
-        let tableData = res.data.page.records ||[]
-          this.total1 = res.data.page.total||0
-          this.assembleData = tableData||[]
+        let totalData = res.data.total || 0
+        let tableData = res.data.page.records || []
+        this.total1 = res.data.page.total || 0
+        this.assembleData = tableData || []
 
-          this.totalDemandQuantity = totalData.demandQuantity||0
-          this.outputQuantity = totalData.outputQuantity||0
-      
+        this.totalDemandQuantity = totalData.demandQuantity || 0
+        this.outputQuantity = totalData.outputQuantity || 0
+
       })
     },
     // 生产列表数据
     getproduceData() {
+      this.produceForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getMaterialDemandReport(this.produceForm).then(res => {
         console.log("生产res", res);
-        let totalData = res.data.total||0
-        let tableData = res.data.page.records ||[]
-          this.produceData = tableData||[]
-          this.total2 = res.data.page.total||0
+        let totalData = res.data.total || 0
+        let tableData = res.data.page.records || []
+        this.produceData = tableData || []
+        this.total2 = res.data.page.total || 0
 
-          this.totalDemandQuantity = totalData.demandQuantity||0
-          this.outputQuantity = totalData.outputQuantity||0
-          this.lossNum = totalData.lossNum||0
-          this.planInTransitQuantity = totalData.planInTransitQuantity||0
-          this.inTransitUnOccupancyQuantity = totalData.inTransitUnOccupancyQuantity||0
-          this.occupancyQuantity = totalData.occupancyQuantity||0
-       
+        this.totalDemandQuantity = totalData.demandQuantity || 0
+        this.outputQuantity = totalData.outputQuantity || 0
+        this.lossNum = totalData.lossNum || 0
+        this.planInTransitQuantity = totalData.planInTransitQuantity || 0
+        this.inTransitUnOccupancyQuantity = totalData.inTransitUnOccupancyQuantity || 0
+        this.occupancyQuantity = totalData.occupancyQuantity || 0
+
       })
     },
     // 采购列表数据
     getpurchaseDataa() {
+      this.purchaseForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getMaterialDemandReport(this.purchaseForm).then(res => {
         console.log("采购res", res);
-        let totalData = res.data.total||0
-        let tableData = res.data.page.records||[]
-          this.purchaseData = tableData||0
-          this.total3 = res.data.page.total||0
+        let totalData = res.data.total || 0
+        let tableData = res.data.page.records || []
+        this.purchaseData = tableData || 0
+        this.total3 = res.data.page.total || 0
 
-          this.totalDemandQuantity = totalData.demandQuantity||0
-          this.outputQuantity = totalData.outputQuantity||0
-          this.lossNum = totalData.lossNum||0
-          this.planInTransitQuantity = totalData.planInTransitQuantity||0
-          this.inTransitUnOccupancyQuantity = totalData.inTransitUnOccupancyQuantity||0
-          this.occupancyQuantity = totalData.occupancyQuantity||0
+        this.totalDemandQuantity = totalData.demandQuantity || 0
+        this.outputQuantity = totalData.outputQuantity || 0
+        this.lossNum = totalData.lossNum || 0
+        this.planInTransitQuantity = totalData.planInTransitQuantity || 0
+        this.inTransitUnOccupancyQuantity = totalData.inTransitUnOccupancyQuantity || 0
+        this.occupancyQuantity = totalData.occupancyQuantity || 0
 
-        
+
       })
     },
     // 外协列表数据
     getouteData() {
+      this.outForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getMaterialDemandReport(this.outForm).then(res => {
         console.log("外协res", res);
         let totalData = res.data.total
-        let tableData = res.data.page.records 
-          this.outData = tableData||[]
-          this.total4 = res.data.page.total||0
+        let tableData = res.data.page.records
+        this.outData = tableData || []
+        this.total4 = res.data.page.total || 0
 
-          this.totalDemandQuantity = totalData.demandQuantity||0
-          this.outputQuantity = totalData.outputQuantity||0
-          this.lossNum = totalData.lossNum||0
-          this.planInTransitQuantity = totalData.planInTransitQuantity||0
-          this.inTransitUnOccupancyQuantity = totalData.inTransitUnOccupancyQuantity||0
-          this.occupancyQuantity = totalData.occupancyQuantity||0
+        this.totalDemandQuantity = totalData.demandQuantity || 0
+        this.outputQuantity = totalData.outputQuantity || 0
+        this.lossNum = totalData.lossNum || 0
+        this.planInTransitQuantity = totalData.planInTransitQuantity || 0
+        this.inTransitUnOccupancyQuantity = totalData.inTransitUnOccupancyQuantity || 0
+        this.occupancyQuantity = totalData.occupancyQuantity || 0
 
-         
+
       })
     },
     // 追溯主产品
     tracMainProduct(id, type) {
-      this.dbformVisible=true
-      this.$nextTick(()=>{
-        this.$refs.dbForm.init(id,type)
+      this.dbformVisible = true
+      this.$nextTick(() => {
+        this.$refs.dbForm.init(id, type)
       })
     },
     // 提交计算结果
     dataFormSubmit() {
       this.btnLoading = true
-      submitMRP().then(res => {
+      submitMRP({
+        projectId: this.planForm.projectId = this.userInfo.projectId == 1 ? "" : this.userInfo.projectId
+      }).then(res => {
         this.$message.success("提交成功")
         setTimeout(() => {
           this.btnLoading = false
@@ -939,6 +994,8 @@ export default {
         this.planForm.planSsd = ""
         this.planForm.planSed = ""
       }
+      this.planForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+
       getPlanList(this.planForm).then(res => {
         this.planTableData = res.data.records
         this.total = res.data.total
@@ -969,7 +1026,7 @@ export default {
     closeForm() {
       this.formVisible = false
       this.complateSetFormVisible = false
-      this.dbformVisible=false
+      this.dbformVisible = false
     },
     // 获取运算方案
     getMrpCalcSchemeListFun() {
@@ -978,7 +1035,6 @@ export default {
         schemeName: "",
         pageNum: 1,
         pageSize: 10,
-
         orderItems: [{
           asc: false,
           column: "create_time"
@@ -986,6 +1042,7 @@ export default {
 
         superQuery: {},
       }
+      obj.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getMrpCalcSchemeList(obj).then(res => {
         console.log("方案数据", res);
         let arr = []
@@ -1067,7 +1124,8 @@ export default {
         obj.scheme.safeInventoryFlag = 0
       }
       console.log(obj);
-      if(!obj.scheme.schemeName) return this.$message.error("方案名称不能为空")
+      if (!obj.scheme.schemeName) return this.$message.error("方案名称不能为空")
+      obj.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       addMrpCalcSchemeList(obj).then(res => {
         this.$message.success("保存方案成功")
         this.getMrpCalcSchemeListFun()
@@ -1116,8 +1174,12 @@ export default {
     },
     init(data) {
       console.log(data);
-      this.visible = true
-      this.tableData = data
+      setTimeout(() => {
+        this.visible = true
+        this.originalData = JSON.parse(JSON.stringify(data))
+        this.tableData = data
+      }, 500);
+
     },
     // 下一步
     next() {
@@ -1130,6 +1192,8 @@ export default {
           availableStockFlag: 0,
           calcBomLevel: this.dataForm.calcBomLevel,
           documentStatus: "submit",
+          projectId: this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+
         },
         planIdList: [],
         rangeList: [],
@@ -1156,7 +1220,7 @@ export default {
         console.log("res", res);
         this.$message.success("分析成功")
         this.activeStep = 1
-        this.activeName='assemble'
+        this.activeName = 'assemble'
         this.getassembleData()
       })
     },
@@ -1278,13 +1342,16 @@ export default {
 .dataTable {
   height: calc(100% - 70px);
 }
-.productInfo ::v-deep .el-collapse-item__wrap{
+
+.productInfo ::v-deep .el-collapse-item__wrap {
   padding: 0;
 }
-::v-deep .el-tabs__item{
+
+::v-deep .el-tabs__item {
   padding: 0 10px;
 }
-.pagination-container{
+
+.pagination-container {
   margin-top: 0
 }
 </style>

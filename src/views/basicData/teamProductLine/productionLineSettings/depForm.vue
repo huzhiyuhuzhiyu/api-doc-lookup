@@ -18,11 +18,20 @@
 
         <div class="main">
           <el-collapse v-model="activeNames">
-            <el-collapse-item title="产线信息" name="modelInfo" class="orderInfo">
+            <el-collapse-item title="产线信息" name="modelInfo" class="orderInfo" v-if="tableDataFlag">
               <el-row :gutter="15" class="" style="margin: 0 10px;">
                 <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                   label-position="top">
                   <template v-if="!loading">
+                    <el-col :span="12">
+                      <el-form-item label="所属项目" prop="projectId">
+                        <el-select v-model="dataForm.projectId" placeholder="请选择所属项目"
+                          :disabled="type === 'look' || userInfo.projectId !== '1'" style="width:100%">
+                          <el-option v-for="item in projectIdData" :key="item.id" :label="item.label"
+                            :value="item.id"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
                     <el-col :span="12">
                       <el-form-item label="产线编码" prop="code" ref="code">
                         <el-input v-model="dataForm.code" placeholder="请输入产线编码" clearable :style="{ width: '100%' }"
@@ -212,6 +221,7 @@ import {
   checkBimWorkstationCode,
   getDepartmentList
 } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   name: 'productionLineSettings',
   components: {
@@ -220,10 +230,12 @@ export default {
     Process,
     recordList
   },
-  mixins: [busFlow],
+  mixins: [busFlow, getProjectList],
   props: [],
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       activeName: 'jcInfo',
       activeNames: ['modelInfo', 'processInfo'],
       datafilelist: [],
@@ -395,7 +407,20 @@ export default {
       endTime: 0
     }
   },
-  created() { },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
+    this.tableDataFlag = true
+    console.log(this.isProjectSwitch)
+    if (this.userInfo.projectId === '1') {
+      console.log(this.projectIdData, 'lllljj')
+
+      this.projectIdData = this.projectIdData.filter(item => item.id !== '1')
+    } else {
+      this.dataForm.projectId = this.userInfo.projectId
+     
+    }
+  },
   methods: {
     getDepartmentList() {
       getDepartmentList('CJ').then(res => {

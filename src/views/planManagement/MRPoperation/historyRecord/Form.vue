@@ -10,6 +10,8 @@
           :summary-method="getSummaries">
           <el-table-column prop="productCode" label="来源产品编码" min-width="130"></el-table-column>
           <el-table-column prop="productDrawingNo" label="来源品名规格" min-width="180" />
+          <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+          v-if="isProjectSwitch == 1" />
           <el-table-column prop="mainUnit" label="单位" width="80" />
           <el-table-column prop="demandQuantity" label="子件需求数量" />
           <el-table-column prop="createTime" label="创建时间" min-width="180"/>
@@ -31,7 +33,10 @@ import {
 
   demandSourceReport
 } from "@/api/calculationList/MRPOperation";
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
+  mixins:[getProjectList],
   data() {
     return {
       total: 0,
@@ -44,12 +49,19 @@ export default {
         materialDemandId: ""
       },
       NumTotal: 0,
+      isProjectSwitch:'',
 
     }
   },
   watch: {
   },
-  created() {
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+
+   
   },
   mounted() {
 

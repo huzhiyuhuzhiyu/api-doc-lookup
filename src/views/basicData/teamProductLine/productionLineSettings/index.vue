@@ -39,7 +39,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head" style="padding: 8px">
           <div>
             <topOpts @add="addSupplier('add')">
@@ -59,12 +59,12 @@
           </div>
         </div>
 
-        <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
-          custom-column :setColumnDisplayList="columnList">
+        <JNPF-table v-if="tableDataFlag" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
+          :setColumnDisplayList="columnList">
           <el-table-column prop="name" label="产线名称" sortable="custom" />
           <el-table-column prop="code" label="产线编码" sortable="custom">
           </el-table-column>
-
+          <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="workshopName" label="加工车间" sortable="custom"></el-table-column>
           <el-table-column prop="remark" label="备注"></el-table-column>
 
@@ -114,11 +114,15 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   name: 'productionLineSettings',
   components: { DepForm, ExportForm, SuperQuery },
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       searchList: [
         { field: 'code', fieldValue: '', label: '产线编码', symbol: 'like', searchType: 1, width: 120 },
         { field: 'name', fieldValue: '', label: '产线名称', symbol: 'like', searchType: 1, width: 120 },
@@ -215,7 +219,11 @@ export default {
       workshopIdOptions: [],
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.tableDataFlag = true
+    await this.getProjectList()
+
     this.superForm = this.tableQuery
     this.getDepartmentList()
     this.initData()
@@ -291,6 +299,9 @@ export default {
       }
     },
     initData() {
+      if (this.isProjectSwitch === '1') {
+        this.superForm.projectId = this.userInfo.projectId
+      }
       getProductionLineList(this.superForm)
         .then((res) => {
           console.log(res, '产线')

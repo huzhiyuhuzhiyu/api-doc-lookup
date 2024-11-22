@@ -59,6 +59,8 @@
                         border :height="customStyleData">
                         <!-- <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column>
                         <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
+                        <el-table-column prop="projectName" label="所属项目" width="120"
+                          v-if="isProjectSwitch === '1'"></el-table-column>
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
                           :key="1">
                           <template slot="header">
@@ -87,7 +89,7 @@
                           </template>
                         </el-table-column>
 
-                 
+
                         <el-table-column prop="availableQuantity" label="可用库存" width="100" show-overflow-tooltip
                           v-if="this.purchasingType === 'safe'" :key="5">
                           <template slot-scope="scope">
@@ -415,13 +417,18 @@ import { getbimProductAttributesList, getbimProductAttributes } from '@/api/mast
 import { getBimProcessList } from '@/api/bimProcess/index'
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   components: {
     sourceForm,
     Process
   },
+  mixins: [getProjectList],
+
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       purProcurementDemandPoolList,
       isDeputyUnitSwitch: '',
       getProductList,
@@ -715,7 +722,11 @@ export default {
       flowData: {}
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
+    this.tableDataFlag = true
+    
     this.getBimBusinessDetail()
   },
   computed: {

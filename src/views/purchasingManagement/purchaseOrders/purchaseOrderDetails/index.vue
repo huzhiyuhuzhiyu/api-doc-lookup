@@ -79,6 +79,8 @@
             </el-table-column>
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" width="120"
+              v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom" />
             <!-- <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" /> -->
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
@@ -86,7 +88,7 @@
               :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
             <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
               :width="isDeputyUnitSwitch === '1' ? 100 : 80" />
-              <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
+            <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
             <el-table-column prop="purchaseQuantity2" label="数量(副)" width="100" v-if="isDeputyUnitSwitch === '1'" />
             <el-table-column prop="receiptQuantity" label="已入库数量" width="130" sortable="custom">
               <template slot-scope="scope">
@@ -192,11 +194,17 @@ import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintDialog from '@/components/no_mount/printDialog'
 import InboundPurchaseForm from '@/views/warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/inboundPurchaseForm.vue'
 import { getBimBusinessDetail } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   name: 'purchaseOrder',
   components: { JNPFForm, withdrawnForm, PrintForm, ExportForm, SuperQuery, PrintBrowse, PrintDialog, InboundPurchaseForm },
+  mixins: [getProjectList],
+
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
       printBrowseVisible: false,
@@ -447,7 +455,9 @@ export default {
   mounted() {
     this.getProductClassFun()
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+
     this.getDeputyUnit()
     this.detailData()
   },

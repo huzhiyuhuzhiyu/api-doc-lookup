@@ -39,7 +39,7 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main"  v-loading="listLoading" >
           <div class="JNPF-common-head">
             <el-button type="primary" size="mini" icon="el-icon-download"
               @click="exportForm('dataTable')">导出</el-button>
@@ -57,7 +57,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
+          <JNPF-table ref="dataTable":data="tableData" :fixedNO="true" v-if="isProjectSwitchFlag"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column>
             <el-table-column prop="planNo" label="计划单号" width="180" sortable="custom">
               <template slot-scope="scope">
@@ -68,6 +68,8 @@
             </el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+              v-if="isProjectSwitch == 1" />
             <el-table-column prop="planStartDate" label="计划开始日期" min-width="150" sortable="custom" />
             <el-table-column prop="planEndDate" label="计划结束日期" min-width="150" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="80" />
@@ -128,11 +130,14 @@ import OrderForm from '../salesOrderCreation/Form.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'assemblyPlanManagement',
+  mixins: [getProjectList],
   components: { Form, ExportForm, SuperQuery, OrderForm },
   data() {
     return {
@@ -289,6 +294,8 @@ export default {
 
       ],
       selectList: [],
+      isProjectSwitchFlag: false,
+      isProjectSwitch: '',
     }
   },
   watch: {
@@ -297,8 +304,14 @@ export default {
     }
   },
 
+ 
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
 
-  created() { 
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag = true
     this.superForm=this.orderForm
     this.search('basic')
     this.getProductClassFun()
@@ -592,7 +605,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'productDrawingNo') {
+      if (prop === 'productName'||prop=='projectName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'productDrawingNo') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'
@@ -622,7 +635,8 @@ export default {
     },
     initData() {
       this.listLoading = true
-      getPlanList(this.superForm).then(res => {
+     this.superForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+     getPlanList(this.superForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false

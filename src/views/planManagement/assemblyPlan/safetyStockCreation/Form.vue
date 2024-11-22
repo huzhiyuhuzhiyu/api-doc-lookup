@@ -30,9 +30,9 @@
                     </el-col>
                     <el-col :sm="6" :xs="24" v-if="isProjectSwitch==1">
                       <el-form-item label="所属项目" prop="projectId">
-                        <el-select v-model="planForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;" :disabled="userInfo.projectId!='1'"
+                        <el-select v-model="planForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;" :disabled="userInfo.projectId!='1'" @change="changeProject"
                           >
-                          <el-option v-for="(item, index) in projectIdData" :key="index" :label="item.label"
+                          <el-option v-for="(item, index) in projectIdDataList" :key="index" :label="item.label"
                             :value="item.value"></el-option>
                         </el-select>
                       </el-form-item>
@@ -293,6 +293,7 @@ export default {
         planDate: [],
         planStartDate: "",
         planEndDate: "",
+        projectId:"",
       },
       codeConfig: {},//单据规则配置
       list1: [],
@@ -353,6 +354,9 @@ export default {
         planDate: [
           { required: true, message: '计划日期不能为空', trigger: 'change' }
         ],
+        projectId: [
+          { required: true, message: '所属项目不能为空', trigger: 'change' }
+        ],
       },
       customerData: {},
       selectRows: [],
@@ -360,7 +364,8 @@ export default {
       customStyleData: 0,
       isProjectSwitch:"",
       isProjectSwitchFlag:null,
-      projectIdData:[],
+      projectIdDataList:[],
+      originalData:[],
     }
   },
   computed: {
@@ -373,7 +378,8 @@ export default {
     await this.getProjectSwitch('system', 'project')
     this.isProjectSwitchFlag=true
     if(this.isProjectSwitch==1){
-      this.planForm.projectId=this.userInfo.projectId
+       
+      this.planForm.projectId=this.userInfo.projectId==1?"":this.userInfo.projectId
     }
   },
   mounted() {
@@ -384,6 +390,10 @@ export default {
   beforeDestroy() {
   },
   methods: {
+    changeProject(){
+      console.log(this.dataForm.projectId);
+      this.productData=this.originalData.filter(item => item.id === this.planForm.projectId); 
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -778,6 +788,7 @@ export default {
           }
         })
         this.productData = data
+        this.originalData=JSON.parse(JSON.stringify(data))
       this.fetchData("JHDH")
     },
 

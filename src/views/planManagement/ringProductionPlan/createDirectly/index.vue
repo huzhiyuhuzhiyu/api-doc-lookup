@@ -34,8 +34,17 @@
                             </el-select>
                           </el-form-item>
                         </el-col>
+                        <el-col :sm="6" :xs="24" v-if="isProjectSwitch == 1">
+                          <el-form-item label="所属项目" prop="projectId">
+                            <el-select v-model="planForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;"
+                              :disabled="userInfo.projectId != '1'">
+                              <el-option v-for="(item, index) in projectIdDataList" :key="index" :label="item.label"
+                                :value="item.value"></el-option>
+                            </el-select>
+                          </el-form-item>
+                        </el-col>
                         <el-col :sm="6" :xs="24">
-                          <el-form-item label="计划日期" prop="planDate">
+                          <el-form-item label="计划日期" prop="planDate" style="margin-bottom: 20px;">
                             <el-date-picker v-model="planForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                               :disabled='btnType == "look"' style="width: 100%;" start-placeholder="开始日期"
                               @change="changDateFun" end-placeholder="结束日期" clearable>
@@ -70,6 +79,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6"></el-table-column>
+                      <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                       <el-table-column prop="bomId" label="BOM" width="140" :key="444">
                         <template slot-scope="scope">
                           <div>{{ scope.row.bomId ? scope.row.drawingNo : "无BOM" }}</div>
@@ -89,90 +99,7 @@
                         </template>
                       </el-table-column>
 
-                      <!-- <el-table-column prop="planStartDate" label="计划开始日期" width="180" :key="13">
-                    <template slot="header">
-                      <span class="required">*</span>计划开始日期
-                    </template>
-                    <template slot-scope="scope">
-                      <el-date-picker v-model="scope.row.planStartDate" type="date" value-format="yyyy-MM-dd"
-                        :disabled="btnType == 'look' ? true : false" style="width: 100%;" placeholder="请选择">
-                      </el-date-picker>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="planEndDate" label="计划结束日期" width="180" :key="139">
-                    <template slot="header">
-                      <span class="required">*</span>计划结束日期
-                    </template>
-                    <template slot-scope="scope">
-                      <el-date-picker v-model="scope.row.planEndDate" type="date" value-format="yyyy-MM-dd"
-                        :disabled="btnType == 'look' ? true : false" style="width: 100%;" placeholder="请选择">
-                      </el-date-picker>
-                    </template>
-                  </el-table-column> -->
 
-                      <!-- <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211">
-                    <template slot-scope="scope">
-                      <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
-                        style="width: 100%;">
-                        <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
-                          :value="item.name"></el-option>
-                      </el-select>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123">
-                    <template slot-scope="scope">
-                      <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
-                        <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
-                          :value="item.name"></el-option>
-                      </el-select>
-                    </template>
-                  </el-table-column>
-
-                  <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
-                    <template slot-scope="scope">
-                      <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable style="width: 100%;">
-                        <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
-                          :value="item.name"></el-option>
-                      </el-select>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="oil" label="油脂" width="120" :key="61">
-
-                    <template slot-scope="scope">
-                      <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
-                        <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
-                          :value="item.name"></el-option>
-                      </el-select>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51">
-
-                    <template slot-scope="scope">
-                      <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
-                        <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
-                          :value="item.name"></el-option>
-                      </el-select>
-                    </template>
-                  </el-table-column>
-
-                  <el-table-column prop="clearance" label="游隙" width="120" :key="100">
-
-                    <template slot-scope="scope">
-                      <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
-                        <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
-                          :value="item.name"></el-option>
-                      </el-select>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101">
-
-                    <template slot-scope="scope">
-                      <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable style="width: 100%;">
-                        <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
-                          :value="item.name"></el-option>
-                      </el-select>
-                    </template>
-                  </el-table-column> -->
                       <el-table-column prop="remark" label="备注" width="200" :key="128">
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.remark" placeholder="请输入" maxlength="200" />
@@ -190,7 +117,7 @@
                   </el-collapse-item>
                 </el-collapse>
               </el-tab-pane>
-              <el-tab-pane label="附件" name="annex"  v-if="isattachmentswitch == '1'">
+              <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
                 <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'">
                 </UploadWj>
               </el-tab-pane>
@@ -222,7 +149,7 @@
                           {{ $t('common.search') }}</el-button>
                         <el-button size="mini" icon="el-icon-refresh-right" @click="resetAllProduct()">{{
                           $t('common.reset')
-                          }}
+                        }}
                         </el-button>
                       </el-form-item>
                     </el-col>
@@ -233,6 +160,8 @@
                     @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
                     <el-table-column prop="drawingNo" label="品名规格" sortable="custom" />
                     <el-table-column prop="code" label="产品编码" sortable="custom" width="140"></el-table-column>
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
+
                     <el-table-column prop="mainUnit" label="单位" width="80"></el-table-column>
                     <el-table-column prop="inventoryQuantity" label="可用库存数量" sortable="custom"></el-table-column>
                     <el-table-column prop="bomId" label="是否有BOM" sortable="custom">
@@ -277,6 +206,8 @@ import { getOrderDetail, addOrders, editOrders, getcategoryTrees, getAttributeli
 import { getCounryData, getCooperativeInfo, getCooperativeData, getscheduleList } from '@/api/basicData/index'
 import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表 
 import { mapGetters, mapState } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
@@ -285,6 +216,7 @@ import { log } from 'mathjs'
 import { getBimBusinessDetail } from '@/api/basicData/index'
 export default {
 
+  mixins: [getProjectList],
 
   data() {
     return {
@@ -299,6 +231,7 @@ export default {
         planType: "add_plan",
         planDate: [],
         planStartDate: "",
+        projectId:"",
         planEndDate: "",
       },
       codeConfig: {},//单据规则配置
@@ -359,11 +292,17 @@ export default {
         planDate: [
           { required: true, message: '计划日期不能为空', trigger: 'change' }
         ],
+        projectId: [
+          { required: true, message: '所属项目不能为空', trigger: 'change' }
+        ],
       },
       customerData: {},
       selectRows: [],
       selectArr: [],
       customStyleData: 0,
+      isProjectSwitch: "",
+      isProjectSwitchFlag: null,
+      projectIdDataList: [],
     }
   },
   computed: {
@@ -372,24 +311,24 @@ export default {
 
   },
 
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
+    this.isProjectSwitchFlag = true
+    if (this.isProjectSwitch == 1) {
+      console.log(this.projectIdDataList);
+      this.planForm.projectId=this.userInfo.projectId==1?"":this.userInfo.projectId 
+    }
   },
-  mounted() {
-    this.getBimBusinessDetail()
+  mounted() { 
     this.init()
     this.getProductClassFun()
   },
   beforeDestroy() {
   },
   methods: {
-    getBimBusinessDetail() {
-      let obj = {
-        businessCode: 'attachment',
-        configKey: 'fj_plan'
-      }
-      getBimBusinessDetail(obj).then(res => {
-        this.isattachmentswitch = res.data.configValue1
-      })
+    changeProject() { 
+      this.productData = this.productData.filter(item => item.id === this.planForm.projectId);
     },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
@@ -618,6 +557,8 @@ export default {
     // 获取所有产品列表数据
     initData() {
       this.listLoading = true
+     this.ProductListRequestObj.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+
       getProducts(this.ProductListRequestObj).then(listRes => {
         if (Array.isArray(listRes.data)) {
           this.allproductData = listRes.data

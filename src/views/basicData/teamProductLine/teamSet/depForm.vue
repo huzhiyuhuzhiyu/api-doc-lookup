@@ -4,7 +4,7 @@
     width="70%">
     <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
       label-width="120px">
-      <el-row :gutter="30">
+      <el-row :gutter="30" v-if="tableDataFlag">
         <el-col :span="12">
           <el-form-item label="班组编码" prop="code">
             <el-input v-model="dataForm.code" placeholder="请输入班组编码" maxlength="20"
@@ -17,7 +17,14 @@
             <el-input v-model="dataForm.name" placeholder="请输入班组名称" maxlength="20" :disabled="btntype ? true : false" />
           </el-form-item>
         </el-col>
-
+        <el-col :span="12">
+          <el-form-item label="所属项目" prop="projectId">
+            <el-select v-model="dataForm.projectId" placeholder="请选择所属项目"
+              :disabled="btntype || userInfo.projectId !== '1'" style="width:100%">
+              <el-option v-for="item in projectIdData" :key="item.id" :label="item.label" :value="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
         <el-col :span="12">
           <el-form-item label="状态" prop="state">
             <el-select v-model="dataForm.state" placeholder="请选择状态" style="width: 100%;"
@@ -148,10 +155,12 @@
 
 <script>
 import { addGroupData, deleteGroupData, editGroupData, getGroupDataInfo, checkGroupCode } from "@/api/basicData/index";
-
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
+  mixins: [getProjectList],
   data() {
     return {
+      tableDataFlag: false,
       visible: false,
       formLoading: false,
       btnLoading: false,
@@ -188,6 +197,7 @@ export default {
       }],
       dataForm: {
         remark: '',
+        projectId: '',
         code: "",
         name: "",
         state: 'enable',
@@ -207,6 +217,9 @@ export default {
       checkCodeFlag: null,
       btntype: false,
       dataRule: {
+        projectId: [
+          { required: true, message: '选择所属项目', trigger: 'blur' },
+        ],
         name: [
           { required: true, message: '请输入班组名称', trigger: 'blur' },
         ],
@@ -286,9 +299,16 @@ export default {
 
 
     },
-    init(id, type) {
+    async init(id, type) {
       this.visible = true
-      console.log(id);
+      await this.getProjectList()
+      if (this.userInfo.projectId === '1') {
+        this.projectIdData = this.projectIdData.filter(item => item.id !== '1')
+      } else {
+        this.$set(this.dataForm, 'projectId', this.userInfo.projectId)
+        this.tableDataFlag = true
+      }
+      console.log(this.dataForm.projectId, 'pjkjjj');
       this.lines = []
       this.dataForm.id = id || ''
       if (type == "edit") {

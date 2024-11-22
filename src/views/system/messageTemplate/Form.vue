@@ -163,6 +163,8 @@ export default {
       this.dataForm.id = id || ''
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
+        console.log(this.dataForm);
+        
         if (this.dataForm.id) {
           this.loading = true
           getInfo(this.dataForm.id).then(res => {
@@ -188,7 +190,7 @@ export default {
           this.btnLoading = true
           const formMethod = this.dataForm.id ? Update : Create
           console.log(this.dataForm);
-          if (this.dataForm.urlList) this.dataForm.url = this.dataForm.urlList[0].url
+          if (this.dataForm.urlList.length) this.dataForm.url = this.dataForm.urlList[0].url
           formMethod(this.dataForm).then((res) => {
             this.$message({
               message: res.msg,

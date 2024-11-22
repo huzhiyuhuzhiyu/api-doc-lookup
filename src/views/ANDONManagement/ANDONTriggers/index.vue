@@ -73,7 +73,9 @@
 <script>
 import { getAbnoramlTypeData, detailAbnoramlTypeData, addAbnoramlData } from '@/api/abnormalManagement/index.js'
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
+  mixins:[getProjectList],
   data() {
     return {
       tipsvisible: false,
@@ -132,10 +134,12 @@ export default {
       dataRule: {
         orderNo: [{ required: true, message: '请输入申请单号', trigger: 'blur' }]
       },
-      codeConfig: {}
+      codeConfig: {},
+      isProjectSwitch:''
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.initData()
     this.fetchData('ABARDH', true)
@@ -176,7 +180,8 @@ export default {
       this.dataForm.module = current.module
       if (!this.dataForm.abnormalTypeId) return
       this.listLoading = true
-      detailAbnoramlTypeData(current.id).then((res) => {
+      let projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      detailAbnoramlTypeData(current.id,projectId).then((res) => {
         this.dataDetail = res.data.contentList || []
         this.listLoading = false
       }).catch(() => this.listLoading = false)
@@ -190,7 +195,8 @@ export default {
           this.dataForm.abnormalTypeId = this.list[0].id
           this.dataForm.abnormalType = this.list[0].name
           this.dataForm.module = this.list[0].module
-          detailAbnoramlTypeData(this.list[0].id).then((res) => {
+          let projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+          detailAbnoramlTypeData(this.list[0].id,projectId).then((res) => {
             this.dataDetail = res.data.contentList || []
             this.activeName = this.list[0].code
           })

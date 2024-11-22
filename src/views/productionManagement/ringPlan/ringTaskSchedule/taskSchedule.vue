@@ -33,6 +33,8 @@
                     <el-tag style="vertical-align: super;" type="warning" effect="dark">返工订单</el-tag>
                   </el-descriptions-item>
                   <el-descriptions-item label="产品编码">{{ dataForm.productCode }}</el-descriptions-item>
+                  <el-descriptions-item label="所属项目" v-if="isProjectSwitch == 1">{{ dataForm.projectName
+                    }}</el-descriptions-item>
                   <el-descriptions-item label="总生产数量">{{ dataForm.productionQuantity }}{{ dataForm.mainUnit
                     }}</el-descriptions-item>
                   <el-descriptions-item label="已完成数量">{{ dataForm.completedQuantity }}{{ dataForm.mainUnit
@@ -81,9 +83,13 @@ import { detailordershengchan } from '@/api/productOrdes/index.js'
 import { getWorkReportList } from "@/api/productOrdes/index.js"
 import { gantt } from 'dhtmlx-gantt' // 引入dhtmlx-gantt
 import 'dhtmlx-gantt/codebase/dhtmlxgantt.css'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
+  mixins: [getProjectList],
+
   data() {
     return {
+      isProjectSwitch: '',
       height: 0,
       relatedTaskVisible: false,
       categoryTypeList: [
@@ -266,11 +272,11 @@ export default {
     }
 
   },
+  async created() {
 
-  watch: {
-
-
+    await this.getProjectSwitch('system', 'project')
   },
+ 
   mounted() {
     this.switchStyle()
     // 清空之前的配置
@@ -385,11 +391,11 @@ export default {
 
   },
   methods: {
-    monthScaleTemplate (date) {
+    monthScaleTemplate(date) {
       const dateToStrss = gantt.date.date_to_str("%Y年");
       const dateToStrs = gantt.date.date_to_str("%M");
       // return dateToStrss(date)+dateToStrs(date)+dateToStr(date)+'日';
-      return dateToStrss(date) +  dateToStrs(date);
+      return dateToStrss(date) + dateToStrs(date);
     },
     formatWeekday(date) { //1号 周一
       const dateToStr = gantt.date.date_to_str("%d");
@@ -463,7 +469,7 @@ export default {
         this.feedData = res.data.materialList
         this.workOrderData = res.data.workOrderList
         let arr = []
-       
+
 
 
         // 2. 拆分成单个项目
@@ -477,30 +483,30 @@ export default {
 
         console.log(123, result);
 
-          this.workOrderData.forEach((itemss, index) => {
-              if (!itemss.actualStartDate||!itemss.actualEndDate) { 
-                itemss.actualStartDate = itemss.planStartDate
-                itemss.actualEndDate = itemss.planEndDate
-              } else {
-                itemss.actualStartDate = itemss.actualStartDate ? itemss.actualStartDate.substring(0, 10) : ""
-                itemss.actualEndDate = itemss.actualEndDate ? itemss.actualEndDate.substring(0, 10) : ""
-              }
-              let bjss = {
-                id: itemss.id,
-                text: result[index].name, 
-                progress: result[index].progress / 100,
-                type: 'task',
-                start_date: new Date(itemss.actualStartDate == itemss.actualEndDate ? itemss.actualStartDate + ' 00:00:00' : itemss.actualStartDate + ' 00:00:00'),
-                end_date: new Date(itemss.actualStartDate == itemss.actualEndDate ? itemss.actualEndDate + ' 23:59:59' : itemss.actualEndDate + ' 23:59:59'),
-                qualifiedQuantity: itemss.qualifiedQuantity,
-                productionQuantity: itemss.productionQuantity,
-                duration: 20,
-                // color: "green",
-              }
-              arr.push(bjss)
-            })
+        this.workOrderData.forEach((itemss, index) => {
+          if (!itemss.actualStartDate || !itemss.actualEndDate) {
+            itemss.actualStartDate = itemss.planStartDate
+            itemss.actualEndDate = itemss.planEndDate
+          } else {
+            itemss.actualStartDate = itemss.actualStartDate ? itemss.actualStartDate.substring(0, 10) : ""
+            itemss.actualEndDate = itemss.actualEndDate ? itemss.actualEndDate.substring(0, 10) : ""
+          }
+          let bjss = {
+            id: itemss.id,
+            text: result[index].name,
+            progress: result[index].progress / 100,
+            type: 'task',
+            start_date: new Date(itemss.actualStartDate == itemss.actualEndDate ? itemss.actualStartDate + ' 00:00:00' : itemss.actualStartDate + ' 00:00:00'),
+            end_date: new Date(itemss.actualStartDate == itemss.actualEndDate ? itemss.actualEndDate + ' 23:59:59' : itemss.actualEndDate + ' 23:59:59'),
+            qualifiedQuantity: itemss.qualifiedQuantity,
+            productionQuantity: itemss.productionQuantity,
+            duration: 20,
+            // color: "green",
+          }
+          arr.push(bjss)
+        })
 
-    
+
         console.log("arr", arr);
         this.gantttt.data = arr
         gantt.init(this.$refs.ganttRef);
@@ -1021,6 +1027,7 @@ $footerPadding: '10px';
   background-color: #f2f2f2;
   /* 设置选中行的背景色 */
 }
+
 ::v-deep .gantt_cell_tree {
   border-right: 0.5px solid #e0e0e0;
 }

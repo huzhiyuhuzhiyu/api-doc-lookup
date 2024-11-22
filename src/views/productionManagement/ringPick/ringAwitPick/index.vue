@@ -5,11 +5,24 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderNoS" placeholder="生产任务单号" clearable @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
+            <template v-for="item in searchList">
+              <el-col :span="item.searchType === 3 ? 6 : 4">
+                <el-form-item>
+                  <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                    @keyup.enter.native="search('basic')" />
+
+                  <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                    clearable>
+                    <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                      :value="item2.value"></el-option>
+                  </el-select>
+                  <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                    :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                    :type="item.dateType"
+                    :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                </el-form-item>
+              </el-col>
+            </template>
             <el-col :span="4">
               <el-form-item>
                 <el-select v-model="orderForm.orderType" placeholder="生产任务类型" style="width: 100%;">
@@ -18,16 +31,12 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="productDrawingNoS" placeholder="品名规格" clearable @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
+          
 
 
             <el-col :span="6">
               <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
                   {{ $t('common.search') }}</el-button>
                 <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
                 </el-button>
@@ -36,7 +45,7 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main"  v-loading="listLoading">
           <div class="JNPF-common-head">
             <div> </div>
             <div class="JNPF-common-head-right">
@@ -53,7 +62,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
+          <JNPF-table ref="dataTable"  :data="tableData" :fixedNO="true"  v-if="isProjectSwitchFlag"
             header-cell-class-name="all-select" @sort-change="sortChange" custom-column
             :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
@@ -70,6 +79,8 @@
               </template>
             </el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
+            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+            v-if="isProjectSwitch == 1" />
             <el-table-column prop="mainUnit" label="单位" width="80" />
             <el-table-column prop="productionQuantity" label="生产数量" min-width="140" sortable="custom" />
             <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom"></el-table-column>
@@ -116,16 +127,28 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'assemblyplanManagement',
   components: { SuperQuery,Form,PickForm },
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      isProjectSwitchFlag: false,
       pickVisible:false,
       columnList: ["sealingCoverTyping", "accuracyLevel", "vibrationLevel", "oil", "oilQuantity", "clearance", "packagingMethod", "specialRequire",],
       orderTypeList: [
         { label: "正常订单", value: "normal" },
         { label: "返工订单", value: "rework" },
+      ],
+      superQuery: {},
+      superForm: {},
+      basicQuery: {},
+      searchList: [
+        { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],
       productDrawingNoS: "",
       orderNoS: "",
@@ -308,13 +331,21 @@ export default {
     }
   },
   created() {
-    this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-    this.search()
+  
   },
   watch: {
     activeName() {
       this.search()
     }
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag = true
+    this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+    this.search('basic')
+  }, 
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   mounted() {
     this.getProductClassFun()
@@ -395,11 +426,11 @@ export default {
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName'||prop=='productDrawingNo') {
+      if (prop === 'partnerCode'||prop=='projectName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName'||prop=='productDrawingNo') {
         if (prop === 'createByName') {
           newProp = 'create_by'
         } else {
@@ -418,40 +449,13 @@ export default {
     closeForm(isRefresh) {
       this.formVisible = false
       this.pickVisible=false
-      this.search()
+      this.search('basic')
     },
     initData() {
       this.listLoading = true
 
-
-
-
-      if (this.orderNoS) {
-
-        if (this.orderForm.superQuery.condition.length) {
-          let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("orderNo"));
-          filteredData.push({ "field": "orderNo", "fieldValue": this.orderNoS, "symbol": "like" })
-          this.orderForm.superQuery.condition = filteredData
-        } else {
-          this.orderForm.superQuery.condition.push(
-            { "field": "orderNo", "fieldValue": this.orderNoS, "symbol": "like" }
-          )
-        }
-      }
-      if (this.productDrawingNoS) {
-        if (this.orderForm.superQuery.condition.length) {
-          let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("productsDrawingNo"));
-          filteredData.push({ "field": "productsDrawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" })
-          this.orderForm.superQuery.condition = filteredData
-        } else {
-          this.orderForm.superQuery.condition.push(
-            { "field": "productsDrawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" }
-          )
-        }
-      }
-      if (this.customerDrawingNumberS || this.productDrawingNoS) {
-        this.$set(this.orderForm.superQuery, 'matchLogic', 'AND')
-      }
+ 
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       ordershengchanList(this.orderForm).then(res => {
         res.data.records.forEach(item => {
           item.selectFlag = false
@@ -464,25 +468,47 @@ export default {
       })
 
     },
-    search() {
+    search(type) {
 
       Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
         let item = this.orderForm[key]
         this.orderForm[key] = typeof item === 'string' ? item.trim() : item
       })
       this.orderForm.pageNum = 1 // 重置页码
-
+      
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       this.initData()
     },
     reset() {
+     
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
 
-      this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+      this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+      this.searchList = [
+        { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+      ],
 
-      this.orderNoS = ""
-      this.productDrawingNoS = ""
-      this.$refs.SuperQuery.conditionList = []
-      this.search()
+        this.$refs.SuperQuery.conditionList = []
+      this.search('basic')
+
+
     },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()

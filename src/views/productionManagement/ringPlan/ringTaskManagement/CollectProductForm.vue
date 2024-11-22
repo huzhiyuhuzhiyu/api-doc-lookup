@@ -66,6 +66,7 @@
             <el-table-column prop="drawingNo" label="品名规格" />
             <el-table-column prop="code" label="产品编码" ></el-table-column> 
             <el-table-column prop="productCategoryName" label="产品分类" />
+            <el-table-column prop="projectName" label="所属项目" min-width="120"   v-if="isProjectSwitch == 1" />
             
           </JNPF-table>
           <pagination :total="allProductTotal" :page.sync="ProductListRequestObj.pageNum"
@@ -84,7 +85,9 @@
 import { detailProcess, getProcessList } from '@/api/basicData/processSettingss.js'
 import { getcategoryTree as productTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getProducts} from '@/api/masterDataManagement/index.js' // 产品列表 
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
+  mixins: [getProjectList],
   data() {
     return {
 
@@ -120,9 +123,13 @@ export default {
         pageNum: 1,
         pageSize: 20,
       },
-
+      isProjectSwitch: "",
+      id:"",
 
     }
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
   },
   methods: {
     filterNodeAllProduct(value, data) {
@@ -154,10 +161,11 @@ export default {
         
       })
     },
-    init() {
+  
+    init(id) {
       this.allProVisible = true
-
-      this.openSeleceProductDialog()
+      this.id=id
+      this.openSeleceProductDialog(id)
     },
     // 根据订单类型  打开不同的选择产品弹框
     openSeleceProductDialog() {
@@ -205,7 +213,7 @@ export default {
           }
           if ((++successTotal) === this.ProductMethodArr.length) {
             this.ProductTreeData = tempTreeData
-            this.initData2()
+            this.initData2(id)
           }
         })
       });
@@ -213,8 +221,9 @@ export default {
 
     },
     // 获取所有产品列表数据
-    initData2() {
+    initData2(id) {
       this.listLoading = true
+      this.ProductListRequestObj.projectId = id
       getProducts(this.ProductListRequestObj).then(listRes => {
         if (Array.isArray(listRes.data)) {
           this.allproductData = listRes.data

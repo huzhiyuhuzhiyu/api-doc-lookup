@@ -37,11 +37,11 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main"  v-loading="listLoading" >
           <div class="JNPF-common-head">
             <div> </div>
             <div class="JNPF-common-head-right">
-              <el-tooltip content="高级查询" placement="top" v-if="true">
+              <el-tooltip content="高级查询" placement="top" v-if="true" >
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                   @click="superQueryVisible = true" />
               </el-tooltip>
@@ -54,7 +54,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"  v-if="isProjectSwitchFlag"
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
@@ -71,6 +71,8 @@
             </el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+            v-if="isProjectSwitch == 1" />
             <el-table-column prop="mainUnit" label="单位" width="160" />
             <el-table-column prop="productionQuantity" label="总生产数量" min-width="160" sortable="custom" />
             <el-table-column prop="completedQuantity" label="已完成数量" min-width="160" sortable="custom" />
@@ -134,11 +136,16 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'assemblyTaskRecord',
   components: { Form, SuperQuery },
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      isProjectSwitchFlag: false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -355,11 +362,16 @@ export default {
       ],
     }
   },
-  created() {
-   this.superForm= this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-    this.search('basic')
-  },
 
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag = true
+    this.superForm= this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+    this.search('basic')
+  }, 
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
   mounted() {
     this.getProductClassFun()
   },
@@ -427,6 +439,7 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
  
       ordershengchanList(this.orderForm).then(res => {
         this.tableData = res.data.records

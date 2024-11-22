@@ -454,11 +454,15 @@ import DeviceReportForm from './deviceReportForm.vue'
 import ProduceLineReportForm from './ProduceLineForm.vue'
 import { getDepartmentSelectorByAuth } from '@/api/permission/department'
 import { getUserListPost } from '@/api/permission/user'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'assembleCompletionReport',
   components: { ExportForm, Diagram, taskForm, produceTaskReportForm, ProcessReportForm, GroupReportForm, PersonReportForm, DeviceReportForm, ProduceLineReportForm },
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
       defaultPropsPerson: {
         children: 'children',
         label: 'fullName'
@@ -661,12 +665,9 @@ export default {
 
     }
   },
-
-  created() {
-
-
-    // this.searchProductData()
-    // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+ 
   },
   methods: {
     closeTaskFun(row) {
@@ -795,6 +796,7 @@ export default {
         this.produceForm.planSed = ""
       }
       this.listLoading = true
+      this.produceForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       ordershengchanList(this.produceForm).then(res => {
         res.data.records.forEach(item => {
           let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.productionQuantity, item.completedQuantity]), 6)
@@ -850,6 +852,7 @@ export default {
     },
     // 工序
     searchProcessData() {
+      this.processForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getBimProcessList(this.processForm).then(res => {
         res.data.records.forEach(item => {
           let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.productionQuantity, item.qualifiedQuantity]), 6)

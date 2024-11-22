@@ -212,7 +212,6 @@ export default {
 
         approvalStatus: "ok",
         documentStatus: "submit",
-        orderState: "not_finish",
         deliveryEndTime: "",
         deliveryStartTime: "",
         extensionFlag: 1,
@@ -946,7 +945,6 @@ export default {
 
         approvalStatus: "ok",
         documentStatus: "submit",
-        orderState: "not_finish",
         deliveryEndTime: this.deliveryDateArr[1],
         deliveryStartTime: "",
         extensionFlag: 1,

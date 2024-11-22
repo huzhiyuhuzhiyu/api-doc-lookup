@@ -133,10 +133,13 @@ export default {
               if (index == 0) {
                 item.firstFlag = true;
                 item.lastFlag = false;
+                this.$set( this.selectArr[index], 'lastFlag', false)
+                this.$set( this.selectArr[index], 'firstFlag', true) 
               } else if (index == this.selectArr.length - 1) {
-                item.firstFlag = false;
-                item.lastFlag = true;
-                item.stockFlag = true;
+             
+                this.$set(this.selectArr[index], 'firstFlag', false)
+                this.$set(this.selectArr[index], 'lastFlag', true)
+                this.$set(this.selectArr[index], 'stockFlag', true)
                 if (this.selectArr[index].processingType !== "self_produced") {
                   item.reportFlag = false;
                 } else {
@@ -157,6 +160,7 @@ export default {
                 if (item.firstFlag) {
                   this.selectArr[index].stockFlag = true;
                 }
+                console.log(666,index);
                 this.selectArr[index - 1].stockFlag = true;
                 this.selectArr[index - 1].reportFlag = true;
 
@@ -202,16 +206,18 @@ export default {
               item.lastFlag = false;
             }
             if (item.processingType !== "self_produced") {
-              item.stockFlag = true
+              this.$set(item,'stockFlag',true)
             }
            
             item.orderType = "rework";
             if (item.processingType !== "self_produced" && this.selectArr.length > 1) {
               if (item.firstFlag) {
                 this.selectArr[index].stockFlag = true;
+              }else{
+
+                this.selectArr[index - 1].stockFlag = true;
+                this.selectArr[index - 1].reportFlag = true;
               }
-              this.selectArr[index - 1].stockFlag = true;
-              this.selectArr[index - 1].reportFlag = true;
             }
           });
           if (this.selectArr.length == 1) {
@@ -294,7 +300,7 @@ export default {
           column: ""
         },],
       }
-      this.init()
+      this.search()
     },
   }
 }

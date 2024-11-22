@@ -37,7 +37,7 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading" >
           <div class="JNPF-common-head">
             <div>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addTaskFun('', 'add')">
@@ -66,7 +66,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" v-loading="listLoading" :data="tableData"
+          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData"   v-if="isProjectSwitchFlag"
             :fixedNO="true" :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" hasC
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
@@ -84,6 +84,8 @@
             </el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+            v-if="isProjectSwitch == 1" />
             <el-table-column prop="mainUnit" label="单位" width="80" />
             <el-table-column prop="productionQuantity" label="总生产数量" min-width="140" sortable="custom" />
             <el-table-column prop="completedQuantity" label="已完成数量" min-width="140" sortable="custom" />
@@ -255,9 +257,12 @@ import {
 import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
 import { getPrintList } from '@/api/system/printDev'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'assemblyTaskManagement',
   components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, TaskForm },
+  mixins: [getProjectList],
   data() {
     return {
       taskFormVisible: false,
@@ -492,14 +497,21 @@ export default {
         category: 'Productionmanage'
       },
       enCode: '',
-      printList: []
+      printList: [],
+      isProjectSwitch: '',
+      isProjectSwitchFlag: false,
     }
   },
-  created() {
+ 
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag = true
     this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search('basic')
+  }, 
+  computed: {
+    ...mapGetters(['userInfo'])
   },
-
   mounted() {
     this.getProductClassFun()
   },
@@ -674,6 +686,7 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
 
 
       ordershengchanList(this.orderForm).then(res => {

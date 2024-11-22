@@ -201,9 +201,9 @@ export default {
   },
 
   async created() {
-    this.superForm=this.form
     await this.getProjectSwitch('system', 'project')
     this.isProjectSwitchFlag=true
+    this.superForm=this.form
     this.search('basic')
   },
   methods: {
@@ -232,7 +232,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus'||prop=='productCategoryName') {
+      if (prop === 'productName'||prop=='projectName' || prop === 'productCode' || prop === 'documentStatus'||prop=='productCategoryName') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'

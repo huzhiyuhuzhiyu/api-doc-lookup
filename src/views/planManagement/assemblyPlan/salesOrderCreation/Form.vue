@@ -21,7 +21,7 @@
             <el-tab-pane label="基础信息" name="orderInfo">
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                  <el-form ref="dataForm" :model="planForm" :rules="dataRule" label-width="160px" label-position="top">
+                  <el-form ref="dataForm" :model="planForm" :rules="dataRule" label-width="160px" label-position="top" key="555">
                     <el-row :gutter="30" class="custom-row">
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="计划单号" prop="planNo">
@@ -88,7 +88,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="计划日期" prop="planDate">
+                        <el-form-item label="计划日期" prop="planDate" style="margin-bottom: 20px;">
                           <el-date-picker v-model="planForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             :disabled='btnType == "look"' style="width: 100%;" start-placeholder="开始日期"
                             end-placeholder="结束日期" clearable>
@@ -312,6 +312,7 @@ export default {
         finalPlanQuantity: "",
         remark: "",
         id: "",
+        projectId:"",
       },
       codeConfig: {},//单据规则配置
       activeName: "orderInfo",
@@ -410,8 +411,8 @@ export default {
   },
 
   async created() {
-    await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
+    await this.getProjectSwitch('system', 'project')
     this.isProjectSwitchFlag = true
     if (this.isProjectSwitch == 1) {
 
@@ -954,6 +955,7 @@ export default {
             obj.plan.clearance = this.productData[0].clearance
             obj.plan.deputyUnit = this.productData[0].deputyUnit
             obj.plan.mainUnit = this.productData[0].mainUnit
+            obj.plan.projectId = this.planForm.projectId
           } else {
             obj.plan = this.planForm
           }

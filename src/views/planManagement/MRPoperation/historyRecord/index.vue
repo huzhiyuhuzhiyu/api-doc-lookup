@@ -1,6 +1,6 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-center JNPF-flex-main"  v-if="!formVisible">
+    <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="组装需求" name="assemble">
           <div class="JNPF-common-layout-center JNPF-flex-main">
@@ -45,7 +45,7 @@
 
               </el-form>
             </el-row>
-            <div class="JNPF-common-layout-main JNPF-flex-main"  v-loading="listLoading" >
+            <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
               <div class="JNPF-common-head">
                 <div>
 
@@ -65,13 +65,13 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table ref="assembleRef" :data="assembleData" :fixedNO="true"   v-if="isProjectSwitchFlag"
+              <JNPF-table ref="assembleRef" :data="assembleData" :fixedNO="true" v-if="isProjectSwitchFlag"
                 @sort-change="sortChange" custom-column :setColumnDisplayList="columnList1"
                 :checkSelectable="disproduceData" :key="1">
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-                v-if="isProjectSwitch == 1" />
+                  v-if="isProjectSwitch == 1" />
                 <el-table-column prop="bomId" label="是否有BOM" min-width="140" sortable="custom">
                   <template slot-scope="scope">
                     <div :style="scope.row.bomId ? 'color:#85ce60' : 'color:#f56c6c'">{{ scope.row.bomId ? "有" : '否'
@@ -158,7 +158,7 @@
                 </el-col>
               </el-form>
             </el-row>
-            <div class="JNPF-common-layout-main JNPF-flex-main"  v-loading="listLoading" >
+            <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
               <div class="JNPF-common-head">
                 <div>
 
@@ -177,14 +177,14 @@
                       @click="getproduceData('basic')" />
                   </el-tooltip>
                 </div>
-              </div> 
-              <JNPF-table ref="produceRef"   :data="produceData" :fixedNO="true"   v-if="isProjectSwitchFlag"
+              </div>
+              <JNPF-table ref="produceRef" :data="produceData" :fixedNO="true" v-if="isProjectSwitchFlag"
                 :setColumnDisplayList="columnList2" @sort-change="sortChange" custom-column :key="2"
                 :checkSelectable="disproduceData">
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="170" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-                v-if="isProjectSwitch == 1" />
+                  v-if="isProjectSwitch == 1" />
                 <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                   <template slot-scope="scope">
                     <div :style="scope.row.bomFlag ? 'color:#85ce60' : 'color:#f56c6c'">{{ scope.row.bomFlag ? "有BOM" :
@@ -307,7 +307,7 @@
 
               </el-form>
             </el-row>
-            <div class="JNPF-common-layout-main JNPF-flex-main"  v-loading="listLoading" >
+            <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
               <div class="JNPF-common-head">
                 <div>
 
@@ -328,13 +328,13 @@
                 </div>
               </div>
 
-              <JNPF-table ref="purchaseRef"  :data="purchaseData" :fixedNO="true" :key="3"   v-if="isProjectSwitchFlag"
+              <JNPF-table ref="purchaseRef" :data="purchaseData" :fixedNO="true" :key="3" v-if="isProjectSwitchFlag"
                 :setColumnDisplayList="columnList3" @sort-change="sortChange" custom-column
                 :checkSelectable="dispurchaseData">
                 <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-                v-if="isProjectSwitch == 1" />
+                  v-if="isProjectSwitch == 1" />
                 <el-table-column prop="immediatelyBuyFlag" label="立即采购" width="140" sortable="custom">
                   <template slot-scope="scope">
                     <div>{{ scope.row.immediatelyBuyFlag ? "是" : "否" }}</div>
@@ -437,8 +437,8 @@
                 </el-col>
 
               </el-form>
-            </el-row> 
-            <div class="JNPF-common-layout-main JNPF-flex-main"  v-loading="listLoading" >
+            </el-row>
+            <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
               <div class="JNPF-common-head">
                 <div>
                 </div>
@@ -458,12 +458,13 @@
                 </div>
               </div>
 
-              <JNPF-table ref="outRef"   :data="outData" :fixedNO="true" @sort-change="sortChange"   v-if="isProjectSwitchFlag"
-                :key="4" :setColumnDisplayList="columnList4" custom-column :checkSelectable="disOutData">
+              <JNPF-table ref="outRef" :data="outData" :fixedNO="true" @sort-change="sortChange"
+                v-if="isProjectSwitchFlag" :key="4" :setColumnDisplayList="columnList4" custom-column
+                :checkSelectable="disOutData">
                 <el-table-column prop="productDrawingNo" label="品名规格" width="180" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-                v-if="isProjectSwitch == 1" />
+                  v-if="isProjectSwitch == 1" />
                 <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                   <template slot-scope="scope">
                     <div :style="scope.row.bomFlag ? 'color:#85ce60' : 'color:#f56c6c'">{{ scope.row.bomFlag ? "有BOM" :
@@ -574,9 +575,10 @@ import { mapGetters, mapState } from 'vuex'
 export default {
   name: "historyRecord",
   components: { Form, ComplateSetForm, SuperQuery, RetrospectForm },
-  mixins:[getProjectList],
+  mixins: [getProjectList],
   data() {
     return {
+      listLoading: false,
       superQuery1: {},
       superForm1: {},
       basicQuery1: {},
@@ -747,9 +749,9 @@ export default {
           typeCode: "pa016"
         }
       ],
-      isProjectSwitch:'',
-      isProjectSwitchFlag:false,
- 
+      isProjectSwitch: '',
+      isProjectSwitchFlag: false,
+
     };
   },
   computed: {
@@ -765,11 +767,11 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
-    this.isProjectSwitchFlag=true
+    this.isProjectSwitchFlag = true
     this.superForm1 = this.assembleForm
     this.getassembleData('basic');
-   
-  }, 
+
+  },
   methods: {
     // 获取打字内容等
     getProductClassFun() {
@@ -1148,8 +1150,8 @@ export default {
       if (type === 'super') {
         this.superForm1.superQuery = this.superQuery1
       }
-     this.superForm1.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-
+      this.superForm1.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      this.listLoading = true
       getMaterialDemandReport(this.superForm1).then(res => {
         console.log("组装res", res);
         let totalData = res.data.total
@@ -1167,6 +1169,10 @@ export default {
           this.outputQuantity = 0
 
         }
+        this.listLoading = false
+      }).catch(error => {
+        this.listLoading = false
+
       })
     },
     resetAssembleData() {
@@ -1228,7 +1234,8 @@ export default {
       if (type === 'super') {
         this.superForm2.superQuery = this.superQuery2
       }
-     this.superForm2.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      this.superForm2.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      this.listLoading = true
       getMaterialDemandReport(this.superForm2).then(res => {
         console.log("生产res", res);
         let totalData = res.data.total
@@ -1253,6 +1260,10 @@ export default {
           this.inTransitUnOccupancyQuantity = 0
           this.occupancyQuantity = 0
         }
+        this.listLoading = false
+      }).catch(error => {
+        this.listLoading = false
+
       })
     },
     resetProduceData() {
@@ -1305,7 +1316,8 @@ export default {
       if (type === 'super') {
         this.superForm3.superQuery = this.superQuery3
       }
-     this.superForm3.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      this.superForm3.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      this.listLoading = true
       getMaterialDemandReport(this.superForm3).then(res => {
         console.log("采购res", res);
         let totalData = res.data.total
@@ -1331,6 +1343,10 @@ export default {
           this.inTransitUnOccupancyQuantity = 0
           this.occupancyQuantity = 0
         }
+        this.listLoading = false
+      }).catch(error => {
+        this.listLoading = false
+
       })
     },
     resetPurchaseData() {
@@ -1389,7 +1405,8 @@ export default {
       if (type === 'super') {
         this.superForm4.superQuery = this.superQuery4
       }
-     this.superForm4.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      this.superForm4.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      this.listLoading = true
       getMaterialDemandReport(this.superForm4).then(res => {
         console.log("外协res", res);
         let totalData = res.data.total
@@ -1415,6 +1432,10 @@ export default {
           this.inTransitUnOccupancyQuantity = 0
           this.occupancyQuantity = 0
         }
+        this.listLoading = false
+      }).catch(error => {
+        this.listLoading = false
+
       })
     },
     resetOuData() {
@@ -1456,7 +1477,7 @@ export default {
         prop === "productName" ||
         prop === "productDrawingNo" ||
         prop === "routingName" ||
-        prop === "routingCode"
+        prop === "routingCode"||prop=='projectName'
       ) {
         newProp = prop;
       } else {
@@ -1582,7 +1603,7 @@ export default {
         ""
       );
     },
- 
+
     // 查看替代件信息
     viewData(id, btntype) {
       console.log(id, btntype);
@@ -1598,8 +1619,8 @@ export default {
         this.$refs.Form.init(id, btntype);
       });
     },
- 
-    
+
+
 
 
 

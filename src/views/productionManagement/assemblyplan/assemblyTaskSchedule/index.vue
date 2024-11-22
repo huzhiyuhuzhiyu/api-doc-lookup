@@ -56,8 +56,8 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData" :fixedNO="true"
-            @sort-change="sortChange" custom-column :setColumnDisplayList="columnList" v-if="showFlag">
+          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData" :fixedNO="true"  v-if="showFlag"
+            @sort-change="sortChange" custom-column :setColumnDisplayList="columnList"  >
             <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'all')">{{
@@ -106,6 +106,8 @@
               </template>
             </el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
+            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+            v-if="isProjectSwitch == 1" />
             <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="orderStatus" label="任务状态" min-width="140" sortable="custom">
@@ -180,12 +182,15 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
+
 export default {
   name: 'assemblyTaskManagement',
   components: { SuperQuery, Form, TaskSchedule },
+  mixins: [getProjectList],
   data() {
     return {
-      showFlag: true,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -209,7 +214,7 @@ export default {
       btnLoading: false,
       title: "更多查询",
       tableData: [],
-      listLoading: true,
+      listLoading: false,
       detailFlag: false,
       orderForm: {},
       orderFormlist: {
@@ -400,13 +405,21 @@ export default {
           { validator: this.formValidate('positiveNumber', '请输入大于0的正整数',), trigger: 'blur' }
         ],
       },
-      maxWidth: ""
+      maxWidth: "",
+      isProjectSwitch: '',
+      showFlag:true,
     }
   },
-  created() {
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+  async created() {
+
+    await this.getProjectSwitch('system', 'project')
     this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search('basic')
-  },
+  }, 
+ 
 
   mounted() {
     this.getProductClassFun()
@@ -472,7 +485,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'productDrawingNo' || prop == 'productCode' || prop == 'routingName' || prop == 'routingCode') {
+      if (prop === 'partnerCode' ||prop=='projectName'|| prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'productDrawingNo' || prop == 'productCode' || prop == 'routingName' || prop == 'routingCode') {
         if (prop === 'createByName') {
           newProp = 'create_by'
         } else {
@@ -497,6 +510,7 @@ export default {
     initData() {
       this.listLoading = true
       this.showFlag = false
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       ordershengchanList(this.orderForm).then(res => {
         if (res.data.records.length) {
 

@@ -341,14 +341,16 @@ export default {
       flowData:{},
       approvalFlag:false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime:0
+      endTime:0,
+      isProjectSwitch: '',
     }
   },
-  computed: {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
 
   },
-  created() {
-
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   mounted() {
     this.getBimBusinessDetail()
@@ -379,8 +381,15 @@ export default {
       if (!this.dataForm.receiveType) return this.$message.error("请先选择领料类型")
       this.productTaskVisible = true
       this.$nextTick(() => {
-        this.$refs.ProductTaskForm.init()
+        if (this.isProjectSwitch == 1) {
+          this.$refs.ProductTaskForm.init(this.userInfo.projectId || '')
+
+        } else {
+          this.$refs.ProductTaskForm.init('')
+
+        }
       })
+      
     },
     // 所选的生产任务数据
     selectProductTaskFun(data) {

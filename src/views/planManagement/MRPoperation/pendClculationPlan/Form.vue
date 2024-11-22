@@ -37,7 +37,7 @@
                 </el-col>
                 <el-col :span="12">
                   <el-form-item label="所属项目" prop="projectId">
-                    <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;"
+                    <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" clearable style="width: auto;"
                       :disabled="userInfo.projectId != '1'" @change="changeProject">
                       <el-option v-for="(item, index) in projectIdDataList" :key="index" :label="item.label"
                         :value="item.value"></el-option>
@@ -167,7 +167,7 @@
                     </el-tooltip>
                   </div>
                 </div>
-                <JNPF-table @sort-change="sortChange" :partentOrChild="'assemble'" :data="assembleData"
+                <JNPF-table  custom-column @sort-change="sortChange" :partentOrChild="'assemble'" :data="assembleData"
                   :setColumnDisplayList="columnList1" highlight-current-row :fixedNO="true" class="dataTable" border
                   ref="assembleRef">
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
@@ -232,7 +232,7 @@
                     </el-tooltip>
                   </div>
                 </div>
-                <JNPF-table :partentOrChild="'produce'" @sort-change="sortChange" :data="produceData"
+                <JNPF-table  custom-column :partentOrChild="'produce'" @sort-change="sortChange" :data="produceData"
                   :setColumnDisplayList="columnList2" highlight-current-row :fixedNO="true" class="dataTable" border
                   ref="produceRef">
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
@@ -328,7 +328,7 @@
                     </el-tooltip>
                   </div>
                 </div>
-                <JNPF-table :partentOrChild="'purchase'" @sort-change="sortChange" :data="purchaseData"
+                <JNPF-table  custom-column :partentOrChild="'purchase'" @sort-change="sortChange" :data="purchaseData"
                   :setColumnDisplayList="columnList3" highlight-current-row :fixedNO="true" class="dataTable" border
                   ref="purchaseRef">
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
@@ -1125,7 +1125,7 @@ export default {
       }
       console.log(obj);
       if (!obj.scheme.schemeName) return this.$message.error("方案名称不能为空")
-      obj.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      obj.scheme.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       addMrpCalcSchemeList(obj).then(res => {
         this.$message.success("保存方案成功")
         this.getMrpCalcSchemeListFun()

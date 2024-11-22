@@ -33,6 +33,8 @@
                     <el-tag style="vertical-align: super;" type="warning" effect="dark">返工订单</el-tag>
                   </el-descriptions-item>
                   <el-descriptions-item label="产品编码">{{ dataForm.productCode }}</el-descriptions-item>
+                  <el-descriptions-item label="所属项目"  v-if="isProjectSwitch==1">{{ dataForm.projectName
+                    }} </el-descriptions-item>
                   <el-descriptions-item label="总生产数量">{{ dataForm.productionQuantity }}{{ dataForm.mainUnit
                     }}</el-descriptions-item>
                   <el-descriptions-item label="已完成数量">{{ dataForm.completedQuantity }}{{ dataForm.mainUnit
@@ -128,6 +130,7 @@
                   :height="height" :key="Math.random()">
                   <el-table-column prop="productDrawingNo" show-overflow-tooltip label="用料规格"></el-table-column>
                   <el-table-column prop="productCode" label="用料编码" />
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="processName" label="工序名称" />
                   <el-table-column prop="mainUnit" label="单位" />
                   <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
@@ -292,6 +295,8 @@ import { getInspectionList, deleteInspectionData, getInspectionLinesList } from 
 import Guidebook from '@/views/esop/fileUpload/workinginstruction/Form.vue'
 import { deleteBimFileUpload, getBimFileUpload } from "@/api/esop/fileUpload/workinginstruction";
 import Inspec from '@/views/inspectionManagement/components/inspectionFormManagementDetail.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 import {
     ApplicationType,
     DocumentStatus, FileManagePageSet, FileTrashPageSet,
@@ -299,6 +304,7 @@ import {
     PageType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 export default {
   components: { RelatedTasksForm,Guidebook,Inspec },
+  mixins: [getProjectList],
   data() {
     return {
       detailFormVisible:false,
@@ -372,11 +378,15 @@ export default {
 
       prodOrderId: "",
       inspectData: [],
+      isProjectSwitch: '',
 
     }
 
   },
-
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+   
+  },
   watch: {
 
     'categoryType': function (newVal) {

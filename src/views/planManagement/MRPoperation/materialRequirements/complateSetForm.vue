@@ -76,32 +76,15 @@
       
             <el-table-column prop="productDrawingNo" key="productDrawingNo" label="品名规格" min-width="350"
               show-overflow-tooltip> </el-table-column>
+              <el-table-column prop="projectName" label="所属项目" min-width="120" 
+              v-if="isProjectSwitch == 1" />
             <el-table-column prop="productSource" key="productSource" label="产品来源" min-width="100">
               <template slot-scope="scope">
                 <div>{{ scope.row.productSource == 'produce' ? "生产" : scope.row.productSource == 'out' ? "外协" : '采购' }}
                 </div>
               </template>
             </el-table-column>
-            <!-- <el-table-column prop="businessCode" key="businessCode" label="产品类型" min-width="100">
-              <template slot-scope="scope">
-                <div v-if="scope.row.businessCode === 'complete'">总成</div>
-                <div v-else-if="scope.row.businessCode === 'assemble'">组装</div>
-                <div v-else-if="scope.row.businessCode === 'metalworking'">金工</div>
-                <div v-else>{{ scope.row.businessCode }}</div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="productCategoryCode" key="productCategoryCode" label="物料分类" min-width="100">
-              <template slot-scope="scope">
-                <div v-if="scope.row.productCategoryCode === '1'">软管总成</div>
-                <div v-else-if="scope.row.productCategoryCode === '2'">钢管总成</div>
-                <div v-else-if="scope.row.productCategoryCode === '3'">过渡接头</div>
-                <div v-else-if="scope.row.productCategoryCode === '4'">软管接头</div>
-                <div v-else-if="scope.row.productCategoryCode === '5'">套筒</div>
-                <div v-else-if="scope.row.productCategoryCode === '6'">原材料</div>
-                <div v-else-if="scope.row.productCategoryCode === '7'">标准配件</div>
-                <div v-else>{{ scope.row.productCategoryCode }}</div>
-              </template>
-            </el-table-column> -->
+        
             <el-table-column prop="mainUnit" key="mainUnit" label="单位" width="80"></el-table-column>
             <el-table-column prop="kitDemandQuantity" key="kitDemandQuantity" label="需求数量"
               min-width="100"></el-table-column>
@@ -136,7 +119,11 @@
 import {
   getDemandList
 } from "@/api/calculationList/MRPOperation";
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
+  mixins:[getProjectList],
+
   data() {
     return {
       formLoading: false,
@@ -148,7 +135,17 @@ export default {
       /**设置替换规则表单 */
       formVisible: false,
       labelTitle:"",
+      isProjectSwitch:'',
+
     }
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project') 
+  
+   
   },
   methods: {
     closeForm() {

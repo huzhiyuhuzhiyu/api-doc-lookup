@@ -42,7 +42,7 @@
 
 
             </div>
-            <div class="JNPF-common-head-right">
+            <div class="JNPF-common-head-right" v-loading="listLoading">
               <el-tooltip content="高级查询" placement="top" v-if="true">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                   @click="superQueryVisible = true" />
@@ -56,7 +56,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
+          <JNPF-table ref="dataTable"   :data="tableData" :fixedNO="true"   v-if="isProjectSwitchFlag"
             header-cell-class-name="all-select" @sort-change="sortChange" custom-column
             :setColumnDisplayList="columnList">
             <el-table-column prop="productionOrderNo" label="任务单号" min-width="220" sortable="custom" />
@@ -64,6 +64,8 @@
             <el-table-column prop="orderNo" label="报工单号" min-width="220" sortable="custom"></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+            v-if="isProjectSwitch == 1" />
             <el-table-column prop="productCategoryName" label="产品分类" min-width="120" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" width="160" sortable="custom" />
             <el-table-column prop="reportingTime" label="报工时间" min-width="180" sortable="custom" />
@@ -113,12 +115,16 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { excelExport } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'assemblyplanManagement',
   components: { SuperQuery, ExportForm },
+  mixins: [getProjectList],
+
   data() {
     return {
       columnList: ["productionOrderNo", "productsCode",],
@@ -276,14 +282,21 @@ export default {
         },
 
       ],
-
+      isProjectSwitchFlag: false,
+      isProjectSwitch: '',
     }
   },
-  created() {
+ 
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag = true
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search()
   },
-
   mounted() {
     this.getProductClassFun()
   },
@@ -358,7 +371,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName'||prop=='workNo'||prop=='productDrawingNo'||prop=='productionOrderNo'||prop=='productCode'
+      if (prop === 'partnerCode'||prop=='projectName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName'||prop=='workNo'||prop=='productDrawingNo'||prop=='productionOrderNo'||prop=='productCode'
       ||prop=='productCategoryName'||prop=='processName'||prop=='producerName') {
         if (prop === 'createByName') {
           newProp = 'create_by'
@@ -424,6 +437,8 @@ export default {
       if (this.customerDrawingNumberS || this.productDrawingNoS || this.processNameS) {
         this.$set(this.orderForm.superQuery, 'matchLogic', 'AND')
       }
+     this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+
       getWorkReportList(this.orderForm).then(res => {
         console.log("报工记录", res);
         // res.data.records.forEach(item => {

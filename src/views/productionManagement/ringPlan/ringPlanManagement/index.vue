@@ -45,7 +45,7 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="translateFun()">
@@ -71,12 +71,14 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
+          <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true"    v-if="isProjectSwitchFlag"
             header-cell-class-name="all-select" @sort-change="sortChange" custom-column
             :setColumnDisplayList="columnList" hasC @selection-change="selectFun" :checkSelectable="dispurchaseData">
             <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
             <el-table-column prop="productsDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="productsCode" label="产品编码" min-width="120" sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+            v-if="isProjectSwitch == 1" />
             <el-table-column prop="mainUnit" label="单位" width="80" />
             <el-table-column prop="planProductionQuantity" label="计划生产数量" min-width="160" sortable="custom" />
             <el-table-column prop="availableArrangeQuantity" label="可编排数量" min-width="160" sortable="custom" />
@@ -129,12 +131,15 @@ import { getProductionPlanList } from '@/api/productionManagement/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { excelExport } from '@/api/basicData/index'
 import PlanSchedule from './planSchedule.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'assemblyplanManagement',
   components: { Form, SuperQuery, ExportForm,PlanSchedule },
+  mixins: [getProjectList],
   data() {
     return {
       planScheduleVisible:false,
@@ -261,15 +266,21 @@ export default {
           type: 'input'
         },
       ],
-    
+      isProjectSwitch: '',
+      isProjectSwitchFlag: false,
     }
   },
-  created() {
-   this.superForm= this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-    this.search('basic')
-  },
  
-  mounted() { 
+ 
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag = true
+    this.superForm= this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+    this.search('basic')
+
+  }, 
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     planSchedule(row){
@@ -357,11 +368,7 @@ export default {
     },
     initData() {
       this.listLoading = true
-
-
-
-
-       
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getProductionPlanList(this.orderForm).then(res => {
         res.data.records.forEach(item => {
           item.selectFlag = false

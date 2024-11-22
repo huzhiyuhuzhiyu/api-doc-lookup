@@ -136,14 +136,20 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import Form from './Form.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { excelExport } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'assemblyplanManagement',
   components: { SuperQuery, ExportForm,Form },
+  mixins: [getProjectList],
+
   data() {
     return {
+      isProjectSwitch: '',
+
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -157,8 +163,7 @@ export default {
         { label: "订单物料", value: "order" },
         { label: "工序物料", value: "process" },
       ],
-      personNameS: "",
-      orderNoS: "",
+ 
       superQueryVisible: false,
       exportFormVisible: false,
 
@@ -257,13 +262,15 @@ export default {
 
 
     }
-  },
-  created() {
-  this.superForm=  this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+  }, 
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag = true
+    this.superForm=  this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search('basic')
-  },
-   
-  mounted() {
+  }, 
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     // 新增
@@ -333,6 +340,7 @@ export default {
     initData() {
       this.listLoading = true
 
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       WithdrawalList(this.orderForm).then(res => {
         res.data.records.forEach(item => {
           item.selectFlag = false

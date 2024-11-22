@@ -5,18 +5,29 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderNoS" placeholder="领料单号" clearable @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-            
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="personNameS" placeholder="领料人" clearable @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-            
+            <template v-for="item in searchList">
+              <el-col :span="item.searchType === 3 ? 6 : 4">
+                <el-form-item>
+                  <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                    @keyup.enter.native="search('basic')" />
+
+                  <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                    clearable>
+                    <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                      :value="item2.value"></el-option>
+                  </el-select>
+                  <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                    :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                    :type="item.dateType"
+                    :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                </el-form-item>
+              </el-col>
+            </template>
+
+
+
+  
+
             <el-col :span="4">
               <el-form-item>
                 <el-select v-model="orderForm.receiveType" placeholder="领料类型" style="width: 100%;">
@@ -25,7 +36,6 @@
                 </el-select>
               </el-form-item>
             </el-col>
-
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
@@ -37,7 +47,7 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier('', 'add')">
               <el-button type="primary" size="mini" icon="el-icon-download"
@@ -57,8 +67,8 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
-            header-cell-class-name="all-select" @sort-change="sortChange" custom-column
+          <JNPF-table ref="dataTable"  :data="tableData" :fixedNO="true"
+            header-cell-class-name="all-select" @sort-change="sortChange" custom-column  v-if="isProjectSwitchFlag"
             :setColumnDisplayList="columnList">
             <el-table-column prop="productionOrderNo" label="生产任务单号" min-width="200" sortable="custom">
             </el-table-column>
@@ -133,11 +143,16 @@ import { excelExport } from '@/api/basicData/index'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'assemblyplanManagement',
   components: { SuperQuery, ExportForm,Form },
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      isProjectSwitchFlag: false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -150,9 +165,7 @@ export default {
       receiveTypeList: [
         { label: "订单物料", value: "order" },
         { label: "工序物料", value: "process" },
-      ],
-      personNameS: "",
-      orderNoS: "",
+      ], 
       superQueryVisible: false,
       exportFormVisible: false,
 
@@ -251,12 +264,16 @@ export default {
 
 
     }
-  },
-  created() {
+  }, 
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag = true
     this.superForm=this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search('basic')
   },
-   
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
   mounted() {
   },
   methods: {
@@ -304,7 +321,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName'||prop=='personName'||prop=='productionOrderNo') {
+      if (prop === 'partnerCode'||prop=='projectName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName'||prop=='personName'||prop=='productionOrderNo') {
         if (prop === 'createByName') {
           newProp = 'create_by'
         } else {
@@ -330,6 +347,7 @@ export default {
 
 
 
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
     
       WithdrawalList(this.orderForm).then(res => {
         res.data.records.forEach(item => {

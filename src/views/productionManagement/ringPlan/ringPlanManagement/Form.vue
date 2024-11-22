@@ -30,7 +30,14 @@
                         :disabled="codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
                     </el-form-item>
                   </el-col>
-
+                  <el-col :sm="6" :xs="24" v-if="isProjectSwitch == 1">
+                    <el-form-item label="所属项目" prop="projectId">
+                      <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;"  disabled >
+                        <el-option v-for="(item, index) in projectIdDataList" :key="index" :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
 
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="品名规格" prop="productsDrawingNo">
@@ -499,8 +506,10 @@ import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } fro
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { getBimBusinessDetail } from '@/api/basicData/index'
 import { getWarehouseList  } from '@/api/basicData/index'
-
+import { mapGetters, mapState } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
+  mixins: [getProjectList],
   components: {
     RoutingForm
   },
@@ -555,6 +564,7 @@ export default {
         specialRequire: "",
         remark: "",
         bomId: "",
+        projectId: "",
       },
       dataFormTwo: {
         data: [],
@@ -610,10 +620,14 @@ export default {
       },
       naturalResourcesFlag: true,
       warehouseList:[],
+      isProjectSwitch:"",
+      projectIdDataList:[],
     }      
 
   },
   computed: {
+    ...mapGetters(['userInfo']),
+    ...mapState('user', ['token']),
     totalProductionQuantity: function () {
       var totalNums = 0;
       for (var i = 0; i < this.detailDataList.length; i++) {
@@ -635,10 +649,13 @@ export default {
       }
       return totalNums
     },
-  },
-  created() {
+  }, 
+  async created() {
+    await this.getProjectList()
+    await this.getProjectSwitch('system', 'project')
     this.getPickingConfig()
   },
+
   mounted() {
 
     this.getWarehouseListFun()
@@ -650,6 +667,7 @@ export default {
         type:"line_edge",
         state:"enable"
       }
+      obj.projectId=this.dataForm.projectId
       getWarehouseList(obj).then(res=>{
         console.log("线边仓库",res);
         this.warehouseList=res.data
@@ -791,12 +809,18 @@ export default {
         this.currentDeviceId = item.split("_")[0];
       }
     },
+   
     openRoutingFun() {
       this.routingVisible = true
-      this.$nextTick(() => {
-        this.$refs.routingForm.init()
+      if (this.isProjectSwitch == 1) {
+        this.$nextTick(() => {
+          this.$refs.routingForm.init(this.dataForm.projectId)
+        })
+      }else{
+        this.$nextTick(() => {
+          this.$refs.routingForm.init("")
+        }) 
       }
-      )
     },
     selectRoutingFun(data) {
       console.log(data);
@@ -1019,6 +1043,7 @@ export default {
         pageSize: -1,
       };
       // 获取产线
+      objs.projectId = this.dataForm.projectId
       getProductionLineList(objs).then((res) => {
         console.log("产线", res);
         this.lineList = res.data.records;

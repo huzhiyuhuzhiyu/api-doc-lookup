@@ -62,6 +62,8 @@
                       <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
                       <el-table-column prop="productCode" label="设备编码" min-width="160" show-overflow-tooltip>
                       </el-table-column>
+          <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName"/>
+
                       <!-- <el-table-column prop="productName" label="设备名称" min-width="160" show-overflow-tooltip>
                         <template slot="header">
                           <span class="required">*</span>设备名称
@@ -146,6 +148,7 @@
                   <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
                   <el-table-column prop="productCode" label="设备编码" min-width="160" show-overflow-tooltip>
                   </el-table-column>
+          <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName"/>
                   <!-- <el-table-column prop="productName" label="设备名称" min-width="160" show-overflow-tooltip>
                         <template slot="header">
                           <span class="required">*</span>设备名称
@@ -202,11 +205,13 @@ import { mapGetters } from 'vuex'
 import { detailCollectionandreturn, addCollectionandreturn, updateCollectionandreturn } from '@/api/dailyManagement/Maintenance'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getBimBusinessDetail } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
-  mixins: [busFlow, flowMixin],
+  mixins: [busFlow, flowMixin,getProjectList],
   components: { Process, recordList },
   data() {
     return {
+      isProjectSwitch: '',
       submitmethodsTitle: '',
       tipsvisible: false,
       flowTemplateJson: {},
@@ -222,6 +227,7 @@ export default {
       getcategoryTree,
       getProductList,
       ProductListRequestObj: {
+        projectId: '',
         classAttribute: "spare_parts",
         code: "",
         drawingNo: "",
@@ -291,6 +297,9 @@ export default {
   },
   computed: {
     ...mapGetters(['userInfo']),
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
   },
   mounted() {
     this.$nextTick(() => {
@@ -371,6 +380,7 @@ export default {
             mainUnit: item.all.mainUnit,
             availableQuantity: item.all.availableQuantity,
             productId: item.all.id,
+            projectName: item.all.projectName,
             requisitionNum: '',
           })
         } else {
@@ -384,6 +394,7 @@ export default {
     },
     // 打开设备
     openSeleceProductDialog() {
+      this.ProductListRequestObj.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       this.$refs['ComSelect-page'].openDialog()
     },
     goBack() {

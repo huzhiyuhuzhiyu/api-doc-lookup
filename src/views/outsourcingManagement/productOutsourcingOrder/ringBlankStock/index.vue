@@ -59,6 +59,8 @@
           <JNPF-table v-if="tableFlag" @selection-change="handeleFinshData" hasC highlight-current-row :fixedNO="true"
             ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
             :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
+            <el-table-column prop="projectName" label="所属项目" width="120"
+              v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="productDrawingNo" label="毛坯规格" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="productCode" label="毛坯编码" width="150" sortable="custom" />
             <!-- <el-table-column prop="productName" label="毛坯名称" min-width="180" sortable="custom" /> -->
@@ -95,11 +97,17 @@ import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getBimBusinessDetail } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   name: 'ringBlankStock',
   components: { ExportForm, Form, SuperQuery },
+  mixins: [getProjectList],
+
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
       exportFormVisible: false,
@@ -260,7 +268,8 @@ export default {
       ]
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.getDeputyUnit()
     this.initData()
   },

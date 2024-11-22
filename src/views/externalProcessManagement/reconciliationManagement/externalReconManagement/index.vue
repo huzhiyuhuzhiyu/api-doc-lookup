@@ -68,6 +68,7 @@
           <el-table-column prop="orderNo" label="出入库单号" min-width="240" sortable="custom" />
           <el-table-column prop="partnerName" label="客户名称" min-width="180" sortable="custom" />
           <el-table-column prop="partnerCode" label="客户编码" min-width="180" sortable="custom" />
+          <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
           <!-- <el-table-column prop="productName" label="产品名称" min-width="180" sortable="custom" /> -->
           <el-table-column prop="drawingNo" label="品名规格" min-width="180" sortable="custom" />
@@ -122,11 +123,17 @@ import JNPFForm from './Form'
 import moment from 'moment'
 import { excelExport } from '@/api/basicData/index'
 import { getBimBusinessDetail } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   name: 'salefinAccount',
   components: { JNPFForm, ExportForm, SuperQuery },
+  mixins: [getProjectList],
+
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
       basicQuery: {},
@@ -245,7 +252,9 @@ export default {
       ]
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+
     this.superForm = this.listQuery
     this.getDeputyUnit()
     this.initData()

@@ -35,7 +35,7 @@
             </el-col>
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head" style="padding: 10px;">
             <div>
               <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
@@ -58,7 +58,7 @@
             </div>
           </div>
 
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO @sort-change="sortChange"
+          <JNPF-table v-if="tableDataFlag" ref="dataTable" :data="tableData" fixedNO @sort-change="sortChange"
             custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="处理单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
@@ -68,6 +68,8 @@
               </template>
             </el-table-column>
             <el-table-column prop="inspectionOrderNo" label="检验单号" min-width="200" sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" width="120"
+              v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
             <el-table-column prop="inspectionDate" label="检验日期" width="120" sortable="custom" />
@@ -157,8 +159,12 @@ import { approvalStatusList, inspectionMethodList, inspectionResultsList } from 
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   components: { Form, SuperQuery },
+  mixins: [getProjectList],
+
   props: {
     pageData: {
       type: Object,
@@ -186,6 +192,8 @@ export default {
   },
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       basicQuery: {},
       superQuery: {},
       searchList: [
@@ -342,6 +350,9 @@ export default {
     }
   },
   async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.tableDataFlag = true
+
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     let code = this.pageData.type === 'procure' ? 'b003' : this.pageData.type === 'sale_back' ? 'b006' : 'b004'
     const res = await this.jnpf.getBusInfo(code)
@@ -365,6 +376,9 @@ export default {
     initData() {
       this.listLoading = true
       this.superForm = this.listQuery
+      if (this.isProjectSwitch === '1') {
+        this.listQuery.projectId = this.userInfo.projectId
+      }
       getQcUnqualifiedList(this.listQuery)
         .then((res) => {
           this.tableData = res.data.records

@@ -68,7 +68,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head" style="padding:10px">
           <el-button size="mini" @click="handleBatch" type="primary">设置检验方式</el-button>
           <div class="JNPF-common-head-right">
@@ -84,9 +84,10 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
+        <JNPF-table v-if="tableDataFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           ref="dataTable" hasC @selection-change="currentChange" :checkSelectable="checkSelectable"
           :setColumnDisplayList="columnList">
+          <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
           <el-table-column prop="code" label="产品编码" width="140" sortable="custom">
             <template slot-scope="scope">
@@ -160,10 +161,16 @@ import finishedProductForm from '@/views/masterDataManagement/productManagement/
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import InspectionSettingForm from './InspectionSettingForm.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   components: { Form, SuperQuery, InspectionSettingForm, finishedProductForm },
+  mixins: [getProjectList],
+
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       leftFlag: false,
       superQueryVisible: false,
       superQueryJson: [
@@ -302,7 +309,11 @@ export default {
       }
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+
+    this.tableDataFlag = true
+
     if (localStorage.getItem('finishedFlag')) {
       let roleFlag = JSON.parse(localStorage.getItem('finishedFlag'))
       this.expands = roleFlag

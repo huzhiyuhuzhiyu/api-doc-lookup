@@ -203,6 +203,11 @@
                       <el-input v-model="dataForm.equipmentIdCode" placeholder="请输入设备编码" :disabled="true" />
                     </el-form-item>
                   </el-col>
+                  <el-col :sm="6" :xs="24" v-if="isProjectSwitch==='1'">
+                    <el-form-item label="所属项目" prop="projectName">
+                      <el-input v-model="dataForm.projectName" placeholder="请输入所属项目" maxlength="20" :disabled="true" />
+                    </el-form-item>
+                  </el-col>
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="使用车间" prop="factoryFloor">
                       <el-input v-model="dataForm.factoryFloor" placeholder="请输入使用车间" :disabled="true" />
@@ -289,6 +294,7 @@
           </el-table-column>
           <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" />
           <el-table-column prop="equipmentIdName" label="设备名称" min-width="200"></el-table-column>
+          <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
           <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
           <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
           <el-table-column prop="frontPicList" label="故障情况照片" min-width="140">
@@ -373,6 +379,7 @@
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" custom-column :height=500>
             <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" />
             <el-table-column prop="equipmentIdName" label="设备名称" min-width="200"></el-table-column>
+            <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
             <el-table-column prop="faultTypeName" label="故障类型名称" min-width="160" />
             <el-table-column prop="faultLocationName" label="故障部位名称" min-width="160" />
             <el-table-column prop="frontPicList" label="故障情况照片" min-width="140">
@@ -413,11 +420,15 @@ import { addRepairRequest, updateRepairRequest, detailRepairRequest, equEquipmen
 import { getOrganizeInfo } from '@/api/permission/organize'
 import { getEquEquipmentList, parametersShelveslist } from '@/api/basicData/index'
 import { getOrganization } from '@/api/permission/user'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters } from 'vuex'
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
+  mixins: [getProjectList],
   components: { UploadImg },
   data() {
     return {
+      isProjectSwitch: '',
       isApprovalwitch: false,
       sparepartRequestObj: {
         pageNum: 1,
@@ -664,8 +675,12 @@ export default {
       _index: ''
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     // this.getSwitch()
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     getSwitch() {
@@ -733,6 +748,7 @@ export default {
         equipmentId: this.dataForm.equipmentId,
         pageNum: 1,
         pageSize: -1,
+        projectId: this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       }
       this.dialogTableVisible = true
       this.TablelistLoading = true
@@ -781,6 +797,7 @@ export default {
         faultLocationCode: this.inforow.faultLocationCode,
         pageNum: 1,
         pageSize: -1,
+        projectId: this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       }
       this.listLoading = true
       equEquipmentRepairKnowledgeList(obj).then(res => {

@@ -44,3 +44,11 @@ export function updateSortBatch(data) {
     data
   })
 }
+
+// 删除项目管理列表
+export const delProject = (id) => {
+  return request({
+    url: `/api/zgt/project/del/${id}`,
+    method: 'delete'
+  })
+}

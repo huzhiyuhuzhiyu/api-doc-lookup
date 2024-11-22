@@ -205,7 +205,7 @@
     <el-dialog title="快速创建" :visible.sync="quickVisible" width="50%" :before-close="handleClose"
       class="JNPF-dialog JNPF-dialog_center" :close-on-click-modal="false" :close-on-press-escape="false">
       <el-form :model="quickForm" :rules="quickRules" ref="quickForm" label-width="100px" labelPosition="top"
-        hide-required-asterisk="fasle">
+        hide-required-asterisk="fasle" v-if="quickFormFlag">
         <el-row :gutter="15">
           <el-col :span="12" v-if="isProjectSwitch === '1'">
             <el-form-item label="所属项目" prop="projectId">
@@ -356,6 +356,7 @@ export default {
     return {
       isProjectSwitch: '',
       tableFlag: false,
+      quickFormFlag: false,
       quickVisible: false,
       quickForm: {
         projectId: '',
@@ -662,9 +663,11 @@ export default {
     },
     quickAdd() {
       this.quickVisible = true
-      if (this.listQuery.classAttribute !== 'semi_finished') {
+      this.quickFormFlag = true
+      if (this.userInfo.projectId !== '1') {
         this.quickForm.projectId = this.userInfo.projectId
       }
+
 
       this.fetchData('CPBM', true)
       this.quickForm.productSource = 'produce'

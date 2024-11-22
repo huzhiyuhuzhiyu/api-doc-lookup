@@ -1151,6 +1151,7 @@ export default {
       arr = data.map((item) => {
         console.log(data, 'pp')
         return {
+          projectName: item.projectName,
           productDrawingNo: item.productDrawingNo,
           productCode: item.productCode,
           stockInventoryLineId: item.id,

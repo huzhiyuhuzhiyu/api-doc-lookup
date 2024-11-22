@@ -78,8 +78,10 @@
                       @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
                       id="table" border height="460">
                       <el-table-column type="selection" width="55" align="center" fixed="left"
-                        :key="2"></el-table-column>
-                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" :key="3" />
+                        :key="1"></el-table-column>
+                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" :key="2" />
+                      <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
+                        :key="3"></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
                         :key="4">
                         <template slot="header">
@@ -316,13 +318,19 @@ import { getbimProductAttributesList, getbimProductAttributes } from '@/api/mast
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import { getBimProcessList } from '@/api/bimProcess/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   components: {
     SourceArea,
     Process
   },
+  mixins: [getProjectList],
+
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
       isattachmentswitch: '',
@@ -745,7 +753,9 @@ export default {
   mounted() {
     this.getProductClassFun()
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+
     this.getBimBusinessDetail()
     this.getDeputyUnit()
     this.fetchData('EPDH')
@@ -1155,6 +1165,7 @@ export default {
         arr = data.map((item) => {
           console.log(data, 'pp')
           return {
+            projectName: item.projectName,
             productDrawingNo: item.externalProductDrawingNo,
             stockInventoryLineId: item.id,
             deliveryDate: item.deliveryDate,
@@ -1196,6 +1207,7 @@ export default {
         arr = data.map((item) => {
           console.log(data, 'pp')
           return {
+            projectName: item.projectName,
             productDrawingNo: item.productDrawingNo,
             stockInventoryLineId: item.id,
             deliveryDate: item.deliveryDate,

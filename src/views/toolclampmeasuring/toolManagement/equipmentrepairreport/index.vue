@@ -29,6 +29,11 @@
                             </el-input>
                           </el-form-item>
                         </el-col>
+                        <el-col :sm="6" :xs="24" v-if="isProjectSwitch==='1'">
+                          <el-form-item label="所属项目" prop="projectName">
+                            <el-input v-model="dataForm.projectName" placeholder="请输入所属项目" maxlength="20" :disabled="true" />
+                          </el-form-item>
+                        </el-col>
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="用途" prop="usin">
                             <el-input v-model="dataForm.usin" placeholder="请输入用途" :disabled="true" />
@@ -152,7 +157,9 @@ import { getOrganization } from '@/api/permission/user'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { mapGetters } from 'vuex'
 import { getEquEquipmentList, parametersShelveslist, getBimBusinessDetail } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
+  mixins: [getProjectList],
   components: { UploadImg },
   data() {
     return {
@@ -162,6 +169,7 @@ export default {
         { label: '一般', value: '3' },
         { label: '不急', value: '4' }
       ],
+      isProjectSwitch: '',
       submitmethodsTitle: '',
       isattachmentswitch: '',
       categoryId: '',
@@ -173,6 +181,7 @@ export default {
         { prop: "name", label: "工具名称", type: 'input' },
       ],
       ProductListRequestObjs: {
+        projectId:'',
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -264,6 +273,7 @@ export default {
       datafilelist: [],
       dataForm: {
         degree: '',
+        projectName:'',
         maintenanceNo: '',
         frontPicList: [],
         usin: '',
@@ -326,7 +336,8 @@ export default {
   computed: {
     ...mapGetters(['userInfo'])
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.getSwitch()
     this.getBimBusinessDetail()
     this.init()
@@ -433,10 +444,12 @@ export default {
         this.dataForm.equipmentId = data[0].id
         this.dataForm.equipmentIdName = data[0].name
         this.dataForm.usin = data[0].all.usin
+        this.dataForm.projectName = data[0].all.projectName
       } else {
         this.dataForm.usin = ''
         this.dataForm.equipmentId = ''
         this.dataForm.equipmentIdName = ''
+        this.dataForm.projectName = ''
       }
     },
     //故障部位选择
@@ -485,6 +498,7 @@ export default {
       this.$refs['ComSelect-page'].openDialog()
     },
     openSeleceProductDialogss() {
+      this.ProductListRequestObjs.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       this.$refs['ComSelect-pagesb'].openDialog()
     },
     // 继续新增

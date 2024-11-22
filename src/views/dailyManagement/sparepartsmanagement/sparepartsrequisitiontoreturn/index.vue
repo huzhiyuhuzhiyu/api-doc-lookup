@@ -72,11 +72,15 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { CollectionandreturnList, deleteCollectionandreturn } from '@/api/dailyManagement/Maintenance'
 import Form from '../sparepartsrequisition/Form.vue'
 import returnForm from '../sparepartsReturn/Form.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters } from 'vuex'
 export default {
+  mixins: [getProjectList],
   // name: 'sparepartsrequisitiontoreturn',
   components: { SuperQuery, Form, returnForm },
   data() {
     return {
+      isProjectSwitch: '',
       returnformVisible: false,
       superQueryVisible: false,
       superQueryJson: [
@@ -144,6 +148,7 @@ export default {
       listLoading: false,
       orderForm: {},
       orderFormone: {
+        projectId: '',
         requisitionType: 'requisition',
         equipmentType: 'accessory',
         returnFlag: 0,
@@ -163,9 +168,13 @@ export default {
       superQuery: {}
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormone))
     this.initData()
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     superQuerySearch(query) {
@@ -207,6 +216,7 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       CollectionandreturnList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total

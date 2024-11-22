@@ -139,6 +139,8 @@
                     <JNPF-table :hasC="btnType !== 'look'" hasNO fixedNO ref="product" :data="dataFormTwo.data"
                       @selection-change="handeleProductInfoData" v-loading="tableloading" @row-click="openDetails"
                       :row-style="rowStyle">
+                      <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
+                        key="2"></el-table-column>
                       <el-table-column prop="drawingNo" label="品名规格" width="220" key="3"
                         show-overflow-tooltip></el-table-column>
                       <el-table-column v-if="btnType == 'look'" prop="productCode" label="产品编码" width="160" key="6"
@@ -249,6 +251,8 @@
                   <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="linesList" :data="linesList"
                     id="table">
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                    <el-table-column prop="projectName" label="所属项目" width="120"
+                      v-if="isProjectSwitch === '1'"></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="200"
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productCode" label="产品编码" width="200"></el-table-column>
@@ -401,7 +405,8 @@
                 <el-table ref="product" :data="dataFormTwo.data" @selection-change="handeleProductInfoData"
                   v-loading="tableloading" @row-click="openDetails" :row-style="rowStyle">
                   <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-
+                  <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
+                    key="2"></el-table-column>
                   <el-table-column prop="drawingNo" label="品名规格" width="290" key="3"
                     show-overflow-tooltip></el-table-column>
                   <el-table-column v-if="btnType == 'look'" prop="productCode" label="产品编码" width="120" key="6"
@@ -511,6 +516,8 @@
               <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="linesList" :data="linesList"
                 id="table">
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                <el-table-column prop="projectName" label="所属项目" width="120"
+                  v-if="isProjectSwitch === '1'"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productCode" label="产品编码" width="120"></el-table-column>
                 <el-table-column prop="processName" label="工序名称" width="100"></el-table-column>
@@ -588,15 +595,19 @@ import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { addoutReceiptGoods } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import { shipmentList } from '@/api/purchasingAndOutsourcingOrders/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   components: {
     changeAddress,
     Process,
     recordList
   },
-  mixins: [busFlow],
+  mixins: [busFlow, getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       flowTemplateJson: {},
       isattachmentswitch: '',
       categoryId: '',
@@ -953,7 +964,9 @@ export default {
       }
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+
     this.getBimBusinessDetail()
     // this.handleChange()
     // this.getProvinceList()
@@ -1481,6 +1494,7 @@ export default {
       // this.getProvinceList()
       this.dataForm.id = id || ''
       this.btnType = btnType
+      console.log(this.btnType, '[[[[]]]]')
       this.approvalFlag = approvalFlag
       this.oldId = JSON.parse(JSON.stringify(id)) || ''
       this.oldType = JSON.parse(JSON.stringify(btnType))
@@ -1522,11 +1536,22 @@ export default {
             })
             this.dataFormTwo.data = res.data.noticeLineList
           } else if (this.btnType == 'edit' || this.btnType == 'look') {
-            this.linesList = res.data.noticeLineList
-            this.processingdata(res.data.purchaseOrderLineList)
-            this.linesList.forEach((item) => {
+            this.dataFormTwo.data = res.data.noticeLineList
+            this.dataFormTwo.data.forEach((item) => {
               item.drawingNo = item.productDrawingNo
-              item.purchaseQuantity = item.ordersNum
+              let obj = {
+                ordersLineIdList: [item.ordersLineId],
+                pageNum: 1,
+                pageSize: -1
+              }
+              shipmentList(obj).then(res => {
+                console.log(res, 'ooo')
+                this.linesList = [...this.linesList, ...res.data.records]
+                this.linesList.forEach(item => {
+                  item.deliveryQuantity = item.qty
+                })
+                item.outShipmentVOList = res.data.records
+              })
             })
             console.log(this.dataFormTwo.data, 'this.dataFormTwo.data')
             if (this.btnType === 'edit') {
@@ -1539,6 +1564,7 @@ export default {
         })
       }
       if (btnType == 'add' || btnType == 'copy') {
+        console.log(3)
         const currentDate = new Date()
 
         // 获取年份
@@ -1588,6 +1614,8 @@ export default {
           })
           this.dataFormTwo.data = data
           this.dataFormTwo.data.forEach((item) => {
+            console.log(item, 'ojj')
+
             let obj = {
               ordersLineIdList: [item.id],
               pageNum: 1,
@@ -1664,7 +1692,7 @@ export default {
       this.linesList = []
       if (this.dataFormTwo.data.length) {
         let obj = {
-          ordersLineIdList: [row.id],
+          ordersLineIdList: [row.ordersLineId],
           pageNum: 1,
           pageSize: -1
         }

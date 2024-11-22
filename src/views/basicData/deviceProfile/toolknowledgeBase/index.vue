@@ -23,7 +23,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head">
           <topOpts @add="addOrUpdateHandle('', 'add')"></topOpts>
           <div class="JNPF-common-head-right">
@@ -38,9 +38,10 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" custom-column>
+        <JNPF-table v-if="istable" ref="dataTable" :data="tableData" @sort-change="sortChange" custom-column>
           <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" sortable="custom" />
           <el-table-column prop="equipmentIdName" label="工具名称" min-width="200" sortable="custom"></el-table-column>
+          <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
           <el-table-column prop="faultTypeName" label="故障类型名称" min-width="160" />
           <el-table-column prop="faultLocationName" label="故障部位名称" min-width="160" />
           <el-table-column prop="frontPicList" label="故障情况照片" min-width="140">
@@ -87,10 +88,15 @@
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { equEquipmentRepairKnowledgeList, deleteequEquipmentRepairKnowledge } from '@/api/dailyManagement/Maintenance'
 import Form from './Form.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters } from 'vuex'
 export default {
   components: { SuperQuery, Form },
+  mixins: [getProjectList],
   data() {
     return {
+      istable: false,
+      isProjectSwitch: '',
       superQueryVisible: false,
       superQueryJson: [
         {
@@ -144,6 +150,7 @@ export default {
       tableData: [],
       listLoading: false,
       orderForm: {
+        projectId: '',
         classAttribute: "tool",
         pageNum: 1,
         pageSize: 20,
@@ -159,8 +166,12 @@ export default {
       formVisible: false,
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.initData()
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     columnSetFun() {
@@ -203,8 +214,10 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       equEquipmentRepairKnowledgeList(this.orderForm).then(res => {
         this.tableData = res.data.records.map(item => {
+          this.istable = true
           if (item.frontPic) {
             item.frontPicList = item.frontPicList.map(o => { return JSON.parse(`{${o}}`) })
           }

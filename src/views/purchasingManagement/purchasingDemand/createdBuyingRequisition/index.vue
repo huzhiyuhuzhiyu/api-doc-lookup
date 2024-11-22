@@ -68,6 +68,8 @@
                           <el-table-column type="selection" width="60" fixed="left" align="center"
                             v-if="type !== 'look'" />
                           <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                          <el-table-column prop="projectName" label="所属项目" width="120"
+                            v-if="isProjectSwitch === '1'"></el-table-column>
                           <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
                             key="productDrawingNo">
                             <template slot-scope="scope">
@@ -213,6 +215,8 @@
                       fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table">
                       <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type !== 'look'" />
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                      <el-table-column prop="projectName" label="所属项目" width="120"
+                        v-if="isProjectSwitch === '1'"></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
                         key="productDrawingNo">
                         <template slot-scope="scope">
@@ -350,11 +354,15 @@ import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBimBusinessDetail } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   components: { Process, recordList },
-  mixins: [busFlow],
+  mixins: [busFlow, getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       isattachmentswitch: '',
       datafilelist: [],
       activeName: 'jcInfo',
@@ -510,7 +518,31 @@ export default {
       categoryId: ''
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
+    this.tableDataFlag = true
+    console.log(this.isProjectSwitch)
+    if (this.isProjectSwitch === '1') {
+      this.ProductTableItems = [
+        { prop: 'projectName', label: '所属项目' },
+        { prop: 'drawingNo', label: '品名规格' },
+        // { prop: 'name', label: '产品名称', fixed: 'left' },
+        { prop: 'code', label: '产品编码', fixed: 'left' },
+
+        { prop: "mainUnit", label: "单位" }
+      ]
+    } else {
+      this.ProductTableItems = [
+        { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'code', label: '产品编码', fixed: 'left' },
+
+        { prop: "mainUnit", label: "单位" }
+      ]
+    }
+
+    this.tableDataFlag = true
+
     this.fetchData('QGD')
     this.getBimBusinessDetail()
     if (this.type === 'add') this.getBusInfo()
@@ -543,6 +575,7 @@ export default {
         let list = data.map((item) => item.all)
         list.forEach((item, index) => {
           selectArr.push({
+            projectName: item.projectName, // 所属项目
             productSource: item.productSource, // 产品来源 采购
             productsId: item.id, // 产品id
             productName: item.name, // 产品名称

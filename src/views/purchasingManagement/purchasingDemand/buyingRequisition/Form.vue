@@ -60,9 +60,11 @@
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
                     <el-table :height="height" style="border: 1px solid #e3e7ee;"
                       @selection-change="handeleProductInfoData" hasC hasNO fixedNO v-bind="dataFormTwo.data"
-                      :data="dataFormTwo.data" id="table">
+                      :data="dataFormTwo.data" id="table" ref="multipleTable">
                       <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type !== 'look'" />
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                      <el-table-column prop="projectName" label="所属项目" width="120"
+                        v-if="isProjectSwitch === '1'"></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
                         key="productDrawingNo">
                         <template slot-scope="scope">
@@ -232,9 +234,11 @@
 
               <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
                 <el-table style="border: 1px solid #e3e7ee;" @selection-change="handeleProductInfoData" hasC hasNO
-                  fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table">
+                  fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table" ref="multipleTable">
                   <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type !== 'look'" />
                   <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                  <el-table-column prop="projectName" label="所属项目" width="120"
+                    v-if="isProjectSwitch === '1'"></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
                     key="productDrawingNo">
                     <template slot-scope="scope">
@@ -372,11 +376,15 @@ import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBimBusinessDetail } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   components: { Process, recordList },
-  mixins: [busFlow],
+  mixins: [busFlow, getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       isattachmentswitch: '',
       datafilelist: [],
       activeName: 'jcInfo',
@@ -533,7 +541,9 @@ export default {
       height: 0,
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+
     this.fetchData('QGD')
     this.getBimBusinessDetail()
     if (this.type === 'add') this.getBusInfo()
@@ -983,7 +993,10 @@ export default {
         }
       }).catch(() => { })
     },
-  }
+  },
+  updated() {
+    this.$refs['multipleTable'].doLayout()
+  },
 }
 </script>
 <style scoped>

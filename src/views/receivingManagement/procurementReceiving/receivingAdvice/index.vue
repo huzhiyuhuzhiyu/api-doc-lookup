@@ -150,11 +150,17 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import Form from './Form'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   name: 'foreigntradenotice',
   components: { Form, SuperQuery, ExportForm },
+  mixins: [getProjectList],
+
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       basicQuery: {},
       superQuery: {},
       searchList: [
@@ -312,7 +318,9 @@ export default {
       ]
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.superForm = this.orderForm
     this.search('basic')
@@ -358,6 +366,9 @@ export default {
     },
     initData() {
       this.listLoading = true
+      if (this.isProjectSwitch === '1') {
+        this.orderForm.projectId = this.userInfo.projectId
+      }
       this.superForm = this.orderForm
       purPurchaseReceiptReturnGoodsList(this.superForm)
         .then((res) => {
@@ -426,7 +437,7 @@ export default {
       console.log(id, btntype)
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype, false,[])
+        this.$refs.Form.init(id, btntype, false, [])
       })
     },
     addOrUpdateHandle(id, btntype) {

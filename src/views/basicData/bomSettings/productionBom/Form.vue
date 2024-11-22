@@ -316,8 +316,201 @@ export default {
       endTime: 0
     }
   },
-  created() {
-
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
+    this.tableDataFlag = true
+    console.log(this.isProjectSwitch)
+    if (this.isProjectSwitch === '1') {
+      this.linesListItems = [
+        { prop: 'ProjectName', label: '所属项目', value: '', type: 'view', minWidth: 340 },
+        { prop: 'drawingNo', label: '品名规格', value: '', type: 'view', minWidth: 340 },
+        // { prop: 'productName', label: '产品名称', value: '', type: 'view', minWidth: 160 },
+        { prop: 'productCode', label: '产品编码', value: '', type: 'view', minWidth: 160 },
+        {
+          prop: 'qty',
+          label: '数量',
+          value: '1',
+          type: 'input',
+          itemRules: [
+            { required: true, trigger: 'blur' },
+            {
+              validator: this.formValidate({
+                type: 'decimal',
+                params: [
+                  20,
+                  4,
+                  '',
+                  (errMsg) => {
+                    this.$message.error('数量：' + errMsg)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            }
+          ],
+          minWidth: 120
+        },
+        { prop: 'mainUnit', label: '单位', value: '', type: 'view', minWidth: 120 },
+        {
+          prop: 'lossRate',
+          label: '损耗率(%)',
+          value: '0',
+          type: 'input',
+          placeholder: '请输入损耗率',
+          itemRules: [
+            { required: true, trigger: 'blur' },
+            {
+              validator: this.formValidate({
+                type: 'decimal',
+                params: [
+                  10,
+                  2,
+                  '',
+                  (errMsg) => {
+                    this.$message.error('损耗率：' + errMsg)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            }
+          ],
+          minWidth: 120
+        },
+        {
+          prop: 'fixedLoss',
+          label: '固定损耗',
+          value: '0',
+          type: 'input',
+          itemRules: [
+            { required: true, trigger: 'blur' },
+            {
+              validator: this.formValidate({
+                type: 'decimal',
+                params: [
+                  10,
+                  2,
+                  '',
+                  (errMsg) => {
+                    this.$message.error('固定损耗：' + errMsg)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            }
+          ],
+          minWidth: 120
+        },
+        {
+          prop: 'reduceType',
+          label: '扣减料方式',
+          value: 'picking',
+          type: 'select',
+          options: [
+            { label: '生成领料单', value: 'picking' },
+            { label: '自动扣减料', value: 'auto' },
+            { label: '都不是', value: 'none' }
+          ],
+          itemRules: [{ required: true, trigger: 'change' }],
+          minWidth: 160,
+        },
+        { prop: 'remark', label: '备注', value: '', type: 'input', maxlength: 200, minWidth: 160 }
+      ]
+    } else {
+      this.linesListItems = [
+        { prop: 'drawingNo', label: '品名规格', value: '', type: 'view', minWidth: 340 },
+        // { prop: 'productName', label: '产品名称', value: '', type: 'view', minWidth: 160 },
+        { prop: 'productCode', label: '产品编码', value: '', type: 'view', minWidth: 160 },
+        {
+          prop: 'qty',
+          label: '数量',
+          value: '1',
+          type: 'input',
+          itemRules: [
+            { required: true, trigger: 'blur' },
+            {
+              validator: this.formValidate({
+                type: 'decimal',
+                params: [
+                  20,
+                  4,
+                  '',
+                  (errMsg) => {
+                    this.$message.error('数量：' + errMsg)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            }
+          ],
+          minWidth: 120
+        },
+        { prop: 'mainUnit', label: '单位', value: '', type: 'view', minWidth: 120 },
+        {
+          prop: 'lossRate',
+          label: '损耗率(%)',
+          value: '0',
+          type: 'input',
+          placeholder: '请输入损耗率',
+          itemRules: [
+            { required: true, trigger: 'blur' },
+            {
+              validator: this.formValidate({
+                type: 'decimal',
+                params: [
+                  10,
+                  2,
+                  '',
+                  (errMsg) => {
+                    this.$message.error('损耗率：' + errMsg)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            }
+          ],
+          minWidth: 120
+        },
+        {
+          prop: 'fixedLoss',
+          label: '固定损耗',
+          value: '0',
+          type: 'input',
+          itemRules: [
+            { required: true, trigger: 'blur' },
+            {
+              validator: this.formValidate({
+                type: 'decimal',
+                params: [
+                  10,
+                  2,
+                  '',
+                  (errMsg) => {
+                    this.$message.error('固定损耗：' + errMsg)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            }
+          ],
+          minWidth: 120
+        },
+        {
+          prop: 'reduceType',
+          label: '扣减料方式',
+          value: 'picking',
+          type: 'select',
+          options: [
+            { label: '生成领料单', value: 'picking' },
+            { label: '自动扣减料', value: 'auto' },
+            { label: '都不是', value: 'none' }
+          ],
+          itemRules: [{ required: true, trigger: 'change' }],
+          minWidth: 160,
+        },
+        { prop: 'remark', label: '备注', value: '', type: 'input', maxlength: 200, minWidth: 160 }
+      ]
+    }
     if (localStorage.getItem("productionBomFormFlag")) {
       let roleFlag = JSON.parse(localStorage.getItem('productionBomFormFlag'))
       console.log(roleFlag, 'roleFlag')

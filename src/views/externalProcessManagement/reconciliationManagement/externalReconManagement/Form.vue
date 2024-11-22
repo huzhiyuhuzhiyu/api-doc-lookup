@@ -75,7 +75,8 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-
+                      <el-table-column prop="projectName" label="所属项目" width="120"
+                        v-if="isProjectSwitch === '1'"></el-table-column>
 
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                         <template slot-scope="scope">
@@ -263,13 +264,19 @@ import Process from '@/components/Process/Preview'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import { getBimBusinessDetail } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   components: {
     Process,
     recordList
   },
+  mixins: [getProjectList],
+
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
       activeNames: ['productInfo', 'basicInfo'],
@@ -359,7 +366,9 @@ export default {
       endTime: 0
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+
     this.getDeputyUnit()
     this.fetchData('DZDH')
   },

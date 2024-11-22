@@ -84,6 +84,8 @@
                           <el-table-column type="selection" width="55" fixed="left" align="center"
                             :key="2"></el-table-column>
                           <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                          <el-table-column prop="projectName" label="所属项目" width="120"
+                            v-if="isProjectSwitch === '1'"></el-table-column>
                           <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                             <template slot="header">
                               <span class="required">*</span>
@@ -296,13 +298,18 @@ import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
 import { getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   components: {
     SourceArea,
     Process
   },
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
       isattachmentswitch: '',
@@ -623,7 +630,30 @@ export default {
     }
   },
   mounted() { },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+
+    console.log(this.isProjectSwitch)
+    if (this.isProjectSwitch === '1') {
+      this.ProductTableItems = [
+        { prop: 'projectName', label: '所属项目' },
+        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
+        // { prop: 'name', label: '产品名称', sortable: 'custom' },
+        { prop: 'code', label: '产品编码', sortable: 'custom' },
+        { prop: 'productCategoryName', label: '产品分类', sortable: 'custom2' },
+        { prop: 'mainUnit', label: '单位', width: 60 },
+        { prop: 'createTime', label: '创建日期', sortable: 'custom', width: 180 }
+      ]
+    } else {
+      this.ProductTableItems = [
+        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
+        // { prop: 'name', label: '产品名称', sortable: 'custom' },
+        { prop: 'code', label: '产品编码', sortable: 'custom' },
+        { prop: 'productCategoryName', label: '产品分类', sortable: 'custom2' },
+        { prop: 'mainUnit', label: '单位', width: 60 },
+        { prop: 'createTime', label: '创建日期', sortable: 'custom', width: 180 }
+      ]
+    }
     this.getDeputyUnit()
     this.getBimBusinessDetail()
     this.fetchData('WXDH')
@@ -737,6 +767,7 @@ export default {
         let list = data.map((item) => item.all)
         list.forEach((item, index) => {
           selectArr.push({
+            projectName: item.projectName, // 所属项目
             productSource: item.productSource, // 产品来源 采购
             classAttribute: item.classAttribute,
             productsId: item.id, // 产品id

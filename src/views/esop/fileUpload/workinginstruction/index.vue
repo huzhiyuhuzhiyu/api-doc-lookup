@@ -1,5 +1,5 @@
 <template>
-    <div class="JNPF-common-layout">
+    <div class="JNPF-common-layout" v-loading="!tableFlag">
         <div v-if="!formVisible" class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
                 <el-form @submit.native.prevent>
@@ -54,6 +54,7 @@
                     </div>
                 </div>
                 <JNPF-table
+                    v-if="tableFlag"
                     v-loading="listLoading"
                     :data="tableData"
                     :fixedNO="true"
@@ -71,7 +72,7 @@
                     <template  v-if="isNoProductPage">
                         <el-table-column prop="categoryName" label="文件分类" min-width="120" />
                     </template>
-
+                    <el-table-column prop="projectName" label="所属项目" width="120"  v-if="abProjectSwitchVisible" />
                     <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center">
                         <template slot-scope="{row}">
                             <el-tag type="warning" v-if="row.documentStatus === 'draft'">草稿</el-tag>
@@ -79,6 +80,7 @@
                             <el-tag type="danger"  v-else-if="row.documentStatus === 'back'">退回</el-tag>
                         </template>
                     </el-table-column>
+                    <el-table-column prop="version" label="版本号" width="80" v-if="!isNoProductPage" />
                     <el-table-column prop="version" label="版本号" width="80" v-if="!isNoProductPage" />
                     <el-table-column prop="fileCount" label="文件数量" width="120" />
                     <template v-if="!isNoProductPage">
@@ -200,6 +202,7 @@ import {
 } from "@/views/esop/utils/utils";
 import {getBimRecycleBin, revertBimRecycleBin} from "@/api/esop/fileTrash";
 import {getBusinessFlowInfo} from "@/api/workFlow/FlowEngine";
+import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 
 
 
@@ -245,9 +248,10 @@ export default {
           }
       }
     },
-    mixins:[RecreateMixin],
+    mixins:[RecreateMixin,AbProjectMixin],
     data() {
         return {
+            tableFlag:false,
             recreateFlag: true,
             ModelType,
             uploadType:ModelType.ADD,
@@ -356,7 +360,16 @@ export default {
         if(notEmpty(this.$route.query.type)){
             return
         }
-        this.initData()
+        try {
+            this.initData()
+            await this.awaitAbProject()
+        }catch (e) {
+
+        }finally {
+            this.tableFlag = true
+        }
+
+
     },
     methods: {
         getDelDisabled(scope){
@@ -413,6 +426,7 @@ export default {
                 data.flowData =flowData
                 data.approvalFlag = approvalFlag
                 data.bimFileUploadLineList =  data.bimFileUploadLineVOList
+
                 const res = await addBimFileUpload(getUploadFileSaveData(data))
                 if(res.data){
                     getSuccessInfo()

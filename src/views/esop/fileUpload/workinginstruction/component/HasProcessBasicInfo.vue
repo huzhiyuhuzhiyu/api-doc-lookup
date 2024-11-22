@@ -8,6 +8,7 @@ import {detailBimFileUpload, switchEnableMark} from "@/api/esop/fileUpload/worki
 import chooseProductParams from "@/views/esop/fileUpload/workinginstruction/utils/chooseProductParams";
 import BasicInfoMixin from "@/views/esop/fileUpload/workinginstruction/component/BasicInfoMixin";
 import CheckVersionCountDialog from "@/views/esop/fileUpload/workinginstruction/component/CheckVersionCountDialog .vue";
+import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 
 function getOriginActiveNames(){
     return ['basicInfo']
@@ -21,6 +22,7 @@ export default {
             formLoading: false,
             activeNames:['basicInfo','normalUpload'],
             dataForm:{
+                projectId:"",
                 applicationType:'',
                 approvalStatus:'',
                 enabledMark:false,
@@ -334,6 +336,15 @@ export default {
                                                 <el-input  readonly @click.native="versionCountHandler" v-model="dataForm.versionCount" class="pointer versionCount"/>
                                             </el-form-item>
                                         </el-form>
+                                    </el-col>
+                                    <el-col :span="6" v-if="abProjectSwitchVisible">
+                                        <el-form-item label="所属项目" prop="projectId" required>
+                                            <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" style="width: 100%;"
+                                                       :disabled="!abIsCommonUser || isView">
+                                                <el-option v-for="(item, index) in abProjectList" :key="index" :label="item.label"
+                                                           :value="item.value"></el-option>
+                                            </el-select>
+                                        </el-form-item>
                                     </el-col>
                                 </el-row>
 

@@ -3,6 +3,24 @@ import {deleteBimFileUpload} from "@/api/esop/fileUpload/workinginstruction";
 import {Message, MessageBox} from "element-ui";
 
 /**
+ *
+ * @returns {{resolve, reject, promise: Promise<unknown>}}
+ */
+export function getPromise(){
+    let resolve, reject;
+    const promise = new Promise((res, rej)=>{
+         resolve =res;
+         reject =rej
+    })
+    return {
+        promise,
+        resolve,
+        reject
+    }
+}
+
+
+/**
  * Parse the time to string
  * @param {(Object|string|number)} time
  * @param {string} cFormat

@@ -2,7 +2,7 @@
   <!-- 销售订单创建 -->
   <div class="JNPF-common-layout">
 
-    <div class="JNPF-common-layout-center JNPF-flex-main"  v-if="!formVisible">
+    <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
@@ -25,7 +25,7 @@
               </el-col>
             </template>
 
-             
+
             <el-col :span="6">
               <el-form-item>
                 <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
@@ -44,7 +44,7 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier()" :addText="'生成计划'">
               <el-button type="primary" size="mini" icon="el-icon-download"
@@ -64,13 +64,15 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
+          <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true" v-if="isProjectSwitchFlag"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column
             @selection-change="handleSelectionChange" hasC>
             <el-table-column prop="orderNo" label="订单号" min-width="160" sortable="custom"> </el-table-column>
             <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="160" sortable="custom" />
             <el-table-column prop="cooperativePartnerCode" label="客户编码" min-width="160" sortable="custom" />
             <el-table-column prop="drawingNo" label="品名规格" min-width="280" sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+              v-if="isProjectSwitch == 1" />
             <el-table-column prop="productName" label="产品名称" min-width="120" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
             <el-table-column prop="deliveryDate" label="交货日期" min-width="120" sortable="custom" />
@@ -117,12 +119,15 @@ import Form from './Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'salesOrderCreation',
   components: { Form, ExportForm, SuperQuery },
+  mixins: [getProjectList],
   data() {
     return {
       superQuery: {},
@@ -138,16 +143,16 @@ export default {
       tableData: [],
       listLoading: false,
       orderForm: {
-        classAttribute:"finish_product",
+        classAttribute: "finish_product",
         orderNo: "",
         drawingNo: "",
-        deliveryEndTime:"",
-        deliveryStartTime:"",
+        deliveryEndTime: "",
+        deliveryStartTime: "",
         planStatus: "not_generated",
         pageNum: 1,
         pageSize: 20,
         orderState: "not_finish",
-        approvalStatus:'ok',
+        approvalStatus: 'ok',
         orderItems: [{
           asc: false,
           column: ""
@@ -303,6 +308,8 @@ export default {
 
       ],
       selectList: [],
+      isProjectSwitchFlag: false,
+      isProjectSwitch: '',
     }
   },
   watch: {
@@ -310,10 +317,16 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
 
+  created() {
 
-  created() { 
-    this.superForm=this.orderForm
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.superForm = this.orderForm
     this.search('basic')
     this.getProductClassFun()
   },
@@ -646,7 +659,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
+      if (prop === 'productName'||prop=='projectName' || prop === 'productCode' || prop === 'documentStatus') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'
@@ -663,7 +676,7 @@ export default {
     },
 
 
-     
+
 
 
     // 关闭新建编辑页面
@@ -677,7 +690,8 @@ export default {
     initData() {
       this.listLoading = true
       getsaleOrderDetailList(this.superForm).then(res => {
-        this.tableData = res.data.records
+    this.isProjectSwitchFlag = true
+    this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
         this.getOrderLineReportFun()
@@ -725,12 +739,12 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.deliveryDateArr = []
-      this.superForm=this.orderForm = {
+      this.superForm = this.orderForm = {
         orderNo: "",
         drawingNo: "",
-        deliveryEndTime:"",
-        classAttribute:"finish_product",
-        deliveryStartTime:"",
+        deliveryEndTime: "",
+        classAttribute: "finish_product",
+        deliveryStartTime: "",
         planStatus: "not_generated",
         pageNum: 1,
         pageSize: 20,
@@ -745,7 +759,7 @@ export default {
 
         superQuery: {},
       }
-      this.searchList=[
+      this.searchList = [
         { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ]
@@ -809,7 +823,7 @@ export default {
       }
 
     },
- 
+
     getCopyOrders(id, btntype) {
       this.formVisible = true
       this.$nextTick(() => {
@@ -900,7 +914,7 @@ export default {
 
 .JNPF-common-search-box {
   padding: 8px 0 !important;
-  margin-left: 0!important;
+  margin-left: 0 !important;
 
   margin-bottom: 5px;
 }

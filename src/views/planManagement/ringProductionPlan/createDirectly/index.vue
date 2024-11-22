@@ -38,7 +38,7 @@
                           <el-form-item label="所属项目" prop="projectId">
                             <el-select v-model="planForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;"
                               :disabled="userInfo.projectId != '1'">
-                              <el-option v-for="(item, index) in projectIdData" :key="index" :label="item.label"
+                              <el-option v-for="(item, index) in projectIdDataList" :key="index" :label="item.label"
                                 :value="item.value"></el-option>
                             </el-select>
                           </el-form-item>
@@ -231,6 +231,7 @@ export default {
         planType: "add_plan",
         planDate: [],
         planStartDate: "",
+        projectId:"",
         planEndDate: "",
       },
       codeConfig: {},//单据规则配置
@@ -291,6 +292,9 @@ export default {
         planDate: [
           { required: true, message: '计划日期不能为空', trigger: 'change' }
         ],
+        projectId: [
+          { required: true, message: '所属项目不能为空', trigger: 'change' }
+        ],
       },
       customerData: {},
       selectRows: [],
@@ -298,7 +302,7 @@ export default {
       customStyleData: 0,
       isProjectSwitch: "",
       isProjectSwitchFlag: null,
-      projectIdData: [],
+      projectIdDataList: [],
     }
   },
   computed: {
@@ -312,8 +316,8 @@ export default {
     await this.getProjectList()
     this.isProjectSwitchFlag = true
     if (this.isProjectSwitch == 1) {
-      console.log(this.projectIdData);
-      this.planForm.projectId = this.userInfo.projectId
+      console.log(this.projectIdDataList);
+      this.planForm.projectId=this.userInfo.projectId==1?"":this.userInfo.projectId 
     }
   },
   mounted() { 
@@ -323,7 +327,9 @@ export default {
   beforeDestroy() {
   },
   methods: {
- 
+    changeProject() { 
+      this.productData = this.productData.filter(item => item.id === this.planForm.projectId);
+    },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
 

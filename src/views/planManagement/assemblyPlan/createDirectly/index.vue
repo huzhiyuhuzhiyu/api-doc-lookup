@@ -34,8 +34,17 @@
                             </el-select>
                           </el-form-item>
                         </el-col>
+                        <el-col :sm="6" :xs="24" v-if="isProjectSwitch == 1">
+                          <el-form-item label="所属项目" prop="projectId">
+                            <el-select v-model="planForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;"
+                              @change="changeProject" :disabled="userInfo.projectId != '1'">
+                              <el-option v-for="(item, index) in projectIdDataList" :key="index" :label="item.label"
+                                :value="item.value"></el-option>
+                            </el-select>
+                          </el-form-item>
+                        </el-col>
                         <el-col :sm="6" :xs="24">
-                          <el-form-item label="计划日期" prop="planDate">
+                          <el-form-item label="计划日期" prop="planDate" style="margin-bottom: 20px;">
                             <el-date-picker v-model="planForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                               :disabled='btnType == "look"' style="width: 100%;" start-placeholder="开始日期"
                               @change="changDateFun" end-placeholder="结束日期" clearable>
@@ -70,6 +79,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6"></el-table-column>
+                      <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                       <el-table-column prop="bomId" label="BOM" width="140" :key="444">
                         <template slot-scope="scope">
                           <div>{{ scope.row.bomId ? scope.row.drawingNo : "无BOM" }}</div>
@@ -184,7 +194,7 @@
                   </el-collapse-item>
                 </el-collapse>
               </el-tab-pane>
-              <el-tab-pane label="附件" name="annex"   v-if="isattachmentswitch == '1'">
+              <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
                 <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'">
                 </UploadWj>
               </el-tab-pane>
@@ -216,7 +226,7 @@
                           {{ $t('common.search') }}</el-button>
                         <el-button size="mini" icon="el-icon-refresh-right" @click="resetAllProduct()">{{
                           $t('common.reset')
-                          }}
+                        }}
                         </el-button>
                       </el-form-item>
                     </el-col>
@@ -227,6 +237,7 @@
                     @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
                     <el-table-column prop="drawingNo" label="品名规格" sortable="custom" />
                     <el-table-column prop="code" label="产品编码" sortable="custom" width="140"></el-table-column>
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                     <el-table-column prop="mainUnit" label="单位" width="80"></el-table-column>
                     <el-table-column prop="inventoryQuantity" label="可用库存数量" sortable="custom"></el-table-column>
                     <el-table-column prop="bomId" label="是否有BOM" sortable="custom">
@@ -274,16 +285,16 @@ import { mapGetters, mapState } from 'vuex'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
-
+import getProjectList from '@/mixins/generator/getProjectList'
 import { getBimBusinessDetail } from '@/api/basicData/index'
-import { log } from 'mathjs'
 
 export default {
 
+  mixins: [getProjectList],
 
   data() {
     return {
-      isattachmentswitch:"",
+      isattachmentswitch: "",
       planTypeList: [
         { label: "订单生成计划", value: "order_plan" },
         { label: "直接创建计划", value: "add_plan" },
@@ -294,6 +305,7 @@ export default {
         planDate: [],
         planStartDate: "",
         planEndDate: "",
+        projectId: "",
       },
       codeConfig: {},//单据规则配置
       list1: [],
@@ -354,11 +366,17 @@ export default {
         planDate: [
           { required: true, message: '计划日期不能为空', trigger: 'change' }
         ],
+        projectId: [
+          { required: true, message: '所属项目不能为空', trigger: 'change' }
+        ],
       },
       customerData: {},
       selectRows: [],
       selectArr: [],
       customStyleData: 0,
+      isProjectSwitch: "",
+      isProjectSwitchFlag: null,
+      projectIdDataList: [],
     }
   },
   computed: {
@@ -367,7 +385,15 @@ export default {
 
   },
 
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
+    this.isProjectSwitchFlag = true
+    if (this.isProjectSwitch == 1) {
+      console.log(this.projectIdDataList);
+      this.planForm.projectId=this.userInfo.projectId==1?"":this.userInfo.projectId
+
+    }
   },
   mounted() {
     this.init()
@@ -378,6 +404,9 @@ export default {
   beforeDestroy() {
   },
   methods: {
+    changeProject() { 
+      this.productData = this.productData.filter(item => item.id === this.planForm.projectId);
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -541,7 +570,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName' || prop === 'productCode') {
+      if (prop === 'productName' || prop == 'projectName' || prop === 'productCode') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'
@@ -631,6 +660,7 @@ export default {
     // 获取所有产品列表数据
     initData() {
       this.listLoading = true
+      this.ProductListRequestObj.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getProducts(this.ProductListRequestObj).then(listRes => {
         if (Array.isArray(listRes.data)) {
           this.allproductData = listRes.data

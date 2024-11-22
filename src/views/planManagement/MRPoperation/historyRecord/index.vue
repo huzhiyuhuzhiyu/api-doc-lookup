@@ -45,7 +45,7 @@
 
               </el-form>
             </el-row>
-            <div class="JNPF-common-layout-main JNPF-flex-main">
+            <div class="JNPF-common-layout-main JNPF-flex-main"  v-loading="listLoading" >
               <div class="JNPF-common-head">
                 <div>
 
@@ -65,11 +65,13 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table ref="assembleRef" v-loading="listLoading" :data="assembleData" :fixedNO="true"
+              <JNPF-table ref="assembleRef" :data="assembleData" :fixedNO="true"   v-if="isProjectSwitchFlag"
                 @sort-change="sortChange" custom-column :setColumnDisplayList="columnList1"
                 :checkSelectable="disproduceData" :key="1">
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                v-if="isProjectSwitch == 1" />
                 <el-table-column prop="bomId" label="是否有BOM" min-width="140" sortable="custom">
                   <template slot-scope="scope">
                     <div :style="scope.row.bomId ? 'color:#85ce60' : 'color:#f56c6c'">{{ scope.row.bomId ? "有" : '否'
@@ -156,7 +158,7 @@
                 </el-col>
               </el-form>
             </el-row>
-            <div class="JNPF-common-layout-main JNPF-flex-main">
+            <div class="JNPF-common-layout-main JNPF-flex-main"  v-loading="listLoading" >
               <div class="JNPF-common-head">
                 <div>
 
@@ -175,12 +177,14 @@
                       @click="getproduceData('basic')" />
                   </el-tooltip>
                 </div>
-              </div>
-              <JNPF-table ref="produceRef" v-loading="listLoading" :data="produceData" :fixedNO="true"
+              </div> 
+              <JNPF-table ref="produceRef"   :data="produceData" :fixedNO="true"   v-if="isProjectSwitchFlag"
                 :setColumnDisplayList="columnList2" @sort-change="sortChange" custom-column :key="2"
                 :checkSelectable="disproduceData">
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="170" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                v-if="isProjectSwitch == 1" />
                 <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                   <template slot-scope="scope">
                     <div :style="scope.row.bomFlag ? 'color:#85ce60' : 'color:#f56c6c'">{{ scope.row.bomFlag ? "有BOM" :
@@ -303,7 +307,7 @@
 
               </el-form>
             </el-row>
-            <div class="JNPF-common-layout-main JNPF-flex-main">
+            <div class="JNPF-common-layout-main JNPF-flex-main"  v-loading="listLoading" >
               <div class="JNPF-common-head">
                 <div>
 
@@ -324,11 +328,13 @@
                 </div>
               </div>
 
-              <JNPF-table ref="purchaseRef" v-loading="listLoading" :data="purchaseData" :fixedNO="true" :key="3"
+              <JNPF-table ref="purchaseRef"  :data="purchaseData" :fixedNO="true" :key="3"   v-if="isProjectSwitchFlag"
                 :setColumnDisplayList="columnList3" @sort-change="sortChange" custom-column
                 :checkSelectable="dispurchaseData">
                 <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                v-if="isProjectSwitch == 1" />
                 <el-table-column prop="immediatelyBuyFlag" label="立即采购" width="140" sortable="custom">
                   <template slot-scope="scope">
                     <div>{{ scope.row.immediatelyBuyFlag ? "是" : "否" }}</div>
@@ -431,8 +437,8 @@
                 </el-col>
 
               </el-form>
-            </el-row>
-            <div class="JNPF-common-layout-main JNPF-flex-main">
+            </el-row> 
+            <div class="JNPF-common-layout-main JNPF-flex-main"  v-loading="listLoading" >
               <div class="JNPF-common-head">
                 <div>
                 </div>
@@ -452,10 +458,12 @@
                 </div>
               </div>
 
-              <JNPF-table ref="outRef" v-loading="listLoading" :data="outData" :fixedNO="true" @sort-change="sortChange"
+              <JNPF-table ref="outRef"   :data="outData" :fixedNO="true" @sort-change="sortChange"   v-if="isProjectSwitchFlag"
                 :key="4" :setColumnDisplayList="columnList4" custom-column :checkSelectable="disOutData">
                 <el-table-column prop="productDrawingNo" label="品名规格" width="180" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                v-if="isProjectSwitch == 1" />
                 <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                   <template slot-scope="scope">
                     <div :style="scope.row.bomFlag ? 'color:#85ce60' : 'color:#f56c6c'">{{ scope.row.bomFlag ? "有BOM" :
@@ -561,9 +569,12 @@ import moment from "moment";
 import RetrospectForm from '../materialRequirements/retrospectForm.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { index } from 'mathjs';
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
   name: "historyRecord",
   components: { Form, ComplateSetForm, SuperQuery, RetrospectForm },
+  mixins:[getProjectList],
   data() {
     return {
       superQuery1: {},
@@ -735,26 +746,14 @@ export default {
           prop: "specialRequire",
           typeCode: "pa016"
         }
-      ]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      ],
+      isProjectSwitch:'',
+      isProjectSwitchFlag:false,
+ 
     };
   },
   computed: {
-
+    ...mapGetters(['userInfo'])
   },
   watch: {
     produceArr: {
@@ -764,12 +763,13 @@ export default {
       deep: true,
     },
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag=true
     this.superForm1 = this.assembleForm
     this.getassembleData('basic');
-
-    // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
-  },
+   
+  }, 
   methods: {
     // 获取打字内容等
     getProductClassFun() {
@@ -1148,6 +1148,8 @@ export default {
       if (type === 'super') {
         this.superForm1.superQuery = this.superQuery1
       }
+     this.superForm1.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+
       getMaterialDemandReport(this.superForm1).then(res => {
         console.log("组装res", res);
         let totalData = res.data.total
@@ -1226,6 +1228,7 @@ export default {
       if (type === 'super') {
         this.superForm2.superQuery = this.superQuery2
       }
+     this.superForm2.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getMaterialDemandReport(this.superForm2).then(res => {
         console.log("生产res", res);
         let totalData = res.data.total
@@ -1302,6 +1305,7 @@ export default {
       if (type === 'super') {
         this.superForm3.superQuery = this.superQuery3
       }
+     this.superForm3.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getMaterialDemandReport(this.superForm3).then(res => {
         console.log("采购res", res);
         let totalData = res.data.total
@@ -1385,6 +1389,7 @@ export default {
       if (type === 'super') {
         this.superForm4.superQuery = this.superQuery4
       }
+     this.superForm4.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getMaterialDemandReport(this.superForm4).then(res => {
         console.log("外协res", res);
         let totalData = res.data.total
@@ -1577,25 +1582,7 @@ export default {
         ""
       );
     },
-    // 生产 下达
-    handleProduce(val) {
-      console.log("生产", val);
-      this.produceArr = val;
-      this.produceArrList = JSON.parse(JSON.stringify(this.produceArr));
-    },
-
-    // 采购 下达
-    handlePurchase(val) {
-      console.log("采购", val, this.purchaseArr);
-      this.purchaseArr = val;
-      this.purchaseArrList = JSON.parse(JSON.stringify(this.purchaseArr));
-    },
-    // 外协 下达
-    handleOut(val) {
-      console.log("外协", val);
-      this.outArr = val;
-      this.outArrList = JSON.parse(JSON.stringify(this.outArr));
-    },
+ 
     // 查看替代件信息
     viewData(id, btntype) {
       console.log(id, btntype);
@@ -1611,418 +1598,8 @@ export default {
         this.$refs.Form.init(id, btntype);
       });
     },
-    submitAllProduct() {
-      if (this.orderForm.demandType == "produce") {
-        let flag = null;
-        console.log(this.orderDetailData);
-        for (let index = 0; index < this.orderDetailData.length; index++) {
-          const item = this.orderDetailData[index];
-
-          if (
-            !item.productionQuantity ||
-            Number(item.productionQuantity) == 0
-          ) {
-            flag = false;
-            this.$message({
-              type: "error",
-              message: "第" + (index + 1) + "行的下达数量不能为0或为空",
-              duration: 1500,
-            });
-            return;
-          } else if (
-            Number(item.productionQuantity) > Number(item.outputQuantity)
-          ) {
-            flag = false;
-            this.$message({
-              type: "error",
-              message: "第" + (index + 1) + "行的下达数量不能超过生产数量",
-              duration: 1500,
-            });
-
-            break;
-          }
-        }
-        if (flag === false) return;
-        this.btnLoading = true;
-        let arr = [];
-        console.log("this.produceArrList", this.produceArrList);
-        this.orderDetailData.forEach((item) => {
-          this.produceArr.forEach((ids, index) => {
-            if (
-              item.cooperativePartnerId === ids.cooperativePartnerId &&
-              item.productsId === ids.productsId
-            ) {
-              ids.planEndDate = item.planEndDate;
-              ids.planStartDate = item.planStartDate;
-              ids.insertOrderFlag = item.insertOrderFlag
-              ids.productionQuantity =
-                this.produceArrList[index].productionQuantity;
-              ids.materialDemandId =
-                this.produceArrList[index].materialDemandId;
-            }
-          });
-        });
-        arr = this.produceArr;
-        demandProduceissue(arr)
-          .then((res) => {
-            this.btnLoading = false;
-            console.log("生产下达", res);
-            this.$message({
-              type: "success",
-              message: "下达成功",
-              duration: 1500,
-            });
-            this.produceArr = [];
-            this.productVisible = false;
-            this.tableFlag = false;
-            this.initData();
-          })
-          .catch((error) => {
-            this.btnLoading = false;
-          });
-      }
-      if (this.orderForm.demandType == "out") {
-        let flag = null;
-        for (let index = 0; index < this.orderDetailData.length; index++) {
-          const item = this.orderDetailData[index];
-          console.log("item", item);
-          if (
-            !item.planDemandQuantity ||
-            Number(item.planDemandQuantity) == 0
-          ) {
-            flag = false;
-            this.$message({
-              type: "error",
-              message: "第" + (index + 1) + "行的下达数量不能为0或为空",
-              duration: 1500,
-            });
-            return;
-          } else if (
-            Number(item.planDemandQuantity) > Number(item.outputQuantity)
-          ) {
-            flag = false;
-            this.$message({
-              type: "error",
-              message: "第" + (index + 1) + "行的下达数量不能超过外协数量",
-              duration: 1500,
-            });
-            break;
-          } else if (!item.deliveryDate) {
-            flag = false;
-            this.$message({
-              type: "error",
-              message: "第" + (index + 1) + "行的交货日期",
-              duration: 1500,
-            });
-            break;
-          }
-        }
-
-        if (flag === false) return;
-        this.btnLoading = true;
-        let arr = [];
-        this.orderDetailData.forEach((item) => {
-          this.outArr.forEach((ids, index) => {
-            if (
-              item.cooperativePartnerId === ids.cooperativePartnerId &&
-              item.productsId === ids.productsId
-            ) {
-              ids.deliveryDate = item.deliveryDate;
-              ids.planDemandQuantity =
-                this.outArrList[index].planDemandQuantity;
-              ids.materialDemandId = this.outArrList[index].materialDemandId;
-              ids.poolType = item.poolType;
-            }
-          });
-        });
-        arr = this.outArr;
-        demandProcureissue(arr)
-          .then((res) => {
-            this.$message({
-              type: "success",
-              message: "下达成功",
-              duration: 1500,
-            });
-            this.outArr = [];
-            this.btnLoading = false;
-            this.productVisible = false;
-            this.tableFlag = false;
-            this.initData();
-          })
-          .catch((error) => {
-            this.btnLoading = false;
-          });
-      }
-      if (this.orderForm.demandType == "purchase") {
-        let flag = null;
-        for (let index = 0; index < this.orderDetailData.length; index++) {
-          const item = this.orderDetailData[index];
-
-          if (
-            !item.planDemandQuantity ||
-            Number(item.planDemandQuantity) == 0
-          ) {
-            flag = false;
-            this.$message({
-              type: "error",
-              message: "第" + (index + 1) + "行的下达数量不能为0或为空",
-              duration: 1500,
-            });
-            return;
-          } else if (
-            Number(item.planDemandQuantity) > Number(item.outputQuantity)
-          ) {
-            flag = false;
-            this.$message({
-              type: "error",
-              message: "第" + (index + 1) + "行的下达数量不能超过采购数量",
-              duration: 1500,
-            });
-            break;
-          } else if (!item.deliveryDate) {
-            flag = false;
-            this.$message({
-              type: "error",
-              message: "请选择第" + (index + 1) + "行的交货日期",
-              duration: 1500,
-            });
-            break;
-          }
-        }
-        if (flag === false) return;
-        this.btnLoading = true;
-        let arr = [];
-        console.log("purchaseArr", this.purchaseArr);
-        this.orderDetailData.forEach((item) => {
-          console.log("item", item);
-          this.purchaseArr.forEach((ids, index) => {
-            if (item.productsId === ids.productsId) {
-              ids.planDemandQuantity =
-                this.purchaseArrList[index].planDemandQuantity;
-              ids.materialDemandId =
-                this.purchaseArrList[index].materialDemandId;
-              ids.deliveryDate = item.deliveryDate;
-              ids.poolType = item.poolType;
-            }
-          });
-        });
-        arr = this.purchaseArr;
-        console.log("arr", arr);
-        demandProcureissue(arr)
-          .then((res) => {
-            this.btnLoading = false;
-            this.$message({
-              type: "success",
-              message: "下达成功",
-              duration: 1500,
-            });
-            this.purchaseArr = [];
-            this.productVisible = false;
-            this.tableFlag = false;
-            this.initData();
-          })
-          .catch((error) => {
-            this.btnLoading = false;
-          });
-      }
-    },
-    // 批量下达
-    bulkRelease(type) {
-      if (type == "produce") {
-        if (!this.produceArr.length) {
-          this.$message({
-            type: "error",
-            message: "请先选择数据",
-            duration: 1500,
-          });
-        } else {
-          this.productVisible = true;
-          this.tableFlag = true;
-          console.log(222, this.produceArr);
-          let arr = JSON.parse(JSON.stringify(this.produceArr));
-
-          arr.forEach((item, index) => {
-            item.materialDemandId = item.id;
-            this.produceArrList[index].materialDemandId = item.id;
-            item.insertOrderFlag = false;
-            item.insertOrderSort = "";
-            item.outputQuantity = Number(item.outputQuantity);
-            item.issuedQuantity = Number(item.issuedQuantity);
-            item.issuingQuantity = Number(item.issuingQuantity);
-            this.produceArrList[index].productionQuantity =
-              item.productionQuantity =
-              item.outputQuantity -
-              item.issuedQuantity -
-              item.issuingQuantity;
-            item.productionQuantity = item.productionQuantity =
-              item.outputQuantity - item.issuedQuantity - item.issuingQuantity;
-          });
-
-          const mergedData = arr.reduce((acc, curr) => {
-            console.log("object");
-            // const key = curr.bussinessCode === "complete" ? `${curr.bussinessCode}-${curr.productsId}-${curr.cooperativePartnerId}` : `${curr.bussinessCode}-${curr.productsId}`;
-            const key = `${curr.bussinessCode}-${curr.productsId}-${curr.cooperativePartnerId}`;
-            if (!acc[key]) {
-              acc[key] = { ...curr };
-            } else {
-              acc[key].outputQuantity += curr.outputQuantity;
-              acc[key].issuedQuantity += curr.issuedQuantity;
-              acc[key].productionQuantity += curr.productionQuantity;
-              let earliestDate = arr.reduce((earliest, current) => {
-                return earliest.deliveryDate < current.deliveryDate
-                  ? earliest
-                  : current;
-              });
-              acc[key].deliveryDate = earliestDate.deliveryDate;
-            }
-            return acc;
-          }, {});
-
-          const result = Object.values(mergedData);
-          console.log("result", result);
-          result.forEach((item, index) => {
-            item.index = index
-          })
-          this.orderDetailData = JSON.parse(JSON.stringify(result));
-
-        }
-      } else if (type == "out") {
-        if (!this.outArr.length) {
-          this.$message({
-            type: "error",
-            message: "请先选择数据",
-            duration: 1500,
-          });
-        } else {
-          let arr = JSON.parse(JSON.stringify(this.outArr));
-
-          arr.forEach((item, index) => {
-            item.materialDemandId = item.id;
-            this.outArrList[index].materialDemandId = item.id;
-            item.deliveryDates = item.deliveryDate;
-            item.deliveryDate = "";
-            item.poolType = "external";
-            item.outputQuantity = Number(item.outputQuantity);
-            item.issuedQuantity = Number(item.issuedQuantity);
-            this.outArrList[index].planDemandQuantity =
-              item.planDemandQuantity = this.jnpf.numberFormat(
-                item.outputQuantity - item.issuedQuantity,
-                4
-              );
-          });
-
-          const mergedArr = arr.reduce((acc, curr) => {
-            const existingItem = acc.find(
-              (item) => item.productsId === curr.productsId
-            );
-            if (existingItem) {
-              existingItem.outputQuantity += Number(curr.outputQuantity);
-              existingItem.issuedQuantity += Number(curr.issuedQuantity);
-              existingItem.planDemandQuantity += this.jnpf.numberFormat(
-                Number(curr.planDemandQuantity),
-                4
-              );
-              let earliestDate = arr.reduce((earliest, current) => {
-                return earliest.deliveryDates < current.deliveryDates
-                  ? earliest
-                  : current;
-              });
-              existingItem.deliveryDates = earliestDate.deliveryDates;
-              // 如果productionQuantity是字符串，您可能需要进行适当的处理
-              // 例如，如果是数字，则可以使用parseInt将其转换为数字并相加
-            } else {
-              acc.push(curr);
-            }
-            return acc;
-          }, []);
-
-          console.log(1111, mergedArr);
-          mergedArr.forEach((item, index) => {
-            item.index = index
-          })
-          this.orderDetailData = JSON.parse(JSON.stringify(mergedArr));
-          this.productVisible = true;
-          this.tableFlag = true;
-
-          console.log(333, this.outArr);
-        }
-      } else if (type == "purchase") {
-        if (!this.purchaseArr.length) {
-          this.$message({
-            type: "error",
-            message: "请先选择数据",
-            duration: 1500,
-          });
-        } else {
-          let arr = JSON.parse(JSON.stringify(this.purchaseArr));
-
-          arr.forEach((item, index) => {
-            item.materialDemandId = item.id;
-            this.purchaseArrList[index].materialDemandId = item.id;
-            item.deliveryDates = item.deliveryDate;
-            item.deliveryDate = "";
-            item.poolType = "procure";
-            item.outputQuantity = Number(item.outputQuantity);
-            item.issuedQuantity = Number(item.issuedQuantity);
-            this.purchaseArrList[index].planDemandQuantity =
-              item.planDemandQuantity = this.jnpf.numberFormat(
-                item.outputQuantity - item.issuedQuantity,
-                4
-              );
-          });
-          console.log("arr", arr);
-          const mergedArr = arr.reduce((acc, curr) => {
-            const existingItem = acc.find(
-              (item) => item.productCode === curr.productCode
-            );
-            if (existingItem) {
-              console.log(6);
-              existingItem.outputQuantity += Number(curr.outputQuantity);
-              existingItem.issuedQuantity += Number(curr.issuedQuantity);
-              existingItem.planDemandQuantity += this.jnpf.numberFormat(
-                Number(curr.planDemandQuantity),
-                4
-              );
-              console.log("curr", curr);
-              let earliestDate = arr.reduce((earliest, current) => {
-                return earliest.deliveryDates < current.deliveryDates
-                  ? earliest
-                  : current;
-              });
-              existingItem.deliveryDates = earliestDate.deliveryDates;
-              // 如果productionQuantity是字符串，您可能需要进行适当的处理
-              // 例如，如果是数字，则可以使用parseInt将其转换为数字并相加
-            } else {
-              console.log(7, curr);
-              acc.push(curr);
-            }
-            acc.forEach((item) => {
-              item.outputQuantity = this.jnpf.numberFormat(
-                item.outputQuantity,
-                4
-              );
-              item.planDemandQuantity = this.jnpf.numberFormat(
-                item.planDemandQuantity,
-                4
-              );
-            });
-            console.log("acc", acc);
-            return acc;
-          }, []);
-
-          // console.log(1111, mergedArr);
-          mergedArr.forEach((item, index) => {
-            item.index = index
-          })
-          this.orderDetailData = JSON.parse(JSON.stringify(mergedArr));
-
-          this.tableFlag = true;
-          this.productVisible = true;
-
-          console.log(333, this.purchaseArr, this.purchaseArrList);
-        }
-      }
-    },
+ 
+    
 
 
 

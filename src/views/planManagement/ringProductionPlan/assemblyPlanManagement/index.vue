@@ -324,16 +324,13 @@ export default {
     ...mapGetters(['userInfo'])
   },
 
-  created() {
-    this.superForm=this.orderForm
-    this.search('basic')
-    // this.getProductClassFun()
-  },
+  
   async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag=true
     this.superForm=this.orderForm
     this.search('basic')
-      await this.getProjectSwitch('system', 'project')
-    this.isProjectSwitchFlag=true
+   
   },
 
 

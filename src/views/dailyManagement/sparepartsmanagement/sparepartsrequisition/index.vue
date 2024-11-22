@@ -131,11 +131,15 @@ import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { CollectionandreturnList, deleteCollectionandreturn } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters } from 'vuex'
 export default {
+  mixins: [getProjectList],
   // name: 'announceInvalidated',
   components: { Form, SuperQuery },
   data() {
     return {
+      isProjectSwitch: '',
       showAppCodeFlag: true,
       useApplicationlist: [
         { label: '设备保养', value: 'equipmentmaintain' },
@@ -229,6 +233,7 @@ export default {
       listLoading: false,
       orderForm: {},
       orderFormone: {
+        projectId:'',
         requisitionType: 'requisition',
         equipmentType: 'accessory',
         maintainerIdText: '',
@@ -249,6 +254,7 @@ export default {
     }
   },
   async created() {
+    await this.getProjectSwitch('system', 'project')
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormone))
     const res = await this.jnpf.getBusInfo('b053')
     if (res) {
@@ -257,6 +263,9 @@ export default {
       this.showAppCodeFlag = false
     }
     this.initData()
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     withdrawnHandle(formId) {
@@ -316,6 +325,7 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       CollectionandreturnList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total

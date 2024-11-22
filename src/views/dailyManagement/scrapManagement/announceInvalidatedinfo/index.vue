@@ -295,6 +295,7 @@ export default {
         { label: "草稿", value: "draft" },
       ],
       orderForm: {
+        projectId:'',
         classAttribute: 'equipment',
         orderNo: '',
         documentStatus: '',

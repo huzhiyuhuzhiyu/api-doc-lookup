@@ -380,6 +380,7 @@ export default {
             mainUnit: item.all.mainUnit,
             availableQuantity: item.all.availableQuantity,
             productId: item.all.id,
+            projectName: item.all.projectName,
             requisitionNum: '',
           })
         } else {

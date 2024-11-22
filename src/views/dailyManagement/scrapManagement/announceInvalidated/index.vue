@@ -124,7 +124,10 @@ import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { ScrapApplicationFormList, deleteScrapApplicationForm } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters } from 'vuex'
 export default {
+  mixins: [getProjectList],
   // name: 'announceInvalidated',
   components: { Form, SuperQuery },
   data() {
@@ -247,6 +250,7 @@ export default {
         { label: "草稿", value: "draft" },
       ],
       orderForm: {
+        projectId:'',
         classAttribute: 'equipment',
         orderNo: '',
         documentStatus: '',
@@ -266,6 +270,7 @@ export default {
     }
   },
   async created() {
+    await this.getProjectSwitch('system', 'project')
     const res = await this.jnpf.getBusInfo('b059')
     if (res) {
       this.showAppCodeFlag = res.enabledMark
@@ -273,6 +278,9 @@ export default {
       this.showAppCodeFlag = false
     }
     this.initData()
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     withdrawnHandle(formId) {
@@ -332,6 +340,7 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       ScrapApplicationFormList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total

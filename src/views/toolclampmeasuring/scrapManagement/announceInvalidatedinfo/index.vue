@@ -32,7 +32,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head">
           <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addSupplier('', 'add')" />
           <div class="JNPF-common-head-right" style="float: right">
@@ -47,7 +47,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" custom-column>
+        <JNPF-table ref="dataTable" v-if="istable" :data="tableData" @sort-change="sortChange" custom-column>
           <el-table-column prop="orderNo" label="报废单号" width="200" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
@@ -60,6 +60,7 @@
           <el-table-column prop="applicantTime" label="申请日期" width="180" sortable="custom"></el-table-column>
           <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200"></el-table-column>
           <el-table-column prop="equipmentIdName" label="工具名称" min-width="200"></el-table-column>
+          <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
           <el-table-column prop="specModel" label="规格型号" min-width="200"></el-table-column>
           <el-table-column prop="categoryName" label="工具分类" min-width="200"></el-table-column>
           <el-table-column prop="factoryFloor" label="使用车间" min-width="200"></el-table-column>
@@ -137,11 +138,16 @@ import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { ScrapApplicationFormListinfo, deleteScrapApplicationForm } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters } from 'vuex'
 export default {
+  mixins: [getProjectList],
   // name: 'announceInvalidated',
   components: { Form, SuperQuery },
   data() {
     return {
+      istable: false,
+      isProjectSwitch: '',
       showAppCodeFlag: true,
       superQueryVisible: false,
       superQueryJson: [
@@ -289,6 +295,7 @@ export default {
         { label: "草稿", value: "draft" },
       ],
       orderForm: {
+        projectId:'',
         classAttribute: 'tool',
         orderNo: '',
         documentStatus: '',
@@ -308,6 +315,7 @@ export default {
     }
   },
   async created() {
+    await this.getProjectSwitch('system', 'project')
     const res = await this.jnpf.getBusInfo('b060')
     if (res) {
       this.showAppCodeFlag = res.enabledMark
@@ -315,6 +323,9 @@ export default {
       this.showAppCodeFlag = false
     }
     this.initData()
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     withdrawnHandle(formId) {
@@ -374,7 +385,9 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       ScrapApplicationFormListinfo(this.orderForm).then(res => {
+        this.istable = true
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false

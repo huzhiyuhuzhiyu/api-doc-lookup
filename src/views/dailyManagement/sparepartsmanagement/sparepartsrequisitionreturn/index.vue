@@ -101,11 +101,15 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { CollectionandreturnList } from '@/api/dailyManagement/Maintenance'
 import Form from '../sparepartsrequisition/Form.vue'
 import Form1 from '../sparepartsReturn/Form.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters } from 'vuex'
 export default {
+  mixins: [getProjectList],
   // name: 'sparepartsrequisitionreturn',
   components: { Form, SuperQuery, Form1 },
   data() {
     return {
+      isProjectSwitch: '',
       formVisible1: false,
       superQueryJson: [
         {
@@ -186,6 +190,7 @@ export default {
         { label: "归还", value: 'back' }
       ],
       orderForm: {
+        projectId: '',
         equipmentType: 'accessory',
         orderNo: '',
         maintainerIdText: '',
@@ -204,8 +209,12 @@ export default {
       formVisible: false,
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.initData()
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     columnSetFun() {
@@ -246,6 +255,7 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       CollectionandreturnList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -275,7 +285,7 @@ export default {
       this.dataFormSubmit()
     },
     handleUserRelation(val, btnType) {
-      if (val.requisitionType=='requisition') {
+      if (val.requisitionType == 'requisition') {
         this.formVisible = true
         this.$nextTick(() => {
           this.$refs.Form.init(val.id, btnType)

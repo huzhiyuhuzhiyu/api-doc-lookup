@@ -35,7 +35,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head">
           <div>
             <el-button size="mini" type="success" icon="el-icon-s-claim" @click="handleBatchreview">批量审核派工</el-button>
@@ -54,7 +54,7 @@
           </div>
         </div>
 
-        <JNPF-table ref="dataTable" hasC @selection-change="handeleInfoData" v-loading="listLoading" :data="tableData" @sort-change="sortChange" custom-column>
+        <JNPF-table ref="dataTable" v-if="istable" hasC @selection-change="handeleInfoData" :data="tableData" @sort-change="sortChange" custom-column>
           <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
@@ -64,6 +64,7 @@
           </el-table-column>
           <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" sortable="custom" />
           <el-table-column prop="equipmentIdName" label="工具名称" min-width="200" sortable="custom"></el-table-column>
+          <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
           <el-table-column prop="usin" label="用途" min-width="140" />
           <el-table-column prop="frontPicList" label="故障情况照片" min-width="140">
             <template slot-scope="scope">
@@ -181,11 +182,16 @@ import depForm from './depForm'
 import sucForm from './sucForm'
 import { RepairRequestList, deleteRepairRequest, equEquipmentRepairOutsourcing } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters } from 'vuex'
 export default {
+  mixins: [getProjectList],
   // name: 'deviceservice',
   components: { Form, depForm, sucForm, SuperQuery },
   data() {
     return {
+      istable: false,
+      isProjectSwitch: '',
       superQueryVisible: false,
       superQueryJson: [
         {
@@ -373,6 +379,7 @@ export default {
         { label: "已维修", value: "maintained" }
       ],
       orderForm: {
+        projectId: '',
         state: 'toBeMaintain',
         // unState: 'maintained',
         classAttribute: "tool",
@@ -401,8 +408,12 @@ export default {
       formVisible: false,
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.initData()
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     outsourcedcompletion(id) {
@@ -509,7 +520,9 @@ export default {
     // console.log(`输入的秒数是${second}：，转换后是${res[0]}时${res[1]}分${res[2]}秒`)
     initData() {
       this.listLoading = true
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       RepairRequestList(this.orderForm).then(res => {
+        this.istable = true
         this.tableData = res.data.records.map(item => {
           if (item.frontPic) {
             item.frontPicList = item.frontPicList.map(o => { return JSON.parse(`{${o}}`) })

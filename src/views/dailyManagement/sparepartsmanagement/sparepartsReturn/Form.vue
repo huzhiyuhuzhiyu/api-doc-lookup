@@ -64,6 +64,7 @@
                     <el-table-column type="index" width="60" label="序号" align="center" fixed='left' key="11" />
                     <el-table-column prop="productCode" label="备件编码" min-width="160" show-overflow-tooltip>
                     </el-table-column>
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                     <!-- <el-table-column prop="productName" label="备件名称" min-width="160" show-overflow-tooltip>
                       <template slot="header">
                         <span class="required">*</span>备件名称
@@ -144,6 +145,7 @@
                 <el-table-column type="index" width="60" label="序号" align="center" fixed='left' key="11" />
                 <el-table-column prop="productCode" label="备件编码" min-width="160" show-overflow-tooltip>
                 </el-table-column>
+                <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                 <!-- <el-table-column prop="productName" label="备件名称" min-width="160" show-overflow-tooltip>
                       <template slot="header">
                         <span class="required">*</span>备件名称
@@ -197,11 +199,13 @@ import { mapGetters } from 'vuex'
 import { updateCollectionandreturn, detailCollectionandreturn, checkmaintenanceList, RepairRequestList, addCollectionandreturn } from '@/api/dailyManagement/Maintenance'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getProductList } from '@/api/basicData/materialFiles' // 备件列表
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
-  mixins: [busFlow, flowMixin],
+  mixins: [busFlow, flowMixin,getProjectList],
   components: { Process, recordList },
   data() {
     return {
+      isProjectSwitch: '',
       flowTemplateJson: {},
       flowData: {},
       approvalFlag: false,   // 待办事宜等页面 需要
@@ -217,6 +221,7 @@ export default {
       getcategoryTree,
       getProductList,
       ProductListRequestObj: {
+        projectId: '',
         classAttribute: "spare_parts",
         code: "",
         createTimeArr: [],
@@ -283,9 +288,13 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
+      this.ProductListRequestObj.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       if (!this.dataForm.id) this.init('', 'add')
       this.getBimBusinessDetail()
     });
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
   },
   computed: {
     ...mapGetters(['userInfo']),
@@ -358,6 +367,7 @@ export default {
             mainUnit: item.all.mainUnit,
             incomingOutgoingNum: item.all.incomingOutgoingNum,
             productId: item.all.id,
+            projectName: item.all.projectName,
             requisitionNum: '',
           })
         } else {

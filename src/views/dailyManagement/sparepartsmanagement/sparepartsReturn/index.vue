@@ -128,11 +128,15 @@ import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { CollectionandreturnList, deleteCollectionandreturn } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters } from 'vuex'
 export default {
+  mixins: [getProjectList],
   name: 'sparepartsReturn',
   components: { Form, SuperQuery },
   data() {
     return {
+      isProjectSwitch: '',
       showAppCodeFlag: true,
       createRequirementDate: [],
       superQueryVisible: false,
@@ -193,7 +197,9 @@ export default {
       ],
       tableData: [],
       listLoading: false,
+      orderForm: {},
       orderFormone: {
+        projectId: '',
         requisitionType: 'back',
         equipmentType: 'accessory',
         maintainerIdText: '',
@@ -216,6 +222,7 @@ export default {
     }
   },
   async created() {
+    await this.getProjectSwitch('system', 'project')
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormone))
     const res = await this.jnpf.getBusInfo('b056')
     if (res) {
@@ -224,6 +231,9 @@ export default {
       this.showAppCodeFlag = false
     }
     this.initData()
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     withdrawnHandle(formId) {
@@ -283,6 +293,7 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       this.jnpf.searchTimeFormat(this.orderForm, this.createRequirementDate, 'collStartTime', 'collEndTime')
       CollectionandreturnList(this.orderForm).then(res => {
         this.tableData = res.data.records

@@ -216,13 +216,13 @@ import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowE
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
-
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   components: {
     Process,
     recordList
   },
-  mixins: [busFlow],
+  mixins: [busFlow, getProjectList],
   data() {
     var checkDateOrderStop = (rule, value, callback) => {
       if (!this.dataForm.dateOrderStart) {
@@ -237,6 +237,8 @@ export default {
       }
     }
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       flowTemplateJson: {},
       flowData: {},
       approvalFlag: false, // 待办事宜等页面 需要
@@ -528,7 +530,31 @@ export default {
   mounted() {
     this.getclassAttributeList()
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.tableDataFlag = true
+    console.log(this.isProjectSwitch)
+    if (this.isProjectSwitch === '1') {
+      console.log(this.projectIdData, 'lllljj')
+
+      this.ProductTableItems = [
+        { prop: 'drawingNo', label: '品名规格', minWidth: 140 },
+        { prop: 'code', label: '产品编码', minWidth: 140 },
+        { prop: 'projectName', label: '所属项目', minWidth: 140 },
+        { prop: 'classAttributeName', label: '所属分类', minWidth: 140 },
+        { prop: 'mainUnit', label: '单位' },
+        { prop: 'colour', label: '颜色' }
+      ] // 产品选择弹出框表单展示字段
+    } else {
+      this.ProductTableItems = [
+        { prop: 'drawingNo', label: '品名规格', minWidth: 140 },
+        { prop: 'code', label: '产品编码', minWidth: 140 },
+        { prop: 'classAttributeName', label: '所属分类', minWidth: 140 },
+        { prop: 'mainUnit', label: '单位' },
+        { prop: 'colour', label: '颜色' }
+      ] // 产品选择弹出框表单展示字段
+
+    }
     this.getBimBusinessDetail()
   },
   computed: {

@@ -37,7 +37,7 @@
                 </el-col>
               </el-form>
             </el-row>
-            <div class="JNPF-common-layout-main JNPF-flex-main">
+            <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
               <div class="JNPF-common-head">
                 <topOpts @add="addOrUpdateHandle('', 'add')">
                   <el-button size="mini" type="primary" icon="el-icon-plus" @click="importProductFun">导入</el-button>
@@ -61,10 +61,12 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm"
+              <JNPF-table v-if="tableDataFlag" highlight-current-row :fixedNO="true" ref="tableForm"
                 :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="lastColumnList">
                 <el-table-column prop="partnerName" label="供应商名称" min-width="160" sortable="custom" />
                 <el-table-column prop="partnerCode" label="供应商编码" min-width="160" sortable="custom" />
+                <el-table-column prop="projectName" label="所属项目" width="120"
+                  v-if="isProjectSwitch === '1'"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" min-width="160" />
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
@@ -130,7 +132,7 @@
                 </el-col>
               </el-form>
             </el-row>
-            <div class="JNPF-common-layout-main JNPF-flex-main">
+            <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
               <div class="JNPF-common-head">
                 <div>
                   <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
@@ -153,10 +155,12 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="dataTable"
+              <JNPF-table v-if="tableDataFlag" highlight-current-row :fixedNO="true" ref="dataTable"
                 :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="lastColumnList">
                 <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="150" sortable="custom" />
                 <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="150" sortable="custom" />
+                <el-table-column prop="projectName" label="所属项目" width="120"
+                  v-if="isProjectSwitch === '1'"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" width="150" sortable="custom" />
                 <el-table-column prop="productsCode" label="产品编码" width="150" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="60" />
@@ -228,11 +232,15 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { buyFixedPointPricingDetailList } from '@/api/purchasingManagement/purchaseInquirySheet'
 import JNPFForm from './Form'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   name: 'PartnerProduct',
   components: { JNPFForm, ExportForm, SuperQuery },
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       uploadVisib: false,
       basicQuery: {},
       superQuery: {},
@@ -667,7 +675,10 @@ export default {
       ]
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.tableDataFlag = true
+
     // if (this.activeName == 'latestprice') {
     //   this.superForm = this.lastListQuery
     // } else {

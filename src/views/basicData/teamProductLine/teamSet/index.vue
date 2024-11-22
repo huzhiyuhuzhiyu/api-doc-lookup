@@ -32,7 +32,7 @@
                     </el-col>
                 </el-form>
             </el-row>
-            <div class="JNPF-common-layout-main JNPF-flex-main">
+            <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
                 <div class="JNPF-common-head" style="padding: 8px">
                     <div>
                         <topOpts @add="addSupplier">
@@ -57,7 +57,7 @@
                         </el-tooltip>
                     </div>
                 </div>
-                <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
+                <JNPF-table v-if="tableDataFlag" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
                     custom-column :setColumnDisplayList="columnList">
                     <el-table-column prop="code" label="班组编码" sortable="custom" min-width="160">
                         <template slot-scope="scope">
@@ -67,6 +67,8 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="name" label="班组名称" sortable="custom" min-width="160" />
+                    <el-table-column prop="projectName" label="所属项目" width="120"
+                        v-if="isProjectSwitch === '1'"></el-table-column>
                     <el-table-column prop="workType" label="做工类型" sortable="custom" min-width="120">
                         <template slot-scope="scope">
                             <div v-if="scope.row.workType == 'same'">同道工序</div>
@@ -130,11 +132,15 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
     name: 'quality',
     components: { DepForm, ExportForm, SuperQuery },
+    mixins: [getProjectList],
     data() {
         return {
+            isProjectSwitch: '',
+            tableDataFlag: false,
             searchList: [
                 { field: 'code', fieldValue: '', label: '班组编码', symbol: 'like', searchType: 1, width: 120 },
                 { field: 'name', fieldValue: '', label: '班组名称', symbol: 'like', searchType: 1, width: 120 },
@@ -265,7 +271,9 @@ export default {
     mounted() {
         this.getProductClassFun()
     },
-    created() {
+    async created() {
+        await this.getProjectSwitch('system', 'project')
+        this.tableDataFlag = true
         this.superForm = this.tableQuery
         this.initData()
         // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
@@ -525,6 +533,9 @@ export default {
             }
         },
         initData() {
+            if (this.isProjectSwitch === '1') {
+                this.superForm.projectId = this.userInfo.projectId
+            }
             getGroupList(this.superForm)
                 .then((res) => {
                     //

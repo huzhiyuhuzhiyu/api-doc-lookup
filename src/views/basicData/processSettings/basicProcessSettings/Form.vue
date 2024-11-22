@@ -17,6 +17,15 @@
               <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                 <el-form ref="dataForm" :model="dataForm" :rules="rules" label-width="140px" label-position="top">
                   <el-row :gutter="20" class="custom-row">
+                    <el-col :span="12">
+                      <el-form-item label="所属项目" prop="projectId">
+                        <el-select v-model="dataForm.projectId" placeholder="请选择所属项目"
+                          :disabled="type === 'look' || userInfo.projectId !== '1'" style="width:100%">
+                          <el-option v-for="item in projectIdData" :key="item.id" :label="item.label"
+                            :value="item.id"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="12" :xs="24">
                       <el-form-item label="工序名称" prop="name">
                         <el-input v-model="dataForm.name" placeholder="请输入工序名称" maxlength="20"
@@ -91,7 +100,6 @@
                     style="width: 100%">
                     <el-table-column prop="resourceId" label="人员名称">
                       <template slot-scope="scope">
-
                         <el-input v-model="scope.row.resourceName" placeholder="请输入人员名称" :disabled="type === 'look'"
                           readonly />
                       </template>
@@ -144,7 +152,6 @@
                     style="width: 100%">
                     <el-table-column prop="resourceId" label="设备名称">
                       <template slot-scope="scope">
-
                         <el-input :disabled="type === 'look'" v-model="scope.row.resourceName" placeholder="请输入设备名称"
                           readonly />
                       </template>
@@ -170,7 +177,6 @@
                     style="width: 100%">
                     <el-table-column prop="resourceId" label="工具名称">
                       <template slot-scope="scope">
-
                         <el-input v-model="scope.row.resourceName" placeholder="请输入工具名称" :disabled="type === 'look'"
                           readonly />
                       </template>
@@ -227,13 +233,18 @@ import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getGroupList, editEquEquipmentAll, getEquEquipmentList, stateEquEquipment } from '@/api/basicData/index'
 import PersonnelDialog from './personnel-dialog.vue'
 import PersonSelect from './personSelect.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   components: {
     PersonnelDialog,
     PersonSelect
   },
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      tableFlag: false,
+      projectIdData: [],
       process_typeList: [
         { label: '正常工序', value: 'normal' },
         { label: '待装配工序', value: 'wait_assemble' },
@@ -251,6 +262,7 @@ export default {
       configurationName: 'personnel',
       btnLoading: false,
       dataForm: {
+        projectId: '',
         id: '', // 工序id
         name: null, //  工序名称
         code: null, // 工序编码
@@ -458,7 +470,16 @@ export default {
       resourceList: []
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
+    console.log(this.isProjectSwitch)
+    if (this.userInfo.projectId === '1') {
+      console.log(this.projectIdData, 'lllljj')
+      this.projectIdData = this.projectIdData.filter(item => item.id !== '1')
+    } else {
+      this.$set(this.dataForm, 'projectId', this.userInfo.projectId)
+    }
     // this.getBusinessType()
   },
   methods: {

@@ -197,11 +197,15 @@ import JNPFForm from '../assemblyProcessSetting/Form.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getProcessList } from '@/api/basicData/processSettingss'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   name: 'ProductionResource',
   components: { ExportForm, SuperQuery, JNPFForm },
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       btnLoading: false,
       superQueryVisible: false,
       superQueryJson: [
@@ -315,12 +319,14 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
-  created() {
+  async created() {
     if (localStorage.getItem("ringProcessSettingFlag")) {
       let roleFlag = JSON.parse(localStorage.getItem('ringProcessSettingFlag'))
       this.expands = roleFlag
       this.toggleExpand(roleFlag)
     }
+    await this.getProjectSwitch('system', 'project')
+
     this.getcategoryTree()
     this.initData()
   },
@@ -384,8 +390,10 @@ export default {
         pageNum: 1,
         pageSize: -1
       }
+      if (this.isProjectSwitch === '1') {
+        obj.projectId = this.userInfo.projectId
+      }
       getProcessList(obj).then((res) => {
-        console.log(res, 'res')
         this.routingIdOptions = res.data.records
       })
     },

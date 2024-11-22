@@ -419,6 +419,7 @@ export default {
           tc.options = this.projectIdData
           if (this.isProjectSwitch === '1') {
             console.log(this.userInfo.projectId, 'this.userInfo.projectId')
+
             if (this.userInfo.projectId === '1') {
               tc.options = tc.options.filter((item) => item.value !== '1')
               tc.itemDisabled = false
@@ -431,10 +432,14 @@ export default {
             }
             tc.change = (val) => {
               this.ProductListRequestObj.projectId = this.dataForm.projectId
-              this.dataForm.drawNo = ''
-              this.linesList = []
+              if (btnType !== 'edit') {
+                this.dataForm.drawNo = ''
+                this.linesList = []
+              }
             }
-
+            if (btnType == 'look') {
+              tc.itemDisabled = true
+            }
             console.log(this.ProductListRequestObj, '4')
             tc.itemRules.push({ required: true, trigger: 'change' })
             console.log(tc, 'this.projectIdData')

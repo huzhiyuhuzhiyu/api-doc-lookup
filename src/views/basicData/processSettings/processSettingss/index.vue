@@ -62,9 +62,9 @@
             </el-tooltip>
           </div>
         </div>
-        <div class="tableBox">
-          <JNPF-table v-loading="listLoading" :data="list" @sort-change="sortChange" highlight-current-row
-            :fixedNO="true" class="dataTable" border ref="listTable" custom-column :setColumnDisplayList="columnList">
+        <div class="tableBox" v-loading="listLoading">
+          <JNPF-table v-if="tableDataFlag" :data="list" @sort-change="sortChange" highlight-current-row :fixedNO="true"
+            class="dataTable" border ref="listTable" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="code" label="工艺路线编码" align="left" sortable="custom" min-width="180">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="updateHandle(scope.row.id, 'look')">
@@ -73,12 +73,14 @@
               </template>
             </el-table-column>
             <el-table-column prop="name" label="工艺路线名称" align="left" sortable="custom" min-width="180" />
+            <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="reportRulesFlag" label="按工艺顺序报工" align="center" sortable="custom" width="160">
               <template slot-scope="scope">
                 <div v-if="scope.row.reportRulesFlag == '0'">否</div>
                 <div v-if="scope.row.reportRulesFlag == '1'">是</div>
               </template>
             </el-table-column>
+
             <el-table-column prop="createTime" label="创建时间" align="left" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" align="left" width="100" sortable="custom" />
             <el-table-column prop="remark" label="备注" align="left" min-width="180" />
@@ -167,10 +169,14 @@ import { excelExport } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   components: { JNPFForm, ExportForm, SuperQuery },
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       superQueryVisible: false,
       superQueryJson: [
         {
@@ -334,6 +340,8 @@ export default {
     } else {
       this.showAppCodeFlag = false
     }
+    await this.getProjectSwitch('system', 'project')
+    this.tableDataFlag = true
     this.initData()
   },
   methods: {
@@ -676,6 +684,9 @@ export default {
     initData() {
       this.listLoading = true
       this.detailLoading = false
+      if (this.isProjectSwitch === '1') {
+        this.listQuery.projectId = this.userInfo.projectId
+      }
       this.dataDetail = []
       getProcessList(this.listQuery)
         .then((res) => {

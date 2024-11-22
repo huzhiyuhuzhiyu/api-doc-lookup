@@ -72,6 +72,7 @@
                         <span class="required">*</span>设备名称
                       </template>
                     </el-table-column>
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                     <el-table-column prop="categoryName" label="设备分类" min-width="120" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="specModel" label="设备规格" min-width="120" show-overflow-tooltip>
@@ -152,6 +153,7 @@
                     <span class="required">*</span>设备名称
                   </template>
                 </el-table-column>
+                <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                 <el-table-column prop="categoryName" label="设备分类" min-width="120" show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column prop="specModel" label="设备规格" min-width="120" show-overflow-tooltip>
@@ -182,12 +184,14 @@ import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getEquEquipmentList } from '@/api/basicData/index'
 import { getOrganizeInfo } from '@/api/permission/organize'
 import { getOrganization } from '@/api/permission/user'
+import getProjectList from '@/mixins/generator/getProjectList'
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
-  mixins: [busFlow, flowMixin],
+  mixins: [busFlow, flowMixin, getProjectList],
   components: { Process, recordList },
   data() {
     return {
+      isProjectSwitch: '',
       flowTemplateJson: {},
       flowData: {},
       approvalFlag: false,   // 待办事宜等页面 需要
@@ -201,6 +205,7 @@ export default {
       getcategoryTree,
       getEquEquipmentList,
       ProductListRequestObj: {
+        projectId: '',
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -278,12 +283,22 @@ export default {
       selectRows: []
     }
   },
+  watch: {
+    applicantId(newValue) {
+      if (this.isProjectSwitch === '1') {
+        this.dataFormTwo.productData = []
+        let _data = this.salesList.filter(item => item.id == newValue)[0]
+        this.ProductListRequestObj.projectId = _data.projectId ? _data.projectId || '' : ''
+      }
+    }
+  },
   mounted() {
     let tBody = document.querySelectorAll('.el-table')[1]
     tBody.style.height = 'auto'
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.getBimBusinessDetail()
   },
   methods: {
@@ -344,8 +359,8 @@ export default {
     },
     //申请部门
     changedepartment(val) {
-      this.dataForm.departmentIdName = ""
-      this.dataForm.departmentId = ""
+      this.dataForm.applicantIdName = ""
+      this.dataForm.applicantId = ""
       this.$forceUpdate()
       if (!val || !val.length) return this.dataForm.departmentId = ''
       this.dataForm.departmentId = val[val.length - 1]
@@ -619,4 +634,3 @@ export default {
   padding: 5px 10px !important;
 }
 </style>
-    

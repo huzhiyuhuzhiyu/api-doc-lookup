@@ -23,7 +23,7 @@
                         </el-input>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24" v-if="isProjectSwitch==='1'">
+                    <el-col :sm="6" :xs="24" v-if="isProjectSwitch==='1'">
                       <el-form-item label="所属项目" prop="projectName">
                         <el-input v-model="dataForm.projectName" placeholder="请输入所属项目" maxlength="20" :disabled="true" />
                       </el-form-item>

@@ -55,7 +55,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head">
           <div>
             <topOpts @add="addOrUpdateHandle('', false,'add')">
@@ -74,9 +74,10 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" :customColumn="true" ref="dataTable" @sort-change="sortChange" custom-column hasC @selection-change="handleSelectionChange">
+        <JNPF-table v-if="istable" :data="tableData" :fixedNO="true" :customColumn="true" ref="dataTable" @sort-change="sortChange" custom-column hasC @selection-change="handleSelectionChange">
           <el-table-column prop="code" label="工具编码" min-width="200" sortable="custom" />
           <el-table-column prop="name" label="工具名称" min-width="200" sortable="custom" />
+          <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName"/>
           <el-table-column prop="state" label="工具状态" min-width="140" sortable="custom">
             <template slot-scope="{row}">
               <el-tag type="success" disable-transitions v-if="row.state == 'normal'">正常</el-tag>
@@ -128,11 +129,16 @@ import Form from './Form'
 import Diagram from '@/views/permission/user/Diagram'
 import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters } from 'vuex'
 export default {
+  mixins: [getProjectList],
   name: 'toolProfilesettings',
   components: { Form, Diagram, PrintBrowse, SuperQuery },
   data() {
     return {
+      istable: false,
+      isProjectSwitch: '',
       superQueryJson: [
         {
           prop: 'code',
@@ -194,6 +200,7 @@ export default {
       userRelationListVisible: false,
       organizeIdTree: [],
       listQuery: {
+        projectId: '',
         name: "",
         orderItems: [{
           asc: false,
@@ -258,8 +265,12 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.getCategoryTree(true)
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     columnSetFun() {
@@ -341,8 +352,9 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.listQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getEquEquipmentList(this.listQuery).then(res => {
-        console.log("res++", res)
+        this.istable = true
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false

@@ -34,7 +34,7 @@
             </el-col>
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head" style="padding:10px">
             <div>
               <el-button size="mini" type="primary" @click="scanFun">
@@ -60,8 +60,8 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
-            @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+          <JNPF-table v-if="tableDataFlag" ref="dataTable" :data="tableData" :fixedNO="true" @sort-change="sortChange"
+            custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom"></el-table-column>
             <el-table-column prop="receiveType" label="退料类型" min-width="110" sortable="custom">
               <template slot-scope="scope">
@@ -72,6 +72,8 @@
             <el-table-column prop="operationDate" label="退料日期" width="180" sortable="custom" />
             <el-table-column prop="personName" label="退料人" width="100" sortable="custom" />
             <el-table-column prop="productionOrderNo" label="任务单号" min-width="200" sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" width="120"
+              v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" min-width="60" />
@@ -120,10 +122,14 @@ import DetailForm from './DetailForm.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   components: { Form, DetailForm, SuperQuery, ExportForm },
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       detailFormVisible: false,
       activeName: 'dataTable',
       exportFormVisible: false,
@@ -235,7 +241,11 @@ export default {
       this.initData()
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+
+    this.tableDataFlag = true
+
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.initData()
   },

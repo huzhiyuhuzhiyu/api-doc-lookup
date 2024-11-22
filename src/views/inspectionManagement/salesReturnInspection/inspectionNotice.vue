@@ -33,7 +33,7 @@
             </el-col>
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head" style="padding:8px">
             <div>
               <el-button size="mini" type="primary" @click="scanFun">
@@ -59,8 +59,8 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
-            @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+          <JNPF-table v-if="tableDataFlag" ref="dataTable" :data="tableData" :fixedNO="true" @sort-change="sortChange"
+            custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row, true)">
@@ -71,6 +71,8 @@
             <el-table-column prop="partnerName" label="客户名称" min-width="150" />
             <el-table-column prop="partnerCode" label="客户编码" min-width="140" sortable="custom" />
             <el-table-column prop="deliverDate" label="退货日期" width="120" />
+            <el-table-column prop="projectName" label="所属项目" width="120"
+              v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="140" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="60" />
@@ -146,10 +148,16 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import { getUnitData } from '@/api/basicData/materialSettings'
 import { getCooperativeData } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   components: { Form, DetailForm, SuperQuery, ExportForm },
+  mixins: [getProjectList],
+
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       superQueryVisible: false,
       exportFormVisible: false,
       superQueryJson: [
@@ -316,7 +324,9 @@ export default {
   mounted() {
     this.getProductClassFun()
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.tableDataFlag = true
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
 
     this.initData()
@@ -921,7 +931,9 @@ export default {
     },
     initData() {
       this.listLoading = true
-
+      if (this.isProjectSwitch === '1') {
+        this.listQuery.projectId = this.userInfo.projectId
+      }
       getQuotationdatasenddatalist(this.listQuery)
         .then((res) => {
           this.tableData = res.data.records
@@ -977,7 +989,7 @@ export default {
         prop === 'productCode' ||
         prop === 'productName' ||
         prop === 'productDrawingNo' ||
-        prop === 'createByName'||
+        prop === 'createByName' ||
         prop === 'sealingCoverTyping' ||
         prop === 'accuracyLevel' ||
         prop === 'vibrationLevel' ||

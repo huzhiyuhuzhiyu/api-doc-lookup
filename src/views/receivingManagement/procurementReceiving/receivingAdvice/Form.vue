@@ -42,7 +42,7 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="仓库" prop="warehouseId">
                         <el-select v-model="dataForm.warehouseId" placeholder="请选择仓库" style="width: 100%;"
-                          :disabled="btnType == 'look' ? true : false" clearable>
+                          :disabled="btnType == 'look' ? true : false" clearable @change="warehouseIdChange">
                           <el-option v-for="(item, index) in warehouseIdList" :key="index" :label="item.name"
                             :value="item.id"></el-option>
                         </el-select>
@@ -114,8 +114,10 @@
                   <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
                     @selection-change="handeleProductInfoData">
                     <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
-                      key="1" />
-                    <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="2" />
+                      key="0" />
+                    <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="1" />
+                    <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
+                      key="2"></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom"
                       show-overflow-tooltip key="3" />
                     <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" key="4" />
@@ -272,7 +274,7 @@
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="仓库" prop="warehouseId">
                     <el-select v-model="dataForm.warehouseId" placeholder="请选择仓库" style="width: 100%;"
-                      :disabled="btnType == 'look' ? true : false" clearable>
+                      :disabled="btnType == 'look' ? true : false" clearable @change="warehouseIdChange">
                       <el-option v-for="(item, index) in warehouseIdList" :key="index" :label="item.name"
                         :value="item.id"></el-option>
                     </el-select>
@@ -343,8 +345,10 @@
               <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
                 @selection-change="handeleProductInfoData">
                 <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
-                  key="1" />
-                <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="2" />
+                  key="0" />
+                <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="1" />
+                <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
+                  key="2"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" width="200" sortable="custom" show-overflow-tooltip
                   key="3" />
                 <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" key="4" />
@@ -591,6 +595,8 @@
               <JNPF-table v-loading="listLoading" :data="productList" hasC
                 @selection-change="handleSelectionChangeAllPruduct">
                 <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom"></el-table-column>
+                <el-table-column prop="projectName" label="所属项目" width="120"
+                  v-if="isProjectSwitch === '1'"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" width="200" sortable="custom" show-overflow-tooltip />
                 <el-table-column prop="productCode" label="产品编码" width="130" sortable="custom" />
 
@@ -669,11 +675,15 @@ import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { mapGetters } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   components: { Process, recordList },
-  mixins: [busFlow],
+  mixins: [busFlow, getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       isDeputyUnitSwitch: '',
       isattachmentswitch: '',
       categoryId: '',
@@ -976,7 +986,7 @@ export default {
     filterText(val) {
       this.$refs.treeBox.filter(val)
     },
-    'dataFormTwo.data': {
+    'dataFormTwo.productData': {
       // immediate:true,
       handler: function (newVal, oldVal) {
         newVal.forEach((item) => {
@@ -985,13 +995,13 @@ export default {
           } else {
             item.excludingTaxPrice = ''
           }
-          if (item.purchaseQuantity && item.excludingTaxPrice) {
-            item.excludingTaxAmount = this.jnpf.numberFormat(item.purchaseQuantity * item.excludingTaxPrice)
+          if (item.receivedQuantity && item.excludingTaxPrice) {
+            item.excludingTaxAmount = this.jnpf.numberFormat(item.receivedQuantity * item.excludingTaxPrice)
           } else {
             item.excludingTaxAmount = ''
           }
-          if (item.price && item.purchaseQuantity && item.excludingTaxAmount) {
-            item.taxAmount = this.jnpf.numberFormat(item.price * item.purchaseQuantity - item.excludingTaxAmount)
+          if (item.price && item.receivedQuantity && item.excludingTaxAmount) {
+            item.taxAmount = this.jnpf.numberFormat(item.price * item.receivedQuantity - item.excludingTaxAmount)
           } else {
             item.taxAmount = ''
           }
@@ -1008,7 +1018,9 @@ export default {
       deep: true
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+
     this.getBimBusinessDetail()
     this.getDeputyUnit()
     // this.handleChange()
@@ -1022,6 +1034,19 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    warehouseIdChange(e) {
+      this.dataForm.warehouseId = e
+      if (this.isProjectSwitch === '1') {
+        this.warehouseIdList.forEach((item) => {
+          if (e === item.id) {
+            this.orderForm.projectId = item.projectId
+          }
+        })
+        this.dataFormTwo.productData = this.dataFormTwo.productData.filter(
+          (item) => item.projectId !== this.orderForm.projectId
+        )
+      }
+    },
     getDeputyUnit() {
       let obj = {
         businessCode: 'deputyUnit',
@@ -1097,6 +1122,9 @@ export default {
       let obj = {
         type: 'virtually',
         category: 'warehouse'
+      }
+      if (this.isProjectSwitch === '1') {
+        obj.projectId = this.userInfo.projectId
       }
       getWarehouseList(obj).then((res) => {
         this.warehouseIdList = res.data
@@ -1919,7 +1947,7 @@ export default {
             taxRate: item.taxRate ? item.taxRate : '',
             excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
             taxAmount: item.taxAmount ? item.taxAmount : '',
-            excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
+            excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : ''
           }
           let dep1 = {
             billStatus: item.billStatus ? item.billStatus : '',
@@ -1947,7 +1975,7 @@ export default {
             taxRate: item.taxRate ? item.taxRate : '',
             excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
             taxAmount: item.taxAmount ? item.taxAmount : '',
-            excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
+            excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : ''
           }
           if (this.btnType == 'add' || this.btnType == 'copy') {
             obj.lines.push(dep)

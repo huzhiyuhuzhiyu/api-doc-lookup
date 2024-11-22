@@ -76,6 +76,8 @@
             </el-table-column>
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" width="120"
+              v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
             <!-- <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" /> -->
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
@@ -148,11 +150,17 @@ import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { getBimBusinessDetail } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   name: 'pendingOrders',
   components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery, Detail },
+  mixins: [getProjectList],
+
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
       columnList: ['cooperativePartnerCode', 'departmentName', 'productName', 'createTime'],
@@ -342,7 +350,16 @@ export default {
   mounted() {
     this.getProductClassFun()
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
+    this.tableDataFlag = true
+    console.log(this.isProjectSwitch)
+    if (this.isProjectSwitch === '1') {
+
+    } else {
+
+    }
     this.getDeputyUnit()
     // 默认设置为近3天
     const end = new Date()
@@ -486,6 +503,9 @@ export default {
     },
     initData() {
       this.listLoading = true
+      if (this.isProjectSwitch === '1') {
+        this.orderForm.projectId = this.userInfo.projectId
+      }
       purchaseOrderReport(this.orderForm)
         .then((res) => {
           this.tableData = res.data.page.records

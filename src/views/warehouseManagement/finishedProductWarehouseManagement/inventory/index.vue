@@ -61,6 +61,8 @@
           <el-table-column prop="productName" label="产品名称" v-if="productNameFlag==='1'" min-width="160"
           sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
+          <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+          v-if="isProjectSwitch == 1" />
           <el-table-column prop="classAttribute" label="产品分类" width="120" sortable="custom">
             <template slot-scope="scope">
               <div v-if="scope.row.classAttribute == 'finish_product'">成品</div>
@@ -129,7 +131,8 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
-
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 import Form from './Form'
 
 export default {
@@ -138,6 +141,8 @@ export default {
   props: {
     warehouseCode: "",
   },
+  mixins: [getProjectList],
+
   data() {
     return {
       tableFlag:false,
@@ -256,6 +261,7 @@ export default {
       classAttributeList:[],
       productNameFlag:null, 
       tableDataFlag:false,
+      isProjectSwitch: '',
 
     }
   },
@@ -264,8 +270,9 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
-  created() {
-    
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.tableDataFlag = true
     this.superForm=this.tableQuery
     this.getclassAttributeList()
     let objs = { "pageSize": -1, "businessCode": "product" } 
@@ -277,11 +284,14 @@ export default {
     
       this.searchList.push({ field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 })
       }
-     
     }).catch(error=>{
       this.tableFlag=true
     })
+  }, 
+  computed: {
+    ...mapGetters(['userInfo'])
   },
+ 
   mounted () {
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
 
@@ -291,7 +301,6 @@ export default {
       this.listLoading=true
       try {
         this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
-        this.tableDataFlag = true
         this.listLoading=false
         
 
@@ -360,6 +369,8 @@ export default {
     initData() {
       this.tableQuery.classAttributeList = this.classAttributeList
         this.listLoading = true
+        this.tableQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+
         inventoryWarehouseList(this.tableQuery).then((res) => {
         console.log(res);
         if (res.data.whPage.records.length) {

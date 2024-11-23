@@ -42,6 +42,8 @@
 
               <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" />
               <el-table-column prop="productCode" label="产品编码" width="120" />
+              <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+              v-if="isProjectSwitch == 1" />
               <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
               <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
               <el-table-column prop="inventoryQuantity" v-if="fieldFlag" label="库存数量" width="120" sortable="custom" />
@@ -111,7 +113,11 @@ import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 import { excelExport } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
+  mixins: [getProjectList],
+
   components: { ExportForm },
   data() {
     return {
@@ -152,8 +158,18 @@ export default {
         fieldFlag: true,
         tableDataFlag: false,
         mainUnitFlag: null,
+        isProjectSwitch: '',
+
       }
     }
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag = true
+
+  }, 
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   mounted() {
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')

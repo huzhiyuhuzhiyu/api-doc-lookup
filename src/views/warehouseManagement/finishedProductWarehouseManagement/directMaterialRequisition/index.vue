@@ -129,6 +129,8 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   name: 'directMaterialRequisition',
@@ -136,6 +138,7 @@ export default {
   props:{
     warehouseCode: "", 
   },
+  mixins: [ getProjectList],
   data() {
     return {
       documentStatusList: [
@@ -221,14 +224,18 @@ export default {
       ],
       selectList: [],
       classAttributeList:[],
+      isProjectSwitch: '',
     }
   },
 
-
-
-  created() {
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag = true
     this.getclassAttributeList()
-    
+
   },
   methods: {
     getclassAttributeList() {
@@ -317,6 +324,7 @@ export default {
     initData() {
       this.listLoading = true
       this.form.classAttributeList=this.classAttributeList
+      this.form.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getTransferList(this.form).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total

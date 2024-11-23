@@ -64,6 +64,8 @@
                         @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
                         <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
+                        <el-table-column prop="projectName" label="所属项目" min-width="120" 
+                        v-if="isProjectSwitch == 1" />
                         <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"></el-table-column>
                         <el-table-column prop="inventoryQuantity" label="批次库存数量" width="180" :key="8"
                           v-if="btnType != 'look'" />
@@ -89,7 +91,7 @@
                           </template>
                           <template slot-scope="scope">
                             <ComSelect-list
-                              :requestObj="{ type: '', scrapFlag: false, virtuallyFlag: false, state: 'enable' }"
+                              :requestObj="{ type: '', scrapFlag: false, virtuallyFlag: false, state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : ''  }"
                               :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'" v-model="scope.row.inWarehouseName"
                               :method="getWarehouseList" placeholder="请选择仓库" :paramsObj="{ index: scope.$index }"
                               @change="changeWarehousex"></ComSelect-list>
@@ -184,6 +186,8 @@
                     @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                    v-if="isProjectSwitch == 1" />
                     <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"></el-table-column>
                     <el-table-column prop="inventoryQuantity" label="批次库存数量" width="180" :key="8"
                       v-if="btnType != 'look'" />
@@ -298,6 +302,8 @@
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="160"
                   sortable="custom"></el-table-column>
                 <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                v-if="isProjectSwitch == 1" />
                 <el-table-column prop="productCategoryName" label="产品分类" sortable="custom" min-width="120" />
                 <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="180" />
                 <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
@@ -390,7 +396,8 @@ import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProduc
 import { getProductList } from '@/api/masterDataManagement/productManage'
 import { addTransferData, updateTransferData, detailTransferData, TransferBarCode } from '@/api/warehouseManagement/transferManagement'
 import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
-
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
@@ -398,7 +405,7 @@ import flowMixin from '@/mixins/generator/flowMixin'
 import WareHouseForm from './wareHouseForm.vue'
 export default {
   components: { WareHouseForm, Process, recordList },
-  mixins: [flowMixin, busFlow],
+  mixins: [flowMixin, busFlow,getProjectList], 
   data() {
     return {
       scanDialog: false,
@@ -480,12 +487,17 @@ export default {
       endTime: 0,
       tableDataFlag: false,
       mainUnitFlag: null,
+      isProjectSwitch: '',
     }
   },
-  created() {
-    // console.log(flowMixin);
-    console.log(this);
-
+ 
+   
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+   
+  }, 
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   mounted() {
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
@@ -532,6 +544,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
       }
+      obj.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getProductList(obj).then(res => {
         console.log("产品信息", res);
         res.data.records.forEach(item => {
@@ -612,6 +625,7 @@ export default {
       this.ProductListRequestObj.classAttributeList = this.classAttributeList
       this.ProductListRequestObj.warehouseId = this.wareHouseInfo.id
       console.log(this.wareHouseInfo);
+      this.ProductListRequestObj.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getBatchNumber(this.ProductListRequestObj).then(listRes => {
         if (Array.isArray(listRes.data)) {
           this.allproductData = listRes.data

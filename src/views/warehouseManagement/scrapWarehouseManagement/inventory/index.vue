@@ -59,6 +59,8 @@
 
           <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
+          <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+          v-if="isProjectSwitch == 1" />
           <el-table-column prop="classAttribute" label="产品分类" width="120" sortable="custom">
             <template slot-scope="scope">
               <div v-if="scope.row.classAttribute == 'finish_product'">成品</div>
@@ -105,13 +107,15 @@ import { inventoryWarehouseList } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import Form from './Form'
-
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'inventory',
   components: { Form, SuperQuery, ExportForm },
   props: {
     classAttribute: "",
   },
+  mixins: [getProjectList],
   data() {
     return {
       superQuery: {},
@@ -226,6 +230,7 @@ export default {
 
 
       ],
+      isProjectSwitch: '',
     }
   },
   watch: {
@@ -233,11 +238,17 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
-  created() {
+
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.tableDataFlag = true
     this.search('basic')
     this.superForm = this.tableQuery
-
+  }, 
+  computed: {
+    ...mapGetters(['userInfo'])
   },
+ 
   methods: {
     // 导出
     exportForm(exportTableRef) {
@@ -292,6 +303,7 @@ export default {
 
     initData() {
       this.tableQuery.classAttribute = this.classAttribute
+        this.tableQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       inventoryWarehouseList(this.tableQuery).then((res) => {
         console.log(res);
         if (res.data.whPage.records.length) {
@@ -364,7 +376,9 @@ export default {
 
 
     sortChange({ prop, order }) {
-      const newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+      let newProp
+      if (prop == 'projectName' || prop == 'maxInventory' || prop == 'drawingNo') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      else newProp =  prop
       this.tableQuery.orderItems[0].asc = order === 'ascending'
       this.tableQuery.orderItems[0].column = newProp
       this.initData()

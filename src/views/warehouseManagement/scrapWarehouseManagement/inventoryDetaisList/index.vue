@@ -42,7 +42,7 @@
 
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head">
           <div>
             <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
@@ -62,7 +62,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table  ref="dataTable" v-loading="listLoading" :data="tableData"
+        <JNPF-table  ref="dataTable" v-loading="listLoading" :data="tableData"  v-if="tableDataFlag"
           border :setColumnDisplayList="columnList" :fixedNO="true" @sort-change="sortChange" custom-column>
           <el-table-column prop="orderNo" label="单号" sortable="custom" min-width="180">
             <template slot-scope="scope">
@@ -90,6 +90,8 @@
 
           <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="300" />
           <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
+          <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+          v-if="isProjectSwitch == 1" />
           <el-table-column prop="mainUnit" label="单位" min-width="140" />
           <el-table-column prop="num" label="数量" sortable="custom" min-width="140" />
           <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120" />
@@ -158,6 +160,8 @@ import { getInventoryDetailList, getInventorySummaryData } from '@/api/warehouse
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import Form from '../inventoryList/Form.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
@@ -167,6 +171,7 @@ export default {
   props: {
     classAttribute: "",
   },
+  mixins: [getProjectList],
   data() {
     return {
       superQuery: {},
@@ -346,12 +351,22 @@ export default {
           type: 'input',
         },
       ],
+     tableDataFlag:true,
+     isProjectSwitch:"",
     }
   },
   created() {
+ 
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+          this.tableDataFlag = true 
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.superForm = this.listQuery
     this.search('basic')
+  }, 
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   mounted() {
     this.getProductClassFun()
@@ -774,6 +789,7 @@ export default {
       this.totalList = []
       this.listQuery.pageNum = 1
       this.listQuery.classAttribute = this.classAttribute
+      this.listQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getInventorySummaryData(this.listQuery).then(res => {
 
         this.tableData = res.data.page.records

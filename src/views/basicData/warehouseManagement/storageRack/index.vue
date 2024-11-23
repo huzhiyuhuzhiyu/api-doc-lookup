@@ -141,8 +141,8 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm" :fullName="fullName"
-      ref="printForm" />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm"
+      :fullName="fullName" ref="printForm" />
     <!-- 选择打印模版弹窗 -->
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
       :printQuery="printQuery" :enCode="enCode" ref="printTemplate" />
@@ -158,12 +158,15 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'storageRack',
   components: { DepForm, AiForm, SuperQuery, PrintBrowse, PrintDialog },
+  mixins: [getProjectList],
   data() {
     return {
-      fullName:'',
+      fullName: '',
       printVisible: false,
       visualizationTable: true,
       superQueryVisible: false,
@@ -274,7 +277,8 @@ export default {
         category: 'Warehousemanage'
       },
       enCode: '',
-      printList: []
+      printList: [],
+      isProjectSwitch: "",
     }
   },
   watch: {
@@ -282,8 +286,14 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
-  created() {
-    this.getWarehouseList(true)
+  computed: {
+    ...mapGetters(['userInfo']),
+    ...mapState('user', ['token']),
+
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    await this.getWarehouseList(true)
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
@@ -376,6 +386,7 @@ export default {
     },
     getWarehouseList(isInit) {
       this.treeLoading = true
+      this.treeQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getWarehouseList(this.treeQuery)
         .then((res) => {
           this.treeData = res.data

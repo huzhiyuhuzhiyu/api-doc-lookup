@@ -58,8 +58,9 @@
         <JNPF-table ref="tabForm" v-if="tableDataFlag" :data="tableData" custom-column row-key="id" :fixedNO="true"
           @sort-change="sortChange" :setColumnDisplayList="columnList" hasC @selection-change="handeleselectFun">
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" sortable="custom" />
-
           <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
+          <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+          v-if="isProjectSwitch == 1" />
           <el-table-column prop="processName" label="工序名称" width="120" sortable="custom" />
           <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
           <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
@@ -128,7 +129,8 @@ import { inventoryWarehouseList, batchInspect } from '@/api/warehouseManagement/
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
-
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   name: 'awaitInspectionInventory',
@@ -136,6 +138,7 @@ export default {
   props: {
     warehouseCode: "",
   },
+  mixins: [getProjectList],
   data() {
     return {
       btnLoading: false,
@@ -359,6 +362,7 @@ export default {
       ],
       mainUnitFlag: null,
       tableDataFlag: null,
+      isProjectSwitch: '',
 
     }
   },
@@ -367,10 +371,15 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
-  created() {
+ 
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.tableDataFlag = true
     this.getclassAttributeList()
     this.getProductClassFun()
-
+  }, 
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   mounted() {
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
@@ -381,7 +390,6 @@ export default {
       this.listLoading=true
       try {
         this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
-        this.tableDataFlag = true
         this.listLoading=false
         
 
@@ -514,6 +522,7 @@ export default {
 
     initData() {
       this.tableQuery.classAttributeList = this.classAttributeList
+      this.tableQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getInventoryLineReport(this.tableQuery).then((res) => {
         console.log(res);
         if (res.data.page.records.length) {

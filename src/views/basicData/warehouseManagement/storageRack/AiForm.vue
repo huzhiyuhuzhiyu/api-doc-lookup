@@ -35,7 +35,10 @@ import {
 } from '@/api/basicData/stockGoodsShelves'
 import { addWarehouse, editWarehouse, getWarehouseInfo, checWarehouseCode } from '@/api/basicData/index'
 import { getWarehouseList } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
+  mixins: [getProjectList],
   data() {
     var checkNum = (rule, value, callback) => {
       value = Number(value)
@@ -152,11 +155,13 @@ export default {
         warehouseId: ''
       },
       areaOptions: [],
-      businessType: '' //  参数设置  自动  还是 手输
+      businessType: '', //  参数设置  自动  还是 手输
+      isProjectSwitch: "",
     }
   },
-  created() {
-    this.dataFormItems.forEach((tc) => {
+ async created() {
+    await this.getProjectSwitch('system', 'project')
+    await this.dataFormItems.forEach((tc) => {
       this.dataForm[tc.prop] = tc.value || '' // 设置默认value
 
       // 添加自定义表单元素方法和参数
@@ -165,7 +170,8 @@ export default {
         if (tc.prop === 'warehouseName') {
           tc.method = getWarehouseList
 
-          tc.requestObj = this.requestObj2
+            this.requestObj2.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+            tc.requestObj = this.requestObj2
           tc.change = this.warehouseNameChange
 
           tc.dialogTitle = '选择仓库'

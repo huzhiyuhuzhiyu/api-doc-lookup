@@ -54,8 +54,9 @@
                           </el-col>
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="仓库" prop="warehouseName">
-                              <ComSelect-list :requestObj="warehouseRequestObj" :dialogTitle="'选择仓库'"
-                                :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName"
+                              <ComSelect-list
+                                :requestObj="{ type: 'normal', state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }"
+                                :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName"
                                 :method="getWarehouseList" placeholder="请选择仓库"
                                 @change="changeWarehousex"></ComSelect-list>
 
@@ -68,7 +69,8 @@
 
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="单据日期" prop="orderDate">
-                              <el-date-picker v-model="dataForm.orderDate" type="date" :clearable="false" :disabled="btnType == 'look' ? true : false" value-format="yyyy-MM-dd"
+                              <el-date-picker v-model="dataForm.orderDate" type="date" :clearable="false"
+                                :disabled="btnType == 'look' ? true : false" value-format="yyyy-MM-dd"
                                 style="width: 100%;" placeholder="请选择单据日期"></el-date-picker>
                             </el-form-item>
                           </el-col>
@@ -108,7 +110,8 @@
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
                         <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
-
+                        <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
+                        min-width="160" />
                         <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112"
                           v-if="allocationFlag">
                           <template slot="header">
@@ -283,22 +286,24 @@
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="仓库" prop="warehouseName">
-                          <ComSelect-list :requestObj="warehouseRequestObj" :dialogTitle="'选择仓库'"
-                            :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName" :method="getWarehouseList"
-                            placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
+                          <ComSelect-list
+                            :requestObj="{ type: 'normal', state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }"
+                            :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName"
+                            :method="getWarehouseList" placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
 
 
 
 
 
-                            </el-form-item>
-                          </el-col>
-                          <el-col :sm="6" :xs="24">
-                            <el-form-item label="单据日期" prop="orderDate">
-                              <el-date-picker v-model="dataForm.orderDate" type="date" :clearable="false" :disabled="btnType == 'look' ? true : false" value-format="yyyy-MM-dd"
-                                style="width: 100%;" placeholder="请选择单据日期"></el-date-picker>
-                            </el-form-item>
-                          </el-col>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="单据日期" prop="orderDate">
+                          <el-date-picker v-model="dataForm.orderDate" type="date" :clearable="false"
+                            :disabled="btnType == 'look' ? true : false" value-format="yyyy-MM-dd" style="width: 100%;"
+                            placeholder="请选择单据日期"></el-date-picker>
+                        </el-form-item>
+                      </el-col>
 
                       <el-col :sm="12" :xs="24">
                         <el-form-item label="备注" prop="remark">
@@ -334,7 +339,8 @@
                     </el-table-column>
                     <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
-
+                    <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
+                    min-width="160" />
                     <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112" v-if="allocationFlag">
                       <template slot="header">
                         <span class="required">*</span>库位
@@ -510,6 +516,8 @@
                 <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
                   sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="140" />
+                <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
+                        min-width="160" />
                 <el-table-column prop="mainUnit" label="单位" width="80" />
                 <el-table-column prop="productionQuantity" label="生产数量" width="120" />
                 <el-table-column prop="completedQuantity" label="已完成数量" width="130" />
@@ -565,12 +573,15 @@ import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowE
 import Process from '@/components/Process/Preview'
 import flowMixin from '@/mixins/generator/flowMixin'
 import recordList from '@/views/workFlow/components/RecordList.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 import busFlow from '@/mixins/generator/busFlow';
 export default {
   components: { CustomerForm, WareHouseForm, BatchNumberForm, Process, recordList },
-  mixins: [flowMixin, busFlow],
+  mixins: [flowMixin, busFlow,getProjectList],
   data() {
     return {
+      isProjectSwitch:"",
       shelfSpaceName: "",
       shelfSpaceId: "",
       warehouseRequestObj: {
@@ -599,7 +610,8 @@ export default {
         approvalFlag: false,
         remark: "",
         sourceNo: "",
-        orderDate:this.jnpf.getToday()
+        orderDate: this.jnpf.getToday(),
+        projectId:"",
       },
       businessTypes: "inbound_mock_production",
       getWarehouseList,
@@ -699,14 +711,17 @@ export default {
       mainUnitFlag: null,
     }
   },
-  created() {
-    this.getProductClassFun()
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     let objs = { "pageSize": -1, "businessCode": "product" }
     getBimBusinessSwitchConfigList(objs).then(res => {
       this.productNameFlag = res.data.product[1].configValue1
 
 
     })
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   watch: {
     "dataForm.warehouseId": {
@@ -724,8 +739,8 @@ export default {
       this.listLoading = true
       try {
         this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
-      console.log(11111);
-      this.tableDataFlag = true
+        console.log(11111);
+        this.tableDataFlag = true
         this.listLoading = false
 
 
@@ -960,6 +975,7 @@ export default {
     },
     //  
     searchProductFun() {
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.dataForm.projectId || '' : ''
 
       ordershengchanList(this.orderForm).then(res => {
         console.log("生产产品", res);
@@ -1162,6 +1178,7 @@ export default {
 
       this.dataForm.warehouseId = data[0].id
       this.dataForm.warehouseName = data[0].name
+      this.dataForm.projectId = data[0].all.projectId
       this.dataForm.warehouseType = data[0].all.type
       this.$nextTick(() => this.$refs['dataForm'].validateField('warehouseName'))
     },
@@ -1173,6 +1190,7 @@ export default {
         // 获取仓库详情信息
         getWarehouseInfo(res.data[0].id).then(response => {
           this.wareHouseInfo = response.data
+          this.dataForm.projectId = response.data.projectId
           this.dataForm.warehouseType = response.data.type
           this.allocationFlag = response.data.locationStatus == 'disabled' ? false : true
         })
@@ -1219,23 +1237,23 @@ export default {
 
         setTimeout(() => {
           data.forEach(item => {
-          console.log(4444);
-          this.$set(item, 'num', item.waitReceivedQuantity)
-          this.$set(item, 'sourceNo', item.orderNo)
-          if (this.mainUnitFlag == 1) {
-            console.log(33333);
-            if (item.calculationDirection == 'multiplication') {
-              console.log(5555);
-              this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.waitReceivedQuantity, item.ratio]), 6))
-            } else {
-              console.log(6666);
-              this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.waitReceivedQuantity, item.ratio]), 6))
+            console.log(4444);
+            this.$set(item, 'num', item.waitReceivedQuantity)
+            this.$set(item, 'sourceNo', item.orderNo)
+            if (this.mainUnitFlag == 1) {
+              console.log(33333);
+              if (item.calculationDirection == 'multiplication') {
+                console.log(5555);
+                this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.waitReceivedQuantity, item.ratio]), 6))
+              } else {
+                console.log(6666);
+                this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.waitReceivedQuantity, item.ratio]), 6))
+              }
             }
-          }
 
-          item.ordersId = item.id
-        });
-        this.productData = data
+            item.ordersId = item.id
+          });
+          this.productData = data
         }, 800);
         console.log("shit", this.productData);
       }

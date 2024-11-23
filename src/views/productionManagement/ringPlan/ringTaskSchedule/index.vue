@@ -388,7 +388,9 @@ export default {
       isProjectSwitch: '',
     }
   },
- 
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
   async created() {
 
     await this.getProjectSwitch('system', 'project')

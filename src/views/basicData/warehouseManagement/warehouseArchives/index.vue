@@ -32,7 +32,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main"  v-loading="listLoading">
         <div class="JNPF-common-head">
           <div>
             <topOpts @add="addWarehouse('', '', 'add')">
@@ -62,7 +62,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="tabForm" v-loading="listLoading" :data="treeList" row-key="id" v-if="refreshTable"
+        <JNPF-table ref="tabForm" :data="treeList" row-key="id"  v-if="isProjectSwitchFlag"
           :fixedNO="true" custom-column :default-expand-all="expands"
           :tree-props="{ children: 'childrenList', hasChildren: '' }" :setColumnDisplayList="columnList" hasC
           @selection-change="handleSelectWork">
@@ -74,6 +74,8 @@
               </el-link>
             </template>
           </el-table-column>
+          <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+          v-if="isProjectSwitch == 1" />
           <!-- <el-table-column prop="image" label="二维码" align="center" width="100" height="50">
             <template slot-scope="scope">
               <el-popover placement="top-start" trigger="click">
@@ -224,9 +226,12 @@ import VueQr from 'vue-qr'
 import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'warehouseArchives',
   components: { Form, SuperQuery, VueQr, PrintBrowse, PrintDialog },
+  mixins: [getProjectList],
   data() {
     return {
       fullName: '',
@@ -324,11 +329,19 @@ export default {
       currentWarehouseInfo: {},
       productList: [],
       selectData: [],
-
+      isProjectSwitch: '',
+      isProjectSwitchFlag: false,
     }
   },
-  created() {
+
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag = true
     this.initData()
+
+  }, 
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     closeWareFun(row) {
@@ -735,6 +748,7 @@ export default {
     },
     initData() {
       this.loading = true
+      this.form.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getWarehouseList(this.form)
         .then((res) => {
           this.treeList = res.data

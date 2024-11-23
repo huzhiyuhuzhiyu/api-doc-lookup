@@ -261,6 +261,8 @@ import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
 import TakingAdjustForm from '@/views/warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/adjust.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'finishedProductWarehouseManagement',
   components: {
@@ -268,14 +270,16 @@ export default {
     ProductInboundForm, OutboundSaleSendForm, InboundSaleReturnForm,
     InboundPurchaseForm, OutboundPurchaseForm, OutboundExternalSendForm,
     InboundExternalForm, OutboundPickOutForm, InboundReturnMaterialsForm,
-    Transfer, SaleOutboundForm, PurchaseOrderInboundForm, ExternalMaterOutboundForm, ExternalInboundForm, outboundUseForm, InboundReturnForm, PrintBrowse, PrintDialog,TakingAdjustForm
+    Transfer, SaleOutboundForm, PurchaseOrderInboundForm, ExternalMaterOutboundForm, ExternalInboundForm, outboundUseForm, InboundReturnForm, PrintBrowse, PrintDialog, TakingAdjustForm
   },
+  mixins: [getProjectList],
+
   props: {
     warehouseCode: "",
   },
   data() {
     return {
-      takingAdjustVisible:false,
+      takingAdjustVisible: false,
       printVisible: false,
       printBrowseVisible: false,
       inboundReturnVisible: false,
@@ -475,12 +479,16 @@ export default {
         },
       ],
       enCode: "",
-
+      isProjectSwitch: '',
     }
   },
-  created() {
-    this.superForm = this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
 
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.superForm = this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.getclassAttributeList()
   },
   methods: {
@@ -579,7 +587,7 @@ export default {
       this.PurchaseOrderInboundFormVisible = false
       this.outboundUseVisible = false
       this.inboundReturnVisible = false
-      this.takingAdjustVisible=false
+      this.takingAdjustVisible = false
       if (isRefresh) {
         this.keyword = ''
         this.initData()
@@ -764,7 +772,7 @@ export default {
         this.$nextTick(() => {
           this.$refs.inboundReturnREFForm.init(id, type,)
         })
-      }else if (row.businessType == 'inbound_taking_adjust') {
+      } else if (row.businessType == 'inbound_taking_adjust') {
         this.takingAdjustVisible = true
         this.$nextTick(() => {
           this.$refs.takingAdjustREFForm.init(id, type,)
@@ -795,6 +803,8 @@ export default {
       })
       this.listQuery.classAttributeList = this.classAttributeList
       // this.listQuery.approvalStatus = 'ok'
+      this.listQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+
       getWarehouseList(this.listQuery).then(res => {
 
         this.tableData = res.data.records ? res.data.records : []

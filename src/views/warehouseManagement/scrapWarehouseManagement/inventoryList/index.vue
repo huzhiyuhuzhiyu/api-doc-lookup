@@ -142,12 +142,15 @@ import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import Form from './Form'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'finishedProductWarehouseManagement',
   components: { Form, ExportForm, SuperQuery },
   props:{
     classAttribute:"",
   },
+  mixins: [getProjectList],
   data() {
     return {
       superQuery: {},
@@ -264,9 +267,16 @@ export default {
         },
 
       ],
+      isProjectSwitch: '',
     }
   },
-  created() {
+ 
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.superForm=this.listQuery
     this.search('basic')
@@ -306,6 +316,7 @@ export default {
       this.listQuery.pageNum = 1
       this.listQuery.classAttribute=this.classAttribute
       
+      this.listQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getWarehouseList(this.listQuery).then(res => {
 
         this.tableData = res.data.records ? res.data.records : []

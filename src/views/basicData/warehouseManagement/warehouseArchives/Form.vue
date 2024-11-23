@@ -38,7 +38,10 @@ import { getbimProductAttributesList, getbimProductsModelList } from '@/api/mast
 import { addWarehouse, editWarehouse, getWarehouseInfo, checWarehouseCode } from '@/api/basicData/index'
 import { getWarehouseList } from '@/api/basicData/index'
 import tabs from './params'
+import { mapGetters, mapState } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
+  mixins: [getProjectList],
   data() {
     return {
       datafilelist: [],
@@ -57,7 +60,8 @@ export default {
       tempCodeRules: [],
       tempDrawingNoRules: [],
       dataForm: {
-        category: 'warehouse'
+        category: 'warehouse',
+        projectId: "",
       },
       sleeveItems: [
         { prop: 'userName', label: '姓名', type: 'view' },
@@ -93,12 +97,36 @@ export default {
       getCooperativeData, // 供应商列表
       getcategoryCoop, // 供应商分类
 
-      businessType: '' //  参数设置  自动  还是 手输
+      projectIdDataList: [],
+      businessType: '',//  参数设置  自动  还是 手输
+      isProjectSwitch: "",
     }
   },
-  created() {
+  computed: {
+    ...mapGetters(['userInfo']),
+    ...mapState('user', ['token']),
+
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
+    this.isProjectSwitchFlag = true
+    if (this.isProjectSwitch == 1) {
+      console.log(this.projectIdDataList);
+      this.dataForm.projectId = this.userInfo.projectId == 1 ? "" : this.userInfo.projectId
+
+    }
     this.tabs.forEach((tab, tabInd) => {
+      if (this.isProjectSwitch == 1) {
+        tab.tabContent.splice(2,0,
+        { prop: "projectId", label: "所属项目", value: this.dataForm.projectId, type: 'select', render: true, itemDisabled: this.dataForm.projectId != 1, itemRules: [{ required: true, trigger: "change" }], options: this.projectIdDataList, sm: 8 },
+
+
+        )
+
+        }
       tab.tabContent.forEach((tc) => {
+       
         this.dataForm[tc.prop] = tc.value || '' // 设置默认value
         // 添加自定义表单元素方法和参数
         if (tc.type == 'custom') {
@@ -111,6 +139,7 @@ export default {
             tc.requestObj = this.requestObj2
             tc.change = (val, data) => {
               // dom更新后重新校验此元素
+              this.requestObj2.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
               getWarehouseList(this.requestObj2).then((res) => {
                 if (!val && !data.length) {
                   this.dataForm.parentId = '-1'
@@ -350,9 +379,9 @@ export default {
       let submitFlag = true // 提交可行性判断
       const valid_1 = await this.$refs['dataForm'].$refs.main.validate().catch(err => false)
       if (!valid_1 && submitFlag) {
-          submitFlag = false
-        }
-     
+        submitFlag = false
+      }
+
       // 判断条件后发送请求
       if (submitFlag) {
         let obj = {
@@ -360,7 +389,7 @@ export default {
           stockLimitsAuthorities: this.stockLimitsAuthorities
         }
         const formMethod = this.dataForm.id ? editWarehouse : addWarehouse
-      this.btnLoading = true
+        this.btnLoading = true
 
         formMethod(obj)
           .then((res) => {
@@ -388,7 +417,7 @@ export default {
     },
     goBack() {
       this.$emit('close')
-    }, 
+    },
   }
 }
 </script>

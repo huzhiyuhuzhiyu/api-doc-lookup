@@ -34,7 +34,7 @@
             </el-col>
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addTaskFun('', 'add')">
@@ -62,7 +62,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" v-loading="listLoading" :data="tableData"
+          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData"  v-if="isProjectSwitchFlag"
             :fixedNO="true" :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" hasC
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
@@ -80,6 +80,8 @@
             </el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+            v-if="isProjectSwitch == 1" />
             <el-table-column prop="mainUnit" label="单位" width="80" />
             <el-table-column prop="productionQuantity" label="总生产数量" min-width="140" sortable="custom" />
             <el-table-column prop="completedQuantity" label="已完成数量" min-width="140" sortable="custom" />
@@ -247,7 +249,8 @@ import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintList } from '@/api/system/printDev'
-
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 import TaskForm from './taskFormCopy.vue'
 // import TaskForm from './taskForm.vue'
 
@@ -256,6 +259,7 @@ export default {
   name: 'assemblyTaskManagement',
 
   components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog, TaskForm },
+  mixins: [getProjectList],
 
   data() {
 
@@ -363,9 +367,7 @@ export default {
       total: 0,
 
       formVisible: false,
-
       selectArr: [],
-
       superQueryJson: [
 
         {
@@ -623,7 +625,6 @@ export default {
         },
 
       ],
-
       requestArr: [
 
         {
@@ -681,7 +682,6 @@ export default {
         }
 
       ],
-
       dataRule: {
 
         appendQuantity: [
@@ -695,13 +695,9 @@ export default {
         ],
 
       },
-
       workOrderData: [],
-
       selectWorkOrder: [],
-
       flowCardCode: '',
-
       workOrderRule: {
 
         productionQuantity: [{ required: true, message: '请输入生产数量', trigger: 'blur' }],
@@ -709,53 +705,37 @@ export default {
         enCode: [{ required: true, message: '请选择打印模版', trigger: 'change' }]
 
       },
-
       printQuery: {
 
         category: 'Productionmanage'
 
       },
-
       enCode: '',
-
-      printList: []
-
+      printList: [],
+      isProjectSwitch: '',
+      isProjectSwitchFlag: false,
     }
-
   },
-
-  created() {
-
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag = true
     this.superForm=this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-
     this.search('basic')
-
+  }, 
+  computed: {
+    ...mapGetters(['userInfo'])
   },
-
-
-
   mounted() {
-
     this.getProductClassFun()
-
   },
-
   methods: {
-
     // 改派
-
     updataDispatch(id) {
-
       this.BatchDispatchVisible = true
-
       this.$nextTick(() => {
-
         this.$refs.BatchDispatchForm.init(id, 'all')
-
       })
-
     },
-
     // 新建返工
 
     addTaskFun(id, type) {
@@ -771,33 +751,16 @@ export default {
     },
 
     // 追加
-
     addition2() {
-
       if (!this.selectArr.length) return this.$message.error("请选择您要追加生产的数据!")
-
       if (this.selectArr.length > 1) return this.$message.error("追加生产只支持单条数据操作")
-
       if (this.selectArr[0].orderType == 'rework') return this.$message.error("返工任务不可追加生产")
-
       this.form = this.selectArr[0]
-
       this.addOrderVisible = true
-
     },
-
     addition1(data) {
-
       this.form = data
-
       this.addOrderVisible = true
-
-
-
-
-
-
-
     },
 
 
@@ -884,11 +847,7 @@ export default {
         return true
       }
     },
-
-
-
     // 关单
-
     Cancelshipment() {
 
       if (!this.selectArr.length) return this.$message.error("请选择您要关单的任务")
@@ -926,7 +885,6 @@ export default {
       }).catch(() => { })
 
     },
-
     // 获取打字内容等
 
     getProductClassFun() {
@@ -1006,9 +964,6 @@ export default {
 
 
     },
-
-
-
     superQuerySearch(query) {
 
       this.orderForm.superQuery = query
@@ -1018,7 +973,6 @@ export default {
       this.search('super')
 
     },
-
     sortChange({ prop, order }) {
 
       let newProp;
@@ -1050,11 +1004,7 @@ export default {
       this.initData()
 
     },
-
-
-
     // 关闭新建编辑页面
-
     closeForm(isRefresh) {
 
       this.formVisible = false
@@ -1068,30 +1018,17 @@ export default {
       this.search()
 
     },
-
     initData() {
-
       this.listLoading = true
- 
-
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       ordershengchanList(this.orderForm).then(res => {
-
         this.tableData = res.data.records
-
         this.total = res.data.total
-
         this.listLoading = false
-
       }).catch(() => {
-
         this.listLoading = false
-
       })
-
-
-
     },
-
     search(type) {
       Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
         let item = this.orderForm[key]

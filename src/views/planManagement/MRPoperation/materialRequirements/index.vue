@@ -43,7 +43,7 @@
 
               </el-form>
             </el-row>
-            <div class="JNPF-common-layout-main JNPF-flex-main">
+            <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
               <div class="JNPF-common-head">
                 <div>
                   <el-button size="mini" type="primary" icon="el-icon-plus"
@@ -65,11 +65,13 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table :partentOrChild="'assemble'" ref="assembleRef" v-loading="listLoading" :data="assembleData"
+              <JNPF-table :partentOrChild="'assemble'" ref="assembleRef" :data="assembleData" v-if="isProjectSwitchFlag"
                 :fixedNO="true" @sort-change="sortChange" custom-column hasC @selection-change="handleAssemble"
                 :setColumnDisplayList="columnList1" :checkSelectable="disproduceData" :key="1">
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="170" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                  v-if="isProjectSwitch == 1" />
                 <el-table-column prop="bomId" label="是否有BOM" min-width="140" sortable="custom">
                   <template slot-scope="scope">
                     <div :style="scope.row.bomId ? 'color:#85ce60' : 'color:#f56c6c'">{{ scope.row.bomId ? "有" : '否'
@@ -169,10 +171,13 @@
                 </div>
               </div>
               <JNPF-table :partentOrChild="'produce'" ref="produceRef" v-loading="listLoading" :data="produceData"
-                :fixedNO="true" :key="2" :setColumnDisplayList="columnList2" @sort-change="sortChange" custom-column
-                hasC @selection-change="handleProduce" :checkSelectable="disproduceData">
+                v-if="isProjectSwitchFlag" :fixedNO="true" :key="2" :setColumnDisplayList="columnList2"
+                @sort-change="sortChange" custom-column hasC @selection-change="handleProduce"
+                :checkSelectable="disproduceData">
                 <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                  v-if="isProjectSwitch == 1" />
                 <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                   <template slot-scope="scope">
                     <div :style="scope.row.bomFlag ? 'color:#85ce60' : 'color:#f56c6c'">{{ scope.row.bomFlag ? "有BOM" :
@@ -318,10 +323,12 @@
               </div>
 
               <JNPF-table :partentOrChild="'purchase'" ref="purchaseRef" v-loading="listLoading" :data="purchaseData"
-                :fixedNO="true" :setColumnDisplayList="columnList3" @sort-change="sortChange" custom-column hasC
-                @selection-change="handlePurchase" :checkSelectable="dispurchaseData">
+                v-if="isProjectSwitchFlag" :fixedNO="true" :setColumnDisplayList="columnList3" @sort-change="sortChange"
+                custom-column hasC @selection-change="handlePurchase" :checkSelectable="dispurchaseData">
                 <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                  v-if="isProjectSwitch == 1" />
                 <el-table-column prop="immediatelyBuyFlag" label="立即采购" width="140" sortable="custom">
                   <template slot-scope="scope">
                     <div>{{ scope.row.immediatelyBuyFlag ? "是" : "否" }}</div>
@@ -413,7 +420,7 @@
                     </el-form-item>
                   </el-col>
                 </template>
-                
+
 
                 <el-col :span="6">
                   <el-form-item>
@@ -447,10 +454,12 @@
               </div>
 
               <JNPF-table :partentOrChild="'out'" ref="outRef" v-loading="listLoading" :data="outData" :fixedNO="true"
-                @sort-change="sortChange" :setColumnDisplayList="columnList4" custom-column hasC
-                @selection-change="handleOut" :checkSelectable="disOutData">
+                v-if="isProjectSwitchFlag" @sort-change="sortChange" :setColumnDisplayList="columnList4" custom-column
+                hasC @selection-change="handleOut" :checkSelectable="disOutData">
                 <el-table-column prop="productDrawingNo" label="品名规格" width="180" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                  v-if="isProjectSwitch == 1" />
                 <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                   <template slot-scope="scope">
                     <div :style="scope.row.bomFlag ? 'color:#85ce60' : 'color:#f56c6c'">{{ scope.row.bomFlag ? "有BOM" :
@@ -535,28 +544,30 @@
     <el-dialog :title="'物料下达'" :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="productVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center wlxd" width="1200px">
 
-      <JNPF-table ref="tableDataAss" v-loading="listLoading" :data="orderDetailData"  fixedNO
-        height="600">
+      <JNPF-table ref="tableDataAss" v-loading="listLoading" :data="orderDetailData" fixedNO height="600">
         <el-table-column prop="productionPlanNo" label="生产计划单号" width="180"
           v-if="activeName != 'purchase' && activeName != 'out' && codeConfig.codeWay != 'auto'"></el-table-column>
         <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" />
         <el-table-column prop="productCode" label="产品编码" min-width="160" />
+        <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+          v-if="isProjectSwitch == 1" />
         <el-table-column prop="outputQuantity" label="组装数量" min-width="120" v-if="activeName == 'assemble'" />
         <el-table-column prop="outputQuantity" label="生产数量" min-width="120" v-if="activeName == 'produce'" />
         <el-table-column prop="outputQuantity" label="采购数量" min-width="140" v-if="activeName == 'purchase'" />
         <el-table-column prop="outputQuantity" label="外协数量" min-width="120" v-if="activeName == 'out'" />
-        <el-table-column prop="issuedQuantity" label="已下达数量" min-width="120" v-if="activeName == 'produce' || activeName == 'assemble'" />
-        <el-table-column prop="planProductionQuantity" label="下达数量" width="120"  
+        <el-table-column prop="issuedQuantity" label="已下达数量" min-width="120"
+          v-if="activeName == 'produce' || activeName == 'assemble'" />
+        <el-table-column prop="planProductionQuantity" label="下达数量" width="120"
           v-if="activeName == 'produce' || activeName == 'assemble'">
           <template slot="header">
             <span class="required">*</span>下达数量
           </template>
           <template slot-scope="scope">
-            <el-input v-model="scope.row.planProductionQuantity" >{{
+            <el-input v-model="scope.row.planProductionQuantity">{{
               scope.row.planProductionQuantity }}</el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="planDemandQuantity" label="下达数量" width="160"  
+        <el-table-column prop="planDemandQuantity" label="下达数量" width="160"
           v-if="activeName == 'purchase' || activeName == 'out'">
           <template slot="header">
             <span class="required">*</span>下达数量
@@ -591,8 +602,9 @@
             </el-date-picker>
           </template>
         </el-table-column>
-        <el-table-column prop="standardValue" label="规值" width="120" v-if="activeName == 'purchase'"  key="standardValue"/>
-        <el-table-column prop="colour" label="颜色" width="120" v-if="activeName == 'purchase'" key="colour"/>
+        <el-table-column prop="standardValue" label="规值" width="120" v-if="activeName == 'purchase'"
+          key="standardValue" />
+        <el-table-column prop="colour" label="颜色" width="120" v-if="activeName == 'purchase'" key="colour" />
 
         <el-table-column label="操作" width="80" fixed="right">
           <template slot-scope="scope">
@@ -633,11 +645,15 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from "moment";
 import { index } from 'mathjs';
 import { getbimProductAttributesList, getbimProductAttributes } from "@/api/masterDataManagement/index";
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
   name: "materialRequirements",
   components: { Form, ComplateSetForm, RetrospectForm, SuperQuery },
+  mixins: [getProjectList],
   data() {
     return {
+      listLoading: false,
       superQueryVisible: false,
       superQuery1: {},
       superForm1: {},
@@ -824,8 +840,9 @@ export default {
           prop: "specialRequire",
           typeCode: "pa016"
         }
-      ]
-
+      ],
+      isProjectSwitch: '',
+      isProjectSwitchFlag: false,
 
 
 
@@ -840,7 +857,7 @@ export default {
     };
   },
   computed: {
-
+    ...mapGetters(['userInfo'])
   },
   watch: {
     produceArr: {
@@ -850,13 +867,15 @@ export default {
       deep: true,
     },
   },
-  created() {
-    this.superForm1=this.assembleForm
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag = true
+    this.superForm1 = this.assembleForm
     this.getassembleData('basic');
     this.getconfigFun()
 
-    // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
+
   methods: {
     // 获取打字内容等
     getProductClassFun() {
@@ -966,7 +985,7 @@ export default {
             label: "单位",
             type: 'input',
           },
-   
+
           {
             prop: 'sealingCoverTyping',
             label: "打字内容",
@@ -1146,7 +1165,7 @@ export default {
             label: "单位",
             type: 'input',
           },
-          
+
 
 
 
@@ -1197,7 +1216,7 @@ export default {
             label: "单位",
             type: 'input',
           },
-           
+
 
 
 
@@ -1260,26 +1279,26 @@ export default {
     // table切换
     handleClick() {
       console.log(this.activeName);
-    
+
       if (this.activeName == "assemble") {
         this.planDateArr = []
         this.assembleForm.productDrawingNo = ""
         this.assembleForm.planNo = ""
-        this.superForm1=this.assembleForm
+        this.superForm1 = this.assembleForm
         this.getassembleData('basic')
       }
       if (this.activeName == "produce") {
         this.planDateArr = []
         this.produceForm.productDrawingNo = ""
         this.produceForm.planNo = ""
-        this.superForm2=this.produceForm
+        this.superForm2 = this.produceForm
         this.getproduceData('basic')
 
       }
       if (this.activeName == "purchase") {
         this.purchaseForm.productDrawingNo = ""
         this.purchaseForm.planNo = ""
-        this.superForm3=this.purchaseForm
+        this.superForm3 = this.purchaseForm
         this.getpurchaseData('basic')
 
       }
@@ -1287,7 +1306,7 @@ export default {
         this.outForm.productDrawingNo = ""
         this.outForm.planNo = ""
         this.planDateArr = []
-        this.superForm4=this.outForm
+        this.superForm4 = this.outForm
         this.getouteData('basic')
 
       }
@@ -1335,14 +1354,16 @@ export default {
       if (type === 'super') {
         this.superForm1.superQuery = this.superQuery1
       }
+      this.assembleForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      this.listLoading = true
       getMaterialDemandReport(this.assembleForm).then(res => {
         console.log("组装res", res);
         let totalData = res.data.total
         let tableData = res.data.page.records
         if (tableData.length) {
           tableData.forEach(item => {
-            this.$set(item,'urgentFlag',false)
-            this.$set(item,'planProductionQuantity',item.outputQuantity)
+            this.$set(item, 'urgentFlag', false)
+            this.$set(item, 'planProductionQuantity', item.outputQuantity)
           });
           this.total1 = res.data.page.total
           this.assembleData = tableData
@@ -1356,6 +1377,10 @@ export default {
           this.outputQuantity = 0
 
         }
+        this.listLoading = false
+      }).catch(error => {
+        this.listLoading = false
+
       })
     },
     resetAssembleData() {
@@ -1390,7 +1415,7 @@ export default {
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
       ],
-      this.getassembleData('basic')
+        this.getassembleData('basic')
     },
     // 生产列表数据
     getproduceData(type) {
@@ -1418,14 +1443,17 @@ export default {
       if (type === 'super') {
         this.superForm2.superQuery = this.superQuery2
       }
+      this.produceForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      this.listLoading = true
+
       getMaterialDemandReport(this.produceForm).then(res => {
         console.log("生产res", res);
         let totalData = res.data.total
         let tableData = res.data.page.records
         if (tableData.length) {
           tableData.forEach(item => {
-            this.$set(item,'urgentFlag',false)
-            this.$set(item,'planProductionQuantity',item.outputQuantity)
+            this.$set(item, 'urgentFlag', false)
+            this.$set(item, 'planProductionQuantity', item.outputQuantity)
           });
           this.produceData = tableData
           this.total2 = res.data.page.total
@@ -1446,11 +1474,15 @@ export default {
           this.inTransitUnOccupancyQuantity = 0
           this.occupancyQuantity = 0
         }
+        this.listLoading = false
+      }).catch(error => {
+        this.listLoading = false
+
       })
     },
     resetProduceData() {
       this.planDateArr = []
-      this.superForm2=this.produceForm = {
+      this.superForm2 = this.produceForm = {
         demandType: "produce",
         demandState: "not_finish",
         documentStatus: "submit",
@@ -1471,11 +1503,11 @@ export default {
         },
         pageNum: 1,
         pageSize: 20,
-      }, 
-      this.searchList2=[
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
-      ]
+      },
+        this.searchList2 = [
+          { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+          { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
+        ]
       this.$refs.SuperQuery.conditionList = []
       this.getproduceData('basic')
     },
@@ -1498,6 +1530,9 @@ export default {
       if (type === 'super') {
         this.superForm3.superQuery = this.superQuery3
       }
+      this.purchaseForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      this.listLoading = true
+
       getMaterialDemandReport(this.purchaseForm).then(res => {
         console.log("采购res", res);
         let totalData = res.data.total
@@ -1506,9 +1541,9 @@ export default {
           this.purchaseData = tableData
           this.total3 = res.data.page.total
           tableData.forEach(item => {
-            this.$set(item,'urgentFlag',false)
-            this.$set(item,'planDemandQuantity',item.outputQuantity)
-          }); 
+            this.$set(item, 'urgentFlag', false)
+            this.$set(item, 'planDemandQuantity', item.outputQuantity)
+          });
           this.totalDemandQuantity = totalData.demandQuantity
           this.outputQuantity = totalData.outputQuantity
           this.lossNum = totalData.lossNum
@@ -1526,10 +1561,14 @@ export default {
           this.inTransitUnOccupancyQuantity = 0
           this.occupancyQuantity = 0
         }
+        this.listLoading = false
+      }).catch(error => {
+        this.listLoading = false
+
       })
     },
     resetPurchaseData() {
-      this.superForm3=this.purchaseForm = {
+      this.superForm3 = this.purchaseForm = {
         productDrawingNo: "",
         planNo: "",
         immediatelyBuyFlag: "",
@@ -1549,7 +1588,7 @@ export default {
         },
         pageNum: 1,
         pageSize: 20,
-      } 
+      }
       this.searchList3 = [
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
@@ -1583,6 +1622,9 @@ export default {
       if (type === 'super') {
         this.superForm4.superQuery = this.superQuery4
       }
+      this.outForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+
+      this.listLoading = true
       getMaterialDemandReport(this.outForm).then(res => {
         console.log("外协res", res);
         let totalData = res.data.total
@@ -1591,9 +1633,9 @@ export default {
           this.outData = tableData
           this.total4 = res.data.page.total
           tableData.forEach(item => {
-            this.$set(item,'urgentFlag',false)
-            this.$set(item,'planDemandQuantity',item.outputQuantity)
-          }); 
+            this.$set(item, 'urgentFlag', false)
+            this.$set(item, 'planDemandQuantity', item.outputQuantity)
+          });
           this.totalDemandQuantity = totalData.demandQuantity
           this.outputQuantity = totalData.outputQuantity
           this.lossNum = totalData.lossNum
@@ -1611,11 +1653,15 @@ export default {
           this.inTransitUnOccupancyQuantity = 0
           this.occupancyQuantity = 0
         }
+        this.listLoading = false
+      }).catch(error => {
+        this.listLoading = false
+
       })
     },
     resetOuData() {
       this.planDateArr = []
-      this.superForm4= this.outForm = {
+      this.superForm4 = this.outForm = {
         demandType: "out",
         demandState: "not_finish",
         documentStatus: "submit",
@@ -1636,8 +1682,8 @@ export default {
         },
         pageNum: 1,
         pageSize: 20,
-      }, 
-      this.$refs.SuperQuery.conditionList = []
+      },
+        this.$refs.SuperQuery.conditionList = []
       this.searchList4 = [
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
@@ -1654,7 +1700,7 @@ export default {
         prop === "productName" ||
         prop === "productDrawingNo" ||
         prop === "routingName" ||
-        prop === "routingCode"
+        prop === "routingCode"||prop=='projectName'
       ) {
         newProp = prop;
       } else {
@@ -1704,10 +1750,10 @@ export default {
     selectDate(data, row) {
       this.orderDetailData.forEach((item) => {
         if (!item.deliveryDate) {
-          this.$set(item,'deliveryDate',data)
+          this.$set(item, 'deliveryDate', data)
         }
       });
-    
+
     },
 
     // 组装下达
@@ -1787,10 +1833,10 @@ export default {
         //   });
         // });
         this.assembleArr.forEach(item => {
-          item.materialDemandId=item.id
+          item.materialDemandId = item.id
         });
         arr = this.assembleArr;
-        console.log("arr",arr);
+        console.log("arr", arr);
         this.btnLoading = true;
 
         demandProduceissue(arr)
@@ -2031,7 +2077,7 @@ export default {
           });
         } else {
           this.productVisible = true;
-          this.tableFlag = true; 
+          this.tableFlag = true;
 
           this.assembleArr.forEach((item, index) => {
             item.materialDemandId = item.id;
@@ -2042,11 +2088,11 @@ export default {
             // item.planProductionQuantity = item.outputQuantity 
 
             item.outputQuantity = Number(item.outputQuantity);
-            item.issuedQuantity = Number(item.issuedQuantity); 
-              item.planProductionQuantity = this.jnpf.numberFormat(
-                item.outputQuantity - item.issuedQuantity,
-                4
-              );
+            item.issuedQuantity = Number(item.issuedQuantity);
+            item.planProductionQuantity = this.jnpf.numberFormat(
+              item.outputQuantity - item.issuedQuantity,
+              4
+            );
           });
           // const mergedData = arr.reduce((acc, curr) => {
           //   console.log("object");
@@ -2065,7 +2111,7 @@ export default {
           //   item.index = index
           // })
           // this.orderDetailData = JSON.parse(JSON.stringify(result));
-          this.orderDetailData =this.assembleArr
+          this.orderDetailData = this.assembleArr
         }
       }
       else if (type == "produce") {
@@ -2084,13 +2130,13 @@ export default {
             item.materialDemandId = item.id;
             // this.produceArrList[index].materialDemandId = item.id;
             item.urgentFlag = false;
-            item.insertOrderSort = ""; 
+            item.insertOrderSort = "";
             item.outputQuantity = Number(item.outputQuantity);
-            item.issuedQuantity = Number(item.issuedQuantity); 
-              item.planProductionQuantity = this.jnpf.numberFormat(
-                item.outputQuantity - item.issuedQuantity,
-                4
-              );
+            item.issuedQuantity = Number(item.issuedQuantity);
+            item.planProductionQuantity = this.jnpf.numberFormat(
+              item.outputQuantity - item.issuedQuantity,
+              4
+            );
 
 
           });
@@ -2139,15 +2185,15 @@ export default {
           this.outArr.forEach((item, index) => {
             item.materialDemandId = item.id;
             // this.outArrList[index].materialDemandId = item.id;
-            this.$set(item,'deliveryDates',item.deliveryDate)
+            this.$set(item, 'deliveryDates', item.deliveryDate)
             // item.deliveryDate = "";
             item.poolType = "external";
             item.outputQuantity = Number(item.outputQuantity);
-            item.issuedQuantity = Number(item.issuedQuantity); 
-              item.planDemandQuantity = this.jnpf.numberFormat(
-                item.outputQuantity - item.issuedQuantity,
-                4
-              );
+            item.issuedQuantity = Number(item.issuedQuantity);
+            item.planDemandQuantity = this.jnpf.numberFormat(
+              item.outputQuantity - item.issuedQuantity,
+              4
+            );
           });
 
           // const mergedArr = arr.reduce((acc, curr) => {
@@ -2199,16 +2245,16 @@ export default {
           this.purchaseArr.forEach((item, index) => {
             item.materialDemandId = item.id;
             // this.purchaseArrList[index].materialDemandId = item.id; 
-            this.$set(item,'deliveryDates',item.deliveryDate)
+            this.$set(item, 'deliveryDates', item.deliveryDate)
             // item.deliveryDate = "";
             item.poolType = "procure";
             item.outputQuantity = Number(item.outputQuantity);
             item.issuedQuantity = Number(item.issuedQuantity);
-          
-              item.planDemandQuantity = this.jnpf.numberFormat(
-                item.outputQuantity - item.issuedQuantity,
-                4
-              );
+
+            item.planDemandQuantity = this.jnpf.numberFormat(
+              item.outputQuantity - item.issuedQuantity,
+              4
+            );
           });
 
 

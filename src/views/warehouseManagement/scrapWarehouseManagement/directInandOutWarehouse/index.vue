@@ -53,7 +53,7 @@
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="仓库" prop="warehouseName">
-                        <ComSelect-list :requestObj="{ type: 'scrap', state: 'enable' }" :dialogTitle="'选择仓库'"
+                        <ComSelect-list :requestObj="{ type: 'scrap', state: 'enable', projectId: isProjectSwitch === '1' ?userInfo.projectId || '' : '' }" :dialogTitle="'选择仓库'"
                           :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName" :method="getWarehouseList"
                           placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
                       </el-form-item>
@@ -85,7 +85,7 @@
                   </el-table-column>
                   <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" sortable="custom" v-if="dataForm.documentType == 'outbound'" />
-
+                  <el-table-column prop="projectName" label="所属项目" min-width="120"   v-if="isProjectSwitch == 1" />
                   <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6" v-if="dataForm.documentType == 'inbound'"> </el-table-column>
                   <el-table-column prop="productCode" label="产品编码"  :key="4" />
                   <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111" v-if="dataForm.documentType == 'outbound'">
@@ -218,6 +218,8 @@
                 v-if="dataForm.documentType == 'outbound'" />
               <el-table-column prop="code" label="产品编码" min-width="160" sortable="custom"
                 v-if="dataForm.documentType == 'inbound'" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                v-if="isProjectSwitch == 1" />
               <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" />
               <el-table-column prop="availableQuantity" label="可用库存数量" width="160" sortable="custom"
@@ -300,13 +302,17 @@ import { getLocationList } from '@/api/warehouseManagement/inventory' // 库位�
 import WareHouseForm from './wareHouseForm.vue'
 import CustomerForm from './customerForm.vue'
 import BatchNumberForm from './batchNumberForm.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
   components: { WareHouseForm, BatchNumberForm, CustomerForm },
   props: {
     classAttribute: "",
   },
+  mixins: [  getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
       documentTypeList: [
         { label: "直接出库", value: "outbound", },
         { label: "直接入库", value: "inbound", },
@@ -427,8 +433,15 @@ export default {
       },
     }
   },
-  created() {
+ 
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag = true
     this.getWarehouseConfig()
+
   },
   watch: {
     "dataForm.warehouseId": {
@@ -509,6 +522,8 @@ export default {
     // 销售发货选择产品——搜索 如果是销售订单  需要计算待出库数量=订单数量-已出库数量  如果是通知单 则直接取接口返回的待出库数量
     searchProductFun() {
       if (this.dataForm.documentType == 'outbound') {
+
+        this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
         getBatchNumber(this.orderForm).then(res => {
           console.log("产品", res);
 
@@ -527,6 +542,7 @@ export default {
         // this.listQuery.pageNum = 1
         this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
         this.listQuery.classAttribute=this.classAttribute
+        this.listQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
         getProductList(this.listQuery)
           .then((res) => {
             console.log("res.", res);
@@ -587,7 +603,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productDrawingNo' || prop === 'productName' || prop === 'productCode') {
+      if (prop === 'productDrawingNo'||prop=='projectName' || prop === 'productName' || prop === 'productCode') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());

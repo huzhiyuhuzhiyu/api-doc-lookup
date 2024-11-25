@@ -48,7 +48,7 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main"   v-loading="listLoading" >
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier('', 'add')">
               <el-button type="primary" size="mini" icon="el-icon-download"
@@ -68,7 +68,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"  v-if="isProjectSwitchFlag"
             header-cell-class-name="all-select" @sort-change="sortChange" custom-column
             :setColumnDisplayList="columnList">
             <el-table-column prop="productionOrderNo" label="生产任务单号" min-width="200" sortable="custom">
@@ -144,11 +144,17 @@ import { excelExport } from '@/api/basicData/index'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'assemblyplanManagement',
   components: { SuperQuery, ExportForm, Form },
+  mixins: [getProjectList],
+
   data() {
     return {
+      isProjectSwitch: '',
+      isProjectSwitchFlag: false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -261,12 +267,15 @@ export default {
 
     }
   },
-  created() {
+
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag = true
     this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search('basic')
   },
-
-  mounted() {
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     // 新增
@@ -313,7 +322,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'personName' || prop == 'productionOrderNo') {
+      if (prop === 'partnerCode'||prop=='projectName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'personName' || prop == 'productionOrderNo') {
         if (prop === 'createByName') {
           newProp = 'create_by'
         } else {
@@ -336,6 +345,7 @@ export default {
     initData() {
       this.listLoading = true
 
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       WithdrawalList(this.orderForm).then(res => {
         res.data.records.forEach(item => {
           item.selectFlag = false

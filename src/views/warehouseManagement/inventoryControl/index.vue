@@ -76,7 +76,7 @@
 
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main"  v-loading="listLoading" >
         <div class="JNPF-common-head" style="padding:6px 10px">
           <el-button icon="el-icon-s-tools" type="primary" size="mini" @click="setStock">设置库存</el-button>
           <div class="JNPF-common-head-right">
@@ -92,13 +92,14 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" custom-column fixedNO @sort-change="sortChange"
+        <JNPF-table :data="tableData" custom-column fixedNO @sort-change="sortChange" v-if="isProjectSwitchFlag"
           @selection-change="handleSelectionChange" hasC ref="dataTable" :setColumnDisplayList="columnList">
           <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom" />
           <!-- 这里的 width 会被转成 min-width -->
           <el-table-column prop="code" label="产品编码" min-width="120" sortable="custom">
           </el-table-column>
-
+          <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+          v-if="isProjectSwitch == 1" />
           <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" width=" 80" />
           <el-table-column prop="safeInventory" label="安全库存" min-width="120" sortable="custom">
@@ -153,13 +154,15 @@ import {
   delUser,
   getUserListPost
 } from '@/api/permission/user'
-
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   name: 'permission-user',
   components: {
     SuperQuery
   },
+  mixins: [getProjectList],
   data() {
     return {
       superQuery: {},
@@ -274,6 +277,8 @@ export default {
       inventoryVisible: false,
       safeInventory: "",
       maxInventory:"",
+      isProjectSwitch: '',
+      isProjectSwitchFlag: false,
     }
   },
   watch: {
@@ -282,10 +287,14 @@ export default {
     }
 
   },
-  created() {
+
+   
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag = true
     this.getcategoryTree()
     this.superForm=this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-  },
+  }, 
   methods: {
     safeInventoryFocusFun(row) {
       this.safeInventory = JSON.parse(JSON.stringify(row.safeInventory))

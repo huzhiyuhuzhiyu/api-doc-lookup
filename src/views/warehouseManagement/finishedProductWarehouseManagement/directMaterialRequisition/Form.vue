@@ -61,6 +61,8 @@
                     @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" 
+                    v-if="isProjectSwitch == 1" />
                     <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"></el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="80" :key="88" />
                     <el-table-column prop="inventoryQuantity" label="批次库存数量" width="180" :key="8"
@@ -80,7 +82,7 @@
                         <span class="required">*</span>目标仓库
                       </template>
                       <template slot-scope="scope">
-                        <ComSelect-list :requestObj="{ type: 'line_edge' }" :dialogTitle="'选择仓库'"
+                        <ComSelect-list :requestObj="{ type: 'line_edge', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }" :dialogTitle="'选择仓库'"
                           :isdisabled="btnType == 'look'" v-model="scope.row.inWarehouseName" :method="getWarehouseList"
                           placeholder="请选择仓库" :paramsObj="{ index: scope.$index }"
                           @change="changeWarehousex"></ComSelect-list>
@@ -173,6 +175,8 @@
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="160"
                   sortable="custom"></el-table-column>
                 <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                v-if="isProjectSwitch == 1" />
                 <el-table-column prop="productCategoryName" label="产品分类" sortable="custom" min-width="120" />
                 <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="180" />
                 <el-table-column prop="mainUnit" label="单位" min-width="80" />
@@ -275,11 +279,15 @@ import { detailByBarCodes } from '@/api/warehouseManagement/packingList'
 // import { addInboundOutbound} from '@/api/warehouseManagement/inboundAndOutbounds.js'
 import { getLocationList } from '@/api/warehouseManagement/inventory' // 库位分类和列表 
 import WareHouseForm from './wareHouseForm.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
   components: { WareHouseForm },
+  mixins: [getProjectList],
 
   data() {
     return {
+      isProjectSwitch: '',
       scanDialog:false,
       getWarehouseList,
       treeLoading: false,
@@ -336,24 +344,11 @@ export default {
       listLoading: false,
       currentProductIndex: "",
       btnType: false,
-
-
-
-
-
-
-
-
-
-
-
       visible: true,
       wareVisibled: false,
       btnLoading: false,
       formLoading: false,
       allocationFlag: false,
-
-
       spaceLines: [],
       loadingText: '',
       copyLinesData: [],
@@ -365,9 +360,14 @@ export default {
       classAttributeList:[],
     }
   },
-  created() {
+ 
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+   
+  }, 
+  computed: {
+    ...mapGetters(['userInfo'])
   },
-
   methods: {
     getProductFun() {
       console.log(21341234);
@@ -391,6 +391,8 @@ export default {
         pageNum: 1,
         pageSize: 20,
       }
+      console.log("this.isProjectSwitch",this.isProjectSwitch,this.userInfo.projectId);
+      obj.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getProductList(obj).then(res => {
         console.log("产品信息", res);
         res.data.records.forEach(item => {
@@ -467,6 +469,7 @@ export default {
     initData2() {
       this.listLoading = true
       this.ProductListRequestObj.classAttributeList=this.classAttributeList
+      this.ProductListRequestObj.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getBatchNumber(this.ProductListRequestObj).then(listRes => {
         if (Array.isArray(listRes.data)) {
           this.allproductData = listRes.data

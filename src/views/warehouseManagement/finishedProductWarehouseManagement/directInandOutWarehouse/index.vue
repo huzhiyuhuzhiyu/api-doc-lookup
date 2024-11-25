@@ -9,7 +9,7 @@
         <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
           @click="handleConfirm('submit')">保存并提交</el-button>
         <el-button
-          v-if="btnType !== 'look' && (dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_external_send'||dataForm.businessType == 'outbound_purchase')"
+          v-if="btnType !== 'look' && (dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'outbound_purchase')"
           type="primary" :loading="btnLoading" @click="handleConfirm('submit', 'print')">提交并打印</el-button>
         <el-button v-if="btnType == 'look' || btnType == 'edit'" @click="goBack">{{ $t('common.cancelButton')
           }}</el-button>
@@ -56,8 +56,9 @@
                         </el-col>
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="仓库" prop="warehouseName">
-                            <ComSelect-list :requestObj="{ type: 'normal', state: 'enable' }" :dialogTitle="'选择仓库'"
-                              :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName"
+                            <ComSelect-list
+                              :requestObj="{ type: 'normal', state: 'enable', projectId: isProjectSwitch === '1' ?userInfo.projectId || '' : '' }"
+                              :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName"
                               :method="getWarehouseList" placeholder="请选择仓库"
                               @change="changeWarehousex"></ComSelect-list>
                           </el-form-item>
@@ -82,11 +83,12 @@
                           </el-form-item>
                         </el-col>
                         <el-col :sm="6" :xs="24">
-                            <el-form-item label="单据日期" prop="orderDate">
-                              <el-date-picker v-model="dataForm.orderDate" type="date" :clearable="false" :disabled="btnType == 'look' ? true : false" value-format="yyyy-MM-dd"
-                                style="width: 100%;" placeholder="请选择单据日期"></el-date-picker>
-                            </el-form-item>
-                          </el-col>
+                          <el-form-item label="单据日期" prop="orderDate">
+                            <el-date-picker v-model="dataForm.orderDate" type="date" :clearable="false"
+                              :disabled="btnType == 'look' ? true : false" value-format="yyyy-MM-dd"
+                              style="width: 100%;" placeholder="请选择单据日期"></el-date-picker>
+                          </el-form-item>
+                        </el-col>
                         <el-col :sm="12" :xs="24">
                           <el-form-item label="备注" prop="remark">
                             <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" :rows="2"
@@ -119,8 +121,11 @@
                       <el-table-column prop="drawingNo" label="品名规格" min-width="300" key="drawingNo"
                         v-if="dataForm.documentType == 'inbound'"> </el-table-column>
                       <el-table-column prop="productName" label="产品名称" min-width="160" key="productName"
-                        v-if=" productNameFlag == '1'" /> 
+                        v-if="productNameFlag == '1'" />
+                        
                       <el-table-column prop="productCode" label="产品编码" width="140" key="productCode" />
+                      <el-table-column prop="projectName" label="所属项目" min-width="120" 
+                      v-if="isProjectSwitch == 1" />
                       <el-table-column prop="batchNumber" label="批次号" width="200" key="batchNumber"
                         v-if="dataForm.documentType == 'outbound'">
                         <template slot="header">
@@ -134,8 +139,8 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="inventoryQuantity" label="批次库存" width="200" key="inventoryQuantity"
-                        v-if="dataForm.documentType == 'outbound'&&btnType!='look'">
-                         
+                        v-if="dataForm.documentType == 'outbound' && btnType != 'look'">
+
                       </el-table-column>
                       <el-table-column prop="shelfSpaceName" label="库位" width="140" key="shelfSpaceName"
                         v-if="allocationFlag">
@@ -470,15 +475,17 @@
                 v-if="dataForm.documentType == 'outbound'" key="productCode" />
               <el-table-column prop="code" label="产品编码" min-width="130" sortable="custom"
                 v-if="dataForm.documentType == 'inbound'" key="code" />
-              <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" width="80" sortable="custom"
+              <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                v-if="isProjectSwitch == 1" />
+              <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" width="120" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="mainUnit" />
-              <el-table-column prop="mainUnit" label="单位(副)" width="80" sortable="custom"
+              <el-table-column prop="mainUnit" label="单位(副)" width="120" sortable="custom"
                 v-if="dataForm.documentType == 'outbound' && mainUnitFlag == 1" key="mainUnit" />
               <el-table-column prop="inventoryQuantity" label="库存数量" width="160" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="inventoryQuantity" />
-                <el-table-column prop="availableQuantity" label="可用库存数量" width="160" sortable="custom"
+              <el-table-column prop="availableQuantity" label="可用库存数量" width="160" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="availableQuantity" />
-                <el-table-column prop="occupancyQuantity" label="占用库存数量" width="160" sortable="custom"
+              <el-table-column prop="occupancyQuantity" label="占用库存数量" width="160" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="occupancyQuantity" />
               <el-table-column prop="batchNumber" label="批次号" width="180" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="batchNumber" />
@@ -578,15 +585,18 @@ import flowMixin from '@/mixins/generator/flowMixin'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
   components: { WareHouseForm, BatchNumberForm, CustomerForm, Process, PrintBrowse, PrintDialog },
-  mixins: [flowMixin],
+  mixins: [flowMixin, getProjectList],
   props: {
     warehouseCode: "",
   },
   name: "directInandOutWarehouse",
   data() {
     return {
+      isProjectSwitch: '',
       prindId: '',
       formId: '',
       enCode: "",
@@ -650,7 +660,7 @@ export default {
         cooperativePartnerId: "",
         approvalFlag: false,
         weightFlag: false,
-        orderDate:this.jnpf.getToday()
+        orderDate: this.jnpf.getToday()
       },
       weightFlagList: [
         { label: "是", value: true },
@@ -797,23 +807,27 @@ export default {
         {
           businessType: 'inbound_purchase',
           code: "p017",
-          fullName:"采购收货单"
+          fullName: "采购收货单"
         },
         {
           businessType: 'outbound_purchase',
           code: "p008",
-          fullName:"采购退货"
+          fullName: "采购退货"
         },
         {
           businessType: 'outbound_external_send',
           code: "p013",
-          fullName:"外协发料单"
+          fullName: "外协发料单"
         },
       ]
     }
   },
-  created() {
-    console.log("this.",this.warehouseCode);
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag = true
     this.getProductClassFun()
     this.getprocessList()
     this.getWarehouseListFun()
@@ -826,6 +840,7 @@ export default {
 
     })
   },
+
   watch: {
     "dataForm.warehouseId": {
       handler: function (newVal, oldVal) {
@@ -837,6 +852,7 @@ export default {
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
 
   },
+  
   methods: {
 
     async getMainUnitFun(code, type) {
@@ -940,6 +956,8 @@ export default {
         "pageSize": 20,
         "productCategoryId": ""
       };
+     obj.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+
       getBimProcessList(obj).then(res => {
         this.processList = res.data.records
       })
@@ -1012,7 +1030,7 @@ export default {
     // 点击选择产品 
     openSeleceProductDialog() {
       if (!this.dataForm.documentType) return this.$message.error("请先选择业务类型")
-
+      if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库")
       this.productVisible = true
       this.orderForm.productName = ""
       this.listQuery.productName = ""
@@ -1024,6 +1042,7 @@ export default {
         this.orderForm.classAttributeList = this.classAttributeList
         this.orderForm.warehouseId = this.dataForm.warehouseId
         this.orderForm.availableBatch = true
+        this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
         getBatchNumber(this.orderForm).then(res => {
 
           this.productList = res.data.records
@@ -1041,6 +1060,7 @@ export default {
         // this.listQuery.pageNum = 1
         this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
         this.listQuery.classAttributeList = this.classAttributeList
+        this.listQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
         getProductList(this.listQuery)
           .then((res) => {
             this.productList = res.data.records
@@ -1386,7 +1406,7 @@ export default {
         this.partnerTreeTitle = '采购供应商分类'
         this.partnerPlaceholder = '请选择采购供应商'
 
-        
+
 
 
         this.getCooperativeMethodArr = { method: getcategoryTrees, requestObj: { type: 'supplier' } }
@@ -1467,7 +1487,7 @@ export default {
 
 
     changeWarehousex(val, data) {
-      console.log(val,data);
+      console.log(val, data);
       if (!val && !data.length) {
         this.dataForm.warehouseId = ''
         this.dataForm.warehouseName = ''
@@ -1496,6 +1516,7 @@ export default {
         // 获取仓库详情信息
         getWarehouseInfo(res.data[0].id).then(response => {
           this.dataForm.warehouseType = response.data.type
+          this.dataForm.projectId = res.data[0].projectId
           this.allocationFlag = response.data.locationStatus == 'disabled' ? false : true
         })
       })
@@ -1507,7 +1528,6 @@ export default {
     init(id, btnType) {
       console.log(777, id, btnType);
       this.formLoading = true
-      this.getWarehouseListFun()
       this.getclassAttributeList()
       this.btnType = btnType
 
@@ -1549,18 +1569,18 @@ export default {
       this.dataForm = {  //表单信息
         orderNo: "",
         warehouseName: "",
-        businessType:this.dataForm.businessType,
-        documentType:this.dataForm.documentType,
-        warehouseId: "", 
+        businessType: this.dataForm.businessType,
+        documentType: this.dataForm.documentType,
+        warehouseId: "",
         sourceType: "direct",
         id: "",
         warehouseType: "",
         inspectionResults: "",
         approvalFlag: false,
-        orderDate:this.jnpf.getToday()
+        orderDate: this.jnpf.getToday()
       }
       this.productData = []
-      
+
       this.$refs.dataForm.resetFields()
     },
     async fetchData(code) {

@@ -72,6 +72,8 @@
             </el-table-column>
             <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
             <el-table-column prop="deliverDate" label="收货日期" width="120" sortable="custom"></el-table-column>
+            <el-table-column prop="projectName" label="所属项目" width="120"
+              v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
             <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
@@ -154,10 +156,15 @@ import {
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import { excelExport } from '@/api/basicData/index'
 import { getBimBusinessDetail } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   components: { Form, ExportForm, SuperQuery },
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
       basicQuery: {},
@@ -325,7 +332,9 @@ export default {
       ]
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+
     this.getDeputyUnit()
     this.orderForm = JSON.parse(JSON.stringify(this.initOrderForm))
     this.superForm = this.orderForm
@@ -420,6 +429,9 @@ export default {
     },
     initData() {
       this.listLoading = true
+      if (this.isProjectSwitch === '1') {
+        this.orderForm.projectId = this.userInfo.projectId
+      }
       this.superForm = this.orderForm
       purPurchaseReceiptReturnGoodsDetailList(this.superForm)
         .then((res) => {

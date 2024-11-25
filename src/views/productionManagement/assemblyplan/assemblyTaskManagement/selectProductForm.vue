@@ -1,6 +1,6 @@
 <template>
 
-  <el-dialog title="选择工艺路线" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="customerVisible"
+  <el-dialog title="选择产品" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="customerVisible"
     lock-scroll class="JNPF-dialog JNPF-dialog_center selectProduct" width="70%" append-to-body
     @close="customerVisible = false">
 
@@ -34,6 +34,8 @@
           <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true">
             <el-table-column prop="drawingNo" label="品名规格" sortable="custom" ></el-table-column>
             <el-table-column prop="code" label="产品编码" sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+            v-if="isProjectSwitch == 1" />
             <el-table-column prop="routingName" label="工艺路线名称" sortable="custom" />
             <el-table-column prop="routingCode" label="工艺路线编码" sortable="custom" />
             <el-table-column label="操作" width="100" fixed="right">
@@ -52,7 +54,10 @@
 </template>
 <script>
 import { getProducts} from '@/api/masterDataManagement/index.js' // 产品列表 
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
+  mixins: [getProjectList],
   data() {
     return {
       
@@ -74,15 +79,23 @@ export default {
       listLoading: false,
       total: 0,
       tableDataList: [],
-     
+      isProjectSwitch: '',
+      id:'',
 
     }
   },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+  }, 
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
   methods: {
-    init() {
+    init(id) {
       console.log(777);
       this.customerVisible = true
-      this.getbatchNumList()
+      this.id=id
+      this.getbatchNumList(id)
     },
     // 选择批次
     selectFun(row) {
@@ -90,8 +103,10 @@ export default {
       this.$emit("selectProduct", row,)
       this.customerVisible = false
     },
-    getbatchNumList() {
-      this.listLoading = true
+    getbatchNumList(id) {
+      this.listLoading = true 
+      this.form.projectId = id
+      
       getProducts(this.form).then(res => {
         console.log("工艺路线", res);
         this.tableDataList=res.data.records
@@ -103,7 +118,7 @@ export default {
     },
 
     search() {
-      this.getbatchNumList()
+      this.getbatchNumList(this.id)
     },
     reset() {
       this.form = {
@@ -117,7 +132,7 @@ export default {
           column: ""
         },],
       }
-      this.init()
+      this.search()
     },
   }
 }

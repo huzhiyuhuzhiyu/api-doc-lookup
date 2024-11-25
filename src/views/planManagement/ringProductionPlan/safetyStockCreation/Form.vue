@@ -644,6 +644,7 @@ export default {
 
     // 根据订单类型  打开不同的选择产品弹框
     openSeleceProductDialog() {
+      if(!this.planForm.projectId) return this.$message.error("请先选择所属项目")
 
       this.allProVisible = true
       this.allproductData = []

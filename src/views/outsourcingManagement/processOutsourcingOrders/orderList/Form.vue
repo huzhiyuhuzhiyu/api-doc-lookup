@@ -86,6 +86,8 @@
                       v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table" @row-click="openDetails">
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
                       <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
+                      <el-table-column prop="projectName" label="所属项目" width="120"
+                        v-if="isProjectSwitch === '1'"></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                         <template slot="header">
                           <span class="required">*</span>
@@ -281,6 +283,8 @@
                   <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="linesList" :data="linesList"
                     id="table">
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                    <el-table-column prop="projectName" label="所属项目" width="120"
+                      v-if="isProjectSwitch === '1'"></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
                     <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
                     <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
@@ -370,6 +374,8 @@
                   v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table" @row-click="openDetails">
                   <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
                   <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
+                  <el-table-column prop="projectName" label="所属项目" width="120"
+                    v-if="isProjectSwitch === '1'"></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                     <template slot="header">
                       <span class="required">*</span>
@@ -565,6 +571,8 @@
               <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="linesList" :data="linesList"
                 id="table">
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                <el-table-column prop="projectName" label="所属项目" width="120"
+                  v-if="isProjectSwitch === '1'"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
                 <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
                 <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
@@ -609,11 +617,15 @@ import SourceArea from '../orderCreation/source.vue'
 import { getCooperativeData, getBimBusinessDetail } from '@/api/basicData/index'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   components: { Process, recordList, SourceArea },
-  mixins: [busFlow],
+  mixins: [busFlow, getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
       //  供应商 树请求
@@ -712,7 +724,15 @@ export default {
       categoryId: ''
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+
+    console.log(this.isProjectSwitch)
+    if (this.isProjectSwitch === '1') {
+
+    } else {
+
+    }
     this.getDeputyUnit()
     this.getBimBusinessDetail()
   },
@@ -845,6 +865,7 @@ export default {
         let list = data.map((item) => item.all)
         list.forEach((item, index) => {
           selectArr.push({
+            projectName: item.projectName,
             productSource: item.productSource, // 产品来源 采购
             classAttribute: item.classAttribute,
             productsId: item.id, // 产品id

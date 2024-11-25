@@ -38,7 +38,7 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="计划日期" prop="planDate"  class="date">
+                      <el-form-item label="计划日期" prop="planDate"  class="date" style="margin-bottom: 20px;">
                         <el-date-picker v-model="planForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                           style="width: 100%;" start-placeholder="开始日期" @change="changDateFun" end-placeholder="结束日期"
                           clearable>
@@ -375,6 +375,7 @@ export default {
   },
 
   async created() {
+    await this.getProjectList()
     await this.getProjectSwitch('system', 'project')
     this.isProjectSwitchFlag=true
     if(this.isProjectSwitch==1){
@@ -638,7 +639,7 @@ export default {
 
     // 根据订单类型  打开不同的选择产品弹框
     openSeleceProductDialog() {
-
+      if(!this.planForm.projectId) return this.$message.error("请先选择所属项目")
       this.allProVisible = true
       this.allproductData = []
       this.resetAllProduct()

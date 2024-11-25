@@ -48,6 +48,12 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
+                      <el-col :sm="6" :xs="24" v-if="isProjectSwitch == 1">
+                        <el-form-item label="所属项目"  >
+                          <el-input v-model="dataForm.projectName" placeholder="所属项目" disabled>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="单位" prop="mainUnit">
                           <el-input v-model="dataForm.mainUnit" placeholder="单位" disabled>
@@ -255,7 +261,8 @@
                   <JNPF-table ref="feed" :data="feedData" fixedNo v-loading="tableloading" :key="Math.random()">
                     <el-table-column prop="productDrawingNo" show-overflow-tooltip label="用料规格"></el-table-column>
                     <el-table-column prop="productCode" label="用料编码" />
-                    <el-table-column prop="processName" label="工序名称" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120"   v-if="isProjectSwitch == 1" />
+                <el-table-column prop="processName" label="工序名称" />
                     <el-table-column prop="mainUnit" label="单位" />
                     <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
                     <el-table-column prop="materialsUsedQuantity" label="计划用量" />
@@ -336,6 +343,7 @@
               <JNPF-table ref="feed" :data="feedData" fixedNo v-loading="tableloading" :key="Math.random()">
                 <el-table-column prop="productDrawingNo" show-overflow-tooltip label="用料规格"></el-table-column>
                 <el-table-column prop="productCode" label="用料编码" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120"   v-if="isProjectSwitch == 1" />
                 <el-table-column prop="processName" label="工序名称" />
                 <el-table-column prop="mainUnit" label="单位" />
                 <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
@@ -359,6 +367,7 @@
                 <el-table-column prop="workNo" label="工单号" min-width="200"></el-table-column>
                 <el-table-column prop="orderNo" label="报工单号" min-width="180"></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="180"></el-table-column>
+                <el-table-column prop="projectName" label="所属项目" min-width="120"   v-if="isProjectSwitch == 1" />
                 <el-table-column prop="processName" label="工序名称" width="160" />
                 <el-table-column prop="reportingTime" label="报工时间" min-width="180" />
                 <el-table-column prop="producerName" label="生产人" min-width="160" />
@@ -388,7 +397,10 @@
 
 import { detailordershengchan } from '@/api/productOrdes/index.js'
 import { getWorkReportList } from "@/api/productOrdes/index.js"
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
+  mixins: [getProjectList],
 
   data() {
     return {
@@ -418,9 +430,13 @@ export default {
       formLoading: false,
       btnType: "",
       title: "",
+      isProjectSwitch: '',
     }
   },
-
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+ 
+  }, 
   mounted() {
 
   },

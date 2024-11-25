@@ -477,3 +477,35 @@ export function equEquipmentRepairOutsourcing(id) {
     method: 'put'
   })
 }
+// 领用归还图表
+export function getmouthRequisitionNum(data) {
+  return request({
+    url: `/api/mes/equReport/mouthRequisitionNum`,
+    method: 'POST',
+    data
+  })
+}
+// 年检定图表
+export function getdailyVerificationNum(data) {
+  return request({
+    url: `/api/mes/equReport/dailyVerificationNum`,
+    method: 'POST',
+    data
+  })
+}
+// 月检定图表
+export function getmouthVerificationNum(data) {
+  return request({
+    url: `/api/mes/equReport/mouthVerificationNum`,
+    method: 'POST',
+    data
+  })
+}
+// 本月领用归还图表
+export function getdailyRequisitionNum(data) {
+  return request({
+    url: `/api/mes/equReport/dailyRequisitionNum`,
+    method: 'POST',
+    data
+  })
+}

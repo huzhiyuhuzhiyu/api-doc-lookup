@@ -112,11 +112,15 @@ import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { CollectionandreturnList, deleteCollectionandreturn, guihuanCollectionandreturn } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters } from 'vuex'
 export default {
+  mixins: [getProjectList],
   // name: 'circulate',
   components: { Form, SuperQuery },
   data() {
     return {
+      isProjectSwitch: '',
       showAppCodeFlag: true,
       superQueryJson: [
         {
@@ -191,6 +195,7 @@ export default {
       tableData: [],
       listLoading: false,
       orderForm: {
+        projectId:'',
         equipmentType: 'tool',
         requisitionType: 'requisition',
         orderNo: '',
@@ -211,6 +216,7 @@ export default {
     }
   },
   async created() {
+    await this.getProjectSwitch('system', 'project')
     const res = await this.jnpf.getBusInfo('b055')
     if (res) {
       this.showAppCodeFlag = res.enabledMark
@@ -218,6 +224,9 @@ export default {
       this.showAppCodeFlag = false
     }
     this.initData()
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     withdrawnHandle(formId) {
@@ -276,6 +285,7 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       CollectionandreturnList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total

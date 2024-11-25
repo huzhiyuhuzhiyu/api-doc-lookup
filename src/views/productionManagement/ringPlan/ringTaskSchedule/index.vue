@@ -90,6 +90,8 @@
               </template>
             </el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
+            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+            v-if="isProjectSwitch == 1" />
             <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="orderStatus" label="任务状态" min-width="140" sortable="custom">
@@ -157,14 +159,18 @@ import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 import TaskSchedule from './taskSchedule.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
+  mixins: [getProjectList],
+
   name: 'assemblyTaskManagement',
   components: { SuperQuery, Form,TaskSchedule },
   data() {
     return {
       taskScheduleVisible:false,
       maxWidth: "",
-      showFlag:false,
+      showFlag:true,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -379,13 +385,18 @@ export default {
           { validator: this.formValidate('positiveNumber', '请输入大于0的正整数',), trigger: 'blur' }
         ],
       },
+      isProjectSwitch: '',
     }
   },
-  created() {
-   this.superForm= this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-    this.search('basic')
+  computed: {
+    ...mapGetters(['userInfo'])
   },
+  async created() {
 
+    await this.getProjectSwitch('system', 'project')
+    this.superForm= this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+    this.search('basic')
+  }, 
   mounted() {
     this.getProductClassFun()
   },
@@ -396,21 +407,7 @@ export default {
         this.$refs.taskScheduleForm.init(id)
       })
     },
-    // 新建返工
-    addTaskFun(id, type) {
-      this.reworkVisible = true
-      this.$nextTick(() => {
-        this.$refs.reworkForm.init(id, type)
-      })
-    },
-    // 追加
-    addition2() {
-      if (!this.selectArr.length) return this.$message.error("请选择您要追加生产的数据!")
-      if (this.selectArr.length > 1) return this.$message.error("追加生产只支持单条数据操作")
-      if (this.selectArr[0].orderType == 'rework') return this.$message.error("返工任务不可追加生产")
-      this.form = this.selectArr[0]
-      this.addOrderVisible = true
-    },
+ 
     addition1(data) {
       this.form = data
       this.addOrderVisible = true
@@ -563,6 +560,7 @@ export default {
       this.showFlag = false
 
    
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       ordershengchanList(this.orderForm).then(res => {
         res.data.records.forEach(item => {
           // 初始化 processInfoList 为一个空数组  

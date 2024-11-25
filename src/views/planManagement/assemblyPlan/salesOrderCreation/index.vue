@@ -659,7 +659,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName'||prop=='projectName' || prop === 'productCode' || prop === 'documentStatus') {
+      if (prop === 'productName' || prop == 'projectName' || prop === 'productCode' || prop === 'documentStatus') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'
@@ -689,9 +689,10 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.superForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getsaleOrderDetailList(this.superForm).then(res => {
-    this.isProjectSwitchFlag = true
-    this.tableData = res.data.records
+        this.isProjectSwitchFlag = true
+        this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
         this.getOrderLineReportFun()

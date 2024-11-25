@@ -24,7 +24,8 @@
 
                   <el-descriptions-item label="品名规格" class="drawingNo">{{ dataForm.productDrawingNo
                     }} </el-descriptions-item>
-                </el-descriptions>
+                </el-descriptions> 
+
                 <el-descriptions class="margin-top" :column="4">
                   <el-descriptions-item label="任务类型" class="orderNo" v-if="dataForm.orderType == 'normal'">
                     <el-tag style="vertical-align: super;" effect="dark">正常订单</el-tag>
@@ -33,6 +34,8 @@
                     <el-tag style="vertical-align: super;" type="warning" effect="dark">返工订单</el-tag>
                   </el-descriptions-item>
                   <el-descriptions-item label="产品编码">{{ dataForm.productCode }}</el-descriptions-item>
+                  <el-descriptions-item label="所属项目"  v-if="isProjectSwitch==1">{{ dataForm.projectName
+                    }} </el-descriptions-item>
                   <el-descriptions-item label="总生产数量">{{ dataForm.productionQuantity }}{{ dataForm.mainUnit
                     }}</el-descriptions-item>
                   <el-descriptions-item label="已完成数量">{{ dataForm.completedQuantity }}{{ dataForm.mainUnit
@@ -128,6 +131,7 @@
                   :height="height" :key="Math.random()">
                   <el-table-column prop="productDrawingNo" show-overflow-tooltip label="用料规格"></el-table-column>
                   <el-table-column prop="productCode" label="用料编码" />
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="processName" label="工序名称" />
                   <el-table-column prop="mainUnit" label="单位" />
                   <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
@@ -208,7 +212,7 @@
                   :height="height" v-loading="tableloading" :key="Math.random()">
 
                   <el-table-column prop="orderNo" label="上传单编码" min-width="180" />
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="300"  show-overflow-tooltip/>
+                  <el-table-column prop="drawingNo" label="品名规格" min-width="300" show-overflow-tooltip />
 
                   <el-table-column prop="productsCode" label="产品编码" min-width="160" />
                   <el-table-column prop="productsCategoryName" label="产品分类" width="140" />
@@ -231,17 +235,17 @@
 
                   <el-table-column label="操作" width="180" fixed="right">
                     <template slot-scope="scope">
-                      <el-button type="text" size="mini" @click="previewFun(scope.row.id, 'look',ApplicationType.WORK)">
+                      <el-button type="text" size="mini" @click="previewFun(scope.row.id, 'look', ApplicationType.WORK)">
                         查看详情
                       </el-button>
                     </template>
                   </el-table-column>
                 </JNPF-table>
-                <JNPF-table ref="inspectionManual" v-if="categoryType == 'inspectionManual'" :data="inspectionManualData" fixedNO
-                  :height="height" v-loading="tableloading" :key="Math.random()">
+                <JNPF-table ref="inspectionManual" v-if="categoryType == 'inspectionManual'"
+                  :data="inspectionManualData" fixedNO :height="height" v-loading="tableloading" :key="Math.random()">
 
                   <!-- <el-table-column prop="orderNo" label="上传单编码" min-width="180" /> -->
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="300"  show-overflow-tooltip/>
+                  <el-table-column prop="drawingNo" label="品名规格" min-width="300" show-overflow-tooltip />
 
                   <el-table-column prop="productsCode" label="产品编码" min-width="160" />
                   <el-table-column prop="productsCategoryName" label="产品分类" width="140" />
@@ -258,7 +262,8 @@
 
                   <el-table-column label="操作" width="180" fixed="right">
                     <template slot-scope="scope">
-                      <el-button type="text" size="mini" @click="previewFun(scope.row.id, 'look',ApplicationType.INSPECT)">
+                      <el-button type="text" size="mini"
+                        @click="previewFun(scope.row.id, 'look', ApplicationType.INSPECT)">
                         查看详情
                       </el-button>
                     </template>
@@ -279,7 +284,8 @@
     </transition>
     <RelatedTasksForm v-if="relatedTaskVisible" ref="relatedTaskForms" @selectRelatedTasksFun="selectRelatedTasksFun">
     </RelatedTasksForm>
-    <Guidebook  v-if="guidebookVisible" ref="guidebookForms" @back="closeFun" :type="'look'" approval-need-header></Guidebook>
+    <Guidebook v-if="guidebookVisible" ref="guidebookForms" @back="closeFun" :type="'look'" approval-need-header>
+    </Guidebook>
     <Inspec v-if="detailFormVisible" ref="detailForm" @close="closeFun"></Inspec>
   </div>
 </template>
@@ -291,21 +297,25 @@ import { getInspectionList, deleteInspectionData, getInspectionLinesList } from 
 import Guidebook from '@/views/esop/fileUpload/workinginstruction/Form.vue'
 import { deleteBimFileUpload, getBimFileUpload } from "@/api/esop/fileUpload/workinginstruction";
 import Inspec from '@/views/inspectionManagement/components/inspectionFormManagementDetail.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 import {
-    ApplicationType,
-    DocumentStatus, FileManagePageSet, FileTrashPageSet,
-    ModelType,
-    PageType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
+  ApplicationType,
+  DocumentStatus, FileManagePageSet, FileTrashPageSet,
+  ModelType,
+  PageType
+} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 export default {
-  components: { RelatedTasksForm,Guidebook,Inspec },
+  components: { RelatedTasksForm, Guidebook, Inspec },
+  mixins: [getProjectList],
   data() {
     return {
-      detailFormVisible:false,
-      needHeader:true,
+      detailFormVisible: false,
+      needHeader: true,
       ApplicationType,
-      fileUploadId:"",
-      applicationType:"",
-      inspectionManualData:[],
+      fileUploadId: "",
+      applicationType: "",
+      inspectionManualData: [],
       guidebookVisible: false,
       height: 0,
       relatedTaskVisible: false,
@@ -348,36 +358,28 @@ export default {
       recoredsData: [],
 
       activeNames1: ["basicInfo", 'info'],
-
       activeNames2: ["workOrderInfoForm"],
-
       activeNames3: ["feedInfoForm"],
-
       activeNames4: ['record'],
-
       activeName: 'orderInfo',
-
       feedData: [],
-
       workOrderData: [],
-
       dataForm: {},
-
       formLoading: false,
-
       btnType: "",
-
       title: "",
-
       prodOrderId: "",
       inspectData: [],
+      isProjectSwitch: '',
 
     }
 
   },
-
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+   
+  },
   watch: {
-
     'categoryType': function (newVal) {
       this.getTabdataList()
     },
@@ -387,25 +389,25 @@ export default {
   },
   methods: {
     // 查看检验详情
-    viewInspectionFun(id,type){
+    viewInspectionFun(id, type) {
       this.detailFormVisible = true
 
-        this.$nextTick(() => {
-          this.$refs.detailForm.init(id, type, false, 'finished')
-        })
+      this.$nextTick(() => {
+        this.$refs.detailForm.init(id, type, false, 'finished')
+      })
     },
-    closeFun(){
-      this.guidebookVisible=false
-      this.detailFormVisible=false
+    closeFun() {
+      this.guidebookVisible = false
+      this.detailFormVisible = false
     },
     // 预览作业指导书
-    previewFun(id, type,applicationType) {
+    previewFun(id, type, applicationType) {
       this.guidebookVisible = true
-      this.fileUploadId=id
-      this.applicationType=applicationType
-     this.$nextTick(()=>{
-      this.$refs.guidebookForms.init(id,type,true)
-     })
+      this.fileUploadId = id
+      this.applicationType = applicationType
+      this.$nextTick(() => {
+        this.$refs.guidebookForms.init(id, type, true)
+      })
     },
     //自适应窗口
     async switchStyle() {
@@ -476,15 +478,17 @@ export default {
           documentStatus: "submit",
           superQuery: {
             condition: [
-              {field: "drawingNo",
-              fieldValue: this.dataForm.productDrawingNo,
-              symbol: "like"}
+              {
+                field: "drawingNo",
+                fieldValue: this.dataForm.productDrawingNo,
+                symbol: "like"
+              }
             ]
           }
         }
         getBimFileUpload(obj).then(res => {
           console.log("指导书", res);
-          this.guidebookData=res.data.records
+          this.guidebookData = res.data.records
         })
         // 作业指导书
       } else if (this.categoryType == 'inspectionManual') {
@@ -495,15 +499,17 @@ export default {
           documentStatus: "submit",
           superQuery: {
             condition: [
-              {field: "drawingNo",
-              fieldValue: this.dataForm.productDrawingNo,
-              symbol: "like"}
+              {
+                field: "drawingNo",
+                fieldValue: this.dataForm.productDrawingNo,
+                symbol: "like"
+              }
             ]
           }
         }
         getBimFileUpload(obj).then(res => {
           console.log("指导书", res);
-          this.inspectionManualData=res.data.records
+          this.inspectionManualData = res.data.records
         })
       } else if (this.categoryType == 'tool') {
         // 工装模具
@@ -520,7 +526,9 @@ export default {
         this.$refs.relatedTaskForms.init(this.dataForm.productionPlanNo)
       })
     },
-    init(id) {
+    async init(id) {
+      await this.getProjectSwitch('system', 'project')
+
       this.prodOrderId = id
       detailordershengchan(id).then(res => {
         console.log("生产任务详情", res);
@@ -580,10 +588,6 @@ export default {
   margin-right: 4px;
 
 }
-
-
-
- 
 </style>
 
 <style scoped>
@@ -968,5 +972,4 @@ $footerPadding: '10px';
 ::v-deep .el-collapse-item {
   border-bottom: 1px solid rgb(220, 223, 230)
 }
- 
 </style>

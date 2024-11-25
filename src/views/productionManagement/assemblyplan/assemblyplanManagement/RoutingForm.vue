@@ -18,7 +18,7 @@
                 <el-input v-model="form.name" placeholder="工艺路线名称" clearable />
               </el-form-item>
             </el-col>
-        
+
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -30,13 +30,14 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main" > 
+        <div class="JNPF-common-layout-main JNPF-flex-main">
           <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @sort-change="sortChange">
-            <el-table-column prop="code" label="工艺路线编码" sortable="custom" ></el-table-column>
+            <el-table-column prop="code" label="工艺路线编码" sortable="custom"></el-table-column>
             <el-table-column prop="name" label="工艺路线名称" sortable="custom" />
-           
+            <el-table-column prop="projectName" label="所属项目" sortable="custom" v-if="isProjectSwitch == 1" />
+
             <el-table-column label="操作" width="100" fixed="right">
-              <template slot-scope="scope" >
+              <template slot-scope="scope">
                 <el-button type="text" @click="selectFun(scope.row)">选择</el-button>
               </template>
             </el-table-column>
@@ -50,62 +51,70 @@
   </el-dialog>
 </template>
 <script>
-import { detailProcess,getProcessList } from '@/api/basicData/processSettingss.js'
+import { detailProcess, getProcessList } from '@/api/basicData/processSettingss.js'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
+  mixins: [getProjectList],
   data() {
     return {
-     
+
       customerVisible: false,
-     
+
       form: {
-        code:"",
-        name:"",
+        code: "",
+        name: "",
         pageNum: 1,
         pageSize: 20,
-        documentStatus:"submit",
+        documentStatus: "submit",
         orderItems: [{
           asc: false,
           column: ""
         },],
-         
-      }, 
+
+      },
       listLoading: false,
       total: 0,
       tableDataList: [],
-     
-
+      id: "",
+      isProjectSwitch:"",
     }
   },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+
+  },
   methods: {
-    
+
     sortChange({ prop, order }) {
       console.log(prop);
       let newProp;
-      if (prop === 'name' || prop === 'code' ) {
+      if (prop === 'name' || prop === 'code' || prop == 'projectName') {
         newProp = prop
-      }   else {
+      } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
       }
-     
+
       this.form.orderItems[0].asc = order === "ascending"
       this.form.orderItems[0].column = order === null ? "" : newProp
       this.getbatchNumList()
     },
-    init() {
+    init(id) {
       this.customerVisible = true
-      this.getbatchNumList()
+      this.id = id
+      this.getbatchNumList(id)
     },
     // 选择批次
     selectFun(row) {
       this.$emit("selectRouting", row,)
       this.customerVisible = false
     },
-    getbatchNumList() {
+    getbatchNumList(id) {
       this.listLoading = true
+      this.form.projectId = id
       getProcessList(this.form).then(res => {
         console.log("工艺路线", res);
-        this.tableDataList=res.data.records
-        this.total=res.data.total
+        this.tableDataList = res.data.records
+        this.total = res.data.total
         this.listLoading = false
       }).catch(() => {
         this.listLoading = false
@@ -113,13 +122,13 @@ export default {
     },
 
     search() {
-      this.getbatchNumList()
+      this.getbatchNumList(this.id)
     },
     reset() {
       this.form = {
-        code:"",
-        name:"",
-        documentStatus:"submit",
+        code: "",
+        name: "",
+        documentStatus: "submit",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -127,7 +136,7 @@ export default {
           column: ""
         },],
       }
-      this.init()
+      this.search()
     },
   }
 }

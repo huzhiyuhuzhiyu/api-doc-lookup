@@ -646,8 +646,11 @@ export default {
     }
   },
   mounted() {
-    this.getProjectSwitch()
+
     this.getProductClassFun()
+  },
+  created() {
+    this.getProjectSwitch()
   },
   computed: {
     ...mapState('user', ['token']),

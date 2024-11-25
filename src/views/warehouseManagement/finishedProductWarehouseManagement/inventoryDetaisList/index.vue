@@ -113,6 +113,8 @@
           <el-table-column prop="productName" label="产品名称" v-if="productNameFlag == '1'" min-width="160"
             sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
+          <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+          v-if="isProjectSwitch == 1" />
           <!-- <el-table-column prop="mainUnit" label="单位" min-width="140" />
           <el-table-column prop="num" label="数量" sortable="custom" min-width="140" /> -->
           <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
@@ -285,6 +287,8 @@ import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 import TakingAdjustForm from '@/views/warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/adjust.vue'
 export default {
   name: 'inventoryDetaisList',
@@ -294,11 +298,13 @@ export default {
     InboundExternalForm, OutboundPickOutForm, InboundReturnMaterialsForm,
     Transfer, SaleOutboundForm, ExternalMaterOutboundForm, PurchaseOrderInboundForm, ExternalInboundForm, outboundUseForm, InboundReturnForm, PrintBrowse, PrintDialog,TakingAdjustForm
   },
+  mixins: [getProjectList],
   props: {
     warehouseCode: "",
   },
   data() {
     return {
+      isProjectSwitch: '',
       takingAdjustVisible:false,
       printVisible: false,
       printBrowseVisible: false,
@@ -573,10 +579,15 @@ export default {
       ]
     }
   },
-  created() {
+
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag = true
     this.superForm = this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.getclassAttributeList()
-
+  }, 
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   mounted() {
     this.getProductClassFun()
@@ -1217,6 +1228,7 @@ export default {
         this.listQuery.orderEndDate = ""
       }
       // this.listQuery.approvalStatus = 'ok'
+      this.listQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getInventorySummaryData(this.listQuery).then(res => {
 
         this.tableData = res.data.page.records

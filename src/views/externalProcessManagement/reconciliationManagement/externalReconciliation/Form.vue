@@ -88,7 +88,8 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-
+                      <el-table-column prop="projectName" label="所属项目" width="120"
+                        v-if="isProjectSwitch === '1'"></el-table-column>
                       <el-table-column prop="drawingNo" label="品名规格" width="190" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
@@ -290,7 +291,8 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-
+                  <el-table-column prop="projectName" label="所属项目" width="120"
+                    v-if="isProjectSwitch === '1'"></el-table-column>
                   <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'">
@@ -432,13 +434,17 @@ import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import busFlow from '@/mixins/generator/busFlow';
 import { getBimBusinessDetail } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   components: {
     Process, recordList
   },
-  mixins: [busFlow],
+  mixins: [busFlow, getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
       activeNames: ['productInfo', 'basicInfo'],
@@ -481,7 +487,9 @@ export default {
   computed: {
     ...mapGetters(['userInfo'])
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+  
     this.getDeputyUnit()
   },
   methods: {

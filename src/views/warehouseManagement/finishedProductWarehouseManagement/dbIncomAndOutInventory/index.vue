@@ -611,6 +611,8 @@
           <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
             sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
+          <el-table-column prop="projectName" label="所属项目" min-width="120"  
+          v-if="isProjectSwitch == 1" />
           <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
           <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="160">
           </el-table-column>
@@ -760,6 +762,8 @@
           <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
             sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
+          <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+          v-if="isProjectSwitch == 1" />
           <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
           <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
           </el-table-column>
@@ -845,6 +849,8 @@
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
             sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+            v-if="isProjectSwitch == 1" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
           <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom" />
 
@@ -938,6 +944,8 @@
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
           <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
             sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+            v-if="isProjectSwitch == 1" />
           <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="processName" label="工序名称" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
@@ -1193,6 +1201,8 @@
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
                 <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
                   sortable="custom" />
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                  v-if="isProjectSwitch == 1" />
                 <el-table-column prop="mainUnit" label="单位" width="80" />
                 <el-table-column prop="productionQuantity" label="生产数量" width="120" />
                 <el-table-column prop="completedQuantity" label="已完成数量" width="130" />
@@ -1291,6 +1301,8 @@
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" />
                 <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
                   sortable="custom" />
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                  v-if="isProjectSwitch == 1" />
                 <el-table-column prop="productCode" label="产品编码" min-width="160" />
                 <el-table-column prop="processName" label="工序名称" min-width="160" />
                 <el-table-column prop="mainUnit" label="单位" min-width="80" />
@@ -1430,12 +1442,14 @@ import EquipmentInboundForm from './equipmentInboundForm.vue'
 import ToolFormS from '@/views/dailyManagement/borrowingReturn/toolreturn/Form.vue'
 import EquipmentFormS from '@/views/dailyManagement/equipmentrequisitionreturn/equipmentreturn/Form.vue'
 import SparePartsFormS from '@/views/dailyManagement/sparepartsmanagement/sparepartsReturn/Form.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index"
 export default {
   name: 'dbIncomAndOutInventory',
-  mixins: [mixin],
+  mixins: [mixin, getProjectList],
   components: {
     Form, SuperQuery, THForm, FHForm,
     CGSHREFForm, CGTHREFForm, WXSHREFForm,
@@ -1451,6 +1465,8 @@ export default {
   },
   data() {
     return {
+      isProjectSwitchFlag: false,
+      isProjectSwitch: "",
       equipmentInboundVisible: false,
       repayDateArr: [],
       toolSVisible: false,
@@ -2018,13 +2034,15 @@ export default {
 
     },
   },
-  created() {
-    this.getPickingConfig()
-    this.getMainUnitFun('deputyUnit','warehouseDeputyUnit')
-  },
-  mounted() {
-    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
 
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag = true
+    this.getPickingConfig()
+    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
+  }, 
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     async getMainUnitFun(code, type) {
@@ -2121,16 +2139,18 @@ export default {
       if (type === 'super') {
         this.superForm.superQuery = this.superQuery
       }
+      this.exterMaterForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+
       detailpurchaseOrderList(this.exterMaterForm).then(res => {
+        if (this.mainUnitFlag == 1) {
         res.data.records.forEach(item => {
-          if (this.mainUnitFlag == 1) {
             if (item.calculationDirection == 'multiplication') {
               this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
             } else {
               this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
             }
-          }
-        });
+          });
+        }
         this.exterMaterTotal = res.data.total
         this.exterMaterList = res.data.records
       })
@@ -2175,16 +2195,17 @@ export default {
       if (type === 'super') {
         this.superForm.superQuery = this.superQuery
       }
+      this.externalForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       detailpurchaseOrderList(this.externalForm).then(res => {
+        if (this.mainUnitFlag == 1) {
         res.data.records.forEach(item => {
-          if (this.mainUnitFlag == 1) {
             if (item.calculationDirection == 'multiplication') {
               this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
             } else {
               this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
             }
-          }
-        });
+          });
+        }
         this.externalList = res.data.records
         this.externalTotal = res.data.total
         console.log("外协订单列表", res);
@@ -2261,6 +2282,8 @@ export default {
     },
 
     getStockMovelistFun() {
+      this.classAttributeList.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+
       getStockMovelist(this.classAttributeList).then(res => {
         console.log("左侧分类数据", res);
         if (res.data.length) {
@@ -2601,18 +2624,19 @@ export default {
             this.superForm.superQuery = this.superQuery
           }
           this.listLoading = true
-          getsaleOrderDetailList(this.saleOrderForm).then(res => {
+      this.saleOrderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      getsaleOrderDetailList(this.saleOrderForm).then(res => {
             this.listLoading = false
             console.log("销售明细", res);
+            if (this.mainUnitFlag == 1) {
             res.data.records.forEach(item => {
-              if (this.mainUnitFlag == 1) {
                 if (item.calculationDirection == 'multiplication') {
                   this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
                 } else {
                   this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
                 }
-              }
-            });
+              });
+            }
             this.saleList = res.data.records
             this.saleTotal = res.data.total
           }).catch(error => {
@@ -2648,7 +2672,8 @@ export default {
           if (type === 'super') {
             this.superForm.superQuery = this.superQuery
           }
-          getQuotationdatasendlist(this.fhForm).then(res => {
+      this.fhForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      getQuotationdatasendlist(this.fhForm).then(res => {
             this.fhTableList = res.data.records
             this.fhTotal = res.data.total
             this.listLoading = false
@@ -2691,7 +2716,8 @@ export default {
           this.superForm.superQuery = this.superQuery
         }
 
-        getQuotationdatasendlist(this.fhForm).then(res => {
+      this.fhForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      getQuotationdatasendlist(this.fhForm).then(res => {
           this.thTableList = res.data.records
           this.fhTotal = res.data.total
           this.listLoading = false
@@ -2731,14 +2757,18 @@ export default {
           if (type === 'super') {
             this.superForm.superQuery = this.superQuery
           }
-          detailpurchaseOrderList(this.purchaseForm).then(res => {
+      this.purchaseForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      detailpurchaseOrderList(this.purchaseForm).then(res => {
             console.log("采购明细", res);
             if (this.mainUnitFlag == 1) {
-              if (item.calculationDirection == 'multiplication') {
-                this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
-              } else {
-                this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
-              }
+              res.data.records.forEach(item => {
+                
+                if (item.calculationDirection == 'multiplication') {
+                  this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+                } else {
+                  this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+                }
+              });
             }
             this.purchaseTotal = res.data.total
             this.purchaseList = res.data.records
@@ -2756,7 +2786,7 @@ export default {
             this.cgForm.deliverDateEnd = ""
           }
           this.cgForm.approvalStatus = 'ok'
-          
+
           this.superForm = this.cgForm
           if (type === 'basic') {
             this.basicQuery = {
@@ -2777,7 +2807,8 @@ export default {
           }
           this.listLoading = true
 
-          purPurchaseReceiptReturnGoodsList(this.cgForm).then(res => {
+      this.cgForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      purPurchaseReceiptReturnGoodsList(this.cgForm).then(res => {
             this.cgTableList = res.data.records
             this.cgTotal = res.data.total
             this.listLoading = false
@@ -2791,8 +2822,8 @@ export default {
         this.listLoading = true
         this.cgForm.receiptReturnType = 'back'
         this.cgForm.receiptInboundFlag = null
-          this.cgForm.stockFlag = true
-          this.cgForm.classAttributeList = this.classAttributeList
+        this.cgForm.stockFlag = true
+        this.cgForm.classAttributeList = this.classAttributeList
         if (this.cgDateArr.length) {
           this.cgForm.deliverDateStart = this.cgDateArr[0]
           this.cgForm.deliverDateEnd = this.cgDateArr[1]
@@ -2820,7 +2851,8 @@ export default {
           this.superForm.superQuery = this.superQuery
         }
 
-        purPurchaseReceiptReturnGoodsList(this.cgForm).then(res => {
+      this.cgForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      purPurchaseReceiptReturnGoodsList(this.cgForm).then(res => {
           this.cgTableList = res.data.records
           this.cgTotal = res.data.total
           this.listLoading = false
@@ -2861,16 +2893,17 @@ export default {
             this.superForm.superQuery = this.superQuery
           }
           this.listLoading = true
-          getQuotationdatasendlist(this.wxflForm).then(res => {
+      this.wxflForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      getQuotationdatasendlist(this.wxflForm).then(res => {
+        if (this.mainUnitFlag == 1) {
             res.data.records.forEach(item => {
-              if (this.mainUnitFlag == 1) {
                 if (item.calculationDirection == 'multiplication') {
                   this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
                 } else {
                   this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
                 }
-              }
-            });
+              });
+            }
             this.wxflTableList = res.data.records
             this.wxflTotal = res.data.total
             this.listLoading = false
@@ -2914,7 +2947,8 @@ export default {
             this.superForm.superQuery = this.superQuery
           }
           this.wxshForm.classAttributeList = this.classAttributeList
-          purPurchaseReceiptReturnGoodsList(this.wxshForm).then(res => {
+      this.wxshForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      purPurchaseReceiptReturnGoodsList(this.wxshForm).then(res => {
             this.wxshTableList = res.data.records
             this.wxshTotal = res.data.total
             this.listLoading = false
@@ -2948,7 +2982,8 @@ export default {
         if (type === 'super') {
           this.superForm.superQuery = this.superQuery
         }
-        WithdrawalList(this.pickForm).then(res => {
+      this.pickForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      WithdrawalList(this.pickForm).then(res => {
           console.log("领料", res);
           this.pickingTableList = res.data.records
           this.pickTotal = res.data.total
@@ -2981,6 +3016,7 @@ export default {
         if (type === 'super') {
           this.superForm.superQuery = this.superQuery
         }
+      this.returnMaterForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
         WithdrawalList(this.returnMaterForm).then(res => {
           console.log("退料", res);
           this.returnMaterTableList = res.data.records
@@ -3029,7 +3065,8 @@ export default {
         if (type === 'super') {
           this.superForm.superQuery = this.superQuery
         }
-        CollectionandreturnList(this.outboundUseForm).then(res => {
+      this.outboundUseForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      CollectionandreturnList(this.outboundUseForm).then(res => {
           console.log("退料", res);
           this.outboundUseTableList = res.data.records
           this.outboundUseTotal = res.data.total
@@ -3069,7 +3106,8 @@ export default {
         if (type === 'super') {
           this.superForm.superQuery = this.superQuery
         }
-        CollectionandreturnList(this.inboundReturnForm).then(res => {
+      this.inboundReturnForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      CollectionandreturnList(this.inboundReturnForm).then(res => {
           console.log("归还", res);
           this.inboundReturnData = res.data.records
           this.inboundReturnTotal = res.data.total
@@ -3102,6 +3140,7 @@ export default {
       if (type === 'super') {
         this.superForm.superQuery = this.superQuery
       }
+      this.productForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       ordershengchanList(this.productForm).then(res => {
         console.log("生产产品", res);
         this.productData = res.data.records
@@ -3134,6 +3173,7 @@ export default {
       if (type === 'super') {
         this.superForm.superQuery = this.superQuery
       }
+      this.workForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getWorkPage(this.workForm).then(res => {
         console.log("生产产品", res);
         this.workData = res.data.records

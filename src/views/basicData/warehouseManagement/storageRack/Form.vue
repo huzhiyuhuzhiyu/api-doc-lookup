@@ -39,7 +39,11 @@ import {
 import { addWarehouse, editWarehouse, getWarehouseInfo, checWarehouseCode } from '@/api/basicData/index'
 import { getWarehouseList } from '@/api/basicData/index'
 import tabs from './params'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
+  mixins: [getProjectList],
+
   data() {
     return {
       datafilelist: [],
@@ -163,10 +167,15 @@ export default {
       },
       areaOptions: [],
       type: '',
-      businessType: '' //  参数设置  自动  还是 手输
+      businessType: '', //  参数设置  自动  还是 手输
+      isProjectSwitch: "",
+
     }
   },
-  created() {
+
+   async created() {
+    await this.getProjectSwitch('system', 'project')
+
     this.tabs.forEach((tab, tabInd) => {
       tab.tabContent.forEach((tc) => {
         this.dataForm[tc.prop] = tc.value || '' // 设置默认value
@@ -176,6 +185,7 @@ export default {
           // 产品分类
           if (tc.prop === 'warehouseName') {
             tc.method = getWarehouseList
+        this.requestObj2.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
 
             tc.requestObj = this.requestObj2
             tc.change = this.warehouseNameChange
@@ -185,6 +195,9 @@ export default {
         }
       })
     })
+  },
+  mounted () {
+    
   },
   computed: {
     openMode() {

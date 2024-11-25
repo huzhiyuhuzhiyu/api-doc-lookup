@@ -127,9 +127,11 @@ import Process from '@/components/Process/Preview'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import busFlow from '@/mixins/generator/busFlow'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   components: { TableFormProduct, workFlow, WareSide, Preview, TableFormWare, TableFormWareTwo, Process, recordList },
-  mixins: [busFlow],
+  mixins: [busFlow, getProjectList],
   data() {
     var checkQualifiedQuantity = (rule, value, callback) => {
       // if (value === '') {
@@ -142,6 +144,8 @@ export default {
       // }
     }
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       isattachmentswitch: '',
       datafilelist: [],
       activeName: 'jcInfo',
@@ -283,6 +287,10 @@ export default {
       },
       { prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120 }
     ]
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+
   },
   methods: {
     getBimBusinessDetail(inspectionType) {
@@ -523,7 +531,7 @@ export default {
                   Number(this.dataForm.inspectionUnqualifiedQuantity)
                 ) {
                   callback(new Error('报废数量+返修数量要等于检验不合格数量'))
-                }else {
+                } else {
                   callback()
                 }
               },
@@ -565,7 +573,7 @@ export default {
                   Number(this.dataForm.inspectionUnqualifiedQuantity)
                 ) {
                   callback(new Error('报废数量+返修数量要等于检验不合格数量'))
-                }else {
+                } else {
                   callback()
                 }
               },
@@ -619,7 +627,16 @@ export default {
           itemRules: [{ required: true, trigger: 'change' }],
           sm: 6
         },
-
+        {
+          prop: 'projectName',
+          label: '所属项目',
+          value: '',
+          type: 'input',
+          itemRules: [{ required: true, trigger: 'blur' }],
+          sm: 6,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
+          itemDisabled: true
+        },
         {
           prop: 'productDrawingNo',
           label: '品名规格',

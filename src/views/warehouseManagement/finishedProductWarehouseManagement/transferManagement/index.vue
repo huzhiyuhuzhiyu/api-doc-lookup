@@ -61,12 +61,12 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column>
-            <el-table-column prop="orderNo" label="调拨单号" min-width="180" sortable="custom"> 
+            <el-table-column prop="orderNo" label="调拨单号" min-width="180" sortable="custom">
               <template slot-scope="scope">
-              <el-link type="primary" @click.native="viewFun(scope.row.id, 'look')">{{
-                scope.row.orderNo
-              }}</el-link>
-            </template>
+                <el-link type="primary" @click.native="viewFun(scope.row.id, 'look')">{{
+                  scope.row.orderNo
+                  }}</el-link>
+              </template>
             </el-table-column>
             <el-table-column prop="pickingDate" label="调拨日期" min-width="160" sortable="custom" />
             <el-table-column prop="remark" label="备注" min-width="160" sortable="custom" />
@@ -145,13 +145,15 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
-
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'salesOrderCreation',
   components: { Form, ExportForm, SuperQuery },
-  props:{
-    warehouseCode: "", 
+  props: {
+    warehouseCode: "",
   },
+  mixins: [getProjectList],
   data() {
     return {
       documentStatusList: [
@@ -169,8 +171,8 @@ export default {
         orderNo: "",
         pickingStartDate: "",
         pickingEndDate: "",
-        documentStatus: "", 
-        transferType:"allocate_transfer",
+        documentStatus: "",
+        transferType: "allocate_transfer",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -235,39 +237,45 @@ export default {
 
       ],
       selectList: [],
-      classAttributeList:[],
+      classAttributeList: [],
+      isProjectSwitch: '',
     }
   },
 
-
-
- async created() {
-   this.getclassAttributeList()
-   const res = await this.jnpf.getBusInfo('b001')
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project') 
+    await this.getclassAttributeList()
+    const res = await this.jnpf.getBusInfo('b001')
     if (res) {
       this.showAppCodeFlag = res.enabledMark
     } else {
       this.showAppCodeFlag = false
     }
+
   },
+
+ 
   methods: {
     getclassAttributeList() {
       getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
         console.log("类别属性", res);
-        this.classAttributeList = res.data 
+        this.classAttributeList = res.data
         this.initData()
       })
     },
-    viewFun(id,btnType){
-      this.formVisible=true
-      this.$nextTick(()=>{
-          this.$refs.Form.init(id,btnType,false,this.warehouseCode)
+    viewFun(id, btnType) {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(id, btnType, false, this.warehouseCode)
       })
     },
-    editFun(id,btnType){
-      this.formVisible=true
-      this.$nextTick(()=>{
-          this.$refs.Form.init(id,btnType,false,this.warehouseCode)
+    editFun(id, btnType) {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(id, btnType, false, this.warehouseCode)
       })
     },
 
@@ -293,9 +301,9 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName' || prop === 'productCode' ) {
+      if (prop === 'productName' || prop === 'productCode') {
         newProp = prop
-      }   else {
+      } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
       }
       if (prop == "createByName") {
@@ -329,14 +337,15 @@ export default {
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
-        this.initData()
-       
+      this.initData()
+
     },
     initData() {
       this.listLoading = true
-      this.form.classAttributeList=this.classAttributeList
+      this.form.classAttributeList = this.classAttributeList
       // this.form.approvalStatus='ok'
 
+      // this.form.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getTransferList(this.form).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -359,9 +368,9 @@ export default {
         orderNo: "",
         pickingStartDate: "",
         pickingEndDate: "",
-        documentStatus: "", 
+        documentStatus: "",
         pageNum: 1,
-        transferType:"allocate_transfer",
+        transferType: "allocate_transfer",
         pageSize: 20,
         orderItems: [{
           asc: false,
@@ -381,7 +390,7 @@ export default {
     addSupplier() {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init('', 'add',false,this.warehouseCode)
+        this.$refs.Form.init('', 'add', false, this.warehouseCode)
       })
 
     },
@@ -409,7 +418,7 @@ export default {
       })
 
     },
- 
+
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
@@ -482,7 +491,7 @@ export default {
 
 .JNPF-common-search-box {
   padding: 8px 0 !important;
-  margin-left: 0!important; 
+  margin-left: 0 !important;
 
   margin-bottom: 5px;
 }

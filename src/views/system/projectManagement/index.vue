@@ -81,7 +81,7 @@ import { getcategoryList, deleteCategory, productPlmSync } from '@/api/basicData
 import DepForm from './depForm'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
-import { getProjectList, updateSortBatch } from '@/api/system/projectManagement'
+import { getProjectList, updateSortBatch, delProject } from '@/api/system/projectManagement'
 export default {
   components: { DepForm, ExportForm, SuperQuery },
   data() {
@@ -253,12 +253,8 @@ export default {
         type: 'process',
         orderItems: [
           {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
+            asc: true,
+            column: 'sort'
           }
         ],
         pageNum: 1,
@@ -300,7 +296,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          deleteCategory(id).then((res) => {
+          delProject(id).then((res) => {
             if (res.msg === 'Success') {
               this.initData()
               this.$message({

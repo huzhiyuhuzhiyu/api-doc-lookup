@@ -69,7 +69,9 @@
 </template>
 <script>
 import { ordershengchanList, addOrderNum } from '@/api/productOrdes/index.js'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
+  mixins: [getProjectList],
   data() {
     return {
       orderTypeList: [
@@ -104,14 +106,20 @@ export default {
       listLoading: false,
       total: 0,
       tableDataList: [],
-
+      isProjectSwitch:"",
+      id:"",
 
     }
   },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+
+  },
   methods: {
-    init() {
+    init(id) {
+      this.id=id
       this.customerVisible = true
-      this.getbatchNumList()
+      this.getbatchNumList(id)
     },
     // 选择批次
     selectFun(row) {
@@ -120,6 +128,7 @@ export default {
     },
     getbatchNumList() {
       this.listLoading = true
+      this.orderForm.projectId = id
       ordershengchanList(this.orderForm).then(res => {
         console.log("工艺路线", res);
         this.tableDataList = res.data.records
@@ -131,7 +140,7 @@ export default {
     },
 
     search() {
-      this.getbatchNumList()
+      this.getbatchNumList(this.id) 
     },
     reset() {
       this.form = {
@@ -145,7 +154,7 @@ export default {
           column: ""
         },],
       }
-      this.init()
+      this.search()
     },
   }
 }

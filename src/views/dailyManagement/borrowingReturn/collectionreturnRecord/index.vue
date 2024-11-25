@@ -101,11 +101,15 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { CollectionandreturnList } from '@/api/dailyManagement/Maintenance'
 import Form from '../circulate/Form.vue'
 import Form1 from '../toolreturn/Form.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters } from 'vuex'
 export default {
+  mixins: [getProjectList],
   // name: 'circulate',
   components: { Form, SuperQuery, Form1 },
   data() {
     return {
+      isProjectSwitch: '',
       formVisible1: false,
       superQueryJson: [
         {
@@ -186,6 +190,7 @@ export default {
         { label: "归还", value: 'back' }
       ],
       orderForm: {
+        projectId: '',
         equipmentType: 'tool',
         orderNo: '',
         maintainerIdText: '',
@@ -204,8 +209,12 @@ export default {
       formVisible: false,
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.initData()
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     columnSetFun() {
@@ -246,6 +255,7 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       CollectionandreturnList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total

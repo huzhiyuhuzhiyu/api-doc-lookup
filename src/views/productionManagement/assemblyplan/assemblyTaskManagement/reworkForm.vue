@@ -35,7 +35,11 @@
                             @focus="openSelectProductFun"></el-input>
                         </el-form-item>
                       </el-col>
-
+                      <el-col :sm="6" :xs="24" v-if="isProjectSwitch == 1">
+                        <el-form-item label="所属项目" prop="projectName">
+                          <el-input v-model="dataForm.projectName" placeholder="所属项目" disabled></el-input>
+                        </el-form-item>
+                      </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="工艺路线名称" prop="routingName">
                           <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" readonly
@@ -264,10 +268,10 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="workOrderFlag" label="是否生成工单" min-width="100">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.workOrderFlag ? "是" : "否" }}</div>
-                    </template>
-                  </el-table-column>
+                        <template slot-scope="scope">
+                          <div>{{ scope.row.workOrderFlag ? "是" : "否" }}</div>
+                        </template>
+                      </el-table-column>
                     </JNPF-table>
 
                   </el-form>
@@ -606,6 +610,8 @@ import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } fro
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { getBimProcessList, getBimProcessDetail } from '@/api/bimProcess/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default {
   components: {
     RoutingForm,
@@ -613,6 +619,8 @@ export default {
     SelectProcrssForm,
     CollectProductForm,
   },
+  mixins: [getProjectList],
+
   data() {
     return {
       taskMethodList: [{ label: "指定加工对象", value: "appoint" }, { label: "不指定加工对象", value: "not_appoint" },],
@@ -721,6 +729,7 @@ export default {
         bomId: "",
         drawingNo: "",
         productionLineId: "",
+        projectName: "",
       },
       dataFormTwo: {
         data: [],
@@ -792,9 +801,18 @@ export default {
       previousroutingId: "",
       detailDiaFlag: false,
       naturalResourcesFlag: true,
+      isProjectSwitch: "",
     }
   },
+
+
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.getPickingConfig()
+
+  },
   computed: {
+    ...mapGetters(['userInfo']),
     totalProductionQuantity: function () {
       var totalNums = 0;
       for (var i = 0; i < this.detailDataList.length; i++) {
@@ -817,9 +835,7 @@ export default {
       return totalNums
     },
   },
-  created() {
-    this.getPickingConfig()
-  },
+
   mounted() {
 
   },
@@ -889,10 +905,18 @@ export default {
 
     // 打开选择领料清单选择产品弹框
     openselectcollectProductFun() {
+      if (!this.dataForm.drawingNo) return this.$message.error("请先选择返工产品")
       this.collectVisible = true
-      this.$nextTick(() => {
-        this.$refs.collectProductForm.init()
-      })
+      if (this.isProjectSwitch == 1) {
+        this.$nextTick(() => {
+          this.$refs.collectProductForm.init(this.dataForm.projectId)
+        })
+      } else {
+        this.$nextTick(() => {
+          this.$refs.collectProductForm.init("")
+        })
+      }
+
     },
     // 选择的领料清单产品
     selectCollectProductFun(data) {
@@ -983,7 +1007,13 @@ export default {
     openSelectProductFun() {
       this.productVisible = true
       this.$nextTick(() => {
-        this.$refs.productForm.init()
+        if (this.isProjectSwitch == 1) {
+          this.$refs.productForm.init(this.userInfo.projectId || '')
+
+        } else {
+          this.$refs.productForm.init('')
+
+        }
       })
       console.log(6666);
     },
@@ -1058,11 +1088,17 @@ export default {
       }
     },
     openRoutingFun() {
+      if (!this.dataForm.drawingNo) return this.$message.error("请先选择返工产品")
       this.routingVisible = true
       this.$nextTick(() => {
-        this.$refs.routingForm.init()
-      }
-      )
+        if (this.isProjectSwitch == 1) {
+          this.$refs.routingForm.init(this.dataForm.projectId)
+
+        } else {
+          this.$refs.routingForm.init("")
+
+        }
+      } )
     },
     selectRoutingFun(data) {
       console.log(data);
@@ -1432,6 +1468,7 @@ export default {
         pageSize: -1,
       };
       // 获取产线
+      objs.projectId = this.dataForm.projectId
       getProductionLineList(objs).then((res) => {
         console.log("产线", res);
         this.lineList = res.data.records;
@@ -1466,13 +1503,15 @@ export default {
         });
       })
     },
-    init(id, btnType) {
+    async init(id, btnType) {
       console.log("传递数据", id, btnType);
       this.dataForm.id = id || ''
       this.btnType = btnType
       this.$set(this.dataForm, 'planDate', [])
       this.$refs.dataForm.clearValidate('planDate');
       this.getProductClassFun()
+      await this.getProjectSwitch('system', 'project')
+      this.getPickingConfig()
       if (btnType == 'edit') {
         this.fetchData("PROD", false)
         this.fetchData("PODH", false)
@@ -1836,7 +1875,8 @@ $footerPadding: '10px';
   background-color: #5d9bd5;
   color: #fff;
 }
-::v-deep .el-range-editor{
-  height: 34px!important;
+
+::v-deep .el-range-editor {
+  height: 34px !important;
 }
 </style>

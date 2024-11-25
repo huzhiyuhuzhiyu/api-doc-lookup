@@ -9,7 +9,8 @@
             <el-table hasNO fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" size="mini" id="table"
               style="width: 100%">
               <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-
+              <el-table-column prop="projectName" label="所属项目" width="120"
+                v-if="isProjectSwitch === '1'"></el-table-column>
               <el-table-column prop="productCode" label="产品编码" min-width="120" show-overflow-tooltip>
                 <template slot-scope="scope">
                   <!-- <el-input v-model="scope.row.productCode" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
@@ -92,11 +93,16 @@
 
 <script>
 import formValidate from '@/utils/formValidate'
+import getProjectList from '@/mixins/generator/getProjectList'
 
 export default {
   components: {},
+  mixins: [getProjectList],
+
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       types: '',
       drawer: false,
       direction: 'rtl',
@@ -127,7 +133,10 @@ export default {
       }
     }
   },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
 
+  },
   methods: {
     handlerDelete(index) {
       this.dataFormTwo.data.splice(index, 1)

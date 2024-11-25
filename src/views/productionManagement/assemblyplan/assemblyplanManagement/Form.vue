@@ -30,7 +30,15 @@
                         :disabled="codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
                     </el-form-item>
                   </el-col>
-
+                  <el-col :sm="6" :xs="24" v-if="isProjectSwitch == 1">
+                    <el-form-item label="所属项目" prop="projectId">
+                      <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;"
+                        disabled>
+                        <el-option v-for="(item, index) in projectIdDataList" :key="index" :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
 
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="品名规格" prop="productsDrawingNo">
@@ -38,6 +46,7 @@
                       </el-input>
                     </el-form-item>
                   </el-col>
+
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="产品编码" prop="productsCode">
                       <el-input v-model="dataForm.productsCode" placeholder="产品编码" disabled>
@@ -90,7 +99,7 @@
                   </el-col>
 
                   <el-col :sm="6" :xs="24">
-                    <el-form-item label="计划生产开始—结束日期" prop="planDate">
+                    <el-form-item label="计划生产开始—结束日期" prop="planDate" style="margin-bottom: 20px;">
                       <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                         style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                       </el-date-picker>
@@ -498,9 +507,12 @@ import { excelExport, getProductionLineInfo, getProductionLineList } from "@/api
 import RoutingForm from "./RoutingForm.vue"
 import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
-import { getWarehouseList  } from '@/api/basicData/index'
+import { getWarehouseList } from '@/api/basicData/index'
 import { getBimBusinessDetail } from '@/api/basicData/index'
+import { mapGetters, mapState } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
+  mixins: [getProjectList],
   components: {
     RoutingForm
   },
@@ -555,6 +567,7 @@ export default {
         specialRequire: "",
         remark: "",
         bomId: "",
+        projectId: "",
       },
       dataFormTwo: {
         data: [],
@@ -610,10 +623,16 @@ export default {
       },
       naturalResourcesFlag: true,
       processList: [],
-      warehouseList:[],
+      warehouseList: [],
+      isProjectSwitch: "",
+      projectIdDataList: [],
+
     }
   },
   computed: {
+    ...mapGetters(['userInfo']),
+    ...mapState('user', ['token']),
+
     totalProductionQuantity: function () {
       var totalNums = 0;
       for (var i = 0; i < this.detailDataList.length; i++) {
@@ -636,23 +655,24 @@ export default {
       return totalNums
     },
   },
-  created() {
-    this.getPickingConfig()
-  },
-  mounted() {
-    this.getWarehouseListFun()
 
+  async created() {
+    await this.getProjectList()
+    await this.getProjectSwitch('system', 'project')
+    this.getPickingConfig()
   },
 
   methods: {
-    getWarehouseListFun(){
-      let obj={
-        type:"line_edge",
-        state:"enable"
+
+    getWarehouseListFun() {
+      let obj = {
+        type: "line_edge",
+        state: "enable"
       }
-      getWarehouseList(obj).then(res=>{
-        console.log("线边仓库",res);
-        this.warehouseList=res.data
+      obj.projectId = this.dataForm.projectId
+      getWarehouseList(obj).then(res => {
+        console.log("线边仓库", res);
+        this.warehouseList = res.data
       })
     },
     getBimBusinessDetail() {
@@ -793,10 +813,15 @@ export default {
     },
     openRoutingFun() {
       this.routingVisible = true
-      this.$nextTick(() => {
-        this.$refs.routingForm.init()
+      if (this.isProjectSwitch == 1) {
+        this.$nextTick(() => {
+          this.$refs.routingForm.init(this.dataForm.projectId)
+        })
+      }else{
+        this.$nextTick(() => {
+          this.$refs.routingForm.init("")
+        }) 
       }
-      )
     },
     selectRoutingFun(data) {
       console.log(data);
@@ -1019,6 +1044,8 @@ export default {
         pageSize: -1,
       };
       // 获取产线
+
+      objs.projectId = this.dataForm.projectId
       getProductionLineList(objs).then((res) => {
         console.log("产线", res);
         this.productionLineList = res.data.records;
@@ -1062,6 +1089,9 @@ export default {
       this.$set(this.dataForm, 'taskMethod', 'appoint')
       // let num=JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
       // this.$set(this.dataForm,'productionQuantity',num)
+      if (this.dataForm.autoMaterialFlag) {
+        this.getWarehouseListFun()
+      }
       this.dataForm.productionQuantity = JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
       this.$set(this.dataForm, 'planDate', [])
       this.$set(this.dataForm, 'productionPlanId', data[0].id)
@@ -1146,13 +1176,13 @@ export default {
         })
         this.$set(item, 'workOrderResList', item.routingProResList)
       });
-      let arr=[]
-      if(this.dataForm.autoMaterialFlag){
+      let arr = []
+      if (this.dataForm.autoMaterialFlag) {
 
-        this.dataForm.lineEdgeList.forEach(item=>{
+        this.dataForm.lineEdgeList.forEach(item => {
           arr.push({
-            productionOrderId:"",
-            warehouseId:item
+            productionOrderId: "",
+            warehouseId: item
           })
         })
       }
@@ -1160,7 +1190,7 @@ export default {
         prodOrder: this.dataForm,
         workOrderList: this.dataFormTwo.data,
         collect: this.collectForm,
-        lineEdgeList:arr
+        lineEdgeList: arr
       }
       addProdPlanArrange(obj).then(res => {
         this.btnLoading = false
@@ -1175,7 +1205,7 @@ export default {
     },
     handleConfirm(value) {
       console.log(this.dataForm);
-      
+
       this.$refs['dataForm'].validate((valid) => {
         this.dataForm.documentStatus = value
         if (valid) {

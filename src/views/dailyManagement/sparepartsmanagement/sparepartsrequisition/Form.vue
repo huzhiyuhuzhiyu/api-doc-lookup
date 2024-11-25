@@ -99,6 +99,7 @@
                     <el-table-column type="index" width="60" label="序号" align="center" fixed='left' key="11" />
                     <el-table-column prop="productCode" label="备件编码" min-width="160" show-overflow-tooltip>
                     </el-table-column>
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                     <!-- <el-table-column prop="productName" label="备件名称" min-width="160" show-overflow-tooltip>
                       <template slot="header">
                         <span class="required">*</span>备件名称
@@ -218,6 +219,7 @@
                 <el-table-column type="index" width="60" label="序号" align="center" fixed='left' key="11" />
                 <el-table-column prop="productCode" label="备件编码" min-width="160" show-overflow-tooltip>
                 </el-table-column>
+                <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                 <!-- <el-table-column prop="productName" label="备件名称" min-width="160" show-overflow-tooltip>
                       <template slot="header">
                         <span class="required">*</span>备件名称
@@ -275,7 +277,7 @@ import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getProductList } from '@/api/basicData/materialFiles' // 备件列表
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
-  mixins: [busFlow, flowMixin,getProjectList],
+  mixins: [busFlow, flowMixin, getProjectList],
   components: { Process, recordList },
   data() {
     return {
@@ -434,7 +436,7 @@ export default {
       getcategoryTree,
       getProductList,
       ProductListRequestObj: {
-        projectId:'',
+        projectId: '',
         classAttribute: "spare_parts",
         code: "",
         drawingNo: "",
@@ -509,7 +511,7 @@ export default {
   computed: {
     ...mapGetters(['userInfo']),
   },
-  async created(){
+  async created() {
     await this.getProjectSwitch('system', 'project')
   },
   mounted() {
@@ -621,6 +623,7 @@ export default {
             mainUnit: item.all.mainUnit,
             availableQuantity: item.all.availableQuantity,
             productId: item.all.id,
+            projectName: item.all.projectName,
             requisitionNum: '',
           })
         } else {

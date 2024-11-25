@@ -34,6 +34,7 @@
           <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @sort-change="sortChange">
             <el-table-column prop="code" label="工艺路线编码" sortable="custom" ></el-table-column>
             <el-table-column prop="name" label="工艺路线名称" sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" sortable="custom" v-if="isProjectSwitch == 1" />
            
             <el-table-column label="操作" width="100" fixed="right">
               <template slot-scope="scope" >
@@ -51,7 +52,9 @@
 </template>
 <script>
 import { detailProcess,getProcessList } from '@/api/basicData/processSettingss.js'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
+  mixins: [getProjectList],
   data() {
     return {
      
@@ -72,9 +75,15 @@ export default {
       listLoading: false,
       total: 0,
       tableDataList: [],
+      isProjectSwitch:"",
+      id:"",
      
 
     }
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+
   },
   methods: {
     
@@ -91,9 +100,10 @@ export default {
       this.form.orderItems[0].column = order === null ? "" : newProp
       this.getbatchNumList()
     },
-    init() {
+    init(id) {
       this.customerVisible = true
-      this.getbatchNumList()
+      this.id = id
+      this.getbatchNumList(id)
     },
     // 选择批次
     selectFun(row) {
@@ -113,7 +123,7 @@ export default {
     },
 
     search() {
-      this.getbatchNumList()
+      this.getbatchNumList(this.id)
     },
     reset() {
       this.form = {
@@ -127,7 +137,7 @@ export default {
           column: ""
         },],
       }
-      this.init()
+      this.search()
     },
   }
 }

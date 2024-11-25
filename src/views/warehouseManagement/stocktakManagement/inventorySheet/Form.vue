@@ -875,7 +875,7 @@ export default {
         this.$set(item, 'num', '')
         this.$set(item, 'diffNum', '')
         this.$set(item, 'shelfSpaceId', item.shelfSpaceId)
-        this.$set(item, 'shelfSpaceName', item.shelfSpaceId)
+        this.$set(item, 'shelfSpaceName', item.shelfSpaceName)
         this.$set(item, 'batchNumber', item.shelfSpaceId)
         this.$set(item, 'productsId', item.id)
         this.$set(item, 'allocationFlag', item.locationStatus == 'disabled' ? false : true)

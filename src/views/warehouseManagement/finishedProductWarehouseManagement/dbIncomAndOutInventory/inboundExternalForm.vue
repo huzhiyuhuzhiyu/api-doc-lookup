@@ -569,12 +569,13 @@ import BatchNumberForm from './batchNumberForm.vue'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import flowMixin from '@/mixins/generator/flowMixin'
+import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 export default {
   components: { CustomerForm, WareHouseForm, BatchNumberForm, Process, recordList },
-  mixins: [flowMixin, getProjectList],
+  mixins: [flowMixin,busFlow, getProjectList],
   data() {
     return {
       isProjectSwitch: '',

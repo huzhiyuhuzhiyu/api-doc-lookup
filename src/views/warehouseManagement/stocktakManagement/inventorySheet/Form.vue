@@ -36,7 +36,8 @@
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="盘点日期" prop="orderDate">
                               <el-date-picker v-model="dataForm.orderDate" type="date" value-format="yyyy-MM-dd"
-                                style="width: 100%;" :picker-options="pickerOptions" placeholder="请选择盘点日期" :disabled="btnType=='look'">
+                                style="width: 100%;" :picker-options="pickerOptions" placeholder="请选择盘点日期"
+                                :disabled="btnType == 'look'">
                               </el-date-picker>
                             </el-form-item>
                           </el-col>
@@ -107,7 +108,7 @@
                           </template>
                           <template slot-scope="scope">
                             <ComSelect-list
-                              :requestObj="{  type: '',virtuallyFlag:false,  state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : ''  }"
+                              :requestObj="{ type: '', virtuallyFlag: false, state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }"
                               :dialogTitle="'选择盘点仓库'" :isdisabled="btnType == 'look'" v-model="scope.row.warehouseName"
                               :method="getWarehouseList" :currentIndex="scope.$index" placeholder="请选择仓库"
                               @change="changeCurrentWarehousex"></ComSelect-list>
@@ -169,7 +170,8 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="盘点日期" prop="orderDate">
                           <el-date-picker v-model="dataForm.orderDate" type="date" value-format="yyyy-MM-dd"
-                            style="width: 100%;" :picker-options="pickerOptions" placeholder="请选择盘点日期" :disabled="btnType=='look'">
+                            style="width: 100%;" :picker-options="pickerOptions" placeholder="请选择盘点日期"
+                            :disabled="btnType == 'look'">
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
@@ -182,7 +184,7 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="盘点仓库" prop="warehouseName">
                           <ComSelect-list
-                            :requestObj="{  type: '',virtuallyFlag:false,  state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : ''  }"
+                            :requestObj="{ type: '', virtuallyFlag: false, state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }"
                             :dialogTitle="'选择盘点仓库'" :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName"
                             :method="getWarehouseList" placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
                         </el-form-item>
@@ -238,7 +240,7 @@
                       </template>
                       <template slot-scope="scope">
                         <ComSelect-list
-                          :requestObj="{   type: '',virtuallyFlag:false,  state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : ''  }"
+                          :requestObj="{ type: '', virtuallyFlag: false, state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }"
                           :dialogTitle="'选择盘点仓库'" :isdisabled="btnType == 'look'" v-model="scope.row.warehouseName"
                           :method="getWarehouseList" placeholder="请选择仓库" :currentIndex="scope.$index"
                           @change="changeCurrentWarehousex"></ComSelect-list>
@@ -333,7 +335,7 @@
                 <el-table-column prop="code" label="产品编码" width="140" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
 
-                <el-table-column prop="batchNumber" label="批次号" width="180"  />
+                <el-table-column prop="batchNumber" label="批次号" width="180" />
                 <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
                 <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
@@ -447,6 +449,7 @@ export default {
         approvalFlag: false,
         personId: "",
         personName: "",
+        orderDate:""
       },
       productForm: {
         productCode: "",
@@ -875,11 +878,12 @@ export default {
         this.$set(item, 'shelfSpaceName', item.shelfSpaceId)
         this.$set(item, 'batchNumber', item.shelfSpaceId)
         this.$set(item, 'productsId', item.id)
+        this.$set(item, 'allocationFlag', item.locationStatus == 'disabled' ? false : true)
         if (this.dataForm.warehouseId) {
           this.$set(item, 'warehouseName', this.dataForm.warehouseName)
           this.$set(item, 'allocationFlag', this.allocationFlag)
           this.$set(item, 'warehouseId', this.dataForm.warehouseId)
-        }else{
+        } else {
           this.$set(item, 'warehouseName', item.warehouseName)
           this.$set(item, 'allocationFlag', item.allocationFlag)
           this.$set(item, 'warehouseId', item.warehouseId)

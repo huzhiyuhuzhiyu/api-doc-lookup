@@ -905,6 +905,7 @@ export default {
             plan: {},
           }
           let arr = []
+          if(!this.productData.length) return this.$message.error("产品信息至少需要一条数据")
           this.productData.forEach(item => {
             let objs = {
               cooperativePartnerId: item.cooperativePartnerId,

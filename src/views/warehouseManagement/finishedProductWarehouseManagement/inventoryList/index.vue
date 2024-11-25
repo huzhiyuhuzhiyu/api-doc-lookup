@@ -772,7 +772,7 @@ export default {
         this.$nextTick(() => {
           this.$refs.inboundReturnREFForm.init(id, type,)
         })
-      } else if (row.businessType == 'inbound_taking_adjust') {
+      } else if (row.businessType == 'inbound_taking_adjust'||row.businessType=='outbound_taking_adjust') {
         this.takingAdjustVisible = true
         this.$nextTick(() => {
           this.$refs.takingAdjustREFForm.init(id, type,)

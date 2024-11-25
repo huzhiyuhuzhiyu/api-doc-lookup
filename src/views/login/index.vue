@@ -54,7 +54,7 @@
                                                 :label="value.companyName"></el-option>
                                         </el-select>
                                     </el-form-item> -->
-                  <el-form-item prop="busCode">
+                  <el-form-item prop="busCode" v-show="isDomain">
                     <el-input ref="account" v-model="loginForm.busCode" :placeholder="$t('login.busCode')" name="busCode" type="text" tabindex="1" autocomplete="on" prefix-icon="el-icon-user" size="large" @change="getConfig">
                     </el-input>
                   </el-form-item>
@@ -277,7 +277,8 @@ export default {
       berning: [],
       isbgload: false,
       isLogin: true,
-      loginpattern: {}
+      loginpattern: {},
+      isDomain:true
     }
   },
   computed: {
@@ -314,6 +315,47 @@ export default {
     }
   },
   created() {
+    // 判断是否是域名 是域名进行截取 不是域名 放开企业代码
+    function isDomainOrIP(origin) {
+      try {
+        // 解析 origin 获取主机名
+        const hostname = new URL(origin).hostname;
+
+        // 检查是否是 IP 地址
+        const ipRegex = /^(?:\d{1,3}\.){3}\d{1,3}$/;
+        if (ipRegex.test(hostname)) {
+          return 'IP';
+        }
+
+        // 检查是否是域名
+        const domainRegex = /^(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
+        if (domainRegex.test(hostname)) {
+          return 'Domain';
+        }
+
+        return 'Unknown';
+      } catch (error) {
+        console.error('Invalid origin:', error);
+        return 'Unknown';
+      }
+    }
+    const result = isDomainOrIP(location.origin);
+    if (result === 'Domain'){
+      const url = location.origin;
+      // const url = 'http://zgt_zy.test.zgt.nbjuxuan.com/';
+      const regex = /http:\/\/([^\.]+)/;
+      const match = url.match(regex);
+
+      if (match) {
+          const result = match[1]; // 捕获组中的内容
+          console.log(result); // 输出: zgt_zy
+          this.isDomain = false;
+          this.loginForm.busCode = result
+      }
+    }else{
+      this.isDomain = true
+    }
+   
     this.berning = []
     for (var i = 0; i < 5; i++) {
       let x = Math.floor(Math.random() * 80)

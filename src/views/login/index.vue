@@ -17,8 +17,7 @@
         </div>
         <div class="body_box">
           <div class="body_right">
-            <div
-              style="display: flex;justify-content: space-between;background:rgba(0, 0, 0, 0.6);height: 82px;align-items: center;">
+            <div style="display: flex;justify-content: space-between;background:rgba(0, 0, 0, 0.6);height: 82px;align-items: center;">
               <div style='display:flex;font-size:34px;font-weight:bold;color:white;align-items: center;'>
                 <el-image class="login-logo" :src="define.comUrl+loginpattern.loginIcon" v-if="loginpattern && loginpattern.loginIcon">
                   <template slot="error">
@@ -42,13 +41,12 @@
             <div class="login-content">
               <div class="login-form">
                 <div class="login-tab" :class="'active' + active">
-                  <a class="item" :class="{ 'active': active == 1 }" @click="active = 1">{{
+                  <a class="item" :class="{ 'active': active == 1 }" @click="tableactive">{{
                     $t('login.title') }}</a>
-                  <a class="item" :class="{ 'active': active == 2 }" @click="active = 2">{{
+                  <a class="item" :class="{ 'active': active == 2 }" @click="tabactive">{{
                     $t('login.scanTitle') }}</a>
                 </div>
-                <el-form v-show="active == 1" ref="loginForm" :model="loginForm" :rules="loginRules" autocomplete="on"
-                  label-position="left">
+                <el-form v-show="active == 1" ref="loginForm" :model="loginForm" :rules="loginRules" autocomplete="on" label-position="left">
                   <!-- <el-form-item>
                                         <el-select class="sel-item" v-model="loginForm.sys" @change="getConfig"
                                             size="medium" v-show="showTenancy">
@@ -57,50 +55,42 @@
                                         </el-select>
                                     </el-form-item> -->
                   <el-form-item prop="busCode">
-                    <el-input ref="account" v-model="loginForm.busCode" :placeholder="$t('login.busCode')"
-                      name="busCode" type="text" tabindex="1" autocomplete="on" prefix-icon="el-icon-user" size="large"
-                      @change="getConfig">
+                    <el-input ref="account" v-model="loginForm.busCode" :placeholder="$t('login.busCode')" name="busCode" type="text" tabindex="1" autocomplete="on" prefix-icon="el-icon-user" size="large" @change="getConfig">
                     </el-input>
                   </el-form-item>
                   <el-form-item prop="account">
-                    <el-input ref="account" v-model="loginForm.account" :placeholder="$t('login.username')"
-                      name="account" type="text" tabindex="1" autocomplete="on" prefix-icon="el-icon-user" size="large"
-                      @change="getConfig">
+                    <el-input ref="account" v-model="loginForm.account" :placeholder="$t('login.username')" name="account" type="text" tabindex="1" autocomplete="on" prefix-icon="el-icon-user" size="large" @change="getConfig">
                     </el-input>
                   </el-form-item>
                   <!-- <el-form-item class="rule-tip">{{$t('login.rule')}}</el-form-item> -->
                   <el-tooltip v-model="capsTooltip" :content="$t('login.upper')" placement="right" manual>
                     <el-form-item prop="password">
-                      <el-input ref="password" v-model="loginForm.password" show-password
-                        :placeholder="$t('login.password')" name="password" tabindex="2" autocomplete="on"
-                        @keyup.native="checkCapslock" @blur="capsTooltip = false" prefix-icon="el-icon-lock"
-                        size="large"></el-input>
+                      <el-input ref="password" v-model="loginForm.password" show-password :placeholder="$t('login.password')" name="password" tabindex="2" autocomplete="on" @keyup.native="checkCapslock" @blur="capsTooltip = false" prefix-icon="el-icon-lock" size="large"></el-input>
                     </el-form-item>
                   </el-tooltip>
                   <el-form-item prop="code" v-if="needCode">
                     <el-row type="flex" justify="space-between">
                       <el-col class="sms-input">
-                        <el-input v-model="loginForm.code" :placeholder="$t('login.codeTip')" name="code"
-                          autocomplete="on" prefix-icon="el-icon-key" size="large">
+                        <el-input v-model="loginForm.code" :placeholder="$t('login.codeTip')" name="code" autocomplete="on" prefix-icon="el-icon-key" size="large">
                         </el-input>
                       </el-col>
                       <el-col class="sms-right code-right">
                         <el-tooltip :content="$t('login.changeCode')" placement="bottom">
-                          <img id="imgcode" :alt="$t('login.changeCode')" :src="define.comUrl + imgUrl"
-                            @click="changeImg">
+                          <img id="imgcode" :alt="$t('login.changeCode')" :src="define.comUrl + imgUrl" @click="changeImg">
                         </el-tooltip>
                       </el-col>
                     </el-row>
                   </el-form-item>
-                  <el-button :loading="loading" type="primary" class="login-btn" size="large"
-                    @click.native.prevent="handleLogin">{{
+                  <el-button :loading="loading" type="primary" class="login-btn" size="large" @click.native.prevent="handleLogin">{{
                       $t('login.logIn') }}</el-button>
 
                 </el-form>
 
                 <div v-show="active == 2" class="login-form-QRCode">
-                  <img class="qrcode-img" src="@/assets/images/login_qr.png">
-                  <p class="qrcode-tip"><br>正在测试,敬请期待</p>
+                  <div @click="Refreshqrcode"><img src="@/assets/images/shuaxin.png" v-if="qrcodetype=='expire'"></div>
+                  <div><img src="@/assets/images/ok.png" v-if="qrcodetype=='success'"></div>
+                  <div id="qrcode" ref="qrCode" style="text-align:center" v-if="qrcodetype=='scancode'"></div>
+                  <p class="qrcode-tip"><br>{{qrcodetip}}</p>
                 </div>
               </div>
             </div>
@@ -141,61 +131,53 @@
               <div class="login-content">
                 <div class="login-form">
                   <div class="login-tab" :class="'active' + active">
-                    <a class="item" :class="{ 'active': active == 1 }" @click="active = 1">{{
+                    <a class="item" :class="{ 'active': active == 1 }" @click="tableactive">{{
                       $t('login.title') }}</a>
-                    <a class="item" :class="{ 'active': active == 2 }" @click="active = 2">{{
+                    <a class="item" :class="{ 'active': active == 2 }" @click="tabactive">{{
                       $t('login.scanTitle') }}</a>
                   </div>
                   <div v-show="active == 1">
-                    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" autocomplete="on"
-                    label-position="left">
-                    <el-form-item prop="busCode">
-                      <el-input ref="account" v-model="loginForm.busCode" :placeholder="$t('login.busCode')"
-                        name="busCode" type="text" tabindex="1" autocomplete="on" prefix-icon="el-icon-user"
-                        size="large" @change="getConfig">
-                      </el-input>
-                    </el-form-item>
-                    <el-form-item prop="account">
-                      <el-input ref="account" v-model="loginForm.account" :placeholder="$t('login.username')"
-                        name="account" type="text" tabindex="1" autocomplete="on" prefix-icon="el-icon-user"
-                        size="large" @change="getConfig">
-                      </el-input>
-                    </el-form-item>
-                    <el-tooltip v-model="capsTooltip" :content="$t('login.upper')" placement="right" manual>
-                      <el-form-item prop="password">
-                        <el-input ref="password" v-model="loginForm.password" show-password
-                          :placeholder="$t('login.password')" name="password" tabindex="2" autocomplete="on"
-                          @keyup.native="checkCapslock" @blur="capsTooltip = false" prefix-icon="el-icon-lock"
-                          size="large"></el-input>
+                    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" autocomplete="on" label-position="left">
+                      <el-form-item prop="busCode">
+                        <el-input ref="account" v-model="loginForm.busCode" :placeholder="$t('login.busCode')" name="busCode" type="text" tabindex="1" autocomplete="on" prefix-icon="el-icon-user" size="large" @change="getConfig">
+                        </el-input>
                       </el-form-item>
-                    </el-tooltip>
-                    <el-form-item prop="code" v-if="needCode">
-                      <el-row type="flex" justify="space-between">
-                        <el-col class="sms-input">
-                          <el-input v-model="loginForm.code" :placeholder="$t('login.codeTip')" name="code"
-                            autocomplete="on" prefix-icon="el-icon-key" size="large">
-                          </el-input>
-                        </el-col>
-                        <el-col class="sms-right code-right">
-                          <el-tooltip :content="$t('login.changeCode')" placement="bottom">
-                            <img id="imgcode" :alt="$t('login.changeCode')" :src="define.comUrl + imgUrl"
-                              @click="changeImg">
-                          </el-tooltip>
-                        </el-col>
-                      </el-row>
-                    </el-form-item>
-                    <div class="sms-password">
-                      <el-switch v-model="value1" active-text="记住我">
-                      </el-switch>
-                      <a href="#">忘记密码?</a>
-                    </div>
-                    <el-button :loading="loading" type="primary" class="login-btn" size="large" @click.native.prevent="handleLogin">{{ $t('login.logIn') }}</el-button>
+                      <el-form-item prop="account">
+                        <el-input ref="account" v-model="loginForm.account" :placeholder="$t('login.username')" name="account" type="text" tabindex="1" autocomplete="on" prefix-icon="el-icon-user" size="large" @change="getConfig">
+                        </el-input>
+                      </el-form-item>
+                      <el-tooltip v-model="capsTooltip" :content="$t('login.upper')" placement="right" manual>
+                        <el-form-item prop="password">
+                          <el-input ref="password" v-model="loginForm.password" show-password :placeholder="$t('login.password')" name="password" tabindex="2" autocomplete="on" @keyup.native="checkCapslock" @blur="capsTooltip = false" prefix-icon="el-icon-lock" size="large"></el-input>
+                        </el-form-item>
+                      </el-tooltip>
+                      <el-form-item prop="code" v-if="needCode">
+                        <el-row type="flex" justify="space-between">
+                          <el-col class="sms-input">
+                            <el-input v-model="loginForm.code" :placeholder="$t('login.codeTip')" name="code" autocomplete="on" prefix-icon="el-icon-key" size="large">
+                            </el-input>
+                          </el-col>
+                          <el-col class="sms-right code-right">
+                            <el-tooltip :content="$t('login.changeCode')" placement="bottom">
+                              <img id="imgcode" :alt="$t('login.changeCode')" :src="define.comUrl + imgUrl" @click="changeImg">
+                            </el-tooltip>
+                          </el-col>
+                        </el-row>
+                      </el-form-item>
+                      <div class="sms-password">
+                        <el-switch v-model="value1" active-text="记住我">
+                        </el-switch>
+                        <a href="#">忘记密码?</a>
+                      </div>
+                      <el-button :loading="loading" type="primary" class="login-btn" size="large" @click.native.prevent="handleLogin">{{ $t('login.logIn') }}</el-button>
 
-                  </el-form>
+                    </el-form>
                   </div>
                   <div v-show="active == 2" class="login-form-QRCode">
-                    <img class="qrcode-img" src="@/assets/images/login_qr.png">
-                    <p class="qrcode-tip"><br>正在测试,敬请期待</p>
+                    <div @click="Refreshqrcode"><img src="@/assets/images/shuaxin.png" v-if="qrcodetype=='expire'"></div>
+                    <div><img src="@/assets/images/ok.png" v-if="qrcodetype=='success'"></div>
+                    <div id="qrcode" ref="qrCode" style="text-align:center" v-if="qrcodetype=='scancode'"></div>
+                    <p class="qrcode-tip"><br>{{qrcodetip}}</p>
                   </div>
                 </div>
               </div>
@@ -226,6 +208,8 @@
 </template>
 
 <script>
+import QRCode from 'qrcodejs2'
+import { setToken } from '@/utils/auth'
 import {
   getConfig, getpattern
 } from '@/api/user'
@@ -234,6 +218,10 @@ export default {
   name: 'Login',
   data() {
     return {
+      socket: null,
+      intervalId: null,
+      qrcodetype: 'scancode',
+      qrcodetip: '请使用App进行扫码登录',
       value1: false,
       loginLeftText: '',
       loginLeftTopic: '',
@@ -304,7 +292,6 @@ export default {
     },
     $route: {
       handler: function (route) {
-        console.log("router", route);
         let aaa = ''
         if (location.host.substring(0, 3) === 'jlw') {
           this.aaa = '机联网'
@@ -316,7 +303,6 @@ export default {
         localStorage.setItem('aaa', aaa)
         const query = route.query
         if (query) {
-          console.log("query", query);
           this.redirect = query.redirect
           this.otherQuery = this.getOtherQuery(query)
           delete this.otherQuery.sys;
@@ -414,6 +400,103 @@ export default {
     }
   },
   methods: {
+    tableactive() {
+      this.active = 1
+      this.socket.close()
+      clearInterval(this.intervalId)
+      this.qrcodetype = 'scancode'
+      this.qrcodetip = '请使用App进行扫码登录'
+    },
+    //刷新二维码
+    Refreshqrcode() {
+      this.qrcodetype = 'scancode'
+      this.qrcodetip = '请使用App进行扫码登录'
+      this.$nextTick(() => {
+        this.tabactive()
+      })
+    },
+    tabactive() {
+      this.active = 2
+      let uuid = this.generateUUID().replace(/-/g, "")
+      this.$refs.qrCode.innerHTML = "";
+      let qrcode = new QRCode(this.$refs.qrCode, {
+        width: 180,
+        height: 180, // 高度
+        text: uuid, // 二维码内容
+        // render: 'canvas' // 设置渲染方式（有两种方式 table和canvas，默认是canvas）
+        // background: '#f0f'
+        // foreground: '#ff0'
+        correctLevel: QRCode.CorrectLevel.H //容错级别 容错级别有：（1）QRCode.CorrectLevel.L （2）QRCode.CorrectLevel.M （3）QRCode.CorrectLevel.Q （4）QRCode.CorrectLevel.H
+      })
+      if ('WebSocket' in window) {
+        let that = this
+        const webSocketUrl = `${this.define.WebSocketqrcode}api/oauth/websocket/${uuid}`
+        this.socket = new WebSocket(webSocketUrl)
+        this.socket.onopen = () => {
+          this.intervalId = setInterval(function () {
+            that.socket.send("123")
+          }, 3000)
+        }
+        // 收到消息时执行的回调函数
+        this.socket.onmessage = function (event) {
+          if (event.data === 'EXPIRED') {
+            clearInterval(that.intervalId);
+            that.socket.close()
+            that.qrcodetype = 'expire'
+            that.qrcodetip = '请刷新二维码'
+            // 处理心跳响应
+          } else if (event.data === 'SCANNED') {
+            clearInterval(that.intervalId);
+            that.qrcodetype = 'success'
+            that.qrcodetip = '请在App上授权操作'
+            // 处理其他消息
+          } else if (event.data === 'NORMAL') {
+
+          } else {
+            let data = JSON.parse(event.data)
+            const layoutList = ['classic', 'functional', 'plain', 'blend']
+            let layoutType = data.theme && layoutList.indexOf(data.theme) > -1 ? data.theme : 'classic'
+            that.$store.commit('user/SET_TOKEN', data.token)
+            that.$store.commit('settings/CHANGE_SETTING', { key: "layoutType", value: layoutType }, { root: true })
+            setToken(data.token)
+            if (data.tenantId == 'ys') {
+              localStorage.setItem('aaa', 'zgt')
+            } else if (data.tenantId == 'jz') {
+              localStorage.setItem('aaa', 'jz')
+            }
+            getInfo("").then(response => {
+              localStorage.setItem('qhxt', false)
+              that.$store.commit('jx/SET_LOGO')
+              localStorage.setItem("sys", data.tenantId)
+              location.href = location.origin + '/' + response.data.systemVO.homeAdress
+            }).catch(error => {
+              that.$store.commit('user/SET_LOGIN_LOADING', false)
+            })
+            that.socket.close()
+          }
+        };
+        // 连接关闭时执行的回调函数
+        this.socket.onclose = function (event) {
+          clearInterval(that.intervalId)
+        };
+
+        // 处理错误
+        this.socket.onerror = function (error) {
+          clearInterval(that.intervalId)
+        };
+      }
+
+    },
+    //生成唯一id
+    generateUUID() {
+      var d = new Date().getTime();
+      var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = (d + Math.random() * 16) % 16 | 0;
+        d = Math.floor(d / 16);
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+      });
+      return uuid;
+    },
     GetQueryString(name) {
       var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
       var r = window.location.search.substr(1).match(reg);
@@ -467,17 +550,16 @@ export default {
               localStorage.setItem('aaa', 'jz')
 
             }
-            getInfo("").then(response=>{
-                console.log(response,location.origin + '/' + response.data.systemVO.homeAdress);
-                localStorage.setItem('qhxt', false)
-            this.$store.commit('jx/SET_LOGO')
-            localStorage.setItem("sys", this.loginForm.busCode)
-                location.href = location.origin + '/' + response.data.systemVO.homeAdress
-              }).catch(error=>{
-          this.$store.commit('user/SET_LOGIN_LOADING', false)
+            getInfo("").then(response => {
+              localStorage.setItem('qhxt', false)
+              this.$store.commit('jx/SET_LOGO')
+              localStorage.setItem("sys", this.loginForm.busCode)
+              location.href = location.origin + '/' + response.data.systemVO.homeAdress
+            }).catch(error => {
+              this.$store.commit('user/SET_LOGIN_LOADING', false)
 
-              })
-            
+            })
+
             // location.reload()
             // this.$router.push({
             //   path: this.redirect ,
@@ -585,8 +667,6 @@ export default {
       margin: 0 auto;
       justify-content: center;
       align-items: center;
-      .body-title {
-      }
       .body_right {
         z-index: 100;
         // background: rgba(0,0,0,.1);
@@ -630,12 +710,25 @@ export default {
           }
 
           .login-form-QRCode {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             img {
               width: 180px;
             }
 
             .qrcode-tip {
               color: black;
+            }
+            .qrcode-overlay {
+              position: absolute;
+              top: 0;
+              left: 59;
+              width: 180px;
+              height: 180px;
+              background-color: rgba(0, 0, 0, 0.8); /* 半透明蒙层 */
             }
           }
         }
@@ -827,7 +920,7 @@ export default {
           color: #fff;
         }
 
-        &>div:nth-child(3) {
+        & > div:nth-child(3) {
           display: flex;
           padding: 10px 0;
         }
@@ -913,12 +1006,25 @@ export default {
           }
 
           .login-form-QRCode {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             img {
               width: 180px;
             }
 
             .qrcode-tip {
               color: black;
+            }
+            .qrcode-overlay {
+              position: absolute;
+              top: 0;
+              left: 59;
+              width: 180px;
+              height: 180px;
+              background-color: rgba(0, 0, 0, 0.8); /* 半透明蒙层 */
             }
           }
         }

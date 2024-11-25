@@ -1,5 +1,5 @@
 // 开发环境接口配置
-const APIURl = 'http://zgt_zy.test.zgt.nbjuxuan.com/'  
+const APIURl = 'http://api.test.zgt.nbjuxuan.com/'  
 module.exports = {
   APIURl: APIURl,
   timeout: process.env.NODE_ENV === 'development' ? 1000000 : 1000000,
@@ -21,4 +21,5 @@ module.exports = {
   // report: process.env.NODE_ENV === 'http://36.140.134.65:40008/Report',
   // 视频播放=前端路径
   m3u8Url: 'http://36.140.26.171:40008',
+  WebSocketqrcode: APIURl.replace('http', 'ws')
 }

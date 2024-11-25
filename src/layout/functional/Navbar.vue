@@ -83,7 +83,8 @@ export default {
       this.autoProjectId = val
       localStorage.setItem('autoProjectId', val)
       this.$store.commit('user/SET_USERINFO_PROJECTID', val)
-      // location.reload();
+      this.$router.push({ name: 'commonPage' })
+      location.reload();
     },
   }
 }

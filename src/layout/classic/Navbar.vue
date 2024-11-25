@@ -57,6 +57,7 @@ export default {
     this.tableDataFlag = true
     console.log(this.isProjectSwitch, 'piii')
     console.log(localStorage.getItem('autoProjectId'), 'pkkkll')
+    console.log(this.userInfo,'user')
     if (this.isProjectSwitch === '1') {
       this.userInfo.systemIds.forEach(item => {
         if (item.name === "后台管理系统" && item.currentSystem) {
@@ -90,7 +91,9 @@ export default {
       this.autoProjectId = val
       localStorage.setItem('autoProjectId', val)
       this.$store.commit('user/SET_USERINFO_PROJECTID', val)
-      // location.reload();
+
+      this.$router.push({ name: 'commonPage' })
+      location.reload();
     },
   },
   mutations

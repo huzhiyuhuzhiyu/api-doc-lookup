@@ -1367,7 +1367,7 @@ export default {
     downLoadTemplate() {
       const a = document.createElement('a')
       a.setAttribute('download', '')
-      a.setAttribute('href', location.origin + '/static/销售报价导入模板.xlsx')
+      a.setAttribute('href', location.origin + '/static/客户产品价格导入模板.xlsx')
       a.click()
     },
     // 联系人信息删除当前行

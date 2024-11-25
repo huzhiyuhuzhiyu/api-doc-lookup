@@ -330,25 +330,18 @@
               <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
                 @selection-change="handleSelectionChangeAllPruduct" ref="form">
 
-                <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
+
+
+                <el-table-column prop="drawingNo" label="品名规格" />
+                <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="name" label="产品名称" v-show="productNameFlag" min-width="160" sortable="custom" />
-                <el-table-column prop="code" label="产品编码" width="140" sortable="custom" />
-                <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
+                <el-table-column prop="productCategoryName" label="所属分类" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                  v-if="isProjectSwitch == 1" />
+                <el-table-column prop="mainUnit" label="单位" />
+                <el-table-column prop="inventoryQuantity" label="库存数量">
+                </el-table-column>
 
-                <el-table-column prop="batchNumber" label="批次号" width="180" />
-                <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
-                <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
-                <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
-                <el-table-column prop="oil" label="油脂" width="80" sortable="custom" />
-                <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom" />
-                <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" />
-                <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"></el-table-column>
-                <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"></el-table-column>
-
-
-                <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
-                <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
               </JNPF-table>
               <pagination :total="productTotal" :page.sync="productForm.pageNum" :limit.sync="productForm.pageSize"
                 @pagination="searchProductFun" />
@@ -387,8 +380,7 @@
           :on-preview="handlePreview" drag :on-remove="handleRemove" :on-change="handleFileChange" ref="uploadRef">
           <i class="el-icon-upload"></i>
           <div class="el-upload__text"><em>点击选取文件上传</em></div>
-          <div class="el-upload__tip" slot="tip">只能上传.xls/.xlsx文件 <el-button type="text" class="topButton"
-              icon="el-icon-download" @click="downLoadTemplate">下载模板</el-button></div>
+          <div class="el-upload__tip" slot="tip">只能上传.xls/.xlsx文件</div>
 
         </el-upload>
 
@@ -407,6 +399,7 @@
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
 import { getWarehouseList } from '@/api/basicData/index'
 import { getQuotationsendlist } from "@/api/salesManagement/index";
+import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表
 
 // import CustomerForm from './customerForm.vue'
 import WareHouseForm from './wareHouseForm.vue'
@@ -449,7 +442,7 @@ export default {
         approvalFlag: false,
         personId: "",
         personName: "",
-        orderDate:""
+        orderDate: ""
       },
       productForm: {
         productCode: "",
@@ -826,9 +819,16 @@ export default {
     },
     searchProductFun() {
       this.productForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-      getProduct(this.productForm).then(res => {
-        this.productList = res.data.records
+      getProducts(this.productForm).then(res => {
+        this.productList = [...this.selectSaleProductArr,...res.data.records]
         this.productTotal = res.data.total
+        if (this.selectSaleProductArr.length) {
+          this.selectSaleProductArr.forEach(row => {
+            this.$refs.form.toggleRowSelection(row,true );
+          });
+        } else {
+          this.$refs.multipleTable.clearSelection();
+        }
         this.listLoading = false
       }).catch(() => {
         this.listLoading = false
@@ -844,7 +844,7 @@ export default {
         this.$set(item, 'productCode', item.code)
       });
       this.selectSaleProductArr = val
-
+      console.log("11",this.selectSaleProductArr);
     },
     // 选择产品——重置
     resetProductFun() {
@@ -871,12 +871,12 @@ export default {
 
 
       arr.forEach(item => {
-        this.$set(item, 'stockNum', item.stockNum)
+        this.$set(item, 'stockNum',0)
         this.$set(item, 'num', '')
         this.$set(item, 'diffNum', '')
         this.$set(item, 'shelfSpaceId', item.shelfSpaceId)
         this.$set(item, 'shelfSpaceName', item.shelfSpaceName)
-        this.$set(item, 'batchNumber', item.shelfSpaceId)
+        this.$set(item, 'batchNumber', item.batchNumber)
         this.$set(item, 'productsId', item.id)
         this.$set(item, 'allocationFlag', item.locationStatus == 'disabled' ? false : true)
         if (this.dataForm.warehouseId) {

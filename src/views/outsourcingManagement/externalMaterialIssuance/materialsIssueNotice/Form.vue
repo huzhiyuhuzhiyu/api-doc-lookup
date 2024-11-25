@@ -1536,6 +1536,7 @@ export default {
             })
             this.dataFormTwo.data = res.data.noticeLineList
           } else if (this.btnType == 'edit' || this.btnType == 'look') {
+            console.log(res.data.noticeLineList,'lsity')
             this.dataFormTwo.data = res.data.noticeLineList
             this.dataFormTwo.data.forEach((item) => {
               item.drawingNo = item.productDrawingNo

@@ -514,25 +514,19 @@ export default {
           duration: 1500
         })
       } else {
-        let msg = true
         let tempList = JSON.parse(JSON.stringify(this.selectData))
         let hasItemList = []
-        for (let i = 0; i < this.selectData.length; i++) {
-          let item = this.selectData[i]
-          console.log(item.externalProductsId, 'item.externalProductsId')
-          if (!item.externalProductsId) {
-            this.$message.error(`请配置毛坯产品所对就主产品的BOM！`)
-            msg = false
-          } else {
-            msg = true
-          }
-        }
+  
+        let msg = this.selectData.every(item => item.externalProductsId)
+        console.log(msg, 'ooo')
         if (msg) {
           this.formVisible = true
           this.$nextTick(() => {
             console.log(this.$refs, 'this.$refs')
             this.$refs.form.init(this.selectData, 'add', 'ring')
           })
+        } else {
+          this.$message.error(`请配置毛坯产品所对就主产品的BOM！`)
         }
       }
     }

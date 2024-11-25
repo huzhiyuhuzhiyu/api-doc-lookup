@@ -494,6 +494,9 @@ export default {
           item.attributeValue = tempAttributeValue
         }
       })
+      if (this.isProjectSwitch === '1') {
+        listQuery.projectId = this.userInfo.projectId
+      }
       listQuery.customerQueryFields = sortMethod(listQuery.customerQueryFields)
       getProductList(listQuery)
         .then((res) => {

@@ -224,7 +224,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="standardValue" label="规值" width="100"></el-table-column>
-                    <el-table-column prop="processName" label="工序" width="100" />
+                    <el-table-column prop="processName" label="工序" width="160" show-overflow-tooltip  />
                     <el-table-column prop="ordersNo" label="订单号" min-width="200" />
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
@@ -457,7 +457,7 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="standardValue" label="规值" min-width="120"></el-table-column>
-                <el-table-column prop="processName" label="工序" width="160" />
+                <el-table-column prop="processName" label="工序" width="160" show-overflow-tooltip  />
                 <el-table-column prop="ordersNo" label="订单号" width="180" />
                 <el-table-column prop="remark" label="备注" min-width="200">
                   <template slot-scope="scope">

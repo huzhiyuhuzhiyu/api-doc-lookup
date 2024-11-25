@@ -173,7 +173,7 @@ export default {
     }
   },
 
-   async created() {
+  async created() {
     await this.getProjectSwitch('system', 'project')
 
     this.tabs.forEach((tab, tabInd) => {
@@ -185,7 +185,7 @@ export default {
           // 产品分类
           if (tc.prop === 'warehouseName') {
             tc.method = getWarehouseList
-        this.requestObj2.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+            this.requestObj2.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
 
             tc.requestObj = this.requestObj2
             tc.change = this.warehouseNameChange
@@ -196,8 +196,8 @@ export default {
       })
     })
   },
-  mounted () {
-    
+  mounted() {
+
   },
   computed: {
     openMode() {

@@ -129,9 +129,12 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {getstockTakingAdjustList} from '@/api/warehouseManagement/stocktak.js'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default { 
   name: 'inventorySheet',
   components: { Form, SuperQuery, ExportForm },
+  mixins: [getProjectList],
   data() {
     return {
       superQuery: {},
@@ -152,8 +155,8 @@ export default {
         orderNo: "",
         pageNum: 1,
         pageSize: 20,
-        endTime: "",
-        startTime: "",
+        orderEndDate: "",
+        orderStartDate: "",
         orderItems: [{
           asc: false,
           column: ""
@@ -223,14 +226,20 @@ export default {
 
 
       ],
+      isProjectSwitch: '',
     }
   },
-  created() {
+  
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.superForm=this.orderForm
     this.search('basic')  
   },
-  
   methods: {
  
     superQuerySearch(query) {
@@ -271,6 +280,7 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getstockTakingAdjustList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -282,11 +292,11 @@ export default {
     },
     search(type) {
       if (this.rdeDateArr.length > 0) {
-        this.orderForm.startTime = this.rdeDateArr[0]
-        this.orderForm.endTime = this.rdeDateArr[1]
+        this.orderForm.orderStartDate = this.rdeDateArr[0]
+        this.orderForm.orderEndDate = this.rdeDateArr[1]
       } else {
-        this.orderForm.startTime = ""
-        this.orderForm.endTime = ""
+        this.orderForm.orderStartDate = ""
+        this.orderForm.orderEndDate = ""
       }
 
       Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格

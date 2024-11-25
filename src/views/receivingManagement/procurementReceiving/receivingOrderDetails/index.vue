@@ -215,8 +215,8 @@ export default {
         notificationTypeList: [],
         orderItems: [
           {
-            asc: true,
-            column: ''
+            asc: false,
+            column: 'createTime'
           }
         ],
         orderNo: '',

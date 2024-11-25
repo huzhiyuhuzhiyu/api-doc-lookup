@@ -50,6 +50,7 @@
 
               <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" />
               <el-table-column prop="productCode" label="产品编码" width="120" />
+              <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
               <el-table-column prop="mainUnit" label="单位" width="80" />
               <el-table-column prop="inventoryQuantity" label="库存数量" width="120" sortable="custom" />
               <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
@@ -60,15 +61,16 @@
               <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
               <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
               <el-table-column prop="oil" label="油脂" min-width="120" sortable="custom" />
-              <el-table-column prop="clearance" label="游隙值" min-width="120" :key="100" sortable="custom"></el-table-column>
+              <el-table-column prop="clearance" label="游隙值" min-width="120" :key="100"
+                sortable="custom"></el-table-column>
               <el-table-column prop="standardValue" label="规值" min-width="120" sortable="custom" />
               <!-- <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom">
                 <el-table-column prop="warehouseName" label="仓库名称" min-width="180" sortable="custom">
                   <template slot-scope="scope">
                     <div>{{ scope.row.warehouseName + '/' + scope.row.shelfSpaceName }}</div>
                   </template>
-                </el-table-column>
-              </el-table-column> -->
+</el-table-column>
+</el-table-column> -->
               <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom" />
               <el-table-column prop="shelfSpaceName" label="货位名称" min-width="120" sortable="custom" />
               <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" fixed="right"
@@ -101,8 +103,10 @@ import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 import { excelExport } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   components: { ExportForm },
+  mixins: [getProjectList],
   data() {
     return {
       exportFormVisible: false,
@@ -116,9 +120,9 @@ export default {
       originalListQuery: {},
       total: 0,
       totalData: {
-        totalInventory:0,
-        totalAvailable:0,
-        totalOccupancy:0,
+        totalInventory: 0,
+        totalAvailable: 0,
+        totalOccupancy: 0,
       },
 
       listQuery: {
@@ -139,20 +143,25 @@ export default {
         batchNumber: "",
         vibrationLevel: '',
         standardValue: '',
-      }
+      isProjectSwitch:"",
+    }
     }
   },
-
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    
+    
+  },
   methods: {
     // 导出
     exportForm(exportTableRef) {
-      console.log("object,",exportTableRef);
+      console.log("object,", exportTableRef);
       this.exportTableRef = exportTableRef
       this.exportFormVisible = true
       console.log(this.$refs[exportTableRef].$refs.JNPFTable);
       let columnList = this.$refs[exportTableRef].$refs.JNPFTable.columns.filter(item => !!item.label && !!item.property)
-      columnList=columnList.filter(item => !(item.label === "序号" && item.property === "index"));
-      console.log("columnList",columnList);
+      columnList = columnList.filter(item => !(item.label === "序号" && item.property === "index"));
+      console.log("columnList", columnList);
       columnList = columnList.map(item => { return { label: item.label, prop: item.property } })
       this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
     },
@@ -234,14 +243,14 @@ export default {
         this.vibrationLevelList = arr
       })
     },
-    init(id, type,warehouseId) {
+    init(id, type, warehouseId) {
       this.getProductClassFun()
       if (type === 'inventoryFlag') { this.title = '库存数明细' }
       else if (type === 'occupancyFlag') { this.title = '占用数明细' }
       else if (type === 'availableFlag') { this.title = '可用数明细' }
       this.visible = true
       let tempListQuery = {
-        warehouseId:warehouseId,
+        warehouseId: warehouseId,
         productsId: id,
         batchNumber: "",
         availableFlag: 0, // 可用数标识（0 否 1是）默认否
@@ -281,11 +290,11 @@ export default {
       inventorySpaceList(this.listQuery).then(res => {
         this.treeLoading = false
         this.listLoading = false
-        if(!res.data.whPage.records.length) return
+        if (!res.data.whPage.records.length) return
         this.tableData = res.data.whPage.records
         this.total = res.data.whPage.total
         this.totalData = res.data.stockSts
-        
+
       }).catch(err => {
         this.treeLoading = false
         this.listLoading = false

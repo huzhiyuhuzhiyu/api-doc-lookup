@@ -118,7 +118,7 @@
                     <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
                       查看详情
                     </el-dropdown-item> 
-                    <el-dropdown-item :disabled="scope.row.approvalStatus!='ok'&&scope.row.takingState=='finish'" @click.native="mergeorderNo(scope.row.id, 'Form')">
+                    <el-dropdown-item :disabled="scope.row.approvalStatus=='ok'&&scope.row.takingState=='finish'" @click.native="mergeorderNo(scope.row.id, 'Form')">
                       转库存调整单
                     </el-dropdown-item> 
                    
@@ -150,9 +150,12 @@ import { excelExport } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {getStocktak,stockTakingToAdjus} from '@/api/warehouseManagement/stocktak.js'
 import Adjust from '../inventoryAdjustmentSheet/Form.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 export default { 
   name: 'inventorySheet',
   components: { Form, SuperQuery, ExportForm,Adjust },
+  mixins: [getProjectList],
   data() {
     return {
       adjustVisible:false,
@@ -175,8 +178,8 @@ export default {
         orderNo: "",
         pageNum: 1,
         pageSize: 20,
-        endTime: "",
-        startTime: "",
+        orderEndDate: "",
+        orderStartDate: "",
         orderItems: [{
           asc: false,
           column: ""
@@ -246,14 +249,20 @@ export default {
 
 
       ],
+      isProjectSwitch: '',
     }
   },
-  created() {
+
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.superForm=this.orderForm
     this.search('basic')  
   },
-  
   methods: {
     mergeorderNo(id,type){
       stockTakingToAdjus(id).then(res=>{
@@ -299,6 +308,7 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getStocktak(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -310,11 +320,11 @@ export default {
     },
     search(type) {
       if (this.rdeDateArr.length > 0) {
-        this.orderForm.startTime = this.rdeDateArr[0]
-        this.orderForm.endTime = this.rdeDateArr[1]
+        this.orderForm.orderStartDate = this.rdeDateArr[0]
+        this.orderForm.orderEndDate = this.rdeDateArr[1]
       } else {
-        this.orderForm.startTime = ""
-        this.orderForm.endTime = ""
+        this.orderForm.orderStartDate = ""
+        this.orderForm.orderEndDate = ""
       }
 
       Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格

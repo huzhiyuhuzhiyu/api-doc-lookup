@@ -820,7 +820,8 @@ export default {
     searchProductFun() {
       this.productForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getProducts(this.productForm).then(res => {
-        this.productList = [...this.selectSaleProductArr,...res.data.records]
+        // this.productList = [...this.selectSaleProductArr,...res.data.records]
+        this.productList = res.data.records
         this.productTotal = res.data.total
         if (this.selectSaleProductArr.length) {
           this.selectSaleProductArr.forEach(row => {

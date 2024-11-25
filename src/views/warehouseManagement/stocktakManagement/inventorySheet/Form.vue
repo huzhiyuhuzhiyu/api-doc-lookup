@@ -9,7 +9,7 @@
             @click="handleConfirm('draft')">保存草稿</el-button>
           <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
             @click="handleConfirm('submit')">保存并提交</el-button>
-          <el-button v-if="btnType == 'look'&&dataForm.approvalStatus=='ok'" type="primary" :loading="btnLoading"
+          <el-button v-if="btnType == 'look' && dataForm.approvalStatus == 'ok'" type="primary" :loading="btnLoading"
             @click="inventoryAdjustmentFun()">转库存调整单</el-button>
           <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
@@ -36,7 +36,7 @@
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="盘点日期" prop="orderDate">
                               <el-date-picker v-model="dataForm.orderDate" type="date" value-format="yyyy-MM-dd"
-                                style="width: 100%;" :picker-options="pickerOptions" placeholder="请选择盘点日期" disabled>
+                                style="width: 100%;" :picker-options="pickerOptions" placeholder="请选择盘点日期" :disabled="btnType=='look'">
                               </el-date-picker>
                             </el-form-item>
                           </el-col>
@@ -48,8 +48,9 @@
 
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="盘点仓库" prop="warehouseName">
-                              <ComSelect-list :requestObj="warehouseRequestObj" :dialogTitle="'选择盘点仓库'"
-                                :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName"
+                              <ComSelect-list
+                                :requestObj="{ type: '', state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }"
+                                :dialogTitle="'选择盘点仓库'" :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName"
                                 :method="getWarehouseList" placeholder="请选择仓库"
                                 @change="changeWarehousex"></ComSelect-list>
                             </el-form-item>
@@ -105,8 +106,9 @@
                             <span class="required">*</span>当前仓库
                           </template>
                           <template slot-scope="scope">
-                            <ComSelect-list :requestObj="warehouseRequestObj" :dialogTitle="'选择盘点仓库'"
-                              :isdisabled="btnType == 'look'" v-model="scope.row.warehouseName"
+                            <ComSelect-list
+                              :requestObj="{  type: '',virtuallyFlag:false,  state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : ''  }"
+                              :dialogTitle="'选择盘点仓库'" :isdisabled="btnType == 'look'" v-model="scope.row.warehouseName"
                               :method="getWarehouseList" :currentIndex="scope.$index" placeholder="请选择仓库"
                               @change="changeCurrentWarehousex"></ComSelect-list>
 
@@ -120,11 +122,11 @@
                             </el-input>
 
                           </template>
-                          
+
                         </el-table-column>
 
                         <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
-                        
+
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.batchNumber" readonly :disabled="btnType == 'look'"
                               @focus="openSeleceBatchNumberDialog(scope.row, scope.$index)" placeholder="批次号">
@@ -167,7 +169,7 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="盘点日期" prop="orderDate">
                           <el-date-picker v-model="dataForm.orderDate" type="date" value-format="yyyy-MM-dd"
-                            style="width: 100%;" :picker-options="pickerOptions" placeholder="请选择盘点日期" disabled>
+                            style="width: 100%;" :picker-options="pickerOptions" placeholder="请选择盘点日期" :disabled="btnType=='look'">
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
@@ -179,9 +181,10 @@
 
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="盘点仓库" prop="warehouseName">
-                          <ComSelect-list :requestObj="warehouseRequestObj" :dialogTitle="'选择盘点仓库'"
-                            :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName" :method="getWarehouseList"
-                            placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
+                          <ComSelect-list
+                            :requestObj="{  type: '',virtuallyFlag:false,  state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : ''  }"
+                            :dialogTitle="'选择盘点仓库'" :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName"
+                            :method="getWarehouseList" placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
                         </el-form-item>
                       </el-col>
                     </el-row>
@@ -234,9 +237,10 @@
                         <span class="required">*</span>当前仓库
                       </template>
                       <template slot-scope="scope">
-                        <ComSelect-list :requestObj="warehouseRequestObj" :dialogTitle="'选择盘点仓库'"
-                          :isdisabled="btnType == 'look'" v-model="scope.row.warehouseName" :method="getWarehouseList"
-                          placeholder="请选择仓库" :currentIndex="scope.$index"
+                        <ComSelect-list
+                          :requestObj="{   type: '',virtuallyFlag:false,  state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : ''  }"
+                          :dialogTitle="'选择盘点仓库'" :isdisabled="btnType == 'look'" v-model="scope.row.warehouseName"
+                          :method="getWarehouseList" placeholder="请选择仓库" :currentIndex="scope.$index"
                           @change="changeCurrentWarehousex"></ComSelect-list>
 
                       </template>
@@ -252,7 +256,7 @@
                     </el-table-column>
 
                     <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
-               
+
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.batchNumber" readonly :disabled="btnType == 'look'"
                           @focus="openSeleceBatchNumberDialog(scope.row, scope.$index)" placeholder="批次号">
@@ -327,6 +331,9 @@
                 <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
                 <el-table-column prop="name" label="产品名称" v-show="productNameFlag" min-width="160" sortable="custom" />
                 <el-table-column prop="code" label="产品编码" width="140" sortable="custom" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
+
+                <el-table-column prop="batchNumber" label="批次号" width="180"  />
                 <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
                 <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
@@ -406,25 +413,26 @@ import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowE
 import { mapGetters, mapState } from 'vuex'
 import { excelExport } from '@/api/basicData/index'
 import Adjust from '../inventoryAdjustmentSheet/Form.vue'
-import { getProduct, addStocktak, detailStocktak, editStocktak, deleteStocktak, productExport, productImport,stockTakingToAdjus } from '@/api/warehouseManagement/stocktak.js'
+import { getProduct, addStocktak, detailStocktak, editStocktak, deleteStocktak, productExport, productImport, stockTakingToAdjus } from '@/api/warehouseManagement/stocktak.js'
 import Process from '@/components/Process/Preview'
 import flowMixin from '@/mixins/generator/flowMixin'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import busFlow from '@/mixins/generator/busFlow';
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   // components: { CustomerForm, WareHouseForm, BatchNumberForm, Process, recordList },
-  components: { Process, recordList, WareHouseForm, BatchNumberForm,Adjust },
-  mixins: [flowMixin, busFlow],
+  components: { Process, recordList, WareHouseForm, BatchNumberForm, Adjust },
+  mixins: [flowMixin, busFlow, getProjectList],
   data() {
     return {
-      adjustVisible:false,
+      adjustVisible: false,
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now();
         }
       },
       warehouseRequestObj: {
-        type: 'normal', state: 'enable'
+
       },
       allocationFlag: false,
       selectSaleProductArr: [],
@@ -438,7 +446,7 @@ export default {
         warehouseType: "",
         approvalFlag: false,
         personId: "",
-        personName: "", 
+        personName: "",
       },
       productForm: {
         productCode: "",
@@ -505,9 +513,12 @@ export default {
       endTime: 0,
       productNameFlag: null,
       uploadVisib: false,
+      isProjectSwitch: '',
     }
   },
-  created() {
+
+  async created() {
+    await this.getProjectSwitch('system', 'project')
 
   },
 
@@ -534,8 +545,8 @@ export default {
   },
 
   methods: {
-    closeForm(){
-      this.adjustVisible=false
+    closeForm() {
+      this.adjustVisible = false
     },
     submit() {
       this.UploadProduct(this.file)
@@ -730,10 +741,10 @@ export default {
       this.dataForm.orderDate = formattedDate;
     },
     inventoryAdjustmentFun() {
-      stockTakingToAdjus(this.dataForm.id).then(res=>{
-        this.adjustVisible=true
-        this.$nextTick(()=>{
-          this.$refs.adjustForm.init(res.data,'Form')
+      stockTakingToAdjus(this.dataForm.id).then(res => {
+        this.adjustVisible = true
+        this.$nextTick(() => {
+          this.$refs.adjustForm.init(res.data, 'Form')
         })
       })
     },
@@ -811,6 +822,7 @@ export default {
       this.searchProductFun()
     },
     searchProductFun() {
+      this.productForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getProduct(this.productForm).then(res => {
         this.productList = res.data.records
         this.productTotal = res.data.total
@@ -826,7 +838,7 @@ export default {
     handleSelectionChangeAllPruduct(val) {
       val.forEach(item => {
         this.$set(item, 'productName', item.name)
-        this.$set(item, 'productCode',item.code)
+        this.$set(item, 'productCode', item.code)
       });
       this.selectSaleProductArr = val
 
@@ -853,23 +865,27 @@ export default {
       if (!this.selectSaleProductArr.length) return this.$message.error("请选择产品！")
       this.productVisible = false
       let arr = JSON.parse(JSON.stringify(this.selectSaleProductArr))
-      
+
 
       arr.forEach(item => {
-        this.$set(item, 'stockNum', 0)
+        this.$set(item, 'stockNum', item.stockNum)
         this.$set(item, 'num', '')
         this.$set(item, 'diffNum', '')
-        this.$set(item, 'shelfSpaceId', '')
-        this.$set(item, 'shelfSpaceName', '')
-        this.$set(item, 'batchNumber', '')
+        this.$set(item, 'shelfSpaceId', item.shelfSpaceId)
+        this.$set(item, 'shelfSpaceName', item.shelfSpaceId)
+        this.$set(item, 'batchNumber', item.shelfSpaceId)
         this.$set(item, 'productsId', item.id)
         if (this.dataForm.warehouseId) {
           this.$set(item, 'warehouseName', this.dataForm.warehouseName)
           this.$set(item, 'allocationFlag', this.allocationFlag)
           this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+        }else{
+          this.$set(item, 'warehouseName', item.warehouseName)
+          this.$set(item, 'allocationFlag', item.allocationFlag)
+          this.$set(item, 'warehouseId', item.warehouseId)
         }
       });
-      this.productData=[...this.productData,...arr]
+      this.productData = [...this.productData, ...arr]
 
 
     },
@@ -903,14 +919,14 @@ export default {
     getDetailFun(id) {
       detailStocktak(id).then(res => {
         console.log("详情", res);
-        this.dataForm=res.data
+        this.dataForm = res.data
         res.data.stockTakingLineVOList.forEach(item => {
           this.$set(item, 'productName', item.productsName)
-          this.$set(item, 'productCode',item.productsCode)
+          this.$set(item, 'productCode', item.productsCode)
           this.$set(item, 'allocationFlag', item.locationStatus == 'disabled' ? false : true)
 
         });
-        this.productData=res.data.stockTakingLineVOList
+        this.productData = res.data.stockTakingLineVOList
       })
     },
     goBack() {

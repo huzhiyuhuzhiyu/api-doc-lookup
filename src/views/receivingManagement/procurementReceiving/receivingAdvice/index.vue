@@ -4,7 +4,6 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-
             <template v-for="item in searchList">
               <el-col :span="item.searchType === 3 ? 6 : 4">
                 <el-form-item>
@@ -214,8 +213,8 @@ export default {
         notificationTypeList: [],
         orderItems: [
           {
-            asc: true,
-            column: ''
+            asc: false,
+            column: 'create_time'
           }
         ],
         orderNo: '',

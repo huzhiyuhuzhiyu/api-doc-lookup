@@ -189,7 +189,7 @@
                           税率
                         </template>
                         <template slot-scope="scope">
-                          <el-form-item :rules="productRules.taxRate">
+                          <el-form-item :rules="productRules.taxRate" :prop="'data.' + scope.$index + '.' + 'taxRate'">
                             <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;">
                               <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                                 :value="item.taxRate"></el-option>

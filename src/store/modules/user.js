@@ -54,7 +54,12 @@ const mutations = {
   },
   SET_LOGIN_LOADING: (state, loginLoading) => {
     state.loginLoading = loginLoading
-  }
+  },
+  SET_USERINFO_PROJECTID: (state, projectId) => {
+    console.log(state,'state')
+    console.log(projectId,'kkk')
+    state.userInfo.projectId = projectId
+  },
 }
 
 const actions = {

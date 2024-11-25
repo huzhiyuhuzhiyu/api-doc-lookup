@@ -744,7 +744,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 采购收货 订单 -->
-        <JNPF-table :partentOrChild="'purchasetabForm'" v-loading="listLoading" @sort-change="sortChange"
+        <JNPF-table :partentOrChild="'purchasetabForm'" v-loading="listLoading" @sort-change="sortChange"  v-if="tableDataFlag"
           :data="purchaseList" v-show="categoryType == 'inbound_purchase' && purchaseFlag" custom-column
           ref="purchasetabForm" :fixedNo="true" hasC @selection-change="handeleselectPurchase"
           :setColumnDisplayList="purchasecolumnList">
@@ -832,7 +832,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 外协收货 订单 -->
-        <JNPF-table :partentOrChild="'externaltabForm'" v-loading="listLoading" @sort-change="sortChange"
+        <JNPF-table :partentOrChild="'externaltabForm'" v-loading="listLoading" @sort-change="sortChange"  v-if="tableDataFlag"
           :data="externalList" v-show="categoryType == 'inbound_external' && externalFlag" hasC custom-column
           ref="externaltabForm" fixedNO :setColumnDisplayList="externalcolumnList"
           @selection-change="handeleselectExternal">
@@ -926,7 +926,7 @@
         </JNPF-table>
 
         <!-- 外协发料 订单-->
-        <JNPF-table :partentOrChild="'wxfltabForm'" v-loading="listLoading" @sort-change="sortChange" :key="3"
+        <JNPF-table :partentOrChild="'wxfltabForm'" v-loading="listLoading" @sort-change="sortChange" :key="3"  v-if="isProjectSwitchFlag"
           :data="exterMaterList" v-show="categoryType == 'outbound_external_send' && externalFlag" custom-column
           ref="wxfltabForm" hasC @selection-change="handeleselectExternalMter" fixedNO
           :setColumnDisplayList="wxflcolumnList">
@@ -1187,7 +1187,7 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table :partentOrChild="'dataTableProductRef'" ref="dataTableProductRef" v-loading="listLoading"
+              <JNPF-table :partentOrChild="'dataTableProductRef'" ref="dataTableProductRef" v-loading="listLoading"  v-if="isProjectSwitchFlag"
                 :data="productData" :fixedNO="true" custom-column :setColumnDisplayList="productColumns"
                 v-show="categoryType == 'inbound_mock_production'">
                 <el-table-column prop="orderNo" label="任务单号" width="180" />
@@ -1293,7 +1293,7 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table :partentOrChild="'dataTableWorkRef'" ref="dataTableWorkRef" v-loading="listLoading"
+              <JNPF-table :partentOrChild="'dataTableWorkRef'" ref="dataTableWorkRef" v-loading="listLoading"  v-if="isProjectSwitchFlag"
                 :data="workData" :fixedNO="true" @sort-change="sortChange" custom-column
                 :setColumnDisplayList="workColumns">
                 <el-table-column prop="productionOrderNo" label="任务单号" min-width="180" />
@@ -2282,9 +2282,11 @@ export default {
     },
 
     getStockMovelistFun() {
-      this.classAttributeList.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-
-      getStockMovelist(this.classAttributeList).then(res => {
+      let obj={
+        classAttributeList:this.classAttributeList,
+        projectId: this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : '',
+      }
+      getStockMovelist(obj.classAttributeList,obj.projectId).then(res => {
         console.log("左侧分类数据", res);
         if (res.data.length) {
           res.data.forEach(item => {

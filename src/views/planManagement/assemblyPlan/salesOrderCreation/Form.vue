@@ -227,14 +227,7 @@
                           <div v-else>{{ scope.row.planQuantity }}</div>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211"></el-table-column>
-                      <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123"> </el-table-column>
-                      <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"></el-table-column>
-                      <el-table-column prop="oil" label="油脂" width="120" :key="61"> </el-table-column>
-                      <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"></el-table-column>
-                      <el-table-column prop="clearance" label="游隙" width="120" :key="100"></el-table-column>
-                      <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101"></el-table-column>
-                      <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"></el-table-column>
+           
                       <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
                     </el-table>
                   </div>
@@ -426,12 +419,13 @@ export default {
   },
   methods: {
     changeProject() {
-      console.log(this.dataForm.projectId);
-      this.productData = this.originalData.filter(item => item.id === this.planForm.projectId);
+   this.$nextTick(()=>{
+    this.productData = this.originalData.filter(item => item.id === this.planForm.projectId);
       this.planForm.planQuantity = this.productData.reduce((acc, item) => {
         return acc + Number(item.num); // 使用 Number() 将字符串转换为数字  
       }, 0);
       this.planForm.relaxQuantity = this.jnpf.numberFormat(this.jnpf.math('multiply', [100, this.jnpf.numberFormat(this.jnpf.math('divide', [this.planForm.planQuantity, this.planForm.qualificationRate]), 6)]), 6)
+   })
 
     },
     // 查看库存信息
@@ -922,7 +916,7 @@ export default {
             arr.push(objs)
           });
           obj.planLineList = arr
-
+          if(!obj.planLineList.length) return  
           if (this.btnType == 'add') {
             obj.plan.documentStatus = value
             obj.plan.finalPlanQuantity = this.planForm.productionQuantity

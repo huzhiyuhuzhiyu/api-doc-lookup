@@ -548,22 +548,26 @@ export default {
         this.$refs.treeBox.setCurrentKey(this.selectedNodeKey)
       }
       this.tableQuery = {
+       
+
         orderItems: [
           {
             asc: true,
             column: ''
           }
         ],
-        warehouseName: "",
         pageNum: 1,
         pageSize: 20,
-
-
-        warehouseId: '',
+        processName: "",
         productDrawingNo: "",
         productCode: "",
         superQuery: {},
-        classAttributeList: this.classAttributeList,
+        classAttributeList: "",
+        batchNumber: "",
+        inspectionResults: "unInspect",
+
+
+
       }
       this.initData()
     },

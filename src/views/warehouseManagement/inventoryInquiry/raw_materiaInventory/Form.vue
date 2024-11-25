@@ -43,6 +43,7 @@
 
               <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" />
               <el-table-column prop="productCode" label="产品编码" width="120" />
+              <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
               <el-table-column prop="mainUnit" label="单位" width="80" />
               <el-table-column prop="inventoryQuantity" label="库存数量" width="120" sortable="custom" />
               <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
@@ -90,10 +91,13 @@ import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 import { excelExport } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   components: { ExportForm },
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch:"",
       exportFormVisible: false,
       title: "明细",
       tableData: [],
@@ -129,7 +133,11 @@ export default {
       }
     }
   },
-
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    
+    
+  },
   methods: {
     // 导出
     exportForm(exportTableRef) {

@@ -4,8 +4,8 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
-          
-          
+
+
           <template v-for="item in searchList">
             <el-col :span="item.searchType === 3 ? 6 : 4">
               <el-form-item>
@@ -34,7 +34,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading" >
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head">
           <div>
             <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
@@ -53,16 +53,16 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="tabForm"  v-if="tableDataFlag==true"  :data="tableData" custom-column row-key="id" :fixedNo="true"
-          @sort-change="sortChange" >
+        <JNPF-table ref="tabForm" v-if="tableDataFlag == true" :data="tableData" custom-column row-key="id"
+          :fixedNo="true" @sort-change="sortChange">
 
 
           <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
-          <el-table-column prop="productName" label="产品名称" v-if="productNameFlag==='1'" min-width="160"
-          sortable="custom" />
+          <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
+            sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-          v-if="isProjectSwitch == 1" />
+            v-if="isProjectSwitch == 1" />
           <el-table-column prop="classAttribute" label="产品分类" width="120" sortable="custom">
             <template slot-scope="scope">
               <div v-if="scope.row.classAttribute == 'finish_product'">成品</div>
@@ -71,8 +71,8 @@
               <div v-if="scope.row.classAttribute == 'accessories'">配件</div>
             </template>
           </el-table-column>
-          <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" /> 
-          <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" /> 
+          <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+          <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
 
           <el-table-column prop="inventoryQuantity" label="库存数量" min-width="120" sortable="custom">
             <template slot-scope="scope">
@@ -145,7 +145,7 @@ export default {
 
   data() {
     return {
-      tableFlag:false,
+      tableFlag: false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -195,9 +195,9 @@ export default {
       },
       selectedNodeKey: "",
       totalData: {
-        totalInventory:0,
-        totalOccupancy:0,
-        totalAvailable:0,
+        totalInventory: 0,
+        totalOccupancy: 0,
+        totalAvailable: 0,
       },
       superQueryJson: [
         {
@@ -258,9 +258,9 @@ export default {
 
 
       ],
-      classAttributeList:[],
-      productNameFlag:null, 
-      tableDataFlag:false,
+      classAttributeList: [],
+      productNameFlag: null,
+      tableDataFlag: false,
       isProjectSwitch: '',
 
     }
@@ -272,37 +272,40 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
-    this.tableDataFlag = true
-    this.superForm=this.tableQuery
+    this.superForm = this.tableQuery
+    this.getConfig()
     this.getclassAttributeList()
-    let objs = { "pageSize": -1, "businessCode": "product" } 
-    getBimBusinessSwitchConfigList(objs).then(res => {
-      this.productNameFlag = res.data.product[1].configValue1 
-      console.log(this.productNameFlag);
-      this.tableFlag=true
-      if(this.productNameFlag=='1'){
-    
-      this.searchList.push({ field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 })
-      }
-    }).catch(error=>{
-      this.tableFlag=true
-    })
-  }, 
+
+  },
   computed: {
     ...mapGetters(['userInfo'])
   },
- 
-  mounted () {
+
+  mounted() {
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
 
   },
   methods: {
+    getConfig() {
+    let objs = { "pageSize": -1, "businessCode": "product" }
+      getBimBusinessSwitchConfigList(objs).then(res => {
+        this.productNameFlag = res.data.product[1].configValue1
+        console.log(this.productNameFlag);
+        this.tableDataFlag = true
+        if (this.productNameFlag == '1') {
+
+          this.searchList.push({ field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 })
+        }
+      }).catch(error => {
+        this.tableFlag = true
+      })
+    },
     async getMainUnitFun(code, type) {
-      this.listLoading=true
+      this.listLoading = true
       try {
         this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
-        this.listLoading=false
-        
+        this.listLoading = false
+
 
       } catch (error) {
       }
@@ -311,7 +314,7 @@ export default {
       getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
         console.log("类别属性", res);
         this.classAttributeList = res.data
-        
+
         this.search('basic')
       })
     },
@@ -368,17 +371,17 @@ export default {
 
     initData() {
       this.tableQuery.classAttributeList = this.classAttributeList
-        this.listLoading = true
-        this.tableQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      this.listLoading = true
+      this.tableQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
 
-        inventoryWarehouseList(this.tableQuery).then((res) => {
+      inventoryWarehouseList(this.tableQuery).then((res) => {
         console.log(res);
         if (res.data.whPage.records.length) {
           this.tableData = res.data.whPage.records
           this.totalData = res.data.stockSts
           this.total = res.data.whPage.total
-        }else{
-          this.tableData=[]
+        } else {
+          this.tableData = []
           this.totalData = 0
         }
 
@@ -412,7 +415,7 @@ export default {
         this.selectedNodeKey = this.tableQuery.warehouseId
         this.$refs.treeBox.setCurrentKey(this.selectedNodeKey)
       }
-      this.superForm=this.tableQuery = {
+      this.superForm = this.tableQuery = {
         orderItems: [
           {
             asc: true,
@@ -437,6 +440,7 @@ export default {
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
         { field: 'warehouseName', fieldValue: '', label: '仓库名称', symbol: 'like', searchType: 1, width: 120 },
       ]
+      this.getConfig()
       this.initData()
     },
 
@@ -445,10 +449,10 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if(prop=='productCode'||prop=='productDrawingNo'||prop=='warehouseName'){
-        newProp=prop
-      }else{
-        newProp=prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+      if (prop == 'productCode' || prop == 'productDrawingNo' || prop == 'warehouseName') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
 
       }
       this.tableQuery.orderItems[0].asc = order === 'ascending'
@@ -480,9 +484,10 @@ export default {
 .JNPF-common-head {
   padding: 8px
 }
+
 .JNPF-common-search-box {
   padding: 8px 0 !important;
-  margin-left: 0!important;
+  margin-left: 0 !important;
 
   margin-bottom: 5px;
 }

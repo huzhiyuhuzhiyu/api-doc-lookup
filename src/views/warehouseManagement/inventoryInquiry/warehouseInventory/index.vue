@@ -81,7 +81,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main"  v-loading="listLoading">
         <div class="JNPF-common-head">
           <div>
             <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
@@ -100,12 +100,14 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableData" custom-column row-key="id" :fixedNo="true"
+        <JNPF-table ref="tabForm" :data="tableData" custom-column row-key="id" :fixedNo="true"  v-if="isProjectSwitchFlag"
           @sort-change="sortChange">
 
 
           <el-table-column prop="productDrawingNo" label="品名规格" width="200" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" width="150" sortable="custom" />
+          <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+          v-if="isProjectSwitch == 1" />
           <el-table-column prop="classAttribute" label="产品分类" width="120" sortable="custom">
             <template slot-scope="scope">
               <div v-if="scope.row.classAttribute == 'finish_product'">成品</div>
@@ -171,12 +173,16 @@ import { inventoryWarehouseList } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import Form from './Form'
+import { mapGetters, mapState } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
 
 export default {
   name: 'warehouseInventory',
   components: { Form, SuperQuery, ExportForm },
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitchFlag:false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -283,6 +289,7 @@ export default {
 
 
       ],
+      isProjectSwitch:"",
     }
   },
   watch: {
@@ -290,14 +297,17 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
-  created() {
-    this.superForm = this.tableQuery
-    this.getWarehouseTree(true)
-    if (localStorage.getItem("warehouseInventoryFlag")) {
-      let warehouseInventoryFlag = JSON.parse(localStorage.getItem('warehouseInventoryFlag'))
-      console.log("warehouseInventoryFlag", warehouseInventoryFlag);
 
-    }
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.isProjectSwitchFlag=true
+    this.superForm = this.tableQuery
+     this.getWarehouseTree(true)
+    
   },
   methods: {
     // 导出
@@ -368,6 +378,9 @@ export default {
         scrapFlag: false,
         virtuallyFlag: false,
       }
+      obj.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+
+     
       getWarehouseList(obj).then(res => {
         this.treeData = res.data
         this.$nextTick(() => {
@@ -380,10 +393,14 @@ export default {
     },
     initData() {
 
+      this.tableQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       inventoryWarehouseList(this.tableQuery).then((res) => {
         console.log(res);
         this.tableData = res.data.whPage.records
-        this.totalData = res.data.stockSts
+        if(res.data.stockSts){
+
+          this.totalData = res.data.stockSts
+        }
         this.total = res.data.whPage.total
         this.listLoading = false
       }).catch(() => {
@@ -415,7 +432,7 @@ export default {
         this.selectedNodeKey = this.tableQuery.warehouseId
         this.$refs.treeBox.setCurrentKey(this.selectedNodeKey)
       }
-      this.superForm=this.tableQuery = {
+      this.superForm = this.tableQuery = {
         orderItems: [
           {
             asc: true,
@@ -433,7 +450,7 @@ export default {
         superQuery: {},
       }
       this.$refs.SuperQuery.conditionList = []
-      this. searchList= [
+      this.searchList = [
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
       ]
@@ -461,7 +478,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp
-      if (prop == 'productDrawingNo' || prop == 'productCode' || prop == 'warehouseName') {
+      if (prop == 'productDrawingNo'||prop=='projectName' || prop == 'productCode' || prop == 'warehouseName') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())

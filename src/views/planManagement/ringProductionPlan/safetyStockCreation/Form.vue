@@ -654,8 +654,8 @@ export default {
     },
     // 获取所有产品列表数据
     initData() {
-      this.listLoading = true 
-     this.ProductListRequestObj.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      this.listLoading = true  
+     this.ProductListRequestObj.projectId = this.isProjectSwitch === '1' ? this.planForm.projectId || '' : ''
      getProducts(this.ProductListRequestObj).then(listRes => {
         if (Array.isArray(listRes.data)) {
           this.allproductData = listRes.data

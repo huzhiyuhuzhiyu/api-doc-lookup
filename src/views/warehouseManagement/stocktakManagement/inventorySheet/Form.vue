@@ -449,6 +449,7 @@ export default {
         approvalFlag: false,
         personId: "",
         personName: "",
+        orderDate:""
       },
       productForm: {
         productCode: "",

@@ -87,6 +87,8 @@
                 <el-table-column prop="planNo" label="计划单号" width="180" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" min-width="80" />
                 <el-table-column prop="outputQuantity" label="需组装数量" min-width="160" sortable="custom" />
+                <el-table-column prop="issuedQuantity" label="已下达数量" min-width="160" sortable="custom" />
+                <el-table-column prop="noIssuedQuantity" label="未下达数量" min-width="160" sortable="custom" />
                 <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom" />
                 <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
                 <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
@@ -108,7 +110,6 @@
               <pagination :total="total1" :page.sync="assembleForm.pageNum" :limit.sync="assembleForm.pageSize"
                 @pagination="getassembleData">
                 <div style="background: #f5f7fa;text-align:end" class="text">
-                  <span style="font-weight:500;margin-right:10px">需求数量：{{ totalDemandQuantity }}</span>
                   <span style="font-weight:500;margin-right:10px">需组装数量：{{ outputQuantity }}</span>
                 </div>
               </pagination>
@@ -225,7 +226,10 @@
                     <div>{{ scope.row.occupancyQuantity ? scope.row.occupancyQuantity : 0 }}</div>
                   </template>
                 </el-table-column>
+
                 <el-table-column prop="outputQuantity" label="需生产数量" min-width="140" sortable="custom" />
+                <el-table-column prop="issuedQuantity" label="已下达数量" min-width="160" sortable="custom" />
+                <el-table-column prop="noIssuedQuantity" label="未下达数量" min-width="160" sortable="custom" />
                 <el-table-column prop="planStartDate" label="计划开始日期" width="180" sortable="custom" />
                 <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
 
@@ -244,11 +248,6 @@
               <pagination :total="total2" :page.sync="produceForm.pageNum" :limit.sync="produceForm.pageSize"
                 @pagination="getproduceData">
                 <div style="background: #f5f7fa;text-align:end" class="text">
-                  <span style="font-weight:500;margin-right:10px">需求数量：{{ totalDemandQuantity }}</span>
-                  <span style="font-weight:500;margin-right:10px">损耗数量：{{ lossNum }}</span>
-                  <span style="font-weight:500;margin-right:10px">计划在制数量：{{ planInTransitQuantity }}</span>
-                  <span style="font-weight:500;margin-right:10px">实际在制数量：{{ inTransitUnOccupancyQuantity }}</span>
-                  <span style="font-weight:500;margin-right:10px">当前预占数量：{{ occupancyQuantity }}</span>
                   <span style="font-weight:500;margin-right:10px">需生产数量：{{ outputQuantity }}</span>
                 </div>
               </pagination>
@@ -370,6 +369,8 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="outputQuantity" label="需采购数量" min-width="140" sortable="custom" />
+                <el-table-column prop="issuedQuantity" label="已下达数量" min-width="160" sortable="custom" />
+                <el-table-column prop="noIssuedQuantity" label="未下达数量" min-width="160" sortable="custom" />
                 <el-table-column prop="planStartDate" label="计划开始日期" width="180" sortable="custom" />
                 <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
                 <el-table-column label="操作" width="120" fixed="right">
@@ -384,11 +385,7 @@
               <pagination :total="total3" :page.sync="purchaseForm.pageNum" :limit.sync="purchaseForm.pageSize"
                 @pagination="getpurchaseData">
                 <div style="background: #f5f7fa;text-align:end" class="text">
-                  <span style="font-weight:500;margin-right:10px">需求数量：{{ totalDemandQuantity }}</span>
-                  <span style="font-weight:500;margin-right:10px">损耗数量：{{ lossNum }}</span>
-                  <span style="font-weight:500;margin-right:10px">计划在途数量：{{ planInTransitQuantity }}</span>
-                  <span style="font-weight:500;margin-right:10px">实际在途数量：{{ inTransitUnOccupancyQuantity }}</span>
-                  <span style="font-weight:500;margin-right:10px">当前预占数量：{{ occupancyQuantity }}</span>
+
                   <span style="font-weight:500;margin-right:10px">需采购数量：{{ outputQuantity }}</span>
                 </div>
               </pagination>
@@ -508,6 +505,8 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="outputQuantity" label="需外协数量" min-width="140" sortable="custom" />
+                <el-table-column prop="issuedQuantity" label="已下达数量" min-width="160" sortable="custom" />
+                <el-table-column prop="noIssuedQuantity" label="未下达数量" min-width="160" sortable="custom" />
                 <el-table-column prop="planStartDate" label="计划开始日期" width="180" sortable="custom" />
                 <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
 
@@ -525,11 +524,7 @@
               <pagination :total="total4" :page.sync="outForm.pageNum" :limit.sync="outForm.pageSize"
                 @pagination="getouteData">
                 <div style="background: #f5f7fa;text-align:end" class="text">
-                  <span style="font-weight:500;margin-right:10px">需求数量：{{ totalDemandQuantity }}</span>
-                  <span style="font-weight:500;margin-right:10px">损耗数量：{{ lossNum }}</span>
-                  <span style="font-weight:500;margin-right:10px">计划在制数量：{{ planInTransitQuantity }}</span>
-                  <span style="font-weight:500;margin-right:10px">实际在制数量：{{ inTransitUnOccupancyQuantity }}</span>
-                  <span style="font-weight:500;margin-right:10px">当前预占数量：{{ occupancyQuantity }}</span>
+
                   <span style="font-weight:500;margin-right:10px">需外协数量：{{ outputQuantity }}</span>
                 </div>
               </pagination>
@@ -1364,6 +1359,7 @@ export default {
           tableData.forEach(item => {
             this.$set(item, 'urgentFlag', false)
             this.$set(item, 'planProductionQuantity', item.outputQuantity)
+            this.$set(item, 'noIssuedQuantity', this.jnpf.numberFormat(this.jnpf.math('subtract', [item.outputQuantity, item.issuedQuantity]), 6))
           });
           this.total1 = res.data.page.total
           this.assembleData = tableData
@@ -1454,6 +1450,7 @@ export default {
           tableData.forEach(item => {
             this.$set(item, 'urgentFlag', false)
             this.$set(item, 'planProductionQuantity', item.outputQuantity)
+            this.$set(item, 'noIssuedQuantity', this.jnpf.numberFormat(this.jnpf.math('subtract', [item.outputQuantity, item.issuedQuantity]), 6))
           });
           this.produceData = tableData
           this.total2 = res.data.page.total
@@ -1543,6 +1540,7 @@ export default {
           tableData.forEach(item => {
             this.$set(item, 'urgentFlag', false)
             this.$set(item, 'planDemandQuantity', item.outputQuantity)
+            this.$set(item, 'noIssuedQuantity', this.jnpf.numberFormat(this.jnpf.math('subtract', [item.outputQuantity, item.issuedQuantity]), 6))
           });
           this.totalDemandQuantity = totalData.demandQuantity
           this.outputQuantity = totalData.outputQuantity
@@ -1635,6 +1633,7 @@ export default {
           tableData.forEach(item => {
             this.$set(item, 'urgentFlag', false)
             this.$set(item, 'planDemandQuantity', item.outputQuantity)
+            this.$set(item, 'noIssuedQuantity', this.jnpf.numberFormat(this.jnpf.math('subtract', [item.outputQuantity, item.issuedQuantity]), 6))
           });
           this.totalDemandQuantity = totalData.demandQuantity
           this.outputQuantity = totalData.outputQuantity
@@ -1700,7 +1699,7 @@ export default {
         prop === "productName" ||
         prop === "productDrawingNo" ||
         prop === "routingName" ||
-        prop === "routingCode"||prop=='projectName'
+        prop === "routingCode" || prop == 'projectName'
       ) {
         newProp = prop;
       } else {

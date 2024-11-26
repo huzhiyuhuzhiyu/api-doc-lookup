@@ -137,19 +137,27 @@
                       $t('login.scanTitle') }}</a>
                   </div>
                   <div v-show="active == 1">
-                    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" autocomplete="on" label-position="left">
-                      <el-form-item prop="busCode">
-                        <el-input ref="account" v-model="loginForm.busCode" :placeholder="$t('login.busCode')" name="busCode" type="text" tabindex="1" autocomplete="on" prefix-icon="el-icon-user" size="large" @change="getConfig">
-                        </el-input>
+                    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" autocomplete="on"
+                    label-position="left">
+                    <el-form-item prop="busCode"  v-show="isDomain">
+                      <el-input ref="account" v-model="loginForm.busCode" :placeholder="$t('login.busCode')"
+                        name="busCode" type="text" tabindex="1" autocomplete="on" prefix-icon="el-icon-user"
+                        size="large" @change="getConfig">
+                      </el-input>
+                    </el-form-item>
+                    <el-form-item prop="account">
+                      <el-input ref="account" v-model="loginForm.account" :placeholder="$t('login.username')"
+                        name="account" type="text" tabindex="1" autocomplete="on" prefix-icon="el-icon-user"
+                        size="large" @change="getConfig">
+                      </el-input>
+                    </el-form-item>
+                    <el-tooltip v-model="capsTooltip" :content="$t('login.upper')" placement="right" manual>
+                      <el-form-item prop="password">
+                        <el-input ref="password" v-model="loginForm.password" show-password
+                          :placeholder="$t('login.password')" name="password" tabindex="2" autocomplete="on"
+                          @keyup.native="checkCapslock" @blur="capsTooltip = false" prefix-icon="el-icon-lock"
+                          size="large"></el-input>
                       </el-form-item>
-                      <el-form-item prop="account">
-                        <el-input ref="account" v-model="loginForm.account" :placeholder="$t('login.username')" name="account" type="text" tabindex="1" autocomplete="on" prefix-icon="el-icon-user" size="large" @change="getConfig">
-                        </el-input>
-                      </el-form-item>
-                      <el-tooltip v-model="capsTooltip" :content="$t('login.upper')" placement="right" manual>
-                        <el-form-item prop="password">
-                          <el-input ref="password" v-model="loginForm.password" show-password :placeholder="$t('login.password')" name="password" tabindex="2" autocomplete="on" @keyup.native="checkCapslock" @blur="capsTooltip = false" prefix-icon="el-icon-lock" size="large"></el-input>
-                        </el-form-item>
                       </el-tooltip>
                       <el-form-item prop="code" v-if="needCode">
                         <el-row type="flex" justify="space-between">

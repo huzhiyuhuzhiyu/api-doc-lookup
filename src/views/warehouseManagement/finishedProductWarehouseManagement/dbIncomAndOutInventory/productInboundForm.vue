@@ -713,6 +713,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    this.getProductClassFun()
     let objs = { "pageSize": -1, "businessCode": "product" }
     getBimBusinessSwitchConfigList(objs).then(res => {
       this.productNameFlag = res.data.product[1].configValue1

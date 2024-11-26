@@ -42,11 +42,12 @@
                       </el-form>
                     </el-row>
                   </div>
-                  <div style="height: 672px;" class="JNPF-flex-main">
-                    <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column>
+                  <div style="height: 672px;" class="JNPF-flex-main" v-loading="listLoading">
+                    <JNPF-table ref="dataTable" v-if="istable" :data="tableData" @sort-change="sortChange" fixedNO custom-column>
                       <el-table-column prop="maintenanceTaskIdText" label="任务名称" min-width="180" />
                       <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" />
                       <el-table-column prop="equipmentIdName" label="工具名称" min-width="200" sortable="custom" />
+                      <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                       <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
                       <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
                       <el-table-column prop="level" label="保养等级" width="140" />
@@ -115,10 +116,11 @@
                       </el-form>
                     </el-row>
                   </div>
-                  <div style="height: 672px;" class="JNPF-flex-main">
-                    <JNPF-table ref="dataTableInspection" v-loading="listLoadingInspection" :data="tableInspectionresults" fixedNO custom-column>
+                  <div style="height: 672px;" class="JNPF-flex-main" v-loading="listLoadingInspection">
+                    <JNPF-table ref="dataTableInspection" v-if="istable" :data="tableInspectionresults" fixedNO custom-column>
                       <el-table-column prop="totalCode" label="工具编码" min-width="200" />
                       <el-table-column prop="totalName" label="工具名称" min-width="200" />
+                      <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                       <el-table-column prop="normalNum" label="正常次数" min-width="140" />
                       <el-table-column prop="abnormalNum" label="异常次数" min-width="140" />
                     </JNPF-table>
@@ -139,17 +141,22 @@ import chart from "@/views/dailyManagement/deviceReportanaly/components/chart.vu
 import { equMaintenanceList, inspectionMonthTotalchart, dailyMaintenanceNum, dailyEquMaintenanceNum, equMaintenanceTime } from '@/api/dailyManagement/Maintenance'
 import { getdailyInspectionMonthTotal } from "@/api/basicData/materialSettings";
 import card from "@/views/dailyManagement/deviceReportanaly/components/card.vue";
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
+  name: 'upkeepStatisticalAnalysis',
+  mixins: [getProjectList],
   components: { card, chart },
   data() {
     return {
+      istable: false,
+      isProjectSwitch: '',
       totalInspection: 0,
       tableInspectionresults: [],
       listLoadingInspection: false,
       listQueryInspection: {},
       listQuerytwo: {
-        totalName:'',
-        totalCode:'',
+        totalName: '',
+        totalCode: '',
         classAttribute: "tool",
         recordType: 'maintenance',
         pageNum: 1,
@@ -191,7 +198,9 @@ export default {
       },
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.istable = true
     this.listQuery = JSON.parse(JSON.stringify(this.listQueryone))
     this.listQueryInspection = JSON.parse(JSON.stringify(this.listQuerytwo))
     this.initDatadjgk()

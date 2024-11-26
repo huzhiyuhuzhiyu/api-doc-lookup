@@ -30,9 +30,14 @@
                         <el-input v-model="dataForm.equipmentIdName" placeholder="请选择工具名称" readonly @focus="openSeleceProductDialogss" :disabled="btnType !== 'add'"></el-input>
                       </el-form-item>
                     </el-col>
+                    <el-col :sm="6" :xs="24" v-if="btnType!=='add'&&isProjectSwitch==='1'">
+                      <el-form-item label="所属项目" prop="projectName">
+                        <el-input v-model="dataForm.projectName" placeholder="请输入所属项目" maxlength="20" :disabled="true" />
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="计划保养部门" prop="departmentId">
-                        <ComSelect v-model="organizeIdTrees" :disabled="btnType === 'look'" placeholder="请选择计划保养部门" auth :dialogTitle="'请选择计划保养部门'" @change="changedepartment" :currOrgId="dataForm.departmentId || '0'" />
+                        <ComSelect v-model="organizeIdTrees" :disabled="btnType!=='add'" placeholder="请选择计划保养部门" auth :dialogTitle="'请选择计划保养部门'" @change="changedepartment" :currOrgId="dataForm.departmentId || '0'" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
@@ -40,8 +45,8 @@
                         <!-- <el-input v-model="dataForm.maintainerIdName" placeholder="请选择计划保养人" :disabled="btnType == 'look'"
                       maxlength="50" /> -->
                         <!-- <el-form-item label="所属销售" prop="salesName"> -->
-                        <el-select v-model="dataForm.maintainerIdName" placeholder="请选择计划保养人" clearable style="width: 100%;" :disabled="btnType === 'look'" filterable @change="selectsales">
-                          <el-option v-for="(item, index) in salesList" :key="index" :label="item.name" :disabled="btnType == 'look'" :value="item.id"></el-option>
+                        <el-select v-model="dataForm.maintainerIdName" placeholder="请选择计划保养人" clearable style="width: 100%;" :disabled="btnType!=='add'" filterable @change="selectsales">
+                          <el-option v-for="(item, index) in salesList" :key="index" :label="item.name" :value="item.id"></el-option>
                         </el-select>
                         <!-- </el-form-item> -->
                       </el-form-item>
@@ -111,6 +116,7 @@
                     </el-table-column>
                     <el-table-column prop="name" label="工具名称" width="200" show-overflow-tooltip>
                     </el-table-column>
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                     <el-table-column prop="categoryName" label="分类名称" min-width="200" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="specModel" label="工具规格" min-width="200" show-overflow-tooltip>
@@ -221,11 +227,14 @@ import { getOrganizeInfo } from '@/api/permission/organize'
 import { getEquEquipmentList } from '@/api/basicData/index'
 import { getDepartmentSelectorByAuth } from '@/api/permission/department'
 import { getOrganization } from '@/api/permission/user'
+import getProjectList from '@/mixins/generator/getProjectList'
 import { log } from 'mathjs'
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
       isattachmentswitch: '',
       categoryId: '',
       activeNames: ["basicInfo", "sbxx", "xmxx"],
@@ -237,6 +246,7 @@ export default {
         { prop: "name", label: "工具名称", type: 'input' },
       ],
       ProductListRequestObjs: {
+        projectId: '',
         maintenanceFlag: 0,
         pageNum: 1,
         pageSize: 20,
@@ -389,9 +399,17 @@ export default {
         }
       },
       deep: true
+    },
+    'dataForm.maintainerId'(newValue) {
+      if (this.isProjectSwitch === '1') {
+        this.dataFormOne.productData = []
+        let _data = this.salesList.filter(item => item.id == newValue)[0]
+        this.ProductListRequestObjs.projectId = _data.projectId ? _data.projectId || '' : ''
+      }
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.getBimBusinessDetail()
   },
   mounted() {

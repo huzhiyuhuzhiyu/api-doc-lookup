@@ -180,13 +180,13 @@
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import depForm from './depForm'
 import sucForm from './sucForm'
-import { RepairRequestList, deleteRepairRequest, equEquipmentRepairOutsourcing } from '@/api/dailyManagement/Maintenance'
+import { RepairRequesttaskList, deleteRepairRequest, equEquipmentRepairOutsourcing } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters } from 'vuex'
 export default {
   mixins: [getProjectList],
-  // name: 'deviceservice',
+  name: 'deviceservice',
   components: { Form, depForm, sucForm, SuperQuery },
   data() {
     return {
@@ -410,6 +410,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    this.istable = true
     this.initData()
   },
   computed: {
@@ -521,8 +522,7 @@ export default {
     initData() {
       this.listLoading = true
       this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-      RepairRequestList(this.orderForm).then(res => {
-        this.istable = true
+      RepairRequesttaskList(this.orderForm).then(res => {
         this.tableData = res.data.records.map(item => {
           if (item.frontPic) {
             item.frontPicList = item.frontPicList.map(o => { return JSON.parse(`{${o}}`) })

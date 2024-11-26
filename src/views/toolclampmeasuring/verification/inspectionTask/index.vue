@@ -8,13 +8,13 @@
               <el-input v-model="orderForm.name" placeholder="请输入任务名称" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <!-- <el-col :span="4">
             <el-form-item>
               <el-select v-model="orderForm.state" placeholder="请选择状态" clearable style="width: 100%;">
                 <el-option v-for="(item, index) in stateList" :key="index" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -25,7 +25,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head">
           <topOpts @add="addSupplier('', 'add')" />
           <div class="JNPF-common-head-right">
@@ -41,7 +41,7 @@
           </div>
         </div>
 
-        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column>
+        <JNPF-table ref="dataTable" :data="tableData" @sort-change="sortChange" fixedNO custom-column>
           <el-table-column prop="name" label="任务名称" width="200" sortable="custom">
             <!-- <template slot-scope="scope">
                             <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
@@ -111,11 +111,15 @@
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { verificationList, deleteverification } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters } from 'vuex'
 export default {
-  // name: 'verification',
+  mixins: [getProjectList],
+  name: 'inspectionTask',
   components: { Form, SuperQuery },
   data() {
     return {
+      isProjectSwitch: '',
       superQueryJson: [
         {
           prop: 'name',
@@ -204,6 +208,7 @@ export default {
         { label: "启用", value: "enable" }
       ],
       orderForm: {
+        projectId: '',
         name: "",
         cycleType: '',
         nextMaintenanceStartTime: '',
@@ -262,8 +267,12 @@ export default {
       formVisible: false,
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.initData()
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     columnSetFun() {
@@ -317,6 +326,7 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       verificationList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total

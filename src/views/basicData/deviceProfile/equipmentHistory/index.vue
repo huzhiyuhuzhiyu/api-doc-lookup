@@ -94,7 +94,7 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters } from 'vuex'
 export default {
   mixins: [getProjectList],
-  name: 'maintenancelevel',
+  name: 'equipmentHistory',
   components: { SuperQuery, Form },
   data() {
     return {
@@ -203,6 +203,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    this.istable = true
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.initData()
   },
@@ -276,7 +277,6 @@ export default {
       })
       this.listQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getequLifeCyclelist(this.listQuery).then(res => {
-        this.istable = true
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false

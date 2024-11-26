@@ -37,7 +37,7 @@
                         icon="icon-ym icon-ym-report-icon-search-setting" @click="moreQueries()">更多查询</el-button> -->
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head">
           <topOpts @add="addSupplier('', 'add')" />
           <div class="JNPF-common-head-right">
@@ -53,9 +53,10 @@
           </div>
         </div>
 
-        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column>
+        <JNPF-table ref="dataTable" v-if="istable" :data="tableData" @sort-change="sortChange" fixedNO custom-column>
           <el-table-column prop="equipmentIdCode" label="设备编码" width="200" />
           <el-table-column prop="equipmentIdName" label="设备名称" width="200" sortable="custom" />
+          <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
           <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
           <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
           <!-- <el-table-column prop="cycle" label="周期" width="90" />
@@ -121,11 +122,16 @@
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { equMaintenanceList, deleteequMaintenance } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters } from 'vuex'
 export default {
-  // name: 'inspectionRecords',
+  mixins: [getProjectList],
+  name: 'inspectionRecords',
   components: { Form, SuperQuery },
   data() {
     return {
+      istable: false,
+      isProjectSwitch: '',
       srcList: [
         'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg'
       ],
@@ -236,6 +242,7 @@ export default {
       tableData: [],
       listLoading: false,
       orderForm: {
+        projectId: '',
         inspectionResults: '',
         recordType: 'inspection',
         equipmentIdCode: '',
@@ -255,8 +262,13 @@ export default {
       formVisible: false,
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.istable = true
     this.initData()
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     bigimg(url) {
@@ -290,6 +302,7 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       equMaintenanceList(this.orderForm).then(res => {
         this.tableData = res.data.records.map(item => {
           if (item.picList && item.picList.length) item.picList = item.picList.map(o => { return JSON.parse(`{${o}}`) })

@@ -97,7 +97,7 @@ import Form from './form'
 import DepForm from './depForm'
 import CheckUser from './checkUser.vue'
 export default {
-  name: 'row-classification',
+  name: 'equipmentClassification',
   components: { Form, DepForm, CheckUser },
   data() {
     return {

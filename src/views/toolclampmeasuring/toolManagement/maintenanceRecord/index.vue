@@ -142,7 +142,7 @@ import Form from '@/views/dailyManagement/maintenanceManagement/pendingdispatch/
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters } from 'vuex'
 export default {
-  // name: 'maintenanceRecord',
+  name: 'maintenanceRecord',
   mixins: [getProjectList],
   components: { Form, SuperQuery },
   data() {
@@ -365,6 +365,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    this.istable = true
     this.initData()
   },
   methods: {
@@ -443,7 +444,6 @@ export default {
       this.listLoading = true
       this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       RepairRequestList(this.orderForm).then(res => {
-        this.istable = true
         this.tableData = res.data.records.map(item => {
           if (item.frontPic) {
             item.frontPicList = item.frontPicList.map(o => { return JSON.parse(`{${o}}`) })

@@ -89,7 +89,7 @@ import { getcategoryTree, deleteCategory, editCategory } from '@/api/basicData/i
 import DepForm from './depForm'
 import CheckUser from './checkUser.vue'
 export default {
-  // name: 'supplierCategory',
+  name: 'equipmentSupplierCategory',
   components: { DepForm, CheckUser },
   data() {
     return {

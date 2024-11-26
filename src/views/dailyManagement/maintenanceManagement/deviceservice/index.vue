@@ -126,7 +126,7 @@
           <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
           <el-table-column label="操作" width="200" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" v-if="scope.row.reviewComments !== 'outsourcing'||scope.row.reviewComments !== 'reject'" @click="handleUserRelation(scope.row.id, 'end')">维修</el-button>
+              <el-button size="mini" type="text" v-if="scope.row.reviewComments == 'immediately'" @click="handleUserRelation(scope.row.id, 'end')">维修</el-button>
               <el-button size="mini" type="text" v-if="scope.row.reviewComments == 'outsourcing'" @click="outsourcedcompletion(scope.row.id)">委外维修</el-button>
               <el-button size="mini" type="text" class="JNPF-table-delBtn" :disabled="scope.row.state === 'maintaining'" @click="handleDel(scope.row.id)">删除</el-button>
               <el-dropdown hide-on-click>
@@ -157,13 +157,13 @@
 </template>
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { RepairRequestList, deleteRepairRequest, equEquipmentRepairOutsourcing } from '@/api/dailyManagement/Maintenance'
+import { RepairRequesttaskList, deleteRepairRequest, equEquipmentRepairOutsourcing } from '@/api/dailyManagement/Maintenance'
 import Form from '../pendingdispatch/Form.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters } from 'vuex'
 export default {
   mixins: [getProjectList],
-  // name: 'deviceservice',
+  name: 'deviceservice',
   components: { Form, SuperQuery },
   data() {
     return {
@@ -488,7 +488,7 @@ export default {
     initData() {
       this.listLoading = true
       this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-      RepairRequestList(this.orderForm).then(res => {
+      RepairRequesttaskList(this.orderForm).then(res => {
         this.tableData = res.data.records.map(item => {
           if (item.frontPic) {
             item.frontPicList = item.frontPicList.map(o => { return JSON.parse(`{${o}}`) })

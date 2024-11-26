@@ -28,7 +28,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head">
           <topOpts @add="addSupplier('', 'add')" />
           <div class="JNPF-common-head-right">
@@ -44,7 +44,7 @@
           </div>
         </div>
 
-        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column>
+        <JNPF-table ref="dataTable" v-if="istable" :data="tableData" @sort-change="sortChange" fixedNO custom-column>
           <el-table-column prop="name" label="任务名称" min-width="200" sortable="custom">
           </el-table-column>
           <el-table-column prop="level" label="保养等级" min-width="140"></el-table-column>
@@ -52,6 +52,7 @@
           <el-table-column prop="unit" label="单位" width="90"></el-table-column>
           <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" />
           <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom"></el-table-column>
+          <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
           <!-- <el-table-column prop="state" label="状态" sortable="custom" width="120" fixed="right" align="center">
             <template slot-scope="scope">
               <div v-if="scope.row.state == 'disabled'"><el-tag type="danger">禁用</el-tag></div>
@@ -103,11 +104,16 @@
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { checkmaintenanceList, deletecheckmaintenance } from '@/api/dailyManagement/Maintenance'
 import Form from './Form'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters } from 'vuex'
 export default {
-  // name: 'maintenanceTasks',
+  mixins: [getProjectList],
+  name: 'maintenanceTasks',
   components: { Form, SuperQuery },
   data() {
     return {
+      istable: false,
+      isProjectSwitch: '',
       superQueryJson: [
         {
           prop: 'name',
@@ -218,6 +224,7 @@ export default {
         { label: "启用", value: "enable" }
       ],
       orderForm: {
+        projectId: '',
         classAttribute: "equipment",
         name: "",
         taskType: 'maintenance',
@@ -280,8 +287,13 @@ export default {
       formVisible: false,
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.istable = true
     this.initData()
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     columnSetFun() {
@@ -339,8 +351,8 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       checkmaintenanceList(this.orderForm).then(res => {
-        console.log("res++", res);
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false

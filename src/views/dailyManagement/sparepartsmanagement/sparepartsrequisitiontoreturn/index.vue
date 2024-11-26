@@ -76,7 +76,7 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters } from 'vuex'
 export default {
   mixins: [getProjectList],
-  // name: 'sparepartsrequisitiontoreturn',
+  name: 'sparepartsrequisitiontoreturn',
   components: { SuperQuery, Form, returnForm },
   data() {
     return {

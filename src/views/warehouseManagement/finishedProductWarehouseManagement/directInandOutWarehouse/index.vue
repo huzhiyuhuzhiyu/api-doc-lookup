@@ -729,7 +729,7 @@ export default {
 
       title: "",
       visible: true,
-      btnType: false,
+      btnType: 'add',
       wareVisibled: false,
       btnLoading: false,
       formLoading: false,

@@ -57,7 +57,7 @@ export default {
     this.tableDataFlag = true
     console.log(this.isProjectSwitch, 'piii')
     console.log(localStorage.getItem('autoProjectId'), 'pkkkll')
-    console.log(this.userInfo,'user')
+    console.log(this.userInfo.userProjectId)
     if (this.isProjectSwitch === '1') {
       this.userInfo.systemIds.forEach(item => {
         if (item.name === "后台管理系统" && item.currentSystem) {
@@ -68,7 +68,11 @@ export default {
       })
       if (this.userInfo.userProjectId === '1') {
         if (this.userInfo.projectId === '1') {
-          this.autoProjectId = localStorage.getItem('autoProjectId')
+          if (localStorage.getItem('autoProjectId')) {
+            this.autoProjectId = localStorage.getItem('autoProjectId')
+          } else {
+            this.autoProjectId = this.userInfo.projectId
+          }
           this.$store.commit('user/SET_USERINFO_PROJECTID', this.autoProjectId)
         } else {
           this.autoProjectId = localStorage.getItem('autoProjectId')

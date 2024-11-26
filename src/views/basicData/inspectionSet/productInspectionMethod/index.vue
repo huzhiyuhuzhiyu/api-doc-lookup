@@ -44,17 +44,18 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.drawingNo" placeholder="品名规格" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" clearable
+                @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.name" placeholder="产品名称" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.productName" placeholder="产品名称" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.code" placeholder="产品编码" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
 
@@ -166,9 +167,14 @@ import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   components: { Form, SuperQuery, InspectionSettingForm, finishedProductForm },
   mixins: [getProjectList],
-
+  watch: {
+    filterText(val) {
+      this.$refs.treeBox.filter(val)
+    }
+  },
   data() {
     return {
+      filterText: '',
       isProjectSwitch: '',
       tableDataFlag: false,
       leftFlag: false,
@@ -550,6 +556,7 @@ export default {
         productStatus: '', // 产品状态
         customerQueryFields: JSON.parse(JSON.stringify(this.customerQueryFields))
       }
+      this.filterText = ''
       // this.search()
       this.getcategoryTree()
     },
@@ -634,3 +641,4 @@ export default {
 }
 </script>
 <!-- <style src="@/assets/scss/index-list.scss" lang="scss" scoped /> -->
+	

@@ -299,7 +299,7 @@ export default {
         planEsd: '',
         planEed: '',
         receiveStatus: '',
-        inspectionFlag: 0,
+        inspectionFlag: 1,
         processingType: 'self_produced',
         businessCode: 'metalworking',
         // "productionStatus": "production_completed", // 生产状态：已完成

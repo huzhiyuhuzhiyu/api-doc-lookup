@@ -26,8 +26,8 @@ export default () => [
         itemRules: [{ required: true, trigger: 'blur' }],
         sm: 8
       },
-      { prop: "state", label: "启用状态", value: "enable", type: 'select', render: true, itemRules: [{ required: true, trigger: "change" }], options: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }], sm: 8 },
-      { prop: "locationStatus", label: "开启库位", value: "enable", type: 'select', render: true, itemRules: [{ required: true, trigger: "change" }], options: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }], sm: 8 },
+      { prop: "state", label: "启用状态", value: "enable", type: 'select', render: true, itemRules: [{ required: true, trigger: "change" }], options: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }], sm: 8, render: false },
+      { prop: "locationStatus", label: "开启库位", value: "enable", type: 'select', render: true, itemRules: [{ required: true, trigger: "change" }], options: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }], sm: 8, itemDisabled: false },
       {
         prop: 'type',
         label: '仓库类型',
@@ -39,7 +39,8 @@ export default () => [
           { label: '不良品仓库', value: 'unqualified' },
           { label: '报废', value: 'scrap' },
           { label: '虚拟仓库', value: 'virtually' },
-          { label: '线边仓库', value: 'line_edge' }
+          { label: '线边仓库', value: 'line_edge' },
+          { label: '委外仓库', value: 'out' }
         ],
         sm: 8
       },

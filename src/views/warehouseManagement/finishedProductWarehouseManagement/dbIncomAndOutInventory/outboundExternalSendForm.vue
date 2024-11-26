@@ -709,7 +709,7 @@ export default {
         this.watchNum(data, index)
       }
     },
-    async getMainUnitFun(code, type) {
+    async getMainUnitFun(code, type,flag) {
       this.listLoading = true
       try {
         if (flag == 'unitFlag') this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);

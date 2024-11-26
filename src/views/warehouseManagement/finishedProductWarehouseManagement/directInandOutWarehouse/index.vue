@@ -1398,12 +1398,14 @@ export default {
       if (val == 'outbound_sale_send' || val == 'outbound_purchase' || val == 'outbound_pick_out' || val == 'outbound_external_send' || val == 'outbound_other') {
         // if (  val == 'outbound_other') {
         this.dataForm.documentType = 'outbound'
-        this.fetchData("CKDH")
+        if(this.btnType=='add')this.fetchData("CKDH")
+        
       }
       if (val == 'inbound_sale_return' || val == 'inbound_purchase' || val == 'inbound_return_materials' || val == 'inbound_external_return' || val == 'inbound_external' || val == 'inbound_other') {
         // if ( val == 'inbound_other') {
         this.dataForm.documentType = 'inbound'
-        this.fetchData("RKDH")
+        if(this.btnType=='add')this.fetchData("RKDH")
+        
 
       }
       if (val == 'outbound_sale_send' || val == 'inbound_sale_return') {
@@ -1561,6 +1563,7 @@ export default {
         this.title = btnType == 'look' ? '查看出入库单' : '编辑出入库单'
         // 获取详情
         detailWarehouseData(id).then(res => {
+          this.$set(res.data.stockMove,'cooperativePartnerIdText',res.data.stockMove.partnerName)
           this.dataForm = res.data.stockMove
           this.selectDocutementType(this.dataForm.businessType)
           res.data.spaceLines.forEach(item => {

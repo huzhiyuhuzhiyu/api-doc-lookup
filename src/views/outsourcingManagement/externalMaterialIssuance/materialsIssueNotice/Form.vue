@@ -147,10 +147,17 @@
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="processName" label="工序名称" width="160" key="5"
                         show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="mainUnit" label="单位" width="80" key="13"
+                      <!-- <el-table-column prop="mainUnit" label="单位" width="80" key="13"
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="purchaseQuantity" label="订单数量" width="120" key="7"
-                        show-overflow-tooltip></el-table-column>
+                        show-overflow-tooltip></el-table-column> -->
+                      <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+                        :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
+                      <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
+                        width="120" v-if="isDeputyUnitSwitch === '1'" />
+                      <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
+                      <el-table-column prop="purchaseQuantity2" label="数量(副)" width="85"
+                        v-if="isDeputyUnitSwitch === '1'" />
                       <el-table-column prop="price" label="含税单价" width="130">
                         <template slot="header">
                           <span class="required">*</span>
@@ -606,6 +613,7 @@ export default {
   mixins: [busFlow, getProjectList],
   data() {
     return {
+      isDeputyUnitSwitch: '',
       isProjectSwitch: '',
       tableDataFlag: false,
       flowTemplateJson: {},
@@ -964,9 +972,42 @@ export default {
       }
     }
   },
+  watch: {
+    'dataFormTwo.data': {
+      // immediate:true,
+      handler: function (newVal, oldVal) {
+        newVal.forEach((item) => {
+          if ((item.price && item.taxRate) || (item.price && item.taxRate === 0)) {
+            item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
+          } else {
+            item.excludingTaxPrice = ''
+          }
+          if (item.purchaseQuantity && item.excludingTaxPrice) {
+            item.excludingTaxAmount = this.jnpf.numberFormat(item.purchaseQuantity * item.excludingTaxPrice)
+          } else {
+            item.excludingTaxAmount = ''
+          }
+          if (item.price && item.purchaseQuantity && item.excludingTaxAmount) {
+            item.taxAmount = this.jnpf.numberFormat(item.price * item.purchaseQuantity - item.excludingTaxAmount)
+          } else {
+            item.taxAmount = ''
+          }
+          if (item.excludingTaxAmount && item.taxAmount) {
+            item.totalAmount = this.jnpf.numberFormat(item.excludingTaxAmount * 1 + item.taxAmount * 1)
+          } else {
+            item.totalAmount = ''
+          }
+          // if (!item.price) {
+          //   this.$message.error('未找到供应商单价')
+          // }
+        })
+      },
+      deep: true
+    }
+  },
   async created() {
     await this.getProjectSwitch('system', 'project')
-
+    this.getDeputyUnit()
     this.getBimBusinessDetail()
     // this.handleChange()
     // this.getProvinceList()
@@ -977,6 +1018,15 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    getDeputyUnit() {
+      let obj = {
+        businessCode: 'deputyUnit',
+        configKey: `outDeputyUnit`
+      }
+      getBimBusinessDetail(obj).then((res) => {
+        this.isDeputyUnitSwitch = res.data.configValue1
+      })
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -1536,12 +1586,11 @@ export default {
             })
             this.dataFormTwo.data = res.data.noticeLineList
           } else if (this.btnType == 'edit' || this.btnType == 'look') {
-            console.log(res.data.noticeLineList,'lsity')
-            this.dataFormTwo.data = res.data.noticeLineList
+            console.log(res.data.purchaseOrderLineList, 'lsity')
+            this.dataFormTwo.data = res.data.purchaseOrderLineList
             this.dataFormTwo.data.forEach((item) => {
-              item.drawingNo = item.productDrawingNo
               let obj = {
-                ordersLineIdList: [item.ordersLineId],
+                ordersLineIdList: [item.id],
                 pageNum: 1,
                 pageSize: -1
               }
@@ -1686,14 +1735,15 @@ export default {
       this.btnLoading = false
       this.$emit('close', true)
     },
+
     openDetails(row) {
       console.log(this.approvalFlag, '555555')
-      console.log(row, 'ppop66666666666')
+      console.log(row.ordersLineId, 'ppop66666666666')
       this.autoId = row.id
       this.linesList = []
       if (this.dataFormTwo.data.length) {
         let obj = {
-          ordersLineIdList: [row.ordersLineId],
+          ordersLineIdList: [row.id],
           pageNum: 1,
           pageSize: -1
         }
@@ -1793,6 +1843,8 @@ export default {
                   deliveryQuantity: it.deliveryQuantity ? it.deliveryQuantity : it.demandQuantity,
                   deputyUnit: it.deputyUnit ? it.deputyUnit : '',
                   mainUnit: it.mainUnit ? it.mainUnit : '',
+                  purchaseQuantity: it.purchaseQuantity ? it.purchaseQuantity : '',
+                  purchaseQuantity2: it.purchaseQuantity2 ? it.purchaseQuantity2 : '',
                   ordersId: it.ordersId ? it.ordersId : it.purchaseOrderId,
                   notifyType: 'external',
                   inspectionResults: 'qualified',
@@ -1826,6 +1878,8 @@ export default {
                 deliveryQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
                 deputyUnit: item.deputyUnit ? item.deputyUnit : '',
                 mainUnit: item.mainUnit ? item.mainUnit : '',
+                purchaseQuantity: it.purchaseQuantity ? it.purchaseQuantity : '',
+                purchaseQuantity2: it.purchaseQuantity2 ? it.purchaseQuantity2 : '',
                 ordersId: item.ordersId ? item.ordersId : item.purchaseOrderId,
                 notifyType: 'external',
                 inspectionResults: 'qualified',

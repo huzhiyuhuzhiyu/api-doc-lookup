@@ -843,7 +843,8 @@ export default {
                   // 'oil',
                   // 'noise',
                   // 'holder',
-                  'productSource'
+                  'productSource',
+                  'projectId'
                 ].includes(tc.prop)
               ) {
                 tc.itemDisabled = true

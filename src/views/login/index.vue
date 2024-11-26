@@ -330,30 +330,25 @@ export default {
   },
   created() {
       // 判断是否是域名 是域名进行截取 不是域名 放开企业代码
-      function isDomainOrIP(origin) {
-      try {
-        // 解析 origin 获取主机名
-        const hostname = new URL(origin).hostname;
-
-        // 检查是否是 IP 地址
-        const ipRegex = /^(?:\d{1,3}\.){3}\d{1,3}$/;
-        if (ipRegex.test(hostname)) {
-          return 'IP';
-        }
-
-        // 检查是否是域名
-        const domainRegex = /^(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
-        if (domainRegex.test(hostname)) {
-          return 'Domain';
-        }
-
-        return 'Unknown';
-      } catch (error) {
-        console.error('Invalid origin:', error);
-        return 'Unknown';
+      function isDomainOrIP(url) {
+          // 匹配IPv4地址的正则表达式
+          const ipv4Pattern = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+          // 提取主机部分
+          const host = url.split('/')[2];
+          
+          // 判断是否为IP地址或localhost
+          if (host === 'localhost:3000' || host === '127.0.0.1:3000') {
+            return 'localhost';
+          } else if (ipv4Pattern.test(host)) {
+            return 'ip';
+          } else {
+            return 'Domain';
+          }
       }
-    }
-    const result = isDomainOrIP(location.origin);
+      const result = isDomainOrIP(location.origin);
+      console.log(result);
+      
+    
     if (result === 'Domain'){
       const url = location.origin;
       // const url = 'http://zgt_zy.test.zgt.nbjuxuan.com/';

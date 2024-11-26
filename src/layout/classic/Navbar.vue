@@ -10,6 +10,9 @@
 </template> -->
 
     </div>
+    <!-- <template class="hamburger-container">
+      <project-select class="right-menu-item hover-effect" />
+    </template> -->
     <template class="hamburger-container" v-if="selectFlag">
       <el-select style="margin-top: 15px;" v-model="autoProjectId" placeholder="请选择"
         :disabled="userInfo.userProjectId !== '1' && userInfo.userProjectId" @change="projectIChange">
@@ -27,9 +30,9 @@ import NavbarRight from '../components/NavbarRight'
 import Search from '@/components/HeaderSearch'
 import SystemSelect from '@/components/SystemSelect'
 import getProjectList from '@/mixins/generator/getProjectList'
-
+import ProjectSelect from '../components/ProjectSelect'
 export default {
-  components: { Hamburger, NavbarRight, SystemSelect, Search },
+  components: { Hamburger, NavbarRight, SystemSelect, Search, ProjectSelect },
   mixins: [getProjectList],
 
   computed: {

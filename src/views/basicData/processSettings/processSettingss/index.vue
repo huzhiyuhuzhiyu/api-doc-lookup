@@ -44,6 +44,7 @@
             <el-button type="primary" icon="el-icon-plus" @click.native="addOrUpdateHandle('', 'add')" size="mini">
               新建
             </el-button>
+            <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
             <el-button :disabled="list.length > 0 ? false : true" size="mini" type="primary" icon="el-icon-download"
               @click="exportForm">
               导出
@@ -73,7 +74,8 @@
               </template>
             </el-table-column>
             <el-table-column prop="name" label="工艺路线名称" align="left" sortable="custom" min-width="180" />
-            <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
+            <el-table-column prop="projectName" label="所属项目" width="120"
+              v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="reportRulesFlag" label="按工艺顺序报工" align="center" sortable="custom" width="160">
               <template slot-scope="scope">
                 <div v-if="scope.row.reportRulesFlag == '0'">否</div>
@@ -158,6 +160,28 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+
+    <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+      :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
+      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false" :limit="1"
+        :on-preview="handlePreview" drag :on-remove="handleRemove" :on-change="handleFileChange" ref="uploadRef">
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text"><em>点击选取文件上传</em></div>
+        <div class="el-upload__tip" slot="tip">
+          只能上传.xls/.xlsx文件
+          <el-button type="text" class="topButton" icon="el-icon-download" @click="downLoadTemplate">
+            下载模板
+          </el-button>
+        </div>
+      </el-upload>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
+        <!-- <el-button type="primary" @click="saveSubmit()">
+          提交
+        </el-button> -->
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -175,6 +199,7 @@ export default {
   mixins: [getProjectList],
   data() {
     return {
+      uploadVisib: false,
       isProjectSwitch: '',
       tableDataFlag: false,
       superQueryVisible: false,
@@ -345,6 +370,116 @@ export default {
     this.initData()
   },
   methods: {
+    // 导入
+    importForm() {
+
+      // this.$refs.UploadProduct.$el.querySelector('input').click()
+      this.uploadVisib = true
+
+    },
+    handleRemove(file, fileList) { },
+    handlePreview(file) { },
+    handleFileChange(file) {
+      this.file = file.raw
+    },
+    // 下载模板
+    downLoadTemplate() {
+      const a = document.createElement('a')
+      a.setAttribute('download', '')
+
+      a.setAttribute('href', location.origin + '/static/工艺路线导入模板.xlsx')
+
+
+      a.click()
+    },
+    // 上传产品
+    UploadProduct(data) {
+      this.loadingText = '正在导入数据'
+      this.formLoading = true
+      var formData = new FormData()
+      formData.append('file', data)
+      //调用上传文件接口
+
+      uploadBomData(formData)
+        .then((res) => {
+          if (!res.data) {
+            this.$message.success(`导入成功`)
+            this.uploadVisib = false
+            this.$refs['UploadProduct']
+            this.initData()
+          } else {
+            this.uploadVisib = false
+            this.handleMessage(res.data)
+          }
+
+          this.formLoading = false
+          this.loadingText = ''
+        })
+        .catch((err) => {
+          console.log(err, 'err')
+          this.uploadVisib = false
+          console.log(err, 'err')
+          this.formLoading = false
+          this.loadingText = ''
+        })
+
+
+    },
+    // 导入产品  下载导入错误数据
+    downNoProduct(res) {
+      this.jnpf.downloadFile(res.url, res.name)
+      this.uploadVisib = false
+      this.$refs['uploadRef'].clearFiles()
+    },
+    cancelFun() {
+      this.uploadVisib = false
+      this.$refs['uploadRef'].clearFiles()
+    },
+    saveSubmit() {
+      this.UploadProduct(this.file)
+    },
+    // 提示
+    handleMessage(data) {
+      const h = this.$createElement
+      this.$message({
+        type: 'error',
+        duration: 0,
+        showClose: true,
+        customClass: 'my-message', // 自定义类名，用于设置样式
+        message: h(
+          'div',
+          {
+            style: 'padding-right:20px;display:flex;align-items:center;color:#f56c6c;'
+          },
+          [
+            h('p', { style: 'font-size:14px;' }, '导入成功，存在BOM相关信息错误！'),
+            h(
+              'el-button',
+              {
+                props: {
+                  type: 'text',
+                  size: 'mini',
+                  icon: 'el-icon-download'
+                },
+                on: {
+                  click: () => {
+                    this.downNoProduct(data)
+                  }
+                },
+                style: {
+                  border: 'none',
+                  textAlign: 'center',
+                  // width:"20%",
+                  margin: '0 5px 0 5px '
+                }
+              },
+              '下载导入错误数据'
+            )
+          ]
+        )
+      })
+      return
+    },
     withdrawnHandle(formId) {
       let _data = {
         formId

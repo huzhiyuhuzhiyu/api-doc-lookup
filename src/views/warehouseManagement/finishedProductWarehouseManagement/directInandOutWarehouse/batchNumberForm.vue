@@ -10,12 +10,12 @@
           <el-form @submit.native.prevent>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="form.batchNumber" placeholder="请输入批次号" clearable />
+                <el-input v-model="form.batchNumber" placeholder="请输入批次号"  @keyup.enter.native="search()" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="form.shelfSpaceName" placeholder="请输入库位" clearable />
+                <el-input v-model="form.shelfSpaceName" placeholder="请输入库位"  @keyup.enter.native="search()" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="6">

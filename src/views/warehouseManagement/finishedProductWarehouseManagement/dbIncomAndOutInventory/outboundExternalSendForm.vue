@@ -66,8 +66,9 @@
 
 
                             </el-form-item>
-                          </el-col>
-                          <el-col :sm="6" :xs="24">
+                          </el-col> 
+                            <el-col :sm="6" :xs="24" v-if="calculateQuantityFlag==1">
+
                             <el-form-item label="是否显示比重折扣" prop="weightFlag">
                               <el-select v-model="dataForm.weightFlag" placeholder="是否显示比重折扣" style="width: 100%;"
                                 :disabled="btnType == 'look' ? true : false">
@@ -676,6 +677,8 @@ export default {
       productNameFlag: null,
       mainUnitFlag: null,
       isProjectSwitch:"",
+      calculateQuantityFlag:"",
+
     }
   }, 
   async created() {
@@ -688,9 +691,9 @@ export default {
   computed: {
     ...mapGetters(['userInfo'])
   },
-  mounted() {
-    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
-
+  mounted() { 
+    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit','unitFlag')
+    this.getMainUnitFun('warehouse', 'proportion','proportionFlag')
   },
   watch: {
     "dataForm.warehouseId": {
@@ -709,7 +712,8 @@ export default {
     async getMainUnitFun(code, type) {
       this.listLoading = true
       try {
-        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+        if (flag == 'unitFlag') this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+        if(flag=='proportionFlag')this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type)
         this.tableDataFlag = true
         this.listLoading = false
 

@@ -57,7 +57,7 @@
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="仓库" prop="warehouseName">
                               <ComSelect-list
-                                :requestObj="{ type: 'normal',  state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }"
+                                :requestObj="{ type: 'normal', state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }"
                                 :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName"
                                 :method="getWarehouseList" placeholder="请选择仓库"
                                 @change="changeWarehousex"></ComSelect-list>
@@ -120,7 +120,7 @@
                           min-width="160" />
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
-                        min-width="160" />
+                          min-width="160" />
                         <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
                           <template slot="header">
                             <span class="required">*</span>批次号
@@ -279,7 +279,7 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="仓库" prop="warehouseName">
                           <ComSelect-list
-                            :requestObj="{ type: 'normal',  state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }"
+                            :requestObj="{ type: 'normal', state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }"
                             :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName"
                             :method="getWarehouseList" placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
 
@@ -289,7 +289,7 @@
 
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="6" :xs="24" v-if="calculateQuantityFlag == 1">
                         <el-form-item label="是否显示比重折扣" prop="weightFlag">
                           <el-select v-model="dataForm.weightFlag" placeholder="是否显示比重折扣" style="width: 100%;"
                             :disabled="btnType == 'look' ? true : false">
@@ -338,8 +338,7 @@
                     </el-table-column>
                     <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
-                    <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
-                    min-width="160" />
+                    <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
                     <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
                       <template slot="header">
                         <span class="required">*</span>批次号
@@ -498,8 +497,7 @@
                   sortable="custom" />
                 <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
-                <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
-                min-width="160" />
+                <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
                 <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                 <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="160">
                 </el-table-column>
@@ -584,7 +582,7 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 export default {
   components: { CustomerForm, BatchNumberForm, Process, recordList },
-  mixins: [flowMixin, busFlow,getProjectList],
+  mixins: [flowMixin, busFlow, getProjectList],
   data() {
     return {
       isProjectSwitch: '',
@@ -633,7 +631,7 @@ export default {
         approvalFlag: false,
         weightFlag: false,
         orderDate: this.jnpf.getToday(),
-        projectId:"",
+        projectId: "",
       },
       customerInfo: {},//所选客户信息
       getWarehouseList,
@@ -715,6 +713,8 @@ export default {
       productNameFlag: null,
       mainUnitFlag: null,
       tableDataFlag: false,
+      calculateQuantityFlag: "",
+
     }
   },
   created() {
@@ -723,7 +723,7 @@ export default {
       this.productNameFlag = res.data.product[1].configValue1
     })
   },
-   
+
   async created() {
     await this.getProjectSwitch('system', 'project')
     let objs = { "pageSize": -1, "businessCode": "product" }
@@ -735,8 +735,8 @@ export default {
     ...mapGetters(['userInfo'])
   },
   mounted() {
-    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
-
+    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit', 'unitFlag')
+    this.getMainUnitFun('warehouse', 'proportion', 'proportionFlag')
   },
   watch: {
     "dataForm.warehouseId": {
@@ -753,10 +753,11 @@ export default {
         this.watchNum(data, index)
       }
     },
-    async getMainUnitFun(code, type) {
+    async getMainUnitFun(code, typ,flag) {
       this.listLoading = true
       try {
-        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+        if (flag == 'unitFlag') this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+        if (flag == 'proportionFlag') this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type)
         this.tableDataFlag = true
         this.listLoading = false
 
@@ -1220,7 +1221,7 @@ export default {
         warehouseType: "",
         approvalFlag: false,
         orderDate: this.jnpf.getToday(),
-        projectId:"",
+        projectId: "",
       }
       this.productData = []
       this.$refs.dataForm.resetFields()

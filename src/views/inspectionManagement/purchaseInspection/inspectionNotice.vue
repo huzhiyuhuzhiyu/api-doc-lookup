@@ -89,6 +89,26 @@
             <el-table-column prop="ordersNo" label="订单号" width="190" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
+            <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center">
+              <template slot-scope="scope">
+                <el-tag disable-transitions
+                  v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus !== 'draft'">
+                  审批中
+                </el-tag>
+                <el-tag type="success" disable-transitions
+                  v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus !== 'draft'">
+                  审批通过
+                </el-tag>
+                <el-tag type="danger" disable-transitions
+                  v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus !== 'draft'">
+                  审批拒绝
+                </el-tag>
+                <el-tag type="warning" disable-transitions
+                  v-else-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus !== 'draft'">
+                  审批撤回
+                </el-tag>
+              </template>
+            </el-table-column>
             <el-table-column prop="remark" min-width="200" label="备注" />
             <el-table-column label="操作" width="140" fixed="right">
               <template slot-scope="scope">

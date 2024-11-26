@@ -129,11 +129,15 @@ import Process from '@/components/Process/Preview'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import busFlow from '@/mixins/generator/busFlow';
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   components: { TableFormProduct, workFlow, WareSide, Preview, TableFormWare, TableFormWareTwo, Process, recordList },
-  mixins: [busFlow],
+  mixins: [busFlow, getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       isattachmentswitch: '',
       datafilelist: [],
       activeName: 'jcInfo',
@@ -474,7 +478,7 @@ export default {
             type: 'input',
             itemRules: [{ required: true, trigger: 'blur' }],
             sm: 6,
-            render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
+            render: this.isProjectSwitch === '1',
             itemDisabled: true
           },
           {
@@ -904,7 +908,9 @@ export default {
       scope.row.totalLossAmount = this.jnpf.math('add', [scope.row.lossAmount, scope.row.otherLossAmount])
     },
     // 初始化
-    init(id, btnType, approvalFlag, inspectionType) {
+    async init(id, btnType, approvalFlag, inspectionType) {
+      await this.getProjectSwitch('system', 'project')
+    
       this.getBimBusinessDetail(inspectionType)
       // let id = row.id
 

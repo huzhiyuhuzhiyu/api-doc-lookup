@@ -229,13 +229,9 @@ export default {
         rdeDate: '',
         rdsDate: '',
         orderItems: [
-          // {
-          //   asc: false,
-          //   column: ''
-          // },
           {
             asc: false,
-            column: ''
+            column: 'create_time'
           }
         ],
         superQuery: {}

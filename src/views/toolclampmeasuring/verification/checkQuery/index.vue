@@ -211,7 +211,7 @@ import { verificationList } from '@/api/dailyManagement/Maintenance'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters } from 'vuex'
 export default {
-  // name: 'verificationQuery',
+  name: 'verificationQuery',
   mixins: [getProjectList],
   components: { Form, SuperQuery },
   data() {

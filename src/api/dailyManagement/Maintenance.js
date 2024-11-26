@@ -107,6 +107,14 @@ export function RepairRequestList(data) {
     data
   })
 }
+//维修申请单-维修列表
+export function RepairRequesttaskList(data) {
+  return request({
+    url: `/api/mes/equEquipmentRepair/task/list`,
+    method: 'POST',
+    data
+  })
+}
 // 维修申请单 新增
 export function addRepairRequest(data) {
   return request({

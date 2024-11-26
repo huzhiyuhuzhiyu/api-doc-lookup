@@ -142,7 +142,7 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters } from 'vuex'
 export default {
   mixins: [getProjectList],
-  // name: 'announceInvalidated',
+  name: 'announceInvalidatedinfo',
   components: { Form, SuperQuery },
   data() {
     return {

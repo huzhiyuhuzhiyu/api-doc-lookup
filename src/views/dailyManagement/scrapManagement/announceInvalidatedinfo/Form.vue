@@ -4,10 +4,10 @@
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add' ? '新建报废申请单' : btnType == 'edit' ? '编辑报废申请单' : '查看报废申请单'" />
-        <div class="options" v-if="btnType != 'look'">
-          <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
+        <div class="options">
+          <el-button type="success" v-if="btnType != 'look'" :loading="btnLoading" @click="handleConfirm('draft')">
             保存草稿</el-button>
-          <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">
+          <el-button type="primary" v-if="btnType != 'look'" :loading="btnLoading" @click="handleConfirm('submit')">
             保存并提交</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
@@ -283,15 +283,6 @@ export default {
       selectRows: []
     }
   },
-  watch: {
-    'dataForm.applicantId'(newValue) {
-      if (this.isProjectSwitch === '1') {
-        this.dataFormTwo.productData = []
-        let _data = this.salesList.filter(item => item.id == newValue)[0]
-        this.ProductListRequestObj.projectId = _data.projectId ? _data.projectId || '' : ''
-      }
-    }
-  },
   mounted() {
     let tBody = document.querySelectorAll('.el-table')[1]
     tBody.style.height = 'auto'
@@ -356,6 +347,11 @@ export default {
     //申请人
     selectsales(val) {
       this.dataForm.applicantId = val
+      if (this.isProjectSwitch === '1') {
+        this.dataFormTwo.productData = []
+        let _data = this.salesList.filter(item => item.id == val)[0]
+        this.ProductListRequestObj.projectId = _data.projectId ? _data.projectId || '' : ''
+      }
     },
     //申请部门
     changedepartment(val) {

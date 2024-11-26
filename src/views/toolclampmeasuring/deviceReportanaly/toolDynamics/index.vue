@@ -485,6 +485,7 @@ import chart from "@/views/dailyManagement/deviceReportanaly/components/chart.vu
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters } from 'vuex'
 export default {
+  name:'toolDynamics',
   mixins: [getProjectList],
   components: { chart },
   data() {

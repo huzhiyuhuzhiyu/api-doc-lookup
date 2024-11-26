@@ -88,7 +88,7 @@ import { getequMaintenanceLevel, deleteequMaintenanceLevel } from "@/api/basicDa
 import Form from './Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
-  // name: 'maintenancelevel',
+  name: 'maintenancelevel',
   components: { SuperQuery, Form },
   data() {
     return {

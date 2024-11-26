@@ -115,7 +115,7 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters } from 'vuex'
 export default {
   mixins: [getProjectList],
-  // name: 'verification',
+  name: 'inspectionTask',
   components: { Form, SuperQuery },
   data() {
     return {

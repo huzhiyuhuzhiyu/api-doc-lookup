@@ -101,7 +101,7 @@ import { getTerminalList, deleteTerminalData } from '@/api/basicData/index'
 import Form from './Form'
 
 export default {
-  // name: 'terminalManagement',
+  name: 'terminalManagement',
   components: { Form, SuperQuery },
   data() {
     return {

@@ -152,8 +152,8 @@
                       <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
                       </el-table-column>
                       <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
-            <el-table-column prop="projectName" label="所属项目" min-width="120"  v-if="isProjectSwitch==1"/>
-                    
+                      <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
+
                       <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                       <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
                       </el-table-column>
@@ -226,7 +226,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
-                    <el-table-column prop="projectName" label="所属项目" min-width="120"  v-if="isProjectSwitch==1"/>
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
 
                     <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                     <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
@@ -552,7 +552,7 @@
 
                   </el-table-column>
                   <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
-                  <el-table-column prop="projectName" label="所属项目" min-width="120"  v-if="isProjectSwitch==1"/>
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
 
                   <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                   <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
@@ -638,8 +638,7 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
-                <el-table-column prop="projectName" label="所属项目" min-width="120" 
-                  v-if="isProjectSwitch == 1" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                 <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" width="80" :key="8" />
                 <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" width="100" :key="7">
                   <template slot="header">
@@ -917,15 +916,16 @@
                 <el-form @submit.native.prevent>
                   <el-col :span="6">
                     <el-form-item>
+                      <el-input v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="6">
+                    <el-form-item>
                       <el-input v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable />
                     </el-form-item>
                   </el-col>
 
-                  <el-col :span="6">
-                    <el-form-item>
-                      <el-input v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
-                    </el-form-item>
-                  </el-col>
+
 
                   <el-col :span="6">
                     <el-form-item>
@@ -933,7 +933,7 @@
                         {{ $t('common.search') }}</el-button>
                       <el-button size="mini" icon="el-icon-refresh-right" @click="resetAllProduct()">{{
                         $t('common.reset')
-                      }}
+                        }}
                       </el-button>
                     </el-form-item>
                   </el-col>
@@ -946,8 +946,9 @@
                   <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="drawingNo" label="品名规格" />
                   <el-table-column prop="productCategoryName" label="所属分类" />
-            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom" v-if="isProjectSwitch==1"/>
-            <el-table-column prop="mainUnit" label="单位" />
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                    v-if="isProjectSwitch == 1" />
+                  <el-table-column prop="mainUnit" label="单位" />
                   <el-table-column prop="inventoryQuantity" label="库存数量">
                     <template slot-scope="scope">
                       <el-link type="primary" @click.native="viewFun(scope.row.id, 'inventoryFlag')">
@@ -1040,7 +1041,7 @@ import { getBimBusinessDetail } from '@/api/basicData/index'
 import Form from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
-  mixins: [busFlow,getProjectList],
+  mixins: [busFlow, getProjectList],
   components: {
     ExportForm, Process, recordList, Form
   },
@@ -1110,7 +1111,7 @@ export default {
         productCode: "",
         productName: "",
         partnerId: "",
-        projectId:'',
+        projectId: '',
         productStatus: 'enable',
         partnerType: "customer",
         orderItems: [{
@@ -1385,10 +1386,10 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
-  
+
   async created() {
     await this.getProjectSwitch('system', 'project')
-    if(this.isProjectSwitch==1) this.ProductTableItems.splice( 2, 0, { prop: 'projectName', label: '所属项目' },);
+    if (this.isProjectSwitch == 1) this.ProductTableItems.splice(2, 0, { prop: 'projectName', label: '所属项目' },);
   },
   mounted() {
     this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
@@ -1475,7 +1476,7 @@ export default {
         if (res.data) {
           res.data.productCode = res.data.code
           res.data.productsId = res.data.id
-          res.data.taxRate = res.data.taxRate*1
+          res.data.taxRate = res.data.taxRate * 1
           this.$set(this.productData, idx, res.data)
           console.log(this.productData);
           let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.taxRate));
@@ -1503,7 +1504,7 @@ export default {
       let query = JSON.parse(JSON.stringify(this.ProductListRequestObjs))
       query.customerProductNo = data.row.customerProductNo
       query.partnerId = this.ProductListRequestObjs.parentId
-      if (data.row.customerProductNo) { 
+      if (data.row.customerProductNo) {
 
         getcooperativeProduct(query).then(res => {
           // console.log("客户产品", res);
@@ -2246,7 +2247,7 @@ export default {
     },
     // 获取所有产品列表数据
     initData2() {
-      this.listLoading = true 
+      this.listLoading = true
 
       getProducts(this.ProductListRequestObj).then(listRes => {
         if (Array.isArray(listRes.data)) {

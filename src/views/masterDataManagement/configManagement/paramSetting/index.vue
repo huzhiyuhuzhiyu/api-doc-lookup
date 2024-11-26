@@ -44,8 +44,7 @@
                   </el-radio-group>
                 </div>
                 <div v-else>
-                  <el-checkbox v-model="scope.row.state" 
-                    @change="stateChange(scope.row)"></el-checkbox>
+                  <el-checkbox v-model="scope.row.state" @change="stateChange(scope.row)"></el-checkbox>
                   <el-input style="width: 150px;margin-left: 10px;" v-if="
                     (scope.row.state && scope.row.configKey == 'work_exceed_report') ||
                     (scope.row.state && scope.row.configKey == 'collect_exceed_picking')
@@ -254,7 +253,7 @@ export default {
         this.listQuery.pageSize = -1
         this.listQuery.businessCode = 'customersupplier'
         this.getData(6)
-      }else if (this.activeName === 'deputyUnit') {
+      } else if (this.activeName === 'deputyUnit') {
         this.listQuery.pageSize = -1
         this.listQuery.businessCode = 'deputyUnit'
         this.getData(7)
@@ -262,7 +261,7 @@ export default {
         this.listQuery.pageSize = -1
         this.listQuery.businessCode = 'maintenance'
         this.getData(8)
-      } 
+      }
       // else if (this.activeName === 'financialSet') {
       //   this.listQuery.codeFlag = 0
       //   this.listQuery.annexFlag = 0
@@ -301,9 +300,9 @@ export default {
             list = res.data.return
           } else if (this.activeName === 'customersupplier') {
             list = res.data.customersupplier
-          }else if (this.activeName === 'deputyUnit') {
+          } else if (this.activeName === 'deputyUnit') {
             list = res.data.deputyUnit
-          }else if (this.activeName === 'maintenance') {
+          } else if (this.activeName === 'maintenance') {
             list = res.data.maintenance
           }
 
@@ -321,6 +320,9 @@ export default {
             } else if (item.configKey === 'outbound_sale_send') {
               item.radioOff = '按通知单入库'
               item.radioOn = '按订单入库'
+            } else if (item.configKey === 'proportion') {
+              item.radioOff = '关闭'
+              item.radioOn = '启用'
             }
             const configKeyObj = ConfigKey[item.configKey]
             if (notEmpty(configKeyObj)) {

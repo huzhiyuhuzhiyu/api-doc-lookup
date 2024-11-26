@@ -66,7 +66,11 @@ export default {
 
       if (this.userInfo.userProjectId === '1') {
         if (this.userInfo.projectId === '1') {
-          this.autoProjectId = localStorage.getItem('autoProjectId')
+          if (localStorage.getItem('autoProjectId')) {
+            this.autoProjectId = localStorage.getItem('autoProjectId')
+          } else {
+            this.autoProjectId = this.userInfo.projectId
+          }
           this.$store.commit('user/SET_USERINFO_PROJECTID', this.autoProjectId)
         } else {
           this.autoProjectId = localStorage.getItem('autoProjectId')

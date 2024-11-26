@@ -118,16 +118,16 @@ export default {
     }
     this.tabs.forEach((tab, tabInd) => {
       if (this.isProjectSwitch == 1) {
-        tab.tabContent.splice(2,0,
-        { prop: "projectId", label: "所属项目", value: this.dataForm.projectId, type: 'select', render: true, itemDisabled: this.dataForm.projectId != 1, itemRules: [{ required: true, trigger: "change" }], options: this.projectIdDataList, sm: 8 },
+        tab.tabContent.splice(2, 0,
+          { prop: "projectId", label: "所属项目", value: this.dataForm.projectId, type: 'select', render: true, itemDisabled: this.dataForm.projectId != 1, itemRules: [{ required: true, trigger: "change" }], options: this.projectIdDataList, sm: 8 },
 
 
         )
 
-        }
+      }
       tab.tabContent.forEach((tc) => {
-       
-        this.dataForm[tc.prop] = tc.value || '' // 设置默认value
+
+        // this.dataForm[tc.prop] = tc.value || '' // 设置默认value
         // 添加自定义表单元素方法和参数
         if (tc.type == 'custom') {
           // 产品分类
@@ -177,7 +177,8 @@ export default {
                         { label: '中转仓库', value: 'temp' },
                         { label: '不良品仓库', value: 'unqualified' },
                         { label: '报废仓库', value: 'scrap' },
-                        { label: '线边仓库', value: 'line_edge' }
+                        { label: '线边仓库', value: 'line_edge' },
+                        { label: '委外仓库', value: 'out' },
                       ]
                     }
                   })
@@ -267,14 +268,27 @@ export default {
               this.tabs[0].tabContent.forEach((tc) => {
                 if (tc.prop == 'workshop') {
                   tc.render = true
+                } else if (tc.prop == 'locationStatus') {
+                  tc.itemDisabled = false
                 }
+              })
+              this.dataForm.locationStatus = 'enable'
+            } else if (val == 'out') {
+              this.tabs[0].tabContent.forEach((tc) => {
+                if (tc.prop == 'locationStatus') {
+                  tc.itemDisabled = true
+                }
+                this.dataForm.locationStatus = 'disabled'
               })
             } else {
               this.tabs[0].tabContent.forEach((tc) => {
                 if (tc.prop == 'workshop') {
                   tc.render = false
+                } else if (tc.prop == 'locationStatus') {
+                  tc.itemDisabled = false
                 }
               })
+              this.dataForm.locationStatus = 'enable'
             }
           }
         }
@@ -347,7 +361,8 @@ export default {
                   { label: '正常仓库', value: 'normal' },
                   { label: '中转仓库', value: 'temp' },
                   { label: '不良品仓库', value: 'unqualified' },
-                  { label: '线边仓库', value: 'line_edge' }
+                  { label: '线边仓库', value: 'line_edge' },
+                  { label: '委外仓库', value: 'out' }
                 ]
               }
             })
@@ -381,7 +396,7 @@ export default {
       if (!valid_1 && submitFlag) {
         submitFlag = false
       }
-
+      this.dataForm.state = 'enable'
       // 判断条件后发送请求
       if (submitFlag) {
         let obj = {

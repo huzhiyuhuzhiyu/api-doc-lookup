@@ -15,5 +15,8 @@ export default {
         configKeyLabel: '启用仓库库位',
         description: '开启后，在仓库库位新建、编辑、查看都会显示附件操作。'
     },
-
+    proportion: {
+        configKeyLabel: '启用比重折扣',
+        description: '启用比重折扣后，采购和外协收货入库、外协发料出库时，则必须填写重重和比重。'
+    },
 }

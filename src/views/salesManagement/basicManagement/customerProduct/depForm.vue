@@ -2,10 +2,9 @@
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
-        <el-page-header @back="$emit('close')"
-          content="新建客户产品价格" />
+        <el-page-header @back="$emit('close')" content="新建客户产品价格" />
         <div class="options">
-      
+
           <el-button size="mini" type="primary" v-if="btnType !== 'look'" :loading="btnLoading"
             @click="handleConfirm('submit')">
             提交</el-button>
@@ -19,7 +18,7 @@
               <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                 <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                   <el-row :gutter="30" class="custom-row">
-                    
+
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="客户" prop="cooperativePartnerIdText">
                         <ComSelect-page key="partner" ref="ComSelect-page" v-model="dataForm.cooperativePartnerIdText"
@@ -31,16 +30,16 @@
                           :isdisabled="btnType === 'look'" />
                       </el-form-item>
                     </el-col>
-                    
+
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="有效时间起止" prop="validDateArr">
-                   
+
                         <el-date-picker v-model="dataForm.validDateArr" type="daterange" value-format="yyyy-MM-dd"
-                            :disabled='btnType == "look"' style="width: 100%;" start-placeholder="有效时间起"
-                            end-placeholder="有效时间止" clearable>
-                          </el-date-picker>
+                          :disabled='btnType == "look"' style="width: 100%;" start-placeholder="有效时间起"
+                          end-placeholder="有效时间止" clearable>
+                        </el-date-picker>
                       </el-form-item>
-                    </el-col> 
+                    </el-col>
                   </el-row>
                 </el-form>
               </el-collapse-item>
@@ -93,7 +92,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="80" show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="num" label="数量" width="120">
+                    <!-- <el-table-column prop="num" label="数量" width="120">
                       <template slot="header">
                         <span class="required">*</span>数量
                       </template>
@@ -105,15 +104,14 @@
                           </el-input>
                         </el-form-item>
                       </template>
-                    </el-table-column>
+                    </el-table-column> -->
 
                     <el-table-column prop="price" label="单价(含税)" width="120">
                       <template slot="header">
                         <span class="required">*</span>单价(含税)
                       </template>
                       <template slot-scope="scope">
-                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'price'"
-                          :rules='productRules.price'>
+                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'price'" :rules='productRules.price'>
                           <el-input v-model="scope.row.price" placeholder="单价" :disabled="status" maxlength="20"
                             @input="watchPrice(scope.row, scope.$index)" oninput="value=value.replace(/[^0-9.]/g,'')">
                           </el-input>
@@ -144,10 +142,10 @@
                     </el-table-column>
                     <el-table-column prop="totalTaxAmount" label="税额" width="150" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="amounts" label="金额(含税)" width="150" show-overflow-tooltip>
+                    <!-- <el-table-column prop="amounts" label="金额(含税)" width="150" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="excludingTaxAmounts" label="金额(不含税)" width="150" show-overflow-tooltip>
-                    </el-table-column>
+                    </el-table-column> -->
                     <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
@@ -190,7 +188,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="clearance" label="游隙" width="120" :key="100">
-                   
+
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list6" :key="index" :disabled="status" :label="item.name"
@@ -230,10 +228,10 @@
                     </el-table-column>
 
                   </el-table>
-                  <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
+                  <!-- <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
                     <span style="font-weight:500;margin:0 10px">总数量：{{ totalNum }}</span>
                     <span style="font-weight:500;margin:0 10px">总金额：{{ totalAmount }}</span>
-                  </div>
+                  </div> -->
                 </el-form>
               </el-collapse-item>
 
@@ -253,31 +251,27 @@
         <el-collapse v-model="activeNames" v-else>
           <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
             <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
-                  <el-row :gutter="30" class="custom-row">
-                    
-                    <el-col :sm="6" :xs="24">
-                      <el-form-item label="客户" prop="cooperativePartnerIdText">
-                        <ComSelect-page key="partner" ref="ComSelect-page" v-model="dataForm.cooperativePartnerIdText"
-                          @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类"
-                          placeholder="请选择客户"
-                          :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }"
-                          :listMethod="getCooperativeData" :listRequestObj="partnerRequestObj"
-                          :searchList="partnerSearchList" :treeNodeClick="yxPartnerTreeNodeClick"
-                          :isdisabled="btnType === 'look'" />
-                      </el-form-item>
-                    </el-col>
-                    
-                    <el-col :sm="6" :xs="24">
-                      <el-form-item label="有效时间起止" prop="validDateArr">
-                   
-                        <el-date-picker v-model="dataForm.validDateArr" type="daterange" value-format="yyyy-MM-dd"
-                            :disabled='btnType == "look"' style="width: 100%;" start-placeholder="有效时间起"
-                            end-placeholder="有效时间止" clearable>
-                          </el-date-picker>
-                      </el-form-item>
-                    </el-col> 
-                  </el-row>
-                </el-form>
+              <el-row :gutter="30" class="custom-row">
+                <el-col :sm="6" :xs="24">
+                  <el-form-item label="客户" prop="cooperativePartnerIdText">
+                    <ComSelect-page key="partner" ref="ComSelect-page" v-model="dataForm.cooperativePartnerIdText"
+                      @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类"
+                      placeholder="请选择客户" :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }"
+                      :listMethod="getCooperativeData" :listRequestObj="partnerRequestObj"
+                      :searchList="partnerSearchList" :treeNodeClick="yxPartnerTreeNodeClick"
+                      :isdisabled="btnType === 'look'" />
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="6" :xs="24">
+                  <el-form-item label="有效时间起止" prop="validDateArr">
+                    <el-date-picker v-model="dataForm.validDateArr" type="daterange" value-format="yyyy-MM-dd"
+                      :disabled='btnType == "look"' style="width: 100%;" start-placeholder="有效时间起"
+                      end-placeholder="有效时间止" clearable>
+                    </el-date-picker>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </el-form>
           </el-collapse-item>
 
 
@@ -328,7 +322,7 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="mainUnit" label="单位" width="160" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="num" label="数量" width="160">
+                <!-- <el-table-column prop="num" label="数量" width="160">
                   <template slot="header">
                     <span class="required">*</span>数量
                   </template>
@@ -340,7 +334,7 @@
                       </el-input>
                     </el-form-item>
                   </template>
-                </el-table-column>
+                </el-table-column> -->
 
                 <el-table-column prop="price" label="单价(含税)" width="160">
                   <template slot="header">
@@ -381,77 +375,76 @@
                 </el-table-column>
                 <el-table-column prop="totalTaxAmount" label="税额" width="150" show-overflow-tooltip>
                 </el-table-column>
-                <el-table-column prop="amounts" label="金额(含税)" width="150" show-overflow-tooltip>
+                <!-- <el-table-column prop="amounts" label="金额(含税)" width="150" show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column prop="excludingTaxAmounts" label="金额(不含税)" width="160" show-overflow-tooltip>
-                </el-table-column>
+                </el-table-column> -->
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
-                          style="width: 100%;">
-                          <el-option v-for="(item, index) in list1" :key="index" :disabled="status" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
-                          <el-option v-for="(item, index) in list2" :key="index" :disabled="status" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list3" :key="index" :disabled="status" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="oil" label="油脂" width="120" :key="61">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list4" :key="index" :disabled="status" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list5" :key="index" :disabled="status" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="clearance" label="游隙" width="120" :key="100">
-                   
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list6" :key="index" :disabled="status" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in list1" :key="index" :disabled="status" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
+                      <el-option v-for="(item, index) in list2" :key="index" :disabled="status" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in list3" :key="index" :disabled="status" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="oil" label="油脂" width="120" :key="61">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in list4" :key="index" :disabled="status" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in list5" :key="index" :disabled="status" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="clearance" label="游隙" width="120" :key="100">
 
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list7" :key="index" :disabled="status" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="101">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list8" :key="index" :disabled="status" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in list6" :key="index" :disabled="status" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101">
+
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in list7" :key="index" :disabled="status" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="101">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in list8" :key="index" :disabled="status" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
 
 
                 <el-table-column prop="remark" label="备注" min-width="200">
@@ -594,7 +587,7 @@ import { getcategoryTrees, getcooperativeProduct } from '@/api/salesManagement/a
 import { getCooperativeInfo, getCooperativeData } from '@/api/basicData/index'
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表
-import { mapGetters, mapState } from 'vuex' 
+import { mapGetters, mapState } from 'vuex'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
@@ -677,10 +670,10 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
-        partnerType:"customer",
-        dateOrderStart:"",
-        cooperativePartnerId:'',
-        validDateArr:[], 
+        partnerType: "customer",
+        dateOrderStart: "",
+        cooperativePartnerId: '',
+        validDateArr: [],
       },
       taxRateList: [],
       pickerOptions: {
@@ -690,9 +683,9 @@ export default {
       },
       selectRows: [],
       taxRate: '13', // 默认税率
-      dataRule: { 
+      dataRule: {
         cooperativePartnerIdText: [{ required: true, message: '客户不能为空', trigger: 'change' }],
-        validDateArr: [{ required: true, message: '有效期止不能为空', trigger: 'blur' }], 
+        validDateArr: [{ required: true, message: '有效期止不能为空', trigger: 'blur' }],
       },
       productRules: {
 
@@ -786,7 +779,7 @@ export default {
   mounted() {
     this.getTaxRateFun()
     this.getBimBusinessDetail()
-    
+
   },
   methods: {
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
@@ -1138,7 +1131,8 @@ export default {
       let productArr = [...this.dataFormTwo.lines]
       productArr[index].excludingTaxPrice = this.jnpf.numberFormat(row.price / (1 + (row.taxRate * 1 / 100)), 2)
       productArr[index].excludingTaxAmounts = this.jnpf.numberFormat((row.excludingTaxPrice * row.num), 2)
-      productArr[index].totalTaxAmount = this.jnpf.numberFormat((row.amounts * 1 - row.excludingTaxAmounts), 2)
+      //  = this.jnpf.numberFormat((row.price * 1 - row.excludingTaxPrice), 2)
+        productArr[index].totalTaxAmount= this.jnpf.numberFormat(this.jnpf.math('subtract', [row.price, row.excludingTaxPrice]), 2)
       this.dataFormTwo.lines = productArr
     },
     getTaxRateFun() {
@@ -1422,116 +1416,117 @@ export default {
       if (row.price && row.price != '0') {
         let b = this.jnpf.numberFormat(this.jnpf.math('divide', [row.price, 1 + row.taxRate / 100]), 2)
         row.excludingTaxPrice = b ? b : 0
+        row.totalTaxAmount=this.jnpf.numberFormat(this.jnpf.math('subtract', [row.price, row.excludingTaxPrice]), 2)
         productArr[index].excludingTaxPrice = b ? b : 0
       } else {
         row.excludingTaxPrice = ''
       }
 
 
-      let a = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.price, row.num]), 2)
-      console.log("aaa", a);
-      row.amounts = a ? a : '' // 含税金额 
-      productArr[index].amounts = a ? a : 0
-      console.log(this.dataFormTwo.lines);
+      // let a = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.price, row.num]), 2)
+      // console.log("aaa", a);
+      // row.amounts = a ? a : '' // 含税金额 
+      // productArr[index].amounts = a ? a : 0
+      // console.log(this.dataFormTwo.lines);
 
-      if (row.excludingTaxPrice && row.num) {
-        let c = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.excludingTaxPrice, row.num]), 2)
-        row.excludingTaxAmounts = c ? c : ''
-        productArr[index].excludingTaxAmounts = c ? c : 0
-      } else {
-        row.excludingTaxAmounts = ''
-      }
-      if (row.excludingTaxAmounts && row.amounts) { // 税额计算
-        let d = this.jnpf.numberFormat(this.jnpf.math('subtract', [row.amounts, row.excludingTaxAmounts]), 2)
-        row.totalTaxAmount = d ? d : 0
-        productArr[index].totalTaxAmount = d ? d : 0
-      }
+      // if (row.excludingTaxPrice && row.num) {
+      //   let c = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.excludingTaxPrice, row.num]), 2)
+      //   row.excludingTaxAmounts = c ? c : ''
+      //   productArr[index].excludingTaxAmounts = c ? c : 0
+      // } else {
+      //   row.excludingTaxAmounts = ''
+      // }
+      // if (row.excludingTaxAmounts && row.amounts) { // 税额计算
+      //   let d = this.jnpf.numberFormat(this.jnpf.math('subtract', [row.amounts, row.excludingTaxAmounts]), 2)
+      //   row.totalTaxAmount = d ? d : 0
+      //   productArr[index].totalTaxAmount = d ? d : 0
+      // }
       this.dataFormTwo.lines = productArr
     },
-    // 监听主数量输入
-    watchnums(row, index) {
-      console.log("ROW", row, index);
-      // 数量处理
-      row.num = row.num ? row.num.replace(/[^\d.]/g, '') : ''
-      if (row.num.length == 1 && row.num == '.') {
-        // 如果第一位是小数点，则清空输入框
-        row.num = '';
-      } else if (row.num.length == 2 && row.num[0] == '0' && row.num[1] != '.') {
-        // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
-        row.num = row.num.slice(0, 1) + '.' + row.num.slice(1);
-      } else if (row.num.length > 2 && row.num[0] == '0' && row.num[1] != '.') {
-        row.num = row.num.substring(1, row.num.length)
-      }
-      if (row.num.includes('.')) {
-        let dotCount = 0; // 小数点的数量
-        let result = ''; // 处理后的结果
-        for (let i = 0; i < row.num.length; i++) {
-          const char = row.num[i];
-          if (char === '.') {
-            if (dotCount === 0) {
-              // 第一个小数点保留
-              result += char;
-              dotCount++;
-            }
-          } else {
-            result += char;
-          }
-        }
-        row.num = result;
-        let arr = row.num.split('.')
-        if (arr[0].length > 8) {
-          arr[0] = arr[0].substring(0, 8)
-        }
-        if (arr[1].length > 2) {
-          arr[1] = arr[1].substring(0, 2)
-        }
-        row.num = arr[0] + '.' + arr[1]
-      } else {
-        if (row.num.length > 8) {
-          row.num = row.num.substring(0, 8);
-        }
-      }
-      // if (row.num.length) {
-      //   console.log(2222222222222);
-      //   // 数量变化 更新审批流程
-      //   // this.$nextTick(() => { this.getApproverData() })//暂时注释
-      // }
+    // // 监听主数量输入
+    // watchnums(row, index) {
+    //   console.log("ROW", row, index);
+    //   // 数量处理
+    //   row.num = row.num ? row.num.replace(/[^\d.]/g, '') : ''
+    //   if (row.num.length == 1 && row.num == '.') {
+    //     // 如果第一位是小数点，则清空输入框
+    //     row.num = '';
+    //   } else if (row.num.length == 2 && row.num[0] == '0' && row.num[1] != '.') {
+    //     // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
+    //     row.num = row.num.slice(0, 1) + '.' + row.num.slice(1);
+    //   } else if (row.num.length > 2 && row.num[0] == '0' && row.num[1] != '.') {
+    //     row.num = row.num.substring(1, row.num.length)
+    //   }
+    //   if (row.num.includes('.')) {
+    //     let dotCount = 0; // 小数点的数量
+    //     let result = ''; // 处理后的结果
+    //     for (let i = 0; i < row.num.length; i++) {
+    //       const char = row.num[i];
+    //       if (char === '.') {
+    //         if (dotCount === 0) {
+    //           // 第一个小数点保留
+    //           result += char;
+    //           dotCount++;
+    //         }
+    //       } else {
+    //         result += char;
+    //       }
+    //     }
+    //     row.num = result;
+    //     let arr = row.num.split('.')
+    //     if (arr[0].length > 8) {
+    //       arr[0] = arr[0].substring(0, 8)
+    //     }
+    //     if (arr[1].length > 2) {
+    //       arr[1] = arr[1].substring(0, 2)
+    //     }
+    //     row.num = arr[0] + '.' + arr[1]
+    //   } else {
+    //     if (row.num.length > 8) {
+    //       row.num = row.num.substring(0, 8);
+    //     }
+    //   }
+    //   // if (row.num.length) {
+    //   //   console.log(2222222222222);
+    //   //   // 数量变化 更新审批流程
+    //   //   // this.$nextTick(() => { this.getApproverData() })//暂时注释
+    //   // }
 
 
 
-      if (row.price && row.price != '0') {
-        let b = this.jnpf.numberFormat((row.price / (1 + row.taxRate / 100)), 2)
-        row.excludingTaxPrice = b ? b : 0
-      } else {
-        row.excludingTaxPrice = ''
-      }
+    //   if (row.price && row.price != '0') {
+    //     let b = this.jnpf.numberFormat((row.price / (1 + row.taxRate / 100)), 2)
+    //     row.excludingTaxPrice = b ? b : 0
+    //   } else {
+    //     row.excludingTaxPrice = ''
+    //   }
 
-      if (!row.num || !row.price) {
-        row.amounts = ''
-        row.totalTaxAmount = ''
-        this.dataForm.totalAmount = 0
-      } else {
-        let a = this.jnpf.numberFormat((row.price * row.num), 2)
-        row.amounts = a ? a : '' // 含税金额
-      }
-      var totalPrice = 0;
-      for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
-        let item = this.dataFormTwo.lines[a]
-        console.log("item", item.amounts);
-        totalPrice = this.jnpf.math('add', [totalPrice, item.amounts])
-      }
-      if (row.excludingTaxPrice && row.num) {
-        let c = this.jnpf.numberFormat((row.excludingTaxPrice * row.num), 2)
-        row.excludingTaxAmounts = c ? c : ''
-      } else {
-        row.excludingTaxAmounts = ''
-      }
-      if (row.excludingTaxAmounts && row.amounts) { // 税额计算
-        let d = this.jnpf.numberFormat((row.amounts * 1 - row.excludingTaxAmounts * 1), 2)
-        row.totalTaxAmount = d ? d : 0
-      }
-      console.log("pfijspdfjp");
-    },
+    //   if (!row.num || !row.price) {
+    //     row.amounts = ''
+    //     row.totalTaxAmount = ''
+    //     this.dataForm.totalAmount = 0
+    //   } else {
+    //     let a = this.jnpf.numberFormat((row.price * row.num), 2)
+    //     row.amounts = a ? a : '' // 含税金额
+    //   }
+    //   var totalPrice = 0;
+    //   for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
+    //     let item = this.dataFormTwo.lines[a]
+    //     console.log("item", item.amounts);
+    //     totalPrice = this.jnpf.math('add', [totalPrice, item.amounts])
+    //   }
+    //   if (row.excludingTaxPrice && row.num) {
+    //     let c = this.jnpf.numberFormat((row.excludingTaxPrice * row.num), 2)
+    //     row.excludingTaxAmounts = c ? c : ''
+    //   } else {
+    //     row.excludingTaxAmounts = ''
+    //   }
+    //   if (row.excludingTaxAmounts && row.amounts) { // 税额计算
+    //     let d = this.jnpf.numberFormat((row.amounts * 1 - row.excludingTaxAmounts * 1), 2)
+    //     row.totalTaxAmount = d ? d : 0
+    //   }
+    //   console.log("pfijspdfjp");
+    // },
     // 产品列表选中 
     handeleProductInfoData(val) {
       this.selectRows = val
@@ -1556,32 +1551,32 @@ export default {
       // this.oldId = JSON.parse(JSON.stringify(id)) || ""
       // this.oldType = JSON.parse(JSON.stringify(btnType))
       this.btnType = btnType
-     
-        this.getProductClassFun()
-        this.iszt = true
-        this.status = false
-        let obj = JSON.parse(JSON.stringify(this.createdData))
-        this.dataFormTwo.lines.push(obj)
-     
+
+      this.getProductClassFun()
+      this.iszt = true
+      this.status = false
+      let obj = JSON.parse(JSON.stringify(this.createdData))
+      this.dataFormTwo.lines.push(obj)
+
       console.log('status', this.status);
 
- 
+
     },
     async handleConfirm(value) {
       this.dataForm.documentStatus = value
       let submitFlag = true
       if (this.dataFormTwo.lines.length) {
-          let index = this.dataFormTwo.lines.findIndex(item =>
-            item.customerProductNo === "" &&
-            item.num === "" &&
-            item.price === "" &&
-            item.productDrawingNo == ""
-          )
-          console.log(index);
-          if (index !== -1) {
-            this.dataFormTwo.lines.splice(index, 1);
-          }
+        let index = this.dataFormTwo.lines.findIndex(item =>
+          item.customerProductNo === "" &&
+          item.num === "" &&
+          item.price === "" &&
+          item.productDrawingNo == ""
+        )
+        console.log(index);
+        if (index !== -1) {
+          this.dataFormTwo.lines.splice(index, 1);
         }
+      }
 
       // 校验主表
       const form_1 = this.$refs['dataForm']
@@ -1639,13 +1634,13 @@ export default {
       }
 
       if (submitFlag) {
-     
+
         this.btnLoading = true
         this.dataForm.totalAmount = Number(this.dataForm.totalAmount = 0)
         this.dataForm.totalAmount = this.totalPrice
-        if(this.dataForm.validDateArr.length){
-          this.dataForm.dateOrderStart=this.dataForm.validDateArr[0]
-          this.dataForm.dateOrderStop=this.dataForm.validDateArr[1]
+        if (this.dataForm.validDateArr.length) {
+          this.dataForm.dateOrderStart = this.dataForm.validDateArr[0]
+          this.dataForm.dateOrderStop = this.dataForm.validDateArr[1]
         }
         // if (this.datafilelist.length) {
         //   this.datafilelist.map((item, index) => {
@@ -1661,16 +1656,16 @@ export default {
         let obj = {
           // attachmentList: this.datafilelist,
           // sale: this.dataForm,
-          cooperativePartnerId:this.dataForm.cooperativePartnerId,
-          dateOrderStart:this.dataForm.dateOrderStart,
-          dateOrderStop:this.dataForm.dateOrderStop,
+          cooperativePartnerId: this.dataForm.cooperativePartnerId,
+          dateOrderStart: this.dataForm.dateOrderStart,
+          dateOrderStop: this.dataForm.dateOrderStop,
           list: filteredArr,
           // flowData: this.flowData
-          partnerType:"customer",
+          partnerType: "customer",
         }
         console.log(obj, '参数');
         // return
-      
+
         addPartnerOrProductData(obj).then(res => {
           let msg = "";
           if (value == "draft") {
@@ -1680,10 +1675,10 @@ export default {
 
           }
           if (this.btnType == 'edit') {
-            msg = "提交成功" 
+            msg = "提交成功"
           } else if (this.btnType == 'add' || this.btnType == 'copy') {
             msg = "新建成功"
-            
+
           } else {
             if (res.data) {
               this.btnLoading = false

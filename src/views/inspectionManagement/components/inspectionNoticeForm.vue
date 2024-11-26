@@ -86,10 +86,16 @@ import { getDownloadUrl } from '@/api/common'
 import { mapGetters } from 'vuex'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   components: { TableFormProduct, WareSide, Preview, TableFormWare, TableFormWareTwo, Process },
+  mixins: [getProjectList],
+
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       isattachmentswitch: '',
       categoryId: '',
       activeFile: {},
@@ -286,7 +292,7 @@ export default {
           type: 'input',
           itemRules: [{ required: true, trigger: 'blur' }],
           sm: 6,
-          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
+          render: this.isProjectSwitch === '1',
           itemDisabled: true
         },
         {
@@ -421,6 +427,7 @@ export default {
     },
     // 初始化
     async init(row, readOnly, inspectionType, type, businessCode) {
+      await this.getProjectSwitch('system', 'project')
       this.getBimBusinessDetail(inspectionType)
 
       this.scope = { ...row }
@@ -962,7 +969,6 @@ export default {
       { prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120 }
     ]
   },
-
   computed: {
     rowNum() {
       return this.dataForm.unqualifiedQuantity

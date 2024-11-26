@@ -149,7 +149,7 @@
                   <div v-show="active == 1">
                     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" autocomplete="on"
                     label-position="left">
-                    <el-form-item prop="busCode">
+                    <el-form-item prop="busCode"  v-show="isDomain">
                       <el-input ref="account" v-model="loginForm.busCode" :placeholder="$t('login.busCode')"
                         name="busCode" type="text" tabindex="1" autocomplete="on" prefix-icon="el-icon-user"
                         size="large" @change="getConfig">

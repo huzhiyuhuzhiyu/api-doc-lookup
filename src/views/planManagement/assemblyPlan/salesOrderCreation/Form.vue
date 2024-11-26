@@ -419,8 +419,11 @@ export default {
   },
   methods: {
     changeProject() {
+      console.log(this.originalData);
+      console.log(this.planForm.projectId);
    this.$nextTick(()=>{
-    this.productData = this.originalData.filter(item => item.id === this.planForm.projectId);
+    this.productData = this.originalData.filter(item => item.projectId === this.planForm.projectId);
+    console.log(55,this.productData);
       this.planForm.planQuantity = this.productData.reduce((acc, item) => {
         return acc + Number(item.num); // 使用 Number() 将字符串转换为数字  
       }, 0);
@@ -902,6 +905,7 @@ export default {
             plan: {},
           }
           let arr = []
+          if(!this.productData.length) return this.$message.error("产品信息至少需要一条数据")
           this.productData.forEach(item => {
             let objs = {
               cooperativePartnerId: item.cooperativePartnerId,

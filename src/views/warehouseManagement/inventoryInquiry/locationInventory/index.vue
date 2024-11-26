@@ -147,7 +147,7 @@
           <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" sortable="custom" />
 
         </JNPF-table>
-        <pagination :total="total" :page.sync="tableQuery.currentPage" :limit.sync="tableQuery.pageSize"
+        <pagination :total="total" :page.sync="tableQuery.pageNum" :limit.sync="tableQuery.pageSize"
           @pagination="search('basic')">
           <div class="text">
             <span>合计：</span>

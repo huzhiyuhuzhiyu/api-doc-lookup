@@ -634,7 +634,7 @@ export default {
           type: 'input',
           itemRules: [{ required: true, trigger: 'blur' }],
           sm: 6,
-          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
+          render: this.isProjectSwitch === '1',
           itemDisabled: true
         },
         {
@@ -1064,6 +1064,7 @@ export default {
     },
     // 初始化
     init(id, btnType, approvalFlag, inspectionType) {
+      
       this.getBimBusinessDetail(inspectionType)
       this.dataForm.unqualifiedQuantity = 0
       this.visible = true

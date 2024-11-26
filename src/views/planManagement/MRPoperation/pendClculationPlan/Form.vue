@@ -35,7 +35,7 @@
                   </el-form-item>
 
                 </el-col>
-                <el-col :span="12">
+                <el-col :span="12" v-if="isProjectSwitch==1">
                   <el-form-item label="所属项目" prop="projectId">
                     <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" clearable style="width: auto;"
                       :disabled="userInfo.projectId != '1'" @change="changeProject">
@@ -167,7 +167,7 @@
                     </el-tooltip>
                   </div>
                 </div>
-                <JNPF-table  custom-column @sort-change="sortChange" :partentOrChild="'assemble'" :data="assembleData"
+                <JNPF-table  custom-column v-if="activeName=='assemble'" @sort-change="sortChange" :partentOrChild="'assemble'" :data="assembleData"
                   :setColumnDisplayList="columnList1" highlight-current-row :fixedNO="true" class="dataTable" border
                   ref="assembleRef">
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
@@ -217,14 +217,14 @@
                 </pagination>
               </div>
             </el-tab-pane>
-            <el-tab-pane label="生产需求" name="produce">
+            <el-tab-pane label="生产需求" name="produce" >
               <div class=" " style="height: 100%;">
                 <div class="JNPF-common-head">
                   <div></div>
                   <div class="JNPF-common-head-right">
                     <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                       <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                        @click="columnSetFun('assembleRef')" />
+                        @click="columnSetFun('produceRef')" />
                     </el-tooltip>
                     <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                       <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
@@ -232,8 +232,8 @@
                     </el-tooltip>
                   </div>
                 </div>
-                <JNPF-table  custom-column :partentOrChild="'produce'" @sort-change="sortChange" :data="produceData"
-                  :setColumnDisplayList="columnList2" highlight-current-row :fixedNO="true" class="dataTable" border
+                <JNPF-table  custom-column :partentOrChild="'produce'" @sort-change="sortChange" :data="produceData" v-if="activeName=='produce'"
+                  :setColumnDisplayList="columnList2" :key="2" highlight-current-row :fixedNO="true" class="dataTable" border
                   ref="produceRef">
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
@@ -287,6 +287,7 @@
                       <div>{{ scope.row.occupancyQuantity ? scope.row.occupancyQuantity : 0 }}</div>
                     </template>
                   </el-table-column>
+              
                   <el-table-column prop="outputQuantity" label="需生产数量" min-width="140" sortable="custom" />
                   <el-table-column prop="planStartDate" label="计划开始日期" width="180" sortable="custom" />
                   <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
@@ -841,6 +842,13 @@ export default {
         console.log("生产res", res);
         let totalData = res.data.total || 0
         let tableData = res.data.page.records || []
+        if(tableData.length){
+          tableData.forEach(item => {
+            
+            item.occupancyQuantity= this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity]), 6) 
+          });
+
+        }
         this.produceData = tableData || []
         this.total2 = res.data.page.total || 0
 

@@ -1,5 +1,5 @@
 <template>
-  <!-- 外协发料  outbound_external_send-->
+  <!-- 外协发料 订单  outbound_external_send-->
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
 

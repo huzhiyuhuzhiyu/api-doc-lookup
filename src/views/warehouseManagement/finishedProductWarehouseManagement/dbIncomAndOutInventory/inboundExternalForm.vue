@@ -1098,7 +1098,8 @@ export default {
       }
       this.allocationFlag = data[0].all.locationStatus == 'disabled' ? false : true
 
-      this.dataForm.projectId = response.data.projectId
+      this.dataForm.projectId = data[0].all.projectId
+
       this.dataForm.warehouseId = data[0].id
       this.dataForm.warehouseName = data[0].name
       this.dataForm.warehouseType = data[0].all.type

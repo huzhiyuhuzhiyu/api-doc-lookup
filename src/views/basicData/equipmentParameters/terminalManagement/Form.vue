@@ -4,8 +4,8 @@
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add' ? '新建工位终端管理' : btnType == 'edit' ? '编辑工位终端管理' : '查看工位终端管理'" />
-        <div class="options" v-if="btnType != 'look'">
-          <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">
+        <div class="options">
+          <el-button type="primary" v-if="btnType != 'look'" :loading="btnLoading" @click="handleConfirm('submit')">
             提交</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>

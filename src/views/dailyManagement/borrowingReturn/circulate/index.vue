@@ -116,7 +116,7 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters } from 'vuex'
 export default {
   mixins: [getProjectList],
-  // name: 'circulate',
+  name: 'circulate',
   components: { Form, SuperQuery },
   data() {
     return {

@@ -95,7 +95,7 @@ import { getequMountedPlaces, deleteequMountedPlaces } from "@/api/basicData/mat
 import Form from './Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
-  // name: 'Installationlocation',
+  name: 'Installationlocation',
   components: { SuperQuery, Form },
   data() {
     return {

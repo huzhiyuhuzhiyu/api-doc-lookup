@@ -292,6 +292,7 @@ import { RepairRequestList, totalRepairNum, repairNum, repairSupplierNum, repair
 import card from "@/views/dailyManagement/deviceReportanaly/components/card.vue";
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
+  name:'maintenanceStatisticalAnalysis',
   mixins: [getProjectList],
   components: { card, chart },
   data() {

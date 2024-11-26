@@ -36,10 +36,10 @@
                         <el-input v-model="dataForm.code" placeholder="请输入工具编码" maxlength="20" :disabled="disabled" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24" v-if="isProjectSwitch=='1'">
+                    <el-col :sm="12" :xs="24" v-if="isProjectSwitch=='1'">
                       <el-form-item label="所属项目" prop="projectId">
-                        <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" :loading="loadingprojectId" :disabled="userInfo.projectId!='1'||disabled ? true : false" style="width: 100%;">
-                          <el-option v-for="item in projectIdList" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                        <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" :loading="loadingprojectId" :disabled="type !== 'add'" style="width: 100%;">
+                          <el-option v-for="item in projectIdList" :key="item.code" :label="item.name" :value="item.name"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>

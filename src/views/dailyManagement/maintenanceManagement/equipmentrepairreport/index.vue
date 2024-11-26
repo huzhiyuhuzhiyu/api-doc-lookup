@@ -165,6 +165,7 @@ import { mapGetters } from 'vuex'
 import { getEquEquipmentList, parametersShelveslist } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
+  name: 'equipmentrepairreport',
   mixins: [getProjectList],
   components: { UploadImg },
   data() {
@@ -187,7 +188,7 @@ export default {
         { prop: "name", label: "设备名称", type: 'input' },
       ],
       ProductListRequestObjs: {
-        projectId:'',
+        projectId: '',
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -279,7 +280,7 @@ export default {
       datafilelist: [],
       dataForm: {
         degree: '',
-        projectName:'',
+        projectName: '',
         maintenanceNo: '',
         frontPicList: [],
         factoryFloor: '',

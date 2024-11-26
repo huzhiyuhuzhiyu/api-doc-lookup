@@ -142,7 +142,7 @@ import Form from '@/views/dailyManagement/maintenanceManagement/pendingdispatch/
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters } from 'vuex'
 export default {
-  // name: 'maintenanceRecord',
+  name: 'maintenanceRecord',
   mixins: [getProjectList],
   components: { Form, SuperQuery },
   data() {

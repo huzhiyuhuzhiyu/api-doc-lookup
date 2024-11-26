@@ -32,7 +32,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main"  v-loading="listLoading">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head">
           <div>
             <topOpts @add="addWarehouse('', '', 'add')">
@@ -62,10 +62,9 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="tabForm" :data="treeList" row-key="id"  v-if="isProjectSwitchFlag"
-          :fixedNO="true" custom-column :default-expand-all="expands"
-          :tree-props="{ children: 'childrenList', hasChildren: '' }" :setColumnDisplayList="columnList" hasC
-          @selection-change="handleSelectWork">
+        <JNPF-table ref="tabForm" :data="treeList" row-key="id" v-if="isProjectSwitchFlag" :fixedNO="true" custom-column
+          :default-expand-all="expands" :tree-props="{ children: 'childrenList', hasChildren: '' }"
+          :setColumnDisplayList="columnList" hasC @selection-change="handleSelectWork">
           <el-table-column prop="name" label="仓库名称" min-width="200" />
           <el-table-column prop="code" label="仓库编码" show-overflow-tooltip min-width="160">
             <template slot-scope="scope">
@@ -75,7 +74,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-          v-if="isProjectSwitch == 1" />
+            v-if="isProjectSwitch == 1" />
           <!-- <el-table-column prop="image" label="二维码" align="center" width="100" height="50">
             <template slot-scope="scope">
               <el-popover placement="top-start" trigger="click">
@@ -87,16 +86,17 @@
               </el-popover>
             </template>
           </el-table-column> -->
-          <el-table-column prop="state" label="仓库启用状态" width="120">
+          <!-- <el-table-column prop="state" label="仓库启用状态" width="120">
             <template slot-scope="scope">
               <el-switch v-model="scope.row.state" active-color="#13ce66" inactive-color="#ff4949" active-value="enable"
                 inactive-value="disabled" @change="stateChange(scope)"></el-switch>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column prop="locationStatus" label="库位启用状态" width="120">
             <template slot-scope="scope">
               <el-switch v-model="scope.row.locationStatus" active-color="#13ce66" inactive-color="#ff4949"
-                active-value="enable" inactive-value="disabled" @change="locationStatusChange(scope)"></el-switch>
+                active-value="enable" inactive-value="disabled" @change="locationStatusChange(scope)"
+                :disabled="scope.row.type === 'out'"></el-switch>
             </template>
           </el-table-column>
           <el-table-column prop="workshop" label="车间" width="100">
@@ -339,7 +339,7 @@ export default {
     this.isProjectSwitchFlag = true
     this.initData()
 
-  }, 
+  },
   computed: {
     ...mapGetters(['userInfo'])
   },

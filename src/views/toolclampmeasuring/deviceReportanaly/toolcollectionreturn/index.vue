@@ -75,6 +75,7 @@ import chart from "@/views/dailyManagement/deviceReportanaly/components/chart.vu
 import { getdailyRequisitionNum, getmouthRequisitionNum, CollectionandreturnList } from '@/api/dailyManagement/Maintenance'
 import card from "@/views/dailyManagement/deviceReportanaly/components/card.vue";
 export default {
+  name:'toolcollectionreturn',
   components: { card, chart },
   data() {
     return {

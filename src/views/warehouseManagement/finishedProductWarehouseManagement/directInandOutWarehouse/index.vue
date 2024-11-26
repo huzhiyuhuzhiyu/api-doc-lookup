@@ -57,7 +57,7 @@
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="仓库" prop="warehouseName">
                             <ComSelect-list
-                              :requestObj="{ type: 'normal', state: 'enable', projectId: isProjectSwitch === '1' ?userInfo.projectId || '' : '' }"
+                              :requestObj="{ type: 'normal', state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }"
                               :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName"
                               :method="getWarehouseList" placeholder="请选择仓库"
                               @change="changeWarehousex"></ComSelect-list>
@@ -72,6 +72,8 @@
                             </el-select>
                           </el-form-item>
                         </el-col>
+                        <!-- v-if="(dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'inbound_external')&&calculateQuantityFlag==1"> -->
+
                         <el-col :sm="6" :xs="24"
                           v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'inbound_external'">
                           <el-form-item label="是否显示比重折扣" prop="weightFlag">
@@ -122,10 +124,9 @@
                         v-if="dataForm.documentType == 'inbound'"> </el-table-column>
                       <el-table-column prop="productName" label="产品名称" min-width="160" key="productName"
                         v-if="productNameFlag == '1'" />
-                        
+
                       <el-table-column prop="productCode" label="产品编码" width="140" key="productCode" />
-                      <el-table-column prop="projectName" label="所属项目" min-width="120" 
-                      v-if="isProjectSwitch == 1" />
+                      <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                       <el-table-column prop="batchNumber" label="批次号" width="200" key="batchNumber"
                         v-if="dataForm.documentType == 'outbound'">
                         <template slot="header">
@@ -387,7 +388,9 @@
                         </template>
                       </el-table-column>
                     </JNPF-table>
-
+                    <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;" class="text">
+                      <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ totalAmount }}</span>
+                    </div>
                   </el-collapse-item>
 
                 </el-collapse>
@@ -413,33 +416,39 @@
 
               <el-col :span="6" v-if="dataForm.documentType == 'outbound'">
                 <el-form-item>
-                  <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable />
+                  <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格"
+                    @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
               <el-col :span="6" v-if="dataForm.documentType == 'outbound' && productNameFlag == '1'">
                 <el-form-item>
-                  <el-input v-model="orderForm.productName" placeholder="请输入产品名称" clearable />
+                  <el-input v-model="orderForm.productName" placeholder="请输入产品名称" @keyup.enter.native="searchProductFun"
+                    clearable />
                 </el-form-item>
               </el-col>
               <el-col :span="6" v-if="dataForm.documentType == 'outbound'">
                 <el-form-item>
-                  <el-input v-model="orderForm.batchNumber" placeholder="请输入批次号" clearable />
+                  <el-input v-model="orderForm.batchNumber" placeholder="请输入批次号" @keyup.enter.native="searchProductFun"
+                    clearable />
                 </el-form-item>
               </el-col>
 
               <el-col :span="6" v-if="dataForm.documentType == 'inbound'">
                 <el-form-item>
-                  <el-input v-model="listQuery.productDrawingNo" placeholder="请输入品名规格" clearable />
+                  <el-input v-model="listQuery.productDrawingNo" placeholder="请输入品名规格"
+                    @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
               <el-col :span="6" v-if="dataForm.documentType == 'inbound' && productNameFlag == '1'">
                 <el-form-item>
-                  <el-input v-model="listQuery.productName" placeholder="请输入产品名称" clearable />
+                  <el-input v-model="listQuery.productName" placeholder="请输入产品名称" @keyup.enter.native="searchProductFun"
+                    clearable />
                 </el-form-item>
               </el-col>
               <el-col :span="6" v-if="dataForm.documentType == 'inbound'">
                 <el-form-item>
-                  <el-input v-model="listQuery.productCode" placeholder="请输入产品编码" clearable />
+                  <el-input v-model="listQuery.productCode" placeholder="请输入产品编码" @keyup.enter.native="searchProductFun"
+                    clearable />
                 </el-form-item>
               </el-col>
 
@@ -802,6 +811,7 @@ export default {
       productNameFlag: null,
       printBrowseVisible: false,
       mainUnitFlag: null,
+
       tableDataFlag: false,
       arr: [
         {
@@ -819,11 +829,19 @@ export default {
           code: "p013",
           fullName: "外协发料单"
         },
-      ]
+      ],
+      // calculateQuantityFlag:"",
     }
   },
   computed: {
-    ...mapGetters(['userInfo'])
+    ...mapGetters(['userInfo']),
+    totalAmount: function () {
+      var totalAmounts = 0;
+      for (var i = 0; i < this.productData.length; i++) {
+        totalAmounts = this.jnpf.math('add', [totalAmounts, this.productData[i].totalAmount])
+      }
+      return totalAmounts
+    },
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
@@ -849,16 +867,18 @@ export default {
     }
   },
   mounted() {
-    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
-
+    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit', 'unitFlag')
+    // this.getMainUnitFun('deputyUnit', 'proportion','proportionFlag')
   },
-  
+
   methods: {
 
-    async getMainUnitFun(code, type) {
+    async getMainUnitFun(code, type, flag) {
       this.listLoading = true
       try {
-        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+
+        if (flag == 'unitFlag') this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+        // if(flag=='proportionFlag')this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type);
         this.tableDataFlag = true
         this.listLoading = false
 
@@ -869,6 +889,7 @@ export default {
     printWarehouse(enCode) {
       getPrintBusInfo(enCode).then(res => {
         if (res.data) {
+          this.printVisible = false
           this.prindId = res.data.id
           this.printBrowseVisible = true
         } else {
@@ -880,7 +901,6 @@ export default {
     },
     closePrint() {
       this.printVisible = false
-      this.tipsvisible = true
     },
     computedNumFun(data, index) {
       if (data.discount && data.proportion && data.weight) {
@@ -956,7 +976,7 @@ export default {
         "pageSize": 20,
         "productCategoryId": ""
       };
-     obj.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      obj.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
 
       getBimProcessList(obj).then(res => {
         this.processList = res.data.records
@@ -1556,32 +1576,7 @@ export default {
     // 继续新增
     continueAdd() {
       this.tipsvisible = false
-      this.btnLoading = false
-      if (this.dataForm.businessType == 'outbound_sale_send' || this.dataForm.businessType == 'outbound_purchase' || this.dataForm.businessType == 'outbound_pick_out' || this.dataForm.businessType == 'outbound_external_send' || this.dataForm.businessType == 'outbound_other') {
-        this.dataForm.documentType = 'outbound'
-        this.fetchData("CKDH")
-      }
-      if (this.dataForm.businessType == 'inbound_sale_return' || this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'inbound_return_materials' || this.dataForm.businessType == 'inbound_external_return' || this.dataForm.businessType == 'inbound_external' || this.dataForm.businessType == 'inbound_other') {
-        this.dataForm.documentType = 'inbound'
-        this.fetchData("RKDH")
 
-      }
-      this.dataForm = {  //表单信息
-        orderNo: "",
-        warehouseName: "",
-        businessType: this.dataForm.businessType,
-        documentType: this.dataForm.documentType,
-        warehouseId: "",
-        sourceType: "direct",
-        id: "",
-        warehouseType: "",
-        inspectionResults: "",
-        approvalFlag: false,
-        orderDate: this.jnpf.getToday()
-      }
-      this.productData = []
-
-      this.$refs.dataForm.resetFields()
     },
     async fetchData(code) {
       try {
@@ -1654,17 +1649,8 @@ export default {
             formMethod(dataObj).then(res => {
               let msg = res.msg
               if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
-              if (submitModel == "draft") {
-                this.submitmethodsTitle = "保存成功"
-              } else {
-                this.submitmethodsTitle = "提交成功"
 
-              }
-              if (this.btnType == 'edit') {
-                this.btnText = "继续修改"
-              } else if (this.btnType == 'add' || this.btnType == 'copy') {
-                this.btnText = "继续新增"
-              }
+              this.$message.success(msg)
 
               if (type) {
                 let codes = this.arr
@@ -1679,12 +1665,38 @@ export default {
                 this.$nextTick(() => {
                   this.$refs.printTemplate.init(this.enCode)
                 })
-              } else {
-                this.btnLoading = false
-                this.tipsvisible = true
+              }
+              // 提交之后  保留表单数据 清空产品信息
+              this.btnLoading = false
+              if (this.dataForm.businessType == 'outbound_sale_send' || this.dataForm.businessType == 'outbound_purchase' || this.dataForm.businessType == 'outbound_pick_out' || this.dataForm.businessType == 'outbound_external_send' || this.dataForm.businessType == 'outbound_other') {
+                this.dataForm.documentType = 'outbound'
+                this.fetchData("CKDH")
+              }
+              if (this.dataForm.businessType == 'inbound_sale_return' || this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'inbound_return_materials' || this.dataForm.businessType == 'inbound_external_return' || this.dataForm.businessType == 'inbound_external' || this.dataForm.businessType == 'inbound_other') {
+                this.dataForm.documentType = 'inbound'
+                this.fetchData("RKDH")
 
               }
+              this.dataForm = {  //表单信息
+                orderNo: "",
+                businessType: this.dataForm.businessType,
+                documentType: this.dataForm.documentType,
+                warehouseId: this.dataForm.warehouseId,
+                warehouseName: this.dataForm.warehouseName,
+                sourceType: "direct",
+                id: "",
+                weightFlag: this.dataForm.weightFlag,
 
+                cooperativePartnerId: this.dataForm.cooperativePartnerId,
+                cooperativePartnerIdText: this.dataForm.cooperativePartnerIdText,
+                warehouseType: this.dataForm.warehouseType,
+                inspectionResults: this.dataForm.inspectionResults,
+                approvalFlag: false,
+                orderDate: this.dataForm.orderDate
+              }
+              this.productData = []
+
+              this.$refs.dataForm.resetFields()
             }).catch(() => {
               this.btnLoading = false
             })

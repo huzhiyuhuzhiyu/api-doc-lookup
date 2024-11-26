@@ -439,6 +439,7 @@ export default {
       this.dataForm.inspectionDate = this.jnpf.toDate(new Date(), 'yyyy-MM-dd')
       this.dataForm.productDrawingNo = row.productDrawingNo
       this.dataForm.mainUnit = row.mainUnit
+      console.log(inspectionType, 'inspectionType')
       if (inspectionType === 'procure' || inspectionType === 'external') {
         this.dataForm.inspectionQuantity = this.scope.receivedQuantity
         this.dataForm.docId = this.scope.purchaseReceiptReturnGoodsId
@@ -506,7 +507,47 @@ export default {
       option ? (this.title = readOnly ? `查看${option.label}检验单` : `检验${option.label}`) : ''
       this.title.includes('生产巡检') ? (this.title = this.title.replace('检验', '')) : ''
       this.setDataFormItems()
+      this.dataForm.inspectionMethod = this.scope.productInspectionMethod
+      if (this.dataForm.inspectionMethod) {
+        if (this.dataForm.inspectionMethod === 'all') {
+          this.dataForm.samplingQuantity = this.dataForm.inspectionQuantity
+          this.inspectionInfo.forEach(tc => {
+            if (tc.prop === 'inspectionMethod') {
+              tc.itemDisabled = true
+            } else if (tc.prop === 'samplingQuantity') {
+              tc.itemDisabled = true
+            }
+          })
+        } else if (this.dataForm.inspectionMethod === 'exempt') {
+          this.dataForm.samplingQuantity = this.dataForm.inspectionQuantity
+          this.dataForm.inspectionResults = 'qualified'
+          this.inspectionInfo.forEach(tc => {
+            if (tc.prop === 'inspectionMethod') {
+              tc.itemDisabled = true
+            } else if (tc.prop === 'samplingQuantity') {
+              tc.itemDisabled = true
+            } else if (tc.prop === 'inspectionResults') {
 
+              tc.itemDisabled = true
+            }
+
+          })
+        } else if (this.dataForm.inspectionMethod === 'spot_check') {
+
+          const _data = [{ productsId: this.dataForm.productsId, num: this.dataForm.inspectionQuantity }]
+          let res = await getSamplingQuantityByProductId(_data).catch(() => false)
+          console.log(res.data[0].spotCheckNum, 'jkjkjkjkjk')
+          // this.dataForm.samplingQuantity = Number(res.data[0].spotCheckNum)
+          this.$set(this.dataForm, 'samplingQuantity', res.data[0].spotCheckNum)
+          // this.inspectionInfo.forEach(tc => {
+          //   if (tc.prop === 'samplingQuantity') {
+          //     tc.itemDisabled = true
+          //   }
+          // })
+        } else {
+
+        }
+      }
       if (inspectionType === 'process') {
         // 生产巡检
 

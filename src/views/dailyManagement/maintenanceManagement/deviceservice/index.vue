@@ -157,13 +157,13 @@
 </template>
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { RepairRequestList, deleteRepairRequest, equEquipmentRepairOutsourcing } from '@/api/dailyManagement/Maintenance'
+import { RepairRequesttaskList, deleteRepairRequest, equEquipmentRepairOutsourcing } from '@/api/dailyManagement/Maintenance'
 import Form from '../pendingdispatch/Form.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters } from 'vuex'
 export default {
   mixins: [getProjectList],
-  // name: 'deviceservice',
+  name: 'deviceservice',
   components: { Form, SuperQuery },
   data() {
     return {
@@ -488,7 +488,7 @@ export default {
     initData() {
       this.listLoading = true
       this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-      RepairRequestList(this.orderForm).then(res => {
+      RepairRequesttaskList(this.orderForm).then(res => {
         this.tableData = res.data.records.map(item => {
           if (item.frontPic) {
             item.frontPicList = item.frontPicList.map(o => { return JSON.parse(`{${o}}`) })

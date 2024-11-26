@@ -47,7 +47,7 @@
                       <el-table-column prop="maintenanceTaskIdText" label="任务名称" min-width="180" />
                       <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" />
                       <el-table-column prop="equipmentIdName" label="工具名称" min-width="200" sortable="custom" />
-                  <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
+                      <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                       <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
                       <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
                       <el-table-column prop="level" label="保养等级" width="140" />
@@ -120,7 +120,7 @@
                     <JNPF-table ref="dataTableInspection" v-if="istable" :data="tableInspectionresults" fixedNO custom-column>
                       <el-table-column prop="totalCode" label="工具编码" min-width="200" />
                       <el-table-column prop="totalName" label="工具名称" min-width="200" />
-                  <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
+                      <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                       <el-table-column prop="normalNum" label="正常次数" min-width="140" />
                       <el-table-column prop="abnormalNum" label="异常次数" min-width="140" />
                     </JNPF-table>
@@ -143,6 +143,7 @@ import { getdailyInspectionMonthTotal } from "@/api/basicData/materialSettings";
 import card from "@/views/dailyManagement/deviceReportanaly/components/card.vue";
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
+  name: 'upkeepStatisticalAnalysis',
   mixins: [getProjectList],
   components: { card, chart },
   data() {
@@ -154,8 +155,8 @@ export default {
       listLoadingInspection: false,
       listQueryInspection: {},
       listQuerytwo: {
-        totalName:'',
-        totalCode:'',
+        totalName: '',
+        totalCode: '',
         classAttribute: "tool",
         recordType: 'maintenance',
         pageNum: 1,

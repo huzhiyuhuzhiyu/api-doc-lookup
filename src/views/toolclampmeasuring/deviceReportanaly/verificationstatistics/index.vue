@@ -76,6 +76,7 @@ import chart from "@/views/dailyManagement/deviceReportanaly/components/chart.vu
 import { getmouthVerificationNum, getdailyVerificationNum, VerificationrecordsList } from '@/api/dailyManagement/Maintenance'
 import card from "@/views/dailyManagement/deviceReportanaly/components/card.vue";
 export default {
+  name: 'verificationstatistics',
   components: { card, chart },
   data() {
     return {

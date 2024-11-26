@@ -428,11 +428,14 @@ export default {
       selectRows: []
     }
   },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+  },
   computed: {
     ...mapGetters(['userInfo']),
   },
   watch: {
-    actualMaintenanceId(newValue) {
+    'dataForm.actualMaintenanceId'(newValue) {
       if (this.isProjectSwitch === '1') {
         this.dataForm.equipmentIdName = ''
         this.dataForm.equipmentId = ''

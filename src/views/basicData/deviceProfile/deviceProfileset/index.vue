@@ -415,6 +415,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    this.istable = true
     if (localStorage.getItem("deviceProfilesetFlag")) {
       let roleFlag = JSON.parse(localStorage.getItem('deviceProfilesetFlag'))
       this.expands = roleFlag
@@ -554,7 +555,6 @@ export default {
       }
       this.listQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getEquEquipmentList(this.listQuery).then(res => {
-        this.istable = true
         this.tableData = res.data.records
         // this.tableData.forEach(item=>{
         //   if (item.state === 'normal'){

@@ -45,8 +45,8 @@
                         <!-- <el-input v-model="dataForm.maintainerIdName" placeholder="请选择计划保养人" :disabled="btnType == 'look'"
                       maxlength="50" /> -->
                         <!-- <el-form-item label="所属销售" prop="salesName"> -->
-                        <el-select v-model="dataForm.maintainerIdName" placeholder="请选择计划保养人" clearable style="width: 100%;" :disabled="btnType === 'look'" filterable @change="selectsales">
-                          <el-option v-for="(item, index) in salesList" :key="index" :label="item.name" :disabled="btnType!=='add'" :value="item.id"></el-option>
+                        <el-select v-model="dataForm.maintainerIdName" placeholder="请选择计划保养人" clearable style="width: 100%;" :disabled="btnType!=='add'" filterable @change="selectsales">
+                          <el-option v-for="(item, index) in salesList" :key="index" :label="item.name" :value="item.id"></el-option>
                         </el-select>
                         <!-- </el-form-item> -->
                       </el-form-item>
@@ -401,7 +401,7 @@ export default {
       },
       deep: true
     },
-    maintainerId(newValue) {
+    'dataForm.maintainerId'(newValue) {
       if (this.isProjectSwitch === '1') {
         this.dataFormOne.productData = []
         let _data = this.salesList.filter(item => item.id == newValue)[0]

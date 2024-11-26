@@ -208,11 +208,15 @@
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import Form from '@/views/toolclampmeasuring/verification/inspectionRecords/Form.vue'
 import { verificationList } from '@/api/dailyManagement/Maintenance'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters } from 'vuex'
 export default {
   // name: 'verificationQuery',
+  mixins: [getProjectList],
   components: { Form, SuperQuery },
   data() {
     return {
+      isProjectSwitch: '',
       superQueryJson: [
         {
           prop: 'name',
@@ -381,6 +385,7 @@ export default {
       ],
       //检定任务
       listQuery: {
+        projectId: '',
         name: "",
         listType: 'onTime',
         cycleType: "",
@@ -401,6 +406,7 @@ export default {
       },
       // 超期检定任务
       listsQuery: {
+        projectId: '',
         name: "",
         listType: 'overtime',
         cycleType: "",
@@ -459,8 +465,12 @@ export default {
       },
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.initData()
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     superQuerySearch(query) {
@@ -538,6 +548,7 @@ export default {
         this.listQuery.startTime = ''
         this.listQuery.endTime = ''
       }
+      this.listQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       verificationList(this.listQuery).then(res => {
         // this.tableDataList = res.data.records
         this.total = res.data.total
@@ -645,19 +656,20 @@ export default {
     detailData() {
       this.listLoading = true
       if (this.createRequirementDate && this.createRequirementDate.length > 0) {
-        this.listQuery.nextMaintenanceStartTime = this.createRequirementDate[0]
-        this.listQuery.nextMaintenanceEndTime = this.createRequirementDate[1]
+        this.listsQuery.nextMaintenanceStartTime = this.createRequirementDate[0]
+        this.listsQuery.nextMaintenanceEndTime = this.createRequirementDate[1]
       } else {
-        this.listQuery.nextMaintenanceStartTime = ''
-        this.listQuery.nextMaintenanceEndTime = ''
+        this.listsQuery.nextMaintenanceStartTime = ''
+        this.listsQuery.nextMaintenanceEndTime = ''
       }
       if (this.submitDate && this.submitDate.length > 0) {
-        this.listQuery.startTime = this.submitDate[0].replace(/ 0(?!0)/g, " ")
-        this.listQuery.endTime = this.submitDate[1].replace(/ 0(?!0)/g, " ")
+        this.listsQuery.startTime = this.submitDate[0].replace(/ 0(?!0)/g, " ")
+        this.listsQuery.endTime = this.submitDate[1].replace(/ 0(?!0)/g, " ")
       } else {
-        this.listQuery.startTime = ''
-        this.listQuery.endTime = ''
+        this.listsQuery.startTime = ''
+        this.listsQuery.endTime = ''
       }
+      this.listsQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       verificationList(this.listsQuery).then(res => {
         // this.detailTableData = res.data.records
         this.total = res.data.total

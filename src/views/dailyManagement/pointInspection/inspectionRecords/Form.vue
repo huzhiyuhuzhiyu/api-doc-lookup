@@ -34,6 +34,11 @@
                       <el-input v-model="dataForm.equipmentIdCode" placeholder="请输入设备编码" :disabled="true" />
                     </el-form-item>
                   </el-col>
+                  <el-col :sm="6" :xs="24" v-if="isProjectSwitch==='1'">
+                    <el-form-item label="所属项目" prop="projectName">
+                      <el-input v-model="dataForm.projectName" placeholder="请输入所属项目" maxlength="20" :disabled="true" />
+                    </el-form-item>
+                  </el-col>
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="使用车间" prop="factoryFloor">
                       <el-input v-model="dataForm.factoryFloor" placeholder="请输入使用车间" :disabled="true" />
@@ -234,10 +239,13 @@ import { getOrganizeInfo } from '@/api/permission/organize'
 import { getEquEquipmentList } from '@/api/basicData/index'
 import { getOrganization } from '@/api/permission/user'
 import { mapGetters } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
+  mixins: [getProjectList],
   components: { UploadImg },
   data() {
     return {
+      isProjectSwitch: '',
       inspectionResultsList: [
         { label: "正常", value: "normal" },
         { label: "异常", value: "abnormal" },
@@ -253,6 +261,7 @@ export default {
         { prop: "name", label: "设备名称", type: 'input' },
       ],
       ProductListRequestObjs: {
+        projectId: '',
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -362,6 +371,9 @@ export default {
       selectRows: []
     }
   },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+  },
   mounted() {
     let tBody = document.querySelectorAll('.el-table')[1]
     tBody.style.height = 'auto'
@@ -369,6 +381,20 @@ export default {
   },
   computed: {
     ...mapGetters(['userInfo']),
+  },
+  watch: {
+    'dataForm.actualMaintenanceId'(newValue) {
+      if (this.isProjectSwitch === '1') {
+        this.dataForm.equipmentIdName = ''
+        this.dataForm.equipmentId = ''
+        this.dataForm.equipmentIdCode = ''
+        this.dataForm.factoryFloor = ''
+        this.dataForm.mountedPlaces = ''
+        this.dataForm.projectName = ''
+        let _data = this.salesList.filter(item => item.id == newValue)[0]
+        this.ProductListRequestObjs.projectId = _data.projectId ? _data.projectId || '' : ''
+      }
+    }
   },
   methods: {
     openSeleceProductDialogss() {
@@ -534,6 +560,7 @@ export default {
       this.dataForm.equipmentIdCode = data[0].all.code
       this.dataForm.factoryFloor = data[0].all.factoryFloor
       this.dataForm.mountedPlaces = data[0].all.mountedPlaces
+      this.dataForm.projectName = data[0].all.projectName
       let a = {
         classAttribute: "equipment",
         equipmentIdCode: data[0].all.code,

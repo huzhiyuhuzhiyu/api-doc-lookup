@@ -98,6 +98,7 @@
                         <span class="required">*</span>工具名称
                       </template>
                     </el-table-column>
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                     <el-table-column prop="spec" label="工具规格" width="200" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="description" label="说明" min-width="300">
@@ -129,17 +130,21 @@
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { addverification, updateverification, detailverification } from '@/api/dailyManagement/Maintenance'
 import { getOrganizeInfo } from '@/api/permission/organize'
-import { stateEquEquipment,getBimBusinessDetail } from '@/api/basicData/index'
+import { stateEquEquipment, getBimBusinessDetail } from '@/api/basicData/index'
 import { getOrganization } from '@/api/permission/user'
+import getProjectList from '@/mixins/generator/getProjectList'
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
       isattachmentswitch: '',
       categoryId: '',
       activeNames: ["basicInfo", "xmxx"],
       datafilelist: [],
       ProductListRequestObj: {
+        projectId: '',
         classAttribute: "tool",
         state: 'normal',
         deviceType: 'normal',
@@ -241,7 +246,17 @@ export default {
       selectRows: []
     }
   },
-  created() {
+  watch: {
+    'dataForm.maintainerId'(newValue) {
+      if (this.isProjectSwitch === '1') {
+        this.dataFormTwo.productData = []
+        let _data = this.salesList.filter(item => item.id == newValue)[0]
+        this.ProductListRequestObj.projectId = _data.projectId ? _data.projectId || '' : ''
+      }
+    }
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.getBimBusinessDetail()
   },
   mounted() {
@@ -286,6 +301,7 @@ export default {
           this.dataFormTwo.productData.push({
             equipmentIdName: item.name,
             equipmentIdCode: item.all.code,
+            projectName: item.all.projectName,
             spec: item.all.specModel,
             equipmentId: item.id,
             description: ''

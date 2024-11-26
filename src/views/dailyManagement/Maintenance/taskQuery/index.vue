@@ -511,6 +511,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    this.istable = true
     this.initData()
   },
   computed: {

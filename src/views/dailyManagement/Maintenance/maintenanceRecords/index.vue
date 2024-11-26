@@ -263,6 +263,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    this.istable = true
     this.initData()
   },
   computed: {
@@ -302,7 +303,6 @@ export default {
       this.listLoading = true
       this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       equMaintenanceList(this.orderForm).then(res => {
-        this.istable = true
         this.tableData = res.data.records.map(item => {
           if (item.picList && item.picList.length) item.picList = item.picList.map(o => { return JSON.parse(`{${o}}`) })
           return item

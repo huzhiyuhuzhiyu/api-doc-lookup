@@ -126,7 +126,7 @@
           <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
           <el-table-column label="操作" width="200" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" v-if="scope.row.reviewComments !== 'outsourcing'||scope.row.reviewComments !== 'reject'" @click="handleUserRelation(scope.row.id, 'end')">维修</el-button>
+              <el-button size="mini" type="text" v-if="scope.row.reviewComments == 'immediately'" @click="handleUserRelation(scope.row.id, 'end')">维修</el-button>
               <el-button size="mini" type="text" v-if="scope.row.reviewComments == 'outsourcing'" @click="outsourcedcompletion(scope.row.id)">委外维修</el-button>
               <el-button size="mini" type="text" class="JNPF-table-delBtn" :disabled="scope.row.state === 'maintaining'" @click="handleDel(scope.row.id)">删除</el-button>
               <el-dropdown hide-on-click>

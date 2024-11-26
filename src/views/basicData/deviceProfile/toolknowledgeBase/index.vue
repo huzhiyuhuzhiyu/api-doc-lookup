@@ -168,6 +168,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    this.istable = true
     this.initData()
   },
   computed: {
@@ -217,7 +218,6 @@ export default {
       this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       equEquipmentRepairKnowledgeList(this.orderForm).then(res => {
         this.tableData = res.data.records.map(item => {
-          this.istable = true
           if (item.frontPic) {
             item.frontPicList = item.frontPicList.map(o => { return JSON.parse(`{${o}}`) })
           }

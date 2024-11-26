@@ -1636,6 +1636,9 @@ export default {
       })
     },
     quickAdd() {
+      if (this.userInfo.projectId !== '1') {
+        this.quickForm.projectId = this.userInfo.projectId
+      }
       this.quickVisible = true
       this.fetchData('CPBM', true)
       this.quickForm.productSource = 'assemble'

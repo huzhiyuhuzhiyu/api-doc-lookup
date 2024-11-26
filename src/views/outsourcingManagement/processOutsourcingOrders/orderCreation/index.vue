@@ -117,7 +117,7 @@
                             </template>
                           </el-table-column>
 
-                          <el-table-column prop="deliveryDate" label="交货日期" width="160">
+                          <el-table-column prop="deliveryDate" label="交货日期" width="180">
                             <template slot="header">
                               <span class="required">*</span>
                               交货日期

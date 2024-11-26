@@ -84,7 +84,7 @@
           </el-button> -->
           <div>
             <el-button type="primary" size="mini" @click="handleBatch">批量设置工艺</el-button>
-            <!-- <el-button type="primary" size="mini" icon="el-icon-upload2" @click="importForm">导入</el-button> -->
+            <el-button type="primary" size="mini" icon="el-icon-upload2" @click="importForm">导入</el-button>
             <!-- <el-button type="primary" size="mini" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
             <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
               icon="el-icon-download" @click="exportForm">
@@ -441,18 +441,14 @@ export default {
     downLoadTemplate() {
       const a = document.createElement('a')
       a.setAttribute('download', '')
-      a.setAttribute('href', location.origin + '/static/产品工艺模板.xlsx')
+      a.setAttribute('href', location.origin + '/static/产品工艺导入模板.xlsx')
       a.click()
     },
     //导入
     importForm() {
-      // this.$refs.UploadProduct.$el.querySelector('input').click()
-      if (!this.listQuery.productCategoryId) {
-        this.$message.warning('请先选择产品分类')
-      } else {
-        // this.$refs.UploadProduct.$el.querySelector('input').click()
-        this.uploadVisib = true
-      }
+
+      this.uploadVisib = true
+
     },
     // 导入数据
     UploadProduct(data) {

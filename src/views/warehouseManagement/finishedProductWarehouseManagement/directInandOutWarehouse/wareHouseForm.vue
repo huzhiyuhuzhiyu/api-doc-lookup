@@ -11,7 +11,7 @@
           <el-form @submit.native.prevent>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="tableQuery.code" placeholder="请输入库位编码" clearable />
+                <el-input v-model="tableQuery.code" placeholder="请输入库位编码" clearable  @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
 
@@ -74,7 +74,6 @@ export default {
         children: 'childrenList',
         label: 'name'
       },
-      cpId:""
     }
   },
   methods: {
@@ -87,7 +86,6 @@ export default {
     initData(id) {
       this.listLoading = true
       this.tableQuery.warehouseId=id
-      this.cpId=JSON.parse(JSON.stringify(id))
       this.locationVisible=true
       getLocationList(this.tableQuery).then(res => {
         this.tableDataList = res.data.records
@@ -114,7 +112,7 @@ export default {
 
 
     search() {
-      this.initData()
+      this.initData(this.tableQuery.warehouseId)
     },
     reset() {
       this.form = {
@@ -128,7 +126,7 @@ export default {
         ],
         warehouseId: ''
       },
-        this.initData(this.cpId)
+        this.initData(this.tableQuery.warehouseId)
     },
   }
 }

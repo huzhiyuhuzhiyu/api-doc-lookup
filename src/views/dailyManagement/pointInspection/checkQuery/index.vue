@@ -38,7 +38,7 @@
                 </el-col>
               </el-form>
             </el-row>
-            <div class="JNPF-common-layout-main JNPF-flex-main">
+            <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
               <div class="JNPF-common-head">
                 <div style="height: 32px;"></div>
                 <div class="JNPF-common-head-right">
@@ -53,7 +53,7 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table v-if="flag" v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column>
+              <JNPF-table v-if="istable" highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column>
                 <el-table-column prop="name" label="任务名称" min-width="200" sortable="custom">
                 </el-table-column>
                 <el-table-column prop="cycleType" label="周期类型" min-width="120" fixed="right" align="center" sortable="custom">
@@ -66,6 +66,7 @@
                 </el-table-column>
                 <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" />
                 <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                 <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
                 <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
                 <el-table-column prop="departmentIdName" label="计划点检部门" min-width="150" />
@@ -126,7 +127,7 @@
                 </el-col>
               </el-form>
             </el-row>
-            <div class="JNPF-common-layout-main JNPF-flex-main">
+            <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
               <div class="JNPF-common-head">
                 <div style="height: 32px;"></div>
                 <div class="JNPF-common-head-right">
@@ -141,7 +142,7 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="detailTableData" :data="detailTableData" @sort-change="sortChangeDetail" custom-column>
+              <JNPF-table v-if="istable" highlight-current-row :fixedNO="true" ref="detailTableData" :data="detailTableData" @sort-change="sortChangeDetail" custom-column>
                 <el-table-column prop="name" label="任务名称" min-width="200" sortable="custom">
                 </el-table-column>
                 <el-table-column prop="overdueTime" label="超期时间" min-width="160">
@@ -159,6 +160,7 @@
                 </el-table-column>
                 <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" />
                 <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                 <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
                 <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
                 <el-table-column prop="departmentIdName" label="计划点检部门" min-width="150" />
@@ -166,7 +168,7 @@
                 <el-table-column prop="cycle" label="周期" min-width="150" />
                 <el-table-column prop="unit" label="单位" width="120" />
                 <el-table-column prop="nextMaintenanceTime" label="计划点检时间" min-width="180" sortable="custom" />
-                
+
                 <el-table-column prop="state" label="状态" sortable="custom" width="120" fixed="right" align="center">
                   <template slot-scope="scope">
                     <div v-if="scope.row.state == 'disabled'"><el-tag type="danger">禁用</el-tag></div>
@@ -194,7 +196,6 @@
       </el-tabs>
     </div>
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
-    <deForm v-if="formVisible1" ref="deForm" @close="closeForm" />
 
   </div>
 </template>
@@ -203,12 +204,16 @@
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import Form from '@/views/dailyManagement/pointInspection/inspectionRecords/Form.vue'
 import { checkmaintenanceList, deletecheckmaintenance } from '@/api/dailyManagement/Maintenance'
-import deForm from './Form'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters } from 'vuex'
 export default {
+  mixins: [getProjectList],
   // name: 'taskQuery',
-  components: { Form, deForm, SuperQuery },
+  components: { Form, SuperQuery },
   data() {
     return {
+      istable: false,
+      isProjectSwitch: '',
       superQueryJson: [
         {
           prop: 'name',
@@ -383,7 +388,6 @@ export default {
       tableDataList: [
       ],
       detailTableData: [],
-      flag: true,
       activeName: "orderList",
       listLoading: false,
       cycleTypeStateList: [
@@ -396,6 +400,7 @@ export default {
       ],
       //点检任务
       listQuery: {
+        projectId: '',
         name: "",
         listType: 'onTime',
         taskType: 'inspection',
@@ -420,6 +425,7 @@ export default {
       },
       // 超期点检任务
       listsQuery: {
+        projectId: '',
         name: "",
         listType: 'overtime',
         taskType: 'inspection',
@@ -482,8 +488,13 @@ export default {
       },
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.istable = true
     this.initData()
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     superQuerySearch(query) {
@@ -519,12 +530,6 @@ export default {
           })
         })
       }).catch(() => { })
-    },
-    handleUserRelation(id, btnType) {
-      this.formVisible1 = true
-      this.$nextTick(() => {
-        this.$refs.deForm.init(id, btnType)
-      })
     },
     // 关闭新建页面
     closeForm(isRefresh = 'ture') {
@@ -585,6 +590,7 @@ export default {
         this.listQuery.startTime = ''
         this.listQuery.endTime = ''
       }
+      this.listQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       checkmaintenanceList(this.listQuery).then(res => {
         // this.tableDataList = res.data.records
         this.total = res.data.total
@@ -692,19 +698,20 @@ export default {
     detailData() {
       this.listLoading = true
       if (this.createRequirementDate && this.createRequirementDate.length > 0) {
-        this.listQuery.nextMaintenanceStartTime = this.createRequirementDate[0]
-        this.listQuery.nextMaintenanceEndTime = this.createRequirementDate[1]
+        this.listsQuery.nextMaintenanceStartTime = this.createRequirementDate[0]
+        this.listsQuery.nextMaintenanceEndTime = this.createRequirementDate[1]
       } else {
-        this.listQuery.nextMaintenanceStartTime = ''
-        this.listQuery.nextMaintenanceEndTime = ''
+        this.listsQuery.nextMaintenanceStartTime = ''
+        this.listsQuery.nextMaintenanceEndTime = ''
       }
       if (this.submitDate && this.submitDate.length > 0) {
-        this.listQuery.startTime = this.submitDate[0].replace(/ 0(?!0)/g, " ")
-        this.listQuery.endTime = this.submitDate[1].replace(/ 0(?!0)/g, " ")
+        this.listsQuery.startTime = this.submitDate[0].replace(/ 0(?!0)/g, " ")
+        this.listsQuery.endTime = this.submitDate[1].replace(/ 0(?!0)/g, " ")
       } else {
-        this.listQuery.startTime = ''
-        this.listQuery.endTime = ''
+        this.listsQuery.startTime = ''
+        this.listsQuery.endTime = ''
       }
+      this.listsQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       checkmaintenanceList(this.listsQuery).then(res => {
         // this.detailTableData = res.data.records
         this.total = res.data.total

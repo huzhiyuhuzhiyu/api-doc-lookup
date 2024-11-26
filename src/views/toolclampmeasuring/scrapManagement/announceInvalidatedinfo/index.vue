@@ -316,6 +316,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    this.istable = true
     const res = await this.jnpf.getBusInfo('b060')
     if (res) {
       this.showAppCodeFlag = res.enabledMark
@@ -387,7 +388,6 @@ export default {
       this.listLoading = true
       this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       ScrapApplicationFormListinfo(this.orderForm).then(res => {
-        this.istable = true
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false

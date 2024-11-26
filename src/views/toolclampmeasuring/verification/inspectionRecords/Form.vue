@@ -70,6 +70,7 @@
                         <span class="required">*</span>检定工具
                       </template>
                     </el-table-column>
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                     <el-table-column prop="spec" label="工具规格" width="200" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="description" label="说明" min-width="300">
@@ -102,10 +103,12 @@ import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { stateEquEquipment } from '@/api/basicData/index'
 import { getOrganizeInfo } from '@/api/permission/organize'
 import { getOrganization } from '@/api/permission/user'
-
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
       activeNames: ["basicInfo", "gjxx"],
       getcategoryTree,
       stateEquEquipment,
@@ -129,6 +132,7 @@ export default {
         { prop: "name", label: "工具名称", type: 'input' }
       ],
       ProductListRequestObj: {
+        projectId: '',
         classAttribute: "tool",
         orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }],
         pageNum: 1,
@@ -160,6 +164,7 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
+        actualMaintenanceId: '',
         verificationAgency: '',
         verificationTaskId: '',
         departmentId: '',
@@ -193,10 +198,22 @@ export default {
       selectRows: []
     }
   },
+  watch: {
+    'dataForm.actualMaintenanceId'(newValue) {
+      if (this.isProjectSwitch === '1') {
+        this.dataFormTwo.productData = []
+        let _data = this.salesList.filter(item => item.id == newValue)[0]
+        this.ProductListRequestObj.projectId = _data.projectId ? _data.projectId || '' : ''
+      }
+    }
+  },
   mounted() {
     let tBody = document.querySelectorAll('.el-table')[1]
     tBody.style.height = 'auto'
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
   },
   methods: {
     //保养时间
@@ -223,6 +240,7 @@ export default {
           this.dataFormTwo.productData.push({
             spec: item.all.specModel,
             equipmentIdCode: item.all.code,
+            projectName: item.all.projectName,
             equipmentIdName: item.name,
             equipmentId: item.id,
             description: ''
@@ -269,7 +287,6 @@ export default {
     },
     //保养人
     selectsales(val) {
-      console.log(val);
       this.dataForm.actualMaintenanceId = val
     },
     //保养部门

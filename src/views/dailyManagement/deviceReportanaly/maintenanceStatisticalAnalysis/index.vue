@@ -58,12 +58,13 @@
                       </el-form>
                     </el-row>
                   </div>
-                  <div style="height: 714px;" class="JNPF-flex-main">
-                    <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" custom-column>
+                  <div style="height: 714px;" class="JNPF-flex-main" v-loading="listLoading">
+                    <JNPF-table ref="dataTable" v-if="istable" :data="tableData" @sort-change="sortChange" custom-column>
                       <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" sortable="custom">
                       </el-table-column>
                       <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" sortable="custom" />
                       <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom"></el-table-column>
+                      <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                       <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
                       <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
                       <el-table-column prop="frontPicList" label="故障情况照片" min-width="140">
@@ -176,15 +177,16 @@
                       </el-form>
                     </el-row>
                   </div>
-                  <div style="height: 664px;" class="JNPF-flex-main">
+                  <div style="height: 664px;" class="JNPF-flex-main" v-loading="listLoading">
                     <div class="container-header">
                       <div class="header-title">委外维修单明细</div>
                     </div>
-                    <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" custom-column>
+                    <JNPF-table v-if="istable" ref="dataTable" :data="tableData" @sort-change="sortChange" custom-column>
                       <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" sortable="custom">
                       </el-table-column>
                       <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" sortable="custom" />
                       <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom"></el-table-column>
+                      <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                       <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
                       <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
                       <el-table-column prop="frontPicList" label="故障情况照片" min-width="140">
@@ -288,10 +290,14 @@
 import chart from "@/views/dailyManagement/deviceReportanaly/components/chart.vue";
 import { RepairRequestList, totalRepairNum, repairNum, repairSupplierNum, repairCommentsNum, repairRejectReasonNum } from '@/api/dailyManagement/Maintenance'
 import card from "@/views/dailyManagement/deviceReportanaly/components/card.vue";
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
+  mixins: [getProjectList],
   components: { card, chart },
   data() {
     return {
+      istable: false,
+      isProjectSwitch: '',
       StateList: [
         { label: '待维修', value: 'toBeMaintain' }, { label: '正在维修', value: 'maintaining' }, { label: '已维修', value: 'maintained' }
       ],
@@ -342,7 +348,9 @@ export default {
       },
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.istable = true
     this.listQuery = JSON.parse(JSON.stringify(this.listQueryone))
     this.initDatawxqkgl()
   },

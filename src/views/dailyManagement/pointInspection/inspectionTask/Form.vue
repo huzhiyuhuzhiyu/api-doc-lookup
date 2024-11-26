@@ -31,15 +31,20 @@
                         </el-input>
                       </el-form-item>
                     </el-col>
+                    <el-col :sm="6" :xs="24" v-if="btnType!=='add'&&isProjectSwitch==='1'">
+                      <el-form-item label="所属项目" prop="projectName">
+                        <el-input v-model="dataForm.projectName" placeholder="请输入所属项目" maxlength="20" :disabled="true" />
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="计划点检部门" prop="departmentId">
-                        <ComSelect v-model="organizeIdTrees" :disabled="btnType === 'look'" placeholder="请选择计划点检部门" auth :dialogTitle="'请选择计划点检部门'" @change="changedepartment" :currOrgId="dataForm.departmentId || '0'" />
+                        <ComSelect v-model="organizeIdTrees" :disabled="btnType!=='add'" placeholder="请选择计划点检部门" auth :dialogTitle="'请选择计划点检部门'" @change="changedepartment" :currOrgId="dataForm.departmentId || '0'" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="计划点检人" prop="maintainerId">
-                        <el-select v-model="dataForm.maintainerIdName" placeholder="请选择计划点检人" clearable style="width: 100%;" :disabled="btnType === 'look'" filterable @change="selectsales">
-                          <el-option v-for="(item, index) in salesList" :key="index" :label="item.name" :disabled="btnType == 'look'" :value="item.id"></el-option>
+                        <el-select v-model="dataForm.maintainerIdName" placeholder="请选择计划点检人" clearable style="width: 100%;" :disabled="btnType!=='add'" filterable @change="selectsales">
+                          <el-option v-for="(item, index) in salesList" :key="index" :label="item.name" :value="item.id"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
@@ -96,6 +101,7 @@
                     </el-table-column>
                     <el-table-column prop="name" label="设备名称" width="200" show-overflow-tooltip>
                     </el-table-column>
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                     <el-table-column prop="factoryFloor" label="车间" min-width="200" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="mountedPlaces" label="安装地点" min-width="200" show-overflow-tooltip>
@@ -210,10 +216,13 @@ import { getOrganizeInfo } from '@/api/permission/organize'
 import { getEquEquipmentList } from '@/api/basicData/index'
 import { getDepartmentSelectorByAuth } from '@/api/permission/department'
 import { getOrganization } from '@/api/permission/user'
+import getProjectList from '@/mixins/generator/getProjectList'
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
       isattachmentswitch: '',
       categoryId: '',
       activeNames: ["basicInfo", "sbxx", "xmxx"],
@@ -225,38 +234,39 @@ export default {
         { label: "四级保养", value: "四级保养" },
         { label: "年度保养", value: "年度保养" }
       ],
-      props: {
-        lazy: true,
-        lazyLoad(node, resolve) {
-          const { level } = node;
-          setTimeout(() => {
-            const nodes = []
-            let initListQuery = {
-              level: node.value,
-              pageNum: 1,
-              pageSize: -1,
-            }
-            if (level > 1) return
-            getequMaintenanceLevel(initListQuery).then(res => {
-              res.data.records.map(item => {
-                let obj = {
-                  value: item.id,
-                  label: item.cycle + ' ' + item.unit,
-                  leaf: level >= 1
-                }
-                nodes.push(obj)
-              })
-              resolve(nodes);
-            })
-          }, 500);
-        }
-      },
+      // props: {
+      //   lazy: true,
+      //   lazyLoad(node, resolve) {
+      //     const { level } = node;
+      //     setTimeout(() => {
+      //       const nodes = []
+      //       let initListQuery = {
+      //         level: node.value,
+      //         pageNum: 1,
+      //         pageSize: -1,
+      //       }
+      //       if (level > 1) return
+      //       getequMaintenanceLevel(initListQuery).then(res => {
+      //         res.data.records.map(item => {
+      //           let obj = {
+      //             value: item.id,
+      //             label: item.cycle + ' ' + item.unit,
+      //             leaf: level >= 1
+      //           }
+      //           nodes.push(obj)
+      //         })
+      //         resolve(nodes);
+      //       })
+      //     }, 500);
+      //   }
+      // },
       datafilelist: [],
       ProductTableSearchLists: [
         { prop: "code", label: "设备编码", type: 'input' },
         { prop: "name", label: "设备名称", type: 'input' },
       ],
       ProductListRequestObjs: {
+        projectId: '',
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -404,7 +414,17 @@ export default {
       selectRowssb: []
     }
   },
-  created() {
+  watch: {
+    'dataForm.maintainerId'(newValue) {
+      if (this.isProjectSwitch === '1') {
+        this.dataFormOne.productData = []
+        let _data = this.salesList.filter(item => item.id == newValue)[0]
+        this.ProductListRequestObjs.projectId = _data.projectId ? _data.projectId || '' : ''
+      }
+    }
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.getBimBusinessDetail()
   },
   mounted() {

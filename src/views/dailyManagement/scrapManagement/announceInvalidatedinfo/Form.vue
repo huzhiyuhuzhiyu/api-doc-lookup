@@ -284,7 +284,7 @@ export default {
     }
   },
   watch: {
-    applicantId(newValue) {
+    'dataForm.applicantId'(newValue) {
       if (this.isProjectSwitch === '1') {
         this.dataFormTwo.productData = []
         let _data = this.salesList.filter(item => item.id == newValue)[0]

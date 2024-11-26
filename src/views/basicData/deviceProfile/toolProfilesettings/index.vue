@@ -267,6 +267,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    this.istable = true
     this.getCategoryTree(true)
   },
   computed: {
@@ -354,7 +355,6 @@ export default {
       this.listLoading = true
       this.listQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getEquEquipmentList(this.listQuery).then(res => {
-        this.istable = true
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false

@@ -180,7 +180,7 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="点检分布" name="djfb">
-            <div class="JNPF-common-layout-main JNPF-flex-main">
+            <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoadingdjfb">
               <div class="vux-flexbox container-content vux-flex-row">
                 <div class="left-content-dj">
                   <div class="react-grid-item-dj dash-container has-hover" v-for="item in datalistdj" :key="item.id">
@@ -229,9 +229,10 @@
                 </el-row>
               </div>
               <div style="height: 500px;" class="JNPF-flex-main">
-                <JNPF-table ref="dataTabledjfb" v-loading="listLoadingdjfb" :data="tableDatadjfb" @sort-change="sortChangedjfb" fixedNO custom-column>
+                <JNPF-table ref="dataTabledjfb" v-if="istable" :data="tableDatadjfb" @sort-change="sortChangedjfb" fixedNO custom-column>
                   <el-table-column prop="equipmentIdCode" label="设备编码" width="200" />
                   <el-table-column prop="equipmentIdName" label="设备名称" width="200" sortable="custom" />
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
                   <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
                   <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
                   <!-- <el-table-column prop="cycle" label="周期" width="90" />
@@ -285,12 +286,12 @@
                     </div>
                   </div>
                 </div>
-                <div class="right-content-dj JNPF-flex-main dash-container has-hover">
+                <div class="right-content-dj JNPF-flex-main dash-container has-hover" v-loading="listLoadingwxfbcl">
                   <div class="container-header text">
                     <div class="header-title">处理中工单明细</div>
                   </div>
                   <div style="height: 320px;padding: 0 10px 10px 10px;" class="JNPF-flex-main">
-                    <JNPF-table v-loading="listLoadingwxfbcl" :data="tableDatawxfbcl" @sort-change="sortChangewxfbcl" fixedNO custom-column>
+                    <JNPF-table v-if="istable" :data="tableDatawxfbcl" @sort-change="sortChangewxfbcl" fixedNO custom-column>
                       <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" sortable="custom">
                       </el-table-column>
                       <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" sortable="custom" />
@@ -398,8 +399,8 @@
                   </el-form>
                 </el-row>
               </div>
-              <div style="height: 500px;" class="JNPF-flex-main">
-                <JNPF-table ref="dataTablewxfb" v-loading="listLoadingwxfb" :data="tableDatawxfb" @sort-change="sortChangewxfb" fixedNO custom-column>
+              <div style="height: 500px;" class="JNPF-flex-main" v-loading="listLoadingwxfb">
+                <JNPF-table ref="dataTablewxfb" v-if="istable" :data="tableDatawxfb" @sort-change="sortChangewxfb" fixedNO custom-column>
                   <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" sortable="custom">
                   </el-table-column>
                   <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" sortable="custom" />
@@ -520,8 +521,8 @@
                   </el-form>
                 </el-row>
               </div>
-              <div style="height: 652px;" class="JNPF-flex-main">
-                <JNPF-table ref="dataTablebyfb" v-loading="listLoadingbyfb" :data="tableDatabyfb" @sort-change="sortChangebyfb" fixedNO custom-column>
+              <div style="height: 652px;" class="JNPF-flex-main" v-loading="listLoadingbyfb">
+                <JNPF-table ref="dataTablebyfb" v-if="istable" :data="tableDatabyfb" @sort-change="sortChangebyfb" fixedNO custom-column>
                   <el-table-column prop="maintenanceTaskIdText" label="任务名称" min-width="180" />
                   <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" />
                   <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom" />
@@ -802,6 +803,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    this.istable = true
     this.listQuerysbtz = JSON.parse(JSON.stringify(this.listQuery1))
     this.listQuerysbgk = JSON.parse(JSON.stringify(this.listQuery2))
     this.listQuerydjfb = JSON.parse(JSON.stringify(this.listQuery3))
@@ -844,7 +846,6 @@ export default {
       this.listQuerysbtz.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       this.listLoading = true
       getEquEquipmentList(this.listQuerysbtz).then(res => {
-        this.istable = true
         this.tableDatasbtz = res.data.records
         this.total = res.data.total
         this.listLoading = false

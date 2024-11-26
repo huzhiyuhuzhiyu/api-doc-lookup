@@ -35,6 +35,11 @@
                       <el-input v-model="dataForm.equipmentIdCode" placeholder="请输入工具编码" :disabled="true" />
                     </el-form-item>
                   </el-col>
+                  <el-col :sm="6" :xs="24" v-if="isProjectSwitch==='1'">
+                    <el-form-item label="所属项目" prop="projectName">
+                      <el-input v-model="dataForm.projectName" placeholder="请输入所属项目" maxlength="20" :disabled="true" />
+                    </el-form-item>
+                  </el-col>
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="用途" prop="usin">
                       <el-input v-model="dataForm.usin" placeholder="请输入用途" :disabled="true" />
@@ -271,10 +276,13 @@ import { getOrganizeInfo } from '@/api/permission/organize'
 import { getEquEquipmentList } from '@/api/basicData/index'
 import { getOrganization } from '@/api/permission/user'
 import { mapGetters } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
+  mixins: [getProjectList],
   components: { UploadImg },
   data() {
     return {
+      isProjectSwitch: '',
       sparepartRequestObj: {
         pageNum: 1,
         pageSize: 20,
@@ -297,6 +305,7 @@ export default {
         { prop: "name", label: "工具名称", type: 'input' },
       ],
       ProductListRequestObjs: {
+        projectId: '',
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -413,8 +422,24 @@ export default {
       selectRows: []
     }
   },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+  },
   computed: {
     ...mapGetters(['userInfo']),
+  },
+  watch: {
+    'dataForm.actualMaintenanceId'(newValue) {
+      if (this.isProjectSwitch === '1') {
+        this.dataForm.equipmentIdName = ''
+        this.dataForm.equipmentId = ''
+        this.dataForm.equipmentIdCode = ''
+        this.dataForm.usin = ''
+        this.dataForm.projectName = ''
+        let _data = this.salesList.filter(item => item.id == newValue)[0]
+        this.ProductListRequestObjs.projectId = _data.projectId ? _data.projectId || '' : ''
+      }
+    }
   },
   mounted() {
     let tBody = document.querySelectorAll('.el-table')[1]
@@ -602,6 +627,7 @@ export default {
       this.dataForm.equipmentId = data[0].id
       this.dataForm.equipmentIdCode = data[0].all.code
       this.dataForm.usin = data[0].all.usin
+      this.dataForm.projectName = data[0].all.projectName
       let a = {
         classAttribute: "tool",
         equipmentIdCode: data[0].all.code,

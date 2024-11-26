@@ -75,7 +75,7 @@
                               </el-select>
                             </el-form-item>
                           </el-col>
-                          <el-col :sm="6" :xs="24">
+                          <el-col :sm="6" :xs="24" v-if="calculateQuantityFlag==1">
                             <el-form-item label="是否显示比重折扣" prop="weightFlag">
                               <el-select v-model="dataForm.weightFlag" placeholder="是否显示比重折扣" style="width: 100%;"
                                 :disabled="btnType == 'look' ? true : false">
@@ -547,6 +547,7 @@ export default {
   mixins: [flowMixin, busFlow,getProjectList],
   data() {
     return {
+      calculateQuantityFlag:"",
       weightFlagList: [
         { label: "是", value: true },
         { label: "否", value: false },
@@ -700,7 +701,8 @@ export default {
   },
   
   mounted() {
-    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
+    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit','unitFlag')
+    this.getMainUnitFun('warehouse', 'proportion','proportionFlag')
 
   },
   watch: {
@@ -717,10 +719,11 @@ export default {
         this.watchNum(data, index)
       }
     },
-    async getMainUnitFun(code, type) {
+    async getMainUnitFun(code, type,flag) {
       this.listLoading = true
       try {
-        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+        if (flag == 'unitFlag') this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+        if(flag=='proportionFlag')this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type);
         this.tableDataFlag = true
         this.listLoading = false
 

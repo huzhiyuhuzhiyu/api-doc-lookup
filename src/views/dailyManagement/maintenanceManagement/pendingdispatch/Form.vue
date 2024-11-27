@@ -888,6 +888,7 @@ export default {
           this.dataFormTwo.productData.push({
             faultTypeName: item.all.name,
             faultTypeCode: item.all.code,
+            repairResult: 'not_finished',
             faultLocationName: '',
             faultLocationCode: '',
             faultDescription: '',
@@ -1010,7 +1011,6 @@ export default {
     },
     // 单个删除
     handleDel(data) {
-      console.log("1234", data);
       this.dataFormTwo.productData.splice(data.$index, 1)
     },
     //申请时间
@@ -1065,6 +1065,9 @@ export default {
           }
           this.dataForm = res.data.repair
           this.dataForms.lines = res.data.equLine
+          res.data.lines.forEach(item => {
+            item.repairResult = 'not_finished'
+          })
           this.dataFormTwo.productData = res.data.lines
           if (res.data.attachmentList) {
             res.data.attachmentList.forEach((item) => {

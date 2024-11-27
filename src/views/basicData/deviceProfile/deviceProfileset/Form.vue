@@ -394,6 +394,10 @@ export default {
         {
           value: "stop",
           label: "停用"
+        },
+        {
+          value: "abnormal",
+          label: "异常"
         }
       ],
       categoryIdProps: {

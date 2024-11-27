@@ -119,7 +119,7 @@ export default {
           }
         }
         if (!['finish_product', 'semi_finished', 'raw_material', 'accessories'].includes(this.classAttribute)) {
-          console.log(this.classAttribute, 'this.classAttribute666')
+
           if (tc.prop === 'productCategoryName') {
             tc.label = `${this.productName.slice(0, 2)}分类`
             tc.itemRules = [{ required: true, message: `请选择${this.productName.slice(0, 2)}分类`, trigger: 'no' }]
@@ -138,6 +138,13 @@ export default {
             tc.label = '单位'
           } else if (['deputyUnit', 'ratio', 'calculationDirection', 'brand'].includes(tc.prop)) {
             tc.render = false
+          }
+        }
+        if (['spare_parts', 'accessories'].includes(this.classAttribute)) {
+
+          if (tc.prop === 'productSource') {
+            tc.options = [{ label: '采购', value: 'purchase' }]
+            tc.value = 'purchase'
           }
         }
         // 添加自定义表单元素方法和参数
@@ -390,7 +397,6 @@ export default {
       if (this.isProjectSwitch === '1') {
         this.tabs[0].tabContent.forEach((ele) => {
           if (ele.prop == 'projectId') {
-            console.log(this.userInfo.projectId, 'pr')
 
             ele.render = true
             let obj = {
@@ -457,7 +463,8 @@ export default {
                 'oil',
                 'noise',
                 'holder',
-                'productSource'
+                'productSource',
+                'projectId'
               ].includes(tc.prop)
             ) {
               tc.itemDisabled = true
@@ -488,7 +495,7 @@ export default {
         }
       }
       if (!['finish_product', 'semi_finished', 'raw_material', 'accessories'].includes(this.classAttribute)) {
-        console.log(this.classAttribute, 'this.classAttribute666999')
+
         this.dataForm.mainUnit = this.dataForm.mainUnit
         this.dataForm.deputyUnit = this.dataForm.mainUnit
         this.dataForm.ratio = 1
@@ -496,7 +503,7 @@ export default {
         this.dataForm.saleFlag = true
         this.dataForm.tradeFlag = false
       }
-      console.log(this.dataForm)
+
       // 判断条件后发送请求
       if (submitFlag) {
         this.dataForm.documentStatus = 'submit'

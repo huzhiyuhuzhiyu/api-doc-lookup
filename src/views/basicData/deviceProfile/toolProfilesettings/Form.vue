@@ -273,6 +273,10 @@ export default {
           value: "discard",
           label: "报废"
         },
+        {
+          value: "abnormal",
+          label: "异常"
+        }
       ],
       categoryIdProps: {
         'label': 'name',
@@ -393,7 +397,6 @@ export default {
         currentPage: 1,
         pageSize: 1000
       }).then(res => {
-        console.log('----------', res);
         this.userList = res.data.list
       })
     },

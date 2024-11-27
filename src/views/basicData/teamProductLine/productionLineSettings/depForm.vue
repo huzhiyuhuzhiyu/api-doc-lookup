@@ -25,8 +25,8 @@
                   <template v-if="!loading">
                     <el-col :span="12">
                       <el-form-item label="所属项目" prop="projectId">
-                        <el-select v-model="dataForm.projectId" placeholder="请选择所属项目"
-                          :disabled="type === 'look' || userInfo.projectId !== '1'" style="width:100%">
+                        <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" @change="projectIdChange"
+                          :disabled="dataForm.id || userInfo.projectId !== '1'" style="width:100%">
                           <el-option v-for="item in projectIdData" :key="item.id" :label="item.label"
                             :value="item.id"></el-option>
                         </el-select>
@@ -138,6 +138,8 @@
                   id="table" :header-cell-style="{ background: '#F5F7FA', color: '#606266' }">
                   <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
                   <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                  <el-table-column prop="projectName" label="所属项目" width="120"
+                    v-if="isProjectSwitch === '1'"></el-table-column>
                   <el-table-column prop="name" label="工序名称" width="180">
                     <template slot="header">
                       <span class="required">*</span>
@@ -255,7 +257,7 @@ export default {
           label: '工序分类',
           classAttribute: 'process',
           method: getcategoryTree,
-          requestObj: { classAttribute: 'process' }
+          requestObj: { type: 'process' }
         }
       ], // 产品选择弹出框树状列表
       ProductListRequestObj: {
@@ -357,7 +359,8 @@ export default {
             trigger: 'blur'
           }
         ],
-        state: [{ required: true, message: '请选择产线状态', trigger: 'change' }]
+        state: [{ required: true, message: '请选择产线状态', trigger: 'change' }],
+        projectId: [{ required: true, message: '请选择所属项目', trigger: 'change' }]
       },
       rulesTwo: {
         ratio: [
@@ -416,12 +419,26 @@ export default {
       console.log(this.projectIdData, 'lllljj')
 
       this.projectIdData = this.projectIdData.filter(item => item.id !== '1')
+      this.ProductTableItems = [
+        { prop: 'code', label: '工序编码', fixed: 'left' },
+        { prop: 'name', label: '工序名称', fixed: 'left' },
+        { prop: 'projectName', label: '所属项目', fixed: 'left' },
+        { prop: 'processTypeName', label: '工序类型', fixed: 'left' },
+        { prop: 'processingTypeName', label: '加工类型', fixed: 'left' }
+      ]
     } else {
       this.dataForm.projectId = this.userInfo.projectId
-     
+
     }
+
   },
   methods: {
+    projectIdChange(val) {
+      this.dataForm.projectId = val
+      if (this.isProjectSwitch === '1') {
+        this.dataFormTwo = []
+      }
+    },
     getDepartmentList() {
       getDepartmentList('CJ').then(res => {
         this.workshopIdOptions = res.data
@@ -461,12 +478,13 @@ export default {
 
     // 可以多选工序
     openSeleceProcessDialog(e, type) {
-      // this.index = e
-      // this.types = type
-      // this.processVisibled = true
-      // this.$nextTick(() => {
-      //   this.$refs.processRef.init()
-      // })
+      if (this.isProjectSwitch === '1') {
+        if (!this.dataForm.projectId) {
+          this.$message.error('请先选择所属项目')
+          return
+        }
+        this.ProductListRequestObj.projectId = this.dataForm.projectId
+      }
 
       this.$refs['ComSelect-page'].openDialog()
     },
@@ -549,7 +567,7 @@ export default {
       this.dialogTitle = !this.dataForm.id ? '新建' : type == 'edit' ? '编辑' : `查看`
       this.type = type
       this.$nextTick(() => {
-        this.$refs['elForm'].resetFields()
+        // this.$refs['elForm'].resetFields()
 
         if (!this.dataForm.id) {
           this.clearData()
@@ -855,6 +873,7 @@ export default {
         list.forEach((item, index) => {
           let obj = {
             index: item._index,
+            projectName: item.projectName, // 所属项目
             name: item.name, // 工序名称
             code: item.code,
             processType: item.processType,

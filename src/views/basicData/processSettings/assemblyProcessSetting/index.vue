@@ -42,18 +42,18 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-          <el-col :span="6">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.productDrawingNo" placeholder="品名规格" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
           <el-col :span="4">
             <el-form-item>
               <el-select v-model="listQuery.routingFlag" placeholder="请选择">
                 <el-option v-for="item in routingFlagOptions" :key="item.value" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item>
+              <el-input v-model.trim="listQuery.productDrawingNo" placeholder="品名规格" clearable
+                @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
@@ -73,7 +73,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main" :element-loading-text="loadingText">
+      <div class="JNPF-common-layout-main JNPF-flex-main" :element-loading-text="loadingText" v-loading="listLoading">
         <div class="JNPF-common-head">
           <!-- <el-dropdown> -->
           <!-- <el-button type="primary" icon="el-icon-plus" @click.native="addSupplier('','add')">
@@ -102,9 +102,10 @@
           </div>
         </div>
 
-        <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList"
+        <JNPF-table v-if="tableDataFlag" highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList"
           border @sort-change="sortChange" custom-column :setColumnDisplayList="columnList" hasC
           @selection-change="currentChange">
+          <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="240" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
           <el-table-column prop="productName" label="产品分类" min-width="160" sortable="custom" />
@@ -323,6 +324,7 @@ export default {
       this.toggleExpand(roleFlag)
     }
     await this.getProjectSwitch('system', 'project')
+    this.tableDataFlag = true
     this.getcategoryTree()
     this.initData()
   },
@@ -393,7 +395,7 @@ export default {
         pageSize: -1
       }
       if (this.isProjectSwitch === '1') {
-        obj.projectId = this.userInfo.projectId
+        obj.projectId = this.projectId
       }
       getProcessList(obj).then((res) => {
         console.log(res, 'res')
@@ -488,9 +490,21 @@ export default {
     },
     handleBatch() {
       if (!this.selectedData.length) return this.$message.error('请至少选择一条工艺数据')
+      let flag = this.hasDifferentProjectId(this.selectedData)
+      if (flag) return this.$message.error('只能选择相同所属项目的工艺数据')
+      this.projectId = this.selectedData[0].projectId
       console.log(this.selectedData, 'selectedData')
       this.getProcessList()
       this.analyseDialog = true
+    },
+    hasDifferentProjectId(arr) {
+      const codes = new Set()
+
+      for (const item of arr) {
+        codes.add(item.projectId)
+      }
+
+      return codes.size > 1 // 如果有多个不同的代码，则返回 true
     },
     async dataFormSubmit() {
       this.btnLoading = true
@@ -557,6 +571,9 @@ export default {
 
     initData() {
       this.listLoading = true
+      if (this.isProjectSwitch === '1') {
+        this.listQuery.projectId = this.userInfo.projectId
+      }
       getProductionResource(this.listQuery)
         .then((res) => {
           console.log(res, '生产资源列表')

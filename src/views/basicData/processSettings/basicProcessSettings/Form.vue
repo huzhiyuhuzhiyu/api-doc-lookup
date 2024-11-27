@@ -20,7 +20,8 @@
                     <el-col :span="12">
                       <el-form-item label="所属项目" prop="projectId">
                         <el-select v-model="dataForm.projectId" placeholder="请选择所属项目"
-                          :disabled="type === 'look' || userInfo.projectId !== '1'" style="width:100%">
+                          :disabled="type === 'look' || type === 'edit' || userInfo.projectId !== '1'"
+                          style="width:100%">
                           <el-option v-for="item in projectIdData" :key="item.id" :label="item.label"
                             :value="item.id"></el-option>
                         </el-select>

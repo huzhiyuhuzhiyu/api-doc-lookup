@@ -890,6 +890,8 @@ export default {
       if (this.dataForm.id) {
         detaDisassemblyData(this.dataForm.id).then((res) => {
           this.dataForm = res.data.trans;
+          this.dataForm.orderNo = res.data.trans.transferNo
+          this.dataForm.drawingNo = res.data.trans.productDrawingNo
           this.dataFormTwo.data = res.data.transLineList;
           this.orginRequestObj.removeShelfSpaceId = res.data.trans.shelfSpaceId;
           this.orginRequestObj.productsId = res.data.trans.productsId;

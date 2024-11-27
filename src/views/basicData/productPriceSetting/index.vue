@@ -58,16 +58,15 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
                 <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
-
+            <el-col :span="4">
+              <el-form-item>
+                <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
+              </el-form-item>
+            </el-col>
             <el-col :span="4">
               <el-form-item>
                 <el-select v-model="listQuery.productSource" placeholder="产品来源" clearable style="width: 100%;">

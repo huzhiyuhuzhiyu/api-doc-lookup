@@ -678,7 +678,17 @@ export default {
       }
 
       this.fetchData('CPBM', true)
-      this.quickForm.productSource = 'produce'
+      if (['spare_parts', 'accessories'].includes(this.listQuery.classAttribute)) {
+        this.productSourceOptions = [{ label: '采购', value: 'purchase' }]
+        this.quickForm.productSource = 'purchase'
+      } else {
+        this.productSourceOptions = [
+          { label: '生产', value: 'produce' },
+          { label: '采购', value: 'purchase' },
+          { label: '外协', value: 'out' }
+        ]
+        this.quickForm.productSource = 'produce'
+      }
     },
     dataFormatting(res) {
       return res.data[0].childrenList
@@ -735,11 +745,9 @@ export default {
       this.quickVisible = false
       this.listQuery = JSON.parse(JSON.stringify(initListQuery))
       this.tableItems = JSON.parse(tableItems)
-      console.log(initListQuery, 'uuu')
-      console.log(this.tableItems, 'this.tableItems')
-      console.log(this.$refs.dataTable, 'dataTable9')
+
       this.classAttributeText = this.listQuery.classAttributeText
-      console.log(this.classAttribute, '[]')
+
       this.getcategoryTree()
       this.initData()
       if (localStorage.getItem(this.listQuery.classAttribute)) {
@@ -1281,11 +1289,11 @@ export default {
           arr.push(obj)
         })
         this.projectIdOptions = res.data.records
-        console.log(this.listQuery.classAttribute, 'this.listQuery.classAttribute33')
+
         if (this.listQuery.classAttribute === 'semi_finished') {
           this.projectIdOptions = this.projectIdOptions.filter(item => item.id !== '1')
         }
-        console.log(this.projectIdOptions, 'this.projectIdOptions')
+
         let tcObj = this.superQueryJson.find((item) => item.prop === 'projectName')
 
         if (tcObj) {

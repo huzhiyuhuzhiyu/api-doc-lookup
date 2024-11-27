@@ -10,15 +10,8 @@
 </template> -->
 
     </div>
-    <!-- <template class="hamburger-container">
+    <template class="hamburger-container">
       <project-select class="right-menu-item hover-effect" />
-    </template> -->
-    <template class="hamburger-container" v-if="selectFlag">
-      <el-select style="margin-top: 15px;" v-model="autoProjectId" placeholder="请选择"
-        :disabled="userInfo.userProjectId !== '1' && userInfo.userProjectId" @change="projectIChange">
-        <el-option v-for="item in projectIdData" :key="item.id" :label="item.name" :value="item.id">
-        </el-option>
-      </el-select>
     </template>
     <NavbarRight />
   </div>
@@ -29,12 +22,9 @@ import Hamburger from '@/components/Hamburger'
 import NavbarRight from '../components/NavbarRight'
 import Search from '@/components/HeaderSearch'
 import SystemSelect from '@/components/SystemSelect'
-import getProjectList from '@/mixins/generator/getProjectList'
 import ProjectSelect from '../components/ProjectSelect'
 export default {
   components: { Hamburger, NavbarRight, SystemSelect, Search, ProjectSelect },
-  mixins: [getProjectList],
-
   computed: {
     ...mapState({
       slideClass: state => state.settings.slideClass,
@@ -45,65 +35,11 @@ export default {
     }),
     ...mapGetters(['sidebar', 'device',])
   },
-  data() {
-    return {
-      autoProjectId: '',
-      isProjectSwitch: '',
-      selectFlag: false,
-    }
-  },
-  async created() {
-    await this.getProjectSwitch('system', 'project')
-    await this.getProjectList()
-    console.log(this.projectIdData, 'oj')
-
-    this.tableDataFlag = true
-    console.log(this.isProjectSwitch, 'piii')
-    console.log(localStorage.getItem('autoProjectId'), 'pkkkll')
-    console.log(this.userInfo.userProjectId)
-    if (this.isProjectSwitch === '1') {
-      this.userInfo.systemIds.forEach(item => {
-        if (item.name === "后台管理系统" && item.currentSystem) {
-          this.selectFlag = false
-        } else {
-          this.selectFlag = true
-        }
-      })
-      if (this.userInfo.userProjectId === '1') {
-        if (this.userInfo.projectId === '1') {
-          if (localStorage.getItem('autoProjectId')) {
-            this.autoProjectId = localStorage.getItem('autoProjectId')
-          } else {
-            this.autoProjectId = this.userInfo.projectId
-          }
-          this.$store.commit('user/SET_USERINFO_PROJECTID', this.autoProjectId)
-        } else {
-          this.autoProjectId = localStorage.getItem('autoProjectId')
-          this.$store.commit('user/SET_USERINFO_PROJECTID', this.autoProjectId)
-        }
-      } else {
-        this.autoProjectId = this.userInfo.userProjectId
-      }
-
-    } else {
-
-    }
-  },
   methods: {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
-    projectIChange(val) {
-      console.log(val, 'kkk')
-      this.autoProjectId = val
-      localStorage.setItem('autoProjectId', val)
-      this.$store.commit('user/SET_USERINFO_PROJECTID', val)
-
-      this.$router.push({ name: 'commonPage' })
-      location.reload();
-    },
-  },
-  mutations
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -125,6 +61,28 @@ export default {
     &:hover {
       background: rgba(0, 0, 0, 0.025);
     }
+  }
+}
+
+::v-deep .system {
+  width: 20%;
+  height: 100vh;
+  position: fixed;
+  z-index: 99999;
+  background-color: #fff;
+  box-shadow: 0 8px 10px -5px rgba(0, 0, 0, 0.2), 0 16px 24px 2px rgba(0, 0, 0, 0.14),
+    0 6px 30px 5px rgba(0, 0, 0, 0.12);
+  overflow: auto;
+  outline: 0;
+
+  .system-header {
+    height: 60px !important;
+    border-bottom: 1px solid #dcdfe6;
+    padding: 0 20px;
+    margin-bottom: 0;
+    align-items: center;
+    color: #fff;
+    display: flex;
   }
 }
 </style>

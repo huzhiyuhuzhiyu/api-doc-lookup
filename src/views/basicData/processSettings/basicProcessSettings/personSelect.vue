@@ -21,20 +21,18 @@
         </transition-group>
       </div> -->
       <el-input ref="reference" v-model="innerValue" type="text" :placeholder="currentPlaceholder"
-        :disabled="selectDisabled" readonly :validate-event="false"
-        :tabindex="(multiple) ? '-1' : null" @mouseenter.native="inputHovering = true"
-        @mouseleave.native="inputHovering = false">
+        :disabled="selectDisabled" readonly :validate-event="false" :tabindex="(multiple) ? '-1' : null"
+        @mouseenter.native="inputHovering = true" @mouseleave.native="inputHovering = false">
         <template slot="suffix">
-          <i v-show="!showClose"
-            :class="['el-select__caret', 'el-input__icon', 'el-icon-arrow-up']"></i>
+          <i v-show="!showClose" :class="['el-select__caret', 'el-input__icon', 'el-icon-arrow-up']"></i>
           <i v-if="showClose" class="el-select__caret el-input__icon el-icon-circle-close"
             @click="handleClearClick"></i>
         </template>
       </el-input>
     </div>
     <el-dialog :title="title" :close-on-click-modal="false" :visible.sync="visible"
-      class="JNPF-dialog JNPF-dialog_center transfer-dialog" lock-scroll append-to-body
-      width="800px" :modal-append-to-body="false" @close="onClose">
+      class="JNPF-dialog JNPF-dialog_center transfer-dialog" lock-scroll append-to-body width="800px"
+      :modal-append-to-body="false" @close="onClose">
       <div class="transfer__body">
         <div class="transfer-pane">
           <div class="transfer-pane__tools">
@@ -46,45 +44,41 @@
               class="search-input" maxlength="20" @buttonClick="getData" />
           </div>
           <div class="transfer-pane__body left-pane">
-            <el-tabs v-model="activeName" class="transfer-pane__body-tab"
-              :class="{'hasSys-tab':hasSys}" v-if="selectType==='all'">
+            <el-tabs v-model="activeName" class="transfer-pane__body-tab" :class="{ 'hasSys-tab': hasSys }"
+              v-if="selectType === 'all'">
               <el-tab-pane label="全部数据" name="all">
-                <el-tree :data="treeData" :props="props" check-on-click-node
-                  @node-click="handleNodeClick" class="JNPF-common-el-tree" node-key="id"
-                  v-loading="loading" lazy :load="loadNode">
+                <el-tree :data="treeData" :props="props" check-on-click-node @node-click="handleNodeClick"
+                  class="JNPF-common-el-tree" node-key="id" v-loading="loading" lazy :load="loadNode">
                   <span class="custom-tree-node" slot-scope="{ node, data }">
                     <i :class="data.icon"></i>
-                    <span class="text">{{node.label}}</span>
+                    <span class="text">{{ node.label }}</span>
                   </span>
                 </el-tree>
               </el-tab-pane>
               <el-tab-pane label="当前组织" name="department">
-                <el-tree :data="treeData2" :props="props" :expand-on-click-node="false"
-                  check-on-click-node @node-click="handleNodeClick2" class="JNPF-common-el-tree"
-                  node-key="id" v-loading="loading">
+                <el-tree :data="treeData2" :props="props" :expand-on-click-node="false" check-on-click-node
+                  @node-click="handleNodeClick2" class="JNPF-common-el-tree" node-key="id" v-loading="loading">
                   <span class="custom-tree-node" slot-scope="{ node }">
                     <i class="icon-ym icon-ym-tree-user2"></i>
-                    <span class="text">{{node.label}}</span>
+                    <span class="text">{{ node.label }}</span>
                   </span>
                 </el-tree>
               </el-tab-pane>
               <el-tab-pane label="我的下属" name="subordinates">
-                <el-tree :data="treeData3" :props="props" :expand-on-click-node="false"
-                  check-on-click-node @node-click="handleNodeClick2" class="JNPF-common-el-tree"
-                  node-key="id" v-loading="loading">
+                <el-tree :data="treeData3" :props="props" :expand-on-click-node="false" check-on-click-node
+                  @node-click="handleNodeClick2" class="JNPF-common-el-tree" node-key="id" v-loading="loading">
                   <span class="custom-tree-node" slot-scope="{ node }">
                     <i class="icon-ym icon-ym-tree-user2"></i>
-                    <span class="text">{{node.label}}</span>
+                    <span class="text">{{ node.label }}</span>
                   </span>
                 </el-tree>
               </el-tab-pane>
               <el-tab-pane label="系统变量" name="system">
-                <el-tree :data="treeData4" :props="props" :expand-on-click-node="false"
-                  check-on-click-node @node-click="handleNodeClick2" class="JNPF-common-el-tree"
-                  node-key="id" v-loading="loading">
+                <el-tree :data="treeData4" :props="props" :expand-on-click-node="false" check-on-click-node
+                  @node-click="handleNodeClick2" class="JNPF-common-el-tree" node-key="id" v-loading="loading">
                   <span class="custom-tree-node" slot-scope="{ node }">
                     <i class="icon-ym icon-ym-tree-user2"></i>
-                    <span class="text">{{node.label}}</span>
+                    <span class="text">{{ node.label }}</span>
                   </span>
                 </el-tree>
               </el-tab-pane>
@@ -93,15 +87,14 @@
               <div class="custom-title">全部数据</div>
               <div class="single-list" ref="infiniteBody">
                 <template v-if="ableList.length">
-                  <div v-for="(item,index) in ableList" :key="index" class="selected-item-user"
+                  <div v-for="(item, index) in ableList" :key="index" class="selected-item-user"
                     @click="handleNodeClick2(item)">
                     <div class="selected-item-main">
-                      <el-avatar :size="36" :src="define.comUrl+item.headIcon"
-                        class="selected-item-headIcon">
+                      <el-avatar :size="36" :src="define.comUrl + item.headIcon" class="selected-item-headIcon">
                       </el-avatar>
                       <div class="selected-item-text">
-                        <p class="name">{{item.fullName}}</p>
-                        <p class="organize" :title="item.organize">{{item.organize}}</p>
+                        <p class="name">{{ item.fullName }}</p>
+                        <p class="organize" :title="item.organize">{{ item.organize }}</p>
                       </div>
                     </div>
                   </div>
@@ -118,16 +111,15 @@
           </div>
           <div class="transfer-pane__body shadow right-pane">
             <template v-if="selectedData.length">
-              <div v-for="(item,index) in selectedData" :key="index" class="selected-item-user">
+              <div v-for="(item, index) in selectedData" :key="index" class="selected-item-user">
                 <div class="selected-item-main">
-                  <el-avatar :size="36" :src="define.comUrl+item.headIcon"
-                    class="selected-item-headIcon">
+                  <el-avatar :size="36" :src="define.comUrl + item.headIcon" class="selected-item-headIcon">
                   </el-avatar>
                   <div class="selected-item-text">
-                    <p class="name">{{item.fullName}}
+                    <p class="name">{{ item.fullName }}
                       <i class="el-icon-delete" @click="removeData(index)"></i>
                     </p>
-                    <p class="organize" :title="item.organize">{{item.organize}}</p>
+                    <p class="organize" :title="item.organize">{{ item.organize }}</p>
                   </div>
                 </div>
               </div>
@@ -137,19 +129,23 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="visible=false">{{$t('common.cancelButton')}}</el-button>
-        <el-button type="primary" @click="confirm">{{$t('common.confirmButton')}}</el-button>
+        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" @click="confirm">{{ $t('common.confirmButton') }}</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getImUserSelector, getUserInfoList, getSubordinates, getOrganization, getUsersByUserCondition } from '@/api/permission/user'
+import { getImUserSelector,getImUserSelectorProjectId, getUserInfoList, getSubordinates, getOrganization, getUsersByUserCondition } from '@/api/permission/user'
 import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event';
 import SearchInput from '@/components/no_mount/Search-input/index.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   components: { SearchInput },
+  mixins: [getProjectList],
+
   name: 'userSelect',
   inject: {
     elForm: {
@@ -223,6 +219,8 @@ export default {
   },
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       visible: false,
       keyword: '',
       activeName: '',
@@ -310,7 +308,16 @@ export default {
         : 'small';
     },
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
+    this.tableDataFlag = true
+    console.log(this.isProjectSwitch, 'hj')
+    if (this.isProjectSwitch === '1') {
+
+    } else {
+
+    }
     this.setDefault()
   },
   mounted() {
@@ -400,9 +407,9 @@ export default {
         this.innerValue = ''
         this.tagsList = JSON.parse(JSON.stringify(this.selectedData))
         let selectedIds = this.selectedData.map(o => o.id)
-        this.$emit('input', selectedIds,this.paramsObj)
-        this.$emit('change', selectedIds, this.selectedData,this.paramsObj)
-        console.log( selectedIds, this.selectedData);
+        this.$emit('input', selectedIds, this.paramsObj)
+        this.$emit('change', selectedIds, this.selectedData, this.paramsObj)
+        console.log(selectedIds, this.selectedData);
       } else {
         if (!this.selectedData.length) {
           this.innerValue = ''
@@ -413,9 +420,9 @@ export default {
         }
         this.innerValue = this.selectedData[0].fullName
         let selectedIds = this.selectedData.map(o => o.id)
-        this.$emit('input', selectedIds[0],this.paramsObj)
-        this.$emit('change', selectedIds[0], this.selectedData[0],this.paramsObj)
-        console.log( selectedIds[0], this.selectedData[0]);
+        this.$emit('input', selectedIds[0], this.paramsObj)
+        this.$emit('change', selectedIds[0], this.selectedData[0], this.paramsObj)
+        console.log(selectedIds[0], this.selectedData[0]);
       }
       this.visible = false
     },
@@ -481,10 +488,20 @@ export default {
     getAllList() {
       this.loading = true
       if (this.keyword) this.nodeId = '0'
-      getImUserSelector(this.nodeId, this.keyword).then(res => {
-        this.treeData = res.data.list
-        this.loading = false
-      })
+      console.log(this.isProjectSwitch, 'hh')
+      if (this.isProjectSwitch === '1') {
+        console.log(console.log(this.userInfo,'jjj'))
+        getImUserSelectorProjectId(this.nodeId, this.keyword, this.userInfo.projectId).then(res => {
+          this.treeData = res.data.list
+          this.loading = false
+        })
+      } else {
+        getImUserSelector(this.nodeId, this.keyword).then(res => {
+          this.treeData = res.data.list
+          this.loading = false
+        })
+      }
+
     },
     loadNode(node, resolve) {
       if (node.level === 0) {

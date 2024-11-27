@@ -726,7 +726,7 @@ export default {
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
     this.tableDataFlag = true
-    
+
     this.getBimBusinessDetail()
   },
   computed: {
@@ -1089,7 +1089,7 @@ export default {
             this.$set(this.dataFormTwo.data[i], 'price', '') // 	价税合计
           }
           this.$set(this.dataFormTwo.data[i], 'taxAmount', '') // 税额
-          this.$set(this.dataFormTwo.data[i], 'taxRate', 13) // taxRate
+          // this.$set(this.dataFormTwo.data[i], 'taxRate', 13) // taxRate
           if (!this.dataFormTwo.data[i].totalAmount) {
             this.$set(this.dataFormTwo.data[i], 'totalAmount', '') // 	价税合计
           }
@@ -1221,7 +1221,7 @@ export default {
                 this.$set(line, 'fixedPrice', item.price)
                 this.$set(line, 'price', item.price)
                 this.$set(line, 'excludingTaxPrice', item.excludingTaxPrice)
-                this.$set(line, 'taxRate', item.taxRate)
+                this.$set(line, 'taxRate', Number(item.taxRate))
               })
             })
             const targetList = this.dataFormTwo.data.filter((line) => line.price == '')

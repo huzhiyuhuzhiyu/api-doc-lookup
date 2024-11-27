@@ -44,8 +44,8 @@
                         </el-col>
                         <el-col :span="12">
                           <el-form-item label="所属项目" prop="projectId">
-                            <el-select v-model="dataForm.projectId" placeholder="请选择所属项目"
-                              :disabled="type === 'look' || userInfo.projectId !== '1'" style="width:100%">
+                            <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" @change="projectIdChange"
+                              :disabled="dataForm.id || userInfo.projectId !== '1'" style="width:100%">
                               <el-option v-for="item in projectIdData" :key="item.id" :label="item.label"
                                 :value="item.id"></el-option>
                             </el-select>
@@ -660,6 +660,7 @@ export default {
       index: null,
       needDisabled: false,
       dataForm: {
+        projectId: '',
         id: '',
         code: '', //  编码
         name: '', //  名称
@@ -716,6 +717,7 @@ export default {
             trigger: 'blur'
           }
         ],
+        projectId: [{ required: true, message: '请选择所属项目', trigger: 'change' }],
         state: [{ required: true, message: '请选择工艺状态', trigger: 'change' }]
       },
       rulesTwo: {
@@ -788,6 +790,12 @@ export default {
     this.getBimBusinessDetail()
   },
   methods: {
+    projectIdChange(val) {
+      this.dataForm.projectId = val
+      if (this.isProjectSwitch === '1') {
+        this.dataFormTwo = []
+      }
+    },
     changeMove(data) {
       data.forEach((item) => {
         console.log(item, 'ooooo')
@@ -885,7 +893,13 @@ export default {
       // this.$nextTick(() => {
       //   this.$refs.processRef.init()
       // })
-
+      if (this.isProjectSwitch === '1') {
+        if (!this.dataForm.projectId) {
+          this.$message.error('请先选择所属项目')
+          return
+        }
+        this.ProductListRequestObj.projectId = this.dataForm.projectId
+      }
       this.$refs['ComSelect-page'].openDialog()
     },
     handeleProductInfoData(val) {
@@ -1312,6 +1326,7 @@ export default {
         list.forEach((item, index) => {
           let obj = {
             index: item._index,
+            projectName: item.projectName, // 工序名称
             name: item.name, // 工序名称
             code: item.code,
             processType: item.processType,

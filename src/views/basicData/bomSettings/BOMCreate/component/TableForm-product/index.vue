@@ -146,6 +146,7 @@ export default {
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
         { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'projectName', label: '所属项目' },
         { prop: 'code', label: '子件编码' },
         { prop: 'classTypeName', label: '子件类型' },
 
@@ -296,7 +297,7 @@ export default {
       this.$refs['ComSelect-page'].openDialog()
       if (this.projectId) {
         this.ProductListRequestObj.projectId = this.projectId
-      }else {
+      } else {
 
       }
     },

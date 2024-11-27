@@ -69,7 +69,7 @@
                   <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
                 </el-tab-pane>
                 <el-tab-pane v-if="btnType == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
-                  <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
+                  <recordList :list="flowTaskOperatorRecordList" :endTime="endTime" />
                 </el-tab-pane>
               </el-tabs>
               <el-collapse v-model="activeNames" v-else>
@@ -108,7 +108,7 @@ import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import TableFormProduct from '../BOMCreate/component/TableForm-product/index.vue' // 产品选择组件
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
-import busFlow from '@/mixins/generator/busFlow';
+import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getProductWithOut } from '@/api/purchasingManagement/purchaseInquirySheet'
 import getProjectList from '@/mixins/generator/getProjectList'
@@ -117,7 +117,6 @@ export default {
   mixins: [busFlow, getProjectList],
   data() {
     return {
-
       isattachmentswitch: '',
       categoryId: '',
       activeNames: ['productInfo', 'basicInfo'],
@@ -143,7 +142,17 @@ export default {
       documentStatus: '',
       dataFormItems: [
         // { prop: "code", label: "BOM编码", value: "", type: "input", itemRules: [{ required: true, trigger: "blur" }, { validator: this.formValidate('enCode'), trigger: 'blur' }], sm: 12 },
-        { prop: "projectId", label: "所属项目", value: "", type: "select", options: [], itemRules: [], sm: 12, itemDisabled: false, render: true },
+        {
+          prop: 'projectId',
+          label: '所属项目',
+          value: '',
+          type: 'select',
+          options: [],
+          itemRules: [],
+          sm: 12,
+          itemDisabled: false,
+          render: true
+        },
         {
           prop: 'drawNo',
           label: '品名规格',
@@ -260,14 +269,19 @@ export default {
             { label: '都不是', value: 'none' }
           ],
           itemRules: [{ required: true, trigger: 'change' }],
-          minWidth: 160,
+          minWidth: 160
         },
         { prop: 'remark', label: '备注', value: '', type: 'input', maxlength: 200, minWidth: 160 }
       ],
       getProductList, // 产品选择弹出框树状列表请求api
       getProductWithOut, // 产品选择弹出框树状列表请求api
       ProductMethodArr: [
-        { label: '产品分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '', type: "material" } }
+        {
+          label: '产品分类',
+          classAttribute: '',
+          method: getcategoryTree,
+          requestObj: { classAttribute: '', type: 'material' }
+        }
       ], // 产品选择弹出框树状列表
       ProductListRequestObj: {
         createByName: '',
@@ -311,209 +325,15 @@ export default {
       statusFlag: false,
       flowTemplateJson: {},
       flowData: {},
-      approvalFlag: false,   // 待办事宜等页面 需要
+      approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
       endTime: 0
     }
   },
   async created() {
-    await this.getProjectSwitch('system', 'project')
-    await this.getProjectList()
-    this.tableDataFlag = true
-    console.log(this.isProjectSwitch)
-    if (this.isProjectSwitch === '1') {
-      this.linesListItems = [
-        { prop: 'ProjectName', label: '所属项目', value: '', type: 'view', minWidth: 340 },
-        { prop: 'drawingNo', label: '品名规格', value: '', type: 'view', minWidth: 340 },
-        // { prop: 'productName', label: '产品名称', value: '', type: 'view', minWidth: 160 },
-        { prop: 'productCode', label: '产品编码', value: '', type: 'view', minWidth: 160 },
-        {
-          prop: 'qty',
-          label: '数量',
-          value: '1',
-          type: 'input',
-          itemRules: [
-            { required: true, trigger: 'blur' },
-            {
-              validator: this.formValidate({
-                type: 'decimal',
-                params: [
-                  20,
-                  4,
-                  '',
-                  (errMsg) => {
-                    this.$message.error('数量：' + errMsg)
-                  }
-                ]
-              }),
-              trigger: 'blur'
-            }
-          ],
-          minWidth: 120
-        },
-        { prop: 'mainUnit', label: '单位', value: '', type: 'view', minWidth: 120 },
-        {
-          prop: 'lossRate',
-          label: '损耗率(%)',
-          value: '0',
-          type: 'input',
-          placeholder: '请输入损耗率',
-          itemRules: [
-            { required: true, trigger: 'blur' },
-            {
-              validator: this.formValidate({
-                type: 'decimal',
-                params: [
-                  10,
-                  2,
-                  '',
-                  (errMsg) => {
-                    this.$message.error('损耗率：' + errMsg)
-                  }
-                ]
-              }),
-              trigger: 'blur'
-            }
-          ],
-          minWidth: 120
-        },
-        {
-          prop: 'fixedLoss',
-          label: '固定损耗',
-          value: '0',
-          type: 'input',
-          itemRules: [
-            { required: true, trigger: 'blur' },
-            {
-              validator: this.formValidate({
-                type: 'decimal',
-                params: [
-                  10,
-                  2,
-                  '',
-                  (errMsg) => {
-                    this.$message.error('固定损耗：' + errMsg)
-                  }
-                ]
-              }),
-              trigger: 'blur'
-            }
-          ],
-          minWidth: 120
-        },
-        {
-          prop: 'reduceType',
-          label: '扣减料方式',
-          value: 'picking',
-          type: 'select',
-          options: [
-            { label: '生成领料单', value: 'picking' },
-            { label: '自动扣减料', value: 'auto' },
-            { label: '都不是', value: 'none' }
-          ],
-          itemRules: [{ required: true, trigger: 'change' }],
-          minWidth: 160,
-        },
-        { prop: 'remark', label: '备注', value: '', type: 'input', maxlength: 200, minWidth: 160 }
-      ]
-    } else {
-      this.linesListItems = [
-        { prop: 'drawingNo', label: '品名规格', value: '', type: 'view', minWidth: 340 },
-        // { prop: 'productName', label: '产品名称', value: '', type: 'view', minWidth: 160 },
-        { prop: 'productCode', label: '产品编码', value: '', type: 'view', minWidth: 160 },
-        {
-          prop: 'qty',
-          label: '数量',
-          value: '1',
-          type: 'input',
-          itemRules: [
-            { required: true, trigger: 'blur' },
-            {
-              validator: this.formValidate({
-                type: 'decimal',
-                params: [
-                  20,
-                  4,
-                  '',
-                  (errMsg) => {
-                    this.$message.error('数量：' + errMsg)
-                  }
-                ]
-              }),
-              trigger: 'blur'
-            }
-          ],
-          minWidth: 120
-        },
-        { prop: 'mainUnit', label: '单位', value: '', type: 'view', minWidth: 120 },
-        {
-          prop: 'lossRate',
-          label: '损耗率(%)',
-          value: '0',
-          type: 'input',
-          placeholder: '请输入损耗率',
-          itemRules: [
-            { required: true, trigger: 'blur' },
-            {
-              validator: this.formValidate({
-                type: 'decimal',
-                params: [
-                  10,
-                  2,
-                  '',
-                  (errMsg) => {
-                    this.$message.error('损耗率：' + errMsg)
-                  }
-                ]
-              }),
-              trigger: 'blur'
-            }
-          ],
-          minWidth: 120
-        },
-        {
-          prop: 'fixedLoss',
-          label: '固定损耗',
-          value: '0',
-          type: 'input',
-          itemRules: [
-            { required: true, trigger: 'blur' },
-            {
-              validator: this.formValidate({
-                type: 'decimal',
-                params: [
-                  10,
-                  2,
-                  '',
-                  (errMsg) => {
-                    this.$message.error('固定损耗：' + errMsg)
-                  }
-                ]
-              }),
-              trigger: 'blur'
-            }
-          ],
-          minWidth: 120
-        },
-        {
-          prop: 'reduceType',
-          label: '扣减料方式',
-          value: 'picking',
-          type: 'select',
-          options: [
-            { label: '生成领料单', value: 'picking' },
-            { label: '自动扣减料', value: 'auto' },
-            { label: '都不是', value: 'none' }
-          ],
-          itemRules: [{ required: true, trigger: 'change' }],
-          minWidth: 160,
-        },
-        { prop: 'remark', label: '备注', value: '', type: 'input', maxlength: 200, minWidth: 160 }
-      ]
-    }
-    if (localStorage.getItem("productionBomFormFlag")) {
+    if (localStorage.getItem('productionBomFormFlag')) {
       let roleFlag = JSON.parse(localStorage.getItem('productionBomFormFlag'))
-      console.log(roleFlag, 'roleFlag')
+
       this.expands = roleFlag
       this.toggleExpand(roleFlag)
     }
@@ -588,7 +408,7 @@ export default {
         businessCode: 'attachment',
         configKey: 'fj_bomgl'
       }
-      getBimBusinessDetail(obj).then(res => {
+      getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
         this.categoryId = res.data.configValue2
       })
@@ -599,20 +419,208 @@ export default {
       this.expands = expands
       this.$nextTick(() => {
         this.refreshTree = true
-        localStorage.setItem("productionBomFormFlag", expands)
+        localStorage.setItem('productionBomFormFlag', expands)
       })
     },
     async init(id, btnType, approvalFlag, approvalStatus) {
       await this.getProjectSwitch('system', 'project')
       await this.getProjectList()
+
+      if (this.isProjectSwitch === '1') {
+        this.linesListItems = [
+          { prop: 'projectName', label: '所属项目', value: '', type: 'view', minWidth: 150 },
+          { prop: 'drawingNo', label: '品名规格', value: '', type: 'view', minWidth: 340 },
+          // { prop: 'productName', label: '产品名称', value: '', type: 'view', minWidth: 160 },
+          { prop: 'productCode', label: '产品编码', value: '', type: 'view', minWidth: 160 },
+          {
+            prop: 'qty',
+            label: '数量',
+            value: '1',
+            type: 'input',
+            itemRules: [
+              { required: true, trigger: 'blur' },
+              {
+                validator: this.formValidate({
+                  type: 'decimal',
+                  params: [
+                    20,
+                    4,
+                    '',
+                    (errMsg) => {
+                      this.$message.error('数量：' + errMsg)
+                    }
+                  ]
+                }),
+                trigger: 'blur'
+              }
+            ],
+            minWidth: 120
+          },
+          { prop: 'mainUnit', label: '单位', value: '', type: 'view', minWidth: 120 },
+          {
+            prop: 'lossRate',
+            label: '损耗率(%)',
+            value: '0',
+            type: 'input',
+            placeholder: '请输入损耗率',
+            itemRules: [
+              { required: true, trigger: 'blur' },
+              {
+                validator: this.formValidate({
+                  type: 'decimal',
+                  params: [
+                    10,
+                    2,
+                    '',
+                    (errMsg) => {
+                      this.$message.error('损耗率：' + errMsg)
+                    }
+                  ]
+                }),
+                trigger: 'blur'
+              }
+            ],
+            minWidth: 120
+          },
+          {
+            prop: 'fixedLoss',
+            label: '固定损耗',
+            value: '0',
+            type: 'input',
+            itemRules: [
+              { required: true, trigger: 'blur' },
+              {
+                validator: this.formValidate({
+                  type: 'decimal',
+                  params: [
+                    10,
+                    2,
+                    '',
+                    (errMsg) => {
+                      this.$message.error('固定损耗：' + errMsg)
+                    }
+                  ]
+                }),
+                trigger: 'blur'
+              }
+            ],
+            minWidth: 120
+          },
+          {
+            prop: 'reduceType',
+            label: '扣减料方式',
+            value: 'picking',
+            type: 'select',
+            options: [
+              { label: '生成领料单', value: 'picking' },
+              { label: '自动扣减料', value: 'auto' },
+              { label: '都不是', value: 'none' }
+            ],
+            itemRules: [{ required: true, trigger: 'change' }],
+            minWidth: 160
+          },
+          { prop: 'remark', label: '备注', value: '', type: 'input', maxlength: 200, minWidth: 160 }
+        ]
+      } else {
+        this.linesListItems = [
+          { prop: 'drawingNo', label: '品名规格', value: '', type: 'view', minWidth: 340 },
+          // { prop: 'productName', label: '产品名称', value: '', type: 'view', minWidth: 160 },
+          { prop: 'productCode', label: '产品编码', value: '', type: 'view', minWidth: 160 },
+          {
+            prop: 'qty',
+            label: '数量',
+            value: '1',
+            type: 'input',
+            itemRules: [
+              { required: true, trigger: 'blur' },
+              {
+                validator: this.formValidate({
+                  type: 'decimal',
+                  params: [
+                    20,
+                    4,
+                    '',
+                    (errMsg) => {
+                      this.$message.error('数量：' + errMsg)
+                    }
+                  ]
+                }),
+                trigger: 'blur'
+              }
+            ],
+            minWidth: 120
+          },
+          { prop: 'mainUnit', label: '单位', value: '', type: 'view', minWidth: 120 },
+          {
+            prop: 'lossRate',
+            label: '损耗率(%)',
+            value: '0',
+            type: 'input',
+            placeholder: '请输入损耗率',
+            itemRules: [
+              { required: true, trigger: 'blur' },
+              {
+                validator: this.formValidate({
+                  type: 'decimal',
+                  params: [
+                    10,
+                    2,
+                    '',
+                    (errMsg) => {
+                      this.$message.error('损耗率：' + errMsg)
+                    }
+                  ]
+                }),
+                trigger: 'blur'
+              }
+            ],
+            minWidth: 120
+          },
+          {
+            prop: 'fixedLoss',
+            label: '固定损耗',
+            value: '0',
+            type: 'input',
+            itemRules: [
+              { required: true, trigger: 'blur' },
+              {
+                validator: this.formValidate({
+                  type: 'decimal',
+                  params: [
+                    10,
+                    2,
+                    '',
+                    (errMsg) => {
+                      this.$message.error('固定损耗：' + errMsg)
+                    }
+                  ]
+                }),
+                trigger: 'blur'
+              }
+            ],
+            minWidth: 120
+          },
+          {
+            prop: 'reduceType',
+            label: '扣减料方式',
+            value: 'picking',
+            type: 'select',
+            options: [
+              { label: '生成领料单', value: 'picking' },
+              { label: '自动扣减料', value: 'auto' },
+              { label: '都不是', value: 'none' }
+            ],
+            itemRules: [{ required: true, trigger: 'change' }],
+            minWidth: 160
+          },
+          { prop: 'remark', label: '备注', value: '', type: 'input', maxlength: 200, minWidth: 160 }
+        ]
+      }
       this.dataFormItems.forEach((tc) => {
         // 添加所属项目
         if (tc.prop === 'projectId') {
-          console.log(this.isProjectSwitch, 'ojjj')
           tc.options = this.projectIdData
           if (this.isProjectSwitch === '1') {
-            console.log(this.userInfo.projectId, 'this.userInfo.projectId')
-
             if (this.userInfo.projectId === '1') {
               tc.options = tc.options.filter((item) => item.value !== '1')
               tc.itemDisabled = false
@@ -630,21 +638,17 @@ export default {
                 this.linesList = []
               }
             }
-            if (btnType == 'look') {
+            if (btnType == 'look' || btnType == 'edit') {
               tc.itemDisabled = true
             }
-            console.log(this.ProductListRequestObj, '4')
-            tc.itemRules.push({ required: true, trigger: 'change' })
-            console.log(tc, 'this.projectIdData')
 
-            console.log('000')
+            tc.itemRules.push({ required: true, trigger: 'change' })
           } else {
             tc.render = false
           }
         }
       })
-      console.log(approvalFlag, 'p')
-      console.log(approvalStatus, 'approvalStatus')
+
       this.visible = true
       this.formLoading = true
       this.btnType = btnType
@@ -657,15 +661,12 @@ export default {
           : false
       let loadTotal = 0
       if (id && this.btnType != 'add' && this.btnType != 'waitAdd' && !this.statusFlag) {
-        console.log('12121212')
-
         this.title = btnType === 'look' ? '查看BOM' : '编辑BOM'
         // 获取详情
         let bomId = id
-        console.log(id, 'id')
+
         detailBomData(bomId)
           .then((res) => {
-            console.log(res, 'e')
             this.firstId = this.firstId ? this.firstId : id
             this.autoCode = res.data.bom.code
             this.dataForm = JSON.parse(JSON.stringify(res.data.bom))
@@ -714,13 +715,11 @@ export default {
               this.formLoading = false
               this.treeLoading = false
             }
-
           })
         } else {
           this.formLoading = false
         }
       } else if (id && this.btnType != 'add' && this.btnType != 'waitAdd' && this.statusFlag) {
-
         this.title = btnType === 'look' ? '查看BOM' : '编辑BOM'
         detailBomData(approvalStatus.id)
           .then((res) => {
@@ -762,9 +761,7 @@ export default {
           .catch(() => {
             this.btnLoading = false
           })
-
       } else if (id && this.btnType == 'add') {
-        console.log(approvalStatus, 'jjjj')
         this.title = '新建BOM'
         this.isDoubleFlag = true
         // 获取详情
@@ -795,7 +792,6 @@ export default {
             this.getBusInfo()
             // 整理BOM树
 
-
             if (res.data.attachmentList) {
               res.data.attachmentList.forEach((item) => {
                 this.datafilelist.push({
@@ -822,13 +818,11 @@ export default {
               this.formLoading = false
               this.treeLoading = false
             }
-
           })
         } else {
           this.formLoading = false
         }
       } else if (this.btnType == 'waitAdd') {
-        console.log(id, 'jjjj')
         if (id.projectId) {
           this.dataForm.projectId = id.projectId
           this.ProductListRequestObj.projectId = this.dataForm.projectId
@@ -838,17 +832,14 @@ export default {
         this.dataForm.drawNo = id.drawingNo
         this.dataForm.productSource = id.productSource
         this.dataForm.productId = id.id
-        console.log(this.statusFlag, 'ppp')
+
         this.title = '新建BOM'
         this.treeLoading = false
         this.formLoading = false
         // 审批
         //  this.$nextTick(() => { this.getApproverData() })
         this.getBusInfo()
-
-
       } else {
-        console.log('oiii')
         this.title = '新建BOM'
         this.treeLoading = false
         this.formLoading = false
@@ -860,7 +851,6 @@ export default {
     async handleConfirm(submitModel) {
       this.btnLoading = true
       let submitFlag = true
-
 
       // 校验表单
       let form_1 = this.$refs['dataForm'].$refs.main
@@ -957,20 +947,16 @@ export default {
       }
     },
     async handleNodeClick(nodeData, node) {
-      console.log(this.approvalFlag, 'fl')
-      console.log(nodeData, 'nodeData')
       let bomId = ''
       if (nodeData.childrenList.length !== 0) {
         bomId = (await getBomByProductId(nodeData.productId)).data
       }
       // 获取详情
 
-      console.log(bomId, 'bomId---')
       const msgArr = ['选择节点']
       if (bomId === this.selectedNodeKey) {
         msgArr.push('和现节点相同')
       } else if (nodeData.childrenList.length !== 0) {
-        console.log('[[]]')
         msgArr.push('切换节点')
         this.selectedNodeKey = bomId
         this.init(bomId, this.btnType, this.approvalFlag)
@@ -1041,52 +1027,63 @@ export default {
     },
     // 测试审批流
     getBusInfo() {
-      getBusinessFlowInfo('b023').then(res => {
-        if (res.data) {
-          if (res.data.enabledMark) {
-            this.flowData = res.data
-            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
-            this.dataForm.approvalFlag = res.data.enabledMark
+      getBusinessFlowInfo('b023')
+        .then((res) => {
+          if (res.data) {
+            if (res.data.enabledMark) {
+              this.flowData = res.data
+              this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+              this.dataForm.approvalFlag = res.data.enabledMark
+            } else {
+              this.flowTemplateJson = {}
+              this.dataForm.approvalFlag = false
+              this.$message.error('未找到审批流程！')
+            }
           } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
-            this.$message.error('未找到审批流程！')
           }
-        } else {
-          this.flowTemplateJson = {}
-          this.dataForm.approvalFlag = false
-        }
-      }).catch(() => { })
+        })
+        .catch(() => { })
     },
     // 流程信息 && 流转记录
     getFlowDetail(id) {
-      getBusinessFlowDetail(id).then(res => {
-        if (res.data) {
-          this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson) : null
-          this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
-          this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
-          let flowTaskNodeList = res.data.flowTaskNodeList
-          if (flowTaskNodeList.length) {
-            for (let i = 0; i < flowTaskNodeList.length; i++) {
-              const nodeItem = flowTaskNodeList[i]
-              const loop = data => {
-                if (Array.isArray(data)) data.forEach(d => loop(d))
-                if (data.nodeId === nodeItem.nodeCode) {
-                  if (nodeItem.type == 0) data.state = 'state-past'
-                  if (nodeItem.type == 1) data.state = 'state-curr'
-                  if (nodeItem.nodeType === 'approver' || nodeItem.nodeType === 'start' || nodeItem.nodeType === 'subFlow') data.content = nodeItem.userName
-                  if (nodeItem.nodeType === 'approver') data.processingTime = nodeItem.processingTime
-                  return
+      getBusinessFlowDetail(id)
+        .then((res) => {
+          if (res.data) {
+            this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson
+              ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson)
+              : null
+            this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
+            this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
+            let flowTaskNodeList = res.data.flowTaskNodeList
+            if (flowTaskNodeList.length) {
+              for (let i = 0; i < flowTaskNodeList.length; i++) {
+                const nodeItem = flowTaskNodeList[i]
+                const loop = (data) => {
+                  if (Array.isArray(data)) data.forEach((d) => loop(d))
+                  if (data.nodeId === nodeItem.nodeCode) {
+                    if (nodeItem.type == 0) data.state = 'state-past'
+                    if (nodeItem.type == 1) data.state = 'state-curr'
+                    if (
+                      nodeItem.nodeType === 'approver' ||
+                      nodeItem.nodeType === 'start' ||
+                      nodeItem.nodeType === 'subFlow'
+                    )
+                      data.content = nodeItem.userName
+                    if (nodeItem.nodeType === 'approver') data.processingTime = nodeItem.processingTime
+                    return
+                  }
+                  if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
+                  if (data.childNode) loop(data.childNode)
                 }
-                if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
-                if (data.childNode) loop(data.childNode)
+                loop(this.flowTemplateJson)
               }
-              loop(this.flowTemplateJson)
             }
           }
-        }
-      }).catch(() => { })
-    },
+        })
+        .catch(() => { })
+    }
   }
 }
 </script>
@@ -1163,11 +1160,10 @@ export default {
   margin-bottom: 0;
   padding: 0 10px 0px;
   border-top: none !important;
-
 }
 
 ::v-deep .el-collapse-item__content {
-  padding-bottom: 0px
+  padding-bottom: 0px;
 }
 
 .JNPF-preview-main .main {
@@ -1175,10 +1171,10 @@ export default {
 }
 
 ::v-deep .el-tabs__item {
-  padding: 0 10px !important
+  padding: 0 10px !important;
 }
 
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
-  padding-left: 0px !important
+  padding-left: 0px !important;
 }
 </style>

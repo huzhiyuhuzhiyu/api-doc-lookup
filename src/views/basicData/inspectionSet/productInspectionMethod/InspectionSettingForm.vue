@@ -80,10 +80,10 @@ export default {
         // },
         {
           label: '小于等于',
-          value: 'le'
+          value: '<='
         }, {
           label: '小于',
-          value: 'lt'
+          value: '<'
         }
       ],
       endSymbolList: [
@@ -101,10 +101,10 @@ export default {
         // },
         {
           label: '小于等于',
-          value: 'le'
+          value: '<='
         }, {
           label: '小于',
-          value: 'lt'
+          value: '<'
         }
       ],
       samplingMethodList: [
@@ -483,9 +483,9 @@ export default {
       this.linesForm.push({
         // index,
         startVal: '',
-        startSymbol: 'le',
+        startSymbol: '<',
         inspectionQuantity: '？',
-        endSymbol: 'le',
+        endSymbol: '<',
         endVal: '',
         samplingRatio: ''
       })

@@ -330,22 +330,31 @@ export default {
   },
   created() {
       // 判断是否是域名 是域名进行截取 不是域名 放开企业代码
-      function isDomainOrIP(url) {
-          // 匹配IPv4地址的正则表达式
-          const ipv4Pattern = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-          // 提取主机部分
-          const host = url.split('/')[2];
-          
-          // 判断是否为IP地址或localhost
-          if (host === 'localhost:3000' || host === '127.0.0.1:3000') {
-            return 'localhost';
-          } else if (ipv4Pattern.test(host)) {
-            return 'ip';
-          } else {
-            return 'Domain';
-          }
+      function isValidIP(ip) {
+          const ipRegex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+          return ipRegex.test(ip);
       }
-      const result = isDomainOrIP(location.origin);
+
+      function extractHost(url) {
+          const urlPattern = /^(?:http[s]?:\/\/)?([^:/]+)/;
+          const match = url.match(urlPattern);
+          return match ? match[1] : null;
+      }
+
+      function classifyUrl(url) {
+          const host = extractHost(url);
+          if (host) {
+              if (host === 'localhost') {
+                  return 'localhost';
+              } else if (isValidIP(host)) {
+                  return 'IP';
+              } else {
+                  return 'Domain';
+              }
+          }
+          return 'Invalid URL';
+      }
+      const result = classifyUrl(location.origin);
       console.log(result);
       
     

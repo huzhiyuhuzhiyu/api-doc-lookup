@@ -295,7 +295,7 @@ export default {
         }
       ], // 产品选择弹出框树状列表
       ProductListRequestObj: {
-        classAttribute: 'other',
+        classAttribute: '',
         productSource: 'purchase',
         productCategoryId: '',
         code: '',
@@ -545,7 +545,13 @@ export default {
         { prop: 'projectName', label: '所属项目', minWidth: 140 },
         { prop: 'classAttributeName', label: '所属分类', minWidth: 140 },
         { prop: 'mainUnit', label: '单位' },
-        { prop: 'colour', label: '颜色' }
+        { prop: 'colour', label: '颜色' },
+        { prop: 'sealingCoverTyping', label: '打字内容', sortable: 'custom' },
+        { prop: 'accuracyLevel', label: '精度等级', sortable: 'custom' },
+        { prop: 'vibrationLevel', label: '振动等级', sortable: 'custom' },
+        { prop: 'oil', label: '油脂', sortable: 'custom' },
+        { prop: 'oilQuantity', label: '油脂量', sortable: 'custom' },
+        { prop: 'clearance', label: '游隙', sortable: 'custom' }
       ] // 产品选择弹出框表单展示字段
     } else {
       this.ProductTableItems = [
@@ -570,6 +576,8 @@ export default {
         newVal.forEach((item) => {
           if ((item.price && item.taxRate) || (item.price && item.taxRate == 0)) {
             item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
+          } else {
+            item.excludingTaxPrice = ''
           }
         })
       },
@@ -822,65 +830,65 @@ export default {
       this.approvalFlag = approvalFlag
 
       this.dataForm.classAttribute = classAttributeFlag
-      if (this.dataForm.classAttribute == 'finish_product') {
-        this.ProductListRequestObj = {
-          classAttribute: 'finish_product',
-          productSource: 'purchase',
-          productCategoryId: '',
-          code: '',
-          name: '',
-          orderItems: [
-            {
-              asc: false,
-              column: 'code'
-            }
-          ],
-          productStatus: 'enable',
-          pageNum: 1,
-          pageSize: 20,
-          queryType: 7
-        }
-        this.ProductTableItems = [
-          { prop: 'drawingNo', label: '品名规格', minWidth: 140, sortable: 'custom' },
-          { prop: 'code', label: '产品编码', minWidth: 140, sortable: 'custom' },
-          { prop: 'classAttributeName', label: '所属分类', minWidth: 120, sortable: 'custom' },
-          { prop: 'mainUnit', label: '单位', width: 60 },
-          { prop: 'sealingCoverTyping', label: '打字内容', sortable: 'custom' },
-          { prop: 'accuracyLevel', label: '精度等级', sortable: 'custom' },
-          { prop: 'vibrationLevel', label: '振动等级', sortable: 'custom' },
-          { prop: 'oil', label: '油脂', sortable: 'custom' },
-          { prop: 'oilQuantity', label: '油脂量', sortable: 'custom' },
-          { prop: 'clearance', label: '游隙', sortable: 'custom' }
-        ]
-      } else {
-        this.ProductListRequestObj = {
-          classAttribute: 'other',
-          productSource: 'purchase',
-          productCategoryId: '',
-          code: '',
-          name: '',
-          orderItems: [
-            {
-              asc: false,
-              column: 'code'
-            }
-          ],
-          productStatus: 'enable',
-          pageNum: 1,
-          pageSize: 20,
-          queryType: 7
-        }
-        this.ProductTableItems = [
-          { prop: 'drawingNo', label: '品名规格', minWidth: 140 },
-          { prop: 'code', label: '产品编码', minWidth: 140 },
+      // if (this.dataForm.classAttribute == 'finish_product') {
+      //   this.ProductListRequestObj = {
+      //     classAttribute: 'finish_product',
+      //     productSource: 'purchase',
+      //     productCategoryId: '',
+      //     code: '',
+      //     name: '',
+      //     orderItems: [
+      //       {
+      //         asc: false,
+      //         column: 'code'
+      //       }
+      //     ],
+      //     productStatus: 'enable',
+      //     pageNum: 1,
+      //     pageSize: 20,
+      //     queryType: 7
+      //   }
+      //   this.ProductTableItems = [
+      //     { prop: 'drawingNo', label: '品名规格', minWidth: 140, sortable: 'custom' },
+      //     { prop: 'code', label: '产品编码', minWidth: 140, sortable: 'custom' },
+      //     { prop: 'classAttributeName', label: '所属分类', minWidth: 120, sortable: 'custom' },
+      //     { prop: 'mainUnit', label: '单位', width: 60 },
+      //     { prop: 'sealingCoverTyping', label: '打字内容', sortable: 'custom' },
+      //     { prop: 'accuracyLevel', label: '精度等级', sortable: 'custom' },
+      //     { prop: 'vibrationLevel', label: '振动等级', sortable: 'custom' },
+      //     { prop: 'oil', label: '油脂', sortable: 'custom' },
+      //     { prop: 'oilQuantity', label: '油脂量', sortable: 'custom' },
+      //     { prop: 'clearance', label: '游隙', sortable: 'custom' }
+      //   ]
+      // } else {
+      //   this.ProductListRequestObj = {
+      //     classAttribute: 'other',
+      //     productSource: 'purchase',
+      //     productCategoryId: '',
+      //     code: '',
+      //     name: '',
+      //     orderItems: [
+      //       {
+      //         asc: false,
+      //         column: 'code'
+      //       }
+      //     ],
+      //     productStatus: 'enable',
+      //     pageNum: 1,
+      //     pageSize: 20,
+      //     queryType: 7
+      //   }
+      //   this.ProductTableItems = [
+      //     { prop: 'drawingNo', label: '品名规格', minWidth: 140 },
+      //     { prop: 'code', label: '产品编码', minWidth: 140 },
 
-          // { prop: 'routingName', label: '工艺路线名称', minWidth: 140 },
-          // { prop: 'processName', label: '工序名称' },
-          { prop: 'classAttributeName', label: '所属分类', minWidth: 140 },
-          { prop: 'mainUnit', label: '单位' },
-          { prop: 'colour', label: '颜色' }
-        ]
-      }
+      //     // { prop: 'routingName', label: '工艺路线名称', minWidth: 140 },
+      //     // { prop: 'processName', label: '工序名称' },
+      //     { prop: 'classAttributeName', label: '所属分类', minWidth: 140 },
+      //     { prop: 'mainUnit', label: '单位' },
+      //     { prop: 'colour', label: '颜色' }
+      //   ]
+      // }
       console.log(this.dataForm, 'form')
       this.getProductClassFun()
       this.$nextTick(() => {

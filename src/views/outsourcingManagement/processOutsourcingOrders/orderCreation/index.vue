@@ -1021,7 +1021,6 @@ export default {
     // 产品弹窗
     openSeleceProductDialog() {
       this.$refs['ComSelect-page'].openDialog()
-      this.ProductListRequestObj.cooperativePartnerId = this.dataForm.cooperativePartnerId
       // this.productVisibled = true
       // this.$nextTick(() => {
       //   this.$refs.productRef.initData2()

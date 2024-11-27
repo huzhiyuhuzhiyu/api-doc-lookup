@@ -354,7 +354,7 @@ export default {
       this.listLoadingInspection = true
       equMaintenanceTime(this.listQueryInspection).then(res => {
         this.tableInspectionresults = res.data
-        this.totalInspection = res.data.total
+        this.totalInspection = res.data.length
         this.listLoadingInspection = false
       }).catch(() => {
         this.listLoadingInspection = false

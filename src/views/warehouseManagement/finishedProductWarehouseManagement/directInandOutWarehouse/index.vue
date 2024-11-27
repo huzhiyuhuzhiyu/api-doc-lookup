@@ -72,10 +72,10 @@
                             </el-select>
                           </el-form-item>
                         </el-col>
-                        <!-- v-if="(dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'inbound_external')&&calculateQuantityFlag==1"> -->
 
+                          <!-- v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'inbound_external'"> -->
                         <el-col :sm="6" :xs="24"
-                          v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'inbound_external'">
+                        v-if="(dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'inbound_external')&&calculateQuantityFlag==1">
                           <el-form-item label="是否显示比重折扣" prop="weightFlag">
                             <el-select v-model="dataForm.weightFlag" placeholder="是否显示比重折扣" style="width: 100%;"
                               :disabled="btnType == 'look' ? true : false">
@@ -729,7 +729,7 @@ export default {
 
       title: "",
       visible: true,
-      btnType: false,
+      btnType: 'add',
       wareVisibled: false,
       btnLoading: false,
       formLoading: false,
@@ -830,7 +830,7 @@ export default {
           fullName: "外协发料单"
         },
       ],
-      // calculateQuantityFlag:"",
+      calculateQuantityFlag:"",
     }
   },
   computed: {
@@ -868,7 +868,6 @@ export default {
   },
   mounted() {
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit', 'unitFlag')
-    // this.getMainUnitFun('deputyUnit', 'proportion','proportionFlag')
   },
 
   methods: {
@@ -878,7 +877,8 @@ export default {
       try {
 
         if (flag == 'unitFlag') this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
-        // if(flag=='proportionFlag')this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type);
+        if(flag=='proportionFlag')this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type);
+        console.log("this.calculateQuantityFlag",this.calculateQuantityFlag);
         this.tableDataFlag = true
         this.listLoading = false
 
@@ -1387,18 +1387,25 @@ export default {
 
 
     // 选择业务类型
-    selectDocutementType(val) {
-      // 判断当前所选的业务类型是否与上一次一样 不一样 则清空产品列表数据及客户/供应商信息
+    selectDocutementType(val) { 
+      // 如果选择的是外协收货 外协发料 采购收退货 需要调用后台参数配置 是否开启显示重量比重折扣显示
+      if(val == 'inbound_purchase' || val == 'outbound_purchase' || val == 'outbound_external_send' || val == 'inbound_external'){
+        this.getMainUnitFun('warehouse', 'proportion','proportionFlag')
+
+      }
+
 
       if (val == 'outbound_sale_send' || val == 'outbound_purchase' || val == 'outbound_pick_out' || val == 'outbound_external_send' || val == 'outbound_other') {
         // if (  val == 'outbound_other') {
         this.dataForm.documentType = 'outbound'
-        this.fetchData("CKDH")
+        if(this.btnType=='add')this.fetchData("CKDH")
+        
       }
       if (val == 'inbound_sale_return' || val == 'inbound_purchase' || val == 'inbound_return_materials' || val == 'inbound_external_return' || val == 'inbound_external' || val == 'inbound_other') {
         // if ( val == 'inbound_other') {
         this.dataForm.documentType = 'inbound'
-        this.fetchData("RKDH")
+        if(this.btnType=='add')this.fetchData("RKDH")
+        
 
       }
       if (val == 'outbound_sale_send' || val == 'inbound_sale_return') {
@@ -1556,6 +1563,7 @@ export default {
         this.title = btnType == 'look' ? '查看出入库单' : '编辑出入库单'
         // 获取详情
         detailWarehouseData(id).then(res => {
+          this.$set(res.data.stockMove,'cooperativePartnerIdText',res.data.stockMove.partnerName)
           this.dataForm = res.data.stockMove
           this.selectDocutementType(this.dataForm.businessType)
           res.data.spaceLines.forEach(item => {

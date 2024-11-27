@@ -373,7 +373,7 @@
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" custom-column :height=500>
             <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" />
             <el-table-column prop="equipmentIdName" label="工具名称" min-width="200"></el-table-column>
-          <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
+            <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
             <el-table-column prop="faultTypeName" label="故障类型名称" min-width="160" />
             <el-table-column prop="faultLocationName" label="故障部位名称" min-width="160" />
             <el-table-column prop="frontPicList" label="故障情况照片" min-width="140">
@@ -882,6 +882,7 @@ export default {
           this.dataFormTwo.productData.push({
             faultTypeName: item.all.name,
             faultTypeCode: item.all.code,
+            repairResult: 'not_finished',
             faultLocationName: '',
             faultLocationCode: '',
             faultDescription: '',
@@ -1059,6 +1060,9 @@ export default {
           }
           this.dataForm = res.data.repair
           this.dataForms.lines = res.data.equLine
+          res.data.lines.forEach(item => {
+            item.repairResult = 'not_finished'
+          })
           this.dataFormTwo.productData = res.data.lines
           if (res.data.attachmentList) {
             res.data.attachmentList.forEach((item) => {

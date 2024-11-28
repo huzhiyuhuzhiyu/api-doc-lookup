@@ -101,6 +101,12 @@
               <div v-if="scope.row.businessType == 'inbound_return'">资产归还</div>
               <div v-if="scope.row.businessType == 'inbound_taking_adjust'">盘点调整入库</div>
               <div v-if="scope.row.businessType == 'outbound_taking_adjust'">盘点调整出库</div>
+              <div v-if="scope.row.businessType == 'inbound_merge'">组装入库</div>
+              <div v-if="scope.row.businessType == 'inbound_split'">拆卸入库</div>
+              <div v-if="scope.row.businessType == 'inbound_shift'">形态转换入库</div>
+              <div v-if="scope.row.businessType == 'outbound_merge'">组装出库</div>
+              <div v-if="scope.row.businessType == 'outbound_split'">拆卸出库</div>
+              <div v-if="scope.row.businessType == 'outbound_shift'">形态转换出库</div>
             </template>
           </el-table-column>
           <el-table-column prop="partnerName" label="客户/供应商" sortable="custom" min-width="160">
@@ -367,6 +373,12 @@ export default {
         { label: "资产归还", value: "inbound_return" },
         { label: "盘点调整入库", value: "inbound_taking_adjust" },
         { label: "盘点调整出库", value: "outbound_taking_adjust" },
+        { label: "组装入库", value: "inbound_merge" },
+        { label: "拆卸入库", value: "inbound_split" },
+        { label: "形态转换入库", value: "inbound_shift" },
+        { label: "组装出库", value: "outbound_merge" },
+        { label: "拆卸出库", value: "outbound_split" },
+        { label: "形态转换出库", value: "outbound_shift" }
       ],
 
       initListQuery: {
@@ -421,6 +433,12 @@ export default {
             { label: "资产归还", value: "inbound_return" },
             { label: "盘点调整入库", value: "inbound_taking_adjust" },
             { label: "盘点调整出库", value: "outbound_taking_adjust" },
+            { label: "组装入库", value: "inbound_merge" },
+            { label: "拆卸入库", value: "inbound_split" },
+            { label: "形态转换入库", value: "inbound_shift" },
+            { label: "组装出库", value: "outbound_merge" },
+            { label: "拆卸出库", value: "outbound_split" },
+            { label: "形态转换出库", value: "outbound_shift" }
           ],
         },
         {

@@ -137,7 +137,7 @@
 </template>
 
 <script>
-import { getImUserSelector,getImUserSelectorProjectId, getUserInfoList, getSubordinates, getOrganization, getUsersByUserCondition } from '@/api/permission/user'
+import { getImUserSelector, getUserInfoList, getSubordinates, getOrganization, getUsersByUserCondition } from '@/api/permission/user'
 import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event';
 import SearchInput from '@/components/no_mount/Search-input/index.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
@@ -310,14 +310,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
-    await this.getProjectList()
-    this.tableDataFlag = true
-    console.log(this.isProjectSwitch, 'hj')
-    if (this.isProjectSwitch === '1') {
 
-    } else {
-
-    }
     this.setDefault()
   },
   mounted() {
@@ -427,6 +420,7 @@ export default {
       this.visible = false
     },
     setDefault() {
+      console.log(123)
       if (!this.value || !this.value.length) {
         this.innerValue = ''
         this.selectedData = []
@@ -463,16 +457,32 @@ export default {
           this.getAllList()
         } else if (this.activeName === 'department') {
           this.loading = true
-          getOrganization({ keyword: this.keyword, organizeId: '0' }).then(res => {
-            this.treeData2 = res.data
-            this.loading = false
-          })
+          if (this.isProjectSwitch === '1') {
+            getOrganization({ keyword: this.keyword, organizeId: '0', projectId: this.userInfo.projectId, }).then(res => {
+              this.treeData2 = res.data
+              this.loading = false
+            })
+          } else {
+            getOrganization({ keyword: this.keyword, organizeId: '0' }).then(res => {
+              this.treeData2 = res.data
+              this.loading = false
+            })
+          }
+
         } else if (this.activeName === 'subordinates') {
           this.loading = true
-          getSubordinates(this.keyword).then(res => {
-            this.treeData3 = res.data
-            this.loading = false
-          })
+          if (this.isProjectSwitch === '1') {
+            getSubordinates(this.keyword, this.userInfo.projectId).then(res => {
+              this.treeData3 = res.data
+              this.loading = false
+            })
+          } else {
+            getSubordinates(this.keyword).then(res => {
+              this.treeData3 = res.data
+              this.loading = false
+            })
+          }
+
         } else {
           this.loading = false
         }
@@ -488,19 +498,14 @@ export default {
     getAllList() {
       this.loading = true
       if (this.keyword) this.nodeId = '0'
-      console.log(this.isProjectSwitch, 'hh')
-      if (this.isProjectSwitch === '1') {
-        console.log(console.log(this.userInfo,'jjj'))
-        getImUserSelectorProjectId(this.nodeId, this.keyword, this.userInfo.projectId).then(res => {
-          this.treeData = res.data.list
-          this.loading = false
-        })
-      } else {
-        getImUserSelector(this.nodeId, this.keyword).then(res => {
-          this.treeData = res.data.list
-          this.loading = false
-        })
-      }
+  
+
+      getImUserSelector(this.nodeId, this.keyword).then(res => {
+        console.log(2)
+        this.treeData = res.data.list
+        this.loading = false
+      })
+
 
     },
     loadNode(node, resolve) {
@@ -509,9 +514,16 @@ export default {
         return resolve(this.treeData)
       }
       this.nodeId = node.data.id
-      getImUserSelector(this.nodeId).then(res => {
-        resolve(res.data.list)
-      })
+      if (this.isProjectSwitch === '1') {
+        getImUserSelector(this.nodeId, '', this.userInfo.projectId).then(res => {
+          resolve(res.data.list)
+        })
+      } else {
+        getImUserSelector(this.nodeId, '').then(res => {
+          resolve(res.data.list)
+        })
+      }
+
     },
     handleNodeClick(data) {
       if (data.type !== 'user') return

@@ -1153,7 +1153,7 @@ export default {
       //调用上传文件接口
       buyFixedPointPricingUploadData(formData)
         .then((res) => {
-          console.log(res, 'hhhh')
+          console.log(res.data, 'hhhh')
           if (!res.data.url) {
             this.$message.success(`数据更新成功`)
             this.uploadVisib = false
@@ -1182,6 +1182,47 @@ export default {
           this.formLoading = false
           this.loadingText = ''
         })
+    },
+    // 提示
+    handleMessage(data) {
+      const h = this.$createElement
+      this.$message({
+        type: "error",
+        duration: 0,
+        showClose: true,
+        customClass: 'my-message', // 自定义类名，用于设置样式
+        message: h('div',
+          {
+            style: "padding-right:20px;display:flex;align-items:center;color:#f56c6c;"
+          },
+          [
+            h('p', { style: 'font-size:14px;' }, '导入成功，存在定点定价相关信息错误！'),
+            h('el-button', {
+              props: {
+                type: 'text',
+                size: "mini",
+                icon: 'el-icon-download'
+              },
+              on: {
+                click: () => {
+                  this.downNoProduct(data)
+                }
+              },
+              style: {
+                border: "none",
+                textAlign: "center",
+                // width:"20%",
+                margin: "0 5px 0 5px ",
+              },
+            }, '下载导入错误数据')
+          ]
+        ),
+      })
+      return
+    },
+    // 生成客户产品  下载无产品档案列表
+    downNoProduct(res) {
+      this.jnpf.downloadFile(res.url, res.name)
     },
     // 下载模板
     downLoadTemplate() {

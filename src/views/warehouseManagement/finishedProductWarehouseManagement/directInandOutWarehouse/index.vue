@@ -34,7 +34,7 @@
                               maxlength="300" />
                           </el-form-item>
                         </el-col>
-                        
+
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="业务类型" prop="documentType">
                             <el-select v-model="dataForm.businessType" placeholder="业务类型" clearable style="width: 100%;"
@@ -64,13 +64,16 @@
                               @change="changeWarehousex"></ComSelect-list>
                           </el-form-item>
                         </el-col>
-                        <el-col :sm="6" :xs="24" v-if="dataForm.businessType=='outbound_pick_out'||dataForm.businessType=='inbound_return_materials'">
-                            <el-form-item :label="dataForm.businessType=='outbound_pick_out'?'领料人':'退料人'" prop="recipientBy">
-                              <user-select v-model="dataForm.recipientBy" :placeholder="dataForm.businessType=='outbound_pick_out'?'请选择领料人':'请选择退料人'" clearable
-                                style="width: 100%;" :disabled="btnType == 'look'" @change="hangleSelectSales">
-                              </user-select>
-                            </el-form-item>
-                          </el-col>
+                        <el-col :sm="6" :xs="24"
+                          v-if="dataForm.businessType == 'outbound_pick_out' || dataForm.businessType == 'inbound_return_materials'">
+                          <el-form-item :label="dataForm.businessType == 'outbound_pick_out' ? '领料人' : '退料人'"
+                            prop="recipientBy">
+                            <user-select v-model="dataForm.recipientBy"
+                              :placeholder="dataForm.businessType == 'outbound_pick_out' ? '请选择领料人' : '请选择退料人'"
+                              clearable style="width: 100%;" :disabled="btnType == 'look'" @change="hangleSelectSales">
+                            </user-select>
+                          </el-form-item>
+                        </el-col>
                         <el-col :sm="6" :xs="24" v-if="dataForm.documentType == 'inbound'">
                           <el-form-item label="检验结果" prop="inspectionResults">
                             <el-select v-model="dataForm.inspectionResults" placeholder="请选择检验结果" style="width: 100%;"
@@ -81,9 +84,9 @@
                           </el-form-item>
                         </el-col>
 
-                          <!-- v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'inbound_external'"> -->
+                        <!-- v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'inbound_external'"> -->
                         <el-col :sm="6" :xs="24"
-                        v-if="(dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'inbound_external')&&calculateQuantityFlag==1">
+                          v-if="(dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'inbound_external') && calculateQuantityFlag == 1">
                           <el-form-item label="是否显示比重折扣" prop="weightFlag">
                             <el-select v-model="dataForm.weightFlag" placeholder="是否显示比重折扣" style="width: 100%;"
                               :disabled="btnType == 'look' ? true : false">
@@ -678,7 +681,7 @@ export default {
         approvalFlag: false,
         weightFlag: false,
         orderDate: this.jnpf.getToday(),
-        recipientBy:"",
+        recipientBy: "",
       },
       weightFlagList: [
         { label: "是", value: true },
@@ -710,7 +713,7 @@ export default {
         ],
         recipientBy: [
           { required: true, message: '领(退)料人不能为空', trigger: 'change' }
-     
+
         ],
       },
       orderForm: { //获取产品数据 
@@ -843,7 +846,7 @@ export default {
           fullName: "外协发料单"
         },
       ],
-      calculateQuantityFlag:"",
+      calculateQuantityFlag: "",
     }
   },
   computed: {
@@ -857,7 +860,7 @@ export default {
     },
   },
   async created() {
-    await this.getProjectSwitch('system', 'project') 
+    await this.getProjectSwitch('system', 'project')
     this.getProductClassFun()
     this.getprocessList()
     this.getWarehouseListFun()
@@ -889,8 +892,8 @@ export default {
       try {
 
         if (flag == 'unitFlag') this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
-        if(flag=='proportionFlag')this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type);
-        console.log("this.calculateQuantityFlag",this.calculateQuantityFlag);
+        if (flag == 'proportionFlag') this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type);
+        console.log("this.calculateQuantityFlag", this.calculateQuantityFlag);
         this.tableDataFlag = true
         this.listLoading = false
 
@@ -1048,8 +1051,8 @@ export default {
     selectWareHouseFun(data) {
       let index = this.currentProductIndex
       this.$set(this.productData[index], 'shelfSpaceName', data.name)
-      this.$set(this.productData[index], 'warehouseId', data.warehouseId)
       this.$set(this.productData[index], 'shelfSpaceId', data.id)
+      this.$set(this.productData[index], 'warehouseId', data.warehouseId)
     },
 
     // 产品信息列表复制功能
@@ -1171,15 +1174,20 @@ export default {
           this.$set(item, 'proportion', '')
           this.$set(item, 'weight', '')
         }
+        if (this.mainUnitFlag == 1) {
+          this.$set(item, 'deputyNum', '')
+          this.$set(item, 'deputyUnit', item.deputyUnit)
+        }
+
+        this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+        this.$set(item, 'warehouseName', this.dataForm.warehouseName)
+        this.$set(item, 'warehouseType', this.dataForm.warehouseType)
         item.classAttribute = item.classAttribute
         item.ordersId = ""
         item.ordersLineId = ""
         item.noticeId = ""
         item.num = ''
-        if (this.mainUnitFlag == 1) {
-          this.$set(item, 'deputyNum', '')
-          this.$set(item, 'deputyUnit', item.deputyUnit)
-        }
+
         item.costPrice = ""
         item.excludingTaxCostPrice = ""
         item.excludingTaxTotalAmount = ""
@@ -1192,6 +1200,7 @@ export default {
         item.excludingTaxCostPrice = item.excludingTaxPrice
         if (this.dataForm.documentType == 'inbound') {
           item.productCode = item.code
+          item.productName = item.name
           item.productsId = item.id
         }
         // item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
@@ -1399,10 +1408,10 @@ export default {
 
 
     // 选择业务类型
-    selectDocutementType(val) { 
+    selectDocutementType(val) {
       // 如果选择的是外协收货 外协发料 采购收退货 需要调用后台参数配置 是否开启显示重量比重折扣显示
-      if(val == 'inbound_purchase' || val == 'outbound_purchase' || val == 'outbound_external_send' || val == 'inbound_external'){
-        this.getMainUnitFun('warehouse', 'proportion','proportionFlag')
+      if (val == 'inbound_purchase' || val == 'outbound_purchase' || val == 'outbound_external_send' || val == 'inbound_external') {
+        this.getMainUnitFun('warehouse', 'proportion', 'proportionFlag')
 
       }
 
@@ -1410,14 +1419,14 @@ export default {
       if (val == 'outbound_sale_send' || val == 'outbound_purchase' || val == 'outbound_pick_out' || val == 'outbound_external_send' || val == 'outbound_other') {
         // if (  val == 'outbound_other') {
         this.dataForm.documentType = 'outbound'
-        if(this.btnType=='add')this.fetchData("CKDH")
-        
+        if (this.btnType == 'add') this.fetchData("CKDH")
+
       }
       if (val == 'inbound_sale_return' || val == 'inbound_purchase' || val == 'inbound_return_materials' || val == 'inbound_external_return' || val == 'inbound_external' || val == 'inbound_other') {
         // if ( val == 'inbound_other') {
         this.dataForm.documentType = 'inbound'
-        if(this.btnType=='add')this.fetchData("RKDH")
-        
+        if (this.btnType == 'add') this.fetchData("RKDH")
+
 
       }
       if (val == 'outbound_sale_send' || val == 'inbound_sale_return') {
@@ -1540,6 +1549,13 @@ export default {
         this.dataForm.warehouseId = data[0].id
         this.dataForm.warehouseName = data[0].name
         this.dataForm.warehouseType = data[0].all.type
+        if (this.productData.length) {
+          this.productData.forEach(item => {
+            this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+            this.$set(item, 'warehouseName', this.dataForm.warehouseName)
+            this.$set(item, 'warehouseType', this.dataForm.warehouseType)
+          });
+        }
       }
 
     },
@@ -1575,7 +1591,7 @@ export default {
         this.title = btnType == 'look' ? '查看出入库单' : '编辑出入库单'
         // 获取详情
         detailWarehouseData(id).then(res => {
-          this.$set(res.data.stockMove,'cooperativePartnerIdText',res.data.stockMove.partnerName)
+          this.$set(res.data.stockMove, 'cooperativePartnerIdText', res.data.stockMove.partnerName)
           this.dataForm = res.data.stockMove
           this.selectDocutementType(this.dataForm.businessType)
           res.data.spaceLines.forEach(item => {

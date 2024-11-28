@@ -110,8 +110,9 @@
                     批量删除
                   </el-button>
                 </div>
-                <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                  <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
+                <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form"
+                  :rules="productRules">
+                  <el-table ref=" product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
                     @selection-change="handeleProductInfoData">
                     <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
                       key="0" />
@@ -137,23 +138,17 @@
                         收货数量
                       </template>
                       <template slot-scope="scope">
-                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'receivedQuantity'"
-                          :rules="productRules.receivedQuantity">
+                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'receivedQuantity'">
                           <el-input v-model="scope.row.receivedQuantity" placeholder="请输入收货数量"
                             :disabled="btnType == 'look'" maxlength="11" @input="watchnums(scope.row, scope.$index)"
                             style="width: 145px;">
-                            {{ scope.row.receivedQuantity }}
                           </el-input>
                         </el-form-item>
                       </template>
                     </el-table-column>
                     <el-table-column prop="price" label="含税单价" width="130">
-                      <template slot="header">
-                        <span class="required">*</span>
-                        单价(含税)
-                      </template>
                       <template slot-scope="scope">
-                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'price'" :rules="productRules.price">
+                        <el-form-item>
                           <div class="viewData">
                             <span>{{ scope.row.price ? scope.row.price : 0 }}</span>
                           </div>
@@ -161,12 +156,8 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="totalAmount" label="金额" width="140">
-                      <template slot="header">
-                        <span class="required">*</span>
-                        金额(含税)
-                      </template>
                       <template slot-scope="scope">
-                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'totalAmount'">
+                        <el-form-item>
                           <div class="viewData">
                             <span>{{ scope.row.totalAmount ? scope.row.totalAmount : 0 }}</span>
                           </div>
@@ -174,10 +165,6 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="taxRate" label="税率" width="140">
-                      <template slot="header">
-                        <span class="required">*</span>
-                        税率
-                      </template>
                       <template slot-scope="scope">
                         <el-form-item>
                           <div class="viewData">
@@ -189,7 +176,7 @@
 
                     <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150">
                       <template slot-scope="scope">
-                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxPrice'">
+                        <el-form-item>
                           <div class="viewData">
                             <span>{{ scope.row.excludingTaxPrice }}</span>
                           </div>
@@ -203,7 +190,7 @@
                         税额
                       </template>
                       <template slot-scope="scope">
-                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'taxAmount'">
+                        <el-form-item>
                           <div class="viewData">
                             <span>{{ scope.row.taxAmount ? scope.row.taxAmount : 0 }}</span>
                           </div>
@@ -383,7 +370,7 @@
                     单价(含税)
                   </template>
                   <template slot-scope="scope">
-                    <el-form-item :prop="'productData.' + scope.$index + '.' + 'price'" :rules="productRules.price">
+                    <el-form-item>
                       <div class="viewData">
                         <span>{{ scope.row.price ? scope.row.price : 0 }}</span>
                       </div>
@@ -771,6 +758,7 @@ export default {
               params: [
                 '',
                 (errMsg, index) => {
+                  console.log(index)
                   this.$message.error(`产品信息第${index + 1}行：收货数量${errMsg}`)
                 }
               ]
@@ -1854,13 +1842,14 @@ export default {
     },
     handleConfirm(value) {
       let submitFlag = true
-
+      console.log(this.$refs['dataForm'])
       this.$refs['dataForm'].validate((valid) => {
         this.dataForm.documentStatus = value
         if (!valid) {
           submitFlag = false
         }
       })
+      console.log(this.$refs['productForm'], 'kkkk')
       this.$refs['productForm'].validate((valid) => {
         console.log(valid, 'p999')
         if (!valid) {

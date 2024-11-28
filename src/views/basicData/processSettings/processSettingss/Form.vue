@@ -42,7 +42,7 @@
                               :style="{ width: '100%' }" maxlength="20" :disabled="type == 'look'"></el-input>
                           </el-form-item>
                         </el-col>
-                        <el-col :span="12">
+                        <el-col :span="12" v-if="isProjectSwitch === '1'">
                           <el-form-item label="所属项目" prop="projectId">
                             <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" @change="projectIdChange"
                               :disabled="dataForm.id || userInfo.projectId !== '1'" style="width:100%">

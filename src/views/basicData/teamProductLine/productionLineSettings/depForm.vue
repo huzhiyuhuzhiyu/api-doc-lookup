@@ -23,7 +23,7 @@
                 <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                   label-position="top">
                   <template v-if="!loading">
-                    <el-col :span="12">
+                    <el-col :span="12" v-if="isProjectSwitch === '1'">
                       <el-form-item label="所属项目" prop="projectId">
                         <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" @change="projectIdChange"
                           :disabled="dataForm.id || userInfo.projectId !== '1'" style="width:100%">

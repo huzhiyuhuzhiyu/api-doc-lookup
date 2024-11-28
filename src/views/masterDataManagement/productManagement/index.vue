@@ -44,31 +44,8 @@ export default {
       classAttribute: this.code,
       classAttributeText: this.name
     }
-    this.productCode = this.name + '编码'
-    this.tableItems = [
-      {
-        align: '',
-        formatter: '',
-        jnpfKey: '',
-        label: this.productCode,
-        minWidth: 180,
-        prop: 'code',
-        sortable: true,
-        width: 180
-      },
-      {
-        align: '',
-        formatter: '',
-        jnpfKey: '',
-        label: `${this.name}规格`,
-        minWidth: 180,
-        prop: 'drawingNo',
-        sortable: true,
-        width: 180
-      }
-    ]
     this.$nextTick(() => {
-      this.$refs.productIndex.init(this.initListQuery, JSON.stringify(this.tableItems))
+      this.$refs.productIndex.init(this.initListQuery)
     })
 
   }

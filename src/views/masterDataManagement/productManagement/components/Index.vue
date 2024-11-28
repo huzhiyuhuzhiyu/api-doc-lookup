@@ -111,14 +111,7 @@
         </div>
         <JNPF-table v-if="tableFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           ref="dataTable" :setColumnDisplayList="columnList">
-          <template v-if="tableItems">
-            <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label"
-              :formatter="item.formatter || toFormatter" :sortable="item.sortable ? 'custom' : false"
-              :align="item.align || 'left'" v-bind="{ minWidth: item.hasOwnProperty('minWidth') ? item.width : 140 }">
-            </el-table-column>
-          </template>
           <el-table-column prop="code" :label="productName + '编码'" min-width="160" sortable="custom">
-
             <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">
                 {{ scope.row.code }}
@@ -741,10 +734,10 @@ export default {
         }
       } catch (error) { }
     },
-    init(initListQuery, tableItems) {
+    init(initListQuery) {
       this.quickVisible = false
       this.listQuery = JSON.parse(JSON.stringify(initListQuery))
-      this.tableItems = JSON.parse(tableItems)
+
 
       this.classAttributeText = this.listQuery.classAttributeText
 

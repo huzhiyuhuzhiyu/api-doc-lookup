@@ -33,7 +33,7 @@
                   <el-col :sm="6" :xs="24" v-if="isProjectSwitch == 1">
                     <el-form-item label="所属项目" prop="projectId">
                       <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;"  disabled >
-                        <el-option v-for="(item, index) in projectIdDataList" :key="index" :label="item.label"
+                        <el-option v-for="(item, index) in projectIdData" :key="index" :label="item.label"
                           :value="item.value"></el-option>
                       </el-select>
                     </el-form-item>
@@ -138,10 +138,7 @@
                   </el-col>
                   <el-col :sm="8" :xs="24">
                     <el-form-item label="领料人" prop="personId">
-                      <user-select v-model="collectForm.personId" placeholder="请选择领料人" clearable style="width: 100%;"
-                        :disabled="btnType == 'look'" @change="hangleSelectSales">
-                      </user-select>
-
+                      <el-input v-model="collectForm.personId"  :disabled="btnType == 'look' ? true : false"  placeholder="领料人"/>
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
@@ -621,7 +618,7 @@ export default {
       naturalResourcesFlag: true,
       warehouseList:[],
       isProjectSwitch:"",
-      projectIdDataList:[],
+      projectIdData:[],
     }      
 
   },

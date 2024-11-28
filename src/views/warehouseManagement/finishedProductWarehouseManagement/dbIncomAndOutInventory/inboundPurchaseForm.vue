@@ -69,7 +69,7 @@
                               </el-input>
                             </el-form-item>
                           </el-col>
-                          <el-col :sm="6" :xs="24" v-if="calculateQuantityFlag==1"> 
+                          <el-col :sm="6" :xs="24" > 
                             <el-form-item label="是否显示比重折扣" prop="weightFlag">
                               <el-select v-model="dataForm.weightFlag" placeholder="是否显示比重折扣" style="width: 100%;"
                                 :disabled="btnType == 'look' ? true : false">
@@ -686,6 +686,7 @@ export default {
  
   async created() {
     await this.getProjectSwitch('system', 'project')
+
     let objs = { "pageSize": -1, "businessCode": "product" }
     getBimBusinessSwitchConfigList(objs).then(res => {
       this.productNameFlag = res.data.product[1].configValue1
@@ -702,8 +703,8 @@ export default {
     }
   },
   mounted() {
-    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit','unitFlag')
-    this.getMainUnitFun('warehouse', 'proportion','proportionFlag')
+     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit','unitFlag')
+     this.getMainUnitFun('warehouse', 'proportion','proportionFlag')
   },
   methods: {
     computedNumFun(data, index) {
@@ -716,7 +717,10 @@ export default {
       this.listLoading = true
       try {
         if (flag == 'unitFlag') this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
-        if(flag=='proportionFlag')this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type);
+        if(flag=='proportionFlag'){
+          this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type);
+          this.dataForm.weightFlag=this.calculateQuantityFlag==1?true:false
+        }
         this.tableDataFlag = true
         this.listLoading = false
 
@@ -1232,7 +1236,7 @@ export default {
                   this.$message.error("产品信息第" + (index + 1) + "行比重不能为空")
                   break
                 }
-                if (!item.discount) {
+                if (!item.weight) {
                   submitFlag = false
                   this.$message.error("产品信息第" + (index + 1) + "行重量不能为空")
                   break

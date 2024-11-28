@@ -9,7 +9,7 @@
           <!-- <el-button v-if="btnType !== 'look'" type="success" :loading="btnLoading"
             @click="handleConfirm('draft')">保存草稿</el-button> -->
           <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
-            @click="handleConfirm('submit')">提交</el-button>
+            @click="handleConfirm('submit')">提交222</el-button>
           <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
@@ -71,7 +71,7 @@
                               </el-input>
                             </el-form-item>
                           </el-col>
-                          <el-col :sm="6" :xs="24" v-if="calculateQuantityFlag == 1">
+                          <el-col :sm="6" :xs="24">
                             <el-form-item label="是否显示比重折扣" prop="weightFlag">
                               <el-select v-model="dataForm.weightFlag" placeholder="是否显示比重折扣" style="width: 100%;"
                                 :disabled="btnType == 'look' ? true : false">
@@ -124,7 +124,17 @@
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
-
+                        <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
+                          <template slot="header">
+                            <span class="required">*</span>批次号
+                          </template>
+                          <template slot-scope="scope">
+                            <el-input v-model="scope.row.batchNumber" readonly :disabled="btnType == 'look'"
+                              @focus="openSeleceBatchNumberDialog(scope.row, scope.$index)" placeholder="批次号">
+                              {{ scope.row.batchNumber }}
+                            </el-input>
+                          </template>
+                        </el-table-column>
                         <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112"
                           v-if="allocationFlag">
                           <template slot="header">
@@ -157,15 +167,15 @@
                         </el-table-column>
                         <el-table-column prop="proportion" label="比重" width="140" :key="727"
                           v-if="dataForm.weightFlag == true">
-                          <template slot="header">
+                          <!-- <template slot="header">
                             <span class="required">*</span>比重
                           </template>
                           <template slot-scope="scope">
                             <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                               v-model="scope.row.proportion" placeholder="比重"></el-input>
-                          </template>
+                          </template> -->
                         </el-table-column>
-                        <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
+                        <!-- <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
                           v-if="dataForm.weightFlag == true">
                           <template slot="header">
                             <span class="required">*</span>折扣(0~1)
@@ -174,7 +184,7 @@
                             <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                               v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
                           </template>
-                        </el-table-column>
+                        </el-table-column> -->
 
                         <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                         <el-table-column prop="num" :label="mainUnitFlag == 1 ? '收货数量(主)' : '收货数量'" min-width="160">
@@ -325,7 +335,17 @@
                     <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                     <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
-
+                    <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
+                      <template slot="header">
+                        <span class="required">*</span>批次号
+                      </template>
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.batchNumber" readonly :disabled="btnType == 'look'"
+                          @focus="openSeleceBatchNumberDialog(scope.row, scope.$index)" placeholder="批次号">
+                          {{ scope.row.batchNumber }}
+                        </el-input>
+                      </template>
+                    </el-table-column>
                     <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112" v-if="allocationFlag">
                       <template slot="header">
                         <span class="required">*</span>库位
@@ -357,15 +377,15 @@
                     </el-table-column>
                     <el-table-column prop="proportion" label="比重" width="140" :key="727"
                       v-if="dataForm.weightFlag == true">
-                      <template slot="header">
+                      <!-- <template slot="header">
                         <span class="required">*</span>比重
                       </template>
                       <template slot-scope="scope">
                         <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                           v-model="scope.row.proportion" placeholder="比重"></el-input>
-                      </template>
+                      </template> -->
                     </el-table-column>
-                    <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
+                    <!-- <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
                       v-if="dataForm.weightFlag == true">
                       <template slot="header">
                         <span class="required">*</span>折扣(0~1)
@@ -374,7 +394,7 @@
                         <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                           v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
                       </template>
-                    </el-table-column>
+                    </el-table-column> -->
 
                     <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                     <el-table-column prop="num" :label="mainUnitFlag == 1 ? '收货数量(主)' : '收货数量'" min-width="160">
@@ -707,7 +727,7 @@ export default {
       endTime: 0,
       productNameFlag: null,
       mainUnitFlag: null,
-      calculateQuantityFlag:"",
+      calculateQuantityFlag: "",
 
     }
   },
@@ -723,8 +743,8 @@ export default {
   },
 
   mounted() {
-    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit','unitFlag')
-    this.getMainUnitFun('warehouse', 'proportion','proportionFlag')
+    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit', 'unitFlag')
+    this.getMainUnitFun('warehouse', 'proportion', 'proportionFlag')
 
   },
   watch: {
@@ -736,16 +756,18 @@ export default {
   },
   methods: {
     computedNumFun(data, index) {
-      if (data.discount && data.proportion && data.weight) {
-        this.productData[index].num = Math.floor(this.jnpf.numberFormat(this.jnpf.math('multiply', [data.discount, data.proportion, data.weight]), 2))
+      if (data.proportion && data.weight) {
+        this.productData[index].num = Math.floor(this.jnpf.numberFormat(this.jnpf.math('multiply', [data.proportion, data.weight]), 2))
         this.watchNum(data, index)
       }
     },
-    async getMainUnitFun(code, type,flag) {
+    async getMainUnitFun(code, type, flag) {
       this.listLoading = true
       try {
         if (flag == 'unitFlag') this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
-        if(flag=='proportionFlag')this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type)
+        if (flag == 'proportionFlag') this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type)
+        this.dataForm.weightFlag = this.calculateQuantityFlag == 1 ? true : false
+
         this.tableDataFlag = true
         this.listLoading = false
 
@@ -753,24 +775,24 @@ export default {
       } catch (error) {
       }
     },
-    // 打开选择批次号弹框
-    openSeleceBatchNumberDialog(data, index) {
+// 打开选择批次号弹框
+openSeleceBatchNumberDialog(data, index) {
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库")
       this.batchNumVisible = true
       data.warehouseId = this.dataForm.warehouseId
       this.$nextTick(() => {
-        this.$refs.BatchNumberForms.init(data, index)
+        this.$refs.BatchNumberForms.init(data, index, 'wxfl', 'ww')
       })
     },
     // 选择批次
     selectBatchNumberFun(data, index) {
       console.log("批次号数据", data, index);
 
-      this.$set(this.productData[index], 'warehouseId', data.warehouseId)
-      this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
-      this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
-      let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [data.availableQuantity, data.occupancyQuantity]), 6)
-      this.$set(this.productData[index], 'availableBatchNumber', num)
+      // this.$set(this.productData[index], 'warehouseId', data.warehouseId)
+      // this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
+      // this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
+      // this.$set(this.productData[index], 'availableBatchNumber', data.inventoryQuantity)
+
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
       this.$set(this.productData[index], 'discount', data.discount)
       this.$set(this.productData[index], 'proportion', data.proportion)
@@ -908,7 +930,7 @@ export default {
         item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
         item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
         item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
-        this.$set(item, 'discount', '')
+        // this.$set(item, 'discount', '')
         this.$set(item, 'proportion', '')
         this.$set(item, 'weight', '')
 
@@ -1191,10 +1213,12 @@ export default {
               item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
               let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
               item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
+              item.totalAmount=""
+              item.taxAmount=""
               item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
               item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
               item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
-              this.$set(item, 'discount', '')
+              // this.$set(item, 'discount', '')
               this.$set(item, 'proportion', '')
               this.$set(item, 'weight', '')
               if (this.mainUnitFlag == 1) {
@@ -1207,7 +1231,7 @@ export default {
               }
             });
           }
-
+          console.log("this.productData",this.productData);
           this.productData = filteredArray
           this.dataForm.id = this.productData[0].returnDeliveryNoticeId
           this.formLoading = false
@@ -1292,17 +1316,17 @@ export default {
                 break
               }
               if (this.dataForm.weightFlag) {
-                if (!item.discount) {
-                  submitFlag = false
-                  this.$message.error("产品信息第" + (index + 1) + "行折扣不能为空")
-                  break
-                }
+                // if (!item.discount) {
+                //   submitFlag = false
+                //   this.$message.error("产品信息第" + (index + 1) + "行折扣不能为空")
+                //   break
+                // }
                 if (!item.proportion) {
                   submitFlag = false
                   this.$message.error("产品信息第" + (index + 1) + "行比重不能为空")
                   break
                 }
-                if (!item.discount) {
+                if (!item.weight) {
                   submitFlag = false
                   this.$message.error("产品信息第" + (index + 1) + "行重量不能为空")
                   break
@@ -1318,37 +1342,14 @@ export default {
                 break
               }
 
-              if (this.dataForm.businessType == 'outbound_sale_send' && item.num > item.availableBatchNumber) {
+              if (item.num > item.availableBatchNumber) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次可用数量")
                 break
               }
-              if (!totals[item.ordersLineId]) {
-                totals[item.ordersLineId] = { totalNum: 0, ordersNum: item.ordersNum };
-              }
-              if (!totalNum[item.ordersLineId]) {
-                totalNum[item.ordersLineId] = { totalNum: 0, availableBatchNumber: item.availableBatchNumber };
-              }
-              totals[item.ordersLineId].totalNum += Number(item.num)
-              totalNum[item.ordersLineId].totalNum += Number(item.num);
+
             }
-            for (let id in totals) {
-              if (totals[id].totalNum > totals[id].ordersNum) {
-                console.log(`同产品 ${id} 的总数量不能超过订单数量`);
-                submitFlag = false
-                this.$message.error("同产品的总数量不能超过订单数量")
-                break
-              }
-            }
-            if (this.dataForm.businessType == 'outbound_sale_send') {
-              for (let id in totalNum) {
-                if (totalNum[id].totalNum > totalNum[id].availableBatchNumber) {
-                  submitFlag = false
-                  this.$message.error("同产品的总数量不能批次可用数量")
-                  break
-                }
-              }
-            }
+
           }
 
 

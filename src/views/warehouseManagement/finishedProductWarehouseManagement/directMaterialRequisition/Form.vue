@@ -63,7 +63,8 @@
                     <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                     <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                     <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"></el-table-column>
-                    <el-table-column prop="mainUnit" label="单位" width="80" :key="88" />
+                    <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                    <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                     <el-table-column prop="inventoryQuantity" label="批次库存数量" width="180" :key="8"
                       v-if="btnType != 'look'" />
                     <el-table-column prop="num" label="领料数量" width="140" :key="8088">
@@ -78,7 +79,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="price" label="单价" width="160" :key="181" />
-                    <el-table-column prop="totalAmount" label="总金额" width="160" :key="181" />
+                    <el-table-column prop="totalAmount" label="总金额" width="160" :key="182" />
                     <el-table-column prop="inWarehouseName" label="目标仓库" width="160" :key="1888">
                       <template slot="header">
                         <span class="required">*</span>目标仓库
@@ -187,6 +188,8 @@
                 <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="180" />
                 <el-table-column prop="mainUnit" label="单位" min-width="80" />
                 <el-table-column prop="price" label="单价" min-width="80" />
+                <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+
                 <el-table-column prop="inventoryQuantity" label="批次库存数量" sortable="custom" min-width="160"
                   v-if="btnType != 'look'" />
                 <el-table-column prop="inspectionResults" label="检验结果" sortable="custom" min-width="120">
@@ -365,11 +368,15 @@ export default {
       classAttribute: "",
       warehouseCode: "",
       classAttributeList: [],
+      mainUnitFlag: null,
+
     }
   },
 
   async created() {
     await this.getProjectSwitch('system', 'project')
+    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
+
 
   },
   computed: {
@@ -383,17 +390,39 @@ export default {
     },
   },
   methods: {
+    async getMainUnitFun(code, type) {
+      this.listLoading = true
+      try {
+        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+        let objs = { "pageSize": -1, "businessCode": "product" }
+        getBimBusinessSwitchConfigList(objs).then(res => {
+          this.productNameFlag = res.data.product[1].configValue1
+          console.log(1111, this.productNameFlag);
+          this.listLoading = false
+          this.tableDataFlag = true
+          if (this.productNameFlag == '1') {
+
+            this.searchList.push({ field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 })
+          }
+
+        }).catch(error => {
+        })
+
+
+      } catch (error) {
+      }
+    },
     computedTotal(row, index) {
-      if(Number(row.num)>Number(row.inventoryQuantity)){
+      if (Number(row.num) > Number(row.inventoryQuantity)) {
         this.$message.error("数量不能超过批次库存数量")
-        row.num=row.inventoryQuantity
+        row.num = row.inventoryQuantity
 
       }
-      if(!row.num){
+      if (!row.num) {
         this.$message.error("数量不能为空")
-        row.num=row.inventoryQuantity
+        row.num = row.inventoryQuantity
       }
-      this.productData[index].totalAmount=this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 2)
+      this.productData[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 2)
     },
     getProductFun() {
       console.log(21341234);
@@ -544,7 +573,7 @@ export default {
       this.selectArr.forEach(item => {
         this.$set(item, 'num', JSON.parse(JSON.stringify(item.inventoryQuantity)))
         this.$set(item, 'price', JSON.parse(JSON.stringify(item.price)))
-        this.$set(item, 'totalAmount', JSON.parse(JSON.stringify(item.totalAmount)))
+        this.$set(item, 'totalAmount', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.price, item.inventoryQuantity]), 6))
       })
       this.productData = [...this.productData, ...this.selectArr]
       console.log(this.productData);
@@ -730,7 +759,7 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行目标仓库不能为空")
                 break
               }
-              if (!item.inShelfSpaceId && allocationFlag) {
+              if (!item.inShelfSpaceId && this.allocationFlag) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行目标库位不能为空")
                 break
@@ -781,6 +810,7 @@ export default {
                 sealingCoverTyping: item.sealingCoverTyping,
                 standardValue: item.standardValue,
                 vibrationLevel: item.vibrationLevel,
+                pickingId: item.pickingId,
               }
               arr.push(obj)
             });

@@ -160,15 +160,15 @@
                         </el-table-column>
                         <el-table-column prop="proportion" label="比重" width="140" :key="727"
                           v-if="dataForm.weightFlag == true">
-                          <template slot="header">
+                          <!-- <template slot="header">
                             <span class="required">*</span>比重
                           </template>
                           <template slot-scope="scope">
                             <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                               v-model="scope.row.proportion" placeholder="比重"></el-input>
-                          </template>
+                          </template> -->
                         </el-table-column>
-                        <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
+                        <!-- <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
                           v-if="dataForm.weightFlag == true">
                           <template slot="header">
                             <span class="required">*</span>折扣(0~1)
@@ -177,7 +177,7 @@
                             <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                               v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
                           </template>
-                        </el-table-column>
+                        </el-table-column> -->
 
 
                         <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
@@ -289,7 +289,7 @@
 
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="calculateQuantityFlag == 1">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="是否显示比重折扣" prop="weightFlag">
                           <el-select v-model="dataForm.weightFlag" placeholder="是否显示比重折扣" style="width: 100%;"
                             :disabled="btnType == 'look' ? true : false">
@@ -372,15 +372,15 @@
                     </el-table-column>
                     <el-table-column prop="proportion" label="比重" width="140" :key="727"
                       v-if="dataForm.weightFlag == true">
-                      <template slot="header">
+                      <!-- <template slot="header">
                         <span class="required">*</span>比重
                       </template>
                       <template slot-scope="scope">
                         <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                           v-model="scope.row.proportion" placeholder="比重"></el-input>
-                      </template>
+                      </template> -->
                     </el-table-column>
-                    <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
+                    <!-- <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
                       v-if="dataForm.weightFlag == true">
                       <template slot="header">
                         <span class="required">*</span>折扣(0~1)
@@ -389,7 +389,7 @@
                         <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                           v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
                       </template>
-                    </el-table-column>
+                    </el-table-column> -->
 
                     <el-table-column prop="receivedQuantity" label="待退货数量" width="140" v-if="btnType != 'look'"
                       :key="777">
@@ -481,6 +481,15 @@
                     <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
                       style="width: 100%;" start-placeholder="退货开始日期" end-placeholder="退货结束日期" clearable>
                     </el-date-picker>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductFun()">
+                      {{ $t('common.search') }}</el-button>
+                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetProductFun()">{{
+                      $t('common.reset') }}
+                    </el-button>
                   </el-form-item>
                 </el-col>
               </el-form>
@@ -717,15 +726,10 @@ export default {
 
     }
   },
-  created() {
-    let objs = { "pageSize": -1, "businessCode": "product" }
-    getBimBusinessSwitchConfigList(objs).then(res => {
-      this.productNameFlag = res.data.product[1].configValue1
-    })
-  },
 
   async created() {
     await this.getProjectSwitch('system', 'project')
+
     let objs = { "pageSize": -1, "businessCode": "product" }
     getBimBusinessSwitchConfigList(objs).then(res => {
       this.productNameFlag = res.data.product[1].configValue1
@@ -747,17 +751,20 @@ export default {
   },
   methods: {
     computedNumFun(data, index) {
-      if (data.discount && data.proportion && data.weight) {
-        if (Number(data.discount) > 1 || Number(data.discount) < 0) return this.$message.error("请输入合理的折扣值，0~1范围内")
-        this.productData[index].num = Math.floor(this.jnpf.numberFormat(this.jnpf.math('multiply', [data.discount, data.proportion, data.weight]), 2)) + ''
+      if (data.proportion && data.weight) {
+        // if (Number(data.discount) > 1 || Number(data.discount) < 0) return this.$message.error("请输入合理的折扣值，0~1范围内")
+        this.productData[index].num = Math.floor(this.jnpf.numberFormat(this.jnpf.math('multiply', [data.proportion, data.weight]), 2)) + ''
         this.watchNum(data, index)
       }
     },
-    async getMainUnitFun(code, typ,flag) {
+    async getMainUnitFun(code, type, flag) {
       this.listLoading = true
       try {
         if (flag == 'unitFlag') this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
-        if (flag == 'proportionFlag') this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type)
+        if (flag == 'proportionFlag') {
+          this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type);
+          this.dataForm.weightFlag = this.calculateQuantityFlag == 1 ? true : false
+        }
         this.tableDataFlag = true
         this.listLoading = false
 
@@ -785,9 +792,9 @@ export default {
       this.$set(this.productData[index], 'availableBatchNumber', data.inventoryQuantity)
 
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
-      this.$set(this.productData[index], 'discount', data.discount)
-      this.$set(this.productData[index], 'proportion', data.proportion)
-      this.$set(this.productData[index], 'weight', data.weight)
+      this.$set(this.productData[index], 'discount', "")
+      this.$set(this.productData[index], 'proportion', "")
+      this.$set(this.productData[index], 'weight',"")
     },
 
 
@@ -1276,17 +1283,17 @@ export default {
               }
 
               if (this.dataForm.weightFlag) {
-                if (!item.discount) {
-                  submitFlag = false
-                  this.$message.error("产品信息第" + (index + 1) + "行折扣不能为空")
-                  break
-                }
+                // if (!item.discount) {
+                //   submitFlag = false
+                //   this.$message.error("产品信息第" + (index + 1) + "行折扣不能为空")
+                //   break
+                // }
                 if (!item.proportion) {
                   submitFlag = false
                   this.$message.error("产品信息第" + (index + 1) + "行比重不能为空")
                   break
                 }
-                if (!item.discount) {
+                if (!item.weight) {
                   submitFlag = false
                   this.$message.error("产品信息第" + (index + 1) + "行重量不能为空")
                   break

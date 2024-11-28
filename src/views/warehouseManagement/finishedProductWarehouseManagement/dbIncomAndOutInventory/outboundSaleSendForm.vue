@@ -1129,9 +1129,8 @@ export default {
 
 
 
-              if (Number(item.num) > Number(item.ordersNum)) {
-                console.log(item.num);
-                console.log(item.ordersNum);
+              if (Number(item.num) > Number(item.undeliveredQuantity)) {
+      
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待发货数量")
                 break

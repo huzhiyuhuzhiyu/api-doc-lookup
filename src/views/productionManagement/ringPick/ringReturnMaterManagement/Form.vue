@@ -46,17 +46,16 @@
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="退料日期" prop="operationDate">
-                          <el-date-picker v-model="dataForm.operationDate" :default-value="new Date()" type="datetime"
-                            value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="请选择退料日期"
+                          <el-date-picker v-model="dataForm.operationDate" :default-value="new Date()" type="date"
+                            value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择退料日期"
                             :disabled="btnType == 'look' ? true : false">
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="退料人" prop="personId">
-                          <user-select v-model="dataForm.personId" placeholder="请选择退料人" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'" @change="hangleSelectSales">
-                          </user-select>
+                          <el-input v-model="dataForm.personId" :disabled="btnType == 'look' ? true : false"
+                          placeholder="退料人" />
 
                         </el-form-item>
                       </el-col>

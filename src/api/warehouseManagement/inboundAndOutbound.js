@@ -219,3 +219,16 @@ export function ioBoundUpload(data, ioType) {
     data
   })
 }
+
+
+
+
+// 获取  委外批次
+
+export function getlistOutBatchStock(id) {
+  return request({
+    url: `/api/wms/stock/inventory/line/listOutBatchStock?ordersLineId=${id}`,
+    method: 'get',
+    
+  })
+}

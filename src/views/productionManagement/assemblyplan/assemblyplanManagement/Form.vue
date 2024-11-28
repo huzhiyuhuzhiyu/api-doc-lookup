@@ -34,8 +34,8 @@
                     <el-form-item label="所属项目" prop="projectId">
                       <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;"
                         disabled>
-                        <el-option v-for="(item, index) in projectIdDataList" :key="index" :label="item.label"
-                          :value="item.value"></el-option>
+                        <el-option v-for="(item, index) in projectIdData" :key="index" :label="item.label"
+                          :value="item.id"></el-option>
                       </el-select>
                     </el-form-item>
                   </el-col>
@@ -141,16 +141,13 @@
                   </el-col>
                   <el-col :sm="8" :xs="24">
                     <el-form-item label="领料人" prop="personId">
-                      <user-select v-model="collectForm.personId" placeholder="请选择领料人" clearable style="width: 100%;"
-                        :disabled="btnType == 'look'" @change="hangleSelectSales">
-                      </user-select>
-
+                      <el-input v-model="collectForm.personId"  :disabled="btnType == 'look' ? true : false"  placeholder="领料人"/>
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="领料日期" prop="operationDate">
-                      <el-date-picker v-model="collectForm.operationDate" :default-value="new Date()" type="datetime"
-                        value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="领料日期"
+                      <el-date-picker v-model="collectForm.operationDate" :default-value="new Date()" type="date"
+                        value-format="yyyy-MM-dd" style="width: 100%;" placeholder="领料日期"
                         :disabled="btnType == 'look' ? true : false" @change="changDateFun">
                       </el-date-picker>
                     </el-form-item>
@@ -538,9 +535,7 @@ export default {
         operationDate: [
           { required: true, message: '领料日期不能为空', trigger: 'change' }
         ],
-        personId: [
-          { required: true, message: '领料人不能为空', trigger: 'change' }
-        ],
+        
       },
       dataForm: {
         planDate: [],
@@ -625,7 +620,7 @@ export default {
       processList: [],
       warehouseList: [],
       isProjectSwitch: "",
-      projectIdDataList: [],
+      projectIdData: [],
 
     }
   },

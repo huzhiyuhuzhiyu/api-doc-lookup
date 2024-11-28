@@ -32,28 +32,30 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true">
             <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="140"></el-table-column>
-            <el-table-column prop="shelfSpaceName" label="库位" sortable="custom" min-width="120"/>
-            <el-table-column prop="inventoryQuantity" label="库存数量" sortable="custom" min-width="120"/>
+            <el-table-column prop="shelfSpaceName" label="库位" sortable="custom" min-width="120" />
+            <el-table-column prop="inventoryQuantity" label="库存数量" sortable="custom" min-width="120" />
+            <el-table-column prop="weight" label="重量(KG)" sortable="custom" min-width="120" v-if="type == 'wxfl'" />
+            <el-table-column prop="proportion" label="比重" sortable="custom" min-width="120" v-if="type == 'wxfl'" />
             <el-table-column prop="inspectionResults" label="检验结果" sortable="custom" min-width="120">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.inspectionResults=='qualified'">合格</div>
-                    <div v-if="scope.row.inspectionResults=='unqualified'">不合格</div>
-                    <div v-if="scope.row.inspectionResults=='partially_qualified'">部分合格</div>
-                    <div v-if="scope.row.inspectionResults=='discard'">报废</div>
-                    <div v-if="scope.row.inspectionResults=='concessive_acceptance'">让步接收</div>
-                  </template>
-                </el-table-column>
-            <el-table-column prop="availableQuantity" label="可用数量" sortable="custom" min-width="120"/>
-            <el-table-column prop="occupancyQuantity" label="占用数量" sortable="custom" min-width="120"/>
-            <el-table-column prop="sealingCoverTyping" label="打字内容" sortable="custom" min-width="120"/>
-            <el-table-column prop="accuracyLevel" label="精度等级" sortable="custom" min-width="120"/>
-            <el-table-column prop="vibrationLevel" label="振动等级" sortable="custom" min-width="120"/>
-            <el-table-column prop="oil" label="油脂" sortable="custom" min-width="120"/>
-            <el-table-column prop="clearance" label="游隙" sortable="custom" min-width="120"/>
-            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" ></el-table-column>
-            <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" ></el-table-column>
+              <template slot-scope="scope">
+                <div v-if="scope.row.inspectionResults == 'qualified'">合格</div>
+                <div v-if="scope.row.inspectionResults == 'unqualified'">不合格</div>
+                <div v-if="scope.row.inspectionResults == 'partially_qualified'">部分合格</div>
+                <div v-if="scope.row.inspectionResults == 'discard'">报废</div>
+                <div v-if="scope.row.inspectionResults == 'concessive_acceptance'">让步接收</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="availableQuantity" label="可用数量" sortable="custom" min-width="120" />
+            <el-table-column prop="occupancyQuantity" label="占用数量" sortable="custom" min-width="120" />
+            <el-table-column prop="sealingCoverTyping" label="打字内容" sortable="custom" min-width="120" />
+            <el-table-column prop="accuracyLevel" label="精度等级" sortable="custom" min-width="120" />
+            <el-table-column prop="vibrationLevel" label="振动等级" sortable="custom" min-width="120" />
+            <el-table-column prop="oil" label="油脂" sortable="custom" min-width="120" />
+            <el-table-column prop="clearance" label="游隙" sortable="custom" min-width="120" />
+            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"></el-table-column>
+            <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"></el-table-column>
             <el-table-column label="操作" width="100" fixed="right">
-              <template slot-scope="scope" >
+              <template slot-scope="scope">
                 <el-button type="text" @click="selectBatchNum(scope.row)">选择</el-button>
               </template>
             </el-table-column>
@@ -67,6 +69,7 @@
   </el-dialog>
 </template>
 <script>
+import { getlistOutBatchStock } from "@/api/warehouseManagement/inboundAndOutbound"
 import { getBatchNumber } from '@/api/basicData/index'
 export default {
   data() {
@@ -90,15 +93,15 @@ export default {
         warehouseId: "",
         vibrationLevel: "",
         sealingCoverTyping: "",
-        availableBatch:1,
+        availableBatch: 1,
         oil: "",
         clearance: "",
         accuracyLevel: "",
-        productsId:"",
-        packagingMethod:"",
-        specialRequire:"",
-        inspectStockFlag :true,
-        processId:"",
+        productsId: "",
+        packagingMethod: "",
+        specialRequire: "",
+        inspectStockFlag: true,
+        processId: "",
       },
       refreshTree: true,
       listLoading: false,
@@ -106,26 +109,43 @@ export default {
       tableDataList: [],
       cpData: {},
       cpIndex: "",
-
+      type: "",
+      dataForm: {},
+      requestFlag: "",
     }
   },
   methods: {
-    init(data, index) {
-      console.log(data,index);
+    init(data, index, type, requestFlag) {
+      console.log(data, index);
       this.customerVisible = true
+      this.type = type || ''
+      this.requestFlag = requestFlag || ""
       this.cpData = JSON.parse(JSON.stringify(data))
       this.cpIndex = JSON.parse(JSON.stringify(index))
-      this.form.productsId=data.productsId
-      this.form.vibrationLevel=data.vibrationLevel
-      this.form.sealingCoverTyping=data.sealingCoverTyping
-      this.form.oil=data.oil
-      this.form.processId=data.processId?data.processId:""
-      this.form.clearance=data.clearance
-      this.form.accuracyLevel=data.accuracyLevel
-      this.form.warehouseId=data.warehouseId
-      this.form.packagingMethod=data.packagingMethod
-      this.form.specialRequire=data.specialRequire 
-      this.getbatchNumList()
+      this.form.productsId = data.productsId
+      this.form.vibrationLevel = data.vibrationLevel
+      this.form.sealingCoverTyping = data.sealingCoverTyping
+      this.form.oil = data.oil
+      this.form.processId = data.processId ? data.processId : ""
+      this.form.clearance = data.clearance
+      this.form.accuracyLevel = data.accuracyLevel
+      this.form.warehouseId = data.warehouseId
+      this.form.packagingMethod = data.packagingMethod
+      this.form.specialRequire = data.specialRequire
+      this.dataForm = data
+      if (!requestFlag) {
+
+        this.getbatchNumList()
+      } else {
+        this.getlistOutBatchStockFun()
+      }
+
+    },
+    getlistOutBatchStockFun() {
+      getlistOutBatchStock(this.dataForm.ordersLineId).then(res => {
+        this.tableDataList = res.data
+        this.total = res.data.total
+      })
     },
     // 选择批次
     selectBatchNum(row) {
@@ -136,8 +156,8 @@ export default {
       this.listLoading = true
       getBatchNumber(this.form).then(res => {
         console.log("批次号数据", res);
-        this.tableDataList=res.data.records
-        this.total=res.data.total
+        this.tableDataList = res.data.records
+        this.total = res.data.total
         this.listLoading = false
       }).catch(() => {
         this.listLoading = false
@@ -145,7 +165,12 @@ export default {
     },
 
     search() {
-      this.getbatchNumList()
+      if (this.requestFlag) {
+        this.getlistOutBatchStockFun()
+      } else {
+
+        this.getbatchNumList()
+      }
     },
     reset() {
       this.form = {
@@ -163,11 +188,16 @@ export default {
         oil: "",
         clearance: "",
         accuracyLevel: "",
-        packagingMethod:"",
-        specialRequire:"",
-        inspectStockFlag :true,
+        packagingMethod: "",
+        specialRequire: "",
+        inspectStockFlag: true,
       }
-      this.init(this.cpData, this.cpIndex)
+      if (this.requestFlag) {
+        this.getlistOutBatchStockFun()
+      } else {
+
+        this.init(this.cpData, this.cpIndex)
+      }
     },
   }
 }

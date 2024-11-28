@@ -844,8 +844,7 @@ export default {
     },
   },
   async created() {
-    await this.getProjectSwitch('system', 'project')
-    this.isProjectSwitchFlag = true
+    await this.getProjectSwitch('system', 'project') 
     this.getProductClassFun()
     this.getprocessList()
     this.getWarehouseListFun()

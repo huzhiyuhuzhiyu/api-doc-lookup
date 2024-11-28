@@ -611,8 +611,7 @@
           <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
             sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
-          <el-table-column prop="projectName" label="所属项目" min-width="120"  
-          v-if="isProjectSwitch == 1" />
+          <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
           <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
           <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="160">
           </el-table-column>
@@ -744,9 +743,9 @@
           </el-table-column>
         </JNPF-table>
         <!-- 采购收货 订单 -->
-        <JNPF-table :partentOrChild="'purchasetabForm'" v-loading="listLoading" @sort-change="sortChange"  v-if="tableDataFlag"
-          :data="purchaseList" v-show="categoryType == 'inbound_purchase' && purchaseFlag" custom-column
-          ref="purchasetabForm" :fixedNo="true" hasC @selection-change="handeleselectPurchase"
+        <JNPF-table :partentOrChild="'purchasetabForm'" v-loading="listLoading" @sort-change="sortChange"
+          v-if="isProjectSwitch" :data="purchaseList" v-show="categoryType == 'inbound_purchase' && purchaseFlag"
+          custom-column ref="purchasetabForm" :fixedNo="true" hasC @selection-change="handeleselectPurchase"
           :setColumnDisplayList="purchasecolumnList">
           <el-table-column prop="orderNo" label="订单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
@@ -763,7 +762,7 @@
             sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-          v-if="isProjectSwitch == 1" />
+            v-if="isProjectSwitch == 1" />
           <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
           <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
           </el-table-column>
@@ -832,9 +831,9 @@
           </el-table-column>
         </JNPF-table>
         <!-- 外协收货 订单 -->
-        <JNPF-table :partentOrChild="'externaltabForm'" v-loading="listLoading" @sort-change="sortChange"  v-if="tableDataFlag"
-          :data="externalList" v-show="categoryType == 'inbound_external' && externalFlag" hasC custom-column
-          ref="externaltabForm" fixedNO :setColumnDisplayList="externalcolumnList"
+        <JNPF-table :partentOrChild="'externaltabForm'" v-loading="listLoading" @sort-change="sortChange"
+          v-if="tableDataFlag" :data="externalList" v-show="categoryType == 'inbound_external' && externalFlag" hasC
+          custom-column ref="externaltabForm" fixedNO :setColumnDisplayList="externalcolumnList"
           @selection-change="handeleselectExternal">
           <el-table-column prop="orderNo" label="订单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
@@ -849,7 +848,7 @@
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
             sortable="custom" />
-            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+          <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
           <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom" />
@@ -926,10 +925,10 @@
         </JNPF-table>
 
         <!-- 外协发料 订单-->
-        <JNPF-table :partentOrChild="'wxfltabForm'" v-loading="listLoading" @sort-change="sortChange" :key="3"  v-if="isProjectSwitchFlag"
-          :data="exterMaterList" v-show="categoryType == 'outbound_external_send' && externalFlag" custom-column
-          ref="wxfltabForm" hasC @selection-change="handeleselectExternalMter" fixedNO
-          :setColumnDisplayList="wxflcolumnList">
+        <JNPF-table :partentOrChild="'wxfltabForm'" v-loading="listLoading" @sort-change="sortChange" :key="3"
+          v-if="isProjectSwitchFlag" :data="exterMaterList"
+          v-show="categoryType == 'outbound_external_send' && externalFlag" custom-column ref="wxfltabForm" hasC
+          @selection-change="handeleselectExternalMter" fixedNO :setColumnDisplayList="wxflcolumnList">
           <el-table-column prop="orderNo" label="订单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
@@ -944,7 +943,7 @@
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
           <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
             sortable="custom" />
-            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+          <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
           <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="processName" label="工序名称" min-width="140" sortable="custom"></el-table-column>
@@ -1187,9 +1186,9 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table :partentOrChild="'dataTableProductRef'" ref="dataTableProductRef" v-loading="listLoading"  v-if="isProjectSwitchFlag"
-                :data="productData" :fixedNO="true" custom-column :setColumnDisplayList="productColumns"
-                v-show="categoryType == 'inbound_mock_production'">
+              <JNPF-table :partentOrChild="'dataTableProductRef'" ref="dataTableProductRef" v-loading="listLoading"
+                v-if="isProjectSwitchFlag" :data="productData" :fixedNO="true" custom-column
+                :setColumnDisplayList="productColumns" v-show="categoryType == 'inbound_mock_production'">
                 <el-table-column prop="orderNo" label="任务单号" width="180" />
                 <el-table-column prop="orderType" label="任务类型" width="120">
                   <template slot-scope="scope">
@@ -1201,7 +1200,7 @@
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
                 <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
                   sortable="custom" />
-                  <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
                 <el-table-column prop="mainUnit" label="单位" width="80" />
                 <el-table-column prop="productionQuantity" label="生产数量" width="120" />
@@ -1293,15 +1292,15 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table :partentOrChild="'dataTableWorkRef'" ref="dataTableWorkRef" v-loading="listLoading"  v-if="isProjectSwitchFlag"
-                :data="workData" :fixedNO="true" @sort-change="sortChange" custom-column
+              <JNPF-table :partentOrChild="'dataTableWorkRef'" ref="dataTableWorkRef" v-loading="listLoading"
+                v-if="isProjectSwitchFlag" :data="workData" :fixedNO="true" @sort-change="sortChange" custom-column
                 :setColumnDisplayList="workColumns">
                 <el-table-column prop="productionOrderNo" label="任务单号" min-width="180" />
                 <el-table-column prop="orderNo" label="工单号" width="200" />
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" />
                 <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
                   sortable="custom" />
-                  <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
                 <el-table-column prop="productCode" label="产品编码" min-width="160" />
                 <el-table-column prop="processName" label="工序名称" min-width="160" />
@@ -2036,11 +2035,11 @@ export default {
   },
 
   async created() {
+    await this.getPickingConfig()
     await this.getProjectSwitch('system', 'project')
     this.isProjectSwitchFlag = true
-    this.getPickingConfig()
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
-  }, 
+  },
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -2143,7 +2142,7 @@ export default {
 
       detailpurchaseOrderList(this.exterMaterForm).then(res => {
         if (this.mainUnitFlag == 1) {
-        res.data.records.forEach(item => {
+          res.data.records.forEach(item => {
             if (item.calculationDirection == 'multiplication') {
               this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
             } else {
@@ -2198,7 +2197,7 @@ export default {
       this.externalForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       detailpurchaseOrderList(this.externalForm).then(res => {
         if (this.mainUnitFlag == 1) {
-        res.data.records.forEach(item => {
+          res.data.records.forEach(item => {
             if (item.calculationDirection == 'multiplication') {
               this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
             } else {
@@ -2282,11 +2281,11 @@ export default {
     },
 
     getStockMovelistFun() {
-      let obj={
-        classAttributeList:this.classAttributeList,
+      let obj = {
+        classAttributeList: this.classAttributeList,
         projectId: this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : '',
       }
-      getStockMovelist(obj.classAttributeList,obj.projectId).then(res => {
+      getStockMovelist(obj.classAttributeList, obj.projectId).then(res => {
         console.log("左侧分类数据", res);
         if (res.data.length) {
           res.data.forEach(item => {
@@ -2626,12 +2625,12 @@ export default {
             this.superForm.superQuery = this.superQuery
           }
           this.listLoading = true
-      this.saleOrderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-      getsaleOrderDetailList(this.saleOrderForm).then(res => {
+          this.saleOrderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+          getsaleOrderDetailList(this.saleOrderForm).then(res => {
             this.listLoading = false
             console.log("销售明细", res);
             if (this.mainUnitFlag == 1) {
-            res.data.records.forEach(item => {
+              res.data.records.forEach(item => {
                 if (item.calculationDirection == 'multiplication') {
                   this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
                 } else {
@@ -2674,8 +2673,8 @@ export default {
           if (type === 'super') {
             this.superForm.superQuery = this.superQuery
           }
-      this.fhForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-      getQuotationdatasendlist(this.fhForm).then(res => {
+          this.fhForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+          getQuotationdatasendlist(this.fhForm).then(res => {
             this.fhTableList = res.data.records
             this.fhTotal = res.data.total
             this.listLoading = false
@@ -2718,8 +2717,8 @@ export default {
           this.superForm.superQuery = this.superQuery
         }
 
-      this.fhForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-      getQuotationdatasendlist(this.fhForm).then(res => {
+        this.fhForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+        getQuotationdatasendlist(this.fhForm).then(res => {
           this.thTableList = res.data.records
           this.fhTotal = res.data.total
           this.listLoading = false
@@ -2759,12 +2758,12 @@ export default {
           if (type === 'super') {
             this.superForm.superQuery = this.superQuery
           }
-      this.purchaseForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-      detailpurchaseOrderList(this.purchaseForm).then(res => {
+          this.purchaseForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+          detailpurchaseOrderList(this.purchaseForm).then(res => {
             console.log("采购明细", res);
             if (this.mainUnitFlag == 1) {
               res.data.records.forEach(item => {
-                
+
                 if (item.calculationDirection == 'multiplication') {
                   this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
                 } else {
@@ -2809,8 +2808,8 @@ export default {
           }
           this.listLoading = true
 
-      this.cgForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-      purPurchaseReceiptReturnGoodsList(this.cgForm).then(res => {
+          this.cgForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+          purPurchaseReceiptReturnGoodsList(this.cgForm).then(res => {
             this.cgTableList = res.data.records
             this.cgTotal = res.data.total
             this.listLoading = false
@@ -2853,8 +2852,8 @@ export default {
           this.superForm.superQuery = this.superQuery
         }
 
-      this.cgForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-      purPurchaseReceiptReturnGoodsList(this.cgForm).then(res => {
+        this.cgForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+        purPurchaseReceiptReturnGoodsList(this.cgForm).then(res => {
           this.cgTableList = res.data.records
           this.cgTotal = res.data.total
           this.listLoading = false
@@ -2895,10 +2894,10 @@ export default {
             this.superForm.superQuery = this.superQuery
           }
           this.listLoading = true
-      this.wxflForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-      getQuotationdatasendlist(this.wxflForm).then(res => {
-        if (this.mainUnitFlag == 1) {
-            res.data.records.forEach(item => {
+          this.wxflForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+          getQuotationdatasendlist(this.wxflForm).then(res => {
+            if (this.mainUnitFlag == 1) {
+              res.data.records.forEach(item => {
                 if (item.calculationDirection == 'multiplication') {
                   this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
                 } else {
@@ -2949,8 +2948,8 @@ export default {
             this.superForm.superQuery = this.superQuery
           }
           this.wxshForm.classAttributeList = this.classAttributeList
-      this.wxshForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-      purPurchaseReceiptReturnGoodsList(this.wxshForm).then(res => {
+          this.wxshForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+          purPurchaseReceiptReturnGoodsList(this.wxshForm).then(res => {
             this.wxshTableList = res.data.records
             this.wxshTotal = res.data.total
             this.listLoading = false
@@ -2984,8 +2983,8 @@ export default {
         if (type === 'super') {
           this.superForm.superQuery = this.superQuery
         }
-      this.pickForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-      WithdrawalList(this.pickForm).then(res => {
+        this.pickForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+        WithdrawalList(this.pickForm).then(res => {
           console.log("领料", res);
           this.pickingTableList = res.data.records
           this.pickTotal = res.data.total
@@ -3018,7 +3017,7 @@ export default {
         if (type === 'super') {
           this.superForm.superQuery = this.superQuery
         }
-      this.returnMaterForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+        this.returnMaterForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
         WithdrawalList(this.returnMaterForm).then(res => {
           console.log("退料", res);
           this.returnMaterTableList = res.data.records
@@ -3067,8 +3066,8 @@ export default {
         if (type === 'super') {
           this.superForm.superQuery = this.superQuery
         }
-      this.outboundUseForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-      CollectionandreturnList(this.outboundUseForm).then(res => {
+        this.outboundUseForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+        CollectionandreturnList(this.outboundUseForm).then(res => {
           console.log("退料", res);
           this.outboundUseTableList = res.data.records
           this.outboundUseTotal = res.data.total
@@ -3108,8 +3107,8 @@ export default {
         if (type === 'super') {
           this.superForm.superQuery = this.superQuery
         }
-      this.inboundReturnForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-      CollectionandreturnList(this.inboundReturnForm).then(res => {
+        this.inboundReturnForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+        CollectionandreturnList(this.inboundReturnForm).then(res => {
           console.log("归还", res);
           this.inboundReturnData = res.data.records
           this.inboundReturnTotal = res.data.total

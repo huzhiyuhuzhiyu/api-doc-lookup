@@ -67,7 +67,7 @@
 
                             </el-form-item>
                           </el-col> 
-                            <el-col :sm="6" :xs="24" v-if="calculateQuantityFlag==1">
+                            <el-col :sm="6" :xs="24" >
 
                             <el-form-item label="是否显示比重折扣" prop="weightFlag">
                               <el-select v-model="dataForm.weightFlag" placeholder="是否显示比重折扣" style="width: 100%;"
@@ -157,15 +157,15 @@
                         </el-table-column>
                         <el-table-column prop="proportion" label="比重" width="140" :key="727"
                           v-if="dataForm.weightFlag == true">
-                          <template slot="header">
+                          <!-- <template slot="header">
                             <span class="required">*</span>比重
                           </template>
                           <template slot-scope="scope">
                             <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                               v-model="scope.row.proportion" placeholder="比重"></el-input>
-                          </template>
+                          </template> -->
                         </el-table-column>
-                        <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
+                        <!-- <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
                           v-if="dataForm.weightFlag == true">
                           <template slot="header">
                             <span class="required">*</span>折扣(0~1)
@@ -174,7 +174,7 @@
                             <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                               v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
                           </template>
-                        </el-table-column>
+                        </el-table-column> -->
                         <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                         <el-table-column prop="num" :label="mainUnitFlag == 1 ? '发料数量(主)' : '发料数量'" min-width="160">
                           <template slot="header">
@@ -349,15 +349,15 @@
                     </el-table-column>
                     <el-table-column prop="proportion" label="比重" width="140" :key="727"
                       v-if="dataForm.weightFlag == true">
-                      <template slot="header">
+                      <!-- <template slot="header">
                         <span class="required">*</span>比重
                       </template>
                       <template slot-scope="scope">
                         <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                           v-model="scope.row.proportion" placeholder="比重"></el-input>
-                      </template>
+                      </template> -->
                     </el-table-column>
-                    <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
+                    <!-- <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
                       v-if="dataForm.weightFlag == true">
                       <template slot="header">
                         <span class="required">*</span>折扣(0~1)
@@ -366,7 +366,7 @@
                         <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                           v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
                       </template>
-                    </el-table-column>
+                    </el-table-column> -->
 
                     <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                     <el-table-column prop="num" :label="mainUnitFlag == 1 ? '发料数量(主)' : '发料数量'" min-width="160">
@@ -704,8 +704,8 @@ export default {
   },
   methods: {
     computedNumFun(data, index) {
-      if (data.discount && data.proportion && data.weight) {
-        this.productData[index].num = Math.floor(this.jnpf.numberFormat(this.jnpf.math('multiply', [data.discount, data.proportion, data.weight]), 2))
+      if ( data.proportion && data.weight) {
+        this.productData[index].num = Math.floor(this.jnpf.numberFormat(this.jnpf.math('multiply', [ data.proportion, data.weight]), 2))
         this.watchNum(data, index)
       }
     },
@@ -714,6 +714,8 @@ export default {
       try {
         if (flag == 'unitFlag') this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
         if(flag=='proportionFlag')this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type)
+        this.dataForm.weightFlag=this.calculateQuantityFlag==1?true:false
+
         this.tableDataFlag = true
         this.listLoading = false
 
@@ -727,7 +729,7 @@ export default {
       this.batchNumVisible = true
       data.warehouseId = this.dataForm.warehouseId
       this.$nextTick(() => {
-        this.$refs.BatchNumberForms.init(data, index)
+        this.$refs.BatchNumberForms.init(data, index,'wxfl')
       })
     },
     // 选择批次
@@ -1109,7 +1111,7 @@ export default {
               item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
               item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
               item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
-              item.ordersLineId = item.outShipmentListId
+           
               this.$set(item, 'discount', '')
               this.$set(item, 'proportion', '')
               this.$set(item, 'weight', '')
@@ -1201,64 +1203,39 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能为空")
                 break
               }
-              if (item.num > item.availableBatchNumber) {
+              if (Number(item.num) > Number(item.availableBatchNumber)) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次库存数量")
                 break
               }
               if (this.dataForm.weightFlag) {
-                if (!item.discount) {
-                  submitFlag = false
-                  this.$message.error("产品信息第" + (index + 1) + "行折扣不能为空")
-                  break
-                }
+                // if (!item.discount) {
+                //   submitFlag = false
+                //   this.$message.error("产品信息第" + (index + 1) + "行折扣不能为空")
+                //   break
+                // }
                 if (!item.proportion) {
                   submitFlag = false
                   this.$message.error("产品信息第" + (index + 1) + "行比重不能为空")
                   break
                 }
-                if (!item.discount) {
+                if (!item.weight) {
                   submitFlag = false
                   this.$message.error("产品信息第" + (index + 1) + "行重量不能为空")
                   break
                 }
               }
 
-              if (Number(item.num) > Number(item.ordersNum)) {
-                console.log(item.num);
-                console.log(item.ordersNum);
+              if (Number(item.num) > Number(item.undeliveredQuantity)) {
+        
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待发料数量")
                 break
               }
 
-
-              if (!totals[item.ordersLineId]) {
-                totals[item.ordersLineId] = { totalNum: 0, ordersNum: item.ordersNum };
-              }
-              if (!totalNum[item.ordersLineId]) {
-                totalNum[item.ordersLineId] = { totalNum: 0, availableBatchNumber: item.availableBatchNumber };
-              }
-              totals[item.ordersLineId].totalNum += Number(item.num)
-              totalNum[item.ordersLineId].totalNum += Number(item.num);
+ 
             }
-            for (let id in totals) {
-              if (totals[id].totalNum > totals[id].ordersNum) {
-                console.log(`同产品 ${id} 的总数量不能超过订单数量`);
-                submitFlag = false
-                this.$message.error("同产品的总数量不能超过订单数量")
-                break
-              }
-            }
-            if (this.dataForm.businessType == 'outbound_sale_send') {
-              for (let id in totalNum) {
-                if (totalNum[id].totalNum > totalNum[id].availableBatchNumber) {
-                  submitFlag = false
-                  this.$message.error("同产品的总数量不能批次库存数量")
-                  break
-                }
-              }
-            }
+      
           }
 
 
@@ -1272,7 +1249,12 @@ export default {
             // const formMethod = this.dataForm.id ? updateInboundOutbound : addInboundOutbound
             const formMethod = addWarehouseData
             // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号
-
+            this.productData.forEach(item => {
+              let ordersLineId=JSON.parse(JSON.stringify(item.outShipmentListId))
+              let ordersId=JSON.parse(JSON.stringify(item.ordersLineId))
+              item.ordersLineId=ordersLineId
+              item.ordersId=ordersId
+            });
             this.copyLinesData = JSON.parse(JSON.stringify(this.productData))
             this.copyLinesData.forEach(element => {
               element.warehouseType = this.dataForm.warehouseType

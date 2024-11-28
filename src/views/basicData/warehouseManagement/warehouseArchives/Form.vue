@@ -111,15 +111,11 @@ export default {
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
     this.isProjectSwitchFlag = true
-    if (this.isProjectSwitch == 1) {
-      console.log(this.projectIdDataList);
-      this.dataForm.projectId = this.userInfo.projectId == 1 ? "" : this.userInfo.projectId
-
-    }
+   
     this.tabs.forEach((tab, tabInd) => {
       if (this.isProjectSwitch == 1) {
         tab.tabContent.splice(2, 0,
-          { prop: "projectId", label: "所属项目", value: this.dataForm.projectId, type: 'select', render: true, itemDisabled: this.dataForm.projectId != 1, itemRules: [{ required: true, trigger: "change" }], options: this.projectIdDataList, sm: 8 },
+          { prop: "projectId", label: "所属项目", value: this.dataForm.projectId, type: 'select', render: true, itemDisabled: this.dataForm.projectId != "", itemRules: [{ required: true, trigger: "change" }], options: this.projectIdDataList, sm: 8 },
 
 
         )
@@ -330,6 +326,7 @@ export default {
           this.dataForm.sort = res.data.sort
           this.dataForm.type = res.data.type
           this.dataForm.warehouseManagementStatus = res.data.warehouseManagementStatus
+          this.dataForm.projectId = res.data.projectId
 
           this.stockLimitsAuthorities = res.data.stockLimitsAuthorities
           this.dataForm.partnerCategoryIdText = res.data.parentName

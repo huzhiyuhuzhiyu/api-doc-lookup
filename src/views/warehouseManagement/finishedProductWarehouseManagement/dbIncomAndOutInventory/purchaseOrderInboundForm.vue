@@ -757,7 +757,11 @@ export default {
       this.listLoading = true
       try {
         if (flag == 'unitFlag') this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
-        if(flag=='proportionFlag')this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type)
+        if(flag=='proportionFlag'){
+          this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type);
+          this.dataForm.weightFlag=this.calculateQuantityFlag==1?true:false
+        }
+
         this.tableDataFlag = true
         this.listLoading = false
 

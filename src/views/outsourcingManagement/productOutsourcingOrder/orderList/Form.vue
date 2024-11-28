@@ -83,8 +83,9 @@
                   </div>
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
                     <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true" :hasC="type == 'edit'"
-                      @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
-                      id="table" border height="460" @row-click="openDetails" :row-style="rowStyle">
+                      ref="multipleTable" @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data"
+                      :data="dataFormTwo.data" id="table" border height="460" @row-click="openDetails"
+                      :row-style="rowStyle">
                       <!-- <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column> -->
                       <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                       <el-table-column prop="projectName" label="所属项目" width="120"
@@ -351,7 +352,7 @@
                 |
               </div>
               <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true" :hasC="type == 'edit'"
+                <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true" :hasC="type == 'edit'" ref="multipleTable"
                   @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
                   id="table" border height="460" @row-click="openDetails" :row-style="rowStyle">
                   <!-- <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column> -->
@@ -1408,7 +1409,10 @@ export default {
         })
         .catch(() => { })
     }
-  }
+  },
+  updated() {
+    this.$refs['multipleTable'].doLayout()
+  },
 }
 </script>
 <style scoped>

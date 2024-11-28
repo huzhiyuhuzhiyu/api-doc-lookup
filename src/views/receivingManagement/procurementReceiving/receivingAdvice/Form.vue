@@ -1043,7 +1043,7 @@ export default {
           }
         })
         this.dataFormTwo.productData = this.dataFormTwo.productData.filter(
-          (item) => item.projectId !== this.orderForm.projectId
+          (item) => item.projectId === this.orderForm.projectId
         )
       }
     },

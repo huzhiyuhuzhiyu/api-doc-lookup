@@ -154,7 +154,8 @@ export default {
     },
     getbatchNumList() {
       this.listLoading = true
-      getBatchNumber(this.form).then(res => {
+        // this.form.projectId=this.cpData.projectId
+        getBatchNumber(this.form).then(res => {
         console.log("批次号数据", res);
         this.tableDataList = res.data.records
         this.total = res.data.total

@@ -102,21 +102,14 @@ export const getImUser = data => {
 }
 
 // 获取用户下拉框列表
-export const getImUserSelector = (organizeId, keyword) => {
+export const getImUserSelector = (organizeId, keyword, projectId) => {
   return request({
     url: `/api/permission/Users/ImUser/Selector/${organizeId}`,
     method: 'post',
-    data: { keyword }
+    data: { keyword, projectId }
   })
 }
-// 获取用户下拉框列表
-export const getImUserSelectorProjectId = (organizeId, keyword,projectId) => {
-  return request({
-    url: `/api/permission/Users/ImUser/Selector/${organizeId}`,
-    method: 'post',
-    data: { keyword }
-  })
-}
+
 // 获取用户基本信息
 export const getUserInfoList = userId => {
   return request({
@@ -127,11 +120,11 @@ export const getUserInfoList = userId => {
 }
 
 // 获取我的下属
-export const getSubordinates = (keyword) => {
+export const getSubordinates = (keyword, projectId) => {
   return request({
     url: '/api/permission/Users/getSubordinates',
     method: 'post',
-    data: { keyword }
+    data: { keyword, projectId }
   })
 }
 // 获取当前组织用户

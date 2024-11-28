@@ -272,7 +272,7 @@ export default {
             } else if (val == 'out') {
               this.tabs[0].tabContent.forEach((tc) => {
                 if (tc.prop == 'locationStatus') {
-                  tc.itemDisabled = true
+                  this.$set(tc,'itemDisabled',true)
                 }
                 this.dataForm.locationStatus = 'disabled'
               })

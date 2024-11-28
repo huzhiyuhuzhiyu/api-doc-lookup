@@ -482,6 +482,15 @@
                     </el-date-picker>
                   </el-form-item>
                 </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductFun()">
+                      {{ $t('common.search') }}</el-button>
+                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetProductFun()">{{
+                      $t('common.reset') }}
+                    </el-button>
+                  </el-form-item>
+                </el-col>
               </el-form>
 
             </el-row>

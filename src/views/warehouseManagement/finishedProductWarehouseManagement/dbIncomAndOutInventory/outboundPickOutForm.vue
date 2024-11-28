@@ -46,6 +46,13 @@
                               </el-select>
                             </el-form-item>
                           </el-col>
+                          <el-col :sm="6" :xs="24">
+                            <el-form-item label="领料人" prop="recipientBy">
+                              <user-select v-model="dataForm.recipientBy" placeholder="请选择领料人" clearable
+                                style="width: 100%;" :disabled="btnType == 'look'" @change="hangleSelectSales">
+                              </user-select>
+                            </el-form-item>
+                          </el-col>
 
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="仓库" prop="warehouseName">
@@ -105,7 +112,7 @@
                           min-width="160" />
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
-                        min-width="160" />
+                          min-width="160" />
                         <el-table-column prop="processName" label="工序名称" width="160" :key="222">
                         </el-table-column>
 
@@ -205,7 +212,13 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="领料人" prop="recipientBy">
+                          <user-select v-model="dataForm.recipientBy" placeholder="请选择领料人" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'" @change="hangleSelectSales">
+                          </user-select>
+                        </el-form-item>
+                      </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="仓库" prop="warehouseName">
                           <ComSelect-list
@@ -260,8 +273,7 @@
                     </el-table-column>
                     <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
-                    <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
-                    min-width="160" />
+                    <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
                     <el-table-column prop="processName" label="工序名称" width="160" :key="222">
                     </el-table-column>
 
@@ -393,8 +405,7 @@
                 <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
                   sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
-                <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
-                min-width="160" />
+                <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
                 <el-table-column prop="processName" label="工序" width="120" sortable="custom" />
 
                 <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
@@ -469,7 +480,7 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 export default {
   components: { CustomerForm, WareHouseForm, BatchNumberForm, Process, recordList },
-  mixins: [flowMixin, busFlow,getProjectList],
+  mixins: [flowMixin, busFlow, getProjectList],
   data() {
     return {
       isProjectSwitch: '',
@@ -513,7 +524,8 @@ export default {
         warehouseType: "",
         approvalFlag: false,
         orderDate: this.jnpf.getToday(),
-        projectId:"",
+        projectId: "",
+        recipientBy:"",
       },
       customerInfo: {},//所选客户信息
       getWarehouseList,
@@ -546,6 +558,9 @@ export default {
         orderNo: [{ required: true, message: "请输入单号", trigger: 'blur' }],
         warehouseName: [
           { required: true, message: '仓库不能为空', trigger: 'change' }
+        ],
+        recipientBy: [
+          { required: true, message: '领料人不能为空', trigger: 'change' }
         ],
       },
 
@@ -595,7 +610,7 @@ export default {
 
     }
   },
- 
+
   async created() {
     await this.getProjectSwitch('system', 'project')
     let objs = { "pageSize": -1, "businessCode": "product" }
@@ -1053,7 +1068,7 @@ export default {
         warehouseType: "",
         approvalFlag: false,
         orderDate: this.jnpf.getToday(),
-        projectId:"",
+        projectId: "",
       }
       this.productData = []
       this.$refs.dataForm.resetFields()

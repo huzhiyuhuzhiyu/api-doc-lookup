@@ -165,10 +165,11 @@
                   </el-col>
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="领料人" prop="personId">
-                      <user-select v-model="dataForm.personId" placeholder="请选择领料人" clearable style="width: 100%;"
+                      <!-- <user-select v-model="dataForm.personId" placeholder="请选择领料人" clearable style="width: 100%;"
                         :disabled="btnType == 'look'" @change="hangleSelectSales">
-                      </user-select>
-
+                      </user-select> -->
+                      <el-input v-model="dataForm.personId" :disabled="btnType == 'look' ? true : false"
+                      placeholder="领料人" />
                     </el-form-item>
                   </el-col>
                   <el-col :sm="12" :xs="24">
@@ -325,9 +326,9 @@ export default {
         operationDate: [
           { required: true, message: '领料日期不能为空', trigger: 'change' }
         ],
-        personId: [
-          { required: true, message: '领料人不能为空', trigger: 'change' }
-        ],
+        // personId: [
+        //   { required: true, message: '领料人不能为空', trigger: 'change' }
+        // ],
 
       },
       selectArr: [],

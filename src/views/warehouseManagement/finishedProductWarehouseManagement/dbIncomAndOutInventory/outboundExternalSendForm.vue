@@ -744,7 +744,7 @@ export default {
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
       this.$set(this.productData[index], 'discount', data.discount)
       this.$set(this.productData[index], 'proportion', data.proportion)
-      this.$set(this.productData[index], 'weight', data.weight)
+      this.$set(this.productData[index], 'weight', this.jnpf.numberFormat(this.jnpf.math('divide', [ this.productData[index].num, data.proportion]), 2))
     },
 
 

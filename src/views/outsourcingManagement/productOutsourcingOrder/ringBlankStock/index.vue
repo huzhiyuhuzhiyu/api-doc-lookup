@@ -523,7 +523,7 @@ export default {
           this.formVisible = true
           this.$nextTick(() => {
             console.log(this.$refs, 'this.$refs')
-            this.$refs.form.init(this.selectData, 'add', 'ring')
+            this.$refs.form.init(this.selectData, 'add', this.isProjectSwitch)
           })
         } else {
           this.$message.error(`请配置毛坯产品所对就主产品的BOM！`)

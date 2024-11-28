@@ -79,8 +79,10 @@
                       @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
                       id="table" border height="460">
                       <el-table-column type="selection" width="55" align="center" fixed="left"
-                        :key="2"></el-table-column>
-                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" :key="3" />
+                        :key="1"></el-table-column>
+                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" :key="2" />
+                      <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
+                        :key="3"></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
                         :key="4">
                         <template slot="header">
@@ -108,7 +110,7 @@
                               title="选择工序" treeTitle="工序分类" :methodArr="ProcessMethodArr"
                               :listMethod="getBimProcessList" :listRequestObj="ProcessListRequestObj"
                               :paramsObj="{ scope }" :searchList="ProcessTableSearchList"
-                              :listDataFormatting="listDataFormatting" />
+                              :listDataFormatting="listDataFormatting" :beforeOpen="beforeOpen" />
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -1145,13 +1147,21 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    init(data, type, sourceType) {
+    async beforeOpen(paramsObj) {
+      console.log(paramsObj, 'lll')
+      if (this.isProjectSwitch === '1') {
+        this.ProcessListRequestObj.projectId = paramsObj.scope.row.projectId
+      }
+      return true
+    },
+    init(data, type, isProjectSwitch) {
       let arr = []
-
+      this.isProjectSwitch = isProjectSwitch
       arr = data.map((item) => {
         console.log(data, 'pp')
         return {
           projectName: item.projectName,
+          projectId: item.projectId,
           productDrawingNo: item.productDrawingNo,
           productCode: item.productCode,
           stockInventoryLineId: item.id,

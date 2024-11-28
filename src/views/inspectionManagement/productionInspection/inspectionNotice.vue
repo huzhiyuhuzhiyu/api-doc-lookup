@@ -162,7 +162,6 @@ import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   components: { Form, SuperQuery, ExportForm },
   mixins: [getProjectList],
-
   data() {
     return {
       isProjectSwitch: '',
@@ -458,6 +457,9 @@ export default {
     },
     initData() {
       this.listLoading = true
+      if (this.isProjectSwitch === '1') {
+        this.listQuery.projectId = this.userInfo.projectId
+      }
       getWorkList(this.listQuery)
         .then((res) => {
           this.tableData = res.data.records

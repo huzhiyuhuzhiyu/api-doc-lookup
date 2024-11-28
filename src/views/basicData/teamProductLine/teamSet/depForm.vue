@@ -80,9 +80,9 @@
                 <span class="required">*</span>人员名称
               </template>
               <template slot-scope="scope">
-                <user-select v-model="scope.row.personnelId" placeholder="请选择人员" clearable
-                  :disabled="btntype ? true : false">
-                </user-select>
+                <ProjectUserSelect v-model="scope.row.personnelId" placeholder="请选择人员" clearable
+                  :disabled="btntype ? true : false" :projectId="dataForm.projectId">
+                </ProjectUserSelect>
 
               </template>
             </el-table-column>
@@ -156,7 +156,11 @@
 <script>
 import { addGroupData, deleteGroupData, editGroupData, getGroupDataInfo, checkGroupCode } from "@/api/basicData/index";
 import getProjectList from '@/mixins/generator/getProjectList'
+import ProjectUserSelect from "./components/JNPF-userSelect";
 export default {
+  components: {
+    ProjectUserSelect
+  },
   mixins: [getProjectList],
   data() {
     return {

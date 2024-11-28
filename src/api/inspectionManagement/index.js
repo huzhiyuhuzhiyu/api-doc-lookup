@@ -70,6 +70,14 @@ export function getSamplingQuantityByProductId(data) {
   })
 }
 
+/**检验单 根据工序id获取默认抽检数量 */
+export function getSamplingQuantityByProcessId(data) {
+  return request({
+    url: `/api/zgt/process/sampling/rules/batch/cal/num?processId=${data.processId}&num=${data.num}`,
+    method: 'GET',
+  })
+}
+
 // 不合格品处理单 列表
 export function getQcUnqualifiedList(data) {
   return request({

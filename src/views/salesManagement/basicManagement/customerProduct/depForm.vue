@@ -720,7 +720,7 @@ export default {
       },
 
       btnText: "",
-      uploadVisib: false, 
+      uploadVisib: false,
       submitmethodsTitle: "",
       historyVisiblt: false,
 
@@ -960,8 +960,8 @@ export default {
       });
 
     },
-      // 获取所有产品列表数据
-      initData2() {
+    // 获取所有产品列表数据
+    initData2() {
       this.listLoading = true
 
       getProducts(this.ProductListRequestObj).then(listRes => {
@@ -1018,6 +1018,7 @@ export default {
         item.productCode = item.code
         item.productsId = item.id
         this.$set(item, 'price', item.salesPrice)
+        this.$set(item, 'productDrawingNo', item.drawingNo)
         item.taxRate = item.taxRate * 1
         if (item.taxRate) {
           item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.salesPrice) / (1 + (Number(item.taxRate)) / 100), 2)
@@ -1028,7 +1029,7 @@ export default {
       });
       if (this.dataFormTwo.lines.length) {
         let index = this.dataFormTwo.lines.findIndex(item =>
-          item.drawingNo === "" &&
+          item.productDrawingNo === "" &&
           item.productsId === "" &&
           item.num === "" &&
           item.price === "" &&
@@ -1040,7 +1041,7 @@ export default {
         } else {
           this.dataFormTwo.lines = [...this.selectArr, ...this.dataFormTwo.lines,]
         }
-      } 
+      }
     },
     filterNodeAllProduct(value, data) {
       if (!value) return true;
@@ -1488,8 +1489,33 @@ export default {
       this.tipsvisible = false
     },
     submit() {
-      console.log(this.fileList);
-      this.UploadProduct(this.file)
+      if (this.dataFormTwo.lines.length) {
+        let index = this.dataFormTwo.lines.findIndex(item =>
+          item.customerProductNo === "" &&
+          item.num === "" &&
+          item.price === "" &&
+          item.productDrawingNo == ""
+        )
+        if (index !== -1) {
+          if (this.dataFormTwo.lines.length == 1) {
+            this.UploadProduct(this.file)
+
+          } else {
+            this.$confirm(`确定导入新的产品数据吗？这会覆盖已有的数据`, `提示`, { type: 'warning' }).then(() => {
+              this.UploadProduct(this.file)
+            }).catch(() => { })
+          }
+        } else {
+          this.$confirm(`确定导入新的产品数据吗？这会覆盖已有的数据`, `提示`, { type: 'warning' }).then(() => {
+            this.UploadProduct(this.file)
+          }).catch(() => { })
+
+        }
+      } else {
+        this.UploadProduct(this.file)
+
+      }
+
     },
 
     handleFileChange(file) {
@@ -1508,15 +1534,8 @@ export default {
     },
     // 导入产品
     importProductFun() {
-      if (this.dataFormTwo.lines.length) {
-        this.$confirm(`确定导入新的产品数据吗？这会覆盖已有的数据`, `提示`, { type: 'warning' }).then(() => {
-          this.uploadVisib = true
+      this.uploadVisib = true
 
-          // this.$refs.UploadProduct.$el.querySelector('input').click()
-        }).catch(() => { })
-      } else {
-        this.uploadVisib = true
-      }
     },
     // 上传产品
     UploadProduct(data) {
@@ -1529,7 +1548,7 @@ export default {
         if (!res.data.url) {
           this.$message.success(`导入成功`)
           if (res.data.length > 0) {
-            this.dataFormTwo.lines = res.data
+            this.dataFormTwo.lines =  [...res.data,...this.dataFormTwo.lines]
 
           }
           this.formLoading = false
@@ -1714,111 +1733,9 @@ export default {
       }
 
 
-      // let a = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.price, row.num]), 2)
-      // console.log("aaa", a);
-      // row.amounts = a ? a : '' // 含税金额 
-      // productArr[index].amounts = a ? a : 0
-      // console.log(this.dataFormTwo.lines);
 
-      // if (row.excludingTaxPrice && row.num) {
-      //   let c = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.excludingTaxPrice, row.num]), 2)
-      //   row.excludingTaxAmounts = c ? c : ''
-      //   productArr[index].excludingTaxAmounts = c ? c : 0
-      // } else {
-      //   row.excludingTaxAmounts = ''
-      // }
-      // if (row.excludingTaxAmounts && row.amounts) { // 税额计算
-      //   let d = this.jnpf.numberFormat(this.jnpf.math('subtract', [row.amounts, row.excludingTaxAmounts]), 2)
-      //   row.totalTaxAmount = d ? d : 0
-      //   productArr[index].totalTaxAmount = d ? d : 0
-      // }
       this.dataFormTwo.lines = productArr
     },
-    // // 监听主数量输入
-    // watchnums(row, index) {
-    //   console.log("ROW", row, index);
-    //   // 数量处理
-    //   row.num = row.num ? row.num.replace(/[^\d.]/g, '') : ''
-    //   if (row.num.length == 1 && row.num == '.') {
-    //     // 如果第一位是小数点，则清空输入框
-    //     row.num = '';
-    //   } else if (row.num.length == 2 && row.num[0] == '0' && row.num[1] != '.') {
-    //     // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
-    //     row.num = row.num.slice(0, 1) + '.' + row.num.slice(1);
-    //   } else if (row.num.length > 2 && row.num[0] == '0' && row.num[1] != '.') {
-    //     row.num = row.num.substring(1, row.num.length)
-    //   }
-    //   if (row.num.includes('.')) {
-    //     let dotCount = 0; // 小数点的数量
-    //     let result = ''; // 处理后的结果
-    //     for (let i = 0; i < row.num.length; i++) {
-    //       const char = row.num[i];
-    //       if (char === '.') {
-    //         if (dotCount === 0) {
-    //           // 第一个小数点保留
-    //           result += char;
-    //           dotCount++;
-    //         }
-    //       } else {
-    //         result += char;
-    //       }
-    //     }
-    //     row.num = result;
-    //     let arr = row.num.split('.')
-    //     if (arr[0].length > 8) {
-    //       arr[0] = arr[0].substring(0, 8)
-    //     }
-    //     if (arr[1].length > 2) {
-    //       arr[1] = arr[1].substring(0, 2)
-    //     }
-    //     row.num = arr[0] + '.' + arr[1]
-    //   } else {
-    //     if (row.num.length > 8) {
-    //       row.num = row.num.substring(0, 8);
-    //     }
-    //   }
-    //   // if (row.num.length) {
-    //   //   console.log(2222222222222);
-    //   //   // 数量变化 更新审批流程
-    //   //   // this.$nextTick(() => { this.getApproverData() })//暂时注释
-    //   // }
-
-
-
-    //   if (row.price && row.price != '0') {
-    //     let b = this.jnpf.numberFormat((row.price / (1 + row.taxRate / 100)), 2)
-    //     row.excludingTaxPrice = b ? b : 0
-    //   } else {
-    //     row.excludingTaxPrice = ''
-    //   }
-
-    //   if (!row.num || !row.price) {
-    //     row.amounts = ''
-    //     row.totalTaxAmount = ''
-    //     this.dataForm.totalAmount = 0
-    //   } else {
-    //     let a = this.jnpf.numberFormat((row.price * row.num), 2)
-    //     row.amounts = a ? a : '' // 含税金额
-    //   }
-    //   var totalPrice = 0;
-    //   for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
-    //     let item = this.dataFormTwo.lines[a]
-    //     console.log("item", item.amounts);
-    //     totalPrice = this.jnpf.math('add', [totalPrice, item.amounts])
-    //   }
-    //   if (row.excludingTaxPrice && row.num) {
-    //     let c = this.jnpf.numberFormat((row.excludingTaxPrice * row.num), 2)
-    //     row.excludingTaxAmounts = c ? c : ''
-    //   } else {
-    //     row.excludingTaxAmounts = ''
-    //   }
-    //   if (row.excludingTaxAmounts && row.amounts) { // 税额计算
-    //     let d = this.jnpf.numberFormat((row.amounts * 1 - row.excludingTaxAmounts * 1), 2)
-    //     row.totalTaxAmount = d ? d : 0
-    //   }
-    //   console.log("pfijspdfjp");
-    // },
-    // 产品列表选中 
     handeleProductInfoData(val) {
       this.selectRows = val
     },

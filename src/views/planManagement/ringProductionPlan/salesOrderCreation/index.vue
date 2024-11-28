@@ -2,21 +2,30 @@
   <!-- 销售订单创建 -->
   <div class="JNPF-common-layout">
 
-    <div class="JNPF-common-layout-center JNPF-flex-main"  v-if="!formVisible">
+    <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.orderNo" @keyup.enter.native="search()" placeholder="订单号" clearable />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.cooperativePartnerName" @keyup.enter.native="search()" placeholder="品名规格"
-                  clearable />
-              </el-form-item>
-            </el-col>
+            <template v-for="item in searchList">
+              <el-col :span="item.searchType === 3 ? 6 : 4">
+                <el-form-item>
+                  <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                    @keyup.enter.native="search('basic')" />
+
+                  <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                    clearable>
+                    <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                      :value="item2.value"></el-option>
+                  </el-select>
+                  <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                    :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                    :type="item.dateType"
+                    :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                </el-form-item>
+              </el-col>
+            </template>
+
+
             <el-col :span="6">
               <el-form-item>
                 <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
@@ -26,7 +35,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
                   {{ $t('common.search') }}</el-button>
                 <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
                 </el-button>
@@ -35,7 +44,7 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier()" :addText="'生成计划'">
               <el-button type="primary" size="mini" icon="el-icon-download"
@@ -55,26 +64,21 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
+          <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true" v-if="isProjectSwitchFlag"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column
             @selection-change="handleSelectionChange" hasC>
             <el-table-column prop="orderNo" label="订单号" min-width="160" sortable="custom"> </el-table-column>
             <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="160" sortable="custom" />
             <el-table-column prop="cooperativePartnerCode" label="客户编码" min-width="160" sortable="custom" />
-            <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom" />
+            <el-table-column prop="drawingNo" label="品名规格" min-width="280" sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+              v-if="isProjectSwitch == 1" />
             <el-table-column prop="productName" label="产品名称" min-width="120" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
             <el-table-column prop="deliveryDate" label="交货日期" min-width="120" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" min-width="80" />
             <el-table-column prop="num" label="订单数量" min-width="120" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
-            <el-table-column prop="oil" label="油脂" min-width="100" sortable="custom" />
-            <el-table-column prop="oilQuantity" label="油脂量" min-width="120" sortable="custom" />
-
-            <el-table-column prop="clearance" label="游隙" min-width="100" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
+     
             <el-table-column prop="contractNo" label="客户合同号" min-width="140" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
@@ -90,7 +94,7 @@
 
     </div>
 
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm"  />
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
 
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
@@ -107,28 +111,40 @@ import Form from './Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { mapGetters, mapState } from 'vuex'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'salesOrderCreation',
   components: { Form, ExportForm, SuperQuery },
+  mixins: [getProjectList],
   data() {
     return {
+      superQuery: {},
+      superForm: {},
+      basicQuery: {},
+      searchList: [
+        { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+      ],
       columnList: ["cooperativePartnerName", "cooperativePartnerCode", "productName", "productCode", "createTime", 'createByName'],
       superQueryVisible: false,
       exportFormVisible: false,
       tableData: [],
       listLoading: false,
       orderForm: {
+        classAttribute: "semi_finished",
         orderNo: "",
         drawingNo: "",
-        deliveryStartTime: "",
         deliveryEndTime: "",
+        deliveryStartTime: "",
         planStatus: "not_generated",
         pageNum: 1,
         pageSize: 20,
-        orderState:"not_finish",
+        orderState: "not_finish",
+        approvalStatus: 'ok',
         orderItems: [{
           asc: false,
           column: ""
@@ -184,11 +200,7 @@ export default {
           label: "品名规格",
           type: 'input'
         },
-        {
-          prop: 'productName',
-          label: "产品名称",
-          type: 'input'
-        },
+
         {
           prop: 'productCode',
           label: "产品编码",
@@ -201,7 +213,6 @@ export default {
           valueFormat: "yyyy-MM-dd",
           startPlaceholder: '开始日期',
           endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
         },
         {
           prop: 'mainUnit',
@@ -214,48 +225,7 @@ export default {
         //   type: 'input'
         // },
 
-        {
-          prop: 'sealingCoverTyping',
-          label: "打字内容",
-          type: 'select',
-          options: [],
-        },
-        {
-          prop: 'accuracyLevel',
-          label: "精度等级",
-          type: 'select',
-          options: [],
-        },
-        {
-          prop: 'vibrationLevel',
-          label: "振动等级",
-          type: 'select',
-          options: [],
-        },
-        {
-          prop: 'oil',
-          label: "油脂",
-          type: 'select',
-          options: [],
-        },
-        {
-          prop: 'oilQuantity',
-          label: "油脂量",
-          type: 'select',
-          options: [],
-        },
-        {
-          prop: 'clearance',
-          label: "游隙",
-          type: 'select',
-          options: [],
-        },
-        {
-          prop: 'packagingMethod',
-          label: "包装方式",
-          type: 'select',
-          options: [],
-        },
+       
         {
           prop: 'contractNo',
           label: "客户合同号",
@@ -282,6 +252,8 @@ export default {
 
       ],
       selectList: [],
+      isProjectSwitchFlag: false,
+      isProjectSwitch: '',
     }
   },
   watch: {
@@ -289,281 +261,23 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
-
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
 
   created() {
-    this.initData()
-    this.getProductClassFun()
+
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    this.superForm = this.orderForm
+    this.search('basic')
   },
   methods: {
     handleSelectionChange(val) {
       this.selectList = val
     },
-    getProductClassFun() {
-      let obj0 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa008",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-
-      getbimProductAttributesList(obj0).then(res => {
-
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'standardValue');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-      let obj1 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa007",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-
-      getbimProductAttributesList(obj1).then(res => {
-
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'sealingCoverTyping');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-      let obj2 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa006",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-
-
-      getbimProductAttributesList(obj2).then(res => {
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'accuracyLevel');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-      let obj3 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa005",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj3).then(res => {
-
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'vibrationLevel');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-      let obj4 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa002",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj4).then(res => {
-
-
-
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'oil');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-      let obj5 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa003",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj5).then(res => {
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'oilQuantity');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-      let obj6 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa001",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-
-      getbimProductAttributesList(obj6).then(res => {
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'clearance');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-      let obj7 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa015",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj7).then(res => {
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'packagingMethod');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-
-
-
-
-    },
+  
 
 
 
@@ -574,7 +288,7 @@ export default {
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
@@ -594,7 +308,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
+      if (prop === 'productName' || prop == 'projectName' || prop === 'productCode' || prop === 'documentStatus') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'
@@ -611,24 +325,7 @@ export default {
     },
 
 
-    dataFormSubmit() {
-      this.orderForm.pageNum = 1
-      Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
-        let item = this.orderForm[key]
-        this.orderForm[key] = typeof item === 'string' ? item.trim() : item
-      })
 
-      if (this.deliveryDateArr && this.deliveryDateArr.length > 0) {
-        this.orderForm.deliveryStartDate = this.deliveryDateArr[0]
-        this.orderForm.deliveryEndDate = this.deliveryDateArr[1]
-      } else {
-        this.orderForm.deliveryStartDate = ""
-        this.orderForm.deliveryEndDate = ""
-      }
-
-      this.initData()
-
-    },
 
 
     // 关闭新建编辑页面
@@ -641,7 +338,9 @@ export default {
     },
     initData() {
       this.listLoading = true
-      getsaleOrderDetailList(this.orderForm).then(res => {
+      this.superForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      getsaleOrderDetailList(this.superForm).then(res => {
+        this.isProjectSwitchFlag = true
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
@@ -653,22 +352,53 @@ export default {
     },
 
 
-    search() {
-      this.dataFormSubmit()
+    search(type) {
+      this.orderForm.pageNum = 1
+      Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
+        let item = this.orderForm[key]
+        this.orderForm[key] = typeof item === 'string' ? item.trim() : item
+      })
+
+      if (this.deliveryDateArr && this.deliveryDateArr.length > 0) {
+        this.orderForm.deliveryStartTime = this.deliveryDateArr[0]
+        this.orderForm.deliveryEndTime = this.deliveryDateArr[1]
+      } else {
+        this.orderForm.deliveryStartTime = ""
+        this.orderForm.deliveryEndTime = ""
+      }
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
+      this.initData()
     },
 
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.deliveryDateArr = []
-      this.orderForm = {
+      this.superForm = this.orderForm = {
         orderNo: "",
         drawingNo: "",
-        deliveryStartTime: "",
         deliveryEndTime: "",
+        classAttribute: "semi_finished",
+        deliveryStartTime: "",
         planStatus: "not_generated",
         pageNum: 1,
         pageSize: 20,
-        orderState:"not_finish",
+        orderState: "not_finish",
         orderItems: [{
           asc: false,
           column: ""
@@ -679,34 +409,63 @@ export default {
 
         superQuery: {},
       }
+      this.searchList = [
+        { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+      ]
+      this.$refs.SuperQuery.conditionList = []
+      this.search('basic')
+    },
+    checkFieldsEqual(arr) {
+      const keys = [
+        'drawingNo',
+        'accuracyLevel',
+        'vibrationLevel',
+        'oil',
+        'oilQuantity',
+        'clearance',
+        'packagingMethod',
+        'specialRequire'
+      ];
 
-      this.search()
+      let firstObj = arr[0];
+
+      for (let key of keys) {
+        for (let i = 1; i < arr.length; i++) {
+          if (arr[i][key] !== firstObj[key]) {
+            return false; // return false if any value is different  
+          }
+        }
+      }
+
+      return true; // all values are the same  
     },
 
-
-    addSupplier( ) {
+    addSupplier() {
+      console.log(this.selectList);
       if (!this.selectList.length) return this.$message.error("请选择您要生成计划的数据")
       if (this.selectList.length == 1) {
         this.formVisible = true
         this.$nextTick(() => {
-          this.$refs.Form.init('','add',this.selectList,'order_plan')
+          this.$refs.Form.init('', 'add', this.selectList, 'order_plan')
         })
       } else {
         const fieldsToCheck = [
           'drawingNo',
-          'sealingCoverTyping',
           'accuracyLevel',
           'vibrationLevel',
           'oil',
           'oilQuantity',
           'clearance',
-          'packagingMethod'
+          'packagingMethod',
+          'specialRequire',
         ];
-        const result = this.areFieldsEqual(this.selectList, fieldsToCheck);
+
+        const result = this.checkFieldsEqual(this.selectList);
         if (result) {
           this.formVisible = true
           this.$nextTick(() => {
-            this.$refs.Form.init('','add',this.selectList,'order_plan')
+            this.$refs.Form.init('', 'add', this.selectList, 'order_plan')
           })
         } else {
           this.$message.error("只能选择相同的产品才能生成计划")
@@ -714,23 +473,7 @@ export default {
       }
 
     },
-    // 检查字段是否相同  
-    areFieldsEqual(arr, fields) {
-      const firstEntry = arr[0];
-      const values = new Set();
 
-      for (const field of fields) {
-        values.add(firstEntry[field]);
-      }
-
-      for (let i = 1; i < arr.length; i++) {
-        for (const field of fields) {
-          values.add(arr[i][field]);
-        }
-      }
-
-      return values.size === 1;
-    },
     getCopyOrders(id, btntype) {
       this.formVisible = true
       this.$nextTick(() => {
@@ -821,7 +564,7 @@ export default {
 
 .JNPF-common-search-box {
   padding: 8px 0 !important;
-  margin-left: 0!important;
+  margin-left: 0 !important;
 
   margin-bottom: 5px;
 }

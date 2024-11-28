@@ -118,7 +118,7 @@
                     <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
                       查看详情
                     </el-dropdown-item> 
-                    <el-dropdown-item :disabled="scope.row.approvalStatus=='ok'&&scope.row.takingState=='finish'" @click.native="mergeorderNo(scope.row.id, 'Form')">
+                    <el-dropdown-item :disabled="!(scope.row.approvalStatus=='ok'&&scope.row.takingState=='not_finish')" @click.native="mergeorderNo(scope.row.id, 'Form')">
                       转库存调整单
                     </el-dropdown-item> 
                    

@@ -19,7 +19,7 @@
                     <el-col :sm="8" :xs="24" v-if="isProjectSwitch=='1'">
                       <el-form-item label="所属项目" prop="projectId">
                         <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" :loading="loadingprojectId" :disabled="type !== 'add'" style="width: 100%;">
-                          <el-option v-for="item in projectIdList" :key="item.code" :label="item.name" :value="item.code"></el-option>
+                          <el-option v-for="item in projectIdList" :key="item.id" :label="item.name" :value="item.id"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
@@ -326,6 +326,7 @@ export default {
       picArr: [],
       type: '',
       dataForm: {
+        projectId: '',
         repairUserId: '',
         salespersonId: "",
         purchaseAmount: "",

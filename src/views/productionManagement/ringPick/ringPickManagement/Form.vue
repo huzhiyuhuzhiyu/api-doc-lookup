@@ -44,18 +44,19 @@
                             readonly placeholder="生产任务" @focus="openProductTaskFun" />
                         </el-form-item>
                       </el-col>
+                 
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="领料人" prop="personId">
+                          <el-input v-model="dataForm.personId" :disabled="btnType == 'look' ? true : false"
+                            placeholder="领料人" />
+                        </el-form-item>
+                      </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="领料日期" prop="operationDate">
                           <el-date-picker v-model="dataForm.operationDate" :default-value="new Date()" type="date"
                             value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择领料日期"
                             :disabled="btnType == 'look' ? true : false">
                           </el-date-picker>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="领料人" prop="personId">
-                          <el-input v-model="dataForm.personId" :disabled="btnType == 'look' ? true : false"
-                            placeholder="领料人" />
                         </el-form-item>
                       </el-col>
                       <el-col :sm="12" :xs="24">
@@ -153,6 +154,13 @@
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
+                    <el-form-item label="领料人" prop="personId">
+                      <el-input v-model="dataForm.personId" :disabled="btnType == 'look' ? true : false"
+                            placeholder="领料人" />
+
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
                     <el-form-item label="领料日期" prop="operationDate">
                       <el-date-picker v-model="dataForm.operationDate" :default-value="new Date()" type="datetime"
                         value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="请选择领料日期"
@@ -160,14 +168,7 @@
                       </el-date-picker>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="6" :xs="24">
-                    <el-form-item label="领料人" prop="personId">
-                      <user-select v-model="dataForm.personId" placeholder="请选择领料人" clearable style="width: 100%;"
-                        :disabled="btnType == 'look'" @change="hangleSelectSales">
-                      </user-select>
-
-                    </el-form-item>
-                  </el-col>
+               
                   <el-col :sm="12" :xs="24">
                     <el-form-item label="备注" prop="remark">
                       <el-input v-model="dataForm.remark" placeholder="请输入备注"
@@ -246,6 +247,8 @@ import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBimBusinessDetail } from '@/api/basicData/index'
+import { mapGetters, mapState } from 'vuex'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   components: {
     ProductTaskForm,
@@ -253,7 +256,7 @@ export default {
     ProcessMaterialForm,
     Process, recordList
   },
-  mixins: [busFlow],
+  mixins: [busFlow,getProjectList],
   data() {
     return {
       isattachmentswitch: "",
@@ -320,9 +323,9 @@ export default {
         operationDate: [
           { required: true, message: '领料日期不能为空', trigger: 'change' }
         ],
-        personId: [
-          { required: true, message: '领料人不能为空', trigger: 'change' }
-        ],
+        // personId: [
+        //   { required: true, message: '领料人不能为空', trigger: 'change' }
+        // ],
 
       },
       selectArr: [],

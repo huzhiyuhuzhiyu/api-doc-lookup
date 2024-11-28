@@ -825,7 +825,7 @@ export default {
         this.productTotal = res.data.total
         if (this.selectSaleProductArr.length) {
           this.selectSaleProductArr.forEach(row => {
-            this.$refs.form.toggleRowSelection(row,true );
+            this.$refs.form.toggleRowSelection(row, true);
           });
         } else {
           this.$refs.multipleTable.clearSelection();
@@ -845,7 +845,7 @@ export default {
         this.$set(item, 'productCode', item.code)
       });
       this.selectSaleProductArr = val
-      console.log("11",this.selectSaleProductArr);
+      console.log("11", this.selectSaleProductArr);
     },
     // 选择产品——重置
     resetProductFun() {
@@ -872,7 +872,7 @@ export default {
 
 
       arr.forEach(item => {
-        this.$set(item, 'stockNum',0)
+        this.$set(item, 'stockNum', 0)
         this.$set(item, 'num', '')
         this.$set(item, 'diffNum', '')
         this.$set(item, 'shelfSpaceId', item.shelfSpaceId)
@@ -1013,96 +1013,140 @@ export default {
     },
     async handleConfirm(submitModel) {
       console.log(this.productData);
-      let submitFlag = true // 自动聚焦是否可用
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
+      if (submitModel == 'submit') {
 
-          // 判断子表是否有效
-          if (!this.productData.length && submitFlag) {
-            submitFlag = false
-            this.$message.error('请至少选择一个产品')
-          }
+        let submitFlag = true // 自动聚焦是否可用
+        this.$refs['dataForm'].validate((valid) => {
+          if (valid) {
 
-
-          if (this.productData.length) {
-            console.log(this.productData);
-            let totals = {};
-            let totalNum = {};
-            for (let index = 0; index < this.productData.length; index++) {
-              const item = this.productData[index];
-              if (!item.num) {
-                submitFlag = false
-                this.$message.error("产品信息第" + (index + 1) + "行盘点数量不能为空")
-                break
-              }
+            // 判断子表是否有效
+            if (!this.productData.length && submitFlag) {
+              submitFlag = false
+              this.$message.error('请至少选择一个产品')
             }
 
 
-          }
+            if (this.productData.length) {
+              console.log(this.productData);
+              let totals = {};
+              let totalNum = {};
+              for (let index = 0; index < this.productData.length; index++) {
+                const item = this.productData[index];
+                if (!item.num) {
+                  submitFlag = false
+                  this.$message.error("产品信息第" + (index + 1) + "行盘点数量不能为空")
+                  break
+                }
+              }
+
+
+            }
 
 
 
 
-          // 自动聚焦未使用则提交
-          if (submitFlag) {
-            this.dataForm.documentStatus = submitModel
-            const formMethod = this.btnType == 'add' ? addStocktak : editStocktak
-            let arr = []
-            this.productData.forEach(item => {
+            // 自动聚焦未使用则提交
+            if (submitFlag) {
+              this.dataForm.documentStatus = submitModel
+              const formMethod = this.btnType == 'add' ? addStocktak : editStocktak
+              let arr = []
+              this.productData.forEach(item => {
+                let obj = {
+                  batchNumber: item.batchNumber,
+                  diffNum: item.diffNum,
+                  num: item.num,
+                  productsId: item.productsId,
+                  shelfSpaceId: item.shelfSpaceId,
+                  stockNum: item.stockNum,
+                  warehouseId: item.warehouseId
+                }
+                arr.push(obj)
+              });
               let obj = {
-                batchNumber: item.batchNumber,
-                diffNum: item.diffNum,
-                num: item.num,
-                productsId: item.productsId,
-                shelfSpaceId: item.shelfSpaceId,
-                stockNum: item.stockNum,
-                warehouseId: item.warehouseId
+                stockTaking: this.dataForm,
+                stockTakingLineList: arr
               }
-              arr.push(obj)
-            });
-            let obj = {
-              stockTaking: this.dataForm,
-              stockTakingLineList: arr
+
+
+
+
+              // // 提交确认
+              // if (submitModel === 'submit') {
+              //   let flag = await this.$confirm('请确认信息是否正确，提交后不允许修改，是否提交！', '提交确认', { type: 'warning' }).catch(err => false)
+              //   if (!flag) {
+              //     console.log(dataObj)
+              //     return this.btnLoading = false
+              //   }
+              // }
+              console.log("this.productData", obj);
+              this.btnLoading = true
+              formMethod(obj).then(res => {
+                let msg = res.msg
+                if (submitModel == "draft") {
+                  this.submitmethodsTitle = "保存成功"
+                } else {
+                  this.submitmethodsTitle = "提交成功"
+
+                }
+                if (this.btnType == 'edit') {
+                  this.btnText = "继续修改"
+                } else if (this.btnType == 'add') {
+                  this.btnText = "继续新增"
+                }
+                this.tipsvisible = true
+
+                this.btnLoading = false
+
+              }).catch(() => {
+                this.btnLoading = false
+              })
+            } else {
+              this.btnLoading = false
             }
-
-
-
-
-            // // 提交确认
-            // if (submitModel === 'submit') {
-            //   let flag = await this.$confirm('请确认信息是否正确，提交后不允许修改，是否提交！', '提交确认', { type: 'warning' }).catch(err => false)
-            //   if (!flag) {
-            //     console.log(dataObj)
-            //     return this.btnLoading = false
-            //   }
-            // }
-            console.log("this.productData", obj);
-            this.btnLoading = true
-            formMethod(obj).then(res => {
-              let msg = res.msg
-              if (submitModel == "draft") {
-                this.submitmethodsTitle = "保存成功"
-              } else {
-                this.submitmethodsTitle = "提交成功"
-
-              }
-              if (this.btnType == 'edit') {
-                this.btnText = "继续修改"
-              } else if (this.btnType == 'add') {
-                this.btnText = "继续新增"
-              }
-              this.tipsvisible = true
-
-              this.btnLoading = false
-
-            }).catch(() => {
-              this.btnLoading = false
-            })
-          } else {
-            this.btnLoading = false
           }
+        })
+      } else {
+        const formMethod = this.btnType == 'add' ? addStocktak : editStocktak
+        this.dataForm.documentStatus = submitModel
+        let arr = []
+        this.productData.forEach(item => {
+          let obj = {
+            batchNumber: item.batchNumber,
+            diffNum: item.diffNum,
+            num: item.num,
+            productsId: item.productsId,
+            shelfSpaceId: item.shelfSpaceId,
+            stockNum: item.stockNum,
+            warehouseId: item.warehouseId
+          }
+          arr.push(obj)
+        });
+        let obj = {
+          stockTaking: this.dataForm,
+          stockTakingLineList: arr
         }
-      })
+        this.btnLoading = true
+        formMethod(obj).then(res => {
+          let msg = res.msg
+          if (submitModel == "draft") {
+            this.submitmethodsTitle = "保存成功"
+          } else {
+            this.submitmethodsTitle = "提交成功"
+
+          }
+          if (this.btnType == 'edit') {
+            this.btnText = "继续修改"
+          } else if (this.btnType == 'add') {
+            this.btnText = "继续新增"
+          }
+          this.tipsvisible = true
+
+          this.btnLoading = false
+
+        }).catch(() => {
+          this.btnLoading = false
+        })
+      }
 
     },
 

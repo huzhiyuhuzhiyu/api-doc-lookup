@@ -9,7 +9,7 @@
           <!-- <el-button v-if="btnType !== 'look'" type="success" :loading="btnLoading"
             @click="handleConfirm('draft')">保存草稿</el-button> -->
           <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
-            @click="handleConfirm('submit')">提交222</el-button>
+            @click="handleConfirm('submit')">提交</el-button>
           <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>

@@ -292,12 +292,10 @@
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="领料人" prop="personId">
-                          <el-form-item label="领料人" prop="personId">
                           <el-input v-model="collect.personId" :disabled="btnType == 'look' ? true : false"
                             placeholder="领料人" />
                         </el-form-item>
 
-                        </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="领料日期" prop="operationDate">
@@ -687,7 +685,7 @@ export default {
         operationDate: [
           { required: true, message: '领料日期不能为空', trigger: 'change' }
         ],
-    
+
       },
       activeNames2: [],
       collect: {

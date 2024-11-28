@@ -46,7 +46,13 @@
                               </el-select>
                             </el-form-item>
                           </el-col>
-
+                          <el-col :sm="6" :xs="24">
+                            <el-form-item label="退料人" prop="recipientBy">
+                              <user-select v-model="dataForm.recipientBy" placeholder="请选择退料人" clearable
+                                style="width: 100%;" :disabled="btnType == 'look'" @change="hangleSelectSales">
+                              </user-select>
+                            </el-form-item>
+                          </el-col>
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="仓库" prop="warehouseName">
                               <ComSelect-list
@@ -201,7 +207,13 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-
+                      <el-col :sm="6" :xs="24">
+                            <el-form-item label="退料人" prop="recipientBy">
+                              <user-select v-model="dataForm.recipientBy" placeholder="请选择退料人" clearable
+                                style="width: 100%;" :disabled="btnType == 'look'" @change="hangleSelectSales">
+                              </user-select>
+                            </el-form-item>
+                          </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="仓库" prop="warehouseName">
                           <ComSelect-list
@@ -536,6 +548,9 @@ export default {
         orderNo: [{ required: true, message: "请输入单号", trigger: 'blur' }],
         warehouseName: [
           { required: true, message: '仓库不能为空', trigger: 'change' }
+        ],
+        recipientBy: [
+          { required: true, message: '退料人不能为空', trigger: 'change' }
         ],
       },
       inspectionResultsList: [

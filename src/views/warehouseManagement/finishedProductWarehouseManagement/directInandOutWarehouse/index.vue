@@ -34,6 +34,7 @@
                               maxlength="300" />
                           </el-form-item>
                         </el-col>
+                        
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="业务类型" prop="documentType">
                             <el-select v-model="dataForm.businessType" placeholder="业务类型" clearable style="width: 100%;"
@@ -63,6 +64,13 @@
                               @change="changeWarehousex"></ComSelect-list>
                           </el-form-item>
                         </el-col>
+                        <el-col :sm="6" :xs="24" v-if="dataForm.businessType=='outbound_pick_out'||dataForm.businessType=='inbound_return_materials'">
+                            <el-form-item :label="dataForm.businessType=='outbound_pick_out'?'领料人':'退料人'" prop="recipientBy">
+                              <user-select v-model="dataForm.recipientBy" :placeholder="dataForm.businessType=='outbound_pick_out'?'请选择领料人':'请选择退料人'" clearable
+                                style="width: 100%;" :disabled="btnType == 'look'" @change="hangleSelectSales">
+                              </user-select>
+                            </el-form-item>
+                          </el-col>
                         <el-col :sm="6" :xs="24" v-if="dataForm.documentType == 'inbound'">
                           <el-form-item label="检验结果" prop="inspectionResults">
                             <el-select v-model="dataForm.inspectionResults" placeholder="请选择检验结果" style="width: 100%;"
@@ -669,7 +677,8 @@ export default {
         cooperativePartnerId: "",
         approvalFlag: false,
         weightFlag: false,
-        orderDate: this.jnpf.getToday()
+        orderDate: this.jnpf.getToday(),
+        recipientBy:"",
       },
       weightFlagList: [
         { label: "是", value: true },
@@ -698,6 +707,10 @@ export default {
         ],
         weightFlag: [
           { required: true, message: '是否显示比重折扣不能为空', trigger: 'change' }
+        ],
+        recipientBy: [
+          { required: true, message: '领(退)料人不能为空', trigger: 'change' }
+     
         ],
       },
       orderForm: { //获取产品数据 

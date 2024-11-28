@@ -143,8 +143,8 @@
                   </el-col>
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="领料日期" prop="operationDate">
-                      <el-date-picker v-model="collectForm.operationDate" :default-value="new Date()" type="datetime"
-                        value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="领料日期"
+                      <el-date-picker v-model="collectForm.operationDate" :default-value="new Date()" type="date"
+                        value-format="yyyy-MM-dd" style="width: 100%;" placeholder="领料日期"
                         :disabled="btnType == 'look' ? true : false" @change="changDateFun">
                       </el-date-picker>
                     </el-form-item>
@@ -532,9 +532,7 @@ export default {
         operationDate: [
           { required: true, message: '领料日期不能为空', trigger: 'change' }
         ],
-        personId: [
-          { required: true, message: '领料人不能为空', trigger: 'change' }
-        ],
+     
       },
       dataForm: {
         taskMethod: "",

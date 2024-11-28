@@ -216,6 +216,9 @@ export default {
       default: () => { }
     },
     size: String,
+    projectId: {
+      type: String,
+    },
   },
   data() {
     return {
@@ -458,7 +461,7 @@ export default {
         } else if (this.activeName === 'department') {
           this.loading = true
           if (this.isProjectSwitch === '1') {
-            getOrganization({ keyword: this.keyword, organizeId: '0', projectId: this.userInfo.projectId, }).then(res => {
+            getOrganization({ keyword: this.keyword, organizeId: '0', projectId: this.projectId, }).then(res => {
               this.treeData2 = res.data
               this.loading = false
             })
@@ -472,7 +475,7 @@ export default {
         } else if (this.activeName === 'subordinates') {
           this.loading = true
           if (this.isProjectSwitch === '1') {
-            getSubordinates(this.keyword, this.userInfo.projectId).then(res => {
+            getSubordinates(this.keyword, this.projectId).then(res => {
               this.treeData3 = res.data
               this.loading = false
             })
@@ -515,7 +518,7 @@ export default {
       }
       this.nodeId = node.data.id
       if (this.isProjectSwitch === '1') {
-        getImUserSelector(this.nodeId, '', this.userInfo.projectId).then(res => {
+        getImUserSelector(this.nodeId, '', this.projectId).then(res => {
           resolve(res.data.list)
         })
       } else {

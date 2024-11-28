@@ -775,8 +775,8 @@ export default {
       } catch (error) {
       }
     },
-// 打开选择批次号弹框
-openSeleceBatchNumberDialog(data, index) {
+    // 打开选择批次号弹框
+    openSeleceBatchNumberDialog(data, index) {
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库")
       this.batchNumVisible = true
       data.warehouseId = this.dataForm.warehouseId
@@ -933,7 +933,9 @@ openSeleceBatchNumberDialog(data, index) {
         // this.$set(item, 'discount', '')
         this.$set(item, 'proportion', '')
         this.$set(item, 'weight', '')
-
+        this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+        this.$set(item, 'warehouseName', this.dataForm.warehouseName)
+        this.$set(item, 'warehouseType', this.dataForm.warehouseType)
 
 
 
@@ -1129,6 +1131,13 @@ openSeleceBatchNumberDialog(data, index) {
       this.dataForm.warehouseId = data[0].id
       this.dataForm.warehouseName = data[0].name
       this.dataForm.warehouseType = data[0].all.type
+      if (this.productData.length) {
+        this.productData.forEach(item => {
+          this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+          this.$set(item, 'warehouseName', this.dataForm.warehouseName)
+          this.$set(item, 'warehouseType', this.dataForm.warehouseType)
+        });
+      }
     },
     goBack() {
       this.$emit('close', true)
@@ -1202,6 +1211,9 @@ openSeleceBatchNumberDialog(data, index) {
           // }
           if (filteredArray.length) {
             filteredArray.forEach(item => {
+              this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+              this.$set(item, 'warehouseName', this.dataForm.warehouseName)
+              this.$set(item, 'warehouseType', this.dataForm.warehouseType)
               item.taxRates = item.taxRate + "%"
               item.sourceNo = this.dataForm.sourceNo
               item.moveId = this.dataForm.id
@@ -1213,8 +1225,8 @@ openSeleceBatchNumberDialog(data, index) {
               item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
               let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
               item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
-              item.totalAmount=""
-              item.taxAmount=""
+              item.totalAmount = ""
+              item.taxAmount = ""
               item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
               item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
               item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
@@ -1231,7 +1243,7 @@ openSeleceBatchNumberDialog(data, index) {
               }
             });
           }
-          console.log("this.productData",this.productData);
+          console.log("this.productData", this.productData);
           this.productData = filteredArray
           this.dataForm.id = this.productData[0].returnDeliveryNoticeId
           this.formLoading = false

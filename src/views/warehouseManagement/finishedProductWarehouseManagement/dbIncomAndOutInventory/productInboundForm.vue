@@ -111,7 +111,7 @@
                           min-width="160" />
                         <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
-                        min-width="160" />
+                          min-width="160" />
                         <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112"
                           v-if="allocationFlag">
                           <template slot="header">
@@ -339,8 +339,7 @@
                     </el-table-column>
                     <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
-                    <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
-                    min-width="160" />
+                    <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
                     <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112" v-if="allocationFlag">
                       <template slot="header">
                         <span class="required">*</span>库位
@@ -516,8 +515,7 @@
                 <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
                   sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="140" />
-                <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
-                        min-width="160" />
+                <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
                 <el-table-column prop="mainUnit" label="单位" width="80" />
                 <el-table-column prop="productionQuantity" label="生产数量" width="120" />
                 <el-table-column prop="completedQuantity" label="已完成数量" width="130" />
@@ -578,10 +576,10 @@ import { mapGetters, mapState } from 'vuex'
 import busFlow from '@/mixins/generator/busFlow';
 export default {
   components: { CustomerForm, WareHouseForm, BatchNumberForm, Process, recordList },
-  mixins: [flowMixin, busFlow,getProjectList],
+  mixins: [flowMixin, busFlow, getProjectList],
   data() {
     return {
-      isProjectSwitch:"",
+      isProjectSwitch: "",
       shelfSpaceName: "",
       shelfSpaceId: "",
       warehouseRequestObj: {
@@ -611,7 +609,7 @@ export default {
         remark: "",
         sourceNo: "",
         orderDate: this.jnpf.getToday(),
-        projectId:"",
+        projectId: "",
       },
       businessTypes: "inbound_mock_production",
       getWarehouseList,
@@ -1041,6 +1039,9 @@ export default {
             this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
           }
         }
+        this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+        this.$set(item, 'warehouseName', this.dataForm.warehouseName)
+        this.$set(item, 'warehouseType', this.dataForm.warehouseType)
       })
       this.productData = [...this.productData, ...arr]
       this.productData.forEach(item => {
@@ -1181,6 +1182,13 @@ export default {
       this.dataForm.warehouseName = data[0].name
       this.dataForm.projectId = data[0].all.projectId
       this.dataForm.warehouseType = data[0].all.type
+      if (this.productData.length) {
+        this.productData.forEach(item => {
+          this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+          this.$set(item, 'warehouseName', this.dataForm.warehouseName)
+          this.$set(item, 'warehouseType', this.dataForm.warehouseType)
+        });
+      }
       this.$nextTick(() => this.$refs['dataForm'].validateField('warehouseName'))
     },
     // 获取仓库id
@@ -1251,7 +1259,9 @@ export default {
                 this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.waitReceivedQuantity, item.ratio]), 6))
               }
             }
-
+            this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+            this.$set(item, 'warehouseName', this.dataForm.warehouseName)
+            this.$set(item, 'warehouseType', this.dataForm.warehouseType)
             item.ordersId = item.id
           });
           this.productData = data

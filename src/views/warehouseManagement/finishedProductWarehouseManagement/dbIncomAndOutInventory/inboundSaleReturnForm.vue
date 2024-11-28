@@ -57,7 +57,7 @@
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="仓库" prop="warehouseName">
                               <ComSelect-list
-                                :requestObj="{ type: 'normal',  state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }"
+                                :requestObj="{ type: 'normal', state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }"
                                 :dialogTitle="'选择仓库'" :isdisabled="true" v-model="dataForm.warehouseName"
                                 :method="getWarehouseList" placeholder="请选择仓库"
                                 @change="changeWarehousex"></ComSelect-list>
@@ -238,7 +238,7 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="仓库" prop="warehouseName">
                           <ComSelect-list
-                            :requestObj="{ type: 'normal',  state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }"
+                            :requestObj="{ type: 'normal', state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }"
                             :dialogTitle="'选择仓库'" :isdisabled="true" v-model="dataForm.warehouseName"
                             :method="getWarehouseList" placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
                         </el-form-item>
@@ -638,7 +638,7 @@ export default {
       tableDataFlag: false,
     }
   },
- 
+
   async created() {
     await this.getProjectSwitch('system', 'project')
     let objs = { "pageSize": -1, "businessCode": "product" }
@@ -999,7 +999,13 @@ export default {
       this.dataForm.warehouseName = data[0].name
       this.dataForm.warehouseType = data[0].all.type
       this.dataForm.projectId = data[0].all.projectId
-
+      if (this.productData.length) {
+        this.productData.forEach(item => {
+          this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+          this.$set(item, 'warehouseName', this.dataForm.warehouseName)
+          this.$set(item, 'warehouseType', this.dataForm.warehouseType)
+        });
+      }
       if (this.dataForm.warehouseType == 'scrap') {
         this.dataForm.inspectionResults = 'discard'
       } else if (this.dataForm.warehouseType == 'normal') {
@@ -1118,7 +1124,9 @@ export default {
                   this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
                 }
               }
-
+              this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+              this.$set(item, 'warehouseName', this.dataForm.warehouseName)
+              this.$set(item, 'warehouseType', this.dataForm.warehouseType)
             });
           }
           this.productData = filteredArray
@@ -1155,7 +1163,7 @@ export default {
         warehouseType: "",
         approvalFlag: false,
         orderDate: this.jnpf.getToday(),
-        projectId:"",
+        projectId: "",
       }
       this.productData = []
       this.$refs.dataForm.resetFields()

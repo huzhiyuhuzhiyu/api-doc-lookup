@@ -305,7 +305,16 @@ export default {
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
           itemDisabled: true
         },
-
+        {
+          prop: 'processName',
+          label: '工序名称',
+          value: '',
+          type: 'input',
+          itemRules: [{ required: true, trigger: 'blur' }],
+          sm: 6,
+          render: this.dataForm.processName,
+          itemDisabled: true
+        },
         {
           prop: 'mainUnit',
           label: '单位',

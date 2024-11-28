@@ -141,6 +141,7 @@ export default {
   },
   methods: {
     goBack() {
+      console.log(333)
       this.$emit('close')
     },
     init(id, btnType) {

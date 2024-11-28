@@ -83,7 +83,8 @@
                   </div>
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
                     <JNPF-table style="border: 1px solid #e3e7ee;" :hasC="type == 'edit'" hasNO fixedNO
-                      v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table" @row-click="openDetails">
+                      ref="multipleTable" v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table"
+                      @row-click="openDetails">
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
                       <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                       <el-table-column prop="projectName" label="所属项目" width="120"
@@ -370,7 +371,7 @@
                 |
               </div>
               <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                <JNPF-table style="border: 1px solid #e3e7ee;" :hasC="type == 'edit'" hasNO fixedNO
+                <JNPF-table style="border: 1px solid #e3e7ee;" :hasC="type == 'edit'" hasNO fixedNO ref="multipleTable"
                   v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table" @row-click="openDetails">
                   <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
                   <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
@@ -1299,7 +1300,10 @@ export default {
         })
         .catch(() => { })
     }
-  }
+  },
+  updated() {
+    this.$refs['multipleTable'].doLayout()
+  },
 }
 </script>
 <style scoped>

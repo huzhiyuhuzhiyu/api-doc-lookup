@@ -251,7 +251,8 @@ export default {
             tc.searchList = this.PartnerTableSearchList
             tc.clearable = true
             tc.change = this.steelBallChange
-            tc.paramsObj = { prop: tc.prop, tabInd }
+            tc.paramsObj = { prop: tc.prop, tabInd },
+              tc.treeNodeClick = this.treeNodeClick
           } else {
             console.warn(tc.prop + '不在判断条件内')
           }
@@ -563,6 +564,12 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
+    treeNodeClick(data, node, listQuery) {
+      if (listQuery.partnerCategoryId === data.id) return listQuery
+      listQuery.partnerCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
+      listQuery.classAttribute = data.classAttribute
+      return listQuery
+    },
     // 选择型号 带出 密封盖 结构 打字 结构类型 游隙 钢球厂家 油脂 噪音 保持架
     modelChange(val, data, paramsObj) {
       this.$nextTick(() => {

@@ -18,6 +18,7 @@
           <!-- 人员配置 -->
           <JNPF-table :hasC="type != 'look'" @selection-change="handelepersonInfoData" :data="personData"
             style="width: 100%">
+            <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="resourceId" label="人员名称">
               <template slot-scope="scope">
                 <!-- <el-select v-model="scope.row.resourceId" filterable placeholder="请选择" style="width:100%;">
@@ -49,6 +50,7 @@
         <el-tab-pane label="班组" name="work_group">
           <JNPF-table :hasC="type != 'look'" @selection-change="handeleworkgroupInfoData" :data="classData"
             style="width: 100%">
+            <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="resourceId" label="班组名称" ref="workGroup">
               <template slot-scope="scope">
                 <el-input v-model="scope.row.resourceName" placeholder="请输入班组名称" disabled />
@@ -71,6 +73,7 @@
         <el-tab-pane label="设备" name="device">
           <JNPF-table :hasC="type != 'look'" @selection-change="handeledeviceInfoData" :data="equipData"
             style="width: 100%">
+            <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="resourceId" label="设备名称">
               <template slot-scope="scope">
 
@@ -96,6 +99,7 @@
         <el-tab-pane label="工具" name="tool">
           <JNPF-table :hasC="type != 'look'" @selection-change="handeletoolInfoData" :data="toolData"
             style="width: 100%">
+            <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="resourceId" label="工具名称">
               <template slot-scope="scope">
                 <!-- <el-select v-model="scope.row.resourceId" filterable placeholder="请选择" style="width:100%;">
@@ -155,16 +159,18 @@ import { getGroupList, editEquEquipmentAll, getEquEquipmentList, stateEquEquipme
 import PersonnelDialog from './personnel-dialog.vue'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getBimProcessDetail } from '@/api/bimProcess/index'
-
 import PersonSelect from './personSelect.vue'
-
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   components: {
     PersonnelDialog,
     PersonSelect
   },
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       getGroupList,
       WorkgroupRequestObj: {
         code: "",
@@ -311,6 +317,9 @@ export default {
   //  mounted() {
   //   this.getClassName()
   //  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+  },
   methods: {
     // 可以多选
     openSeleceProcessDialog(e, type) {
@@ -324,16 +333,25 @@ export default {
 
       }
       if (type === 'work_group') {
+        if (this.isProjectSwitch === '1') {
+          this.WorkgroupRequestObj.projectId = this.userInfo.projectId
+        }
         this.$nextTick(() => {
           this.$refs['ComSelect-page3'].openDialog()
         })
       }
       if (type === 'device') {
+        if (this.isProjectSwitch === '1') {
+          this.DeviceRequestObj.projectId = this.userInfo.projectId
+        }
         this.$nextTick(() => {
           this.$refs['ComSelect-page'].openDialog()
         })
       }
       if (type === 'tool') {
+        if (this.isProjectSwitch === '1') {
+          this.ToolRequestObj.projectId = this.userInfo.projectId
+        }
         this.$nextTick(() => {
           this.$refs['ComSelect-page2'].openDialog()
         })
@@ -454,6 +472,7 @@ export default {
         this.personData = tempList.map((item, index) => {
           return {
             index: index,
+            projectName: item.projectName ? item.projectName : '',
             resourceId: item.resourceId ? item.resourceId : item.id,
             resourceName: item.resourceName ? item.resourceName : item.fullName.split('/')[0],
             jobNumber: item.jobNumber,
@@ -484,6 +503,7 @@ export default {
         this.classData = tempList.map((item, index) => {
           return {
             index: index,
+            projectName: item.projectName ? item.projectName : '',
             resourceId: item.resourceId ? item.resourceId : item.id,
             resourceName: item.resourceName ? item.resourceName : item.name,
             resourceCode: item.resourceCode ? item.resourceCode : item.code,
@@ -519,6 +539,7 @@ export default {
         this.equipData = tempList.map((item, index) => {
           return {
             index: index,
+            projectName: item.projectName ? item.projectName : '',
             resourceId: item.resourceId ? item.resourceId : item.id,
             resourceName: item.resourceName ? item.resourceName : item.name,
             resourceCode: item.resourceCode ? item.resourceCode : item.code,
@@ -547,6 +568,7 @@ export default {
         this.toolData = tempList.map((item, index) => {
           return {
             index: index,
+            projectName: item.projectName ? item.projectName : '',
             resourceId: item.resourceId ? item.resourceId : item.id,
             resourceName: item.resourceName ? item.resourceName : item.name,
             resourceCode: item.resourceCode ? item.resourceCode : item.code,

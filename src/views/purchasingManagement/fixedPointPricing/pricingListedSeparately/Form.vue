@@ -103,7 +103,6 @@
                         </template>
                       </el-table-column>
 
-
                       <el-table-column prop="price" key="price" label="协议价" min-width="140">
                         <template slot="header">
                           协议价(含税)
@@ -112,7 +111,7 @@
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'price'" :rules="productRules.price">
                             <el-input v-model="scope.row.price" :disabled="type === 'look'" maxlength="20"
-                              placeholder="请输入协议价">
+                              placeholder="协议价">
                               {{ scope.row.price }}
                             </el-input>
                           </el-form-item>
@@ -121,8 +120,8 @@
 
                       <el-table-column prop="taxRate" key="taxRate" label="税率" min-width="140">
                         <template slot="header">
-                          <span class="required">*</span>
                           税率
+                          <span class="required">*</span>
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'taxRate'" :rules="productRules.taxRate">
@@ -146,7 +145,7 @@
                       </el-table-column>
 
                       <el-table-column prop="effectiveTimeStart" key="effectiveTimeStart" label="有效起始时间"
-                        min-width="240">
+                        min-width="180">
                         <template slot="header">
                           <span class="required">*</span>
                           有效起始时间
@@ -155,13 +154,13 @@
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'effectiveTimeStart'"
                             :rules="productRules.effectiveTimeStart">
                             <el-date-picker v-model="scope.row.effectiveTimeStart" type="date" value-format="yyyy-MM-dd"
-                              style="width: 100%;" placeholder="请选择有效起始时间"
+                              style="width: 100%;" placeholder="有效起始时间"
                               :disabled="type == 'look' ? true : false"></el-date-picker>
                           </el-form-item>
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="effectiveTimeEnd" key="effectiveTimeEnd" label="有效结束时间" min-width="240">
+                      <el-table-column prop="effectiveTimeEnd" key="effectiveTimeEnd" label="有效结束时间" min-width="180">
                         <template slot="header">
                           <span class="required">*</span>
                           有效结束时间
@@ -170,7 +169,7 @@
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'effectiveTimeEnd'"
                             :rules="productRules.effectiveTimeEnd">
                             <el-date-picker v-model="scope.row.effectiveTimeEnd" type="date" value-format="yyyy-MM-dd"
-                              style="width: 100%;" placeholder="请选择有效结束时间"
+                              style="width: 100%;" placeholder="有效结束时间"
                               :disabled="type == 'look' ? true : false"></el-date-picker>
                           </el-form-item>
                         </template>
@@ -396,7 +395,7 @@
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'price'" :rules="productRules.price">
                         <el-input v-model="scope.row.price" :disabled="type === 'look'" maxlength="20"
-                          placeholder="请输入协议价">
+                          placeholder="协议价">
                           {{ scope.row.price }}
                         </el-input>
                       </el-form-item>
@@ -405,12 +404,12 @@
 
                   <el-table-column prop="taxRate" key="taxRate" label="税率" min-width="140">
                     <template slot="header">
-                      <span class="required">*</span>
                       税率
+                      <span class="required">*</span>
                     </template>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'taxRate'" :rules="productRules.taxRate">
-                        <el-select v-model="scope.row.taxRate" placeholder="请选择税率" style="width: 100%;"
+                        <el-select v-model="scope.row.taxRate" placeholder="税率" style="width: 100%;"
                           :disabled="type === 'look' ? true : false">
                           <el-option v-for="item in taxRateList" size="small" :key="item.enCode" :label="item.fullName"
                             :value="item.enCode"></el-option>
@@ -442,7 +441,7 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="effectiveTimeStart" key="effectiveTimeStart" label="有效起始时间" min-width="240">
+                  <el-table-column prop="effectiveTimeStart" key="effectiveTimeStart" label="有效起始时间" min-width="220">
                     <template slot="header">
                       <span class="required">*</span>
                       有效起始时间
@@ -451,13 +450,13 @@
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'effectiveTimeStart'"
                         :rules="productRules.effectiveTimeStart">
                         <el-date-picker v-model="scope.row.effectiveTimeStart" type="date" value-format="yyyy-MM-dd"
-                          style="width: 100%;" placeholder="请选择有效起始时间"
+                          style="width: 100%;" placeholder="有效起始时间"
                           :disabled="type == 'look' ? true : false"></el-date-picker>
                       </el-form-item>
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="effectiveTimeEnd" key="effectiveTimeEnd" label="有效结束时间" min-width="240">
+                  <el-table-column prop="effectiveTimeEnd" key="effectiveTimeEnd" label="有效结束时间" min-width="220">
                     <template slot="header">
                       <span class="required">*</span>
                       有效结束时间
@@ -466,7 +465,7 @@
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'effectiveTimeEnd'"
                         :rules="productRules.effectiveTimeEnd">
                         <el-date-picker v-model="scope.row.effectiveTimeEnd" type="date" value-format="yyyy-MM-dd"
-                          style="width: 100%;" placeholder="请选择有效结束时间"
+                          style="width: 100%;" placeholder="有效结束时间"
                           :disabled="type == 'look' ? true : false"></el-date-picker>
                       </el-form-item>
                     </template>
@@ -870,7 +869,7 @@ export default {
           }
         ],
         price: [
-          { required: true, trigger: ['blur'] },
+          // { required: true, trigger: ['blur'] },
           {
             validator: this.formValidate({
               type: 'decimal',
@@ -1010,6 +1009,8 @@ export default {
         newVal.forEach((item) => {
           if ((item.price && item.taxRate) || (item.price && item.taxRate == 0)) {
             item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
+          } else {
+            item.excludingTaxPrice = ''
           }
         })
       },
@@ -1022,7 +1023,7 @@ export default {
         businessCode: 'deputyUnit',
         configKey: `procureDeputyUnit`
       }
-      getBimBusinessDetail(obj).then(res => {
+      getBimBusinessDetail(obj).then((res) => {
         this.isDeputyUnitSwitch = res.data.configValue1
       })
     },
@@ -1104,7 +1105,12 @@ export default {
             colour: item.colour,
             sealingCoverTyping: item.sealingCoverTyping,
             accuracyLevel: item.accuracyLevel,
-            vibrationLevel: item.vibrationLevel
+            vibrationLevel: item.vibrationLevel,
+            oil: item.oil,
+            oilQuantity: item.oilQuantity,
+            clearance: item.clearance,
+            packagingMethod: item.packagingMethod,
+            specialRequire: item.specialRequire,
           })
         })
         if (this.dataFormTwo.data.length) {
@@ -1147,26 +1153,76 @@ export default {
       //调用上传文件接口
       buyFixedPointPricingUploadData(formData)
         .then((res) => {
-          this.$message.success(`数据更新成功`)
-          this.uploadVisib = false
-          this.dataFormTwo.data = res.data
-          this.dataFormTwo.data.map((item) => {
-            return (item.productsCode = item.productCode)
-          })
-          this.dataFormTwo.data.map((item) => {
-            return (item.productsName = item.productName)
-          })
-          this.dataFormTwo.data.map((item) => {
-            return (item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + item.taxRate / 100)))
-          })
-          this.formLoading = false
-          this.loadingText = ''
+          console.log(res.data, 'hhhh')
+          if (!res.data.url) {
+            this.$message.success(`数据更新成功`)
+            this.uploadVisib = false
+            this.dataFormTwo.data = res.data
+            this.dataFormTwo.data.map((item) => {
+              return (item.productsCode = item.productCode)
+            })
+            this.dataFormTwo.data.map((item) => {
+              return (item.productsName = item.productName)
+            })
+            this.dataFormTwo.data.map((item) => {
+              return (item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + item.taxRate / 100)))
+            })
+            this.formLoading = false
+            this.loadingText = ''
+          } else {
+            this.handleMessage(res.data)
+            this.$refs['uploadRef'].clearFiles();
+            this.formLoading = false
+            this.loadingText = ''
+          }
+          this.$refs['uploadRef'].clearFiles();
         })
         .catch((err) => {
           this.$message.error(`文件上传失败`)
           this.formLoading = false
           this.loadingText = ''
         })
+    },
+    // 提示
+    handleMessage(data) {
+      const h = this.$createElement
+      this.$message({
+        type: "error",
+        duration: 0,
+        showClose: true,
+        customClass: 'my-message', // 自定义类名，用于设置样式
+        message: h('div',
+          {
+            style: "padding-right:20px;display:flex;align-items:center;color:#f56c6c;"
+          },
+          [
+            h('p', { style: 'font-size:14px;' }, '导入成功，存在定点定价相关信息错误！'),
+            h('el-button', {
+              props: {
+                type: 'text',
+                size: "mini",
+                icon: 'el-icon-download'
+              },
+              on: {
+                click: () => {
+                  this.downNoProduct(data)
+                }
+              },
+              style: {
+                border: "none",
+                textAlign: "center",
+                // width:"20%",
+                margin: "0 5px 0 5px ",
+              },
+            }, '下载导入错误数据')
+          ]
+        ),
+      })
+      return
+    },
+    // 生成客户产品  下载无产品档案列表
+    downNoProduct(res) {
+      this.jnpf.downloadFile(res.url, res.name)
     },
     // 下载模板
     downLoadTemplate() {
@@ -1181,7 +1237,6 @@ export default {
         a.setAttribute('href', location.origin + '/static/定点定价导入模板.xlsx')
         a.click()
       }
-
     },
     checktaxRate() {
       return (rule, value, callback) => {

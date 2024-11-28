@@ -159,7 +159,7 @@
                       <el-input v-model="scope.row.description" placeholder="请输入说明" :disabled="btnType == 'look' ? true : false" maxlength="200" />
                     </template>
                   </el-table-column>
-                  <el-table-column prop="faultDescription" label="是否完成" width="90">
+                  <el-table-column prop="inspectionResult" label="是否完成" width="90">
                     <template slot-scope="scope">
                       <el-checkbox v-model="scope.row.inspectionResult" true-label="finished" false-label="not_finished" :disabled="btnType == 'look'"></el-checkbox>
                     </template>
@@ -183,24 +183,24 @@
                   <el-table-column type="selection" width="60" align="center" v-if="btnType !== 'look'" key="22" />
                   <el-table-column type="index" width="60" label="序号" align="center"></el-table-column>
                   <el-table-column prop="partCode" label="备件编码" min-width="160" show-overflow-tooltip>
-                    </el-table-column>
-                    <el-table-column prop="partName" label="备件名称" min-width="160" show-overflow-tooltip>
-                    </el-table-column>
-                    <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
-                    </el-table-column>
-                    <el-table-column prop="mainUnit" label="单位" width="120" show-overflow-tooltip>
-                    </el-table-column>
-                    <el-table-column prop="num" label="数量" width="180">
-                      <template slot="header">
-                        <span class="required">*</span>数量
-                      </template>
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'num'" :rules='productRulesling.num'>
-                          <el-input :title="scope.row.num" v-model="scope.row.num" placeholder="请输入数量" :disabled="btnType == 'look'" maxlength="11" style="width: 100%;">
-                          </el-input>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
+                  </el-table-column>
+                  <el-table-column prop="partName" label="备件名称" min-width="160" show-overflow-tooltip>
+                  </el-table-column>
+                  <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
+                  </el-table-column>
+                  <el-table-column prop="mainUnit" label="单位" width="120" show-overflow-tooltip>
+                  </el-table-column>
+                  <el-table-column prop="num" label="数量" width="180">
+                    <template slot="header">
+                      <span class="required">*</span>数量
+                    </template>
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'lines.' + scope.$index + '.' + 'num'" :rules='productRulesling.num'>
+                        <el-input :title="scope.row.num" v-model="scope.row.num" placeholder="请输入数量" :disabled="btnType == 'look'" maxlength="11" style="width: 100%;">
+                        </el-input>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
                   <el-table-column label="操作" width="120" v-if="btnType !== 'look'" key="11">
                     <template slot-scope="scope">
                       <el-button type="text" @click="deltable(scope)" style=" color: #ff3a3a">删除</el-button>
@@ -270,7 +270,7 @@
 <script>
 import UploadImg from "@/components/Generator/components/Upload/UploadImg.vue";
 import { getcategoryTree } from '@/api/basicData/materialSettings'
-import { addequMaintenance, checkmaintenanceList, updateequMaintenance, detailequMaintenance, detailcheckmaintenance, equMaintenancemainte,equRequisitionRecordsproducts } from '@/api/dailyManagement/Maintenance'
+import { addequMaintenance, checkmaintenanceList, updateequMaintenance, detailequMaintenance, detailcheckmaintenance, equMaintenancemainte, equRequisitionRecordsproducts } from '@/api/dailyManagement/Maintenance'
 import { parametersShelveslist } from '@/api/basicData/index'
 import { getOrganizeInfo } from '@/api/permission/organize'
 import { getEquEquipmentList } from '@/api/basicData/index'
@@ -823,10 +823,11 @@ export default {
             this.salesList = res.data
           })
           res.data.lines.forEach((item) => {
-            item.maintenanceItemName = item.itemName,
-              item.maintenanceItemCode = item.itemCode,
-              item.maintenanceItemRequirement = item.itemRequirements,
-              this.dataFormTwo.productData.push(item)
+            item.maintenanceItemName = item.itemName
+            item.maintenanceItemCode = item.itemCode
+            item.maintenanceItemRequirement = item.itemRequirements
+            item.inspectionResult = 'not_finished'
+            this.dataFormTwo.productData.push(item)
           })
           this.limittime(res.data.task.nextMaintenanceTime)
         })

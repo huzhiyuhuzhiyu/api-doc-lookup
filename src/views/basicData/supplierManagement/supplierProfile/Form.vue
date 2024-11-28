@@ -706,7 +706,7 @@ export default {
         // city: [{ required: true, message: '城市不能为空', trigger: 'change' }],
         // area: [{ required: true, message: '区不能为空', trigger: 'change' }],
         // address: [{ required: true, message: '请输入地址', trigger: 'blur' }],
-        taxRate: [{ required: true, message: '请输入税率', trigger: 'blur' }],
+        taxRate: [{ required: true, message: '请输入税率', trigger: 'change' }],
         contacts: [{ required: true, message: '请输入联系人', trigger: 'blur' }],
         includingTaxPrecision: [{ required: true, message: '请输入含税计价精度', trigger: 'blur' }],
         excludingTaxPrecision: [{ required: true, message: '请输入不含税计价精度', trigger: 'blur' }],

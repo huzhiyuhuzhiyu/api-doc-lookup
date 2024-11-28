@@ -20,7 +20,7 @@
         <el-col :span="12">
           <el-form-item label="所属项目" prop="projectId">
             <el-select v-model="dataForm.projectId" placeholder="请选择所属项目"
-              :disabled="btntype || userInfo.projectId !== '1'" style="width:100%">
+              :disabled="dataForm.id || userInfo.projectId !== '1'" style="width:100%">
               <el-option v-for="item in projectIdData" :key="item.id" :label="item.label" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
@@ -306,8 +306,8 @@ export default {
         this.projectIdData = this.projectIdData.filter(item => item.id !== '1')
       } else {
         this.$set(this.dataForm, 'projectId', this.userInfo.projectId)
-        this.tableDataFlag = true
       }
+      this.tableDataFlag = true
       console.log(this.dataForm.projectId, 'pjkjjj');
       this.lines = []
       this.dataForm.id = id || ''

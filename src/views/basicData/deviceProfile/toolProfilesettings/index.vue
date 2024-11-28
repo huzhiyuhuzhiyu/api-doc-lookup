@@ -77,7 +77,7 @@
         <JNPF-table v-if="istable" :data="tableData" :fixedNO="true" :customColumn="true" ref="dataTable" @sort-change="sortChange" custom-column hasC @selection-change="handleSelectionChange">
           <el-table-column prop="code" label="工具编码" min-width="200" sortable="custom" />
           <el-table-column prop="name" label="工具名称" min-width="200" sortable="custom" />
-          <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName"/>
+          <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
           <el-table-column prop="state" label="工具状态" min-width="140" sortable="custom">
             <template slot-scope="{row}">
               <el-tag type="success" disable-transitions v-if="row.state == 'normal'">正常</el-tag>
@@ -85,6 +85,7 @@
               <el-tag type="info" disable-transitions v-if="row.state == 'verification'">检定</el-tag>
               <el-tag disable-transitions v-if="row.state == 'use'">领用</el-tag>
               <el-tag type="danger" disable-transitions v-if="row.state == 'discard'">报废</el-tag>
+              <el-tag type="danger" disable-transitions v-if="row.state == 'abnormal'">异常</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="categoryName" label="分类名称" width="200" sortable="custom" />
@@ -159,7 +160,11 @@ export default {
             { label: "检定", value: "verification" },
             { label: "维修", value: "repair" },
             { label: "领用", value: "use" },
-            { label: "报废", value: "discard" }
+            { label: "报废", value: "discard" },
+            {
+              value: "abnormal",
+              label: "异常"
+            }
           ]
         },
         {
@@ -238,6 +243,10 @@ export default {
           value: "discard",
           label: "报废"
         },
+        {
+          value: "abnormal",
+          label: "异常"
+        }
       ],
       pickerOptions: {
         disabledDate(time) {

@@ -307,7 +307,7 @@ import {
 import { getUnitData, detailUnitData } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getCooperativeData } from '@/api/basicData/index'
 import { getcategoryTree as getcategoryCoop } from '@/api/basicData/materialSettings'
-import { mapGetters } from "vuex"
+import { mapGetters } from 'vuex'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { getProjectList } from '@/api/system/projectManagement'
 export default {
@@ -369,32 +369,35 @@ export default {
       codeConfig: {},
       quickRules: {
         projectId: [{ required: true, message: '请选择所属项目', trigger: 'change' }],
-        code: [{ required: true, message: '请输入产品编码', trigger: 'blur' }, {
-          validator: (rule, value, callback) => {
-            if (!value) {
-              callback()
-            } else if (this.quickForm.code === this.autoDrawingNo) {
-              callback()
-            } else {
-              // this.jnpf.specialCodeUrl 对浏览器无法解析的url字符进行手动转码
-              checkCodeExist({
-                id: this.quickForm.id || '',
-                code: this.jnpf.specialCodeUrl(this.quickForm.code)
-              })
-                .then((res) => {
-                  if (!res.data) {
-                    callback()
-                  } else {
-                    callback(new Error('此产品编码已存在'))
-                  }
+        code: [
+          { required: true, message: '请输入产品编码', trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              if (!value) {
+                callback()
+              } else if (this.quickForm.code === this.autoDrawingNo) {
+                callback()
+              } else {
+                // this.jnpf.specialCodeUrl 对浏览器无法解析的url字符进行手动转码
+                checkCodeExist({
+                  id: this.quickForm.id || '',
+                  code: this.jnpf.specialCodeUrl(this.quickForm.code)
                 })
-                .catch((err) => {
-                  callback(new Error(' '))
-                })
-            }
-          },
-          trigger: 'blur'
-        }],
+                  .then((res) => {
+                    if (!res.data) {
+                      callback()
+                    } else {
+                      callback(new Error('此产品编码已存在'))
+                    }
+                  })
+                  .catch((err) => {
+                    callback(new Error(' '))
+                  })
+              }
+            },
+            trigger: 'blur'
+          }
+        ],
         drawingNo: [
           { required: true, message: '请输入品名规格', trigger: 'blur' },
           {
@@ -668,9 +671,19 @@ export default {
         this.quickForm.projectId = this.userInfo.projectId
       }
 
-
       this.fetchData('CPBM', true)
-      this.quickForm.productSource = 'produce'
+ 
+      if (['spare_parts', 'accessories'].includes(this.listQuery.classAttribute)) {
+        this.productSourceOptions = [{ label: '采购', value: 'purchase' }]
+        this.quickForm.productSource = 'purchase'
+      } else {
+        this.productSourceOptions = [
+          { label: '生产', value: 'produce' },
+          { label: '采购', value: 'purchase' },
+          { label: '外协', value: 'out' }
+        ]
+        this.quickForm.productSource = 'produce'
+      }
     },
     dataFormatting(res) {
       return res.data[0].childrenList
@@ -1256,7 +1269,7 @@ export default {
         })
         this.projectIdOptions = res.data.records
         if (this.listQuery.classAttribute === 'semi_finished') {
-          this.projectIdOptions = this.projectIdOptions.filter(item => item.id !== '1')
+          this.projectIdOptions = this.projectIdOptions.filter((item) => item.id !== '1')
         }
 
         let tcObj = this.superQueryJson.find((item) => item.prop === 'projectName')
@@ -1265,7 +1278,7 @@ export default {
           // 将options赋值为5
           tcObj.options = arr
           if (this.listQuery.classAttribute === 'semi_finished') {
-            tcObj.options = tcObj.options.filter(item => item.id !== '1')
+            tcObj.options = tcObj.options.filter((item) => item.id !== '1')
           }
         }
       })

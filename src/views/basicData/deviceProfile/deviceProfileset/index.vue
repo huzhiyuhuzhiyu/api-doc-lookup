@@ -87,7 +87,7 @@
         <JNPF-table v-if="istable" :data="tableData" ref="dataTable" @sort-change="sortChange" custom-column hasC @selection-change="handleSelectionChange">
           <el-table-column prop="code" label="设备编码" min-width="200" sortable="custom" />
           <el-table-column prop="name" label="设备名称" min-width="200" sortable="custom" />
-          <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName"/>
+          <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
           <el-table-column prop="deviceType" label="设备类型" width="140" sortable="custom">
             <template slot-scope="scope">
               <el-tag type="success" disable-transitions v-if="scope.row.deviceType == 'normal'">正常设备</el-tag>
@@ -122,6 +122,7 @@
               <el-tag type="success" disable-transitions v-if="row.state == 'normal'">正常</el-tag>
               <el-tag type="warning" disable-transitions v-if="row.state == 'repair'">维修</el-tag>
               <el-tag type="danger" disable-transitions v-if="row.state == 'discard'">报废</el-tag>
+              <el-tag type="danger" disable-transitions v-if="row.state == 'abnormal'">异常</el-tag>
               <el-tag disable-transitions v-if="row.state == 'spare'">备用</el-tag>
               <el-tag type="info" disable-transitions v-if="row.state == 'stop'">停用</el-tag>
             </template>
@@ -320,6 +321,10 @@ export default {
             {
               value: "stop",
               label: "停用"
+            },
+            {
+              value: "abnormal",
+              label: "异常"
             }
           ]
         },
@@ -385,6 +390,10 @@ export default {
         {
           value: "stop",
           label: "停用"
+        },
+        {
+          value: "abnormal",
+          label: "异常"
         }
       ],
       pickerOptions: {

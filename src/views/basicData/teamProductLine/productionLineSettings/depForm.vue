@@ -873,7 +873,8 @@ export default {
         list.forEach((item, index) => {
           let obj = {
             index: item._index,
-            projectName: item.projectName, // 所属项目
+            projectName: item.projectName, // 所属项目名称
+            projectId: item.projectId, // 所属项目Id
             name: item.name, // 工序名称
             code: item.code,
             processType: item.processType,

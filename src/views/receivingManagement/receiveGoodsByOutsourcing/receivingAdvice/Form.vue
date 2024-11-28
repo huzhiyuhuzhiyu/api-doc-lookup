@@ -224,7 +224,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="standardValue" label="规值" width="100"></el-table-column>
-                    <el-table-column prop="processName" label="工序" width="160" show-overflow-tooltip  />
+                    <el-table-column prop="processName" label="工序" width="160" show-overflow-tooltip />
                     <el-table-column prop="ordersNo" label="订单号" min-width="200" />
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
@@ -457,7 +457,7 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="standardValue" label="规值" min-width="120"></el-table-column>
-                <el-table-column prop="processName" label="工序" width="160" show-overflow-tooltip  />
+                <el-table-column prop="processName" label="工序" width="160" show-overflow-tooltip />
                 <el-table-column prop="ordersNo" label="订单号" width="180" />
                 <el-table-column prop="remark" label="备注" min-width="200">
                   <template slot-scope="scope">
@@ -898,7 +898,7 @@ export default {
           }
         })
         this.dataFormTwo.productData = this.dataFormTwo.productData.filter(
-          (item) => item.projectId !== this.ProductListRequestObj.projectId
+          (item) => item.projectId === this.ProductListRequestObj.projectId
         )
       } else {
         this.ProductTableItems = [
@@ -1203,7 +1203,7 @@ export default {
           selectArr = selectArr.filter((item1) => {
             const index = this.dataFormTwo.productData.findIndex((item2) => item2.productsId === item1.productsId)
             if (index !== -1) {
-              deletedArray.push(item1.productName)
+              deletedArray.push(item1.drawingNo)
               if (deletedArray.length) {
                 this.$message.error(`已经添加过的产品：${deletedArray.join('、')}`)
               }

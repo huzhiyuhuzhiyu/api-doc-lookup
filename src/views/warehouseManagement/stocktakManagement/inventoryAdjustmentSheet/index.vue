@@ -132,7 +132,7 @@ import {getstockTakingAdjustList} from '@/api/warehouseManagement/stocktak.js'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 export default { 
-  name: 'inventorySheet',
+  name: 'inventoryAdjustmentSheet',
   components: { Form, SuperQuery, ExportForm },
   mixins: [getProjectList],
   data() {

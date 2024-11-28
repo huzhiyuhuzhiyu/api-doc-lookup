@@ -99,7 +99,8 @@
 
               <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
                 <div v-if="btnType != 'look'">
-
+                  <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important"
+                  icon="el-icon-plus" @click="addProduct">选择产品</el-button>|
                   <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important"
                     icon="el-icon-plus" @click="importProductFun">导入产品</el-button>|
                   <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
@@ -142,7 +143,7 @@
                           style="width: 100%;"  /> -->
                       </template>
                     </el-table-column>
-                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==1"/>
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
 
                     <el-table-column prop="mainUnit" label="单位" width="80" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="num" label="数量" width="120">
@@ -242,7 +243,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="clearance" label="游隙" width="120" :key="100">
-                   
+
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list6" :key="index" :disabled="status" :label="item.name"
@@ -387,7 +388,8 @@
 
           <el-collapse-item title="产品信息" name="productInfo">
             <div v-if="btnType == 'add' || btnType == 'edit'">
-
+              <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important"
+              icon="el-icon-plus" @click="addProduct">选择产品</el-button>|
               <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
                 icon="el-icon-plus" @click="importProductFun">导入产品</el-button>|
               <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
@@ -430,8 +432,8 @@
                           style="width: 100%;"  /> -->
                   </template>
                 </el-table-column>
-                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==1"/>
-                    <el-table-column prop="mainUnit" label="单位" width="160" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
+                <el-table-column prop="mainUnit" label="单位" width="160" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="num" label="数量" width="160">
                   <template slot="header">
                     <span class="required">*</span>数量
@@ -490,72 +492,71 @@
                 <el-table-column prop="excludingTaxAmounts" label="金额(不含税)" width="160" show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
-                          style="width: 100%;">
-                          <el-option v-for="(item, index) in list1" :key="index" :disabled="status" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
-                          <el-option v-for="(item, index) in list2" :key="index" :disabled="status" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list3" :key="index" :disabled="status" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="oil" label="油脂" width="120" :key="61">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list4" :key="index" :disabled="status" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list5" :key="index" :disabled="status" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="clearance" label="游隙" width="120" :key="100">
-                   
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list6" :key="index" :disabled="status" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in list1" :key="index" :disabled="status" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
+                      <el-option v-for="(item, index) in list2" :key="index" :disabled="status" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in list3" :key="index" :disabled="status" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="oil" label="油脂" width="120" :key="61">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in list4" :key="index" :disabled="status" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in list5" :key="index" :disabled="status" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="clearance" label="游隙" width="120" :key="100">
 
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list7" :key="index" :disabled="status" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="101">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list8" :key="index" :disabled="status" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in list6" :key="index" :disabled="status" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101">
+
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in list7" :key="index" :disabled="status" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="101">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in list8" :key="index" :disabled="status" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
 
 
                 <el-table-column prop="remark" label="备注" min-width="200">
@@ -660,8 +661,8 @@
                 <el-table-column prop="cooperativePartnerIdText" label="客户名称" sortable="custom" width="200" />
                 <el-table-column prop="customerDrawingNumber" label=" 客户料号" width="150" sortable="custom" />
                 <el-table-column prop="productDrawingNo" label="品名规格" width="180" sortable="custom" />
-                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==1"/>
-                    <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
+                <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
                 <el-table-column prop="num" label="数量" width="80" sortable="custom" />
                 <el-table-column prop="unitPrice" label="单价(含税)" width="130" sortable="custom" />
                 <el-table-column prop="taxRate" label="税率" width="110" sortable="custom">
@@ -684,6 +685,95 @@
         </div>
 
       </el-dialog>
+      <el-dialog title="选择产品" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="allProVisible"
+        lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body>
+
+        <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
+          <div class="JNPF-common-layout-left">
+            <div class="JNPF-common-title">
+              <h2>产品分类</h2>
+              <span class="options">
+                <el-dropdown>
+                  <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
+                    <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
+                    <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </span>
+            </div>
+
+            <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
+              <el-tree ref="treeBox" :data="ProductTreeData" :props="defaultProps" :default-expand-all="expands"
+                highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
+                class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNodeAllProduct">
+                <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
+                  <i
+                    :class="[data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
+                  <span class="text" :title="data.name">{{ data.name }}</span>
+                </span>
+              </el-tree>
+            </el-scrollbar>
+          </div>
+          <div class="JNPF-common-layout-center JNPF-flex-main">
+            <el-row class="JNPF-common-search-box" :gutter="16">
+              <el-form @submit.native.prevent>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-input v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-input v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable />
+                  </el-form-item>
+                </el-col>
+
+
+
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="searchAllProduct()">
+                      {{ $t('common.search') }}</el-button>
+                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetAllProduct()">{{
+                      $t('common.reset')
+                    }}
+                    </el-button>
+                  </el-form-item>
+                </el-col>
+
+              </el-form>
+            </el-row>
+            <div class="JNPF-common-layout-main JNPF-flex-main">
+              <JNPF-table v-loading="listLoading" :data="allproductData" hasC
+                @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
+                <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="drawingNo" label="品名规格" />
+                <el-table-column prop="productCategoryName" label="所属分类" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                  v-if="isProjectSwitch == 1" />
+                <el-table-column prop="mainUnit" label="单位" />
+                <el-table-column prop="inventoryQuantity" label="库存数量">
+                  <template slot-scope="scope">
+                    <el-link type="primary" @click.native="viewFun(scope.row.id, 'inventoryFlag')">
+                      {{ scope.row.inventoryQuantity }}
+                    </el-link>
+                  </template>
+                </el-table-column>
+
+              </JNPF-table>
+              <pagination :total="allProductTotal" :page.sync="ProductListRequestObj.pageNum"
+                :limit.sync="ProductListRequestObj.pageSize" @pagination="initData2" />
+            </div>
+          </div>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="allProVisible = false">{{ $t('common.cancelButton') }}</el-button>
+          <el-button type="primary" :loading="btnLoading" @click="submitAllProduct()">
+            确定</el-button>
+        </span>
+      </el-dialog>
       <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     </div>
   </transition>
@@ -695,11 +785,12 @@ import {
 } from "@/api/masterDataManagement/index"
 import { getQuotationmxLists, addQuotationData, editQuotationMData, getQuotationInfo, denerateQuotationMData, calculatequotationData, calculatequotationSpecData, saleUploadData, saleUploadAmountsCount, exportNoProduct } from "@/api/salesManagement/index";
 import { getCounryData, getPrivateList, deletePrivate, getcategoryTree, privateDetail } from '@/api/basicData/index'
+import { getcategoryTree as productTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getcategoryTrees, getcooperativeProduct } from '@/api/salesManagement/assemblyOrders'
 import { getCooperativeInfo, getCooperativeData } from '@/api/basicData/index'
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表
-import { mapGetters, mapState } from 'vuex' 
+import { mapGetters, mapState } from 'vuex'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
@@ -711,11 +802,11 @@ import { getBimBusinessDetail } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   components: { ExportForm, Process, recordList },
-  mixins: [busFlow, flowMixin,getProjectList],
-  
+  mixins: [busFlow, flowMixin, getProjectList],
+
   data() {
     return {
-      isProjectSwitch:'',
+      isProjectSwitch: '',
       list1: [],
       list2: [],
       list3: [],
@@ -881,8 +972,48 @@ export default {
       flowTaskOperatorRecordList: [],
       endTime: 0,
       isattachmentswitch: '',
+      ProductMethodArr: [
+        {
+          label: "产品分类", classAttribute: "", method: productTree, requeseObj: {
+            classAttribute: "", type: "material",
+          }
+        },
+      ],
+      allproductData: [],
+      allProductTotal: 0,
+
+      ProductTreeData: [],
+      allProVisible:false,
+      ProductListRequestObj: {
+        classAttributeList: [],
+        classAttribute: "",
+        productDrawingNo: "",
+        productCategoryId: "",
+        queryType: 2,
+        saleFlag: true,
+        productStatus: 'enable',
+        productCode: "",
+        productName: "",
+        orderItems: [{
+          "asc": false,
+          "column": ""
+        }, {
+          "asc": false,
+          "column": "create_time"
+        }],
+        pageNum: 1,
+        pageSize: 20,
+      },
+      productData: [],
+      expands: true,
+      refreshTree: true,
+      defaultProps: {
+        children: 'childrenList',
+        label: 'name'
+      },
+      selectArr: [],
     }
-  }, 
+  },
   watch: {
     activeName(val) {
       // 如果切换到订单信息tab并且表格表单处于适配模式，触发计算高度
@@ -910,17 +1041,187 @@ export default {
     },
     ...mapGetters(['userInfo']),
     ...mapState('user', ['token']),
-    
+
   },
   mounted() {
     this.getTaxRateFun()
     this.getBimBusinessDetail()
-    
+
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
   },
   methods: {
+
+      // 点击选择产品
+      addProduct() {
+      this.allProVisible = true
+      let arr = [];
+      this.ProductListRequestObj = {
+        classAttributeList: [],
+        classAttribute: "",
+        productDrawingNo: "",
+        queryType: 2,
+        productStatus: 'enable',
+        saleFlag: true,
+
+        productCategoryId: "",
+        code: "",
+        name: "",
+        orderItems: [{
+          "asc": false,
+          "column": ""
+        }, {
+          "asc": false,
+          "column": "create_time"
+        }],
+        pageNum: 1,
+        pageSize: 20,
+      }
+      this.allproductData = []
+      let successTotal = 0;
+      let tempTreeData = [...this.ProductMethodArr]
+      this.ProductMethodArr.forEach((item, index) => {
+        item.method(item.requeseObj).then(res => {
+          if (Array.isArray(res.data)) {
+            tempTreeData[index] = {
+              id: item.label,
+              name: item.label,
+              classAttribute: item.classAttribute,
+              childrenList: res.data
+            }
+          } else {
+            tempTreeData[index] = {
+              id: item.label,
+              name: item.label,
+              classAttribute: item.classAttribute,
+              childrenList: res.data.records
+            }
+          }
+          if ((++successTotal) === this.ProductMethodArr.length) {
+            this.ProductTreeData = tempTreeData
+            this.initData2()
+          }
+        })
+      });
+
+    },
+      // 获取所有产品列表数据
+      initData2() {
+      this.listLoading = true
+
+      getProducts(this.ProductListRequestObj).then(listRes => {
+        if (Array.isArray(listRes.data)) {
+          this.allproductData = listRes.data
+        } else {
+          this.allproductData = listRes.data.records
+        }
+        this.allProductTotal = listRes.data.total
+        this.$forceUpdate()
+        this.treeLoading = false
+        this.listLoading = false
+      })
+    },
+    // 搜索所有产品 列表
+    searchAllProduct() {
+      this.ProductListRequestObj.pageNum = 1
+      this.initData2()
+    },
+    // 所有产品弹框 重置搜索条件
+    resetAllProduct() {
+      this.ProductListRequestObj = {
+        classAttributeList: [],
+        classAttribute: "",
+        productDrawingNo: "",
+        productCategoryId: "",
+        queryType: 2,
+        saleFlag: true,
+
+        productCode: "",
+        productName: "",
+        orderItems: [{
+          "asc": false,
+          "column": ""
+        }, {
+          "asc": false,
+          "column": "create_time"
+        }],
+        pageNum: 1,
+        pageSize: 20,
+      },
+        this.searchAllProduct()
+    },
+    // 所有产品列表 多选
+    handleSelectionChangeAllPruduct(val) {
+      this.selectArr = val
+
+
+    },
+    submitAllProduct() {
+      this.allProVisible = false
+      this.selectArr.forEach(item => {
+        item.productName = item.name
+        item.productCode = item.code
+        item.productsId = item.id
+        this.$set(item, 'price', item.salesPrice)
+        this.$set(item, 'productDrawingNo', item.drawingNo)
+        item.taxRate = item.taxRate * 1
+        if (item.taxRate) {
+          item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.salesPrice) / (1 + (Number(item.taxRate)) / 100), 2)
+
+        } else {
+          item.excludingTaxPrice = item.salesPrice
+        }
+      });
+      if (this.dataFormTwo.lines.length) {
+        let index = this.dataFormTwo.lines.findIndex(item =>
+          item.productDrawingNo === "" &&
+          item.productsId === "" &&
+          item.num === "" &&
+          item.price === "" &&
+          item.deliveryDate === ""
+        )
+        if (index !== -1) {
+          // 使用 splice 插入 newDataArray
+          this.dataFormTwo.lines.splice(index, 0, ...this.selectArr);
+        } else {
+          this.dataFormTwo.lines = [...this.selectArr, ...this.dataFormTwo.lines,]
+        }
+      }
+    },
+    filterNodeAllProduct(value, data) {
+      if (!value) return true;
+      return data.name.indexOf(value) !== -1;
+    },
+    handleNodeAllProduct(data, node) {
+      if (this.ProductListRequestObj.productCategoryId === data.id) return
+      this.ProductListRequestObj.productCategoryId = data.hasOwnProperty('parentId') ? data.id : ""
+      const nodePath = this.getNodePathProduct(node)
+      this.organizeIdTree = nodePath.map(o => o.id)
+      this.ProductListRequestObj.classAttribute = data.classAttribute
+      this.searchAllProduct()
+    },
+    getNodePathProduct(node) {
+      let fullPath = []
+      const loop = (node) => {
+        if (node.level) fullPath.unshift(node.data)
+        if (node.parent) loop(node.parent)
+      }
+      loop(node)
+      return fullPath
+    },
+    toggleExpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        this.$nextTick(() => {
+          this.$refs.treeBox.setCurrentKey(this.companyId)
+        })
+      })
+    },
+
+
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
 
@@ -1335,8 +1636,32 @@ export default {
       this.tipsvisible = false
     },
     submit() {
-      console.log(this.fileList);
-      this.UploadProduct(this.file)
+      if (this.dataFormTwo.lines.length) {
+        let index = this.dataFormTwo.lines.findIndex(item =>
+          item.customerDrawingNumber === "" &&
+          item.num === "" &&
+          item.unitPrice === "" &&
+          item.productDrawingNo == ""
+        )
+        if (index !== -1) {
+          if (this.dataFormTwo.lines.length == 1) {
+            this.UploadProduct(this.file)
+
+          } else {
+            this.$confirm(`确定导入新的产品数据吗？这会覆盖已有的数据`, `提示`, { type: 'warning' }).then(() => {
+              this.UploadProduct(this.file)
+            }).catch(() => { })
+          }
+        } else {
+          this.$confirm(`确定导入新的产品数据吗？这会覆盖已有的数据`, `提示`, { type: 'warning' }).then(() => {
+            this.UploadProduct(this.file)
+          }).catch(() => { })
+
+        }
+      } else {
+        this.UploadProduct(this.file)
+
+      }
     },
 
     handleFileChange(file) {
@@ -1355,15 +1680,8 @@ export default {
     },
     // 导入产品
     importProductFun() {
-      if (this.dataFormTwo.lines.length) {
-        this.$confirm(`确定导入新的产品数据吗？这会覆盖已有的数据`, `提示`, { type: 'warning' }).then(() => {
-          this.uploadVisib = true
+      this.uploadVisib = true
 
-          // this.$refs.UploadProduct.$el.querySelector('input').click()
-        }).catch(() => { })
-      } else {
-        this.uploadVisib = true
-      }
     },
     // 上传产品
     UploadProduct(data) {

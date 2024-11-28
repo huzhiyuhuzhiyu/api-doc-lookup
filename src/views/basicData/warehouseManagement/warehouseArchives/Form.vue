@@ -322,6 +322,7 @@ export default {
           this.dataForm.state = res.data.state
           this.dataForm.workshop = res.data.workshop
           this.dataForm.position = res.data.position
+          this.dataForm.locationStatus=res.data.locationStatus
           this.dataForm.remark = res.data.remark
           this.dataForm.sort = res.data.sort
           this.dataForm.type = res.data.type
@@ -334,6 +335,12 @@ export default {
             this.tabs[0].tabContent.forEach((tc) => {
               if (tc.prop == 'workshop') {
                 tc.render = true
+              }
+            })
+          }else if (this.dataForm.type == 'out') {
+            this.tabs[0].tabContent.forEach((tc) => {
+              if (tc.prop == 'locationStatus') {
+                this.$set(tc, 'itemDisabled', true)
               }
             })
           }

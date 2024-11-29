@@ -475,6 +475,9 @@ export default {
         boxBarcode: [
           { required: true, message: "请选择目标箱条码", trigger: "change" },
         ],
+        batchNumber: [
+          { required: true, message: "批次号不能为空", trigger: "change" },
+        ],
         num: [
           { required: true, message: "数量不能为空", trigger: "blur" },
           { validator: this.formValidate({ type: "decimal", params: [20, 4], }), trigger: "blur", },
@@ -485,13 +488,17 @@ export default {
         data: [],
       },
       productRules: {
+        batchNumber: [
+          { validator: this.formValidate({ type: 'noEmtry', params: ["", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：批次号${errMsg}`) }] }), trigger: 'blur' },
+          { required: true, trigger: "blur" },
+        ],
         num: [
           { validator: this.formValidate('noZero', '不能为0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：转换数量${errMsg}`) }), trigger: 'blur' },
           { validator: this.formValidate({ type: 'calc', params: [(rowIndex, value) => Number(this.dataFormTwo.data[rowIndex].num) <= Number(this.dataFormTwo.data[rowIndex].availableQuantity), "不能超过原批次数量", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：转换数量${errMsg}`) }] }), trigger: 'blur' },
           // { validator: this.formValidate({ type: 'calc', params: [(rowIndex, value) => Number(this.dataFormTwo.data[rowIndex].num) <= Number(this.dataFormTwo.data[rowIndex].realityTotalNum), "不能超过对应原箱数量", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：转换数量${errMsg}`) }] }), trigger: 'blur' },
           { validator: this.formValidate({ type: 'noEmtry', params: ["", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：转换数量${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: "blur" },
-        ],
+        ]
       },
 
     };

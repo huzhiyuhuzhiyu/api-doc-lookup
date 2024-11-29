@@ -34,7 +34,7 @@ export default {
   created() {
     console.log(this.userInfo, 'userInfo')
     if (this.userInfo.userAccount === 'admin') {
-      // this.getProjectSwitch()
+      this.getProjectSwitch()
     }
   },
   methods: {

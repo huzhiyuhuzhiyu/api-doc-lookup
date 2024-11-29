@@ -467,6 +467,7 @@ export default {
         orderNo: "",
         processName: "",
         productDrawingNo: "",
+        classAttributeList:"",
         stockFlag: true,
         orderItems: [{
           asc: false,

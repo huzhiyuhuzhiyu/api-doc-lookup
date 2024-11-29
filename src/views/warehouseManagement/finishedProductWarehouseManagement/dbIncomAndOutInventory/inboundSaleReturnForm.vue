@@ -624,7 +624,21 @@ export default {
       loadingText: '',
       copyLinesData: [],
       previousValue: "",
-      orderForm: {},
+      orderForm: {
+        cooperativePartnerId: "",
+        drawingNo: "",        // customerProductNo: "",
+        customerProductDrawingNo: "",
+        rdsDate: "",
+        rdeDate: "",
+        classAttributeList: [],
+        pageNum: 1,
+        pageSize: 20,
+        orderNo: "",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }],
+      },
       activeName: "orderInfo",
       classAttributeList: [],
       warehouseCode: "",
@@ -727,23 +741,10 @@ export default {
       this.searchProductFun()
     },
     // 销售发货选择产品——搜索 如果是销售订单  需要计算待出库数量=订单数量-已出库数量  如果是通知单 则直接取接口返回的待出库数量
-    searchProductFun() {
-      this.deliveryDateArr = []
-      this.orderForm = { //获取产品数据
-        cooperativePartnerId: "",
-        drawingNo: "",        // customerProductNo: "",
-        customerProductDrawingNo: "",
-        rdsDate: "",
-        rdeDate: "",
-        classAttributeList: this.classAttributeList,
-        pageNum: 1,
-        pageSize: 20,
-        orderNo: this.dataForm.sourceNo,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }],
-      }
+    searchProductFun() { 
+      this.orderForm.orderNo = this.dataForm.sourceNo
+      this.orderForm.classAttributeList = this.classAttributeList
+
       if (this.deliveryDateArr.length) {
         this.orderForm.rdsDate = this.deliveryDateArr[0]
         this.orderForm.rdeDate = this.deliveryDateArr[1]
@@ -783,6 +784,21 @@ export default {
     // 销售发货选择产品——重置
     resetProductFun() {
       this.deliveryDateArr = []
+      this.orderForm = {
+        cooperativePartnerId: "",
+        drawingNo: "",        // customerProductNo: "",
+        customerProductDrawingNo: "",
+        rdsDate: "",
+        rdeDate: "",
+        classAttributeList: [],
+        pageNum: 1,
+        pageSize: 20,
+        orderNo: "",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }],
+      }
       this.searchProductFun()
 
     },

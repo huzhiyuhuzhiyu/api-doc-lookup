@@ -473,7 +473,7 @@
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.drawingNo" placeholder="品名规格" clearable />
+                    <el-input v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -705,7 +705,26 @@ export default {
       loadingText: '',
       copyLinesData: [],
       previousValue: "",
-      orderForm: {},
+      orderForm:{ //获取产品数据
+        cooperativePartnerId: '',
+        productDrawingNo: "",        // customerProductNo: "",
+        deliveryEndDate: "",
+        deliveryStartDate: "",
+        classAttributeList: [],
+        receiptQueryFlag: true,
+        cooperativePartnerName: "",
+        pageNum: 1,
+        pageSize: 20,
+        orderType: 'procure',
+        receivingStatus: "not_finished",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: ""
+        }],
+      },
       activeName: "orderInfo",
       classAttributeList: [],
       warehouseCode: "",
@@ -825,27 +844,10 @@ export default {
     // 选择产品——搜索
     searchProductFun() {
 
-      this.orderForm = { //获取产品数据
-        cooperativePartnerId: this.dataForm.cooperativePartnerId,
-        drawingNo: "",        // customerProductNo: "",
-        deliveryEndDate: "",
-        deliveryStartDate: "",
-        classAttributeList: this.classAttributeList,
-        receiptQueryFlag: true,
-        cooperativePartnerName: "",
-        pageNum: 1,
-        pageSize: 20,
-        orderType: 'procure',
-        receivingStatus: "not_finished",
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: ""
-        }],
-      }
-      if (this.deliveryDateArr.length) {
+   
+        this.orderForm.classAttributeList= this.classAttributeList
+        this.orderForm.cooperativePartnerId= this.dataForm.cooperativePartnerId
+        if (this.deliveryDateArr.length) {
         this.orderForm.deliveryStartDate = this.deliveryDateArr[0]
         this.orderForm.deliveryEndDate = this.deliveryDateArr[1]
       } else {
@@ -891,6 +893,26 @@ export default {
     // 销售发货选择产品——重置
     resetProductFun() {
       this.deliveryDateArr = []
+      this.orderForm = { //获取产品数据
+        cooperativePartnerId: '',
+        productDrawingNo: "",        // customerProductNo: "",
+        deliveryEndDate: "",
+        deliveryStartDate: "",
+        classAttributeList: [],
+        receiptQueryFlag: true,
+        cooperativePartnerName: "",
+        pageNum: 1,
+        pageSize: 20,
+        orderType: 'procure',
+        receivingStatus: "not_finished",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: ""
+        }],
+      }
       this.searchProductFun()
 
     },

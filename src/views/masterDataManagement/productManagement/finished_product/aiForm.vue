@@ -937,13 +937,14 @@ export default {
               ele.options = ele.options.filter((item) => item.value !== '1')
             })
             if (!this.userInfo.projectId) {
-              this.dataForm.projectId = this.userInfo.projectId
+              this.$set(this.dataForm, 'projectId', this.userInfo.projectId)
               ele.itemDisabled = false
             } else {
               if (this.userInfo.projectId === '1') {
                 ele.itemDisabled = false
               } else {
-                this.dataForm.projectId = this.userInfo.projectId
+                console.log(this.userInfo.projectId, '////')
+               this.$set(this.dataForm, 'projectId', this.userInfo.projectId)
                 ele.itemDisabled = true
               }
             }

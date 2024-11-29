@@ -105,8 +105,8 @@
 
                       <el-table-column prop="price" key="price" label="协议价" min-width="140">
                         <template slot="header">
-                          协议价(含税)
                           <span class="required">*</span>
+                          协议价(含税)
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'price'" :rules="productRules.price">
@@ -120,8 +120,8 @@
 
                       <el-table-column prop="taxRate" key="taxRate" label="税率" min-width="140">
                         <template slot="header">
-                          税率
                           <span class="required">*</span>
+                          税率
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'taxRate'" :rules="productRules.taxRate">
@@ -389,8 +389,8 @@
 
                   <el-table-column prop="price" key="price" label="协议价" min-width="140">
                     <template slot="header">
-                      协议价(含税)
                       <span class="required">*</span>
+                      协议价(含税)
                     </template>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'price'" :rules="productRules.price">
@@ -404,8 +404,8 @@
 
                   <el-table-column prop="taxRate" key="taxRate" label="税率" min-width="140">
                     <template slot="header">
-                      税率
                       <span class="required">*</span>
+                      税率
                     </template>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'taxRate'" :rules="productRules.taxRate">

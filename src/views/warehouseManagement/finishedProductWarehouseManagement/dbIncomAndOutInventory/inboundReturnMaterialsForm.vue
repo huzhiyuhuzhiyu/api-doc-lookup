@@ -588,7 +588,15 @@ export default {
       loadingText: '',
       copyLinesData: [],
       previousValue: "",
-      orderForm: {},
+      orderForm: {
+
+        orderNo: "",
+        productClassAttributeList: [],
+        pageNum: 1,
+        pageSize: 20,
+        productDrawingNo: "",
+        productCode: "",
+      },
       classAttribute: "",
       activeName: "orderInfo",
       productClassAttributeList: [],
@@ -710,7 +718,6 @@ export default {
     },
     // 销售发货选择产品——搜索 如果是销售订单  需要计算待出库数量=订单数量-已出库数量  如果是通知单 则直接取接口返回的待出库数量
     searchProductFun() {
-      this.deliveryDateArr = []
 
       // { label: "销售发货", value: "outbound_sale_send" },
       //   { label: "销售退货", value: "inbound_sale_return" },
@@ -722,15 +729,9 @@ export default {
       //   { label: "外协退料", value: "inbound_external_return" },
       //   { label: "外协收货", value: "inbound_external" },
       //   { label: "外协退货", value: "outbound_external" },  
-      this.orderForm = {
 
-        orderNo: this.dataForm.sourceNo,
-        productClassAttributeList: this.productClassAttributeList,
-        pageNum: 1,
-        pageSize: 20,
-        productDrawingNo: "",
-        productCode: "",
-      }
+      this.orderForm.productClassAttributeList = this.productClassAttributeList
+      this.orderForm.orderNo = this.dataForm.sourceNo
       if (this.dataForm.businessType == 'outbound_pick_out') {
         this.orderForm.pickingFlag = true
       }
@@ -762,6 +763,15 @@ export default {
     // 销售发货选择产品——重置
     resetProductFun() {
       this.deliveryDateArr = []
+      this.orderForm = {
+
+        orderNo: this.dataForm.sourceNo,
+        productClassAttributeList: this.productClassAttributeList,
+        pageNum: 1,
+        pageSize: 20,
+        productDrawingNo: "",
+        productCode: "",
+      }
       this.searchProductFun()
 
     },

@@ -466,14 +466,10 @@
 
               <!-- 采购收退货 -->
               <el-form @submit.native.prevent>
+               
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.orderNo" placeholder="退货单号" clearable />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-input v-model="orderForm.drawingNo" placeholder="品名规格" clearable />
+                    <el-input v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -710,7 +706,25 @@ export default {
       loadingText: '',
       copyLinesData: [],
       previousValue: "",
-      orderForm: {},
+      orderForm:  { //获取产品数据
+        cooperativePartnerId: "",
+        productDrawingNo: "",        // customerProductNo: "",
+        customerProductDrawingNo: "",
+        deliveryEndDate: "",
+        deliveryStartDate: "",
+        classAttributeList: [],
+        pageNum: 1,
+        pageSize: 20,
+        orderNo: "",
+        receivingStatus: "not_finished",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: ""
+        }],
+      },
       activeName: "orderInfo",
       classAttributeList: [],
       warehouseCode: "",
@@ -817,29 +831,12 @@ export default {
       this.searchProductFun()
     },
     // 销售发货选择产品——搜索 如果是销售订单  需要计算待出库数量=订单数量-已出库数量  如果是通知单 则直接取接口返回的待出库数量
-    searchProductFun() {
-      this.deliveryDateArr = []
+    searchProductFun() { 
 
-      this.orderForm = { //获取产品数据
-        cooperativePartnerId: "",
-        drawingNo: "",        // customerProductNo: "",
-        customerProductDrawingNo: "",
-        deliveryEndDate: "",
-        deliveryStartDate: "",
-        classAttributeList: this.classAttributeList,
-        pageNum: 1,
-        pageSize: 20,
-        orderNo: this.dataForm.sourceNo,
-        receivingStatus: "not_finished",
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: ""
-        }],
-      }
-      if (this.deliveryDateArr.length) {
+     
+        this.orderForm.classAttributeList= this.classAttributeList
+        this.orderForm.orderNo= this.dataForm.sourceNo
+        if (this.deliveryDateArr.length) {
         this.orderForm.deliveryStartDate = this.deliveryDateArr[0]
         this.orderForm.deliveryEndDate = this.deliveryDateArr[1]
       } else {
@@ -884,6 +881,25 @@ export default {
     // 销售发货选择产品——重置
     resetProductFun() {
       this.deliveryDateArr = []
+      this.orderForm = { //获取产品数据
+        cooperativePartnerId: "",
+        productDrawingNo: "",        // customerProductNo: "",
+        customerProductDrawingNo: "",
+        deliveryEndDate: "",
+        deliveryStartDate: "",
+        classAttributeList: [],
+        pageNum: 1,
+        pageSize: 20,
+        orderNo: "",
+        receivingStatus: "not_finished",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: ""
+        }],
+      }
       this.searchProductFun()
 
     },

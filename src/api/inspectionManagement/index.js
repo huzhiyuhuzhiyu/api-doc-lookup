@@ -73,7 +73,7 @@ export function getSamplingQuantityByProductId(data) {
 /**检验单 根据工序id获取默认抽检数量 */
 export function getSamplingQuantityByProcessId(data) {
   return request({
-    url: `/api/zgt/process/sampling/rules/batch/cal/num?processId=${data.processId}&num=${data.num}`,
+    url: `/api/zgt/process/sampling/rules/cal/num?processId=${data.processId}&num=${data.num}`,
     method: 'GET',
   })
 }

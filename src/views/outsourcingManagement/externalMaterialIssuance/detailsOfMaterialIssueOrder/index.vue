@@ -208,7 +208,7 @@ export default {
       paymentCycleList: [],
       orderForm: {},
       orderFormlist: {
-        notifyType: 'external',
+        externalFlag: 1,
         returnDeliveryType: 'delivery',
         orderNo: '',
         partnerCode: '',

@@ -485,14 +485,15 @@
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
 
+             
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.orderNo" placeholder="任务单号" clearable />
+                    <el-input v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable />
+                    <el-input v-model="orderForm.productCode" placeholder="产品编码" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -668,7 +669,6 @@ export default {
       copyLinesData: [],
       orderForm: {
         orderNo: "",
-        orderType: "",
         productDrawingNo: "",
         classAttribute: "",
         stockFlag: true,
@@ -682,6 +682,7 @@ export default {
         superQuery: {},
         pageNum: 1,
         pageSize: 20,
+        productCode:"",
       },
       classAttribute: "",
       activeName: "orderInfo",

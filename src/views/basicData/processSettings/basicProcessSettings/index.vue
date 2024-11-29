@@ -174,6 +174,7 @@
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
+      
       <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false" :limit="1"
         :on-preview="handlePreview" drag :on-remove="handleRemove" :on-change="handleFileChange" ref="uploadRef">
         <i class="el-icon-upload"></i>
@@ -188,9 +189,9 @@
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
-        <!-- <el-button type="primary" @click="saveSubmit()">
+        <el-button type="primary" @click="saveSubmit()">
           提交
-        </el-button> -->
+        </el-button>
       </span>
     </el-dialog>
     <!-- <UserRelationList v-if="userRelationListVisible" ref="UserRelationList" @refreshDataList="getOrganizeList" /> -->
@@ -198,7 +199,7 @@
 </template>
 
 <script>
-import { getBimProcessList, deleteBimProcess } from '@/api/bimProcess/index'
+import { getBimProcessList, deleteBimProcess, importProcessList } from '@/api/bimProcess/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import JNPFForm from "./Form"
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -382,7 +383,7 @@ export default {
       formData.append('file', data)
       //调用上传文件接口
 
-      uploadBomData(formData)
+      importProcessList(formData)
         .then((res) => {
           if (!res.data) {
             this.$message.success(`导入成功`)

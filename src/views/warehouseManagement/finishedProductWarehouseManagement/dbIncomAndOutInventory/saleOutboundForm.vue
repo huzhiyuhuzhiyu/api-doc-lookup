@@ -54,14 +54,16 @@
                           </el-col>
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="仓库" prop="warehouseName">
-                              <ComSelect-list :requestObj="{ type: 'normal', state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }" :dialogTitle="'选择仓库'" :isdisabled="true"
-                                v-model="dataForm.warehouseName" :method="getWarehouseList"
-                                placeholder="请选择仓库"></ComSelect-list>
+                              <ComSelect-list
+                                :requestObj="{ type: 'normal', state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }"
+                                :dialogTitle="'选择仓库'" :isdisabled="true" v-model="dataForm.warehouseName"
+                                :method="getWarehouseList" placeholder="请选择仓库"></ComSelect-list>
                             </el-form-item>
                           </el-col>
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="单据日期" prop="orderDate">
-                              <el-date-picker v-model="dataForm.orderDate" type="date" :clearable="false" :disabled="btnType == 'look' ? true : false" value-format="yyyy-MM-dd"
+                              <el-date-picker v-model="dataForm.orderDate" type="date" :clearable="false"
+                                :disabled="btnType == 'look' ? true : false" value-format="yyyy-MM-dd"
                                 style="width: 100%;" placeholder="请选择单据日期"></el-date-picker>
                             </el-form-item>
                           </el-col>
@@ -97,7 +99,8 @@
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
-                    <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" /> 
+                        <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
+                          min-width="160" />
 
                         <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
                           <template slot="header">
@@ -196,44 +199,45 @@
                               <el-input v-model="dataForm.sourceNo" placeholder="请输入业务单号" disabled maxlength="300" />
                             </el-form-item>
                           </el-col> -->
-                          <el-col :sm="6" :xs="24">
-                            <el-form-item label="业务类型" prop="businessType">
-                              <el-select v-model="dataForm.businessType" placeholder="请选择业务类型" style="width: 100%;"
-                                @change="selectSourceTypeFun" disabled>
-                                <el-option v-for="(item, index) in sourceTypeList" :key="index" :label="item.label"
-                                  :value="item.value"></el-option>
-                              </el-select>
-                            </el-form-item>
-                          </el-col>
-                          <el-col :sm="6" :xs="24">
-                            <el-form-item label="客户" prop="cooperativePartnerId">
-                              <el-input v-model="dataForm.partnerName" placeholder="请选择所属客户" disabled>
-                              </el-input>
-                            </el-form-item>
-                          </el-col>
-                          <el-col :sm="6" :xs="24">
-                            <el-form-item label="仓库" prop="warehouseName">
-                              <ComSelect-list :requestObj="{ type: 'normal', state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }" :dialogTitle="'选择仓库'" :isdisabled="true" 
-                                v-model="dataForm.warehouseName" :method="getWarehouseList"
-                                placeholder="请选择仓库"></ComSelect-list>
-                            </el-form-item>
-                          </el-col>
-                          <el-col :sm="6" :xs="24">
-                            <el-form-item label="单据日期" prop="orderDate">
-                              <el-date-picker v-model="dataForm.orderDate" type="date" :clearable="false" :disabled="btnType == 'look' ? true : false" value-format="yyyy-MM-dd"
-                                style="width: 100%;" placeholder="请选择单据日期"></el-date-picker>
-                            </el-form-item>
-                          </el-col>
-                          <el-col :sm="12" :xs="24">
-                            <el-form-item label="备注" prop="remark">
-                              <el-input v-model="dataForm.remark" placeholder="请输入备注"
-                                :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2"
-                                maxlength="200" />
-                            </el-form-item>
-                          </el-col>
-                        </el-row>
-                      </el-form>
-                    </el-collapse-item>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="业务类型" prop="businessType">
+                          <el-select v-model="dataForm.businessType" placeholder="请选择业务类型" style="width: 100%;"
+                            @change="selectSourceTypeFun" disabled>
+                            <el-option v-for="(item, index) in sourceTypeList" :key="index" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="客户" prop="cooperativePartnerId">
+                          <el-input v-model="dataForm.partnerName" placeholder="请选择所属客户" disabled>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="仓库" prop="warehouseName">
+                          <ComSelect-list
+                            :requestObj="{ type: 'normal', state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }"
+                            :dialogTitle="'选择仓库'" :isdisabled="true" v-model="dataForm.warehouseName"
+                            :method="getWarehouseList" placeholder="请选择仓库"></ComSelect-list>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="单据日期" prop="orderDate">
+                          <el-date-picker v-model="dataForm.orderDate" type="date" :clearable="false"
+                            :disabled="btnType == 'look' ? true : false" value-format="yyyy-MM-dd" style="width: 100%;"
+                            placeholder="请选择单据日期"></el-date-picker>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="12" :xs="24">
+                        <el-form-item label="备注" prop="remark">
+                          <el-input v-model="dataForm.remark" placeholder="请输入备注"
+                            :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2" maxlength="200" />
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+                  </el-form>
+                </el-collapse-item>
 
 
 
@@ -387,7 +391,7 @@
                   sortable="custom" />
                 <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
-                    <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
+                <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
                 <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                 <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="160">
                 </el-table-column>
@@ -472,11 +476,11 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 export default {
   components: { CustomerForm, BatchNumberForm, Process, recordList },
-  mixins: [flowMixin, busFlow,getProjectList],
+  mixins: [flowMixin, busFlow, getProjectList],
   data() {
     return {
       isProjectSwitch: '',
-   
+
 
       batchNumVisible: false,
       wareHouseVisible: false,
@@ -512,8 +516,8 @@ export default {
         id: "",
         warehouseType: "",
         approvalFlag: false,
-        orderDate:this.jnpf.getToday(),
-        projectId:"",
+        orderDate: this.jnpf.getToday(),
+        projectId: "",
       },
       customerInfo: {},//所选客户信息
       getWarehouseList,
@@ -577,7 +581,22 @@ export default {
       loadingText: '',
       copyLinesData: [],
       previousValue: "",
-      orderForm: {},
+      orderForm: {
+        cooperativePartnerId: "",
+        drawingNo: "",        // customerProductNo: "",
+        customerProductDrawingNo: "",
+        deliveryStartTime: "",
+        deliveryEndTime: "",
+        classAttributeList: [],
+        deliverQueryFlag: true,
+        pageNum: 1,
+        pageSize: 20,
+        orderNo: [],
+        orderItems: [{
+          asc: false,
+          column: ""
+        }],
+      },
       activeName: "orderInfo",
       classAttributeList: [],
       warehouseCode: "",
@@ -592,7 +611,7 @@ export default {
       tableDataFlag: false,
     }
   },
- 
+
   async created() {
     await this.getProjectSwitch('system', 'project')
     this.isProjectSwitchFlag = true
@@ -668,22 +687,8 @@ export default {
     },
     // 销售发货选择产品——搜索 如果是销售订单  需要计算待出库数量=订单数量-已出库数量  如果是通知单 则直接取接口返回的待出库数量
     searchProductFun() {
-      this.orderForm = { //获取产品数据
-        cooperativePartnerId: "",
-        drawingNo: "",        // customerProductNo: "",
-        customerProductDrawingNo: "",
-        deliveryStartTime: "",
-        deliveryEndTime: "",
-        classAttributeList: this.classAttributeList,
-        deliverQueryFlag: true,
-        pageNum: 1,
-        pageSize: 20,
-        orderNo: "",
-        orderItems: [{
-          asc: false,
-          column: ""
-        }],
-      }
+      this.orderForm.classAttributeList = this.classAttributeList
+      this.orderForm.orderNo = this.dataForm.orderNo
       if (this.deliveryDateArr.length) {
         this.orderForm.deliveryStartTime = this.deliveryDateArr[0]
         this.orderForm.deliveryEndTime = this.deliveryDateArr[1]
@@ -722,7 +727,22 @@ export default {
     // 销售发货选择产品——重置
     resetProductFun() {
       this.deliveryDateArr = []
-
+      this.orderForm = { //获取产品数据
+        cooperativePartnerId: "",
+        drawingNo: "",        // customerProductNo: "",
+        customerProductDrawingNo: "",
+        deliveryStartTime: "",
+        deliveryEndTime: "",
+        classAttributeList: [],
+        deliverQueryFlag: true,
+        pageNum: 1,
+        pageSize: 20,
+        orderNo: [],
+        orderItems: [{
+          asc: false,
+          column: ""
+        }],
+      }
       this.searchProductFun()
 
     },
@@ -1052,8 +1072,8 @@ export default {
         id: "",
         warehouseType: "",
         approvalFlag: false,
-        orderDate:this.jnpf.getToday(),
-        projectId:"",
+        orderDate: this.jnpf.getToday(),
+        projectId: "",
       }
       this.productData = []
       this.$refs.dataForm.resetFields()

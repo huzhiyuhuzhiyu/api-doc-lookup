@@ -496,7 +496,7 @@
       </el-dialog>
       <ComSelect-page ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" title="选择产品" treeTitle="产品分类"
         :methodArr="ProductMethodArr" :listMethod="detailpurchaseOrderList" :listRequestObj="ProductListRequestObj"
-        :searchList="ProductTableSearchList" :elementShow="false" multiple />
+        :searchList="ProductTableSearchList" :elementShow="false" multiple :renderTree="false" />
       <el-dialog title="扫码录入" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
         :show-close="true" :visible.sync="scanDialog" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px"
         @close="closeScanDiaFun()">
@@ -1172,6 +1172,7 @@ export default {
             projectName: item.projectName, // 所属项目
             productSource: item.productSource, // 产品来源 采购
             classAttribute: item.classAttribute,
+            orderType: item.orderType,
             purchaseOrderId: item.purchaseOrderId,
             productsId: item.productsId, // 产品id
             productName: item.name, // 产品名称
@@ -1198,6 +1199,8 @@ export default {
             deliveryDate: '' // 交期
           })
         })
+        let orderTypeFlag = this.hasDifferentOrderType(list)
+        if (orderTypeFlag) return this.$message.error('只能选择相同外协订单类型的明细订单')
         if (this.dataFormTwo.productData.length) {
           const deletedArray = []
           selectArr = selectArr.filter((item1) => {
@@ -1218,7 +1221,15 @@ export default {
         // this.$nextTick(() => { this.getApproverData() })
       }
     },
+    hasDifferentOrderType(arr) {
+      const codes = new Set()
 
+      for (const item of arr) {
+        codes.add(item.orderType)
+      }
+
+      return codes.size > 1 // 如果有多个不同的代码，则返回 true
+    },
     // 监听主数量输入
     watchnums(row, index) {
       if (!row.receivedQuantity) {

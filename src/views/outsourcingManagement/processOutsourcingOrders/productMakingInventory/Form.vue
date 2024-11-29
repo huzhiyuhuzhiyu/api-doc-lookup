@@ -79,9 +79,11 @@
                       @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
                       id="table" border height="460">
                       <el-table-column type="selection" width="55" align="center" fixed="left"
-                        :key="1"></el-table-column>
-                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" :key="2" />
+                        :key="0"></el-table-column>
+                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" :key="1" />
                       <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
+                        :key="2"></el-table-column>
+                      <el-table-column prop="productName" label="产品名称" width="120" v-if="isProductNameSwitch === '1'"
                         :key="3"></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
                         :key="4">
@@ -327,6 +329,7 @@ export default {
   data() {
     return {
       isDeputyUnitSwitch: '',
+      isProductNameSwitch: '',
       tableFlag: false,
       isattachmentswitch: '',
       datafilelist: [],
@@ -751,13 +754,19 @@ export default {
   mounted() {
     this.getProductClassFun()
   },
-  created() {
+  async created() {
+    await this.getProductNameSwitch('product', 'enable_productName')
     this.getDeputyUnit()
     this.getBimBusinessDetail()
     this.fetchData('EPDH')
     this.getBusInfo()
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     getDeputyUnit() {
       let obj = {
         businessCode: 'deputyUnit',
@@ -1161,6 +1170,7 @@ export default {
         console.log(data, 'pp')
         return {
           projectName: item.projectName,
+          productName: item.productName,
           projectId: item.projectId,
           productDrawingNo: item.productDrawingNo,
           productCode: item.productCode,

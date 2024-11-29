@@ -63,7 +63,8 @@
               v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="productDrawingNo" label="毛坯规格" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="productCode" label="毛坯编码" width="150" sortable="custom" />
-            <!-- <el-table-column prop="productName" label="毛坯名称" min-width="180" sortable="custom" /> -->
+            <el-table-column prop="productName" label="毛坯名称" min-width="180" sortable="custom"
+              v-if="isProductNameSwitch === '1'" />
             <el-table-column prop="productCategoryName" label="毛坯分类" width="120" sortable="custom" />
             <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
             <el-table-column prop="weight" label="重量(kg)" width="90" />
@@ -107,6 +108,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isProductNameSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
@@ -270,11 +272,17 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
     this.getDeputyUnit()
     this.initData()
   },
 
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     getDeputyUnit() {
       let obj = {
         businessCode: 'deputyUnit',
@@ -516,7 +524,7 @@ export default {
       } else {
         let tempList = JSON.parse(JSON.stringify(this.selectData))
         let hasItemList = []
-  
+
         let msg = this.selectData.every(item => item.externalProductsId)
         console.log(msg, 'ooo')
         if (msg) {

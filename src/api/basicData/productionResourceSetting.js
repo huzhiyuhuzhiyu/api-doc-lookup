@@ -59,6 +59,16 @@ export function saleUploadroutingModel(data) {
     data
   })
 }
+
+// 导入
+export function importRoutingModel(data) {
+  return request({
+    url: `/api/mes/production/resource/import`,
+    method: 'post',
+    data
+  })
+}
+
 export function errordatalist(data) {
   return request({
     url: `/api/mes/production/resource/export/error`,

@@ -214,6 +214,13 @@
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
+      <div style="margin-bottom: 10px;" v-if="isProjectSwitch === '1'">
+        <el-select v-model="importProjectId" placeholder="请选择所属项目" style="width: 100%;" filterable
+          :disabled="!userInfo.projectId ? false : userInfo.projectId === '1' ? false : true">
+          <el-option v-for="item in projectIdOptions" :key="item.id" :label="item.name" :value="item.id"></el-option>
+        </el-select>
+      </div>
+
       <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false" :limit="1"
         :on-preview="handlePreview" drag :on-remove="handleRemove" :on-change="handleFileChange" ref="uploadRef">
         <i class="el-icon-upload"></i>
@@ -348,6 +355,7 @@ export default {
   name: 'finished_product',
   data() {
     return {
+      importProjectId: '',
       exportFormVisible: false,
       quickVisible: false,
       quickForm: {
@@ -1497,6 +1505,11 @@ export default {
     // 导入
     importForm() {
       // this.$refs.UploadProduct.$el.querySelector('input').click()
+      if (this.userInfo.projectId !== '1') {
+        this.importProjectId = this.userInfo.projectId
+      } else {
+        this.importProjectId = ''
+      }
       this.uploadVisib = true
     },
     handleRemove(file, fileList) { },
@@ -1524,6 +1537,9 @@ export default {
       formData.append('file', data)
       // formData.append('productCategoryId', this.listQuery.productCategoryId)
       formData.append('classAttribute', this.listQuery.classAttribute)
+      if (this.isProjectSwitch === '1') {
+        formData.append('projectId', this.importProjectId)
+      }
       //调用上传文件接口
       if (this.configFlag) {
         uploadCpProductData(formData)
@@ -1584,6 +1600,7 @@ export default {
       this.$refs['uploadRef'].clearFiles()
     },
     saveSubmit() {
+      if (!this.importProjectId) return this.$message.error('请选择所属项目');
       this.UploadProduct(this.file)
     },
     // 提示

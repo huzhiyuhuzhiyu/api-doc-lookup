@@ -19,7 +19,7 @@
                       v-model="scope.row.drawingNo" ref="ComSelect-page" @change="productChange"
                       :tableItems="ProductTableItems" :placeholder="'请选择产品'" title="选择产品" treeTitle="产品分类"
                       :methodArr="ProductMethodArr" :listMethod="getProductList" :listRequestObj="ProductListRequestObj"
-                      :paramsObj="{ scope }" :searchList="ProcessTableSearchList"
+                      :paramsObj="{ scope }" :searchList="ProductTableSearchList"
                       :listDataFormatting="listDataFormatting" />
                   </el-form-item>
                 </template>
@@ -37,12 +37,9 @@
                 </template>
               </el-table-column>
               <el-table-column prop="processName" label="工序名称" width="135" show-overflow-tooltip>
-                <template slot="header">
-                  <span class="required">*</span>
-                  工序名称
-                </template>
+
                 <template slot-scope="scope">
-                  <el-form-item :prop="'data.' + scope.$index + '.' + 'processName'" :rules="productRule.processName">
+                  <el-form-item>
                     <!-- 工序选择弹窗  -->
                     <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeProcessClick"
                       v-model="scope.row.processName" ref="ComSelect-page" @change="onOrganizeChangeTwo"
@@ -153,7 +150,7 @@ export default {
           }
         ],
         productStatus: 'enable',
-        productSource: 'out',
+        // productSource: 'out',
         pageNum: 1,
         pageSize: 20
         // queryType: 3
@@ -353,7 +350,8 @@ export default {
     // 弹窗节点的点击
     treeNodeClick(data, node, listQuery) {
       if (listQuery.partnerCategoryId === data.id) return listQuery
-      listQuery.partnerCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
+      // listQuery.partnerCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
+      listQuery.productCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
       listQuery.classAttribute = data.classAttribute
       return listQuery
     },

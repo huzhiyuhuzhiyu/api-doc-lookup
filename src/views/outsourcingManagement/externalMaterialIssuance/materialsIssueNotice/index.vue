@@ -224,7 +224,7 @@ export default {
         partnerName: '',
         pageNum: 1,
         pageSize: 20,
-        notifyType: 'external',
+        externalFlag: 1,
         returnDeliveryType: 'delivery',
         rdeDate: '',
         rdsDate: '',

@@ -517,11 +517,11 @@ export default {
       this.title.includes('生产巡检') ? (this.title = this.title.replace('检验', '')) : ''
       this.setDataFormItems()
       if (this.dataForm.processId) {
-         this.dataForm.inspectionMethod = this.scope.processInspectionMethod
-      } else{
+        this.dataForm.inspectionMethod = this.scope.processInspectionMethod
+      } else {
         this.dataForm.inspectionMethod = this.scope.productInspectionMethod
       }
-     
+
       if (this.dataForm.inspectionMethod) {
         if (this.dataForm.inspectionMethod === 'all') {
           this.dataForm.samplingQuantity = this.dataForm.inspectionQuantity
@@ -551,7 +551,7 @@ export default {
           if (this.dataForm.processId) {
             const _data = { processId: this.dataForm.processId, num: this.dataForm.inspectionQuantity }
             let res = await getSamplingQuantityByProcessId(_data).catch(() => false)
-            this.$set(this.dataForm, 'samplingQuantity', res.data[0].spotCheckNum)
+            this.$set(this.dataForm, 'samplingQuantity', res.data)
           } else {
             const _data = [{ productsId: this.dataForm.productsId, num: this.dataForm.inspectionQuantity }]
             let res = await getSamplingQuantityByProductId(_data).catch(() => false)
@@ -930,11 +930,18 @@ export default {
         // this.dataForm.unqualifiedQuantity = 0
         this.inspectionResultsChange('qualified', scope)
       } else if (val === 'spot_check') {
-        const _data = [{ productsId: this.dataForm.productsId, num: this.dataForm.inspectionQuantity }]
-        let res = await getSamplingQuantityByProductId(_data).catch(() => false)
 
-        this.dataForm.samplingQuantity = res.data[0].spotCheckNum
-        this.autosamplingQuantity = res.data[0].spotCheckNum
+        if (this.dataForm.processId) {
+          const _data = { processId: this.dataForm.processId, num: this.dataForm.inspectionQuantity }
+          let res = await getSamplingQuantityByProcessId(_data).catch(() => false)
+          this.$set(this.dataForm, 'samplingQuantity', res.data)
+          this.autosamplingQuantity = res.data
+        } else {
+          const _data = [{ productsId: this.dataForm.productsId, num: this.dataForm.inspectionQuantity }]
+          let res = await getSamplingQuantityByProductId(_data).catch(() => false)
+          this.$set(this.dataForm, 'samplingQuantity', res.data[0].spotCheckNum)
+          this.autosamplingQuantity = res.data[0].spotCheckNum
+        }
 
         // 抽检
         this.dataForm.inspectionMethod = val

@@ -88,3 +88,12 @@ export function updatebimProcessPrice (data) {
     data
   })
 }
+
+// 获取工序分页
+export function importProcessList (data) {
+  return request({
+    url: '/api/mes/bimProcess/import',
+    method: 'post',
+    data
+  })
+}

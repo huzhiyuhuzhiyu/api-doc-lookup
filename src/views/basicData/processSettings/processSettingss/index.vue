@@ -177,9 +177,9 @@
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
-        <!-- <el-button type="primary" @click="saveSubmit()">
+        <el-button type="primary" @click="saveSubmit()">
           提交
-        </el-button> -->
+        </el-button>
       </span>
     </el-dialog>
   </div>
@@ -187,7 +187,7 @@
 
 <script>
 import JNPFForm from './Form'
-import { getProcessList, detailProcess, deleteProcess } from '@/api/basicData/processSettingss'
+import { getProcessList, detailProcess, importProcess, deleteProcess } from '@/api/basicData/processSettingss'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -400,7 +400,7 @@ export default {
       formData.append('file', data)
       //调用上传文件接口
 
-      uploadBomData(formData)
+      importProcess(formData)
         .then((res) => {
           if (!res.data) {
             this.$message.success(`导入成功`)

@@ -51,6 +51,15 @@ export function checkBimRoutingCode(code, id) {
     })
 }
 
+// 工艺路线导入
+
+export function importProcess(data) {
+    return request({
+        url: `/api/mes/bimRouting/import`,
+        method: 'POST',
+        data
+    })
+  }
 
 
 export function getWorkListMap(data) {

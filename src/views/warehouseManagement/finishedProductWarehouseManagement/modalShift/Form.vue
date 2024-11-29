@@ -107,8 +107,11 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="targetBatchNumber" label="目标产品批次号" width="230" key="targetBatchNumber">
+                      <template slot="header">
+                        <span class="required">*</span>目标产品批次号
+                      </template>
                       <template slot-scope="scope">
-                        <el-form-item :prop="'data.' + scope.$index + '.' + 'targetBatchNumber'">
+                        <el-form-item :prop="'data.' + scope.$index + '.' + 'targetBatchNumber'" :rules='productRules.targetBatchNumber'>
                           <el-select v-model="scope.row.targetBatchNumber" filterable remote reserve-keyword placeholder="请选择目标产品批次号" style="width:100%" clearable :disabled="btnType == 'look'" :remote-method="remoteMethod" :loading="loading" @focus="action">
                             <el-option v-for="item in options" :key="item.value" :label="item.value" :value="item.value">
                             </el-option>
@@ -244,8 +247,11 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="targetBatchNumber" label="目标产品批次号" width="230" key="targetBatchNumber">
+                  <template slot="header">
+                    <span class="required">*</span>目标产品批次号
+                  </template>
                   <template slot-scope="scope">
-                    <el-form-item :prop="'data.' + scope.$index + '.' + 'targetBatchNumber'">
+                    <el-form-item :prop="'data.' + scope.$index + '.' + 'targetBatchNumber'" :rules='productRules.targetBatchNumber'>
                       <el-select v-model="scope.row.targetBatchNumber" filterable remote reserve-keyword placeholder="请选择目标产品批次号" style="width:100%" clearable :disabled="btnType == 'look'" :remote-method="remoteMethod" :loading="loading" @focus="action">
                         <el-option v-for="item in options" :key="item.value" :label="item.value" :value="item.value">
                         </el-option>
@@ -348,6 +354,7 @@ export default {
         ]
       },
       productRules: {
+        targetBatchNumber: [{ required: true, trigger: 'change' }],
         targetShelfSpaceName: [{ required: true, trigger: 'change' }],
         targetProductDrawingNo: [{ required: true, trigger: 'change' }],
         originBoxBarcode: [{ required: true, trigger: 'change' }],

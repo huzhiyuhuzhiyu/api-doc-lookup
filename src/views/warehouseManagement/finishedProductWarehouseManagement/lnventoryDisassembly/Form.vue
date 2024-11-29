@@ -122,13 +122,16 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="batchNumber" label="目标批次号" width="230" show-overflow-tooltip>
+                      <template slot="header">
+                        <span class="required">*</span>目标批次号
+                      </template>
                       <template slot-scope="scope">
-                        <!-- <el-input v-model="scope.row.batchNumber" placeholder="请输入批次号"
-                      :disabled="btnType=='look'" /> -->
-                        <el-select v-model.trim="scope.row.batchNumber" filterable remote reserve-keyword placeholder="请输入批次号" style="width: 100%" clearable :disabled="btnType == 'look'" :remote-method="remoteMethod" :loading="loading" @focus="actionbat">
-                          <el-option v-for="item in options" :key="item.value" :label="item.value" :value="item.value">
-                          </el-option>
-                        </el-select>
+                        <el-form-item :prop="'data.' + scope.$index + '.' + 'batchNumber'" :rules="productRules.batchNumber">
+                          <el-select v-model.trim="scope.row.batchNumber" filterable remote reserve-keyword placeholder="请输入批次号" style="width: 100%" clearable :disabled="btnType == 'look'" :remote-method="remoteMethod" :loading="loading" @focus="actionbat">
+                            <el-option v-for="item in options" :key="item.value" :label="item.value" :value="item.value">
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
                       </template>
                     </el-table-column>
                     <!-- <el-table-column prop="boxBarcode" label="目标箱条码" width="220">
@@ -540,6 +543,7 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
+        batchNumber: '',
         orderNo: '',
         id: '',
         approvalFlag: false,
@@ -573,9 +577,9 @@ export default {
         transferDate: [
           { required: true, message: "拆卸日期不能为空", trigger: "blur" },
         ],
-        // batchNumber: [
-        //   { required: true, message: "原批次号不能为空", trigger: "blur" },
-        // ],
+        batchNumber: [
+          { required: true, message: "原批次号不能为空", trigger: "change" },
+        ],
         // warehouseId: [
         //   { required: true, message: "仓库不能为空", trigger: "change" },
         // ],

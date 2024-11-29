@@ -264,6 +264,8 @@ export default {
         availableFlag: 0, // 可用数标识（0 否 1是）默认否
         inventoryFlag: 0, // 库存数标识（0 否 1是）默认否
         occupancyFlag: 0, // 占用数标识（0 否 1是）默认否
+        virtuallyFlag:false,
+        scrapFlag: false,
         orderItems: [{
           asc: false,
           column: ""
@@ -298,10 +300,20 @@ export default {
       inventorySpaceList(this.listQuery).then(res => {
         this.treeLoading = false
         this.listLoading = false
-        if (!res.data.whPage.records.length) return
-        this.tableData = res.data.whPage.records
-        this.total = res.data.whPage.total
-        this.totalData = res.data.stockSts
+        if (!res.data.whPage.records.length){
+          console.log(6666);
+          this.tableData=[]
+          this.total=0
+          this.totalData.totalInventory=0
+          this.totalData.totalAvailable=0
+          this.totalData.totalOccupancy=0
+        
+        } else{
+
+          this.tableData = res.data.whPage.records
+          this.total = res.data.whPage.total
+          this.totalData = res.data.stockSts
+        }
 
       }).catch(err => {
         this.treeLoading = false

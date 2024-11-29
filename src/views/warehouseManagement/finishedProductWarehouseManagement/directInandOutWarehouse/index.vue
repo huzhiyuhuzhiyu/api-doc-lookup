@@ -645,7 +645,7 @@ export default {
         { label: "外协收货", value: "inbound_external" },
         { label: "直接入库", value: "inbound_other" },
         { label: "直接出库", value: "outbound_other" },
-      ], 
+      ],
       batchNumVisible: false,
       wareHouseVisible: false,
       // 选择批次号请求条件
@@ -896,6 +896,7 @@ export default {
         if (flag == 'unitFlag') this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
         if (flag == 'proportionFlag') this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type);
         console.log("this.calculateQuantityFlag", this.calculateQuantityFlag);
+        this.dataForm.weightFlag = this.calculateQuantityFlag == 1 ? true : false
         this.tableDataFlag = true
         this.listLoading = false
 
@@ -1424,7 +1425,7 @@ export default {
         if (this.btnType == 'add') this.fetchData("CKDH")
 
       }
-      if (val == 'inbound_sale_return' ||val=='inbound_production'||val=='inbound_order_production'|| val == 'inbound_purchase' || val == 'inbound_return_materials' || val == 'inbound_external_return' || val == 'inbound_external' || val == 'inbound_other') {
+      if (val == 'inbound_sale_return' || val == 'inbound_production' || val == 'inbound_order_production' || val == 'inbound_purchase' || val == 'inbound_return_materials' || val == 'inbound_external_return' || val == 'inbound_external' || val == 'inbound_other') {
         // if ( val == 'inbound_other') {
         this.dataForm.documentType = 'inbound'
         if (this.btnType == 'add') this.fetchData("RKDH")
@@ -1644,8 +1645,8 @@ export default {
               }
             })
           }
-
           if (this.productData.length) {
+
             let totals = {};
             let totalNum = {};
             for (let index = 0; index < this.productData.length; index++) {
@@ -1655,7 +1656,28 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能为空")
                 break
               }
-
+              if (!item.costPrice) {
+                submitFlag = false
+                this.$message.error("产品信息第" + (index + 1) + "行单价不能为空或为0")
+                break
+              }
+              if ((this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'outbound_purchase' || this.dataForm.businessType == 'outbound_external_send' || this.dataForm.businessType == 'inbound_external') && this.calculateQuantityFlag == 1) {
+                if (!item.weight) {
+                  submitFlag = false
+                  this.$message.error("产品信息第" + (index + 1) + "行重量不能为空或为0")
+                  break
+                }
+                if (!item.proportion) {
+                  submitFlag = false
+                  this.$message.error("产品信息第" + (index + 1) + "行比重不能为空或为0")
+                  break
+                }
+                if (!item.discount) {
+                  submitFlag = false
+                  this.$message.error("产品信息第" + (index + 1) + "行折扣不能为空或为0")
+                  break
+                }
+              }
             }
 
 

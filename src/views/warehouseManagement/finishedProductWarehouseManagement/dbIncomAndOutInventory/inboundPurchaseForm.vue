@@ -138,9 +138,9 @@
 
                         <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
                           v-if="dataForm.weightFlag == true">
-                          <template slot="header">
+                          <!-- <template slot="header">
                             <span class="required">*</span>重量(kg)
-                          </template>
+                          </template> -->
                           <template slot-scope="scope">
                             <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                               v-model="scope.row.weight" placeholder="重量"></el-input>
@@ -148,9 +148,9 @@
                         </el-table-column>
                         <el-table-column prop="proportion" label="比重" width="140" :key="727"
                           v-if="dataForm.weightFlag == true">
-                          <template slot="header">
+                          <!-- <template slot="header">
                             <span class="required">*</span>比重
-                          </template>
+                          </template> -->
                           <template slot-scope="scope">
                             <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                               v-model="scope.row.proportion" placeholder="比重"></el-input>
@@ -158,9 +158,9 @@
                         </el-table-column>
                         <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
                           v-if="dataForm.weightFlag == true">
-                          <template slot="header">
+                          <!-- <template slot="header">
                             <span class="required">*</span>折扣(0~1)
-                          </template>
+                          </template> -->
                           <template slot-scope="scope">
                             <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                               v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
@@ -342,9 +342,9 @@
 
                     <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
                       v-if="dataForm.weightFlag == true">
-                      <template slot="header">
+                      <!-- <template slot="header">
                         <span class="required">*</span>重量(kg)
-                      </template>
+                      </template> -->
                       <template slot-scope="scope">
                         <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                           v-model="scope.row.weight" placeholder="重量"></el-input>
@@ -352,9 +352,9 @@
                     </el-table-column>
                     <el-table-column prop="proportion" label="比重" width="140" :key="727"
                       v-if="dataForm.weightFlag == true">
-                      <template slot="header">
+                      <!-- <template slot="header">
                         <span class="required">*</span>比重
-                      </template>
+                      </template> -->
                       <template slot-scope="scope">
                         <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                           v-model="scope.row.proportion" placeholder="比重"></el-input>
@@ -362,9 +362,9 @@
                     </el-table-column>
                     <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
                       v-if="dataForm.weightFlag == true">
-                      <template slot="header">
+                      <!-- <template slot="header">
                         <span class="required">*</span>折扣(0~1)
-                      </template>
+                      </template> -->
                       <template slot-scope="scope">
                         <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                           v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
@@ -1255,23 +1255,23 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能为空或为0")
                 break
               }
-              if (this.dataForm.weightFlag) {
-                if (!item.discount) {
-                  submitFlag = false
-                  this.$message.error("产品信息第" + (index + 1) + "行折扣不能为空")
-                  break
-                }
-                if (!item.proportion) {
-                  submitFlag = false
-                  this.$message.error("产品信息第" + (index + 1) + "行比重不能为空")
-                  break
-                }
-                if (!item.weight) {
-                  submitFlag = false
-                  this.$message.error("产品信息第" + (index + 1) + "行重量不能为空")
-                  break
-                }
-              }
+              // if (this.dataForm.weightFlag) {
+              //   if (!item.discount) {
+              //     submitFlag = false
+              //     this.$message.error("产品信息第" + (index + 1) + "行折扣不能为空")
+              //     break
+              //   }
+              //   if (!item.proportion) {
+              //     submitFlag = false
+              //     this.$message.error("产品信息第" + (index + 1) + "行比重不能为空")
+              //     break
+              //   }
+              //   if (!item.weight) {
+              //     submitFlag = false
+              //     this.$message.error("产品信息第" + (index + 1) + "行重量不能为空")
+              //     break
+              //   }
+              // }
 
 
               if (Number(item.num) > Number(item.ordersNum)) {

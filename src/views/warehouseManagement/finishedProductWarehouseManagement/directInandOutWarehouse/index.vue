@@ -86,7 +86,7 @@
 
                         <!-- v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'inbound_external'"> -->
                         <el-col :sm="6" :xs="24"
-                          v-if="(dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'inbound_external') && calculateQuantityFlag == 1">
+                          v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'inbound_external'">
                           <el-form-item label="是否显示比重折扣" prop="weightFlag">
                             <el-select v-model="dataForm.weightFlag" placeholder="是否显示比重折扣" style="width: 100%;"
                               :disabled="btnType == 'look' ? true : false">
@@ -171,9 +171,7 @@
 
                       <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
                         v-if="dataForm.weightFlag == true">
-                        <template slot="header">
-                          <span class="required">*</span>重量(kg)
-                        </template>
+                  
                         <template slot-scope="scope">
                           <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                             v-model="scope.row.weight" placeholder="重量"></el-input>
@@ -181,9 +179,7 @@
                       </el-table-column>
                       <el-table-column prop="proportion" label="比重" width="140" :key="727"
                         v-if="dataForm.weightFlag == true">
-                        <template slot="header">
-                          <span class="required">*</span>比重
-                        </template>
+                        
                         <template slot-scope="scope">
                           <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                             v-model="scope.row.proportion" placeholder="比重"></el-input>
@@ -191,9 +187,7 @@
                       </el-table-column>
                       <el-table-column prop="discount" label="折扣折扣(0~1)" width="140" :key="717"
                         v-if="dataForm.weightFlag == true">
-                        <template slot="header">
-                          <span class="required">*</span>折扣(0~1)
-                        </template>
+                  
                         <template slot-scope="scope">
                           <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                             v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
@@ -1661,23 +1655,23 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行单价不能为空或为0")
                 break
               }
-              if ((this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'outbound_purchase' || this.dataForm.businessType == 'outbound_external_send' || this.dataForm.businessType == 'inbound_external') && this.calculateQuantityFlag == 1) {
-                if (!item.weight) {
-                  submitFlag = false
-                  this.$message.error("产品信息第" + (index + 1) + "行重量不能为空或为0")
-                  break
-                }
-                if (!item.proportion) {
-                  submitFlag = false
-                  this.$message.error("产品信息第" + (index + 1) + "行比重不能为空或为0")
-                  break
-                }
-                if (!item.discount) {
-                  submitFlag = false
-                  this.$message.error("产品信息第" + (index + 1) + "行折扣不能为空或为0")
-                  break
-                }
-              }
+              // if ((this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'outbound_purchase' || this.dataForm.businessType == 'outbound_external_send' || this.dataForm.businessType == 'inbound_external') && this.calculateQuantityFlag == 1) {
+              //   if (!item.weight) {
+              //     submitFlag = false
+              //     this.$message.error("产品信息第" + (index + 1) + "行重量不能为空或为0")
+              //     break
+              //   }
+              //   if (!item.proportion) {
+              //     submitFlag = false
+              //     this.$message.error("产品信息第" + (index + 1) + "行比重不能为空或为0")
+              //     break
+              //   }
+              //   if (!item.discount) {
+              //     submitFlag = false
+              //     this.$message.error("产品信息第" + (index + 1) + "行折扣不能为空或为0")
+              //     break
+              //   }
+              // }
             }
 
 

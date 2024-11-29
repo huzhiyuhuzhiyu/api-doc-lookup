@@ -1142,6 +1142,7 @@ export default {
     // 产品组件回调
     addth(id, data) {
       console.log(data, 'ooo')
+
       if (data.length) {
         let selectArr = []
         console.log('0000')
@@ -1150,6 +1151,7 @@ export default {
         list.forEach((item, index) => {
           selectArr.push({
             productSource: item.productSource, // 产品来源 采购
+            orderType: item.orderType,
             classAttribute: item.classAttribute,
             purchaseOrderId: item.purchaseOrderId,
             productsId: item.productsId, // 产品id
@@ -1177,13 +1179,14 @@ export default {
             deliveryDate: '' // 交期
           })
         })
-
+        let orderTypeFlag = this.hasDifferentOrderType(list)
+        if (orderTypeFlag) return this.$message.error('只能选择相同外协订单类型的明细订单')
         if (this.dataFormTwo.data.length) {
           const deletedArray = []
           selectArr = selectArr.filter((item1) => {
             const index = this.dataFormTwo.data.findIndex((item2) => item2.productsId === item1.productsId)
             if (index !== -1) {
-              deletedArray.push(item1.productName)
+              deletedArray.push(item1.drawingNo)
               if (deletedArray.length) {
                 this.$message.error(`已经添加过的产品：${deletedArray.join('、')}`)
               }
@@ -1205,6 +1208,15 @@ export default {
         // 审批
         // this.$nextTick(() => { this.getApproverData() })
       }
+    },
+    hasDifferentOrderType(arr) {
+      const codes = new Set()
+
+      for (const item of arr) {
+        codes.add(item.orderType)
+      }
+
+      return codes.size > 1 // 如果有多个不同的代码，则返回 true
     },
     changeclick(e) {
       if (this.dataFormTwo.data.length) {
@@ -1810,6 +1822,7 @@ export default {
           if (value == 'submit') {
             this.dataForm.inspectionStatus = 'inspected'
           }
+          this.dataForm.notifyType = this.dataFormTwo.data[0].orderType
           if (this.datafilelist.length) {
             this.datafilelist.map((item, index) => {
               item.bimAttachments = {
@@ -1846,7 +1859,7 @@ export default {
                   purchaseQuantity: it.purchaseQuantity ? it.purchaseQuantity : '',
                   purchaseQuantity2: it.purchaseQuantity2 ? it.purchaseQuantity2 : '',
                   ordersId: it.ordersId ? it.ordersId : it.purchaseOrderId,
-                  notifyType: 'external',
+                  notifyType: item.orderType,
                   inspectionResults: 'qualified',
                   qualifiedQuantity: it.deliveryQuantity ? it.deliveryQuantity : '',
                   id: '',
@@ -1881,7 +1894,7 @@ export default {
                 purchaseQuantity: it.purchaseQuantity ? it.purchaseQuantity : '',
                 purchaseQuantity2: it.purchaseQuantity2 ? it.purchaseQuantity2 : '',
                 ordersId: item.ordersId ? item.ordersId : item.purchaseOrderId,
-                notifyType: 'external',
+                notifyType: item.orderType,
                 inspectionResults: 'qualified',
                 qualifiedQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
                 // id: item.id ? item.id : '',

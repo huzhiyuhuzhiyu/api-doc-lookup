@@ -799,6 +799,8 @@ export default {
       if (!this.list.length) return this.$message.error('请选择您要新建的订单')
       let flag = this.hasDifferentCooperativePartnerCode(this.list)
       if (flag) return this.$message.error('只能选择相同供应商的明细订单')
+      let orderTypeFlag = this.hasDifferentOrderType(this.list)
+      if (orderTypeFlag) return this.$message.error('只能选择相同外协订单类型的明细订单')
       console.log(this.list)
       this.formVisible = true
       this.$nextTick(() => {
@@ -814,7 +816,15 @@ export default {
 
       return codes.size > 1 // 如果有多个不同的代码，则返回 true
     },
+    hasDifferentOrderType(arr) {
+      const codes = new Set()
 
+      for (const item of arr) {
+        codes.add(item.orderType)
+      }
+
+      return codes.size > 1 // 如果有多个不同的代码，则返回 true
+    },
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'

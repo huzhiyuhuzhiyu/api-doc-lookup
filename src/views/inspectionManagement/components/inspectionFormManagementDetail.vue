@@ -963,6 +963,11 @@ export default {
         this.formLoading = false
       }
     },
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     // 提交
     async handleConfirm(submitModel) {
       this.btnLoading = true

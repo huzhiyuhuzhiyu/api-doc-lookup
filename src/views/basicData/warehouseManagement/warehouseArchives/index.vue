@@ -753,7 +753,7 @@ export default {
                 sortCode: 30,
                 type: 2,
                 systemId: '600691840022287813',
-                urlAddress: '/pages/apply/warehouse/finishProduct/scanCodeInbound/index?warehouseCode=' + this.currentWarehouseInfo.code
+                urlAddress: '/pages/apply/warehouse/finishProduct/dbIncomAndOutInventory/index?warehouseCode=' + this.currentWarehouseInfo.code
             },
             {
                 category: 'App',

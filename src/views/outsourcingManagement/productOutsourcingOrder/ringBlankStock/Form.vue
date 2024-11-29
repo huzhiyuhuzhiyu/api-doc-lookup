@@ -109,7 +109,7 @@
                               title="选择工序" treeTitle="工序分类" :methodArr="ProcessMethodArr"
                               :listMethod="getBimProcessList" :listRequestObj="ProcessListRequestObj"
                               :paramsObj="{ scope }" :searchList="ProcessTableSearchList"
-                              :listDataFormatting="listDataFormatting" />
+                              :listDataFormatting="listDataFormatting" :beforeOpen="beforeOpen" />
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -318,14 +318,12 @@ import { getbimProductAttributesList, getbimProductAttributes } from '@/api/mast
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import { getBimProcessList } from '@/api/bimProcess/index'
-import getProjectList from '@/mixins/generator/getProjectList'
 
 export default {
   components: {
     SourceArea,
     Process
   },
-  mixins: [getProjectList],
 
   data() {
     return {
@@ -754,7 +752,7 @@ export default {
     this.getProductClassFun()
   },
   async created() {
-    await this.getProjectSwitch('system', 'project')
+
 
     this.getBimBusinessDetail()
     this.getDeputyUnit()
@@ -913,6 +911,13 @@ export default {
         // 审批
         // this.$nextTick(() => { this.getApproverData() })
       }
+    },
+    async beforeOpen(paramsObj) {
+      console.log(paramsObj, 'lll')
+      if (this.isProjectSwitch === '1') {
+        this.ProcessListRequestObj.projectId = paramsObj.scope.row.projectId
+      }
+      return true
     },
     // 配置资源
     handlerOpenSource(index, type) {
@@ -1159,93 +1164,52 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    init(data, type, sourceType) {
+    init(data, type, isProjectSwitch) {
       let arr = []
-      if (sourceType === 'ring') {
-        arr = data.map((item) => {
-          console.log(data, 'pp')
-          return {
-            projectName: item.projectName,
-            productDrawingNo: item.externalProductDrawingNo,
-            stockInventoryLineId: item.id,
-            deliveryDate: item.deliveryDate,
-            mainUnit: item.externalMainUnit,
-            deputyUnit: item.externalDeputyUnit,
-            purchaseQuantity: Number(item.inventoryQuantity) - Number(item.outsourcingQuantity),
-            productsId: item.externalProductsId,
-            classAttribute: item.externalClassAttribute,
-            calculationDirection: item.externalCalculationDirection,
-            ratio: item.externalRatio,
-            processName: '',
-            processId: '',
-            price: item.price,
-            totalAmount: item.totalAmount,
-            taxRate: 13,
-            excludingTaxPrice: item.excludingTaxPrice,
-            taxAmount: item.taxAmount,
-            excludingTaxAmount: item.excludingTaxAmount,
-            inventoryQuantity: item.inventoryQuantity, //库存数量
-            outsourcingQuantity: item.outsourcingQuantity, //转外协数量
-            remark: item.remark,
-            outShipmentList: []
-          }
-        })
-        this.ProcessListRequestObj = {
-          code: '',
-          name: '',
-          processType: 'heat_treatment',
-          pageNum: 1,
-          pageSize: 20,
-          orderItems: [
-            {
-              asc: true,
-              column: 'create_time'
-            }
-          ]
+      this.isProjectSwitch = isProjectSwitch
+      arr = data.map((item) => {
+        console.log(data, 'pp')
+        return {
+          projectName: item.projectName,
+          projectId: item.projectId,
+          productDrawingNo: item.externalProductDrawingNo,
+          stockInventoryLineId: item.id,
+          deliveryDate: item.deliveryDate,
+          mainUnit: item.externalMainUnit,
+          deputyUnit: item.externalDeputyUnit,
+          purchaseQuantity: Number(item.inventoryQuantity) - Number(item.outsourcingQuantity),
+          productsId: item.externalProductsId,
+          classAttribute: item.externalClassAttribute,
+          calculationDirection: item.externalCalculationDirection,
+          ratio: item.externalRatio,
+          processName: '',
+          processId: '',
+          price: item.price,
+          totalAmount: item.totalAmount,
+          taxRate: 13,
+          excludingTaxPrice: item.excludingTaxPrice,
+          taxAmount: item.taxAmount,
+          excludingTaxAmount: item.excludingTaxAmount,
+          inventoryQuantity: item.inventoryQuantity, //库存数量
+          outsourcingQuantity: item.outsourcingQuantity, //转外协数量
+          remark: item.remark,
+          outShipmentList: []
         }
-      } else {
-        arr = data.map((item) => {
-          console.log(data, 'pp')
-          return {
-            projectName: item.projectName,
-            productDrawingNo: item.productDrawingNo,
-            stockInventoryLineId: item.id,
-            deliveryDate: item.deliveryDate,
-            mainUnit: item.mainUnit,
-            deputyUnit: item.deputyUnit,
-            purchaseQuantity: Number(item.inventoryQuantity),
-            productsId: item.productsId,
-            classAttribute: item.classAttribute,
-            calculationDirection: item.calculationDirection,
-            ratio: item.ratio,
-            processName: '',
-            processId: '',
-            price: item.price,
-            totalAmount: item.totalAmount,
-            taxRate: 13,
-            excludingTaxPrice: item.excludingTaxPrice,
-            taxAmount: item.taxAmount,
-            excludingTaxAmount: item.excludingTaxAmount,
-            inventoryQuantity: item.inventoryQuantity, //库存数量
-            outsourcingQuantity: item.outsourcingQuantity, //转外协数量
-            remark: item.remark,
-            outShipmentList: []
+      })
+      this.ProcessListRequestObj = {
+        code: '',
+        name: '',
+        processType: 'heat_treatment',
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [
+          {
+            asc: true,
+            column: 'create_time'
           }
-        })
-        this.ProcessListRequestObj = {
-          code: '',
-          name: '',
-          unProcessType: 'heat_treatment',
-          pageNum: 1,
-          pageSize: 20,
-          orderItems: [
-            {
-              asc: true,
-              column: 'create_time'
-            }
-          ]
-        }
+        ]
       }
+
 
       // this.fetchData('QGD')
       // 此处判断用户选择新增还是编辑
@@ -1264,8 +1228,26 @@ export default {
           })
           console.log(this.dataFormTwo.data[index].outShipmentList, 'o')
         })
-        if (sourceType === 'ring') {
-          let ProcessListRequestObj = {
+
+        let ProcessListRequestObj = {}
+        console.log(this.isProjectSwitch, 'jjjjj')
+        if (this.isProjectSwitch === '1') {
+          ProcessListRequestObj = {
+            code: '',
+            name: '',
+            processType: 'heat_treatment',
+            projectId: item.projectId,
+            pageNum: 1,
+            pageSize: 20,
+            orderItems: [
+              {
+                asc: true,
+                column: 'create_time'
+              }
+            ]
+          }
+        } else {
+          ProcessListRequestObj = {
             code: '',
             name: '',
             processType: 'heat_treatment',
@@ -1278,35 +1260,16 @@ export default {
               }
             ]
           }
-          getBimProcessList(ProcessListRequestObj).then((res) => {
-            console.log(res, 'pjj')
-            let data = res.data.records
-            this.dataFormTwo.data[index].processName = data[0].name
-            this.dataFormTwo.data[index].processId = data[0].id
-            console.log(this.dataFormTwo.data, '[[this.dataFormTwo.data]]')
-          })
-        } else {
-          let ProcessListRequestObj = {
-            code: '',
-            name: '',
-            unProcessType: 'heat_treatment',
-            pageNum: 1,
-            pageSize: 20,
-            orderItems: [
-              {
-                asc: true,
-                column: 'create_time'
-              }
-            ]
-          }
-          getBimProcessList(ProcessListRequestObj).then((res) => {
-            console.log(res, 'pjj')
-            let data = res.data.records
-            this.dataFormTwo.data[index].processName = data[0].name
-            this.dataFormTwo.data[index].processId = data[0].id
-            console.log(this.dataFormTwo.data, '[[this.dataFormTwo.data]]')
-          })
         }
+
+        getBimProcessList(ProcessListRequestObj).then((res) => {
+          console.log(res, 'pjj')
+          let data = res.data.records
+          this.dataFormTwo.data[index].processName = data[0].name
+          this.dataFormTwo.data[index].processId = data[0].id
+          console.log(this.dataFormTwo.data, '[[this.dataFormTwo.data]]')
+        })
+
         if (item.calculationDirection === 'multiplication') {
           item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
         } else {

@@ -56,7 +56,7 @@
           <el-table-column prop="createByName" label="创建人" width="180" />
           <el-table-column prop="remark" label="备注" min-width="200" />
 
-          <el-table-column label="操作" width="100" fixed="right">
+          <el-table-column label="操作" width="120" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId)"
                 @del="handleDel(scope.row.id, scope.row.parentId)"></tableOpts>

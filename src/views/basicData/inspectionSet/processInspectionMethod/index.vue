@@ -106,11 +106,6 @@
         <JNPF-table v-if="tableDataFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           :hasNO="true" hasC @selection-change="currentChange" ref="listTable" :setColumnDisplayList="columnList">
           <el-table-column prop="code" label="工序编码" width="120" sortable="custom">
-            <template slot-scope="scope">
-              <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">{{
-                scope.row.code
-              }}</el-link>
-            </template>
           </el-table-column>
           <el-table-column prop="name" label="工序名称" width="140" sortable="custom" />
           <el-table-column prop="productCategoryIdText" label="工序分类" width="130" sortable="custom" />
@@ -134,28 +129,25 @@
               <div v-if="scope.row.processType == 'heat_treatment'">热处理工序</div>
             </template>
           </el-table-column>
+          <el-table-column prop="inspectionMethod" label="检验方式" width="110" sortable="custom" align="center">
+            <template slot-scope="{ row }">
+              <template v-if="row.inspectionMethod == 'exempt'">
+                <el-tag type="success">免检</el-tag>
+              </template>
+              <template v-else-if="row.inspectionMethod == 'spot_check'">
+                <el-tag type="warning">抽检</el-tag>
+              </template>
+              <template v-else-if="row.inspectionMethod == 'all'">
+                <el-tag>全检</el-tag>
+              </template>
+              <template v-else>
+                {{ row.inspectionMethod }}
+              </template>
+            </template>
+          </el-table-column>
           <el-table-column prop="createByName" label="创建人" width="180" />
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
           <el-table-column prop="remark" label="备注" width="130" />
-          <el-table-column label="操作" width="220" fixed="right">
-            <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
-                <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
-                      查看详情
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </tableOpts>
-
-            </template>
-          </el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="superForm.pageNum" :limit.sync="superForm.pageSize"
           @pagination="initData" />

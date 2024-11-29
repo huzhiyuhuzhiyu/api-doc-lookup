@@ -112,7 +112,7 @@
                                   :tableItems="ProcessTableItems" :placeholder="'工序名称'" title="选择工序" treeTitle="工序分类"
                                   :methodArr="ProcessMethodArr" :listMethod="getBimProcessList"
                                   :listRequestObj="ProcessListRequestObj" :paramsObj="{ scope }"
-                                  :searchList="ProcessTableSearchList" />
+                                  :searchList="ProcessTableSearchList" :beforeOpen="beforeOpen" />
                               </el-form-item>
                             </template>
                           </el-table-column>
@@ -364,7 +364,7 @@ export default {
       // 工序
       getBimProcessList,
       //  供应商 树请求
-      ProcessMethodArr: { method: getcategoryTree, requestObj: { classAttribute: 'process' } },
+      ProcessMethodArr: { method: getcategoryTree, requestObj: { type: 'process' } },
       // 供应商 列表
       ProcessTableItems: [
         { prop: 'code', label: '工序编码' },
@@ -806,6 +806,7 @@ export default {
           }
           selectArr.push({
             projectName: item.projectName,
+            projectId: item.projectId,
             productSource: item.productSource, // 产品来源 采购
             classAttribute: item.classAttribute,
             productsId: item.id, // 产品id
@@ -850,6 +851,13 @@ export default {
         // 审批
         // this.$nextTick(() => { this.getApproverData() })
       }
+    },
+    async beforeOpen(paramsObj) {
+      console.log(paramsObj, 'lll')
+      if (this.isProjectSwitch === '1') {
+        this.ProcessListRequestObj.projectId = paramsObj.scope.row.projectId
+      }
+      return true
     },
     // 配置资源
     handlerOpenSource(index, type) {

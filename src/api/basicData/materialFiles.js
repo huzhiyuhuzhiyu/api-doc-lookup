@@ -177,3 +177,12 @@ export function batchSetProducts(data) {
     data
   })
 }
+
+// 工序 批量设置检验方式
+export function batchSetProcesses(data) {
+  return request({
+    url: `/api/zgt/process/sampling/rules/batch/set`,
+    method: 'POST',
+    data
+  })
+}

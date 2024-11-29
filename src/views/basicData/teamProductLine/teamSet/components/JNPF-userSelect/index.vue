@@ -1,11 +1,11 @@
 <template>
   <div class="popupSelect-container">
     <div class="el-select" @click.stop="openDialog">
-      <!-- <div class="el-select__tags" v-if="multiple" ref="tags"
-        :style="{ 'max-width': inputWidth - 32 + 'px', width: '100%',cursor:'pointer' }">
+      <div class="el-select__tags" v-if="multiple" ref="tags"
+        :style="{ 'max-width': inputWidth - 32 + 'px', width: '100%', cursor: 'pointer' }">
         <span v-if="collapseTags && tagsList.length">
-          <el-tag :closable="!selectDisabled" :size="collapseTagSize" type="info"
-            @close="deleteTag($event, 0)" disable-transitions>
+          <el-tag :closable="!selectDisabled" :size="collapseTagSize" type="info" @close="deleteTag($event, 0)"
+            disable-transitions>
             <span class="el-select__tags-text">{{ tagsList[0].fullName }}</span>
           </el-tag>
           <el-tag v-if="tagsList.length > 1" :closable="false" type="info" disable-transitions>
@@ -13,13 +13,12 @@
           </el-tag>
         </span>
         <transition-group @after-leave="resetInputHeight" v-if="!collapseTags">
-          <el-tag v-for="(item,i) in tagsList" :key="item.id" :size="collapseTagSize"
-            :closable="!selectDisabled" type="info" @close="deleteTag($event, i)"
-            disable-transitions>
+          <el-tag v-for="(item, i) in tagsList" :key="item.id" :size="collapseTagSize" :closable="!selectDisabled"
+            type="info" @close="deleteTag($event, i)" disable-transitions>
             <span class="el-select__tags-text">{{ item.fullName }}</span>
           </el-tag>
         </transition-group>
-      </div> -->
+      </div>
       <el-input ref="reference" v-model="innerValue" type="text" :placeholder="currentPlaceholder"
         :disabled="selectDisabled" readonly :validate-event="false" :tabindex="(multiple) ? '-1' : null"
         @mouseenter.native="inputHovering = true" @mouseleave.native="inputHovering = false">
@@ -145,7 +144,6 @@ import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   components: { SearchInput },
   mixins: [getProjectList],
-
   name: 'userSelect',
   inject: {
     elForm: {
@@ -270,7 +268,7 @@ export default {
     },
     activeName(val) {
       this.keyword = ''
-      if (!val && val.length) return
+      if (!val) return
       this.nodeId = '0'
       this.treeData = []
       this.treeData2 = []
@@ -313,7 +311,6 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
-
     this.setDefault()
   },
   mounted() {
@@ -337,7 +334,7 @@ export default {
         this.inputWidth = reference.$el.getBoundingClientRect().width;
       }
     });
-    this.setDefault()
+    // this.setDefault()
   },
   beforeDestroy() {
     if (this.$el && this.handleResize) removeResizeListener(this.$el, this.handleResize);
@@ -398,14 +395,12 @@ export default {
       }
     },
     confirm() {
-      console.log(6666);
       if (this.multiple) {
         this.innerValue = ''
         this.tagsList = JSON.parse(JSON.stringify(this.selectedData))
         let selectedIds = this.selectedData.map(o => o.id)
         this.$emit('input', selectedIds, this.paramsObj)
         this.$emit('change', selectedIds, this.selectedData, this.paramsObj)
-        console.log(selectedIds, this.selectedData);
       } else {
         if (!this.selectedData.length) {
           this.innerValue = ''
@@ -418,12 +413,10 @@ export default {
         let selectedIds = this.selectedData.map(o => o.id)
         this.$emit('input', selectedIds[0], this.paramsObj)
         this.$emit('change', selectedIds[0], this.selectedData[0], this.paramsObj)
-        console.log(selectedIds[0], this.selectedData[0]);
       }
       this.visible = false
     },
     setDefault() {
-      console.log(123)
       if (!this.value || !this.value.length) {
         this.innerValue = ''
         this.selectedData = []
@@ -460,6 +453,7 @@ export default {
           this.getAllList()
         } else if (this.activeName === 'department') {
           this.loading = true
+          console.log(this.isProjectSwitch,'oo')
           if (this.isProjectSwitch === '1') {
             getOrganization({ keyword: this.keyword, organizeId: '0', projectId: this.projectId, }).then(res => {
               this.treeData2 = res.data
@@ -471,7 +465,6 @@ export default {
               this.loading = false
             })
           }
-
         } else if (this.activeName === 'subordinates') {
           this.loading = true
           if (this.isProjectSwitch === '1') {
@@ -485,7 +478,6 @@ export default {
               this.loading = false
             })
           }
-
         } else {
           this.loading = false
         }
@@ -501,14 +493,10 @@ export default {
     getAllList() {
       this.loading = true
       if (this.keyword) this.nodeId = '0'
-  
-
       getImUserSelector(this.nodeId, this.keyword).then(res => {
         this.treeData = res.data.list
         this.loading = false
       })
-
-
     },
     loadNode(node, resolve) {
       if (node.level === 0) {
@@ -525,7 +513,6 @@ export default {
           resolve(res.data.list)
         })
       }
-
     },
     handleNodeClick(data) {
       if (data.type !== 'user') return

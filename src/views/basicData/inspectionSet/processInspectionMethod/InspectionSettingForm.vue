@@ -40,7 +40,7 @@
   </transition>
 </template>
 <script>
-import { batchSetProducts, detailInspectionLine } from '@/api/basicData/materialFiles'
+import { batchSetProcesses, detailInspectionLine } from '@/api/basicData/materialFiles'
 export default {
   props: {
     selectedData: {}
@@ -417,18 +417,18 @@ export default {
         if (this.spotCheckFlag) {
           rulesList = this.linesForm.map((line) => ({
             ...line,
-            productsId: line.id,
+            processId: line.id,
             samplingMethod: line.samplingRatio.indexOf('%') !== -1 ? 'proportion' : 'fixed_quantity', // 抽检方式;按总数比例 proportion、固定抽检数fixed_quantity
             samplingRatio: line.samplingRatio.replace('%', '')
           }))
         }
         let _data = this.selectedData.map((item) => ({
-          productsId: item.id,
+          processId: item.id,
           inspectionMethod: this.dataForm.inspectionMethod,
           rulesList
         }))
         console.log(_data, 'daaaa')
-        batchSetProducts(_data)
+        batchSetProcesses(_data)
           .then((res) => {
             this.$message.success('操作成功')
             // this.selectedData = []

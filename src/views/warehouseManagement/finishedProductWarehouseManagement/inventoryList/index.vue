@@ -7,12 +7,18 @@
           <template v-for="item in searchList">
             <el-col :span="item.searchType === 3 ? 6 : 4">
               <el-form-item>
-                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable @keyup.enter.native="search('basic')" />
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="search('basic')" />
 
-                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label" clearable>
-                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label" :value="item2.value"></el-option>
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
                 </el-select>
-                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue" :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable :type="item.dateType" :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
               </el-form-item>
             </el-col>
           </template>
@@ -20,7 +26,8 @@
           <el-col :span="4">
             <el-form-item>
               <el-select v-model="listQuery.businessType" placeholder="业务类型" style="width: 100%;" clearable>
-                <el-option v-for="(item, index) in list" :key="index" :label="item.label" :value="item.value"></el-option>
+                <el-option v-for="(item, index) in list" :key="index" :label="item.label"
+                  :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -38,13 +45,16 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
           <div>
-            <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary" icon="iconfont  icon-chehui1" @click="withdrawFun">撤回</el-button>
-            <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary" icon="el-icon-download" @click="exportForm">导出</el-button>
+            <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+              icon="iconfont  icon-chehui1" @click="withdrawFun">撤回</el-button>
+            <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+              icon="el-icon-download" @click="exportForm">导出</el-button>
           </div>
 
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
@@ -55,7 +65,9 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" border :setColumnDisplayList="columnList" hasC :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" :fixedNO="true" @sort-change="sortChange" custom-column>
+        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" border :setColumnDisplayList="columnList"
+          hasC :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" :fixedNO="true"
+          @sort-change="sortChange" custom-column>
           <el-table-column prop="orderNo" label="单号" sortable="custom" min-width="180">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="viewFun(scope.row.id, 'look', scope.row)">{{
@@ -146,7 +158,10 @@
           <el-table-column prop="createByName" label="创建人" width="120" />
           <el-table-column label="操作" width="200" fixed="right">
             <template slot-scope="scope">
-              <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'" :delDisabled="scope.row.documentStatus == 'submit'" :editDisabled="scope.row.documentStatus == 'submit' || scope.row.documentStatus == 'back'" @edit="viewFun(scope.row.id, 'edit', scope.row)" @del="handleDel(scope.row.id)">
+              <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
+                :delDisabled="scope.row.documentStatus == 'submit'"
+                :editDisabled="scope.row.documentStatus == 'submit' || scope.row.documentStatus == 'back'"
+                @edit="viewFun(scope.row.id, 'edit', scope.row)" @del="handleDel(scope.row.id)">
 
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
@@ -159,7 +174,9 @@
                       查看详情
                     </el-dropdown-item>
 
-                    <el-dropdown-item type="text" :disabled="!((scope.row.businessType == 'inbound_purchase' || scope.row.businessType == 'outbound_external_send' || scope.row.businessType == 'outbound_purchase') && scope.row.sourceType == 'direct' && scope.row.documentStatus == 'submit')" @click.native="PrintFun(scope.row)">打印</el-dropdown-item>
+                    <el-dropdown-item type="text"
+                      :disabled="!((scope.row.businessType == 'inbound_purchase' || scope.row.businessType == 'outbound_external_send' || scope.row.businessType == 'outbound_purchase') && scope.row.sourceType == 'direct' && scope.row.documentStatus == 'submit')"
+                      @click.native="PrintFun(scope.row)">打印</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </tableOpts>
@@ -167,7 +184,8 @@
             </template>
           </el-table-column>
         </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData">
+        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
+          @pagination="initData">
         </pagination>
       </div>
     </div>
@@ -186,19 +204,23 @@
     </InboundPurchaseForm>
     <OutboundPurchaseForm v-if="outboundPurchaseFormVisible" ref="outboundPurchaseREFForm" @close="closeForm">
     </OutboundPurchaseForm>
-    <OutboundExternalSendForm v-if="outboundExternalSendFormVisible" ref="outboundExternalSendREFForm" @close="closeForm">
+    <OutboundExternalSendForm v-if="outboundExternalSendFormVisible" ref="outboundExternalSendREFForm"
+      @close="closeForm">
     </OutboundExternalSendForm>
     <InboundExternalForm v-if="inboundExternalFormVisible" ref="inboundExternalREFForm" @close="closeForm">
     </InboundExternalForm>
     <OutboundPickOutForm v-if="outboundPickOutFormVisible" ref="outboundPickOutREFForm" @close="closeForm">
     </OutboundPickOutForm>
-    <InboundReturnMaterialsForm v-if="inboundReturnMaterialsFormVisible" ref="inboundReturnMaterialsREFForm" @close="closeForm">
+    <InboundReturnMaterialsForm v-if="inboundReturnMaterialsFormVisible" ref="inboundReturnMaterialsREFForm"
+      @close="closeForm">
     </InboundReturnMaterialsForm>
     <Transfer v-if="transferFormVisible" ref="transferREFForm" @close="closeForm"></Transfer>
     <SaleOutboundForm v-if="saleOutboundFormVisible" ref="saleOutboundREFForm" @close="closeForm"></SaleOutboundForm>
-    <PurchaseOrderInboundForm v-if="PurchaseOrderInboundFormVisible" ref="PurchaseOrderInboundREFForm" @close="closeForm">
+    <PurchaseOrderInboundForm v-if="PurchaseOrderInboundFormVisible" ref="PurchaseOrderInboundREFForm"
+      @close="closeForm">
     </PurchaseOrderInboundForm>
-    <ExternalMaterOutboundForm v-if="externalMaterOutboundFormVisible" ref="externalMaterOutboundREFForm" @close="closeForm">
+    <ExternalMaterOutboundForm v-if="externalMaterOutboundFormVisible" ref="externalMaterOutboundREFForm"
+      @close="closeForm">
     </ExternalMaterOutboundForm>
     <ExternalInboundForm v-if="externalInboundFormVisible" ref="externalInboundREFForm" @close="closeForm">
     </ExternalInboundForm>
@@ -207,8 +229,10 @@
     <InboundReturnForm v-if="inboundReturnVisible" ref="inboundReturnREFForm" @close="closeForm"></InboundReturnForm>
     <TakingAdjustForm v-if="takingAdjustVisible" ref="takingAdjustREFForm" @close="closeForm"></TakingAdjustForm>
     <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse" :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
   </div>
 </template>
@@ -589,15 +613,30 @@ export default {
     viewFun(id, type, row) {
 
       if (row.businessType == 'inbound_order_production') {
-        this.productInboundFormVisible = true
-        this.$nextTick(() => {
-          this.$refs.productInboundREFForm.init(id, type, this.classAttributeList)
-        })
+        if (row.sourceType == 'direct') {
+          this.formVisible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init(id, type, this.warehouseCode)
+          })
+        } else {
+
+          this.productInboundFormVisible = true
+          this.$nextTick(() => {
+            this.$refs.productInboundREFForm.init(id, type, this.classAttributeList)
+          })
+        }
       } else if (row.businessType == 'inbound_production') {
-        this.workInboundFormVisible = true
-        this.$nextTick(() => {
-          this.$refs.workInboundREFForm.init(id, type, this.classAttributeList)
-        })
+        if (row.sourceType == 'direct') {
+          this.formVisible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init(id, type, this.warehouseCode)
+          })
+        } else {
+          this.workInboundFormVisible = true
+          this.$nextTick(() => {
+            this.$refs.workInboundREFForm.init(id, type, this.classAttributeList)
+          })
+        }
       } else if (row.businessType == 'outbound_sale_send') {
         if (row.sourceType == 'order') {
           this.saleOutboundFormVisible = true

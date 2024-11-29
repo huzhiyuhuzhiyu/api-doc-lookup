@@ -636,6 +636,8 @@ export default {
         { label: "销售退货", value: "inbound_sale_return" },
         { label: "采购收货", value: "inbound_purchase" },
         { label: "采购退货", value: "outbound_purchase" },
+        { label: "生产产品入库", value: "inbound_order_production" },
+        { label: "生产工单入库", value: "inbound_production" },
         { label: "生产领料", value: "outbound_pick_out" },
         { label: "生产退料", value: "inbound_return_materials" },
         { label: "外协发料", value: "outbound_external_send" },
@@ -643,7 +645,7 @@ export default {
         { label: "外协收货", value: "inbound_external" },
         { label: "直接入库", value: "inbound_other" },
         { label: "直接出库", value: "outbound_other" },
-      ],
+      ], 
       batchNumVisible: false,
       wareHouseVisible: false,
       // 选择批次号请求条件
@@ -1422,7 +1424,7 @@ export default {
         if (this.btnType == 'add') this.fetchData("CKDH")
 
       }
-      if (val == 'inbound_sale_return' || val == 'inbound_purchase' || val == 'inbound_return_materials' || val == 'inbound_external_return' || val == 'inbound_external' || val == 'inbound_other') {
+      if (val == 'inbound_sale_return' ||val=='inbound_production'||val=='inbound_order_production'|| val == 'inbound_purchase' || val == 'inbound_return_materials' || val == 'inbound_external_return' || val == 'inbound_external' || val == 'inbound_other') {
         // if ( val == 'inbound_other') {
         this.dataForm.documentType = 'inbound'
         if (this.btnType == 'add') this.fetchData("RKDH")

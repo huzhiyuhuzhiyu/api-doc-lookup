@@ -1063,18 +1063,34 @@ export default {
       this.search('super')
     },
     viewFun(id, type, row) {
+   
+      
       if (row.businessType == 'inbound_order_production') {
-        console.log(444);
-        this.productInboundFormVisible = true
-        this.$nextTick(() => {
-          this.$refs.productInboundREFForm.init(id, type, this.classAttribute)
-        })
+        if (row.sourceType == 'direct') {
+          this.formVisible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init(id, type, this.warehouseCode)
+          })
+        } else {
+
+          this.productInboundFormVisible = true
+          this.$nextTick(() => {
+            this.$refs.productInboundREFForm.init(id, type, this.classAttributeList)
+          })
+        }
       } else if (row.businessType == 'inbound_production') {
-        this.workInboundFormVisible = true
-        this.$nextTick(() => {
-          this.$refs.workInboundREFForm.init(id, type, this.classAttribute)
-        })
-      } else if (row.businessType == 'inbound_sale_return') {
+        if (row.sourceType == 'direct') {
+          this.formVisible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init(id, type, this.warehouseCode)
+          })
+        } else {
+          this.workInboundFormVisible = true
+          this.$nextTick(() => {
+            this.$refs.workInboundREFForm.init(id, type, this.classAttributeList)
+          })
+        }
+      }else if (row.businessType == 'inbound_sale_return') {
 
         if (row.sourceType == 'notice') {
           this.inboundSaleReturnFormVisible = true

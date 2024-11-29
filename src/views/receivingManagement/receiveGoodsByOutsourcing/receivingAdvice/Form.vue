@@ -1611,7 +1611,27 @@ export default {
           })
           return
         }
-
+        for (let index = 0; index < this.dataFormTwo.productData.length; index++) {
+          const item = this.dataFormTwo.productData[index]
+          if (!item.receivedQuantity && item.productsId) {
+            submitFlag = false
+            this.$message({
+              message: '请输入第' + (index + 1) + '行产品的收货数量',
+              type: 'error',
+              duration: 1500
+            })
+            break
+          }
+          if (Number(item.receivedQuantity) == 0) {
+            submitFlag = false
+            this.$message({
+              message: '第' + (index + 1) + '行产品的收货数量必须大于0',
+              type: 'error',
+              duration: 1500
+            })
+            break
+          }
+        }
         this.dataFormTwo.productData.forEach((item, index) => {
           let dep = {
             accuracyLevel: item.accuracyLevel,

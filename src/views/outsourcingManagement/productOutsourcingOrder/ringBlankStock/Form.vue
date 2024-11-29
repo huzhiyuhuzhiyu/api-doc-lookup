@@ -82,8 +82,8 @@
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" :key="1" />
                       <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                         :key="2"></el-table-column>
-                      <el-table-column prop="productName" label="产品名称" width="120"
-                        v-if="isProductNameSwitch === '1'" :key="3"></el-table-column>
+                      <el-table-column prop="productName" label="产品名称" width="120" v-if="isProductNameSwitch === '1'"
+                        :key="3"></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
                         :key="4">
                         <template slot="header">
@@ -115,7 +115,8 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-
+                      <el-table-column prop="weight" label="重量(kg)" width="90" />
+                      <el-table-column prop="proportion" label="比重" width="80" />
                       <el-table-column prop="deliveryDate" label="交货日期" width="195" :key="6">
                         <template slot="header">
                           <span class="required">*</span>
@@ -941,6 +942,8 @@ export default {
             this.sourceData[ind].demandQuantity1 = item.demandQuantity
             this.sourceData[ind].processId = item.processId
             this.sourceData[ind].processName = item.processName
+            this.sourceData[ind].weight = this.dataFormTwo.data[index].weight
+            this.sourceData[ind].proportion = this.dataFormTwo.data[index].proportion
             // this.sourceData[ind].demandQuantity1 = item.demandQuantity-item.issuedQuantity-item.undeliveredQuantity
           })
         } else {
@@ -1177,6 +1180,8 @@ export default {
           productName: item.productName,
           projectId: item.projectId,
           productDrawingNo: item.externalProductDrawingNo,
+          weight: item.weight,
+          proportion: item.proportion,
           stockInventoryLineId: item.id,
           deliveryDate: item.deliveryDate,
           mainUnit: item.externalMainUnit,

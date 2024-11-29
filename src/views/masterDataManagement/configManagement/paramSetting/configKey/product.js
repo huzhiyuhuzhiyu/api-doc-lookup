@@ -4,7 +4,7 @@ export default {
         description: '启用产品型号管理后，创建成品产品时，需先创建型号，再创建产品。'
     },
     enable_productName: {
-        configKeyLabel: '启用产品名称',
-        description: '启用产品名称管理后，创建产品时，需先创建产品名称，再创建产品。'
+        configKeyLabel: '显示产品名称',
+        description: '显示产品名称后，采购、外协、销售、仓库将显示产品名称。'
     },
 }

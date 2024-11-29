@@ -64,6 +64,8 @@
                         <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                         <el-table-column prop="projectName" label="所属项目" width="120"
                           v-if="isProjectSwitch === '1'"></el-table-column>
+                        <el-table-column prop="productName" label="产品名称" width="120"
+                          v-if="isProductNameSwitch === '1'"></el-table-column>
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                           <template slot="header">
                             <span class="required">*</span>
@@ -593,6 +595,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
     await this.getProjectList()
     this.tableDataFlag = true
     console.log(this.isProjectSwitch)
@@ -689,6 +692,11 @@ export default {
     }
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     getDeputyUnit() {
       let obj = {
         businessCode: 'deputyUnit',

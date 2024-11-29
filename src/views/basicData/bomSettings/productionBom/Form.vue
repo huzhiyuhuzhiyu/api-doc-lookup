@@ -873,7 +873,21 @@ export default {
         submitFlag = false
         this.$message.error('请至少添加一个子产品')
       }
+      if (this.dataForm.classAttribute == 'semi_finished') {
+        if (this.linesList.length > 1) {
+          this.linesList.forEach((item) => {
+            console.log(item, 'p')
 
+            if (item.classType === 'inner_ring_blank' || item.classType === 'outer_ring_blank') {
+              submitFlag = false
+              this.btnLoading = false
+              this.btnDisabled = false
+
+              return this.$message.error('半成品产品，创建BOM的子件，子件选择内外圈毛坯，只能有一个子件')
+            }
+          })
+        }
+      }
       if (submitFlag) {
         let index = this.linesList.findIndex((line) => line.productId === this.dataForm.productId)
         if (index !== -1) {

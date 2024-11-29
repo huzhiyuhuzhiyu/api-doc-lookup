@@ -188,6 +188,7 @@ import {
   batchProductionResource,
   deleteProductionResource,
   saleUploadroutingModel,
+  importRoutingModel,
   errordatalist
 } from '@/api/basicData/productionResourceSetting'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -327,6 +328,7 @@ export default {
       this.toggleExpand(roleFlag)
     }
     await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
     this.tableDataFlag = true
     this.getcategoryTree()
     this.initData()
@@ -445,51 +447,114 @@ export default {
       a.setAttribute('href', location.origin + '/static/产品工艺导入模板.xlsx')
       a.click()
     },
-    //导入
+    // 导入
     importForm() {
-
+      // this.$refs.UploadProduct.$el.querySelector('input').click()
       this.uploadVisib = true
-
     },
-    // 导入数据
+    handleRemove(file, fileList) { },
+    handlePreview(file) { },
+    handleFileChange(file) {
+      this.file = file.raw
+    },
+    // 下载模板
+    downLoadTemplate() {
+      const a = document.createElement('a')
+      a.setAttribute('download', '')
+
+      a.setAttribute('href', location.origin + '/static/产品工艺导入模板.xlsx')
+
+
+      a.click()
+    },
+    // 上传产品
     UploadProduct(data) {
-      console.log(data, 'dadsdsd')
       this.loadingText = '正在导入数据'
-      this.listLoading = true
+      this.formLoading = true
       var formData = new FormData()
       formData.append('file', data)
-      //调用导入接口
-      saleUploadroutingModel(formData)
+      //调用上传文件接口
+
+      importRoutingModel(formData)
         .then((res) => {
-          if (res.data.length)
-            errordatalist(res.data).then((row) => {
-              this.jnpf.downloadFile(row.data.url, row.data.name)
-            })
-          this.initData()
-        })
-        .catch((err) => {
-          this.$message.error(`数据上传失败`)
-          this.listLoading = false
+          if (!res.data) {
+            this.$message.success(`导入成功`)
+            this.uploadVisib = false
+            this.$refs['UploadProduct']
+            this.initData()
+          } else {
+            this.uploadVisib = false
+            this.handleMessage(res.data)
+          }
+
+          this.formLoading = false
           this.loadingText = ''
         })
-    },
-    handleRemove(file, fileList) {
+        .catch((err) => {
+          console.log(err, 'err')
+          this.uploadVisib = false
+          console.log(err, 'err')
+          this.formLoading = false
+          this.loadingText = ''
+        })
+
 
     },
-    handlePreview(file) {
-
-    },
-    handleFileChange(file) {
-      console.log(file, 'ooooo')
-      this.file = file.raw
-      console.log(this.file, 'file')
+    // 导入产品  下载导入错误数据
+    downNoProduct(res) {
+      this.jnpf.downloadFile(res.url, res.name)
+      this.uploadVisib = false
+      this.$refs['uploadRef'].clearFiles()
     },
     cancelFun() {
       this.uploadVisib = false
       this.$refs['uploadRef'].clearFiles()
     },
     saveSubmit() {
+      if (!this.file) return this.$message.error('请上传文件');
       this.UploadProduct(this.file)
+    },
+    // 提示
+    handleMessage(data) {
+      const h = this.$createElement
+      this.$message({
+        type: 'error',
+        duration: 0,
+        showClose: true,
+        customClass: 'my-message', // 自定义类名，用于设置样式
+        message: h(
+          'div',
+          {
+            style: 'padding-right:20px;display:flex;align-items:center;color:#f56c6c;'
+          },
+          [
+            h('p', { style: 'font-size:14px;' }, '导入成功，存在套圈工艺设置相关信息错误！'),
+            h(
+              'el-button',
+              {
+                props: {
+                  type: 'text',
+                  size: 'mini',
+                  icon: 'el-icon-download'
+                },
+                on: {
+                  click: () => {
+                    this.downNoProduct(data)
+                  }
+                },
+                style: {
+                  border: 'none',
+                  textAlign: 'center',
+                  // width:"20%",
+                  margin: '0 5px 0 5px '
+                }
+              },
+              '下载导入错误数据'
+            )
+          ]
+        )
+      })
+      return
     },
     currentChange(data) {
       this.selectedData = data

@@ -324,7 +324,7 @@ export default {
     Process
   },
   mixins: [getProjectList],
-
+  name: 'orderCreation',
   data() {
     return {
       isProjectSwitch: '',

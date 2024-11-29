@@ -115,17 +115,7 @@
               <div v-if="scope.row.demandStatus == 'finished'"><el-tag type="success">已完成</el-tag></div>
             </template>
           </el-table-column>
-          <el-table-column prop="standardValue" label="规值" width="100" sortable="custom" />
-          <el-table-column prop="colour" label="颜色" width="100" sortable="custom" />
-          <el-table-column prop="sealingCoverTyping" width="120" label="打字内容" sortable="custom" />
-          <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
-          <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
-          <el-table-column prop="oil" label="油脂" width="80" sortable="custom" />
-          <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom" />
-          <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" />
-          <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
-          <el-table-column prop="processName" label="工序" width="100" sortable="custom" />
-
+ 
           <!-- <el-table-column prop="sourceOrderNo" label="来源单号" min-width="180" sortable="custom" /> -->
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" min-width="180" sortable="custom" />

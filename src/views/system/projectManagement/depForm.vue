@@ -116,7 +116,7 @@ export default {
       this.$nextTick(() => {
         if (this.dataForm.id) {
           this.btntype = true
-          this.dataForm = row
+          this.dataForm = {...row}
           this.formLoading = false
         } else {
           this.fetchData('bm_gy_xmgl', true)

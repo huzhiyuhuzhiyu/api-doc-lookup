@@ -137,6 +137,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isProductNameSwitch: '',
       tableDataFlag: false,
       isattachmentswitch: '',
       datafilelist: [],
@@ -405,6 +406,16 @@ export default {
           itemRules: [{ required: true, trigger: 'blur' }],
           sm: 6,
           render: this.isProjectSwitch === '1',
+          itemDisabled: true
+        },
+        {
+          prop: 'productName',
+          label: '产品名称',
+          value: '',
+          type: 'input',
+          itemRules: [{ required: true, trigger: 'blur' }],
+          sm: 6,
+          render: this.isProductNameSwitch === '1',
           itemDisabled: true
         },
         {
@@ -899,6 +910,7 @@ export default {
     // 初始化
     async init(id, btnType, approvalFlag, inspectionType, businessCode) {
       await this.getProjectSwitch('system', 'project')
+      await this.getProductNameSwitch('product', 'enable_productName')
 
       this.getBimBusinessDetail(inspectionType)
       this.inspectionOrderNoChange(id)
@@ -911,61 +923,80 @@ export default {
       this.businessCode = businessCode
       this.dialogRequestObj = { ...this.dialogRequestObj, notificationType: option.value, businessCode }
       this.ProductListRequestObjs = {
-      code: this.dataForm.productCode,
-      drawingNo: '',
-      name: this.dataForm.productName,
-      orderItems: [{ asc: false, column: '' }, { asc: false, column: 'create_time' }],
-      pageNum: 1,
-      pageSize: 20
-    }
+        code: this.dataForm.productCode,
+        drawingNo: '',
+        name: this.dataForm.productName,
+        orderItems: [{ asc: false, column: '' }, { asc: false, column: 'create_time' }],
+        pageNum: 1,
+        pageSize: 20
+      }
       await getbimDrawingData(this.ProductListRequestObjs)
-      .then((res) => {
-        this.productList = res.data.records
-        this.loading = false
-      })
-      .catch((err) => {
-        this.loading = false
-      })
+        .then((res) => {
+          this.productList = res.data.records
+          this.loading = false
+        })
+        .catch((err) => {
+          this.loading = false
+        })
       // this.$nextTick(() => { this.dataFormFlag = true })
       this.fetchData('UQDH', true)
       this.refeshDataFormItems()
       this.refeshLinesListItems()
       this.title = '查看检验单'
       this.formLoading = false
-      if(id) {
-      if (btnType === 'anew') {
-        // 重新提交
-        this.title = '新建检验单'
-      } else if (btnType === 'edit') {
-        this.title = '编辑检验单'
-      } else if (btnType === 'look') {
-        this.title = '查看检验单'
-      } else if (btnType === 'setLoss') {
-        this.title = '损失上报'
-      }
-    } else {
-      this.fetchData('UQDH', true)
+      if (id) {
+        if (btnType === 'anew') {
+          // 重新提交
+          this.title = '新建检验单'
+        } else if (btnType === 'edit') {
+          this.title = '编辑检验单'
+        } else if (btnType === 'look') {
+          this.title = '查看检验单'
+        } else if (btnType === 'setLoss') {
+          this.title = '损失上报'
+        }
+      } else {
+        this.fetchData('UQDH', true)
         this.refeshDataFormItems()
         this.refeshLinesListItems()
         this.title = '新建检验单'
         this.formLoading = false
-    }
-  },
-  // 提交
-  async handleConfirm(submitModel) {
-    this.btnLoading = true
-    let submitFlag = true // 自动聚焦是否可用
+      }
+    },
+    // 提交
+    async handleConfirm(submitModel) {
+      this.btnLoading = true
+      let submitFlag = true // 自动聚焦是否可用
 
-    // 校验主表
-    let form_1 = this.$refs['dataForm'].$children[0]
-    let valid_1 = await form_1.validate().catch(() => false)
-    if (!valid_1 && submitFlag) {
-      // 校验失败，聚焦第一失败项，继续校验后续项
-      if (submitFlag) {
-        // 聚焦第一个失败的表单元素
-        let formItems = form_1.$children[0].$children
-        for (let j = 0; j < formItems.length; j++) {
-          let formItem = formItems[j].$children[0].$children[0]
+      // 校验主表
+      let form_1 = this.$refs['dataForm'].$children[0]
+      let valid_1 = await form_1.validate().catch(() => false)
+      if (!valid_1 && submitFlag) {
+        // 校验失败，聚焦第一失败项，继续校验后续项
+        if (submitFlag) {
+          // 聚焦第一个失败的表单元素
+          let formItems = form_1.$children[0].$children
+          for (let j = 0; j < formItems.length; j++) {
+            let formItem = formItems[j].$children[0].$children[0]
+            if (formItem.validateState === 'error') {
+              this.activeName = 'jcInfo'
+              submitFlag = false
+              this.jnpf.focusItem(formItem.$children[1].$el)
+              this.$nextTick(() => {
+                this.jnpf.formItemValidate(formItem)
+              })
+              break
+            }
+          }
+        }
+      }
+
+      // 校验表单表格（子数据列表）
+      let form_2 = this.$refs['linesForm'].$children[0]
+      let valid_2 = await form_2.validate().catch((err) => false)
+      if (!valid_2 && submitFlag) {
+        let formItems = form_2.fields
+        formItems.some((formItem) => {
           if (formItem.validateState === 'error') {
             this.activeName = 'jcInfo'
             submitFlag = false
@@ -973,246 +1004,227 @@ export default {
             this.$nextTick(() => {
               this.jnpf.formItemValidate(formItem)
             })
-            break
+            return true
           }
-        }
+        })
       }
-    }
 
-    // 校验表单表格（子数据列表）
-    let form_2 = this.$refs['linesForm'].$children[0]
-    let valid_2 = await form_2.validate().catch((err) => false)
-    if (!valid_2 && submitFlag) {
-      let formItems = form_2.fields
-      formItems.some((formItem) => {
-        if (formItem.validateState === 'error') {
-          this.activeName = 'jcInfo'
+      // // 判断子表是否有效
+      // if (!this.linesList.length && submitFlag) {
+      //   submitFlag = false
+      //   this.$message.error('请至少选择一个产品')
+      // }
+
+      // 是否配置好审批
+      if (submitModel === 'submit' && this.dataForm.approvalFlag && submitFlag) {
+        if (!this.busNodeConfig.childNode) {
           submitFlag = false
-          this.jnpf.focusItem(formItem.$children[1].$el)
-          this.$nextTick(() => {
-            this.jnpf.formItemValidate(formItem)
-          })
-          return true
+          this.$message.error('未找到匹配的审批流程，请联系管理员！')
         }
-      })
-    }
-
-    // // 判断子表是否有效
-    // if (!this.linesList.length && submitFlag) {
-    //   submitFlag = false
-    //   this.$message.error('请至少选择一个产品')
-    // }
-
-    // 是否配置好审批
-    if (submitModel === 'submit' && this.dataForm.approvalFlag && submitFlag) {
-      if (!this.busNodeConfig.childNode) {
-        submitFlag = false
-        this.$message.error('未找到匹配的审批流程，请联系管理员！')
-      }
-      if (formNodeList.length) {
-        formNodeList.forEach((item) => {
-          if (item.approvalType === 'option') {
-            if (!item.designatedMembersId) {
-              this.activeName = 'approvalFlow'
-              submitFlag = false
-              this.$message.error('未配置发起人自选！')
-            }
-          }
-        })
-      }
-    }
-
-    // 自动聚焦未使用则提交
-    if (submitFlag) {
-      if (this.datafilelist.length) {
-        this.datafilelist.map((item, index) => {
-          item.bimAttachments = {
-            businessType: '',
-            documentId: item.id,
-            fileFlag: '',
-            sort: index
-          }
-        })
-      }
-      this.dataForm.documentStatus = submitModel
-      this.dataForm.businessCode = this.businessCode
-      this.dataForm.inspectionId = this.dataForm.id
-      let formMethod = ''
-      console.log(this.btnType, 'btn')
-      if (!this.btnType || this.btnType === 'add' || this.btnType === 'anew') {
-        formMethod = addQcUnqualifiedData
-      } else if (this.btnType === 'edit') {
-        formMethod = updateQcUnqualifiedData
-      } else if (this.btnType === 'setLoss') {
-        // 损失上报
-        formMethod = lossQcUnqualifiedData
-      }
-      let dataObj = {
-        attachmentList: this.datafilelist,
-        unqualified: this.dataForm
-        // lines: this.linesList,
-      }
-
-      formMethod(dataObj)
-        .then((res) => {
-          let msg = res.msg
-          if (res.msg === 'Success') {
-            msg = submitModel == 'submit' ? '提交成功' : '保存成功'
-          }
-          this.$message({
-            message: msg,
-            type: 'success',
-            duration: 1500,
-            onClose: () => {
-              this.visible = false
-              this.btnLoading = false
-              this.$emit('close', true)
+        if (formNodeList.length) {
+          formNodeList.forEach((item) => {
+            if (item.approvalType === 'option') {
+              if (!item.designatedMembersId) {
+                this.activeName = 'approvalFlow'
+                submitFlag = false
+                this.$message.error('未配置发起人自选！')
+              }
             }
           })
-        })
-        .catch(() => {
-          this.btnLoading = false
-        })
-    } else {
-      this.btnLoading = false
-    }
-  },
+        }
+      }
 
-  // 检验单更改
-  inspectionOrderNoChange(id) {
-    this.formLoading = true
-    detailInspectionData(id)
-      .then((res) => {
-        console.log(res, 'res123')
-        if (res.data.attachmentList) {
-          res.data.attachmentList.forEach((item) => {
-            this.datafilelist.push({
-              name: item.document.fullName,
-              fileSize: item.document.fileSize,
-              filename: item.document.filePath,
-              id: item.document.id,
-              url: item.url
+      // 自动聚焦未使用则提交
+      if (submitFlag) {
+        if (this.datafilelist.length) {
+          this.datafilelist.map((item, index) => {
+            item.bimAttachments = {
+              businessType: '',
+              documentId: item.id,
+              fileFlag: '',
+              sort: index
+            }
+          })
+        }
+        this.dataForm.documentStatus = submitModel
+        this.dataForm.businessCode = this.businessCode
+        this.dataForm.inspectionId = this.dataForm.id
+        let formMethod = ''
+        console.log(this.btnType, 'btn')
+        if (!this.btnType || this.btnType === 'add' || this.btnType === 'anew') {
+          formMethod = addQcUnqualifiedData
+        } else if (this.btnType === 'edit') {
+          formMethod = updateQcUnqualifiedData
+        } else if (this.btnType === 'setLoss') {
+          // 损失上报
+          formMethod = lossQcUnqualifiedData
+        }
+        let dataObj = {
+          attachmentList: this.datafilelist,
+          unqualified: this.dataForm
+          // lines: this.linesList,
+        }
+
+        formMethod(dataObj)
+          .then((res) => {
+            let msg = res.msg
+            if (res.msg === 'Success') {
+              msg = submitModel == 'submit' ? '提交成功' : '保存成功'
+            }
+            this.$message({
+              message: msg,
+              type: 'success',
+              duration: 1500,
+              onClose: () => {
+                this.visible = false
+                this.btnLoading = false
+                this.$emit('close', true)
+              }
             })
           })
-        }
-        this.inspectionList = res.data.itemList
-        this.linesListTwo = res.data.causesList
-        this.dataForm = res.data.inspection
-        console.log(this.dataForm, 'oooooo')
-        this.dataForm.inspectionOrderNo = this.dataForm.orderNo
-        this.refeshDataFormItems()
-        // 流程信息和流转记录
-        if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
-        let tempLinesList = res.data.lines.filter((line) => line.unqualifiedQuantity != '0')
-        tempLinesList.forEach((line) => {
-          line.inspectionUnqualifiedQuantity = line.unqualifiedQuantity
-          line.qualifiedQuantity = ''
-          line.unqualifiedQuantity = ''
-          line.scrapQuantity = ''
-          line.repairQuantity = ''
-          line.inspectionLineId = line.id
-          line.id = ''
-
-          line.scrapQuantityDisabled = true
-          line.repairQuantityDisabled = true
-        })
-
-        if (['sale_back', 'process', 'finished'].includes(this.inspectionType.replace('_batch', ''))) {
-          tempLinesList.forEach((line) => {
-            line.unqualifiedQuantity = line.inspectionUnqualifiedQuantity
-            line.qualifiedQuantity = this.jnpf.math('subtract', [line.inspectionQuantity, line.unqualifiedQuantity])
+          .catch(() => {
+            this.btnLoading = false
           })
-        }
+      } else {
+        this.btnLoading = false
+      }
+    },
 
-        this.linesList = tempLinesList
-        this.formLoading = false
-      })
-      .catch((err) => {
-        this.formLoading = false
-      })
-  },
+    // 检验单更改
+    inspectionOrderNoChange(id) {
+      this.formLoading = true
+      detailInspectionData(id)
+        .then((res) => {
+          console.log(res, 'res123')
+          if (res.data.attachmentList) {
+            res.data.attachmentList.forEach((item) => {
+              this.datafilelist.push({
+                name: item.document.fullName,
+                fileSize: item.document.fileSize,
+                filename: item.document.filePath,
+                id: item.document.id,
+                url: item.url
+              })
+            })
+          }
+          this.inspectionList = res.data.itemList
+          this.linesListTwo = res.data.causesList
+          this.dataForm = res.data.inspection
+          console.log(this.dataForm, 'oooooo')
+          this.dataForm.inspectionOrderNo = this.dataForm.orderNo
+          this.refeshDataFormItems()
+          // 流程信息和流转记录
+          if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+          let tempLinesList = res.data.lines.filter((line) => line.unqualifiedQuantity != '0')
+          tempLinesList.forEach((line) => {
+            line.inspectionUnqualifiedQuantity = line.unqualifiedQuantity
+            line.qualifiedQuantity = ''
+            line.unqualifiedQuantity = ''
+            line.scrapQuantity = ''
+            line.repairQuantity = ''
+            line.inspectionLineId = line.id
+            line.id = ''
 
-  // 打开抽屉
-  openSide(scope) {
-    this.wareVisibled = true
-    this.$nextTick(() => {
-      this.$refs['wareSide'].init({ ...scope }, true)
-    })
-  },
-  // 流程信息 && 流转记录
-  getFlowDetail(id) {
-    getBusinessFlowDetail(id)
-      .then((res) => {
-        if (res.data) {
-          this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson
-            ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson)
-            : null
-          this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
-          this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
-          let flowTaskNodeList = res.data.flowTaskNodeList
-          if (flowTaskNodeList.length) {
-            for (let i = 0; i < flowTaskNodeList.length; i++) {
-              const nodeItem = flowTaskNodeList[i]
-              const loop = (data) => {
-                if (Array.isArray(data)) data.forEach((d) => loop(d))
-                if (data.nodeId === nodeItem.nodeCode) {
-                  if (nodeItem.type == 0) data.state = 'state-past'
-                  if (nodeItem.type == 1) data.state = 'state-curr'
-                  if (
-                    nodeItem.nodeType === 'approver' ||
-                    nodeItem.nodeType === 'start' ||
-                    nodeItem.nodeType === 'subFlow'
-                  )
-                    data.content = nodeItem.userName
-                  return
+            line.scrapQuantityDisabled = true
+            line.repairQuantityDisabled = true
+          })
+
+          if (['sale_back', 'process', 'finished'].includes(this.inspectionType.replace('_batch', ''))) {
+            tempLinesList.forEach((line) => {
+              line.unqualifiedQuantity = line.inspectionUnqualifiedQuantity
+              line.qualifiedQuantity = this.jnpf.math('subtract', [line.inspectionQuantity, line.unqualifiedQuantity])
+            })
+          }
+
+          this.linesList = tempLinesList
+          this.formLoading = false
+        })
+        .catch((err) => {
+          this.formLoading = false
+        })
+    },
+
+    // 打开抽屉
+    openSide(scope) {
+      this.wareVisibled = true
+      this.$nextTick(() => {
+        this.$refs['wareSide'].init({ ...scope }, true)
+      })
+    },
+    // 流程信息 && 流转记录
+    getFlowDetail(id) {
+      getBusinessFlowDetail(id)
+        .then((res) => {
+          if (res.data) {
+            this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson
+              ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson)
+              : null
+            this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
+            this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
+            let flowTaskNodeList = res.data.flowTaskNodeList
+            if (flowTaskNodeList.length) {
+              for (let i = 0; i < flowTaskNodeList.length; i++) {
+                const nodeItem = flowTaskNodeList[i]
+                const loop = (data) => {
+                  if (Array.isArray(data)) data.forEach((d) => loop(d))
+                  if (data.nodeId === nodeItem.nodeCode) {
+                    if (nodeItem.type == 0) data.state = 'state-past'
+                    if (nodeItem.type == 1) data.state = 'state-curr'
+                    if (
+                      nodeItem.nodeType === 'approver' ||
+                      nodeItem.nodeType === 'start' ||
+                      nodeItem.nodeType === 'subFlow'
+                    )
+                      data.content = nodeItem.userName
+                    return
+                  }
+                  if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
+                  if (data.childNode) loop(data.childNode)
                 }
-                if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
-                if (data.childNode) loop(data.childNode)
+                loop(this.flowTemplateJson)
               }
-              loop(this.flowTemplateJson)
             }
           }
-        }
-      })
-      .catch(() => { })
-  }
-},
-computed: {
-  openMode() {
-    console.log(this.title.substr(0, 2), 'this.title.substr(0, 2)')
-    // return this.dataForm.submitFlag === 'add' ? '新建' : this.title.includes('查看') ? '只读' : '编辑'
-    if (this.title.includes('检验单')) {
-      return this.title === '生产巡检' ? '新建' : '只读'
+        })
+        .catch(() => { })
     }
-    console.log(this.title.substr(0, 2), 'this.title.substr(0, 2)33333333333333')
-    return this.title.substr(0, 2) == '检验' ? '新建' : '只读'
   },
-  rowNum() {
-    return this.dataForm.unqualifiedQuantity
-  },
-  nowNum() {
-    let tempNum = 0
-    this.inspectionList.forEach((item) => {
-      tempNum += item.unqualifiedQuantity ? Number(item.unqualifiedQuantity) : 0
-    })
+  computed: {
+    openMode() {
+      console.log(this.title.substr(0, 2), 'this.title.substr(0, 2)')
+      // return this.dataForm.submitFlag === 'add' ? '新建' : this.title.includes('查看') ? '只读' : '编辑'
+      if (this.title.includes('检验单')) {
+        return this.title === '生产巡检' ? '新建' : '只读'
+      }
+      console.log(this.title.substr(0, 2), 'this.title.substr(0, 2)33333333333333')
+      return this.title.substr(0, 2) == '检验' ? '新建' : '只读'
+    },
+    rowNum() {
+      return this.dataForm.unqualifiedQuantity
+    },
+    nowNum() {
+      let tempNum = 0
+      this.inspectionList.forEach((item) => {
+        tempNum += item.unqualifiedQuantity ? Number(item.unqualifiedQuantity) : 0
+      })
 
-    let tempUnqualifiedQuantity = this.dataForm.unqualifiedQuantity ? this.dataForm.unqualifiedQuantity : 0
+      let tempUnqualifiedQuantity = this.dataForm.unqualifiedQuantity ? this.dataForm.unqualifiedQuantity : 0
 
-    let newNumber = this.scope ? this.jnpf.math('subtract', [tempUnqualifiedQuantity, tempNum]) : 0
+      let newNumber = this.scope ? this.jnpf.math('subtract', [tempUnqualifiedQuantity, tempNum]) : 0
 
-    return this.jnpf.numberFormat(newNumber, 4)
-  },
-  nowNumTwo() {
-    let tempNum = 0
-    this.linesListTwo.forEach((item) => {
-      tempNum += item.unqualifiedQuantity ? Number(item.unqualifiedQuantity) : 0
-    })
-    let tempUnqualifiedQuantity = this.dataForm.unqualifiedQuantity ? this.dataForm.unqualifiedQuantity : 0
-    let newNumber = this.scope ? this.jnpf.math('subtract', [tempUnqualifiedQuantity, tempNum]) : 0
-    return this.jnpf.numberFormat(newNumber, 4)
-  },
+      return this.jnpf.numberFormat(newNumber, 4)
+    },
+    nowNumTwo() {
+      let tempNum = 0
+      this.linesListTwo.forEach((item) => {
+        tempNum += item.unqualifiedQuantity ? Number(item.unqualifiedQuantity) : 0
+      })
+      let tempUnqualifiedQuantity = this.dataForm.unqualifiedQuantity ? this.dataForm.unqualifiedQuantity : 0
+      let newNumber = this.scope ? this.jnpf.math('subtract', [tempUnqualifiedQuantity, tempNum]) : 0
+      return this.jnpf.numberFormat(newNumber, 4)
+    },
     ...mapGetters(['userInfo'])
-}
+  }
 }
 </script>
 <style lang="scss" scoped>

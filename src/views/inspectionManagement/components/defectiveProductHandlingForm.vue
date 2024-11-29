@@ -145,6 +145,7 @@ export default {
     }
     return {
       isProjectSwitch: '',
+      isProductNameSwitch: '',
       tableDataFlag: false,
       isattachmentswitch: '',
       datafilelist: [],
@@ -288,11 +289,12 @@ export default {
       { prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120 }
     ]
   },
-  async created() {
-    await this.getProjectSwitch('system', 'project')
-
-  },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     getBimBusinessDetail(inspectionType) {
       console.log(inspectionType, 'businessCode')
       let obj = {
@@ -635,6 +637,16 @@ export default {
           itemRules: [{ required: true, trigger: 'blur' }],
           sm: 6,
           render: this.isProjectSwitch === '1',
+          itemDisabled: true
+        },
+        {
+          prop: 'productName',
+          label: '产品名称',
+          value: '',
+          type: 'input',
+          itemRules: [{ required: true, trigger: 'blur' }],
+          sm: 6,
+          render: this.isProductNameSwitch === '1',
           itemDisabled: true
         },
         {
@@ -1063,8 +1075,9 @@ export default {
       scope.row.totalLossAmount = this.jnpf.math('add', [scope.row.lossAmount, scope.row.otherLossAmount])
     },
     // 初始化
-    init(id, btnType, approvalFlag, inspectionType) {
-      
+    async init(id, btnType, approvalFlag, inspectionType) {
+      await this.getProjectSwitch('system', 'project')
+      await this.getProductNameSwitch('product', 'enable_productName')
       this.getBimBusinessDetail(inspectionType)
       this.dataForm.unqualifiedQuantity = 0
       this.visible = true

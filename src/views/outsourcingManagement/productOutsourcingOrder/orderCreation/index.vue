@@ -308,9 +308,10 @@ export default {
     Process
   },
   mixins: [getProjectList],
+  name: 'orderCreation',
   data() {
     return {
-      isProductNameSwitch:'',
+      isProductNameSwitch: '',
       isProjectSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',

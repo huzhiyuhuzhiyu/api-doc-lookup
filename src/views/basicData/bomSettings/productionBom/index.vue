@@ -183,6 +183,12 @@
       :http-request="UploadProduct" />
     <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
+      <div style="margin-bottom: 10px;" v-if="isProjectSwitch === '1'">
+        <el-select v-model="importProjectId" placeholder="请选择所属项目" style="width: 100%;" filterable
+          :disabled="!userInfo.projectId ? false : userInfo.projectId === '1' ? false : true">
+          <el-option v-for="item in projectIdDataList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+        </el-select>
+      </div>
       <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false" :limit="1"
         :on-preview="handlePreview" drag :on-remove="handleRemove" :on-change="handleFileChange" ref="uploadRef">
         <i class="el-icon-upload"></i>
@@ -221,6 +227,7 @@ export default {
   mixins: [getProjectList],
   data() {
     return {
+      importProjectId: '',
       isProjectSwitch: '',
       tableDataFlag: false,
       filterText: '',
@@ -326,8 +333,10 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
+
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
     this.tableDataFlag = true
     this.getcategoryTree()
     if (localStorage.getItem("productionBomFlag")) {
@@ -346,7 +355,11 @@ export default {
   methods: {
     // 导入
     importForm() {
-
+      if (this.userInfo.projectId !== '1') {
+        this.importProjectId = this.userInfo.projectId
+      } else {
+        this.importProjectId = ''
+      }
       // this.$refs.UploadProduct.$el.querySelector('input').click()
       this.uploadVisib = true
 
@@ -373,7 +386,9 @@ export default {
       var formData = new FormData()
       formData.append('file', data)
       //调用上传文件接口
-
+      if (this.isProjectSwitch === '1') {
+        formData.append('projectId', this.importProjectId)
+      }
       uploadBomData(formData)
         .then((res) => {
           if (!res.data) {
@@ -410,6 +425,8 @@ export default {
       this.$refs['uploadRef'].clearFiles()
     },
     saveSubmit() {
+      if (!this.importProjectId) return this.$message.error('请选择所属项目');
+      if (!this.file) return this.$message.error('请上传文件');
       this.UploadProduct(this.file)
     },
     // 提示
@@ -521,7 +538,7 @@ export default {
     },
     initData() {
       this.listLoading = true
-   
+
       if (this.isProjectSwitch === '1') {
         this.listQuery.projectId = this.userInfo.projectId
       }

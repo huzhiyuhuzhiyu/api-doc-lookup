@@ -86,6 +86,8 @@
                           <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                           <el-table-column prop="projectName" label="所属项目" width="120"
                             v-if="isProjectSwitch === '1'"></el-table-column>
+                          <el-table-column prop="productName" label="产品名称" width="160" show-overflow-tooltip
+                            v-if="isProjectSwitch === '1'"></el-table-column>
                           <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                             <template slot="header">
                               <span class="required">*</span>
@@ -687,7 +689,7 @@ export default {
       this.ProductTableItems = [
         { prop: 'projectName', label: '所属项目' },
         { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
-        // { prop: 'name', label: '产品名称', sortable: 'custom' },
+        { prop: 'name', label: '产品名称', sortable: 'custom' },
         { prop: 'code', label: '产品编码', sortable: 'custom' },
         { prop: 'productCategoryName', label: '产品分类', sortable: 'custom2' },
         { prop: 'mainUnit', label: '单位', width: 60 },
@@ -696,7 +698,7 @@ export default {
     } else {
       this.ProductTableItems = [
         { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
-        // { prop: 'name', label: '产品名称', sortable: 'custom' },
+        { prop: 'name', label: '产品名称', sortable: 'custom' },
         { prop: 'code', label: '产品编码', sortable: 'custom' },
         { prop: 'productCategoryName', label: '产品分类', sortable: 'custom2' },
         { prop: 'mainUnit', label: '单位', width: 60 },

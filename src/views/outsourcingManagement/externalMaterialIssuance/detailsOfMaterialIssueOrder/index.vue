@@ -73,6 +73,8 @@
             <el-table-column prop="deliverDate" label="发料日期" width="180" sortable="custom"></el-table-column>
             <el-table-column prop="projectName" label="所属项目" width="120"
               v-if="isProjectSwitch === '1'"></el-table-column>
+            <el-table-column prop="productName" label="产品名称" width="120"
+              v-if="isProductNameSwitch === '1'"></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" width="160" sortable="custom" />
@@ -157,6 +159,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isProductNameSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
@@ -322,7 +325,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
-  
+    await this.getProductNameSwitch('product', 'enable_productName')
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.getDeputyUnit()
     this.search()
@@ -338,6 +341,11 @@ export default {
     this.getProductClassFun()
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     getDeputyUnit() {
       let obj = {
         businessCode: 'deputyUnit',

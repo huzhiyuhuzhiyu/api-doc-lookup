@@ -163,6 +163,12 @@
 
     <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
+      <div style="margin-bottom: 10px;" v-if="isProjectSwitch === '1'">
+        <el-select v-model="importProjectId" placeholder="请选择所属项目" style="width: 100%;" filterable
+          :disabled="!userInfo.projectId ? false : userInfo.projectId === '1' ? false : true">
+          <el-option v-for="item in projectIdDataList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+        </el-select>
+      </div>
       <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false" :limit="1"
         :on-preview="handlePreview" drag :on-remove="handleRemove" :on-change="handleFileChange" ref="uploadRef">
         <i class="el-icon-upload"></i>
@@ -200,6 +206,7 @@ export default {
   data() {
     return {
       uploadVisib: false,
+      importProjectId: '',
       isProjectSwitch: '',
       tableDataFlag: false,
       superQueryVisible: false,
@@ -366,6 +373,7 @@ export default {
       this.showAppCodeFlag = false
     }
     await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
     this.tableDataFlag = true
     this.initData()
   },
@@ -374,6 +382,11 @@ export default {
     importForm() {
 
       // this.$refs.UploadProduct.$el.querySelector('input').click()
+      if (this.userInfo.projectId !== '1') {
+        this.importProjectId = this.userInfo.projectId
+      } else {
+        this.importProjectId = ''
+      }
       this.uploadVisib = true
 
     },
@@ -398,6 +411,9 @@ export default {
       this.formLoading = true
       var formData = new FormData()
       formData.append('file', data)
+      if (this.isProjectSwitch === '1') {
+        formData.append('projectId', this.importProjectId)
+      }
       //调用上传文件接口
 
       importProcess(formData)
@@ -436,6 +452,8 @@ export default {
       this.$refs['uploadRef'].clearFiles()
     },
     saveSubmit() {
+      if (!this.importProjectId) return this.$message.error('请选择所属项目');
+      if (!this.file) return this.$message.error('请上传文件');
       this.UploadProduct(this.file)
     },
     // 提示
@@ -452,7 +470,7 @@ export default {
             style: 'padding-right:20px;display:flex;align-items:center;color:#f56c6c;'
           },
           [
-            h('p', { style: 'font-size:14px;' }, '导入成功，存在BOM相关信息错误！'),
+            h('p', { style: 'font-size:14px;' }, '导入成功，存在工艺路线相关信息错误！'),
             h(
               'el-button',
               {

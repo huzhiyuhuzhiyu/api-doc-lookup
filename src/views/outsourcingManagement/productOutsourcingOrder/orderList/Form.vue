@@ -536,6 +536,8 @@
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                 <el-table-column prop="projectName" label="所属项目" width="120"
                   v-if="isProjectSwitch === '1'"></el-table-column>
+                  <el-table-column prop="productName" label="产品名称" width="120"
+              v-if="isProductNameSwitch === '1'"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
                 <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
                 <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
@@ -595,6 +597,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isProductNameSwitch:'',
       tableDataFlag: false,
       tipsvisible: false,
       btnText: '继续新建',
@@ -772,6 +775,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
     this.getDeputyUnit()
     this.getBimBusinessDetail()
   },
@@ -809,6 +813,11 @@ export default {
     }
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     getDeputyUnit() {
       let obj = {
         businessCode: 'deputyUnit',

@@ -452,25 +452,20 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <!-- 销售发退货 -->
-              <el-form @submit.native.prevent
-                v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'">
+              <el-form @submit.native.prevent >
 
+              
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.customerProductDrawingNo" placeholder="请输入客户料号" clearable />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-input v-model="orderForm.drawingNo" placeholder="请输入品名规格" clearable />
+                    <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
                     <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
                       style="width: 100%;"
-                      :start-placeholder="dataForm.businessType == 'outbound_sale_send' ? '发货开始日期' : '退货开始日期'"
-                      :end-placeholder="dataForm.businessType == 'outbound_sale_send' ? '发货结束日期' : '退货结束日期'" clearable>
+                      :start-placeholder="dataForm.businessType == 'outbound_sale_send' ? '收货开始日期' : '收货开始日期'"
+                      :end-placeholder="dataForm.businessType == 'outbound_sale_send' ? '收货结束日期' : '收货结束日期'" clearable>
                     </el-date-picker>
                   </el-form-item>
                 </el-col>
@@ -486,25 +481,7 @@
                 </el-col>
 
               </el-form>
-              <el-form @submit.native.prevent>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-input v-model="orderForm.orderNo" placeholder="收货单号" clearable />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-input v-model="orderForm.drawingNo" placeholder="品名规格" clearable />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
-                      style="width: 100%;" start-placeholder="收货开始日期" end-placeholder="收货结束日期" clearable>
-                    </el-date-picker>
-                  </el-form-item>
-                </el-col>
-              </el-form>
+      
 
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -716,7 +693,24 @@ export default {
       loadingText: '',
       copyLinesData: [],
       previousValue: "",
-      orderForm: {},
+      orderForm: {
+        cooperativePartnerId: "",
+        productDrawingNo: "",        // customerProductNo: "",
+        deliverDateEnd: "",
+        deliverDateStart: "",
+        classAttributeList: [],
+        pageNum: 1,
+        pageSize: 20,
+        orderNo: "",
+        receivingStatus: "not_finished",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: ""
+        }],
+      },
       activeName: "orderInfo",
       warehouseCode: "",
       classAttributeList: [],
@@ -853,28 +847,11 @@ export default {
     },
     // 销售发货选择产品——搜索 如果是销售订单  需要计算待出库数量=订单数量-已出库数量  如果是通知单 则直接取接口返回的待出库数量
     searchProductFun() {
-      this.deliveryDateArr = []
 
-      this.orderForm = { //获取产品数据
-        cooperativePartnerId: "",
-        drawingNo: "",        // customerProductNo: "",
-        customerProductDrawingNo: "",
-        deliverDateEnd: "",
-        deliverDateStart: "",
-        classAttributeList: this.classAttributeList,
-        pageNum: 1,
-        pageSize: 20,
-        orderNo: this.dataForm.sourceNo,
-        receivingStatus: "not_finished",
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: ""
-        }],
-      }
-      if (this.deliveryDateArr.length) {
+       
+        this.orderForm.classAttributeList= this.classAttributeList
+        this.orderForm.orderNo= this.dataForm.sourceNo
+        if (this.deliveryDateArr.length) {
         this.orderForm.deliverDateStart = this.deliveryDateArr[0]
         this.orderForm.deliverDateEnd = this.deliveryDateArr[1]
       } else {
@@ -908,6 +885,24 @@ export default {
     // 销售发货选择产品——重置
     resetProductFun() {
       this.deliveryDateArr = []
+      this.orderForm= {
+        cooperativePartnerId: "",
+        productDrawingNo: "",        // customerProductNo: "",
+        deliverDateEnd: "",
+        deliverDateStart: "",
+        classAttributeList: [],
+        pageNum: 1,
+        pageSize: 20,
+        orderNo: "",
+        receivingStatus: "not_finished",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: ""
+        }],
+      }
       this.searchProductFun()
 
     },

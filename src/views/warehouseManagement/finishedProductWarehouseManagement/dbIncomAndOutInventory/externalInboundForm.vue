@@ -923,6 +923,9 @@ export default {
         // item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
         item.sourceNo = this.dataForm.sourceNo
         item.moveId = this.dataForm.id
+        this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+        this.$set(item, 'warehouseName', this.dataForm.warehouseName)
+        this.$set(item, 'warehouseType', this.dataForm.warehouseType)
         if (this.mainUnitFlag == 1) {
           if (item.calculationDirection == 'multiplication') {
             this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
@@ -1116,6 +1119,13 @@ export default {
       this.dataForm.warehouseName = data[0].name
       this.dataForm.warehouseType = data[0].all.type
       this.dataForm.projectId = data[0].all.projectId
+      if (this.productData.length) {
+        this.productData.forEach(item => {
+          this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+          this.$set(item, 'warehouseName', this.dataForm.warehouseName)
+          this.$set(item, 'warehouseType', this.dataForm.warehouseType)
+        });
+      }
     },
     goBack() {
       this.$emit('close', true)
@@ -1206,6 +1216,9 @@ export default {
             item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
             item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
             // this.$set(item, 'discount', '')
+            this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+            this.$set(item, 'warehouseName', this.dataForm.warehouseName)
+            this.$set(item, 'warehouseType', this.dataForm.warehouseType)
             this.$set(item, 'proportion', '')
             this.$set(item, 'weight', '')
             if (this.mainUnitFlag == 1) {

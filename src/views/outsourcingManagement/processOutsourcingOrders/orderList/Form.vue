@@ -405,7 +405,7 @@
                           :tableItems="ProcessTableItems" :placeholder="'工序名称'" title="选择工序" treeTitle="工序分类"
                           :methodArr="ProcessMethodArr" :listMethod="getBimProcessList"
                           :listRequestObj="ProcessListRequestObj" :paramsObj="{ scope }"
-                          :searchList="ProcessTableSearchList" />
+                          :searchList="ProcessTableSearchList" :beforeOpen="beforeOpen" />
                       </el-form-item>
                     </template>
                   </el-table-column>
@@ -812,6 +812,12 @@ export default {
         console.log(item, 'p')
       })
       this.dataFormTwo.data[this.index].outShipmentList = data
+    },
+    async beforeOpen(paramsObj) {
+      if (this.isProjectSwitch === '1') {
+        this.ProcessListRequestObj.projectId = paramsObj.scope.row.projectId
+      }
+      return true
     },
     // 产品弹窗
     openSeleceProductDialog() {

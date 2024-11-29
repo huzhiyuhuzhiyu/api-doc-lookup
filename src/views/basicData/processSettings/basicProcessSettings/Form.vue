@@ -17,7 +17,7 @@
               <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                 <el-form ref="dataForm" :model="dataForm" :rules="rules" label-width="140px" label-position="top">
                   <el-row :gutter="20" class="custom-row">
-                    <el-col :span="12">
+                    <el-col :span="12" v-if="isProjectSwitch === '1'">
                       <el-form-item label="所属项目" prop="projectId">
                         <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" @change="projectIdChange"
                           :disabled="type === 'look' || type === 'edit' || userInfo.projectId !== '1'"

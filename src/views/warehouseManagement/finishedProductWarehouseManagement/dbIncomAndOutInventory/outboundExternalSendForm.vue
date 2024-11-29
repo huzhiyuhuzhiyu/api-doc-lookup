@@ -725,6 +725,7 @@ export default {
     },
     // 打开选择批次号弹框
     openSeleceBatchNumberDialog(data, index) {
+      console.log("data",data);
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库")
       this.batchNumVisible = true
       data.warehouseId = this.dataForm.warehouseId

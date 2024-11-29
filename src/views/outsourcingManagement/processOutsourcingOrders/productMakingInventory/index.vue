@@ -104,11 +104,16 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getInventoryLineReport } from '@/api/basicData/index' // 仓库 
 import { getBimBusinessDetail } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   name: 'productMakingInventory',
   components: { ExportForm, Form, SuperQuery },
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
       exportFormVisible: false,
@@ -194,7 +199,7 @@ export default {
         orderNo: '', //订单号
         excludeProcessFlag: 0,
         outFlag: 1,
-        productSource:'produce',
+        productSource: 'produce',
         // orderType: 'external', //	订单类型 采购 procure、外协 external
         pageNum: 1,
         pageSize: 20,
@@ -264,7 +269,8 @@ export default {
       availableQuantityNum: 0
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     this.getDeputyUnit()
     this.initData()
   },
@@ -480,8 +486,10 @@ export default {
         deliveryDate: '',
         endTime: '',
         orderNo: '', //订单号
+        excludeProcessFlag: 0,
+        outFlag: 1,
+        productSource: 'produce',
         // orderType: 'external', //	订单类型 采购 procure、外协 external
-        ringBlankQueryFlag: 1,
         pageNum: 1,
         pageSize: 20,
         startTime: '',
@@ -520,7 +528,7 @@ export default {
           this.formVisible = true
           this.$nextTick(() => {
             console.log(this.$refs, 'this.$refs')
-            this.$refs.form.init(this.selectData, 'add')
+            this.$refs.form.init(this.selectData, 'add', this.isProjectSwitch)
           })
         }
       }

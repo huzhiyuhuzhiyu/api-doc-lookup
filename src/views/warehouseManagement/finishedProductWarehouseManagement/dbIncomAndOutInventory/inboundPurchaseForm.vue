@@ -69,7 +69,7 @@
                               </el-input>
                             </el-form-item>
                           </el-col>
-                          <el-col :sm="6" :xs="24" > 
+                          <el-col :sm="6" :xs="24">
                             <el-form-item label="是否显示比重折扣" prop="weightFlag">
                               <el-select v-model="dataForm.weightFlag" placeholder="是否显示比重折扣" style="width: 100%;"
                                 :disabled="btnType == 'look' ? true : false">
@@ -679,11 +679,11 @@ export default {
       endTime: 0,
       productNameFlag: null,
       mainUnitFlag: false,
-      calculateQuantityFlag:"",
+      calculateQuantityFlag: "",
 
     }
   },
- 
+
   async created() {
     await this.getProjectSwitch('system', 'project')
 
@@ -703,8 +703,8 @@ export default {
     }
   },
   mounted() {
-     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit','unitFlag')
-     this.getMainUnitFun('warehouse', 'proportion','proportionFlag')
+    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit', 'unitFlag')
+    this.getMainUnitFun('warehouse', 'proportion', 'proportionFlag')
   },
   methods: {
     computedNumFun(data, index) {
@@ -713,13 +713,13 @@ export default {
         this.watchNum(data, index)
       }
     },
-    async getMainUnitFun(code, type,flag) {
+    async getMainUnitFun(code, type, flag) {
       this.listLoading = true
       try {
         if (flag == 'unitFlag') this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
-        if(flag=='proportionFlag'){
+        if (flag == 'proportionFlag') {
           this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type);
-          this.dataForm.weightFlag=this.calculateQuantityFlag==1?true:false
+          this.dataForm.weightFlag = this.calculateQuantityFlag == 1 ? true : false
         }
         this.tableDataFlag = true
         this.listLoading = false
@@ -854,7 +854,9 @@ export default {
         item.costPrice = item.price
         item.num = item.requiredReceivedQuantity
         item.taxRates = item.taxRate + "%"
-
+        this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+        this.$set(item, 'warehouseName', this.dataForm.warehouseName)
+        this.$set(item, 'warehouseType', this.dataForm.warehouseType)
 
 
 
@@ -1049,6 +1051,13 @@ export default {
       this.dataForm.warehouseName = data[0].name
       this.dataForm.warehouseType = data[0].all.type
       this.dataForm.projectId = data[0].all.projectId
+      if (this.productData.length) {
+        this.productData.forEach(item => {
+          this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+          this.$set(item, 'warehouseName', this.dataForm.warehouseName)
+          this.$set(item, 'warehouseType', this.dataForm.warehouseType)
+        });
+      }
     },
     // 获取仓库id
     getWarehouseListFun() {
@@ -1146,6 +1155,9 @@ export default {
                   this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
                 }
               }
+              this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+              this.$set(item, 'warehouseName', this.dataForm.warehouseName)
+              this.$set(item, 'warehouseType', this.dataForm.warehouseType)
               this.$set(item, 'discount', '')
               this.$set(item, 'proportion', '')
               this.$set(item, 'weight', '')

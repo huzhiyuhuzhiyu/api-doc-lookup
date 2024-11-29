@@ -447,29 +447,55 @@ export default {
           for (const key in detailObj) {
             this.dataForm[key] = detailObj[key]
           }
-          this.tabs[0].tabContent.forEach((tc) => {
-            if (
-              [
-                'productCategoryName',
-                'code',
-                'drawingNo',
-                'name',
-                'model',
-                'sealingCoverStructure',
-                'structureType',
-                'sealingCoverTyping',
-                'clearance',
-                'steelBallManufacturer',
-                'oil',
-                'noise',
-                'holder',
-                'productSource',
-                'projectId'
-              ].includes(tc.prop)
-            ) {
-              tc.itemDisabled = true
-            }
-          })
+          if (this.btnType) {
+            this.tabs[0].tabContent.forEach((tc) => {
+              if (
+                [
+                  'productCategoryName',
+                  'code',
+                  'drawingNo',
+                  'name',
+                  'model',
+                  'sealingCoverStructure',
+                  'structureType',
+                  'sealingCoverTyping',
+                  'clearance',
+                  'steelBallManufacturer',
+                  'oil',
+                  'noise',
+                  'holder',
+                  'productSource',
+                  'projectId'
+                ].includes(tc.prop)
+              ) {
+                tc.itemDisabled = true
+              }
+            })
+          } else {
+            this.tabs[0].tabContent.forEach((tc) => {
+              if (
+                [
+                  'productCategoryName',
+                  'code',
+                  'drawingNo',
+                  'model',
+                  'sealingCoverStructure',
+                  'structureType',
+                  'sealingCoverTyping',
+                  'clearance',
+                  'steelBallManufacturer',
+                  'oil',
+                  'noise',
+                  'holder',
+                  'productSource',
+                  'projectId'
+                ].includes(tc.prop)
+              ) {
+                tc.itemDisabled = true
+              }
+            })
+          }
+
 
           this.fetchData(this.busSetId, false)
         })

@@ -17,7 +17,7 @@
             <el-input v-model="dataForm.name" placeholder="请输入班组名称" maxlength="20" :disabled="btntype ? true : false" />
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="12" v-if="isProjectSwitch === '1'">
           <el-form-item label="所属项目" prop="projectId">
             <el-select v-model="dataForm.projectId" placeholder="请选择所属项目"
               :disabled="dataForm.id || userInfo.projectId !== '1'" style="width:100%">
@@ -80,9 +80,9 @@
                 <span class="required">*</span>人员名称
               </template>
               <template slot-scope="scope">
-                <user-select v-model="scope.row.personnelId" placeholder="请选择人员" clearable
-                  :disabled="btntype ? true : false">
-                </user-select>
+                <ProjectUserSelect v-model="scope.row.personnelId" placeholder="请选择人员" clearable
+                  :disabled="btntype ? true : false" :projectId="dataForm.projectId">
+                </ProjectUserSelect>
 
               </template>
             </el-table-column>
@@ -156,10 +156,15 @@
 <script>
 import { addGroupData, deleteGroupData, editGroupData, getGroupDataInfo, checkGroupCode } from "@/api/basicData/index";
 import getProjectList from '@/mixins/generator/getProjectList'
+import ProjectUserSelect from "./components/JNPF-userSelect";
 export default {
+  components: {
+    ProjectUserSelect
+  },
   mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
       tableDataFlag: false,
       visible: false,
       formLoading: false,
@@ -250,7 +255,11 @@ export default {
       codeConfig: {},
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
+    this.tableDataFlag = true
+
   },
   methods: {
     async fetchData(code, flag) {

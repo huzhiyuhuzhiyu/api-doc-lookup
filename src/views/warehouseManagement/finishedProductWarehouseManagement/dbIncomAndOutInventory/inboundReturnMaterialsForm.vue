@@ -208,12 +208,12 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                            <el-form-item label="退料人" prop="recipientBy">
-                              <user-select v-model="dataForm.recipientBy" placeholder="请选择退料人" clearable
-                                style="width: 100%;" :disabled="btnType == 'look'" @change="hangleSelectSales">
-                              </user-select>
-                            </el-form-item>
-                          </el-col>
+                        <el-form-item label="退料人" prop="recipientBy">
+                          <user-select v-model="dataForm.recipientBy" placeholder="请选择退料人" clearable
+                            style="width: 100%;" :disabled="btnType == 'look'" @change="hangleSelectSales">
+                          </user-select>
+                        </el-form-item>
+                      </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="仓库" prop="warehouseName">
                           <ComSelect-list
@@ -472,7 +472,7 @@ export default {
   mixins: [flowMixin, busFlow, getProjectList],
   data() {
     return {
-      isProjectSwitch:"",
+      isProjectSwitch: "",
       shelfSpaceName: "",
       shelfSpaceId: "",
       warehouseRequestObj: {
@@ -968,6 +968,13 @@ export default {
       this.dataForm.warehouseName = data[0].name
       this.dataForm.projectId = data[0].all.projectId
       this.dataForm.warehouseType = data[0].all.type
+      if (this.productData.length) {
+        this.productData.forEach(item => {
+          this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+          this.$set(item, 'warehouseName', this.dataForm.warehouseName)
+          this.$set(item, 'warehouseType', this.dataForm.warehouseType)
+        });
+      }
     },
     goBack() {
       this.$emit('close', true)
@@ -1045,6 +1052,9 @@ export default {
                   this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
                 }
               }
+              this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+              this.$set(item, 'warehouseName', this.dataForm.warehouseName)
+              this.$set(item, 'warehouseType', this.dataForm.warehouseType)
             });
           }
           console.log("filteredArray", filteredArray);

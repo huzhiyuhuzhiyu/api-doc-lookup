@@ -78,7 +78,7 @@ import { inspectionTypeList } from '../data.js'
 import TableFormProduct from './TableForm-product.vue'
 import TableFormWare from './TableForm-ware.vue'
 import TableFormWareTwo from './TableForm-ware-two.vue'
-import { getInspectionItem, getSamplingQuantityByProductId } from '@/api/inspectionManagement/index' // 产品检验项目列表
+import { getInspectionItem, getSamplingQuantityByProductId, getSamplingQuantityByProcessId } from '@/api/inspectionManagement/index' // 产品检验项目列表
 import WareSide from './WareSide.vue'
 import { getbimDrawingData, getBimBusinessDetail } from '@/api/basicData/index'
 import Preview from '@/components/upload-wj/Preview.vue'
@@ -305,7 +305,16 @@ export default {
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
           itemDisabled: true
         },
-
+        {
+          prop: 'processName',
+          label: '工序名称',
+          value: '',
+          type: 'input',
+          itemRules: [{ required: true, trigger: 'blur' }],
+          sm: 6,
+          render: this.dataForm.processName,
+          itemDisabled: true
+        },
         {
           prop: 'mainUnit',
           label: '单位',
@@ -507,7 +516,12 @@ export default {
       option ? (this.title = readOnly ? `查看${option.label}检验单` : `检验${option.label}`) : ''
       this.title.includes('生产巡检') ? (this.title = this.title.replace('检验', '')) : ''
       this.setDataFormItems()
-      this.dataForm.inspectionMethod = this.scope.productInspectionMethod
+      if (this.dataForm.processId) {
+         this.dataForm.inspectionMethod = this.scope.processInspectionMethod
+      } else{
+        this.dataForm.inspectionMethod = this.scope.productInspectionMethod
+      }
+     
       if (this.dataForm.inspectionMethod) {
         if (this.dataForm.inspectionMethod === 'all') {
           this.dataForm.samplingQuantity = this.dataForm.inspectionQuantity
@@ -533,17 +547,17 @@ export default {
 
           })
         } else if (this.dataForm.inspectionMethod === 'spot_check') {
+          console.log(this.dataForm.processId, 'id')
+          if (this.dataForm.processId) {
+            const _data = { processId: this.dataForm.processId, num: this.dataForm.inspectionQuantity }
+            let res = await getSamplingQuantityByProcessId(_data).catch(() => false)
+            this.$set(this.dataForm, 'samplingQuantity', res.data[0].spotCheckNum)
+          } else {
+            const _data = [{ productsId: this.dataForm.productsId, num: this.dataForm.inspectionQuantity }]
+            let res = await getSamplingQuantityByProductId(_data).catch(() => false)
+            this.$set(this.dataForm, 'samplingQuantity', res.data[0].spotCheckNum)
+          }
 
-          const _data = [{ productsId: this.dataForm.productsId, num: this.dataForm.inspectionQuantity }]
-          let res = await getSamplingQuantityByProductId(_data).catch(() => false)
-          console.log(res.data[0].spotCheckNum, 'jkjkjkjkjk')
-          // this.dataForm.samplingQuantity = Number(res.data[0].spotCheckNum)
-          this.$set(this.dataForm, 'samplingQuantity', res.data[0].spotCheckNum)
-          // this.inspectionInfo.forEach(tc => {
-          //   if (tc.prop === 'samplingQuantity') {
-          //     tc.itemDisabled = true
-          //   }
-          // })
         } else {
 
         }

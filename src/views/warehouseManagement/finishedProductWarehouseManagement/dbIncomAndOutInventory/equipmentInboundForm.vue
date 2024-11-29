@@ -422,7 +422,7 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 export default {
   components: { CustomerForm, WareHouseForm, BatchNumberForm, Process, recordList },
-  mixins: [flowMixin, busFlow,getProjectList],
+  mixins: [flowMixin, busFlow, getProjectList],
   data() {
     return {
       warehouseRequestObj: {
@@ -466,7 +466,7 @@ export default {
         approvalFlag: false,
         inspectionResults: "",
         orderDate: this.jnpf.getToday(),
-        projectId:"",
+        projectId: "",
       },
       customerInfo: {},//所选客户信息
       getWarehouseList,
@@ -725,7 +725,9 @@ export default {
             this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
           }
         }
-
+        this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+        this.$set(item, 'warehouseName', this.dataForm.warehouseName)
+        this.$set(item, 'warehouseType', this.dataForm.warehouseType)
         this.productData.push(item)
       });
       this.productData.forEach(item => {
@@ -856,6 +858,13 @@ export default {
       this.dataForm.projectId = data[0].all.projectId
       this.dataForm.warehouseName = data[0].name
       this.dataForm.warehouseType = data[0].all.type
+      if (this.productData.length) {
+        this.productData.forEach(item => {
+          this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+          this.$set(item, 'warehouseName', this.dataForm.warehouseName)
+          this.$set(item, 'warehouseType', this.dataForm.warehouseType)
+        });
+      }
       if (this.dataForm.warehouseType == 'scrap') {
         this.dataForm.inspectionResults = 'discard'
       } else if (this.dataForm.warehouseType == 'normal') {
@@ -961,6 +970,13 @@ export default {
               item.num = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.requisitionNum, item.incomingOutgoingNum]), 2)
               this.$set(item, 'unReceiveQuantity', item.num)
               this.$set(item, 'warehouseCodeLineList', [])
+              if (this.productData.length) {
+                this.productData.forEach(item => {
+                  this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+                  this.$set(item, 'warehouseName', this.dataForm.warehouseName)
+                  this.$set(item, 'warehouseType', this.dataForm.warehouseType)
+                });
+              }
               item.equipments.forEach(equipment => {
                 // 创建新的对象并赋值  
                 const newObj = {

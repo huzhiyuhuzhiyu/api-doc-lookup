@@ -42,6 +42,9 @@
 
               <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" />
               <el-table-column prop="productCode" label="产品编码" width="120" />
+              <el-table-column prop="weight" label="重量(KG)" min-width="180" sortable="custom" />
+              <el-table-column prop="processName" label="工序名称" min-width="180"  />
+              <el-table-column prop="processCode" label="工序编码" min-width="180"  />
               <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
               v-if="isProjectSwitch == 1" />
               <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
@@ -56,6 +59,7 @@
                 </template>
               </el-table-column>
               <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
+          
               <el-table-column prop="inspectionResults" label="检验结果" sortable="custom" min-width="120">
                 <template slot-scope="scope">
                   <div v-if="scope.row.inspectionResults == 'qualified'">合格</div>

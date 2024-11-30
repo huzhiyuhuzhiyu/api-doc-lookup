@@ -56,7 +56,7 @@
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="仓库" prop="warehouseName">
                               <ComSelect-list
-                                :requestObj="{ type: 'normal',  state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }"
+                                :requestObj="{ type: 'normal',  state: 'enable', projectId: isProjectSwitch === '1' ? dataForm.projectId || '' : '' }"
                                 :dialogTitle="'选择仓库'" :isdisabled="true" v-model="dataForm.warehouseName"
                                 :method="getWarehouseList" placeholder="请选择仓库"></ComSelect-list>
                             </el-form-item>
@@ -274,7 +274,7 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="仓库" prop="warehouseName">
                           <ComSelect-list
-                            :requestObj="{ type: 'normal',  state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }"
+                            :requestObj="{ type: 'normal',  state: 'enable', projectId: isProjectSwitch === '1' ? dataForm.projectId || '' : '' }"
                             :dialogTitle="'选择仓库'" :isdisabled="true" v-model="dataForm.warehouseName"
                             :method="getWarehouseList" placeholder="请选择仓库"></ComSelect-list>
                         </el-form-item>
@@ -388,15 +388,7 @@
                           v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="num" label="收货数量" width="140" :key="77">
-                      <template slot="header">
-                        <span class="required">*</span>收货数量
-                      </template>
-                      <template slot-scope="scope">
-                        <el-input :disabled="btnType == 'look'" @input="watchNum(scope.row, scope.$index)"
-                          v-model="scope.row.num" placeholder="收货数量"></el-input>
-                      </template>
-                    </el-table-column>
+              
 
                     <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                     <el-table-column prop="num" :label="mainUnitFlag == 1 ? '收货数量(主)' : '收货数量'" min-width="160">
@@ -1275,9 +1267,8 @@ export default {
               //   }
               // }
 
-              if (Number(item.num) > Number(item.ordersNum)) {
-                console.log(item.num);
-                console.log(item.ordersNum);
+              if (Number(item.num) > Number(item.waitReceiptNum)) {
+                 
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待收货数量")
                 break

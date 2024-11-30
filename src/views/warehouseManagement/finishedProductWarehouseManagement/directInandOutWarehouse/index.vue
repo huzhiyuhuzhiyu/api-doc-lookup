@@ -58,7 +58,7 @@
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="仓库" prop="warehouseName">
                             <ComSelect-list
-                              :requestObj="{ type: 'normal', state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }"
+                              :requestObj="{ type: 'normal', state: 'enable', projectId: isProjectSwitch === '1' ? dataForm.projectId || '' : '' }"
                               :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName"
                               :method="getWarehouseList" placeholder="请选择仓库"
                               @change="changeWarehousex"></ComSelect-list>
@@ -1419,7 +1419,7 @@ export default {
         if (this.btnType == 'add') this.fetchData("CKDH")
 
       }
-      if (val == 'inbound_sale_return' || val == 'inbound_production' || val == 'inbound_order_production' || val == 'inbound_purchase' || val == 'inbound_return_materials' || val == 'inbound_external_return' || val == 'inbound_external' || val == 'inbound_other') {
+      if (val == 'inbound_sale_return' || val == 'inbound_production' || val == 'inbound_order_production' || val == 'inbound_purchase' || val == 'inbound_return_materials'  || val == 'inbound_external' || val == 'inbound_other') {
         // if ( val == 'inbound_other') {
         this.dataForm.documentType = 'inbound'
         if (this.btnType == 'add') this.fetchData("RKDH")
@@ -1467,7 +1467,7 @@ export default {
         } // 意向客户列表入参
         this.dataRule.cooperativePartnerIdText[0].message = '采购供应商不能为空'
         // this.dataRule
-      } else if (val == 'outbound_external_send' || val == 'inbound_external_return') {
+      } else if (val == 'outbound_external_send'|| val == 'inbound_external') {
         this.partnerFlag = true
         this.partnerTitle = '外协供应商'
         this.partnerDialogTitle = '选择外协供应商'
@@ -1726,7 +1726,7 @@ export default {
                 this.dataForm.documentType = 'outbound'
                 this.fetchData("CKDH")
               }
-              if (this.dataForm.businessType == 'inbound_sale_return' || this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'inbound_return_materials' || this.dataForm.businessType == 'inbound_external_return' || this.dataForm.businessType == 'inbound_external' || this.dataForm.businessType == 'inbound_other') {
+              if (this.dataForm.businessType == 'inbound_sale_return' || this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'inbound_return_materials' || this.dataForm.businessType == 'inbound_external' || this.dataForm.businessType == 'inbound_other') {
                 this.dataForm.documentType = 'inbound'
                 this.fetchData("RKDH")
 

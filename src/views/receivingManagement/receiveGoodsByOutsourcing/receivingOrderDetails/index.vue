@@ -81,6 +81,10 @@
             <el-table-column prop="projectName" label="所属项目" width="120"
               v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
+            <template v-if="isProportionSwitch === '1'">
+              <el-table-column prop="weight" label="重量(kg)" width="90" />
+              <el-table-column prop="proportion" label="比重" width="80" />
+            </template>
             <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
               :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
             <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
@@ -171,6 +175,7 @@ export default {
     return {
       isProductNameSwitch: '',
       isProjectSwitch: '',
+      isProportionSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
@@ -352,6 +357,7 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.getProportionSwitch('warehouse', 'proportion')
     this.getDeputyUnit()
     this.orderForm = JSON.parse(JSON.stringify(this.initOrderForm))
     this.search('basic')
@@ -360,6 +366,11 @@ export default {
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    async getProportionSwitch(code, type) {
+      try {
+        this.isProportionSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
     getDeputyUnit() {

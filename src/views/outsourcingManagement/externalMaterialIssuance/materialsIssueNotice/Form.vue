@@ -147,6 +147,10 @@
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="processName" label="工序名称" width="160" key="5"
                         show-overflow-tooltip></el-table-column>
+                      <template v-if="isProportionSwitch === '1'">
+                        <el-table-column prop="weight" label="重量(kg)" width="90" />
+                        <el-table-column prop="proportion" label="比重" width="80" />
+                      </template>
                       <!-- <el-table-column prop="mainUnit" label="单位" width="80" key="13"
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="purchaseQuantity" label="订单数量" width="120" key="7"
@@ -264,6 +268,10 @@
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productCode" label="产品编码" width="200"></el-table-column>
                     <el-table-column prop="processName" label="工序名称" width="200"></el-table-column>
+                    <!-- <template v-if="isProportionSwitch === '1'">
+                      <el-table-column prop="weight" label="重量(kg)" width="90" />
+                      <el-table-column prop="proportion" label="比重" width="80" />
+                    </template> -->
                     <el-table-column prop="mainUnit" label="单位" width="80"></el-table-column>
                     <el-table-column prop="qty" label="基本数量" width="100" v-if="btnType !== 'look'"></el-table-column>
                     <el-table-column prop="demandQuantity" label="需发料数量" width="140"
@@ -420,6 +428,10 @@
                     show-overflow-tooltip></el-table-column>
                   <el-table-column prop="processName" label="工序名称" width="100" key="5"
                     show-overflow-tooltip></el-table-column>
+                  <template v-if="isProportionSwitch === '1'">
+                    <el-table-column prop="weight" label="重量(kg)" width="90" />
+                    <el-table-column prop="proportion" label="比重" width="80" />
+                  </template>
                   <el-table-column prop="mainUnit" label="单位" width="80" key="13"
                     show-overflow-tooltip></el-table-column>
                   <el-table-column prop="purchaseQuantity" label="订单数量" width="120" key="7"
@@ -530,6 +542,10 @@
                 <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productCode" label="产品编码" width="120"></el-table-column>
                 <el-table-column prop="processName" label="工序名称" width="100"></el-table-column>
+                <!-- <template v-if="isProportionSwitch === '1'">
+                  <el-table-column prop="weight" label="重量(kg)" width="90" />
+                  <el-table-column prop="proportion" label="比重" width="80" />
+                </template> -->
                 <el-table-column prop="mainUnit" label="单位" width="80"></el-table-column>
                 <el-table-column prop="qty" label="基本数量" width="100" v-if="btnType !== 'look'"></el-table-column>
                 <el-table-column prop="demandQuantity" label="需发料数量" width="140"
@@ -618,6 +634,7 @@ export default {
       isDeputyUnitSwitch: '',
       isProductNameSwitch: '',
       isProjectSwitch: '',
+      isProportionSwitch: '',
       tableDataFlag: false,
       flowTemplateJson: {},
       isattachmentswitch: '',
@@ -1011,6 +1028,7 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.getProportionSwitch('warehouse', 'proportion')
     this.getDeputyUnit()
     this.getBimBusinessDetail()
     // this.handleChange()
@@ -1025,6 +1043,11 @@ export default {
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    async getProportionSwitch(code, type) {
+      try {
+        this.isProportionSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
     getDeputyUnit() {

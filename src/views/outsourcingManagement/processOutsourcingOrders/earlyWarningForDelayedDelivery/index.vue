@@ -82,6 +82,10 @@
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
             <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" width="120" sortable="custom" />
+            <template v-if="isProportionSwitch === '1'">
+              <el-table-column prop="weight" label="重量(kg)" width="90" />
+              <el-table-column prop="proportion" label="比重" width="80" />
+            </template>
             <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
               :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
             <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
@@ -150,10 +154,11 @@ export default {
     return {
       isProjectSwitch: '',
       isProductNameSwitch: '',
+      isProportionSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
-      columnList: ['cooperativePartnerCode', 'departmentName','createTime'],
+      columnList: ['cooperativePartnerCode', 'departmentName', 'createTime'],
       deliveryDateArr: [],
       orderFollowVisible: false,
       productFormVisible: false,
@@ -278,6 +283,7 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.getProportionSwitch('warehouse', 'proportion')
     this.getDeputyUnit()
     // 默认设置为近3天
     const end = new Date()
@@ -290,6 +296,11 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    async getProportionSwitch(code, type) {
+      try {
+        this.isProportionSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)

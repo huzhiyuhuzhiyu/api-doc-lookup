@@ -258,6 +258,11 @@
               </el-select>
             </el-form-item>
           </el-col>
+          <el-col :span="12" v-if="isProductNameSwitch === '1'">
+            <el-form-item label="产品名称" prop="name">
+              <el-input v-model="quickForm.name" placeholder="请输入产品名称"></el-input>
+            </el-form-item>
+          </el-col>
           <el-col :span="12">
             <el-form-item label="产品编码" prop="code">
               <template slot="label">
@@ -356,6 +361,7 @@ export default {
   data() {
     return {
       importProjectId: '',
+      isProductNameSwitch: '',
       exportFormVisible: false,
       quickVisible: false,
       quickForm: {
@@ -684,8 +690,9 @@ export default {
   mounted() {
     this.getProductClassFun()
   },
-  created() {
+  async created() {
     this.getProjectSwitch()
+    await this.getProductNameSwitch('product', 'enable_productName')
     if (localStorage.getItem('finishedFlag')) {
       let roleFlag = JSON.parse(localStorage.getItem('finishedFlag'))
       this.expands = roleFlag
@@ -705,6 +712,11 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     async getProjectSwitch() {
       let obj = {
         businessCode: 'system',

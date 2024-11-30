@@ -66,8 +66,8 @@
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
           :setColumnDisplayList="columnList" :checkSelectable="checkSelectable">
           <el-table-column prop="orderNo" label="出入库单号" min-width="240" sortable="custom" />
-          <el-table-column prop="partnerName" label="客户名称" min-width="180" sortable="custom" />
-          <el-table-column prop="partnerCode" label="客户编码" min-width="180" sortable="custom" />
+          <el-table-column prop="partnerName" label="供应商名称" min-width="180" sortable="custom" />
+          <el-table-column prop="partnerCode" label="供应商编码" min-width="180" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
           <!-- <el-table-column prop="productName" label="产品名称" min-width="180" sortable="custom" /> -->
@@ -202,12 +202,12 @@ export default {
         },
         {
           prop: 'partnerName',
-          label: '客户名称',
+          label: '供应商名称',
           type: 'input'
         },
         {
           prop: 'partnerCode',
-          label: '客户编码',
+          label: '供应商编码',
           type: 'input'
         },
         {
@@ -399,12 +399,12 @@ export default {
               },
               {
                 prop: 'partnerName',
-                label: '客户名称',
+                label: '供应商名称',
                 type: 'input'
               },
               {
                 prop: 'partnerCode',
-                label: '客户编码',
+                label: '供应商编码',
                 type: 'input'
               },
               {
@@ -459,12 +459,12 @@ export default {
               },
               {
                 prop: 'partnerName',
-                label: '客户名称',
+                label: '供应商名称',
                 type: 'input'
               },
               {
                 prop: 'partnerCode',
-                label: '客户编码',
+                label: '供应商编码',
                 type: 'input'
               },
               {
@@ -572,7 +572,7 @@ export default {
         {
           field: 'cooperativePartnerName',
           fieldValue: '',
-          label: '客户名称',
+          label: '供应商名称',
           symbol: 'like',
           searchType: 1,
           width: 120
@@ -601,7 +601,7 @@ export default {
             this.$refs.procureForm.init(this.selectData)
           })
         } else {
-          this.$message.error('请选择客户相同的通知单!')
+          this.$message.error('请选择供应商相同的通知单!')
         }
       }
     }

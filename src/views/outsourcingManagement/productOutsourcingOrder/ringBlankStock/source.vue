@@ -45,7 +45,24 @@
                   </el-form-item>
                 </template>
               </el-table-column>
-
+              <!-- <el-table-column prop="weight" label="重量(kg)" min-width="120" show-overflow-tooltip>
+                <template slot-scope="scope">
+                  <el-form-item>
+                    <div class="viewData">
+                      <span>{{ scope.row.weight }}</span>
+                    </div>
+                  </el-form-item>
+                </template>
+              </el-table-column>
+              <el-table-column prop="proportion" label="比重" min-width="120" show-overflow-tooltip>
+                <template slot-scope="scope">
+                  <el-form-item>
+                    <div class="viewData">
+                      <span>{{ scope.row.proportion }}</span>
+                    </div>
+                  </el-form-item>
+                </template>
+              </el-table-column> -->
               <el-table-column prop="demandQuantity1" label="发料数量" min-width="140">
                 <template slot="header">
                   <span class="required">*</span>

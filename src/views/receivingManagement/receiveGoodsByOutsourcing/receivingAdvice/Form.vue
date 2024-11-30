@@ -119,7 +119,10 @@
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="1" />
                     <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                       key="2"></el-table-column>
-
+                    <template v-if="isProportionSwitch === '1'">
+                      <el-table-column prop="weight" label="重量(kg)" width="90" />
+                      <el-table-column prop="proportion" label="比重" width="80" />
+                    </template>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip />
                     <el-table-column prop="productCode" label="产品编码" width="140"
                       show-overflow-tooltip></el-table-column>
@@ -544,6 +547,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isProportionSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
@@ -863,7 +867,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
-
+    await this.getProportionSwitch('warehouse', 'proportion')
     this.getDeputyUnit()
     this.getBimBusinessDetail()
     // this.handleChange()
@@ -922,6 +926,11 @@ export default {
       getBimBusinessDetail(obj).then((res) => {
         this.isDeputyUnitSwitch = res.data.configValue1
       })
+    },
+    async getProportionSwitch(code, type) {
+      try {
+        this.isProportionSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
     },
     getBimBusinessDetail() {
       let obj = {

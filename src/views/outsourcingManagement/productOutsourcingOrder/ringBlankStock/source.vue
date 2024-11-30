@@ -45,7 +45,7 @@
                   </el-form-item>
                 </template>
               </el-table-column>
-              <el-table-column prop="weight" label="重量(kg)" min-width="120" show-overflow-tooltip>
+              <!-- <el-table-column prop="weight" label="重量(kg)" min-width="120" show-overflow-tooltip>
                 <template slot-scope="scope">
                   <el-form-item>
                     <div class="viewData">
@@ -62,7 +62,7 @@
                     </div>
                   </el-form-item>
                 </template>
-              </el-table-column>
+              </el-table-column> -->
               <el-table-column prop="demandQuantity1" label="发料数量" min-width="140">
                 <template slot="header">
                   <span class="required">*</span>

@@ -292,11 +292,10 @@
                     <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
                     <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
                     <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
-                    <template v-if="isProportionSwitch === '1'">
+                    <!-- <template v-if="isProportionSwitch === '1'">
                       <el-table-column prop="weight" label="重量(kg)" width="90" />
                       <el-table-column prop="proportion" label="比重" width="80" />
-                    </template>
-
+                    </template> -->
                     <el-table-column prop="mainUnit" label="单位" min-width="140"></el-table-column>
                     <el-table-column prop="qty" label="基本数量" min-width="140"></el-table-column>
                     <el-table-column prop="demandQuantity" label="发料数量" min-width="140"></el-table-column>
@@ -434,8 +433,10 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="weight" label="重量(kg)" width="90" />
-                  <el-table-column prop="proportion" label="比重" width="80" />
+                  <template v-if="isProportionSwitch === '1'">
+                    <el-table-column prop="weight" label="重量(kg)" width="90" />
+                    <el-table-column prop="proportion" label="比重" width="80" />
+                  </template>
                   <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                     :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
                   <el-table-column prop="purchaseQuantity" label="数量" min-width="100">
@@ -588,8 +589,10 @@
                 <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
                 <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
                 <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
-                <el-table-column prop="weight" label="重量(kg)" width="90" />
-                <el-table-column prop="proportion" label="比重" width="80" />
+                <!-- <template v-if="isProportionSwitch === '1'">
+                  <el-table-column prop="weight" label="重量(kg)" width="90" />
+                  <el-table-column prop="proportion" label="比重" width="80" />
+                </template> -->
                 <el-table-column prop="mainUnit" label="单位" min-width="140"></el-table-column>
                 <el-table-column prop="qty" label="基本数量" min-width="140"></el-table-column>
                 <el-table-column prop="demandQuantity" label="发料数量" min-width="140"></el-table-column>
@@ -797,7 +800,7 @@ export default {
     },
     async getProportionSwitch(code, type) {
       try {
-        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.isProportionSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
     getDeputyUnit() {
@@ -1512,4 +1515,3 @@ export default {
   display: inline-block;
 }
 </style>
-

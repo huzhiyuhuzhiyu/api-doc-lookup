@@ -118,7 +118,10 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-
+                      <template v-if="isProportionSwitch === '1'">
+                        <el-table-column prop="weight" label="重量(kg)" width="90" />
+                        <el-table-column prop="proportion" label="比重" width="80" />
+                      </template>
                       <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                         :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
                       <el-table-column prop="purchaseQuantity" label="数量" width="100">
@@ -352,9 +355,10 @@
                 |
               </div>
               <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true" :hasC="type == 'edit'" ref="multipleTable"
-                  @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
-                  id="table" border height="460" @row-click="openDetails" :row-style="rowStyle">
+                <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true" :hasC="type == 'edit'"
+                  ref="multipleTable" @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data"
+                  :data="dataFormTwo.data" id="table" border height="460" @row-click="openDetails"
+                  :row-style="rowStyle">
                   <!-- <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column> -->
                   <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                   <el-table-column prop="projectName" label="所属项目" width="120"
@@ -387,7 +391,10 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-
+                  <template v-if="isProportionSwitch === '1'">
+                    <el-table-column prop="weight" label="重量(kg)" width="90" />
+                    <el-table-column prop="proportion" label="比重" width="80" />
+                  </template>
                   <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                     :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
                   <el-table-column prop="purchaseQuantity" label="数量" width="100">
@@ -536,8 +543,8 @@
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                 <el-table-column prop="projectName" label="所属项目" width="120"
                   v-if="isProjectSwitch === '1'"></el-table-column>
-                  <el-table-column prop="productName" label="产品名称" width="120"
-              v-if="isProductNameSwitch === '1'"></el-table-column>
+                <el-table-column prop="productName" label="产品名称" width="120"
+                  v-if="isProductNameSwitch === '1'"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
                 <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
                 <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
@@ -597,7 +604,8 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
-      isProductNameSwitch:'',
+      isProductNameSwitch: '',
+      isProportionSwitch: '',
       tableDataFlag: false,
       tipsvisible: false,
       btnText: '继续新建',
@@ -776,6 +784,7 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.getProportionSwitch('warehouse', 'proportion')
     this.getDeputyUnit()
     this.getBimBusinessDetail()
   },
@@ -826,6 +835,11 @@ export default {
       getBimBusinessDetail(obj).then((res) => {
         this.isDeputyUnitSwitch = res.data.configValue1
       })
+    },
+    async getProportionSwitch(code, type) {
+      try {
+        this.isProportionSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
     },
     getBimBusinessDetail() {
       let obj = {

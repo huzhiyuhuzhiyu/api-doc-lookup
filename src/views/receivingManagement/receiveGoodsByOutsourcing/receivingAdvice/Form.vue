@@ -1469,6 +1469,7 @@ export default {
       this.approvalFlag = approvalFlag
       this.btnType = btnType
       console.log(this.btnType, 'this.btnType')
+      console.log(data,'kk')
       if (data) {
         data.forEach((item) => {
           item.ordersNo = item.orderNo

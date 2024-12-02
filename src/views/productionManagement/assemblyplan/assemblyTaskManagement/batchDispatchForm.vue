@@ -480,7 +480,7 @@
 
           </el-row>
         </el-dialog>
-        <el-dialog title="派工单数据" :close-on-click-modal="false" :close-on-press-escape="false" append-to-body
+        <el-dialog title="工单数据" :close-on-click-modal="false" :close-on-press-escape="false" append-to-body
           :visible.sync="detailDiaFlag" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1180px"
           @close="detailDiaFlag = false">
           <el-row class="JNPF-common-search-box" :gutter="5">

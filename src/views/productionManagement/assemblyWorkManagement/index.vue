@@ -26,7 +26,7 @@
             </template>
             <el-col :span="4">
               <el-form-item>
-                <el-select v-model="dataForm.businessType" placeholder="业务类型" style="width: 100%;" clearable>
+                <el-select v-model="dataForm.prodOrderStatus" placeholder="任务状态" style="width: 100%;" clearable>
                   <el-option v-for="(item, index) in list" :key="index" :label="item.label"
                     :value="item.value"></el-option>
                 </el-select>
@@ -45,8 +45,9 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
-              <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"> 关单
-              </el-button>
+              <el-button size="mini" type="primary" icon="el-icon-edit" @click="reassignmentFun2()">改派</el-button>
+              <el-button type="primary" size="mini" icon="el-icon-download"
+                @click="exportForm('dataTable')">导出</el-button>
             </div>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -72,47 +73,53 @@
                 <div>{{ scope.row.processingType == 'self_produced' ? '自制' : '外协' }}</div>
               </template>
             </el-table-column>
-            <el-table-column prop="planStartDate" label="计划开始日期" min-width="120" sortable="custom" />
-            <el-table-column prop="planEndDate" label="计划结束日期" min-width="120" sortable="custom" />
+            <el-table-column prop="planStartDate" label="计划开始日期" min-width="160" sortable="custom" />
+            <el-table-column prop="planEndDate" label="计划结束日期" min-width="160" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="80" />
             <el-table-column prop="productionQuantity" label="生产数量" min-width="140" sortable="custom" />
             <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="140" sortable="custom" />
-            <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="140"> </el-table-column>
+            <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="140" sortable="custom"> </el-table-column>
             <el-table-column prop="personName" label="人员" min-width="160" sortable="custom" />
             <el-table-column prop="workGroupName" label="班组" min-width="160" sortable="custom" />
             <el-table-column prop="equipmentName" label="设备" min-width="160" sortable="custom"></el-table-column>
-            <el-table-column prop="pickingFlag" label="是否领料" min-width="160" sortable="custom">
+            <el-table-column prop="pickingFlag" label="是否领料" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div>{{ scope.row.pickingFlag == 1 ? '是' : '否' }}</div>
               </template>
             </el-table-column>
-            <el-table-column prop="firstInspection" label="是否首检" min-width="160" sortable="custom">
+            <el-table-column prop="firstInspection" label="是否首检" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div>{{ scope.row.firstInspection == 1 ? '是' : '否' }}</div>
               </template>
             </el-table-column>
-            <el-table-column prop="checkFlag" label="是否检验" min-width="160" sortable="custom">
+            <el-table-column prop="checkFlag" label="是否检验" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div>{{ scope.row.checkFlag == 1 ? '是' : '否' }}</div>
               </template>
             </el-table-column>
-            <el-table-column prop="reportFlag" label="是否报工" min-width="160" sortable="custom">
+            <el-table-column prop="reportFlag" label="是否报工" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div>{{ scope.row.reportFlag == 1 ? '是' : '否' }}</div>
               </template>
             </el-table-column>
-            <el-table-column prop="stockFlag" label="是否入库" min-width="160" sortable="custom">
+            <el-table-column prop="stockFlag" label="是否入库" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div>{{ scope.row.pickingFlag == 1 ? '是' : '否' }}</div>
               </template>
             </el-table-column>
-            <el-table-column prop="productionOrderNo" label="生产任务单号" min-width="160"
+            <el-table-column prop="productionOrderNo" label="生产任务单号" min-width="180"
               sortable="custom"></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" sortable="custom"></el-table-column>
-            <el-table-column prop="taskMethod" label="任务类型" min-width="160" sortable="custom"></el-table-column>
-            <el-table-column prop="taskMethod" label="任务状态" min-width="160" sortable="custom"></el-table-column>
-            <el-table-column prop="taskMethod" label="创建时间" min-width="160" sortable="custom"></el-table-column>
-            <el-table-column label="操作" width="320" fixed="right">
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom"></el-table-column>
+            <el-table-column prop="prodOrderStatus" label="任务状态" min-width="120" sortable="custom">
+              <template slot-scope="scope">
+                <div v-if="scope.row.prodOrderStatus == 'normal'"><el-tag>正常</el-tag> </div>
+                <div v-if="scope.row.prodOrderStatus == 'suspend'"><el-tag type="info">暂停</el-tag></div>
+                <div v-if="scope.row.prodOrderStatus == 'closed'"><el-tag type="danger">关闭</el-tag></div>
+                <div v-if="scope.row.prodOrderStatus == 'finish'"><el-tag type="success">已完成</el-tag></div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="createTime" label="创建时间" min-width="210" sortable="custom"></el-table-column>
+            <el-table-column label="操作" width="120" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text"
                   @click="handleUserRelation(scope.row.orderNo, 'report')">报工记录</el-button>
@@ -120,7 +127,7 @@
               </template>
             </el-table-column>
           </JNPF-table>
-          <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
+          <pagination :total="total" :page.sync="dataForm.pageNum" :limit.sync="dataForm.pageSize"
             @pagination="initData" />
         </div>
       </div>
@@ -130,27 +137,32 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-
+    <BatchDispatchForm v-if="BatchDispatchVisible" ref="BatchDispatchForm" @refreshDataList="initData"
+      @close="closeForm">
+    </BatchDispatchForm>
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
 <script>
 import { detailordershengchan, getWorkList, addWorkReport } from '@/api/productOrdes/index.js'
 import { UserListAll, } from '@/api/permission/user'
 import Form from './Form'
+
+import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
- 
+import BatchDispatchForm from './batchDispatchForm.vue'
+
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 // import TaskForm from './taskForm.vue'
 
 export default {
 
-  name: 'assemblyTaskManagement',
-
-  components: { SuperQuery, Form, },
+  name: 'assemblyWorkManagement',
+  components: { SuperQuery, Form, BatchDispatchForm, ExportForm },
   mixins: [getProjectList],
 
   data() {
@@ -168,21 +180,15 @@ export default {
       basicQuery: {},
       searchList: [
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
-      ],
-      taskFormVisible: false,
+        { field: 'productionOrderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
+      ], 
       fullName: '',
-      printVisible: false,
       BatchDispatchVisible: false,
-      printBrowseVisible: false,
 
-      workOrderVisible: false,
 
-      dataForm: {
+      dataFormList: {
         processName: "",
         productionOrderNo: "",
-        productionQuantity: '',
-        prodOrderStatus: "",
         classAttribute: "finish_product",
         prodOrderStatus: "normal",
         pageNum: 1,
@@ -199,406 +205,222 @@ export default {
           column: "create_time"
         }],
       },
-
-
-      reworkVisible: false,
-
+      dataForm:{},
       addOrderVisible: false,
-
-
-      orderNoS: "",
-
-      productDrawingNoS: "",
-
-      productionPlanNoS: "",
-
       superQueryVisible: false,
-
       btnLoading: false,
-
       title: "更多查询",
-
       tableData: [],
-
-      listLoading: false,
-
-      detailFlag: false,
-
-      orderForm: {},
-
-      orderFormlist: {
-
-        productDrawingNo: "",
-
-        productionPlanNo: "",
-
-        orderNo: "",
-
-        orderStatus: "normal",
-
-        classAttribute: "finish_product",
-
-        pageNum: 1,
-
-        pageSize: 20,
-
-        superQuery: {
-
-          condition: [],
-
-          matchLogic: ""
-
-        },
-
-        orderItems: [{
-
-          asc: false,
-
-          column: ""
-
-        }, {
-
-          asc: false,
-
-          column: "create_time"
-
-        }],
-
-      },
-
+      listLoading: false, 
       total: 0,
-
       formVisible: false,
       selectArr: [],
       superQueryJson: [
-
         {
-
-          prop: 'orderNo',
-
-          label: "生产任务单号",
-
+          prop: 'processName',
+          label: "工序名称",
           type: 'input'
-
         },
-
         {
-
-          prop: 'orderType',
-
-          label: "任务类型",
-
+          prop: 'processCode',
+          label: "工序编码",
           type: 'select',
-
           options: [
-
             { label: "正常订单", value: "normal" },
-
             { label: "返工订单", value: "rework" },
-
           ]
-
         },
-
         {
-
-          prop: 'productDrawingNo',
-
-          label: "品名规格",
-
+          prop: 'processingType',
+          label: "加工类型",
           type: 'input'
-
         },
-
         {
-
-          prop: 'productCode',
-
+          prop: 'processingType',
           label: "产品编码",
-
-          type: 'input'
-
-        },
-
-        {
-
-          prop: 'mainUnit',
-
-          label: "单位",
-
-          type: 'input'
-
-        },
-
-        {
-
-          prop: 'productionQuantity',
-
-          label: "总生产数量",
-
-          type: 'input'
-
-        },
-
-        {
-
-          prop: 'completedQuantity',
-
-          label: "已完成数量",
-
-          type: 'input'
-
-        },
-
-        {
-
-          prop: 'routingName',
-
-          label: "工艺路线名称",
-
-          type: 'input'
-
-        },
-
-        {
-
-          prop: 'routingCode',
-
-          label: "工艺路线编码",
-
-          type: 'input'
-
-        },
-
-
-
-        {
-
-          prop: 'sealingCoverTyping',
-
-          label: "打字内容",
-
           type: 'select',
-
-          options: []
-
-        },
-
-        {
-
-          prop: 'accuracyLevel',
-
-          label: "精度等级",
-
-          type: 'select',
-
-          options: []
-
-        },
-
-        {
-
-          prop: 'vibrationLevel',
-
-          label: "振动等级",
-
-          type: 'select',
-
-          options: []
-
-        },
-
-
-
-        {
-
-          prop: 'oil',
-
-          label: "油脂",
-
-          type: 'select',
-
-          options: []
-
-        },
-
-        {
-
-          prop: 'oilQuantity',
-
-          label: "油脂量",
-
-          type: 'select',
-
-          options: []
-
-        },
-
-        {
-
-          prop: 'clearance',
-
-          label: "游隙",
-
-          type: 'select',
-
-          options: []
-
-        },
-
-        {
-
-          prop: 'packagingMethod',
-
-          label: "包装方式",
-
-          type: 'select',
-
-          options: []
-
-        },
-
-        {
-
-          prop: 'specialRequire',
-
-          label: "特殊要求",
-
-          type: 'select',
-
-          options: []
-
-        },
-
-        {
-
-          prop: 'productionPlanNo',
-
-          label: "生产计划单号",
-
-          type: 'input'
-
-        },
-
-
-
-        {
-
-          prop: 'urgentFlag',
-
-          label: "是否紧急",
-
-          type: 'select',
-
           options: [
-
-            { label: "是", value: true },
-
-            { label: "否", value: false },
-
+            { label: "自制", value: "self_produced" },
+            { label: "外协", value: "external_production" },
           ]
+        },
+        {
+          prop: 'planStartDate',
+          label: '计划开始日期',
+          type: 'date',
+          valueFormat: "yyyy-MM-dd",
 
         },
-
         {
-
-          prop: 'createTime',
-
-          label: '创建时间',
-
-          type: 'daterange',
-
-          valueFormat: "yyyy-MM-dd HH:mm:ss",
-
-          startPlaceholder: '开始日期',
-
-          endPlaceholder: '结束日期',
-
+          prop: 'planEndDate',
+          label: '计划结束日期',
+          type: 'date',
+          valueFormat: "yyyy-MM-dd",
         },
-
         {
-
-          prop: 'createByName',
-
-          label: "创建人",
-
+          prop: 'mainUnit',
+          label: "单位",
           type: 'input'
+        },
+        {
+          prop: 'personName',
+          label: "人员",
+          type: 'input'
+        },
+        {
+          prop: 'workGroupName',
+          label: "班组",
+          type: 'input'
+        },
+        {
+          prop: 'equipmentName',
+          label: "设备",
+          type: 'input'
+        },
+        {
+          prop: 'pickingFlag',
+          label: "是否领料",
+          type: 'select',
+          options: [
+            { label: "是", value: true },
+            { label: "否", value: false },
+          ]
+        },
+        {
+          prop: 'firstInspection',
+          label: "是否首检",
+          type: 'select',
+          options: [
+            { label: "是", value: true },
+            { label: "否", value: false },
+          ]
+        },
+        {
+          prop: 'checkFlag',
+          label: "是否检验",
+          type: 'select',
+          options: [
+            { label: "是", value: true },
+            { label: "否", value: false },
+          ]
+        },
+        {
+          prop: 'reportFlag',
+          label: "是否报工",
+          type: 'select',
+          options: [
+            { label: "是", value: true },
+            { label: "否", value: false },
+          ]
+        },
+        {
+          prop: 'stockFlag',
+          label: "是否入库",
+          type: 'select',
+          options: [
+            { label: "是", value: true },
+            { label: "否", value: false },
+          ]
+        },
+        {
+          prop: 'productionOrderNo',
+          label: "生产任务单号",
+          type: 'input'
+        },
+        {
+          prop: 'productDrawingNo',
+          label: "品名规格",
+          type: 'input'
+        },
+        {
+          prop: 'productionOrderNo',
+          label: "生产任务单号",
+          type: 'input'
+        },
+        {
+          prop: 'prodOrderStatus',
+          label: "任务状态",
+          type: 'select',
+          options: [
+            { label: "正常", value: 'normal' },
+            { label: "暂停", value: 'suspend' },
+            { label: "关闭", value: 'closed' },
+            { label: "已完成", value: 'finish' },
+          ]
+        },
 
+
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
         },
 
       ],
-    
-  
       workOrderData: [],
       selectWorkOrder: [],
-      flowCardCode: '',
-      workOrderRule: {
 
-        productionQuantity: [{ required: true, message: '请输入生产数量', trigger: 'blur' }],
 
-        enCode: [{ required: true, message: '请选择打印模版', trigger: 'change' }]
-
-      },
-      printQuery: {
-
-        category: 'Productionmanage'
-
-      },
       enCode: '',
       printList: [],
       isProjectSwitch: '',
       isProjectSwitchFlag: false,
+      exportFormVisible:false,
     }
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
     this.isProjectSwitchFlag = true
-    this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+    this.superForm = this.dataForm = JSON.parse(JSON.stringify(this.dataFormList))
     this.search('basic')
   },
   computed: {
     ...mapGetters(['userInfo'])
   },
   mounted() {
-    this.getProductClassFun()
   },
   methods: {
-    // 改派
-    updataDispatch(id) {
-      this.BatchDispatchVisible = true
-      this.$nextTick(() => {
-        this.$refs.BatchDispatchForm.init(id, 'all')
+   
+    
+    // 导出
+    exportForm(exportTableRef) {
+      this.exportTableRef = exportTableRef
+      this.exportFormVisible = true
+      let columnList = this.$refs[exportTableRef].columnList.filter(item => !!item.label && !!item.prop)
+      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
+      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+    },
+    download(data) {
+      this.exportFormVisible = false
+      let includeFieldMap = {}
+      for (let i = 0; i < data.selectKey.length; i++) {
+        includeFieldMap[data.selectKey[i]] = data.selectVal[i];
+      }
+      const targetListQuery = this.dataForm
+      let _data = {
+        ...targetListQuery,
+        exportType: '1018',
+        exportName: '装配工单管理',
+        includeFieldMap,
+        pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
+      }
+      excelExport(_data).then(res => {
+        this.exportFormVisible = false
+        if (!res.data.url) return
+        this.jnpf.downloadFile(res.data.url, res.data.name)
       })
     },
-    // 新建返工
-
-    addTaskFun(id, type) {
-
-      this.reworkVisible = true
-
-      this.$nextTick(() => {
-
-        this.$refs.reworkForm.init(id, type)
-
-      })
-
-    },
-
-    // 追加
-    addition2() {
-      if (!this.selectArr.length) return this.$message.error("请选择您要追加生产的数据!")
-      if (this.selectArr.length > 1) return this.$message.error("追加生产只支持单条数据操作")
-      if (this.selectArr[0].orderType == 'rework') return this.$message.error("返工任务不可追加生产")
-      this.form = this.selectArr[0]
-      this.addOrderVisible = true
-    },
+   
     addition1(data) {
       this.form = data
       this.addOrderVisible = true
     },
 
 
-
+    // 改派
     reassignmentFun2() {
       console.log(this.selectArr);
       if (!this.selectArr.length) return this.$message.error("请选择您要改派的数据!")
@@ -608,27 +430,15 @@ export default {
 
       this.$nextTick(() => {
 
-        this.$refs.BatchDispatchForm.init(this.selectArr[0].id, 'all')
-
-      })
-
-    },
-
-    reassignmentFun1(data) {
-
-
-
-      this.BatchDispatchVisible = true
-
-      this.$nextTick(() => {
-
-        this.$refs.BatchDispatchForm.init(id, 'all')
+        this.$refs.BatchDispatchForm.init(this.selectArr[0].id)
 
       })
 
     },
 
  
+
+
 
     // 多选
 
@@ -641,17 +451,17 @@ export default {
     //禁用复选框
 
     checkSelectable(row) {
-      if (row.orderStatus !== 'normal' || row.orderStatus == 'suspend' || row.documentStatus == 'draft') {
+      if (row.prodOrderStatus !== 'normal' || row.prodOrderStatus == 'suspend' || row.documentStatus == 'draft') {
         return false
       } else {
         return true
       }
     },
- 
- 
+
+
     superQuerySearch(query) {
 
-      this.orderForm.superQuery = query
+      this.superQuery = query
 
       this.superQueryVisible = false
 
@@ -662,7 +472,7 @@ export default {
 
       let newProp;
 
-      if (prop === 'partnerCode' || prop == 'projectName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'productDrawingNo' || prop == 'productCode' || prop == 'routingName' || prop == 'routingCode') {
+      if (prop === 'processName' ||prop=='prodOrderStatus'|| prop == 'projectName' || prop === 'processCode' || prop === 'personName' || prop === 'workGroupName' || prop == 'equipmentName' || prop == 'productDrawingNo' || prop == 'routingName' || prop == 'routingCode') {
 
         if (prop === 'createByName') {
 
@@ -680,9 +490,9 @@ export default {
 
       }
 
-      this.orderForm.orderItems[0].asc = order !== "descending"
+      this.dataForm.orderItems[0].asc = order !== "descending"
 
-      this.orderForm.orderItems[0].column = order === null ? "" : newProp
+      this.dataForm.orderItems[0].column = order === null ? "" : newProp
 
 
 
@@ -691,22 +501,14 @@ export default {
     },
     // 关闭新建编辑页面
     closeForm(isRefresh) {
-
-      this.formVisible = false
-
-      this.reworkVisible = false
-
+      this.formVisible = false 
       this.BatchDispatchVisible = false
-
-      this.taskFormVisible = false
-
       this.search()
-
     },
     initData() {
       this.listLoading = true
-      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-      ordershengchanList(this.orderForm).then(res => {
+      this.dataForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      getWorkList(this.dataForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
@@ -715,11 +517,11 @@ export default {
       })
     },
     search(type) {
-      Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
-        let item = this.orderForm[key]
-        this.orderForm[key] = typeof item === 'string' ? item.trim() : item
+      Object.keys(this.dataForm).forEach(key => { // 清除搜索条件两端空格
+        let item = this.dataForm[key]
+        this.dataForm[key] = typeof item === 'string' ? item.trim() : item
       })
-      this.orderForm.pageNum = 1 // 重置页码
+      this.dataForm.pageNum = 1 // 重置页码
       if (type === 'basic') {
         this.basicQuery = {
           matchLogic: 'AND',
@@ -741,7 +543,7 @@ export default {
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+      this.superForm = this.dataForm = JSON.parse(JSON.stringify(this.dataFormList))
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
         { field: 'productionPlanNo', fieldValue: '', label: '生产计划单号', symbol: 'like', searchType: 1, width: 120 },
@@ -770,22 +572,17 @@ export default {
         this.$refs.Form.init(id, btnType)
       })
     },
-    viewDetailFun(id) {
-      this.taskFormVisible = true
-      this.$nextTick(() => {
-        this.$refs.taskForm.init(id)
-      })
-    },
+ 
     columnSetFun() {
 
       this.$refs.dataTable.showDrawer()
 
     },
 
-   
- 
- 
- 
+
+
+
+
     handleSelectWork(val) {
       if (val.length) {
         this.workOrderData.forEach(item => {
@@ -800,7 +597,7 @@ export default {
         });
       }
     },
-    
+
   }
 }
 </script>

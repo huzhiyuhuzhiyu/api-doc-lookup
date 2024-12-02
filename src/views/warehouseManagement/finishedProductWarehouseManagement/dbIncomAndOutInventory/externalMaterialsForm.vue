@@ -62,8 +62,8 @@
 
 
                             </el-form-item>
-                          </el-col> 
-                            <el-col :sm="6" :xs="24" >
+                          </el-col>
+                          <el-col :sm="6" :xs="24">
 
                             <el-form-item label="是否显示比重折扣" prop="weightFlag">
                               <el-select v-model="dataForm.weightFlag" placeholder="是否显示比重折扣" style="width: 100%;"
@@ -118,7 +118,7 @@
                           min-width="160" />
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
-                        min-width="160" />
+                          min-width="160" />
                         <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
                           <template slot="header">
                             <span class="required">*</span>批次号
@@ -306,8 +306,7 @@
                     </el-table-column>
                     <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
-                    <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
-                    min-width="160" />
+                    <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
                     <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
                       <template slot="header">
                         <span class="required">*</span>批次号
@@ -453,8 +452,7 @@
                 <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
                   sortable="custom" />
                 <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
-                <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
-                min-width="160" />
+                <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
                 <el-table-column prop="processName" label="工序名称" width="120" sortable="custom" />
                 <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                 <el-table-column prop="waitDeliverNum" :label="mainUnitFlag == 1 ? '待发料数量(主)' : '待发料数量'"
@@ -533,11 +531,11 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 export default {
   components: { CustomerForm, BatchNumberForm, Process, recordList },
-  mixins: [flowMixin, busFlow,getProjectList],
+  mixins: [flowMixin, busFlow, getProjectList],
   data() {
     return {
       isProjectSwitch: '',
-      
+
       weightFlagList: [
         { label: "是", value: true },
         { label: "否", value: false },
@@ -583,7 +581,7 @@ export default {
         approvalFlag: false,
         weightFlag: false,
         orderDate: this.jnpf.getToday(),
-        projectId:"",
+        projectId: "",
       },
       customerInfo: {},//所选客户信息
       getWarehouseList,
@@ -678,7 +676,7 @@ export default {
       endTime: 0,
       productNameFlag: null,
       mainUnitFlag: null,
-      calculateQuantityFlag:"",
+      calculateQuantityFlag: "",
 
     }
   },
@@ -701,23 +699,24 @@ export default {
     }
   },
   mounted() {
-    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit','unitFlag')
-    this.getMainUnitFun('warehouse', 'proportion','proportionFlag')
+    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit', 'unitFlag')
+    this.getMainUnitFun('warehouse', 'proportion', 'proportionFlag')
 
   },
   methods: {
+ 
     computedNumFun(data, index) {
-      if ( data.proportion && data.weight) {
-        this.productData[index].num = Math.floor(this.jnpf.numberFormat(this.jnpf.math('multiply', [ data.proportion, data.weight]), 2))
+      if (data.proportion && data.weight) {
+        this.productData[index].num = Math.floor(this.jnpf.numberFormat(this.jnpf.math('multiply', [data.proportion, data.weight]), 2))
         this.watchNum(data, index)
       }
     },
-    async getMainUnitFun(code, type,flag) {
+    async getMainUnitFun(code, type, flag) {
       this.listLoading = true
       try {
         if (flag == 'unitFlag') this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
-        if(flag=='proportionFlag')this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type)
-        this.dataForm.weightFlag=this.calculateQuantityFlag==1?true:false
+        if (flag == 'proportionFlag') this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type)
+        this.dataForm.weightFlag = this.calculateQuantityFlag == 1 ? true : false
 
         this.tableDataFlag = true
         this.listLoading = false
@@ -728,12 +727,12 @@ export default {
     },
     // 打开选择批次号弹框
     openSeleceBatchNumberDialog(data, index) {
-      console.log("data",data);
+      console.log("data", data);
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库")
       this.batchNumVisible = true
       data.warehouseId = this.dataForm.warehouseId
       this.$nextTick(() => {
-        this.$refs.BatchNumberForms.init(data, index,'wxfl')
+        this.$refs.BatchNumberForms.init(data, index, 'wxfl')
       })
     },
     // 选择批次
@@ -803,8 +802,8 @@ export default {
 
       arr.forEach(item => {
         // this.$set(item, 'discount', '')
-        this.$set(item, 'proportion', '')
-        this.$set(item, 'weight', '')
+        // this.$set(item, 'proportion', '')
+        // this.$set(item, 'weight', '')
         // item.num = item.waitDeliverNum
         this.$set(item, 'num', item.waitDeliverNum)
 
@@ -966,9 +965,10 @@ export default {
         console.log("发料清单数据", res);
         res.data.records.forEach(item => {
           this.$set(item, 'num', item.waitDeliverNum)
+          this.$set(item, 'availableBatchNumber', item.availableBatchQuantity)
           // this.$set(item, 'discount', '')
-          this.$set(item, 'proportion', '')
-          this.$set(item, 'weight', '')
+          // this.$set(item, 'proportion', '')
+          // this.$set(item, 'weight', '')
           item.ordersId = item.ordersLineId
           item.ordersLineId = item.id
           if (this.mainUnitFlag == 1) {
@@ -1077,7 +1077,7 @@ export default {
         warehouseType: "",
         approvalFlag: false,
         orderDate: this.jnpf.getToday(),
-        projectId:"",
+        projectId: "",
       }
       this.productData = []
       this.$refs.dataForm.resetFields()
@@ -1138,11 +1138,11 @@ export default {
                 break
               }
               // if (this.dataForm.weightFlag) {
-                // if (!item.discount) {
-                //   submitFlag = false
-                //   this.$message.error("产品信息第" + (index + 1) + "行折扣不能为空")
-                //   break
-                // }
+              // if (!item.discount) {
+              //   submitFlag = false
+              //   this.$message.error("产品信息第" + (index + 1) + "行折扣不能为空")
+              //   break
+              // }
               //   if (!item.proportion) {
               //     submitFlag = false
               //     this.$message.error("产品信息第" + (index + 1) + "行比重不能为空")

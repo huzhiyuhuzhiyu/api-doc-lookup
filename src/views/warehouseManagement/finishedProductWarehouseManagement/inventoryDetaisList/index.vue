@@ -25,8 +25,8 @@
 
           <el-col :span="4">
             <el-form-item>
-              <el-date-picker v-model="createTimeArr" type="daterange" 
-                style="width: 100%" start-placeholder="单据开始日期" end-placeholder="单据结束日期" clearable></el-date-picker>
+              <el-date-picker v-model="createTimeArr" type="daterange" style="width: 100%" start-placeholder="单据开始日期"
+                end-placeholder="单据结束日期" clearable></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="4">
@@ -120,7 +120,7 @@
             sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-          v-if="isProjectSwitch == 1" />
+            v-if="isProjectSwitch == 1" />
           <!-- <el-table-column prop="mainUnit" label="单位" min-width="140" />
           <el-table-column prop="num" label="数量" sortable="custom" min-width="140" /> -->
           <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
@@ -292,7 +292,8 @@ import InboundReturnForm from '../dbIncomAndOutInventory/equipmentInboundForm.vu
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
-import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
+import { getBimBusinessSwitchConfigList, getWarehouseInfo, excelExport } from '@/api/basicData/index'
+import { getWarehouseTree } from '@/api/warehouseManagement/inboundAndOutbound'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 import TakingAdjustForm from '@/views/warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/adjust.vue'
@@ -302,7 +303,7 @@ export default {
     Form, SuperQuery, ExportForm, ProductInboundForm, WorkInboundForm, OutboundSaleSendForm, InboundSaleReturnForm,
     InboundPurchaseForm, OutboundPurchaseForm, OutboundExternalSendForm,
     InboundExternalForm, OutboundPickOutForm, InboundReturnMaterialsForm,
-    Transfer, SaleOutboundForm, ExternalMaterOutboundForm, PurchaseOrderInboundForm, ExternalInboundForm, outboundUseForm, InboundReturnForm, PrintBrowse, PrintDialog,TakingAdjustForm
+    Transfer, SaleOutboundForm, ExternalMaterOutboundForm, PurchaseOrderInboundForm, ExternalInboundForm, outboundUseForm, InboundReturnForm, PrintBrowse, PrintDialog, TakingAdjustForm
   },
   mixins: [getProjectList],
   props: {
@@ -311,7 +312,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
-      takingAdjustVisible:false,
+      takingAdjustVisible: false,
       printVisible: false,
       printBrowseVisible: false,
       inboundReturnVisible: false,
@@ -384,6 +385,7 @@ export default {
       initListQuery: {
         startTime: "",
         endTime: "",
+        projectId: "",
         productDrawingNo: "",
         businessType: "",
         orderNo: "",
@@ -600,10 +602,11 @@ export default {
 
   async created() {
     await this.getProjectSwitch('system', 'project')
+    this.getWarehouseListFun()
     this.isProjectSwitchFlag = true
     this.superForm = this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.getclassAttributeList()
-  }, 
+  },
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -614,7 +617,16 @@ export default {
 
   },
   methods: {
-
+    // 获取仓库
+    getWarehouseListFun() {
+      getWarehouseTree({ code: this.warehouseCode }).then(res => {
+        // 获取仓库详情信息
+        getWarehouseInfo(res.data[0].id).then(response => { 
+          this.initListQuery.projectId = this.listQuery.projectId =this.isProjectSwitch === '1' ? res.data[0].projectId || '' : '' 
+          this.getclassAttributeList()
+        })
+      })
+    },
     async getMainUnitFun(code, type) {
       this.listLoading = true
       try {
@@ -1063,8 +1075,8 @@ export default {
       this.search('super')
     },
     viewFun(id, type, row) {
-   
-      
+
+
       if (row.businessType == 'inbound_order_production') {
         if (row.sourceType == 'direct') {
           this.formVisible = true
@@ -1090,7 +1102,7 @@ export default {
             this.$refs.workInboundREFForm.init(id, type, this.classAttributeList)
           })
         }
-      }else if (row.businessType == 'inbound_sale_return') {
+      } else if (row.businessType == 'inbound_sale_return') {
 
         if (row.sourceType == 'notice') {
           this.inboundSaleReturnFormVisible = true
@@ -1190,12 +1202,12 @@ export default {
           })
         }
       } else if (row.businessType == 'outbound_pick_out') {
-        
+
         if (row.sourceType == 'notice') {
           this.outboundPickOutFormVisible = true
-        this.$nextTick(() => {
-          this.$refs.outboundPickOutREFForm.init(id, type, row.businessType, this.classAttribute)
-        })
+          this.$nextTick(() => {
+            this.$refs.outboundPickOutREFForm.init(id, type, row.businessType, this.classAttribute)
+          })
         } else {
           this.formVisible = true
           this.$nextTick(() => {
@@ -1203,12 +1215,12 @@ export default {
           })
         }
       } else if (row.businessType == 'inbound_return_materials') {
-        
+
         if (row.sourceType == 'notice') {
           this.inboundReturnMaterialsFormVisible = true
-        this.$nextTick(() => {
-          this.$refs.inboundReturnMaterialsREFForm.init(id, type, row.businessType, this.classAttribute)
-        })
+          this.$nextTick(() => {
+            this.$refs.inboundReturnMaterialsREFForm.init(id, type, row.businessType, this.classAttribute)
+          })
         } else {
           this.formVisible = true
           this.$nextTick(() => {
@@ -1230,7 +1242,7 @@ export default {
         this.$nextTick(() => {
           this.$refs.inboundReturnREFForm.init(id, type,)
         })
-      }else if (row.businessType == 'inbound_taking_adjust'||row.businessType=='outbound_taking_adjust') {
+      } else if (row.businessType == 'inbound_taking_adjust' || row.businessType == 'outbound_taking_adjust') {
         this.takingAdjustVisible = true
         this.$nextTick(() => {
           this.$refs.takingAdjustREFForm.init(id, type,)
@@ -1262,7 +1274,6 @@ export default {
         this.listQuery.orderEndDate = ""
       }
       // this.listQuery.approvalStatus = 'ok'
-      this.listQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getInventorySummaryData(this.listQuery).then(res => {
 
         this.tableData = res.data.page.records
@@ -1367,7 +1378,7 @@ export default {
       this.PurchaseOrderInboundFormVisible = false
       this.outboundUseVisible = false
       this.inboundReturnVisible = false
-      this.takingAdjustVisible=false
+      this.takingAdjustVisible = false
 
       if (isRefresh) {
         this.keyword = ''

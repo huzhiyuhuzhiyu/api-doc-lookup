@@ -1,5 +1,5 @@
 <template>
-  <!-- 外协发料 通知单  outbound_external_send--> 
+  <!-- 外协发料 通知单  outbound_external_send-->
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
 
@@ -56,8 +56,9 @@
                           </el-col>
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="仓库" prop="warehouseName">
-                              <ComSelect-list :requestObj="{ type: 'normal',   state: 'enable', projectId: isProjectSwitch === '1' ? dataForm.projectId || '' : '' }" :dialogTitle="'选择仓库'"
-                                :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName"
+                              <ComSelect-list
+                                :requestObj="{ type: 'normal', state: 'enable', projectId: isProjectSwitch === '1' ? dataForm.projectId || '' : '' }"
+                                :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName"
                                 :method="getWarehouseList" placeholder="请选择仓库"
                                 @change="changeWarehousex"></ComSelect-list>
 
@@ -66,8 +67,8 @@
 
 
                             </el-form-item>
-                          </el-col> 
-                            <el-col :sm="6" :xs="24" >
+                          </el-col>
+                          <el-col :sm="6" :xs="24">
 
                             <el-form-item label="是否显示比重折扣" prop="weightFlag">
                               <el-select v-model="dataForm.weightFlag" placeholder="是否显示比重折扣" style="width: 100%;"
@@ -79,7 +80,8 @@
                           </el-col>
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="单据日期" prop="orderDate">
-                              <el-date-picker v-model="dataForm.orderDate" type="date" :clearable="false" :disabled="btnType == 'look' ? true : false" value-format="yyyy-MM-dd"
+                              <el-date-picker v-model="dataForm.orderDate" type="date" :clearable="false"
+                                :disabled="btnType == 'look' ? true : false" value-format="yyyy-MM-dd"
                                 style="width: 100%;" placeholder="请选择单据日期"></el-date-picker>
                             </el-form-item>
                           </el-col>
@@ -119,7 +121,7 @@
                           min-width="160" />
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
-                        min-width="160" />
+                          min-width="160" />
                         <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
                           <template slot="header">
                             <span class="required">*</span>批次号
@@ -251,9 +253,10 @@
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="仓库" prop="warehouseName">
-                          <ComSelect-list :requestObj="{ type: 'normal',   state: 'enable', projectId: isProjectSwitch === '1' ? dataForm.projectId || '' : '' }" :dialogTitle="'选择仓库'"
-                            :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName" :method="getWarehouseList"
-                            placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
+                          <ComSelect-list
+                            :requestObj="{ type: 'normal', state: 'enable', projectId: isProjectSwitch === '1' ? dataForm.projectId || '' : '' }"
+                            :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName"
+                            :method="getWarehouseList" placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
 
 
 
@@ -272,11 +275,12 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                            <el-form-item label="单据日期" prop="orderDate">
-                              <el-date-picker v-model="dataForm.orderDate" type="date" :clearable="false" :disabled="btnType == 'look' ? true : false" value-format="yyyy-MM-dd"
-                                style="width: 100%;" placeholder="请选择单据日期"></el-date-picker>
-                            </el-form-item>
-                          </el-col>
+                        <el-form-item label="单据日期" prop="orderDate">
+                          <el-date-picker v-model="dataForm.orderDate" type="date" :clearable="false"
+                            :disabled="btnType == 'look' ? true : false" value-format="yyyy-MM-dd" style="width: 100%;"
+                            placeholder="请选择单据日期"></el-date-picker>
+                        </el-form-item>
+                      </el-col>
                       <el-col :sm="12" :xs="24">
                         <el-form-item label="备注" prop="remark">
                           <el-input v-model="dataForm.remark" placeholder="请输入备注"
@@ -310,8 +314,7 @@
                     </el-table-column>
                     <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
-                    <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
-                    min-width="160" />
+                    <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
                     <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
                       <template slot="header">
                         <span class="required">*</span>批次号
@@ -415,7 +418,7 @@
             <el-row class="JNPF-common-search-box" :gutter="16">
 
               <!-- 外协发料 -->
-              <el-form @submit.native.prevent >
+              <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
                     <el-input v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable />
@@ -461,8 +464,7 @@
                 <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
                   sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
-                <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
-                min-width="160" />
+                <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
                 <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                 <el-table-column prop="deliveryQuantity" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="160">
                 </el-table-column>
@@ -542,7 +544,7 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 export default {
   components: { CustomerForm, BatchNumberForm, Process, recordList },
-  mixins: [flowMixin, busFlow,getProjectList],
+  mixins: [flowMixin, busFlow, getProjectList],
   data() {
     return {
       weightFlagList: [
@@ -589,8 +591,8 @@ export default {
         warehouseType: "",
         approvalFlag: false,
         weightFlag: false,
-        orderDate:this.jnpf.getToday(),
-        projectId:"",
+        orderDate: this.jnpf.getToday(),
+        projectId: "",
       },
       customerInfo: {},//所选客户信息
       getWarehouseList,
@@ -685,11 +687,11 @@ export default {
       endTime: 0,
       productNameFlag: null,
       mainUnitFlag: null,
-      isProjectSwitch:"",
-      calculateQuantityFlag:"",
+      isProjectSwitch: "",
+      calculateQuantityFlag: "",
 
     }
-  }, 
+  },
   async created() {
     await this.getProjectSwitch('system', 'project')
     let objs = { "pageSize": -1, "businessCode": "product" }
@@ -700,9 +702,9 @@ export default {
   computed: {
     ...mapGetters(['userInfo'])
   },
-  mounted() { 
-    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit','unitFlag')
-    this.getMainUnitFun('warehouse', 'proportion','proportionFlag')
+  mounted() {
+    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit', 'unitFlag')
+    this.getMainUnitFun('warehouse', 'proportion', 'proportionFlag')
   },
   watch: {
     "dataForm.warehouseId": {
@@ -713,17 +715,17 @@ export default {
   },
   methods: {
     computedNumFun(data, index) {
-      if ( data.proportion && data.weight) {
-        this.productData[index].num = Math.floor(this.jnpf.numberFormat(this.jnpf.math('multiply', [ data.proportion, data.weight]), 2))
+      if (data.proportion && data.weight) {
+        this.productData[index].num = Math.floor(this.jnpf.numberFormat(this.jnpf.math('multiply', [data.proportion, data.weight]), 2))
         this.watchNum(data, index)
       }
     },
-    async getMainUnitFun(code, type,flag) {
+    async getMainUnitFun(code, type, flag) {
       this.listLoading = true
       try {
         if (flag == 'unitFlag') this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
-        if(flag=='proportionFlag')this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type)
-        this.dataForm.weightFlag=this.calculateQuantityFlag==1?true:false
+        if (flag == 'proportionFlag') this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type)
+        this.dataForm.weightFlag = this.calculateQuantityFlag == 1 ? true : false
 
         this.tableDataFlag = true
         this.listLoading = false
@@ -734,12 +736,12 @@ export default {
     },
     // 打开选择批次号弹框
     openSeleceBatchNumberDialog(data, index) {
-      console.log("data",data);
+      console.log("data", data);
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库")
       this.batchNumVisible = true
       data.warehouseId = this.dataForm.warehouseId
       this.$nextTick(() => {
-        this.$refs.BatchNumberForms.init(data, index,'wxfl')
+        this.$refs.BatchNumberForms.init(data, index, 'wxfl')
       })
     },
     // 选择批次
@@ -754,7 +756,7 @@ export default {
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
       this.$set(this.productData[index], 'discount', data.discount)
       this.$set(this.productData[index], 'proportion', data.proportion)
-      this.$set(this.productData[index], 'weight', this.jnpf.numberFormat(this.jnpf.math('divide', [ this.productData[index].num, data.proportion]), 2))
+      this.$set(this.productData[index], 'weight', data.weight)
     },
 
 
@@ -773,11 +775,11 @@ export default {
       this.searchProductFun()
     },
     // 销售发货选择产品——搜索 如果是销售订单  需要计算待出库数量=订单数量-已出库数量  如果是通知单 则直接取接口返回的待出库数量
-    searchProductFun() { 
-   
-        this.orderForm.orderNo= this.dataForm.sourceNo
-        this.orderForm.classAttributeList= this.classAttributeList
-        this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
+    searchProductFun() {
+
+      this.orderForm.orderNo = this.dataForm.sourceNo
+      this.orderForm.classAttributeList = this.classAttributeList
+      this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
       this.orderForm.notifyType = "external"
       if (this.deliveryDateArr.length) {
         this.orderForm.rdsDate = this.deliveryDateArr[0]
@@ -785,7 +787,7 @@ export default {
       } else {
         this.orderForm.rdsDate = ""
         this.orderForm.rdeDate = ""
-      } 
+      }
       this.orderForm.projectId = this.isProjectSwitch === '1' ? this.dataForm.projectId || '' : ''
       getQuotationdatasenddatalist(this.orderForm).then(res => {
         console.log("产品", res);
@@ -854,9 +856,9 @@ export default {
         item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
         item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
         item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
-        this.$set(item, 'discount', '')
-        this.$set(item, 'proportion', '')
-        this.$set(item, 'weight', '')
+        // this.$set(item, 'discount', '')
+        // this.$set(item, 'proportion', '')
+        // this.$set(item, 'weight', '')
         if (this.mainUnitFlag == 1) {
           if (item.calculationDirection == 'multiplication') {
             this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
@@ -1116,6 +1118,7 @@ export default {
               item.noticeLineId = item.id
               item.costPrice = item.price
               item.sourceNo = this.dataForm.sourceNo
+              this.$set(item, 'availableBatchNumber', item.availableBatchQuantity)
               item.moveId = this.dataForm.id
               item.num = item.undeliveredQuantity
               let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
@@ -1123,10 +1126,10 @@ export default {
               item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
               item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
               item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
-           
-              this.$set(item, 'discount', '')
-              this.$set(item, 'proportion', '')
-              this.$set(item, 'weight', '')
+
+              // this.$set(item, 'discount', '')
+              // this.$set(item, 'proportion', '')
+              // this.$set(item, 'weight', '')
 
 
               if (this.mainUnitFlag == 1) {
@@ -1167,7 +1170,7 @@ export default {
         id: "",
         warehouseType: "",
         approvalFlag: false,
-        orderDate:this.jnpf.getToday()
+        orderDate: this.jnpf.getToday()
       }
       this.productData = []
       this.$refs.dataForm.resetFields()
@@ -1239,15 +1242,15 @@ export default {
               // }
 
               if (Number(item.num) > Number(item.undeliveredQuantity)) {
-        
+
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待发料数量")
                 break
               }
 
- 
+
             }
-      
+
           }
 
 
@@ -1262,10 +1265,10 @@ export default {
             const formMethod = addWarehouseData
             // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号
             this.productData.forEach(item => {
-              let ordersLineId=JSON.parse(JSON.stringify(item.outShipmentListId))
-              let ordersId=JSON.parse(JSON.stringify(item.ordersLineId))
-              item.ordersLineId=ordersLineId
-              item.ordersId=ordersId
+              let ordersLineId = JSON.parse(JSON.stringify(item.outShipmentListId))
+              let ordersId = JSON.parse(JSON.stringify(item.ordersLineId))
+              item.ordersLineId = ordersLineId
+              item.ordersId = ordersId
             });
             this.copyLinesData = JSON.parse(JSON.stringify(this.productData))
             this.copyLinesData.forEach(element => {

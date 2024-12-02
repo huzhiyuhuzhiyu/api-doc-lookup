@@ -65,7 +65,7 @@
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="viewFun(scope.row.id, 'look')">{{
                   scope.row.orderNo
-                  }}</el-link>
+                }}</el-link>
               </template>
             </el-table-column>
             <el-table-column prop="pickingDate" label="调拨日期" min-width="160" sortable="custom" />
@@ -139,12 +139,13 @@
 
 <script>
 import { getTransferList, deleteTransferData, getTransferLinesList } from '@/api/warehouseManagement/transferManagement'
-import { excelExport } from '@/api/basicData/index'
+import { excelExport, getWarehouseInfo } from '@/api/basicData/index'
 import Form from './Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
+import { getWarehouseTree } from '@/api/warehouseManagement/inboundAndOutbound'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 export default {
@@ -168,6 +169,7 @@ export default {
       tableData: [],
       listLoading: false,
       form: {
+        projectId: "",
         orderNo: "",
         pickingStartDate: "",
         pickingEndDate: "",
@@ -246,8 +248,9 @@ export default {
     ...mapGetters(['userInfo'])
   },
   async created() {
-    await this.getProjectSwitch('system', 'project') 
+    await this.getProjectSwitch('system', 'project')
     await this.getclassAttributeList()
+    this.getWarehouseListFun()
     const res = await this.jnpf.getBusInfo('b001')
     if (res) {
       this.showAppCodeFlag = res.enabledMark
@@ -257,13 +260,23 @@ export default {
 
   },
 
- 
+
   methods: {
     getclassAttributeList() {
       getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
         console.log("类别属性", res);
         this.classAttributeList = res.data
         this.initData()
+      })
+    },
+    // 获取仓库
+    getWarehouseListFun() {
+      getWarehouseTree({ code: this.warehouseCode }).then(res => {
+        // 获取仓库详情信息
+        getWarehouseInfo(res.data[0].id).then(response => {
+          this.form.projectId = this.isProjectSwitch === '1' ? res.data[0].projectId || '' : ''
+          this.getclassAttributeList()
+        })
       })
     },
     viewFun(id, btnType) {
@@ -382,7 +395,7 @@ export default {
 
         superQuery: {},
       }
-
+      this.getWarehouseListFun()
       this.search()
     },
 

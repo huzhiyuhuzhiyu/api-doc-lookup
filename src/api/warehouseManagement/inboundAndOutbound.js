@@ -8,6 +8,14 @@ export function getWarehouseList(data) {
     data
   })
 }
+// 获取仓库列表数据(树形)
+export function getWarehouseTree(data) {
+  return request({
+    url: `/api/wms/stockWarehouse/tree`,
+    method: 'post',
+    data
+  })
+}
 // 仓库出入库单 明细列表
 export function getWarehouseLinesList(data) {
   return request({

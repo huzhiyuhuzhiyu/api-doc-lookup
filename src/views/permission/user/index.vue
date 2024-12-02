@@ -447,6 +447,9 @@ export default {
       this.formLoading = true
       var formData = new FormData()
       formData.append("file", data)
+      if (this.isProjectSwitch === '1') {
+        formData.append('projectId', this.importProjectId)
+      }
       //调用上传文件接口
       salecooperativeUsers(formData).then(res => {
         if (!res.data) {
@@ -510,6 +513,10 @@ export default {
       this.file = file.raw
     },
     submit() {
+      if (this.isProjectSwitch === '1') {
+        if (!this.importProjectId) return this.$message.error('请选择所属项目');
+      }
+      if (!this.file) return this.$message.error('请上传文件');
       this.UploadProduct(this.file)
     },
     cancelFun() {

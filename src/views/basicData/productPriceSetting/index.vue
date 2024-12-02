@@ -109,6 +109,8 @@
           <template v-if="tableFlag">
             <JNPF-table v-show="dataTableFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
               ref="dataTable" :setColumnDisplayList="columnList">
+              <el-table-column prop="productName" label="产品名称" width="120"
+                v-if="isProductNameSwitch === '1'"></el-table-column>
               <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
               <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
                 <!-- <template slot-scope="scope">
@@ -388,6 +390,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isProductNameSwitch: '',
       categoryList: [],
       exportFormVisible: false,
       quickVisible: false,
@@ -1201,13 +1204,14 @@ export default {
     this.getProductClassFun()
     this.getclassAttributeList()
   },
-  created() {
+  async created() {
     if (localStorage.getItem(`${this.listQuery.classAttribute}productPriceSettingFlag`)) {
       let roleFlag = JSON.parse(localStorage.getItem(`${this.listQuery.classAttribute}productPriceSettingFlag`))
 
       this.expands = roleFlag
       this.toggleExpand(roleFlag)
     }
+    await this.getProductNameSwitch('product', 'enable_productName')
     this.getcategoryTree()
     this.getProjectSwitch()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
@@ -1221,6 +1225,11 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     getclassAttributeList() {
       let obj = {
         orderItems: [{ asc: true, column: 'sort' }]

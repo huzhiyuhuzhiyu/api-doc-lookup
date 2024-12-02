@@ -270,7 +270,6 @@ export default {
       isProjectSwitch: '',
       importProjectId:'',
       tableFlag: false,
-      isProjectSwitch: '',
       JobCodeFormVisible: false,
       printQuery: {
         category: 'Humanresources'   // 对应数据字典 分类编码

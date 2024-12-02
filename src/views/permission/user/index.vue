@@ -182,6 +182,12 @@
       </div>
     </div>
     <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
+      <div style="margin-bottom: 10px;" v-if="isProjectSwitch === '1'">
+        <el-select v-model="importProjectId" placeholder="请选择所属项目" style="width: 100%;" filterable
+          :disabled="!userInfo.projectId ? false : userInfo.projectId === '1' ? false : true">
+          <el-option v-for="item in projectIdData" :key="item.id" :label="item.name" :value="item.id"></el-option>
+        </el-select>
+      </div>
       <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" drag :auto-upload="false" :limit="1" :on-change="handleFileChange" ref="uploadRef">
         <i class="el-icon-upload"></i>
         <div class="el-upload__text"><em>点击选取文件上传</em></div>
@@ -269,9 +275,11 @@ import {
   getUserToDing
 
 } from '@/api/system/sysConfig'
+import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters } from "vuex"
 export default {
   name: 'permission-user',
+  mixins: [getProjectList],
   components: {
     Form,
     Diagram,
@@ -286,6 +294,7 @@ export default {
   data() {
     return {
       isProjectSwitch:'',
+      importProjectId:'',
       tableFlag:false,
       syncType:'',
       superQueryJson: [
@@ -402,8 +411,9 @@ export default {
   computed: {
     ...mapGetters(['userInfo'])
   },
-  created() {
-    this.getProjectSwitch()
+ async created() {
+    await this.getProjectSwitch()
+    await this.getProjectList()
     this.getOrganizeList(true)
     if (localStorage.getItem("userFlag")) {
       let userFlag = JSON.parse(localStorage.getItem('userFlag'))
@@ -437,6 +447,9 @@ export default {
       this.formLoading = true
       var formData = new FormData()
       formData.append("file", data)
+      if (this.isProjectSwitch === '1') {
+        formData.append('projectId', this.importProjectId)
+      }
       //调用上传文件接口
       salecooperativeUsers(formData).then(res => {
         if (!res.data) {
@@ -496,7 +509,14 @@ export default {
     downNoProduct(res) {
       this.jnpf.downloadFile(res.url, res.name)
     },
+    handleFileChange(file) {
+      this.file = file.raw
+    },
     submit() {
+      if (this.isProjectSwitch === '1') {
+        if (!this.importProjectId) return this.$message.error('请选择所属项目');
+      }
+      if (!this.file) return this.$message.error('请上传文件');
       this.UploadProduct(this.file)
     },
     cancelFun() {

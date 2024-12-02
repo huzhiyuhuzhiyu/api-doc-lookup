@@ -510,9 +510,11 @@
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                 v-if="categoryType == 'inbound_external' && externalFlag" @click="columnSetFun('externaltabForm')" />
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                v-if="categoryType == 'outbound_external_send'&& !outboundExternalSendFlag" @click="columnSetFun('wxfltabForm')" />
-                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                v-if="categoryType == 'outbound_external_send'&& outboundExternalSendFlag" @click="columnSetFun('wxflOrdertabForm')" />
+                v-if="categoryType == 'outbound_external_send' && !outboundExternalSendFlag"
+                @click="columnSetFun('wxfltabForm')" />
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                v-if="categoryType == 'outbound_external_send' && outboundExternalSendFlag"
+                @click="columnSetFun('wxflOrdertabForm')" />
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                 v-if="categoryType == 'outbound_pick_out'" @click="columnSetFun('picktabForm')" />
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
@@ -875,8 +877,8 @@
         </JNPF-table>
         <!-- 外协发料 -->
         <JNPF-table :partentOrChild="'wxfltabForm'" v-loading="listLoading" @sort-change="sortChange" :key="3"
-          :data="wxflTableList" v-show="categoryType == 'outbound_external_send' && !outboundExternalSendFlag" custom-column
-          ref="wxfltabForm" :fixedNo="true" :setColumnDisplayList="wxflcolumnList">
+          :data="wxflTableList" v-show="categoryType == 'outbound_external_send' && !outboundExternalSendFlag"
+          custom-column ref="wxfltabForm" :fixedNo="true" :setColumnDisplayList="wxflcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
@@ -929,8 +931,9 @@
         <!-- 外协发料 订单-->
         <JNPF-table :partentOrChild="'wxflOrdertabForm'" v-loading="listLoading" @sort-change="sortChange" :key="3"
           v-if="isProjectSwitchFlag" :data="exterMaterList"
-          v-show="categoryType == 'outbound_external_send' && outboundExternalSendFlag" custom-column ref="wxflOrdertabForm" hasC
-          @selection-change="handeleselectExternalMter" fixedNO :setColumnDisplayList="wxflcolumnList">
+          v-show="categoryType == 'outbound_external_send' && outboundExternalSendFlag" custom-column
+          ref="wxflOrdertabForm" hasC @selection-change="handeleselectExternalMter" fixedNO
+          :setColumnDisplayList="wxflcolumnList">
           <el-table-column prop="orderNo" label="订单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
@@ -1112,7 +1115,7 @@
           :limit.sync="returnMaterForm.pageSize" @pagination="getTabdataList"
           v-if="categoryType == 'inbound_return_materials'">
         </pagination>
-     
+
         <pagination :total="outboundUseTotal" :page.sync="outboundUseForm.pageNum"
           :limit.sync="outboundUseForm.pageSize" @pagination="getTabdataList" v-if="categoryType == 'outbound_use'">
         </pagination>
@@ -1401,7 +1404,7 @@
 import { getQuotationdatasendlist, getStockMovelist } from '@/api/salesManagement/index'
 import { purPurchaseReceiptReturnGoodsList, detailpurchaseOrderList } from "@/api/purchasingAndOutsourcingOrders/index"
 import { ordershengchanList, detailordershengchan, getWorkPage } from '@/api/productOrdes/index.js'
-import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
+import { getBimBusinessSwitchConfigList, getWarehouseInfo } from '@/api/basicData/index'
 import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal, getOrderLineReport } from '@/api/salesManagement/assemblyOrders'
 import Form from './Form'
 import mixin from '@/mixins/generator/index'
@@ -1445,6 +1448,7 @@ import ToolFormS from '@/views/dailyManagement/borrowingReturn/toolreturn/Form.v
 import EquipmentFormS from '@/views/dailyManagement/equipmentrequisitionreturn/equipmentreturn/Form.vue'
 import SparePartsFormS from '@/views/dailyManagement/sparepartsmanagement/sparepartsReturn/Form.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
+import { getWarehouseTree } from '@/api/warehouseManagement/inboundAndOutbound'
 import { mapGetters, mapState } from 'vuex'
 import {
   getbimProductAttributesList, getbimProductAttributes
@@ -1844,7 +1848,7 @@ export default {
         documentStatus: "sibmit",
         rdeDate: "",
         rdsDate: "",
-        externalFlag : true,
+        externalFlag: true,
         deliveryStatus: "not_finished",
         returnDeliveryType: "delivery",
         orderNo: "",
@@ -1940,7 +1944,7 @@ export default {
       saleFlag: false,
       purchaseFlag: false,
       externalFlag: false,
-      outboundExternalSendFlag:false,
+      outboundExternalSendFlag: false,
       selectSaleList: [],
       selectPurchaseList: [],
       selectExternalList: [],
@@ -1991,6 +1995,7 @@ export default {
       ],
       mainUnitFlag: null,
       tableDataFlag: false,
+      projectId:"",
     }
   },
   watch: {
@@ -2039,7 +2044,7 @@ export default {
   },
 
   async created() {
-    await this.getPickingConfig()
+    await this.getWarehouseListFun()
     await this.getProjectSwitch('system', 'project')
     this.isProjectSwitchFlag = true
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
@@ -2048,6 +2053,17 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
+    // 获取仓库
+    getWarehouseListFun() {
+      getWarehouseTree({ code: this.warehouseCode }).then(res => {
+        // 获取仓库详情信息
+        getWarehouseInfo(res.data[0].id).then(response => {
+          this.projectId =  this.isProjectSwitch === '1' ? res.data[0].projectId || '' : ''
+          this.getPickingConfig()
+
+        })
+      })
+    },
     async getMainUnitFun(code, type) {
       this.listLoading = true
       try {
@@ -2122,7 +2138,7 @@ export default {
     },
     // 外协发料 订单
     getexterMaterFUN(type) {
-      this.exterMaterForm.classAttributeList = this.classAttributeList
+      // this.exterMaterForm.classAttributeList = this.classAttributeList
       this.exterMaterForm.approvalStatus = 'ok'
       this.superForm = this.exterMaterForm
       if (type === 'basic') {
@@ -2142,8 +2158,9 @@ export default {
       if (type === 'super') {
         this.superForm.superQuery = this.superQuery
       }
-      this.exterMaterForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      this.exterMaterForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
 
+      this.exterMaterForm.blankClassAttributeList = this.classAttributeList
       detailpurchaseOrderList(this.exterMaterForm).then(res => {
         if (this.mainUnitFlag == 1) {
           res.data.records.forEach(item => {
@@ -2198,7 +2215,7 @@ export default {
       if (type === 'super') {
         this.superForm.superQuery = this.superQuery
       }
-      this.externalForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      this.externalForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
       detailpurchaseOrderList(this.externalForm).then(res => {
         if (this.mainUnitFlag == 1) {
           res.data.records.forEach(item => {
@@ -2263,7 +2280,7 @@ export default {
         this.purchaseFlag = res.data.warehouse[0].configValue1 == '1' ? true : false
         this.externalFlag = res.data.warehouse[1].configValue1 == '1' ? true : false
         this.saleFlag = res.data.warehouse[2].configValue1 == '1' ? true : false
-        this.outboundExternalSendFlag=res.data.warehouse[4].configValue1 == '1' ? true : false
+        this.outboundExternalSendFlag = res.data.warehouse[4].configValue1 == '1' ? true : false
         if (this.saleFlag) {
           console.log(555, this.$refs.salestabForm);
           this.salecolumnList = ["cooperativePartnerCode",]
@@ -2288,7 +2305,7 @@ export default {
     getStockMovelistFun() {
       let obj = {
         classAttributeList: this.classAttributeList,
-        projectId: this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : '',
+        projectId: this.isProjectSwitch === '1' ? this.projectId || '' : '',
       }
       getStockMovelist(obj.classAttributeList, obj.projectId).then(res => {
         console.log("左侧分类数据", res);
@@ -2630,7 +2647,7 @@ export default {
             this.superForm.superQuery = this.superQuery
           }
           this.listLoading = true
-          this.saleOrderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+          this.saleOrderForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
           getsaleOrderDetailList(this.saleOrderForm).then(res => {
             this.listLoading = false
             console.log("销售明细", res);
@@ -2678,7 +2695,7 @@ export default {
           if (type === 'super') {
             this.superForm.superQuery = this.superQuery
           }
-          this.fhForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+          this.fhForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
           getQuotationdatasendlist(this.fhForm).then(res => {
             this.fhTableList = res.data.records
             this.fhTotal = res.data.total
@@ -2722,7 +2739,7 @@ export default {
           this.superForm.superQuery = this.superQuery
         }
 
-        this.fhForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+        this.fhForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
         getQuotationdatasendlist(this.fhForm).then(res => {
           this.thTableList = res.data.records
           this.fhTotal = res.data.total
@@ -2763,7 +2780,7 @@ export default {
           if (type === 'super') {
             this.superForm.superQuery = this.superQuery
           }
-          this.purchaseForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+          this.purchaseForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
           detailpurchaseOrderList(this.purchaseForm).then(res => {
             console.log("采购明细", res);
             if (this.mainUnitFlag == 1) {
@@ -2813,7 +2830,7 @@ export default {
           }
           this.listLoading = true
 
-          this.cgForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+          this.cgForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
           purPurchaseReceiptReturnGoodsList(this.cgForm).then(res => {
             this.cgTableList = res.data.records
             this.cgTotal = res.data.total
@@ -2857,7 +2874,7 @@ export default {
           this.superForm.superQuery = this.superQuery
         }
 
-        this.cgForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+        this.cgForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
         purPurchaseReceiptReturnGoodsList(this.cgForm).then(res => {
           this.cgTableList = res.data.records
           this.cgTotal = res.data.total
@@ -2899,7 +2916,7 @@ export default {
             this.superForm.superQuery = this.superQuery
           }
           this.listLoading = true
-          this.wxflForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+          this.wxflForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
           getQuotationdatasendlist(this.wxflForm).then(res => {
             if (this.mainUnitFlag == 1) {
               res.data.records.forEach(item => {
@@ -2953,7 +2970,7 @@ export default {
             this.superForm.superQuery = this.superQuery
           }
           this.wxshForm.classAttributeList = this.classAttributeList
-          this.wxshForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+          this.wxshForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
           purPurchaseReceiptReturnGoodsList(this.wxshForm).then(res => {
             this.wxshTableList = res.data.records
             this.wxshTotal = res.data.total
@@ -2988,7 +3005,7 @@ export default {
         if (type === 'super') {
           this.superForm.superQuery = this.superQuery
         }
-        this.pickForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+        this.pickForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
         WithdrawalList(this.pickForm).then(res => {
           console.log("领料", res);
           this.pickingTableList = res.data.records
@@ -3022,7 +3039,7 @@ export default {
         if (type === 'super') {
           this.superForm.superQuery = this.superQuery
         }
-        this.returnMaterForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+        this.returnMaterForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
         WithdrawalList(this.returnMaterForm).then(res => {
           console.log("退料", res);
           this.returnMaterTableList = res.data.records
@@ -3071,7 +3088,7 @@ export default {
         if (type === 'super') {
           this.superForm.superQuery = this.superQuery
         }
-        this.outboundUseForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+        this.outboundUseForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
         CollectionandreturnList(this.outboundUseForm).then(res => {
           console.log("退料", res);
           this.outboundUseTableList = res.data.records
@@ -3112,7 +3129,7 @@ export default {
         if (type === 'super') {
           this.superForm.superQuery = this.superQuery
         }
-        this.inboundReturnForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+        this.inboundReturnForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
         CollectionandreturnList(this.inboundReturnForm).then(res => {
           console.log("归还", res);
           this.inboundReturnData = res.data.records
@@ -3146,7 +3163,7 @@ export default {
       if (type === 'super') {
         this.superForm.superQuery = this.superQuery
       }
-      this.productForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      this.productForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
       ordershengchanList(this.productForm).then(res => {
         console.log("生产产品", res);
         this.productData = res.data.records
@@ -3179,7 +3196,7 @@ export default {
       if (type === 'super') {
         this.superForm.superQuery = this.superQuery
       }
-      this.workForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      this.workForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
       getWorkPage(this.workForm).then(res => {
         console.log("生产产品", res);
         this.workData = res.data.records
@@ -4554,7 +4571,7 @@ export default {
 
             rdeDate: "",
             rdsDate: "",
-            externalFlag : true,
+            externalFlag: true,
             deliveryStatus: "not_finished",
             receiptReturnType: "receipt",
             orderNo: "",

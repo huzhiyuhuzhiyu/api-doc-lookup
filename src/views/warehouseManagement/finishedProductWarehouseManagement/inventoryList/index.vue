@@ -239,8 +239,8 @@
 
 <script>
 import { getInventoryDetailList, getInventorySummaryData, withdrawApi } from '@/api/warehouseManagement/inventory'
-import { getWarehouseList, deleteWarehouseData } from '@/api/warehouseManagement/inboundAndOutbound'
-import { excelExport } from '@/api/basicData/index'
+import { getWarehouseList, deleteWarehouseData, getWarehouseTree } from '@/api/warehouseManagement/inboundAndOutbound'
+import { excelExport, getWarehouseInfo } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import ProductInboundForm from '../dbIncomAndOutInventory/productInboundForm.vue'
@@ -356,6 +356,7 @@ export default {
         pageNum: 1,
         partnerName: "",
         pageSize: 20,
+        projectId: "",
         orderItems: [{
           asc: false,
           column: ""
@@ -505,8 +506,8 @@ export default {
 
   async created() {
     await this.getProjectSwitch('system', 'project')
+    this.getWarehouseListFun()
     this.superForm = this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-    this.getclassAttributeList()
   },
   methods: {
     handleSelectionChange(val) {
@@ -577,6 +578,17 @@ export default {
         console.log("类别属性", res);
         this.classAttributeList = res.data
         this.search('basic')
+      })
+    },
+
+    // 获取仓库
+    getWarehouseListFun() {
+      getWarehouseTree({ code: this.warehouseCode }).then(res => {
+        // 获取仓库详情信息
+        getWarehouseInfo(res.data[0].id).then(response => { 
+          this.initListQuery.projectId = this.listQuery.projectId =this.isProjectSwitch === '1' ? res.data[0].projectId || '' : '' 
+          this.getclassAttributeList()
+        })
       })
     },
     superQuerySearch(query) {
@@ -834,8 +846,7 @@ export default {
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
       this.listQuery.classAttributeList = this.classAttributeList
-      // this.listQuery.approvalStatus = 'ok'
-      this.listQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      // this.listQuery.approvalStatus = 'ok' 
 
       getWarehouseList(this.listQuery).then(res => {
 

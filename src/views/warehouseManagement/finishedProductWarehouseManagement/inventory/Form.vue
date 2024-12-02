@@ -12,6 +12,12 @@
                     @keyup.enter.native="search()" />
                 </el-form-item>
               </el-col>
+              <el-col :span="6" v-if="productNameFlag==1">
+                <el-form-item>
+                  <el-input v-model="listQuery.productName" placeholder="产品名称" clearable
+                    @keyup.enter.native="search()" />
+                </el-form-item>
+              </el-col>
               <el-col :span="6">
                 <el-form-item>
                   <el-select v-model="listQuery.vibrationLevel" placeholder="振动等级" clearable>
@@ -42,9 +48,11 @@
 
               <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" />
               <el-table-column prop="productCode" label="产品编码" width="120" />
-              <el-table-column prop="weight" label="重量(KG)" min-width="180" sortable="custom" />
-              <el-table-column prop="processName" label="工序名称" min-width="180"  />
-              <el-table-column prop="processCode" label="工序编码" min-width="180"  />
+              <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"  />
+              <el-table-column prop="weight" label="重量(KG)" min-width="120" sortable="custom" />
+              <el-table-column prop="proportion" label="比重" min-width="120" sortable="custom" />
+              <el-table-column prop="processName" label="工序名称" min-width="120"  />
+              <el-table-column prop="processCode" label="工序编码" min-width="120"  />
               <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
               v-if="isProjectSwitch == 1" />
               <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
@@ -116,6 +124,7 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
+import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { excelExport } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
@@ -163,12 +172,14 @@ export default {
         tableDataFlag: false,
         mainUnitFlag: null,
         isProjectSwitch: '',
+        productNameFlag: null,
 
       }
     }
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    this.getConfig()
     this.isProjectSwitchFlag = true
 
   }, 
@@ -180,6 +191,17 @@ export default {
 
   },
   methods: {
+    getConfig() {
+    let objs = { "pageSize": -1, "businessCode": "product" }
+      getBimBusinessSwitchConfigList(objs).then(res => {
+        this.productNameFlag = res.data.product[1].configValue1
+        console.log(this.productNameFlag);
+        this.tableDataFlag = true
+     
+      }).catch(error => {
+        this.tableFlag = true
+      })
+    },
     async getMainUnitFun(code, type) {
       this.listLoading=true
       try {

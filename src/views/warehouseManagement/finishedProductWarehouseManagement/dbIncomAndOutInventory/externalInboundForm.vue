@@ -1215,6 +1215,7 @@ export default {
             this.$set(item, 'warehouseId', this.dataForm.warehouseId)
             this.$set(item, 'warehouseName', this.dataForm.warehouseName)
             this.$set(item, 'warehouseType', this.dataForm.warehouseType)
+            this.$set(item, 'batchNumber', '')
             this.$set(item, 'proportion', '')
             this.$set(item, 'weight', '')
             if (this.mainUnitFlag == 1) {

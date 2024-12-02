@@ -467,10 +467,12 @@ export default {
       let errMsg
       if (value && value.indexOf('%') !== -1 && !/^([0-9]\d{0,1}|100[%]{1}$)(\.\d{1,2})?%?$/.test(value)) {
         errMsg = '比例只能输入0%-100%以内的值，最多保留两位小数！'
-      } else if (value.indexOf('%') === -1 && !/^(0|[1-9](\d{0,15}))((.\d{1,4})?)$/.test(value)) {
+      } else if (this.linesForm[index].samplingMethod === 'fixed_quantity' && value.indexOf('%') === -1 && !/^(0|[1-9](\d{0,15}))((.\d{1,4})?)$/.test(value)) {
         errMsg = '具体数量请输入正数，小数不能超过4位！'
-      } else if (value.indexOf('%') === -1 && Number(value) > Number(this.linesForm[index].startVal)) {
+      } else if (this.linesForm[index].samplingMethod === 'fixed_quantity' && value.indexOf('%') === -1 && Number(value) > Number(this.linesForm[index].startVal)) {
         errMsg = '具体数量不能超过起始值！'
+      } else if (this.linesForm[index].samplingMethod === 'proportion' && value && value.indexOf('%') === -1) {
+        errMsg = '比例只能输入%'
       }
       if (errMsg) {
         this.$message.error(`抽检规则第${index + 1}行：抽检比例或数量 ${errMsg}`)

@@ -96,10 +96,10 @@
             <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="orderStatus" label="任务状态" min-width="140" sortable="custom">
               <template slot-scope="scope">
-                <div v-if="scope.row.orderStatus == 'normal'">进行中</div>
-                <div v-if="scope.row.orderStatus == 'suspend'">暂停</div>
-                <div v-if="scope.row.orderStatus == 'closed'">关闭</div>
-                <div v-if="scope.row.orderStatus == 'finish'">已完成</div>
+                <div v-if="scope.row.orderStatus == 'normal'"><el-tag >正常</el-tag> </div>
+                <div v-if="scope.row.orderStatus == 'suspend'"><el-tag type="info">暂停</el-tag></div>
+                <div v-if="scope.row.orderStatus == 'closed'"><el-tag type="danger">关闭</el-tag></div>
+                <div v-if="scope.row.orderStatus == 'finish'"><el-tag type="success">已完成</el-tag></div>
               </template>
             </el-table-column>
 

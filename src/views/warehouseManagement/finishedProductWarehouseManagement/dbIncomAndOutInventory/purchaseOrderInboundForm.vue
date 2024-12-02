@@ -294,7 +294,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="calculateQuantityFlag==1"> 
+                      <el-col :sm="6" :xs="24"  > 
                         <el-form-item label="是否显示比重折扣" prop="weightFlag">
                           <el-select v-model="dataForm.weightFlag" placeholder="是否显示比重折扣" style="width: 100%;"
                             :disabled="btnType == 'look' ? true : false">

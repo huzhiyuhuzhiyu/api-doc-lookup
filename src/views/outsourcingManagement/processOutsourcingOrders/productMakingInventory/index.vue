@@ -66,6 +66,9 @@
             <el-table-column prop="processName" label="工序名称" min-width="180" sortable="custom" />
             <el-table-column prop="productCategoryName" label="产品分类" width="120" sortable="custom" />
             <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
+            <!-- <el-table-column prop="weight" label="重量(kg)" width="90" />
+            <el-table-column prop="proportion" label="比重" width="80" />
+            <el-table-column prop="discount" label="折扣" width="80" /> -->
             <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
               :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
             <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
@@ -115,7 +118,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
-      isProductNameSwitch:'',
+      isProductNameSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
@@ -266,7 +269,9 @@ export default {
       printForm: {}, // 表单数据
       //	收货状态 待收货 receiving、已收货 received,可用值:received,receiving,returned,returning
       receiptReturnType: [{ label: '未完成', value: 'receiving' }, { label: '已完成', value: 'received' }],
-      columnList: [],
+      columnList: ['weight',
+        'proportion',
+        'discount'],
       inventoryQuantityNum: 0,
       occupancyQuantityNum: 0,
       availableQuantityNum: 0

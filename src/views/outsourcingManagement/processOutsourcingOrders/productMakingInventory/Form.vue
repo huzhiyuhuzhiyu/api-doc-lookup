@@ -1228,6 +1228,9 @@ export default {
           demandQuantity: item.purchaseQuantity, //库存数量
           demandQuantity1: item.purchaseQuantity, //库存数量
           qty: 1,
+          // weight: item.weight, //重量
+          // proportion: item.proportion, //比重
+          // discount: item.discount, //折扣
         }
         this.dataFormTwo.data[index].outShipmentList = [obj]
         let ProcessListRequestObj = {

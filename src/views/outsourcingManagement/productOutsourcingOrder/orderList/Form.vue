@@ -597,7 +597,7 @@ import {
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import SourceArea from '../orderCreation/source.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
-
+import { shipmentList } from '@/api/purchasingAndOutsourcingOrders/index'
 export default {
   components: { Process, recordList, SourceArea },
   mixins: [busFlow, getProjectList],
@@ -1061,7 +1061,17 @@ export default {
       this.autoId = row.id
       console.log(this.autoId, 'oiGGG')
       this.linesList = []
-      this.linesList = row.outShipmentList
+      if (this.dataFormTwo.data.length) {
+        let obj = {
+          ordersLineIdList: [row.id],
+          pageNum: 1,
+          pageSize: -1
+        }
+        shipmentList(obj).then(res => {
+          console.log(res, 'ooo')
+          this.linesList = [...this.linesList, ...res.data.records]
+        })
+      }
 
     },
     // 更改选中行背景色
@@ -1191,8 +1201,16 @@ export default {
               console.log(item, 'o')
               item.productDrawingNo = item.drawingNo
               item.taxRate = Number(item.taxRate)
-              item.outShipmentList = item.outShipmentVOList
-              this.linesList.push(...item.outShipmentVOList)
+              let obj = {
+                ordersLineIdList: [item.id],
+                pageNum: 1,
+                pageSize: -1
+              }
+              shipmentList(obj).then(res => {
+                console.log(res, 'ooo')
+                this.linesList = [...this.linesList, ...res.data.records]
+                item.outShipmentVOList = res.data.records
+              })
             })
 
             console.log(this.linesList, 'this.linesList ')

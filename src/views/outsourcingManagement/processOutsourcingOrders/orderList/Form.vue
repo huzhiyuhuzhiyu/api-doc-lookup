@@ -292,10 +292,11 @@
                     <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
                     <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
                     <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
-                    <!-- <template v-if="isProportionSwitch === '1'">
+                    <template v-if="isProportionSwitch === '1'">
                       <el-table-column prop="weight" label="重量(kg)" width="90" />
                       <el-table-column prop="proportion" label="比重" width="80" />
-                    </template> -->
+                    </template>
+                    <el-table-column prop="batchNumber" label="批次号" width="180" />
                     <el-table-column prop="mainUnit" label="单位" min-width="140"></el-table-column>
                     <el-table-column prop="qty" label="基本数量" min-width="140"></el-table-column>
                     <el-table-column prop="demandQuantity" label="发料数量" min-width="140"></el-table-column>
@@ -589,10 +590,11 @@
                 <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
                 <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
                 <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
-                <!-- <template v-if="isProportionSwitch === '1'">
+                <template v-if="isProportionSwitch === '1'">
                   <el-table-column prop="weight" label="重量(kg)" width="90" />
                   <el-table-column prop="proportion" label="比重" width="80" />
-                </template> -->
+                  <el-table-column prop="batchNumber" label="批次号" width="160" />
+                </template>
                 <el-table-column prop="mainUnit" label="单位" min-width="140"></el-table-column>
                 <el-table-column prop="qty" label="基本数量" min-width="140"></el-table-column>
                 <el-table-column prop="demandQuantity" label="发料数量" min-width="140"></el-table-column>
@@ -635,7 +637,7 @@ import { getCooperativeData, getBimBusinessDetail } from '@/api/basicData/index'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
 import getProjectList from '@/mixins/generator/getProjectList'
-
+import { shipmentList } from '@/api/purchasingAndOutsourcingOrders/index'
 export default {
   components: { Process, recordList, SourceArea },
   mixins: [busFlow, getProjectList],
@@ -952,7 +954,17 @@ export default {
       this.autoId = row.id
       console.log(this.autoId, 'oiGGG')
       this.linesList = []
-      this.linesList = row.outShipmentList
+      if (this.dataFormTwo.data.length) {
+        let obj = {
+          ordersLineIdList: [row.id],
+          pageNum: 1,
+          pageSize: -1
+        }
+        shipmentList(obj).then(res => {
+          console.log(res, 'ooo')
+          this.linesList = [...this.linesList, ...res.data.records]
+        })
+      }
     },
     disabledDate(time) {
       // 将输入的日期字符串转换为日期对象
@@ -1078,30 +1090,20 @@ export default {
             }
             this.dataForm = res.data
             this.dataFormTwo.data = res.data.purchaseOrderLineVOList
-            this.dataFormTwo.data.forEach((item, index) => {
-              console.log(item.productsId, 'id')
-              item.productDrawingNo = item.drawingNo
-              item.taxRate = Number(item.taxRate)
-              if (item.outShipmentVOList.length == 0) {
-                this.linesList.push(...item.outShipmentVOList)
-                item.outShipmentList = []
-              } else {
-                this.linesList.push(...item.outShipmentVOList)
-                item.outShipmentList = item.outShipmentVOList
-              }
-              // let obj = {
-              //   productsId: this.dataFormTwo.data[index].productsId,
-              //   purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
-              // }
-              // // 通过需求池id 获取明细的数据
-              // getShipmentList(obj).then((res) => {
-              //   this.dataFormTwo.data[index].outShipmentList = res.data
-              //   if (res.data.length !== 0) {
-              //     this.linesList.push(res.data)
-              //   }
 
-              //   console.log(this.linesList, 'this.linesList')
-              // })
+            this.dataFormTwo.data.forEach((item) => {
+              console.log(item, 'ojj')
+              item.productDrawingNo = item.drawingNo
+              let obj = {
+                ordersLineIdList: [item.id],
+                pageNum: 1,
+                pageSize: -1
+              }
+              shipmentList(obj).then(res => {
+                console.log(res, 'ooo')
+                this.linesList = [...this.linesList, ...res.data.records]
+                item.outShipmentVOList = res.data.records
+              })
             })
             // this.linesList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
             if (this.type === 'edit') {

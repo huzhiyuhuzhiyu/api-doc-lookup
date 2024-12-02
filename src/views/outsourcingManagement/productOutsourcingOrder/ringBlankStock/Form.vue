@@ -936,14 +936,18 @@ export default {
       }
       // 通过需求池id 获取明细的数据
       getShipmentList(obj).then((res) => {
-        this.sourceData = res.data
+        console.log(this.dataFormTwo.data[this.index])
+        this.sourceData = res.data.filter(item => item.productsId === this.dataFormTwo.data[this.index].materialProductsId)
+        this.dataFormTwo.data[this.index].outShipmentList = this.dataFormTwo.data[index].outShipmentList.filter(item => item.productsId === this.dataFormTwo.data[this.index].materialProductsId)
         if (this.dataFormTwo.data[this.index].outShipmentList) {
           this.dataFormTwo.data[this.index].outShipmentList.forEach((item, ind) => {
             this.sourceData[ind].demandQuantity1 = item.demandQuantity
             this.sourceData[ind].processId = item.processId
             this.sourceData[ind].processName = item.processName
+            this.sourceData[ind].batchNumber = this.dataFormTwo.data[index].batchNumber
             this.sourceData[ind].weight = this.dataFormTwo.data[index].weight
             this.sourceData[ind].proportion = this.dataFormTwo.data[index].proportion
+            this.sourceData[ind].discount = this.dataFormTwo.data[index].discount
             // this.sourceData[ind].demandQuantity1 = item.demandQuantity-item.issuedQuantity-item.undeliveredQuantity
           })
         } else {
@@ -952,6 +956,7 @@ export default {
           })
         }
 
+        console.log(this.dataFormTwo.data[this.index].outShipmentList, 'llll')
         if (this.sourceData.length === 0) {
           this.sourceDisabled = true
         } else {
@@ -1176,12 +1181,15 @@ export default {
       arr = data.map((item) => {
         console.log(data, 'pp')
         return {
+          materialProductsId: item.productsId,
+          batchNumber: item.batchNumber,
           projectName: item.projectName,
           productName: item.productName,
           projectId: item.projectId,
           productDrawingNo: item.externalProductDrawingNo,
           weight: item.weight,
           proportion: item.proportion,
+          discount: item.discount,
           stockInventoryLineId: item.id,
           deliveryDate: item.deliveryDate,
           mainUnit: item.externalMainUnit,
@@ -1232,8 +1240,14 @@ export default {
         // 通过需求池id 获取明细的数据
         getShipmentList(obj).then((res) => {
           this.dataFormTwo.data[index].outShipmentList = res.data
+          this.dataFormTwo.data[index].outShipmentList = this.dataFormTwo.data[index].outShipmentList.filter(item => item.productsId === this.dataFormTwo.data[index].materialProductsId)
           this.dataFormTwo.data[index].outShipmentList.forEach((item) => {
-            item.demandQuantity = this.dataFormTwo.data[index].purchaseQuantity
+            item.demandQuantity = this.dataFormTwo.data[index].purchaseQuantity,
+              item.batchNumber = this.dataFormTwo.data[index].batchNumber,
+              item.weight = this.dataFormTwo.data[index].weight,
+              item.proportion = this.dataFormTwo.data[index].proportion,
+              item.discount = this.dataFormTwo.data[index].discount,
+              item.stockInventoryLineId = this.dataFormTwo.data[index].stockInventoryLineId
           })
           console.log(this.dataFormTwo.data[index].outShipmentList, 'o')
         })

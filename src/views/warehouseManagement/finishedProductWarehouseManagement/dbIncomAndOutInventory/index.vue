@@ -246,7 +246,7 @@
           </el-col>
         </el-form>
         <!-- 外协发料查询条件 -->
-        <el-form @submit.native.prevent v-if="categoryType == 'outbound_external_send' && !externalFlag">
+        <el-form @submit.native.prevent v-if="categoryType == 'outbound_external_send' && !outboundExternalSendFlag">
           <template v-for="item in searchList3">
             <el-col :span="item.searchType === 3 ? 6 : 4">
               <el-form-item>
@@ -284,7 +284,7 @@
           </el-col>
         </el-form>
         <!-- 外协发料 订单查询条件 -->
-        <el-form @submit.native.prevent v-if="categoryType == 'outbound_external_send' && externalFlag">
+        <el-form @submit.native.prevent v-if="categoryType == 'outbound_external_send' && outboundExternalSendFlag">
 
           <template v-for="item in searchList12">
             <el-col :span="item.searchType === 3 ? 6 : 4">
@@ -478,7 +478,7 @@
             <el-button type="primary" size="mini" icon="el-icon-plus"
               v-show="categoryType == 'inbound_external' && externalFlag" @click="externalBatchInbound">批量入库</el-button>
             <el-button type="primary" size="mini" icon="el-icon-plus"
-              v-show="categoryType == 'outbound_external_send' && externalFlag"
+              v-show="categoryType == 'outbound_external_send' && outboundExternalSendFlag"
               @click="externalMaterBatchOutbound">批量出库</el-button>
             <el-button type="primary" size="mini" icon="el-icon-plus"
               v-show="categoryType == 'inbound_purchase' && purchaseFlag" @click="purchaseBatchInbound">批量入库</el-button>
@@ -510,7 +510,9 @@
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                 v-if="categoryType == 'inbound_external' && externalFlag" @click="columnSetFun('externaltabForm')" />
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                v-if="categoryType == 'outbound_external_send'" @click="columnSetFun('wxfltabForm')" />
+                v-if="categoryType == 'outbound_external_send'&& !outboundExternalSendFlag" @click="columnSetFun('wxfltabForm')" />
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                v-if="categoryType == 'outbound_external_send'&& outboundExternalSendFlag" @click="columnSetFun('wxflOrdertabForm')" />
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                 v-if="categoryType == 'outbound_pick_out'" @click="columnSetFun('picktabForm')" />
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
@@ -873,7 +875,7 @@
         </JNPF-table>
         <!-- 外协发料 -->
         <JNPF-table :partentOrChild="'wxfltabForm'" v-loading="listLoading" @sort-change="sortChange" :key="3"
-          :data="wxflTableList" v-show="categoryType == 'outbound_external_send' && !externalFlag" custom-column
+          :data="wxflTableList" v-show="categoryType == 'outbound_external_send' && !outboundExternalSendFlag" custom-column
           ref="wxfltabForm" :fixedNo="true" :setColumnDisplayList="wxflcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
@@ -925,9 +927,9 @@
         </JNPF-table>
 
         <!-- 外协发料 订单-->
-        <JNPF-table :partentOrChild="'wxfltabForm'" v-loading="listLoading" @sort-change="sortChange" :key="3"
+        <JNPF-table :partentOrChild="'wxflOrdertabForm'" v-loading="listLoading" @sort-change="sortChange" :key="3"
           v-if="isProjectSwitchFlag" :data="exterMaterList"
-          v-show="categoryType == 'outbound_external_send' && externalFlag" custom-column ref="wxfltabForm" hasC
+          v-show="categoryType == 'outbound_external_send' && outboundExternalSendFlag" custom-column ref="wxflOrdertabForm" hasC
           @selection-change="handeleselectExternalMter" fixedNO :setColumnDisplayList="wxflcolumnList">
           <el-table-column prop="orderNo" label="订单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
@@ -1094,11 +1096,14 @@
         <pagination :total="wxshTotal" :page.sync="wxshForm.pageNum" :limit.sync="wxshForm.pageSize"
           @pagination="getTabdataList" v-if="categoryType == 'inbound_external' && !externalFlag">
         </pagination>
+        <pagination :total="externalTotal" :page.sync="externalForm.pageNum" :limit.sync="externalForm.pageSize"
+          @pagination="getTabdataList" v-if="categoryType == 'inbound_external' && externalFlag">
+        </pagination>
         <pagination :total="wxflTotal" :page.sync="wxflForm.pageNum" :limit.sync="wxflForm.pageSize"
-          @pagination="getTabdataList" v-if="categoryType == 'outbound_external_send' && !externalFlag">
+          @pagination="getTabdataList" v-if="categoryType == 'outbound_external_send' && !outboundExternalSendFlag">
         </pagination>
         <pagination :total="exterMaterTotal" :page.sync="exterMaterForm.pageNum" :limit.sync="exterMaterForm.pageSize"
-          @pagination="getTabdataList" v-if="categoryType == 'outbound_external_send' && externalFlag">
+          @pagination="getTabdataList" v-if="categoryType == 'outbound_external_send' && outboundExternalSendFlag">
         </pagination>
         <pagination :total="pickTotal" :page.sync="pickForm.pageNum" :limit.sync="pickForm.pageSize"
           @pagination="getTabdataList" v-if="categoryType == 'outbound_pick_out'">
@@ -1107,9 +1112,7 @@
           :limit.sync="returnMaterForm.pageSize" @pagination="getTabdataList"
           v-if="categoryType == 'inbound_return_materials'">
         </pagination>
-        <pagination :total="externalTotal" :page.sync="externalForm.pageNum" :limit.sync="externalForm.pageSize"
-          @pagination="getTabdataList" v-if="categoryType == 'inbound_external' && externalFlag">
-        </pagination>
+     
         <pagination :total="outboundUseTotal" :page.sync="outboundUseForm.pageNum"
           :limit.sync="outboundUseForm.pageSize" @pagination="getTabdataList" v-if="categoryType == 'outbound_use'">
         </pagination>
@@ -1937,6 +1940,7 @@ export default {
       saleFlag: false,
       purchaseFlag: false,
       externalFlag: false,
+      outboundExternalSendFlag:false,
       selectSaleList: [],
       selectPurchaseList: [],
       selectExternalList: [],
@@ -2256,9 +2260,10 @@ export default {
     getPickingConfig() {
       let obj = { "pageSize": -1, "businessCode": "warehouse" }
       getBimBusinessSwitchConfigList(obj).then(res => {
-        this.saleFlag = res.data.warehouse[2].configValue1 == '1' ? true : false
         this.purchaseFlag = res.data.warehouse[0].configValue1 == '1' ? true : false
         this.externalFlag = res.data.warehouse[1].configValue1 == '1' ? true : false
+        this.saleFlag = res.data.warehouse[2].configValue1 == '1' ? true : false
+        this.outboundExternalSendFlag=res.data.warehouse[4].configValue1 == '1' ? true : false
         if (this.saleFlag) {
           console.log(555, this.$refs.salestabForm);
           this.salecolumnList = ["cooperativePartnerCode",]
@@ -2306,7 +2311,7 @@ export default {
             }
 
             if (item.businessType == 'outbound_external_send') {
-              if (this.externalFlag) item.num = item.orderTodoNum
+              if (this.outboundExternalSendFlag) item.num = item.orderTodoNum
               item.fullName = '外协发料'
             }
             if (item.businessType == 'inbound_external') {
@@ -2392,7 +2397,7 @@ export default {
             this.$refs.outboundPurchaseREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
           })
         } else if (this.categoryType == 'outbound_external_send') {
-          if (!this.externalFlag) {
+          if (!this.outboundExternalSendFlag) {
 
             this.outboundExternalSendFormVisible = true
             this.$nextTick(() => {
@@ -2518,7 +2523,7 @@ export default {
       if (this.categoryType == 'outbound_external_send') {
 
         let newProp
-        if (!this.externalFlag) {
+        if (!this.outboundExternalSendFlag) {
           console.log("外协发料通知单");
           if (prop == 'orderNo' || prop == 'partnerName' || prop == 'partnerCode' || prop == 'deliverDate' || prop == 'recipient'
             || prop == 'phone' || prop == 'delivery' || prop == 'countryName' || prop == 'provinceName' || prop == 'cityName' || prop == 'areaName' || prop == 'address'
@@ -2863,7 +2868,7 @@ export default {
       }
       // 外协发料
       if (this.categoryType == 'outbound_external_send') {
-        if (this.externalFlag) {
+        if (this.outboundExternalSendFlag) {
           this.getexterMaterFUN(type)
         } else {
           if (this.wxflDateArr.length) {
@@ -3900,7 +3905,7 @@ export default {
         ]
       }
       // 外协发料通知单    
-      if (this.categoryType == 'outbound_external_send' && !this.externalFlag) {
+      if (this.categoryType == 'outbound_external_send' && !this.outboundExternalSendFlag) {
         this.superQueryJson = [
           {
             prop: 'orderNo',
@@ -4005,7 +4010,7 @@ export default {
       }
 
       // 外协发料订单   
-      if (this.categoryType == 'outbound_external_send' && this.externalFlag) {
+      if (this.categoryType == 'outbound_external_send' && this.outboundExternalSendFlag) {
         this.superQueryJson = [
           {
             prop: 'orderNo',
@@ -4541,7 +4546,7 @@ export default {
       }
 
       if (this.categoryType == 'outbound_external_send') {
-        if (!this.externalFlag) {
+        if (!this.outboundExternalSendFlag) {
           this.wxflDateArr = []
           this.superForm = this.wxflForm = {
             documentStatus: "sibmit",

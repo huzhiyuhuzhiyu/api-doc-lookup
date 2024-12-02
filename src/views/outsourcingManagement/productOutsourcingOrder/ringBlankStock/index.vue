@@ -194,6 +194,8 @@ export default {
         orderNo: '', //订单号
         // orderType: 'external', //	订单类型 采购 procure、外协 external
         ringBlankQueryFlag: 1,
+        productSource:'purchase', //产品来源
+        classAttribute:'',
         outFlag: 1,
         pageNum: 1,
         pageSize: 20,
@@ -493,6 +495,8 @@ export default {
         orderNo: '', //订单号
         // orderType: 'external', //	订单类型 采购 procure、外协 external
         ringBlankQueryFlag: 1,
+        productSource:'purchase', //产品来源
+        outFlag: 1,
         pageNum: 1,
         pageSize: 20,
         startTime: '',

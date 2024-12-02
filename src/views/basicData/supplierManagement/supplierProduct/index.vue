@@ -156,7 +156,8 @@
                 </div>
               </div>
               <JNPF-table v-if="tableDataFlag" highlight-current-row :fixedNO="true" ref="dataTable"
-                :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="lastColumnList">
+                :partentOrChild="'child'" :data="tableDataList" @sort-change="sortChange" custom-column
+                :setColumnDisplayList="lastColumnList">
                 <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="150" sortable="custom" />
                 <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="150" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" width="120"

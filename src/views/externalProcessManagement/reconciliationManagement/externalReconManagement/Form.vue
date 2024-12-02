@@ -102,9 +102,9 @@
                             <div class="viewData">
                               <span>
                                 {{
-                                  scope.row.receiptReturnType === 'outbound_external'
+                                  scope.row.receiptReturnType === 'inbound_external'
                                     ? '退货'
-                                    : scope.row.receiptReturnType === 'inbound_external'
+                                    : scope.row.receiptReturnType === 'outbound_external'
                                       ? '收货'
                                       : ''
                                 }}
@@ -132,12 +132,12 @@
                             :rules="productFormRules.excludingTaxAmount">
                             <div :class="[
                               'viewData',
-                              scope.row.receiptReturnType === 'outbound_external' ? 'green' : 'red'
+                              scope.row.receiptReturnType === 'inbound_external' ? 'green' : 'red'
                             ]">
-                              <span v-if="scope.row.receiptReturnType === 'outbound_external'">
+                              <span v-if="scope.row.receiptReturnType === 'inbound_external'">
                                 +{{ scope.row.excludingTaxAmount }}
                               </span>
-                              <span v-else-if="scope.row.receiptReturnType === 'inbound_external'">
+                              <span v-else-if="scope.row.receiptReturnType === 'outbound_external'">
                                 {{ scope.row.excludingTaxAmount }}
                               </span>
                               <el-input v-if="!scope.row.receiptReturnType" disabled
@@ -155,12 +155,12 @@
                             :rules="productFormRules.taxAmount">
                             <div :class="[
                               'viewData',
-                              scope.row.receiptReturnType === 'outbound_external' ? 'green' : 'red'
+                              scope.row.receiptReturnType === 'inbound_external' ? 'green' : 'red'
                             ]">
-                              <span v-if="scope.row.receiptReturnType === 'outbound_external'">
+                              <span v-if="scope.row.receiptReturnType === 'inbound_external'">
                                 +{{ scope.row.taxAmount }}
                               </span>
-                              <span v-else-if="scope.row.receiptReturnType === 'inbound_external'">
+                              <span v-else-if="scope.row.receiptReturnType === 'outbound_external'">
                                 {{ scope.row.taxAmount }}
                               </span>
 
@@ -178,12 +178,12 @@
                             :rules="productFormRules.includingTaxAmount">
                             <div :class="[
                               'viewData',
-                              scope.row.receiptReturnType === 'outbound_external' ? 'green' : 'red'
+                              scope.row.receiptReturnType === 'inbound_external' ? 'green' : 'red'
                             ]">
-                              <span v-if="scope.row.receiptReturnType === 'outbound_external'">
+                              <span v-if="scope.row.receiptReturnType === 'inbound_external'">
                                 +{{ scope.row.includingTaxAmount }}
                               </span>
-                              <span v-else-if="scope.row.receiptReturnType === 'inbound_external'">
+                              <span v-else-if="scope.row.receiptReturnType === 'outbound_external'">
                                 {{ scope.row.includingTaxAmount }}
                               </span>
                               <el-input v-if="!scope.row.receiptReturnType" v-model="scope.row.includingTaxAmount">
@@ -397,7 +397,7 @@ export default {
     backComputedValue() {
       let count = 0
       this.dataFormTwo.data.forEach((item) => {
-        if (item.receiptReturnType == 'inbound_external') {
+        if (item.receiptReturnType == 'outbound_external') {
           count += item.includingTaxAmount * 1
         }
       })
@@ -407,7 +407,7 @@ export default {
     receiptComputedValue() {
       let count = 0
       this.dataFormTwo.data.forEach((item) => {
-        if (item.receiptReturnType === 'outbound_external') {
+        if (item.receiptReturnType === 'inbound_external') {
           count += item.includingTaxAmount * 1
         }
       })
@@ -430,7 +430,7 @@ export default {
       handler: function (newVal, oldVal) {
         console.log(111, newVal)
         newVal.forEach((item) => {
-          if (item.receiptReturnType === 'outbound_external') {
+          if (item.receiptReturnType === 'inbound_external') {
             if (item.includingTaxAmount) {
               if (!newVal[0].taxRate || newVal[0].taxRate == 0) {
                 item.excludingTaxAmount = item.excludingTaxAmount
@@ -442,7 +442,7 @@ export default {
                 item.taxAmount = this.jnpf.numberFormat(item.includingTaxAmount - item.excludingTaxAmount, 2)
               }
             }
-          } else if (item.receiptReturnType === 'inbound_external') {
+          } else if (item.receiptReturnType === 'outbound_external') {
             if (item.includingTaxAmount) {
               if (!newVal[0].taxRate || newVal[0].taxRate == 0) {
                 item.excludingTaxAmount = item.excludingTaxAmount
@@ -530,7 +530,7 @@ export default {
       let _data = JSON.parse(JSON.stringify(data))
       _data.forEach((item) => {
         let excludingTaxAmount =
-          item.businessType === 'outbound_external'
+          item.businessType === 'inbound_external'
             ? this.jnpf.numberFormat(
               item.num * this.jnpf.numberFormat(item.costPrice / (1 + (item.taxRate * 1) / 100), 2),
               2
@@ -539,7 +539,7 @@ export default {
               item.num * this.jnpf.numberFormat(item.costPrice / (1 + (item.taxRate * 1) / 100))
             )
         let includingTaxAmount =
-          item.businessType === 'inbound_external'
+          item.businessType === 'outbound_external'
             ? this.jnpf.numberFormat(Math.abs(excludingTaxAmount) * (1 + (item.taxRate * 1) / 100))
             : this.jnpf.numberFormat(excludingTaxAmount * (1 + (item.taxRate * 1) / 100))
         this.dataFormTwo.data.push({
@@ -567,7 +567,7 @@ export default {
           excludingTaxPrice: this.jnpf.numberFormat(item.costPrice / (1 + (item.taxRate * 1) / 100), 2),
           excludingTaxAmount: excludingTaxAmount,
           taxAmount:
-            item.businessType === 'outbound_external'
+            item.businessType === 'inbound_external'
               ? this.jnpf.numberFormat(includingTaxAmount - excludingTaxAmount)
               : this.jnpf.numberFormat(includingTaxAmount - excludingTaxAmount),
           taxRate: item.taxRate,
@@ -579,7 +579,7 @@ export default {
       this.listLoading = false
 
       this.dataFormTwo.data.forEach((item, index) => {
-        if (item.receiptReturnType === 'outbound_external') {
+        if (item.receiptReturnType === 'inbound_external') {
           item.includingTaxAmount = this.jnpf.numberFormat(item.reconciliationUnitPrice * item.price)
           this.includingTaxAmount += this.jnpf.numberFormat(item.reconciliationUnitPrice * item.price)
         } else {

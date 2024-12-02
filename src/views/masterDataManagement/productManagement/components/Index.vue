@@ -1334,7 +1334,10 @@ export default {
       this.$refs['uploadRef'].clearFiles()
     },
     saveSubmit() {
-      if (!this.importProjectId) return this.$message.error('请选择所属项目');
+      if (this.isProjectSwitch === '1') {
+        if (!this.importProjectId) return this.$message.error('请选择所属项目');
+      }
+      if (!this.file) return this.$message.error('请上传文件');
       this.UploadProduct(this.file)
     },
     // 导出

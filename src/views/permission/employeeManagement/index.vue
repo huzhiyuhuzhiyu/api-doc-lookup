@@ -193,6 +193,12 @@
       :printQuery="printQuery" :enCode="enCode" ref="printTemplate" />
     <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
+      <div style="margin-bottom: 10px;" v-if="isProjectSwitch === '1'">
+        <el-select v-model="importProjectId" placeholder="请选择所属项目" style="width: 100%;" filterable
+          :disabled="!userInfo.projectId ? false : userInfo.projectId === '1' ? false : true">
+          <el-option v-for="item in projectIdData" :key="item.id" :label="item.name" :value="item.id"></el-option>
+        </el-select>
+      </div>
       <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" drag :auto-upload="false"
         :limit="1" :on-change="handleFileChange" ref="uploadRef">
         <i class="el-icon-upload"></i>
@@ -243,8 +249,10 @@ import JobQuit from './JobQuit' // 办理离职
 import JobCode from './JobCode' // 调岗记录
 // import JobEntry from './JobEntry' // 重新入职
 import { mapGetters } from "vuex"
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   name: 'permission-user',
+  mixins: [getProjectList],
   components: {
     Form,
     Diagram,
@@ -259,6 +267,8 @@ export default {
   },
   data() {
     return {
+      isProjectSwitch: '',
+      importProjectId:'',
       tableFlag: false,
       isProjectSwitch: '',
       JobCodeFormVisible: false,
@@ -480,8 +490,10 @@ export default {
   computed: {
     ...mapGetters(['userInfo'])
   },
-  created() {
+ async created() {
     console.log(this.userInfo.projectId)
+    await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
     this.getOrganizeList(true)
     if (localStorage.getItem("userFlag")) {
       let userFlag = JSON.parse(localStorage.getItem('userFlag'))
@@ -575,6 +587,9 @@ export default {
       this.formLoading = true
       var formData = new FormData()
       formData.append("file", data)
+      if (this.isProjectSwitch === '1') {
+        formData.append('projectId', this.importProjectId)
+      }
       //调用上传文件接口
       salecooperativepoolModel(formData).then(res => {
         if (!res.data) {
@@ -637,6 +652,10 @@ export default {
       this.jnpf.downloadFile(res.url, res.name)
     },
     submit() {
+      if (this.isProjectSwitch === '1') {
+        if (!this.importProjectId) return this.$message.error('请选择所属项目');
+      }
+      if (!this.file) return this.$message.error('请上传文件');
       this.UploadProduct(this.file)
     },
     cancelFun() {
@@ -899,6 +918,7 @@ export default {
       // this.$nextTick(() => {
       //   this.$refs.importForm.init()
       // })
+      this.importProjectId = ''
       this.uploadVisib = true
     },
     sortChange({ prop, order }) {

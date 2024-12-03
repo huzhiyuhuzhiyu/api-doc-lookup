@@ -143,7 +143,7 @@
                   </div>
                   <div style="height:530px;display:flex;" ref="boxresiz" v-if="btnType == 'look'">
 
-                    <el-table ref="product" :data="productData" :fixedNO="false" border height="100%" :key="191"
+                    <el-table ref="product" :data="productData" :fixedNO="false" border height="100%" key="191"
                       style="width: 100%;height:100%">
 
                       <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
@@ -198,8 +198,8 @@
                     </el-table>
 
                   </div>
-                  <el-table ref="product" v-else :data="productData" :fixedNO="true"
-                    @selection-change="handeleProductInfoData" border height="460" @row-click="rowclick" :key="165"
+                  <el-table ref="product" v-else :data="productData" :fixedNO="true" 
+                    @selection-change="handeleProductInfoData" border height="460" @row-click="rowclick" key="165"
                     style="width: 100%;">
                     <el-table-column type="selection" width="55" fixed="left" :key="2">
                     </el-table-column>
@@ -226,7 +226,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
-                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-show="isProjectSwitch == 1" />
 
                     <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                     <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
@@ -242,8 +242,8 @@
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
-                    <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                    <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-show="mainUnitFlag == 1" />
+                    <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-show="mainUnitFlag == 1" />
                     <el-table-column prop="price" label="单价(含税)" width="120" :key="110">
                       <template slot="header">
                         <span class="required">*</span>单价(含税)

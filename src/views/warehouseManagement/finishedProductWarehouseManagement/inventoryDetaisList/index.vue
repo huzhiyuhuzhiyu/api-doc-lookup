@@ -1328,7 +1328,7 @@ export default {
         let query = this.initListQuery
         let _data = {
           ...query,
-          exportType: '1201',
+          exportType: '1013',
           exportName: '出入库明细',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.initListQuery.pageSize : -1,

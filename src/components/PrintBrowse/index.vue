@@ -230,6 +230,7 @@ export default {
     },
     closeDialog() {
       this.$emit('update:visible', false)
+      this.$emit('closePrintPage')
     },
     shengchengtable(data, tds) {
       for (let key in data) {

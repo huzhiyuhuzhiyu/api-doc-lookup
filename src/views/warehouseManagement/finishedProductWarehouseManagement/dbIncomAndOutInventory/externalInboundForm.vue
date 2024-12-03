@@ -10,6 +10,9 @@
             @click="handleConfirm('draft')">保存草稿</el-button> -->
           <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
             @click="handleConfirm('submit')">提交</el-button>
+          <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
+            @click="handleConfirm('submit', 'print')">提交并打印</el-button>
+
           <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
@@ -162,7 +165,7 @@
 
                         <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
                           v-if="dataForm.weightFlag == true">
-                        
+
                           <template slot-scope="scope">
                             <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                               v-model="scope.row.weight" placeholder="重量"></el-input>
@@ -377,7 +380,7 @@
 
                     <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
                       v-if="dataForm.weightFlag == true">
-                       
+
                       <template slot-scope="scope">
                         <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                           v-model="scope.row.weight" placeholder="重量"></el-input>
@@ -541,6 +544,10 @@
       <!-- 选批次号 -->
       <BatchNumberForm v-if="batchNumVisible" ref="BatchNumberForms" @selectBatchNumberFun="selectBatchNumberFun">
       </BatchNumberForm>
+      <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+        :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+      <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm"
+        @closePrintPage="closePrintPage" />
     </div>
   </transition>
 </template>
@@ -564,9 +571,12 @@ import flowMixin from '@/mixins/generator/flowMixin'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import busFlow from '@/mixins/generator/busFlow';
 import getProjectList from '@/mixins/generator/getProjectList'
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
+import { getPrintBusInfo } from '@/api/system/printDev'
 import { mapGetters, mapState } from 'vuex'
 export default {
-  components: { CustomerForm, WareHouseForm, BatchNumberForm, Process, recordList },
+  components: { CustomerForm, WareHouseForm, BatchNumberForm, Process, recordList, PrintBrowse, PrintDialog },
   mixins: [flowMixin, busFlow, getProjectList],
   data() {
     return {
@@ -708,6 +718,11 @@ export default {
       productNameFlag: null,
 
       tableDataFlag: false,
+      prindId: '',
+      formId: '',
+      enCode: "",
+      printBrowseVisible: false,
+      printVisible: false,
     }
   },
   async created() {
@@ -736,6 +751,25 @@ export default {
     }
   },
   methods: {
+    printWarehouse(enCode) {
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          // this.printVisible = false
+          this.prindId = res.data.id
+          this.printBrowseVisible = true
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
+    closePrint() {
+      this.printVisible = false
+    },
+    closePrintPage() {
+      this.$emit('close', true)
+    },
     computedNumFun(data, index) {
       if (data.proportion && data.weight) {
         this.productData[index].num = Math.floor(this.jnpf.numberFormat(this.jnpf.math('multiply', [data.proportion, data.weight]), 2))
@@ -1275,7 +1309,7 @@ export default {
       } catch (error) {
       }
     },
-    async handleConfirm(submitModel) {
+    async handleConfirm(submitModel, type) {
       console.log(this.productData);
       let submitFlag = true // 自动聚焦是否可用
       this.$refs['dataForm'].validate((valid) => {
@@ -1307,16 +1341,16 @@ export default {
                 break
               }
               // if (this.dataForm.weightFlag) {
-                // if (!item.discount) {
-                //   submitFlag = false
-                //   this.$message.error("产品信息第" + (index + 1) + "行折扣不能为空")
-                //   break
-                // }
-                // if (!item.proportion) {
-                //   submitFlag = false
-                //   this.$message.error("产品信息第" + (index + 1) + "行比重不能为空")
-                //   break
-                // }
+              // if (!item.discount) {
+              //   submitFlag = false
+              //   this.$message.error("产品信息第" + (index + 1) + "行折扣不能为空")
+              //   break
+              // }
+              // if (!item.proportion) {
+              //   submitFlag = false
+              //   this.$message.error("产品信息第" + (index + 1) + "行比重不能为空")
+              //   break
+              // }
               //   if (!item.discount) {
               //     submitFlag = false
               //     this.$message.error("产品信息第" + (index + 1) + "行重量不能为空")
@@ -1326,7 +1360,7 @@ export default {
 
 
               if (Number(item.num) > Number(item.waitReceiptNum)) {
-                
+
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待收货数量")
                 break
@@ -1387,8 +1421,17 @@ export default {
                 this.submitmethodsTitle = "提交成功"
 
               }
+              if (type) {
 
-              this.tipsvisible = true
+                this.enCode = 'p018'
+                this.formId = res.data.id
+                this.fullName = '外协收货单'
+
+                this.printVisible = true
+                this.$nextTick(() => {
+                  this.$refs.printTemplate.init(this.enCode)
+                })
+              }
 
 
               this.btnLoading = false

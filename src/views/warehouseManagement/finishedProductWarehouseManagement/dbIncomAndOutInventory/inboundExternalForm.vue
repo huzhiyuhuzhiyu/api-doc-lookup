@@ -10,6 +10,9 @@
             @click="handleConfirm('draft')">保存草稿</el-button> -->
           <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
             @click="handleConfirm('submit')">提交</el-button>
+          <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
+            @click="handleConfirm('submit', 'print')">提交并打印</el-button>
+
           <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
@@ -452,9 +455,9 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <!-- 销售发退货 -->
-              <el-form @submit.native.prevent >
+              <el-form @submit.native.prevent>
 
-              
+
                 <el-col :span="6">
                   <el-form-item>
                     <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable />
@@ -481,7 +484,7 @@
                 </el-col>
 
               </el-form>
-      
+
 
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -547,6 +550,10 @@
       <!-- 选批次号 -->
       <BatchNumberForm v-if="batchNumVisible" ref="BatchNumberForms" @selectBatchNumberFun="selectBatchNumberFun">
       </BatchNumberForm>
+      <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+        :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+      <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm"
+        @closePrintPage="closePrintPage" />
     </div>
   </transition>
 </template>
@@ -569,6 +576,9 @@ import flowMixin from '@/mixins/generator/flowMixin'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
+import { getPrintBusInfo } from '@/api/system/printDev'
 import { mapGetters, mapState } from 'vuex'
 export default {
   components: { CustomerForm, WareHouseForm, BatchNumberForm, Process, recordList },
@@ -722,7 +732,11 @@ export default {
       productNameFlag: null,
       mainUnitFlag: null,
       calculateQuantityFlag: "",
-
+      prindId: '',
+      formId: '',
+      enCode: "",
+      printBrowseVisible: false,
+      printVisible: false,
     }
   },
   async created() {
@@ -749,6 +763,25 @@ export default {
     }
   },
   methods: {
+    printWarehouse(enCode) {
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          // this.printVisible = false
+          this.prindId = res.data.id
+          this.printBrowseVisible = true
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
+    closePrint() {
+      this.printVisible = false
+    },
+    closePrintPage() {
+      this.$emit('close', true)
+    },
     computedNumFun(data, index) {
       if (data.proportion && data.weight) {
         this.productData[index].num = Math.floor(this.jnpf.numberFormat(this.jnpf.math('multiply', [data.proportion, data.weight]), 2))
@@ -848,10 +881,10 @@ export default {
     // 销售发货选择产品——搜索 如果是销售订单  需要计算待出库数量=订单数量-已出库数量  如果是通知单 则直接取接口返回的待出库数量
     searchProductFun() {
 
-       
-        this.orderForm.classAttributeList= this.classAttributeList
-        this.orderForm.orderNo= this.dataForm.sourceNo
-        if (this.deliveryDateArr.length) {
+
+      this.orderForm.classAttributeList = this.classAttributeList
+      this.orderForm.orderNo = this.dataForm.sourceNo
+      if (this.deliveryDateArr.length) {
         this.orderForm.deliverDateStart = this.deliveryDateArr[0]
         this.orderForm.deliverDateEnd = this.deliveryDateArr[1]
       } else {
@@ -885,7 +918,7 @@ export default {
     // 销售发货选择产品——重置
     resetProductFun() {
       this.deliveryDateArr = []
-      this.orderForm= {
+      this.orderForm = {
         cooperativePartnerId: "",
         productDrawingNo: "",        // customerProductNo: "",
         deliverDateEnd: "",
@@ -919,7 +952,7 @@ export default {
         item.num = item.requiredReceivedQuantity
         item.ordersId = item.purchaseOrderId
         item.noticeId = item.purchaseReceiptReturnGoodsId
-        item.noticeLineId = item.id 
+        item.noticeLineId = item.id
         item.costPrice = item.price
         item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
         item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
@@ -1291,7 +1324,7 @@ export default {
       } catch (error) {
       }
     },
-    async handleConfirm(submitModel) {
+    async handleConfirm(submitModel, type) {
       console.log(this.productData);
       let submitFlag = true // 自动聚焦是否可用
       this.$refs['dataForm'].validate((valid) => {
@@ -1323,11 +1356,11 @@ export default {
                 break
               }
               // if (this.dataForm.weightFlag) {
-                // if (!item.discount) {
-                //   submitFlag = false
-                //   this.$message.error("产品信息第" + (index + 1) + "行折扣不能为空")
-                //   break
-                // }
+              // if (!item.discount) {
+              //   submitFlag = false
+              //   this.$message.error("产品信息第" + (index + 1) + "行折扣不能为空")
+              //   break
+              // }
               //   if (!item.proportion) {
               //     submitFlag = false
               //     this.$message.error("产品信息第" + (index + 1) + "行比重不能为空")
@@ -1342,7 +1375,7 @@ export default {
 
 
               if (Number(item.num) > Number(item.requiredReceivedQuantity)) {
-                
+
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待收货数量")
                 break
@@ -1402,8 +1435,18 @@ export default {
                 this.submitmethodsTitle = "提交成功"
 
               }
+              if (type) {
 
-              this.tipsvisible = true
+                this.enCode = 'p018'
+                this.formId = res.data.id
+                this.fullName = '外协收货单'
+
+                this.printVisible = true
+                this.$nextTick(() => {
+                  this.$refs.printTemplate.init(this.enCode)
+                })
+              }
+              // this.tipsvisible = true
 
 
               this.btnLoading = false

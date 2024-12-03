@@ -85,8 +85,7 @@
               <div v-if="scope.row.businessType == 'inbound_return_materials'">生产退料</div>
               <div v-if="scope.row.businessType == 'outbound_external_send'">外协发料</div>
               <div v-if="scope.row.businessType == 'inbound_external_return'">外协退料</div>
-              <div v-if="scope.row.businessType == 'inbound_external'">外协收货</div>
-              <div v-if="scope.row.businessType == 'outbound_external'">外协退货</div>
+              <div v-if="scope.row.businessType == 'inbound_external'">外协收货</div> 
               <div v-if="scope.row.businessType == 'inbound_other'">直接入库</div>
               <div v-if="scope.row.businessType == 'outbound_other'">直接出库</div>
               <div v-if="scope.row.businessType == 'outbound_transfer'">调拨出库</div>
@@ -175,7 +174,7 @@
                     </el-dropdown-item>
 
                     <el-dropdown-item type="text"
-                      :disabled="!((scope.row.businessType == 'inbound_purchase' || scope.row.businessType == 'outbound_external_send' || scope.row.businessType == 'outbound_purchase') && scope.row.sourceType == 'direct' && scope.row.documentStatus == 'submit')"
+                      :disabled="!((scope.row.businessType == 'inbound_purchase'||scope.row.businessType == 'inbound_external' || scope.row.businessType == 'outbound_external_send' || scope.row.businessType == 'outbound_purchase')  && scope.row.documentStatus == 'submit')"
                       @click.native="PrintFun(scope.row)">打印</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -495,6 +494,11 @@ export default {
           code: "p013",
           fullName: "外协发料单"
         },
+        {
+          businessType: 'inbound_external',
+          code: "p018",
+          fullName: "外协收货单"
+        },
       ],
       enCode: "",
       isProjectSwitch: '',
@@ -549,6 +553,7 @@ export default {
         if (res.data) {
           this.prindId = res.data.id
           this.printBrowseVisible = true
+          this.printVisible = false
         } else {
           this.$message.warning('未找到相应打印模版')
         }
@@ -559,6 +564,7 @@ export default {
     // 打印
     PrintFun(row) {
       console.log(this.arr, row);
+      this.p
       this.enCode = this.arr.find(item => item.businessType === row.businessType).code // 筛选出 businessType 等于 type 的项  
       console.log("this.encode", this.enCode);
       this.formId = row.id
@@ -585,8 +591,8 @@ export default {
     getWarehouseListFun() {
       getWarehouseTree({ code: this.warehouseCode }).then(res => {
         // 获取仓库详情信息
-        getWarehouseInfo(res.data[0].id).then(response => { 
-          this.initListQuery.projectId = this.listQuery.projectId =this.isProjectSwitch === '1' ? res.data[0].projectId || '' : '' 
+        getWarehouseInfo(res.data[0].id).then(response => {
+          this.initListQuery.projectId = this.listQuery.projectId = this.isProjectSwitch === '1' ? res.data[0].projectId || '' : ''
           this.getclassAttributeList()
         })
       })

@@ -10,6 +10,8 @@
             @click="handleConfirm('draft')">保存草稿</el-button> -->
           <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
             @click="handleConfirm('submit')">提交</el-button>
+          <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
+            @click="handleConfirm('submit', 'print')">提交并打印</el-button>
           <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
@@ -56,7 +58,7 @@
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="仓库" prop="warehouseName">
                               <ComSelect-list
-                                :requestObj="{ type: 'normal',  state: 'enable', projectId: isProjectSwitch === '1' ? dataForm.projectId || '' : '' }"
+                                :requestObj="{ type: 'normal', state: 'enable', projectId: isProjectSwitch === '1' ? dataForm.projectId || '' : '' }"
                                 :dialogTitle="'选择仓库'" :isdisabled="true" v-model="dataForm.warehouseName"
                                 :method="getWarehouseList" placeholder="请选择仓库"></ComSelect-list>
                             </el-form-item>
@@ -126,7 +128,7 @@
                           min-width="160" />
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
-                        min-width="160" />
+                          min-width="160" />
 
                         <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112"
                           v-if="allocationFlag">
@@ -274,7 +276,7 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="仓库" prop="warehouseName">
                           <ComSelect-list
-                            :requestObj="{ type: 'normal',  state: 'enable', projectId: isProjectSwitch === '1' ? dataForm.projectId || '' : '' }"
+                            :requestObj="{ type: 'normal', state: 'enable', projectId: isProjectSwitch === '1' ? dataForm.projectId || '' : '' }"
                             :dialogTitle="'选择仓库'" :isdisabled="true" v-model="dataForm.warehouseName"
                             :method="getWarehouseList" placeholder="请选择仓库"></ComSelect-list>
                         </el-form-item>
@@ -294,7 +296,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24"  > 
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="是否显示比重折扣" prop="weightFlag">
                           <el-select v-model="dataForm.weightFlag" placeholder="是否显示比重折扣" style="width: 100%;"
                             :disabled="btnType == 'look' ? true : false">
@@ -340,8 +342,7 @@
                     </el-table-column>
                     <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
-                    <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
-                    min-width="160" />
+                    <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
 
                     <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112" v-if="allocationFlag">
                       <template slot="header">
@@ -388,7 +389,7 @@
                           v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
                       </template>
                     </el-table-column>
-              
+
 
                     <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                     <el-table-column prop="num" :label="mainUnitFlag == 1 ? '收货数量(主)' : '收货数量'" min-width="160">
@@ -496,8 +497,7 @@
                   sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
                 <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
-                <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
-                min-width="160" />
+                <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
 
                 <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                 <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="160">
@@ -547,7 +547,9 @@
       <!-- 选库位 -->
       <WareHouseForm v-if="wareHouseVisible" ref="WareHouseForms" @selectWareHouseFun="selectWareHouseFun">
       </WareHouseForm>
-
+      <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+        :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+      <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm"   @closePrintPage="closePrintPage"/>
     </div>
   </transition>
 </template>
@@ -570,12 +572,20 @@ import flowMixin from '@/mixins/generator/flowMixin'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import busFlow from '@/mixins/generator/busFlow';
 import getProjectList from '@/mixins/generator/getProjectList'
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
+import { getPrintBusInfo } from '@/api/system/printDev'
 import { mapGetters, mapState } from 'vuex'
 export default {
-  components: { CustomerForm, WareHouseForm, Process, recordList },
-  mixins: [flowMixin, busFlow,getProjectList],
+  components: { CustomerForm, WareHouseForm, Process, recordList, PrintBrowse, PrintDialog },
+  mixins: [flowMixin, busFlow, getProjectList],
   data() {
     return {
+      prindId: '',
+      formId: '',
+      enCode: "",
+      printBrowseVisible: false,
+      printVisible: false,
       isProjectSwitch: '',
       weightFlagList: [
         { label: "是", value: true },
@@ -583,7 +593,7 @@ export default {
       ],
       shelfSpaceName: "",
       shelfSpaceId: "",
-  
+
       inOroundTitle: "",
       numTitle: "",
       batchNumVisible: false,
@@ -622,7 +632,7 @@ export default {
         approvalFlag: false,
         weightFlag: false,
         orderDate: this.jnpf.getToday(),
-        projectId:"",
+        projectId: "",
       },
       customerInfo: {},//所选客户信息
       getWarehouseList,
@@ -697,7 +707,7 @@ export default {
       loadingText: '',
       copyLinesData: [],
       previousValue: "",
-      orderForm:{ //获取产品数据
+      orderForm: { //获取产品数据
         cooperativePartnerId: '',
         productDrawingNo: "",        // customerProductNo: "",
         deliveryEndDate: "",
@@ -729,11 +739,11 @@ export default {
       productNameFlag: null,
       mainUnitFlag: null,
       tableDataFlag: false,
-      calculateQuantityFlag:"",
+      calculateQuantityFlag: "",
 
     }
   },
- 
+
   async created() {
     await this.getProjectSwitch('system', 'project')
     let objs = { "pageSize": -1, "businessCode": "product" }
@@ -745,8 +755,8 @@ export default {
     ...mapGetters(['userInfo'])
   },
   mounted() {
-    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit','unitFlag')
-    this.getMainUnitFun('warehouse', 'proportion','proportionFlag')
+    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit', 'unitFlag')
+    this.getMainUnitFun('warehouse', 'proportion', 'proportionFlag')
 
   },
   watch: {
@@ -757,6 +767,26 @@ export default {
     }
   },
   methods: {
+    printWarehouse(enCode) {
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          // this.printVisible = false
+          this.prindId = res.data.id
+          this.printBrowseVisible = true
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
+    closePrint() {
+      this.printVisible = false
+      this.$emit('close', true)
+    },
+    closePrintPage() {
+      this.$emit('close', true)
+    },
     computedNumFun(data, index) {
       if (data.discount && data.proportion && data.weight) {
         if (Number(data.discount) > 1 || Number(data.discount) < 0) return this.$message.error("请输入合理的折扣值，0~1范围内")
@@ -764,13 +794,13 @@ export default {
         this.watchNum(data, index)
       }
     },
-    async getMainUnitFun(code, type,flag) {
+    async getMainUnitFun(code, type, flag) {
       this.listLoading = true
       try {
         if (flag == 'unitFlag') this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
-        if(flag=='proportionFlag'){
+        if (flag == 'proportionFlag') {
           this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type);
-          this.dataForm.weightFlag=this.calculateQuantityFlag==1?true:false
+          this.dataForm.weightFlag = this.calculateQuantityFlag == 1 ? true : false
         }
 
         this.tableDataFlag = true
@@ -836,10 +866,10 @@ export default {
     // 选择产品——搜索
     searchProductFun() {
 
-   
-        this.orderForm.classAttributeList= this.classAttributeList
-        this.orderForm.cooperativePartnerId= this.dataForm.cooperativePartnerId
-        if (this.deliveryDateArr.length) {
+
+      this.orderForm.classAttributeList = this.classAttributeList
+      this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
+      if (this.deliveryDateArr.length) {
         this.orderForm.deliveryStartDate = this.deliveryDateArr[0]
         this.orderForm.deliveryEndDate = this.deliveryDateArr[1]
       } else {
@@ -1217,7 +1247,7 @@ export default {
       } catch (error) {
       }
     },
-    async handleConfirm(submitModel) {
+    async handleConfirm(submitModel, type) {
       console.log(this.productData);
       let submitFlag = true // 自动聚焦是否可用
       this.$refs['dataForm'].validate((valid) => {
@@ -1268,7 +1298,7 @@ export default {
               // }
 
               if (Number(item.num) > Number(item.waitReceiptNum)) {
-                 
+
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待收货数量")
                 break
@@ -1336,8 +1366,18 @@ export default {
                 this.submitmethodsTitle = "提交成功"
 
               }
+              if (type) {
 
-              this.tipsvisible = true
+                this.enCode = 'p017'
+                this.formId = res.data.id
+                this.fullName = '采购收货单'
+
+                this.printVisible = true
+                this.$nextTick(() => {
+                  this.$refs.printTemplate.init(this.enCode)
+                })
+              }
+              // this.tipsvisible = true
               this.btnLoading = false
 
 
@@ -1390,9 +1430,7 @@ export default {
   padding-left: 5px;
 }
 
-::v-deep.JNPF-dialog.JNPF-dialog_center .el-dialog .el-dialog__body {
-  padding: 0 !important;
-}
+
 
 .JNPF-preview-main .main {
   padding-top: 0;

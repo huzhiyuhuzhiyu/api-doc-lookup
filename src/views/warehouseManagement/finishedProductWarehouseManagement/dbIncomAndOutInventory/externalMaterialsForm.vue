@@ -10,6 +10,8 @@
             @click="handleConfirm('draft')">保存草稿</el-button> -->
           <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
             @click="handleConfirm('submit')">提交</el-button>
+          <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
+            @click="handleConfirm('submit', 'print')">提交并打印</el-button>
           <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
@@ -505,6 +507,10 @@
       <!-- 选批次号 -->
       <BatchNumberForm v-if="batchNumVisible" ref="BatchNumberForms" @selectBatchNumberFun="selectBatchNumberFun">
       </BatchNumberForm>
+      <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+        :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+      <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm"
+        @closePrintPage="closePrintPage" />
     </div>
   </transition>
 </template>
@@ -529,11 +535,19 @@ import recordList from '@/views/workFlow/components/RecordList.vue'
 import busFlow from '@/mixins/generator/busFlow';
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
+import { getPrintBusInfo } from '@/api/system/printDev'
 export default {
-  components: { CustomerForm, BatchNumberForm, Process, recordList },
+  components: { CustomerForm, BatchNumberForm, Process, recordList, PrintBrowse, PrintDialog },
   mixins: [flowMixin, busFlow, getProjectList],
   data() {
     return {
+      prindId: '',
+      formId: '',
+      enCode: "",
+      printBrowseVisible: false,
+      printVisible: false,
       isProjectSwitch: '',
 
       weightFlagList: [
@@ -704,7 +718,26 @@ export default {
 
   },
   methods: {
- 
+    printWarehouse(enCode) {
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          // this.printVisible = false
+          this.prindId = res.data.id
+          this.printBrowseVisible = true
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
+    closePrint() {
+      this.printVisible = false
+      this.$emit('close', true)
+    },
+    closePrintPage() {
+      this.$emit('close', true)
+    },
     computedNumFun(data, index) {
       if (data.proportion && data.weight) {
         this.productData[index].num = Math.floor(this.jnpf.numberFormat(this.jnpf.math('multiply', [data.proportion, data.weight]), 2))
@@ -1204,8 +1237,16 @@ export default {
                 this.submitmethodsTitle = "提交成功"
 
               }
-
-              this.tipsvisible = true
+              if (type) {
+                this.enCode = 'p013'
+                this.formId = res.data.id
+                this.fullName = '外协发料单'
+                this.printVisible = true
+                this.$nextTick(() => {
+                  this.$refs.printTemplate.init(this.enCode)
+                })
+              }
+              // this.tipsvisible = true
 
               this.btnLoading = false
 

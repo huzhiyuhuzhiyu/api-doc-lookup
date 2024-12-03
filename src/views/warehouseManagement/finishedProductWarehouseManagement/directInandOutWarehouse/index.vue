@@ -185,7 +185,7 @@
                             v-model="scope.row.proportion" placeholder="比重"></el-input>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="discount" label="折扣折扣(0~1)" width="140" :key="717"
+                      <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
                         v-if="dataForm.weightFlag == true">
                   
                         <template slot-scope="scope">
@@ -610,6 +610,7 @@ export default {
   name: "directInandOutWarehouse",
   data() {
     return {
+      printVisible:false,
       isProjectSwitch: '',
       prindId: '',
       formId: '',

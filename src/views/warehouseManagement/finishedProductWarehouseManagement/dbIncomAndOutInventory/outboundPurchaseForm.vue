@@ -10,6 +10,9 @@
             @click="handleConfirm('draft')">保存草稿</el-button> -->
           <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
             @click="handleConfirm('submit')">提交</el-button>
+          <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
+            @click="handleConfirm('submit', 'print')">提交并打印</el-button>
+
           <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
@@ -150,9 +153,7 @@
 
                         <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
                           v-if="dataForm.weightFlag == true">
-                          <template slot="header">
-                            <span class="required">*</span>重量(kg)
-                          </template>
+                     
                           <template slot-scope="scope">
                             <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                               v-model="scope.row.weight" placeholder="重量"></el-input>
@@ -362,9 +363,7 @@
 
                     <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
                       v-if="dataForm.weightFlag == true">
-                      <template slot="header">
-                        <span class="required">*</span>重量(kg)
-                      </template>
+                
                       <template slot-scope="scope">
                         <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                           v-model="scope.row.weight" placeholder="重量"></el-input>
@@ -466,7 +465,7 @@
 
               <!-- 采购收退货 -->
               <el-form @submit.native.prevent>
-               
+
                 <el-col :span="6">
                   <el-form-item>
                     <el-input v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable />
@@ -563,6 +562,9 @@
       <!-- 选批次号 -->
       <BatchNumberForm v-if="batchNumVisible" ref="BatchNumberForms" @selectBatchNumberFun="selectBatchNumberFun">
       </BatchNumberForm>
+      <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+        :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+      <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm"  @closePrintPage="closePrintPage"/>
     </div>
   </transition>
 </template>
@@ -585,8 +587,11 @@ import recordList from '@/views/workFlow/components/RecordList.vue'
 import busFlow from '@/mixins/generator/busFlow';
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
+import { getPrintBusInfo } from '@/api/system/printDev'
 export default {
-  components: { CustomerForm, BatchNumberForm, Process, recordList },
+  components: { CustomerForm, BatchNumberForm, Process, recordList, PrintBrowse, PrintDialog },
   mixins: [flowMixin, busFlow, getProjectList],
   data() {
     return {
@@ -706,7 +711,7 @@ export default {
       loadingText: '',
       copyLinesData: [],
       previousValue: "",
-      orderForm:  { //获取产品数据
+      orderForm: { //获取产品数据
         cooperativePartnerId: "",
         productDrawingNo: "",        // customerProductNo: "",
         customerProductDrawingNo: "",
@@ -737,7 +742,11 @@ export default {
       mainUnitFlag: null,
       tableDataFlag: false,
       calculateQuantityFlag: "",
-
+      prindId: '',
+      formId: '',
+      enCode: "",
+      printBrowseVisible: false,
+      printVisible: false,
     }
   },
 
@@ -764,6 +773,26 @@ export default {
     }
   },
   methods: {
+    printWarehouse(enCode) {
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.printBrowseVisible = true
+          // this.printVisible = false
+          this.prindId = res.data.id
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
+    closePrint() {
+      this.printVisible = false
+      this.$emit('close',true)
+    },
+    closePrintPage(){
+      this.$emit('close',true)
+    },
     computedNumFun(data, index) {
       if (data.proportion && data.weight) {
         // if (Number(data.discount) > 1 || Number(data.discount) < 0) return this.$message.error("请输入合理的折扣值，0~1范围内")
@@ -808,7 +837,7 @@ export default {
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
       this.$set(this.productData[index], 'discount', "")
       this.$set(this.productData[index], 'proportion', "")
-      this.$set(this.productData[index], 'weight',"")
+      this.$set(this.productData[index], 'weight', "")
     },
 
 
@@ -831,12 +860,12 @@ export default {
       this.searchProductFun()
     },
     // 销售发货选择产品——搜索 如果是销售订单  需要计算待出库数量=订单数量-已出库数量  如果是通知单 则直接取接口返回的待出库数量
-    searchProductFun() { 
+    searchProductFun() {
 
-     
-        this.orderForm.classAttributeList= this.classAttributeList
-        this.orderForm.orderNo= this.dataForm.sourceNo
-        if (this.deliveryDateArr.length) {
+
+      this.orderForm.classAttributeList = this.classAttributeList
+      this.orderForm.orderNo = this.dataForm.sourceNo
+      if (this.deliveryDateArr.length) {
         this.orderForm.deliveryStartDate = this.deliveryDateArr[0]
         this.orderForm.deliveryEndDate = this.deliveryDateArr[1]
       } else {
@@ -859,20 +888,7 @@ export default {
         this.productList = res.data.records
         this.productTotal = res.data.total
         this.listLoading = false
-      })
-      // { label: "销售发货", value: "outbound_sale_send" },
-      //   { label: "销售退货", value: "inbound_sale_return" },
-      //   { label: "采购收货", value: "inbound_purchase" },
-      //   { label: "采购退货", value: "outbound_purchase" },
-      //   { label: "生产领料", value: "outbound_pick_out" },
-      //   { label: "生产退料", value: "inbound_return_materials" },
-      //   { label: "外协发料", value: "outbound_external_send" },
-      //   { label: "外协退料", value: "inbound_external_return" },
-      //   { label: "外协收货", value: "inbound_external" },
-      //   { label: "外协退货", value: "outbound_external" },  
-
-
-
+      }) 
     },
     // 选择产品 (销售发货——多选)
     handleSelectionChangeAllPruduct(val) {
@@ -1261,7 +1277,7 @@ export default {
       } catch (error) {
       }
     },
-    async handleConfirm(submitModel) {
+    async handleConfirm(submitModel, type) {
       console.log(this.productData);
       let submitFlag = true // 自动聚焦是否可用
       this.$refs['dataForm'].validate((valid) => {
@@ -1298,23 +1314,7 @@ export default {
                 break
               }
 
-              if (this.dataForm.weightFlag) {
-                // if (!item.discount) {
-                //   submitFlag = false
-                //   this.$message.error("产品信息第" + (index + 1) + "行折扣不能为空")
-                //   break
-                // }
-                if (!item.proportion) {
-                  submitFlag = false
-                  this.$message.error("产品信息第" + (index + 1) + "行比重不能为空")
-                  break
-                }
-                if (!item.weight) {
-                  submitFlag = false
-                  this.$message.error("产品信息第" + (index + 1) + "行重量不能为空")
-                  break
-                }
-              }
+           
 
 
               if (Number(item.num) > Number(item.receivedQuantity)) {
@@ -1326,32 +1326,10 @@ export default {
               }
 
 
-              if (!totals[item.ordersLineId]) {
-                totals[item.ordersLineId] = { totalNum: 0, ordersNum: item.ordersNum };
-              }
-              if (!totalNum[item.ordersLineId]) {
-                totalNum[item.ordersLineId] = { totalNum: 0, availableBatchNumber: item.availableBatchNumber };
-              }
-              totals[item.ordersLineId].totalNum += Number(item.num)
-              totalNum[item.ordersLineId].totalNum += Number(item.num);
+       
             }
-            for (let id in totals) {
-              if (totals[id].totalNum > totals[id].ordersNum) {
-                console.log(`同产品 ${id} 的总数量不能超过订单数量`);
-                submitFlag = false
-                this.$message.error("同产品的总数量不能超过订单数量")
-                break
-              }
-            }
-            if (this.dataForm.businessType == 'outbound_sale_send') {
-              for (let id in totalNum) {
-                if (totalNum[id].totalNum > totalNum[id].availableBatchNumber) {
-                  submitFlag = false
-                  this.$message.error("同产品的总数量不能批次库存数量")
-                  break
-                }
-              }
-            }
+       
+          
           }
 
 
@@ -1379,14 +1357,7 @@ export default {
               flowData: this.flowData
             }
             console.log("this.dataForm", this.dataForm);
-            // // 提交确认
-            // if (submitModel === 'submit') {
-            //   let flag = await this.$confirm('请确认信息是否正确，提交后不允许修改，是否提交！', '提交确认', { type: 'warning' }).catch(err => false)
-            //   if (!flag) {
-            //     console.log(dataObj)
-            //     return this.btnLoading = false
-            //   }
-            // }
+
             console.log("this.productData", this.productData);
             this.btnLoading = true
             formMethod(dataObj).then(res => {
@@ -1398,8 +1369,18 @@ export default {
                 this.submitmethodsTitle = "提交成功"
 
               }
+              if (type) {
 
-              this.tipsvisible = true
+                this.enCode = 'p008'
+                this.formId = res.data.id
+                this.fullName = '采购退货单'
+
+                this.printVisible = true
+                this.$nextTick(() => {
+                  this.$refs.printTemplate.init(this.enCode)
+                })
+              }
+              // this.tipsvisible = true
 
               this.btnLoading = false
 
@@ -1452,9 +1433,7 @@ export default {
   padding-left: 5px;
 }
 
-::v-deep.JNPF-dialog.JNPF-dialog_center .el-dialog .el-dialog__body {
-  padding: 0 !important;
-}
+
 
 .JNPF-preview-main .main {
   padding-top: 0;

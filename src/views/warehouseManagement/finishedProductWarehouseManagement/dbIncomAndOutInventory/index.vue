@@ -858,6 +858,9 @@
           <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom" />
 
           <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+          <el-table-column prop="weight" label="重量" min-width="140" ></el-table-column>
+          <el-table-column prop="proportion" label="比重" min-width="140" ></el-table-column>
+          <el-table-column prop="batchNumber" label="批次号" min-width="180" ></el-table-column>
           <el-table-column prop="purchaseQuantity" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
           </el-table-column>
           <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
@@ -953,6 +956,9 @@
           <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="processName" label="工序名称" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+          <el-table-column prop="weight" label="重量" min-width="140" ></el-table-column>
+          <el-table-column prop="proportion" label="比重" min-width="140" ></el-table-column>
+          <el-table-column prop="batchNumber" label="批次号" min-width="180" ></el-table-column>
           <el-table-column prop="purchaseQuantity" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
           </el-table-column>
           <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
@@ -2280,7 +2286,7 @@ export default {
         this.purchaseFlag = res.data.warehouse[0].configValue1 == '1' ? true : false
         this.externalFlag = res.data.warehouse[1].configValue1 == '1' ? true : false
         this.saleFlag = res.data.warehouse[2].configValue1 == '1' ? true : false
-        this.outboundExternalSendFlag = res.data.warehouse[4].configValue1 == '1' ? true : false
+        this.outboundExternalSendFlag = res.data.warehouse[3].configValue1 == '1' ? true : false
         if (this.saleFlag) {
           console.log(555, this.$refs.salestabForm);
           this.salecolumnList = ["cooperativePartnerCode",]
@@ -2550,7 +2556,7 @@ export default {
           this.wxflForm.orderItems[0].column = newProp
         } else {
           console.log("外协发料订单");
-          if (prop == 'orderNo' || prop == 'deliveryDate' || prop == 'drawingNo' || prop == 'mainUnit' || prop == 'purchaseQuantity') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+          if (prop == 'orderNo' || prop == 'deliveryDate'   || prop == 'mainUnit' || prop == 'purchaseQuantity') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
           else newProp = prop
           this.exterMaterForm.orderItems[0].asc = order === 'ascending'
           this.exterMaterForm.orderItems[0].column = newProp

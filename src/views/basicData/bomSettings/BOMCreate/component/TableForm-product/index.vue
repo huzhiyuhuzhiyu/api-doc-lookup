@@ -207,6 +207,9 @@ export default {
     projectId: {
       type: String
     },
+    isProductNameSwitch: {
+      type: String
+    },
   },
   watch: {
     value: {
@@ -294,6 +297,17 @@ export default {
     },
 
     openSeleceProductDialog() {
+      if (this.productId === '1') {
+        this.ProductTableItems.unshift({ prop: 'productName', label: '所属项目', fixed: 'left' })
+      } else {
+
+      }
+      if (this.isProductNameSwitch === '1') {
+        this.ProductTableItems.unshift({ prop: 'name', label: '产品名称', fixed: 'left' })
+      } else {
+
+      }
+
       this.$refs['ComSelect-page'].openDialog()
       if (this.projectId) {
         this.ProductListRequestObj.projectId = this.projectId

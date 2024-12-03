@@ -538,6 +538,7 @@ export default {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = {
         classAttribute: '',
+        type: 'material',
         orderItems: [
           {
             asc: false,

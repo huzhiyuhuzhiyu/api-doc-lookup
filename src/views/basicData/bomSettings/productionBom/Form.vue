@@ -57,7 +57,8 @@
                     <el-collapse-item title="子件信息" name="productInfo">
                       <TableForm-product :value="linesList" @input="contentChanges" ref="tableForm"
                         :tableItems="linesListItems" :btnType="btnType" @addth="addOrDelLinesItem"
-                        @deleteth="addOrDelLinesItem" customStyle :projectId="dataForm.projectId" />
+                        @deleteth="addOrDelLinesItem" customStyle :projectId="dataForm.projectId"
+                        :isProductNameSwitch="isProductNameSwitch" />
                     </el-collapse-item>
                   </el-collapse>
                 </el-tab-pane>
@@ -118,6 +119,7 @@ export default {
   data() {
     return {
       isattachmentswitch: '',
+      isProductNameSwitch: '',
       categoryId: '',
       activeNames: ['productInfo', 'basicInfo'],
       datafilelist: [],
@@ -331,6 +333,7 @@ export default {
     }
   },
   async created() {
+
     if (localStorage.getItem('productionBomFormFlag')) {
       let roleFlag = JSON.parse(localStorage.getItem('productionBomFormFlag'))
 
@@ -403,6 +406,11 @@ export default {
     })
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -425,6 +433,7 @@ export default {
     async init(id, btnType, approvalFlag, approvalStatus) {
       await this.getProjectSwitch('system', 'project')
       await this.getProjectList()
+      await this.getProductNameSwitch('product', 'enable_productName')
 
       if (this.isProjectSwitch === '1') {
         this.linesListItems = [
@@ -615,6 +624,12 @@ export default {
           },
           { prop: 'remark', label: '备注', value: '', type: 'input', maxlength: 200, minWidth: 160 }
         ]
+      }
+      if (this.isProductNameSwitch === '1') {
+        this.ProductTableItems.unshift({ prop: 'name', label: '产品名称', fixed: 'left' })
+        this.linesListItems.unshift({ prop: 'productName', label: '产品名称', value: '', type: 'view', minWidth: 160 })
+      } else {
+
       }
       this.dataFormItems.forEach((tc) => {
         // 添加所属项目

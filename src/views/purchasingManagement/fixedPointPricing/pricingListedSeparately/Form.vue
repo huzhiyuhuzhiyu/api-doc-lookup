@@ -80,6 +80,8 @@
                       <!-- <el-table-column type="index" key="index" width="60" label="序号" align="center" fixed="left" /> -->
                       <el-table-column prop="projectName" label="所属项目" width="120"
                         v-if="isProjectSwitch === '1'"></el-table-column>
+                      <el-table-column prop="productsName" label="产品名称" width="120"
+                        v-if="isProductNameSwitch === '1'"></el-table-column>
                       <el-table-column prop="drawingNo" key="drawingNo" label="品名规格" min-width="180">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'"
@@ -366,6 +368,8 @@
                   :hasC="type != 'look'" hasNO fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table">
                   <el-table-column prop="projectName" label="所属项目" width="120"
                     v-if="isProjectSwitch === '1'"></el-table-column>
+                  <el-table-column prop="productsName" label="产品名称" width="120"
+                    v-if="isProductNameSwitch === '1'"></el-table-column>
                   <el-table-column prop="drawingNo" key="drawingNo" label="品名规格" min-width="180">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'" :rules="productRules.drawingNo">
@@ -678,6 +682,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isProductNameSwitch: '',
       tableDataFlag: false,
       flowTemplateJson: {},
       flowData: {},
@@ -975,6 +980,7 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
+    await this.getProductNameSwitch('product', 'enable_productName')
     this.tableDataFlag = true
     console.log(this.isProjectSwitch)
     if (this.isProjectSwitch === '1') {
@@ -994,6 +1000,9 @@ export default {
         { prop: 'mainUnit', label: '单位' },
         { prop: 'colour', label: '颜色' }
       ]
+    }
+    if (this.isProductNameSwitch === '1') {
+      this.ProductTableItems.unshift({ prop: 'name', label: '产品名称', minWidth: 140 })
     }
     this.getBimBusinessDetail()
     this.getDeputyUnit()
@@ -1018,6 +1027,11 @@ export default {
     }
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     getDeputyUnit() {
       let obj = {
         businessCode: 'deputyUnit',
@@ -1118,7 +1132,7 @@ export default {
           selectArr = selectArr.filter((item1) => {
             const index = this.dataFormTwo.data.findIndex((item2) => item2.productsId === item1.productsId)
             if (index !== -1) {
-              deletedArray.push(item1.productsName)
+              deletedArray.push(item1.drawingNo)
               if (deletedArray.length) {
                 this.$message.error(`已经添加过的产品：${deletedArray.join('、')}`)
               }

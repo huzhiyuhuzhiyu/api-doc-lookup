@@ -89,6 +89,8 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
+                      <el-table-column prop="productName" label="产品名称" width="160"
+                        v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productCode" label="产品编码" width="140" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'">
@@ -278,6 +280,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isProductNameSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
@@ -369,7 +372,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
-
+    await this.getProductNameSwitch('product', 'enable_productName')
     this.fetchData('DZDH')
     this.getDeputyUnit()
   },
@@ -479,6 +482,11 @@ export default {
     }
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     getDeputyUnit() {
       let obj = {
         businessCode: 'deputyUnit',

@@ -41,16 +41,21 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
               <el-select v-model="listQuery.classAttribute" placeholder="类别属性">
                 <el-option v-for="item in classAttributeOptions" :key="item.value" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" clearable
+                @keyup.enter.native="search()" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="4" v-if="isProductNameSwitch === '1'">
+            <el-form-item>
+              <el-input v-model="listQuery.productName" placeholder="产品名称" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
@@ -94,6 +99,8 @@
         <JNPF-table v-if="tableFlag" :data="tableData" :fixedNO="true" hasC @sort-change="sortChange" custom-column
           ref="dataTable" :setColumnDisplayList="columnList" @selection-change="handeleProductInfoData">
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
+          <el-table-column prop="productName" label="产品名称" width="120"
+            v-if="isProductNameSwitch === '1'"></el-table-column>
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
           <el-table-column prop="code" label="产品编码" width="140" sortable="custom"></el-table-column>
           <el-table-column prop="classAttribute" label="类别属性" width="120" sortable="custom">
@@ -167,6 +174,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isProductNameSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: '',
@@ -296,7 +304,14 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
-
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProductNameSwitch === '1') {
+      this.superQueryJson.splice(2, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
+    }
     if (localStorage.getItem('safetyInventoryWarningFlag')) {
       let roleFlag = JSON.parse(localStorage.getItem('safetyInventoryWarningFlag'))
       this.expands = roleFlag
@@ -312,6 +327,11 @@ export default {
     ...mapState('user', ['token'])
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     getDeputyUnit() {
       let obj = {
         businessCode: 'deputyUnit',

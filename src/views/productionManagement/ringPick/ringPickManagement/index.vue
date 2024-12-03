@@ -81,7 +81,7 @@
             </el-table-column>
             <el-table-column prop="receiveType" label="领料类型" min-width="160" sortable="custom">
               <template slot-scope="scope">
-                <div v-if="scope.row.receiveType == 'order'">订单物料</div>
+                <div v-if="scope.row.receiveType == 'order'">任务物料</div>
                 <div v-if="scope.row.receiveType == 'process'">工序物料</div>
               </template>
             </el-table-column>
@@ -163,7 +163,7 @@ export default {
       formVisible:false,
       columnList: ["productionOrderNo", "createByName"],
       receiveTypeList: [
-        { label: "订单物料", value: "order" },
+        { label: "任务物料", value: "order" },
         { label: "工序物料", value: "process" },
       ], 
       superQueryVisible: false,
@@ -223,7 +223,7 @@ export default {
           label: "领料类型",
           type: 'select',
           options: [
-            { label: "订单物料", value: "order" },
+            { label: "任务物料", value: "order" },
             { label: "工序物料", value: "process" },
           ]
         },

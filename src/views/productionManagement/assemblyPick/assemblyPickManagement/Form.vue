@@ -266,7 +266,7 @@ export default {
       orderMaterialFormVisible: false,
       processMaterialFormVisible: false,
       receiveTypeList: [
-        { label: "订单物料", value: "order" },
+        { label: "任务物料", value: "order" },
         { label: "工序物料", value: "process" },
       ],
       codeConfig: {},
@@ -453,7 +453,7 @@ export default {
           this.$refs.orderMaterialForm.init(this.dataForm.productionOrderId)
 
         })
-        // 订单物料
+        // 任务物料
       } else {
         // 工序物料
         this.processMaterialFormVisible = true

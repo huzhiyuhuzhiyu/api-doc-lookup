@@ -5,26 +5,33 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.productDrawingNo" placeholder="品名规格" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
               <el-select v-model="listQuery.classAttribute" placeholder="类别属性">
                 <el-option v-for="item in classAttributeOptions" :key="item.value" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="4" v-if="isProductNameSwitch === '1'">
+            <el-form-item>
+              <el-input v-model.trim="listQuery.productName" placeholder="产品名称" clearable
+                @keyup.enter.native="search()" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model.trim="listQuery.productDrawingNo" placeholder="品名规格" clearable
+                @keyup.enter.native="search()" />
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="6">
             <el-form-item>
               <el-date-picker v-model="deliveryDateArr" type="daterange" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
                 style="width: 100%" start-placeholder="交货开始日期" end-placeholder="交货结束日期" clearable></el-date-picker>
             </el-form-item>
           </el-col>
 
-          <el-col :span="6">
+          <el-col :span="3">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
                 {{ $t('common.search') }}
@@ -63,7 +70,8 @@
           :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
-          <!-- <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" /> -->
+          <el-table-column prop="productName" label="产品名称" width="120"
+            v-if="isProductNameSwitch === '1'"></el-table-column>
           <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
           <el-table-column prop="classAttribute" label="类别属性" min-width="110" sortable="custom">
             <template slot-scope="scope">
@@ -115,7 +123,7 @@
               <div v-if="scope.row.demandStatus == 'finished'"><el-tag type="success">已完成</el-tag></div>
             </template>
           </el-table-column>
- 
+
           <!-- <el-table-column prop="sourceOrderNo" label="来源单号" min-width="180" sortable="custom" /> -->
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" min-width="180" sortable="custom" />
@@ -183,7 +191,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
-
+      isProductNameSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
@@ -424,12 +432,18 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
+    await this.getProductNameSwitch('product', 'enable_productName')
     this.tableDataFlag = true
 
     this.getDeputyUnit()
     this.initData()
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     getDeputyUnit() {
       let obj = {
         businessCode: 'deputyUnit',

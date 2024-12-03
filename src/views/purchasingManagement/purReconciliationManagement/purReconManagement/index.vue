@@ -71,8 +71,10 @@
           <el-table-column prop="partnerName" label="供应商名称" min-width="180" sortable="custom" />
           <el-table-column prop="partnerCode" label="供应商编码" min-width="180" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
+          <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+            show-overflow-tooltip></el-table-column>
           <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
-          <!-- <el-table-column prop="productName" label="产品名称" min-width="180" sortable="custom" /> -->
+
           <el-table-column prop="drawingNo" label="品名规格" min-width="180" sortable="custom" />
           <el-table-column prop="businessType" label="收/退货类型" width="140" sortable="custom">
             <template slot-scope="scope">
@@ -134,6 +136,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isProductNameSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
@@ -264,11 +267,31 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
-
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProductNameSwitch === '1') {
+      this.searchList.push({
+        field: 'productName',
+        fieldValue: '',
+        label: '产品名称',
+        symbol: 'like',
+        searchType: 1,
+        width: 120
+      })
+      this.superQueryJson.splice(3, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
+    }
     this.getDeputyUnit()
     this.initData()
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     getDeputyUnit() {
       let obj = {
         businessCode: 'deputyUnit',
@@ -478,79 +501,11 @@ export default {
                 type: 'input'
               }
             ]
-          } else {
-            this.superQueryJson = [
-              {
-                prop: 'orderNo',
-                label: '出入库单号',
-                type: 'input'
-              },
-              {
-                prop: 'partnerName',
-                label: '供应商名称',
-                type: 'input'
-              },
-              {
-                prop: 'partnerCode',
-                label: '供应商编码',
-                type: 'input'
-              },
-              {
-                prop: 'productCode',
-                label: '产品编码',
-                type: 'input'
-              },
-              // {
-              //   prop: 'productName',
-              //   label: "产品名称",
-              //   type: 'input'
-              // },
-              {
-                prop: 'productDrawingNo',
-                label: '品名规格',
-                type: 'input'
-              },
-              {
-                prop: 'mainUnit',
-                label: '单位',
-                type: 'input'
-              },
-              {
-                prop: 'num',
-                label: '出入库数量',
-                type: 'input'
-              },
-              {
-                prop: 'price',
-                label: '单价(含税)',
-                type: 'input'
-              },
-              {
-                prop: 'taxRate',
-                label: '税率(%)',
-                type: 'input'
-              },
-              {
-                prop: 'excludingTaxAmount',
-                label: '金额',
-                type: 'input'
-              },
-              {
-                prop: 'createTime',
-                label: '创建时间',
-                type: 'datetimerange',
-                valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                startPlaceholder: '创建开始时间',
-                endPlaceholder: '创建结束时间',
-                pickerOptions: this.global.timePickerOptions
-              },
-
-              {
-                prop: 'createByName',
-                label: '创建人',
-                type: 'input'
-              }
-            ]
+            this.superQueryJson.splice(3, 0, {
+              prop: 'productName',
+              label: '产品名称',
+              type: 'input'
+            })
           }
           this.total = res.data.total
           this.listLoading = false

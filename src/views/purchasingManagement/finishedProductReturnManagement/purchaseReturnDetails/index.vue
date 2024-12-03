@@ -15,6 +15,12 @@
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
+            <el-col :span="4" v-if="isProductNameSwitch === '1'">
+              <el-form-item>
+                <el-input v-model.trim="orderForm.productName" placeholder="产品名称" clearable
+                  @keyup.enter.native="search()" />
+              </el-form-item>
+            </el-col>
             <el-col :span="6">
               <el-form-item>
                 <el-date-picker v-model="orderDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
@@ -74,6 +80,8 @@
             <el-table-column prop="projectName" label="所属项目" width="120"
               v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
+            <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+              show-overflow-tooltip></el-table-column>
             <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
             <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
               :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
@@ -170,6 +178,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isProductNameSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
@@ -404,7 +413,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
-
+    await this.getProductNameSwitch('product', 'enable_productName')
     this.orderForm = JSON.parse(JSON.stringify(this.initOrderForm))
     this.getDeputyUnit()
     this.search()
@@ -418,6 +427,11 @@ export default {
     this.getProductClassFun()
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     getDeputyUnit() {
       let obj = {
         businessCode: 'deputyUnit',

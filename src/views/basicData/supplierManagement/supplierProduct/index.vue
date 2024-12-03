@@ -67,6 +67,8 @@
                 <el-table-column prop="partnerCode" label="供应商编码" min-width="160" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" width="120"
                   v-if="isProjectSwitch === '1'"></el-table-column>
+                <el-table-column prop="productName" label="产品名称" width="120"
+                  v-if="isProductNameSwitch === '1'"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" min-width="160" />
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
@@ -162,6 +164,8 @@
                 <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="150" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" width="120"
                   v-if="isProjectSwitch === '1'"></el-table-column>
+                <el-table-column prop="productName" label="产品名称" width="120"
+                  v-if="isProductNameSwitch === '1'"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" width="150" sortable="custom" />
                 <el-table-column prop="productsCode" label="产品编码" width="150" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="60" />
@@ -227,7 +231,12 @@
 </template>
 
 <script>
-import { getBimVehicleTypeData, deleteBimVehicleType, getPartnerOrProductData, uploadPartnerOrProductData } from '@/api/basicData/index'
+import {
+  getBimVehicleTypeData,
+  deleteBimVehicleType,
+  getPartnerOrProductData,
+  uploadPartnerOrProductData
+} from '@/api/basicData/index'
 import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -241,17 +250,25 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isProductNameSwitch: '',
       tableDataFlag: false,
       uploadVisib: false,
       basicQuery: {},
       superQuery: {},
       lastSearchList: [
         { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 }
       ],
       historySearchList: [
-        { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        {
+          field: 'cooperativePartnerName',
+          fieldValue: '',
+          label: '供应商名称',
+          symbol: 'like',
+          searchType: 1,
+          width: 120
+        },
+        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 }
       ],
       exportFormVisible: false,
       depFormVisible: false,
@@ -503,8 +520,7 @@ export default {
           prop: 'createByName',
           label: '创建人',
           type: 'input'
-        },
-
+        }
       ],
       historyColumnList: [
         'cooperativePartnerCode',
@@ -678,6 +694,25 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProductNameSwitch === '1') {
+      this.lastSearchList.unshift({
+        field: 'productName',
+        fieldValue: '',
+        label: '产品名称',
+        symbol: 'like',
+        searchType: 1,
+        width: 120
+      })
+      this.historySearchList.unshift({
+        field: 'productName',
+        fieldValue: '',
+        label: '产品名称',
+        symbol: 'like',
+        searchType: 1,
+        width: 120
+      })
+    }
     this.tableDataFlag = true
 
     // if (this.activeName == 'latestprice') {
@@ -694,6 +729,11 @@ export default {
     }
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     columnList() {
       if (this.activeName == 'latestprice') {
         this.$refs.tableForm.showDrawer()
@@ -713,10 +753,8 @@ export default {
     },
     // 导入
     importProductFun() {
-
       // this.$refs.UploadProduct.$el.querySelector('input').click()
       this.uploadVisib = true
-
     },
     handleRemove(file, fileList) { },
     handlePreview(file) { },
@@ -729,7 +767,6 @@ export default {
       a.setAttribute('download', '')
 
       a.setAttribute('href', location.origin + '/static/供应商价格导入模板.xlsx')
-
 
       a.click()
     },
@@ -765,8 +802,6 @@ export default {
           this.formLoading = false
           this.loadingText = ''
         })
-
-
     },
     // 导入产品  下载导入错误数据
     downNoProduct(res) {
@@ -882,10 +917,10 @@ export default {
             })
             .catch(() => { })
         }
-
       }
     },
     handleClick(e) {
+      console.log(123)
       this.activeName = e.name
       // this.reset()
     },
@@ -1033,13 +1068,37 @@ export default {
       }
       this.lastSearchList = [
         { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
-
+        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 }
       ]
       this.historySearchList = [
         { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+        {
+          field: 'cooperativePartnerName',
+          fieldValue: '',
+          label: '供应商名称',
+          symbol: 'like',
+          searchType: 1,
+          width: 120
+        }
       ]
+      if (this.isProductNameSwitch === '1') {
+        this.lastSearchList.unshift({
+          field: 'productName',
+          fieldValue: '',
+          label: '产品名称',
+          symbol: 'like',
+          searchType: 1,
+          width: 120
+        })
+        this.historySearchList.unshift({
+          field: 'productName',
+          fieldValue: '',
+          label: '产品名称',
+          symbol: 'like',
+          searchType: 1,
+          width: 120
+        })
+      }
       this.search()
     },
     addSupplier(type) {

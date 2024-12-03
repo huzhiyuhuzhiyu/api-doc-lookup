@@ -52,6 +52,8 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
+                      <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                        show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'">
@@ -66,7 +68,7 @@
                         :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
                       <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
                         width="110" sortable="custom" />
-                        <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
+                      <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
                       <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" sortable="custom"
                         v-if="isDeputyUnitSwitch === '1'" />
 
@@ -295,6 +297,8 @@
                   :data="dataFormTwo.data" id="table">
                   <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
                   <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                  <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                    show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'">
@@ -329,7 +333,7 @@
                     :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
                   <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
                     width="110" sortable="custom" />
-                    <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
+                  <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
                   <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" sortable="custom"
                     v-if="isDeputyUnitSwitch === '1'" />
 
@@ -549,6 +553,7 @@ export default {
   data() {
     return {
       isDeputyUnitSwitch: '',
+      isProductNameSwitch: '',
       datafilelist: [],
       activeName: 'jcInfo',
       activeNames: ['productInfo', 'basicInfo'],
@@ -618,8 +623,9 @@ export default {
       isattachmentswitch: ''
     }
   },
-  created() {
+  async created() {
     this.getDeputyUnit()
+    await this.getProductNameSwitch('product', 'enable_productName')
     this.getBimBusinessDetail()
   },
   computed: {
@@ -674,6 +680,11 @@ export default {
     }
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     getDeputyUnit() {
       let obj = {
         businessCode: 'deputyUnit',

@@ -130,6 +130,8 @@
                     <!-- </el-table-column> -->
                     <el-table-column prop="projectName" label="所属项目" width="120"
                       v-if="isProjectSwitch === '1'"></el-table-column>
+                    <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                      show-overflow-tooltip></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom"
                       show-overflow-tooltip />
                     <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
@@ -385,6 +387,8 @@
                 <!-- </el-table-column> -->
                 <el-table-column prop="projectName" label="所属项目" width="120"
                   v-if="isProjectSwitch === '1'"></el-table-column>
+                <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                  show-overflow-tooltip></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" show-overflow-tooltip />
                 <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                   :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
@@ -649,6 +653,11 @@
                   v-if="isReturnSwitch === '1'"></el-table-column>
                 <el-table-column prop="projectName" label="所属项目" width="120"
                   v-if="isProjectSwitch === '1'"></el-table-column>
+                <template v-if="isProductNameSwitch === '1'">
+                  <el-table-column v-if="isReturnSwitch === '1'" prop="productName" label="产品名称" width="160"
+                    show-overflow-tooltip></el-table-column>
+                  <el-table-column v-else prop="name" label="产品名称" width="160" show-overflow-tooltip></el-table-column>
+                </template>
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom"
                   v-if="isReturnSwitch === '1'" />
                 <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom"
@@ -1379,12 +1388,14 @@ export default {
         this.selectArr.forEach((item) => {
           item.receiptQuantity = item.purchaseQuantity
           item.ordersNum = item.num
+          item.productName = item.productName
           this.dataFormTwo.productData.push(item)
         })
       } else {
         this.selectArr.forEach((item) => {
           item.receiptQuantity = item.inventoryQuantity
           item.productsId = item.id
+          item.productName = item.name
           this.dataFormTwo.productData.push(item)
         })
       }
@@ -1762,6 +1773,11 @@ export default {
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
+          if (this.dataForm.stockFlag) {
+            this.dataForm.stockFlag = 1
+          } else {
+            this.dataForm.stockFlag = 0
+          }
           this.dataFormTwo.productData = res.data.noticeLineList
           if (res.data.attachmentList) {
             res.data.attachmentList.forEach((item) => {

@@ -71,6 +71,8 @@
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="150" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" width="120"
               v-if="isProjectSwitch === '1'"></el-table-column>
+            <el-table-column prop="productName" label="产品名称" width="120"
+              v-if="isProductNameSwitch === '1'"></el-table-column>
             <el-table-column prop="drawingNo" label="品名规格" width="150" sortable="custom" />
             <el-table-column prop="productsCode" label="产品编码" width="150" sortable="custom" />
             <el-table-column prop="price" label="协议价(含税)" width="140" sortable="custom" />
@@ -172,6 +174,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isProductNameSwitch: '',
       tableDataFlag: false,
       columnList: ['cooperativePartnerCode', 'productsCode', 'remark', 'createByName'],
       basicQuery: {},
@@ -182,14 +185,6 @@ export default {
           field: 'partnerName',
           fieldValue: '',
           label: '供应商名称',
-          symbol: 'like',
-          searchType: 1,
-          width: 120
-        },
-        {
-          field: 'partnerCode',
-          fieldValue: '',
-          label: '供应商编码',
           symbol: 'like',
           searchType: 1,
           width: 120
@@ -450,6 +445,22 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProductNameSwitch === '1') {
+      this.searchList.push({
+        field: 'productName',
+        fieldValue: '',
+        label: '产品名称',
+        symbol: 'like',
+        searchType: 1,
+        width: 120
+      })
+      this.superQueryJson.splice(2, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
+    }
     this.tableDataFlag = true
     console.log(this.isProjectSwitch)
 
@@ -458,6 +469,11 @@ export default {
     this.initData()
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
@@ -862,16 +878,23 @@ export default {
           searchType: 1,
           width: 120
         },
-        {
-          field: 'partnerCode',
+        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 }
+      ]
+      if (this.isProductNameSwitch === '1') {
+        this.searchList.push({
+          field: 'productName',
           fieldValue: '',
-          label: '供应商编码',
+          label: '产品名称',
           symbol: 'like',
           searchType: 1,
           width: 120
-        },
-        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 }
-      ]
+        })
+        this.superQueryJson.splice(2, 0, {
+          prop: 'productName',
+          label: '产品名称',
+          type: 'input'
+        })
+      }
       this.superForm = JSON.parse(JSON.stringify(this.initListQuery))
 
       this.initData()

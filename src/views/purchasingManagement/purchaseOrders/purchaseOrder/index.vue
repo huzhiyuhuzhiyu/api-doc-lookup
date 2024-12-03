@@ -92,22 +92,22 @@
               </template>
             </el-table-column>
             <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center"
-            v-if="showAppCodeFlag">
-            <template slot-scope="scope">
-              <el-tag v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus !== 'draft'">审批中</el-tag>
-              <el-tag type="success"
-                v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus !== 'draft'">
-                审批通过
-              </el-tag>
-              <el-tag type="danger"
-                v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus !== 'draft'">
-                审批拒绝
-              </el-tag>
-              <div v-else-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus == 'submit'">
-                <el-tag type="warning">审批撤回</el-tag>
-              </div>
-            </template>
-          </el-table-column>
+              v-if="showAppCodeFlag">
+              <template slot-scope="scope">
+                <el-tag v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus !== 'draft'">审批中</el-tag>
+                <el-tag type="success"
+                  v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus !== 'draft'">
+                  审批通过
+                </el-tag>
+                <el-tag type="danger"
+                  v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus !== 'draft'">
+                  审批拒绝
+                </el-tag>
+                <div v-else-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus == 'submit'">
+                  <el-tag type="warning">审批撤回</el-tag>
+                </div>
+              </template>
+            </el-table-column>
             <el-table-column prop="remark" min-width="140" label="备注" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" />
@@ -179,7 +179,7 @@ import JNPFForm from './Form'
 import moment from 'moment'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 // import withdrawnForm from './withranForm'
-import withdrawnForm from '@/views/purchasingManagement/purchasingDemand/purchasingDemandPool/Form.vue'
+import withdrawnForm from '@/views/purchasingManagement/purchasingDemand/purchasingDemandPool/withranForm'
 import PrintForm from './printForm'
 import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -224,13 +224,13 @@ export default {
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
-   
+
         // {
         //   prop: 'taxAmount',
         //   label: '税额',
         //   type: 'input'
         // },
-       
+
         {
           prop: 'receivingStatus',
           label: '订单状态',
@@ -369,7 +369,7 @@ export default {
       printForm: {}, // 表单数据
       //	收货状态 待收货 receiving、已收货 received,可用值:received,receiving,returned,returning
       receiptReturnType: [{ label: '未完成', value: 'receiving' }, { label: '已完成', value: 'received' }],
-      columnList: ['cooperativePartnerCode', 'excludingTaxTotalAmount', 'taxAmount',  'createByName'],
+      columnList: ['cooperativePartnerCode', 'excludingTaxTotalAmount', 'taxAmount', 'createByName'],
       showAppCodeFlag: true
     }
   },
@@ -662,7 +662,7 @@ export default {
     withdrawnAddHandle(id, type) {
       let row = {}
       purPurchaseOrderdetail(id).then((res) => {
-        console.log(res, 'asdada')
+        console.log(res.data.purchaseOrderLineVOList, 'asdada')
         row = {
           attachmentList: [],
           cooperativePartnerName: res.data.cooperativePartnerName, //供应商名称
@@ -670,22 +670,16 @@ export default {
           cooperativePartnerId: res.data.cooperativePartnerId, //供应商名称
           deliveryDate: res.data.deliveryDate, //交货日期.
           orderType: 'procure',
-          purchaseOrderLines: res.data.purchaseOrderLineVOList.map((item) => {
-            return {
-              ...item,
-              orderQuantity:
-                item.planDemandQuantity -
-                (item.procurementDemandPoolVO ? item.procurementDemandPoolVO.orderedQuantity : 0),
-              id: ''
-            }
-          }),
+          purchaseOrderLines: res.data.purchaseOrderLineVOList,
           excludingTaxTotalAmount: res.data.excludingTaxTotalAmount, //订单 不含税总金额
           totalAmount: res.data.totalAmount, //   含税总金额
           taxAmount: res.data.taxAmount // 税额
         }
+
         this.withdrawnVisible = true
         this.$nextTick(() => {
-          this.$refs.withdrawnForm.init(row)
+          console.log(row,'r')
+          this.$refs.withdrawnForm.init(row, 'other', 'pool')
         })
       })
     },

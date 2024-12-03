@@ -189,7 +189,7 @@ export default {
       dataFormList: {
         processName: "",
         productionOrderNo: "",
-        classAttribute: "finish_product",
+        classAttribute: "semi_finished",
         prodOrderStatus: "normal",
         pageNum: 1,
         pageSize: 20,

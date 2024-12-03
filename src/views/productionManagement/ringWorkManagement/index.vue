@@ -161,7 +161,7 @@ import { mapGetters, mapState } from 'vuex'
 
 export default {
 
-  name: 'assemblyWorkManagement',
+  name: 'ringWorkManagement',
   components: { SuperQuery, Form, BatchDispatchForm, ExportForm },
   mixins: [getProjectList],
 
@@ -189,7 +189,7 @@ export default {
       dataFormList: {
         processName: "",
         productionOrderNo: "",
-        classAttribute: "finish_product",
+        classAttribute: "semi_finished",
         prodOrderStatus: "normal",
         pageNum: 1,
         pageSize: 20,

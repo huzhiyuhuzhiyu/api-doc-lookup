@@ -227,6 +227,13 @@ export default {
 
        
         {
+          prop: 'specialRequire',
+          label: "特殊要求",
+          type: 'select',
+          options: [],
+        },
+
+        {
           prop: 'contractNo',
           label: "客户合同号",
           type: 'input'

@@ -333,7 +333,7 @@ import {
  
 import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } from '@/api/basicData/processSettingss.js'
 import { detailDispatchData, reassignment } from '@/api/productOrdes/dispatchTicketInquiry'
-import { detailWorkData } from '@/api/productOrdes/index.js'
+import { detailWorkData,changProdWork } from '@/api/productOrdes/index.js'
 
 export default {
   data() {
@@ -681,9 +681,9 @@ export default {
 
       this.btnLoading = true
 
-      reassignment(this.dispatchForm).then(res => {
+      changProdWork([this.dispatchForm]).then(res => {
         this.$message({
-          message: "修改成功",
+          message: "改派成功",
           type: "success",
           duration: 1500,
           onClose: () => {

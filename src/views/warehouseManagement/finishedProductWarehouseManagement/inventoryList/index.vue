@@ -554,6 +554,8 @@ export default {
           this.prindId = res.data.id
           this.printBrowseVisible = true
           this.printVisible = false
+
+          this.printVisible = false
         } else {
           this.$message.warning('未找到相应打印模版')
         }
@@ -564,12 +566,9 @@ export default {
     // 打印
     PrintFun(row) {
       console.log(this.arr, row);
-      this.p
       this.enCode = this.arr.find(item => item.businessType === row.businessType).code // 筛选出 businessType 等于 type 的项  
-      console.log("this.encode", this.enCode);
       this.formId = row.id
       this.fullName = this.arr.find(item => item.businessType === row.businessType).fullName // 筛选出 businessType 等于 type 的项  
-      console.log("this.fullName", this.fullName);
       this.printVisible = true
       this.$nextTick(() => {
         this.$refs.printTemplate.init(this.enCode)

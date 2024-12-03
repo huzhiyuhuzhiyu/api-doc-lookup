@@ -658,6 +658,7 @@ export default {
       getPrintBusInfo(enCode).then(res => {
         if (res.data) {
           this.prindId = res.data.id
+          this.printVisible = false
           this.printBrowseVisible = true
         } else {
           this.$message.warning('未找到相应打印模版')

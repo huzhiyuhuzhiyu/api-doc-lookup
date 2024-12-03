@@ -16,7 +16,18 @@
                   @keyup.enter.native="searchDetail()" />
               </el-form-item>
             </el-col>
-
+            <el-col :span="4" v-if="isProductNameSwitch === '1'">
+              <el-form-item>
+                <el-input v-model.trim="listsQuery.productName" placeholder="产品名称" clearable
+                  @keyup.enter.native="search()" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item>
+                <el-date-picker v-model="deliveryDateArr" type="daterange" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
+                  style="width: 100%" start-placeholder="交货开始日期" end-placeholder="交货结束日期" clearable></el-date-picker>
+              </el-form-item>
+            </el-col>
             <el-col :span="6">
               <el-form-item>
                 <el-button size="mini" type="primary" icon="el-icon-search" @click="searchDetail()">
@@ -71,7 +82,8 @@
             <el-table-column prop="projectName" label="所属项目" width="120"
               v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
-            <!-- <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" /> -->
+            <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+              show-overflow-tooltip></el-table-column>
             <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
             <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
               :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
@@ -259,6 +271,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isProductNameSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
@@ -592,11 +605,16 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
-
+    await this.getProductNameSwitch('product', 'enable_productName')
     this.getDeputyUnit()
     this.detailData()
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     getDeputyUnit() {
       let obj = {
         businessCode: 'deputyUnit',
@@ -1007,12 +1025,12 @@ export default {
         this.listsQuery.startTime = ''
         this.listsQuery.endTime = ''
       }
-      if (this.deliveryDate && this.deliveryDate.length > 0) {
-        this.listsQuery.deliveryStartTime = this.deliveryDate[0] + ' 00:00:00'
-        this.listsQuery.deliveryEndTime = this.deliveryDate[1] + ' 23:59:59'
+      if (this.deliveryDateArr && this.deliveryDateArr.length > 0) {
+        this.listsQuery.deliveryStartDate = this.deliveryDateArr[0] + ' 00:00:00'
+        this.listsQuery.deliveryEndDate = this.deliveryDateArr[1] + ' 23:59:59'
       } else {
-        this.listsQuery.deliveryStartTime = ''
-        this.listsQuery.deliveryEndTime = ''
+        this.listsQuery.deliveryStartDate = ''
+        this.listsQuery.deliveryEndDate = ''
       }
       detailpurchaseOrderList(this.listsQuery)
         .then((res) => {
@@ -1442,7 +1460,7 @@ export default {
         productName: ''
       }
       this.createRequirementDate = []
-      this.deliveryDate = []
+      this.deliveryDateArr = []
       this.searchDetail()
     },
     // addSupplier(id, type) {

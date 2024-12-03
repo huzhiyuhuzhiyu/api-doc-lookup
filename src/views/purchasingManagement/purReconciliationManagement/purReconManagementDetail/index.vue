@@ -111,6 +111,8 @@
           </el-table-column>
           <el-table-column prop="stockMoveOrderNo" label="出入库单号" width="180" sortable="custom" />
           <el-table-column prop="drawingNo" label="品名规格" width="180" sortable="custom" />
+          <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+            show-overflow-tooltip></el-table-column>
           <el-table-column prop="productCode" label="产品编码" width="180" sortable="custom" />
           <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
             :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
@@ -162,6 +164,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isProductNameSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
@@ -292,11 +295,17 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
     this.superForm = this.listQuery
     this.getDeputyUnit()
     this.search('basic')
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     getDeputyUnit() {
       let obj = {
         businessCode: 'deputyUnit',

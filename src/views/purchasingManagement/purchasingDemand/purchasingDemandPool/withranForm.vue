@@ -112,16 +112,6 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="orderQuantity" label="可下单数量" width="120" show-overflow-tooltip
-                          v-if="this.purchasingType === 'pool'" :key="5">
-                          <template slot-scope="scope">
-                            <el-form-item :prop="'data.' + scope.$index + '.' + 'orderQuantity'">
-                              <div class="viewData">
-                                <span>{{ scope.row.orderQuantity }}</span>
-                              </div>
-                            </el-form-item>
-                          </template>
-                        </el-table-column>
                         <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                           :width="isDeputyUnitSwitch === '1' ? 100 : 60" show-overflow-tooltip :key="3">
                           <template slot-scope="scope">
@@ -1298,18 +1288,20 @@ export default {
     init(data, classAttributeFlag, type) {
       this.getDeputyUnit()
       console.log(data, 'uuuu')
-      console.log(classAttributeFlag, 'classAttributeFlag')
+      this.dataForm = data
+      console.log(data.purchaseOrderLines, 'classAttributeFlag')
+      console.log()
       this.purchasingType = type
       console.log(this.purchasingType, 'this.purchasingType')
-      data.forEach((item) => {
+      data.purchaseOrderLines.forEach((item) => {
+        console.log(item, 'it')
+        item.taxRate = Number(item.taxRate)
         if (item.productDrawingNo) {
           item.productDrawingNo = item.productDrawingNo
         } else {
           item.productDrawingNo = item.drawingNo
         }
         if (this.purchasingType == 'pool') {
-          console.log(333)
-          item.purchaseQuantity = Number(item.planDemandQuantity) - Number(item.orderedQuantity)
           if (item.calculationDirection === 'multiplication') {
             item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
           } else {
@@ -1317,7 +1309,7 @@ export default {
           }
           this.customStyleData = 389
         } else {
-          item.purchaseQuantity = Number(item.maxInventory) - Number(item.availableQuantity)
+        
           if (item.calculationDirection === 'multiplication') {
             item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
           } else {
@@ -1366,7 +1358,7 @@ export default {
 
       // if (!demandDelivery) { // 没有日期，代表从重新提交中进来的
       // this.dataForm = data
-      this.$set(this.dataFormTwo, 'data', JSON.parse(JSON.stringify(data)))
+      this.$set(this.dataFormTwo, 'data', JSON.parse(JSON.stringify(data.purchaseOrderLines)))
 
       // }
       // else {
@@ -1375,44 +1367,7 @@ export default {
       // }
 
       var maxDate = null // 最大日期初始值设为null
-      // 遍历数组，比较日期来找到最大日期
-      for (var i = 0; i < this.dataFormTwo.data.length; i++) {
-        console.log(this.dataFormTwo.data[i], 'this.dataFormTwo.data[i]')
-        var currentDate = new Date(this.dataFormTwo.data[i].deliveryDate)
-        if (maxDate === null || currentDate > maxDate) {
-          maxDate = currentDate
-        }
-        this.$set(this.dataFormTwo.data[i], 'excludingTaxAmount', '') // 总金额(不含税)
-        // this.$set(this.dataFormTwo.data[i], 'excludingTaxPrice', '')    // 	不含税单价
-        this.$set(this.dataFormTwo.data[i], 'fixedPrice', '') //  	定价
-        this.$set(this.dataFormTwo.data[i], 'price', '') //  	含税单价
-        this.$set(this.dataFormTwo.data[i], 'taxAmount', '') // 税额
-        this.$set(this.dataFormTwo.data[i], 'taxRate', '') // taxRate
-        this.$set(this.dataFormTwo.data[i], 'totalAmount', '') // 	价税合计
-        this.$set(
-          this.dataFormTwo.data[i],
-          'orderQuantity',
-          this.dataFormTwo.data[i].planDemandQuantity -
-          (this.dataFormTwo.data[i].orderedQuantity ? this.dataFormTwo.data[i].orderedQuantity : 0)
-        ) // 	可下单数量
-        this.olddeliveryDateArr.push(this.dataFormTwo.data[i].deliveryDate)
-      }
-      // 明细中最大的交货日期
-      // this.demandDelivery = maxDate.toISOString().split('T')[0];
-      // this.demandDelivery2 = demandDelivery
-      // 取明细第一条数据的产品id，自动带下其第一条供应商设为主表供应商
-      // priceList(this.dataFormTwo.data[0].productsId).then(res => {
-      //   if (!res.data.length) return
-      //   const data = [{
-      //     all: {
-      //       ...res.data[0],
-      //       id: res.data[0].cooperativePartnerId,
-      //       code: res.data[0].cooperativePartnerIdCode,
-      //       name: res.data[0].cooperativePartnerIdName,
-      //     }
-      //   }]
-      //   this.supplierdata('', data)
-      // })
+
       // 审批
       // this.$nextTick(() => { this.getApproverData() })
       this.getBusInfo()

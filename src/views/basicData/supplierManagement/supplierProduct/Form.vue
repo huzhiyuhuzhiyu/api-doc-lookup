@@ -75,6 +75,8 @@
                       id="table">
                       <el-table-column prop="projectName" label="所属项目" width="120"
                         v-if="isProjectSwitch === '1'"></el-table-column>
+                      <el-table-column prop="productName" label="产品名称" width="120"
+                        v-if="isProductNameSwitch === '1'"></el-table-column>
                       <el-table-column prop="drawingNo" key="drawingNo" label="品名规格" min-width="180">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'"

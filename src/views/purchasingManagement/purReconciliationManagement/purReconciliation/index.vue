@@ -550,6 +550,7 @@ export default {
         console.log(res, '详情')
         row = {
           projectName: res.data.projectName,
+          productName: res.data.productName,
           cooperativePartnerName: res.data.cooperativePartnerName,
           cooperativePartnerId: res.data.cooperativePartnerId,
           excludingTaxAmount: res.data.excludingTaxAmount,

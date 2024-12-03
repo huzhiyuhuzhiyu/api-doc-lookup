@@ -58,6 +58,12 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
+              <el-input v-model.trim="listQuery.productName" placeholder="产品名称" clearable
+                @keyup.enter.native="search()" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
               <el-input v-model.trim="listQuery.productCode" placeholder="产品编码" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
@@ -108,7 +114,7 @@
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="240" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
-          <el-table-column prop="productName" label="产品分类" min-width="160" sortable="custom" />
+          <el-table-column prop="productName" label="产品名称" min-width="160" sortable="custom" />
           <el-table-column prop="routingName" label="工艺路线名称" min-width="180" sortable="custom" />
           <el-table-column prop="routingCode" label="工艺路线编码" min-width="160" sortable="custom" />
           <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />

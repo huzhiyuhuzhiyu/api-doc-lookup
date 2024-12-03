@@ -45,6 +45,12 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
+          <el-col :span="4" v-if="isProductNameSwitch === '1'">
+            <el-form-item>
+              <el-input v-model.trim="listQuery.productName" placeholder="产品名称" clearable
+                @keyup.enter.native="search()" />
+            </el-form-item>
+          </el-col>
           <el-col :span="4">
             <el-form-item>
               <el-input v-model="listQuery.drawNo" @keyup.enter.native="search()" placeholder="品名规格" clearable />
@@ -96,6 +102,8 @@
           fixedNO @selection-change="selectionChange" :element-loading-text="loadingText"
           :setColumnDisplayList="columnList">
           <el-table-column prop="drawNo" label="品名规格" min-width="600" sortable="custom" />
+          <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+            show-overflow-tooltip></el-table-column>
           <el-table-column prop="productCode" label="产品编码" min-width="200" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
@@ -176,6 +184,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isProductNameSwitch: '',
       tableFlag: false,
       filterText: '',
       superQueryVisible: false,
@@ -281,6 +290,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
     this.tableDataFlag = true
     this.getcategoryTree()
     if (localStorage.getItem("BOMHistoryFlag")) {
@@ -291,6 +301,11 @@ export default {
     // this.initData()
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     changeLeft() {
       this.leftFlag = !this.leftFlag
     },

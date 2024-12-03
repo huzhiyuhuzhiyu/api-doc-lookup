@@ -1071,6 +1071,15 @@ export default {
     },
     // 产品弹窗
     openSeleceProductDialog() {
+      if (this.isProjectSwitch === '1') {
+        this.ProductTableItems.unshift({ prop: 'projectName', label: '所属项目' })
+      } else {
+      }
+      if (this.isProductNameSwitch === '1') {
+        this.ProductTableItems.unshift({ prop: 'productName', label: '产品名称' })
+      } else {
+
+      }
       this.$refs['ComSelect-page'].openDialog()
       // this.productVisibled = true
       // this.$nextTick(() => {

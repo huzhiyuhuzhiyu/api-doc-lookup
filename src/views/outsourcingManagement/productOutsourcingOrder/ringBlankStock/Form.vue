@@ -293,7 +293,8 @@
     </transition>
     <ComSelect-page ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" title="选择产品" treeTitle="产品分类"
       :methodArr="ProductMethodArr" :listMethod="inventoryList" :listRequestObj="ProductListRequestObj"
-      :searchList="ProductTableSearchList" :elementShow="false" multiple :renderTree="false" />
+      :searchList="ProductTableSearchList" :elementShow="false" multiple :renderTree="false"
+      :beforeSubmit="beforeProductSubmit" />
     <source-area v-if="sourceVisibled" ref="sourceRef" @confirm="handlerConfirm"></source-area>
   </div>
 </template>
@@ -332,6 +333,7 @@ export default {
     return {
       isProjectSwitch: '',
       isProductNameSwitch: '',
+      isProportionSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
@@ -495,6 +497,8 @@ export default {
         orderNo: '', //订单号
         // orderType: 'external', //	订单类型 采购 procure、外协 external
         ringBlankQueryFlag: 1,
+        productSource: 'purchase', //产品来源
+        outFlag: 1,
         pageNum: 1,
         pageSize: 20,
         startTime: '',
@@ -516,7 +520,7 @@ export default {
         // { prop: 'name', label: '产品名称', sortable: 'custom' },
         { prop: 'productCode', label: '毛坯编码', sortable: 'custom' },
         { prop: 'productCategoryName', label: '毛坯分类', sortable: 'custom' },
-        { prop: 'batchNumber', label: '批次号' },
+        { prop: 'batchNumber', label: '批次号', width: 180 },
         { prop: 'mainUnit', label: '单位' },
         { prop: 'inventoryQuantity', label: '库存数量' },
         { prop: 'createTime', label: '创建日期', sortable: 'custom' }
@@ -756,14 +760,24 @@ export default {
     this.getProductClassFun()
   },
   async created() {
-
-
+    await this.getProductNameSwitch('product', 'enable_productName')
+    await this.getProportionSwitch('warehouse', 'proportion')
     this.getBimBusinessDetail()
     this.getDeputyUnit()
     this.fetchData('EPDH')
     this.getBusInfo()
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    async getProportionSwitch(code, type) {
+      try {
+        this.isProportionSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     getDeputyUnit() {
       let obj = {
         businessCode: 'deputyUnit',
@@ -831,6 +845,17 @@ export default {
       })
       return treeData
     },
+    async beforeProductSubmit(data, paramsObj) {
+      console.log(data, 'data')
+      console.log(paramsObj, 'obj')
+      let msg = data.every(item => item.all.externalProductsId)
+      console.log(msg, 'ooo')
+      if (msg) {
+      } else {
+        this.$message.error(`请配置毛坯产品所对就主产品的BOM！`)
+      }
+      return msg
+    },
     // 产品组件回调
     addth(id, data) {
       if (data.length) {
@@ -846,7 +871,15 @@ export default {
         }
         list.forEach((item, index) => {
           selectArr.push({
+            materialProductsId: item.productsId,
+            projectName: item.projectName,
+            projectId: item.projectId,
+            batchNumber: item.batchNumber,
+            weight: item.weight,
+            proportion: item.proportion,
+            discount: item.discount,
             productDrawingNo: item.externalProductDrawingNo,
+            productName: item.externalProductName,
             stockInventoryLineId: item.id,
             deliveryDate: item.deliveryDate,
             mainUnit: item.externalMainUnit,
@@ -1090,6 +1123,20 @@ export default {
     },
     // 产品弹窗
     openSeleceProductDialog() {
+      if (this.isProjectSwitch === '1') {
+        this.ProductTableItems.unshift({ prop: 'projectName', label: '所属项目' })
+      } else {
+      }
+      if (this.isProductNameSwitch === '1') {
+        this.ProductTableItems.unshift({ prop: 'productName', label: '产品名称' })
+      } else {
+
+      }
+      if (this.isProportionSwitch === '1') {
+        this.ProductTableItems.push({ prop: 'weight', label: '重量(kg)' }, { prop: 'proportion', label: '比重' })
+      } else {
+
+      }
       this.$refs['ComSelect-page'].openDialog()
       // this.productVisibled = true
       // this.$nextTick(() => {
@@ -1187,6 +1234,7 @@ export default {
           productName: item.productName,
           projectId: item.projectId,
           productDrawingNo: item.externalProductDrawingNo,
+          productName: item.externalProductName,
           weight: item.weight,
           proportion: item.proportion,
           discount: item.discount,

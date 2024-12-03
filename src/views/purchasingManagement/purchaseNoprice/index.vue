@@ -3,6 +3,12 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
+          <el-col :span="4" v-if="isProductNameSwitch === '1'">
+            <el-form-item>
+              <el-input v-model.trim="listQuery.productName" placeholder="产品名称" clearable
+                @keyup.enter.native="search()" />
+            </el-form-item>
+          </el-col>
           <el-col :span="4">
             <el-form-item>
               <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" clearable
@@ -113,6 +119,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isProductNameSwitch: '',
       tableDataFlag: false,
       formVisible: false,
       superQueryVisible: false,
@@ -201,6 +208,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
     this.tableDataFlag = true
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     // 查询类型 区分 无价格 无bom 无工艺
@@ -209,6 +217,11 @@ export default {
     this.initData()
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false

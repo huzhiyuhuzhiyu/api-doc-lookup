@@ -161,7 +161,7 @@ import { mapGetters, mapState } from 'vuex'
 
 export default {
 
-  name: 'assemblyWorkManagement',
+  name: 'ringWorkManagement',
   components: { SuperQuery, Form, BatchDispatchForm, ExportForm },
   mixins: [getProjectList],
 

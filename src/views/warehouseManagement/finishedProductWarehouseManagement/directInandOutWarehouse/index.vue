@@ -322,16 +322,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="oilQuantity" label="油脂量" width="120" key="51">
-
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
+                       
                       <el-table-column prop="clearance" label="游隙" width="120" key="1055">
 
                         <template slot-scope="scope">
@@ -516,8 +507,7 @@
               <el-table-column prop="oil" label="油脂" width="80" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="oil" />
 
-              <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" key="oilQuantity" />
+        
               <el-table-column prop="clearance" label="游隙" width="80" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="clearance" />
               <el-table-column prop="aperture" label="孔径" width="80" :key="102" sortable="custom"

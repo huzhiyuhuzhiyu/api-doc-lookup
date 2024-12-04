@@ -190,15 +190,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="4">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;"
-                              :disabled="btnType == 'look'">
-                              <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
-                                :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
+                   
                         <el-table-column prop="clearance" label="游隙" width="120" :key="5">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;"
@@ -416,15 +408,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="4">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;"
-                          :disabled="btnType == 'look'">
-                          <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
+                   
                     <el-table-column prop="clearance" label="游隙" width="120" :key="5">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;"
@@ -527,7 +511,6 @@
                 <el-table-column prop="accuracyLevel" label="精度等级" width="110" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="110" />
                 <el-table-column prop="oil" label="油脂" width="80" />
-                <el-table-column prop="oilQuantity" label="油脂量" width="110" />
                 <el-table-column prop="clearance" label="游隙" width="80" />
                 <el-table-column prop="packagingMethod" label="包装方式" width="110"></el-table-column>
                 <el-table-column prop="specialRequire" label="特殊要求" width="110"></el-table-column>

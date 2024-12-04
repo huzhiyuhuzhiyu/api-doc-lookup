@@ -137,14 +137,13 @@
           </el-table-column>
           <el-table-column prop="excludingTaxCostPrice" label="单价(不含税)" sortable="custom" min-width="180" />
           <el-table-column prop="taxAmount" label="税额" sortable="custom" min-width="120" />
-          <el-table-column prop="excludingTaxAmount" label="总金额(不含税)" sortable="custom" min-width="180" />
+          <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" sortable="custom" min-width="180" />
           <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120" />
           <el-table-column prop="colour" label="颜色" sortable="custom" min-width="120" />
           <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom"></el-table-column>
           <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom"></el-table-column>
           <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom"></el-table-column>
           <el-table-column prop="oil" label="油脂" min-width="120" sortable="custom"></el-table-column>
-          <el-table-column prop="oilQuantity" label="油脂量" min-width="120" sortable="custom"> </el-table-column>
           <el-table-column prop="clearance" label="游隙" min-width="120" sortable="custom"></el-table-column>
           <el-table-column prop="aperture" label="孔径" min-width="120" sortable="custom"></el-table-column>
           <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom"></el-table-column>
@@ -340,7 +339,7 @@ export default {
       saleOutboundFormVisible: false,
       externalInboundFormVisible: false,
       externalMaterOutboundFormVisible: false,
-      columnList: ["partnerCode", 'productCode', "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxAmount", "createByName", "taxAmount"],
+      columnList: ["partnerCode", 'productCode', "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxTotalAmount", "createByName", "taxAmount"],
       num: 0,
       superQueryVisible: false,
       taxAmount: 0,
@@ -516,12 +515,7 @@ export default {
           type: 'select',
           options: []
         },
-        {
-          prop: 'oilQuantity',
-          label: "油脂量",
-          type: 'select',
-          options: []
-        },
+  
         {
           prop: 'clearance',
           label: "游隙",
@@ -974,22 +968,7 @@ export default {
           },
         ],
       };
-      getbimProductAttributesList(obj5).then(res => {
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'oilQuantity');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
+ 
       // 游隙
       let obj6 = {
         pageNum: -1,
@@ -1352,7 +1331,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop == 'partnerName' || prop == 'createTime' || prop == 'documentStatus' || prop == 'processName' || prop == 'oilQuantity' || prop == 'excludingTaxAmount' || prop == 'productCode' || prop == 'partnerCode') {
+      if (prop == 'partnerName' || prop == 'createTime' || prop == 'documentStatus' || prop == 'processName'  || prop == 'excludingTaxTotalAmount' || prop == 'productCode' || prop == 'partnerCode') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());

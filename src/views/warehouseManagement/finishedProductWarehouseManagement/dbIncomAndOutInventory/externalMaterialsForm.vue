@@ -1127,7 +1127,7 @@ export default {
       } catch (error) {
       }
     },
-    async handleConfirm(submitModel) {
+    async handleConfirm(submitModel,type) {
       console.log(this.productData);
       let submitFlag = true // 自动聚焦是否可用
       this.$refs['dataForm'].validate((valid) => {
@@ -1299,9 +1299,9 @@ export default {
   padding-left: 5px;
 }
 
-::v-deep.JNPF-dialog.JNPF-dialog_center .el-dialog .el-dialog__body {
-  padding: 0 !important;
-}
+// ::v-deep.JNPF-dialog.JNPF-dialog_center .el-dialog .el-dialog__body {
+//   padding: 0 !important;
+// }
 
 .JNPF-preview-main .main {
   padding-top: 0;

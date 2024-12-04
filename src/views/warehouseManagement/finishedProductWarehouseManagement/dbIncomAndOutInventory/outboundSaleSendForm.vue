@@ -153,7 +153,6 @@
                         <el-table-column prop="accuracyLevel" label="精度等级" width="100" />
                         <el-table-column prop="vibrationLevel" label="振动等级" width="100" />
                         <el-table-column prop="oil" label="油脂" width="100" />
-                        <el-table-column prop="oilQuantity" label="油脂量" width="100" />
                         <el-table-column prop="clearance" label="游隙" width="100" />
                         <el-table-column prop="packagingMethod" label="包装方式" width="100"></el-table-column>
                         <el-table-column prop="specialRequire" label="特殊要求" width="100"></el-table-column>
@@ -304,7 +303,6 @@
                     <el-table-column prop="accuracyLevel" label="精度等级" width="100" />
                     <el-table-column prop="vibrationLevel" label="振动等级" width="100" />
                     <el-table-column prop="oil" label="油脂" width="100" />
-                    <el-table-column prop="oilQuantity" label="油脂量" width="100" />
                     <el-table-column prop="clearance" label="游隙" width="100" />
                     <el-table-column prop="packagingMethod" label="包装方式" width="100"></el-table-column>
                     <el-table-column prop="specialRequire" label="特殊要求" width="100"></el-table-column>
@@ -398,7 +396,6 @@
                 <el-table-column prop="accuracyLevel" label="精度等级" width="110" sortable="custom" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom" />
                 <el-table-column prop="oil" label="油脂" width="80" sortable="custom" />
-                <el-table-column prop="oilQuantity" label="油脂量" width="110" sortable="custom" />
                 <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" />
                 <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom"></el-table-column>
                 <el-table-column prop="specialRequire" label="特殊要求" width="110" sortable="custom"></el-table-column>

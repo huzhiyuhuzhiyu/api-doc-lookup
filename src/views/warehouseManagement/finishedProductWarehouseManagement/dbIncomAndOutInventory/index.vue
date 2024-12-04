@@ -932,7 +932,7 @@
         </JNPF-table>
 
         <!-- 外协发料 订单-->
-        <JNPF-table :partentOrChild="'wxflOrdertabForm'" v-loading="listLoading" @sort-change="sortChange" :key="3"
+        <JNPF-table :partentOrChild="'wxflOrdertabForm'" v-loading="listLoading" @sort-change="sortChange" key="3"
           v-if="isProjectSwitchFlag" :data="exterMaterList"
           v-show="categoryType == 'outbound_external_send' && outboundExternalSendFlag" custom-column
           ref="wxflOrdertabForm" hasC @selection-change="handeleselectExternalMter" fixedNO
@@ -949,11 +949,13 @@
           <el-table-column prop="cooperativePartnerCode" label="供应商编码" width="200" sortable="custom" />
           <el-table-column prop="deliveryDate" label="交货日期" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
+          
           <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
             sortable="custom" />
-          <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-            v-if="isProjectSwitch == 1" />
+        
           <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom"></el-table-column>
+          <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+          v-if="isProjectSwitch == 1" />
           <el-table-column prop="processName" label="工序名称" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
           <el-table-column prop="weight" label="重量" min-width="140" ></el-table-column>
@@ -2051,8 +2053,7 @@ export default {
 
   async created() {
     await this.getWarehouseListFun()
-    await this.getProjectSwitch('system', 'project')
-    this.isProjectSwitchFlag = true
+    await this.getProjectSwitch('system', 'project') 
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
   },
   computed: {
@@ -2296,7 +2297,7 @@ export default {
       let objs = { "pageSize": -1, "businessCode": "product" }
       getBimBusinessSwitchConfigList(objs).then(res => {
         this.productNameFlag = res.data.product[1].configValue1
-
+        this.isProjectSwitchFlag=true
 
       })
     },

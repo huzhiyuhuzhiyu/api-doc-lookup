@@ -21,7 +21,11 @@
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
-
+            <el-col :span="4" v-if="isProductNameSwitch === '1'">
+              <el-form-item>
+                <el-input v-model="orderForm.productName" placeholder="产品名称" clearable @keyup.enter.native="search()" />
+              </el-form-item>
+            </el-col>
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -328,11 +332,31 @@ export default {
     }
   },
   async created() {
+    await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getProportionSwitch('warehouse', 'proportion')
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-    this.getDeputyUnit()
+    if (this.isDeputyUnitSwitch === '1') {
+      this.superQueryJson.forEach(item => {
+        if (item.prop === 'mainUnit') {
+          item.label = '单位(主)'
+        }
+      })
+      this.superQueryJson.splice(6, 0, {
+        prop: 'deputyUnit',
+        label: '单位(副)',
+        type: 'input'
+      })
+
+    }
+    if (this.isProductNameSwitch === '1') {
+      this.superQueryJson.splice(4, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
+    }
     this.search()
     // this.getAttributeline()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
@@ -738,146 +762,7 @@ export default {
         .then((res) => {
           this.tableData = res.data.records
           this.tableFlag = true
-          if (this.isDeputyUnitSwitch === '1') {
-            this.superQueryJson = [
-              {
-                prop: 'orderNo',
-                label: '单号',
-                type: 'input'
-              },
-              {
-                prop: 'partnerName',
-                label: '供应商名称',
-                type: 'input'
-              },
-              {
-                prop: 'partnerCode',
-                label: '供应商编码',
-                type: 'input'
-              },
-              {
-                prop: 'deliverDate',
-                label: '发料日期',
-                type: 'daterange',
-                valueFormat: 'yyyy-MM-dd',
-                startPlaceholder: '开始日期',
-                endPlaceholder: '结束日期',
-                pickerOptions: this.global.timePickerOptions
-              },
-              {
-                prop: 'productDrawingNo',
-                label: '品名规格',
-                type: 'input'
-              },
-              {
-                prop: 'productCode',
-                label: '产品编码',
-                type: 'input'
-              },
-              {
-                prop: 'processName',
-                label: '工序名称',
-                type: 'input'
-              },
-              {
-                prop: 'mainUnit',
-                label: '单位(主)',
-                type: 'input'
-              },
-              {
-                prop: 'deputyUnit',
-                label: '单位(副)',
-                type: 'input'
-              },
-              {
-                prop: 'deliveryQuantity',
-                label: '订单数量',
-                type: 'input'
-              },
-              {
-                prop: 'deliveryDate',
-                label: '交货日期',
-                type: 'daterange',
-                valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                startPlaceholder: '开始日期',
-                endPlaceholder: '结束日期',
-                pickerOptions: this.global.timePickerOptions
-              },
-              {
-                prop: 'documentStatus',
-                label: '单据状态',
-                type: 'select',
-                options: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }]
-              }
-            ]
-          } else {
-            this.superQueryJson = [
-              {
-                prop: 'orderNo',
-                label: '单号',
-                type: 'input'
-              },
-              {
-                prop: 'partnerName',
-                label: '供应商名称',
-                type: 'input'
-              },
-              {
-                prop: 'partnerCode',
-                label: '供应商编码',
-                type: 'input'
-              },
-              {
-                prop: 'deliverDate',
-                label: '发料日期',
-                type: 'daterange',
-                valueFormat: 'yyyy-MM-dd',
-                startPlaceholder: '开始日期',
-                endPlaceholder: '结束日期',
-                pickerOptions: this.global.timePickerOptions
-              },
-              {
-                prop: 'productDrawingNo',
-                label: '品名规格',
-                type: 'input'
-              },
-              {
-                prop: 'productCode',
-                label: '产品编码',
-                type: 'input'
-              },
-              {
-                prop: 'processName',
-                label: '工序名称',
-                type: 'input'
-              },
-              {
-                prop: 'mainUnit',
-                label: '单位',
-                type: 'input'
-              },
-              {
-                prop: 'deliveryQuantity',
-                label: '订单数量',
-                type: 'input'
-              },
-              {
-                prop: 'deliveryDate',
-                label: '交货日期',
-                type: 'daterange',
-                valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                startPlaceholder: '开始日期',
-                endPlaceholder: '结束日期',
-                pickerOptions: this.global.timePickerOptions
-              },
-              {
-                prop: 'documentStatus',
-                label: '单据状态',
-                type: 'select',
-                options: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }]
-              }
-            ]
-          }
+
           this.total = res.data.total
           this.listLoading = false
         })

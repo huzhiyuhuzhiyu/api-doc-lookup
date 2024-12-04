@@ -42,6 +42,12 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
+          <el-col :span="4" v-if="isProductNameSwitch === '1'">
+            <el-form-item>
+              <el-input v-model.trim="listQuery.productName" :placeholder="productName + '名称'" clearable
+                @keyup.enter.native="search()" />
+            </el-form-item>
+          </el-col>
           <el-col :span="4">
             <el-form-item>
               <el-input v-model="listQuery.productCode" :placeholder="productName + '编码'" clearable

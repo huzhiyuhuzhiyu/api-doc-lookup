@@ -9,6 +9,11 @@
                 <el-input v-model="orderForm.orderNo" @keyup.enter.native="search()" placeholder="订单号" clearable />
               </el-form-item>
             </el-col>
+            <el-col :span="3" v-if="isProductNameSwitch === '1'">
+              <el-form-item>
+                <el-input v-model="orderForm.productName" @keyup.enter.native="search()" placeholder="产品名称" clearable />
+              </el-form-item>
+            </el-col>
             <el-col :span="4">
               <el-form-item>
                 <el-date-picker v-model="orderForm.deliveryStartDate" type="date" value-format="yyyy-MM-dd"
@@ -22,7 +27,7 @@
                   style="width: 100%;" placeholder="交货结束日期" clearable></el-date-picker>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="6">
               <el-form-item>
                 <el-button class="btnBox" size="mini" @click="btnsearch1()">已延期</el-button>
                 <el-button class="btnBox" size="mini" @click="btnsearch2()">近3天</el-button>
@@ -31,7 +36,7 @@
               </el-form-item>
             </el-col>
 
-            <el-col :span="4">
+            <el-col :span="3">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
                   {{ $t('common.search') }}
@@ -340,9 +345,30 @@ export default {
     this.getProductClassFun()
   },
   async created() {
+    await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
-    this.getDeputyUnit()
+
+    if (this.isDeputyUnitSwitch === '1') {
+      this.superQueryJson.forEach(item => {
+        if (item.prop === 'mainUnit') {
+          item.label = '单位(主)'
+        }
+      })
+      this.superQueryJson.splice(6, 0, {
+        prop: 'deputyUnit',
+        label: '单位(副)',
+        type: 'input'
+      })
+
+    }
+    if (this.isProductNameSwitch === '1') {
+      this.superQueryJson.splice(4, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
+    }
     // 默认设置为近3天
     const end = new Date()
     const start = new Date()
@@ -728,356 +754,7 @@ export default {
         .then((res) => {
           this.tableData = res.data.page.records
           this.tableFlag = true
-          if (this.isDeputyUnitSwitch === '1') {
-            this.superQueryJson = [
-              {
-                prop: 'orderNo',
-                label: '单号',
-                type: 'input'
-              },
-              {
-                prop: 'cooperativePartnerCode',
-                label: '供应商编码',
-                type: 'input'
-              },
 
-              {
-                prop: 'cooperativePartnerName',
-                label: '供应商名称',
-                type: 'input'
-              },
-              {
-                prop: 'drawingNo',
-                label: '品名规格',
-                type: 'input'
-              },
-              {
-                prop: 'processName',
-                label: '工序名称',
-                type: 'input'
-              },
-              {
-                prop: 'productCode',
-                label: '产品编码',
-                type: 'input'
-              },
-              {
-                prop: 'mainUnit',
-                label: '单位(主)',
-                type: 'input'
-              },
-              {
-                prop: 'deputyUnit',
-                label: '单位(副)',
-                type: 'input'
-              },
-
-              {
-                prop: 'receiptQuantity',
-                label: '已入库数量',
-                type: 'input'
-              },
-              {
-                prop: 'price',
-                label: '单价(含税)',
-                type: 'input'
-              },
-              {
-                prop: 'taxRate',
-                label: '税率(%)',
-                type: 'input'
-              },
-              {
-                prop: 'totalAmount',
-                label: '总金额(含税)',
-                type: 'input'
-              },
-
-              {
-                prop: 'excludingTaxPrice',
-                label: '单价(不含税)',
-                type: 'input'
-              },
-              {
-                prop: 'taxAmount',
-                label: '税额',
-                type: 'input'
-              },
-              {
-                prop: 'excludingTaxAmount',
-                label: '总金额(不含税)',
-                type: 'input'
-              },
-              {
-                prop: 'deliveryDate',
-                label: '交货日期',
-                type: 'daterange',
-                valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                startPlaceholder: '开始日期',
-                endPlaceholder: '结束日期',
-                pickerOptions: this.global.timePickerOptions
-              },
-              {
-                prop: 'receivingStatus',
-                label: '收货状态',
-                type: 'select',
-                options: [
-                  { label: '审批中', value: 'receiving' },
-                  { label: '已完成', value: 'received' },
-                  { label: '已停止', value: 'stopped' }
-                ]
-              },
-
-              {
-                prop: 'standardValue',
-                label: '规值',
-                type: 'input'
-              },
-
-              {
-                prop: 'sealingCoverTyping',
-                label: '打字内容',
-                type: 'select',
-                options: []
-              },
-              {
-                prop: 'accuracyLevel',
-                label: '精度等级',
-                type: 'select',
-                options: []
-              },
-              {
-                prop: 'vibrationLevel',
-                label: '振动等级',
-                type: 'select',
-                options: []
-              },
-
-              {
-                prop: 'oil',
-                label: '油脂',
-                type: 'select',
-                options: []
-              },
-              {
-                prop: 'oilQuantity',
-                label: '油脂量',
-                type: 'select',
-                options: []
-              },
-              {
-                prop: 'clearance',
-                label: '游隙',
-                type: 'select',
-                options: []
-              },
-              {
-                prop: 'packagingMethod',
-                label: '包装方式',
-                type: 'select',
-                options: []
-              },
-
-              {
-                prop: 'processName',
-                label: '工序',
-                type: 'select',
-                options: []
-              },
-
-              {
-                prop: 'createTime',
-                label: '创建时间',
-                type: 'daterange',
-                valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                startPlaceholder: '开始日期',
-                endPlaceholder: '结束日期',
-                pickerOptions: this.global.timePickerOptions
-              },
-              {
-                prop: 'createByName',
-                label: '创建人',
-                type: 'input'
-              },
-              {
-                prop: 'remark',
-                label: '备注',
-                type: 'input'
-              }
-            ]
-          } else {
-            this.superQueryJson = [
-              {
-                prop: 'orderNo',
-                label: '单号',
-                type: 'input'
-              },
-              {
-                prop: 'cooperativePartnerCode',
-                label: '供应商编码',
-                type: 'input'
-              },
-
-              {
-                prop: 'cooperativePartnerName',
-                label: '供应商名称',
-                type: 'input'
-              },
-              {
-                prop: 'drawingNo',
-                label: '品名规格',
-                type: 'input'
-              },
-              {
-                prop: 'processName',
-                label: '工序名称',
-                type: 'input'
-              },
-              {
-                prop: 'productCode',
-                label: '产品编码',
-                type: 'input'
-              },
-              {
-                prop: 'mainUnit',
-                label: '单位',
-                type: 'input'
-              },
-
-              {
-                prop: 'receiptQuantity',
-                label: '已入库数量',
-                type: 'input'
-              },
-              {
-                prop: 'price',
-                label: '单价(含税)',
-                type: 'input'
-              },
-              {
-                prop: 'taxRate',
-                label: '税率(%)',
-                type: 'input'
-              },
-              {
-                prop: 'totalAmount',
-                label: '总金额(含税)',
-                type: 'input'
-              },
-
-              {
-                prop: 'excludingTaxPrice',
-                label: '单价(不含税)',
-                type: 'input'
-              },
-              {
-                prop: 'taxAmount',
-                label: '税额',
-                type: 'input'
-              },
-              {
-                prop: 'excludingTaxAmount',
-                label: '总金额(不含税)',
-                type: 'input'
-              },
-              {
-                prop: 'deliveryDate',
-                label: '交货日期',
-                type: 'daterange',
-                valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                startPlaceholder: '开始日期',
-                endPlaceholder: '结束日期',
-                pickerOptions: this.global.timePickerOptions
-              },
-              {
-                prop: 'receivingStatus',
-                label: '收货状态',
-                type: 'select',
-                options: [
-                  { label: '审批中', value: 'receiving' },
-                  { label: '已完成', value: 'received' },
-                  { label: '已停止', value: 'stopped' }
-                ]
-              },
-
-              {
-                prop: 'standardValue',
-                label: '规值',
-                type: 'input'
-              },
-
-              {
-                prop: 'sealingCoverTyping',
-                label: '打字内容',
-                type: 'select',
-                options: []
-              },
-              {
-                prop: 'accuracyLevel',
-                label: '精度等级',
-                type: 'select',
-                options: []
-              },
-              {
-                prop: 'vibrationLevel',
-                label: '振动等级',
-                type: 'select',
-                options: []
-              },
-
-              {
-                prop: 'oil',
-                label: '油脂',
-                type: 'select',
-                options: []
-              },
-              {
-                prop: 'oilQuantity',
-                label: '油脂量',
-                type: 'select',
-                options: []
-              },
-              {
-                prop: 'clearance',
-                label: '游隙',
-                type: 'select',
-                options: []
-              },
-              {
-                prop: 'packagingMethod',
-                label: '包装方式',
-                type: 'select',
-                options: []
-              },
-
-              {
-                prop: 'processName',
-                label: '工序',
-                type: 'select',
-                options: []
-              },
-
-              {
-                prop: 'createTime',
-                label: '创建时间',
-                type: 'daterange',
-                valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                startPlaceholder: '开始日期',
-                endPlaceholder: '结束日期',
-                pickerOptions: this.global.timePickerOptions
-              },
-              {
-                prop: 'createByName',
-                label: '创建人',
-                type: 'input'
-              },
-              {
-                prop: 'remark',
-                label: '备注',
-                type: 'input'
-              }
-            ]
-          }
           this.total = res.data.page.total
           this.listLoading = false
         })

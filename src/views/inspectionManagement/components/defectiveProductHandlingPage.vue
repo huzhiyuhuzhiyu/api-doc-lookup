@@ -73,6 +73,8 @@
             <el-table-column prop="productName" label="产品名称" width="120"
               v-if="isProductNameSwitch === '1'"></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
+            <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+              show-overflow-tooltip></el-table-column>
             <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
             <el-table-column prop="inspectionDate" label="检验日期" width="120" sortable="custom" />
             <el-table-column prop="inspectorName" label="检验人" width="100" sortable="custom" />
@@ -355,6 +357,34 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isDeputyUnitSwitch === '1') {
+      this.superQueryJson.forEach(item => {
+        if (item.prop === 'mainUnit') {
+          item.label = '单位(主)'
+        }
+      })
+      this.superQueryJson.splice(7, 0, {
+        prop: 'deputyUnit',
+        label: '单位(副)',
+        type: 'input'
+      })
+
+    }
+    if (this.isProductNameSwitch === '1') {
+      this.searchList.push({
+        field: 'productName',
+        fieldValue: '',
+        label: '产品名称',
+        symbol: 'like',
+        searchType: 1,
+        width: 120
+      })
+      this.superQueryJson.splice(3, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
+    }
     this.tableDataFlag = true
 
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
@@ -432,7 +462,17 @@ export default {
         { field: 'inspectionOrderNo', fieldValue: '', label: '检验单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ]
+      if (this.isProductNameSwitch === '1') {
+        this.searchList.push({
+          field: 'productName',
+          fieldValue: '',
+          label: '产品名称',
+          symbol: 'like',
+          searchType: 1,
+          width: 120
+        })
 
+      }
       this.initData()
     },
     addOrUpdateHandle(row, btnType) {

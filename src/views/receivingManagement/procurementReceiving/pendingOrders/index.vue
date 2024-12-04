@@ -9,6 +9,11 @@
                 <el-input v-model="orderForm.orderNo" @keyup.enter.native="search()" placeholder="订单号" clearable />
               </el-form-item>
             </el-col>
+            <el-col :span="3" v-if="isProductNameSwitch === '1'">
+              <el-form-item>
+                <el-input v-model="orderForm.productName" @keyup.enter.native="search()" placeholder="产品名称" clearable />
+              </el-form-item>
+            </el-col>
             <el-col :span="4">
               <el-form-item>
                 <el-date-picker v-model="orderForm.deliveryStartDate" type="date" value-format="yyyy-MM-dd"
@@ -22,7 +27,7 @@
                   style="width: 100%;" placeholder="交货结束日期" clearable></el-date-picker>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="6">
               <el-form-item>
                 <el-button class="btnBox" size="mini" @click="btnsearch1()">已延期</el-button>
                 <el-button class="btnBox" size="mini" @click="btnsearch2()">近3天</el-button>
@@ -79,7 +84,8 @@
             <el-table-column prop="projectName" label="所属项目" width="120"
               v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
-            <!-- <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" /> -->
+            <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+              show-overflow-tooltip></el-table-column>
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
             <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
               :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
@@ -155,6 +161,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isProductNameSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
@@ -299,9 +306,29 @@ export default {
     this.getProductClassFun()
   },
   async created() {
+    await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
-
-    this.getDeputyUnit()
+    await this.getProductNameSwitch('product', 'enable_productName')
+    
+    if (this.isDeputyUnitSwitch === '1') {
+      this.superQueryJson.forEach((item) => {
+        if (item.prop === 'mainUnit') {
+          item.label = '单位(主)'
+        }
+      })
+      this.superQueryJson.splice(6, 0, {
+        prop: 'deputyUnit',
+        label: '单位(副)',
+        type: 'input'
+      })
+    }
+    if (this.isProductNameSwitch === '1') {
+      this.superQueryJson.splice(4, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
+    }
     // 默认设置为近3天
     const end = new Date()
     const start = new Date()
@@ -313,6 +340,11 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     getDeputyUnit() {
       let obj = {
         businessCode: 'deputyUnit',
@@ -452,150 +484,7 @@ export default {
         .then((res) => {
           this.tableData = res.data.page.records
           this.tableFlag = true
-          if (this.isDeputyUnitSwitch === '1') {
-            this.superQueryJson = [
-              {
-                prop: 'orderNo',
-                label: '订单号',
-                type: 'input'
-              },
-              {
-                prop: 'cooperativePartnerCode',
-                label: '供应商编码',
-                type: 'input'
-              },
-              {
-                prop: 'cooperativePartnerName',
-                label: '供应商名称',
-                type: 'input'
-              },
 
-              {
-                prop: 'drawingNo',
-                label: '品名规格',
-                type: 'input'
-              },
-
-              // {
-              //   prop: 'productName',
-              //   label: '产品名称',
-              //   type: 'input'
-              // },
-              {
-                prop: 'productCode',
-                label: '产品编码',
-                type: 'input'
-              },
-              {
-                prop: 'mainUnit',
-                label: '单位(主)',
-                type: 'input'
-              },
-              {
-                prop: 'deputyUnit',
-                label: '单位(副)',
-                type: 'input'
-              },
-              {
-                prop: 'deliveryDate',
-                label: '交货日期',
-                type: 'daterange',
-                valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                startPlaceholder: '开始日期',
-                endPlaceholder: '结束日期',
-                pickerOptions: this.global.timePickerOptions
-              },
-
-              {
-                prop: 'createTime',
-                label: '创建时间',
-                type: 'daterange',
-                valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                startPlaceholder: '开始日期',
-                endPlaceholder: '结束日期',
-                pickerOptions: this.global.timePickerOptions
-              },
-              {
-                prop: 'createByName',
-                label: '创建人',
-                type: 'input'
-              },
-              {
-                prop: 'remark',
-                label: '备注',
-                type: 'input'
-              }
-            ]
-          } else {
-            this.superQueryJson = [
-              {
-                prop: 'orderNo',
-                label: '订单号',
-                type: 'input'
-              },
-              {
-                prop: 'cooperativePartnerCode',
-                label: '供应商编码',
-                type: 'input'
-              },
-              {
-                prop: 'cooperativePartnerName',
-                label: '供应商名称',
-                type: 'input'
-              },
-
-              {
-                prop: 'drawingNo',
-                label: '品名规格',
-                type: 'input'
-              },
-
-              // {
-              //   prop: 'productName',
-              //   label: '产品名称',
-              //   type: 'input'
-              // },
-              {
-                prop: 'productCode',
-                label: '产品编码',
-                type: 'input'
-              },
-              {
-                prop: 'mainUnit',
-                label: '单位',
-                type: 'input'
-              },
-              {
-                prop: 'deliveryDate',
-                label: '交货日期',
-                type: 'daterange',
-                valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                startPlaceholder: '开始日期',
-                endPlaceholder: '结束日期',
-                pickerOptions: this.global.timePickerOptions
-              },
-
-              {
-                prop: 'createTime',
-                label: '创建时间',
-                type: 'daterange',
-                valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                startPlaceholder: '开始日期',
-                endPlaceholder: '结束日期',
-                pickerOptions: this.global.timePickerOptions
-              },
-              {
-                prop: 'createByName',
-                label: '创建人',
-                type: 'input'
-              },
-              {
-                prop: 'remark',
-                label: '备注',
-                type: 'input'
-              }
-            ]
-          }
           this.total = res.data.page.total
           this.listLoading = false
         })

@@ -4,6 +4,12 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
+            <el-col :span="4" v-if="isProductNameSwitch === '1'">
+              <el-form-item>
+                <el-input v-model.trim="listQuery.productName" placeholder="产品名称" clearable
+                  @keyup.enter.native="search()" />
+              </el-form-item>
+            </el-col>
             <el-col :span="4">
               <el-form-item>
                 <el-input v-model.trim="listQuery.productDrawingNo" placeholder="品名规格" clearable
@@ -278,9 +284,30 @@ export default {
     }
   },
   async created() {
+    await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
-    this.getDeputyUnit()
+    if (this.isDeputyUnitSwitch === '1') {
+      this.superQueryJson.forEach(item => {
+        if (item.prop === 'mainUnit') {
+          item.label = '单位(主)'
+        }
+      })
+      this.superQueryJson.splice(7, 0, {
+        prop: 'deputyUnit',
+        label: '单位(副)',
+        type: 'input'
+      })
+
+    }
+    if (this.isProductNameSwitch === '1') {
+     
+      this.superQueryJson.splice(4, 0, {
+        prop: 'productName',
+        label: '毛坯名称',
+        type: 'input'
+      })
+    }
     this.initData()
   },
 
@@ -379,93 +406,7 @@ export default {
           console.log(res, '外协订单列表')
           this.tableDataList = res.data.page.records
           this.tableFlag = true
-          if (this.isDeputyUnitSwitch === '1') {
-            this.superQueryJson = [
-              {
-                prop: 'productDrawingNo',
-                label: '品名规格',
-                type: 'input'
-              },
-              {
-                prop: 'productCode',
-                label: '产品编码',
-                type: 'input'
-              },
 
-              {
-                prop: 'productCategoryName',
-                label: '产品分类',
-                type: 'input'
-              },
-
-              {
-                prop: 'batchNumber',
-                label: '批次号',
-                type: 'input'
-              },
-              {
-                prop: 'mainUnit',
-                label: '单位(主)',
-                type: 'input'
-              },
-              {
-                prop: 'deputyUnit',
-                label: '单位(副)',
-                type: 'input'
-              },
-
-              {
-                prop: 'latestStorageTime',
-                label: '入库日期',
-                type: 'daterange',
-                valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                startPlaceholder: '开始日期',
-                endPlaceholder: '结束日期',
-                pickerOptions: this.global.timePickerOptions
-              },
-
-            ]
-          } else {
-            this.superQueryJson = [
-              {
-                prop: 'productDrawingNo',
-                label: '品名规格',
-                type: 'input'
-              },
-              {
-                prop: 'productCode',
-                label: '产品编码',
-                type: 'input'
-              },
-
-              {
-                prop: 'productCategoryName',
-                label: '产品分类',
-                type: 'input'
-              },
-
-              {
-                prop: 'batchNumber',
-                label: '批次号',
-                type: 'input'
-              },
-              {
-                prop: 'mainUnit',
-                label: '单位',
-                type: 'input'
-              },
-              {
-                prop: 'latestStorageTime',
-                label: '入库日期',
-                type: 'daterange',
-                valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                startPlaceholder: '开始日期',
-                endPlaceholder: '结束日期',
-                pickerOptions: this.global.timePickerOptions
-              },
-
-            ]
-          }
           this.total = res.data.page.total
           this.inventoryQuantityNum = res.data.total ? res.data.total.inventoryQuantity : 0
           this.occupancyQuantityNum = res.data.total ? res.data.total.occupancyQuantity : 0

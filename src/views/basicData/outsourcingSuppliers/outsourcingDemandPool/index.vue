@@ -3,6 +3,12 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
+          <el-col :span="4" v-if="isProductNameSwitch === '1'">
+            <el-form-item>
+              <el-input v-model.trim="listQuery.productName" placeholder="产品名称" clearable
+                @keyup.enter.native="search()" />
+            </el-form-item>
+          </el-col>
           <el-col :span="4">
             <el-form-item>
               <el-input v-model.trim="listQuery.productDrawingNo" placeholder="品名规格" clearable
@@ -22,7 +28,7 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="6">
+          <el-col :span="3">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
                 {{ $t('common.search') }}
@@ -60,10 +66,9 @@
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
           :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
+          <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" width="120"
             v-if="isProductNameSwitch === '1'"></el-table-column>
-          <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
-          <!-- <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" /> -->
           <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
           <!-- <el-table-column prop="spec" label="规格型号" min-width="180" sortable="custom" /> -->
 
@@ -332,9 +337,30 @@ export default {
     }
   },
   async created() {
+    await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
-    this.getDeputyUnit()
+    if (this.isDeputyUnitSwitch === '1') {
+      this.superQueryJson.forEach(item => {
+        if (item.prop === 'mainUnit') {
+          item.label = '单位(主)'
+        }
+      })
+      this.superQueryJson.splice(4, 0, {
+        prop: 'deputyUnit',
+        label: '单位(副)',
+        type: 'input'
+      })
+
+    }
+    if (this.isProductNameSwitch === '1') {
+
+      this.superQueryJson.splice(1, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
+    }
     this.initData()
   },
   methods: {
@@ -436,137 +462,7 @@ export default {
         .then((res) => {
           this.tableDataList = res.data.records
           this.tableFlag = true
-          if (this.isDeputyUnitSwitch === '1') {
-            this.superQueryJson = [
-              {
-                prop: 'productDrawingNo',
-                label: '品名规格',
-                type: 'input'
-              },
 
-              {
-                prop: 'productCode',
-                label: '产品编码',
-                type: 'input'
-              },
-              {
-                prop: 'immediatelyBuyFlag',
-                label: '立即外协',
-                type: 'select',
-                options: [
-                  { label: '是', value: true },
-                  { label: '否', value: false }
-                ]
-              },
-              {
-                prop: 'mainUnit',
-                label: '单位(主)',
-                type: 'input'
-              },
-              {
-                prop: 'deputyUnit',
-                label: '单位(副)',
-                type: 'input'
-              },
-
-              {
-                prop: 'deliveryDate',
-                label: '交货日期',
-                type: 'daterange',
-                valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                startPlaceholder: '开始日期',
-                endPlaceholder: '结束日期',
-                pickerOptions: this.global.timePickerOptions
-              },
-              {
-                prop: 'source',
-                label: '来源',
-                type: 'select',
-                options: [
-                  { label: '请购单', value: 'procure' },
-                  { label: 'MRP下发', value: 'mrp' },
-                  { label: '计划下达', value: 'plan' }
-                ]
-              },
-
-              {
-                prop: 'createTime',
-                label: '创建时间',
-                type: 'daterange',
-                valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                startPlaceholder: '开始日期',
-                endPlaceholder: '结束日期',
-                pickerOptions: this.global.timePickerOptions
-              },
-              {
-                prop: 'createByName',
-                label: '创建人',
-                type: 'input'
-              }
-            ]
-          } else {
-            this.superQueryJson = [
-              {
-                prop: 'productDrawingNo',
-                label: '品名规格',
-                type: 'input'
-              },
-
-              {
-                prop: 'productCode',
-                label: '产品编码',
-                type: 'input'
-              },
-              {
-                prop: 'immediatelyBuyFlag',
-                label: '立即外协',
-                type: 'select',
-                options: [
-                  { label: '是', value: true },
-                  { label: '否', value: false }
-                ]
-              },
-              {
-                prop: 'mainUnit',
-                label: '单位',
-                type: 'input'
-              },
-              {
-                prop: 'deliveryDate',
-                label: '交货日期',
-                type: 'daterange',
-                valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                startPlaceholder: '开始日期',
-                endPlaceholder: '结束日期',
-                pickerOptions: this.global.timePickerOptions
-              },
-              {
-                prop: 'source',
-                label: '来源',
-                type: 'select',
-                options: [
-                  { label: '请购单', value: 'procure' },
-                  { label: 'MRP下发', value: 'mrp' },
-                  { label: '计划下达', value: 'plan' }
-                ]
-              },
-
-              {
-                prop: 'createTime',
-                label: '创建时间',
-                type: 'daterange',
-                valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                startPlaceholder: '开始日期',
-                endPlaceholder: '结束日期',
-                pickerOptions: this.global.timePickerOptions
-              },
-              {
-                prop: 'createByName',
-                label: '创建人',
-                type: 'input'
-              }
-            ]
-          }
           // res.data.records.forEach(item => {
           //   if (item.planDemandQuantity * 1 <= item.orderedQuantity * 1) {
           //     item.disabled = true

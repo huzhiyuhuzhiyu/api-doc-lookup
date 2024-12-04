@@ -70,7 +70,8 @@
           <el-table-column prop="partnerCode" label="供应商编码" min-width="180" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
-          <!-- <el-table-column prop="productName" label="产品名称" min-width="180" sortable="custom" /> -->
+          <el-table-column prop="productName" label="产品名称" min-width="180" sortable="custom"
+            v-if="isProductNameSwitch === '1'" />
           <el-table-column prop="drawingNo" label="品名规格" min-width="180" sortable="custom" />
           <el-table-column prop="businessType" label="收/退货类型" width="140" sortable="custom">
             <template slot-scope="scope">
@@ -133,6 +134,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isProductNameSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
@@ -254,12 +256,32 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
-
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProductNameSwitch === '1') {
+      this.searchList.push({
+        field: 'productName',
+        fieldValue: '',
+        label: '产品名称',
+        symbol: 'like',
+        searchType: 1,
+        width: 120
+      })
+      this.superQueryJson.splice(2, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
+    }
     this.superForm = this.listQuery
     this.getDeputyUnit()
     this.initData()
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     getDeputyUnit() {
       let obj = {
         businessCode: 'deputyUnit',
@@ -578,6 +600,21 @@ export default {
           width: 120
         }
       ]
+      if (this.isProductNameSwitch === '1') {
+        this.searchList.push({
+          field: 'productName',
+          fieldValue: '',
+          label: '产品名称',
+          symbol: 'like',
+          searchType: 1,
+          width: 120
+        })
+        this.superQueryJson.splice(2, 0, {
+          prop: 'productName',
+          label: '产品名称',
+          type: 'input'
+        })
+      }
       this.superForm = JSON.parse(JSON.stringify(this.listQuery))
       this.search('basic')
     },

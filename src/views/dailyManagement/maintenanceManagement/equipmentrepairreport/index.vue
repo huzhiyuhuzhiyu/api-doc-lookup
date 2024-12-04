@@ -347,6 +347,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    this.getSwitch()
     this.getBimBusinessDetail()
     this.init()
   },

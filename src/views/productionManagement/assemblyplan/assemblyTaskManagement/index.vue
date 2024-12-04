@@ -37,6 +37,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
+           
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addTaskFun('', 'add')">
                 新建返工任务
               </el-button>

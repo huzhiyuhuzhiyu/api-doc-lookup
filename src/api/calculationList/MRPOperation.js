@@ -109,3 +109,13 @@ export function demandSourceReport(data) {
     data
   })
 }
+
+ 
+// 全部下达
+export function issueApi(data) {
+  return request({
+    url: `/api/mrp/material/demand/plan/issue`,
+    method: 'POST',
+    data
+  })
+}

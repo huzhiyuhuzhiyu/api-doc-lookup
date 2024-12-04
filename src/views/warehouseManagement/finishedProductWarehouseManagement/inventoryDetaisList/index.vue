@@ -206,7 +206,7 @@
           </el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-          @pagination="initData">
+          @pagination="search('basic')">
           <div class="text">
             <span style="margin-left: 10px">数量:{{ num }}</span>
             <span style="margin-left: 10px">税额:{{ taxAmount }}</span>
@@ -518,12 +518,7 @@ export default {
           type: 'select',
           options: []
         },
-        {
-          prop: 'oilQuantity',
-          label: "油脂量",
-          type: 'select',
-          options: []
-        },
+  
         {
           prop: 'clearance',
           label: "游隙",
@@ -600,7 +595,7 @@ export default {
         },
         {
           businessType: 'inbound_external',
-          code: "p018",
+          code: "p019",
           fullName: "外协收货单"
         },
       ]
@@ -976,22 +971,7 @@ export default {
           },
         ],
       };
-      getbimProductAttributesList(obj5).then(res => {
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'oilQuantity');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
+ 
       // 游隙
       let obj6 = {
         pageNum: -1,
@@ -1272,7 +1252,6 @@ export default {
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
       this.totalList = []
-      this.listQuery.pageNum = 1
       this.listQuery.classAttributeList = this.classAttributeList
       if (this.createTimeArr.length) {
         this.listQuery.orderStartDate = this.createTimeArr[0]
@@ -1354,7 +1333,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop == 'partnerName' || prop == 'createTime' || prop == 'documentStatus' || prop == 'processName' || prop == 'oilQuantity' || prop == 'excludingTaxTotalAmount' || prop == 'productCode' || prop == 'partnerCode') {
+      if (prop == 'partnerName' || prop == 'createTime' || prop == 'documentStatus' || prop == 'processName'  || prop == 'excludingTaxTotalAmount' || prop == 'productCode' || prop == 'partnerCode') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());

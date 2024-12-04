@@ -1437,7 +1437,7 @@ export default {
               }
               if (type) {
 
-                this.enCode = 'p018'
+                this.enCode = 'p019'
                 this.formId = res.data.id
                 this.fullName = '外协收货单'
 
@@ -1499,9 +1499,9 @@ export default {
   padding-left: 5px;
 }
 
-::v-deep.JNPF-dialog.JNPF-dialog_center .el-dialog .el-dialog__body {
-  padding: 0 !important;
-}
+// ::v-deep.JNPF-dialog.JNPF-dialog_center .el-dialog .el-dialog__body {
+//   padding: 0 !important;
+// }
 
 .JNPF-preview-main .main {
   padding-top: 0;

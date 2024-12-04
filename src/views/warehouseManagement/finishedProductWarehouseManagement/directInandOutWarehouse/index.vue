@@ -322,16 +322,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="oilQuantity" label="油脂量" width="120" key="51">
-
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
+                       
                       <el-table-column prop="clearance" label="游隙" width="120" key="1055">
 
                         <template slot-scope="scope">
@@ -516,8 +507,7 @@
               <el-table-column prop="oil" label="油脂" width="80" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="oil" />
 
-              <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" key="oilQuantity" />
+        
               <el-table-column prop="clearance" label="游隙" width="80" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="clearance" />
               <el-table-column prop="aperture" label="孔径" width="80" :key="102" sortable="custom"
@@ -1599,6 +1589,20 @@ export default {
           this.spaceLines = res.data.spaceLines
 
           this.formLoading = false
+          let arr=[
+          {label:"组装入库",value:"inbound_merge",},
+            {label:"拆卸入库",value:"inbound_split",},
+            {label:"形态转换入库",value:"inbound_shift",},
+            {label:"组装出库",value:"outbound_merge",},
+            {label:"拆卸出库",value:"outbound_split",},
+            {label:"形态转换出库",value:"outbound_shift",},
+            {label:"调拨出库",value:"outbound_transfer",},
+            {label:"调拨入库",value:"inbound_transfer",},
+            {label:"直接领料入库",value:"inbound_receive_material",},
+            {label:"直接领料出库",value:"outbound_receive_material",},
+          ]
+          this.list=[...this.list,...arr]
+ 
         }).catch(() => { this.formLoading = false })
       } else {
         this.title = '新建出入库单'

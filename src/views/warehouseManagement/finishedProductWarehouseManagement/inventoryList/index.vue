@@ -496,7 +496,7 @@ export default {
         },
         {
           businessType: 'inbound_external',
-          code: "p018",
+          code: "p019",
           fullName: "外协收货单"
         },
       ],

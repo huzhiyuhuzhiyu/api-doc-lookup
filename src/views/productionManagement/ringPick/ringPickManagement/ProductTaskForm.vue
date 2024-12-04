@@ -128,7 +128,7 @@ export default {
       this.$emit("selectProductTask", row,)
       this.customerVisible = false
     },
-    getbatchNumList() {
+    getbatchNumList(id) {
       this.listLoading = true
       this.orderForm.projectId = id
       ordershengchanList(this.orderForm).then(res => {

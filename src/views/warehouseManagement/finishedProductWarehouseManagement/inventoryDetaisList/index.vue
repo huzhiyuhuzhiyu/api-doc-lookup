@@ -124,6 +124,9 @@
           <!-- <el-table-column prop="mainUnit" label="单位" min-width="140" />
           <el-table-column prop="num" label="数量" sortable="custom" min-width="140" /> -->
           <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+          <el-table-column prop="weight" label="重量"  min-width="120" />
+          <el-table-column prop="proportion" label="比重"  min-width="120" />
+          <el-table-column prop="discount" label="折扣"  min-width="120" />
           <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120" />
           <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
           <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
@@ -137,14 +140,13 @@
           </el-table-column>
           <el-table-column prop="excludingTaxCostPrice" label="单价(不含税)" sortable="custom" min-width="180" />
           <el-table-column prop="taxAmount" label="税额" sortable="custom" min-width="120" />
-          <el-table-column prop="excludingTaxAmount" label="总金额(不含税)" sortable="custom" min-width="180" />
+          <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" sortable="custom" min-width="180" />
           <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120" />
           <el-table-column prop="colour" label="颜色" sortable="custom" min-width="120" />
           <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom"></el-table-column>
           <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom"></el-table-column>
           <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom"></el-table-column>
           <el-table-column prop="oil" label="油脂" min-width="120" sortable="custom"></el-table-column>
-          <el-table-column prop="oilQuantity" label="油脂量" min-width="120" sortable="custom"> </el-table-column>
           <el-table-column prop="clearance" label="游隙" min-width="120" sortable="custom"></el-table-column>
           <el-table-column prop="aperture" label="孔径" min-width="120" sortable="custom"></el-table-column>
           <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom"></el-table-column>
@@ -340,7 +342,7 @@ export default {
       saleOutboundFormVisible: false,
       externalInboundFormVisible: false,
       externalMaterOutboundFormVisible: false,
-      columnList: ["partnerCode", 'productCode', "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxAmount", "createByName", "taxAmount"],
+      columnList: ["partnerCode", 'productCode', "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxTotalAmount", "createByName", "taxAmount",'discount'],
       num: 0,
       superQueryVisible: false,
       taxAmount: 0,
@@ -1352,7 +1354,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop == 'partnerName' || prop == 'createTime' || prop == 'documentStatus' || prop == 'processName' || prop == 'oilQuantity' || prop == 'excludingTaxAmount' || prop == 'productCode' || prop == 'partnerCode') {
+      if (prop == 'partnerName' || prop == 'createTime' || prop == 'documentStatus' || prop == 'processName' || prop == 'oilQuantity' || prop == 'excludingTaxTotalAmount' || prop == 'productCode' || prop == 'partnerCode') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());

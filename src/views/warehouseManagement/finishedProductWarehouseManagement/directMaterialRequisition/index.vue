@@ -369,7 +369,7 @@ export default {
     addSupplier() {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init('', 'add',this.classAttributeList)
+        this.$refs.Form.init('', 'add',this.classAttributeList,this.warehouseCode)
       })
 
     },

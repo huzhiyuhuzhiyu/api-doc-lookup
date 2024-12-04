@@ -1127,7 +1127,7 @@ export default {
       } catch (error) {
       }
     },
-    async handleConfirm(submitModel) {
+    async handleConfirm(submitModel,type) {
       console.log(this.productData);
       let submitFlag = true // 自动聚焦是否可用
       this.$refs['dataForm'].validate((valid) => {

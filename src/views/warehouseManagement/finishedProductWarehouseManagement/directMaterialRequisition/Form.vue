@@ -86,7 +86,7 @@
                       </template>
                       <template slot-scope="scope">
                         <ComSelect-list
-                          :requestObj="{ type: 'line_edge', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }"
+                          :requestObj="{ type: 'line_edge', projectId: isProjectSwitch === '1' ? projectId || '' : '' }"
                           :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'" v-model="scope.row.inWarehouseName"
                           :method="getWarehouseList" placeholder="请选择仓库" :paramsObj="{ index: scope.$index }"
                           @change="changeWarehousex"></ComSelect-list>
@@ -365,16 +365,17 @@ export default {
       previousValue: "",
 
       taxRateList: [],
-      classAttribute: "",
-      warehouseCode: "",
+      classAttribute: "", 
       classAttributeList: [],
       mainUnitFlag: null,
-
+      warehouseId:"",
+      warehouseCode:"",
     }
   },
 
   async created() {
     await this.getProjectSwitch('system', 'project')
+    this.getWarehouseListFun()
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
 
 
@@ -390,6 +391,14 @@ export default {
     },
   },
   methods: {
+      // 获取仓库id
+      getWarehouseListFun() {
+      getWarehouseList({ code: this.warehouseCode }).then(res => {
+        this.warehouseId = res.data[0].id
+        this.projectId = res.data[0].projectId
+        
+      })
+    },
     async getMainUnitFun(code, type) {
       this.listLoading = true
       try {
@@ -445,9 +454,8 @@ export default {
         ],
         pageNum: 1,
         pageSize: 20,
-      }
-      console.log("this.isProjectSwitch", this.isProjectSwitch, this.userInfo.projectId);
-      obj.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      } 
+      obj.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
       getProductList(obj).then(res => {
         console.log("产品信息", res);
         res.data.records.forEach(item => {
@@ -505,6 +513,7 @@ export default {
         productCategoryId: "",
         batchNumber: "",
         availableBatch: 1,
+        warehouseId:this.warehouseId,
         inspectStockFlag: true,
         productCode: "",
         productName: "",
@@ -524,7 +533,8 @@ export default {
     initData2() {
       this.listLoading = true
       this.ProductListRequestObj.classAttributeList = this.classAttributeList
-      this.ProductListRequestObj.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      this.ProductListRequestObj.warehouseId = this.warehouseId
+      this.ProductListRequestObj.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
       getBatchNumber(this.ProductListRequestObj).then(listRes => {
         if (Array.isArray(listRes.data)) {
           this.allproductData = listRes.data
@@ -550,6 +560,8 @@ export default {
         productCategoryId: "",
         batchNumber: "",
         availableBatch: 1,
+        projectId:this.projectId,
+        warehouseId:this.warehouseId,
         inspectStockFlag: true,
         productCode: "",
         productName: "",
@@ -649,7 +661,7 @@ export default {
       this.$emit('close', true)
     },
 
-    init(id, btnType, classAttributeList) {
+    init(id, btnType, classAttributeList,warehouseCode) {
       console.log(classAttributeList);
       // this.visible = true
       this.formLoading = true
@@ -657,6 +669,7 @@ export default {
       this.oldType = JSON.parse(JSON.stringify(btnType))
       this.dataForm.id = id
       this.classAttributeList = classAttributeList
+      this.warehouseCode = warehouseCode
       this.btnType = btnType
       console.log("btnty", btnType);
       // this.refeshDataFormItems()

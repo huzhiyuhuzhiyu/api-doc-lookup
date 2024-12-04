@@ -425,7 +425,7 @@ export default {
         searchType: 1,
         width: 120
       })
-      this.superQueryJson.splice(3, 0, {
+      this.superQueryJson.splice(4, 0, {
         prop: 'productName',
         label: '产品名称',
         type: 'input'

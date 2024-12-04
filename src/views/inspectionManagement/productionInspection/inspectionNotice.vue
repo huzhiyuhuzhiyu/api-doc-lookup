@@ -23,6 +23,11 @@
                 clearable />
             </el-form-item>
           </el-col>
+          <el-col :span="4" v-if="isProductNameSwitch === '1'">
+            <el-form-item>
+              <el-input v-model="listQuery.productName" placeholder="产品名称" @keyup.enter.native="search()" clearable />
+            </el-form-item>
+          </el-col>
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -77,6 +82,8 @@
           </el-table-column> -->
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="120" sortable="custom" />
+          <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+            show-overflow-tooltip></el-table-column>
           <el-table-column prop="processName" label="工序名称" min-width="120" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" width="60" />
           <el-table-column prop="productionQuantity" label="生产数量" min-width="120" sortable="custom" />
@@ -165,6 +172,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isProductNameSwitch: '',
       tableDataFlag: false,
       columnList: [
         'sealingCoverTyping',
@@ -364,13 +372,38 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isDeputyUnitSwitch === '1') {
+      this.superQueryJson.forEach(item => {
+        if (item.prop === 'mainUnit') {
+          item.label = '单位(主)'
+        }
+      })
+      this.superQueryJson.splice(7, 0, {
+        prop: 'deputyUnit',
+        label: '单位(副)',
+        type: 'input'
+      })
 
+    }
+    if (this.isProductNameSwitch === '1') {
+      this.superQueryJson.splice(3, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
+    }
     this.tableDataFlag = true
 
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.initData()
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     scanFun() {
       this.scanDialog = true
       this.$nextTick(() => {

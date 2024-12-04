@@ -624,9 +624,9 @@ export default {
       ], // 产品选择弹出框搜索条件
 
       ProductTableSearchList: [
-        { prop: 'drawingNo', label: '品名规格', type: 'input' },
-        { prop: 'name', label: '产品名称', type: 'input' },
-        { prop: 'code', label: '产品编码', type: 'input' }
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productName', label: '产品名称', type: 'input' },
+        { prop: 'productCode', label: '产品编码', type: 'input' }
       ], // 产品选择弹出框搜索条件
 
       submitmethodsTitle: '',

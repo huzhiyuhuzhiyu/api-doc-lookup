@@ -180,10 +180,10 @@ export default {
               })
             }
             // }
-          }else{
+          } else {
             let TbarCodeEl = this.$refs.tsPrint.querySelectorAll('[data-tag="T1.bar_code"]')
             console.log(TbarCodeEl);
-            
+
             if (this.data.T1 && this.data.T1.length) {
               this.data.T1.forEach((e, i) => {
                 if (TbarCodeEl && TbarCodeEl[i]) {
@@ -238,8 +238,6 @@ export default {
           tds.cells[j].style.height = '22px'
           tds.cells[j].style.border = '1px solid gray'
           let spanList = tds.cells[j].getElementsByTagName('span')
-          console.log(spanList,'spanList');
-          
           for (let i = 0; i < spanList.length; i++) {
             if (`{${key}}` === spanList[i].innerHTML) {
               spanList[i].innerHTML = data[key]
@@ -249,31 +247,31 @@ export default {
       }
       return tds
     },
-    getAttribute(element,dataName){
+    getAttribute(element, dataName) {
       if (!element) return
-      const val= element.getAttribute(dataName)
-        if(val){return val}
-        if(element.children.length){
-            for(let item of element.children){
-                const v = this.getAttribute(item,dataName)
-                if(v){
-                    return v
-                }
-            }
+      const val = element.getAttribute(dataName)
+      if (val) { return val }
+      if (element.children.length) {
+        for (let item of element.children) {
+          const v = this.getAttribute(item, dataName)
+          if (v) {
+            return v
+          }
         }
-        return null
-    
+      }
+      return null
+
     },
     // 固定头尾分页使用
     retrieveData(dataTag, tableObj, tds, newTable, j) {
       if (dataTag == 'T1') {
         inner: for (let c = 0; c < this.data.T1[j].pagedata.length; c++) {
           newTable.push(this.shengchengtable(this.data.T1[j].pagedata[c], tds.cloneNode(true)))
-         
-          
-          if(this.getAttribute(tds,"data-tag") ==='T1.大写子表金额合计'){
+
+
+          if (this.getAttribute(tds, "data-tag") === 'T1.大写子表金额合计') {
             console.log("单行生成 return")
-            return 
+            return
           }
           if (c === this.data.T1[j].pagedata.length - 1) {
             newTable = []
@@ -415,7 +413,7 @@ export default {
           data[i].index = i + 1
           pagedata.push(data[i])
           pageNum++
-          if (pageNum === pageSize || ( i === data.length - 1)) {
+          if (pageNum === pageSize || (i === data.length - 1)) {
 
             printTable.push({
               '小写子表金额合计': pagedata.reduce((accumulator, currentValue) => (accumulator * 1 ? accumulator * 1 : '') + currentValue['子表金额'] * 1, 0),

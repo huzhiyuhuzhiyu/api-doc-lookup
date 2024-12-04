@@ -3,7 +3,7 @@ const APIURl = 'http://api.test.zgt.nbjuxuan.com/'
 module.exports = {
   APIURl: APIURl,
   timeout: process.env.NODE_ENV === 'development' ? 1000000 : 1000000,
-  WebSocketUrl: process.env.NODE_ENV === 'development' ? APIURl.replace('http', 'ws') + '/api/message/websocket' : process.env.VUE_APP_BASE_WSS,
+  WebSocketUrl: process.env.NODE_ENV === 'development' ? APIURl.replace('http', 'ws') + '/websocket' : process.env.VUE_APP_BASE_WSS,
   comUploadUrl: process.env.VUE_APP_BASE_API + '/api/file/Uploader',
   comUrl: process.env.VUE_APP_BASE_API,
   // 本地文件预览

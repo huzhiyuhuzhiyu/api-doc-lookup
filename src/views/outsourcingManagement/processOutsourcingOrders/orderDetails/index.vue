@@ -16,12 +16,12 @@
                   @keyup.enter.native="searchDetail()" />
               </el-form-item>
             </el-col>
-            <!-- <el-col :span="4">
+            <el-col :span="4" v-if="isProductNameSwitch === '1'">
               <el-form-item>
                 <el-input v-model.trim="listsQuery.productName" placeholder="请输入产品名称" clearable
                   @keyup.enter.native="searchDetail()" />
               </el-form-item>
-            </el-col> -->
+            </el-col>
             <el-col :span="6">
               <el-form-item>
                 <el-button size="mini" type="primary" icon="el-icon-search" @click="searchDetail()">
@@ -400,12 +400,32 @@ export default {
     }
   },
   async created() {
+    await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getProportionSwitch('warehouse', 'proportion')
     this.tableDataFlag = true
+    if (this.isDeputyUnitSwitch === '1') {
+      this.superQueryJson.forEach(item => {
+        if (item.prop === 'mainUnit') {
+          item.label = '单位(主)'
+        }
+      })
+      this.superQueryJson.splice(7, 0, {
+        prop: 'deputyUnit',
+        label: '单位(副)',
+        type: 'input'
+      })
 
-    this.getDeputyUnit()
+    }
+    if (this.isProductNameSwitch === '1') {
+      this.superQueryJson.splice(4, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
+    }
+
     this.initData()
     this.detailData()
   },
@@ -637,170 +657,7 @@ export default {
           console.log(res, '明细列表')
           this.detailTableData = res.data.records
           this.tableFlag = true
-          if (this.isDeputyUnitSwitch === '1') {
-            this.superQueryJson = [
-              {
-                prop: 'orderNo',
-                label: '单号',
-                type: 'input'
-              },
-              {
-                prop: 'cooperativePartnerCode',
-                label: '供应商编码',
-                type: 'input'
-              },
 
-
-              {
-                prop: 'cooperativePartnerName',
-                label: '供应商名称',
-                type: 'input'
-              },
-              {
-                prop: 'drawingNo',
-                label: '品名规格',
-                type: 'input'
-              },
-              {
-                prop: 'processName',
-                label: '工序名称',
-                type: 'input'
-              },
-              {
-                prop: 'productCode',
-                label: '产品编码',
-                type: 'input'
-              },
-              {
-                prop: 'mainUnit',
-                label: '单位(主)',
-                type: 'input'
-              },
-              {
-                prop: 'deputyUnit',
-                label: '单位(副)',
-                type: 'input'
-              },
-              {
-                prop: 'deliveryDate',
-                label: '交货日期',
-                type: 'daterange',
-                valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                startPlaceholder: '开始日期',
-                endPlaceholder: '结束日期',
-                pickerOptions: this.global.timePickerOptions
-              },
-              {
-                prop: 'receivingStatus',
-                label: '收货状态',
-                type: 'select',
-                options: [
-                  { label: '审批中', value: 'receiving' },
-                  { label: '已完成', value: 'received' },
-                  { label: '已停止', value: 'stopped' },
-                ]
-              },
-
-              {
-                prop: 'createTime',
-                label: '创建时间',
-                type: 'daterange',
-                valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                startPlaceholder: '开始日期',
-                endPlaceholder: '结束日期',
-                pickerOptions: this.global.timePickerOptions
-              },
-              {
-                prop: 'createByName',
-                label: '创建人',
-                type: 'input'
-              },
-              {
-                prop: 'remark',
-                label: '备注',
-                type: 'input'
-              },
-            ]
-          } else {
-            this.superQueryJson = [
-              {
-                prop: 'orderNo',
-                label: '单号',
-                type: 'input'
-              },
-              {
-                prop: 'cooperativePartnerCode',
-                label: '供应商编码',
-                type: 'input'
-              },
-
-
-              {
-                prop: 'cooperativePartnerName',
-                label: '供应商名称',
-                type: 'input'
-              },
-              {
-                prop: 'drawingNo',
-                label: '品名规格',
-                type: 'input'
-              },
-              {
-                prop: 'processName',
-                label: '工序名称',
-                type: 'input'
-              },
-              {
-                prop: 'productCode',
-                label: '产品编码',
-                type: 'input'
-              },
-              {
-                prop: 'mainUnit',
-                label: '单位',
-                type: 'input'
-              },
-              {
-                prop: 'deliveryDate',
-                label: '交货日期',
-                type: 'daterange',
-                valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                startPlaceholder: '开始日期',
-                endPlaceholder: '结束日期',
-                pickerOptions: this.global.timePickerOptions
-              },
-              {
-                prop: 'receivingStatus',
-                label: '收货状态',
-                type: 'select',
-                options: [
-                  { label: '审批中', value: 'receiving' },
-                  { label: '已完成', value: 'received' },
-                  { label: '已停止', value: 'stopped' },
-                ]
-              },
-
-              {
-                prop: 'createTime',
-                label: '创建时间',
-                type: 'daterange',
-                valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                startPlaceholder: '开始日期',
-                endPlaceholder: '结束日期',
-                pickerOptions: this.global.timePickerOptions
-              },
-              {
-                prop: 'createByName',
-                label: '创建人',
-                type: 'input'
-              },
-              {
-                prop: 'remark',
-                label: '备注',
-                type: 'input'
-              },
-            ]
-          }
           console.log(this.detailTableData)
           this.detailTableData.forEach((item) => {
             item.disabled = item.receivingStatus == 'receiving' && item.approvalStatus == 'ok' ? false : true

@@ -1589,6 +1589,20 @@ export default {
           this.spaceLines = res.data.spaceLines
 
           this.formLoading = false
+          let arr=[
+          {label:"组装入库",value:"inbound_merge",},
+            {label:"拆卸入库",value:"inbound_split",},
+            {label:"形态转换入库",value:"inbound_shift",},
+            {label:"组装出库",value:"outbound_merge",},
+            {label:"拆卸出库",value:"outbound_split",},
+            {label:"形态转换出库",value:"outbound_shift",},
+            {label:"调拨出库",value:"outbound_transfer",},
+            {label:"调拨入库",value:"inbound_transfer",},
+            {label:"直接领料入库",value:"inbound_receive_material",},
+            {label:"直接领料出库",value:"outbound_receive_material",},
+          ]
+          this.list=[...this.list,...arr]
+ 
         }).catch(() => { this.formLoading = false })
       } else {
         this.title = '新建出入库单'

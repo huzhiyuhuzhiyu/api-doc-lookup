@@ -203,7 +203,7 @@
           </el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-          @pagination="initData">
+          @pagination="search('basic')">
           <div class="text">
             <span style="margin-left: 10px">数量:{{ num }}</span>
             <span style="margin-left: 10px">税额:{{ taxAmount }}</span>
@@ -592,7 +592,7 @@ export default {
         },
         {
           businessType: 'inbound_external',
-          code: "p018",
+          code: "p019",
           fullName: "外协收货单"
         },
       ]
@@ -1249,7 +1249,6 @@ export default {
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
       this.totalList = []
-      this.listQuery.pageNum = 1
       this.listQuery.classAttributeList = this.classAttributeList
       if (this.createTimeArr.length) {
         this.listQuery.orderStartDate = this.createTimeArr[0]

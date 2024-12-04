@@ -16,8 +16,9 @@
         <div class="options">
           <el-button type="primary" size="mini" @click="next" :disabled="activeStep == 1 || loading"
             v-if="activeStep == 0">执行计算 </el-button>
-          <el-button size="mini" @click="prev" :disabled="activeStep <= 0" v-if="activeStep != 2">{{ $t('common.prev')
-            }}</el-button>
+          <el-button size="mini" @click="prev" :disabled="activeStep <= 0" v-if="activeStep > 0 && activeStep != 2">{{
+            $t('common.prev')
+          }}</el-button>
           <el-button size="mini" type="primary" @click="dataFormSubmit()" :loading="btnLoading"
             v-if="activeStep == 1">提交</el-button>
           <el-button size="mini" type="primary" @click="allIssueFun()" :loading="btnLoading"
@@ -29,7 +30,7 @@
       <div class="main" v-loading="loading">
         <el-collapse v-model="activeNames" v-if="!activeStep" style="height: 100%;background-color: #fff;">
           <el-collapse-item title="运算公式" name="basicInfo" class="orderInfo">
-            <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="120px" label-position="left">
+            <el-form ref="dataForm" :model="dataForm" label-width="120px" label-position="left">
               <el-row style="height: 100%;">
                 <el-col :span="10">
                   <el-form-item label="运算单号">
@@ -328,7 +329,7 @@
                     </el-tooltip>
                     <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                       <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                        @click="getpurchaseDataa()" />
+                        @click="getpurchaseData()" />
                     </el-tooltip>
                   </div>
                 </div>
@@ -391,7 +392,7 @@
 
                 </JNPF-table>
                 <pagination :total="total3" :page.sync="purchaseForm.pageNum" :limit.sync="purchaseForm.pageSize"
-                  @pagination="getpurchaseDataa">
+                  @pagination="getpurchaseData">
                   <div style="background: #f5f7fa;text-align:end" class="text">
                     <span style="font-weight:500;margin-right:10px">需求数量：{{ totalDemandQuantity }}</span>
                     <span style="font-weight:500;margin-right:10px">损耗数量：{{ lossNum }}</span>
@@ -521,7 +522,7 @@
                   </div>
                 </div>
                 <JNPF-table custom-column v-if="activeNameIss == 'assemble'" @sort-change="sortChange"
-                  :partentOrChild="'assemble'" :data="assembleData" :setColumnDisplayList="columnList1"
+                  :partentOrChild="'assemble'" :data="assembleDataIss" :setColumnDisplayList="columnList1"
                   highlight-current-row :fixedNO="true" class="dataTable" border ref="assembleRef">
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
@@ -561,11 +562,11 @@
                   </el-table-column>
 
                 </JNPF-table>
-                <pagination :total="total1" :page.sync="assembleForm.pageNum" :limit.sync="assembleForm.pageSize"
-                  @pagination="getassembleData">
+                <pagination :total="total1Iss" :page.sync="assembleFormIss.pageNum"
+                  :limit.sync="assembleFormIss.pageSize" @pagination="getassembleDataIss">
                   <div style="background: #f5f7fa;text-align:end" class="text">
                     <!-- <span style="font-weight:500;margin-right:10px">需求数量：{{ totalDemandQuantity }}</span> -->
-                    <span style="font-weight:500;margin-right:10px">需组装数量：{{ outputQuantity }}</span>
+                    <span style="font-weight:500;margin-right:10px">需组装数量：{{ outputQuantityIss }}</span>
                   </div>
                 </pagination>
               </div>
@@ -585,7 +586,7 @@
                     </el-tooltip>
                   </div>
                 </div>
-                <JNPF-table custom-column :partentOrChild="'produce'" @sort-change="sortChange" :data="produceData"
+                <JNPF-table custom-column :partentOrChild="'produce'" @sort-change="sortChange" :data="produceDataIss"
                   v-if="activeNameIss == 'produce'" :setColumnDisplayList="columnList2" :key="2" highlight-current-row
                   :fixedNO="true" class="dataTable" border ref="produceRef">
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
@@ -654,15 +655,15 @@
                   </el-table-column>
 
                 </JNPF-table>
-                <pagination :total="total2" :page.sync="produceForm.pageNum" :limit.sync="produceForm.pageSize"
-                  @pagination="getproduceData">
+                <pagination :total="total2Iss" :page.sync="produceFormIss.pageNum" :limit.sync="produceFormIss.pageSize"
+                  @pagination="getproduceDataIss">
                   <div style="background: #f5f7fa;text-align:end" class="text">
                     <!-- <span style="font-weight:500;margin-right:10px">需求数量：{{ totalDemandQuantity }}</span>
                     <span style="font-weight:500;margin-right:10px">损耗数量：{{ lossNum }}</span>
                     <span style="font-weight:500;margin-right:10px">计划在制数量：{{ planInTransitQuantity }}</span>
                     <span style="font-weight:500;margin-right:10px">实际在制数量：{{ inTransitUnOccupancyQuantity }}</span>
                     <span style="font-weight:500;margin-right:10px">当前预占数量：{{ occupancyQuantity }}</span> -->
-                    <span style="font-weight:500;margin-right:10px">需生产数量：{{ outputQuantity }}</span>
+                    <span style="font-weight:500;margin-right:10px">需生产数量：{{ outputQuantityIss }}</span>
                   </div>
                 </pagination>
               </div>
@@ -678,12 +679,12 @@
                     </el-tooltip>
                     <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                       <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                        @click="getpurchaseDataa()" />
+                        @click="getpurchaseData()" />
                     </el-tooltip>
                   </div>
                 </div>
                 <JNPF-table v-if="activeNameIss == 'purchase'" custom-column :partentOrChild="'purchase'"
-                  @sort-change="sortChange" :data="purchaseData" :setColumnDisplayList="columnList3"
+                  @sort-change="sortChange" :data="purchaseDataIss" :setColumnDisplayList="columnList3"
                   highlight-current-row :fixedNO="true" class="dataTable" border ref="purchaseRef">
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
@@ -740,15 +741,15 @@
                   </el-table-column>
 
                 </JNPF-table>
-                <pagination :total="total3" :page.sync="purchaseForm.pageNum" :limit.sync="purchaseForm.pageSize"
-                  @pagination="getpurchaseDataa">
+                <pagination :total="total3Iss" :page.sync="purchaseFormIss.pageNum"
+                  :limit.sync="purchaseFormIss.pageSize" @pagination="getpurchaseDataIss">
                   <div style="background: #f5f7fa;text-align:end" class="text">
                     <!-- <span style="font-weight:500;margin-right:10px">需求数量：{{ totalDemandQuantity }}</span>
                     <span style="font-weight:500;margin-right:10px">损耗数量：{{ lossNum }}</span>
                     <span style="font-weight:500;margin-right:10px">计划在途数量：{{ planInTransitQuantity }}</span>
                     <span style="font-weight:500;margin-right:10px">实际在途数量：{{ inTransitUnOccupancyQuantity }}</span>
                     <span style="font-weight:500;margin-right:10px">当前预占数量：{{ occupancyQuantity }}</span> -->
-                    <span style="font-weight:500;margin-right:10px">需采购数量：{{ outputQuantity }}</span>
+                    <span style="font-weight:500;margin-right:10px">需采购数量：{{ outputQuantityIss }}</span>
                   </div>
                 </pagination>
               </div>
@@ -769,7 +770,7 @@
                   </div>
                 </div>
                 <JNPF-table v-if="activeNameIss == 'out'" custom-column :partentOrChild="'out'"
-                  @sort-change="sortChange" :data="outData" highlight-current-row :setColumnDisplayList="columnList4"
+                  @sort-change="sortChange" :data="outDataIss" highlight-current-row :setColumnDisplayList="columnList4"
                   :fixedNO="true" class="dataTable" border ref="outRef">
 
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
@@ -837,15 +838,15 @@
                   </el-table-column>
 
                 </JNPF-table>
-                <pagination :total="total4" :page.sync="outForm.pageNum" :limit.sync="outForm.pageSize"
-                  @pagination="getouteData">
+                <pagination :total="total4Iss" :page.sync="outFormIss.pageNum" :limit.sync="outFormIss.pageSize"
+                  @pagination="getouteDataIss">
                   <div style="background: #f5f7fa;text-align:end" class="text">
                     <!-- <span style="font-weight:500;margin-right:10px">需求数量：{{ totalDemandQuantity }}</span>
                     <span style="font-weight:500;margin-right:10px">损耗数量：{{ lossNum }}</span>
                     <span style="font-weight:500;margin-right:10px">计划在制数量：{{ planInTransitQuantity }}</span>
                     <span style="font-weight:500;margin-right:10px">实际在制数量：{{ inTransitUnOccupancyQuantity }}</span>
                     <span style="font-weight:500;margin-right:10px">当前预占数量：{{ occupancyQuantity }}</span> -->
-                    <span style="font-weight:500;margin-right:10px">需外协数量：{{ outputQuantity }}</span>
+                    <span style="font-weight:500;margin-right:10px">需外协数量：{{ outputQuantityIss }}</span>
                   </div>
                 </pagination>
               </div>
@@ -939,6 +940,40 @@
             确定</el-button>
         </span>
       </el-dialog>
+      <el-dialog title="选择交货日期" :close-on-click-modal="false" :close-on-press-escape="false"
+        :visible.sync="selectDateDialogVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro"
+        width="400px" append-to-body>
+
+
+        <el-row class="JNPF-common-search-box treeBox_bot issForm" :gutter="16">
+          <el-form @submit.native.prevent ref="issForm" :model="issForm" :rules="dataRule" label-width="120px"
+            label-position="left">
+
+            <el-col :span="24" v-if='purchaseDataIss.length'>
+              <el-form-item prop='purchaseDeliveryDate' label="采购交货日期">
+                <el-date-picker v-model="issForm.purchaseDeliveryDate" type="date" value-format="yyyy-MM-dd"
+                  style="width: 100%;margin-left:0;" placeholder="请选择交货日期" clearable>
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24" v-if='outDataIss.length'>
+              <el-form-item prop="outDeliveryDate" label="外协交货日期">
+                <el-date-picker v-model="issForm.outDeliveryDate" type="date" value-format="yyyy-MM-dd"
+                  style="width: 100%;margin-left:0;" placeholder="请选择交货日期" clearable>
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+
+          </el-form>
+        </el-row>
+
+
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="selectDateDialogVisible = false">取消</el-button>
+          <el-button type="primary" :loading="btnLoading" @click="submitIssFun()">
+            确定</el-button>
+        </span>
+      </el-dialog>
       <PlanForm v-if="formVisible" ref="orderForm" @close="closeForm" />
       <ComplateSetForm v-if="complateSetFormVisible" ref="complateSetForm" @close="closeForm"
         :customList="customList" />
@@ -953,7 +988,7 @@
 import { getMrpCalcSchemeList, addMrpCalcSchemeList, delMrpCalcSchemeList } from '@/api/plan/index.js'
 import { addPlanList, updatePlanList, deletePlanList, getPlanList, detailPlanList } from '@/api/calculationList/calculationList.js'
 import PlanForm from '@/views/planManagement/assemblyPlan/salesOrderCreation/Form.vue'
-import { analyseMRP, getMaterialDemandReport, submitMRP } from "@/api/calculationList/MRPOperation.js"
+import { analyseMRP, getMaterialDemandReport, submitMRP, issueApi } from "@/api/calculationList/MRPOperation.js"
 import ComplateSetForm from './complateSetForm.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
@@ -976,12 +1011,20 @@ export default {
       total2: 0,
       total3: 0,
       total4: 0,
+      total1Iss: 0,
+      total2Iss: 0,
+      total3Iss: 0,
+      total4Iss: 0,
       activeName: "assemble",
       activeNameIss: "assemble",
       assembleData: [],
       produceData: [],
       purchaseData: [],
       outData: [],
+      assembleDataIss: [],
+      produceDataIss: [],
+      purchaseDataIss: [],
+      outDataIss: [],
       assembleForm: {
         demandType: "assemble",
         demandState: "not_finish",
@@ -1038,6 +1081,66 @@ export default {
         pageNum: 1,
         documentStatus: "draft",
       },
+      assembleFormIss: {
+        planIdList: [],
+        demandType: "assemble",
+        demandState: "not_finish",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+        pageSize: 20,
+        pageNum: 1,
+        documentStatus: "submit",
+      },
+      produceFormIss: {
+        planIdList: [],
+        demandType: "produce",
+        demandState: "not_finish",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+        pageSize: 20,
+        pageNum: 1,
+        documentStatus: "submit",
+      },
+      purchaseFormIss: {
+        planIdList: [],
+        demandType: "purchase",
+        demandState: "not_finish",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+        pageSize: 20,
+        pageNum: 1,
+        documentStatus: "submit",
+      },
+      outFormIss: {
+        planIdList: [],
+        demandType: "out",
+        demandState: "not_finish",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+        pageSize: 20,
+        pageNum: 1,
+        documentStatus: "submit",
+      },
       totalDemandQuantity: 0,//需求数量
       outputQuantity: 0,//需组装/生产/采购/外协数量
       lossNum: 0,//损耗数量
@@ -1045,6 +1148,12 @@ export default {
       inTransitUnOccupancyQuantity: 0,//实际在制在途数量
       occupancyQuantity: 0,//当前预占数量
 
+      totalDemandQuantityIss: 0,//需求数量
+      outputQuantityIss: 0,//需组装/生产/采购/外协数量
+      lossNumIss: 0,//损耗数量
+      planInTransitQuantityIss: 0,//计划在制在途数量
+      inTransitUnOccupancyQuantityIss: 0,//实际在制在途数量
+      occupancyQuantityIss: 0,//当前预占数量
 
 
 
@@ -1097,23 +1206,25 @@ export default {
       activeStep: 0,
       maxStep: 1,
       dataRule: {
-        fullName: [
-          { required: true, message: '功能名称不能为空', trigger: 'blur' },
+        outDeliveryDate: [
+          { required: true, message: '外协交货日期不能为空', trigger: 'change' },
         ],
-        enCode: [
-          { required: true, message: '功能编码不能为空', trigger: 'blur' },
-          { validator: this.formValidate('enCode'), trigger: 'blur' },
+        purchaseDeliveryDate: [
+          { required: true, message: '采购交货日期不能为空', trigger: 'change' },
         ],
-        category: [
-          { required: true, message: '功能分类不能为空', trigger: 'change' },
-        ]
+      },
+      issForm: {
+        outDeliveryDate: "",
+        purchaseDeliveryDate: "",
+        planIdList: [],
       },
       selectArr: [],
       isProjectSwitch: '',
       isProjectSwitchFlag: false,
       originalData: [],
       projectIdDataList: [],
-
+      planIdList: [],
+      selectDateDialogVisible: false,
     }
   },
   computed: {
@@ -1137,9 +1248,34 @@ export default {
   methods: {
     // 全部下达
     allIssueFun() {
-
+      if (this.outDataIss.length || this.purchaseDataIss.length) return this.selectDateDialogVisible = true
+      this.issForm.planIdList = this.planIdList
+      issueApi(this.issForm).then(res => {
+        this.selectDateDialogVisible = false
+        this.btnLoading = false
+        this.$message.success("全部下达成功")
+        this.closeDialog()
+      }).catch(error => {
+        this.btnLoading = false
+      })
     },
-
+    // 提交下达
+    submitIssFun() {
+      this.$refs['issForm'].validate((valid) => {
+        if (valid) {
+          this.btnLoading = true
+          this.issForm.planIdList = this.planIdList
+          issueApi(this.issForm).then(res => {
+            this.selectDateDialogVisible = false
+            this.btnLoading = false
+            this.$message.success("全部下达成功")
+            this.closeDialog()
+          }).catch(error => {
+            this.btnLoading = false
+          })
+        }
+      })
+    },
 
 
     changeProject() {
@@ -1174,7 +1310,7 @@ export default {
 
       }
       if (this.activeName == "purchase") {
-        this.getpurchaseDataa()
+        this.getpurchaseData()
 
       }
       if (this.activeName == "out") {
@@ -1214,11 +1350,11 @@ export default {
     // 组装数据  全部下达界面
     getassembleDataIss() {
       this.assembleFormIss.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-
+      this.assembleFormIss.planIdList = this.planIdList
       getMaterialDemandReport(this.assembleFormIss).then(res => {
         console.log("组装res", res);
-        let totalDataIss = res.data.total || 0
-        let tableDataIss = res.data.page.records || []
+        let totalData = res.data.total || 0
+        let tableData = res.data.page.records || []
         this.total1Iss = res.data.page.total || 0
         this.assembleDataIss = tableData || []
         this.totalDemandQuantityIss = totalData.demandQuantity || 0
@@ -1255,21 +1391,22 @@ export default {
     },
     // 生产数据  全部下达界面
     getproduceDataIss() {
-      this.assembleFormIss.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      this.produceFormIss.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
 
-      getMaterialDemandReport(this.assembleFormIss).then(res => {
+      this.produceFormIss.planIdList = this.planIdList
+      getMaterialDemandReport(this.produceFormIss).then(res => {
         console.log("组装res", res);
-        let totalDataIss = res.data.total || 0
-        let tableDataIss = res.data.page.records || []
+        let totalData = res.data.total || 0
+        let tableData = res.data.page.records || []
         this.total1Iss = res.data.page.total || 0
-        this.assembleDataIss = tableData || []
+        this.produceDataIss = tableData || []
         this.totalDemandQuantityIss = totalData.demandQuantity || 0
         this.outputQuantityIss = totalData.outputQuantity || 0
 
       })
     },
     // 采购列表数据
-    getpurchaseDataa() {
+    getpurchaseData() {
       this.purchaseForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getMaterialDemandReport(this.purchaseForm).then(res => {
         console.log("采购res", res);
@@ -1284,6 +1421,27 @@ export default {
         this.planInTransitQuantity = totalData.planInTransitQuantity || 0
         this.inTransitUnOccupancyQuantity = totalData.inTransitUnOccupancyQuantity || 0
         this.occupancyQuantity = totalData.occupancyQuantity || 0
+
+
+      })
+    },
+    // 采购 数据 全部下达界面
+    getpurchaseDataaIss() {
+      this.purchaseFormIss.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      this.purchaseFormIss.planIdList = this.planIdList
+      getMaterialDemandReport(this.purchaseFormIss).then(res => {
+        console.log("采购res", res);
+        let totalData = res.data.total || 0
+        let tableData = res.data.page.records || []
+        this.purchaseDataIss = tableData || 0
+        this.total3Iss = res.data.page.total || 0
+
+        this.totalDemandQuantityIss = totalData.demandQuantity || 0
+        this.outputQuantityIss = totalData.outputQuantity || 0
+        this.lossNumIss = totalData.lossNum || 0
+        this.planInTransitQuantityIss = totalData.planInTransitQuantity || 0
+        this.inTransitUnOccupancyQuantityIss = totalData.inTransitUnOccupancyQuantity || 0
+        this.occupancyQuantityIss = totalData.occupancyQuantity || 0
 
 
       })
@@ -1308,6 +1466,27 @@ export default {
 
       })
     },
+    // 外协数据  全部下达界面
+    getouteDataIss() {
+      this.outFormIss.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      this.outFormIss.planIdList = this.planIdList
+      getMaterialDemandReport(this.outFormIss).then(res => {
+        console.log("外协res", res);
+        let totalData = res.data.total
+        let tableData = res.data.page.records
+        this.outDataIss = tableData || []
+        this.total4Iss = res.data.page.total || 0
+
+        this.totalDemandQuantityIss = totalData.demandQuantity || 0
+        this.outputQuantityIss = totalData.outputQuantity || 0
+        this.lossNumIss = totalData.lossNum || 0
+        this.planInTransitQuantityIss = totalData.planInTransitQuantity || 0
+        this.inTransitUnOccupancyQuantityIss = totalData.inTransitUnOccupancyQuantity || 0
+        this.occupancyQuantityIss = totalData.occupancyQuantity || 0
+
+
+      })
+    },
     // 追溯主产品
     tracMainProduct(id, type) {
       this.dbformVisible = true
@@ -1327,6 +1506,7 @@ export default {
         //   setTimeout(() => {
         //   this.closeDialog()
         // }, 1500);
+        this.handleClickIssFun()
       }).catch(error => {
         this.btnLoading = false
       })
@@ -1632,6 +1812,7 @@ export default {
       this.tableData.forEach(item => {
         obj.planIdList.push(item.id)
       });
+      this.planIdList = obj.planIdList
       analyseMRP(obj).then(res => {
         console.log("res", res);
         this.$message.success("分析成功")
@@ -1769,5 +1950,9 @@ export default {
 
 .pagination-container {
   margin-top: 0
+}
+
+.issForm ::v-deep .el-form-item__content {
+  margin-left: 0 !important;
 }
 </style>

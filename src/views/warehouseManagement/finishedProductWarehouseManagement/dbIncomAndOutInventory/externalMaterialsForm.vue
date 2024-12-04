@@ -839,6 +839,7 @@ export default {
         // this.$set(item, 'weight', '')
         // item.num = item.waitDeliverNum
         this.$set(item, 'num', item.waitDeliverNum)
+        this.$set(item, 'warehouseId', this.dataForm.warehouseId)
 
         if (this.mainUnitFlag == 1) {
           if (item.calculationDirection == 'multiplication') {
@@ -995,10 +996,11 @@ export default {
       this.materialsForm.projectId = this.isProjectSwitch === '1' ? this.dataForm.projectId || '' : ''
 
       shipmentList(this.materialsForm).then(res => {
-        console.log("发料清单数据", res);
+        console.log("发料清单数据", res,this.dataForm.warehouseId);
         res.data.records.forEach(item => {
           this.$set(item, 'num', item.waitDeliverNum)
           this.$set(item, 'availableBatchNumber', item.availableBatchQuantity)
+          this.$set(item, 'warehouseId', this.dataForm.warehouseId)
           // this.$set(item, 'discount', '')
           // this.$set(item, 'proportion', '')
           // this.$set(item, 'weight', '')
@@ -1170,23 +1172,7 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待发料数量")
                 break
               }
-              // if (this.dataForm.weightFlag) {
-              // if (!item.discount) {
-              //   submitFlag = false
-              //   this.$message.error("产品信息第" + (index + 1) + "行折扣不能为空")
-              //   break
-              // }
-              //   if (!item.proportion) {
-              //     submitFlag = false
-              //     this.$message.error("产品信息第" + (index + 1) + "行比重不能为空")
-              //     break
-              //   }
-              //   if (!item.weight) {
-              //     submitFlag = false
-              //     this.$message.error("产品信息第" + (index + 1) + "行重量不能为空")
-              //     break
-              //   }
-              // }
+        
 
             }
 

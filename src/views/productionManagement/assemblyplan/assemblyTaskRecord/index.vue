@@ -65,8 +65,8 @@
             </el-table-column>
             <el-table-column prop="orderType" label="任务类型" min-width="120" sortable="custom">
               <template slot-scope="scope">
-                <div v-if="scope.row.orderType == 'normal'">正常订单</div>
-                <div v-if="scope.row.orderType == 'rework'">返工订单</div>
+                <div v-if="scope.row.orderType == 'normal'">正常任务</div>
+                <div v-if="scope.row.orderType == 'rework'">返工任务</div>
               </template>
             </el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
@@ -194,8 +194,9 @@ export default {
           label: "任务类型",
           type: 'select',
           options: [
-            { label: "正常订单", value: "normal" },
-            { label: "返工订单", value: "rework" },
+            { label: "正常任务", value: "normal" },
+            { label: "返工任务", value: "rework" },
+            { label: "手动新建任务", value: "manually" },
           ]
         },
         {

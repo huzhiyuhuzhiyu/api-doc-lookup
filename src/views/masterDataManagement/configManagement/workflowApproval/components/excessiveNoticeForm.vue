@@ -368,7 +368,7 @@ export default {
       //搜素条件列表
       ProductTableSearchList: [
         { prop: "orderNo", label: "生产单号", type: 'input' },
-        { prop: "orderType", label: "订单类型", type: 'select', options: [{ label: '正常订单', value: 'normal' }, { label: '返工订单', value: 'rework' }] }
+        { prop: "orderType", label: "订单类型", type: 'select', options: [{ label: '正常任务', value: 'normal' }, { label: '返工任务', value: 'rework' }] }
       ],
       ProductListRequestObj: {
         demandType: '',

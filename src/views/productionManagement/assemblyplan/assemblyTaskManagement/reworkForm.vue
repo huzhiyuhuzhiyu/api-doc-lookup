@@ -1019,6 +1019,7 @@ export default {
       this.dataForm = data
       this.$set(this.dataForm, 'taskMethod', 'appoint')
       this.$set(this.dataForm, 'planDate', [])
+      this.$set(this.dataForm, 'orderType', 'rework')
       this.$set(this.dataForm, 'orderNo', this.codeConfig.number)
     },
 

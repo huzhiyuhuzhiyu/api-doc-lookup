@@ -1,6 +1,7 @@
 // 开发环境接口配置
 const APIURl = 'http://zgt_zy.test.zgt.nbjuxuan.com/'  
 // const APIURl = 'http://192.168.0.49:30004'  
+// const APIURl = 'http://192.168.0.79:30004'  
 module.exports = {
   APIURl: APIURl,
   timeout: process.env.NODE_ENV === 'development' ? 1000000 : 1000000,

@@ -1650,8 +1650,8 @@ export default {
 
 
       orderTypeList: [
-        { label: "正常订单", value: "normal", },
-        { label: "返工订单", value: "rework", },
+        { label: "正常任务", value: "normal", },
+        { label: "返工任务", value: "rework", },
       ],
       saleOutboundFormVisible: false,
       saleOrderDateArr: [],
@@ -4294,10 +4294,10 @@ export default {
               type: 'select',
               options: [
                 {
-                  label: "正常订单", value: "normal",
+                  label: "正常任务", value: "normal",
                 },
                 {
-                  label: "返工订单", value: "rework",
+                  label: "返工任务", value: "rework",
                 }
               ]
             },

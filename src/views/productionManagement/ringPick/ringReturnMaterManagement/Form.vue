@@ -44,11 +44,11 @@
                             readonly placeholder="生产任务" @focus="openProductTaskFun" />
                         </el-form-item>
                       </el-col>
-                  
+
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="退料人" prop="personId">
                           <el-input v-model="dataForm.personId" :disabled="btnType == 'look' ? true : false"
-                          placeholder="退料人" />
+                            placeholder="退料人" />
 
                         </el-form-item>
                       </el-col>
@@ -86,7 +86,7 @@
                       <el-table-column prop="mainUnit" label="单位" min-width="130"></el-table-column>
                       <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="130"
                         v-if="btnType != 'look' && dataForm.receiveType == 'order'"></el-table-column>
-                     
+
                       <el-table-column prop="num" label="退料数量" min-width="130" v-if="dataForm.receiveType == 'order'">
                         <template slot="header">
                           <span class="required">*</span>退料数量
@@ -96,7 +96,7 @@
                             <el-input v-model="scope.row.num" placeholder="退料数量" :disabled="btnType == 'look'" />
                           </el-form-item>
                         </template>
-                      </el-table-column> 
+                      </el-table-column>
                       <el-table-column prop="num" label="退料数量" min-width="130" v-if="dataForm.receiveType == 'process'">
                         <template slot="header">
                           <span class="required">*</span>退料数量
@@ -114,7 +114,7 @@
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
-            <el-tab-pane label="附件" name="annex"   v-if="isattachmentswitch == '1'">
+            <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
               <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
             </el-tab-pane>
             <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
@@ -125,99 +125,99 @@
             </el-tab-pane>
           </el-tabs>
           <el-collapse v-model="activeNames" v-else>
-                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" style="margin-top: 10px;">
+            <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" style="margin-top: 10px;">
 
-                  <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
-                    <el-row :gutter="30" class="custom-row">
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="退料单号" prop="orderNo">
-                          <el-input v-model="dataForm.orderNo"
-                            :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="退料类型" prop="receiveType">
-                          <el-select v-model="dataForm.receiveType" placeholder="退料类型" style="width: 100%;"
-                            :disabled="btnType == 'look'" @change="checkSelection">
-                            <el-option v-for="(item, index) in receiveTypeList" :key="index" :label="item.label"
-                              :value="item.value"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="生产任务" prop="productionOrderNo">
-                          <el-input v-model="dataForm.productionOrderNo" :disabled="btnType == 'look' ? true : false"
-                            readonly placeholder="生产任务" @focus="openProductTaskFun" />
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="退料人" prop="personId">
-                          <el-input v-model="dataForm.personId" :disabled="btnType == 'look' ? true : false"
-                          placeholder="退料人" />
+              <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+                <el-row :gutter="30" class="custom-row">
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="退料单号" prop="orderNo">
+                      <el-input v-model="dataForm.orderNo"
+                        :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="退料类型" prop="receiveType">
+                      <el-select v-model="dataForm.receiveType" placeholder="退料类型" style="width: 100%;"
+                        :disabled="btnType == 'look'" @change="checkSelection">
+                        <el-option v-for="(item, index) in receiveTypeList" :key="index" :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="生产任务" prop="productionOrderNo">
+                      <el-input v-model="dataForm.productionOrderNo" :disabled="btnType == 'look' ? true : false"
+                        readonly placeholder="生产任务" @focus="openProductTaskFun" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="退料人" prop="personId">
+                      <el-input v-model="dataForm.personId" :disabled="btnType == 'look' ? true : false"
+                        placeholder="退料人" />
 
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="退料日期" prop="operationDate">
-                          <el-date-picker v-model="dataForm.operationDate" :default-value="new Date()" type="date"
-                            value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择退料日期"
-                            :disabled="btnType == 'look' ? true : false">
-                          </el-date-picker>
-                        </el-form-item>
-                      </el-col>
-                   
-                      <el-col :sm="12" :xs="24">
-                        <el-form-item label="备注" prop="remark">
-                          <el-input v-model="dataForm.remark" placeholder="请输入备注"
-                            :disabled="btnType == 'look' ? true : false" type="textarea" maxlength="200" />
-                        </el-form-item>
-                      </el-col>
-                    </el-row>
-                  </el-form>
-                </el-collapse-item>
-                <el-collapse-item title="退料清单" name="productInfo" class="productInfo">
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="退料日期" prop="operationDate">
+                      <el-date-picker v-model="dataForm.operationDate" :default-value="new Date()" type="date"
+                        value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择退料日期"
+                        :disabled="btnType == 'look' ? true : false">
+                      </el-date-picker>
+                    </el-form-item>
+                  </el-col>
 
-                  <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                    <div v-if="btnType != 'look'">
-                      <el-button type="text" style="margin-right:8px;margin-left:8px;  font-size:14px!important"
-                        icon="el-icon-plus" @click="openSeleceMaterDialog()">选择物料</el-button>|
-                      <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                        icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
-                    </div>
-                    <JNPF-table ref="product" :data="dataFormTwo.data" fixedNo v-loading="tableloading"
-                      :hasC="btnType != 'look'" @selection-change="handeleProductInfoData">
-                      <el-table-column prop="productDrawingNo" label="品名规格" min-width="130"></el-table-column>
-                      <el-table-column prop="productCode" label="产品编码" min-width="130"></el-table-column>
-                      <el-table-column prop="processName" label="工序名称" min-width="130" />
-                      <el-table-column prop="mainUnit" label="单位" min-width="130"></el-table-column>
-                      <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="130"
-                        v-if="btnType != 'look' && dataForm.receiveType == 'order'"></el-table-column>
-                     
-                      <el-table-column prop="num" label="退料数量" min-width="130" v-if="dataForm.receiveType == 'order'">
-                        <template slot="header">
-                          <span class="required">*</span>退料数量
-                        </template>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'num'" :rules="productRules.rules">
-                            <el-input v-model="scope.row.num" placeholder="退料数量" :disabled="btnType == 'look'" />
-                          </el-form-item>
-                        </template>
-                      </el-table-column> 
-                      <el-table-column prop="num" label="退料数量" min-width="130" v-if="dataForm.receiveType == 'process'">
-                        <template slot="header">
-                          <span class="required">*</span>退料数量
-                        </template>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'num'" :rules="productRules.rules">
-                            <el-input v-model="scope.row.num" placeholder="退料数量" :disabled="btnType == 'look'" />
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
+                  <el-col :sm="12" :xs="24">
+                    <el-form-item label="备注" prop="remark">
+                      <el-input v-model="dataForm.remark" placeholder="请输入备注"
+                        :disabled="btnType == 'look' ? true : false" type="textarea" maxlength="200" />
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-form>
+            </el-collapse-item>
+            <el-collapse-item title="退料清单" name="productInfo" class="productInfo">
 
-                    </JNPF-table>
+              <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
+                <div v-if="btnType != 'look'">
+                  <el-button type="text" style="margin-right:8px;margin-left:8px;  font-size:14px!important"
+                    icon="el-icon-plus" @click="openSeleceMaterDialog()">选择物料</el-button>|
+                  <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                    icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
+                </div>
+                <JNPF-table ref="product" :data="dataFormTwo.data" fixedNo v-loading="tableloading"
+                  :hasC="btnType != 'look'" @selection-change="handeleProductInfoData">
+                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="130"></el-table-column>
+                  <el-table-column prop="productCode" label="产品编码" min-width="130"></el-table-column>
+                  <el-table-column prop="processName" label="工序名称" min-width="130" />
+                  <el-table-column prop="mainUnit" label="单位" min-width="130"></el-table-column>
+                  <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="130"
+                    v-if="btnType != 'look' && dataForm.receiveType == 'order'"></el-table-column>
 
-                  </el-form>
-                </el-collapse-item>
+                  <el-table-column prop="num" label="退料数量" min-width="130" v-if="dataForm.receiveType == 'order'">
+                    <template slot="header">
+                      <span class="required">*</span>退料数量
+                    </template>
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'num'" :rules="productRules.rules">
+                        <el-input v-model="scope.row.num" placeholder="退料数量" :disabled="btnType == 'look'" />
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="num" label="退料数量" min-width="130" v-if="dataForm.receiveType == 'process'">
+                    <template slot="header">
+                      <span class="required">*</span>退料数量
+                    </template>
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'num'" :rules="productRules.rules">
+                        <el-input v-model="scope.row.num" placeholder="退料数量" :disabled="btnType == 'look'" />
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+
+                </JNPF-table>
+
+              </el-form>
+            </el-collapse-item>
           </el-collapse>
         </div>
 
@@ -236,7 +236,7 @@ import { detailordershengchan, detailWithdrawal, addWithdrawal, updateWithdrawal
 import ProductTaskForm from './ProductTaskForm.vue'
 import OrderMaterialForm from './OrderMaterialForm.vue'
 import ProcessMaterialForm from './ProcessMaterialForm.vue'
-import { getBusinessFlowInfo , getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
+import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
@@ -247,16 +247,16 @@ export default {
     ProductTaskForm,
     OrderMaterialForm,
     ProcessMaterialForm,
-    Process , recordList
+    Process, recordList
   },
   mixins: [busFlow],
   data() {
     return {
-      isattachmentswitch:"",
+      isattachmentswitch: "",
       orderMaterialFormVisible: false,
       processMaterialFormVisible: false,
       receiveTypeList: [
-        { label: "订单物料", value: "order" },
+        { label: "任务物料", value: "order" },
         { label: "工序物料", value: "process" },
       ],
       codeConfig: {},
@@ -289,7 +289,7 @@ export default {
         productionOrderId: "",
         productionOrderNo: "",
         remark: "",
-        approvalFlag:false
+        approvalFlag: false
       },
       dataFormTwo: {
         data: [],
@@ -316,7 +316,7 @@ export default {
         operationDate: [
           { required: true, message: '退料日期不能为空', trigger: 'change' }
         ],
-    
+
 
       },
       selectArr: [],
@@ -330,10 +330,10 @@ export default {
       previousReceiveType: null,  // 存储上一次选择的退料类型  
       isSame: false,
       flowTemplateJson: {},
-      flowData:{},
-      approvalFlag:false,   // 待办事宜等页面 需要
+      flowData: {},
+      approvalFlag: false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime:0
+      endTime: 0
     }
   },
   computed: {
@@ -383,7 +383,7 @@ export default {
       this.dataForm.productionOrderNo = data.orderNo
 
       this.dataForm.productionOrderId = data.id
-    
+
 
 
     },
@@ -429,7 +429,7 @@ export default {
           this.$refs.orderMaterialForm.init(this.dataForm.productionOrderId)
 
         })
-        // 订单物料
+        // 任务物料
       } else {
         // 工序物料
         this.processMaterialFormVisible = true
@@ -481,7 +481,7 @@ export default {
       }
 
     },
- 
+
     dateFormat(dateData) {
       var date = new Date(dateData);
       var year = date.getFullYear();
@@ -538,23 +538,23 @@ export default {
         console.log("通知单详情", res);
         this.dataFormTwo.data = res.data.collectLineList
         this.dataForm = res.data.collect
-        if (this.btnType === 'edit'){
-            this.getBusInfo()
-        }else{
-           // 流程信息和流转记录
+        if (this.btnType === 'edit') {
+          this.getBusInfo()
+        } else {
+          // 流程信息和流转记录
           if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
         }
       })
     },
-    init(id, btnType,approvalFlag, sourceType) {
-        console.log("传递数据", id, btnType);
-        this.btnType = btnType
-        this.approvalFlag = approvalFlag
-        this.sourceType = sourceType
-        if (id) {
-          this.getDetailWithdrawal(id)
-        }
-    
+    init(id, btnType, approvalFlag, sourceType) {
+      console.log("传递数据", id, btnType);
+      this.btnType = btnType
+      this.approvalFlag = approvalFlag
+      this.sourceType = sourceType
+      if (id) {
+        this.getDetailWithdrawal(id)
+      }
+
       // let num=JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
       // this.$set(this.dataForm,'productionQuantity',num)
 
@@ -612,7 +612,7 @@ export default {
           nodeCondList: null,
           collect: this.dataForm,
           collectLineList: this.dataFormTwo.data,
-          flowData:this.flowData
+          flowData: this.flowData
         }
         let method = this.btnType == 'add' ? addWithdrawal : updateWithdrawal
         console.log(obj);
@@ -637,28 +637,28 @@ export default {
 
     },
     // 测试审批流
-    getBusInfo(){
-      getBusinessFlowInfo('b039').then(res=>{
-        if (res.data){
-          if (res.data.enabledMark){
+    getBusInfo() {
+      getBusinessFlowInfo('b039').then(res => {
+        if (res.data) {
+          if (res.data.enabledMark) {
             this.flowData = res.data
             this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
             this.dataForm.approvalFlag = res.data.enabledMark
-          }else{
+          } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
             this.$message.error('未找到审批流程！')
           }
-        }else{
+        } else {
           this.flowTemplateJson = {}
           this.dataForm.approvalFlag = false
         }
-      }).catch(()=>{})
+      }).catch(() => { })
     },
     // 流程信息 && 流转记录
-    getFlowDetail(id){
-      getBusinessFlowDetail(id).then(res=>{
-        if (res.data){
+    getFlowDetail(id) {
+      getBusinessFlowDetail(id).then(res => {
+        if (res.data) {
           this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson) : null
           this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
           this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
@@ -681,8 +681,8 @@ export default {
             }
           }
         }
-      }).catch(()=>{})
-    },     
+      }).catch(() => { })
+    },
   }
 }
 </script>

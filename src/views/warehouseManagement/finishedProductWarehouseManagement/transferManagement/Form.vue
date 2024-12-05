@@ -117,7 +117,6 @@
                         <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123"></el-table-column>
                         <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"></el-table-column>
                         <el-table-column prop="oil" label="油脂" width="120" :key="61"></el-table-column>
-                        <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"></el-table-column>
                         <el-table-column prop="clearance" label="游隙" width="120" :key="100"></el-table-column>
                         <el-table-column prop="aperture" label="孔径" width="120" :key="200"></el-table-column>
                         <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="900"></el-table-column>
@@ -235,7 +234,6 @@
                     <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123"></el-table-column>
                     <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"></el-table-column>
                     <el-table-column prop="oil" label="油脂" width="120" :key="61"></el-table-column>
-                    <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"></el-table-column>
                     <el-table-column prop="clearance" label="游隙" width="120" :key="100"></el-table-column>
                     <el-table-column prop="aperture" label="孔径" width="120" :key="200"></el-table-column>
                     <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="900"></el-table-column>
@@ -299,6 +297,8 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="allproductData" hasC @sort-change="sortChange" :fixedNO="true"
                 @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
+                <el-table-column prop="partnerName" label="供应商名称" min-width="160" />
+                <el-table-column prop="partnerCode" label="供应商编码" min-width="160" />
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="160"
                   sortable="custom"></el-table-column>
                 <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
@@ -335,8 +335,7 @@
                   :key="17"></el-table-column>
                 <el-table-column prop="oil" label="油脂" width="120" :key="61" sortable="custom"
                   min-width="160"></el-table-column>
-                <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" min-width="160"
-                  :key="51"></el-table-column>
+            
                 <el-table-column prop="clearance" label="游隙" width="120" sortable="custom" min-width="160"
                   :key="300"></el-table-column>
                 <el-table-column prop="aperture" label="孔径" width="120" sortable="custom" min-width="160"

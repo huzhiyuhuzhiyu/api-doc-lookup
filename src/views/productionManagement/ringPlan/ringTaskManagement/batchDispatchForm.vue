@@ -568,8 +568,8 @@ export default {
       totalDispatchQuantity: 0,
       totalCompletedQuantity: 0,
       orderTypeList: [
-        { label: "正常订单", value: "normal", },
-        { label: "返工订单", value: "rework", },
+        { label: "正常任务", value: "normal", },
+        { label: "返工任务", value: "rework", },
       ],
       orderStatusList: [
         { label: "进行中", value: "normal", },

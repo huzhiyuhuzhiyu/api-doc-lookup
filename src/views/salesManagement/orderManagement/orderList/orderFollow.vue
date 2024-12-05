@@ -876,7 +876,7 @@ export default {
             tableData:[],
             listLoading:false,
             orderTypeList: [
-                { label: "正常订单", value: "normal" },
+                { label: "正常任务", value: "normal" },
                 { label: "预测订单", value: "prediction" },
                 { label: "样品订单", value: "sample" },
                 { label: "备货订单", value: "stock_up" },

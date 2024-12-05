@@ -157,7 +157,7 @@
                   </el-col>
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="领料日期" prop="operationDate">
-                      <el-date-picker v-model="dataForm.operationDate" :default-value="new Date()" type="datetime"
+                      <el-date-picker v-model="dataForm.operationDate" :default-value="new Date()" type="date"
                         value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择领料日期"
                         :disabled="btnType == 'look' ? true : false">
                       </el-date-picker>

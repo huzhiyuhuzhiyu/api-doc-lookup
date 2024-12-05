@@ -19,8 +19,8 @@
                     }} <img v-if="dataForm.urgentFlag" src="@/assets/images/emergency2.png" alt="" style="width: 30px;vertical-align: top;"> </el-descriptions-item>
                 </el-descriptions>
                 <el-descriptions class="margin-top" :column="4">
-                  <el-descriptions-item label="任务类型" class="orderNo"> {{ dataForm.orderType == 'normal' ? "正常订单" :
-                    "返工订单"
+                  <el-descriptions-item label="任务类型" class="orderNo"> {{ dataForm.orderType == 'normal' ? "正常任务" :
+                    "返工任务"
                     }}</el-descriptions-item>
                   <el-descriptions-item label="产品编码">{{ dataForm.productCode }}</el-descriptions-item>
                   <el-descriptions-item label="总生产数量">{{ dataForm.productionQuantity }}{{ dataForm.mainUnit }}</el-descriptions-item>
@@ -155,8 +155,8 @@ export default {
       ],
       categoryType: "workOrder",
       orderTypeList: [
-        { label: "正常订单", value: "normal", },
-        { label: "返工订单", value: "rework", },
+        { label: "正常任务", value: "normal", },
+        { label: "返工任务", value: "rework", },
       ],
       orderStatusList: [
 

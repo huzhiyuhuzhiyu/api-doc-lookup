@@ -1084,10 +1084,10 @@ export default {
       getWarehouseList({ code: this.warehouseCode }).then(res => {
         this.dataForm.warehouseName = res.data[0].name
         this.dataForm.warehouseId = res.data[0].id
-        // 获取仓库详情信息
+          this.dataForm.warehouseType = res.data[0].type
+          // 获取仓库详情信息
         getWarehouseInfo(res.data[0].id).then(response => {
           this.wareHouseInfo = response.data
-          this.dataForm.warehouseType = response.data.type
           this.dataForm.projectId = response.data.projectId
           this.allocationFlag = response.data.locationStatus == 'disabled' ? false : true
         })
@@ -1161,7 +1161,8 @@ export default {
 
               // this.$set(item, 'discount', '')
               // this.$set(item, 'proportion', '')
-              // this.$set(item, 'weight', '')
+              this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+              this.$set(item, 'warehouseType', this.dataForm.warehouseType)
 
 
               if (this.mainUnitFlag == 1) {
@@ -1289,6 +1290,7 @@ export default {
             this.copyLinesData = JSON.parse(JSON.stringify(this.productData))
             this.copyLinesData.forEach(element => {
               element.warehouseType = this.dataForm.warehouseType
+              element.warehouseId = this.dataForm.warehouseId
             });
             this.dataForm.classAttributeList = this.classAttributeList
             this.dataForm.sourceType = 'notice'

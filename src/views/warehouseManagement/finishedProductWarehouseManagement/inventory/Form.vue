@@ -12,7 +12,7 @@
                     @keyup.enter.native="search()" />
                 </el-form-item>
               </el-col>
-              <el-col :span="6" v-if="productNameFlag==1">
+              <el-col :span="6" v-if="productNameFlag == 1">
                 <el-form-item>
                   <el-input v-model="listQuery.productName" placeholder="产品名称" clearable
                     @keyup.enter.native="search()" />
@@ -46,15 +46,17 @@
             </div>
             <JNPF-table v-if="tableDataFlag" :data="tableData" hasNO fixedNO @sort-change="sortChange" ref="dataTables">
 
+              <el-table-column prop="partnerName" label="供应商名称" min-width="200" />
+              <el-table-column prop="partnerCode" label="供应商编码" min-width="200" />
               <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" />
               <el-table-column prop="productCode" label="产品编码" width="120" />
-              <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"  />
+              <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
               <el-table-column prop="weight" label="重量(KG)" min-width="120" sortable="custom" />
               <el-table-column prop="proportion" label="比重" min-width="120" sortable="custom" />
-              <el-table-column prop="processName" label="工序名称" min-width="120"  />
-              <el-table-column prop="processCode" label="工序编码" min-width="120"  />
+              <el-table-column prop="processName" label="工序名称" min-width="120" />
+              <el-table-column prop="processCode" label="工序编码" min-width="120" />
               <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-              v-if="isProjectSwitch == 1" />
+                v-if="isProjectSwitch == 1" />
               <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
               <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
               <el-table-column prop="inventoryQuantity" v-if="fieldFlag" label="库存数量" width="120" sortable="custom" />
@@ -67,7 +69,7 @@
                 </template>
               </el-table-column>
               <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
-          
+
               <el-table-column prop="inspectionResults" label="检验结果" sortable="custom" min-width="120">
                 <template slot-scope="scope">
                   <div v-if="scope.row.inspectionResults == 'qualified'">合格</div>
@@ -94,7 +96,14 @@
               <el-table-column prop="aperture" label="孔径" min-width="120" :key="100"
                 sortable="custom"></el-table-column>
               <el-table-column prop="colour" label="颜色" min-width="120" :key="100" sortable="custom"></el-table-column>
-
+              <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom" min-width="160"
+                :key="601"></el-table-column>
+              <el-table-column prop="logo" label="logo" width="120" sortable="custom" min-width="160"
+                :key="602"></el-table-column>
+              <el-table-column prop="specialRequire" label="开等分" width="120" sortable="custom" min-width="160"
+                :key="603"></el-table-column>
+              <el-table-column prop="material" label="材质" width="120" sortable="custom" min-width="160"
+                :key="604"></el-table-column>
               <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" fixed="right"
                 sortable="custom" />
             </JNPF-table>
@@ -182,7 +191,7 @@ export default {
     this.getConfig()
     this.isProjectSwitchFlag = true
 
-  }, 
+  },
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -192,23 +201,23 @@ export default {
   },
   methods: {
     getConfig() {
-    let objs = { "pageSize": -1, "businessCode": "product" }
+      let objs = { "pageSize": -1, "businessCode": "product" }
       getBimBusinessSwitchConfigList(objs).then(res => {
         this.productNameFlag = res.data.product[1].configValue1
         console.log(this.productNameFlag);
         this.tableDataFlag = true
-     
+
       }).catch(error => {
         this.tableFlag = true
       })
     },
     async getMainUnitFun(code, type) {
-      this.listLoading=true
+      this.listLoading = true
       try {
         this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
         this.tableDataFlag = true
-        this.listLoading=false
-        
+        this.listLoading = false
+
 
       } catch (error) {
       }
@@ -290,7 +299,7 @@ export default {
         availableFlag: 0, // 可用数标识（0 否 1是）默认否
         inventoryFlag: 0, // 库存数标识（0 否 1是）默认否
         occupancyFlag: 0, // 占用数标识（0 否 1是）默认否
-        virtuallyFlag:false,
+        virtuallyFlag: false,
         scrapFlag: false,
         orderItems: [{
           asc: false,
@@ -326,15 +335,15 @@ export default {
       inventorySpaceList(this.listQuery).then(res => {
         this.treeLoading = false
         this.listLoading = false
-        if (!res.data.whPage.records.length){
+        if (!res.data.whPage.records.length) {
           console.log(6666);
-          this.tableData=[]
-          this.total=0
-          this.totalData.totalInventory=0
-          this.totalData.totalAvailable=0
-          this.totalData.totalOccupancy=0
-        
-        } else{
+          this.tableData = []
+          this.total = 0
+          this.totalData.totalInventory = 0
+          this.totalData.totalAvailable = 0
+          this.totalData.totalOccupancy = 0
+
+        } else {
 
           this.tableData = res.data.whPage.records
           this.total = res.data.whPage.total

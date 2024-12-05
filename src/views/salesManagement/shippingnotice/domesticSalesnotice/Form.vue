@@ -527,7 +527,7 @@ export default {
         { label: "审批拒绝", value: "rebut" }
       ],
       orderList: [
-        { label: "正常订单", value: "normal" },
+        { label: "正常任务", value: "normal" },
         { label: "预测订单", value: "prediction" },
         { label: "样品订单", value: "sample" },
         { label: "备货订单", value: "stock_up" },
@@ -767,7 +767,7 @@ export default {
     listDataFormatting(res) {
       res.data.records.forEach((item, index) => {
         if (item.orderType === 'normal') {
-          item.orderType = '正常订单'
+          item.orderType = '正常任务'
         } else if (item.orderType === 'prediction') {
           item.orderType = '预测订单'
         } else if (item.orderType === 'sample') {

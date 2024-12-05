@@ -68,8 +68,8 @@ export default {
   data() {
     return {
       orderTypeList: [
-        { label: "正常订单", value: "normal" },
-        { label: "返工订单", value: "rework" },
+        { label: "正常任务", value: "normal" },
+        { label: "返工任务", value: "rework" },
       ],
       customerVisible: false,
 

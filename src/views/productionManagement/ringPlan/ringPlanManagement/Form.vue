@@ -104,7 +104,7 @@
                   </el-col>
 
                   <el-col :sm="6" :xs="24">
-                    <el-form-item label="工艺路线名称" prop="routingName" style="margin-bottom: 20px;">
+                    <el-form-item label="工艺路线名称" prop="routingName" >
                       <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" readonly
                         @focus="openRoutingFun"></el-input>
                     </el-form-item>

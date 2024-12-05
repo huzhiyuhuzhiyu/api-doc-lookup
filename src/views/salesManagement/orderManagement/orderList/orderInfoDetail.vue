@@ -20,7 +20,7 @@
                 <el-descriptions class="margin-top" :column="4">
 
                   <el-descriptions-item label="订单类型" class="orderNo" v-if="dataForm.orderType == 'normal'">
-                    <el-tag style="vertical-align: super;" effect="dark">正常订单</el-tag>
+                    <el-tag style="vertical-align: super;" effect="dark">正常任务</el-tag>
                   </el-descriptions-item>
                   <el-descriptions-item label="订单类型" class="orderNo" v-if="dataForm.orderType == 'prediction'">
                     <el-tag style="vertical-align: super;" effect="dark" type="success">预测订单</el-tag>
@@ -211,8 +211,8 @@ export default {
       ],
       productData: [], 
       orderTypeList: [
-        { label: "正常订单", value: "normal", },
-        { label: "返工订单", value: "rework", },
+        { label: "正常任务", value: "normal", },
+        { label: "返工任务", value: "rework", },
       ],
 
 

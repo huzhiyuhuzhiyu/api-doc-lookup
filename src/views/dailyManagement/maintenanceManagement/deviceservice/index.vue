@@ -55,7 +55,7 @@
           </el-table-column>
           <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" sortable="custom" />
           <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom"></el-table-column>
-          <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName"/>
+          <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
           <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
           <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
           <el-table-column prop="frontPicList" label="故障情况照片" min-width="140">
@@ -126,7 +126,7 @@
           <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
           <el-table-column label="操作" width="200" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" v-if="scope.row.reviewComments == 'immediately'" @click="handleUserRelation(scope.row.id, 'end')">维修</el-button>
+              <el-button size="mini" type="text" v-if="scope.row.reviewComments == 'immediately'||scope.row.reviewComments==''" @click="handleUserRelation(scope.row.id, 'end')">维修</el-button>
               <el-button size="mini" type="text" v-if="scope.row.reviewComments == 'outsourcing'" @click="outsourcedcompletion(scope.row.id)">委外维修</el-button>
               <el-button size="mini" type="text" class="JNPF-table-delBtn" :disabled="scope.row.state === 'maintaining'" @click="handleDel(scope.row.id)">删除</el-button>
               <el-dropdown hide-on-click>

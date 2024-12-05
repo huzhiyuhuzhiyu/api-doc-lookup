@@ -141,10 +141,10 @@
           <el-table-column prop="excludingTaxCostPrice" label="单价(不含税)" sortable="custom" min-width="180" />
           <el-table-column prop="taxAmount" label="税额" sortable="custom" min-width="120" />
           <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" sortable="custom" min-width="180" />
-          <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom" ></el-table-column>
-          <el-table-column prop="logo" label="logo" width="120" sortable="custom" ></el-table-column>
-          <el-table-column prop="specialRequire" label="开等分" width="120" sortable="custom" ></el-table-column>
-          <el-table-column prop="material" label="材质" width="120" sortable="custom" ></el-table-column>
+          <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom"></el-table-column>
+          <el-table-column prop="logo" label="logo" width="120" sortable="custom"></el-table-column>
+          <el-table-column prop="specialRequire" label="开等分" width="120" sortable="custom"></el-table-column>
+          <el-table-column prop="material" label="材质" width="120" sortable="custom"></el-table-column>
           <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120" />
           <el-table-column prop="colour" label="颜色" sortable="custom" min-width="120" />
           <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom"></el-table-column>
@@ -1062,9 +1062,9 @@ export default {
 
     },
     superQuerySearch(query) {
-      this.superQuery = query
+      this.listQuery.superQuery = query
       this.superQueryVisible = false
-      this.search('super')
+      this.search()
     },
     viewFun(id, type, row) {
 
@@ -1406,8 +1406,12 @@ export default {
         // { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'partnerName', fieldValue: '', label: '客户/供应商', symbol: 'like', searchType: 1, width: 120 },
         // { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-      ],
-        this.initData()
+      ]
+      if (this.productNameFlag == '1') {
+
+        this.searchList.push({ field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 })
+      }
+      this.initData()
     },
 
     addOrUpdateHandle(id, btntype) {

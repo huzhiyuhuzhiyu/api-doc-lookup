@@ -336,7 +336,7 @@ export default {
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false
-      this.search('super')
+      this.search()
     },
     // 获取指定树状列表
     getcategoryTree() {

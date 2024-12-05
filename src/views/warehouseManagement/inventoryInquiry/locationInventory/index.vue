@@ -229,7 +229,11 @@ export default {
         superQuery: {},
       },
       selectedNodeKey: "",
-      totalData: {},
+      totalData: {
+        totalInventory:0,
+        totalAvailable:0,
+        totalOccupancy:0,
+      },
       superQueryJson: [
         {
           prop: 'productDrawingNo',
@@ -424,7 +428,11 @@ export default {
         this.tableData = res.data.whPage.records
         if (res.data.stockSts) {
 
-          this.totalData = res.data.stockSts
+          this.totalData = res.data.stockSts||{
+        totalInventory:0,
+        totalAvailable:0,
+        totalOccupancy:0,
+      }
         }
         this.total = res.data.whPage.total
         this.listLoading = false

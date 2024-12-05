@@ -181,7 +181,11 @@ export default {
         classAttribute: "finish_product",
       },
       selectedNodeKey: "",
-      totalData: {},
+      totalData: {
+        totalInventory:0,
+        totalAvailable:0,
+        totalOccupancy:0,
+      },
       superQueryJson: [
         {
           prop: 'productDrawingNo',
@@ -319,11 +323,14 @@ export default {
       this.tableQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       inventoryWarehouseList(this.tableQuery).then((res) => {
         console.log(res);
-        this.tableData = res.data.whPage.records
-        if (res.data.stockSts) {
+        this.tableData = res.data.whPage.records 
 
-          this.totalData = res.data.stockSts
-        }
+          this.totalData = res.data.stockSts||{
+        totalInventory:0,
+        totalAvailable:0,
+        totalOccupancy:0,
+      }
+     
         this.total = res.data.whPage.total
         this.listLoading = false
       }).catch(() => {

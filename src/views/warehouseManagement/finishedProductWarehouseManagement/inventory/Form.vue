@@ -335,20 +335,16 @@ export default {
       inventorySpaceList(this.listQuery).then(res => {
         this.treeLoading = false
         this.listLoading = false
-        if (!res.data.whPage.records.length) {
-          console.log(6666);
-          this.tableData = []
-          this.total = 0
-          this.totalData.totalInventory = 0
-          this.totalData.totalAvailable = 0
-          this.totalData.totalOccupancy = 0
-
-        } else {
+     
 
           this.tableData = res.data.whPage.records
           this.total = res.data.whPage.total
-          this.totalData = res.data.stockSts
-        }
+          this.totalData = res.data.stockSts||{
+            totalInventory:0,
+            totalAvailable:0,
+            totalOccupancy:0,
+          }
+ 
 
       }).catch(err => {
         this.treeLoading = false

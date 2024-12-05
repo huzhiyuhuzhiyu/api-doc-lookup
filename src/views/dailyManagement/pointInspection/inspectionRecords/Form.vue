@@ -97,18 +97,18 @@
               <el-collapse-item title="点检任务" name="byrw" v-if="btnType==='look'">
                 <el-row :gutter="30">
                   <el-col :sm="6" :xs="24">
-                    <el-form-item label="计划点检人" prop="maintainerIdName">
-                      <el-input v-model="dataForm.maintainerIdName" placeholder="请输入计划点检人" :disabled="true" />
+                    <el-form-item label="计划点检人" prop="maintainerIdText">
+                      <el-input v-model="dataForm.maintainerIdText" placeholder="请输入计划点检人" :disabled="true" />
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
-                    <el-form-item label="计划点检时间" prop="nextMaintenanceTime">
-                      <el-input v-model="dataForm.nextMaintenanceTime" placeholder="请输入计划点检时间" :disabled="true" />
+                    <el-form-item label="计划点检时间" prop="planMaintenanceDate">
+                      <el-input v-model="dataForm.planMaintenanceDate" placeholder="请输入计划点检时间" :disabled="true" />
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
-                    <el-form-item label="点检任务名称" prop="name">
-                      <el-input v-model="dataForm.name" placeholder="请输入点检任务名称" :disabled="true" />
+                    <el-form-item label="点检任务名称" prop="maintenanceTaskIdText">
+                      <el-input v-model="dataForm.maintenanceTaskIdText" placeholder="请输入点检任务名称" :disabled="true" />
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
@@ -321,15 +321,15 @@ export default {
       dataForm: {
         // inspectionResults: 'normal',
         pic: '',
-        name: '',
+        maintenanceTaskIdText: '',
         cycleType: '',
         cycle: '',
         unit: '',
         factoryFloor: '',
         mountedPlaces: '',
         equipmentIdCode: '',
-        maintainerIdName: '',
-        nextMaintenanceTime: '',
+        maintainerIdText: '',
+        planMaintenanceDate: '',
         maintenanceTaskId: '',
         departmentId: '',
         maintainerId: '',
@@ -570,9 +570,9 @@ export default {
       }
       checkmaintenanceList(a).then(res => {
         if (!res.data.records.length) return
-        this.dataForm.maintainerIdName = res.data.records[0].maintainerIdName
-        this.dataForm.nextMaintenanceTime = res.data.records[0].nextMaintenanceTime
-        this.dataForm.name = res.data.records[0].name
+        this.dataForm.maintainerIdText = res.data.records[0].maintainerIdName
+        this.dataForm.planMaintenanceDate = res.data.records[0].nextMaintenanceTime
+        this.dataForm.maintenanceTaskIdText = res.data.records[0].name
         this.dataForm.cycleType = res.data.records[0].cycleType
         this.dataForm.cycle = res.data.records[0].cycle
         this.dataForm.unit = res.data.records[0].unit

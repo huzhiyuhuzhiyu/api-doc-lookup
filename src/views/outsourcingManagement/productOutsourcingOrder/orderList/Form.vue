@@ -91,16 +91,9 @@
                       <el-table-column prop="projectName" label="所属项目" width="120"
                         v-if="isProjectSwitch === '1'"></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
-
-                        <template slot="header">
-                          <span class="required">*</span>
-                          品名规格
-                        </template>
                         <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
-                            :rules="productRules.productDrawingNo">
-                            <el-input v-model="scope.row.productDrawingNo" placeholder="请输入品名规格"
-                              :disabled="type === 'look'" />
+                          <el-form-item>
+                            <el-input v-model="scope.row.productDrawingNo" placeholder="请输入品名规格" disabled />
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -364,16 +357,9 @@
                   <el-table-column prop="projectName" label="所属项目" width="120"
                     v-if="isProjectSwitch === '1'"></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
-
-                    <template slot="header">
-                      <span class="required">*</span>
-                      品名规格
-                    </template>
                     <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
-                        :rules="productRules.productDrawingNo">
-                        <el-input v-model="scope.row.productDrawingNo" placeholder="请输入品名规格"
-                          :disabled="type === 'look'" />
+                      <el-form-item>
+                        <el-input v-model="scope.row.productDrawingNo" placeholder="请输入品名规格" disabled />
                       </el-form-item>
                     </template>
                   </el-table-column>

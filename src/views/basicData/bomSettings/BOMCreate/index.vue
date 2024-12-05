@@ -31,8 +31,8 @@
                           <el-collapse-item title="子件信息" name="productInfo">
                             <TableForm-product :value="linesList" @input="contentChanges" ref="tableForm"
                               :tableItems="linesListItems" :btnType="btnType" @addth="addOrDelLinesItem"
-                              @deleteth="addOrDelLinesItem" customStyle :projectId="this.dataForm.projectId"
-                              :isProductNameSwitch="isProductNameSwitch" />
+                              @deleteth="addOrDelLinesItem" customStyle :isProjectSwitch="isProjectSwitch"
+                              :projectId="this.dataForm.projectId" :isProductNameSwitch="isProductNameSwitch" />
                           </el-collapse-item>
                         </el-collapse>
                       </el-tab-pane>
@@ -301,15 +301,14 @@ export default {
         createTimeArr: []
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
-        { prop: 'code', label: '产品编码', fixed: 'left' },
-        // { prop: 'name', label: '产品名称', fixed: 'left' },
+        { prop: 'code', label: '产品编码' },
+        // { prop: 'name', label: '产品名称'},
         { prop: 'drawingNo', label: '品名规格' },
         // { prop: 'spec', label: '规格型号' },
         { prop: 'classAttributeName', label: '类别属性' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: 'productCode', label: '产品编码', type: 'input' },
-        // { prop: "name", label: "产品名称", type: 'input', },
         { prop: 'productDrawingNo', label: '品名规格', type: 'input' }
       ], // 产品选择弹出框搜索条件
       formLoading: false,
@@ -339,202 +338,20 @@ export default {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getProjectList()
-    if (this.isProjectSwitch === '1') {
-      this.linesListItems = [
-        { prop: 'projectName', label: '所属项目', value: '', type: 'view', minWidth: 150 },
-        { prop: 'drawingNo', label: '品名规格', value: '', type: 'view', minWidth: 340 },
-        // { prop: 'productName', label: '产品名称', value: '', type: 'view', minWidth: 160 },
-        { prop: 'productCode', label: '产品编码', value: '', type: 'view', minWidth: 160 },
-        {
-          prop: 'qty',
-          label: '数量',
-          value: '1',
-          type: 'input',
-          itemRules: [
-            { required: true, trigger: 'blur' },
-            {
-              validator: this.formValidate({
-                type: 'decimal',
-                params: [
-                  20,
-                  4,
-                  '',
-                  (errMsg) => {
-                    this.$message.error('数量：' + errMsg)
-                  }
-                ]
-              }),
-              trigger: 'blur'
-            }
-          ],
-          minWidth: 120
-        },
-        { prop: 'mainUnit', label: '单位', value: '', type: 'view', minWidth: 120 },
-        {
-          prop: 'lossRate',
-          label: '损耗率(%)',
-          value: '0',
-          type: 'input',
-          placeholder: '请输入损耗率',
-          itemRules: [
-            { required: true, trigger: 'blur' },
-            {
-              validator: this.formValidate({
-                type: 'decimal',
-                params: [
-                  10,
-                  2,
-                  '',
-                  (errMsg) => {
-                    this.$message.error('损耗率：' + errMsg)
-                  }
-                ]
-              }),
-              trigger: 'blur'
-            }
-          ],
-          minWidth: 120
-        },
-        {
-          prop: 'fixedLoss',
-          label: '固定损耗',
-          value: '0',
-          type: 'input',
-          itemRules: [
-            { required: true, trigger: 'blur' },
-            {
-              validator: this.formValidate({
-                type: 'decimal',
-                params: [
-                  10,
-                  2,
-                  '',
-                  (errMsg) => {
-                    this.$message.error('固定损耗：' + errMsg)
-                  }
-                ]
-              }),
-              trigger: 'blur'
-            }
-          ],
-          minWidth: 120
-        },
-        {
-          prop: 'reduceType',
-          label: '扣减料方式',
-          value: 'picking',
-          type: 'select',
-          options: [
-            { label: '生成领料单', value: 'picking' },
-            { label: '自动扣减料', value: 'auto' },
-            { label: '都不是', value: 'none' }
-          ],
-          itemRules: [{ required: true, trigger: 'change' }],
-          minWidth: 160,
-        },
-        { prop: 'remark', label: '备注', value: '', type: 'input', maxlength: 200, minWidth: 160 }
-      ]
-    } else {
-      this.linesListItems = [
-        { prop: 'drawingNo', label: '品名规格', value: '', type: 'view', minWidth: 340 },
-        // { prop: 'productName', label: '产品名称', value: '', type: 'view', minWidth: 160 },
-        { prop: 'productCode', label: '产品编码', value: '', type: 'view', minWidth: 160 },
-        {
-          prop: 'qty',
-          label: '数量',
-          value: '1',
-          type: 'input',
-          itemRules: [
-            { required: true, trigger: 'blur' },
-            {
-              validator: this.formValidate({
-                type: 'decimal',
-                params: [
-                  20,
-                  4,
-                  '',
-                  (errMsg) => {
-                    this.$message.error('数量：' + errMsg)
-                  }
-                ]
-              }),
-              trigger: 'blur'
-            }
-          ],
-          minWidth: 120
-        },
-        { prop: 'mainUnit', label: '单位', value: '', type: 'view', minWidth: 120 },
-        {
-          prop: 'lossRate',
-          label: '损耗率(%)',
-          value: '0',
-          type: 'input',
-          placeholder: '请输入损耗率',
-          itemRules: [
-            { required: true, trigger: 'blur' },
-            {
-              validator: this.formValidate({
-                type: 'decimal',
-                params: [
-                  10,
-                  2,
-                  '',
-                  (errMsg) => {
-                    this.$message.error('损耗率：' + errMsg)
-                  }
-                ]
-              }),
-              trigger: 'blur'
-            }
-          ],
-          minWidth: 120
-        },
-        {
-          prop: 'fixedLoss',
-          label: '固定损耗',
-          value: '0',
-          type: 'input',
-          itemRules: [
-            { required: true, trigger: 'blur' },
-            {
-              validator: this.formValidate({
-                type: 'decimal',
-                params: [
-                  10,
-                  2,
-                  '',
-                  (errMsg) => {
-                    this.$message.error('固定损耗：' + errMsg)
-                  }
-                ]
-              }),
-              trigger: 'blur'
-            }
-          ],
-          minWidth: 120
-        },
-        {
-          prop: 'reduceType',
-          label: '扣减料方式',
-          value: 'picking',
-          type: 'select',
-          options: [
-            { label: '生成领料单', value: 'picking' },
-            { label: '自动扣减料', value: 'auto' },
-            { label: '都不是', value: 'none' }
-          ],
-          itemRules: [{ required: true, trigger: 'change' }],
-          minWidth: 160,
-        },
-        { prop: 'remark', label: '备注', value: '', type: 'input', maxlength: 200, minWidth: 160 }
-      ]
-    }
+
     if (this.isProductNameSwitch === '1') {
-      this.ProductTableItems.unshift({ prop: 'name', label: '产品名称', fixed: 'left' })
-      this.linesListItems.unshift({ prop: 'productName', label: '产品名称', value: '', type: 'view', minWidth: 160 })
+      this.ProductTableItems.splice(1, 0, { prop: 'name', label: '产品名称' })
+      this.ProductTableSearchList.splice(1, 0, { prop: "productName", label: "产品名称", type: 'input', })
+      this.linesListItems.splice(1, 0, { prop: 'productName', label: '产品名称', value: '', type: 'view', minWidth: 160 })
     } else {
 
     }
+    if (this.isProjectSwitch === '1') {
+      this.linesListItems.unshift({ prop: 'projectName', label: '所属项目', value: '', type: 'view', minWidth: 150 })
+    } else {
+
+    }
+    console.log(this.linesListItems)
     this.dataFormItems.forEach((tc) => {
       // 添加所属项目
       if (tc.prop === 'projectId') {

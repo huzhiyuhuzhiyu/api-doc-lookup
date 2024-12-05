@@ -49,8 +49,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" clearable
-                @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4" v-if="isProductNameSwitch === '1'">
@@ -60,9 +59,12 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" clearable
+                @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
+
+
           <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
@@ -99,10 +101,10 @@
         <JNPF-table v-if="tableFlag" :data="tableData" :fixedNO="true" hasC @sort-change="sortChange" custom-column
           ref="dataTable" :setColumnDisplayList="columnList" @selection-change="handeleProductInfoData">
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
+          <el-table-column prop="code" label="产品编码" width="140" sortable="custom"></el-table-column>
           <el-table-column prop="productName" label="产品名称" width="120"
             v-if="isProductNameSwitch === '1'"></el-table-column>
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
-          <el-table-column prop="code" label="产品编码" width="140" sortable="custom"></el-table-column>
           <el-table-column prop="classAttribute" label="类别属性" width="120" sortable="custom">
             <template slot-scope="scope">
               {{ $getLabel(classAttributeList, scope.row.classAttribute, 'value', 'label') }}
@@ -253,21 +255,15 @@ export default {
       superQueryVisible: false,
       superQueryJson: [
         {
-          prop: 'drawingNo',
-          label: '品名规格',
-          type: 'input'
-        },
-        {
           prop: 'code',
           label: '产品编码',
           type: 'input'
         },
-
-        // {
-        //   prop: 'name',
-        //   label: '产品名称',
-        //   type: 'input'
-        // },
+        {
+          prop: 'drawingNo',
+          label: '品名规格',
+          type: 'input'
+        },
         {
           prop: 'classAttribute',
           label: '类别属性',

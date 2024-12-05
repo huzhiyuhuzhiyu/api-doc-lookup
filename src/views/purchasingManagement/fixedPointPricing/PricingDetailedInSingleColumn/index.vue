@@ -4,24 +4,6 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <!-- <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="listQuery.orderNo" placeholder="单号" clearable @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="listQuery.cooperativePartnerName" placeholder="供应商名称" clearable
-                  @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="listQuery.cooperativePartnerName" placeholder="品名规格" clearable
-                  @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col> -->
             <template v-for="(item) in searchList">
               <el-col :span="item.searchType === 3 ? 6 : 4">
                 <el-form-item>
@@ -87,10 +69,10 @@
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="150" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" width="120"
               v-if="isProjectSwitch === '1'"></el-table-column>
-            <el-table-column prop="productName" label="产品名称" width="120"
+            <el-table-column prop="productsCode" label="产品编码" width="150" sortable="custom" />
+            <el-table-column prop="productsName" label="产品名称" width="120"
               v-if="isProductNameSwitch === '1'"></el-table-column>
             <el-table-column prop="drawingNo" label="品名规格" width="150" sortable="custom" />
-            <el-table-column prop="productsCode" label="产品编码" width="150" sortable="custom" />
             <el-table-column prop="price" label="协议价(含税)" width="140" sortable="custom" />
             <el-table-column prop="excludingTaxPrice" label="协议价(不含税)" width="160" sortable="custom" />
             <el-table-column prop="taxRate" label="税率" width="80" sortable="custom">
@@ -217,13 +199,13 @@ export default {
           type: 'input'
         },
         {
-          prop: 'productDrawingNo',
-          label: '品名规格',
+          prop: 'productCode',
+          label: '产品编码',
           type: 'input'
         },
         {
-          prop: 'productCode',
-          label: '产品编码',
+          prop: 'productDrawingNo',
+          label: '品名规格',
           type: 'input'
         },
         {
@@ -417,8 +399,8 @@ export default {
     await this.getProjectList()
     await this.getProductNameSwitch('product', 'enable_productName')
     if (this.isProductNameSwitch === '1') {
-      this.searchList.push({
-        field: 'productName',
+      this.searchList.splice(2, 0, {
+        field: 'productsName',
         fieldValue: '',
         label: '产品名称',
         symbol: 'like',
@@ -426,7 +408,7 @@ export default {
         width: 120
       })
       this.superQueryJson.splice(4, 0, {
-        prop: 'productName',
+        prop: 'productsName',
         label: '产品名称',
         type: 'input'
       })
@@ -668,8 +650,8 @@ export default {
         { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 }
       ]
       if (this.isProductNameSwitch === '1') {
-        this.searchList.push({
-          field: 'productName',
+        this.searchList.splice(2, 0, {
+          field: 'productsName',
           fieldValue: '',
           label: '产品名称',
           symbol: 'like',

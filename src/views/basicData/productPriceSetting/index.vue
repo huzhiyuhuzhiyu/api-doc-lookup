@@ -58,8 +58,7 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" clearable
-                  @keyup.enter.native="search()" />
+                <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4" v-if="isProductNameSwitch === '1'">
@@ -70,7 +69,8 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
+                <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" clearable
+                  @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
@@ -115,18 +115,13 @@
           <template v-if="tableFlag">
             <JNPF-table v-show="dataTableFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
               ref="dataTable" :setColumnDisplayList="columnList">
+              <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom"
+                v-if="isProjectSwitch === '1'"></el-table-column>
+              <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
+              </el-table-column>
               <el-table-column prop="productName" label="产品名称" width="120"
                 v-if="isProductNameSwitch === '1'"></el-table-column>
               <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
-              <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
-                <!-- <template slot-scope="scope">
-                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">
-                  {{ scope.row.code }}
-                </el-link>
-              </template> -->
-              </el-table-column>
-              <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom"
-                v-if="isProjectSwitch === '1'"></el-table-column>
               <el-table-column prop="productCategoryName" label="产品分类" width="120" sortable="custom" />
               <el-table-column prop="productSource" label="产品来源" width="120" sortable="custom">
                 <template slot-scope="{ row }">
@@ -243,16 +238,13 @@
             </JNPF-table>
             <JNPF-table v-show="!dataTableFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange"
               custom-column ref="otherTable" :setColumnDisplayList="columnList">
-              <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
-              <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
-                <!-- <template slot-scope="scope">
-                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">
-                  {{ scope.row.code }}
-                </el-link>
-              </template> -->
-              </el-table-column>
               <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom"
                 v-if="isProjectSwitch === '1'"></el-table-column>
+              <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
+              </el-table-column>
+              <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom">
+              </el-table-column>
+              <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
               <el-table-column prop="productCategoryName" label="产品分类" width="120" sortable="custom" />
               <el-table-column prop="productSource" label="产品来源" width="120" sortable="custom">
                 <template slot-scope="{ row }">
@@ -471,7 +463,6 @@ export default {
         label: 'name'
       },
       columnList: [
-        'name',
         'mainUnit',
         'brand',
         'model',
@@ -695,16 +686,15 @@ export default {
         this.dataTableFlag = true
         this.superQueryJson = [
           {
-            prop: 'drawingNo',
-            label: '品名规格',
-            type: 'input'
-          },
-          {
             prop: 'code',
             label: '产品编码',
             type: 'input'
           },
-
+          {
+            prop: 'drawingNo',
+            label: '品名规格',
+            type: 'input'
+          },
           {
             prop: 'productCategoryName',
             label: '产品分类',
@@ -874,6 +864,13 @@ export default {
             type: 'input'
           }
         ]
+        if (this.isProductNameSwitch === '1') {
+          this.superQueryJson.splice(1, 0, {
+            prop: 'productName',
+            label: '产品名称',
+            type: 'input'
+          })
+        }
         this.productSourceList = [
           { label: '组装', value: 'assemble' },
           { label: '生产', value: 'produce' },
@@ -885,15 +882,16 @@ export default {
           this.dataTableFlag = true
           this.superQueryJson = [
             {
-              prop: 'drawingNo',
-              label: '品名规格',
-              type: 'input'
-            },
-            {
               prop: 'code',
               label: '产品编码',
               type: 'input'
             },
+            {
+              prop: 'drawingNo',
+              label: '品名规格',
+              type: 'input'
+            },
+
 
             {
               prop: 'productCategoryName',
@@ -1064,6 +1062,13 @@ export default {
               type: 'input'
             }
           ]
+          if (this.isProductNameSwitch === '1') {
+            this.superQueryJson.splice(1, 0, {
+              prop: 'productName',
+              label: '产品名称',
+              type: 'input'
+            })
+          }
           this.productSourceList = [
             { label: '组装', value: 'assemble' },
             { label: '生产', value: 'produce' },
@@ -1074,16 +1079,15 @@ export default {
           this.dataTableFlag = false
           this.superQueryJson = [
             {
-              prop: 'drawingNo',
-              label: '品名规格',
-              type: 'input'
-            },
-            {
               prop: 'code',
               label: '产品编码',
               type: 'input'
             },
-
+            {
+              prop: 'drawingNo',
+              label: '品名规格',
+              type: 'input'
+            },
             {
               prop: 'productCategoryName',
               label: '产品分类',
@@ -1161,6 +1165,13 @@ export default {
               type: 'input'
             }
           ]
+          if (this.isProductNameSwitch === '1') {
+            this.superQueryJson.splice(1, 0, {
+              prop: 'productName',
+              label: '产品名称',
+              type: 'input'
+            })
+          }
           this.productSourceList = [
             { label: '生产', value: 'produce' },
             { label: '采购', value: 'purchase' },

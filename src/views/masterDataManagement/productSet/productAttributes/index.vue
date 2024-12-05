@@ -335,6 +335,7 @@ export default {
       return
     },
     superQuerySearch(query) {
+      console.log(query,'ooo')
       this.form.superQuery = query
       this.superQueryVisible = false
       this.search()

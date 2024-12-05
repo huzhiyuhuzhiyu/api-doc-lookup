@@ -164,9 +164,9 @@
                             <!-- </el-table-column> -->
                             <el-table-column prop="projectName" label="所属项目" width="120"
                               v-if="isProjectSwitch === '1'"></el-table-column>
-                            <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
                             <el-table-column prop="productName" label="产品名称" width="160"
                               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                            <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
                             <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                               :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
                             <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom"
@@ -407,14 +407,11 @@
                         <el-table-column prop="projectName" label="所属项目" width="120"
                           v-if="isProjectSwitch === '1'"></el-table-column>
                         <template v-if="isProductNameSwitch === '1'">
+                          <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom"
+                            v-if="isReturnSwitch === '1'" />
                           <el-table-column v-if="isReturnSwitch === '1'" prop="productName" label="产品名称" width="160"
                             show-overflow-tooltip></el-table-column>
-                          <el-table-column v-else prop="name" label="产品名称" width="160"
-                            show-overflow-tooltip></el-table-column>
                         </template>
-
-                        <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom"
-                          v-if="isReturnSwitch === '1'" />
                         <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom"
                           v-if="isReturnSwitch === '1'" />
                         <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
@@ -429,9 +426,11 @@
                         <el-table-column prop="remark" label="备注" width="160" v-if="isReturnSwitch === '1'" />
                         <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"
                           v-if="isReturnSwitch === '1'" />
-                        <el-table-column prop="code" label="产品编码" show-overflow-tooltip
-                          v-if="isReturnSwitch === '0'"></el-table-column>
-                        <el-table-column prop="drawingNo" label="品名规格" v-if="isReturnSwitch === '0'" />
+                        <el-table-column prop="code" label="产品编码" show-overflow-tooltip v-if="isReturnSwitch === '0'"
+                          width="150"></el-table-column>
+                        <el-table-column v-if="isProductNameSwitch === '1' && isReturnSwitch === '0'" prop="name"
+                          label="产品名称" width="160" show-overflow-tooltip></el-table-column>
+                        <el-table-column prop="drawingNo" label="品名规格" v-if="isReturnSwitch === '0'" width="150" />
                         <el-table-column prop="productCategoryName" label="所属分类" v-if="isReturnSwitch === '0'" />
 
                         <el-table-column prop="inventoryQuantity" label="库存数量" v-if="isReturnSwitch === '0'">

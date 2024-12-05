@@ -94,7 +94,7 @@
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
                             :rules="productRules.productDrawingNo">
-                            <el-input v-model="scope.row.productDrawingNo" placeholder="请输入品名规格" />
+                            <el-input v-model="scope.row.productDrawingNo" placeholder="请输入品名规格" disabled />
                           </el-form-item>
                         </template>
                       </el-table-column>

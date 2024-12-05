@@ -152,7 +152,7 @@ export default {
       basicQuery: {},
       searchList: [
         { field: 'productionPlanNo', fieldValue: '', label: '生产计划单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productsDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],
       planScheduleVisible:false,
       columnList: ["productCode", "arithmeticNo", "remark", "createByName",],
@@ -451,9 +451,9 @@ export default {
     },
 
     superQuerySearch(query) {
-      this.superQuery = query
+      this.orderForm.superQuery = query
       this.superQueryVisible = false
-      this.search('super')
+      this.search()
     },
 
 

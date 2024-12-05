@@ -546,9 +546,8 @@ export default {
       this.superForm = this.dataForm = JSON.parse(JSON.stringify(this.dataFormList))
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
-        { field: 'productionPlanNo', fieldValue: '', label: '生产计划单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 }, 
+        { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 }, 
       ],
         this.search('basic')
     },

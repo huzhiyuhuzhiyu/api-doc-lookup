@@ -254,7 +254,7 @@ export default {
 
   methods: {
     superQuerySearch(query) {
-      this.listQuery.superQuery = query
+      this.superQuery = query
       this.superQueryVisible = false
       this.search('super')
     },

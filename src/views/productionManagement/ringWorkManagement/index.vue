@@ -224,25 +224,23 @@ export default {
         {
           prop: 'processCode',
           label: "工序编码",
-          type: 'select',
-          options: [
-            { label: "正常任务", value: "normal" },
-            { label: "返工任务", value: "rework" },
-          ]
+          type: 'input',
+          
         },
         {
           prop: 'processingType',
           label: "加工类型",
-          type: 'input'
-        },
-        {
-          prop: 'processingType',
-          label: "产品编码",
-          type: 'select',
+          type: 'input',
           options: [
             { label: "自制", value: "self_produced" },
             { label: "外协", value: "external_production" },
           ]
+        },
+        {
+          prop: 'processingType',
+          label: "产品编码",
+          type: 'input',
+          
         },
         {
           prop: 'planStartDate',
@@ -546,9 +544,8 @@ export default {
       this.superForm = this.dataForm = JSON.parse(JSON.stringify(this.dataFormList))
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
-        { field: 'productionPlanNo', fieldValue: '', label: '生产计划单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],
         this.search('basic')
     },

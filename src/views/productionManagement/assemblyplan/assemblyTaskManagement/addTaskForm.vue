@@ -668,6 +668,7 @@ export default {
       this.$set(this.dataForm, 'productsDrawingNo', data.drawingNo)
       this.$set(this.dataForm, 'planDate', [])
       this.$set(this.dataForm, 'orderNo', this.codeConfig.number)
+      if(!data.routingId) return
       this.getRoutingDetail(data.routingId)
     },
 

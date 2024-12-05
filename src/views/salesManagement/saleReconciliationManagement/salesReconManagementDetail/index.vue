@@ -296,6 +296,11 @@ export default {
     this.isProjectSwitchFlag=true
   },
   methods: {
+    superQuerySearch(query) {
+      this.superQuery = query
+      this.superQueryVisible = false
+      this.search('super')
+    },
     sortChange({ prop, order }) {
       let newProp
       if (

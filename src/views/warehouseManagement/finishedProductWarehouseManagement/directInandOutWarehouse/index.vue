@@ -171,7 +171,7 @@
 
                       <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
                         v-if="dataForm.weightFlag == true">
-                  
+
                         <template slot-scope="scope">
                           <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                             v-model="scope.row.weight" placeholder="重量"></el-input>
@@ -179,7 +179,7 @@
                       </el-table-column>
                       <el-table-column prop="proportion" label="比重" width="140" :key="727"
                         v-if="dataForm.weightFlag == true">
-                        
+
                         <template slot-scope="scope">
                           <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                             v-model="scope.row.proportion" placeholder="比重"></el-input>
@@ -187,7 +187,7 @@
                       </el-table-column>
                       <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
                         v-if="dataForm.weightFlag == true">
-                  
+
                         <template slot-scope="scope">
                           <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                             v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
@@ -250,6 +250,43 @@
                         <template slot-scope="scope">
                           <el-input :disabled="btnType == 'look'" v-model="scope.row.originalBatchNumber"
                             placeholder="原批次号"></el-input>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.specSize" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in scope.row.spaceSizeList" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="logo" label="Logo" width="120" key="2116">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.logo" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in scope.row.logoList" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="divideEqually" label="开等分" width="120" key="2117">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.divideEqually" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in scope.row.divideEquallyList" :key="index"
+                              :label="item.name" :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+
+                      <el-table-column prop="material" label="材质" width="120" key="2118">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in scope.row.materialList" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
                         </template>
                       </el-table-column>
                       <el-table-column prop="standardValue" label="规值" width="120" key="211">
@@ -322,7 +359,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                       
+
                       <el-table-column prop="clearance" label="游隙" width="120" key="1055">
 
                         <template slot-scope="scope">
@@ -507,7 +544,7 @@
               <el-table-column prop="oil" label="油脂" width="80" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="oil" />
 
-        
+
               <el-table-column prop="clearance" label="游隙" width="80" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="clearance" />
               <el-table-column prop="aperture" label="孔径" width="80" :key="102" sortable="custom"
@@ -600,7 +637,8 @@ export default {
   name: "directInandOutWarehouse",
   data() {
     return {
-      printVisible:false,
+
+      printVisible: false,
       isProjectSwitch: '',
       prindId: '',
       formId: '',
@@ -1167,6 +1205,7 @@ export default {
           this.$set(item, 'deputyUnit', item.deputyUnit)
         }
 
+
         this.$set(item, 'warehouseId', this.dataForm.warehouseId)
         this.$set(item, 'warehouseName', this.dataForm.warehouseName)
         this.$set(item, 'warehouseType', this.dataForm.warehouseType)
@@ -1191,9 +1230,49 @@ export default {
           item.productName = item.name
           item.productsId = item.id
         }
-        // item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
+
+        if (this.dataForm.businessType == 'inbound_purchase') {
+
+          if (item.productCategoryName == '保持架') {
+            let arr = ['pa017', 'pa019', 'pa020', 'pa021']
+            arr.forEach(items => {
+              let obj1 = {
+                pageNum: -1,
+                pageSize: 20,
+                typeCode: items,//保持架尺寸
+              };
+              getbimProductAttributesList(obj1).then(res => {
+                let list = items == 'pa017' ? 'spaceSizeList' : items == 'pa019' ? 'logoList' : items == 'pa020' ? 'divideEquallyList' : 'materialList'
+                this.$set(item, list, res.data.records)
+              })
+
+            });
+          }
+          if (item.productCategoryName == '防尘盖') {
+            let arr = ['pa018', 'pa019', 'pa020', 'pa022']
+            arr.forEach(items => {
+              let obj1 = {
+                pageNum: -1,
+                pageSize: 20,
+                typeCode: items,//保持架尺寸
+              };
+              getbimProductAttributesList(obj1).then(res => {
+                let list = items == 'pa018' ? 'spaceSizeList' : items == 'pa019' ? 'logoList' : items == 'pa020' ? 'divideEquallyList' : 'materialList'
+                this.$set(item, list, res.data.records)
+              })
+
+            });
+
+
+
+
+
+          }
+
+        }
 
         this.productData.push(item)
+        console.log("this.productData",this.productData);
       });
     },
     // 产品信息列表多选
@@ -1410,7 +1489,7 @@ export default {
         if (this.btnType == 'add') this.fetchData("CKDH")
 
       }
-      if (val == 'inbound_sale_return' || val == 'inbound_production' || val == 'inbound_order_production' || val == 'inbound_purchase' || val == 'inbound_return_materials'  || val == 'inbound_external' || val == 'inbound_other') {
+      if (val == 'inbound_sale_return' || val == 'inbound_production' || val == 'inbound_order_production' || val == 'inbound_purchase' || val == 'inbound_return_materials' || val == 'inbound_external' || val == 'inbound_other') {
         // if ( val == 'inbound_other') {
         this.dataForm.documentType = 'inbound'
         if (this.btnType == 'add') this.fetchData("RKDH")
@@ -1458,7 +1537,7 @@ export default {
         } // 意向客户列表入参
         this.dataRule.cooperativePartnerIdText[0].message = '采购供应商不能为空'
         // this.dataRule
-      } else if (val == 'outbound_external_send'|| val == 'inbound_external') {
+      } else if (val == 'outbound_external_send' || val == 'inbound_external') {
         this.partnerFlag = true
         this.partnerTitle = '外协供应商'
         this.partnerDialogTitle = '选择外协供应商'
@@ -1589,20 +1668,20 @@ export default {
           this.spaceLines = res.data.spaceLines
 
           this.formLoading = false
-          let arr=[
-          {label:"组装入库",value:"inbound_merge",},
-            {label:"拆卸入库",value:"inbound_split",},
-            {label:"形态转换入库",value:"inbound_shift",},
-            {label:"组装出库",value:"outbound_merge",},
-            {label:"拆卸出库",value:"outbound_split",},
-            {label:"形态转换出库",value:"outbound_shift",},
-            {label:"调拨出库",value:"outbound_transfer",},
-            {label:"调拨入库",value:"inbound_transfer",},
-            {label:"直接领料入库",value:"inbound_receive_material",},
-            {label:"直接领料出库",value:"outbound_receive_material",},
+          let arr = [
+            { label: "组装入库", value: "inbound_merge", },
+            { label: "拆卸入库", value: "inbound_split", },
+            { label: "形态转换入库", value: "inbound_shift", },
+            { label: "组装出库", value: "outbound_merge", },
+            { label: "拆卸出库", value: "outbound_split", },
+            { label: "形态转换出库", value: "outbound_shift", },
+            { label: "调拨出库", value: "outbound_transfer", },
+            { label: "调拨入库", value: "inbound_transfer", },
+            { label: "直接领料入库", value: "inbound_receive_material", },
+            { label: "直接领料出库", value: "outbound_receive_material", },
           ]
-          this.list=[...this.list,...arr]
- 
+          this.list = [...this.list, ...arr]
+
         }).catch(() => { this.formLoading = false })
       } else {
         this.title = '新建出入库单'

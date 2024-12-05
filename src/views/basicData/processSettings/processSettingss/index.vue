@@ -38,7 +38,7 @@
             icon="icon-ym icon-ym-report-icon-search-setting" @click="moreQueries()">更多查询</el-button> -->
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head" style="padding:8px">
           <div>
             <el-button type="primary" icon="el-icon-plus" @click.native="addOrUpdateHandle('', 'add')" size="mini">
@@ -63,93 +63,90 @@
             </el-tooltip>
           </div>
         </div>
-        <div class="tableBox" v-loading="listLoading">
-          <JNPF-table v-if="tableDataFlag" :data="list" @sort-change="sortChange" highlight-current-row :fixedNO="true"
-            class="dataTable" border ref="listTable" custom-column :setColumnDisplayList="columnList">
-            <el-table-column prop="code" label="工艺路线编码" align="left" sortable="custom" min-width="180">
-              <template slot-scope="scope">
-                <el-link type="primary" @click.native="updateHandle(scope.row.id, 'look')">
-                  {{ scope.row.code }}
-                </el-link>
-              </template>
-            </el-table-column>
-            <el-table-column prop="name" label="工艺路线名称" align="left" sortable="custom" min-width="180" />
-            <el-table-column prop="projectName" label="所属项目" width="120"
-              v-if="isProjectSwitch === '1'"></el-table-column>
-            <el-table-column prop="reportRulesFlag" label="按工艺顺序报工" align="center" sortable="custom" width="160">
-              <template slot-scope="scope">
-                <div v-if="scope.row.reportRulesFlag == '0'">否</div>
-                <div v-if="scope.row.reportRulesFlag == '1'">是</div>
-              </template>
-            </el-table-column>
+        <JNPF-table v-if="tableDataFlag" :data="list" @sort-change="sortChange" highlight-current-row :fixedNO="true"
+          class="dataTable" border ref="listTable" custom-column :setColumnDisplayList="columnList">
+          <el-table-column prop="code" label="工艺路线编码" align="left" sortable="custom" min-width="180">
+            <template slot-scope="scope">
+              <el-link type="primary" @click.native="updateHandle(scope.row.id, 'look')">
+                {{ scope.row.code }}
+              </el-link>
+            </template>
+          </el-table-column>
+          <el-table-column prop="name" label="工艺路线名称" align="left" sortable="custom" min-width="180" />
+          <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
+          <el-table-column prop="reportRulesFlag" label="按工艺顺序报工" align="center" sortable="custom" width="160">
+            <template slot-scope="scope">
+              <div v-if="scope.row.reportRulesFlag == '0'">否</div>
+              <div v-if="scope.row.reportRulesFlag == '1'">是</div>
+            </template>
+          </el-table-column>
 
-            <el-table-column prop="createTime" label="创建时间" align="left" min-width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" align="left" width="100" sortable="custom" />
-            <el-table-column prop="remark" label="备注" align="left" min-width="180" />
-            <!-- <el-table-column prop="state" label="工艺状态" align="center" sortable="custom" width="120" >
+          <el-table-column prop="createTime" label="创建时间" align="left" min-width="180" sortable="custom" />
+          <el-table-column prop="createByName" label="创建人" align="left" width="100" sortable="custom" />
+          <el-table-column prop="remark" label="备注" align="left" min-width="180" />
+          <!-- <el-table-column prop="state" label="工艺状态" align="center" sortable="custom" width="120" >
               <template slot-scope="scope">
                 <div v-if="scope.row.state == 'enable'"><el-tag type="success">启用</el-tag></div>
                 <div v-if="scope.row.state == 'disable'"><el-tag type="danger">禁用</el-tag></div>
               </template>
             </el-table-column> -->
-            <el-table-column prop="documentStatus" label="单据状态" align="center" sortable="custom" width="120">
-              <template slot-scope="scope">
-                <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
-                <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center"
-              v-if="showAppCodeFlag">
-              <template slot-scope="scope">
-                <el-tag disable-transitions
-                  v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus !== 'draft'">
-                  审批中
-                </el-tag>
-                <el-tag type="success" disable-transitions
-                  v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus !== 'draft'">
-                  审批通过
-                </el-tag>
-                <el-tag type="danger" disable-transitions
-                  v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus !== 'draft'">
-                  审批拒绝
-                </el-tag>
-                <el-tag type="warning" disable-transitions
-                  v-else-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus !== 'draft'">
-                  审批撤回
-                </el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column label="操作" width="180" fixed="right">
-              <template slot-scope="scope">
-                <!-- <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : scope.row.approvalStatus == 'ok'" -->
-                <el-button size="mini" type="text" @click="updateHandle(scope.row.id, 'edit')">
-                  编辑
-                </el-button>
-                <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                  :disabled="scope.row.documentStatus !== 'draft'" @click="handleDel(scope.$index, scope.row.id)">
-                  删除
-                </el-button>
-                <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}
-                      <i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item v-if="scope.row.approvalStatus === 'ing' && showAppCodeFlag"
-                      @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
-                      审批撤回
-                    </el-dropdown-item>
-                    <el-dropdown-item @click.native="updateHandle(scope.row.id, 'look')">
-                      查看详情
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </template>
-            </el-table-column>
-          </JNPF-table>
-        </div>
+          <el-table-column prop="documentStatus" label="单据状态" align="center" sortable="custom" width="120">
+            <template slot-scope="scope">
+              <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
+              <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center"
+            v-if="showAppCodeFlag">
+            <template slot-scope="scope">
+              <el-tag disable-transitions
+                v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus !== 'draft'">
+                审批中
+              </el-tag>
+              <el-tag type="success" disable-transitions
+                v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus !== 'draft'">
+                审批通过
+              </el-tag>
+              <el-tag type="danger" disable-transitions
+                v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus !== 'draft'">
+                审批拒绝
+              </el-tag>
+              <el-tag type="warning" disable-transitions
+                v-else-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus !== 'draft'">
+                审批撤回
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="180" fixed="right">
+            <template slot-scope="scope">
+              <!-- <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : scope.row.approvalStatus == 'ok'" -->
+              <el-button size="mini" type="text" @click="updateHandle(scope.row.id, 'edit')">
+                编辑
+              </el-button>
+              <el-button size="mini" type="text" class="JNPF-table-delBtn"
+                :disabled="scope.row.documentStatus !== 'draft'" @click="handleDel(scope.$index, scope.row.id)">
+                删除
+              </el-button>
+              <el-dropdown hide-on-click>
+                <span class="el-dropdown-link">
+                  <el-button type="text" size="mini">
+                    {{ $t('common.moreBtn') }}
+                    <i class="el-icon-arrow-down el-icon--right"></i>
+                  </el-button>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item v-if="scope.row.approvalStatus === 'ing' && showAppCodeFlag"
+                    @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
+                    审批撤回
+                  </el-dropdown-item>
+                  <el-dropdown-item @click.native="updateHandle(scope.row.id, 'look')">
+                    查看详情
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </template>
+          </el-table-column>
+        </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
           @pagination="initData" class="pagination" />
       </div>

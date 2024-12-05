@@ -96,7 +96,7 @@
                             <template slot-scope="scope">
                               <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
                                 :rules="productRules.productDrawingNo">
-                                <el-input v-model="scope.row.productDrawingNo" placeholder="品名规格" />
+                                <el-input v-model="scope.row.productDrawingNo" placeholder="品名规格" disabled />
                               </el-form-item>
                             </template>
                           </el-table-column>
@@ -764,6 +764,7 @@ export default {
       this.btnLoading = false
     },
     goBom() {
+      this.tipsvisible = false
       this.$router.push({
         path: '/outsourcingManagement/productOutsourcingOrder/orderList'
       })

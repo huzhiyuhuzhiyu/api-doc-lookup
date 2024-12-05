@@ -83,10 +83,10 @@
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" width="120"
               v-if="isProjectSwitch === '1'"></el-table-column>
-            <el-table-column prop="drawingNo" label="品名规格" width="200" sortable="custom" />
+            <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
               show-overflow-tooltip></el-table-column>
-            <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
+            <el-table-column prop="drawingNo" label="品名规格" width="200" sortable="custom" />
             <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
               :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
             <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
@@ -172,7 +172,7 @@ export default {
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
-      columnList: ['cooperativePartnerCode', 'departmentName', 'productName', 'createTime'],
+      columnList: ['cooperativePartnerCode', 'departmentName', 'createTime'],
       deliveryDateArr: [],
       orderFollowVisible: false,
       productFormVisible: false,
@@ -238,20 +238,16 @@ export default {
           type: 'input'
         },
         {
-          prop: 'drawingNo',
-          label: '品名规格',
-          type: 'input'
-        },
-        // {
-        //   prop: 'productName',
-        //   label: '产品名称',
-        //   type: 'input'
-        // },
-        {
           prop: 'productCode',
           label: '产品编码',
           type: 'input'
         },
+        {
+          prop: 'drawingNo',
+          label: '品名规格',
+          type: 'input'
+        },
+
         {
           prop: 'mainUnit',
           label: '单位',
@@ -767,7 +763,7 @@ export default {
         .then((res) => {
           this.tableData = res.data.page.records
           this.tableFlag = true
-        
+
           this.total = res.data.page.total
           this.listLoading = false
         })

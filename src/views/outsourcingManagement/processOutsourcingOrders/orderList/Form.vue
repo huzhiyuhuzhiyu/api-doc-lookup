@@ -97,8 +97,7 @@
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
                             :rules="productRules.productDrawingNo">
-                            <el-input v-model="scope.row.productDrawingNo" :disabled="type == 'look' ? true : false"
-                              placeholder="品名规格" />
+                            <el-input v-model="scope.row.productDrawingNo" disabled placeholder="品名规格"  />
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -395,8 +394,7 @@
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
                         :rules="productRules.productDrawingNo">
-                        <el-input v-model="scope.row.productDrawingNo" :disabled="type == 'look' ? true : false"
-                          placeholder="品名规格" />
+                        <el-input v-model="scope.row.productDrawingNo" disabled placeholder="品名规格" />
                       </el-form-item>
                     </template>
                   </el-table-column>

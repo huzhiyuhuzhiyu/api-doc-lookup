@@ -43,17 +43,6 @@
                       :data="dataFormTwo.data" id="table">
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                      <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
-                            <div class="viewData">
-                              <span>{{ scope.row.drawingNo }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
-                        show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'">
@@ -63,7 +52,17 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-
+                      <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                        show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
+                            <div class="viewData">
+                              <span>{{ scope.row.drawingNo }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                         :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
                       <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
@@ -297,8 +296,7 @@
                   :data="dataFormTwo.data" id="table">
                   <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
                   <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                  <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
-                    show-overflow-tooltip></el-table-column>
+
                   <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'">
@@ -308,7 +306,8 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-
+                  <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                    show-overflow-tooltip></el-table-column>
                   <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">

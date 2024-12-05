@@ -110,10 +110,10 @@
             </template>
           </el-table-column>
           <el-table-column prop="stockMoveOrderNo" label="出入库单号" width="180" sortable="custom" />
-          <el-table-column prop="drawingNo" label="品名规格" width="180" sortable="custom" />
+          <el-table-column prop="productCode" label="产品编码" width="180" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
             show-overflow-tooltip></el-table-column>
-          <el-table-column prop="productCode" label="产品编码" width="180" sortable="custom" />
+          <el-table-column prop="drawingNo" label="品名规格" width="180" sortable="custom" />
           <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
             :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
           <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
@@ -122,7 +122,6 @@
           <el-table-column prop="price" label="单价(含税)" width="100" />
           <el-table-column prop="totalIncludingTaxAmount" label="金额(含税)" width="130" sortable="custom" />
           <el-table-column prop="stockMoveDate" label="出入库日期" sortable="custom" width="180" />
-
           <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="handleUserRelation(scope.row.accountsReceivableId, 'look')" :editText="'查看详情'"
@@ -200,13 +199,13 @@ export default {
           type: 'input'
         },
         {
-          prop: 'drawingNo',
-          label: '品名规格',
+          prop: 'productCode',
+          label: '产品编码',
           type: 'input'
         },
         {
-          prop: 'productCode',
-          label: '产品编码',
+          prop: 'drawingNo',
+          label: '品名规格',
           type: 'input'
         },
         {
@@ -294,13 +293,38 @@ export default {
     }
   },
   async created() {
+    await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isDeputyUnitSwitch === '1') {
+      this.superQueryJson.forEach((item) => {
+        if (item.prop === 'mainUnit') {
+          item.label = '单位(主)'
+        }
+      })
+      this.superQueryJson.splice(8, 0, {
+        prop: 'deputyUnit',
+        label: '单位(副)',
+        type: 'input'
+      })
+    }
+    if (this.isProductNameSwitch === '1') {
+      this.superQueryJson.splice(6, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
+    }
     this.superForm = this.listQuery
-    this.getDeputyUnit()
+
     this.search('basic')
   },
   methods: {
+    superQuerySearch(query) {
+      this.superQuery = query
+      this.superQueryVisible = false
+      this.search('super')
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -430,124 +454,6 @@ export default {
           })
           this.tableDataList = res.data.records
           this.tableFlag = true
-          if (this.isDeputyUnitSwitch === '1') {
-            this.superQueryJson = [
-              {
-                prop: 'orderNo',
-                label: '对账单号',
-                type: 'input'
-              },
-              {
-                prop: 'reconciliationDate',
-                label: '对账日期',
-                type: 'daterange',
-                valueFormat: 'yyyy-MM-dd',
-                startPlaceholder: '开始日期',
-                endPlaceholder: '结束日期',
-                pickerOptions: this.global.timePickerOptions
-              },
-              {
-                prop: 'cooperativePartnerName',
-                label: '供应商名称',
-                type: 'input'
-              },
-              {
-                prop: 'cooperativePartnerCode',
-                label: '供应商编码',
-                type: 'input'
-              },
-              {
-                prop: 'stockMoveOrderNo',
-                label: '出入库单号',
-                type: 'input'
-              },
-              {
-                prop: 'drawingNo',
-                label: '品名规格',
-                type: 'input'
-              },
-              {
-                prop: 'productCode',
-                label: '产品编码',
-                type: 'input'
-              },
-              {
-                prop: 'mainUnit',
-                label: '单位(主)',
-                type: 'input'
-              },
-              {
-                prop: 'deputyUnit',
-                label: '单位(副)',
-                type: 'input'
-              },
-              {
-                prop: 'stockMoveDate',
-                label: '出入库日期',
-                type: 'datetimerange',
-                valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                startPlaceholder: '创建开始时间',
-                endPlaceholder: '创建结束时间',
-                pickerOptions: this.global.timePickerOptions
-              }
-            ]
-          } else {
-            this.superQueryJson = [
-              {
-                prop: 'orderNo',
-                label: '对账单号',
-                type: 'input'
-              },
-              {
-                prop: 'reconciliationDate',
-                label: '对账日期',
-                type: 'daterange',
-                valueFormat: 'yyyy-MM-dd',
-                startPlaceholder: '开始日期',
-                endPlaceholder: '结束日期',
-                pickerOptions: this.global.timePickerOptions
-              },
-              {
-                prop: 'cooperativePartnerName',
-                label: '供应商名称',
-                type: 'input'
-              },
-              {
-                prop: 'cooperativePartnerCode',
-                label: '供应商编码',
-                type: 'input'
-              },
-              {
-                prop: 'stockMoveOrderNo',
-                label: '出入库单号',
-                type: 'input'
-              },
-              {
-                prop: 'drawingNo',
-                label: '品名规格',
-                type: 'input'
-              },
-              {
-                prop: 'productCode',
-                label: '产品编码',
-                type: 'input'
-              },
-              {
-                prop: 'mainUnit',
-                label: '单位',
-                type: 'input'
-              },
-              {
-                prop: 'stockMoveDate',
-                label: '出入库日期',
-                type: 'datetimerange',
-                valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                startPlaceholder: '创建开始时间',
-                endPlaceholder: '创建结束时间',
-                pickerOptions: this.global.timePickerOptions
-              }
-            ]
-          }
           this.total = res.data.total
           this.listLoading = false
           this.visible = false

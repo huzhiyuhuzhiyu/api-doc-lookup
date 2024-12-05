@@ -111,6 +111,7 @@
         </div>
         <JNPF-table v-if="tableDataFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           :hasNO="true" ref="listTable" :setColumnDisplayList="columnList">
+          <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="code" label="工序编码" width="120" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">{{
@@ -120,10 +121,6 @@
           </el-table-column>
           <el-table-column prop="name" label="工序名称" width="140" sortable="custom" />
           <el-table-column prop="productCategoryIdText" label="工序分类" width="130" sortable="custom" />
-          <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
-          <el-table-column prop="unitPrice" label="正品单价" width="100" />
-          <el-table-column prop="rejectUnitPrice" label="次品单价" width="100" />
-          <el-table-column prop="scrapUnitPrice" label="废品单价" width="100" />
           <el-table-column prop="pricingTypeName" label="计价类型" width="100"> </el-table-column>
           <el-table-column prop="timePrice" label="计时单价" min-width="120"></el-table-column>
           <el-table-column prop="processingType" label="加工类型" width="120" sortable="custom">
@@ -248,21 +245,6 @@ export default {
         {
           prop: 'productCategoryIdText',
           label: '工序分类',
-          type: 'input'
-        },
-        {
-          prop: 'unitPrice',
-          label: '正品单价',
-          type: 'input'
-        },
-        {
-          prop: 'scrapUnitPrice',
-          label: '次品单价',
-          type: 'input'
-        },
-        {
-          prop: 'timePrice',
-          label: '计时单价',
           type: 'input'
         },
         {

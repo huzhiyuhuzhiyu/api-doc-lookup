@@ -552,7 +552,7 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.drawingNo" placeholder="请输入品名规格" clearable />
+                    <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -1294,11 +1294,11 @@ export default {
     // 选择产品——搜索
     searchProductFun() {
       if (this.deliveryDateArr.length) {
-        this.orderForm.deliveryStartTime = this.deliveryDateArr[0]
-        this.orderForm.deliveryEndTime = this.deliveryDateArr[1]
+        this.orderForm.deliveryStartDate = this.deliveryDateArr[0]
+        this.orderForm.deliveryEndDate = this.deliveryDateArr[1]
       } else {
-        this.orderForm.deliveryStartTime = ''
-        this.orderForm.deliveryEndTime = ''
+        this.orderForm.deliveryStartDate = ''
+        this.orderForm.deliveryEndDate = ''
       }
       this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
       detailpurchaseOrderList(this.orderForm)

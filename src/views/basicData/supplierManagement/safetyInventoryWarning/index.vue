@@ -302,9 +302,23 @@ export default {
     this.getProductClassFun()
   },
   async created() {
+    await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
     await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isDeputyUnitSwitch === '1') {
+      this.superQueryJson.forEach(item => {
+        if (item.prop === 'mainUnit') {
+          item.label = '单位(主)'
+        }
+      })
+      this.superQueryJson.splice(7, 0, {
+        prop: 'deputyUnit',
+        label: '单位(副)',
+        type: 'input'
+      })
+
+    }
     if (this.isProductNameSwitch === '1') {
       this.superQueryJson.splice(2, 0, {
         prop: 'productName',
@@ -317,7 +331,7 @@ export default {
       this.expands = roleFlag
       this.toggleExpand(roleFlag)
     }
-    this.getDeputyUnit()
+
     this.getcategoryTree()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
 
@@ -541,7 +555,7 @@ export default {
           // demandDelivery = maxDate.toISOString().split('T')[0];
           this.formVisible = true
           this.$nextTick(() => {
-            this.$refs.Form.init(this.selectData, this.listQuery.classAttribut, 'safe')
+            this.$refs.Form.init(this.selectData, this.listQuery.classAttribute, 'safe')
           })
         }
       }

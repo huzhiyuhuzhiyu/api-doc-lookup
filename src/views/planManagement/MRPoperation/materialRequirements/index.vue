@@ -1031,9 +1031,7 @@ export default {
           },
 
         ]
-        setTimeout(() => {
           this.getProductClassFun()
-        }, 1000);
       }
       if (this.activeName == 'produce') {
         this.superQueryJson = [

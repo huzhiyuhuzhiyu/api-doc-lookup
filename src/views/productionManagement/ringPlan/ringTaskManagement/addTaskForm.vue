@@ -4,7 +4,7 @@
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
           <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-          <el-page-header @back="goBack" content="编排" />
+          <el-page-header @back="goBack" content="新建任务" />
           <div class="options">
             <el-button type="primary" v-if="btnType != 'look'" :loading="btnLoading"
               @click="handleConfirm('submit')">提交</el-button>
@@ -19,15 +19,18 @@
 
               <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                 <el-row :gutter="30" class="custom-row">
-                  <el-col :sm="6" :xs="24">
-                    <el-form-item label="生产计划单号" prop="productionPlanNo">
-                      <el-input v-model="dataForm.productionPlanNo" disabled />
-                    </el-form-item>
-                  </el-col>
+
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="生产任务单号" prop="orderNo">
                       <el-input v-model="dataForm.orderNo"
                         :disabled="codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="品名规格" prop="productsDrawingNo">
+                      <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" readonly
+                        @focus="openSelectProductFun">
+                      </el-input>
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24" v-if="isProjectSwitch == 1">
@@ -39,49 +42,24 @@
                       </el-select>
                     </el-form-item>
                   </el-col>
-
-                  <el-col :sm="6" :xs="24">
-                    <el-form-item label="品名规格" prop="productsDrawingNo">
-                      <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" disabled>
-                      </el-input>
-                    </el-form-item>
-                  </el-col>
-
-                  <el-col :sm="6" :xs="24">
-                    <el-form-item label="产品编码" prop="productsCode">
-                      <el-input v-model="dataForm.productsCode" placeholder="产品编码" disabled>
-                      </el-input>
-                    </el-form-item>
-                  </el-col>
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="单位" prop="mainUnit">
                       <el-input v-model="dataForm.mainUnit" placeholder="单位" disabled>
                       </el-input>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="6" :xs="24">
-                    <el-form-item label="计划生产数量" prop="planProductionQuantity">
-                      <el-input v-model="dataForm.planProductionQuantity" placeholder="计划生产数量" disabled>
-                      </el-input>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :sm="6" :xs="24">
-                    <el-form-item label="可编排数量" prop="availableArrangeQuantity">
-                      <el-input v-model="dataForm.availableArrangeQuantity" placeholder="可编排数量" disabled>
-                      </el-input>
-                    </el-form-item>
-                  </el-col>
+
 
 
                   <el-col :sm="6" :xs="24">
-                    <el-form-item label="编排数量" prop="productionQuantity">
-                      <el-input v-model="dataForm.productionQuantity" placeholder="编排数量">
+                    <el-form-item label="生产数量" prop="productionQuantity">
+                      <el-input v-model="dataForm.productionQuantity" placeholder="生产数量">
                       </el-input>
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="编排任务方式" prop="taskMethod">
-                      <el-select v-model="dataForm.taskMethod" placeholder="请选择业务类型" style="width: 100%;"
+                      <el-select v-model="dataForm.taskMethod" placeholder="请选择编排任务方式" style="width: 100%;"
                         @change="selectTaskMethod">
                         <el-option v-for="(item, index) in taskMethodList" :key="index" :label="item.label"
                           :value="item.value"></el-option>
@@ -112,14 +90,14 @@
                         @focus="openRoutingFun"></el-input>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="6" :xs="24" v-if="dataForm.autoMaterialFlag">
+                  <!-- <el-col :sm="6" :xs="24" v-if="dataForm.autoMaterialFlag">
                     <el-form-item label="线边仓库" prop="lineEdgeList" ref="organizeIdTree">
                       <el-select v-model="dataForm.lineEdgeList" multiple placeholder="请选择" style="width: 100%;">
                         <el-option v-for="item in warehouseList" :key="item.id" :label="item.name" :value="item.id">
                         </el-option>
                       </el-select>
                     </el-form-item>
-                  </el-col>
+                  </el-col> -->
                   <el-col :sm="12" :xs="24">
                     <el-form-item label="备注" prop="remark">
                       <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" maxlength="200"
@@ -141,7 +119,8 @@
                   </el-col>
                   <el-col :sm="8" :xs="24">
                     <el-form-item label="领料人" prop="personId">
-                      <el-input v-model="collectForm.personId"  :disabled="btnType == 'look' ? true : false"  placeholder="领料人"/>
+                      <el-input v-model="collectForm.personId" :disabled="btnType == 'look' ? true : false"
+                        placeholder="领料人" />
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
@@ -486,6 +465,8 @@
 
         <RoutingForm v-if="routingVisible" ref="routingForm" @selectRouting="selectRoutingFun">
         </RoutingForm>
+        <SelectProductForm v-if="productVisible" ref="productForm" @selectProduct="selectProductFun">
+        </SelectProductForm>
       </div>
     </transition>
   </div>
@@ -501,6 +482,7 @@ import {
   dispatchListMap,
 } from "@/api/productOrdes/finishedProductOrders";
 import { excelExport, getProductionLineInfo, getProductionLineList } from "@/api/basicData/index";
+import SelectProductForm from './selectProductForm.vue'
 import RoutingForm from "./RoutingForm.vue"
 import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
@@ -511,10 +493,12 @@ import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   mixins: [getProjectList],
   components: {
-    RoutingForm
+    RoutingForm,
+    SelectProductForm,
   },
   data() {
     return {
+      productVisible: false,
       isattachmentswitch: "",
       taskMethodList: [{ label: "指定加工对象", value: "appoint" }, { label: "不指定加工对象", value: "not_appoint" },],
       activeNames: ["productInfo", "basicInfo"],
@@ -535,7 +519,7 @@ export default {
         operationDate: [
           { required: true, message: '领料日期不能为空', trigger: 'change' }
         ],
-        
+
       },
       dataForm: {
         planDate: [],
@@ -546,8 +530,8 @@ export default {
         mainUnit: "",
         planProductionQuantity: "",
         availableArrangeQuantity: "",
-        productionQuantity: "appoint",
-        taskMethod: "",
+        productionQuantity: "",
+        taskMethod: "appoint",
         planStartDate: "",
         planEndDate: "",
         routingName: "",
@@ -563,6 +547,8 @@ export default {
         remark: "",
         bomId: "",
         projectId: "",
+        orderType: "manually",
+
       },
       dataFormTwo: {
         data: [],
@@ -579,12 +565,15 @@ export default {
           { required: true, message: '计划生产日期不能为空', trigger: 'change' }
         ],
         productionQuantity: [
-          { validator: this.formValidate({ type: 'noEmtry', params: ["编排数量不能为空", (errMsg, index) => { this.$message.error(`编排数量：${errMsg}`) }] }), trigger: 'blur' },
+          { validator: this.formValidate({ type: 'noEmtry', params: ["生产数量不能为空", (errMsg, index) => { this.$message.error(`生产数量：${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' },
-          { validator: this.formValidate('positiveNumber', '编排数量必须大于0', (errMsg, index) => { this.$message.error(`编排数量：${errMsg}`) }), trigger: 'blur' }
+          { validator: this.formValidate('positiveNumber', '生产数量必须大于0', (errMsg, index) => { this.$message.error(`生产数量：${errMsg}`) }), trigger: 'blur' }
         ],
         routingName: [
           { required: true, message: '工艺路线不能为空', trigger: 'change' }
+        ],
+        productsDrawingNo: [
+          { required: true, message: '品名规格不能为空', trigger: 'blur' }
         ]
       },
       selectArr: [],
@@ -658,6 +647,32 @@ export default {
   },
 
   methods: {
+    openSelectProductFun() {
+      this.productVisible = true
+      this.$nextTick(() => {
+        if (this.isProjectSwitch == 1) {
+          this.$refs.productForm.init(this.userInfo.projectId || '')
+
+        } else {
+          this.$refs.productForm.init('')
+
+        }
+      })
+    },
+    // 选择产品
+    selectProductFun(data) {
+      console.log("所选返工产品", data);
+      this.dataForm = data
+      this.$set(this.dataForm, 'orderType', 'manually')
+      this.$set(this.dataForm, 'taskMethod', 'appoint')
+      this.$set(this.dataForm, 'productsDrawingNo', data.drawingNo)
+      this.$set(this.dataForm, 'planDate', [])
+      this.$set(this.dataForm, 'orderNo', this.codeConfig.number)
+      this.getRoutingDetail(data.routingId)
+    },
+
+
+
 
     getWarehouseListFun() {
       let obj = {
@@ -812,10 +827,10 @@ export default {
         this.$nextTick(() => {
           this.$refs.routingForm.init(this.dataForm.projectId)
         })
-      }else{
+      } else {
         this.$nextTick(() => {
           this.$refs.routingForm.init("")
-        }) 
+        })
       }
     },
     selectRoutingFun(data) {
@@ -1077,25 +1092,9 @@ export default {
         this.processList = JSON.parse(JSON.stringify(res.data.routingLineList))
       })
     },
-    init(data) {
-      console.log("传递数据", data);
-      this.$set(data[0], 'productionQuantity', '')
-      this.dataForm = data[0]
-      this.$set(this.dataForm, 'taskMethod', 'appoint')
-      // let num=JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
-      // this.$set(this.dataForm,'productionQuantity',num)
-      if (this.dataForm.autoMaterialFlag) {
-        this.getWarehouseListFun()
-      }
-      this.dataForm.productionQuantity = JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
-      this.$set(this.dataForm, 'planDate', [])
-      this.$set(this.dataForm, 'productionPlanId', data[0].id)
-      console.log(this.$refs.dataForm);
-      this.$refs.dataForm.clearValidate('planDate');
+    init() {
       this.getProductionLineListFun()
       this.fetchData("PROD")
-
-      if (this.dataForm.routingId) this.getRoutingDetail(this.dataForm.routingId)
     },
     async fetchData(code) {
       try {
@@ -1119,8 +1118,10 @@ export default {
       this.$emit('close', true)
     },
     checkFun() {
-      if (Number(this.dataForm.productionQuantity) > Number(this.dataForm.availableArrangeQuantity)) return this.$message.error("编排数量不可大于可编排数量")
       let submitFlag = null;
+      this.dataForm.productsId = this.dataForm.id
+      this.dataForm.planStartDate = this.dataForm.planDate[0]
+      this.dataForm.planEndDate = this.dataForm.planDate[1]
       if (this.naturalResourcesFlag) {
 
         for (let index = 0; index < this.dataFormTwo.data.length; index++) {
@@ -1187,9 +1188,10 @@ export default {
         collect: this.collectForm,
         lineEdgeList: arr
       }
-      addProdPlanArrange(obj).then(res => {
+      this.btnLoading=true
+      addProdOrder(obj).then(res => {
         this.btnLoading = false
-        this.$message.success("生成编排成功")
+        this.$message.success("手动新建任务成功")
         setTimeout(() => {
           this.$emit('close')
         }, 1500);

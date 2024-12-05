@@ -1065,9 +1065,11 @@ export default {
           }
           this.dataForm = res.data.repair
           this.dataForms.lines = res.data.equLine
-          res.data.lines.forEach(item => {
-            item.repairResult = 'not_finished'
-          })
+          if (this.btnType !== 'look') {
+            res.data.lines.forEach(item => {
+              item.repairResult = 'not_finished'
+            })
+          }
           this.dataFormTwo.productData = res.data.lines
           if (res.data.attachmentList) {
             res.data.attachmentList.forEach((item) => {

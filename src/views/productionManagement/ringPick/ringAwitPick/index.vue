@@ -74,8 +74,8 @@
             </el-table-column>
             <el-table-column prop="orderType" label="生产任务类型" min-width="160" sortable="custom">
               <template slot-scope="scope">
-                <div v-if="scope.row.orderType == 'normal'">正常订单</div>
-                <div v-if="scope.row.orderType == 'rework'">返工订单</div>
+                <div v-if="scope.row.orderType == 'normal'">正常任务</div>
+                <div v-if="scope.row.orderType == 'rework'">返工任务</div>
               </template>
             </el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
@@ -140,8 +140,8 @@ export default {
       pickVisible:false,
       columnList: ["sealingCoverTyping", "accuracyLevel", "vibrationLevel", "oil", "oilQuantity", "clearance", "packagingMethod", "specialRequire",],
       orderTypeList: [
-        { label: "正常订单", value: "normal" },
-        { label: "返工订单", value: "rework" },
+        { label: "正常任务", value: "normal" },
+        { label: "返工任务", value: "rework" },
       ],
       superQuery: {},
       superForm: {},
@@ -424,7 +424,7 @@ export default {
     },
 
     superQuerySearch(query) {
-      this.orderForm.superQuery = query
+      this.superQuery = query
       this.superQueryVisible = false
       this.search('super')
     },

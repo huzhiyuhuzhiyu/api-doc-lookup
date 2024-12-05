@@ -287,7 +287,7 @@ export default {
   },
   methods: {
     getConfig() {
-    let objs = { "pageSize": -1, "businessCode": "product" }
+      let objs = { "pageSize": -1, "businessCode": "product" }
       getBimBusinessSwitchConfigList(objs).then(res => {
         this.productNameFlag = res.data.product[1].configValue1
         console.log(this.productNameFlag);
@@ -375,15 +375,15 @@ export default {
       this.tableQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
 
       inventoryWarehouseList(this.tableQuery).then((res) => {
-        console.log(res);
-        if (res.data.whPage.records.length) {
-          this.tableData = res.data.whPage.records
-          this.totalData = res.data.stockSts
+        console.log(res); 
+          this.tableData = res.data.whPage.records||[]
+          this.totalData = res.data.stockSts || {
+            totalInventory: 0,
+            totalOccupancy: 0,
+            totalAvailable: 0,
+          }
           this.total = res.data.whPage.total
-        } else {
-          this.tableData = []
-          this.totalData = 0
-        }
+         
 
         this.listLoading = false
       }).catch(() => {
@@ -449,7 +449,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop == 'productCode'||prop=='productName' || prop == 'productDrawingNo' || prop == 'warehouseName') {
+      if (prop == 'productCode' || prop == 'productName' || prop == 'productDrawingNo' || prop == 'warehouseName') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())

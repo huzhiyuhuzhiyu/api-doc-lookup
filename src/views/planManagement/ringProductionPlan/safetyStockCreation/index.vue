@@ -222,7 +222,7 @@ export default {
 
 
     superQuerySearch(query) {
-      this.form.superQuery = query
+      this.superQuery = query
       this.superQueryVisible = false
       this.search('super')
     },

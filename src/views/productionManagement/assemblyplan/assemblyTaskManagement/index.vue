@@ -1,6 +1,6 @@
 ﻿<template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-center JNPF-flex-main"  v-if="!formVisible">
+    <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
@@ -37,8 +37,9 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
-           
-              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addTaskFun('', 'add')">
+
+              <el-button size="mini" type="primary" icon="el-icon-plus" @click="addTaskFun()">新建任务</el-button>
+              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addReworkTaskFun('', 'add')">
                 新建返工任务
               </el-button>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click="addition2()">追加生产</el-button>
@@ -63,9 +64,10 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData"  v-if="isProjectSwitchFlag"
+          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData" v-if="isProjectSwitchFlag"
             :fixedNO="true" :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" hasC
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+            <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
             <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="viewDetailFun(scope.row.id)">{{
@@ -75,14 +77,15 @@
             </el-table-column>
             <el-table-column prop="orderType" label="任务类型" min-width="120" sortable="custom">
               <template slot-scope="scope">
-                <div v-if="scope.row.orderType == 'normal'">正常订单</div>
-                <div v-if="scope.row.orderType == 'rework'">返工订单</div>
+                <div v-if="scope.row.orderType == 'normal'">正常任务</div>
+                <div v-if="scope.row.orderType == 'rework'">返工任务</div>
+                <div v-if="scope.row.orderType == 'manually'">手动新建任务</div>
               </template>
             </el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-            v-if="isProjectSwitch == 1" />
+              v-if="isProjectSwitch == 1" />
             <el-table-column prop="mainUnit" label="单位" width="80" />
             <el-table-column prop="productionQuantity" label="总生产数量" min-width="140" sortable="custom" />
             <el-table-column prop="completedQuantity" label="已完成数量" min-width="140" sortable="custom" />
@@ -107,7 +110,6 @@
             <el-table-column prop="clearance" label="游隙" min-width="100" sortable="custom" />
             <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
             <el-table-column prop="specialRequire" label="特殊要求" min-width="160" sortable="custom" />
-            <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
             <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
             <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom"></el-table-column>
@@ -213,7 +215,7 @@
         </el-form>
       </el-row>
       <JNPF-table ref="work" :data="workOrderData" hasC @selection-change="handleSelectWork" fixedNo
-        v-loading="tableloading" border  :checkSelectable="row=>!row.selectFlag">
+        v-loading="tableloading" border :checkSelectable="row => !row.selectFlag">
         <el-table-column prop="orderNo" label="工单号" min-width="160" />
         <el-table-column prop="processName" label="工序名称" min-width="120" />
         <el-table-column prop="processCode" label="工序编码" min-width="120"></el-table-column>
@@ -233,6 +235,9 @@
     <!-- 选择打印模版弹窗 -->
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printOrder"
       :printQuery="printQuery" :enCode="enCode" ref="printTemplate" />
+    <AddTaskForm v-if="addTaskFormVisible" ref="addTaskForm" @refreshDataList="initData"
+      @close="closeForm">
+    </AddTaskForm>
   </div>
 </template>
 <script>
@@ -253,18 +258,20 @@ import { getPrintList } from '@/api/system/printDev'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 import TaskForm from './taskFormCopy.vue'
+import AddTaskForm from './addTaskForm.vue'
 // import TaskForm from './taskForm.vue'
 
 export default {
 
   name: 'assemblyTaskManagement',
 
-  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog, TaskForm },
+  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog, TaskForm,AddTaskForm},
   mixins: [getProjectList],
 
   data() {
 
     return {
+      addTaskFormVisible:false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -391,9 +398,10 @@ export default {
 
           options: [
 
-            { label: "正常订单", value: "normal" },
+            { label: "正常任务", value: "normal" },
 
-            { label: "返工订单", value: "rework" },
+            { label: "返工任务", value: "rework" },
+            { label: "手动新建任务", value: "manually" },
 
           ]
 
@@ -720,9 +728,9 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     this.isProjectSwitchFlag = true
-    this.superForm=this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+    this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search('basic')
-  }, 
+  },
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -739,7 +747,7 @@ export default {
     },
     // 新建返工
 
-    addTaskFun(id, type) {
+    addReworkTaskFun(id, type) {
 
       this.reworkVisible = true
 
@@ -763,7 +771,13 @@ export default {
       this.form = data
       this.addOrderVisible = true
     },
-
+    // 新建任务
+    addTaskFun() {
+      this.addTaskFormVisible=true
+      this.$nextTick(()=>{
+        this.$refs.addTaskForm.init('add')
+      })
+    },
 
 
     reassignmentFun2() {
@@ -901,73 +915,36 @@ export default {
           typeCode: item.typeCode,
 
           orderItems: [
-
             {
-
               asc: false,
-
               column: "",
-
             },
-
             {
-
               asc: false,
-
               column: "code",
-
             },
-
           ],
-
         };
-
         getbimProductAttributesList(obj1).then(res => {
-
-
-
           let arr = []
-
           res.data.records.forEach(items => {
-
             let obj = {
-
               label: items.name,
-
               value: items.name,
-
             }
-
             arr.push(obj)
-
           });
-
           let oilObj = this.superQueryJson.find(rs => rs.prop === item.prop);
-
           if (oilObj) {
-
             // 将options赋值为5  
-
             oilObj.options = JSON.parse(JSON.stringify(arr));
-
           }
-
         })
-
       })
-
-
-
-
-
-
-
-
-
     },
     superQuerySearch(query) {
 
-      this.orderForm.superQuery = query
+      this.superQuery = query
 
       this.superQueryVisible = false
 
@@ -975,49 +952,28 @@ export default {
 
     },
     sortChange({ prop, order }) {
-
       let newProp;
-
-      if (prop === 'partnerCode'||prop=='projectName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'productDrawingNo' || prop == 'productCode' || prop == 'routingName' || prop == 'routingCode') {
-
+      if (prop === 'partnerCode' || prop == 'projectName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'productDrawingNo' || prop == 'productCode' || prop == 'routingName' || prop == 'routingCode') {
         if (prop === 'createByName') {
-
           newProp = 'create_by'
-
         } else {
-
           newProp = prop
-
         }
-
       } else {
-
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-
       }
-
       this.orderForm.orderItems[0].asc = order !== "descending"
-
       this.orderForm.orderItems[0].column = order === null ? "" : newProp
-
-
-
       this.initData()
-
     },
     // 关闭新建编辑页面
     closeForm(isRefresh) {
-
+      this.addTaskFormVisible=false
       this.formVisible = false
-
       this.reworkVisible = false
-
       this.BatchDispatchVisible = false
-
       this.taskFormVisible = false
-
       this.search()
-
     },
     initData() {
       this.listLoading = true
@@ -1057,14 +1013,14 @@ export default {
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.superForm=this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+      this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
       this.$refs.SuperQuery.conditionList = []
-      this.searchList=[
+      this.searchList = [
         { field: 'productionPlanNo', fieldValue: '', label: '生产计划单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],
-      this.search('basic')
+        this.search('basic')
     },
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
@@ -1172,8 +1128,8 @@ export default {
         if (res.data) {
           if (res.data.hasOwnProperty(enCode)) {
             this.printList = res.data[enCode]
-            this.printList && this.printList.forEach(item=>{
-              if (item.enabledMark){
+            this.printList && this.printList.forEach(item => {
+              if (item.enabledMark) {
                 this.workOrderForm.enCode = item.id
               }
             })
@@ -1224,6 +1180,6 @@ export default {
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />
 <style scoped>
 ::v-deep .el-tabs__header {
-    margin-bottom: 5px!important;
+  margin-bottom: 5px !important;
 }
 </style>

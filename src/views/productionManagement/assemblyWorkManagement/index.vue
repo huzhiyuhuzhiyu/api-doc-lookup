@@ -226,8 +226,8 @@ export default {
           label: "工序编码",
           type: 'select',
           options: [
-            { label: "正常订单", value: "normal" },
-            { label: "返工订单", value: "rework" },
+            { label: "正常任务", value: "normal" },
+            { label: "返工任务", value: "rework" },
           ]
         },
         {

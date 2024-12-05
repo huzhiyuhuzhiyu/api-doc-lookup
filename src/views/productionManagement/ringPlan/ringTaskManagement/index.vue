@@ -40,7 +40,8 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading" >
           <div class="JNPF-common-head">
             <div>
-              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addTaskFun('', 'add')">
+              <el-button size="mini" type="primary" icon="el-icon-plus" @click="addTaskFun()">新建任务</el-button>
+              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addReworkTaskFun('', 'add')">
                 新建返工任务
               </el-button>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click="addition2()">追加生产</el-button>
@@ -78,8 +79,10 @@
             </el-table-column>
             <el-table-column prop="orderType" label="任务类型" min-width="120" sortable="custom">
               <template slot-scope="scope">
-                <div v-if="scope.row.orderType == 'normal'">正常订单</div>
-                <div v-if="scope.row.orderType == 'rework'">返工订单</div>
+                <div v-if="scope.row.orderType == 'normal'">正常任务</div>
+                <div v-if="scope.row.orderType == 'rework'">返工任务</div>
+                <div v-if="scope.row.orderType == 'manually'">手动新建任务</div>
+
               </template>
             </el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
@@ -239,6 +242,9 @@
           打 印</el-button>
       </span>
     </el-dialog>
+    <AddTaskForm v-if="addTaskFormVisible" ref="addTaskForm" @refreshDataList="initData"
+      @close="closeForm">
+    </AddTaskForm>
   </div>
 </template>
 
@@ -259,9 +265,10 @@ import PrintBrowse from '@/components/PrintBrowse'
 import { getPrintList } from '@/api/system/printDev'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
+import AddTaskForm from './addTaskForm.vue'
 export default {
-  name: 'assemblyTaskManagement',
-  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, TaskForm },
+  name: 'ringTaskManagement',
+  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, TaskForm,AddTaskForm },
   mixins: [getProjectList],
   data() {
     return {
@@ -332,8 +339,10 @@ export default {
           label: "任务类型",
           type: 'select',
           options: [
-            { label: "正常订单", value: "normal" },
-            { label: "返工订单", value: "rework" },
+            { label: "正常任务", value: "normal" },
+            { label: "返工任务", value: "rework" },
+            { label: "手动新建任务", value: "manually" },
+
           ]
         },
         {
@@ -523,10 +532,17 @@ export default {
       })
     },
     // 新建返工
-    addTaskFun(id, type) {
+    addReworkTaskFun(id, type) {
       this.reworkVisible = true
       this.$nextTick(() => {
         this.$refs.reworkForm.init(id, type)
+      })
+    },
+      // 新建任务
+      addTaskFun() {
+      this.addTaskFormVisible=true
+      this.$nextTick(()=>{
+        this.$refs.addTaskForm.init('add')
       })
     },
     // 追加
@@ -655,7 +671,7 @@ export default {
     },
 
     superQuerySearch(query) {
-      this.orderForm.superQuery = query
+      this.superQuery = query
       this.superQueryVisible = false
       this.search('super')
     },

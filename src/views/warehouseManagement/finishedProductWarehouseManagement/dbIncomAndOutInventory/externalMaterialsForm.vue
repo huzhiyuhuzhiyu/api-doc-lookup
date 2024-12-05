@@ -980,13 +980,10 @@ export default {
       getWarehouseList({ code: this.warehouseCode }).then(res => {
         this.dataForm.warehouseName = res.data[0].name
         this.dataForm.warehouseId = res.data[0].id
-        // 获取仓库详情信息
-        getWarehouseInfo(res.data[0].id).then(response => {
-          this.wareHouseInfo = response.data
-          this.dataForm.warehouseType = response.data.type
-          this.dataForm.projectId = response.data.projectId
-          this.allocationFlag = response.data.locationStatus == 'disabled' ? false : true
-        })
+        this.dataForm.warehouseType = res.data[0].type
+          this.dataForm.projectId = res.data[0].projectId
+          this.allocationFlag = res.data[0].locationStatus == 'disabled' ? false : true
+          this.getMaterialsFun('init')
       })
     },
 
@@ -996,11 +993,12 @@ export default {
       this.materialsForm.projectId = this.isProjectSwitch === '1' ? this.dataForm.projectId || '' : ''
 
       shipmentList(this.materialsForm).then(res => {
-        console.log("发料清单数据", res,this.dataForm.warehouseId);
+        console.log("发料清单数据", res, this.dataForm.warehouseId);
         res.data.records.forEach(item => {
           this.$set(item, 'num', item.waitDeliverNum)
           this.$set(item, 'availableBatchNumber', item.availableBatchQuantity)
           this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+          this.$set(item, 'warehouseType', this.dataForm.warehouseType)
           // this.$set(item, 'discount', '')
           // this.$set(item, 'proportion', '')
           // this.$set(item, 'weight', '')
@@ -1014,7 +1012,10 @@ export default {
             }
           }
         });
-        if (flag) return this.productData = res.data.records
+        if (flag) {
+          this.productData = res.data.records
+         
+        }
 
         this.productList = res.data.records
         this.productTotal = res.data.total
@@ -1064,7 +1065,6 @@ export default {
         data.forEach(item => {
           this.ordersLineIdList.push(item.id)
         });
-        this.getMaterialsFun('init')
         this.getBusInfo('b045')
 
         console.log(66666);
@@ -1129,7 +1129,7 @@ export default {
       } catch (error) {
       }
     },
-    async handleConfirm(submitModel,type) {
+    async handleConfirm(submitModel, type) {
       console.log(this.productData);
       let submitFlag = true // 自动聚焦是否可用
       this.$refs['dataForm'].validate((valid) => {
@@ -1172,7 +1172,7 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待发料数量")
                 break
               }
-        
+
 
             }
 
@@ -1194,6 +1194,7 @@ export default {
             this.copyLinesData = JSON.parse(JSON.stringify(this.productData))
             this.copyLinesData.forEach(element => {
               element.warehouseType = this.dataForm.warehouseType
+              element.warehouseId = this.dataForm.warehouseId
             });
             this.dataForm.classAttributeList = this.classAttributeList
             this.dataForm.sourceType = 'order'

@@ -56,6 +56,7 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"  v-if="isProjectSwitchFlag"
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+            <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
             <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id)">{{
@@ -65,8 +66,8 @@
             </el-table-column>
             <el-table-column prop="orderType" label="任务类型" min-width="120" sortable="custom">
               <template slot-scope="scope">
-                <div v-if="scope.row.orderType == 'normal'">正常订单</div>
-                <div v-if="scope.row.orderType == 'rework'">返工订单</div>
+                <div v-if="scope.row.orderType == 'normal'">正常任务</div>
+                <div v-if="scope.row.orderType == 'rework'">返工任务</div>
               </template>
             </el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
@@ -86,7 +87,6 @@
             <el-table-column prop="clearance" label="游隙" min-width="100" sortable="custom" />
             <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
             <el-table-column prop="specialRequire" label="特殊要求" min-width="160" sortable="custom" />
-            <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
             <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
             <el-table-column prop="orderStatus" label="状态" min-width="120" sortable="custom">
               <template slot-scope="scope">
@@ -144,6 +144,7 @@ export default {
   mixins: [getProjectList],
   data() {
     return {
+      superQueryVisible:false,
       isProjectSwitch: '',
       isProjectSwitchFlag: false,
       superQuery: {},
@@ -194,8 +195,9 @@ export default {
           label: "任务类型",
           type: 'select',
           options: [
-            { label: "正常订单", value: "normal" },
-            { label: "返工订单", value: "rework" },
+            { label: "正常任务", value: "normal" },
+            { label: "返工任务", value: "rework" },
+            { label: "手动新建任务", value: "manually" },
           ]
         },
         {
@@ -412,7 +414,7 @@ export default {
       })
     },
     superQuerySearch(query) {
-      this.orderForm.superQuery = query
+      this.superQuery = query
       this.superQueryVisible = false
       this.search('super')
     },

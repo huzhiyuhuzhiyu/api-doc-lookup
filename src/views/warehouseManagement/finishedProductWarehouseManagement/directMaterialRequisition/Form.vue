@@ -179,6 +179,8 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="allproductData" hasC @sort-change="sortChange" :fixedNO="true"
                 @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
+                <el-table-column prop="partnerName" label="供应商名称" min-width="160" />
+                <el-table-column prop="partnerCode" label="供应商编码" min-width="160" />
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="160"
                   sortable="custom"></el-table-column>
                 <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
@@ -226,6 +228,15 @@
                   :key="500"></el-table-column>
                 <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" min-width="160"
                   :key="600"></el-table-column>
+                <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom" min-width="160"
+                  :key="601"></el-table-column>
+                <el-table-column prop="logo" label="logo" width="120" sortable="custom" min-width="160"
+                  :key="602"></el-table-column>
+                <el-table-column prop="specialRequire" label="开等分" width="120" sortable="custom" min-width="160"
+                  :key="603"></el-table-column>
+                <el-table-column prop="material" label="材质" width="120" sortable="custom" min-width="160"
+                  :key="604"></el-table-column>
+
                 <el-table-column prop="processName" label="工序" width="120" sortable="custom" min-width="160"
                   :key="1100"></el-table-column>
               </JNPF-table>

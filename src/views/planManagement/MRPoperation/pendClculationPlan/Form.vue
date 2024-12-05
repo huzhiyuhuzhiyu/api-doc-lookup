@@ -1911,11 +1911,11 @@ export default {
 ::v-deep.header-title {
   line-height: 46px;
   /* width: 200px; */
-  flex: 1;
+  flex: 0.5;
 }
 
 ::v-deep .el-steps {
-  flex: 1.5;
+  flex: 2;
 }
 
 .options {

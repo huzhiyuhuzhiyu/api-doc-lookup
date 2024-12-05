@@ -113,8 +113,8 @@ export default {
       superForm: {},
       basicQuery: {},
       searchList: [
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'code', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
       ],
       columnList: ["cooperativePartnerName", "cooperativePartnerCode",   "productCode", "createTime", 'createByName'],
       superQueryVisible: false,
@@ -218,7 +218,7 @@ export default {
 
 
     superQuerySearch(query) {
-      this.form.superQuery = query
+      this.superQuery = query
       this.superQueryVisible = false
       this.search('super')
     },

@@ -173,7 +173,7 @@ export default {
       superForm: {},
       basicQuery: {},
       searchList: [
-        { field: 'quotationNo', fieldValue: '', label: '报价单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'quotationNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'cooperativePartnerIdText', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'bidder', fieldValue: '', label: '报价人', symbol: 'like', searchType: 1, width: 120 },
 

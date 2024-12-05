@@ -599,7 +599,7 @@ export default {
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false
-      this.search('super')
+      this.search()
     },
     // 关闭新建编辑页面
     closeForm(isRefresh) {

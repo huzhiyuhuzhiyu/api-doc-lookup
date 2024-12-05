@@ -817,27 +817,27 @@ export default {
     },
     superQuerySearch(query) {
 
-if (this.activeName == 'assemble') {
-  this.assembleForm.superQuery = query
-  this.superQueryVisible = false
-  this.getassembleData()
-}
-if (this.activeName == 'produce') {
-  this.produceForm.superQuery = query
-  this.superQueryVisible = false
-  this.getproduceData()
-}
-if (this.activeName == 'purchase') {
-  this.purchaseForm.superQuery = query
-  this.superQueryVisible = false
-  this.getpurchaseData()
-}
-if (this.activeName == 'out') {
-  this.outForm.superQuery = query
-  this.superQueryVisible = false
-  this.getouteData()
-}
-},
+      if (this.activeName == 'assemble') {
+        this.assembleForm.superQuery = query
+        this.superQueryVisible = false
+        this.getassembleData()
+      }
+      if (this.activeName == 'produce') {
+        this.produceForm.superQuery = query
+        this.superQueryVisible = false
+        this.getproduceData()
+      }
+      if (this.activeName == 'purchase') {
+        this.purchaseForm.superQuery = query
+        this.superQueryVisible = false
+        this.getpurchaseData()
+      }
+      if (this.activeName == 'out') {
+        this.outForm.superQuery = query
+        this.superQueryVisible = false
+        this.getouteData()
+      }
+    },
     // 高级查询
     advancedQueryFun() {
       if (this.activeName == 'assemble') {
@@ -1477,7 +1477,7 @@ if (this.activeName == 'out') {
         prop === "productName" ||
         prop === "productDrawingNo" ||
         prop === "routingName" ||
-        prop === "routingCode"||prop=='projectName'
+        prop === "routingCode" || prop == 'projectName'
       ) {
         newProp = prop;
       } else {

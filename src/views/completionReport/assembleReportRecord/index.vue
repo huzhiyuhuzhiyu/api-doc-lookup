@@ -221,36 +221,7 @@ export default {
           label: "单位",
           type: 'input'
         },
-        {
-          prop: 'reportingQuantity',
-          label: "报工数量",
-          type: 'input'
-        },
-        {
-          prop: 'qualifiedQuantity',
-          label: "合格数量",
-          type: 'input'
-        },
-        {
-          prop: 'responsibilityWasteQuantity',
-          label: "责废数量",
-          type: 'input'
-        },
-        {
-          prop: 'materialWasteQuantity',
-          label: "料废数量",
-          type: 'input'
-        },
-        {
-          prop: 'reworkQuantity',
-          label: "返工数量",
-          type: 'input'
-        },
-        {
-          prop: 'materialWasteQuantity',
-          label: "料废数量",
-          type: 'input'
-        },
+         
 
 
         {

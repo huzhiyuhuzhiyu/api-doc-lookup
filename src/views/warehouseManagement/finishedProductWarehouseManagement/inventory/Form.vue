@@ -81,6 +81,10 @@
               </el-table-column>
               <el-table-column prop="warehouseName" label="仓库名称" min-width="180" sortable="custom"> </el-table-column>
               <el-table-column prop="shelfSpaceName" label="库位名称" min-width="120" sortable="custom" />
+              <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom" :key="601"></el-table-column>
+              <el-table-column prop="logo" label="logo" width="120" sortable="custom" :key="602"></el-table-column>
+              <el-table-column prop="specialRequire" label="开等分" width="120" sortable="custom" :key="603"></el-table-column>
+              <el-table-column prop="material" label="材质" width="120" sortable="custom" :key="604"></el-table-column>
               <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
               <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
               <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
@@ -96,14 +100,7 @@
               <el-table-column prop="aperture" label="孔径" min-width="120" :key="100"
                 sortable="custom"></el-table-column>
               <el-table-column prop="colour" label="颜色" min-width="120" :key="100" sortable="custom"></el-table-column>
-              <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom" min-width="160"
-                :key="601"></el-table-column>
-              <el-table-column prop="logo" label="logo" width="120" sortable="custom" min-width="160"
-                :key="602"></el-table-column>
-              <el-table-column prop="specialRequire" label="开等分" width="120" sortable="custom" min-width="160"
-                :key="603"></el-table-column>
-              <el-table-column prop="material" label="材质" width="120" sortable="custom" min-width="160"
-                :key="604"></el-table-column>
+
               <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" fixed="right"
                 sortable="custom" />
             </JNPF-table>
@@ -335,20 +332,16 @@ export default {
       inventorySpaceList(this.listQuery).then(res => {
         this.treeLoading = false
         this.listLoading = false
-        if (!res.data.whPage.records.length) {
-          console.log(6666);
-          this.tableData = []
-          this.total = 0
-          this.totalData.totalInventory = 0
-          this.totalData.totalAvailable = 0
-          this.totalData.totalOccupancy = 0
 
-        } else {
 
-          this.tableData = res.data.whPage.records
-          this.total = res.data.whPage.total
-          this.totalData = res.data.stockSts
+        this.tableData = res.data.whPage.records
+        this.total = res.data.whPage.total
+        this.totalData = res.data.stockSts || {
+          totalInventory: 0,
+          totalAvailable: 0,
+          totalOccupancy: 0,
         }
+
 
       }).catch(err => {
         this.treeLoading = false

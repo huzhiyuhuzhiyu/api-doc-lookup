@@ -399,7 +399,11 @@ export default {
         this.tableData = res.data.whPage.records
         if(res.data.stockSts){
 
-          this.totalData = res.data.stockSts
+          this.totalData = res.data.stockSts||{
+        totalInventory:0,
+        totalAvailable:0,
+        totalOccupancy:0,
+      }
         }
         this.total = res.data.whPage.total
         this.listLoading = false

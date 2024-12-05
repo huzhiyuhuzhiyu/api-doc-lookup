@@ -292,7 +292,7 @@ export default {
         if(!res.data.whPage.records.length) return
         this.tableData = res.data.whPage.records
         this.total = res.data.whPage.total
-        this.totalData = res.data.stockSts
+        this.totalData = res.data.stockSts||{}
         
       }).catch(err => {
         this.treeLoading = false

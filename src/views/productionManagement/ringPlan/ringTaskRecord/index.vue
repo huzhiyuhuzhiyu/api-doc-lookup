@@ -138,6 +138,7 @@ export default {
   mixins: [getProjectList],
   data() {
     return {
+      superQueryVisible:false,
       isProjectSwitch: '',
       isProjectSwitchFlag: false,
       superQuery: {},
@@ -298,7 +299,7 @@ export default {
   methods: {
    
     superQuerySearch(query) {
-      this.orderForm.superQuery = query
+      this.superQuery = query
       this.superQueryVisible = false
       this.search('super')
     },

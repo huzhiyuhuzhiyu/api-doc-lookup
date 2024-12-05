@@ -308,7 +308,11 @@ export default {
         console.log(res);
         if (res.data.whPage.records.length) {
           this.tableData = res.data.whPage.records
-          this.totalData = res.data.stockSts
+          this.totalData = res.data.stockSts||{
+        totalInventory:0,
+        totalAvailable:0,
+        totalOccupancy:0,
+      }
           this.total = res.data.whPage.total
         } else {
 

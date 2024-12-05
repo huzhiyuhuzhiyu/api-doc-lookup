@@ -83,7 +83,7 @@
               <el-table-column prop="shelfSpaceName" label="库位名称" min-width="120" sortable="custom" />
               <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom" :key="601"></el-table-column>
               <el-table-column prop="logo" label="logo" width="120" sortable="custom" :key="602"></el-table-column>
-              <el-table-column prop="specialRequire" label="开等分" width="120" sortable="custom" :key="603"></el-table-column>
+              <el-table-column prop="divideEqually" label="开等分" width="120" sortable="custom" :key="603"></el-table-column>
               <el-table-column prop="material" label="材质" width="120" sortable="custom" :key="604"></el-table-column>
               <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
               <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />

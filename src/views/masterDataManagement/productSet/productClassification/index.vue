@@ -240,6 +240,7 @@ export default {
       })
     },
     superQuerySearch(query) {
+      console.log(query,'qu')
       this.listQuery.superQuery = query
       this.superQueryVisible = false
       this.search()

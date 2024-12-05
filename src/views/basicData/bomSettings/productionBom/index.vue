@@ -45,6 +45,11 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model="listQuery.productCode" @keyup.enter.native="search()" placeholder="产品编码" clearable />
+            </el-form-item>
+          </el-col>
           <el-col :span="4" v-if="isProductNameSwitch === '1'">
             <el-form-item>
               <el-input v-model.trim="listQuery.productName" placeholder="产品名称" clearable
@@ -56,12 +61,6 @@
               <el-input v-model="listQuery.drawNo" @keyup.enter.native="search()" placeholder="品名规格" clearable />
             </el-form-item>
           </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="listQuery.productCode" @keyup.enter.native="search()" placeholder="产品编码" clearable />
-            </el-form-item>
-          </el-col>
-
           <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
@@ -100,9 +99,7 @@
         <JNPF-table v-if="tableDataFlag" ref="tableForm" :data="tableData" @sort-change="sortChange" custom-column
           fixedNO @selection-change="selectionChange" :element-loading-text="loadingText"
           :setColumnDisplayList="columnList">
-          <el-table-column prop="drawNo" label="品名规格" min-width="600" sortable="custom" />
-          <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
-            show-overflow-tooltip></el-table-column>
+          <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="productCode" label="产品编码" min-width="200" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
@@ -110,7 +107,9 @@
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
+          <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+            show-overflow-tooltip></el-table-column>
+          <el-table-column prop="drawNo" label="品名规格" min-width="600" sortable="custom" />
           <el-table-column prop="pickingWay" label="领料方式" min-width="180">
             <template slot-scope="{ row }">
               <template v-if="row.pickingWay == 'production_order'">
@@ -244,13 +243,13 @@ export default {
       superQueryVisible: false,
       superQueryJson: [
         {
-          prop: 'drawNo',
-          label: '品名规格',
+          prop: 'productCode',
+          label: '产品编码',
           type: 'input'
         },
         {
-          prop: 'productCode',
-          label: '产品编码',
+          prop: 'drawNo',
+          label: '品名规格',
           type: 'input'
         },
         {
@@ -342,11 +341,17 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
-
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
     await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProductNameSwitch === '1') {
+      this.superQueryJson.splice(1, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
+    }
     this.tableDataFlag = true
     this.getcategoryTree()
     if (localStorage.getItem("productionBomFlag")) {

@@ -77,10 +77,10 @@
             <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
             <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" />
             <el-table-column prop="deliverDate" label="退货日期" width="120" sortable="custom"></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
+            <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
               show-overflow-tooltip></el-table-column>
-            <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
+            <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
             <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
               :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
             <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
@@ -304,17 +304,17 @@ export default {
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
-
-        {
-          prop: 'productDrawingNo',
-          label: '品名规格',
-          type: 'input'
-        },
         {
           prop: 'productCode',
           label: '产品编码',
           type: 'input'
         },
+        {
+          prop: 'productDrawingNo',
+          label: '品名规格',
+          type: 'input'
+        },
+
         {
           prop: 'mainUnit',
           label: '单位',
@@ -377,8 +377,8 @@ export default {
 
     }
     if (this.isProductNameSwitch === '1') {
-    
-      this.superQueryJson.splice(4, 0, {
+
+      this.superQueryJson.splice(5, 0, {
         prop: 'productName',
         label: '产品名称',
         type: 'input'

@@ -69,10 +69,12 @@
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
           :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
-          <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
+          <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" width="120"
             v-if="isProductNameSwitch === '1'"></el-table-column>
-          <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
+
+
           <el-table-column prop="classAttribute" label="类别属性" min-width="110" sortable="custom">
             <template slot-scope="scope">
               {{ $getLabel(classAttributeList, scope.row.classAttribute, 'value', 'label') }}
@@ -198,21 +200,15 @@ export default {
       superQueryVisible: false,
       superQueryJson: [
         {
-          prop: 'drawingNo',
-          label: '品名规格',
-          type: 'input'
-        },
-        {
-          prop: 'code',
+          prop: 'productCode',
           label: '产品编码',
           type: 'input'
         },
-
-        // {
-        //   prop: 'name',
-        //   label: '产品名称',
-        //   type: 'input'
-        // },
+        {
+          prop: 'productDrawingNo',
+          label: '品名规格',
+          type: 'input'
+        },
         {
           prop: 'classAttribute',
           label: '类别属性',
@@ -448,7 +444,7 @@ export default {
 
     }
     if (this.isProductNameSwitch === '1') {
-      this.superQueryJson.splice(0, 0, {
+      this.superQueryJson.splice(1, 0, {
         prop: 'productName',
         label: '产品名称',
         type: 'input'
@@ -477,6 +473,11 @@ export default {
     },
     columnSetFun() {
       this.$refs.tableForm.showDrawer()
+    },
+    superQuerySearch(query) {
+      this.listQuery.superQuery = query
+      this.superQueryVisible = false
+      this.search()
     },
     getPoolSourceList(id) {
       let obj = {

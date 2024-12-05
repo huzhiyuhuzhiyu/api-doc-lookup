@@ -289,7 +289,7 @@ export default {
     await this.getProjectSwitch('system', 'project')
     this.isProjectSwitchFlag = true
        this.superForm= this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-    this.search(basic)
+    this.search('basic')
   }, 
   computed: {
     ...mapGetters(['userInfo'])
@@ -299,9 +299,9 @@ export default {
   methods: {
    
     superQuerySearch(query) {
-      this.superQuery = query
+      this.orderForm.superQuery = query
       this.superQueryVisible = false
-      this.search('super')
+      this.search()
     },
     sortChange({ prop, order }) {
       let newProp;

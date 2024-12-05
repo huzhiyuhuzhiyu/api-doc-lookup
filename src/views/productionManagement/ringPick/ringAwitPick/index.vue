@@ -188,8 +188,8 @@ export default {
 
       superQueryJson: [
         {
-          prop: 'productionPlanNo',
-          label: "生产计划单号",
+          prop: 'orderNo',
+          label: "生产任务单号",
           type: 'input'
         },
 
@@ -424,9 +424,9 @@ export default {
     },
 
     superQuerySearch(query) {
-      this.superQuery = query
+      this.orderForm.superQuery = query
       this.superQueryVisible = false
-      this.search('super')
+      this.search()
     },
     sortChange({ prop, order }) {
       let newProp;

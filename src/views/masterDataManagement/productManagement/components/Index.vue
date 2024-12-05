@@ -42,15 +42,15 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-          <el-col :span="4" v-if="isProductNameSwitch === '1'">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.productName" :placeholder="productName + '名称'" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
           <el-col :span="4">
             <el-form-item>
               <el-input v-model="listQuery.productCode" :placeholder="productName + '编码'" clearable
+                @keyup.enter.native="search()" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="4" v-if="isProductNameSwitch === '1'">
+            <el-form-item>
+              <el-input v-model.trim="listQuery.productName" :placeholder="productName + '名称'" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
@@ -60,7 +60,6 @@
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
-
           <el-col :span="4">
             <el-form-item>
               <el-select v-model="listQuery.productSource" :placeholder="productName + '来源'" clearable
@@ -117,6 +116,7 @@
         </div>
         <JNPF-table v-if="tableFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           ref="dataTable" :setColumnDisplayList="columnList">
+          <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="code" :label="productName + '编码'" min-width="160" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">
@@ -124,10 +124,9 @@
               </el-link>
             </template>
           </el-table-column>
+          <el-table-column v-if="isProductNameSwitch === '1'" prop="name" :label="productName + '名称'" min-width="160"
+            sortable="custom" />
           <el-table-column prop="drawingNo" :label="productName + '规格'" min-width="200" sortable="custom" />
-          <el-table-column prop="name" :label="productName + '名称'" min-width="160" sortable="custom">
-
-          </el-table-column>
 
           <el-table-column prop="productCategoryName" :label="productName + '分类'" width="120">
 
@@ -146,7 +145,7 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
+
           <el-table-column prop="productStatus" :label="productName + '状态'" width="120" align="center">
 
             <template slot-scope="{ row }">
@@ -239,38 +238,39 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="isProductNameSwitch === '1'">
-            <el-form-item label="产品名称" prop="name">
-              <el-input v-model="quickForm.name" placeholder="请输入产品名称"></el-input>
-            </el-form-item>
-          </el-col>
+
           <el-col :span="12">
-            <el-form-item label="产品编码" prop="code">
+            <el-form-item label="编码" prop="code">
               <template slot="label">
-                产品编码
+                {{ productName + '编码' }}
                 <span class="required">*</span>
               </template>
               <el-input v-model="quickForm.code" placeholder="请输入产品编码" :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true
                 "></el-input>
             </el-form-item>
           </el-col>
+          <el-col :span="12" v-if="isProductNameSwitch === '1'">
+            <el-form-item :label="productName + '名称'" prop="name">
+              <el-input v-model="quickForm.name" :placeholder="'请输入' + productName + '名称'"></el-input>
+            </el-form-item>
+          </el-col>
           <el-col :span="12">
             <el-form-item label="品名规格" prop="drawingNo">
               <template slot="label">
-                品名规格
+                {{ productName + '品名规格' }}
                 <span class="required">*</span>
               </template>
-              <el-input v-model="quickForm.drawingNo" placeholder="请输入品名规格"></el-input>
+              <el-input v-model="quickForm.drawingNo" :placeholder="'请输入' + productName + '品名规格'"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="产品分类" prop="productCategoryName">
               <template slot="label">
-                产品分类
+                {{ productName + '分类' }}
                 <span class="required">*</span>
               </template>
-              <ComSelect-list v-model="quickForm.productCategoryName" placeholder="请选择产品分类" auth
-                @change="productCategoryChange" :title="'选择产品分类'" :method="getcategoryCoop"
+              <ComSelect-list v-model="quickForm.productCategoryName" :placeholder="'请选择' + productName + '分类'" auth
+                @change="productCategoryChange" :title="'选择' + productName + '分类'" :method="getcategoryCoop"
                 :requestObj="quickRequestObj" :dataFormatting="dataFormatting" />
             </el-form-item>
           </el-col>
@@ -289,10 +289,11 @@
           <el-col :span="12">
             <el-form-item label="产品来源" prop="productSource">
               <template slot="label">
-                产品来源
+                {{ productName + '来源' }}
                 <span class="required">*</span>
               </template>
-              <el-select v-model="quickForm.productSource" placeholder="请选择产品来源" style="width: 100%;">
+              <el-select v-model="quickForm.productSource" :placeholder="'请选择' + productName + '来源'"
+                style="width: 100%;">
                 <el-option v-for="item in productSourceOptions" :key="item.value" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -473,23 +474,17 @@ export default {
       superQueryJson: [
         {
           prop: 'code',
-          label: '产品编码',
+          label: this.productName + '编码',
           type: 'input'
         },
         {
           prop: 'drawingNo',
-          label: '品名规格',
-          type: 'input'
-        },
-
-        {
-          prop: 'name',
-          label: '产品名称',
+          label: this.productName + '品名规格',
           type: 'input'
         },
         {
           prop: 'productCategoryName',
-          label: '产品分类',
+          label: this.productName + '分类',
           type: 'input'
         },
         {
@@ -499,7 +494,7 @@ export default {
         },
         {
           prop: 'productSource',
-          label: '产品来源',
+          label: this.productName + '来源',
           type: 'select',
           options: [
             { label: '生产', value: 'produce' },
@@ -509,7 +504,7 @@ export default {
         },
         {
           prop: 'productStatus',
-          label: '产品状态',
+          label: this.productName + '状态',
           type: 'select',
           options: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }]
         },
@@ -665,6 +660,15 @@ export default {
   async created() {
     await this.getProjectSwitch()
     await this.getProductNameSwitch('product', 'enable_productName')
+
+    if (this.isProductNameSwitch === '1') {
+
+      this.superQueryJson.splice(1, 0, {
+        prop: 'name',
+        label: this.productName + '名称',
+        type: 'input'
+      })
+    }
   },
   computed: {
     ...mapState('user', ['token']),

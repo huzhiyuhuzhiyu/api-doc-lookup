@@ -531,9 +531,9 @@ export default {
     },
 
     superQuerySearch(query) {
-      this.superQuery = query
+      this.orderForm.superQuery = query
       this.superQueryVisible = false
-      this.search('super')
+      this.search()
     },
     sortChange({ prop, order }) {
       let newProp;

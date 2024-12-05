@@ -817,27 +817,27 @@ export default {
     },
     superQuerySearch(query) {
 
-      if (this.activeName == 'assemble') {
-        this.superQuery1 = query
-        this.superQueryVisible = false
-        this.getassembleData('super')
-      }
-      if (this.activeName == 'produce') {
-        this.superQuery2 = query
-        this.superQueryVisible = false
-        this.getproduceData('super')
-      }
-      if (this.activeName == 'purchase') {
-        this.superQuery3 = query
-        this.superQueryVisible = false
-        this.getpurchaseData('super')
-      }
-      if (this.activeName == 'out') {
-        this.superQuery4 = query
-        this.superQueryVisible = false
-        this.getouteData('super')
-      }
-    },
+if (this.activeName == 'assemble') {
+  this.assembleForm.superQuery = query
+  this.superQueryVisible = false
+  this.getassembleData()
+}
+if (this.activeName == 'produce') {
+  this.produceForm.superQuery = query
+  this.superQueryVisible = false
+  this.getproduceData()
+}
+if (this.activeName == 'purchase') {
+  this.purchaseForm.superQuery = query
+  this.superQueryVisible = false
+  this.getpurchaseData()
+}
+if (this.activeName == 'out') {
+  this.outForm.superQuery = query
+  this.superQueryVisible = false
+  this.getouteData()
+}
+},
     // 高级查询
     advancedQueryFun() {
       if (this.activeName == 'assemble') {

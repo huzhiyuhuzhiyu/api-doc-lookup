@@ -6,16 +6,6 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent :rules="rules">
-          <!-- <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="form.name" placeholder="类别名称" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="form.code" placeholder="类别编码" clearable />
-            </el-form-item>
-          </el-col> -->
           <template v-for="(item, index) in searchList">
             <el-col :span="item.searchType === 3 ? 6 : 4">
               <el-form-item>
@@ -228,7 +218,7 @@ export default {
       })
     },
     superQuerySearch(query) {
-      this.form.superQuery = query
+      this.superQuery = query
       this.superQueryVisible = false
       this.search('super')
     },

@@ -200,8 +200,8 @@ export default {
 
       superQueryJson: [
         {
-          prop: 'productionPlanNo',
-          label: "生产计划单号",
+          prop: 'orderNo',
+          label: "生产任务单号",
           type: 'input'
         },
 
@@ -220,16 +220,7 @@ export default {
           label: "单位",
           type: 'input'
         },
-        {
-          prop: 'planProductionQuantity',
-          label: "计划生产数量",
-          type: 'input'
-        },
-        {
-          prop: 'availableArrangeQuantity',
-          label: "可编排数量",
-          type: 'input'
-        },
+
         {
           prop: 'urgentFlag',
           label: "是否紧急",

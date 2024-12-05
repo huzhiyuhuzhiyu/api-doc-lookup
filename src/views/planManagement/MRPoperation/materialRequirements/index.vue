@@ -1402,8 +1402,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
       },
-        this.assembleFormSQ.planNo = ""
-      this.assembleFormSQ.productDrawingNo = ""
+   
       this.$refs.SuperQuery.conditionList = []
       this.searchList1 = [
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },

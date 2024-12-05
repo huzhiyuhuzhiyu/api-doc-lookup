@@ -3,16 +3,26 @@
     <div class="JNPF-common-layout-center  JNPF-flex-main">
       <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="form.name" placeholder="仓库名称" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="form.code" placeholder="仓库编码" clearable />
-            </el-form-item>
-          </el-col>
+
+
+          <template v-for="item in searchList">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="search('basic')" />
+
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
           <el-col :span="4">
             <el-form-item prop="type">
               <el-select v-model="form.type" placeholder="仓库类型" style="width: 100%;">
@@ -24,7 +34,7 @@
 
           <el-col :span="6">
             <el-form-item>
-              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
+              <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
                 {{ $t('common.search') }}
               </el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
@@ -234,6 +244,13 @@ export default {
   mixins: [getProjectList],
   data() {
     return {
+      superQuery: {},
+      superForm: {},
+      basicQuery: {},
+      searchList: [
+        { field: 'name', fieldValue: '', label: '仓库名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'code', fieldValue: '', label: '仓库编码', symbol: 'like', searchType: 1, width: 120 },
+      ],
       fullName: '',
       productClassAttribute: false,
       dialogVisible: false,
@@ -318,7 +335,11 @@ export default {
             asc: false,
             column: 'create_time'
           }
-        ]
+        ],
+        superQuery: {
+          condition: [],
+          matchLogic: ""
+        },
       },
       selectWarehouse: [],
       printQuery: {
@@ -337,7 +358,7 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     this.isProjectSwitchFlag = true
-    this.initData()
+    this.search('basic')
 
   },
   computed: {
@@ -673,210 +694,210 @@ export default {
 
       })
     },
-      getMobileMenuList(){
-        const appDirectory = {
-            category: 'App',
-            description: '',
-            enCode: this.currentWarehouseInfo.code,
-            enabledMark: 1,
-            fullName: `仓库管理（${this.currentWarehouseInfo.name}）`,
-            icon: 'icon-ym icon-ym-documentPreviewExample left-icon',
-            id: '',
-            isButtonAuthorize: 0,
-            isColumnAuthorize: 0,
-            isDataAuthorize: 0,
-            isFormAuthorize: 0,
-            sortCode: 5,
-            linkTarget: '_self',
-            parentId: '-1',
-            propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-            systemId: '600691840022287813',
-            type: 1,
-            urlAddress: '',
-        }
-        const appMenuList = [
-            {
-                category: 'App',
-                description: '',
-                enCode: 'scanCodeInbound',
-                enabledMark: 1,
-                fullName: `扫码入库`,
-                icon: 'icon-ym icon-ym-webForm',
-                id: '',
-                isButtonAuthorize: 1,
-                isColumnAuthorize: 1,
-                isDataAuthorize: 1,
-                isFormAuthorize: 1,
-                linkTarget: '_self',
-                parentId: '',
-                propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-                sortCode: 10,
-                type: 2,
-                systemId: '600691840022287813',
-                urlAddress: '/pages/apply/warehouse/finishProduct/scanCodeInbound/index?warehouseCode=' + this.currentWarehouseInfo.code
-            },
-            {
-                category: 'App',
-                description: '',
-                enCode: 'scanCodeOutbound',
-                enabledMark: 1,
-                fullName: `扫码出库`,
-                icon: 'icon-ym icon-ym-webForm',
-                id: '',
-                isButtonAuthorize: 1,
-                isColumnAuthorize: 1,
-                isDataAuthorize: 1,
-                isFormAuthorize: 1,
-                linkTarget: '_self',
-                parentId: '',
-                propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-                sortCode: 20,
-                type: 2,
-                systemId: '600691840022287813',
-                urlAddress: '/pages/apply/warehouse/finishProduct/scanCodeOutbound/index?warehouseCode=' + this.currentWarehouseInfo.code
-            },
-            {
-                category: 'App',
-                description: '',
-                enCode: 'dbIncomAndOutInventory',
-                enabledMark: 1,
-                fullName: `待办出入库`,
-                icon: 'icon-ym icon-ym-webForm',
-                id: '',
-                isButtonAuthorize: 1,
-                isColumnAuthorize: 1,
-                isDataAuthorize: 1,
-                isFormAuthorize: 1,
-                linkTarget: '_self',
-                parentId: '',
-                propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-                sortCode: 30,
-                type: 2,
-                systemId: '600691840022287813',
-                urlAddress: '/pages/apply/warehouse/finishProduct/dbIncomAndOutInventory/index?warehouseCode=' + this.currentWarehouseInfo.code
-            },
-            {
-                category: 'App',
-                description: '',
-                enCode: 'directInandOutWarehouse',
-                enabledMark: 1,
-                fullName: `直接出入库`,
-                icon: 'icon-ym icon-ym-webForm',
-                id: '',
-                isButtonAuthorize: 1,
-                isColumnAuthorize: 1,
-                isDataAuthorize: 1,
-                isFormAuthorize: 1,
-                linkTarget: '_self',
-                parentId: '',
-                propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-                sortCode: 40,
-                type: 2,
-                systemId: '600691840022287813',
-                urlAddress: '/pages/apply/warehouse/finishProduct/directInandOutWarehouse/index?warehouseCode=' + this.currentWarehouseInfo.code
-            },
-            {
-                category: 'App',
-                description: '',
-                enCode: 'inventoryManagement',
-                enabledMark: 1,
-                fullName: `出入库管理`,
-                icon: 'icon-ym icon-ym-webForm',
-                id: '',
-                isButtonAuthorize: 1,
-                isColumnAuthorize: 1,
-                isDataAuthorize: 1,
-                isFormAuthorize: 1,
-                linkTarget: '_self',
-                parentId: '',
-                propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-                sortCode: 50,
-                type: 2,
-                systemId: '600691840022287813',
-                urlAddress: '/pages/apply/warehouse/finishProduct/inventoryManagement/index?warehouseCode=' + this.currentWarehouseInfo.code
-            },  {
-                category: 'App',
-                description: '',
-                enCode: 'transferManagement',
-                enabledMark: 1,
-                fullName: `调拨管理`,
-                icon: 'icon-ym icon-ym-webForm',
-                id: '',
-                isButtonAuthorize: 1,
-                isColumnAuthorize: 1,
-                isDataAuthorize: 1,
-                isFormAuthorize: 1,
-                linkTarget: '_self',
-                parentId: '',
-                propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-                sortCode: 60,
-                type: 2,
-                systemId: '600691840022287813',
-                urlAddress: '/pages/apply/warehouse/finishProduct/transferManagement/index?warehouseCode=' + this.currentWarehouseInfo.code
-            }, {
-                category: 'App',
-                description: '',
-                enCode: 'directMaterialRequisition',
-                enabledMark: 1,
-                fullName: `直接领料管理`,
-                icon: 'icon-ym icon-ym-webForm',
-                id: '',
-                isButtonAuthorize: 1,
-                isColumnAuthorize: 1,
-                isDataAuthorize: 1,
-                isFormAuthorize: 1,
-                linkTarget: '_self',
-                parentId: '',
-                propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-                sortCode: 70,
-                type: 2,
-                systemId: '600691840022287813',
-                urlAddress: '/pages/apply/warehouse/finishProduct/directMaterialRequisition/index?warehouseCode=' + this.currentWarehouseInfo.code
-            },{
-                category: 'App',
-                description: '',
-                enCode: 'awaitInspectionInventory',
-                enabledMark: 1,
-                fullName: `待检验库存`,
-                icon: 'icon-ym icon-ym-webForm',
-                id: '',
-                isButtonAuthorize: 1,
-                isColumnAuthorize: 1,
-                isDataAuthorize: 1,
-                isFormAuthorize: 1,
-                linkTarget: '_self',
-                parentId: '',
-                propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-                sortCode: 80,
-                type: 2,
-                systemId: '600691840022287813',
-                urlAddress: '/pages/apply/warehouse/finishProduct/awaitInspectionInventory/index?warehouseCode=' + this.currentWarehouseInfo.code
-            },{
-                category: 'App',
-                description: '',
-                enCode: 'inventory',
-                enabledMark: 1,
-                fullName: `库存查询`,
-                icon: 'icon-ym icon-ym-webForm',
-                id: '',
-                isButtonAuthorize: 1,
-                isColumnAuthorize: 1,
-                isDataAuthorize: 1,
-                isFormAuthorize: 1,
-                linkTarget: '_self',
-                parentId: '',
-                propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-                sortCode: 90,
-                type: 2,
-                systemId: '600691840022287813',
-                urlAddress: '/pages/apply/warehouse/finishProduct/inventory/index?warehouseCode=' + this.currentWarehouseInfo.code
-            },
-        ]
-          return {
-              appDirectory,
-              appMenuList
-          }
-      },
+    getMobileMenuList() {
+      const appDirectory = {
+        category: 'App',
+        description: '',
+        enCode: this.currentWarehouseInfo.code,
+        enabledMark: 1,
+        fullName: `仓库管理（${this.currentWarehouseInfo.name}）`,
+        icon: 'icon-ym icon-ym-documentPreviewExample left-icon',
+        id: '',
+        isButtonAuthorize: 0,
+        isColumnAuthorize: 0,
+        isDataAuthorize: 0,
+        isFormAuthorize: 0,
+        sortCode: 5,
+        linkTarget: '_self',
+        parentId: '-1',
+        propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+        systemId: '600691840022287813',
+        type: 1,
+        urlAddress: '',
+      }
+      const appMenuList = [
+        {
+          category: 'App',
+          description: '',
+          enCode: 'scanCodeInbound',
+          enabledMark: 1,
+          fullName: `扫码入库`,
+          icon: 'icon-ym icon-ym-webForm',
+          id: '',
+          isButtonAuthorize: 1,
+          isColumnAuthorize: 1,
+          isDataAuthorize: 1,
+          isFormAuthorize: 1,
+          linkTarget: '_self',
+          parentId: '',
+          propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+          sortCode: 10,
+          type: 2,
+          systemId: '600691840022287813',
+          urlAddress: '/pages/apply/warehouse/finishProduct/scanCodeInbound/index?warehouseCode=' + this.currentWarehouseInfo.code
+        },
+        {
+          category: 'App',
+          description: '',
+          enCode: 'scanCodeOutbound',
+          enabledMark: 1,
+          fullName: `扫码出库`,
+          icon: 'icon-ym icon-ym-webForm',
+          id: '',
+          isButtonAuthorize: 1,
+          isColumnAuthorize: 1,
+          isDataAuthorize: 1,
+          isFormAuthorize: 1,
+          linkTarget: '_self',
+          parentId: '',
+          propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+          sortCode: 20,
+          type: 2,
+          systemId: '600691840022287813',
+          urlAddress: '/pages/apply/warehouse/finishProduct/scanCodeOutbound/index?warehouseCode=' + this.currentWarehouseInfo.code
+        },
+        {
+          category: 'App',
+          description: '',
+          enCode: 'dbIncomAndOutInventory',
+          enabledMark: 1,
+          fullName: `待办出入库`,
+          icon: 'icon-ym icon-ym-webForm',
+          id: '',
+          isButtonAuthorize: 1,
+          isColumnAuthorize: 1,
+          isDataAuthorize: 1,
+          isFormAuthorize: 1,
+          linkTarget: '_self',
+          parentId: '',
+          propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+          sortCode: 30,
+          type: 2,
+          systemId: '600691840022287813',
+          urlAddress: '/pages/apply/warehouse/finishProduct/dbIncomAndOutInventory/index?warehouseCode=' + this.currentWarehouseInfo.code
+        },
+        {
+          category: 'App',
+          description: '',
+          enCode: 'directInandOutWarehouse',
+          enabledMark: 1,
+          fullName: `直接出入库`,
+          icon: 'icon-ym icon-ym-webForm',
+          id: '',
+          isButtonAuthorize: 1,
+          isColumnAuthorize: 1,
+          isDataAuthorize: 1,
+          isFormAuthorize: 1,
+          linkTarget: '_self',
+          parentId: '',
+          propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+          sortCode: 40,
+          type: 2,
+          systemId: '600691840022287813',
+          urlAddress: '/pages/apply/warehouse/finishProduct/directInandOutWarehouse/index?warehouseCode=' + this.currentWarehouseInfo.code
+        },
+        {
+          category: 'App',
+          description: '',
+          enCode: 'inventoryManagement',
+          enabledMark: 1,
+          fullName: `出入库管理`,
+          icon: 'icon-ym icon-ym-webForm',
+          id: '',
+          isButtonAuthorize: 1,
+          isColumnAuthorize: 1,
+          isDataAuthorize: 1,
+          isFormAuthorize: 1,
+          linkTarget: '_self',
+          parentId: '',
+          propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+          sortCode: 50,
+          type: 2,
+          systemId: '600691840022287813',
+          urlAddress: '/pages/apply/warehouse/finishProduct/inventoryManagement/index?warehouseCode=' + this.currentWarehouseInfo.code
+        }, {
+          category: 'App',
+          description: '',
+          enCode: 'transferManagement',
+          enabledMark: 1,
+          fullName: `调拨管理`,
+          icon: 'icon-ym icon-ym-webForm',
+          id: '',
+          isButtonAuthorize: 1,
+          isColumnAuthorize: 1,
+          isDataAuthorize: 1,
+          isFormAuthorize: 1,
+          linkTarget: '_self',
+          parentId: '',
+          propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+          sortCode: 60,
+          type: 2,
+          systemId: '600691840022287813',
+          urlAddress: '/pages/apply/warehouse/finishProduct/transferManagement/index?warehouseCode=' + this.currentWarehouseInfo.code
+        }, {
+          category: 'App',
+          description: '',
+          enCode: 'directMaterialRequisition',
+          enabledMark: 1,
+          fullName: `直接领料管理`,
+          icon: 'icon-ym icon-ym-webForm',
+          id: '',
+          isButtonAuthorize: 1,
+          isColumnAuthorize: 1,
+          isDataAuthorize: 1,
+          isFormAuthorize: 1,
+          linkTarget: '_self',
+          parentId: '',
+          propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+          sortCode: 70,
+          type: 2,
+          systemId: '600691840022287813',
+          urlAddress: '/pages/apply/warehouse/finishProduct/directMaterialRequisition/index?warehouseCode=' + this.currentWarehouseInfo.code
+        }, {
+          category: 'App',
+          description: '',
+          enCode: 'awaitInspectionInventory',
+          enabledMark: 1,
+          fullName: `待检验库存`,
+          icon: 'icon-ym icon-ym-webForm',
+          id: '',
+          isButtonAuthorize: 1,
+          isColumnAuthorize: 1,
+          isDataAuthorize: 1,
+          isFormAuthorize: 1,
+          linkTarget: '_self',
+          parentId: '',
+          propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+          sortCode: 80,
+          type: 2,
+          systemId: '600691840022287813',
+          urlAddress: '/pages/apply/warehouse/finishProduct/awaitInspectionInventory/index?warehouseCode=' + this.currentWarehouseInfo.code
+        }, {
+          category: 'App',
+          description: '',
+          enCode: 'inventory',
+          enabledMark: 1,
+          fullName: `库存查询`,
+          icon: 'icon-ym icon-ym-webForm',
+          id: '',
+          isButtonAuthorize: 1,
+          isColumnAuthorize: 1,
+          isDataAuthorize: 1,
+          isFormAuthorize: 1,
+          linkTarget: '_self',
+          parentId: '',
+          propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+          sortCode: 90,
+          type: 2,
+          systemId: '600691840022287813',
+          urlAddress: '/pages/apply/warehouse/finishProduct/inventory/index?warehouseCode=' + this.currentWarehouseInfo.code
+        },
+      ]
+      return {
+        appDirectory,
+        appMenuList
+      }
+    },
     stateChange(scope) {
       let msg;
       if (scope.row.state == 'disabled') {
@@ -953,6 +974,7 @@ export default {
       this.$refs.tabForm.showDrawer()
     },
     initData() {
+      console.log("进来了么");
       this.loading = true
       this.form.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       getWarehouseList(this.form)
@@ -967,7 +989,30 @@ export default {
           this.btnLoading = false
         })
     },
-    search() {
+    search(type) {
+      Object.keys(this.form).forEach(key => { // 清除搜索条件两端空格
+        let item = this.form[key]
+        this.form[key] = typeof item === 'string' ? item.trim() : item
+      })
+      this.form.pageNum = 1 // 重置页码
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
+      console.log(55555);
       this.initData()
       // this.buildQRCode()
     },
@@ -985,11 +1030,28 @@ export default {
       })
     },
     reset() {
-      this.listQuery.keyword = ''
-      this.form.name = ''
-      this.form.code = ''
-      this.form.type = ''
-      this.initData()
+      this.superForm = this.form = {
+        code: '',
+        name: '',
+        type: '',
+        category: 'warehouse',
+        orderItems: [
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        superQuery: {
+          condition: [],
+          matchLogic: ""
+        },
+      },
+        this.$refs.SuperQuery.conditionList = []
+      this.searchList = [
+        { field: 'name', fieldValue: '', label: '仓库名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'code', fieldValue: '', label: '仓库编码', symbol: 'like', searchType: 1, width: 120 },
+      ],
+        this.search('basic')
     },
     openQr(row) {
 

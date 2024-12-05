@@ -272,6 +272,7 @@ export default {
   mixins: [getProjectList],
   data() {
     return {
+      addTaskFormVisible:false,
       taskFormVisible: false,
       superQuery: {},
       superForm: {},
@@ -671,9 +672,9 @@ export default {
     },
 
     superQuerySearch(query) {
-      this.superQuery = query
+      this.orderForm.superQuery = query
       this.superQueryVisible = false
-      this.search('super')
+      this.search()
     },
     sortChange({ prop, order }) {
       let newProp;
@@ -697,6 +698,7 @@ export default {
       this.formVisible = false
       this.reworkVisible = false
       this.BatchDispatchVisible = false
+      this.addTaskFormVisible=false
       this.taskFormVisible = false
       this.search('basic')
     },

@@ -445,6 +445,64 @@ export default {
 
         },
         superQueryVisibleShow(){
+            const common =[     {
+                prop: 'documentStatus',
+                label: "单据状态",
+                type: 'select',
+                options: [
+                    { label: '草稿', value: 'draft' },
+                    { label: '提交', value: 'submit' },
+                    { label: '退回', value: 'back' }
+                ]
+            },
+
+                {
+                    prop: 'createTime',
+                    label: '创建时间',
+                    type: 'daterange',
+                    valueFormat: 'yyyy-MM-dd HH:mm:ss',
+                    startPlaceholder: '开始日期',
+                    endPlaceholder: '结束日期',
+                    pickerOptions: this.global.timePickerOptions
+                },
+                {
+                    prop: 'createByName',
+                    label: '创建人',
+                    type: 'input'
+                },]
+
+            let res =[];
+            if(!this.isNoProductPage || this.isImage){
+                res=[
+                    {
+                        prop: 'drawingNo',
+                        label: '品名规格',
+                        type: 'input'
+                    },  {
+                        prop: 'productsCode',
+                        label: '产品编码',
+                        type: 'input'
+                    },{
+                        prop: 'productsCategoryName',
+                        label: '产品分类',
+                        type: 'input'
+                    },
+                ]
+            }else{
+
+
+                res =[
+                    {
+                        prop: 'categoryName',
+                        label: '文件分类',
+                        type: 'input'
+                    },
+                ]
+            }
+            this.superQueryJson =[
+                ...res,
+                ...common
+            ]
           this.superQueryVisible = true
         },
         async changeState({productsCode,id,enabledMark}) {

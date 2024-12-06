@@ -89,6 +89,10 @@
                       <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                       <el-table-column prop="projectName" label="所属项目" width="120"
                         v-if="isProjectSwitch === '1'"></el-table-column>
+                      <el-table-column prop="productCode" label="产品编码" width="160"
+                        show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                        show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                         <template slot="header">
                           <span class="required">*</span>
@@ -97,7 +101,7 @@
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
                             :rules="productRules.productDrawingNo">
-                            <el-input v-model="scope.row.productDrawingNo" disabled placeholder="品名规格"  />
+                            <el-input v-model="scope.row.productDrawingNo" disabled placeholder="品名规格" />
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -158,7 +162,7 @@
                       </el-table-column>
                       <el-table-column prop="purchaseQuantity2" label="数量(副)" width="85"
                         v-if="isDeputyUnitSwitch === '1'" />
-                      <el-table-column prop="price" label="含税单价" width="120">
+                      <el-table-column prop="price" label="含税单价" min-width="120">
                         <template slot="header">
                           <span class="required">*</span>
                           单价(含税)
@@ -170,7 +174,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="totalAmount" label="金额" width="120">
+                      <el-table-column prop="totalAmount" label="金额" min-width="120">
                         <template slot="header">
                           <span class="required">*</span>
                           金额(含税)
@@ -288,8 +292,12 @@
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                     <el-table-column prop="projectName" label="所属项目" width="120"
                       v-if="isProjectSwitch === '1'"></el-table-column>
+                    <el-table-column prop="productCode" label="产品编码" width="160"
+                      show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                      show-overflow-tooltip></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
-                    <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
+
                     <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
                     <template v-if="isProportionSwitch === '1'">
                       <el-table-column prop="weight" label="重量(kg)" width="90" />
@@ -384,8 +392,9 @@
                   <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                   <el-table-column prop="projectName" label="所属项目" width="120"
                     v-if="isProjectSwitch === '1'"></el-table-column>
-                  <el-table-column prop="productName" label="产品名称" width="120"
-                    v-if="isProductNameSwitch === '1'"></el-table-column>
+                  <el-table-column prop="productCode" label="产品编码" width="160" show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                    show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                     <template slot="header">
                       <span class="required">*</span>
@@ -455,7 +464,7 @@
                   <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
                   <el-table-column prop="purchaseQuantity2" label="数量(副)" width="100"
                     v-if="isDeputyUnitSwitch === '1'" />
-                  <el-table-column prop="price" label="含税单价" width="120">
+                  <el-table-column prop="price" label="含税单价" min-width="120">
                     <template slot="header">
                       <span class="required">*</span>
                       单价(含税)
@@ -467,7 +476,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="totalAmount" label="金额" width="120">
+                  <el-table-column prop="totalAmount" label="金额" min-width="120">
                     <template slot="header">
                       <span class="required">*</span>
                       金额(含税)
@@ -585,8 +594,11 @@
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                 <el-table-column prop="projectName" label="所属项目" width="120"
                   v-if="isProjectSwitch === '1'"></el-table-column>
+                <el-table-column prop="productCode" label="产品编码" width="160" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                  show-overflow-tooltip></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
-                <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
+
                 <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
                 <template v-if="isProportionSwitch === '1'">
                   <el-table-column prop="weight" label="重量(kg)" width="90" />
@@ -748,10 +760,12 @@ export default {
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getProportionSwitch('warehouse', 'proportion')
     console.log(this.isProjectSwitch)
+    if (this.isProductNameSwitch === '1') {
+      this.ProductTableItems.splice(1, 0, { prop: 'name', label: '产品名称' })
+      this.ProductTableSearchList.splice(1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
+    }
     if (this.isProjectSwitch === '1') {
-
-    } else {
-
+      this.ProductTableItems.unshift({ prop: 'projectName', label: '所属项目' })
     }
     this.getDeputyUnit()
     this.getBimBusinessDetail()

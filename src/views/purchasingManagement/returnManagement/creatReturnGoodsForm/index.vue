@@ -362,16 +362,22 @@
                   <div class="JNPF-common-layout-center JNPF-flex-main">
                     <el-row class="JNPF-common-search-box" :gutter="16">
                       <el-form @submit.native.prevent>
-                        <el-col :span="6" v-if="isReturnSwitch === '1'">
-                          <el-form-item>
-                            <el-input v-model="orderForm.drawingNo" placeholder="品名规格" clearable />
-                          </el-form-item>
-                        </el-col>
                         <el-col :span="6" v-if="isReturnSwitch === '0'">
                           <el-form-item>
                             <el-input v-model="productForm.productCode" placeholder="产品编码" clearable />
                           </el-form-item>
                         </el-col>
+                        <el-col :span="6" v-if="isProductNameSwitch === '1'">
+                          <el-form-item>
+                            <el-input v-model="productForm.productName" placeholder="产品名称" clearable />
+                          </el-form-item>
+                        </el-col>
+                        <el-col :span="6" v-if="isReturnSwitch === '1'">
+                          <el-form-item>
+                            <el-input v-model="orderForm.drawingNo" placeholder="品名规格" clearable />
+                          </el-form-item>
+                        </el-col>
+
                         <el-col :span="6" v-if="isReturnSwitch === '0'">
                           <el-form-item>
                             <el-input v-model="productForm.productDrawingNo" placeholder="品名规格" clearable />
@@ -837,6 +843,9 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProductNameSwitch === '1') {
+
+    }
     // this.handleChange()
     // this.getProvinceList()
     this.getDeputyUnit()

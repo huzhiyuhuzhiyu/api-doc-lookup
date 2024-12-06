@@ -481,6 +481,7 @@ export default {
         pageSize: 20
       },
       ProductTableItems: [
+        { prop: 'productCode', label: '产品编码', type: 'input' },
         { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
         { prop: 'immediatelyBuyFlag', label: '立即采购', sortable: 'custom' },
         { prop: 'mainUnit', label: '单位' },
@@ -490,6 +491,7 @@ export default {
         { prop: 'createTime', label: '创建日期', sortable: 'custom', width: 180 }
       ],
       ProductPoolTableItems: [
+        { prop: 'productCode', label: '产品编码', type: 'input' },
         { prop: 'productDrawingNo', label: '品名规格', sortable: 'custom' },
         { prop: 'immediatelyBuyFlag', label: '立即采购', sortable: 'custom' },
         { prop: 'mainUnit', label: '单位' },
@@ -500,8 +502,9 @@ export default {
       ],
       // 客户产品查询条件
       ProductTableSearchList: [
+        { prop: 'productCode', label: '产品编码', type: 'input' },
         { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
-        { prop: 'productCode', label: '产品编码', type: 'input' }
+
       ],
       getcooperativeProduct,
       productVisible: false,
@@ -739,6 +742,12 @@ export default {
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
     await this.getProductNameSwitch('product', 'enable_productName')
+
+    if (this.isProductNameSwitch === '1') {
+      this.ProductTableSearchList.splice(1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
+      this.ProductTableItems.splice(1, 0, { prop: 'productName', label: '产品名称' })
+      this.ProductPoolTableItems.splice(1, 0, { prop: 'productName', label: '产品名称' })
+    }
     this.tableDataFlag = true
 
     this.getBimBusinessDetail()

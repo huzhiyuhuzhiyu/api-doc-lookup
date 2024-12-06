@@ -270,7 +270,7 @@
     <ComSelect-page ref="comSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems"
       dialogTitle="选择产品" :listMethod="purProcurementDemandPoolList" :listRequestObj="ProductListRequestObjs"
       :listDataFormatting="listDataFormatting" :searchList="ProductTableSearchList" :elementShow="false"
-      :multiple="true" :renderTree="false" />
+      :multiple="true" :renderTree="false"  />
   </div>
 </template>
 <script>
@@ -342,9 +342,8 @@ export default {
         pageSize: 20
       },
       ProductTableItems: [
+        { prop: 'productCode', label: '产品编码', sortable: 'custom' },
         { prop: 'productDrawingNo', label: '品名规格', sortable: 'custom' },
-
-        { prop: 'productName', label: '产品名称', sortable: 'custom' },
         { prop: 'immediatelyBuyFlag', label: '立即外协', sortable: 'custom' },
 
         { prop: 'mainUnit', label: '单位', width: 60 },
@@ -355,8 +354,8 @@ export default {
       ],
       // 客户产品查询条件
       ProductTableSearchList: [
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
         { prop: 'productCode', label: '产品编码', type: 'input' },
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
         { prop: 'deliveryDate', label: '交货日期', type: 'date' }
       ],
       getcooperativeProduct,
@@ -594,40 +593,23 @@ export default {
     }
   },
   async created() {
+    await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getProjectList()
+
+    if (this.isProductNameSwitch === '1') {
+      this.ProductTableItems.splice(1, 0, { prop: 'productName', label: '产品名称' })
+      this.ProductTableSearchList.splice(1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
+    }
+    if (this.isProjectSwitch === '1') {
+      this.ProductTableItems.unshift({ prop: 'projectName', label: '所属项目' })
+
+    }
     this.tableDataFlag = true
     console.log(this.isProjectSwitch)
-    if (this.isProjectSwitch === '1') {
-      this.ProductTableItems = [
-        { prop: 'projectName', label: '所属项目' },
-        { prop: 'productDrawingNo', label: '品名规格', sortable: 'custom' },
 
-        { prop: 'productName', label: '产品名称', sortable: 'custom' },
-        { prop: 'immediatelyBuyFlag', label: '立即外协', sortable: 'custom' },
 
-        { prop: 'mainUnit', label: '单位', width: 60 },
-        { prop: 'planDemandQuantity', label: '计划需求数', sortable: 'custom', minWidth: 130 },
-        { prop: 'orderedQuantity', label: '已下单数量', sortable: 'custom', minWidth: 130 },
-        { prop: 'deliveryDate', label: '交货日期', sortable: 'custom' },
-        { prop: 'createTime', label: '创建日期', sortable: 'custom', minWidth: 180 }
-      ]
-    } else {
-      this.ProductTableItems = [
-        { prop: 'productDrawingNo', label: '品名规格', sortable: 'custom' },
-
-        { prop: 'productName', label: '产品名称', sortable: 'custom' },
-        { prop: 'immediatelyBuyFlag', label: '立即外协', sortable: 'custom' },
-
-        { prop: 'mainUnit', label: '单位', width: 60 },
-        { prop: 'planDemandQuantity', label: '计划需求数', sortable: 'custom', minWidth: 130 },
-        { prop: 'orderedQuantity', label: '已下单数量', sortable: 'custom', minWidth: 130 },
-        { prop: 'deliveryDate', label: '交货日期', sortable: 'custom' },
-        { prop: 'createTime', label: '创建日期', sortable: 'custom', minWidth: 180 }
-      ]
-    }
-    this.getDeputyUnit()
   },
   computed: {
     ...mapGetters(['userInfo']),

@@ -65,10 +65,11 @@
           <JNPF-table @selection-change="handeleFinshData" hasC v-if="flag" v-loading="listLoading"
             highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
             custom-column :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
+            <el-table-column prop="productCode" label="产品编码" width="150" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="120"
               v-if="isProductNameSwitch === '1'"></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="productCode" label="产品编码" width="150" sortable="custom" />
+
             <el-table-column prop="processName" label="工序名称" min-width="180" sortable="custom" />
             <el-table-column prop="productCategoryName" label="产品分类" width="120" sortable="custom" />
             <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
@@ -132,19 +133,20 @@ export default {
       superQueryVisible: false,
       superQueryJson: [
         {
-          prop: 'productDrawingNo',
-          label: '毛坯规格',
+          prop: 'productCode',
+          label: '产品编码',
           type: 'input'
         },
         {
-          prop: 'productCode',
-          label: '毛坯编码',
+          prop: 'productDrawingNo',
+          label: '品名规格',
           type: 'input'
         },
 
+
         {
           prop: 'productCategoryName',
-          label: '毛坯分类',
+          label: '产品分类',
           type: 'input'
         },
 
@@ -301,10 +303,10 @@ export default {
 
     }
     if (this.isProductNameSwitch === '1') {
-     
-      this.superQueryJson.splice(4, 0, {
+
+      this.superQueryJson.splice(1, 0, {
         prop: 'productName',
-        label: '毛坯名称',
+        label: '产品名称',
         type: 'input'
       })
     }
@@ -364,7 +366,7 @@ export default {
       })
     },
     superQuerySearch(query) {
-      this.orderForm.superQuery = query
+      this.listQuery.superQuery = query
       this.superQueryVisible = false
       this.search()
     },

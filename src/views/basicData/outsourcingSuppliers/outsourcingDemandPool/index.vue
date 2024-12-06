@@ -3,9 +3,9 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-          <el-col :span="4" v-if="isProductNameSwitch === '1'">
+          <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.productName" placeholder="产品名称" clearable
+              <el-input v-model.trim="listQuery.productCode" placeholder="产品编码" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
@@ -15,9 +15,9 @@
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="4" v-if="isProductNameSwitch === '1'">
             <el-form-item>
-              <el-input v-model.trim="listQuery.productCode" placeholder="产品编码" clearable
+              <el-input v-model.trim="listQuery.productName" placeholder="产品名称" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
@@ -66,10 +66,10 @@
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
           :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
-          <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
+          <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" width="120"
             v-if="isProductNameSwitch === '1'"></el-table-column>
-          <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
           <!-- <el-table-column prop="spec" label="规格型号" min-width="180" sortable="custom" /> -->
 
           <el-table-column prop="immediatelyBuyFlag" label="立即外协" min-width="120" sortable="custom">
@@ -364,6 +364,11 @@ export default {
     this.initData()
   },
   methods: {
+    superQuerySearch(query) {
+      this.listQuery.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)

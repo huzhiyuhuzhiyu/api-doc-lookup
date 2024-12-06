@@ -496,6 +496,11 @@ export default {
     this.getData()
   },
   methods: {
+    superQuerySearch(query) {
+      this.listQuery.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
     getData() {
       this.listQuery = JSON.parse(JSON.stringify(this.listRequestObj))
       this.initData()

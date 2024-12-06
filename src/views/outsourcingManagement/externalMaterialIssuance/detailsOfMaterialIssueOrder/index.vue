@@ -15,15 +15,15 @@
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
+            <el-col :span="4" v-if="isProductNameSwitch === '1'">
+              <el-form-item>
+                <el-input v-model="orderForm.productName" placeholder="产品名称" clearable @keyup.enter.native="search()" />
+              </el-form-item>
+            </el-col>
             <el-col :span="4">
               <el-form-item>
                 <el-input v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable
                   @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4" v-if="isProductNameSwitch === '1'">
-              <el-form-item>
-                <el-input v-model="orderForm.productName" placeholder="产品名称" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -77,10 +77,11 @@
             <el-table-column prop="deliverDate" label="发料日期" width="180" sortable="custom"></el-table-column>
             <el-table-column prop="projectName" label="所属项目" width="120"
               v-if="isProjectSwitch === '1'"></el-table-column>
+            <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="120"
               v-if="isProductNameSwitch === '1'"></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
-            <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
+
             <el-table-column prop="processName" label="工序名称" width="160" sortable="custom" />
             <template v-if="isProportionSwitch === '1'">
               <el-table-column prop="weight" label="重量(kg)" width="90" />
@@ -289,13 +290,13 @@ export default {
           pickerOptions: this.global.timePickerOptions
         },
         {
-          prop: 'productDrawingNo',
-          label: '品名规格',
+          prop: 'productCode',
+          label: '产品编码',
           type: 'input'
         },
         {
-          prop: 'productCode',
-          label: '产品编码',
+          prop: 'productDrawingNo',
+          label: '品名规格',
           type: 'input'
         },
         {
@@ -343,7 +344,7 @@ export default {
           item.label = '单位(主)'
         }
       })
-      this.superQueryJson.splice(6, 0, {
+      this.superQueryJson.splice(8, 0, {
         prop: 'deputyUnit',
         label: '单位(副)',
         type: 'input'
@@ -351,7 +352,7 @@ export default {
 
     }
     if (this.isProductNameSwitch === '1') {
-      this.superQueryJson.splice(4, 0, {
+      this.superQueryJson.splice(5, 0, {
         prop: 'productName',
         label: '产品名称',
         type: 'input'

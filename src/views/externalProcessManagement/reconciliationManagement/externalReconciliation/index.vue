@@ -341,7 +341,7 @@ export default {
     superQuerySearch(query) {
       this.superQuery = query
       this.superQueryVisible = false
-      this.search('basic')
+      this.search('super')
     },
     columnSetFun() {
       this.$refs.tableForm.showDrawer()

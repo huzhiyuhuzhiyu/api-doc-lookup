@@ -8,19 +8,18 @@
               <el-input v-model="listQuery.workNo" @keyup.enter.native="search()" placeholder="工单单号" clearable />
             </el-form-item>
           </el-col>
+          <el-col :span="4" v-if="isProductNameSwitch === '1'">
+            <el-form-item>
+              <el-input v-model="listQuery.productName" placeholder="产品名称" @keyup.enter.native="search()" clearable />
+            </el-form-item>
+          </el-col>
           <el-col :span="4">
             <el-form-item>
               <el-input v-model="listQuery.productDrawingNo" @keyup.enter.native="search()" placeholder="品名规格"
                 clearable />
             </el-form-item>
           </el-col>
-          <el-col :span="4" v-if="isProductNameSwitch === '1'">
-            <el-form-item>
-              <el-input v-model="listQuery.productName" placeholder="产品名称" @keyup.enter.native="search()" clearable />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="6">
+          <el-col :span="3">
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
                 {{ $t('common.search') }}
@@ -67,8 +66,11 @@
           <el-table-column prop="workNo" label="工单单号" width="200" sortable="custom" />
           <el-table-column prop="orderNo" label="报工单号" width="200" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
-          <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
+          <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+            show-overflow-tooltip></el-table-column>
+          <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" sortable="custom" />
+
           <el-table-column prop="processName" label="工序名称" width="120" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" width="60" />
           <el-table-column prop="productionQuantity" label="生产数量" width="120" sortable="custom" />
@@ -167,14 +169,13 @@ export default {
           type: 'input'
         },
         {
-          prop: 'productDrawingNo',
-          label: '品名规格',
-          type: 'input'
-        },
-
-        {
           prop: 'productCode',
           label: '产品编码',
+          type: 'input'
+        },
+        {
+          prop: 'productDrawingNo',
+          label: '品名规格',
           type: 'input'
         },
         {

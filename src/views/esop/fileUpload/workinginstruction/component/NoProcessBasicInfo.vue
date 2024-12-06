@@ -11,6 +11,7 @@ import { getcategoryTree as getFileCategoryTree } from '@/api/basicData/index'
 import {FileCategoryType} from "@/views/esop/fileCategoryManagement/constants";
 import BasicInfoMixin from "@/views/esop/fileUpload/workinginstruction/component/BasicInfoMixin";
 import CheckVersionCountDialog from "@/views/esop/fileUpload/workinginstruction/component/CheckVersionCountDialog .vue";
+import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 export default {
     name: "NoProcessBasicInfo" ,
     components: {CheckVersionCountDialog, FileUploadDrop},
@@ -20,6 +21,7 @@ export default {
             formLoading: false,
             activeNames:['basicInfo','normalUpload'],
             dataForm:{
+                projectId:"",
                 orderNo:'',
                 categoryName:'',
                 categoryId:'',
@@ -140,6 +142,15 @@ export default {
                                                 :method="getFileCategoryTree"
                                                 :requestObj="{  keyword: '', type: FileCategoryType.IMAGE_DOCUMENT }"
                                                 :paramsObj="{}" />
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="6" v-if="abProjectSwitchVisible">
+                                        <el-form-item label="所属项目" prop="projectId" required>
+                                            <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" style="width: 100%;"
+                                                       :disabled="!abIsCommonUser || isView">
+                                                <el-option v-for="(item, index) in abProjectList" :key="index" :label="item.label"
+                                                           :value="item.value"></el-option>
+                                            </el-select>
                                         </el-form-item>
                                     </el-col>
                                     <template v-if="!isNoProductPage">

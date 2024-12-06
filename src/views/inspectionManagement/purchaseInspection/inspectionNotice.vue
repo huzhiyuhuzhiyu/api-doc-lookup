@@ -15,15 +15,15 @@
                   clearable />
               </el-form-item>
             </el-col>
+            <el-col :span="4" v-if="isProductNameSwitch === '1'">
+              <el-form-item>
+                <el-input v-model="listQuery.productName" placeholder="产品名称" @keyup.enter.native="search()" clearable />
+              </el-form-item>
+            </el-col>
             <el-col :span="4">
               <el-form-item>
                 <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" @keyup.enter.native="search()"
                   clearable />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4" v-if="isProductNameSwitch === '1'">
-              <el-form-item>
-                <el-input v-model="listQuery.productName" placeholder="产品名称" @keyup.enter.native="search()" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -78,9 +78,9 @@
             <el-table-column prop="deliverDate" label="收货日期" min-width="120" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" width="120"
               v-if="isProjectSwitch === '1'"></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="140" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
               show-overflow-tooltip></el-table-column>
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="140" sortable="custom" />
             <el-table-column prop="warehouseName" label="仓库" min-width="120" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="60" />
             <el-table-column prop="receivedQuantity" label="收货数量" width="120" sortable="custom" />
@@ -379,7 +379,7 @@ export default {
     }
     if (this.isProductNameSwitch === '1') {
 
-      this.superQueryJson.splice(5, 0, {
+      this.superQueryJson.splice(4, 0, {
         prop: 'productName',
         label: '产品名称',
         type: 'input'

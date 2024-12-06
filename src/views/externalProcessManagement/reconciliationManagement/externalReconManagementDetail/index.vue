@@ -197,15 +197,16 @@ export default {
           type: 'input'
         },
         {
-          prop: 'drawingNo',
-          label: '品名规格',
-          type: 'input'
-        },
-        {
           prop: 'productCode',
           label: '产品编码',
           type: 'input'
         },
+        {
+          prop: 'drawingNo',
+          label: '品名规格',
+          type: 'input'
+        },
+
         {
           prop: 'mainUnit',
           label: '单位',
@@ -289,13 +290,43 @@ export default {
     }
   },
   async created() {
+    await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isDeputyUnitSwitch === '1') {
+      this.superQueryJson.forEach(item => {
+        if (item.prop === 'mainUnit') {
+          item.label = '单位(主)'
+        }
+      })
+      this.superQueryJson.splice(8, 0, {
+        prop: 'deputyUnit',
+        label: '单位(副)',
+        type: 'input'
+      })
 
-    this.getDeputyUnit()
+    }
+    if (this.isProductNameSwitch === '1') {
+      this.superQueryJson.splice(6, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
+    }
     this.superForm = this.listQuery
     this.search('basic')
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    superQuerySearch(query) {
+      this.superQuery = query
+      this.superQueryVisible = false
+      this.search('super')
+    },
     getDeputyUnit() {
       let obj = {
         businessCode: 'deputyUnit',

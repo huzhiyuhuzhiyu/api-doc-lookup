@@ -409,17 +409,16 @@ export default {
         // queryType: 3
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
-        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
-        // { prop: 'name', label: '产品名称', sortable: 'custom' },
         { prop: 'code', label: '产品编码', sortable: 'custom' },
+        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
         { prop: 'productCategoryName', label: '产品分类', sortable: 'custom2' },
         { prop: 'mainUnit', label: '单位', width: 60 },
         { prop: 'createTime', label: '创建日期', sortable: 'custom', width: 180 }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
+        { prop: 'productCode', label: '产品编码', type: 'input' },
         { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
-        // { prop: 'name', label: '产品名称', type: 'input' },
-        { prop: 'productCode', label: '产品编码', type: 'input' }
+
       ], // 产品选择弹出框搜索条件
       formLoading: false,
       codeConfig: {},
@@ -638,25 +637,13 @@ export default {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
     console.log(this.isProjectSwitch)
+    if (this.isProductNameSwitch === '1') {
+      this.ProductTableItems.splice(1, 0, { prop: 'name', label: '产品名称' })
+      this.ProductTableSearchList.splice(1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
+    }
     if (this.isProjectSwitch === '1') {
-      this.ProductTableItems = [
-        { prop: 'projectName', label: '所属项目' },
-        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
-        { prop: 'name', label: '产品名称', sortable: 'custom' },
-        { prop: 'code', label: '产品编码', sortable: 'custom' },
-        { prop: 'productCategoryName', label: '产品分类', sortable: 'custom2' },
-        { prop: 'mainUnit', label: '单位', width: 60 },
-        { prop: 'createTime', label: '创建日期', sortable: 'custom', width: 180 }
-      ]
-    } else {
-      this.ProductTableItems = [
-        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
-        { prop: 'name', label: '产品名称', sortable: 'custom' },
-        { prop: 'code', label: '产品编码', sortable: 'custom' },
-        { prop: 'productCategoryName', label: '产品分类', sortable: 'custom2' },
-        { prop: 'mainUnit', label: '单位', width: 60 },
-        { prop: 'createTime', label: '创建日期', sortable: 'custom', width: 180 }
-      ]
+      this.ProductTableItems.unshift({ prop: 'projectName', label: '所属项目' })
+
     }
     this.getDeputyUnit()
     this.getBimBusinessDetail()

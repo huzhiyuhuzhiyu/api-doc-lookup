@@ -128,7 +128,8 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-
+                    <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                      show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="330">
                       <template slot="header">
                         <span class="required">*</span> 品名规格
@@ -417,7 +418,8 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-
+                <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                  show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" width="400">
                   <template slot="header">
                     <span class="required">*</span> 品名规格
@@ -660,6 +662,8 @@
               <JNPF-table :data="historyPriceData" ref="dataTable" custom-column>
                 <el-table-column prop="cooperativePartnerIdText" label="客户名称" sortable="custom" width="200" />
                 <el-table-column prop="customerDrawingNumber" label=" 客户料号" width="150" sortable="custom" />
+                <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                  show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" width="180" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                 <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />

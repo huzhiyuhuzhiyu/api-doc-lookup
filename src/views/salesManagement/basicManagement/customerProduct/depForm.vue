@@ -77,7 +77,8 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-
+                    <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                    show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="330">
                       <template slot="header">
                         <span class="required">*</span> 品名规格
@@ -279,7 +280,8 @@
 
           <el-collapse-item title="产品信息" name="productInfo">
             <div v-if="btnType == 'add' || btnType == 'edit'">
-
+              <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important"
+              icon="el-icon-plus" @click="addProduct">选择产品</el-button>|
               <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
                 icon="el-icon-plus" @click="importProductFun">导入产品</el-button>|
               <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
@@ -307,7 +309,8 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-
+                <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" width="400">
                   <template slot="header">
                     <span class="required">*</span> 品名规格
@@ -607,18 +610,22 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-input v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
-                  </el-form-item>
-                </el-col>
+           
                 <el-col :span="6">
                   <el-form-item>
                     <el-input v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable />
                   </el-form-item>
                 </el-col>
-
-
+                <el-col :span="6" v-if="isProductNameSwitch==1">
+                  <el-form-item>
+                    <el-input v-model="ProductListRequestObj.productName" placeholder="请输入产品名称" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-input v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
+                  </el-form-item>
+                </el-col>
 
                 <el-col :span="6">
                   <el-form-item>
@@ -637,6 +644,8 @@
               <JNPF-table v-loading="listLoading" :data="allproductData" hasC
                 @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
                 <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="name" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                show-overflow-tooltip></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" />
                 <el-table-column prop="productCategoryName" label="所属分类" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
@@ -805,7 +814,7 @@ export default {
       },
       activeNames: ["productInfo", "basicInfo"],
       customStyleData: {},
-      tableVisible: true,
+      tableVisible: false,
       loadingText: '',
       fontSizeValue: '',
       oldId: "",
@@ -880,6 +889,7 @@ export default {
         label: 'name'
       },
       selectArr: [],
+      isProductNameSwitch:"",
     }
   },
   computed: {
@@ -905,8 +915,16 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
+
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableVisible=true
+      } catch (error) { }
+    },
     // 点击选择产品
     addProduct() {
       this.allProVisible = true

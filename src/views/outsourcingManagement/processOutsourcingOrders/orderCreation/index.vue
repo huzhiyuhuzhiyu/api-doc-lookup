@@ -86,8 +86,10 @@
                           <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                           <el-table-column prop="projectName" label="所属项目" width="120"
                             v-if="isProjectSwitch === '1'"></el-table-column>
+                          <el-table-column prop="productCode" label="产品编码" width="160"
+                            show-overflow-tooltip></el-table-column>
                           <el-table-column prop="productName" label="产品名称" width="160" show-overflow-tooltip
-                            v-if="isProjectSwitch === '1'"></el-table-column>
+                            v-if="isProductNameSwitch === '1'"></el-table-column>
                           <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                             <template slot="header">
                               <span class="required">*</span>
@@ -328,6 +330,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isProductNameSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
@@ -445,17 +448,16 @@ export default {
         // queryType: 3
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
-        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
-        // { prop: 'name', label: '产品名称', sortable: 'custom' },
         { prop: 'code', label: '产品编码', sortable: 'custom' },
+        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
         { prop: 'productCategoryName', label: '产品分类', sortable: 'custom2' },
         { prop: 'mainUnit', label: '单位', width: 60 },
         { prop: 'createTime', label: '创建日期', sortable: 'custom', width: 180 }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
+        { prop: 'productCode', label: '产品编码', type: 'input' },
         { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
-        // { prop: 'name', label: '产品名称', type: 'input' },
-        { prop: 'productCode', label: '产品编码', type: 'input' }
+
       ], // 产品选择弹出框搜索条件
       formLoading: false,
       codeConfig: {},
@@ -681,31 +683,19 @@ export default {
     this.getProductClassFun()
   },
   async created() {
+    await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
-
+    await this.getProductNameSwitch('product', 'enable_productName')
     this.tableDataFlag = true
-    console.log(this.isProjectSwitch)
-    if (this.isProjectSwitch === '1') {
-      this.ProductTableItems = [
-        { prop: 'projectName', label: '所属项目' },
-        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
-        { prop: 'name', label: '产品名称', sortable: 'custom' },
-        { prop: 'code', label: '产品编码', sortable: 'custom' },
-        { prop: 'productCategoryName', label: '产品分类', sortable: 'custom2' },
-        { prop: 'mainUnit', label: '单位', width: 60 },
-        { prop: 'createTime', label: '创建日期', sortable: 'custom', width: 180 }
-      ]
-    } else {
-      this.ProductTableItems = [
-        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
-        { prop: 'name', label: '产品名称', sortable: 'custom' },
-        { prop: 'code', label: '产品编码', sortable: 'custom' },
-        { prop: 'productCategoryName', label: '产品分类', sortable: 'custom2' },
-        { prop: 'mainUnit', label: '单位', width: 60 },
-        { prop: 'createTime', label: '创建日期', sortable: 'custom', width: 180 }
-      ]
+    console.log(this.isProductNameSwitch)
+
+    if (this.isProductNameSwitch === '1') {
+      this.ProductTableItems.splice(1, 0, { prop: 'name', label: '产品名称' })
+      this.ProductTableSearchList.splice(1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
     }
-    this.getDeputyUnit()
+    if (this.isProjectSwitch === '1') {
+      this.ProductTableItems.unshift({ prop: 'projectName', label: '所属项目' })
+    }
     this.getBimBusinessDetail()
     console.log(this.$route.query.alert, 'this.$route.query.alert')
     if (this.$route.query.alert) {
@@ -716,6 +706,11 @@ export default {
     this.getBusInfo()
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     getDeputyUnit() {
       let obj = {
         businessCode: 'deputyUnit',

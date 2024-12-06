@@ -90,6 +90,9 @@
                       <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                       <el-table-column prop="projectName" label="所属项目" width="120"
                         v-if="isProjectSwitch === '1'"></el-table-column>
+                      <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
+                      <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                        show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item>
@@ -159,7 +162,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="taxRate" label="税率" width="100">
+                      <el-table-column prop="taxRate" label="税率" min-width="100">
                         <template slot="header">
                           <span class="required">*</span>
                           税率
@@ -263,8 +266,11 @@
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                     <el-table-column prop="projectName" label="所属项目" width="120"
                       v-if="isProjectSwitch === '1'"></el-table-column>
-                    <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
                     <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
+                    <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                      show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
+
                     <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
                     <el-table-column prop="mainUnit" label="单位" min-width="140"></el-table-column>
                     <el-table-column prop="qty" label="基本数量" min-width="140"></el-table-column>
@@ -356,6 +362,9 @@
                   <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                   <el-table-column prop="projectName" label="所属项目" width="120"
                     v-if="isProjectSwitch === '1'"></el-table-column>
+                  <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
+                  <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                    show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item>
@@ -442,7 +451,7 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="120">
+                  <el-table-column prop="excludingTaxPrice" label="单价(不含税)" min-width="120">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxPrice'">
                         <div class="viewData">
@@ -529,10 +538,11 @@
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                 <el-table-column prop="projectName" label="所属项目" width="120"
                   v-if="isProjectSwitch === '1'"></el-table-column>
+                <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
                 <el-table-column prop="productName" label="产品名称" width="120"
                   v-if="isProductNameSwitch === '1'"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
-                <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
+
                 <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
                 <el-table-column prop="mainUnit" label="单位" min-width="140"></el-table-column>
                 <el-table-column prop="qty" label="基本数量" min-width="140"></el-table-column>

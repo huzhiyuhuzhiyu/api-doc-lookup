@@ -82,11 +82,11 @@
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" width="120"
               v-if="isProjectSwitch === '1'"></el-table-column>
+            <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="120"
               v-if="isProductNameSwitch === '1'"></el-table-column>
             <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
-            <!-- <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" /> -->
-            <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+
             <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
               :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
             <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
@@ -222,23 +222,17 @@ export default {
           label: '供应商名称',
           type: 'input'
         },
-
+        {
+          prop: 'productCode',
+          label: '产品编码',
+          type: 'input'
+        },
         {
           prop: 'drawingNo',
           label: '品名规格',
           type: 'input'
         },
 
-        // {
-        //   prop: 'productName',
-        //   label: '产品名称',
-        //   type: 'input'
-        // },
-        {
-          prop: 'productCode',
-          label: '产品编码',
-          type: 'input'
-        },
         {
           prop: 'mainUnit',
           label: '单位',

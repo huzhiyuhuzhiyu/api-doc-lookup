@@ -5,7 +5,7 @@
         <el-tab-pane label="产品价格" name="latestprice">
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
-              <el-form @submit.native.prevent>
+              <el-form @submit.native.prevent ref="latestpriceRef">
                 <template v-for="item in searchList">
                   <el-col :span="item.searchType === 3 ? 6 : 4">
                     <el-form-item>
@@ -75,7 +75,6 @@
                 </el-table-column>
                 <el-table-column prop="partnerCode" label="客户编码" min-width="160" sortable="custom" />
                 <el-table-column prop="customerProductNo" label="客户料号" min-width="180" />
-                <el-table-column prop="drawingNo" label="品名规格" min-width="400" />
                 <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom">
                   <template slot-scope="scope">
                     <el-link type="primary" @click.native="viewProduct(scope.row, 'look')">{{
@@ -83,6 +82,9 @@
                     }}</el-link>
                   </template>
                 </el-table-column>
+                <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                  show-overflow-tooltip></el-table-column>
+                <el-table-column prop="drawingNo" label="品名规格" min-width="400" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
 
@@ -110,9 +112,9 @@
         <el-tab-pane label="历史价格" name="historicalprice">
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
-              <el-form @submit.native.prevent>
+              <el-form @submit.native.prevent ref="historicalpriceRef">
                 <template v-for="item in searchList1">
-                  <el-col :span="item.searchType === 3 ? 6 : 4">
+                  <el-col :span="item.searchType === 3 ? 6 : 4" :key="item.field">
                     <el-form-item>
                       <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label"
                         clearable @keyup.enter.native="search('basic')" />
@@ -143,7 +145,7 @@
 
               </el-form>
             </el-row>
-            <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading" >
+            <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
               <div class="JNPF-common-head">
                 <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm">导出</el-button>
                 <div class="JNPF-common-head-right">
@@ -161,9 +163,8 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table highlight-current-row :fixedNO="true" ref="tableForms"
-                v-if="isProjectSwitchFlag" :data="tableDataList" @sort-change="sortChange" custom-column
-                :setColumnDisplayList="columnLists">
+              <JNPF-table highlight-current-row :fixedNO="true" ref="tableFormss" v-if="isProjectSwitchFlag"
+                :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="columnLists">
                 <el-table-column prop="cooperativePartnerIdText" label="客户名称" min-width="260" sortable="custom">
                   <template slot-scope="scope">
                     <el-link type="primary" @click.native="viewPartner(scope.row.cooperativePartnerId, 'look')">{{
@@ -173,7 +174,6 @@
                 </el-table-column>
                 <el-table-column prop="cooperativePartnerCode" label="客户编码" min-width="160" sortable="custom" />
                 <el-table-column prop="customerDrawingNumber" label="客户料号" min-width="180" />
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="400" />
                 <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom">
                   <template slot-scope="scope">
                     <el-link type="primary" @click.native="viewProduct(scope.row, 'look')">{{
@@ -181,6 +181,9 @@
                     }}</el-link>
                   </template>
                 </el-table-column>
+                <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                  show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productDrawingNo" label="品名规格" min-width="400" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
                 <el-table-column prop="unitPrice" min-width="140" label="销售单价(含税)" />
@@ -249,6 +252,7 @@ export default {
   components: { ExportForm, SuperQuery, CustomerForm, Form, FinshForm, DepForm },
   data() {
     return {
+      isProductNameSwitch: '',
       finshVisible: false,
       classAttribute: "",
       productName: "",
@@ -258,7 +262,6 @@ export default {
         { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-
       ],
       searchList1: [
         { field: 'cooperativePartnerIdText', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
@@ -267,7 +270,7 @@ export default {
 
       ],
       superQueryVisible: false,
-      columnLists: ["partnerCode", "productName"],
+      columnLists: ["partnerCode",],
       exportFormVisible: false,
       depFormVisible: false,
       background: true,//分页器背景颜色
@@ -329,17 +332,17 @@ export default {
           label: "客户料号",
           type: 'input',
         },
-
-        {
-          prop: 'drawingNo',
-          label: "品名规格 ",
-          type: 'custom',
-        },
         {
           prop: 'productCode',
           label: "产品编码",
           type: 'input',
         },
+        {
+          prop: 'drawingNo',
+          label: "品名规格 ",
+          type: 'custom',
+        },
+
         {
           prop: 'dateOrderStart',
           label: '有效日期起',
@@ -438,22 +441,18 @@ export default {
           label: "客户料号",
           type: 'input',
         },
-
-        {
-          prop: 'productDrawingNo',
-          label: "品名规格 ",
-          type: 'custom',
-        },
         {
           prop: 'productCode',
           label: "产品编码",
           type: 'input',
         },
         {
-          prop: 'productName',
-          label: "产品名称",
-          type: 'input',
+          prop: 'productDrawingNo',
+          label: "品名规格 ",
+          type: 'custom',
         },
+
+
 
 
         {
@@ -516,6 +515,7 @@ export default {
       ],
       isProjectSwitchFlag: false,
       isProjectSwitch: '',
+      historyFlag: false,
     }
   },
   computed: {
@@ -526,8 +526,14 @@ export default {
 
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
     this.isProjectSwitchFlag = true
     this.superForm = this.listQuery
+    if (this.isProductNameSwitch == 1) {
+      this.searchList.splice(2, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },)
+
+
+    }
     this.search('basic')
   },
   watch: {
@@ -536,6 +542,11 @@ export default {
     }
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     handleRemove(file, fileList) {
       console.log(file, fileList);
     },
@@ -567,7 +578,7 @@ export default {
     },
     // 上传产品
     UploadProduct(data) {
-      console.log("data产品",data);
+      console.log("data产品", data);
       this.loadingText = '正在导入数据'
       this.formLoading = true
       var formData = new FormData()
@@ -639,11 +650,19 @@ export default {
     seniorFun() {
       if (this.activeName == 'historicalprice') {
         this.superQueryJson = this.superQueryJson2
+
       } else {
         this.superQueryJson = this.superQueryJson1
 
       }
-      console.log(this.superQueryJson);
+      if (this.isProductNameSwitch === '1') {
+        this.superQueryJson.splice(4, 0, {
+          prop: 'productName',
+          label: '产品名称',
+          type: 'input'
+        })
+      }
+      this.getProductClassFun()
       this.superQueryVisible = true
     },
     viewProduct(row, type) {
@@ -717,6 +736,13 @@ export default {
     },
     handleClick(e) {
       this.activeName = e.name
+      if (this.isProductNameSwitch == 1) {
+        // this.searchList1.splice(2, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },)
+        this.searchList1.push({ field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 })
+
+
+      }
+      console.log(this.searchList1);
       // this.reset()
     },
     sortChange({ prop, order }) {
@@ -725,7 +751,7 @@ export default {
       // console.log(newProp);
       if (this.activeName == "historicalprice") {
         let newProp;
-        if (prop === 'cooperativePartnerIdText'||prop=='projectName' || prop === 'cooperativePartnerCode' || prop === 'customerDrawingNumber' || prop === 'productDrawingNo' || prop === 'productCode' || prop == 'productName' || prop == 'unitPrice'
+        if (prop === 'cooperativePartnerIdText' || prop == 'projectName' || prop === 'cooperativePartnerCode' || prop === 'customerDrawingNumber' || prop === 'productDrawingNo' || prop === 'productCode' || prop == 'productName' || prop == 'unitPrice'
           || prop == 'excludingTaxUnitPrice' || prop == 'validEnd' || prop == 'ask' || prop == 'remark' || prop == 'createTime'
         ) {
           newProp = prop
@@ -740,7 +766,7 @@ export default {
       } else {
 
         let newProp;
-        if (prop === 'productCode' || prop === 'partnerName'||prop=='projectName' || prop == 'oil' || prop == 'clearance') {
+        if (prop === 'productCode' || prop === 'partnerName' || prop == 'projectName' || prop == 'oil' || prop == 'clearance') {
           newProp = prop
         } else {
           newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
@@ -814,7 +840,7 @@ export default {
         })
       } else {
         this.superForm.historyFlag = false
-        this.getProductClassFun()
+
         getPartnerOrProductData(this.superForm).then(res => {
           console.log(res, '客户产品列表');
           this.tableDataList = res.data.records
@@ -887,9 +913,22 @@ export default {
             { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
 
           ]
+        if (this.isProductNameSwitch === '1') {
+          this.superQueryJson.splice(4, 0, {
+            prop: 'productName',
+            label: '产品名称',
+            type: 'input'
+          })
+        }
         this.$refs.SuperQuery.conditionList = []
         this.search('basic')
+        if (this.isProductNameSwitch == 1) {
+          this.searchList.splice(2, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },)
+
+
+        }
       } else {
+     
         this.superForm = this.historyForm = {
           productDrawingNo: "",
           cooperativePartnerIdText: "",
@@ -910,6 +949,9 @@ export default {
           { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
 
         ]
+        if (this.isProductNameSwitch == 1) {
+          this.searchList1.splice(2, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },)
+        }
         this.$refs.SuperQuery.conditionList = []
         this.search('basic')
       }

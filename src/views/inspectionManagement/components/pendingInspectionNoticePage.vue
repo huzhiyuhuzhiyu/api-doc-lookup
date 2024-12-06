@@ -344,7 +344,7 @@ export default {
       } catch (error) { }
     },
     superQuerySearch(query) {
-      this.orderForm.superQuery = query
+      this.listQuery.superQuery = query
       this.superQueryVisible = false
       this.search()
     },

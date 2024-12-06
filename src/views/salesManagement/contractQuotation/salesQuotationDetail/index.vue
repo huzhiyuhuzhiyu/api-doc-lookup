@@ -72,6 +72,8 @@
           <el-table-column prop="quotationTime" label="报价时间" width="130" sortable="custom" />
           <el-table-column prop="validEnd" label="有效时间止" width="130" sortable="custom" />
           <el-table-column prop="customerDrawingNumber" label=" 客户料号" width="150" sortable="custom" />
+          <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+          show-overflow-tooltip></el-table-column>
           <el-table-column prop="productDrawingNo" label="品名规格" width="180" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom" v-if="isProjectSwitch==1"/>
             <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
@@ -421,6 +423,7 @@ export default {
       ],
       isProjectSwitchFlag:false,
       isProjectSwitch:'',
+      isProductNameSwitch: '',
 
     }
   },
@@ -430,13 +433,26 @@ export default {
 
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
     this.isProjectSwitchFlag=true
     this.form = JSON.parse(JSON.stringify(this.formlist))
     this.superForm = this.form
+    if (this.isProductNameSwitch == 1) {
+      this.searchList.splice(2, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },) 
+          this.superQueryJson.splice(7, 0, {
+            prop: 'productName',
+            label: '产品名称',
+            type: 'input'
+          })
+    }
     this.search('basic')
   },
   methods: {
-
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     superQuerySearch(query) {
       this.superQuery = query
       this.superQueryVisible = false
@@ -512,6 +528,9 @@ export default {
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
 
       ]
+      if (this.isProductNameSwitch == 1) {
+      this.searchList.splice(2, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },) 
+    }
       this.search('basic')
 
 

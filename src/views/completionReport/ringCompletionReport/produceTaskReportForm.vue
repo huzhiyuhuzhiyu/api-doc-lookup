@@ -149,7 +149,7 @@
                 </div>
 
               </el-col>
-              <el-col :sm="24" :xs="24" v-if="materialList[0].reduceType=='picking'">
+              <el-col :sm="24" :xs="24" v-if="materialList.length&&materialList[0].reduceType=='picking'">
                 <div class="info">
                   <span class="left-title">已领料数量：</span>
                   <span class="left-title">{{ materialList[0].receivedQuantity }}</span>
@@ -462,9 +462,9 @@ export default {
           this.targetHeight = height;
         });
       } else {
-        const height = this.$refs.fixedInfo.$el.clientHeight
-        console.log('el-col的高度是2：', height);
-        this.targetHeight2 = height;
+        // const height = this.$refs.fixedInfo.$el.clientHeight
+        // console.log('el-col的高度是2：', height);
+        // this.targetHeight2 = height;
       }
       this.producePersonListFun(this.currentProcess.id)
       const end = new Date();//获取当前的日期

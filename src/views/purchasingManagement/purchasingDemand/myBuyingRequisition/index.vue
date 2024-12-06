@@ -314,6 +314,11 @@ export default {
     this.initData()
   },
   methods: {
+    superQuerySearch(query) {
+      this.listQuery.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },

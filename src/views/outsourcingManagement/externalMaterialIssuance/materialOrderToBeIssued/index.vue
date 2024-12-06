@@ -15,17 +15,18 @@
                   clearable />
               </el-form-item>
             </el-col>
+            <el-col :span="3" v-if="isProductNameSwitch === '1'">
+              <el-form-item>
+                <el-input v-model="orderForm.productName" @keyup.enter.native="search()" placeholder="产品名称" clearable />
+              </el-form-item>
+            </el-col>
             <el-col :span="3">
               <el-form-item>
                 <el-input v-model="orderForm.productDrawingNo" @keyup.enter.native="search()" placeholder="品名规格"
                   clearable />
               </el-form-item>
             </el-col>
-            <el-col :span="3" v-if="isProductNameSwitch === '1'">
-              <el-form-item>
-                <el-input v-model="orderForm.productName" @keyup.enter.native="search()" placeholder="产品名称" clearable />
-              </el-form-item>
-            </el-col>
+
             <el-col :span="6">
               <el-form-item>
                 <el-date-picker v-model="ordeDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
@@ -81,10 +82,11 @@
             <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" width="120"
               v-if="isProjectSwitch === '1'"></el-table-column>
+            <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="120"
               v-if="isProductNameSwitch === '1'"></el-table-column>
             <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
-            <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
+
             <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom" />
             <template v-if="isProportionSwitch === '1'">
               <el-table-column prop="weight" label="重量(kg)" width="90" />
@@ -242,6 +244,21 @@ export default {
           type: 'input'
         },
         {
+          prop: 'productCode',
+          label: '产品编码',
+          type: 'input'
+        },
+        {
+          prop: 'drawingNo',
+          label: '品名规格',
+          type: 'input'
+        },
+        {
+          prop: 'processName',
+          label: '工序名称',
+          type: 'input'
+        },
+        {
           prop: 'mainUnit',
           label: '单位',
           type: 'input'
@@ -282,7 +299,7 @@ export default {
           item.label = '单位(主)'
         }
       })
-      this.superQueryJson.splice(5, 0, {
+      this.superQueryJson.splice(8, 0, {
         prop: 'deputyUnit',
         label: '单位(副)',
         type: 'input'
@@ -291,13 +308,13 @@ export default {
     }
     if (this.isProductNameSwitch === '1') {
 
-      this.superQueryJson.splice(4, 0, {
+      this.superQueryJson.splice(5, 0, {
         prop: 'productName',
         label: '产品名称',
         type: 'input'
       })
     }
- 
+
     // 默认设置为近3天
     const end = new Date()
     const start = ''

@@ -237,7 +237,7 @@ export default {
   },
   methods: {
     superQuerySearch(query) {
-      this.orderForm.superQuery = query
+      this.query.superQuery = query
       this.superQueryVisible = false
       this.search()
     },

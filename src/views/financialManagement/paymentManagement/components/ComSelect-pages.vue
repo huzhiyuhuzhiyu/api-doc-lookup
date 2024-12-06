@@ -377,8 +377,8 @@ export default {
   data() {
     return {
       orderList:[
-        {value:'normal',label:'正常任务'},
-        {value:'rework',label:'返工任务'}
+        {value:'normal',label:'正常订单'},
+        {value:'rework',label:'返工订单'}
       ],
       allList: [],
       innerValue: '',

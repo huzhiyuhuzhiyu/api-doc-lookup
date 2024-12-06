@@ -148,7 +148,7 @@ import {
 } from "@/api/masterDataManagement/index";
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import { getBimBusinessDetail } from '@/api/basicData/index'
+import { getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 
 export default {
@@ -284,6 +284,17 @@ export default {
           type: 'input'
         },
       ],
+      standardValueFlag: '',
+      colourFlag: '',
+      processFlag: '',
+      sealingCoverTypingFlag: '',
+      accuracyLevelFlag: '',
+      vibrationLevelFlag: '',
+      oilFlag: '',
+      oilQuantityFlag: '',
+      clearanceFlag: '',
+      packagingMethodFlag: '',
+      specialRequireFlag: ''
     }
   },
   watch: {
@@ -296,6 +307,7 @@ export default {
     this.getProductClassFun()
   },
   async created() {
+    await this.getOrderFiledMap()
     await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
@@ -320,6 +332,27 @@ export default {
         type: 'input'
       })
     }
+    if (this.standardValueFlag === '1') {
+      this.superQueryJson.splice(6, 0, {
+        prop: 'standardValue',
+        label: '规值',
+        type: 'input'
+      })
+    }
+    if (this.colourFlag === '1') {
+      this.superQueryJson.splice(7, 0, {
+        prop: 'colour',
+        label: '颜色',
+        type: 'input'
+      })
+    }
+    if (this.colourFlag === '1') {
+      this.superQueryJson.splice(8, 0, {
+        prop: 'processName',
+        label: '工序名称',
+        type: 'input'
+      })
+    }
     // 默认设置为近3天
 
     const end = new Date()
@@ -332,6 +365,13 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    getOrderFiledMap() {
+      getOrderFiledMap('purchase').then(res => {
+        this.standardValueFlag = res.data.standardValue
+        this.colourFlag = res.data.colour
+        this.processFlag = res.data.process
+      })
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)

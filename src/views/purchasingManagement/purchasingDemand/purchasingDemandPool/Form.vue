@@ -10,6 +10,8 @@
             <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit('submit')">
               {{ $t('common.submitButton') }}
             </el-button>
+            <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
+              @click="dataFormSubmit('submit', 'print')">提交并打印</el-button>
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div>
         </div>
@@ -245,7 +247,7 @@
                         </el-table-column>
 
                         <el-table-column prop="standardValue" label="规值" width="120"
-                          v-if="this.dataForm.classAttribute !== 'finish_product'">
+                          v-if="dataForm.classAttribute !== 'finish_product' && standardValueFlag === '1'">
                           <template slot-scope="scope">
                             <el-form-item>
                               <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable
@@ -257,7 +259,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="colour" label="颜色" min-width="120"
-                          v-if="this.dataForm.classAttribute !== 'finish_product'">
+                          v-if="dataForm.classAttribute !== 'finish_product' && colourFlag === '1'">
                           <template slot-scope="scope">
                             <el-form-item>
                               <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;">
@@ -268,7 +270,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="processId" label="工序" min-width="120"
-                          v-if="this.dataForm.classAttribute !== 'finish_product'">
+                          v-if="this.dataForm.classAttribute !== 'finish_product' && processFlag === '1'">
                           <template slot-scope="scope">
                             <el-form-item>
                               <el-select v-model="scope.row.processId" placeholder="请选择" clearable>
@@ -279,7 +281,8 @@
                           </template>
                         </el-table-column>
 
-                        <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'"
+                        <el-table-column
+                          v-if="this.dataForm.classAttribute == 'finish_product' && sealingCoverTypingFlag === '1'"
                           prop="sealingCoverTyping" label="打字内容" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
@@ -289,8 +292,9 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="accuracyLevel"
-                          label="精度等级" min-width="120">
+                        <el-table-column
+                          v-if="this.dataForm.classAttribute == 'finish_product' && accuracyLevelFlag === '1'"
+                          prop="accuracyLevel" label="精度等级" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
                               <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
@@ -299,8 +303,9 @@
                           </template>
                         </el-table-column>
 
-                        <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="vibrationLevel"
-                          label="振动等级" min-width="120">
+                        <el-table-column
+                          v-if="this.dataForm.classAttribute == 'finish_product' && vibrationLevelFlag === '1'"
+                          prop="vibrationLevel" label="振动等级" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable
                               style="width: 100%;">
@@ -309,8 +314,8 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="oil" label="油脂"
-                          min-width="120">
+                        <el-table-column v-if="this.dataForm.classAttribute == 'finish_product' && oilFlag === '1'"
+                          prop="oil" label="油脂" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
@@ -318,8 +323,9 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="oilQuantity"
-                          label="油脂量" min-width="160">
+                        <el-table-column
+                          v-if="this.dataForm.classAttribute == 'finish_product' && oilQuantityFlag === '1'"
+                          prop="oilQuantity" label="油脂量" min-width="160">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
@@ -327,8 +333,9 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="clearance"
-                          label="游隙" min-width="120">
+                        <el-table-column
+                          v-if="this.dataForm.classAttribute == 'finish_product' && clearanceFlag === '1'"
+                          prop="clearance" label="游隙" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
@@ -336,8 +343,9 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="packagingMethod"
-                          label="包装方式" min-width="120">
+                        <el-table-column
+                          v-if="this.dataForm.classAttribute == 'finish_product' && packagingMethodFlag === '1'"
+                          prop="packagingMethod" label="包装方式" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
                               style="width: 100%;">
@@ -347,7 +355,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="specialRequire" label="特殊要求" min-width="120"
-                          v-if="this.dataForm.classAttribute == 'finish_product'">
+                          v-if="this.dataForm.classAttribute == 'finish_product' && specialRequireFlag === '1'">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
                               style="width: 100%;">
@@ -405,6 +413,10 @@
       dialogTitle="选择产品" :listMethod="getProductList" :listRequestObj="ProductListRequestObjs"
       :listDataFormatting="listDataFormatting" :searchList="ProductTableSearchList" :elementShow="false"
       :multiple="true" :renderTree="false" />
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm"
+      @closePrintPage="closePrintPage" />
   </div>
 </template>
 <script>
@@ -430,6 +442,9 @@ import { getBimProcessList } from '@/api/bimProcess/index'
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import getProjectList from '@/mixins/generator/getProjectList'
+import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
 export default {
   components: {
     sourceForm,
@@ -439,6 +454,8 @@ export default {
 
   data() {
     return {
+      printVisible: false,
+      printBrowseVisible: false,
       isProjectSwitch: '',
       isProductNameSwitch: '',
       tableDataFlag: false,
@@ -735,10 +752,22 @@ export default {
       list8: [],
       taxRateList: [],
       flowTemplateJson: {},
-      flowData: {}
+      flowData: {},
+      standardValueFlag: '',
+      colourFlag: '',
+      processFlag: '',
+      sealingCoverTypingFlag: '',
+      accuracyLevelFlag: '',
+      vibrationLevelFlag: '',
+      oilFlag: '',
+      oilQuantityFlag: '',
+      clearanceFlag: '',
+      packagingMethodFlag: '',
+      specialRequireFlag: ''
     }
   },
   async created() {
+    await this.getOrderSwitch()
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
     await this.getProductNameSwitch('product', 'enable_productName')
@@ -747,6 +776,31 @@ export default {
       this.ProductTableSearchList.splice(1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
       this.ProductTableItems.splice(1, 0, { prop: 'productName', label: '产品名称' })
       this.ProductPoolTableItems.splice(1, 0, { prop: 'productName', label: '产品名称' })
+    }
+    if (this.standardValueFlag === '1') {
+      this.superQueryJson.splice(8, 0, {
+        prop: 'standardValue',
+        label: '规值',
+        type: 'select'
+      })
+
+    }
+    if (this.colourFlag === '1') {
+      this.superQueryJson.splice(9, 0, {
+        prop: 'colour',
+        label: '颜色',
+        type: 'input'
+      })
+
+    }
+    if (this.processFlag === '1') {
+      this.superQueryJson.splice(10, 0, {
+        prop: 'processName',
+        label: '工序',
+        type: 'select',
+        options: []
+      })
+
     }
     this.tableDataFlag = true
 
@@ -814,6 +868,45 @@ export default {
     }
   },
   methods: {
+    getOrderSwitch() {
+      let obj = {
+        businessCode: 'orderField',
+        pageSize: -1
+      }
+      getBimBusinessSwitchConfigList(obj).then((res) => {
+        res.data.orderField.forEach((item) => {
+          console.log(item.configValue2 === "purchase")
+          if (item.configValue2 === "purchase") {
+            if (item.configKey === "standardValue") {
+              this.standardValueFlag = item.configValue1
+            } else if (item.configKey === "colour") {
+              this.colourFlag = item.configValue1
+            } else if (item.configKey === "process") {
+              this.processFlag = item.configValue1
+            }
+          } else if (item.configValue2 === "finishProductPurchase") {
+            if (item.configKey === "sealingCoverTyping") {
+              this.sealingCoverTypingFlag = item.configValue1
+            } else if (item.configKey === "accuracyLevel") {
+              this.accuracyLevelFlag = item.configValue1
+            } else if (item.configKey === "vibrationLevel") {
+              this.vibrationLevelFlag = item.configValue1
+            } else if (item.configKey === "oil") {
+              this.oilFlag = item.configValue1
+            } else if (item.configKey === "oilQuantity") {
+              this.oilQuantityFlag = item.configValue1
+            } else if (item.configKey === "clearance") {
+              this.clearanceFlag = item.configValue1
+            } else if (item.configKey === "packagingMethod") {
+              this.packagingMethodFlag = item.configValue1
+            } else if (item.configKey === "specialRequire") {
+              this.specialRequireFlag = item.configValue1
+            }
+          }
+
+        })
+      })
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -1459,7 +1552,7 @@ export default {
     },
 
     // 表单提交
-    async dataFormSubmit(type) {
+    async dataFormSubmit(type, printType) {
       this.btnLoading = true
       let submitFlag = true // 自动聚焦是否可用
 
@@ -1524,6 +1617,17 @@ export default {
                 this.$emit('close', true)
               }
             })
+            if (printType) {
+
+              this.enCode = 'p019'
+              this.formId = res.data.id
+              this.fullName = '外协收货单'
+
+              this.printVisible = true
+              this.$nextTick(() => {
+                this.$refs.printTemplate.init(this.enCode)
+              })
+            }
           })
           .catch(() => {
             this.btnLoading = false

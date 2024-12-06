@@ -108,8 +108,10 @@
                   }}</el-link>
                 </template>
               </el-table-column>
-              <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" />
               <el-table-column prop="productCode" label="产品编码" min-width="180" />
+              <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                show-overflow-tooltip></el-table-column>
+              <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" />
               <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
 
               <el-table-column prop="productSource" label="产品来源" min-width="160">
@@ -174,8 +176,10 @@
                 <JNPF-table custom-column v-if="activeName == 'assemble'" @sort-change="sortChange"
                   :partentOrChild="'assemble'" :data="assembleData" :setColumnDisplayList="columnList1"
                   highlight-current-row :fixedNO="true" class="dataTable" border ref="assembleRef">
-                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                  <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                    v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                     <template slot-scope="scope">
@@ -239,8 +243,10 @@
                 <JNPF-table custom-column :partentOrChild="'produce'" @sort-change="sortChange" :data="produceData"
                   v-if="activeName == 'produce'" :setColumnDisplayList="columnList2" :key="2" highlight-current-row
                   :fixedNO="true" class="dataTable" border ref="produceRef">
-                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                  <el-table-column prop="productName" label="产品名称"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
+                      show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                     <template slot-scope="scope">
@@ -336,8 +342,10 @@
                 <JNPF-table custom-column :partentOrChild="'purchase'" @sort-change="sortChange" :data="purchaseData"
                   :setColumnDisplayList="columnList3" highlight-current-row :fixedNO="true" class="dataTable" border
                   ref="purchaseRef">
-                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                  <el-table-column prop="productName" label="产品名称"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
+                      show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="immediatelyBuyFlag" label="立即采购" width="140" sortable="custom">
                     <template slot-scope="scope">
@@ -423,8 +431,10 @@
                   highlight-current-row :setColumnDisplayList="columnList4" :fixedNO="true" class="dataTable" border
                   ref="outRef">
 
-                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                  <el-table-column prop="productName" label="产品名称"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
+                      show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                     <template slot-scope="scope">
@@ -524,8 +534,10 @@
                 <JNPF-table custom-column v-if="activeNameIss == 'assemble'" @sort-change="sortChange"
                   :partentOrChild="'assemble'" :data="assembleDataIss" :setColumnDisplayList="columnList1"
                   highlight-current-row :fixedNO="true" class="dataTable" border ref="assembleRef">
-                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                  <el-table-column prop="productName" label="产品名称"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
+                      show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                     <template slot-scope="scope">
@@ -589,8 +601,10 @@
                 <JNPF-table custom-column :partentOrChild="'produce'" @sort-change="sortChange" :data="produceDataIss"
                   v-if="activeNameIss == 'produce'" :setColumnDisplayList="columnList2" :key="2" highlight-current-row
                   :fixedNO="true" class="dataTable" border ref="produceRef">
-                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                  <el-table-column prop="productName" label="产品名称"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
+                      show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                     <template slot-scope="scope">
@@ -686,8 +700,10 @@
                 <JNPF-table v-if="activeNameIss == 'purchase'" custom-column :partentOrChild="'purchase'"
                   @sort-change="sortChange" :data="purchaseDataIss" :setColumnDisplayList="columnList3"
                   highlight-current-row :fixedNO="true" class="dataTable" border ref="purchaseRef">
-                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                  <el-table-column prop="productName" label="产品名称"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
+                      show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="immediatelyBuyFlag" label="立即采购" width="140" sortable="custom">
                     <template slot-scope="scope">
@@ -773,8 +789,10 @@
                   @sort-change="sortChange" :data="outDataIss" highlight-current-row :setColumnDisplayList="columnList4"
                   :fixedNO="true" class="dataTable" border ref="outRef">
 
-                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                  <el-table-column prop="productName" label="产品名称"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
+                      show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                     <template slot-scope="scope">
@@ -897,8 +915,10 @@
               <JNPF-table :data="planTableData" hasC @sort-change="sortChange" @selection-change="selectPlanFun"
                 ref="dataTableRef" @row-click="handleRowClick">
                 <el-table-column prop="planNo" label="计划单号" min-width="180" sortable="custom"> </el-table-column>
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
+                <el-table-column prop="productName" label="产品名称"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
+                      show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
                 <el-table-column prop="productSource" label="产品来源" min-width="160" sortable="custom">
@@ -1225,6 +1245,7 @@ export default {
       projectIdDataList: [],
       planIdList: [],
       selectDateDialogVisible: false,
+      isProductNameSwitch: "",
     }
   },
   computed: {
@@ -1233,8 +1254,9 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
+    await this.getProductNameSwitch('product', 'enable_productName')
+
     console.log("下拉项", this.projectIdDataList);
-    this.isProjectSwitchFlag = true
     this.getMrpCalcSchemeListFun()
     if (this.isProjectSwitch == 1) {
       console.log(1111);
@@ -1246,6 +1268,12 @@ export default {
     this.fetchData("AMDH")
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.isProjectSwitchFlag = true
+      } catch (error) { }
+    },
     // 全部下达
     allIssueFun() {
       if (this.outDataIss.length || this.purchaseDataIss.length) return this.selectDateDialogVisible = true

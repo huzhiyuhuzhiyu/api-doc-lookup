@@ -110,7 +110,7 @@
 
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                   <el-table ref="product" :data="dataFormTwo.lines" @selection-change="handeleProductInfoData"
-                    v-if="tableVisible" v-bind="customStyleData">
+                    v-if="tableFlag" v-bind="customStyleData">
                     <el-table-column type="selection" width="60" fixed='left' align="center"
                       v-if="this.btnType !== 'look'" key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
@@ -127,7 +127,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                    <el-table-column prop="name" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="330">
                       <template slot="header">
@@ -399,7 +399,7 @@
 
             <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
               <el-table ref="product" :data="dataFormTwo.lines" @selection-change="handeleProductInfoData"
-                v-if="tableVisible" v-bind="customStyleData">
+                v-if="tableFlag" v-bind="customStyleData">
                 <el-table-column type="selection" width="60" fixed='left' align="center" v-if="this.btnType !== 'look'"
                   key="1" />
                 <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
@@ -416,7 +416,7 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                <el-table-column prop="name" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                   show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" width="400">
                   <template slot="header">
@@ -718,6 +718,7 @@ export default {
 
   data() {
     return {
+      isProductNameSwitch:"",
       isProjectSwitch: '',
       list1: [],
       list2: [],
@@ -884,6 +885,7 @@ export default {
       flowTaskOperatorRecordList: [],
       endTime: 0,
       isattachmentswitch: '',
+      tableFlag:false,
     }
   },
   watch: {
@@ -922,8 +924,16 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
+    
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableFlag=true
+      } catch (error) { }
+    },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
 
@@ -2027,7 +2037,7 @@ export default {
         this.customStyleData = {}
         // 重新加载表格
         this.tableVisible = false
-        this.$nextTick(() => { this.tableVisible = true })
+        this.$nextTick(() => {  })
       }
     },
     // 生成客户产品  下载无产品档案列表

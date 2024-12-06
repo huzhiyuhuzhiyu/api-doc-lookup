@@ -867,27 +867,7 @@ export default {
     // 销售发货选择产品——搜索 如果是销售订单  需要计算待出库数量=订单数量-已出库数量  如果是通知单 则直接取接口返回的待出库数量
     searchProductFun() {
 
-      this.orderForm = { //获取产品数据
-        cooperativePartnerId: this.dataForm.cooperativePartnerId,
-        drawingNo: "",        // customerProductNo: "",
-        customerProductDrawingNo: "",
-        deliverDateEnd: "",
-        deliverDateStart: "",
-        classAttributeList: this.classAttributeList,
-        externalFlag: true,
-        pageNum: 1,
-        pageSize: 20,
-        orderNo: this.dataForm.sourceNo,
-        receivingStatus: "not_finished",
-        receiptQueryFlag: true,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: ""
-        }],
-      }
+
       if (this.deliveryDateArr.length) {
         this.orderForm.deliverDateStart = this.deliveryDateArr[0]
         this.orderForm.deliverDateEnd = this.deliveryDateArr[1]
@@ -895,6 +875,10 @@ export default {
         this.orderForm.deliverDateStart = ""
         this.orderForm.deliverDateEnd = ""
       }
+      this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
+      this.orderForm.receivingStatus = 'not_finished'
+      this.orderForm.orderNo = this.dataForm.sourceNo
+      this.orderForm.classAttributeList = this.classAttributeList
       this.orderForm.projectId = this.isProjectSwitch === '1' ? this.dataForm.projectId || '' : ''
       detailpurchaseOrderList(this.orderForm).then(res => {
         console.log("采购明细",);
@@ -922,8 +906,27 @@ export default {
     // 销售发货选择产品——重置
     resetProductFun() {
       this.deliveryDateArr = []
+      this.orderForm = { //获取产品数据
+        drawingNo: "",        // customerProductNo: "",
+        customerProductDrawingNo: "",
+        deliverDateEnd: "",
+        deliverDateStart: "",
+        classAttributeList: this.classAttributeList,
+        externalFlag: true,
+        pageNum: 1,
+        pageSize: 20,
+        orderNo: this.dataForm.sourceNo,
+        receivingStatus: "not_finished",
+        receiptQueryFlag: true,
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: ""
+        }],
+      }
       this.searchProductFun()
-
     },
     // 选完产品后  渲染在产品信息列表
     submitAllProduct() {

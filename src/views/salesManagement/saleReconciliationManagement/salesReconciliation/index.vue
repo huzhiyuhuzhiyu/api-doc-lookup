@@ -75,6 +75,8 @@
           <el-table-column prop="partnerName" label="客户名称" min-width="180" sortable="custom" />
           <el-table-column prop="partnerCode" label="客户编码" min-width="180" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
+          <el-table-column prop="productName" label="产品名称"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
+          show-overflow-tooltip></el-table-column>
           <el-table-column prop="drawingNo" label="品名规格" min-width="180" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
           v-if="isProjectSwitch == 1" />
@@ -146,7 +148,7 @@ export default {
         { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
       ],
-      columnList: ["partnerCode", "productCode", "productName", "createByName"],
+      columnList: ["partnerCode", "productCode", , "createByName"],
       superQueryVisible: false,
       title: "更多查询",
       exportFormVisible: false,
@@ -240,11 +242,21 @@ export default {
       ],
       isProjectSwitch:"",
       isProjectSwitchFlag:false,
+      isProductNameSwitch: '',
+
     }
   },
   async created() {
     this.superForm = this.listQuery
     this.search('basic')
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProductNameSwitch == 1) {
+          this.superQueryJson.splice(4, 0, {
+            prop: 'productName',
+            label: '产品名称',
+            type: 'input'
+          })
+    }
     await this.getProjectSwitch('system', 'project')
     this.isProjectSwitchFlag=true
   },
@@ -253,6 +265,11 @@ export default {
   },
 
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+      } catch (error) { }
+    },
     superQuerySearch(query) {
       this.superQuery = query
       this.superQueryVisible = false
@@ -331,7 +348,7 @@ export default {
         newProp = 'createTime'
       }
       
-      if(newprop=='project_name'){
+      if(newProp=='project_name'){
         newProp = 'projectName'
 
       }

@@ -76,8 +76,10 @@
             <el-table-column prop="recipient" label="收件人" width="140" sortable="custom" />
             <el-table-column prop="phone" label="收件人电话" width="160" sortable="custom" />
             <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
-            <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" /> 
+            <el-table-column prop="productName" label="产品名称" width="160" sortable="custom" v-if="isProductNameSwitch === '1'"
+            show-overflow-tooltip></el-table-column>
+            <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
               v-if="isProjectSwitch == 1" />
             <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
@@ -339,13 +341,13 @@ export default {
           type: 'input'
         },
         {
-          prop: 'productDrawingNo',
-          label: "品名规格",
+          prop: 'productCode',
+          label: "产品编码",
           type: 'input'
         },
         {
-          prop: 'productCode',
-          label: "产品编码",
+          prop: 'productDrawingNo',
+          label: "品名规格",
           type: 'input'
         },
         {
@@ -442,11 +444,20 @@ export default {
         },
       ],
       isProjectSwitch: '',
+      isProductNameSwitch:"",
     }
   },
  
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProductNameSwitch == 1) {
+          this.superQueryJson.splice(7, 0, {
+            prop: 'productName',
+            label: '产品名称',
+            type: 'input'
+          })
+    }
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.superForm = this.orderForm
     this.search('basic')
@@ -460,11 +471,16 @@ export default {
 
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
     async getMainUnitFun(code, type) {
       this.listLoading = true
       try {
         this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
-        this.tableDataFlag = true
         this.listLoading = false
 
 
@@ -841,7 +857,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName'
+      if (prop === 'partnerCode'||prop=='productName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName'
         || prop == 'ordersNo' || prop == 'oilQuantity' || prop == 'vibrationLevel' || prop == 'accuracyLevel' || prop == 'sealingCoverTyping' ||
         prop == 'productCode' || prop == 'productDrawingNo') {
         if (prop === 'createByName') {

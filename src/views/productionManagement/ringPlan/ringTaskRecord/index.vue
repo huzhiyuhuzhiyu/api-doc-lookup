@@ -55,6 +55,7 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" v-if="isProjectSwitchFlag"
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+            <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
             <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id)">{{
@@ -81,7 +82,6 @@
             <el-table-column prop="routingCode" label="工艺路线编码" min-width="160" sortable="custom" />
             
             <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
-            <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
             <el-table-column prop="orderStatus" label="状态" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.orderStatus == 'normal'"><el-tag >正常</el-tag> </div>

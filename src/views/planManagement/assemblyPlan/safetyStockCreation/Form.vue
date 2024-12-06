@@ -28,17 +28,17 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="isProjectSwitch==1">
+                    <el-col :sm="6" :xs="24" v-if="isProjectSwitch == 1">
                       <el-form-item label="所属项目" prop="projectId">
-                        <el-select v-model="planForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;" :disabled="userInfo.projectId!='1'" @change="changeProject"
-                          >
+                        <el-select v-model="planForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;"
+                          :disabled="userInfo.projectId != '1'" @change="changeProject">
                           <el-option v-for="(item, index) in projectIdDataList" :key="index" :label="item.label"
                             :value="item.value"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="计划日期" prop="planDate"  class="date" style="margin-bottom: 20px;">
+                      <el-form-item label="计划日期" prop="planDate" class="date" style="margin-bottom: 20px;">
                         <el-date-picker v-model="planForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                           style="width: 100%;" start-placeholder="开始日期" @change="changDateFun" end-placeholder="结束日期"
                           clearable>
@@ -62,7 +62,7 @@
                     icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
                 </div>
 
-                <JNPF-table ref="product" :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData"
+                <JNPF-table ref="product" :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData" v-if="isProjectSwitchFlag"
                   border height="660" :key="165" style="width: 100%;" hasC>
 
                   <el-table-column type="planNo" width="160" label="计划单号" :key="1011"
@@ -71,14 +71,15 @@
                       <el-input v-model="scope.row.planNo" placeholder="计划单号" />
                     </template>
                   </el-table-column>
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6"></el-table-column>
+                  <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                    show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="drawingNo" label="品名规格" min-width="330" :key="6"></el-table-column>
                   <el-table-column prop="bomId" label="BOM" min-width="140" :key="444" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <div>{{ scope.row.bomId ? scope.row.drawingNo : "无BOM" }}</div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="projectName" label="所属项目" min-width="120" 
-                  v-if="isProjectSwitch == 1" />
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="mainUnit" label="单位" width="80" :key="89" />
                   <el-table-column prop="availableQuantity" label="可用库存数量" width="140" :key="8" />
                   <el-table-column prop="planQuantity" label="计划数量" width="140" :key="7">
@@ -182,7 +183,7 @@
               </el-collapse-item>
             </el-collapse>
           </el-tab-pane>
-          <el-tab-pane label="附件" name="annex"   v-if="isattachmentswitch == '1'">
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
             <UploadWj v-model="datafilelist" :detailed="false"></UploadWj>
           </el-tab-pane>
         </el-tabs>
@@ -200,7 +201,11 @@
                     <el-input v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
                   </el-form-item>
                 </el-col>
-            
+                <el-col :span="6"  v-if="isProductNameSwitch === '1'">
+                  <el-form-item>
+                    <el-input v-model="ProductListRequestObj.name" placeholder="请输入产品名称" clearable />
+                  </el-form-item>
+                </el-col>
                 <el-col :span="6">
                   <el-form-item>
                     <el-input v-model="ProductListRequestObj.code" placeholder="请输入产品编码" clearable />
@@ -221,13 +226,14 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="allproductData" hasC @sort-change="sortChange"
                 @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
-                <el-table-column prop="drawingNo" label="品名规格" sortable="custom" />
                 <el-table-column prop="code" label="产品编码" sortable="custom" width="140"></el-table-column>
-                <el-table-column prop="projectName" label="所属项目" min-width="120" 
-                v-if="isProjectSwitch == 1" />
+                <el-table-column prop="name" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                  show-overflow-tooltip></el-table-column>
+                <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="330" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                 <el-table-column prop="mainUnit" label="单位" width="80"></el-table-column>
-                <el-table-column prop="inventoryQuantity" label="可用库存数量" sortable="custom"></el-table-column>
-                <el-table-column prop="bomId" label="是否有BOM" sortable="custom">
+                <el-table-column prop="inventoryQuantity" label="可用库存数量" min-width="160" sortable="custom"></el-table-column>
+                <el-table-column prop="bomId" label="是否有BOM"  min-width="140" sortable="custom">
                   <template slot-scope="scope">
                     {{ scope.row.bomId ? '有' : '无' }}
                   </template>
@@ -293,7 +299,7 @@ export default {
         planDate: [],
         planStartDate: "",
         planEndDate: "",
-        projectId:"",
+        projectId: "",
       },
       codeConfig: {},//单据规则配置
       list1: [],
@@ -362,10 +368,11 @@ export default {
       selectRows: [],
       selectArr: [],
       customStyleData: 0,
-      isProjectSwitch:"",
-      isProjectSwitchFlag:null,
-      projectIdDataList:[],
-      originalData:[],
+      isProjectSwitch: "",
+      isProjectSwitchFlag: null,
+      projectIdDataList: [],
+      originalData: [],
+      isProductNameSwitch:"",
     }
   },
   computed: {
@@ -377,10 +384,11 @@ export default {
   async created() {
     await this.getProjectList()
     await this.getProjectSwitch('system', 'project')
-    this.isProjectSwitchFlag=true
-    if(this.isProjectSwitch==1){
-       
-      this.planForm.projectId=this.userInfo.projectId==1?"":this.userInfo.projectId
+    await this.getProductNameSwitch('product', 'enable_productName')
+
+    if (this.isProjectSwitch == 1) {
+
+      this.planForm.projectId = this.userInfo.projectId == 1 ? "" : this.userInfo.projectId
     }
   },
   mounted() {
@@ -391,8 +399,14 @@ export default {
   beforeDestroy() {
   },
   methods: {
-    changeProject(){
-      this.productData=this.originalData.filter(item => item.projectId === this.planForm.projectId); 
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.isProjectSwitchFlag = true
+      } catch (error) { }
+    },
+    changeProject() {
+      this.productData = this.originalData.filter(item => item.projectId === this.planForm.projectId);
     },
     getBimBusinessDetail() {
       let obj = {
@@ -401,7 +415,7 @@ export default {
       }
       getBimBusinessDetail(obj).then(res => {
         this.isattachmentswitch = res.data.configValue1
-        this.attachmentData=res.data
+        this.attachmentData = res.data
       })
     },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
@@ -638,7 +652,7 @@ export default {
 
     // 根据订单类型  打开不同的选择产品弹框
     openSeleceProductDialog() {
-      if(!this.planForm.projectId&&this.isProjectSwitch==1) return this.$message.error("请先选择所属项目") 
+      if (!this.planForm.projectId && this.isProjectSwitch == 1) return this.$message.error("请先选择所属项目")
       this.allProVisible = true
       this.allproductData = []
       this.resetAllProduct()
@@ -648,8 +662,8 @@ export default {
     // 获取所有产品列表数据
     initData() {
       this.listLoading = true
-     this.ProductListRequestObj.projectId = this.isProjectSwitch === '1' ? this.planForm.projectId || '' : ''
-     getProducts(this.ProductListRequestObj).then(listRes => {
+      this.ProductListRequestObj.projectId = this.isProjectSwitch === '1' ? this.planForm.projectId || '' : ''
+      getProducts(this.ProductListRequestObj).then(listRes => {
         if (Array.isArray(listRes.data)) {
           this.allproductData = listRes.data
         } else {
@@ -777,18 +791,18 @@ export default {
       this.productData = []
     },
     init(data) {
-      console.log("data",data);
-        data.forEach(item => {
-          item.productsId = item.id
-          let num=this.jnpf.numberFormat(this.jnpf.math('subtract', [item.maxInventory, item.availableQuantity]))<0?0:this.jnpf.numberFormat(this.jnpf.math('subtract', [item.maxInventory, item.availableQuantity]))
-          this.$set(item,'planQuantity',num)
-          item.planType = 'safety_stock_plan'
-          if (this.codeConfig.codeWay != 'auto') {
-            item.planNo = null
-          }
-        })
-        this.productData = data
-        this.originalData=JSON.parse(JSON.stringify(data))
+      console.log("data", data);
+      data.forEach(item => {
+        item.productsId = item.id
+        let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.maxInventory, item.availableQuantity])) < 0 ? 0 : this.jnpf.numberFormat(this.jnpf.math('subtract', [item.maxInventory, item.availableQuantity]))
+        this.$set(item, 'planQuantity', num)
+        item.planType = 'safety_stock_plan'
+        if (this.codeConfig.codeWay != 'auto') {
+          item.planNo = null
+        }
+      })
+      this.productData = data
+      this.originalData = JSON.parse(JSON.stringify(data))
       this.fetchData("JHDH")
     },
 
@@ -813,7 +827,7 @@ export default {
               item.bimAttachments = {
                 businessType: "system_attachment",
                 categoryId: this.attachmentData.configValue2,
-                configKey:this.attachmentData.configValue1,
+                configKey: this.attachmentData.configValue1,
                 documentId: item.id,
                 fileFlag: '',
                 sort: index
@@ -1039,5 +1053,5 @@ export default {
   height: 100%;
   line-height: 36px;
   font-weight: 700;
-} 
+}
 </style>

@@ -109,8 +109,10 @@
             </template>
           </el-table-column>
           <el-table-column prop="stockMoveOrderNo" label="出入库单号" width="180" sortable="custom" />
-          <el-table-column prop="drawingNo" label="品名规格" width="180" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" width="180" sortable="custom" />
+          <el-table-column prop="productName" label="产品名称"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
+          show-overflow-tooltip></el-table-column>
+          <el-table-column prop="drawingNo" label="品名规格" width="180" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
           v-if="isProjectSwitch == 1" />
           <el-table-column prop="mainUnit" label="单位" width="80" />
@@ -283,7 +285,9 @@ export default {
         ]
       },
       total: 0,
-      formVisible: false
+      formVisible: false,
+      isProductNameSwitch: '',
+
     }
   },
   computed: {
@@ -291,11 +295,24 @@ export default {
   },
  async created() {
     this.superForm = this.listQuery
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProductNameSwitch == 1) {
+          this.superQueryJson.splice(4, 0, {
+            prop: 'productName',
+            label: '产品名称',
+            type: 'input'
+          })
+    }
     this.search('basic')
     await this.getProjectSwitch('system', 'project')
     this.isProjectSwitchFlag=true
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+      } catch (error) { }
+    },
     superQuerySearch(query) {
       this.superQuery = query
       this.superQueryVisible = false
@@ -310,7 +327,8 @@ export default {
           'cooperativePartnerCode',
           'stockMoveOrderNo',
           'productCode',
-          'stockMoveDate'
+          'stockMoveDate',
+          'productName'
         ].includes(prop)
       ) {
         newProp = prop

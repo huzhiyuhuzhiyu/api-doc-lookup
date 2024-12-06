@@ -82,7 +82,7 @@
                     }}</el-link>
                   </template>
                 </el-table-column>
-                <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                <el-table-column prop="productName" label="产品名称" sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
                   show-overflow-tooltip></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" min-width="400" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
@@ -181,7 +181,7 @@
                     }}</el-link>
                   </template>
                 </el-table-column>
-                <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                <el-table-column prop="productName" label="产品名称" sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
                   show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="400" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
@@ -751,7 +751,7 @@ export default {
       // console.log(newProp);
       if (this.activeName == "historicalprice") {
         let newProp;
-        if (prop === 'cooperativePartnerIdText' || prop == 'projectName' || prop === 'cooperativePartnerCode' || prop === 'customerDrawingNumber' || prop === 'productDrawingNo' || prop === 'productCode' || prop == 'productName' || prop == 'unitPrice'
+        if (prop === 'cooperativePartnerIdText'||prop=='productName'  || prop == 'projectName' || prop === 'cooperativePartnerCode' || prop === 'customerDrawingNumber' || prop === 'productDrawingNo' || prop === 'productCode' || prop == 'productName' || prop == 'unitPrice'
           || prop == 'excludingTaxUnitPrice' || prop == 'validEnd' || prop == 'ask' || prop == 'remark' || prop == 'createTime'
         ) {
           newProp = prop
@@ -766,7 +766,7 @@ export default {
       } else {
 
         let newProp;
-        if (prop === 'productCode' || prop === 'partnerName' || prop == 'projectName' || prop == 'oil' || prop == 'clearance') {
+        if (prop === 'productCode'||prop=='productName' || prop === 'partnerName' || prop == 'projectName' || prop == 'oil' || prop == 'clearance') {
           newProp = prop
         } else {
           newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());

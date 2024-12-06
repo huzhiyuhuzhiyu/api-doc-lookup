@@ -68,9 +68,11 @@
                 }}</el-link>
               </template>
             </el-table-column>
+            <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
+            <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+              v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
             <!-- <el-table-column prop="productName" label="产品名称" width="120" sortable="custom" /> -->
-            <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
               v-if="isProjectSwitch == 1" />
             <el-table-column prop="planStartDate" label="计划开始日期" min-width="150" sortable="custom" />
@@ -149,8 +151,7 @@ export default {
       basicQuery: {},
       searchList: [
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 }, 
       ],
 
 
@@ -191,19 +192,15 @@ export default {
           label: "计划单号",
           type: 'input'
         },
-        {
-          prop: 'drawingNo',
-          label: "品名规格",
-          type: 'input'
-        },
-        {
-          prop: 'productName',
-          label: "产品名称",
-          type: 'input'
-        },
+     
         {
           prop: 'productCode',
           label: "产品编码",
+          type: 'input'
+        },
+        {
+          prop: 'drawingNo',
+          label: "品名规格",
           type: 'input'
         },
         {
@@ -219,63 +216,7 @@ export default {
           label: "单位",
           type: 'input'
         },
-        // {
-        //   prop: 'planQuantity',
-        //   label: "计划数量",
-        //   type: 'input'
-        // },
-        // {
-        //   prop: 'relaxQuantity',
-        //   label: "宽放计划数量",
-        //   type: 'input'
-        // },
-        // {
-        //   prop: 'finalPlanQuantity',
-        //   label: "最终计划数量",
-        //   type: 'input'
-        // },
-        // {
-        //   prop: 'sealingCoverTyping',
-        //   label: "打字内容",
-        //   type: 'select',
-        //   options: [],
-        // },
-        // {
-        //   prop: 'accuracyLevel',
-        //   label: "精度等级",
-        //   type: 'select',
-        //   options: [],
-        // },
-        // {
-        //   prop: 'vibrationLevel',
-        //   label: "振动等级",
-        //   type: 'select',
-        //   options: [],
-        // },
-        // {
-        //   prop: 'oil',
-        //   label: "油脂",
-        //   type: 'select',
-        //   options: [],
-        // },
-        // {
-        //   prop: 'oilQuantity',
-        //   label: "油脂量",
-        //   type: 'select',
-        //   options: [],
-        // },
-        // {
-        //   prop: 'clearance',
-        //   label: "游隙",
-        //   type: 'select',
-        //   options: [],
-        // },
-        // {
-        //   prop: 'packagingMethod',
-        //   label: "包装方式",
-        //   type: 'select',
-        //   options: [],
-        // },
+        
         {
           prop: 'remark',
           label: "备注",
@@ -321,13 +262,28 @@ export default {
   },
 
   async created() {
-    await this.getProjectSwitch('system', 'project')
-    this.isProjectSwitchFlag = true
+    await this.getProjectSwitch('system', 'project') 
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProductNameSwitch == 1) {
+      this.superQueryJson.splice(2, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
+      this.searchList.splice(1, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },)
+
+    }
     this.superForm = this.orderForm
     this.search('basic')
   },
  
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.isProjectSwitchFlag = true
+      } catch (error) { }
+    },
     getProductClassFun() {
       let obj0 = {
         pageNum: -1,
@@ -712,7 +668,11 @@ export default {
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
       ]
+      if (this.isProductNameSwitch == 1) {
+   
+      this.searchList.splice(1, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },)
 
+    }
       this.$refs.SuperQuery.conditionList = []
       this.search('basic')
     },

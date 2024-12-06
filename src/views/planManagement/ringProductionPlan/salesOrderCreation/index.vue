@@ -70,10 +70,11 @@
             <el-table-column prop="orderNo" label="订单号" min-width="160" sortable="custom"> </el-table-column>
             <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="160" sortable="custom" />
             <el-table-column prop="cooperativePartnerCode" label="客户编码" min-width="160" sortable="custom" />
+            <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+              v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
             <el-table-column prop="drawingNo" label="品名规格" min-width="280" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
               v-if="isProjectSwitch == 1" />
-            <el-table-column prop="productName" label="产品名称" min-width="120" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
             <el-table-column prop="deliveryDate" label="交货日期" min-width="120" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" min-width="80" />
@@ -137,7 +138,7 @@ export default {
         { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],
-      columnList: ["cooperativePartnerName", "cooperativePartnerCode", "productName", "productCode", "createTime", 'createByName'],
+      columnList: ["cooperativePartnerName", "cooperativePartnerCode", "productCode", "createTime", 'createByName'],
       superQueryVisible: false,
       exportFormVisible: false,
       tableData: [],
@@ -204,16 +205,16 @@ export default {
         },
 
         {
+          prop: 'productCode',
+          label: "产品编码",
+          type: 'input'
+        },
+        {
           prop: 'drawingNo',
           label: "品名规格",
           type: 'input'
         },
 
-        {
-          prop: 'productCode',
-          label: "产品编码",
-          type: 'input'
-        },
         {
           prop: 'deliverDate',
           label: '交货日期',
@@ -321,16 +322,28 @@ export default {
     ...mapGetters(['userInfo'])
   },
 
-  created() {
 
-  },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProductNameSwitch == 1) {
+      this.superQueryJson.splice(7, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
+    }
     this.superForm = this.orderForm
     this.search('basic')
     this.getProductClassFun()
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.isProjectSwitchFlag = true
+      } catch (error) { }
+    },
     handleSelectionChange(val) {
       this.selectList = val
     },

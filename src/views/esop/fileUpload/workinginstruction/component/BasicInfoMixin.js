@@ -6,6 +6,7 @@ import {
     ModelType, PageType, ApplicationType
 } from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 import {isNoProductPage} from "@/views/esop/utils/utils";
+import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 
 export default {
     data(){
@@ -13,6 +14,7 @@ export default {
             versionCountVisible:false,
         }
     },
+    mixins:[AbProjectMixin],
     props:{
         type:{
             type:String,
@@ -109,5 +111,12 @@ export default {
         isNoProductPage(){
             return isNoProductPage(this.dataForm.applicationType || this.applicationType)
         },
+    },
+    async created() {
+        await this.awaitAbProject()
+        if(this.isAdd){
+            this.dataForm.projectId = this.abProjectId
+        }
+
     }
 }

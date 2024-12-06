@@ -207,6 +207,7 @@ export function getUploadFileSaveData(data) {
             categoryId,
             bimFileUploadLineList,
             flowData,
+            projectId,
             categoryName} = data
    return {
         bimFileUpload:{
@@ -216,6 +217,7 @@ export function getUploadFileSaveData(data) {
                 productsId,
                 routingId,
                 orderNo,
+                projectId,
                 id,
                 approvalFlag,
                 version,

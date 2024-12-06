@@ -18,12 +18,13 @@
       </div>
       <div class="JNPF-common-layout-center JNPF-flex-main" style="background-color: #FFFFFF;margin-top: 5px">
         <div style="margin: 10px -6px 0 10px;overflow: scroll;">
-          <el-table v-if="tableRerender" :span-method="['attachment', 'orderField'].includes(activeName) ? arraySpanMethod : undefined"
+          <el-table v-if="tableRerender"
+            :span-method="['attachment', 'orderField'].includes(activeName) ? arraySpanMethod : undefined"
             :height="maxHeight" :data="tableData" stripe :row-style="{ height: '50px' }"
             :header-cell-style="{ background: '#FAFAFA', color: '#606266', 'text-align': 'center' }">
             <el-table-column align="left" v-if="activeName === 'attachment'" prop="mainModule" label="所属模块"
               width="135" />
-              <el-table-column align="left" v-if="activeName === 'orderField'" prop="mainModule" label="所属模块"
+            <el-table-column align="left" v-if="activeName === 'orderField'" prop="mainModule" label="所属模块"
               width="135" />
 
 
@@ -310,9 +311,9 @@ export default {
             list = res.data.deputyUnit
           } else if (this.activeName === 'maintenance') {
             list = res.data.maintenance
-          }else if (this.activeName === 'orderField') {
+          } else if (this.activeName === 'orderField') {
             list = res.data.orderField
-            list.forEach(item=>{
+            list.forEach(item => {
               item.configKey = `${item.configValue2}_${item.configKey}`
             })
           }
@@ -339,8 +340,8 @@ export default {
               item.radioOn = '启用'
             }
             const configKeyObj = ConfigKey[item.configKey]
-            console.log(configKeyObj,'obj')
-            console.log(notEmpty(configKeyObj),'notEmpty(configKeyObj)')
+            console.log(configKeyObj, 'obj')
+            console.log(notEmpty(configKeyObj), 'notEmpty(configKeyObj)')
             if (notEmpty(configKeyObj)) {
               item.description = configKeyObj.description
               item.configKeyLabel = configKeyObj.configKeyLabel
@@ -371,6 +372,13 @@ export default {
       } else {
         data.configValue1 = 0
       }
+
+      if (data.businessCode === "orderField") {
+        data.configKey = data.configKey.replace(`${data.configValue2}_`, "")
+        console.log(`${data.configValue2}_`)
+      }
+      console.log(data)
+
       let query = {
         ...data,
         configKey: data.configKey

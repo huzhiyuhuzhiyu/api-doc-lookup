@@ -18,22 +18,7 @@ export function getPromise(){
     }
 }
 
-/**
- *
- * @returns {{resolve, reject, promise: Promise<unknown>}}
- */
-export function getPromise(){
-    let resolve, reject;
-    const promise = new Promise((res, rej)=>{
-         resolve =res;
-         reject =rej
-    })
-    return {
-        promise,
-        resolve,
-        reject
-    }
-}
+
 
 
 /**

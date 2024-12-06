@@ -251,6 +251,7 @@ export default {
                 version,
                 bimFileUploadLineList,
                 categoryId,
+                projectId,
                 categoryName
           } =  this.basicInfoRef.getSaveData()
 
@@ -261,6 +262,7 @@ export default {
                     routingId,
                     orderNo,
                     id,
+                    projectId,
                     approvalFlag,
                     version,
                     bimFileUploadLineList,

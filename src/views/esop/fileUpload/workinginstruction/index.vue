@@ -1,5 +1,5 @@
 <template>
-    <div class="JNPF-common-layout">
+    <div class="JNPF-common-layout" v-loading="!tableFlag">
         <div v-if="!formVisible" class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
                 <el-form @submit.native.prevent>
@@ -39,7 +39,7 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
                 <div class="JNPF-common-head" style="padding: 8px;display: -webkit-box" v-if="hasTableTopOpts">
                     <topOpts @add="addOrUpdateHandle(ModelType.ADD)">
-                            <el-button  type="danger" size="mini" v-has="BtnType.batchRemove.enCode" class="topButton" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
+                        <el-button  type="danger" size="mini" v-has="BtnType.batchRemove.enCode" class="topButton" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
                     </topOpts>
                     <div class="JNPF-common-head-right">
                         <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -54,6 +54,7 @@
                     </div>
                 </div>
                 <JNPF-table
+                    v-if="tableFlag"
                     v-loading="listLoading"
                     :data="tableData"
                     :fixedNO="true"
@@ -61,8 +62,8 @@
                     custom-column
                     enabled-checkbox-plus
                     :hasC="hasTableTopOpts"
-                            ref="dataTable" :setColumnDisplayList="columnList">
-<!--                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />-->
+                    ref="dataTable" :setColumnDisplayList="columnList">
+                    <!--                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />-->
                     <template v-if="!isNoProductPage || isImage">
                         <el-table-column prop="drawingNo" label="品名规格" min-width="305" />
                         <el-table-column prop="productsCode" label="产品编码" min-width="120" />
@@ -71,7 +72,7 @@
                     <template  v-if="isNoProductPage">
                         <el-table-column prop="categoryName" label="文件分类" min-width="120" />
                     </template>
-
+                    <el-table-column prop="projectName" label="所属项目" width="120"  v-if="abProjectSwitchVisible" />
                     <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center">
                         <template slot-scope="{row}">
                             <el-tag type="warning" v-if="row.documentStatus === 'draft'">草稿</el-tag>
@@ -79,6 +80,7 @@
                             <el-tag type="danger"  v-else-if="row.documentStatus === 'back'">退回</el-tag>
                         </template>
                     </el-table-column>
+                    <el-table-column prop="version" label="版本号" width="80" v-if="!isNoProductPage" />
                     <el-table-column prop="version" label="版本号" width="80" v-if="!isNoProductPage" />
                     <el-table-column prop="fileCount" label="文件数量" width="120" />
                     <template v-if="!isNoProductPage">
@@ -103,34 +105,34 @@
 
                     <el-table-column label="操作" width="180" fixed="right">
                         <template slot-scope="scope">
-                                <tableOpts
-                                            v-if="!isFileCheckPage"
-                                            :isJudgePer="true"
-                                           :del-disabled="getDelDisabled(scope)"
-                                           :edit-disabled="getDelDisabled(scope)"
-                                           :edit-text="tableOptsEditText"
-                                           :del-text="tableOptsDelText"
-                                           :has-del="tableOptsDelShow"
-                                           @edit="tableOptsEditHandle(ModelType.EDIT,scope.row.id)"
-                                           @del="handleDel(scope.row.id)">
-                                            <el-dropdown hide-on-click>
+                            <tableOpts
+                                v-if="!isFileCheckPage"
+                                :isJudgePer="true"
+                                :del-disabled="getDelDisabled(scope)"
+                                :edit-disabled="getDelDisabled(scope)"
+                                :edit-text="tableOptsEditText"
+                                :del-text="tableOptsDelText"
+                                :has-del="tableOptsDelShow"
+                                @edit="tableOptsEditHandle(ModelType.EDIT,scope.row.id)"
+                                @del="handleDel(scope.row.id)">
+                                <el-dropdown hide-on-click>
                                                   <span class="el-dropdown-link">
                                                     <el-button type="text" size="mini">
                                                       {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
                                                     </el-button>
                                                   </span>
-                                                    <el-dropdown-menu slot="dropdown">
-                                                        <el-dropdown-item v-if="isFileManagementPage" @click.native="copy2FileUpload(scope.row.id)">
-                                                            复制
-                                                        </el-dropdown-item>
-                                                        <el-dropdown-item @click.native="addOrUpdateHandle(ModelType.VIEW,scope.row.id)">
-                                                            查看详情
-                                                        </el-dropdown-item>
+                                    <el-dropdown-menu slot="dropdown">
+                                        <el-dropdown-item v-if="isFileManagementPage" @click.native="copy2FileUpload(scope.row.id)">
+                                            复制
+                                        </el-dropdown-item>
+                                        <el-dropdown-item @click.native="addOrUpdateHandle(ModelType.VIEW,scope.row.id)">
+                                            查看详情
+                                        </el-dropdown-item>
 
-                                                    </el-dropdown-menu>
-                                            </el-dropdown>
-                                </tableOpts>
-                                <el-button v-if="isFileCheckPage" type="text" size="mini" @click="addOrUpdateHandle(ModelType.VIEW,scope.row.id)">查看详情</el-button>
+                                    </el-dropdown-menu>
+                                </el-dropdown>
+                            </tableOpts>
+                            <el-button v-if="isFileCheckPage" type="text" size="mini" @click="addOrUpdateHandle(ModelType.VIEW,scope.row.id)">查看详情</el-button>
                         </template>
                     </el-table-column>
                 </JNPF-table>
@@ -200,6 +202,7 @@ import {
 } from "@/views/esop/utils/utils";
 import {getBimRecycleBin, revertBimRecycleBin} from "@/api/esop/fileTrash";
 import {getBusinessFlowInfo} from "@/api/workFlow/FlowEngine";
+import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 
 
 
@@ -229,25 +232,26 @@ export default {
         }
     },
     watch:{
-      "$route.query.type":{
-          immediate:true,
-          handler(val){
-              if(!this.isFileUploadPage && !this.isFileManagementPage){
-                  return
-              }
-              const type = this.$route.query.type
-              if(isModelType(type) && notEmpty(val)){
-                  if(type === ModelType.SEARCH){
-                    return this.modelTypeSearchHandler(type,this.$route.query)
-                  }
-                  return this.modelTypeDefaultHandler(type,this.$route.query)
-              }
-          }
-      }
+        "$route.query.type":{
+            immediate:true,
+            handler(val){
+                if(!this.isFileUploadPage && !this.isFileManagementPage){
+                    return
+                }
+                const type = this.$route.query.type
+                if(isModelType(type) && notEmpty(val)){
+                    if(type === ModelType.SEARCH){
+                        return this.modelTypeSearchHandler(type,this.$route.query)
+                    }
+                    return this.modelTypeDefaultHandler(type,this.$route.query)
+                }
+            }
+        }
     },
-    mixins:[RecreateMixin],
+    mixins:[RecreateMixin,AbProjectMixin],
     data() {
         return {
+            tableFlag:false,
             recreateFlag: true,
             ModelType,
             uploadType:ModelType.ADD,
@@ -322,7 +326,7 @@ export default {
             return FileUploadPageSet.has(this.pageType)
         },
         isFileCheckPage(){
-          return FileCheckPageSet.has(this.pageType)
+            return FileCheckPageSet.has(this.pageType)
         },
         hasTableTopOpts(){
             return this.isFileUploadPage
@@ -331,7 +335,7 @@ export default {
             return this.isFileTrashPage ? '还原' : '删除'
         },
         tableOptsDelShow(){
-             return !this.isFileTrashPage
+            return !this.isFileTrashPage
         },
         tableOptsEditText(){
             if(this.isFileManagementPage){
@@ -356,7 +360,16 @@ export default {
         if(notEmpty(this.$route.query.type)){
             return
         }
-        this.initData()
+        try {
+            this.initData()
+            await this.awaitAbProject()
+        }catch (e) {
+
+        }finally {
+            this.tableFlag = true
+        }
+
+
     },
     methods: {
         getDelDisabled(scope){
@@ -366,7 +379,7 @@ export default {
             return this.isFileManagementPage && scope.row.enabledMark
         },
         modelTypeDefaultHandler(type, {id}){
-           return this.addOrUpdateHandle(type,id)
+            return this.addOrUpdateHandle(type,id)
         },
         modelTypeSearchHandler(type,{searchTimeType}){
             if(isEmpty(searchTimeType)){
@@ -376,21 +389,21 @@ export default {
             this.createTimeArr = [startTime,endTime]
             this.search()
         },
-       async getFlowData(){
-           const resObj ={
-               flowData:null,
-               approvalFlag:false
-           }
-           try{
-               const res = await getBusinessFlowInfo(this.flowCode)
-               if (res.data) {
-                   resObj.approvalFlag = res.data.enabledMark
-                   resObj.flowData = res.data.enabledMark? res.data : null
-               }
+        async getFlowData(){
+            const resObj ={
+                flowData:null,
+                approvalFlag:false
+            }
+            try{
+                const res = await getBusinessFlowInfo(this.flowCode)
+                if (res.data) {
+                    resObj.approvalFlag = res.data.enabledMark
+                    resObj.flowData = res.data.enabledMark? res.data : null
+                }
 
-           }catch (e) {
-           }
-           return resObj
+            }catch (e) {
+            }
+            return resObj
         },
         async copy2FileUpload(id){
             this.listLoading = true
@@ -413,6 +426,7 @@ export default {
                 data.flowData =flowData
                 data.approvalFlag = approvalFlag
                 data.bimFileUploadLineList =  data.bimFileUploadLineVOList
+
                 const res = await addBimFileUpload(getUploadFileSaveData(data))
                 if(res.data){
                     getSuccessInfo()
@@ -425,7 +439,7 @@ export default {
                     })
                 }
             }catch (e) {
-               this.$message.error(e.message)
+                this.$message.error(e.message)
             }finally {
                 this.listLoading = false
             }
@@ -434,18 +448,76 @@ export default {
         },
         async backFileUpload(type,id){
             console.log('type',type)
-           try {
-               await getQueryConfirm(this,'是否要退回此记录？')
-               const res = await backBimFileUpload(id)
-               getSuccessInfo()
-               this.initData()
-           }catch (e) {
+            try {
+                await getQueryConfirm(this,'是否要退回此记录？')
+                const res = await backBimFileUpload(id)
+                getSuccessInfo()
+                this.initData()
+            }catch (e) {
                 this.$message.error(e.message)
-           }
+            }
 
         },
         superQueryVisibleShow(){
-          this.superQueryVisible = true
+            const common =[     {
+                prop: 'documentStatus',
+                label: "单据状态",
+                type: 'select',
+                options: [
+                    { label: '草稿', value: 'draft' },
+                    { label: '提交', value: 'submit' },
+                    { label: '退回', value: 'back' }
+                ]
+            },
+
+                {
+                    prop: 'createTime',
+                    label: '创建时间',
+                    type: 'daterange',
+                    valueFormat: 'yyyy-MM-dd HH:mm:ss',
+                    startPlaceholder: '开始日期',
+                    endPlaceholder: '结束日期',
+                    pickerOptions: this.global.timePickerOptions
+                },
+                {
+                    prop: 'createByName',
+                    label: '创建人',
+                    type: 'input'
+                },]
+
+            let res =[];
+            if(!this.isNoProductPage || this.isImage){
+                res=[
+                    {
+                        prop: 'drawingNo',
+                        label: '品名规格',
+                        type: 'input'
+                    },  {
+                        prop: 'productsCode',
+                        label: '产品编码',
+                        type: 'input'
+                    },{
+                        prop: 'productsCategoryName',
+                        label: '产品分类',
+                        type: 'input'
+                    },
+                ]
+            }else{
+
+
+                res =[
+                    {
+                        prop: 'categoryName',
+                        label: '文件分类',
+                        type: 'input'
+                    },
+                ]
+            }
+            this.superQueryJson =[
+                ...res,
+                ...common
+            ]
+            this.superQueryVisible = true
         },
         async changeState({productsCode,id,enabledMark}) {
             const {data} = await switchEnableMark(id)
@@ -485,23 +557,21 @@ export default {
                 totalRowFlag: false
             }
         },
-        editBack(){
+        editBack() {
             this.formVisible = false
             this.search()
         },
         superQuerySearch(query) {
-            this.listQuery.superQuery = query
             this.superQueryVisible = false
-            this.search()
+            this.search({superQuery:query})
         },
-
 
 
         columnSetFun() {
             console.log('this.$refs.dataTable', this.$refs.dataTable)
             this.$refs.dataTable.showDrawer()
         },
-        sortChange({ prop, order }) {
+        sortChange({prop, order}) {
             let newProp = ''
             if (prop == 'steelBall' || prop == 'outerCircle' || prop == 'innerCircle' || prop == 'createByName') {
                 newProp = prop
@@ -512,31 +582,31 @@ export default {
             this.listQuery.orderItems[0].column = order === null ? '' : newProp
             this.initData()
         },
-        executeUploadPageParams(params){
-            if(this.isFileUploadPage){
+        executeUploadPageParams(params) {
+            if (this.isFileUploadPage) {
                 params.uploadListFlag = 1
                 delete params.documentStatus
             }
         },
-       async initData() {
-           this.listLoading = true
-           const params ={...this.listQuery}
-           params.superQuery.condition[0].fieldValue === '' && delete params.superQuery
-           this.executeUploadPageParams(params)
-           const {data} = await this.getListFn(params)
-           this.tableData = data.records
-           this.total = data.total
-           this.listLoading = false
+        async initData(query={}) {
+            this.listLoading = true
+            const params = {...this.listQuery,...query}
+            params.superQuery.condition[0].fieldValue === '' && delete params.superQuery
+            this.executeUploadPageParams(params)
+            const {data} = await this.getListFn(params)
+            this.tableData = data.records
+            this.total = data.total
+            this.listLoading = false
         },
-        searchVersion(drawingNo){
-            this.createTimeArr =[]
+        searchVersion(drawingNo) {
+            this.createTimeArr = []
             this.listQuery.superQuery.condition[0].fieldValue = drawingNo
             this.search()
         },
-        search() {
-            trim(executeQueryTime(this.listQuery,this.createTimeArr))
+        search(query) {
+            trim(executeQueryTime(this.listQuery, this.createTimeArr))
             this.listQuery.pageNum = 1
-            this.initData()
+            this.initData(query)
         },
         refresh(isrRefresh) {
             this.formVisible = false
@@ -546,11 +616,11 @@ export default {
         reset() {
             this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
             this.createTimeArr = []
-            this.listQuery =this.getOriginListQuery()
+            this.listQuery = this.getOriginListQuery()
             this.$refs.SuperQuery.conditionList = []
             this.initData()
         },
-        addOrUpdateHandle(type,id) {
+        addOrUpdateHandle(type, id) {
             this.fileUploadId = id
             this.uploadType = type
             this.formVisible = true
@@ -561,13 +631,13 @@ export default {
          * @param id
          * @returns {Promise<void>}
          */
-        async revertBimRecycle(type,id){
+        async revertBimRecycle(type, id) {
             try {
-                await getQueryConfirm(this,'是否要还原此记录？')
+                await getQueryConfirm(this, '是否要还原此记录？')
                 const res = revertBimRecycleBin(id)
                 getSuccessInfo()
                 this.initData()
-            }catch (e) {
+            } catch (e) {
 
             }
         },
@@ -584,18 +654,18 @@ export default {
                         duration: 1500
                     })
                 }
-            }catch (e) {
+            } catch (e) {
 
             }
         },
-        async batchDelete(){
-            const arr =this.$refs.dataTable.getCurrentSelection()
-             if(isEmpty(arr)){
-                 return this.$message.info('请选择要删除的数据')
-             }
+        async batchDelete() {
+            const arr = this.$refs.dataTable.getCurrentSelection()
+            if (isEmpty(arr)) {
+                return this.$message.info('请选择要删除的数据')
+            }
             try {
                 await getQueryConfirm(this)
-                const {msg} = await batchDeleteBimFileUpload(arr.map(({id})=>id))
+                const {msg} = await batchDeleteBimFileUpload(arr.map(({id}) => id))
                 if (msg === 'Success') {
                     this.initData()
                     this.$message({
@@ -604,7 +674,7 @@ export default {
                         duration: 1500
                     })
                 }
-            }catch (e) {
+            } catch (e) {
 
             }
         }

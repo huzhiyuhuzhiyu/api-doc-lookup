@@ -116,6 +116,8 @@
             <el-table-column prop="salesName" label="所属销售" width="160" sortable="custom" />
             <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
+            <el-table-column prop="productName" label="产品名称"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
+            show-overflow-tooltip></el-table-column>
             <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
               v-if="isProjectSwitch == 1" />
@@ -197,7 +199,7 @@ export default {
         { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
 
       ],
-      columnList: ["cooperativePartnerCode", "departmentName", "productName", "createTime",],
+      columnList: ["cooperativePartnerCode", "departmentName",  "createTime",],
       deliveryDateArr: [],
       orderFollowVisible: false,
       superQueryVisible: false,
@@ -274,7 +276,7 @@ export default {
 
       {
         prop: 'salesName',
-        label: "所属销售人员",
+        label: "所属销售",
         type: 'custom',
         component: 'user-select',
       },
@@ -288,11 +290,7 @@ export default {
         label: "产品编码",
         type: 'input'
       },
-      {
-        prop: 'productName',
-        label: "产品名称",
-        type: 'input'
-      },
+
       {
         prop: 'drawingNo',
         label: "品名规格",
@@ -303,11 +301,7 @@ export default {
         label: "单位",
         type: 'input'
       },
-      {
-        prop: 'num',
-        label: "数量",
-        type: 'input'
-      },
+       
 
       {
         prop: 'deliveryDate',
@@ -315,32 +309,14 @@ export default {
         type: 'input'
       },
 
-      {
-        prop: 'price',
-        label: "单价(含税)",
-        type: 'input'
-      },
+  
       {
         prop: 'taxRate',
         label: "税率",
         type: 'select',
         options: []
       },
-      {
-        prop: 'totalAmount',
-        label: "金额(含税)",
-        type: 'input'
-      },
-      {
-        prop: 'excludingTaxPrice',
-        label: "单价(不含税)",
-        type: 'input'
-      },
-      {
-        prop: 'excludingTaxAmount',
-        label: "金额(不含税)",
-        type: 'input'
-      },
+       
       {
         prop: 'sealingCoverTyping',
         label: "打字内容",
@@ -446,6 +422,8 @@ export default {
       mainUnitFlag: null,
       tableDataFlag: false,
       isProjectSwitch: '',
+      isProductNameSwitch: '',
+
     }
   },
   watch: {
@@ -461,14 +439,12 @@ export default {
     this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
 
   },
-  created() {
-
-    // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
-  },
+ 
 
   async created() {
     await this.getProjectSwitch('system', 'project')
     this.isProjectSwitchFlag = true
+    await this.getProductNameSwitch('product', 'enable_productName')
     // 默认设置为近3天  
     const end = new Date();
     const start = new Date();
@@ -477,14 +453,27 @@ export default {
     this.orderForm.deliveryStartTime = ""
     this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
     this.superForm = this.orderForm
+    if (this.isProductNameSwitch == 1) {
+          this.superQueryJson.splice(7, 0, {
+            prop: 'productName',
+            label: '产品名称',
+            type: 'input'
+          })
+    }
     this.search('basic')
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
     async getMainUnitFun(code, type) {
       this.listLoading = true
       try {
         this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
-        this.tableDataFlag = true
         this.listLoading = false
 
 

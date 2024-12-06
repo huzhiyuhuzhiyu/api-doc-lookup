@@ -15,7 +15,7 @@
       </div>
       <div class="main" v-loading="formLoading">
 
-        <el-tabs v-model="activeName" v-if="!approvalFlag" @tab-click="handleClick">
+        <el-tabs v-model="activeName" v-if="!approvalFlag" @tab-click="handleClick" class=".el-table">
           <el-tab-pane label="基础信息" name="orderInfo">
             <el-collapse v-model="activeNames">
               <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
@@ -54,44 +54,7 @@
                     </el-col>
 
 
-                    <!-- <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                      <el-form-item label="退货状态" prop="deliveryStatus">
-                        <el-select v-model="dataForm.deliveryStatus" placeholder="请选择退货状态" clearable
-                          style="width: 100%;" :disabled="btnType == 'look' ? true : false">
-                          <el-option v-for="(item, index) in deliveryStatusList" :key="index" :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                      <el-form-item label="退货完成时间" prop="deliveryCompletionDate">
-                        <el-date-picker v-model="dataForm.deliveryCompletionDate" type="datetime"
-                          placeholder="请选择退货完成时间" :disabled="btnType == 'look'" style="width: 100%;" clearable>
-                        </el-date-picker>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                      <el-form-item label="检验状态" prop="inspectionStatus">
-                        <el-select v-model="dataForm.inspectionStatus" placeholder="请选择检验状态" clearable
-                          style="width: 100%;" :disabled="btnType == 'look' ? true : false">
-                          <el-option v-for="(item, index) in inspectionStatusList" :key="index" :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                      <el-form-item label="创建时间" prop="createTime">
-                        <el-date-picker v-model="dataForm.createTime" type="datetime" placeholder="请选择创建时间"
-                          :disabled="btnType == 'look'" style="width: 100%;" clearable>
-                        </el-date-picker>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                      <el-form-item label="创建人" prop="createByName">
-                        <el-input v-model="dataForm.createByName" placeholder="请输入创建人" :disabled="btnType == 'look'"
-                          maxlength="20" />
-                      </el-form-item>
-                    </el-col> -->
+                     
 
                     <el-col :sm="12" :xs="24">
                       <el-form-item label="备注" prop="remark">
@@ -124,12 +87,14 @@
 
                     <el-table-column prop="customerProductDrawingNo" label="客户料号" min-width="160" show-overflow-tooltip>
                     </el-table-column>
+                    <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="productName" label="产品名称"   width="160" v-if="isProductNameSwitch === '1'"
+                    show-overflow-tooltip></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="projectName" label="所属项目" min-width="120"  
                     v-if="isProjectSwitch == 1" />
-                    <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
-                    </el-table-column>
                     <el-table-column prop="mainUnit" label="单位" min-width="160" show-overflow-tooltip>
                     </el-table-column>
 
@@ -266,44 +231,7 @@
                 </el-col>
 
 
-                <!-- <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                  <el-form-item label="退货状态" prop="deliveryStatus">
-                    <el-select v-model="dataForm.deliveryStatus" placeholder="请选择退货状态" clearable style="width: 100%;"
-                      :disabled="btnType == 'look' ? true : false">
-                      <el-option v-for="(item, index) in deliveryStatusList" :key="index" :label="item.label"
-                        :value="item.value"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                  <el-form-item label="退货完成时间" prop="deliveryCompletionDate">
-                    <el-date-picker v-model="dataForm.deliveryCompletionDate" type="datetime" placeholder="请选择退货完成时间"
-                      :disabled="btnType == 'look'" style="width: 100%;" clearable>
-                    </el-date-picker>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                  <el-form-item label="检验状态" prop="inspectionStatus">
-                    <el-select v-model="dataForm.inspectionStatus" placeholder="请选择检验状态" clearable style="width: 100%;"
-                      :disabled="btnType == 'look' ? true : false">
-                      <el-option v-for="(item, index) in inspectionStatusList" :key="index" :label="item.label"
-                        :value="item.value"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                  <el-form-item label="创建时间" prop="createTime">
-                    <el-date-picker v-model="dataForm.createTime" type="datetime" placeholder="请选择创建时间"
-                      :disabled="btnType == 'look'" style="width: 100%;" clearable>
-                    </el-date-picker>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                  <el-form-item label="创建人" prop="createByName">
-                    <el-input v-model="dataForm.createByName" placeholder="请输入创建人" :disabled="btnType == 'look'"
-                      maxlength="20" />
-                  </el-form-item>
-                </el-col> -->
+                
 
                 <el-col :sm="12" :xs="24">
                   <el-form-item label="备注" prop="remark">
@@ -335,9 +263,11 @@
 
                 <el-table-column prop="customerProductDrawingNo" label="客户料号" min-width="160" show-overflow-tooltip>
                 </el-table-column>
-                <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
-                </el-table-column>
                 <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
+                </el-table-column>
+                <el-table-column prop="productName" label="产品名称"    width="160" v-if="isProductNameSwitch === '1'"
+                show-overflow-tooltip></el-table-column>
+                <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column prop="projectName" label="所属项目" min-width="120"  
                 v-if="isProjectSwitch == 1" />
@@ -549,6 +479,8 @@
                 <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom"></el-table-column>
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
+                <el-table-column prop="productName" label="产品名称"    width="160" v-if="isProductNameSwitch === '1'"
+                show-overflow-tooltip></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                 v-if="isProjectSwitch == 1" />
@@ -628,7 +560,11 @@
                     <el-input v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable />
                   </el-form-item>
                 </el-col>
-
+                <el-col :span="6" v-if="isProductNameSwitch==1">
+                  <el-form-item>
+                    <el-input v-model="ProductListRequestObj.productName" placeholder="请输入产品名称" clearable />
+                  </el-form-item>
+                </el-col>
                 <el-col :span="6">
                   <el-form-item>
                     <el-input v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
@@ -652,7 +588,10 @@
               <JNPF-table v-loading="listLoading" :data="allproductData" hasC
                 @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
                 <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productName" label="产品名称"    width="160" v-if="isProductNameSwitch === '1'"
+                show-overflow-tooltip></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" />
+
                 <el-table-column prop="productCategoryName" label="所属分类" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                 v-if="isProjectSwitch == 1" />
@@ -970,6 +909,8 @@ export default {
       endTime: 0,
       taxRateList: [],
       selectArr: [],
+      isProductNameSwitch: '',
+
     }
   },
   computed: {
@@ -994,16 +935,24 @@ export default {
     // this.handleChange()
     // this.getProvinceList()
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
+     
     this.getAttributeline()
   },
   mounted() {
     this.getBimBusinessDetail()
-    let tBody = document.querySelectorAll('.el-table')[1]
+    let tBody = document.querySelectorAll('.el-table')[0]
     tBody.style.height = 'auto'
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
     this.getAttachmentswitch()
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+ 
+      } catch (error) { }
+    },
     getAttachmentswitch() {
       let obj = {
         businessCode: 'return',

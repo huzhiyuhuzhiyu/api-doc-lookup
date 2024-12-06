@@ -71,6 +71,8 @@
             <el-table-column prop="salesName" label="所属销售" width="120" sortable="custom" />
             <el-table-column prop="customerProductNo" label=" 客户料号" width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
+            <el-table-column prop="productName" label="产品名称"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
+            show-overflow-tooltip></el-table-column>
             <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom" v-if="isProjectSwitch==1"/>
             <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
@@ -194,7 +196,7 @@ export default {
 
 
       totalNum: 0,
-      columnList: ["cooperativePartnerCode", "departmentName", "productName", , "assistantNum", "taxRate", "createTime",],
+      columnList: ["cooperativePartnerCode", "departmentName" , "assistantNum", "taxRate", "createTime",],
       orderFollowVisible: false,
       superQueryVisible: false,
       productFormVisible: false,
@@ -422,6 +424,8 @@ export default {
       ],
       mainUnitFlag:null,
       tableDataFlag:false,
+      isProductNameSwitch: '',
+
     }
   },
   watch: {
@@ -440,15 +444,28 @@ export default {
   
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProductNameSwitch == 1) {
+          this.superQueryJson.splice(7, 0, {
+            prop: 'productName',
+            label: '产品名称',
+            type: 'input'
+          })
+    }
     this.superForm=this.orderForm
     this.search('basic')
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
     async getMainUnitFun(code, type) {
       this.listLoading = true
       try {
         this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
-        this.tableDataFlag = true
         this.listLoading = false
 
 

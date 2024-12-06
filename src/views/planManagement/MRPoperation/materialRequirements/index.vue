@@ -68,8 +68,10 @@
               <JNPF-table :partentOrChild="'assemble'" ref="assembleRef" :data="assembleData" v-if="isProjectSwitchFlag"
                 :fixedNO="true" @sort-change="sortChange" custom-column hasC @selection-change="handleAssemble"
                 :setColumnDisplayList="columnList1" :checkSelectable="disproduceData" :key="1">
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="170" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                  v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productDrawingNo" label="品名规格" min-width="170" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
                 <el-table-column prop="bomId" label="是否有BOM" min-width="140" sortable="custom">
@@ -175,8 +177,10 @@
                 v-if="isProjectSwitchFlag" :fixedNO="true" :key="2" :setColumnDisplayList="columnList2"
                 @sort-change="sortChange" custom-column hasC @selection-change="handleProduce"
                 :checkSelectable="disproduceData">
-                <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                  v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
                 <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
@@ -324,8 +328,10 @@
               <JNPF-table :partentOrChild="'purchase'" ref="purchaseRef" v-loading="listLoading" :data="purchaseData"
                 v-if="isProjectSwitchFlag" :fixedNO="true" :setColumnDisplayList="columnList3" @sort-change="sortChange"
                 custom-column hasC @selection-change="handlePurchase" :checkSelectable="dispurchaseData">
-                <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                  v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
                 <el-table-column prop="immediatelyBuyFlag" label="立即采购" width="140" sortable="custom">
@@ -453,8 +459,10 @@
               <JNPF-table :partentOrChild="'out'" ref="outRef" v-loading="listLoading" :data="outData" :fixedNO="true"
                 v-if="isProjectSwitchFlag" @sort-change="sortChange" :setColumnDisplayList="columnList4" custom-column
                 hasC @selection-change="handleOut" :checkSelectable="disOutData">
-                <el-table-column prop="productDrawingNo" label="品名规格" width="180" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                  v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productDrawingNo" label="品名规格" width="180" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
                 <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
@@ -542,10 +550,11 @@
       <JNPF-table ref="tableDataAss" v-loading="listLoading" :data="orderDetailData" fixedNO height="600">
         <el-table-column prop="productionPlanNo" label="生产计划单号" width="180"
           v-if="activeName != 'purchase' && activeName != 'out' && codeConfig.codeWay != 'auto'"></el-table-column>
-        <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" />
         <el-table-column prop="productCode" label="产品编码" min-width="160" />
-        <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-          v-if="isProjectSwitch == 1" />
+        <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+          show-overflow-tooltip></el-table-column>
+        <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" />
+        <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
         <el-table-column prop="outputQuantity" label="组装数量" min-width="120" v-if="activeName == 'assemble'" />
         <el-table-column prop="outputQuantity" label="生产数量" min-width="120" v-if="activeName == 'produce'" />
         <el-table-column prop="outputQuantity" label="采购数量" min-width="140" v-if="activeName == 'purchase'" />
@@ -838,7 +847,7 @@ export default {
       ],
       isProjectSwitch: '',
       isProjectSwitchFlag: false,
-
+      isProductNameSwitch:"", 
 
 
 
@@ -864,7 +873,15 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
-    this.isProjectSwitchFlag = true
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProductNameSwitch == 1) {
+   
+      this.searchList1.splice(0, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },)
+      this.searchList2.splice(0, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },)
+      this.searchList3.splice(0, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },)
+      this.searchList4.splice(0, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },)
+
+    }
     this.superForm1 = this.assembleForm
     this.getassembleData('basic');
     this.getconfigFun()
@@ -872,6 +889,12 @@ export default {
   },
 
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.isProjectSwitchFlag = true
+      } catch (error) { }
+    },
     // 获取打字内容等
     getProductClassFun() {
       this.requestArr.forEach((item, index) => {
@@ -942,13 +965,13 @@ export default {
       if (this.activeName == 'assemble') {
         this.superQueryJson = [
           {
-            prop: 'productDrawingNo',
-            label: "品名规格",
+            prop: 'productCode',
+            label: "产品编码",
             type: 'input'
           },
           {
-            prop: 'productCode',
-            label: "产品编码",
+            prop: 'productDrawingNo',
+            label: "品名规格",
             type: 'input'
           },
           {
@@ -1031,18 +1054,19 @@ export default {
           },
 
         ]
-          this.getProductClassFun()
+
+        this.getProductClassFun()
       }
       if (this.activeName == 'produce') {
         this.superQueryJson = [
           {
-            prop: 'productDrawingNo',
-            label: "品名规格",
+            prop: 'productCode',
+            label: "产品编码",
             type: 'input'
           },
           {
-            prop: 'productCode',
-            label: "产品编码",
+            prop: 'productDrawingNo',
+            label: "品名规格",
             type: 'input'
           },
           {
@@ -1125,18 +1149,19 @@ export default {
 
 
         ]
+
         this.superQueryVisible = true
       }
       if (this.activeName == 'purchase') {
         this.superQueryJson = [
           {
-            prop: 'productDrawingNo',
-            label: "品名规格",
+            prop: 'productCode',
+            label: "产品编码",
             type: 'input'
           },
           {
-            prop: 'productCode',
-            label: "产品编码",
+            prop: 'productDrawingNo',
+            label: "品名规格",
             type: 'input'
           },
           {
@@ -1167,18 +1192,19 @@ export default {
 
 
         ]
+
         this.superQueryVisible = true
       }
       if (this.activeName == 'out') {
         this.superQueryJson = [
           {
-            prop: 'productDrawingNo',
-            label: "品名规格",
+            prop: 'productCode',
+            label: "产品编码",
             type: 'input'
           },
           {
-            prop: 'productCode',
-            label: "产品编码",
+            prop: 'productDrawingNo',
+            label: "品名规格",
             type: 'input'
           },
           {
@@ -1219,7 +1245,15 @@ export default {
 
 
         ]
+
         this.superQueryVisible = true
+      }
+      if (this.isProductNameSwitch == 1) {
+        this.superQueryJson.splice(1, 0, {
+          prop: 'productName',
+          label: '产品名称',
+          type: 'input'
+        })
       }
     },
 
@@ -1402,8 +1436,8 @@ export default {
         pageNum: 1,
         pageSize: 20,
       },
-   
-      this.$refs.SuperQuery.conditionList = []
+
+        this.$refs.SuperQuery.conditionList = []
       this.searchList1 = [
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },

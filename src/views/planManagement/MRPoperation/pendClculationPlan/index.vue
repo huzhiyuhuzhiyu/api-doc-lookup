@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
 
-    <div class="JNPF-common-layout-center JNPF-flex-main"  v-if="!MRPForm">
+    <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!MRPForm">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
@@ -41,7 +41,7 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main"  v-loading="listLoading">
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <topOpts @add="calculationFun()" :addText="'计算'">
               <el-button type="primary" size="mini" icon="el-icon-download"
@@ -61,10 +61,10 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true"   v-if="isProjectSwitchFlag"
+          <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true" v-if="isProjectSwitchFlag"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column
             @selection-change="handleSelectionChange" hasC>
-            <el-table-column prop="planNo" label="计划单号" min-width="180" sortable="custom"> 
+            <el-table-column prop="planNo" label="计划单号" min-width="180" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row, 'look')">{{
                   scope.row.planNo
@@ -86,10 +86,12 @@
                 <div v-if="scope.row.planType == 'safety_stock_plan'">安全库存计划</div>
               </template>
             </el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
+            <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+              v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-            v-if="isProjectSwitch == 1" />
+              v-if="isProjectSwitch == 1" />
             <el-table-column prop="productSource" label="产品来源" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.productSource == 'purchase'">采购</div>
@@ -123,7 +125,8 @@
             <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
             <el-table-column label="操作" width="120" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click.native="handleUserRelation(scope.row, 'look')">查看详情</el-button>
+                <el-button size="mini" type="text"
+                  @click.native="handleUserRelation(scope.row, 'look')">查看详情</el-button>
 
               </template>
             </el-table-column>
@@ -143,7 +146,7 @@
 
     <PlanForm v-if="formVisible" ref="orderForm" @refreshDataList="initData" @close="closeForm" />
     <Form v-if="mrpForm" ref="MRPForm" @refreshDataList="initData" @close="closeForm" />
-    
+
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 高级查询 -->
@@ -167,10 +170,10 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'pendClculationPlan',
-  components: { PlanForm,Form, ExportForm, SuperQuery },
-  mixins:[getProjectList],
+  components: { PlanForm, Form, ExportForm, SuperQuery },
+  mixins: [getProjectList],
   data() {
-    return { 
+    return {
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -185,7 +188,7 @@ export default {
       listLoading: false,
       orderForm: {
         planNo: "",
-        documentStatus:"submit",
+        documentStatus: "submit",
         productDrawingNo: "",
         planSsd: "",
         planSed: "",
@@ -205,7 +208,7 @@ export default {
           matchLogic: ""
         },
       },
-      mrpForm:false,
+      mrpForm: false,
 
       deliveryDateArr: [],
       total: 0,
@@ -221,31 +224,31 @@ export default {
           prop: 'classAttribute',
           label: "类别属性",
           type: 'select',
-          options:[
-            {label:"成品",value:"finish_product"},
-            {label:"原材料",value:"raw_material"},
-            {label:"半成品",value:"semi_finished"},
-            {label:"配件",value:"accessories"},
+          options: [
+            { label: "成品", value: "finish_product" },
+            { label: "原材料", value: "raw_material" },
+            { label: "半成品", value: "semi_finished" },
+            { label: "配件", value: "accessories" },
           ]
         },
         {
           prop: 'planType',
           label: "计划类型",
           type: 'select',
-          options:[
-            {label:"订单计划",value:"order_plan"},
-            {label:"添加计划",value:"add_plan"},
-            {label:"安全库存计划",value:"safety_stock_plan"},
+          options: [
+            { label: "订单计划", value: "order_plan" },
+            { label: "添加计划", value: "add_plan" },
+            { label: "安全库存计划", value: "safety_stock_plan" },
           ]
-        },
-        {
-          prop: 'productDrawingNo',
-          label: "品名规格",
-          type: 'input'
         },
         {
           prop: 'productCode',
           label: "产品编码",
+          type: 'input'
+        },
+        {
+          prop: 'productDrawingNo',
+          label: "品名规格",
           type: 'input'
         },
 
@@ -253,20 +256,20 @@ export default {
           prop: 'productSource',
           label: "产品来源",
           type: 'select',
-          options:[
-            {label:"采购",value:"purchase"},
-            {label:"外协",value:"out"},
-            {label:"生产",value:"produce"},
-            {label:"组装",value:"assemble"},
+          options: [
+            { label: "采购", value: "purchase" },
+            { label: "外协", value: "out" },
+            { label: "生产", value: "produce" },
+            { label: "组装", value: "assemble" },
           ]
         },
         {
           prop: 'bomFlag',
           label: "是否有BOM",
           type: 'select',
-          options:[
-            {label:"有",value:true},
-            {label:"无",value:false},
+          options: [
+            { label: "有", value: true },
+            { label: "无", value: false },
           ]
         },
         {
@@ -285,32 +288,13 @@ export default {
           startPlaceholder: '开始日期',
           endPlaceholder: '结束日期',
         },
-        
+
         {
           prop: 'mainUnit',
           label: "单位",
           type: 'input'
         },
-        // {
-        //   prop: 'planQuantity',
-        //   label: "计划数量",
-        //   type: 'input'
-        // },
-        // {
-        //   prop: 'qualificationRate',
-        //   label: "合格率(%)",
-        //   type: 'input'
-        // },
-        // {
-        //   prop: 'relaxQuantity',
-        //   label: "宽放计划数量",
-        //   type: 'input'
-        // },
-        // {
-        //   prop: 'finalPlanQuantity',
-        //   label: "最终计划数量",
-        //   type: 'input'
-        // }, 
+ 
         {
           prop: 'sealingCoverTyping',
           label: "打字内容",
@@ -360,7 +344,7 @@ export default {
           options: [],
         },
 
-      
+
         {
           prop: 'createByName',
           label: "创建人",
@@ -376,8 +360,9 @@ export default {
         },
       ],
       selectList: [],
-      isProjectSwitch:'',
-      isProjectSwitchFlag:false,
+      isProjectSwitch: '',
+      isProjectSwitchFlag: false,
+      isProductNameSwitch:"",
     }
   },
   watch: {
@@ -388,25 +373,38 @@ export default {
   computed: {
     ...mapGetters(['userInfo'])
   },
- 
- 
+
+
   async created() {
     await this.getProjectSwitch('system', 'project')
-    this.isProjectSwitchFlag=true
-    this.superForm=this.orderForm
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProductNameSwitch == 1) {
+          this.superQueryJson.splice(4, 0, {
+            prop: 'productName',
+            label: '产品名称',
+            type: 'input'
+          })
+    }
+    this.superForm = this.orderForm
     this.search('basic')
     this.getProductClassFun()
-   
+
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.isProjectSwitchFlag = true
+      } catch (error) { }
+    },
     calculationFun() {
-      if(!this.selectList.length) return this.$message.error("请选择您要进行计算的计划数据")
-      this.mrpForm=true
-    this.$nextTick(()=>{
+      if (!this.selectList.length) return this.$message.error("请选择您要进行计算的计划数据")
+      this.mrpForm = true
+      this.$nextTick(() => {
         this.$refs.MRPForm.init(this.selectList)
       })
     },
-   
+
     handleSelectionChange(val) {
       this.selectList = val
     },
@@ -721,13 +719,13 @@ export default {
       this.$refs.dataTable.showDrawer()
     },
 
- 
+
 
 
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName'||prop=='projectName' || prop === 'productCode' || prop === 'documentStatus'||prop=='productDrawingNo') {
+      if (prop === 'productName' || prop == 'projectName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'productDrawingNo') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'
@@ -743,13 +741,13 @@ export default {
       this.initData()
     },
 
- 
+
 
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       console.log(1111);
       this.formVisible = false
-      this.mrpForm=false
+      this.mrpForm = false
       if (isRefresh) {
         this.keyword = ''
         this.initData()
@@ -757,12 +755,12 @@ export default {
     },
     initData() {
       this.listLoading = true
-     this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
 
       getPlanList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
-        this.listLoading = false 
+        this.listLoading = false
       }).catch(() => {
         this.listLoading = false
       })
@@ -806,10 +804,10 @@ export default {
 
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.superForm=this.deliveryDateArr = []
+      this.superForm = this.deliveryDateArr = []
       this.orderForm = {
         planNo: "",
-        documentStatus:"submit",
+        documentStatus: "submit",
         productDrawingNo: "",
         planSsd: "",
         planSed: "",
@@ -829,17 +827,17 @@ export default {
           matchLogic: ""
         },
       },
-      this.$refs.SuperQuery.conditionList = []
-      this. searchList= [
+        this.$refs.SuperQuery.conditionList = []
+      this.searchList = [
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
       ]
       this.search('basic')
     },
 
- 
-    
- 
+
+
+
     handleUserRelation(data, btnType) {
       console.log(data, btnType);
       // 订单创建计划
@@ -904,7 +902,7 @@ export default {
 
 .JNPF-common-search-box {
   padding: 8px 0 !important;
-  margin-left: 0!important;
+  margin-left: 0 !important;
 
   margin-bottom: 5px;
 }

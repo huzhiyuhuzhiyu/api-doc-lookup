@@ -44,15 +44,21 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" clearable
-                @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="4" v-if="isProductNameSwitch === '1'">
+            <el-form-item>
+              <el-input v-model="listQuery.productName" placeholder="产品名称" @keyup.enter.native="search()" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" clearable
+                @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
+
 
           <el-col :span="6">
             <el-form-item>
@@ -84,7 +90,6 @@
           ref="dataTable" hasC @selection-change="currentChange" :checkSelectable="checkSelectable"
           :setColumnDisplayList="columnList">
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
-          <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
           <el-table-column prop="code" label="产品编码" width="140" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row, true)">
@@ -92,7 +97,11 @@
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="name" label="产品分类" width="130" sortable="custom" />
+          <el-table-column prop="name" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+            show-overflow-tooltip></el-table-column>
+          <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
+
+          <el-table-column prop="productCategoryName" label="产品分类" width="130" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" width="60" />
           <el-table-column prop="inspectionMethod" label="检验方式" width="110" sortable="custom" align="center">
             <template slot-scope="{ row }">
@@ -176,18 +185,17 @@ export default {
       superQueryVisible: false,
       superQueryJson: [
         {
+          prop: 'code',
+          label: '产品编码',
+          type: 'input'
+        },
+        {
           prop: 'drawingNo',
           label: '品名规格',
           type: 'input'
         },
         {
-          prop: 'code',
-          label: '产品编码',
-          type: 'input'
-        },
-
-        {
-          prop: 'name',
+          prop: 'productCategoryName',
           label: '产品分类',
           type: 'input'
         },
@@ -312,7 +320,27 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isDeputyUnitSwitch === '1') {
+      this.superQueryJson.forEach(item => {
+        if (item.prop === 'mainUnit') {
+          item.label = '单位(主)'
+        }
+      })
+      this.superQueryJson.splice(7, 0, {
+        prop: 'deputyUnit',
+        label: '单位(副)',
+        type: 'input'
+      })
 
+    }
+    if (this.isProductNameSwitch === '1') {
+      this.superQueryJson.splice(1, 0, {
+        prop: 'name',
+        label: '产品名称',
+        type: 'input'
+      })
+    }
     this.tableDataFlag = true
 
     if (localStorage.getItem('finishedFlag')) {
@@ -324,6 +352,11 @@ export default {
     this.getDynamicConditions()
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     changeLeft() {
       this.leftFlag = !this.leftFlag
     },
@@ -636,4 +669,3 @@ export default {
 }
 </script>
 <!-- <style src="@/assets/scss/index-list.scss" lang="scss" scoped /> -->
-	

@@ -220,13 +220,13 @@ export default {
           type: 'input'
         },
         {
-          prop: 'productDrawingNo',
-          label: '品名规格',
+          prop: 'productCode',
+          label: '产品编码',
           type: 'input'
         },
         {
-          prop: 'productCode',
-          label: '产品编码',
+          prop: 'productDrawingNo',
+          label: '品名规格',
           type: 'input'
         },
         {

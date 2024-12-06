@@ -47,6 +47,9 @@
           <JNPF-table v-loading="listLoading"  highlight-current-row  :data="tableDataList" :row-key="'id'" v-if="refreshTable" fixedNO  :setColumnDisplayList="columnList"
           :default-expand-all="expands" :tree-props="{ children: 'childrenList', hasChildren: '' }" ref="dataTable" show-overflow-tooltip
           >
+          <el-table-column prop="productCode" key="productCode" label="产品编码" min-width="100" show-overflow-tooltip/>
+          <el-table-column prop="productName" label="产品名称"   width="160" v-if="isProductNameSwitch === '1'"
+          show-overflow-tooltip></el-table-column>
           <el-table-column prop="drawNo" label="品名规格"width="360" show-overflow-tooltip>
             <template slot-scope="scope">
               <i :class="[
@@ -58,7 +61,6 @@
             </template>
           </el-table-column>
           <!-- <el-table-column prop="productName" key="productName" label="产品名称" min-width="140" /> -->
-          <el-table-column prop="productCode" key="productCode" label="产品编码" min-width="100" show-overflow-tooltip/>
           <el-table-column prop="productSource" key="productSource" label="产品来源" min-width="100">
             <template slot-scope="scope">
               <div>{{ scope.row.productSource == 'produce' ? "生产" : scope.row.productSource == 'out' ? "外协" : '采购' }}</div>
@@ -107,13 +109,22 @@ export default {
         drawingNo:'',
       },
       total: 0,
+      isProductNameSwitch: '',
+
     }
   },
-  created() {
+  async created() {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.initData()
+    await this.getProductNameSwitch('product', 'enable_productName')
+    
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+      } catch (error) { }
+    },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },

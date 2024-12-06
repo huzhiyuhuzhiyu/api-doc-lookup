@@ -1,8 +1,8 @@
 <template>
   <!-- 销售订单创建 -->
-  <div class="JNPF-common-layout" >
+  <div class="JNPF-common-layout">
 
-    <div class="JNPF-common-layout-center JNPF-flex-main"  v-if="!formVisible">
+    <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
@@ -35,7 +35,7 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main"  v-loading="listLoading" >
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier()" :addText="'生成计划'">
               <el-button type="primary" size="mini" icon="el-icon-download"
@@ -55,13 +55,16 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"  v-if="isProjectSwitchFlag"
-            :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
+            v-if="isProjectSwitchFlag" :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column
             @selection-change="handleSelectionChange" hasC>
-            <el-table-column prop="drawingNo" label="品名规格" min-width="330" sortable="custom" />
             <el-table-column prop="code" label="产品编码" min-width="120" sortable="custom" />
+            <el-table-column prop="name" label="产品名称" sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
+              show-overflow-tooltip></el-table-column>
+            <el-table-column prop="drawingNo" label="品名规格" min-width="330" sortable="custom" />
             <el-table-column prop="productCategoryName" label="产品分类" min-width="120" sortable="custom" />
-            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom" v-if="isProjectSwitch==1"/>
+            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+              v-if="isProjectSwitch == 1" />
             <el-table-column prop="mainUnit" label="单位" min-width="80" />
             <el-table-column prop="availableQuantity" label="可用库存" min-width="120" />
             <el-table-column prop="safeInventory" label="安全库存" min-width="120" />
@@ -104,19 +107,19 @@ import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   name: 'salesOrderCreation',
   components: { Form, ExportForm, SuperQuery },
-  mixins:[getProjectList],
+  mixins: [getProjectList],
   data() {
     return {
-      isProjectSwitch:'',
-      isProjectSwitchFlag:false,
+      isProjectSwitch: '',
+      isProjectSwitchFlag: false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
       searchList: [
-        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'code', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],
-      columnList: ["cooperativePartnerName", "cooperativePartnerCode",   "productCode", "createTime", 'createByName'],
+      columnList: ["cooperativePartnerName", "cooperativePartnerCode", "productCode", "createTime", 'createByName'],
       superQueryVisible: false,
       exportFormVisible: false,
       tableData: [],
@@ -153,16 +156,16 @@ export default {
 
 
         {
+          prop: 'productCode',
+          label: "产品编码",
+          type: 'input'
+        },
+        {
           prop: 'drawingNo',
           label: "品名规格",
           type: 'input'
         },
 
-        {
-          prop: 'productCode',
-          label: "产品编码",
-          type: 'input'
-        },
         {
           prop: 'productCategoryName',
           label: "产品分类",
@@ -189,6 +192,7 @@ export default {
 
       ],
       selectList: [],
+      isProductNameSwitch:"",
     }
   },
   watch: {
@@ -202,15 +206,28 @@ export default {
 
   async created() {
     await this.getProjectSwitch('system', 'project')
-    this.isProjectSwitchFlag=true
-    this.superForm=this.form
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProductNameSwitch == 1) {
+      this.searchList.splice(1, 0, { field: 'name', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 })
+      this.superQueryJson.splice(1, 0, {
+        prop: 'name',
+        label: '产品名称',
+        type: 'input'
+      })
+    }
+    this.superForm = this.form
     this.search('basic')
   },
   methods: {
     handleSelectionChange(val) {
       this.selectList = val
     },
-
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.isProjectSwitchFlag = true
+      } catch (error) { }
+    },
 
 
 
@@ -232,7 +249,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName'||prop=='projectName' || prop === 'productCode' || prop === 'documentStatus'||prop=='productCategoryName') {
+      if (prop === 'productName' || prop == 'projectName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'productCategoryName') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'
@@ -249,20 +266,20 @@ export default {
     },
 
 
-   
+
 
 
     // 关闭新建编辑页面
     closeForm(isRefresh) {
-      this.formVisible = false 
-        this.keyword = ''
-        this.search('basic')
-       
+      this.formVisible = false
+      this.keyword = ''
+      this.search('basic')
+
     },
     initData() {
       this.listLoading = true
       this.superForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-    
+
       getProducts(this.superForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -303,7 +320,7 @@ export default {
 
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.superForm=this.form = {
+      this.superForm = this.form = {
         classAttribute: "finish_product",
         productDrawingNo: "",
         productCode: "",
@@ -328,12 +345,15 @@ export default {
         },
       }
       this.$refs.SuperQuery.conditionList = []
-      this.searchList= [
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+      this.searchList = [
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ]
- 
-        this.search('basic')
+      if (this.isProductNameSwitch == 1) {
+        this.searchList.splice(1, 0, { field: 'name', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 })
+
+      }
+      this.search('basic')
     },
 
 
@@ -342,7 +362,7 @@ export default {
       if (!this.selectList.length) return this.$message.error("请选择您要生成计划的数据")
       this.formVisible = true
       this.$nextTick(() => {
-        console.log("this.$refs.Forms",this.$refs.Forms);
+        console.log("this.$refs.Forms", this.$refs.Forms);
         this.$refs.Forms.init(this.selectList)
       })
 

@@ -140,12 +140,15 @@
                       @selection-change="handeleProductInfoData" v-loading="tableloading" @row-click="openDetails"
                       :row-style="rowStyle">
                       <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
-                        key="2"></el-table-column>
-                      <el-table-column prop="drawingNo" label="品名规格" width="220" key="3"
+                        key="1"></el-table-column>
+                      <el-table-column v-if="btnType == 'look'" prop="productCode" label="产品编码" width="160" key="3"
                         show-overflow-tooltip></el-table-column>
-                      <el-table-column v-if="btnType == 'look'" prop="productCode" label="产品编码" width="160" key="6"
+                      <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                         show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="processName" label="工序名称" width="160" key="5"
+                      <el-table-column prop="drawingNo" label="品名规格" width="220" key="5"
+                        show-overflow-tooltip></el-table-column>
+
+                      <el-table-column prop="processName" label="工序名称" width="160" key="7"
                         show-overflow-tooltip></el-table-column>
                       <template v-if="isProportionSwitch === '1'">
                         <el-table-column prop="weight" label="重量(kg)" width="90" />
@@ -264,9 +267,12 @@
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                     <el-table-column prop="projectName" label="所属项目" width="120"
                       v-if="isProjectSwitch === '1'"></el-table-column>
+                    <el-table-column prop="productCode" label="产品编码" width="200"></el-table-column>
+                    <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                      show-overflow-tooltip></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="200"
                       show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="productCode" label="产品编码" width="200"></el-table-column>
+
                     <el-table-column prop="processName" label="工序名称" width="200"></el-table-column>
                     <template v-if="isProportionSwitch === '1'">
                       <el-table-column prop="weight" label="重量(kg)" width="90" />
@@ -422,20 +428,23 @@
                   v-loading="tableloading" @row-click="openDetails" :row-style="rowStyle">
                   <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                   <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
-                    key="2"></el-table-column>
-                  <el-table-column prop="drawingNo" label="品名规格" width="290" key="3"
+                    key="1"></el-table-column>
+                  <el-table-column v-if="btnType == 'look'" prop="productCode" label="产品编码" width="120" key="3"
                     show-overflow-tooltip></el-table-column>
-                  <el-table-column v-if="btnType == 'look'" prop="productCode" label="产品编码" width="120" key="6"
+                  <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                    show-overflow-tooltip key="5"></el-table-column>
+                  <el-table-column prop="drawingNo" label="品名规格" width="290" key="7"
                     show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="processName" label="工序名称" width="100" key="5"
+
+                  <el-table-column prop="processName" label="工序名称" width="100" key="9"
                     show-overflow-tooltip></el-table-column>
                   <template v-if="isProportionSwitch === '1'">
-                    <el-table-column prop="weight" label="重量(kg)" width="90" />
-                    <el-table-column prop="proportion" label="比重" width="80" />
+                    <el-table-column prop="weight" label="重量(kg)" width="90" key="11" />
+                    <el-table-column prop="proportion" label="比重" width="80" key="13" />
                   </template>
-                  <el-table-column prop="mainUnit" label="单位" width="80" key="13"
+                  <el-table-column prop="mainUnit" label="单位" width="80" key="15"
                     show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="purchaseQuantity" label="订单数量" width="120" key="7"
+                  <el-table-column prop="purchaseQuantity" label="订单数量" width="120" key="17"
                     show-overflow-tooltip></el-table-column>
                   <el-table-column prop="price" label="含税单价" width="130">
                     <template slot="header">
@@ -538,10 +547,11 @@
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                 <el-table-column prop="projectName" label="所属项目" width="120"
                   v-if="isProjectSwitch === '1'"></el-table-column>
+                <el-table-column prop="productCode" label="产品编码" width="120"></el-table-column>
                 <el-table-column prop="productName" label="产品名称" width="120"
                   v-if="isProductNameSwitch === '1'"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="productCode" label="产品编码" width="120"></el-table-column>
+
                 <el-table-column prop="processName" label="工序名称" width="100"></el-table-column>
                 <template v-if="isProportionSwitch === '1'">
                   <el-table-column prop="weight" label="重量(kg)" width="90" />
@@ -1028,10 +1038,12 @@ export default {
     }
   },
   async created() {
+    await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getProportionSwitch('warehouse', 'proportion')
-    this.getDeputyUnit()
+
+
     this.getBimBusinessDetail()
     // this.handleChange()
     // this.getProvinceList()
@@ -1169,6 +1181,21 @@ export default {
     // 点击选择产品
     openSeleceProductDialog() {
       if (!this.dataForm.cooperativePartnerId) return this.$message.error('请先选择供应商')
+      if (this.isProductNameSwitch === '1') {
+        this.ProductTableItems.splice(1, 0, { prop: 'productName', label: '产品名称' })
+        this.ProductTableSearchList.splice(2, 0, { prop: 'productName', label: '产品名称', type: 'input' })
+      } else {
+
+      }
+      if (this.isProjectSwitch === '1') {
+        this.ProductTableItems.unshift({ prop: 'projectName', label: '所属项目' })
+      } else {
+      }
+      if (this.isProportionSwitch === '1') {
+        this.ProductTableItems.push({ prop: 'weight', label: '重量(kg)' }, { prop: 'proportion', label: '比重' })
+      } else {
+
+      }
       this.ProductListRequestObj.cooperativePartnerId = this.dataForm.cooperativePartnerId
       this.$refs['ComSelect-page'].openDialog()
     },

@@ -17,17 +17,18 @@
               <el-input v-model="listQuery.orderNo" placeholder="工单号" @keyup.enter.native="search()" clearable />
             </el-form-item>
           </el-col>
+          <el-col :span="4" v-if="isProductNameSwitch === '1'">
+            <el-form-item>
+              <el-input v-model="listQuery.productName" placeholder="产品名称" @keyup.enter.native="search()" clearable />
+            </el-form-item>
+          </el-col>
           <el-col :span="4">
             <el-form-item>
               <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" @keyup.enter.native="search()"
                 clearable />
             </el-form-item>
           </el-col>
-          <el-col :span="4" v-if="isProductNameSwitch === '1'">
-            <el-form-item>
-              <el-input v-model="listQuery.productName" placeholder="产品名称" @keyup.enter.native="search()" clearable />
-            </el-form-item>
-          </el-col>
+
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -81,9 +82,11 @@
             </template>
           </el-table-column> -->
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
-          <el-table-column prop="productDrawingNo" label="品名规格" min-width="120" sortable="custom" />
+          <el-table-column prop="productCode" label="产品编码" width="160" show-overflow-tooltip></el-table-column>
           <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
             show-overflow-tooltip></el-table-column>
+          <el-table-column prop="productDrawingNo" label="品名规格" min-width="120" sortable="custom" />
+
           <el-table-column prop="processName" label="工序名称" min-width="120" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" width="60" />
           <el-table-column prop="productionQuantity" label="生产数量" min-width="120" sortable="custom" />
@@ -196,11 +199,11 @@ export default {
           label: '工单单号',
           type: 'input'
         },
-        // {
-        //   prop: 'orderNo',
-        //   label: '报工单号',
-        //   type: 'input'
-        // },
+        {
+          prop: 'productCode',
+          label: '产品编码',
+          type: 'input'
+        },
         {
           prop: 'productDrawingNo',
           label: '品名规格',
@@ -216,41 +219,6 @@ export default {
           label: '单位',
           type: 'input'
         },
-        {
-          prop: 'productionQuantity',
-          label: '生产数量',
-          type: 'input'
-        },
-        {
-          prop: 'qualifiedQuantity',
-          label: '合格数量',
-          type: 'input'
-        },
-        {
-          prop: 'unqualifiedQuantity',
-          label: '不合格数量',
-          type: 'input'
-        },
-        {
-          prop: 'responsibilityWasteQuantity',
-          label: '责废数量',
-          type: 'input'
-        },
-        {
-          prop: 'materialWasteQuantity',
-          label: '料废数量',
-          type: 'input'
-        },
-        {
-          prop: 'utilizeQuantity',
-          label: '利用数量',
-          type: 'input'
-        },
-        // {
-        //   prop: 'reworkQuantity',
-        //   label: '返工数量',
-        //   type: 'input'
-        // },
         {
           prop: 'planStartDate',
           label: '计划开始日期',

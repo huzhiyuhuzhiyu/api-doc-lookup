@@ -5,6 +5,7 @@
         style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:0px 0 0px 0">
         <el-radio-group v-model="activeName">
           <el-radio-button label="product">产品设置</el-radio-button>
+          <el-radio-button label="orderField">订单设置</el-radio-button>
           <el-radio-button label="produce">生产设置</el-radio-button>
           <el-radio-button label="warehouse">仓库设置</el-radio-button>
           <el-radio-button label="return">退货设置</el-radio-button>
@@ -17,12 +18,13 @@
       </div>
       <div class="JNPF-common-layout-center JNPF-flex-main" style="background-color: #FFFFFF;margin-top: 5px">
         <div style="margin: 10px -6px 0 10px;overflow: scroll;">
-          <el-table v-if="tableRerender" :span-method="activeName === 'attachment' ? arraySpanMethod : undefined"
+          <el-table v-if="tableRerender" :span-method="['attachment', 'orderField'].includes(activeName) ? arraySpanMethod : undefined"
             :height="maxHeight" :data="tableData" stripe :row-style="{ height: '50px' }"
             :header-cell-style="{ background: '#FAFAFA', color: '#606266', 'text-align': 'center' }">
             <el-table-column align="left" v-if="activeName === 'attachment'" prop="mainModule" label="所属模块"
               width="135" />
-
+              <el-table-column align="left" v-if="activeName === 'orderField'" prop="mainModule" label="所属模块"
+              width="135" />
 
 
 
@@ -261,6 +263,10 @@ export default {
         this.listQuery.pageSize = -1
         this.listQuery.businessCode = 'maintenance'
         this.getData(8)
+      } else if (this.activeName === 'orderField') {
+        this.listQuery.pageSize = -1
+        this.listQuery.businessCode = 'orderField'
+        this.getData(9)
       }
       // else if (this.activeName === 'financialSet') {
       //   this.listQuery.codeFlag = 0
@@ -304,6 +310,11 @@ export default {
             list = res.data.deputyUnit
           } else if (this.activeName === 'maintenance') {
             list = res.data.maintenance
+          }else if (this.activeName === 'orderField') {
+            list = res.data.orderField
+            list.forEach(item=>{
+              item.configKey = `${item.configValue2}_${item.configKey}`
+            })
           }
 
           list.forEach((item) => {
@@ -328,10 +339,13 @@ export default {
               item.radioOn = '启用'
             }
             const configKeyObj = ConfigKey[item.configKey]
+            console.log(configKeyObj,'obj')
+            console.log(notEmpty(configKeyObj),'notEmpty(configKeyObj)')
             if (notEmpty(configKeyObj)) {
               item.description = configKeyObj.description
               item.configKeyLabel = configKeyObj.configKeyLabel
               this.isAttachment && (item.mainModule = configKeyObj.mainModule)
+              this.activeName === 'orderField' && (item.mainModule = configKeyObj.mainModule)
             } else {
               item.configKeyLabel = item.configKey
               item.mainModule = " 暂无设置"

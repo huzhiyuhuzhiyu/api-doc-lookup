@@ -40,7 +40,7 @@
             </el-col>
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier('', 'add')" addText="生成外协订单">
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('tableForm')">
@@ -62,9 +62,9 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table @selection-change="handeleFinshData" hasC v-if="flag" v-loading="listLoading"
-            highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
-            custom-column :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
+          <JNPF-table @selection-change="handeleFinshData" hasC v-if="tableFlag" highlight-current-row :fixedNO="true"
+            ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
+            :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
             <el-table-column prop="productCode" label="产品编码" width="150" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="120"
               v-if="isProductNameSwitch === '1'"></el-table-column>

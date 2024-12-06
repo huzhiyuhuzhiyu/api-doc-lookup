@@ -127,7 +127,8 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-
+                    <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                      show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="330">
                       <template slot="header">
                         <span class="required">*</span> 品名规格
@@ -142,7 +143,7 @@
                           style="width: 100%;"  /> -->
                       </template>
                     </el-table-column>
-                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==1"/>
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
 
                     <el-table-column prop="mainUnit" label="单位" width="80" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="num" label="数量" width="120">
@@ -242,7 +243,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="clearance" label="游隙" width="120" :key="100">
-                   
+
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list6" :key="index" :disabled="status" :label="item.name"
@@ -415,7 +416,8 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-
+                <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                  show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" width="400">
                   <template slot="header">
                     <span class="required">*</span> 品名规格
@@ -430,8 +432,8 @@
                           style="width: 100%;"  /> -->
                   </template>
                 </el-table-column>
-                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==1"/>
-                    <el-table-column prop="mainUnit" label="单位" width="160" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
+                <el-table-column prop="mainUnit" label="单位" width="160" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="num" label="数量" width="160">
                   <template slot="header">
                     <span class="required">*</span>数量
@@ -490,72 +492,71 @@
                 <el-table-column prop="excludingTaxAmounts" label="金额(不含税)" width="160" show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
-                          style="width: 100%;">
-                          <el-option v-for="(item, index) in list1" :key="index" :disabled="status" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
-                          <el-option v-for="(item, index) in list2" :key="index" :disabled="status" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list3" :key="index" :disabled="status" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="oil" label="油脂" width="120" :key="61">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list4" :key="index" :disabled="status" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list5" :key="index" :disabled="status" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="clearance" label="游隙" width="120" :key="100">
-                   
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list6" :key="index" :disabled="status" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in list1" :key="index" :disabled="status" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
+                      <el-option v-for="(item, index) in list2" :key="index" :disabled="status" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in list3" :key="index" :disabled="status" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="oil" label="油脂" width="120" :key="61">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in list4" :key="index" :disabled="status" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in list5" :key="index" :disabled="status" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="clearance" label="游隙" width="120" :key="100">
 
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list7" :key="index" :disabled="status" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="101">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list8" :key="index" :disabled="status" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in list6" :key="index" :disabled="status" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101">
+
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in list7" :key="index" :disabled="status" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="101">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in list8" :key="index" :disabled="status" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
 
 
                 <el-table-column prop="remark" label="备注" min-width="200">
@@ -659,9 +660,11 @@
               <JNPF-table :data="historyPriceData" ref="dataTable" custom-column>
                 <el-table-column prop="cooperativePartnerIdText" label="客户名称" sortable="custom" width="200" />
                 <el-table-column prop="customerDrawingNumber" label=" 客户料号" width="150" sortable="custom" />
+                <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                  show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" width="180" sortable="custom" />
-                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==1"/>
-                    <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
+                <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
                 <el-table-column prop="num" label="数量" width="80" sortable="custom" />
                 <el-table-column prop="unitPrice" label="单价(含税)" width="130" sortable="custom" />
                 <el-table-column prop="taxRate" label="税率" width="110" sortable="custom">
@@ -699,7 +702,7 @@ import { getcategoryTrees, getcooperativeProduct } from '@/api/salesManagement/a
 import { getCooperativeInfo, getCooperativeData } from '@/api/basicData/index'
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表
-import { mapGetters, mapState } from 'vuex' 
+import { mapGetters, mapState } from 'vuex'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
@@ -711,11 +714,11 @@ import { getBimBusinessDetail } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   components: { ExportForm, Process, recordList },
-  mixins: [busFlow, flowMixin,getProjectList],
-  
+  mixins: [busFlow, flowMixin, getProjectList],
+
   data() {
     return {
-      isProjectSwitch:'',
+      isProjectSwitch: '',
       list1: [],
       list2: [],
       list3: [],
@@ -882,7 +885,7 @@ export default {
       endTime: 0,
       isattachmentswitch: '',
     }
-  }, 
+  },
   watch: {
     activeName(val) {
       // 如果切换到订单信息tab并且表格表单处于适配模式，触发计算高度
@@ -910,12 +913,12 @@ export default {
     },
     ...mapGetters(['userInfo']),
     ...mapState('user', ['token']),
-    
+
   },
   mounted() {
     this.getTaxRateFun()
     this.getBimBusinessDetail()
-    
+
   },
   async created() {
     await this.getProjectSwitch('system', 'project')

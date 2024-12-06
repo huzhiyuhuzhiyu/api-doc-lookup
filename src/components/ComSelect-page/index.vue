@@ -241,7 +241,10 @@
                 <el-option v-for="item2 in item.options" :key="item2.value" :label="item2.label"
                   :value="item2.value"></el-option>
               </el-select>
-
+              <el-date-picker v-else-if="item.type === 'date'" v-model="listQuery[item.prop]" style="width: 100%;"
+                      :start-placeholder="'请选择' + item.label + '开始日期'" :end-placeholder="'请选择' + item.label + '结束日期'"
+                      clearable type="daterange" value-format="yyyy-MM-dd">
+              </el-date-picker>
             </el-form-item>
           </el-col>
         </el-form>

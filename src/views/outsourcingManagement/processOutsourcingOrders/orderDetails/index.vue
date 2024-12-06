@@ -74,10 +74,11 @@
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" width="120"
               v-if="isProjectSwitch === '1'"></el-table-column>
+            <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="120"
               v-if="isProductNameSwitch === '1'"></el-table-column>
             <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
-            <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+
             <el-table-column prop="processName" label="工序名称" min-width="140" sortable="custom" />
             <template v-if="isProportionSwitch === '1'">
               <el-table-column prop="weight" label="重量(kg)" width="90" />
@@ -198,6 +199,11 @@ export default {
           type: 'input'
         },
         {
+          prop: 'productCode',
+          label: '产品编码',
+          type: 'input'
+        },
+        {
           prop: 'drawingNo',
           label: '品名规格',
           type: 'input'
@@ -207,11 +213,7 @@ export default {
           label: '工序名称',
           type: 'input'
         },
-        {
-          prop: 'productCode',
-          label: '产品编码',
-          type: 'input'
-        },
+
         {
           prop: 'mainUnit',
           label: '单位',
@@ -450,7 +452,7 @@ export default {
       })
     },
     superQuerySearch(query) {
-      this.orderForm.superQuery = query
+      this.listQuery.superQuery = query
       this.superQueryVisible = false
       this.search()
     },

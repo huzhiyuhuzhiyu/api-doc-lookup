@@ -255,8 +255,22 @@ export default {
     }
   },
   async created() {
+    await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isDeputyUnitSwitch === '1') {
+      this.superQueryJson.forEach(item => {
+        if (item.prop === 'mainUnit') {
+          item.label = '单位(主)'
+        }
+      })
+      this.superQueryJson.splice(6, 0, {
+        prop: 'deputyUnit',
+        label: '单位(副)',
+        type: 'input'
+      })
+
+    }
     if (this.isProductNameSwitch === '1') {
       this.searchList.push({
         field: 'productName',
@@ -266,14 +280,14 @@ export default {
         searchType: 1,
         width: 120
       })
-      this.superQueryJson.splice(2, 0, {
+      this.superQueryJson.splice(4, 0, {
         prop: 'productName',
         label: '产品名称',
         type: 'input'
       })
     }
     this.superForm = this.listQuery
-    this.getDeputyUnit()
+
     this.initData()
   },
   methods: {
@@ -412,122 +426,7 @@ export default {
 
           this.tableDataList = res.data.records
           this.tableFlag = true
-          if (this.isDeputyUnitSwitch === '1') {
-            this.superQueryJson = [
-              {
-                prop: 'orderNo',
-                label: '出入库单号',
-                type: 'input'
-              },
-              {
-                prop: 'partnerName',
-                label: '供应商名称',
-                type: 'input'
-              },
-              {
-                prop: 'partnerCode',
-                label: '供应商编码',
-                type: 'input'
-              },
-              {
-                prop: 'productCode',
-                label: '产品编码',
-                type: 'input'
-              },
 
-              {
-                prop: 'productDrawingNo',
-                label: '品名规格',
-                type: 'input'
-              },
-              {
-                prop: 'mainUnit',
-                label: '单位(主)',
-                type: 'input'
-              },
-              {
-                prop: 'deputyUnit',
-                label: '单位(副)',
-                type: 'input'
-              },
-              {
-                prop: 'taxRate',
-                label: '税率(%)',
-                type: 'input'
-              },
-
-              {
-                prop: 'createTime',
-                label: '创建时间',
-                type: 'datetimerange',
-                valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                startPlaceholder: '创建开始时间',
-                endPlaceholder: '创建结束时间',
-                pickerOptions: this.global.timePickerOptions
-              },
-
-              {
-                prop: 'createByName',
-                label: '创建人',
-                type: 'input'
-              }
-            ]
-          } else {
-            this.superQueryJson = [
-              {
-                prop: 'orderNo',
-                label: '出入库单号',
-                type: 'input'
-              },
-              {
-                prop: 'partnerName',
-                label: '供应商名称',
-                type: 'input'
-              },
-              {
-                prop: 'partnerCode',
-                label: '供应商编码',
-                type: 'input'
-              },
-              {
-                prop: 'productCode',
-                label: '产品编码',
-                type: 'input'
-              },
-
-              {
-                prop: 'productDrawingNo',
-                label: '品名规格',
-                type: 'input'
-              },
-              {
-                prop: 'mainUnit',
-                label: '单位',
-                type: 'input'
-              },
-              {
-                prop: 'taxRate',
-                label: '税率(%)',
-                type: 'input'
-              },
-
-              {
-                prop: 'createTime',
-                label: '创建时间',
-                type: 'datetimerange',
-                valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                startPlaceholder: '创建开始时间',
-                endPlaceholder: '创建结束时间',
-                pickerOptions: this.global.timePickerOptions
-              },
-
-              {
-                prop: 'createByName',
-                label: '创建人',
-                type: 'input'
-              }
-            ]
-          }
           console.log('this.tableDataList ', this.tableDataList)
           this.total = res.data.total
           this.listLoading = false

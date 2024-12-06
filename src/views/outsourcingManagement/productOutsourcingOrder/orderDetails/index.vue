@@ -74,11 +74,11 @@
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" width="120"
               v-if="isProjectSwitch === '1'"></el-table-column>
+            <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="120"
               v-if="isProductNameSwitch === '1'"></el-table-column>
             <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
-            <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
-            <el-table-column prop="processName" label="工序名称" min-width="140" sortable="custom" />
+            <!-- <el-table-column prop="processName" label="工序名称" min-width="140" sortable="custom" /> -->
 
             <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
               :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
@@ -188,64 +188,29 @@ export default {
           type: 'input'
         },
         {
-          prop: 'drawingNo',
-          label: '品名规格',
-          type: 'input'
-        },
-        {
-          prop: 'processName',
-          label: '工序名称',
-          type: 'input'
-        },
-        {
           prop: 'productCode',
           label: '产品编码',
           type: 'input'
         },
+        {
+          prop: 'drawingNo',
+          label: '品名规格',
+          type: 'input'
+        },
+        // {
+        //   prop: 'processName',
+        //   label: '工序名称',
+        //   type: 'input'
+        // },
+
         {
           prop: 'mainUnit',
           label: '单位',
           type: 'input'
         },
         {
-          prop: 'purchaseQuantity',
-          label: '数量',
-          type: 'input'
-        },
-        {
-          prop: 'receiptQuantity',
-          label: '已入库数量',
-          type: 'input'
-        },
-        {
-          prop: 'price',
-          label: '单价(含税)',
-          type: 'input'
-        },
-        {
           prop: 'taxRate',
           label: '税率(%)',
-          type: 'input'
-        },
-        {
-          prop: 'totalAmount',
-          label: '总金额(含税)',
-          type: 'input'
-        },
-
-        {
-          prop: 'excludingTaxPrice',
-          label: '单价(不含税)',
-          type: 'input'
-        },
-        {
-          prop: 'taxAmount',
-          label: '税额',
-          type: 'input'
-        },
-        {
-          prop: 'excludingTaxAmount',
-          label: '总金额(不含税)',
           type: 'input'
         },
         {
@@ -268,62 +233,6 @@ export default {
           ]
         },
 
-        {
-          prop: 'standardValue',
-          label: '规值',
-          type: 'input'
-        },
-
-        {
-          prop: 'sealingCoverTyping',
-          label: '打字内容',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'accuracyLevel',
-          label: '精度等级',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'vibrationLevel',
-          label: '振动等级',
-          type: 'select',
-          options: []
-        },
-
-        {
-          prop: 'oil',
-          label: '油脂',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'oilQuantity',
-          label: '油脂量',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'clearance',
-          label: '游隙',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'packagingMethod',
-          label: '包装方式',
-          type: 'select',
-          options: []
-        },
-
-        {
-          prop: 'processName',
-          label: '工序',
-          type: 'select',
-          options: []
-        },
 
         {
           prop: 'createTime',
@@ -509,7 +418,7 @@ export default {
 
     }
     if (this.isProductNameSwitch === '1') {
-      this.superQueryJson.splice(3, 0, {
+      this.superQueryJson.splice(4, 0, {
         prop: 'productName',
         label: '产品名称',
         type: 'input'
@@ -534,232 +443,12 @@ export default {
       })
     },
     superQuerySearch(query) {
-      this.orderForm.superQuery = query
+      this.listQuery.superQuery = query
       this.superQueryVisible = false
       this.search()
     },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
-      let obj1 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa007',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-
-      getbimProductAttributesList(obj1).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let oilObj = this.superQueryJson.find((item) => item.prop === 'sealingCoverTyping')
-
-        if (oilObj) {
-          // 将options赋值为5
-          oilObj.options = arr
-        }
-      })
-      let obj2 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa006',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-
-      getbimProductAttributesList(obj2).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let oilObj = this.superQueryJson.find((item) => item.prop === 'accuracyLevel')
-
-        if (oilObj) {
-          // 将options赋值为5
-          oilObj.options = arr
-        }
-      })
-      let obj3 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa005',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj3).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let oilObj = this.superQueryJson.find((item) => item.prop === 'vibrationLevel')
-
-        if (oilObj) {
-          // 将options赋值为5
-          oilObj.options = arr
-        }
-      })
-      let obj4 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa002',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj4).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let oilObj = this.superQueryJson.find((item) => item.prop === 'oil')
-
-        if (oilObj) {
-          // 将options赋值为5
-          oilObj.options = arr
-        }
-      })
-      let obj5 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa003',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj5).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let oilObj = this.superQueryJson.find((item) => item.prop === 'oilQuantity')
-
-        if (oilObj) {
-          // 将options赋值为5
-          oilObj.options = arr
-        }
-      })
-      let obj6 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa001',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-
-      getbimProductAttributesList(obj6).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let oilObj = this.superQueryJson.find((item) => item.prop === 'clearance')
-
-        if (oilObj) {
-          // 将options赋值为5
-          oilObj.options = arr
-        }
-      })
-      let obj7 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa015',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj7).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let oilObj = this.superQueryJson.find((item) => item.prop === 'packagingMethod')
-
-        if (oilObj) {
-          // 将options赋值为5
-          oilObj.options = arr
-        }
-      })
 
       // 获取税率(数据字典)
       getbimProductAttributes('585438081021126405').then((res) => {

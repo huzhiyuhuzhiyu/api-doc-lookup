@@ -516,9 +516,10 @@ export default {
         // queryType: 3
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
+        { prop: 'productCode', label: '毛坯编码', sortable: 'custom' },
         { prop: 'productDrawingNo', label: '毛坯规格', sortable: 'custom' },
         // { prop: 'name', label: '产品名称', sortable: 'custom' },
-        { prop: 'productCode', label: '毛坯编码', sortable: 'custom' },
+
         { prop: 'productCategoryName', label: '毛坯分类', sortable: 'custom' },
         { prop: 'batchNumber', label: '批次号', width: 180 },
         { prop: 'mainUnit', label: '单位' },
@@ -526,9 +527,10 @@ export default {
         { prop: 'createTime', label: '创建日期', sortable: 'custom' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productCode', label: '毛坯编码', type: 'input' },
+        { prop: 'productDrawingNo', label: '毛坯规格', type: 'input' },
         // { prop: 'name', label: '产品名称', type: 'input' },
-        { prop: 'productCode', label: '产品编码', type: 'input' }
+
       ], // 产品选择弹出框搜索条件
       formLoading: false,
       codeConfig: {},
@@ -1123,14 +1125,15 @@ export default {
     },
     // 产品弹窗
     openSeleceProductDialog() {
+
+      if (this.isProductNameSwitch === '1') {
+        this.ProductTableItems.splice(1, 0, { prop: 'productName', label: '毛坯名称' })
+      } else {
+
+      }
       if (this.isProjectSwitch === '1') {
         this.ProductTableItems.unshift({ prop: 'projectName', label: '所属项目' })
       } else {
-      }
-      if (this.isProductNameSwitch === '1') {
-        this.ProductTableItems.unshift({ prop: 'productName', label: '产品名称' })
-      } else {
-
       }
       if (this.isProportionSwitch === '1') {
         this.ProductTableItems.push({ prop: 'weight', label: '重量(kg)' }, { prop: 'proportion', label: '比重' })

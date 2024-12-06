@@ -15,17 +15,18 @@
                   clearable />
               </el-form-item>
             </el-col>
+            <el-col :span="4" v-if="isProductNameSwitch === '1'">
+              <el-form-item>
+                <el-input v-model="listQuery.productName" placeholder="产品名称" @keyup.enter.native="search()" clearable />
+              </el-form-item>
+            </el-col>
             <el-col :span="4">
               <el-form-item>
                 <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" @keyup.enter.native="search()"
                   clearable />
               </el-form-item>
             </el-col>
-            <el-col :span="4" v-if="isProductNameSwitch === '1'">
-              <el-form-item>
-                <el-input v-model="listQuery.productName" placeholder="产品名称" @keyup.enter.native="search()" clearable />
-              </el-form-item>
-            </el-col>
+
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -78,6 +79,7 @@
             <el-table-column prop="deliverDate" label="收货日期" width="120" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" width="120"
               v-if="isProjectSwitch === '1'"></el-table-column>
+            <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="120"
               v-if="isProductNameSwitch === '1'"></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="140" sortable="custom" />
@@ -200,11 +202,6 @@ export default {
           prop: 'mainUnit',
           label: '单位',
           type: 'select'
-        },
-        {
-          prop: 'receivedQuantity',
-          label: '收货数量',
-          type: 'input'
         },
 
         {

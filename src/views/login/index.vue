@@ -121,7 +121,7 @@
       </p>
     </div>
     <div class="login-container2" v-show="!isLogin" v-else>
-      <el-image class="login-bg" :src="define.comUrl + loginpattern.loginBg" @load="bgload" v-show="isbgload"></el-image>
+      <el-image class="login-bg" :src="define.comUrl + loginpattern.loginBg" v-if="loginpattern && loginpattern.loginBg" @load="bgload" v-show="isbgload"></el-image>
       <img class="login-bg" src="@/assets/images/sybj.jpg" alt="" v-show="!isbgload" />
       <div class="body">
         <div style="opacity: .8;">

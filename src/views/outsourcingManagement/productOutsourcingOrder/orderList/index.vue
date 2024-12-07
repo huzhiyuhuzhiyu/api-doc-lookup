@@ -108,7 +108,7 @@
     <JNPF-Form v-if="formVisible" ref="procureForm" @refresh="refresh" @close="closeForm" />
     <CreateForm v-if="createFormVisible" ref="createForm" @refresh="refresh" @close="closeForm" />
     <withdrawnForm v-if="withdrawnVisible" ref="withdrawnForm" @refresh="refresh" @close="closeForm" />
-
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -133,9 +133,10 @@ import { excelExport } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { CreateForm } from '../orderCreation/index.vue'
+import ExportForm from '@/components/no_mount/ExportBox/index'
 export default {
   name: 'orderList',
-  components: { JNPFForm, withdrawnForm, SuperQuery, CreateForm },
+  components: { JNPFForm, withdrawnForm, ExportForm, SuperQuery, CreateForm },
   data() {
     return {
       exportFormVisible: false,

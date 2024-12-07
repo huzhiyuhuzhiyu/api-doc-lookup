@@ -216,9 +216,9 @@
                         <el-input v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable />
                       </el-form-item>
                     </el-col>
-                    <el-col :span="6">
+                    <el-col :span="6"  v-if="isProductNameSwitch === '1'">
                       <el-form-item>
-                        <el-input v-model="ProductListRequestObj.productName" placeholder="请输入产品名称" clearable />
+                        <el-input  v-model="ProductListRequestObj.productName" placeholder="请输入产品名称" clearable />
                       </el-form-item>
                     </el-col>
                     <el-col :span="6">

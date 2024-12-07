@@ -85,8 +85,10 @@
 
               </template>
             </el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
+            <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+            v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
             <el-table-column prop="mainUnit" label="单位" width="80" />
@@ -347,13 +349,13 @@ export default {
           ]
         },
         {
-          prop: 'productDrawingNo',
-          label: "品名规格",
+          prop: 'productCode',
+          label: "产品编码",
           type: 'input'
         },
         {
-          prop: 'productCode',
-          label: "产品编码",
+          prop: 'productDrawingNo',
+          label: "品名规格",
           type: 'input'
         },
         {
@@ -510,12 +512,20 @@ export default {
       printList: [],
       isProjectSwitch: '',
       isProjectSwitchFlag: false,
+      isProductNameSwitch:"",
     }
   },
  
   async created() {
     await this.getProjectSwitch('system', 'project')
-    this.isProjectSwitchFlag = true
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProductNameSwitch == 1) {
+      this.superQueryJson.splice(3, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
+    } 
     this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search('basic')
   }, 
@@ -526,6 +536,12 @@ export default {
     this.getProductClassFun()
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.isProjectSwitchFlag = true
+      } catch (error) { }
+    },
     viewDetailFun(id) {
       this.taskFormVisible = true
       this.$nextTick(() => {

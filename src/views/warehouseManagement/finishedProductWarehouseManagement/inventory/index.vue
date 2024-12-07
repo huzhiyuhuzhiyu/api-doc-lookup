@@ -57,10 +57,10 @@
           :fixedNo="true" @sort-change="sortChange">
 
 
-          <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
+          <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
             sortable="custom" />
-          <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
           <el-table-column prop="classAttribute" label="产品分类" width="120" sortable="custom">
@@ -150,8 +150,8 @@ export default {
       superForm: {},
       basicQuery: {},
       searchList: [
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'warehouseName', fieldValue: '', label: '仓库名称', symbol: 'like', searchType: 1, width: 120 },
       ],
       exportFormVisible: false,
@@ -201,13 +201,13 @@ export default {
       },
       superQueryJson: [
         {
-          prop: 'productDrawingNo',
-          label: "品名规格",
+          prop: 'productCode',
+          label: "产品编码",
           type: 'input'
         },
         {
-          prop: 'productCode',
-          label: "产品编码",
+          prop: 'productDrawingNo',
+          label: "品名规格",
           type: 'input'
         },
 
@@ -294,7 +294,12 @@ export default {
         this.tableDataFlag = true
         if (this.productNameFlag == '1') {
 
-          this.searchList.push({ field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 })
+          this.searchList.splice(1, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 })
+          this.superQueryJson.splice(1, 0, {
+            prop: 'productsName',
+            label: '产品名称',
+            type: 'input'
+          })
         }
       }).catch(error => {
         this.tableFlag = true
@@ -375,15 +380,15 @@ export default {
       this.tableQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
 
       inventoryWarehouseList(this.tableQuery).then((res) => {
-        console.log(res); 
-          this.tableData = res.data.whPage.records||[]
-          this.totalData = res.data.stockSts || {
-            totalInventory: 0,
-            totalOccupancy: 0,
-            totalAvailable: 0,
-          }
-          this.total = res.data.whPage.total
-         
+        console.log(res);
+        this.tableData = res.data.whPage.records || []
+        this.totalData = res.data.stockSts || {
+          totalInventory: 0,
+          totalOccupancy: 0,
+          totalAvailable: 0,
+        }
+        this.total = res.data.whPage.total
+
 
         this.listLoading = false
       }).catch(() => {
@@ -436,10 +441,14 @@ export default {
       }
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'warehouseName', fieldValue: '', label: '仓库名称', symbol: 'like', searchType: 1, width: 120 },
       ]
+      if (this.productNameFlag == '1') {
+
+        this.searchList.splice(1, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 })
+      }
       this.getConfig()
       this.initData()
     },

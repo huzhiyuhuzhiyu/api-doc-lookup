@@ -53,12 +53,13 @@
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="仓库" prop="warehouseName">
-                        <ComSelect-list :requestObj="{ type: 'scrap', state: 'enable', projectId: isProjectSwitch === '1' ?userInfo.projectId || '' : '' }" :dialogTitle="'选择仓库'"
-                          :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName" :method="getWarehouseList"
-                          placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
+                        <ComSelect-list
+                          :requestObj="{ type: 'scrap', state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }"
+                          :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName"
+                          :method="getWarehouseList" placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
                       </el-form-item>
                     </el-col>
-                  
+
 
                     <el-col :sm="12" :xs="24">
                       <el-form-item label="备注" prop="remark">
@@ -84,11 +85,16 @@
                   <el-table-column type="selection" width="55" fixed="left" :key="2">
                   </el-table-column>
                   <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
-                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" sortable="custom" v-if="dataForm.documentType == 'outbound'" />
-                  <el-table-column prop="projectName" label="所属项目" min-width="120"   v-if="isProjectSwitch == 1" />
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6" v-if="dataForm.documentType == 'inbound'"> </el-table-column>
-                  <el-table-column prop="productCode" label="产品编码"  :key="4" />
-                  <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111" v-if="dataForm.documentType == 'outbound'">
+                  <el-table-column prop="productCode" label="产品编码" width="120" :key="4" />
+                  <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                    show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" sortable="custom"
+                    v-if="dataForm.documentType == 'outbound'" />
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
+                  <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6"
+                    v-if="dataForm.documentType == 'inbound'"> </el-table-column>
+                  <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"
+                    v-if="dataForm.documentType == 'outbound'">
                     <template slot="header">
                       <span class="required">*</span>批次号
                     </template>
@@ -99,7 +105,7 @@
                       </el-input>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="shelfSpaceName" label="库位"  :key="10112" v-if="allocationFlag">
+                  <el-table-column prop="shelfSpaceName" label="库位" :key="10112" v-if="allocationFlag">
 
                     <template slot="header" v-if="dataForm.documentType == 'inbound'">
                       <span class="required">*</span>库位
@@ -112,7 +118,7 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-                  <el-table-column prop="num" label="数量"  :key="77">
+                  <el-table-column prop="num" label="数量" :key="77">
                     <template slot="header">
                       <span class="required">*</span>数量
                     </template>
@@ -121,13 +127,14 @@
                         v-model="scope.row.num" placeholder="数量"></el-input>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="originalBatchNumber" label="原产品批次号"  :key="1255" v-if="dataForm.documentType == 'inbound'">
+                  <el-table-column prop="originalBatchNumber" label="原产品批次号" :key="1255"
+                    v-if="dataForm.documentType == 'inbound'">
                     <template slot-scope="scope">
                       <el-input :disabled="btnType == 'look'" v-model="scope.row.originalBatchNumber"
                         placeholder="原产品批次号"></el-input>
                     </template>
                   </el-table-column>
-                  
+
                   <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
                   <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'">
                     <template slot-scope="scope">
@@ -206,10 +213,7 @@
           <div class="JNPF-common-layout-main JNPF-flex-main">
             <JNPF-table v-loading="listLoading" :data="productList" hasC
               @selection-change="handleSelectionChangeAllPruduct" @sort-change="sortChange">
-              <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
-              <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom"
-                v-if="dataForm.documentType == 'inbound'" />
+
               <!-- <el-table-column prop="productName" label="产品名称" min-width="160" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" /> -->
               <!-- <el-table-column prop="name" label="产品名称" min-width="160" sortable="custom"
@@ -218,7 +222,17 @@
                 v-if="dataForm.documentType == 'outbound'" />
               <el-table-column prop="code" label="产品编码" min-width="160" sortable="custom"
                 v-if="dataForm.documentType == 'inbound'" />
-                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+              <el-table-column prop="name" label="产品名称" sortable="custom" width="160"
+                v-if="dataForm.documentType == 'inbound' && isProductNameSwitch === '1'"
+                show-overflow-tooltip></el-table-column>
+              <el-table-column prop="productsName" label="产品名称" sortable="custom" width="160"
+                v-if="dataForm.documentType == 'outbound' && isProductNameSwitch === '1'"
+                show-overflow-tooltip></el-table-column>
+              <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" sortable="custom"
+                v-if="dataForm.documentType == 'outbound'" />
+              <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom"
+                v-if="dataForm.documentType == 'inbound'" />
+              <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                 v-if="isProjectSwitch == 1" />
               <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" />
@@ -309,7 +323,7 @@ export default {
   props: {
     classAttribute: "",
   },
-  mixins: [  getProjectList],
+  mixins: [getProjectList],
   data() {
     return {
       isProjectSwitch: '',
@@ -353,13 +367,13 @@ export default {
         id: "",
         warehouseType: "",
         inspectionResults: "",
-        partnerName:"",
-        cooperativePartnerId:"",
+        partnerName: "",
+        cooperativePartnerId: "",
       },
       customerInfo: {},//所选客户信息
       getWarehouseList,
 
-   
+
       dataRule: {
 
 
@@ -411,7 +425,7 @@ export default {
       loadingText: '',
       copyLinesData: [],
       previousValue: "",
-     
+
       taxRateList: [],
       listQuery: {
         productName: '',
@@ -431,14 +445,17 @@ export default {
         pageSize: 20,
         classAttribute: 'finish_product'
       },
+      isProductNameSwitch: ""
     }
   },
- 
+
   computed: {
     ...mapGetters(['userInfo'])
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
+
     this.isProjectSwitchFlag = true
     this.getWarehouseConfig()
 
@@ -451,6 +468,12 @@ export default {
     }
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
     // 所选择的客户数据
     handleSelectCustomer(data) {
       console.log("客户信息", data);
@@ -541,7 +564,7 @@ export default {
         })
         // this.listQuery.pageNum = 1
         this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
-        this.listQuery.classAttribute=this.classAttribute
+        this.listQuery.classAttribute = this.classAttribute
         this.listQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
         getProductList(this.listQuery)
           .then((res) => {
@@ -603,7 +626,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productDrawingNo'||prop=='projectName' || prop === 'productName' || prop === 'productCode') {
+      if (prop === 'productDrawingNo' || prop == 'projectName' || prop === 'productName' || prop === 'productCode') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
@@ -635,6 +658,8 @@ export default {
         item.taxRate = 13
         if (this.dataForm.documentType == 'inbound') {
           item.productsId = item.id
+          item.productName = item.name
+          item.productCode = item.code
         }
         // item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
 
@@ -665,8 +690,8 @@ export default {
       }
       this.selectRows = []; // 清空选中的行的数据
     },
-   
-   
+
+
 
 
 
@@ -929,7 +954,7 @@ export default {
 
 
     },
- 
+
 
   },
 }
@@ -944,9 +969,11 @@ export default {
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
   padding: 10px 10px;
 }
-.JNPF-common-layout-main.JNPF-flex-main{
+
+.JNPF-common-layout-main.JNPF-flex-main {
   padding-top: 5px;
 }
+
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
   overflow: auto;
 }

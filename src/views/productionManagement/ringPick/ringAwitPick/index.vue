@@ -78,6 +78,8 @@
                 <div v-if="scope.row.orderType == 'rework'">返工任务</div>
               </template>
             </el-table-column>
+            <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+            v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
@@ -193,14 +195,10 @@ export default {
           type: 'input'
         },
 
+ 
         {
           prop: 'productDrawingNo',
           label: "品名规格",
-          type: 'input'
-        },
-        {
-          prop: 'productCode',
-          label: "产品编码",
           type: 'input'
         },
         {
@@ -330,9 +328,7 @@ export default {
       ],
     }
   },
-  created() {
-  
-  },
+ 
   watch: {
     activeName() {
       this.search()
@@ -340,7 +336,14 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
-    this.isProjectSwitchFlag = true
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProductNameSwitch == 1) {
+      this.superQueryJson.splice(1, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      }) 
+    }
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search('basic')
   }, 
@@ -351,6 +354,12 @@ export default {
     this.getProductClassFun()
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.isProjectSwitchFlag = true
+      } catch (error) { }
+    },
     addition(data){
       this.pickVisible=true
       this.$nextTick(()=>{

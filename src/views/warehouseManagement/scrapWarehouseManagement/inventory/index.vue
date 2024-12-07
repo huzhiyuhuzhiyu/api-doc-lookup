@@ -57,10 +57,12 @@
           @sort-change="sortChange">
 
 
-          <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
+          <el-table-column prop="productName" label="产品名称" v-if="isProductNameSwitch === '1'" min-width="160"
+            sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-          v-if="isProjectSwitch == 1" />
+            v-if="isProjectSwitch == 1" />
           <el-table-column prop="classAttribute" label="产品分类" width="120" sortable="custom">
             <template slot-scope="scope">
               <div v-if="scope.row.classAttribute == 'finish_product'">成品</div>
@@ -173,13 +175,13 @@ export default {
       },
       superQueryJson: [
         {
-          prop: 'productDrawingNo',
-          label: "品名规格",
+          prop: 'productCode',
+          label: "产品编码",
           type: 'input'
         },
         {
-          prop: 'productCode',
-          label: "产品编码",
+          prop: 'productDrawingNo',
+          label: "品名规格",
           type: 'input'
         },
 
@@ -231,6 +233,7 @@ export default {
 
       ],
       isProjectSwitch: '',
+      isProductNameSwitch: "",
     }
   },
   watch: {
@@ -241,15 +244,28 @@ export default {
 
   async created() {
     await this.getProjectSwitch('system', 'project')
-    this.tableDataFlag = true
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProductNameSwitch == 1) {
+      this.superQueryJson.splice(1, 0, {
+        prop: 'productsName',
+        label: '产品名称',
+        type: 'input'
+      })
+    }
     this.search('basic')
     this.superForm = this.tableQuery
-  }, 
+  },
   computed: {
     ...mapGetters(['userInfo'])
   },
- 
+
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
     // 导出
     exportForm(exportTableRef) {
       console.log("object,", exportTableRef);
@@ -303,16 +319,16 @@ export default {
 
     initData() {
       this.tableQuery.classAttribute = this.classAttribute
-        this.tableQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      this.tableQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       inventoryWarehouseList(this.tableQuery).then((res) => {
         console.log(res);
         if (res.data.whPage.records.length) {
           this.tableData = res.data.whPage.records
-          this.totalData = res.data.stockSts||{
-        totalInventory:0,
-        totalAvailable:0,
-        totalOccupancy:0,
-      }
+          this.totalData = res.data.stockSts || {
+            totalInventory: 0,
+            totalAvailable: 0,
+            totalOccupancy: 0,
+          }
           this.total = res.data.whPage.total
         } else {
 
@@ -382,7 +398,7 @@ export default {
     sortChange({ prop, order }) {
       let newProp
       if (prop == 'projectName' || prop == 'maxInventory' || prop == 'drawingNo') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-      else newProp =  prop
+      else newProp = prop
       this.tableQuery.orderItems[0].asc = order === 'ascending'
       this.tableQuery.orderItems[0].column = newProp
       this.initData()

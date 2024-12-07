@@ -182,6 +182,7 @@ export default {
       ],
       selectList: [],
       isProjectSwitchFlag: false,
+      isProductNameSwitch:"",
     }
   },
   watch: {

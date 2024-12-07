@@ -43,7 +43,7 @@
             </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="form.pageNum" :limit.sync="form.pageSize"
-            @pagination="getbatchNumList" />
+            @pagination="getbatchNumList(id)" />
         </div>
       </div>
     </div>
@@ -97,6 +97,7 @@ export default {
       this.customerVisible = false
     },
     getbatchNumList(id) {
+      console.log("id0,",id);
       this.listLoading = true
       this.form.projectId=id
       getProcessList(this.form).then(res => {

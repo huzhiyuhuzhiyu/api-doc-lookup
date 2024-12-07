@@ -1,18 +1,14 @@
 <template>
   <div class="JNPF-common-layout">
-
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-
-
             <template v-for="item in searchList">
               <el-col :span="item.searchType === 3 ? 6 : 4">
                 <el-form-item>
                   <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
                     @keyup.enter.native="search('basic')" />
-
                   <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
                     clearable>
                     <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
@@ -25,7 +21,6 @@
                 </el-form-item>
               </el-col>
             </template>
-
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
@@ -34,14 +29,12 @@
                 </el-button>
               </el-form-item>
             </el-col>
-
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
             </div>
-
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -65,7 +58,6 @@
                 }}</el-link>
               </template>
             </el-table-column>
-
             <el-table-column prop="processSchedule" label="工单进度条" :width="maxWidth">
               <template slot-scope="scope">
                 <div v-for="(item, index) in scope.row.processInfoList" :key="index"
@@ -79,7 +71,6 @@
                     style="width: 30px;height: 30px;position: absolute; top: 13px; right: -14px;"
                     src="../../../../assets/images/right.png" alt="">
                 </div>
-
                 <!-- <el-progress type="circle" width="60" :percentage="25"></el-progress>
                 <el-progress type="circle" width="60" :percentage="100" status="success"></el-progress> -->
                 <!-- <div v-for="(item, index) in scope.row.processInfoList" :key="index"
@@ -95,7 +86,6 @@
                       style="width: 30px;height: 30px;position: absolute; top: 13px; right: 10px;"
                       src="../../../../assets/images/right.png" alt="">
                   </div>
-
                 </div> -->
               </template>
             </el-table-column>
@@ -104,9 +94,10 @@
                 <div v-if="scope.row.orderType == 'normal'">正常任务</div>
                 <div v-if="scope.row.orderType == 'rework'">返工任务</div>
                 <div v-if="scope.row.orderType == 'manually'">手动新建任务</div>
-
               </template>
             </el-table-column>
+            <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+            v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
@@ -120,14 +111,9 @@
                 <div v-if="scope.row.orderStatus == 'finish'"><el-tag type="success">已完成</el-tag></div>
               </template>
             </el-table-column>
-
-
-
-
             <el-table-column prop="mainUnit" label="单位" width="80" />
             <el-table-column prop="productionQuantity" label="生产数量" min-width="140" sortable="custom" />
             <el-table-column prop="completedQuantity" label="已完成数量" min-width="140" sortable="custom" />
-
             <el-table-column prop="routingName" label="工艺路线名称" min-width="160" sortable="custom" />
             <el-table-column prop="routingCode" label="工艺路线编码" min-width="160" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
@@ -139,10 +125,6 @@
             <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
             <el-table-column prop="specialRequire" label="特殊要求" min-width="160" sortable="custom" />
             <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
-
-
-
-
             <el-table-column prop="urgentFlag" label="是否紧急" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div>{{ scope.row.urgentFlag ? '是' : '否' }}</div>
@@ -151,9 +133,7 @@
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" />
             <el-table-column label="操作" width="180" fixed="right">
-
               <template slot-scope="scope">
-
                 <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'all')">任务详情</el-button>
                 <el-button size="mini" type="text" @click="viewTaskSchedule(scope.row.id)">进度详情</el-button>
               </template>
@@ -163,7 +143,6 @@
             @pagination="initData" />
         </div>
       </div>
-
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
     <TaskSchedule v-if="taskScheduleVisible" ref="taskScheduleForm" @refreshDataList="initData" @close="closeForm" />
@@ -172,7 +151,6 @@
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
-
 <script>
 import { ordershengchanList, addOrderNum } from '@/api/productOrdes/index.js'
 import { prodOrderClose } from '@/api/productOrdes/finishedProductOrders.js'
@@ -180,13 +158,11 @@ import { UserListAll, } from '@/api/permission/user'
 import Form from '../assemblyTaskManagement/taskFormCopy.vue'
 import TaskSchedule from './taskSchedule.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
-
 export default {
   name: 'assemblyTaskManagement',
   components: { SuperQuery, Form, TaskSchedule },
@@ -201,8 +177,7 @@ export default {
         { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],
-      taskScheduleVisible: false,
-      columnList: ["orderType", "routingCode", "productionPlanNo", "createByName"],
+      taskScheduleVisible: false, 
       form: {
         appendQuantity: "",
         productionQuantity: "",
@@ -211,7 +186,6 @@ export default {
       reworkVisible: false,
       addOrderVisible: false,
       columnList: ["productCode", "routingCode", "planStartDate", "planEndDate", "createByName",],
-
       superQueryVisible: false,
       btnLoading: false,
       title: "更多查询",
@@ -259,13 +233,13 @@ export default {
           ]
         },
         {
-          prop: 'productDrawingNo',
-          label: "品名规格",
+          prop: 'productCode',
+          label: "产品编码",
           type: 'input'
         },
         {
-          prop: 'productCode',
-          label: "产品编码",
+          prop: 'productDrawingNo',
+          label: "品名规格",
           type: 'input'
         },
         {
@@ -293,7 +267,6 @@ export default {
           label: "工艺路线编码",
           type: 'input'
         },
-
         {
           prop: 'sealingCoverTyping',
           label: "打字内容",
@@ -312,7 +285,6 @@ export default {
           type: 'select',
           options: []
         },
-
         {
           prop: 'oil',
           label: "油脂",
@@ -348,7 +320,6 @@ export default {
           label: "生产计划单号",
           type: 'input'
         },
-
         {
           prop: 'urgentFlag',
           label: "是否紧急",
@@ -411,35 +382,42 @@ export default {
       maxWidth: "",
       isProjectSwitch: '',
       showFlag:true,
+      isProductNameSwitch:"",
+
     }
   },
   computed: {
     ...mapGetters(['userInfo'])
   },
   async created() {
-
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProductNameSwitch == 1) {
+      this.superQueryJson.splice(3, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
+    }
     this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search('basic')
   }, 
- 
-
   mounted() {
     this.getProductClassFun()
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.isProjectSwitchFlag = true
+      } catch (error) { }
+    },
     viewTaskSchedule(id) {
       this.taskScheduleVisible = true
       this.$nextTick(() => {
         this.$refs.taskScheduleForm.init(id)
       })
     },
-
-
-
-
-
-
     // 获取打字内容等
     getProductClassFun() {
       this.requestArr.forEach((item, index) => {
@@ -459,7 +437,6 @@ export default {
           ],
         };
         getbimProductAttributesList(obj1).then(res => {
-
           let arr = []
           res.data.records.forEach(items => {
             let obj = {
@@ -475,12 +452,7 @@ export default {
           }
         })
       })
-
-
-
-
     },
-
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
@@ -488,7 +460,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'partnerCode' ||prop=='projectName'|| prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'productDrawingNo' || prop == 'productCode' || prop == 'routingName' || prop == 'routingCode') {
+      if (prop === 'partnerCode'||prop=='productName' ||prop=='projectName'|| prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'productDrawingNo' || prop == 'productCode' || prop == 'routingName' || prop == 'routingCode') {
         if (prop === 'createByName') {
           newProp = 'create_by'
         } else {
@@ -499,10 +471,8 @@ export default {
       }
       this.orderForm.orderItems[0].asc = order !== "descending"
       this.orderForm.orderItems[0].column = order === null ? "" : newProp
-
       this.initData()
     },
-
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
@@ -515,19 +485,17 @@ export default {
       this.showFlag = false
       this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       ordershengchanList(this.orderForm).then(res => {
-        if (res.data.records.length) {
-
+          this.showFlag = true
+          if (res.data.records.length) {
           res.data.records.forEach(item => {
             // 初始化 processInfoList 为一个空数组  
             item.processInfoList = [];
-
             // 检查 processSchedule 字段是否有值  
             if (item.processSchedule) {
               // 判断是否包含逗号  
               if (item.processSchedule.includes(',')) {
                 // 以逗号分割为数组  
                 const processes = item.processSchedule.split(',');
-
                 // 遍历每一项并处理  
                 processes.forEach(process => {
                   const [name, value] = process.split(':');
@@ -545,7 +513,6 @@ export default {
             return current.processInfoList.length > longest.processInfoList.length ? current : longest;
           }, res.data.records[0]);
           this.maxWidth = longestProcessInfo.processInfoList.length * 100 + 50
-          this.showFlag = true
           setTimeout(() => {
             this.listLoading = false
           }, 500);
@@ -553,7 +520,6 @@ export default {
           this.total = res.data.total
         }else{
           this.showFlag=true
-          
           this.tableData=[]
           this.total=0
           this.listLoading=false
@@ -562,11 +528,8 @@ export default {
       }).catch(() => {
         this.listLoading = false
       })
-
     },
-
     search(type) {
-
       Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
         let item = this.orderForm[key]
         this.orderForm[key] = typeof item === 'string' ? item.trim() : item
@@ -593,10 +556,7 @@ export default {
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-
       this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-
-
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
         { field: 'productionPlanNo', fieldValue: '', label: '生产计划单号', symbol: 'like', searchType: 1, width: 120 },
@@ -605,7 +565,6 @@ export default {
       ],
         this.search('basic')
     },
-
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
@@ -626,11 +585,9 @@ export default {
         this.$refs.Form.init(id, btnType)
       })
     },
-
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
-
   }
 }
 </script>
@@ -638,10 +595,8 @@ export default {
 .JNPF-common-search-box {
   padding: 8px 0 !important;
   margin-left: 0 !important;
-
   margin-bottom: 5px;
 }
-
 .processSchedule_top {
   width: 50px;
   height: 50px;
@@ -650,20 +605,15 @@ export default {
   line-height: 50px;
   text-align: center;
 }
-
 .noValue {
   border-color: #ccc;
-
 }
-
 .normal {
   border-color: #409eff
 }
-
 .sucess {
   border-color: #67c23A
 }
-
 .ProcessName {
   font-size: 12px !important;
   overflow: hidden;

@@ -80,8 +80,10 @@
                     </div>
                     <JNPF-table ref="product" :data="dataFormTwo.data" fixedNo v-loading="tableloading"
                       :hasC="btnType != 'look'" @selection-change="handeleProductInfoData">
-                      <el-table-column prop="productDrawingNo" label="品名规格" min-width="130"></el-table-column>
                       <el-table-column prop="productCode" label="产品编码" min-width="130"></el-table-column>
+                      <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                      v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="productDrawingNo" label="品名规格" min-width="130"></el-table-column>
                       <el-table-column prop="processName" label="工序名称" min-width="130" />
                       <el-table-column prop="mainUnit" label="单位" min-width="130"></el-table-column>
                       <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="130"
@@ -187,8 +189,10 @@
                     </div>
                     <JNPF-table ref="product" :data="dataFormTwo.data" fixedNo v-loading="tableloading"
                       :hasC="btnType != 'look'" @selection-change="handeleProductInfoData">
-                      <el-table-column prop="productDrawingNo" label="品名规格" min-width="130"></el-table-column>
                       <el-table-column prop="productCode" label="产品编码" min-width="130"></el-table-column>
+                      <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                      v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="productDrawingNo" label="品名规格" min-width="130"></el-table-column>
                       <el-table-column prop="processName" label="工序名称" min-width="130" />
                       <el-table-column prop="mainUnit" label="单位" min-width="130"></el-table-column>
                       <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="130"
@@ -336,19 +340,26 @@ export default {
       flowData:{},
       approvalFlag:false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime:0
+      endTime:0,
+      isProductNameSwitch:"",
     }
   },
   computed: {
 
   },
-  created() {
-
+async  created() {
+  await this.getProductNameSwitch('product', 'enable_productName')
+   
   },
   mounted() {
     this.getBimBusinessDetail()
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+      } catch (error) { }
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',

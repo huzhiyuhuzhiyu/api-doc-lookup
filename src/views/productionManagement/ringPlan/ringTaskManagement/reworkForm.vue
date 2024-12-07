@@ -325,8 +325,10 @@
                       v-bind="dataFormOne.collectData" @selection-change="handeleProductInfoData">
                       <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column>
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                      <el-table-column prop="drawingNo" label="品名规格" />
                       <el-table-column prop="productCode" label="产品编码"></el-table-column>
+                      <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                      v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="drawingNo" label="品名规格" />
                       <el-table-column prop="processName" label="工序名称">
                         <template slot="header">
                           <span class="required">*</span>工序名称
@@ -797,6 +799,7 @@ export default {
       detailDiaFlag: false,
       naturalResourcesFlag: true,
       isProjectSwitch: "",
+      isProductNameSwitch:"",
     }
   },
   computed: {
@@ -825,6 +828,8 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
+     
     this.getPickingConfig()
 
   },
@@ -832,6 +837,11 @@ export default {
 
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+      } catch (error) { }
+    },
     selectTaskMethod() {
       if (this.dataForm.taskMethod == 'not_appoint') {
         this.naturalResourcesFlag = false

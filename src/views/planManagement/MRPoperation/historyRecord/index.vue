@@ -70,7 +70,7 @@
                 :checkSelectable="disproduceData" :key="1">
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
-                v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                  v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
@@ -185,7 +185,7 @@
                 :checkSelectable="disproduceData">
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
-                v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                  v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="170" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
@@ -337,7 +337,7 @@
                 :checkSelectable="dispurchaseData">
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
-                v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                  v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
@@ -469,7 +469,7 @@
                 :checkSelectable="disOutData">
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
-                v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                  v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" width="180" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
@@ -775,7 +775,6 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
-    this.isProjectSwitchFlag = true
     this.superForm1 = this.assembleForm
     this.getassembleData('basic');
     await this.getProductNameSwitch('product', 'enable_productName')
@@ -1232,8 +1231,13 @@ export default {
       this.searchList1 = [
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
-      ],
-        this.$refs.SuperQuery.conditionList = []
+      ]
+      if (this.isProductNameSwitch == 1) {
+
+        this.searchList1.splice(1, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },)
+
+      }
+      this.$refs.SuperQuery.conditionList = []
       this.getassembleData('basic')
     },
     // 生产列表数据
@@ -1324,6 +1328,11 @@ export default {
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
       ]
+      if (this.isProductNameSwitch == 1) {
+
+        this.searchList2.splice(1, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },)
+
+      }
       this.getproduceData('basic')
     },
     // 采购列表数据
@@ -1406,6 +1415,11 @@ export default {
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
       ]
+      if (this.isProductNameSwitch == 1) {
+
+        this.searchList3.splice(1, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },)
+
+      }
       this.getpurchaseData('basic')
     },
     // 外协列表数据
@@ -1495,6 +1509,10 @@ export default {
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
       ]
+      if (this.isProductNameSwitch == 1) {
+        this.searchList4.splice(1, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },)
+
+      }
       this.$refs.SuperQuery.conditionList = []
       this.getouteData('basic')
     },

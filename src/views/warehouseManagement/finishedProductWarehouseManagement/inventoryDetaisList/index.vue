@@ -58,7 +58,7 @@
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                @click="superQueryVisible = true" />
+                @click="advancedQueryFun" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
@@ -115,10 +115,10 @@
           <el-table-column prop="partnerCode" label="客户/供应商编码" sortable="custom" min-width="180">
 
           </el-table-column>
-          <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="300" />
+          <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
           <el-table-column prop="productName" label="产品名称" v-if="productNameFlag == '1'" min-width="160"
             sortable="custom" />
-          <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
+          <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="300" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
           <!-- <el-table-column prop="mainUnit" label="单位" min-width="140" />
@@ -457,13 +457,13 @@ export default {
           type: 'input'
         },
         {
-          prop: 'drawingNo',
-          label: "品名规格",
+          prop: 'productCode',
+          label: "产品编码",
           type: 'input'
         },
         {
-          prop: 'productCode',
-          label: "产品编码",
+          prop: 'drawingNo',
+          label: "品名规格",
           type: 'input'
         },
 
@@ -614,20 +614,22 @@ export default {
     ...mapGetters(['userInfo'])
   },
   mounted() {
-    this.getProductClassFun()
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
 
 
   },
   methods: {
+    // 点击高级查询
+    advancedQueryFun() {
+      this.getProductClassFun()
+      this.superQueryVisible = true
+    },
     // 获取仓库
     getWarehouseListFun() {
       getWarehouseTree({ code: this.warehouseCode }).then(res => {
         // 获取仓库详情信息
-        getWarehouseInfo(res.data[0].id).then(response => {
-          this.initListQuery.projectId = this.listQuery.projectId = this.isProjectSwitch === '1' ? res.data[0].projectId || '' : ''
-          this.getclassAttributeList()
-        })
+        this.initListQuery.projectId = this.listQuery.projectId = this.isProjectSwitch === '1' ? res.data[0].projectId || '' : ''
+
       })
     },
     async getMainUnitFun(code, type) {
@@ -641,7 +643,11 @@ export default {
           this.listLoading = false
           this.tableDataFlag = true
           if (this.productNameFlag == '1') {
-
+            this.superQueryJson.splice(5, 0, {
+              prop: 'productsName',
+              label: '产品名称',
+              type: 'input'
+            })
             this.searchList.push({ field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 })
           }
 
@@ -1262,6 +1268,7 @@ export default {
         this.listQuery.orderEndDate = ""
       }
       // this.listQuery.approvalStatus = 'ok'
+      this.listQuery.projectId = this.isProjectSwitch === '1' ? this.initListQuery.projectId || '' : ''
       getInventorySummaryData(this.listQuery).then(res => {
 
         this.tableData = res.data.page.records

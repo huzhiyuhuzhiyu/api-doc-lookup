@@ -21,8 +21,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="orderForm.processName" placeholder="工序名称" clearable
-                  @keyup.enter.native="search()" />
+                <el-input v-model="orderForm.processName" placeholder="工序名称" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
 
@@ -39,15 +38,17 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @selection-change="selectmaterial"
-          @row-click="handleRowClick" hasC>
-           
-            <el-table-column prop="productDrawingNo" label="品名规格" ></el-table-column>
-            <el-table-column prop="productCode" label="产品编码" ></el-table-column>
-            <el-table-column prop="processName" label="工序名称" ></el-table-column>
+            @row-click="handleRowClick" hasC>
+
+            <el-table-column prop="productCode" label="产品编码"></el-table-column>
+            <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+              v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="productDrawingNo" label="品名规格"></el-table-column>
+            <el-table-column prop="processName" label="工序名称"></el-table-column>
             <el-table-column prop="mainUnit" label="单位" width="80" />
-            <el-table-column prop="inventoryQuantity" label="可领料数量"  />
-         
-     
+            <el-table-column prop="inventoryQuantity" label="可领料数量" />
+
+
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
             @pagination="getWorkListFun" />
@@ -62,7 +63,7 @@
   </el-dialog>
 </template>
 <script>
-import { ordershengchanList, addOrderNum,getWorkList,ordercollectlList } from '@/api/productOrdes/index.js'
+import { ordershengchanList, addOrderNum, getWorkList, ordercollectlList } from '@/api/productOrdes/index.js'
 export default {
   data() {
     return {
@@ -77,7 +78,7 @@ export default {
         productCode: "",
         processName: "",
         pageNum: 1,
-        productionOrderId:"",
+        productionOrderId: "",
         pageSize: 20,
         superQuery: {
           condition: [],
@@ -89,24 +90,35 @@ export default {
         }, {
           asc: false,
           column: "create_time"
-        }], 
-        pickingProductFlag: 1, 
+        }],
+        pickingProductFlag: 1,
 
       },
       listLoading: false,
       total: 0,
       tableDataList: [],
-      selectArr:[],
+      selectArr: [],
+      isProductNameSwitch:"",
+
 
     }
   },
+  async created () {
+    await this.getProductNameSwitch('product', 'enable_productName')
+     
+  },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+      } catch (error) { }
+    },
     init(id) {
       this.customerVisible = true
       this.orderForm.productionOrderId = id
       this.getWorkListFun()
     },
-    selectmaterial(val){
+    selectmaterial(val) {
       this.selectArr = val
 
     },
@@ -148,7 +160,7 @@ export default {
         }, {
           asc: false,
           column: "create_time"
-        }], 
+        }],
         pickingProductFlag: 1,
       }
       this.getWorkListFun()

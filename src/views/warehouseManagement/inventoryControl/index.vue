@@ -94,10 +94,12 @@
         </div>
         <JNPF-table :data="tableData" custom-column fixedNO @sort-change="sortChange" v-if="isProjectSwitchFlag"
           @selection-change="handleSelectionChange" hasC ref="dataTable" :setColumnDisplayList="columnList">
-          <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom" />
-          <!-- 这里的 width 会被转成 min-width -->
           <el-table-column prop="code" label="产品编码" min-width="120" sortable="custom">
           </el-table-column>
+          <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+          v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom" />
+          <!-- 这里的 width 会被转成 min-width -->
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
           v-if="isProjectSwitch == 1" />
           <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
@@ -169,8 +171,8 @@ export default {
       superForm: {},
       basicQuery: {},
       searchList: [
-        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'code', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],
       superQueryVisible: false,
       formLoading: false,
@@ -237,13 +239,13 @@ export default {
 
       superQueryJson: [
         {
-          prop: 'drawingNo',
-          label: "品名规格",
+          prop: 'code',
+          label: "产品编码",
           type: 'input'
         },
         {
-          prop: 'code',
-          label: "产品编码",
+          prop: 'drawingNo',
+          label: "品名规格",
           type: 'input'
         },
 
@@ -279,6 +281,8 @@ export default {
       maxInventory:"",
       isProjectSwitch: '',
       isProjectSwitchFlag: false,
+      isProductNameSwitch:"",
+
     }
   },
   watch: {
@@ -291,11 +295,28 @@ export default {
    
   async created() {
     await this.getProjectSwitch('system', 'project')
+   
+    await this.getProductNameSwitch('product', 'enable_productName')
+   
+    if (this.isProductNameSwitch == 1) {
+      this.superQueryJson.splice(1, 0, {
+        prop: 'name',
+        label: '产品名称',
+        type: 'input'
+      })
+      this.searchList.splice(1, 0,  { field: 'name', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 })
+    }
     this.isProjectSwitchFlag = true
     this.getcategoryTree()
     this.superForm=this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
   }, 
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.isProjectSwitchFlag = true
+      } catch (error) { }
+    },
     safeInventoryFocusFun(row) {
       this.safeInventory = JSON.parse(JSON.stringify(row.safeInventory))
     },
@@ -464,9 +485,13 @@ export default {
       this.superForm=this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.selectedKeys = [];
       this.searchList=[
+        { field: 'code', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
       { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-      { field: 'code', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
-      ],
+      ]
+      if (this.isProductNameSwitch == 1) {
+    
+      this.searchList.splice(1, 0,  { field: 'name', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 })
+    }
       this.initData()
     },
 

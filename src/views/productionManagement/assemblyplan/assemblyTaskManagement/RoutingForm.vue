@@ -43,7 +43,7 @@
             </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="form.pageNum" :limit.sync="form.pageSize"
-            @pagination="getbatchNumList" />
+            @pagination="getbatchNumList(id)" />
         </div>
       </div>
     </div>

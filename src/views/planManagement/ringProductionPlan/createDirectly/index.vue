@@ -37,7 +37,7 @@
                         <el-col :sm="6" :xs="24" v-if="isProjectSwitch == 1">
                           <el-form-item label="所属项目" prop="projectId">
                             <el-select v-model="planForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;"
-                              :disabled="userInfo.projectId != '1'">
+                              @change="changeProject" :disabled="userInfo.projectId != '1'">
                               <el-option v-for="(item, index) in projectIdDataList" :key="index" :label="item.label"
                                 :value="item.value"></el-option>
                             </el-select>
@@ -72,12 +72,14 @@
                       @selection-change="handeleProductInfoData" border height="660" :key="165" style="width: 100%;"
                       hasC>
 
-                      <el-table-column type="planNo" min-width="160" label="计划单号" :key="1011"
+                      <el-table-column type="planNo" width="160" label="计划单号" :key="1011"
                         v-if="codeConfig.codeWay != 'auto'">
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.planNo" placeholder="计划单号" />
                         </template>
                       </el-table-column>
+                      <el-table-column prop="productName" label="产品名称"    width="160" v-if="isProductNameSwitch === '1'"
+                      show-overflow-tooltip></el-table-column>
                       <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6"></el-table-column>
                       <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                       <el-table-column prop="bomId" label="BOM" width="140" :key="444">
@@ -87,8 +89,8 @@
                       </el-table-column>
 
                       <el-table-column prop="mainUnit" label="单位" width="80" :key="89" />
-                      <el-table-column prop="inventoryQuantity" label="可用库存数量" min-width="140" :key="8" />
-                      <el-table-column prop="planQuantity" label="计划数量" min-width="120" :key="7">
+                      <el-table-column prop="inventoryQuantity" label="可用库存数量" width="140" :key="8" />
+                      <el-table-column prop="planQuantity" label="计划数量" width="100" :key="7">
                         <template slot="header">
                           <span class="required">*</span>计划数量
                         </template>
@@ -100,6 +102,8 @@
                       </el-table-column>
 
 
+
+                       
                       <el-table-column prop="remark" label="备注" width="200" :key="128">
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.remark" placeholder="请输入" maxlength="200" />
@@ -134,15 +138,20 @@
                   <el-form @submit.native.prevent>
                     <el-col :span="6">
                       <el-form-item>
+                        <el-input v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="6"  v-if="isProductNameSwitch === '1'">
+                      <el-form-item>
+                        <el-input  v-model="ProductListRequestObj.productName" placeholder="请输入产品名称" clearable />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                      <el-form-item>
                         <el-input v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
                       </el-form-item>
                     </el-col>
 
-                    <el-col :span="6">
-                      <el-form-item>
-                        <el-input v-model="ProductListRequestObj.code" placeholder="请输入产品编码" clearable />
-                      </el-form-item>
-                    </el-col>
                     <el-col :span="6">
                       <el-form-item>
                         <el-button type="primary" size="mini" icon="el-icon-search" @click="searchAllProduct()">
@@ -158,13 +167,14 @@
                 <div class="JNPF-common-layout-main JNPF-flex-main">
                   <JNPF-table v-loading="listLoading" :data="allproductData" hasC @sort-change="sortChange"
                     @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
-                    <el-table-column prop="drawingNo" label="品名规格" sortable="custom" />
-                    <el-table-column prop="code" label="产品编码" sortable="custom" width="140"></el-table-column>
+                    <el-table-column prop="code" label="产品编码" sortable="custom" width="160"></el-table-column>
+                    <el-table-column prop="name" label="产品名称"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
+                      show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="330"/>
                     <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
-
                     <el-table-column prop="mainUnit" label="单位" width="80"></el-table-column>
-                    <el-table-column prop="inventoryQuantity" label="可用库存数量" sortable="custom"></el-table-column>
-                    <el-table-column prop="bomId" label="是否有BOM" sortable="custom">
+                    <el-table-column prop="inventoryQuantity" label="可用库存数量" min-width="160" sortable="custom"></el-table-column>
+                    <el-table-column prop="bomId" label="是否有BOM" sortable="custom" min-width="140">
                       <template slot-scope="scope">
                         {{ scope.row.bomId ? '有' : '无' }}
                       </template>
@@ -206,22 +216,19 @@ import { getOrderDetail, addOrders, editOrders, getcategoryTrees, getAttributeli
 import { getCounryData, getCooperativeInfo, getCooperativeData, getscheduleList } from '@/api/basicData/index'
 import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表 
 import { mapGetters, mapState } from 'vuex'
-import getProjectList from '@/mixins/generator/getProjectList'
-
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
-import { log } from 'mathjs'
-
+import getProjectList from '@/mixins/generator/getProjectList'
 import { getBimBusinessDetail } from '@/api/basicData/index'
+
 export default {
 
   mixins: [getProjectList],
 
   data() {
     return {
-      isattachmentswitch: '',
-
+      isattachmentswitch: "",
       planTypeList: [
         { label: "订单生成计划", value: "order_plan" },
         { label: "直接创建计划", value: "add_plan" },
@@ -231,17 +238,11 @@ export default {
         planType: "add_plan",
         planDate: [],
         planStartDate: "",
-        projectId:"",
         planEndDate: "",
+        projectId: "",
       },
       codeConfig: {},//单据规则配置
-      list1: [],
-      list2: [],
-      list3: [],
-      list4: [],
-      list5: [],
-      list6: [],
-      list7: [],
+ 
       btnText: "",
       tipsvisible: false,
       activeNames: ["productInfo", "basicInfo"],
@@ -253,8 +254,8 @@ export default {
         queryType: 2,
         productStatus: 'enable',
         purchaseFlag: false,
-        code: "",
-        name: "",
+        productCode: "",
+        productName: "",
         orderItems: [{
           "asc": false,
           "column": ""
@@ -303,6 +304,7 @@ export default {
       isProjectSwitch: "",
       isProjectSwitchFlag: null,
       projectIdDataList: [],
+      isProductNameSwitch:"",
     }
   },
   computed: {
@@ -313,161 +315,45 @@ export default {
 
   async created() {
     await this.getProjectSwitch('system', 'project')
-    await this.getProjectList()
-    this.isProjectSwitchFlag = true
+    await this.getProductNameSwitch('product', 'enable_productName')
+
+    await this.getProjectList() 
     if (this.isProjectSwitch == 1) {
       console.log(this.projectIdDataList);
-      this.planForm.projectId=this.userInfo.projectId==1?"":this.userInfo.projectId 
+      this.planForm.projectId=this.userInfo.projectId==1?"":this.userInfo.projectId
+
     }
   },
-  mounted() { 
-    this.init()
-    this.getProductClassFun()
+  mounted() {
+    this.init() 
+    this.getBimBusinessDetail()
+
   },
   beforeDestroy() {
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.isProjectSwitchFlag = true
+      } catch (error) { }
+    },
     changeProject() { 
-      this.productData = this.productData.filter(item => item.id === this.planForm.projectId);
+      this.productData = this.productData.filter(item => item.projectId === this.planForm.projectId);
     },
-    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
-    getProductClassFun() {
-
-      let obj1 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa007",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj1).then(res => {
-        this.list1 = res.data.records
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_plan'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
       })
-      let obj2 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa006",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj2).then(res => {
-        this.list2 = res.data.records
-      })
-      let obj3 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa005",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj3).then(res => {
-        this.list3 = res.data.records
-      })
-      let obj4 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa002",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj4).then(res => {
-        this.list4 = res.data.records
-      })
-      let obj5 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa003",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj5).then(res => {
-        this.list5 = res.data.records
-      })
-      let obj6 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa001",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-
-      getbimProductAttributesList(obj6).then(res => {
-        this.list6 = res.data.records
-      })
-      let obj7 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa015",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj7).then(res => {
-        this.list7 = res.data.records
-      })
-
-
-
-
     },
+  
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName' || prop === 'productCode') {
+      if (prop === 'productName' || prop == 'projectName' || prop === 'productCode') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'
@@ -546,7 +432,7 @@ export default {
 
 
     // 根据订单类型  打开不同的选择产品弹框
-    openSeleceProductDialog() {
+    openSeleceProductDialog() { 
       if(!this.planForm.projectId&&this.isProjectSwitch==1) return this.$message.error("请先选择所属项目")
 
       this.allProVisible = true
@@ -557,10 +443,9 @@ export default {
     },
     // 获取所有产品列表数据
     initData() {
-      this.listLoading = true 
+      this.listLoading = true
      this.ProductListRequestObj.projectId = this.isProjectSwitch === '1' ? this.planForm.projectId || '' : ''
-
-      getProducts(this.ProductListRequestObj).then(listRes => {
+     getProducts(this.ProductListRequestObj).then(listRes => {
         if (Array.isArray(listRes.data)) {
           this.allproductData = listRes.data
         } else {
@@ -584,8 +469,8 @@ export default {
         productDrawingNo: "",
         productCategoryId: "",
         queryType: 2,
-        code: "",
-        name: "",
+        productCode: "",
+        productName: "",
         purchaseFlag: false,
         orderItems: [{
           "asc": false,
@@ -691,7 +576,7 @@ export default {
 
     goBack() {
       this.$router.push({
-        path: "/planManagement/ringProductionPlan/assemblyPlanManagement",
+        path: "/planManagement/assemblyPlan/assemblyPlanManagement",
       })
       this.tipsvisible = false
     },

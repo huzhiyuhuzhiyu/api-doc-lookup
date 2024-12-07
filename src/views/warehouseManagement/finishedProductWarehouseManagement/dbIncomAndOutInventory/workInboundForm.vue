@@ -90,11 +90,12 @@
                         style="width: 100%;">
 
 
-                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
-                          show-overflow-tooltip> </el-table-column>
+                     
+                        <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
-                        <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
+                          <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
+                          show-overflow-tooltip> </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
                         <el-table-column prop="processName" label="工序" width="120" />
@@ -216,11 +217,12 @@
                   <JNPF-table ref="product" :data="productData" :fixedNO="true" border :key="165" style="width: 100%;">
 
 
+          
+                    <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
+                    <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                       show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
-                    <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                     <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
                     <el-table-column prop="processName" label="工序" width="120" />
 
@@ -321,9 +323,9 @@
                 @selection-change="handleSelectionChangeAllPruduct" ref="form">
                 <el-table-column prop="productionOrderNo" label="任务单号" width="180" />
                 <el-table-column prop="orderNo" label="工单号" width="180" />
-                <el-table-column prop="productDrawingNo" label="品名规格" width="300" />
-                <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
                 <el-table-column prop="productName" label="产品编码" width="160" />
+                <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
+                <el-table-column prop="productDrawingNo" label="品名规格" width="300" />
                 <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
                 <el-table-column prop="processName" label="工序名称" width="160" />
                 <el-table-column prop="mainUnit" label="单位" width="80" />

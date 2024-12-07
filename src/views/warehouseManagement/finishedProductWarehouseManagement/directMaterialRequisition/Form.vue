@@ -59,8 +59,10 @@
 
                   <JNPF-table ref="product" :data="productData" :fixedNO="true" hasC
                     @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
-                    <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
+                    <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                      v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
                     <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                     <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"></el-table-column>
                     <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
@@ -181,9 +183,11 @@
                 @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
                 <el-table-column prop="partnerName" label="供应商名称" min-width="160" />
                 <el-table-column prop="partnerCode" label="供应商编码" min-width="160" />
+                <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
+                <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                  v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="160"
                   sortable="custom"></el-table-column>
-                <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
                 <el-table-column prop="productCategoryName" label="产品分类" sortable="custom" min-width="120" />
@@ -376,11 +380,13 @@ export default {
       previousValue: "",
 
       taxRateList: [],
-      classAttribute: "", 
+      classAttribute: "",
       classAttributeList: [],
       mainUnitFlag: null,
-      warehouseId:"",
-      warehouseCode:"",
+      warehouseId: "",
+      warehouseCode: "",
+      isProductNameSwitch: "",
+
     }
   },
 
@@ -388,6 +394,8 @@ export default {
     await this.getProjectSwitch('system', 'project')
     this.getWarehouseListFun()
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
+
+    await this.getProductNameSwitch('product', 'enable_productName')
 
 
   },
@@ -402,13 +410,18 @@ export default {
     },
   },
   methods: {
-      // 获取仓库id
-      getWarehouseListFun() {
+    // 获取仓库id
+    getWarehouseListFun() {
       getWarehouseList({ code: this.warehouseCode }).then(res => {
         this.warehouseId = res.data[0].id
         this.projectId = res.data[0].projectId
-        
+
       })
+    },
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
     },
     async getMainUnitFun(code, type) {
       this.listLoading = true
@@ -465,7 +478,7 @@ export default {
         ],
         pageNum: 1,
         pageSize: 20,
-      } 
+      }
       obj.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
       getProductList(obj).then(res => {
         console.log("产品信息", res);
@@ -524,7 +537,7 @@ export default {
         productCategoryId: "",
         batchNumber: "",
         availableBatch: 1,
-        warehouseId:this.warehouseId,
+        warehouseId: this.warehouseId,
         inspectStockFlag: true,
         productCode: "",
         productName: "",
@@ -571,8 +584,8 @@ export default {
         productCategoryId: "",
         batchNumber: "",
         availableBatch: 1,
-        projectId:this.projectId,
-        warehouseId:this.warehouseId,
+        projectId: this.projectId,
+        warehouseId: this.warehouseId,
         inspectStockFlag: true,
         productCode: "",
         productName: "",
@@ -672,7 +685,7 @@ export default {
       this.$emit('close', true)
     },
 
-    init(id, btnType, classAttributeList,warehouseCode) {
+    init(id, btnType, classAttributeList, warehouseCode) {
       console.log(classAttributeList);
       // this.visible = true
       this.formLoading = true

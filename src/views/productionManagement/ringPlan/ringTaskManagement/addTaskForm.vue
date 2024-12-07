@@ -26,6 +26,13 @@
                         :disabled="codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
                     </el-form-item>
                   </el-col>
+                  <el-col :sm="6" :xs="24" v-if="isProductNameSwitch==1">
+                    <el-form-item label="产品名称" prop="productsName">
+                      <el-input v-model="dataForm.productsName" placeholder="产品名称" disabled
+                        >
+                      </el-input>
+                    </el-form-item>
+                  </el-col>
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="品名规格" prop="productsDrawingNo">
                       <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" readonly
@@ -610,7 +617,7 @@ export default {
       warehouseList: [],
       isProjectSwitch: "",
       projectIdData: [],
-
+      isProductNameSwitch:"",
     }
   },
   computed: {
@@ -643,10 +650,16 @@ export default {
   async created() {
     await this.getProjectList()
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
     this.getPickingConfig()
   },
 
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+      } catch (error) { }
+    },
     openSelectProductFun() {
       this.productVisible = true
       this.$nextTick(() => {

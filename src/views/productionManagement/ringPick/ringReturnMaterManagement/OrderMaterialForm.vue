@@ -1,6 +1,6 @@
 <template>
 
-  <el-dialog title="选择订单物料" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="customerVisible"
+  <el-dialog title="选择任务物料" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="customerVisible"
     lock-scroll class="JNPF-dialog JNPF-dialog_center selectProcess" width="70%" append-to-body
     @close="customerVisible = false">
 
@@ -42,8 +42,10 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @selection-change="selectmaterial"
             @row-click="handleRowClick" hasC>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="140"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
+            <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+            v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="140"></el-table-column>
             <el-table-column prop="processName" label="工序名称" min-width="140" />
             <el-table-column prop="mainUnit" label="单位" min-width="140" />
             <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="140" />
@@ -93,9 +95,20 @@ export default {
       tableDataList: [],
       id: "",
       selectArr:[],
+      isProductNameSwitch:"",
+
     }
   },
+  async  created() {
+  await this.getProductNameSwitch('product', 'enable_productName')
+   
+  },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+      } catch (error) { }
+    },
     init(id) {
       this.customerVisible = true
       this.orderForm.productionOrderId = id

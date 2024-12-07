@@ -30,16 +30,18 @@
                         :disabled="codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="6" :xs="24" v-if="isProjectSwitch == 1">
-                    <el-form-item label="所属项目" prop="projectId">
-                      <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;"
-                        disabled>
-                        <el-option v-for="(item, index) in projectIdData" :key="index" :label="item.label"
-                          :value="item.id"></el-option>
-                      </el-select>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="产品编码" prop="productsCode">
+                      <el-input v-model="dataForm.productsCode" placeholder="产品编码" disabled>
+                      </el-input>
                     </el-form-item>
                   </el-col>
-
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="产品名称" prop="productsName" v-if="isProductNameSwitch == 1">
+                      <el-input v-model="dataForm.productsName" placeholder="产品名称" disabled>
+                      </el-input>
+                    </el-form-item>
+                  </el-col>
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="品名规格" prop="productsDrawingNo">
                       <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" disabled>
@@ -47,10 +49,13 @@
                     </el-form-item>
                   </el-col>
 
-                  <el-col :sm="6" :xs="24">
-                    <el-form-item label="产品编码" prop="productsCode">
-                      <el-input v-model="dataForm.productsCode" placeholder="产品编码" disabled>
-                      </el-input>
+                  <el-col :sm="6" :xs="24" v-if="isProjectSwitch == 1">
+                    <el-form-item label="所属项目" prop="projectId">
+                      <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;"
+                        disabled>
+                        <el-option v-for="(item, index) in projectIdData" :key="index" :label="item.label"
+                          :value="item.id"></el-option>
+                      </el-select>
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
@@ -141,7 +146,8 @@
                   </el-col>
                   <el-col :sm="8" :xs="24">
                     <el-form-item label="领料人" prop="personId">
-                      <el-input v-model="collectForm.personId"  :disabled="btnType == 'look' ? true : false"  placeholder="领料人"/>
+                      <el-input v-model="collectForm.personId" :disabled="btnType == 'look' ? true : false"
+                        placeholder="领料人" />
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
@@ -535,7 +541,7 @@ export default {
         operationDate: [
           { required: true, message: '领料日期不能为空', trigger: 'change' }
         ],
-        
+
       },
       dataForm: {
         planDate: [],
@@ -621,6 +627,7 @@ export default {
       warehouseList: [],
       isProjectSwitch: "",
       projectIdData: [],
+      isProductNameSwitch: "",
 
     }
   },
@@ -654,11 +661,17 @@ export default {
   async created() {
     await this.getProjectList()
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
+
     this.getPickingConfig()
   },
 
   methods: {
-
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+      } catch (error) { }
+    },
     getWarehouseListFun() {
       let obj = {
         type: "line_edge",
@@ -812,10 +825,10 @@ export default {
         this.$nextTick(() => {
           this.$refs.routingForm.init(this.dataForm.projectId)
         })
-      }else{
+      } else {
         this.$nextTick(() => {
           this.$refs.routingForm.init("")
-        }) 
+        })
       }
     },
     selectRoutingFun(data) {

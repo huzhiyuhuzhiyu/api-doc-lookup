@@ -275,6 +275,7 @@ export default {
         // 获取仓库详情信息
         getWarehouseInfo(res.data[0].id).then(response => {
           this.form.projectId = this.isProjectSwitch === '1' ? res.data[0].projectId || '' : ''
+          this.warehouseInfo=res.data[0]
           this.getclassAttributeList()
         })
       })

@@ -40,8 +40,10 @@
             <el-table-column prop="productionOrderNo" label="任务单号" min-width="180" sortable="custom" />
             <el-table-column prop="workNo" label="工单单号" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="orderNo" label="报工单号" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
+            <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+            v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="productCategoryName" label="产品分类" min-width="120" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" width="160" sortable="custom" />
             <el-table-column prop="reportingTime" label="报工时间" min-width="160" sortable="custom" />
@@ -89,11 +91,21 @@ export default {
       listLoading: false,
       total: 0,
       tableDataList: [],
+      isProductNameSwitch:"",
 
 
     }
   },
+  async created() {
+    await this.getProductNameSwitch('product', 'enable_productName')
+   
+  },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+      } catch (error) { }
+    },
     init(data) {
       this.form.workNo = data
       this.customerVisible = true

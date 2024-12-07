@@ -66,7 +66,7 @@
           <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData" v-if="isProjectSwitchFlag"
             :fixedNO="true" :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" hasC
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
-            <el-table-column prop="processName" label="工序名称" min-width="300" sortable="custom"></el-table-column>
+            <el-table-column prop="processName" label="工序名称" min-width="120" sortable="custom"></el-table-column>
             <el-table-column prop="processCode" label="工序编码" min-width="120" sortable="custom" />
             <el-table-column prop="processingType" label="加工类型" min-width="120" sortable="custom">
               <template slot-scope="scope">
@@ -109,6 +109,8 @@
             </el-table-column>
             <el-table-column prop="productionOrderNo" label="生产任务单号" min-width="180"
               sortable="custom"></el-table-column>
+              <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+              v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom"></el-table-column>
             <el-table-column prop="prodOrderStatus" label="任务状态" min-width="120" sortable="custom">
               <template slot-scope="scope">
@@ -161,7 +163,7 @@ import { mapGetters, mapState } from 'vuex'
 
 export default {
 
-  name: 'ringWorkManagement',
+  name: 'assemblyWorkManagement',
   components: { SuperQuery, Form, BatchDispatchForm, ExportForm },
   mixins: [getProjectList],
 
@@ -225,23 +227,18 @@ export default {
           prop: 'processCode',
           label: "工序编码",
           type: 'input',
-          
+           
         },
         {
           prop: 'processingType',
           label: "加工类型",
-          type: 'input',
+          type: 'select',
           options: [
-            { label: "自制", value: "self_produced" },
-            { label: "外协", value: "external_production" },
+          { label: "自制", value: "self_produced" },
+          { label: "外协", value: "external_production" },
           ]
         },
-        {
-          prop: 'processingType',
-          label: "产品编码",
-          type: 'input',
-          
-        },
+         
         {
           prop: 'planStartDate',
           label: '计划开始日期',
@@ -330,11 +327,7 @@ export default {
           label: "品名规格",
           type: 'input'
         },
-        {
-          prop: 'productionOrderNo',
-          label: "生产任务单号",
-          type: 'input'
-        },
+     
         {
           prop: 'prodOrderStatus',
           label: "任务状态",
@@ -367,11 +360,20 @@ export default {
       isProjectSwitch: '',
       isProjectSwitchFlag: false,
       exportFormVisible:false,
+      isProductNameSwitch:"",
+
     }
   },
   async created() {
-    await this.getProjectSwitch('system', 'project')
-    this.isProjectSwitchFlag = true
+    await this.getProjectSwitch('system', 'project') 
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProductNameSwitch == 1) {
+      this.superQueryJson.splice(15, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
+    }
     this.superForm = this.dataForm = JSON.parse(JSON.stringify(this.dataFormList))
     this.search('basic')
   },
@@ -381,7 +383,12 @@ export default {
   mounted() {
   },
   methods: {
-   
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.isProjectSwitchFlag = true
+      } catch (error) { }
+    },
     
     // 导出
     exportForm(exportTableRef) {
@@ -470,7 +477,7 @@ export default {
 
       let newProp;
 
-      if (prop === 'processName' ||prop=='prodOrderStatus'|| prop == 'projectName' || prop === 'processCode' || prop === 'personName' || prop === 'workGroupName' || prop == 'equipmentName' || prop == 'productDrawingNo' || prop == 'routingName' || prop == 'routingCode') {
+      if (prop === 'processName'||prop=='productName' ||prop=='prodOrderStatus'|| prop == 'projectName' || prop === 'processCode' || prop === 'personName' || prop === 'workGroupName' || prop == 'equipmentName' || prop == 'productDrawingNo' || prop == 'routingName' || prop == 'routingCode') {
 
         if (prop === 'createByName') {
 
@@ -544,8 +551,8 @@ export default {
       this.superForm = this.dataForm = JSON.parse(JSON.stringify(this.dataFormList))
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
-        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 }, 
+        { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 }, 
       ],
         this.search('basic')
     },

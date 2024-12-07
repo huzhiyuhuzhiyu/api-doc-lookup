@@ -26,6 +26,12 @@
                         :disabled="codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
                     </el-form-item>
                   </el-col>
+                  <el-col :sm="6" :xs="24" v-if="isProductNameSwitch == 1">
+                    <el-form-item label="产品名称" prop="productsName">
+                      <el-input v-model="dataForm.productsName" placeholder="产品名称" disabled>
+                      </el-input>
+                    </el-form-item>
+                  </el-col>
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="品名规格" prop="productsDrawingNo">
                       <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" readonly
@@ -610,6 +616,7 @@ export default {
       warehouseList: [],
       isProjectSwitch: "",
       projectIdData: [],
+      isProductNameSwitch: "",
 
     }
   },
@@ -643,10 +650,18 @@ export default {
   async created() {
     await this.getProjectList()
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
+
     this.getPickingConfig()
   },
 
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+
+      } catch (error) { }
+    },
     openSelectProductFun() {
       this.productVisible = true
       this.$nextTick(() => {
@@ -668,7 +683,7 @@ export default {
       this.$set(this.dataForm, 'productsDrawingNo', data.drawingNo)
       this.$set(this.dataForm, 'planDate', [])
       this.$set(this.dataForm, 'orderNo', this.codeConfig.number)
-      if(!data.routingId) return
+      if (!data.routingId) return
       this.getRoutingDetail(data.routingId)
     },
 
@@ -1189,7 +1204,7 @@ export default {
         collect: this.collectForm,
         lineEdgeList: arr
       }
-      this.btnLoading=true
+      this.btnLoading = true
       addProdOrder(obj).then(res => {
         this.btnLoading = false
         this.$message.success("手动新建任务成功")

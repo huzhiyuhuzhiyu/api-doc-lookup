@@ -10,13 +10,13 @@
           <el-form @submit.native.prevent>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable
-                  @keyup.enter.native="search()" />
+                <el-input v-model="orderForm.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="orderForm.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
+                <el-input v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable
+                  @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -41,8 +41,10 @@
           <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @selection-change="selectmaterial"
           @row-click="handleRowClick" hasC>
            
+          <el-table-column prop="productCode" label="产品编码" ></el-table-column>
+          <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+          v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" ></el-table-column>
-            <el-table-column prop="productCode" label="产品编码" ></el-table-column>
             <el-table-column prop="processName" label="工序名称" ></el-table-column>
             <el-table-column prop="mainUnit" label="单位" width="80" />
             <el-table-column prop="inventoryQuantity" label="可领料数量"  />
@@ -97,10 +99,19 @@ export default {
       total: 0,
       tableDataList: [],
       selectArr:[],
-
+      isProductNameSwitch:"",
     }
   },
+  async created () {
+    await this.getProductNameSwitch('product', 'enable_productName')
+  
+  },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+      } catch (error) { }
+    },
     init(id) {
       this.customerVisible = true
       this.orderForm.productionOrderId = id

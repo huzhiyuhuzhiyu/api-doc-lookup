@@ -590,10 +590,9 @@ export default {
     getWarehouseListFun() {
       getWarehouseTree({ code: this.warehouseCode }).then(res => {
         // 获取仓库详情信息
-        getWarehouseInfo(res.data[0].id).then(response => {
-          this.initListQuery.projectId = this.listQuery.projectId = this.isProjectSwitch === '1' ? res.data[0].projectId || '' : ''
+        this.initListQuery.projectId = this.listQuery.projectId = this.isProjectSwitch === '1' ? res.data[0].projectId || '' : ''
           this.getclassAttributeList()
-        })
+      
       })
     },
     superQuerySearch(query) {
@@ -853,6 +852,7 @@ export default {
       this.listQuery.classAttributeList = this.classAttributeList
       // this.listQuery.approvalStatus = 'ok' 
 
+      this.listQuery.projectId = this.isProjectSwitch === '1' ? this.initListQuery.projectId || '' : ''
       getWarehouseList(this.listQuery).then(res => {
 
         this.tableData = res.data.records ? res.data.records : []

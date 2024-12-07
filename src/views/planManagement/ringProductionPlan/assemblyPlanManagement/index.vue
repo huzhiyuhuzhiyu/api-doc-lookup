@@ -254,7 +254,7 @@ export default {
       selectList: [],
       isProjectSwitch: '',
       isProjectSwitchFlag: false,
-
+      isProductNameSwitch:"",
     }
   },
   watch: {

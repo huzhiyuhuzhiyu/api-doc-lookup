@@ -62,8 +62,8 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table  ref="dataTable" v-loading="listLoading" :data="tableData"  v-if="tableDataFlag"
-          border :setColumnDisplayList="columnList" :fixedNO="true" @sort-change="sortChange" custom-column>
+        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" v-if="tableDataFlag" border
+          :setColumnDisplayList="columnList" :fixedNO="true" @sort-change="sortChange" custom-column>
           <el-table-column prop="orderNo" label="单号" sortable="custom" min-width="180">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="viewFun(scope.row.moveId, 'look')">{{
@@ -88,10 +88,12 @@
             </template>
           </el-table-column>
 
-          <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="300" />
           <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
+          <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+            v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="300" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-          v-if="isProjectSwitch == 1" />
+            v-if="isProjectSwitch == 1" />
           <el-table-column prop="mainUnit" label="单位" min-width="140" />
           <el-table-column prop="num" label="数量" sortable="custom" min-width="140" />
           <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120" />
@@ -181,7 +183,7 @@ export default {
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],
-      columnList: ["partnerCode", 'productCode', "productName", "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxAmount", "createByName", "taxAmount"],
+      columnList: ["partnerCode", 'productCode', "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxAmount", "createByName", "taxAmount"],
       num: 0,
       superQueryVisible: false,
       taxAmount: 0,
@@ -235,13 +237,13 @@ export default {
         },
 
         {
-          prop: 'productDrawingNo',
-          label: "品名规格",
+          prop: 'productCode',
+          label: "产品编码",
           type: 'input'
         },
         {
-          prop: 'productCode',
-          label: "产品编码",
+          prop: 'productDrawingNo',
+          label: "品名规格",
           type: 'input'
         },
 
@@ -351,20 +353,27 @@ export default {
           type: 'input',
         },
       ],
-     tableDataFlag:true,
-     isProjectSwitch:"",
+      tableDataFlag: false,
+      isProjectSwitch: "",
+      isProductNameSwitch: "",
     }
   },
-  created() {
  
-  },
   async created() {
     await this.getProjectSwitch('system', 'project')
-          this.tableDataFlag = true 
+    await this.getProductNameSwitch('product', 'enable_productName')
+        this.tableDataFlag = true
+        if (this.isProductNameSwitch == 1) {
+      this.superQueryJson.splice(3, 0, {
+        prop: 'productsName',
+        label: '产品名称',
+        type: 'input'
+      })
+    }
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.superForm = this.listQuery
     this.search('basic')
-  }, 
+  },
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -372,6 +381,11 @@ export default {
     this.getProductClassFun()
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     getProductClassFun() {
       // 孔径
       let objO = {

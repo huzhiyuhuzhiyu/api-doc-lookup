@@ -62,8 +62,10 @@
 
                       <JNPF-table ref="product" :data="productData" :fixedNO="true" hasC v-if="tableDataFlag"
                         @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
-                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
                         <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
+                        <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                        v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
                         <el-table-column prop="projectName" label="所属项目" min-width="120" 
                         v-if="isProjectSwitch == 1" />
                         <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"></el-table-column>
@@ -183,8 +185,10 @@
 
                   <JNPF-table ref="product" :data="productData" :fixedNO="true"
                     @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
-                    <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
+                    <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                    v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
                     <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                     v-if="isProjectSwitch == 1" />
                     <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"></el-table-column>
@@ -299,9 +303,11 @@
                 @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
                 <el-table-column prop="partnerName" label="供应商名称" min-width="160" />
                 <el-table-column prop="partnerCode" label="供应商编码" min-width="160" />
+                <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
+                <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="160"
                   sortable="custom"></el-table-column>
-                <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                 v-if="isProjectSwitch == 1" />
                 <el-table-column prop="productCategoryName" label="产品分类" sortable="custom" min-width="120" />
@@ -487,13 +493,16 @@ export default {
       tableDataFlag: false,
       mainUnitFlag: null,
       isProjectSwitch: '',
+      isProductNameSwitch: "",
+
     }
   },
  
    
   async created() {
     await this.getProjectSwitch('system', 'project')
-   
+    await this.getProductNameSwitch('product', 'enable_productName')
+
   }, 
   computed: {
     ...mapGetters(['userInfo'])
@@ -503,6 +512,11 @@ export default {
 
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+      } catch (error) { }
+    },
     async getMainUnitFun(code, type) {
       this.listLoading = true
       try {

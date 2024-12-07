@@ -57,10 +57,12 @@
         </div>
         <JNPF-table ref="tabForm" v-if="tableDataFlag" :data="tableData" custom-column row-key="id" :fixedNO="true"
           @sort-change="sortChange" :setColumnDisplayList="columnList" hasC @selection-change="handeleselectFun">
-          <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
+          <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+            v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-          v-if="isProjectSwitch == 1" />
+            v-if="isProjectSwitch == 1" />
           <el-table-column prop="processName" label="工序名称" width="120" sortable="custom" />
           <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
           <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
@@ -203,13 +205,13 @@ export default {
       totalInventory: 0,
       superQueryJson: [
         {
-          prop: 'productDrawingNo',
-          label: "品名规格",
+          prop: 'productCode',
+          label: "产品编码",
           type: 'input'
         },
         {
-          prop: 'productCode',
-          label: "产品编码",
+          prop: 'productDrawingNo',
+          label: "品名规格",
           type: 'input'
         },
         {
@@ -363,7 +365,7 @@ export default {
       mainUnitFlag: null,
       tableDataFlag: null,
       isProjectSwitch: '',
-
+      isProductNameSwitch: "",
     }
   },
   watch: {
@@ -371,13 +373,14 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
- 
+
   async created() {
     await this.getProjectSwitch('system', 'project')
-    this.tableDataFlag = true
+    await this.getProductNameSwitch('product', 'enable_productName')
+
     this.getclassAttributeList()
     this.getProductClassFun()
-  }, 
+  },
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -386,12 +389,17 @@ export default {
 
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+    this.tableDataFlag = true
+  } catch (error) { }
+    },
     async getMainUnitFun(code, type) {
-      this.listLoading=true
       try {
         this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
-        this.listLoading=false
-        
+        this.listLoading = false
+
 
       } catch (error) {
       }
@@ -548,7 +556,7 @@ export default {
         this.$refs.treeBox.setCurrentKey(this.selectedNodeKey)
       }
       this.tableQuery = {
-       
+
 
         orderItems: [
           {
@@ -577,7 +585,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop == 'productCode' || prop == 'productDrawingNo' || prop == 'warehouseName' || prop == 'processName' || prop == 'shelfSpaceName') {
+      if (prop == 'productCode'||prop=='productName' || prop == 'productDrawingNo' || prop == 'warehouseName' || prop == 'processName' || prop == 'shelfSpaceName') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())

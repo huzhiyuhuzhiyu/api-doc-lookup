@@ -32,8 +32,10 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true">
-            <el-table-column prop="drawingNo" label="品名规格" sortable="custom" ></el-table-column>
             <el-table-column prop="code" label="产品编码" sortable="custom" />
+            <el-table-column prop="name" label="产品名称" sortable="custom" width="160"
+            v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="drawingNo" label="品名规格" sortable="custom" ></el-table-column>
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
             <el-table-column prop="routingName" label="工艺路线名称" sortable="custom" />
@@ -45,7 +47,7 @@
             </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="form.pageNum" :limit.sync="form.pageSize"
-            @pagination="getbatchNumList" />
+            @pagination="getbatchNumList(id)" />
         </div>
       </div>
     </div>
@@ -81,17 +83,24 @@ export default {
       tableDataList: [],
       isProjectSwitch: '',
       id:'',
+      isProductNameSwitch:"",
 
     }
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
   }, 
   computed: {
     ...mapGetters(['userInfo'])
   },
   methods: {
-   
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+ 
+      } catch (error) { }
+    },
     init(id) {
       console.log(777);
       this.customerVisible = true

@@ -37,15 +37,20 @@
           <el-form @submit.native.prevent>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
+                <el-input v-model="ProductListRequestObj.code" placeholder="请输入产品编码" clearable />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6" v-if="isProductNameSwitch==1">
+              <el-form-item>
+                <el-input v-model="ProductListRequestObj.name" placeholder="请输入产品名称" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="ProductListRequestObj.code" placeholder="请输入产品编码" clearable />
+                <el-input v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
               </el-form-item>
             </el-col>
-           
+
 
             <el-col :span="6">
               <el-form-item>
@@ -63,11 +68,13 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <JNPF-table v-loading="listLoading" :data="allproductData" hasC
             @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
+            <el-table-column prop="code" label="产品编码"></el-table-column>
+            <el-table-column prop="name" label="产品名称" sortable="custom" width="160"
+            v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
             <el-table-column prop="drawingNo" label="品名规格" />
-            <el-table-column prop="code" label="产品编码" ></el-table-column> 
             <el-table-column prop="productCategoryName" label="产品分类" />
             <el-table-column prop="projectName" label="所属项目" min-width="120"   v-if="isProjectSwitch == 1" />
-            
+
           </JNPF-table>
           <pagination :total="allProductTotal" :page.sync="ProductListRequestObj.pageNum"
             :limit.sync="ProductListRequestObj.pageSize" @pagination="initData2" />
@@ -84,7 +91,7 @@
 <script>
 import { detailProcess, getProcessList } from '@/api/basicData/processSettingss.js'
 import { getcategoryTree as productTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
-import { getProducts} from '@/api/masterDataManagement/index.js' // 产品列表 
+import { getProducts } from '@/api/masterDataManagement/index.js' // 产品列表 
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   mixins: [getProjectList],
@@ -124,14 +131,21 @@ export default {
         pageSize: 20,
       },
       isProjectSwitch: "",
+      isProductNameSwitch:"",
       id:"",
-
     }
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
+   
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+      } catch (error) { }
+    },
     filterNodeAllProduct(value, data) {
       if (!value) return true;
       return data.name.indexOf(value) !== -1;
@@ -158,10 +172,9 @@ export default {
       this.expands = expands
       this.$nextTick(() => {
         this.refreshTree = true
-        
+
       })
     },
-  
     init(id) {
       this.allProVisible = true
       this.id=id
@@ -213,7 +226,7 @@ export default {
           }
           if ((++successTotal) === this.ProductMethodArr.length) {
             this.ProductTreeData = tempTreeData
-            this.initData2(id)
+            this.initData2(this.id)
           }
         })
       });
@@ -224,6 +237,7 @@ export default {
     initData2(id) {
       this.listLoading = true
       this.ProductListRequestObj.projectId = id
+
       getProducts(this.ProductListRequestObj).then(listRes => {
         if (Array.isArray(listRes.data)) {
           this.allproductData = listRes.data
@@ -239,7 +253,7 @@ export default {
     // 搜索所有产品 列表
     searchAllProduct() {
       this.ProductListRequestObj.pageNum = 1
-      this.initData2()
+      this.initData2(this.id)
     },
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
@@ -277,7 +291,7 @@ export default {
         item.productCode = item.code
         item.productsId = item.id
       });
-     this.$emit('selectCollectProduct',this.selectArr)
+      this.$emit('selectCollectProduct', this.selectArr)
 
       // this.productData=[...this.productData,...this.selectArr]
     },

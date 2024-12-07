@@ -94,11 +94,12 @@
 
                         <el-table-column prop="customerProductNo" label="客户料号" width="160"
                           :key="1212"></el-table-column>
-                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
-                          show-overflow-tooltip> </el-table-column>
+                      
+                        <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
-                        <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
+                          <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
+                          show-overflow-tooltip> </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
 
@@ -253,12 +254,12 @@
                     @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
 
                     <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212"></el-table-column>
+         
+                    <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
+                    <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                       show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
-                    <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
-
                     <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
                     <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
                       <template slot="header">
@@ -385,10 +386,10 @@
                 <el-table-column prop="departmentName" label="所属部门" width="120" sortable="custom"></el-table-column>
                 <el-table-column prop="salesName" label="所属销售" width="120" sortable="custom" />
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
+                <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
                   sortable="custom" />
                 <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
-                <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
                 <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                 <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="160">

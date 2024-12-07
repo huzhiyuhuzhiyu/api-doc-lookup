@@ -40,14 +40,20 @@
                   </el-col>
 
                   <el-col :sm="6" :xs="24">
-                    <el-form-item label="品名规格" prop="productsDrawingNo">
-                      <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" disabled>
+                    <el-form-item label="产品编码" prop="productsCode">
+                      <el-input v-model="dataForm.productsCode" placeholder="产品编码" disabled>
                       </el-input>
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
-                    <el-form-item label="产品编码" prop="productsCode">
-                      <el-input v-model="dataForm.productsCode" placeholder="产品编码" disabled>
+                    <el-form-item label="产品名称" prop="productsName" v-if="isProductNameSwitch == 1">
+                      <el-input v-model="dataForm.productsName" placeholder="产品名称" disabled>
+                      </el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="品名规格" prop="productsDrawingNo">
+                      <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" disabled>
                       </el-input>
                     </el-form-item>
                   </el-col>
@@ -617,6 +623,8 @@ export default {
       warehouseList:[],
       isProjectSwitch:"",
       projectIdData:[],
+      isProductNameSwitch: "",
+
     }      
 
   },
@@ -648,6 +656,7 @@ export default {
   async created() {
     await this.getProjectList()
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
     this.getPickingConfig()
   },
 
@@ -657,6 +666,11 @@ export default {
 
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+      } catch (error) { }
+    },
     getWarehouseListFun(){
       let obj={
         type:"line_edge",

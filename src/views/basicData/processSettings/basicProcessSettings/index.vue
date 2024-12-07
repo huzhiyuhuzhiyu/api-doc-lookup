@@ -121,14 +121,20 @@
           </el-table-column>
           <el-table-column prop="name" label="工序名称" width="140" sortable="custom" />
           <el-table-column prop="productCategoryIdText" label="工序分类" width="130" sortable="custom" />
-          <el-table-column prop="pricingTypeName" label="计价类型" width="100"> </el-table-column>
-          <el-table-column prop="timePrice" label="计时单价" min-width="120"></el-table-column>
           <el-table-column prop="processingType" label="加工类型" width="120" sortable="custom">
             <template slot-scope="scope">
               <div v-if="scope.row.processingType == 'self_produced'">自制</div>
               <div v-if="scope.row.processingType == 'external_production'">外协</div>
             </template>
           </el-table-column>
+          <el-table-column prop="pricingType" label="计价类型" width="100">
+            <template slot-scope="scope">
+              <div v-if="scope.row.processingType == 'by_time'">计时</div>
+              <div v-if="scope.row.processingType == 'by_piece'">计件</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="unitPrice" label="计件单价" min-width="120"></el-table-column>
+          <el-table-column prop="timePrice" label="计时单价" min-width="120"></el-table-column>
           <el-table-column prop="processType" label="工序类型" width="120" sortable="custom">
             <template slot-scope="scope">
               <div v-if="scope.row.processType == 'normal'">正常工序</div>
@@ -156,7 +162,6 @@
                   </el-dropdown-menu>
                 </el-dropdown>
               </tableOpts>
-
             </template>
           </el-table-column>
         </JNPF-table>

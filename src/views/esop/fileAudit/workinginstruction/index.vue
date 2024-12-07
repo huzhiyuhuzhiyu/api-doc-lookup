@@ -90,7 +90,7 @@ import { FlowEngineListAll } from '@/api/workFlow/FlowEngine'
 import FlowBox from '@/views/workFlow/components/FlowBox'
 import BatchList from './BatchList'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import {FlowId} from "@/views/esop/utils/constants";
+import {FlowCode, FlowId} from "@/views/esop/utils/constants";
 import {getFileUploadByAuditId, getFileUploadByIds} from "@/api/esop/fileUpload/workinginstruction";
 import {array2Map, trim} from "@/utils";
 import {executeQueryTime, getStatusChinese, getStatusTagType} from "@/views/esop/utils/utils";
@@ -110,7 +110,7 @@ export default {
                 creatorUserId: "",
                 endTime: "",
                 endUpdateTime: "",
-                flowId: "",
+                businessFlow: "",
                 orderItems: [{
                     asc: false,
                     column: "F_CreatorTime"
@@ -243,13 +243,13 @@ export default {
         }
     },
     props:{
-        flowId:{
+        flowCode:{
             type:String,
-            default:FlowId.WORK
+            default:FlowCode.WORK
         }
     },
     created() {
-        this.initListQuery.flowId = this.flowId
+        this.initListQuery.businessFlow = this.flowCode
         this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
         this.initData()
     },
@@ -318,10 +318,10 @@ export default {
     },
     computed:{
         noProductCol(){
-            return this.flowId === FlowId.OFFICE
+            return this.flowCode === FlowCode.OFFICE
         },
         isImage(){
-            return this.flowId === FlowId.IMAGE
+            return this.flowCode === FlowCode.IMAGE
         }
     }
 }

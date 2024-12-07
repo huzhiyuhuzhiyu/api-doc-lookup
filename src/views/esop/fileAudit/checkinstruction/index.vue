@@ -1,5 +1,5 @@
 <template>
-    <FileAuditWorkingInstruction :flow-id="FlowId.INSPECT"/>
+    <FileAuditWorkingInstruction :flow-code="FlowCode.INSPECT"/>
 </template>
 <script>
 import ESOPConstantsMixin from "@/views/esop/utils/ESOPConstantsMixin";

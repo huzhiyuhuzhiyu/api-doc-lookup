@@ -351,11 +351,11 @@ export default {
         }
 
         let _data = {
-          ...this.dataForm,
-          exportType: '1110',
-          exportName: '报工记录查询',
+          ...this.listQuery,
+          exportType: '1066',
+          exportName: '定点定价列表',
           includeFieldMap,
-          pageSize: data.dataType == 0 ? this.dataForm.pageSize : -1,
+          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
           totalRowFlag: true
         }
         excelExport(_data)

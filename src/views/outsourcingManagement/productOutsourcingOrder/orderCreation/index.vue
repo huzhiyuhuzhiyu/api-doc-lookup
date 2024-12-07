@@ -793,7 +793,7 @@ export default {
           selectArr = selectArr.filter((item1) => {
             const index = this.dataFormTwo.data.findIndex((item2) => item2.productsId === item1.productsId)
             if (index !== -1) {
-              deletedArray.push(item1.productName)
+              deletedArray.push(item1.productDrawingNo)
               if (deletedArray.length) {
                 this.$message.error(`已经添加过的产品：${deletedArray.join('、')}`)
               }

@@ -1128,6 +1128,13 @@ export function getBimBusinessDetail(data) {
   })
 }
 
+export function getOrderFiledMap(configValue2) {
+  return request({
+    url: `/api/erp/bimBusinessSwitchConfig/orderFiledMap?configValue2=` + configValue2,
+    method: 'get',
+  })
+}
+
 // 开关
 export function editSwitch(id) {
   return request({

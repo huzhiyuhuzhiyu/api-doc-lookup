@@ -83,9 +83,10 @@
             <el-table-column prop="projectName" label="所属项目" width="120"
               v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
-            <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="120"
               v-if="isProductNameSwitch === '1'"></el-table-column>
+            <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
+
 
             <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
               :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
@@ -95,7 +96,10 @@
             <el-table-column prop="purchaseQuantity2" label="数量(副)" width="100" v-if="isDeputyUnitSwitch === '1'" />
             <el-table-column prop="waitReceiptNum" label="待收货数量" width="130" sortable="custom" />
             <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
-            <el-table-column prop="standardValue" label="规值" width="100" sortable="custom" />
+            <el-table-column prop="standardValue" label="规值" width="100" sortable="custom"
+              v-if="standardValueFlag === '1'" />
+            <el-table-column prop="colour" label="颜色" width="100" sortable="custom" v-if="colourFlag === '1'" />
+            <el-table-column prop="processName" label="工序" width="100" sortable="custom" v-if="processFlag === '1'" />
             <el-table-column prop="remark" label="备注" width="120" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
@@ -147,7 +151,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
-import { getBimBusinessDetail } from '@/api/basicData/index'
+import { getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 
 export default {
@@ -251,13 +255,6 @@ export default {
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
-
-        {
-          prop: 'standardValue',
-          label: '规值',
-          type: 'input'
-        },
-
         {
           prop: 'createTime',
           label: '创建时间',
@@ -277,7 +274,18 @@ export default {
           label: '备注',
           type: 'input'
         }
-      ]
+      ],
+      standardValueFlag: '',
+      colourFlag: '',
+      processFlag: '',
+      sealingCoverTypingFlag: '',
+      accuracyLevelFlag: '',
+      vibrationLevelFlag: '',
+      oilFlag: '',
+      oilQuantityFlag: '',
+      clearanceFlag: '',
+      packagingMethodFlag: '',
+      specialRequireFlag: ''
     }
   },
   watch: {
@@ -290,6 +298,7 @@ export default {
     this.getProductClassFun()
   },
   async created() {
+    await this.getOrderFiledMap()
     await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
@@ -314,6 +323,27 @@ export default {
         type: 'input'
       })
     }
+    if (this.standardValueFlag === '1') {
+      this.superQueryJson.splice(9, 0, {
+        prop: 'standardValue',
+        label: '规值',
+        type: 'input'
+      })
+    }
+    if (this.colourFlag === '1') {
+      this.superQueryJson.splice(10, 0, {
+        prop: 'colour',
+        label: '颜色',
+        type: 'input'
+      })
+    }
+    if (this.colourFlag === '1') {
+      this.superQueryJson.splice(11, 0, {
+        prop: 'processName',
+        label: '工序',
+        type: 'input'
+      })
+    }
 
     // 默认设置为近3天
     const end = new Date()
@@ -327,6 +357,13 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    getOrderFiledMap() {
+      getOrderFiledMap('purchase').then(res => {
+        this.standardValueFlag = res.data.standardValue
+        this.colourFlag = res.data.colour
+        this.processFlag = res.data.process
+      })
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)

@@ -149,9 +149,11 @@
                       <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
                       <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                       </el-table-column>
+                      <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
+                      <el-table-column prop="productName" label="产品名称"  width="160" v-if="isProductNameSwitch === '1'"
+                      show-overflow-tooltip></el-table-column>
                       <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
                       </el-table-column>
-                      <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                       <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
 
                       <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
@@ -213,7 +215,9 @@
                         </el-input>
                       </template>
                     </el-table-column>
-
+                    <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
+                    <el-table-column prop="productName" label="产品名称"  width="160" v-if="isProductNameSwitch === '1'"
+                    show-overflow-tooltip></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
                       <template slot="header">
                         <span class="required">*</span>品名规格
@@ -225,7 +229,6 @@
                         </el-input>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                     <el-table-column prop="projectName" label="所属项目" min-width="120" v-show="isProjectSwitch == 1" />
 
                     <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
@@ -547,11 +550,12 @@
 
 
                   </el-table-column>
-
+                  <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
+                  <el-table-column prop="productName" label="产品名称"  width="160" v-if="isProductNameSwitch === '1'"
+                  show-overflow-tooltip></el-table-column>
                   <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
 
                   </el-table-column>
-                  <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
 
                   <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
@@ -625,7 +629,9 @@
                     </el-input>
                   </template>
                 </el-table-column>
-
+                <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
+                <el-table-column prop="productName" label="产品名称"  width="160" v-if="isProductNameSwitch === '1'"
+                show-overflow-tooltip></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
                   <template slot="header">
                     <span class="required">*</span>品名规格
@@ -637,7 +643,6 @@
                     </el-input>
                   </template>
                 </el-table-column>
-                <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                 <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" width="80" :key="8" />
                 <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" width="100" :key="7">
@@ -916,12 +921,17 @@
                 <el-form @submit.native.prevent>
                   <el-col :span="6">
                     <el-form-item>
-                      <el-input v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
+                      <el-input v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="6" v-if="isProductNameSwitch==1">
+                    <el-form-item>
+                      <el-input v-model="ProductListRequestObj.productName" placeholder="请输入产品名称" clearable />
                     </el-form-item>
                   </el-col>
                   <el-col :span="6">
                     <el-form-item>
-                      <el-input v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable />
+                      <el-input v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
                     </el-form-item>
                   </el-col>
 
@@ -943,13 +953,15 @@
               <div class="JNPF-common-layout-main JNPF-flex-main">
                 <JNPF-table v-loading="listLoading" :data="allproductData" hasC
                   @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
-                  <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="drawingNo" label="品名规格" />
-                  <el-table-column prop="productCategoryName" label="所属分类" />
+                  <el-table-column prop="code" label="产品编码" min-width="120" show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="name" label="产品名称"  width="160" v-if="isProductNameSwitch === '1'"
+                  show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="drawingNo" label="品名规格" min-width="330" />
+                  <el-table-column prop="productCategoryName" label="所属分类"  min-width="330" />
                   <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                     v-if="isProjectSwitch == 1" />
-                  <el-table-column prop="mainUnit" label="单位" />
-                  <el-table-column prop="inventoryQuantity" label="库存数量">
+                  <el-table-column prop="mainUnit" label="单位" width="80"/>
+                  <el-table-column prop="inventoryQuantity" label="库存数量"  min-width="120" >
                     <template slot-scope="scope">
                       <el-link type="primary" @click.native="viewFun(scope.row.id, 'inventoryFlag')">
                         {{ scope.row.inventoryQuantity }}
@@ -1345,6 +1357,7 @@ export default {
       attachmentData: {},
       mainUnitFlag: null,
       isProjectSwitch: '',
+      isProductNameSwitch:"",
     }
   },
   computed: {
@@ -1389,7 +1402,9 @@ export default {
 
   async created() {
     await this.getProjectSwitch('system', 'project')
-    if (this.isProjectSwitch == 1) this.ProductTableItems.splice(2, 0, { prop: 'projectName', label: '所属项目' },);
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProjectSwitch == 1) this.ProductTableItems.splice(3, 0, { prop: 'projectName', label: '所属项目' },);
+    if (this.isProductNameSwitch == 1) this.ProductTableItems.splice(2, 0, { prop: 'productName', label: '产品名称' },);
   },
   mounted() {
     this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
@@ -1422,6 +1437,12 @@ export default {
   beforeDestroy() {
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+        this.isProjectSwitchFlag = true
+      } catch (error) { }
+    },
     async getMainUnitFun(code, type) {
       this.listLoading = true
       try {

@@ -621,7 +621,7 @@ export default {
       let _data = {
         ...targetListQuery,
         exportType: '1073',
-        exportName: '退货通知单明细',
+        exportName: '采购收货单明细',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }

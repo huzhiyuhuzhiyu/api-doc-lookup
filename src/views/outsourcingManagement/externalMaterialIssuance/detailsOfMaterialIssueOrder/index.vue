@@ -159,7 +159,7 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getBimBusinessDetail } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
-
+import { excelExport } from '@/api/basicData/index'
 export default {
   name: 'foreigntradenotice',
   components: { Form, SuperQuery, ExportForm },
@@ -882,8 +882,8 @@ export default {
       const targetListQuery = this.orderForm
       let _data = {
         ...targetListQuery,
-        exportType: this.exportTableRef === '1061',
-        exportName: this.exportTableRef === '发料通知单明细',
+        exportType: '1061',
+        exportName: '发料通知单明细',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }

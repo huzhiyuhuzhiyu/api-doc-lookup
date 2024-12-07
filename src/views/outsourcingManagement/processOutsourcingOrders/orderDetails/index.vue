@@ -133,7 +133,7 @@
     <JNPF-Form v-if="formVisible" ref="procureForm" @refresh="refresh" @close="closeForm" />
 
     <withdrawnForm v-if="withdrawnVisible" ref="withdrawnForm" @refresh="refresh" @close="closeForm" />
-
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -158,7 +158,7 @@ import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import withdrawnForm from '@/views/purchasingManagement/purchasingDemand/purchasingDemandPool/Form.vue'
 
 import { excelExport } from '@/api/basicData/index'
-
+import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {
   getbimProductAttributesList, getbimProductAttributes
@@ -168,7 +168,7 @@ import getProjectList from '@/mixins/generator/getProjectList'
 
 export default {
   name: 'purchaseOrder',
-  components: { JNPFForm, withdrawnForm, SuperQuery },
+  components: { JNPFForm, withdrawnForm, ExportForm, SuperQuery },
   mixins: [getProjectList],
 
   data() {

@@ -122,7 +122,7 @@
                       </el-table-column>
 
                       <el-table-column prop="standardValue" label="规值" width="120" :key="211"
-                        v-if="this.dataForm.classAttribute !== 'finish_product'">
+                        v-if="this.dataForm.classAttribute !== 'finish_product' && standardValueFlag === '1'">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.standardValue" placeholder="请选择" disabled clearable
                             style="width: 100%;">
@@ -132,7 +132,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="colour" label="颜色" width="120" :key="211"
-                        v-if="this.dataForm.classAttribute !== 'finish_product'">
+                        v-if="this.dataForm.classAttribute !== 'finish_product' && colourFlag === '1'">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.colour" placeholder="请选择" disabled clearable
                             style="width: 100%;">
@@ -142,7 +142,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="processId" label="工序" width="120" :key="102"
-                        v-if="this.dataForm.classAttribute !== 'finish_product'">
+                        v-if="this.dataForm.classAttribute !== 'finish_product' && processFlag === '1'">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.processId" placeholder="请选择" disabled clearable
                             style="width: 100%;">
@@ -399,7 +399,7 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop="standardValue" label="规值" width="120" :key="211"
-                    v-if="this.dataForm.classAttribute !== 'finish_product'">
+                    v-if="this.dataForm.classAttribute !== 'finish_product' && standardValueFlag === '1'">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.standardValue" placeholder="请选择" disabled clearable
                         style="width: 100%;">
@@ -409,7 +409,7 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop="colour" label="颜色" width="120" :key="211"
-                    v-if="this.dataForm.classAttribute !== 'finish_product'">
+                    v-if="this.dataForm.classAttribute !== 'finish_product' && colourFlag === '1'">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.colour" placeholder="请选择" disabled clearable style="width: 100%;">
                         <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
@@ -418,7 +418,7 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop="processId" label="工序" width="120" :key="102"
-                    v-if="this.dataForm.classAttribute !== 'finish_product'">
+                    v-if="this.dataForm.classAttribute !== 'finish_product' && processFlag === '1'">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.processId" placeholder="请选择" disabled clearable
                         style="width: 100%;">
@@ -532,15 +532,16 @@
 </template>
 <script>
 import { insertPurchaseOrder, purPurchaseOrderdetail, orderSchedule } from '@/api/purchasingAndOutsourcingOrders/index'
-import { excelExport, getBimBusinessDetail } from '@/api/basicData/index'
+import { excelExport, getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 import workFlow from '@/components/WorkFlow/settingBus.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
-import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import { getbimProductAttributesList, getbimProductAttributes, bimProductAttributesList } from '@/api/masterDataManagement/index'
 import { getBimProcessList } from '@/api/bimProcess/index'
+
 export default {
   components: {
     workFlow,
@@ -619,15 +620,36 @@ export default {
       approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
       endTime: 0,
-      isattachmentswitch: ''
+      isattachmentswitch: '',
+      standardValueFlag: '',
+      colourFlag: '',
+      processFlag: '',
+      sealingCoverTypingFlag: '',
+      accuracyLevelFlag: '',
+      vibrationLevelFlag: '',
+      oilFlag: '',
+      oilQuantityFlag: '',
+      clearanceFlag: '',
+      packagingMethodFlag: '',
+      specialRequireFlag: '',
+      bimProductAttributesList: [],
+      processList: []
     }
   },
   async created() {
+    await this.getOrderFiledMap()
     this.getDeputyUnit()
     await this.getProductNameSwitch('product', 'enable_productName')
     this.getBimBusinessDetail()
   },
   computed: {
+    getOrderFiledMap() {
+      getOrderFiledMap('purchase').then(res => {
+        this.standardValueFlag = res.data.standardValue
+        this.colourFlag = res.data.colour
+        this.processFlag = res.data.process
+      })
+    },
     computedValue() {
       // 在这里计算第三个输入框的值
       let count = 0

@@ -48,8 +48,8 @@
           <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
           <div>
             <el-button size="mini" type="primary" @click="addOrUpdateHandle()">生成采购订单</el-button>
-            <!-- <el-button size="mini" type="primary" @click="batchQuiry()">批量询价</el-button>
-            <el-button size="mini" type="primary" @click="batchFixed()">批量定价</el-button> -->
+
+            <!-- <el-button size="mini" type="primary" @click="batchFixed()">批量定价</el-button>  -->
           </div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -691,55 +691,7 @@ export default {
         }
       }
     },
-    // 批量询价
-    batchQuiry() {
-      if (this.selectData.length === 0) {
-        this.$message({
-          message: '请选择你要询价的产品',
-          type: 'error',
-          duration: 1500
-        })
-      } else {
-        // let quirtFlag = this.selectData.every(item => item.hasPrice == false)
-        let quirtFlag = true
-        if (quirtFlag) {
-          this.quiryVisible = true
-          let quiryData = []
-          this.selectData.forEach((item, index) => {
-            quiryData.push({
-              productSource: item.productSource, // 产品来源 采购
-              productsId: item.productsId, // 产品id
-              productsName: item.productName, // 产品名称
-              productCode: item.productCode, // 产品编码
-              taxRate: 13, // 产品税率
-              materialPrice: '', // 产品价格
-              productsDrawingNo: item.productDrawingNo
-            })
-          })
-          quiryData = Object.values(
-            quiryData.reduce((acc, item) => {
-              // 如果累加器中已经有了该productsId的条目，则累加planDemandQuantity
-              if (acc[item.productsId]) {
-                // acc[item.productsId].planDemandQuantity = String(Number(acc[item.productsId].planDemandQuantity) + Number(item.planDemandQuantity));
-              } else {
-                // 否则，把当前条目以productsId为键存入累加器
-                acc[item.productsId] = { ...item }
-              }
-              return acc
-            }, {})
-          )
-          this.$nextTick(() => {
-            this.$refs.QuiryForm.init('', 'add', 'quiryPool', quiryData)
-          })
-        } else {
-          this.$message({
-            message: '请选择无价格的产品',
-            type: 'error',
-            duration: 1500
-          })
-        }
-      }
-    },
+   
     // 关闭询价单页面
     closePool(isRefresh) {
       this.quiryVisible = false

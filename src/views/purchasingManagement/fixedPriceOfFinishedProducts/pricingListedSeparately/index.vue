@@ -354,7 +354,7 @@ export default {
         let _data = {
           ...this.listQuery,
           exportType: '1066',
-          exportName: '成品定点定价',
+          exportName: '成品定点定价列表',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
           totalRowFlag: false

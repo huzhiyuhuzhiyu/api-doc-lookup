@@ -15,6 +15,15 @@ export function getbimProductAttributesList(data) {
         data: data
     })
 }
+
+// 产品属性列表 map列表
+export function getbimProductAttributesListMap() {
+  return request({
+      url: '/api/erp/bimProductAttributes/listMap',
+      method: 'post',
+  })
+}
+
 // 产品属性-检查编码是否存在
 export function  checkAbnoramlTypeCode(typeCode,name,id) {
   return request({

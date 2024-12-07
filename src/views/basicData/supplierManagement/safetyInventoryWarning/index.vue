@@ -102,8 +102,7 @@
           ref="dataTable" :setColumnDisplayList="columnList" @selection-change="handeleProductInfoData">
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="code" label="产品编码" width="140" sortable="custom"></el-table-column>
-          <el-table-column prop="productName" label="产品名称" width="120"
-            v-if="isProductNameSwitch === '1'"></el-table-column>
+          <el-table-column prop="name" label="产品名称" width="120" v-if="isProductNameSwitch === '1'"></el-table-column>
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
           <el-table-column prop="classAttribute" label="类别属性" width="120" sortable="custom">
             <template slot-scope="scope">
@@ -317,7 +316,7 @@ export default {
     }
     if (this.isProductNameSwitch === '1') {
       this.superQueryJson.splice(2, 0, {
-        prop: 'productName',
+        prop: 'name',
         label: '产品名称',
         type: 'input'
       })

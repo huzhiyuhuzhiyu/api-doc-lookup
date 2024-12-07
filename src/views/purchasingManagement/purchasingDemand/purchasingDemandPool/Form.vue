@@ -61,12 +61,12 @@
                         border :height="customStyleData">
                         <!-- <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column>
                         <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
-                        <el-table-column prop="projectName" label="所属项目" width="120"
-                          v-if="isProjectSwitch === '1'"></el-table-column>
-                        <el-table-column prop="productName" label="产品名称" width="120"
-                          v-if="isProductNameSwitch === '1'"></el-table-column>
+                        <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
+                          key="1"></el-table-column>
+                        <el-table-column prop="productName" label="产品名称" width="120" v-if="isProductNameSwitch === '1'"
+                          key="3"></el-table-column>
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
-                          :key="1">
+                          key="5">
                           <template slot="header">
                             <span class="required">*</span>
                             品名规格
@@ -79,7 +79,7 @@
                           </template>
                         </el-table-column>
 
-                        <el-table-column prop="deliveryDate" label="交货日期" width="175" :key="2">
+                        <el-table-column prop="deliveryDate" label="交货日期" min-width="175" key="7">
                           <template slot="header">
                             <span class="required">*</span>
                             交货日期
@@ -95,7 +95,7 @@
 
 
                         <el-table-column prop="availableQuantity" label="可用库存" width="100" show-overflow-tooltip
-                          v-if="this.purchasingType === 'safe'" :key="5">
+                          v-if="this.purchasingType === 'safe'" key="9">
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'availableQuantity'">
                               <div class="viewData">
@@ -105,7 +105,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="maxInventory" label="最高库存" width="100" show-overflow-tooltip
-                          v-if="this.purchasingType === 'safe'" :key="6">
+                          v-if="this.purchasingType === 'safe'" :key="11">
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'maxInventory'">
                               <div class="viewData">
@@ -115,7 +115,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="orderQuantity" label="可下单数量" width="120" show-overflow-tooltip
-                          v-if="this.purchasingType === 'pool'" :key="5">
+                          v-if="this.purchasingType === 'pool'" :key="13">
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'orderQuantity'">
                               <div class="viewData">
@@ -125,7 +125,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
-                          :width="isDeputyUnitSwitch === '1' ? 100 : 60" show-overflow-tooltip :key="3">
+                          :min-width="isDeputyUnitSwitch === '1' ? 100 : 60" show-overflow-tooltip :key="15">
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
                               <div class="viewData">
@@ -134,7 +134,7 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="purchaseQuantity" label="数量" width="100" :key="7">
+                        <el-table-column prop="purchaseQuantity" label="数量" min-width="100" :key="17">
                           <template slot="header">
                             <span class="required">*</span>
                             {{ isDeputyUnitSwitch === '1' ? '数量(主)' : '数量' }}
@@ -147,7 +147,7 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="deputyUnit" label="单位(副)" width="100" show-overflow-tooltip :key="4"
+                        <el-table-column prop="deputyUnit" label="单位(副)" width="100" show-overflow-tooltip :key="19"
                           v-if="isDeputyUnitSwitch === '1'">
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
@@ -158,7 +158,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="purchaseQuantity2" label="数量(副)" width="120"
-                          v-if="isDeputyUnitSwitch === '1'" :key="8">
+                          v-if="isDeputyUnitSwitch === '1'" :key="21">
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity2'"
                               :rules="productRules.purchaseQuantity2">
@@ -448,7 +448,9 @@ import PrintDialog from '@/components/no_mount/printDialog'
 export default {
   components: {
     sourceForm,
-    Process
+    Process,
+    PrintBrowse,
+    PrintDialog
   },
   mixins: [getProjectList],
 

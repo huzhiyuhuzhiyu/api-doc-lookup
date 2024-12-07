@@ -480,23 +480,23 @@ export default {
       })
     }
     if (this.standardValueFlag === '1') {
-      this.superQueryJson.splice(4, 0, {
+      this.superQueryJson.splice(12, 0, {
         prop: 'standardValue',
         label: '规值',
         type: 'input'
       })
     }
     if (this.colourFlag === '1') {
-      this.superQueryJson.splice(5, 0, {
+      this.superQueryJson.splice(13, 0, {
         prop: 'colour',
         label: '颜色',
         type: 'input'
       })
     }
     if (this.colourFlag === '1') {
-      this.superQueryJson.splice(6, 0, {
+      this.superQueryJson.splice(14, 0, {
         prop: 'processName',
-        label: '工序名称',
+        label: '工序',
         type: 'input'
       })
     }

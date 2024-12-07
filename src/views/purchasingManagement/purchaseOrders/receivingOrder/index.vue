@@ -83,9 +83,10 @@
             <el-table-column prop="projectName" label="所属项目" width="120"
               v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
-            <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="120"
               v-if="isProductNameSwitch === '1'"></el-table-column>
+            <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
+
 
             <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
               :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
@@ -254,13 +255,6 @@ export default {
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
-
-        {
-          prop: 'standardValue',
-          label: '规值',
-          type: 'input'
-        },
-
         {
           prop: 'createTime',
           label: '创建时间',
@@ -330,23 +324,23 @@ export default {
       })
     }
     if (this.standardValueFlag === '1') {
-      this.superQueryJson.splice(4, 0, {
+      this.superQueryJson.splice(9, 0, {
         prop: 'standardValue',
         label: '规值',
         type: 'input'
       })
     }
     if (this.colourFlag === '1') {
-      this.superQueryJson.splice(5, 0, {
+      this.superQueryJson.splice(10, 0, {
         prop: 'colour',
         label: '颜色',
         type: 'input'
       })
     }
     if (this.colourFlag === '1') {
-      this.superQueryJson.splice(6, 0, {
+      this.superQueryJson.splice(11, 0, {
         prop: 'processName',
-        label: '工序名称',
+        label: '工序',
         type: 'input'
       })
     }

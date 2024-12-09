@@ -263,7 +263,7 @@ export default {
                     orderNo,
                     id,
                     projectId,
-                    approvalFlag,
+                    approvalFlag:this.dataForm.approvalFlag,
                     version,
                     bimFileUploadLineList,
                     categoryId,

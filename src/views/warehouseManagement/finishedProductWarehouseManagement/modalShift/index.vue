@@ -220,14 +220,22 @@
 <script>
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getWarehouseList } from '@/api/basicData/index'// 仓库树
+import { getWarehouseList, getWarehouseInfo } from '@/api/basicData/index'// 仓库树
 import { InventorymodalShiftlist, InventorymodalShiftdele, InventorymodalShiftmxlist } from '@/api/warehouseManagement/modalShift'
 import Form from './Form'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { getWarehouseTree } from '@/api/warehouseManagement/inboundAndOutbound'
 export default {
   // name: 'modalShift',
   components: { Form, SuperQuery },
+  props: {
+    warehouseCode: "",
+  },
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      warehouseInfo: {},
       showAppCodeFlag: true,
       superQueryJson1: [
         {
@@ -402,6 +410,7 @@ export default {
       ],
       orderForm: {},
       orderFormlist: {
+        projectId: '',
         orderNo: "",
         productName: '',
         originBatchNumber: '',
@@ -423,6 +432,7 @@ export default {
       },
       linesQuery: {},
       linesQuerylist: {
+        projectId: '',
         orderNo: "",
         warehouseName: '',
         approvalStatus: '',
@@ -447,6 +457,7 @@ export default {
     }
   },
   async created() {
+    await this.getProjectSwitch('system', 'project')
     const res = await this.jnpf.getBusInfo('b060')
     if (res) {
       this.showAppCodeFlag = res.enabledMark
@@ -455,7 +466,8 @@ export default {
     }
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.linesQuery = JSON.parse(JSON.stringify(this.linesQuerylist))
-    this.search()
+    this.getWarehouseListFun()
+    // this.search()
   },
   watch: {
     activeName() {
@@ -463,6 +475,18 @@ export default {
     }
   },
   methods: {
+    // 获取仓库
+    getWarehouseListFun() {
+      getWarehouseTree({ code: this.warehouseCode }).then(res => {
+        // 获取仓库详情信息
+        getWarehouseInfo(res.data[0].id).then(response => {
+          this.orderForm.projectId = this.isProjectSwitch === '1' ? res.data[0].projectId || '' : ''
+          this.linesQuery.projectId = this.isProjectSwitch === '1' ? res.data[0].projectId || '' : ''
+          this.warehouseInfo = res.data[0]
+          this.initData()
+        })
+      })
+    },
     withdrawnHandle(formId) {
       let _data = {
         formId
@@ -623,16 +647,23 @@ export default {
 
     addSupplier(id, btntype) {
       this.formVisible = true
+      let obj = {
+        btnType: btntype,
+        warehouseInfo: this.warehouseInfo
+      }
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype)
+        this.$refs.Form.init(id, obj)
       })
     },
     addOrUpdateHandle(id, btntype) {
       this.formVisible = true
       if (id) {
-        console.log(id);
+        let obj = {
+          btnType: btntype,
+          warehouseInfo: this.warehouseInfo
+        }
         this.$nextTick(() => {
-          this.$refs.Form.init(id, btntype)
+          this.$refs.Form.init(id, obj)
         })
       }
     },
@@ -652,8 +683,12 @@ export default {
     },
     handleUserRelation(id, btnType) {
       this.formVisible = true
+      let obj = {
+        btnType: btnType,
+        warehouseInfo: this.warehouseInfo
+      }
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType)
+        this.$refs.Form.init(id, obj)
       })
     },
   }

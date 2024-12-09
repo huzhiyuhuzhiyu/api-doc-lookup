@@ -240,8 +240,7 @@ export default {
       listLoading: false,
       btnLoading: false,
       exportFormVisible: false,
-
-
+      listQuery: {},
       dataForm: {
         categoryId: '',
         code: "",

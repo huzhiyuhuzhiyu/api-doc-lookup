@@ -237,15 +237,24 @@
 </template>
 
 <script>
+import { getWarehouseInfo } from '@/api/basicData/index'// 仓库树
+import { getWarehouseTree } from '@/api/warehouseManagement/inboundAndOutbound'
+import getProjectList from '@/mixins/generator/getProjectList'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { InventoryDisassemblylist, InventoryDisassemblydele, InventoryDisassemblymxlist } from '@/api/warehouseManagement/productlistChange'
 import Form from './Form'
 export default {
-  // name: 'InventoryDisassembly',
+  name: 'InventoryDisassembly',
   components: { Form, SuperQuery },
+  props: {
+    warehouseCode: "",
+  },
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      warehouseInfo: {},
       showAppCodeFlag: true,
       superQueryVisible1: false,
       superQueryVisible: false,
@@ -502,6 +511,7 @@ export default {
       tableDataList: [],
       form: {},
       formlist: {
+        projectId: '',
         transferType: 'split',
         documentStatus: '',
         approvalStatus: '',
@@ -526,6 +536,7 @@ export default {
       },
       linesQuery: {},
       linesQuerylist: {
+        projectId: '',
         transferType: 'split',
         transferNo: '',
         startTime: '',
@@ -557,6 +568,7 @@ export default {
     }
   },
   async created() {
+    await this.getProjectSwitch('system', 'project')
     const res = await this.jnpf.getBusInfo('b062')
     if (res) {
       this.showAppCodeFlag = res.enabledMark
@@ -565,7 +577,8 @@ export default {
     }
     this.form = JSON.parse(JSON.stringify(this.formlist))
     this.linesQuery = JSON.parse(JSON.stringify(this.linesQuerylist))
-    this.search()
+    this.getWarehouseListFun()
+    // this.search()
   },
   watch: {
     activeName() {
@@ -573,6 +586,18 @@ export default {
     }
   },
   methods: {
+    // 获取仓库
+    getWarehouseListFun() {
+      getWarehouseTree({ code: this.warehouseCode }).then(res => {
+        // 获取仓库详情信息
+        getWarehouseInfo(res.data[0].id).then(response => {
+          this.form.projectId = this.isProjectSwitch === '1' ? res.data[0].projectId || '' : ''
+          this.linesQuery.projectId = this.isProjectSwitch === '1' ? res.data[0].projectId || '' : ''
+          this.warehouseInfo = res.data[0]
+          this.initData()
+        })
+      })
+    },
     withdrawnHandle(formId) {
       let _data = {
         formId
@@ -725,8 +750,12 @@ export default {
     },
     addSupplier(type) {
       this.depFormVisible = true
+      let obj = {
+        btnType: type,
+        warehouseInfo: this.warehouseInfo
+      }
       this.$nextTick(() => {
-        this.$refs.depForm.init("", type)
+        this.$refs.depForm.init("", obj)
       })
     },
     addOrUpdateHandlemx(res, type) {
@@ -738,10 +767,14 @@ export default {
         type1 = type
       }
       let id = res.transferId
+      let obj = {
+        btnType: type1,
+        warehouseInfo: this.warehouseInfo
+      }
       if (id) {
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.depForm.init(id, type1)
+          this.$refs.depForm.init(id, obj)
         })
         // }, 600);
       }
@@ -755,19 +788,27 @@ export default {
         type1 = type
       }
       let id = res.id
+      let obj = {
+        btnType: type1,
+        warehouseInfo: this.warehouseInfo
+      }
       if (id) {
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.depForm.init(id, type1)
+          this.$refs.depForm.init(id, obj)
         })
         // }, 600);
       }
     },
     handleUsercustom(id, type) {
       this.depFormVisible = true
+      let obj = {
+        btnType: type,
+        warehouseInfo: this.warehouseInfo
+      }
       if (id) {
         this.$nextTick(() => {
-          this.$refs.depForm.init(id, type)
+          this.$refs.depForm.init(id, obj)
         })
       }
     },

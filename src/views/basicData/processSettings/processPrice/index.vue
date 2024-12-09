@@ -131,7 +131,7 @@
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" width="100" />
         </JNPF-table>
-        <pagination :total="total" :page.sync="superForm.pageNum" :limit.sync="superForm.pageSize"
+        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
           @pagination="initData" />
       </div>
     </div>
@@ -249,7 +249,7 @@ export default {
       initListQuery: {
         code: '',
         name: '',
-        pricingType: 'by_time',
+        pricingType: '',
         orderItems: [
           {
             asc: false,
@@ -269,7 +269,7 @@ export default {
         children: 'childrenList',
         label: 'name'
       },
-      superForm: {},
+      listQuery: {},
       total: 0,
       formVisible: false,
       expands: true,
@@ -307,7 +307,7 @@ export default {
     await this.getProjectSwitch('system', 'project')
     this.tableDataFlag = true
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-    this.superForm = this.listQuery
+
     this.getcategoryTree()
   },
   methods: {
@@ -374,9 +374,9 @@ export default {
     initData() {
       this.listLoading = true
       if (this.isProjectSwitch === '1') {
-        this.superForm.projectId = this.userInfo.projectId
+        this.listQuery.projectId = this.userInfo.projectId
       }
-      getBimProcessList(this.superForm)
+      getBimProcessList(this.listQuery)
         .then((res) => {
           this.tableData = res.data.records
           this.total = res.data.total
@@ -405,10 +405,10 @@ export default {
               }
             })
         }
-        this.superForm.superQuery = this.basicQuery
+        this.listQuery.superQuery = this.basicQuery
       }
       if (type === 'super') {
-        this.superForm.superQuery = this.superQuery
+        this.listQuery.superQuery = this.superQuery
       }
 
       this.initData()
@@ -428,7 +428,7 @@ export default {
         //   options: [{ label: '计时', value: 'by_time' }, { label: '计件', value: 'by_piece' }]
         // }
       ]
-      this.superForm = JSON.parse(JSON.stringify(this.initListQuery))
+      this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.initData()
       this.filterText = ''
       this.getcategoryTree()

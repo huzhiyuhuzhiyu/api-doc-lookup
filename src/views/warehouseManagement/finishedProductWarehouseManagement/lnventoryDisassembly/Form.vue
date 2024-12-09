@@ -28,8 +28,8 @@
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="拆卸人" prop="transferBy">
-                        <user-select v-model="dataForm.transferBy" placeholder="请选择拆卸人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
-                        </user-select>
+                        <PersonSelect v-model="dataForm.transferBy" :projectId="warehouseInfo.projectId" placeholder="请选择拆卸人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
+                        </PersonSelect>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
@@ -98,6 +98,7 @@
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="2" />
                     <el-table-column prop="productDrawingNo" label="目标品名规格" width="300" show-overflow-tooltip />
                     <el-table-column prop="productCode" label="目标产品编码" width="200" show-overflow-tooltip />
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                     <!-- <el-table-column prop="warehouseId" label="目标仓库" width="260">
                   <template slot="header">
                     <span class="required">*</span>目标仓库
@@ -198,8 +199,8 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="拆卸人" prop="transferBy">
-                    <user-select v-model="dataForm.transferBy" placeholder="请选择拆卸人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
-                    </user-select>
+                    <PersonSelect v-model="dataForm.transferBy" :projectId="warehouseInfo.projectId" placeholder="请选择拆卸人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
+                    </PersonSelect>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
@@ -268,6 +269,7 @@
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="2" />
                 <el-table-column prop="productDrawingNo" label="目标品名规格" width="300" show-overflow-tooltip />
                 <el-table-column prop="productCode" label="目标产品编码" width="200" show-overflow-tooltip />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                 <!-- <el-table-column prop="warehouseId" label="目标仓库" width="260">
                   <template slot="header">
                     <span class="required">*</span>目标仓库
@@ -350,6 +352,8 @@
   </transition>
 </template>
 <script>
+import PersonSelect from '@/views/basicData/processSettings/basicProcessSettings/personSelect.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
@@ -367,10 +371,12 @@ import { getWarehouseList, getProductionLotList, getBatchNumber } from "@/api/ba
 import { TransferBarCode } from "@/api/warehouseManagement/transferManagement";
 import formValidate from "@/utils/formValidate";
 export default {
-  mixins: [busFlow, flowMixin],
-  components: { Process, recordList },
+  mixins: [busFlow, flowMixin, getProjectList],
+  components: { Process, recordList,PersonSelect },
   data() {
     return {
+      isProjectSwitch: '',
+      warehouseInfo: {},
       flowTemplateJson: {},
       flowData: {},
       approvalFlag: false,   // 待办事宜等页面 需要
@@ -506,6 +512,7 @@ export default {
         ]
       },
       ProductListRequestObj: {
+        projectId: '',
         drawingNo: '',
         classAttribute: "",
         classAttributeList: ["raw_material", "semi_finished", "finish_product", "accessories"],
@@ -525,6 +532,7 @@ export default {
       },
       btnType: undefined,
       listQuery: {
+        projectId: '',
         accuracyLevel: "",
         availableStock: true,
         availableBatch: 1,
@@ -599,6 +607,9 @@ export default {
       },
       selectRows: [],
     };
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
   },
   mounted() {
     this.calcHeight();
@@ -892,11 +903,14 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
     },
-    init(id, btnType, approvalFlag) {
+    init(id, obj, approvalFlag) {
       this.approvalFlag = approvalFlag
       this.formLoading = true
       this.dataForm.id = id || "";
-      this.btnType = btnType;
+      this.btnType = obj.btnType;
+      this.warehouseInfo = obj.warehouseInfo
+      this.listQuery.projectId = this.warehouseInfo.projectId
+      this.ProductListRequestObj.projectId = this.warehouseInfo.projectId
       if (this.btnType === 'add' || this.btnType === 'edit') {
         this.getBusInfo('b062')
         this.fetchData('SPSD')

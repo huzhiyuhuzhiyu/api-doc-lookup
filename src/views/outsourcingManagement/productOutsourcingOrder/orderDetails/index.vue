@@ -424,7 +424,6 @@ export default {
         type: 'input'
       })
     }
-    this.initData()
     this.detailData()
   },
   methods: {
@@ -590,40 +589,6 @@ export default {
       this.reset()
     },
 
-    initData() {
-      this.listLoading = true
-      if (this.createRequirementDate && this.createRequirementDate.length > 0) {
-        this.listQuery.startTime = this.createRequirementDate[0] + ' 00:00:00'
-        this.listQuery.endTime = this.createRequirementDate[1] + ' 23:59:59'
-      } else {
-        this.listQuery.startTime = ''
-        this.listQuery.endTime = ''
-      }
-      if (this.deliveryDate && this.deliveryDate.length > 0) {
-        this.listQuery.deliveryStartDate = this.deliveryDate[0]
-        this.listQuery.deliveryEndDate = this.deliveryDate[1]
-      } else {
-        this.listQuery.deliveryStartDate = ''
-        this.listQuery.deliveryEndDate = ''
-      }
-      purchaseOrderList(this.listQuery)
-        .then((res) => {
-          console.log(res, '外协订单列表')
-          this.tableDataList = res.data.records
-          this.tableFlag = true
-
-          this.tableDataList.forEach((item) => {
-            item.disabled = item.receivingStatus == 'receiving' && item.approvalStatus == 'ok' ? false : true
-          })
-          this.total = res.data.total
-          this.listLoading = false
-          this.visible = false
-        })
-        .catch(() => {
-          this.listLoading = false
-        })
-    },
-
     detailData() {
       this.listLoading = true
       if (this.createRequirementDate && this.createRequirementDate.length > 0) {
@@ -655,14 +620,7 @@ export default {
           this.listLoading = false
         })
     },
-    search() {
-      Object.keys(this.listQuery).forEach((key) => {
-        let item = this.listQuery[key]
-        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
-      })
-      this.listQuery.pageNum = 1
-      this.initData()
-    },
+
     // 搜索明细
     searchDetail() {
       Object.keys(this.listsQuery).forEach((key) => {
@@ -749,28 +707,6 @@ export default {
       this.$nextTick(() => {
         this.$refs.procureForm.init(id, type)
       })
-    },
-
-    withdrawnHandle(formId) {
-      let _data = {
-        formId
-      }
-      this.$confirm('此操作将撤回审批单，是否继续？', this.$t('common.tipTitle'), {
-        type: 'warning'
-      })
-        .then(() => {
-          withdrawn(_data).then((res) => {
-            this.$message({
-              type: 'success',
-              message: '撤回成功',
-              duration: 1500,
-              onClose: () => {
-                this.initData()
-              }
-            })
-          })
-        })
-        .catch(() => { })
     },
 
     // 处理分页

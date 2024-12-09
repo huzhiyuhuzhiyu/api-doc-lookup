@@ -925,30 +925,8 @@ export default {
         return formatted
       }
     },
-    //数量输入事件
-    changePlanQuantity(index, val) {
-      if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
-        this.dataFormTwo.data[index].planQuantity2 = this.numberFormat(
-          this.dataFormTwo.data[index].planQuantity * this.dataFormTwo.data[index].ratio
-        )
-      } else {
-        this.dataFormTwo.data[index].planQuantity2 = this.numberFormat(
-          this.dataFormTwo.data[index].planQuantity / this.dataFormTwo.data[index].ratio
-        )
-      }
-    },
-    // 副数量输入事件
-    changePlanQuantity2(index, val) {
-      if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
-        this.dataFormTwo.data[index].planQuantity = this.numberFormat(
-          this.dataFormTwo.data[index].planQuantity2 / this.dataFormTwo.data[index].ratio
-        )
-      } else {
-        this.dataFormTwo.data[index].planQuantity = this.numberFormat(
-          this.dataFormTwo.data[index].planQuantity2 * this.dataFormTwo.data[index].ratio
-        )
-      }
-    },
+
+ 
     // 产品弹窗
     openSeleceProductDialog() {
       this.$refs['ComSelect-page'].openDialog()
@@ -1021,18 +999,7 @@ export default {
         )
       }
     },
-    // 副数量输入事件
-    changePlanQuantity2(index, val) {
-      if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
-        this.dataFormTwo.data[index].purchaseQuantity = this.numberFormat(
-          this.dataFormTwo.data[index].purchaseQuantity2 / this.dataFormTwo.data[index].ratio
-        )
-      } else {
-        this.dataFormTwo.data[index].purchaseQuantity = this.numberFormat(
-          this.dataFormTwo.data[index].purchaseQuantity2 * this.dataFormTwo.data[index].ratio
-        )
-      }
-    },
+
     clearData() {
       this.dataForm.id = ''
       this.dataFormTwo.data = []

@@ -106,7 +106,7 @@
 </template>
 
 <script>
-import { excelExport } from '@/api/basicData/index'
+import { excelExport,getOrderFiledMap } from '@/api/basicData/index'
 import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal, getOrderLineReport } from '@/api/salesManagement/assemblyOrders'
 import Form from './Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -115,7 +115,7 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 import {
-  getbimProductAttributesList, getbimProductAttributes
+  getbimProductAttributesList, getbimProductAttributes,getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'salesOrderCreation',
@@ -220,20 +220,7 @@ export default {
           label: "单位",
           type: 'input'
         },
-        // {
-        //   prop: 'num',
-        //   label: "数量",
-        //   type: 'input'
-        // },
-
-       
-        {
-          prop: 'specialRequire',
-          label: "特殊要求",
-          type: 'select',
-          options: [],
-        },
-
+        
         {
           prop: 'contractNo',
           label: "客户合同号",
@@ -263,6 +250,7 @@ export default {
       isProjectSwitchFlag: false,
       isProjectSwitch: '',
       isProductNameSwitch:"",
+ 
     }
   },
   watch: {
@@ -276,6 +264,7 @@ export default {
 
 
   async created() {
+ 
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
     if (this.isProductNameSwitch == 1) {
@@ -289,6 +278,7 @@ export default {
     this.search('basic')
   },
   methods: {
+   
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)

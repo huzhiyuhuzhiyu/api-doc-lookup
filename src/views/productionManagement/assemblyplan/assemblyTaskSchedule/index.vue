@@ -512,7 +512,7 @@ export default {
           let longestProcessInfo = res.data.records.reduce((longest, current) => {
             return current.processInfoList.length > longest.processInfoList.length ? current : longest;
           }, res.data.records[0]);
-          this.maxWidth = longestProcessInfo.processInfoList.length * 100 + 50
+          this.maxWidth = longestProcessInfo.processInfoList.length * 100 + 150
           setTimeout(() => {
             this.listLoading = false
           }, 500);

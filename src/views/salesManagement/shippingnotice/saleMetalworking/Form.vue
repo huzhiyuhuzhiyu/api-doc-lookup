@@ -15,12 +15,10 @@
           </div>
         </div>
         <div class="main" v-loading="formLoading">
-
           <el-tabs v-model="activeName" v-if="!approvalFlag" @tab-click="handleClick" class=".el-table">
             <el-tab-pane label="基础信息" name="orderInfo">
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
                       <el-col :sm="8" :xs="24">
@@ -38,7 +36,6 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="客户名称" prop="partnerName">
                           <el-input v-model="dataForm.partnerName" placeholder="请选择客户" :disabled="btnType == 'look'"
@@ -66,14 +63,6 @@
                             :disabled="btnType == 'look' || btnType == 'qrsh'" />
                         </el-form-item>
                       </el-col>
-                      <!-- <el-col :sm="6" :xs="24">
-                    <el-form-item label="发货人" prop="shipperId">
-                      <user-select v-model="dataForm.shipperId" placeholder="请选择发货人" clearable style="width: 100%;"
-                        :disabled="btnType == 'look' || btnType == 'qrsh'" @change="hangleSelectSales">
-                      </user-select>
-
-                    </el-form-item>
-                  </el-col> -->
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="发货方式" prop="delivery">
                           <el-select v-model="dataForm.delivery" placeholder="请选择发货方式" clearable style="width: 100%;"
@@ -83,7 +72,6 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-
                       <el-col :sm="8" :xs="24" v-if="btnType == 'look'">
                         <el-form-item label="发货状态" prop="deliveryStatus">
                           <el-select v-model="dataForm.deliveryStatus" placeholder="请选择发货状态" clearable
@@ -100,7 +88,6 @@
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
-
                       <el-col :sm="8" :xs="24" v-if="btnType == 'look'">
                         <el-form-item label="创建时间" prop="createTime">
                           <el-date-picker v-model="dataForm.createTime" type="datetime" placeholder="请选择创建时间"
@@ -142,10 +129,7 @@
                   </el-form>
                 </el-collapse-item>
                 <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
-
-
                   <div v-if="btnType == 'add' || btnType == 'edit' || btnType == 'copy'">
-
                     <el-button type="text" style="margin-right:8px;margin-left:5px; font-size:14px!important"
                       icon="el-icon-plus" @click="openSeleceProductDialog()">选择产品</el-button>|
                     <el-button type="text" style="margin-right:8px;margin-left:8px ; font-size:14px!important"
@@ -154,28 +138,20 @@
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                     <JNPF-table ref="product" :data="dataFormTwo.data" @selection-change="handeleProductInfoData"
                       fixedNo :hasC="btnType != 'look'" v-loading="tableloading">
-
-
-
                       <el-table-column prop="customerProductNo" label="客户料号" width="160" show-overflow-tooltip
                         key="166">
                       </el-table-column>
-                      <el-table-column prop="productName" label="产品名称"    width="160" v-if="isProductNameSwitch === '1'"
-                      show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                        show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" width="290" key="3" show-overflow-tooltip>
                       </el-table-column>
-                      <el-table-column prop="projectName" label="所属项目" min-width="120"  
-                      v-if="isProjectSwitch == 1" />
-
+                      <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                       <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
-
-
                       <el-table-column prop="ordersNum" label="订单数量" width="120" key="4"
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="waitDeliverNum" label="待发货数量" v-if="btnType != 'look'" width="120" key="6"
                         show-overflow-tooltip>
                       </el-table-column>
-
                       <el-table-column prop="num" :label="mainUnitFlag == 1 ? '发货数量(主)' : '发货数量'" min-width="150"
                         v-if="!dataForm.exchangeGoodsFlag">
                         <template slot="header">
@@ -202,23 +178,31 @@
                         <template slot-scope="scope">
                           <div>{{ scope.row.taxRate + '%' }}</div>
                         </template>
-
                       </el-table-column>
                       <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
                       <el-table-column prop="taxAmount" label="税额" width="140"></el-table-column>
-
                       <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column>
                       <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126">
                       </el-table-column>
                       <el-table-column prop="deliveryDate" label="交货日期" width="160" />
-                      <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" />
-                      <el-table-column prop="accuracyLevel" label="精度等级" width="160" />
-                      <el-table-column prop="vibrationLevel" label="振动等级" width="160" />
-                      <el-table-column prop="oil" label="油脂" width="160" />
-                      <el-table-column prop="oilQuantity" label="油脂量" width="160" />
-                      <el-table-column prop="clearance" label="游隙" width="160" />
-                      <el-table-column prop="packagingMethod" label="包装方式" width="160" />
-                      <el-table-column prop="specialRequire" label="特殊要求" width="160" />
+                      <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211"
+                        v-if="accuracyLevelFlag == 1"></el-table-column>
+                      <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123"
+                        v-if="clearanceFlag == 1">
+                      </el-table-column>
+                      <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"
+                        v-if="oilFlag == 1"></el-table-column>
+                      <el-table-column prop="oil" label="油脂" width="120" :key="61"
+                        v-if="oilQuantityFlag == 1"></el-table-column>
+                      <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"
+                        v-if="packagingMethodFlag == 1"></el-table-column>
+                      <el-table-column prop="clearance" label="游隙" width="120" :key="100"
+                        v-if="sealingCoverTypingFlag == 1"></el-table-column>
+                      <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101"
+                        v-if="specialRequireFlag == 1">
+                      </el-table-column>
+                      <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"
+                        v-if="vibrationLevelFlag == 1"></el-table-column>
                       <el-table-column prop="ordersNo" label="订单号" width="160" />
                       <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip>
                         <template slot-scope="scope">
@@ -254,7 +238,6 @@
           </el-tabs>
           <el-collapse v-model="activeNames" v-else>
             <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-
               <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                 <el-row :gutter="30" class="custom-row">
                   <el-col :sm="8" :xs="24">
@@ -272,7 +255,6 @@
                       </el-select>
                     </el-form-item>
                   </el-col>
-
                   <el-col :sm="8" :xs="24">
                     <el-form-item label="客户名称" prop="partnerName">
                       <el-input v-model="dataForm.partnerName" placeholder="请选择客户" :disabled="btnType == 'look'"
@@ -305,7 +287,6 @@
                       <user-select v-model="dataForm.shipperId" placeholder="请选择发货人" clearable style="width: 100%;"
                         :disabled="btnType == 'look' || btnType == 'qrsh'" @change="hangleSelectSales">
                       </user-select>
-
                     </el-form-item>
                   </el-col> -->
                   <el-col :sm="8" :xs="24">
@@ -317,7 +298,6 @@
                       </el-select>
                     </el-form-item>
                   </el-col>
-
                   <el-col :sm="8" :xs="24" v-if="btnType == 'look'">
                     <el-form-item label="发货状态" prop="deliveryStatus">
                       <el-select v-model="dataForm.deliveryStatus" placeholder="请选择发货状态" clearable style="width: 100%;"
@@ -334,7 +314,6 @@
                       </el-date-picker>
                     </el-form-item>
                   </el-col>
-
                   <el-col :sm="8" :xs="24" v-if="btnType == 'look'">
                     <el-form-item label="创建时间" prop="createTime">
                       <el-date-picker v-model="dataForm.createTime" type="datetime" placeholder="请选择创建时间"
@@ -375,10 +354,7 @@
               </el-form>
             </el-collapse-item>
             <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
-
-
               <div v-if="btnType == 'add' || btnType == 'edit' || btnType == 'copy'">
-
                 <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                   icon="el-icon-plus" @click="openSeleceProductDialog()">选择产品</el-button>|
                 <el-button type="text" style="margin-right:8px;margin-left:8px ; font-size:14px!important"
@@ -387,26 +363,19 @@
               <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                 <JNPF-table ref="product" :data="dataFormTwo.data" @selection-change="handeleProductInfoData" fixedNo
                   :hasC="btnType != 'look'" v-loading="tableloading">
-
-
-
                   <el-table-column prop="customerProductNo" label="客户料号" width="160" show-overflow-tooltip key="166">
                   </el-table-column>
-                  <el-table-column prop="productName" label="产品名称"   width="160" v-if="isProductNameSwitch === '1'"
-                  show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                    show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" width="290" key="3" show-overflow-tooltip>
                   </el-table-column>
-                  <el-table-column prop="projectName" label="所属项目" min-width="120"  
-                  v-if="isProjectSwitch == 1" />
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
-
-
                   <el-table-column prop="ordersNum" label="订单数量" width="120" key="4"
                     show-overflow-tooltip></el-table-column>
                   <el-table-column prop="waitDeliverNum" label="待发货数量" v-if="btnType != 'look'" width="120" key="6"
                     show-overflow-tooltip>
                   </el-table-column>
-
                   <el-table-column prop="num" :label="mainUnitFlag == 1 ? '发货数量(主)' : '发货数量'" min-width="150"
                     v-if="!dataForm.exchangeGoodsFlag">
                     <template slot="header">
@@ -425,16 +394,24 @@
                   </el-table-column>
                   <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                   <el-table-column prop="deputyNum" label="发货数量(副)" min-width="150" v-if="mainUnitFlag == 1" />
-
                   <el-table-column prop="deliveryDate" label="交货日期" width="160" />
-                  <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" />
-                  <el-table-column prop="accuracyLevel" label="精度等级" width="160" />
-                  <el-table-column prop="vibrationLevel" label="振动等级" width="160" />
-                  <el-table-column prop="oil" label="油脂" width="160" />
-                  <el-table-column prop="oilQuantity" label="油脂量" width="160" />
-                  <el-table-column prop="clearance" label="游隙" width="160" />
-                  <el-table-column prop="packagingMethod" label="包装方式" width="160" />
-                  <el-table-column prop="specialRequire" label="特殊要求" width="160" />
+                  <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211"
+                    v-if="accuracyLevelFlag == 1"></el-table-column>
+                  <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123" v-if="clearanceFlag == 1">
+                  </el-table-column>
+                  <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"
+                    v-if="oilFlag == 1"></el-table-column>
+                  <el-table-column prop="oil" label="油脂" width="120" :key="61"
+                    v-if="oilQuantityFlag == 1"></el-table-column>
+                  <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"
+                    v-if="packagingMethodFlag == 1"></el-table-column>
+                  <el-table-column prop="clearance" label="游隙" width="120" :key="100"
+                    v-if="sealingCoverTypingFlag == 1"></el-table-column>
+                  <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101"
+                    v-if="specialRequireFlag == 1">
+                  </el-table-column>
+                  <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"
+                    v-if="vibrationLevelFlag == 1"></el-table-column>
                   <el-table-column prop="ordersNo" label="订单号" width="160" />
                   <el-table-column prop="workOrderNo" label="工作令号" width="160" />
                   <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip>
@@ -462,7 +439,6 @@
         <el-dialog title="选择客户" :close-on-click-modal="false" :close-on-press-escape="false"
           :visible.sync="customerVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%"
           append-to-body @close="handleClose">
-
           <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
             <div class="JNPF-common-layout-left">
               <div class="JNPF-common-title">
@@ -478,7 +454,6 @@
                   </el-dropdown>
                 </span>
               </div>
-
               <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
                 <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands"
                   highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick"
@@ -517,7 +492,6 @@
                       </el-button>
                     </el-form-item>
                   </el-col>
-
                 </el-form>
               </el-row>
               <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -536,18 +510,14 @@
               </div>
             </div>
           </div>
-
         </el-dialog>
         <el-dialog title="选择产品" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false"
           :visible.sync="productVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%"
           append-to-body>
-
           <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
-
             <div class="JNPF-common-layout-center JNPF-flex-main">
               <el-row class="JNPF-common-search-box" :gutter="16">
                 <el-form @submit.native.prevent>
-
                   <el-col :span="6">
                     <el-form-item>
                       <el-input v-model="orderForm.customerProductDrawingNo" placeholder="请输入客户料号" clearable />
@@ -565,7 +535,6 @@
                       </el-date-picker>
                     </el-form-item>
                   </el-col>
-
                   <el-col :span="6">
                     <el-form-item>
                       <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductFun()">
@@ -575,37 +544,44 @@
                       </el-button>
                     </el-form-item>
                   </el-col>
-
                 </el-form>
               </el-row>
               <div class="JNPF-common-layout-main JNPF-flex-main">
                 <JNPF-table v-loading="listLoading" :data="productList" hasC
                   @selection-change="handleSelectionChangeAllPruduct">
-                  <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom"></el-table-column>
-                  <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
-                  <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-                  <el-table-column prop="productName" label="产品名称"    width="160" v-if="isProductNameSwitch === '1'"
-                  show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
-                  <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-                  v-if="isProjectSwitch == 1" />
+                  <el-table-column prop="orderNo" label="订单号" width="180"></el-table-column>
+                  <el-table-column prop="customerProductNo" label="客户料号" width="160" />
+                  <el-table-column prop="productCode" label="产品编码" width="160" />
+                  <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                    show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="drawingNo" label="品名规格" width="160" />
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                   <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
                   </el-table-column>
                   <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                   <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
-                  <el-table-column prop="waitDeliverNum" label="待发货数量" width="160" sortable="custom" />
-                  <el-table-column prop="deliveryDate" label="交货日期" width="160" sortable="custom" />
-                  <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
-                  <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
-                  <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
-                  <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
-                  <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
-                  <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-                  <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
-                  <el-table-column prop="specialRequire" label="特殊要求" width="160" sortable="custom" />
-                  <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
-                  <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+                  <el-table-column prop="waitDeliverNum" label="待发货数量" width="160" />
+                  <el-table-column prop="deliveryDate" label="交货日期" width="160" />
+                  <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211"
+                    v-if="accuracyLevelFlag == 1"></el-table-column>
+                  <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123" v-if="clearanceFlag == 1">
+                  </el-table-column>
+                  <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"
+                    v-if="oilFlag == 1"></el-table-column>
+                  <el-table-column prop="oil" label="油脂" width="120" :key="61"
+                    v-if="oilQuantityFlag == 1"></el-table-column>
+                  <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"
+                    v-if="packagingMethodFlag == 1"></el-table-column>
+                  <el-table-column prop="clearance" label="游隙" width="120" :key="100"
+                    v-if="sealingCoverTypingFlag == 1"></el-table-column>
+                  <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101"
+                    v-if="specialRequireFlag == 1">
+                  </el-table-column>
+                  <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"
+                    v-if="vibrationLevelFlag == 1"></el-table-column>
+                  <el-table-column prop="remark" label="备注" width="160" />
+                  <el-table-column prop="createTime" label="创建时间" width="180" />
                 </JNPF-table>
                 <pagination :total="productTotal" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
                   @pagination="searchProductFun" />
@@ -623,21 +599,17 @@
           width="500px">
           <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
               {{ submitmethodsTitle }}啦！</span><span class="import_b">您还可以进行如下操作：</span></div>
-
-
           <span slot="footer" class="dialog-footer">
             <el-button @click="goBack">返回列表</el-button>
             <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()"> {{ btnText }}</el-button>
             <el-button v-else type="primary" @click="continueAdd()"> {{ btnText }}</el-button>
           </span>
         </el-dialog>
-
       </div>
     </transition>
     <changeAddress v-if="addressVisibled" ref="addressRef" @getChangeAddress="getChangeAddress"></changeAddress>
   </div>
 </template>
-
 <script>
 import { editQuotationMsendlist, addQuotationsendlist, getQuotationsendlist, editReceiptnoticelist } from "@/api/salesManagement/index";
 import { getsaleOrderList } from '@/api/salesManagement/assemblyOrders'
@@ -650,18 +622,17 @@ import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowE
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
-import { getBimBusinessDetail } from '@/api/basicData/index'
+import { getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
-  mixins: [busFlow,getProjectList],
+  mixins: [busFlow, getProjectList],
   components: {
     changeAddress, Process, recordList
   },
   data() {
     return {
       isattachmentswitch: '',
-
       tipsvisible: false,
       btnText: "",
       submitmethodsTitle: "",
@@ -682,16 +653,9 @@ export default {
       Flagtype: false,
       datafilelist: [],
       provinces: [],
-      deliveryList: [
-        { label: "全部", value: "all" },
-        { label: "未发货完成", value: "un_shipment_completed" },
-        { label: "已发货完成", value: "shipment_completed" }
-      ],
+
       addressVisibled: false,
-      inspectionStatusList: [
-        { label: "待检验", value: "unInspect" },
-        { label: "已检验", value: "inspected" },
-      ],
+
       deliveryStatusList: [
         { label: "未完成", value: "not_finished" },
         { label: "已完成", value: "finished" },
@@ -706,38 +670,21 @@ export default {
         { label: "审批通过", value: "ok" },
         { label: "审批拒绝", value: "rebut" }
       ],
-      orderList: [
-        { label: "正常任务", value: "normal" },
-        { label: "预测订单", value: "prediction" },
-        { label: "样品订单", value: "sample" },
-        { label: "备货订单", value: "stock_up" },
-        { label: "急件订单", value: "urgent" },
-      ],
+
       orderListtf: [
         { label: "退货", value: "back" },
         { label: "发货", value: "delivery" },
       ],
-      orderListdd: [
-        { label: "外贸", value: "foreign_trade" },
-        { label: "内销", value: "domestic_market" },
-        { label: "总成", value: "assembly" }
-      ],
+
       departMentList: [
       ],
-      paymentStatusList: [
-        { label: "未付款", value: "no_pay", },
-        { label: "部分付款", value: "part_pay", },
-        { label: "已付清", value: "payed", },
-      ],
+
       productRules: {
-
         deliveryQuantity: [
-
           { validator: this.formValidate({ type: 'noEmtry', params: ['', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：发货数量${errMsg}`) }] }), trigger: ['blur'] },
           { validator: this.formValidate({ type: 'decimal', params: [20, 4, '', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：发货数量${errMsg}`) }] }), trigger: ['blur'] },
           { validator: this.formValidate('positiveNumber', false, (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：发货数量${errMsg}`) }), trigger: 'blur' },
           { required: true, trigger: ['blur'] }
-
         ],
       },
       ordersLineId: '',
@@ -774,7 +721,6 @@ export default {
       ],
       allproductData: [],
       allProductTotal: 0,
-
       ProductTreeData: [],
       ProductListRequestObj: {
         // neOrderState: 'finish',
@@ -799,7 +745,6 @@ export default {
         approvalStatus: "",
         startTime: "",
         endTime: "",
-
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -840,11 +785,7 @@ export default {
       paymentCycleList: [],
       activeNameDetail: 'productInfo',
       coverNum: "",//用于计算
-      invoicingStatusList: [
-        { label: "未开票", value: "not_invoiced" },
-        { label: "部分开票", value: "partial_invoicing" },
-        { label: "已开票", value: "invoiced" },
-      ],
+
       btnType: undefined,
       areaList: [],
       provinces: [],
@@ -926,7 +867,6 @@ export default {
         drawingNo: "",        // customerProductNo: "",
         deliveryStartTime: "",
         deliveryEndTime: "",
-
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -936,7 +876,6 @@ export default {
           asc: false,
           column: "t1.create_time"
         }],
-
       },
       selectArr: [],
       flowTemplateJson: {},
@@ -946,12 +885,21 @@ export default {
       endTime: 0,
       tableDataFlag: false,
       mainUnitFlag: null,
-      isProjectSwitch:null,
+      isProjectSwitch: null,
       isProductNameSwitch: '',
-
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
+      clearanceFlag: "",
+      oilFlag: "",
+      oilQuantityFlag: "",
+      packagingMethodFlag: "",
+      sealingCoverTypingFlag: "",
+      specialRequireFlag: "",
+      vibrationLevelFlag: "",
+      bimProductAttributesList: [],
     }
   },
-  computed: { 
+  computed: {
     ...mapGetters(['userInfo']),
     // 总发货数量
     totalDeliveryQuantity: function () {
@@ -978,26 +926,45 @@ export default {
       return totalNum
     },
   },
- 
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductAttributeFun()
     this.isProjectSwitchFlag = true
     this.getbimProductAttributesFun()
     await this.getProductNameSwitch('product', 'enable_productName')
-    
- 
   },
   mounted() {
     console.log(5555);
     this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
-
     this.getBimBusinessDetail()
-
   },
   methods: {
+    // 获取业务参数中 属性字段动态显示
+    getProductAttributeFun() {
+      getOrderFiledMap('sale').then(res => {
+        console.log("产品属性", res);
+        // sealingCoverTypingFlag list1  pa007
+        // accuracyLevelFlag list2  pa006
+        // vibrationLevelFlag list3 pa005
+        // oilFlag list4 pa002
+        // oilQuantityFlag list5 pa003
+        // clearanceFlag list6 pa001
+        // packagingMethodFlag list7 pa015
+        // specialRequireFlag list8 pa016
+
+        this.accuracyLevelFlag = res.data.accuracyLevel //list1
+        this.clearanceFlag = res.data.clearance
+        this.oilFlag = res.data.oil
+        this.oilQuantityFlag = res.data.oilQuantity
+        this.packagingMethodFlag = res.data.packagingMethod
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        this.specialRequireFlag = res.data.specialRequire
+        this.vibrationLevelFlag = res.data.vibrationLevel
+      })
+    },
     async getProductNameSwitch(code, type) {
       try {
-        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
     async getMainUnitFun(code, type) {
@@ -1006,8 +973,6 @@ export default {
         this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
         this.tableDataFlag = true
         this.listLoading = false
-
-
       } catch (error) { }
     },
     getBimBusinessDetail() {
@@ -1028,8 +993,6 @@ export default {
           }
           this.departMentList.push(obj)
           let arr = []
-
-
         });
       })
     },
@@ -1047,12 +1010,12 @@ export default {
         console.log("产品", res);
         res.data.records.forEach(item => {
           if (this.mainUnitFlag == 1) {
-          if (item.calculationDirection == 'multiplication') {
-            this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
-          } else {
-            this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+            if (item.calculationDirection == 'multiplication') {
+              this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+            } else {
+              this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+            }
           }
-        }
         });
         this.productList = res.data.records
         this.productTotal = res.data.total
@@ -1060,7 +1023,6 @@ export default {
       }).catch(() => {
         this.listLoading = false
       })
-
     },
     // 选择产品——重置
     resetProductFun() {
@@ -1072,7 +1034,6 @@ export default {
         drawingNo: "",        // customerProductNo: "",
         deliveryStartTime: "",
         deliveryEndTime: "",
-
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -1082,10 +1043,8 @@ export default {
           asc: false,
           column: "t1.create_time"
         }],
-
       }
       this.searchProductFun()
-
     },
     // 点击选择产品
     openSeleceProductDialog() {
@@ -1093,7 +1052,6 @@ export default {
       this.productVisible = true
       this.searchProductFun()
     },
-
     changeclick(e) {
       if (this.dataFormTwo.data.length) {
         this.$confirm('切换换货标识，将清空产品数据,是否继续？', '提示', {
@@ -1115,7 +1073,6 @@ export default {
           this.dataForm.exchangeGoodsFlag = !e
         })
       }
-
     },
     //发货数量不能为0
     calcValidate() {
@@ -1137,7 +1094,6 @@ export default {
         }
       };
     },
-
     //选择发货方式
     changeDelivery(val) {
       if (val === 'self_pickup') {
@@ -1163,7 +1119,6 @@ export default {
     changeAddress() {
       if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
       this.addressVisibled = true
-
       this.$nextTick(() => {
         this.$refs.addressRef.initData(this.customerData.id)
       })
@@ -1210,7 +1165,6 @@ export default {
       });
       let uniqueArr = [];
       let idSet = new Set();
-
       this.dataFormTwo.data.forEach(item => {
         if (!idSet.has(item.id)) {
           uniqueArr.push(item);
@@ -1220,7 +1174,6 @@ export default {
       this.dataFormTwo.data = uniqueArr
       console.log("this.dataFormTwo", this.dataFormTwo.data);
     },
-
     dateFormat(dateData) {
       var date = new Date(dateData)
       var y = date.getFullYear()
@@ -1253,7 +1206,6 @@ export default {
       }
       this.selectRows = []; // 清空选中的行的数据
     },
-
     // 单个删除
     handleDel(data) {
       if (this.btnType == 'qrsh') {
@@ -1273,7 +1225,6 @@ export default {
         this.deletedata()
       }
     },
-
     // 监听主数量输入
     watchnums(row, index) {
       // 计算方向calculationDirection 转换系数ratio  副数量assistantNum
@@ -1282,7 +1233,6 @@ export default {
       // 使用正则表达式验证输入内容
       row.deliveryQuantity = row.deliveryQuantity.replace(/[^\d.]/g, '');
       let productArr = [...this.dataFormTwo.data]
-
       if (row.deliveryQuantity.length == 1 && row.deliveryQuantity == '.') {
         // 如果第一位是小数点，则清空输入框
         row.deliveryQuantity = '';
@@ -1293,12 +1243,9 @@ export default {
       } else if (row.deliveryQuantity.length > 2 && row.deliveryQuantity[0] == '0' && row.deliveryQuantity[1] != '.') {
         row.deliveryQuantity = row.deliveryQuantity.substring(1, row.deliveryQuantity.length)
       }
-
-
       if (row.deliveryQuantity.includes('.')) {
         let dotCount = 0; // 小数点的数量
         let result = ''; // 处理后的结果
-
         for (let i = 0; i < row.deliveryQuantity.length; i++) {
           const char = row.deliveryQuantity[i];
           if (char === '.') {
@@ -1311,7 +1258,6 @@ export default {
             result += char;
           }
         }
-
         row.deliveryQuantity = result;
         let arr = row.deliveryQuantity.split('.')
         if (arr[0].length > 8) {
@@ -1334,7 +1280,6 @@ export default {
         productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.excludingTaxPrice]), 2)
         productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
         this.$set(productArr[index], 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.ratio]), 6))
-
       } else {
         productArr[index].assistantNum = this.jnpf.numberFormat(row.deliveryQuantity / row.ratio, 2)
         productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.price]), 2)
@@ -1359,22 +1304,11 @@ export default {
           type: 'error',
           duration: 1500,
         })
-
       }
     },
-
-
-
-
-
-
-
-
     handleSelectionChangeAllPruduct(val) {
       this.selectArr = val
     },
-
-
     handleClose() {
       this.form = {
         code: "",
@@ -1388,7 +1322,6 @@ export default {
       this.initData()
     },
     closeproductVisible() {
-
     },
     //清空数据
     deletedata() {
@@ -1428,7 +1361,6 @@ export default {
             this.dataForm.code = e.code
             this.customerVisible = false
             this.getAddressInfoFun(e.id)
-
           }).catch(() => {
             this.$message({
               type: 'info',
@@ -1447,10 +1379,8 @@ export default {
           this.dataForm.code = e.code
           this.customerVisible = false
           this.getAddressInfoFun(e.id)
-
         }
       })
-
     },
     getAddressInfoFun(id) {
       console.log(7777);
@@ -1480,7 +1410,6 @@ export default {
           this.dataForm.address = ""
           this.defaultAddress = ""
           // this.deletedata()
-
         }
       })
     },
@@ -1553,7 +1482,6 @@ export default {
       loop(node)
       return fullPath
     },
-
     toggleExpand(expands) {
       this.refreshTree = false
       this.expands = expands
@@ -1586,7 +1514,6 @@ export default {
       this.customerVisible = true
       this.getcategoryTree()
     },
-
     // 切换table
     handleClick(tab, event) {
     },
@@ -1652,12 +1579,8 @@ export default {
               item.deliveryQuantity = ""
             });
             this.dataFormTwo.data = res.data.noticeLineList
-
-
             console.log("this.dataFormTwo.data", this.dataFormTwo.data);
-
           } else if (this.btnType == 'edit' || this.btnType == 'look') {
-
             // this.dataFormTwo.data = res.data.noticeLineList
             this.processingdata(res.data.noticeLineList)
             if (this.btnType === 'edit') {
@@ -1667,11 +1590,8 @@ export default {
               if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             }
           }
-
         })
-
       }
-
       if (this.btnType == 'edit') {
         this.fetchData("SSDH", false)
         this.btnText = "继续修改"
@@ -1691,7 +1611,6 @@ export default {
         this.getBusInfo()
       }
       this.formLoading = false
-
     },
     async fetchData(code, flag) {
       try {
@@ -1711,7 +1630,6 @@ export default {
     },
     // 继续新增
     continueAdd() {
-
       this.tipsvisible = false
       this.btnLoading = false
       this.dataForm = {
@@ -1755,8 +1673,6 @@ export default {
             })
             return
           }
-
-
           if (this.iszhi) {
             this.iszhi = false
             return
@@ -1902,7 +1818,6 @@ export default {
               obj.noticeLineList.push(dep2)
             }
           })
-
           let isQuantity = this.dataFormTwo.data.some((item, index) => {
             return item.ordersNum && item.deliveryQuantity * 1 + item.outboundQuantity * 1 + item.undeliveredQuantity * 1 > item.ordersNum * 1
           })
@@ -2166,13 +2081,11 @@ $footerPadding: '10px';
   margin-bottom: 0;
   padding: 0 10px 0px;
   border-top: none !important;
-
 }
 
 ::v-deep .el-collapse-item__content {
   padding-bottom: 0px
 }
-
 
 .import_t {
   font-size: 22px;

@@ -11,7 +11,7 @@
             <el-tab-pane label="基础信息" name="jcInfo">
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                  <el-row :gutter="15" class="">
+                  <el-row :gutter="15" style="padding: 10px;">
                     <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
                       <el-col :span="6" v-if="type === 'look'">
@@ -264,7 +264,7 @@
           </el-tabs>
           <el-collapse v-model="activeNames" v-else>
             <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-              <el-row :gutter="15" class="">
+              <el-row :gutter="15" style="padding: 10px;">
                 <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                   label-position="top">
                   <el-col :span="6" v-if="type === 'look'">
@@ -643,13 +643,6 @@ export default {
     this.getBimBusinessDetail()
   },
   computed: {
-    getOrderFiledMap() {
-      getOrderFiledMap('purchase').then(res => {
-        this.standardValueFlag = res.data.standardValue
-        this.colourFlag = res.data.colour
-        this.processFlag = res.data.process
-      })
-    },
     computedValue() {
       // 在这里计算第三个输入框的值
       let count = 0
@@ -701,6 +694,13 @@ export default {
     }
   },
   methods: {
+    getOrderFiledMap() {
+      getOrderFiledMap('purchase').then(res => {
+        this.standardValueFlag = res.data.standardValue
+        this.colourFlag = res.data.colour
+        this.processFlag = res.data.process
+      })
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -1144,7 +1144,7 @@ export default {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 10px;
+  /* padding: 10px; */
   border-top: none !important;
 }
 

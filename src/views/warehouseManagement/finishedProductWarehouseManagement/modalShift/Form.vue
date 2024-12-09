@@ -24,7 +24,7 @@
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="仓库" prop="warehouseName">
-                        <ComSelect-list :requestObj="{ type: 'normal' }" :dialogTitle="'选择仓库'" v-model="dataForm.warehouseName" :warehouseId="dataForm.warehouseId" :isdisabled="btnType === 'look'" :method="getWarehouseList" placeholder="请选择仓库" @change="changeWarehouse" />
+                        <ComSelect-list :requestObj="{ type: 'normal',warehouseId:warehouseInfo.id }" :dialogTitle="'选择仓库'" v-model="dataForm.warehouseName" :warehouseId="dataForm.warehouseId" :isdisabled="btnType === 'look'" :method="getWarehouseList" placeholder="请选择仓库" @change="changeWarehouse" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="24" :xs="24">
@@ -45,6 +45,7 @@
                     <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType != 'look'" key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="index" />
                     <el-table-column prop="productDrawingNo" label="原品名规格" width="200" show-overflow-tooltip key="productDrawingNo" />
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                     <el-table-column prop="shelfSpaceName" label="原库位" width="260" show-overflow-tooltip key="shelfSpaceName" />
                     <el-table-column prop="originBatchNumber" label="原批次号" width="230" show-overflow-tooltip key="originBatchNumber" />
                     <el-table-column prop="availableQuantity" label="原批次数量" width="120" show-overflow-tooltip v-if="btnType !== 'look'" key="availableQuantity" />
@@ -164,7 +165,7 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="仓库" prop="warehouseName">
-                    <ComSelect-list :requestObj="{ type: 'normal' }" :dialogTitle="'选择仓库'" v-model="dataForm.warehouseName" :warehouseId="dataForm.warehouseId" :isdisabled="btnType === 'look'" :method="getWarehouseList" placeholder="请选择仓库" @change="changeWarehouse" />
+                    <ComSelect-list :requestObj="{ type: 'normal',warehouseId:warehouseInfo.id }" :dialogTitle="'选择仓库'" v-model="dataForm.warehouseName" :warehouseId="dataForm.warehouseId" :isdisabled="btnType === 'look'" :method="getWarehouseList" placeholder="请选择仓库" @change="changeWarehouse" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="24" :xs="24">
@@ -185,6 +186,7 @@
                 <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType != 'look'" key="1" />
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="index" />
                 <el-table-column prop="productDrawingNo" label="原品名规格" width="200" show-overflow-tooltip key="productDrawingNo" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                 <el-table-column prop="shelfSpaceName" label="原库位" width="260" show-overflow-tooltip key="shelfSpaceName" />
                 <el-table-column prop="originBatchNumber" label="原批次号" width="230" show-overflow-tooltip key="originBatchNumber" />
                 <el-table-column prop="availableQuantity" label="原批次数量" width="120" show-overflow-tooltip v-if="btnType !== 'look'" key="availableQuantity" />
@@ -294,6 +296,7 @@
 </template>
 
 <script>
+import getProjectList from '@/mixins/generator/getProjectList'
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
@@ -307,10 +310,12 @@ import { inventorySpaceList } from '@/api/warehouseManagement/inventory'
 import { getWarehouseList } from '@/api/basicData/index'// 仓库树
 import { getProductionLotList, getBatchNumber } from '@/api/basicData/index'
 export default {
-  mixins: [busFlow, flowMixin],
+  mixins: [busFlow, flowMixin, getProjectList],
   components: { Process, recordList },
   data() {
     return {
+      isProjectSwitch: '',
+      warehouseInfo: {},
       flowTemplateJson: {},
       flowData: {},
       approvalFlag: false,   // 待办事宜等页面 需要
@@ -462,6 +467,9 @@ export default {
         locationType: 'goods_allocation'
       },
     }
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
   },
   mounted() {
     this.calcHeight()
@@ -740,10 +748,11 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
     },
-    init(id, btnType, approvalFlag) {
+    init(id, obj, approvalFlag) {
       this.approvalFlag = approvalFlag
       this.dataForm.id = id || ''
-      this.btnType = btnType
+      this.btnType = obj.btnType
+      this.warehouseInfo = obj.warehouseInfo
       this.formLoading = true
       if (this.btnType === 'add' || this.btnType === 'edit') {
         this.getBusInfo('b060')
@@ -788,6 +797,10 @@ export default {
           this.formLoading = false
         })
       } else {
+        this.dataForm.warehouseId = this.warehouseInfo.id
+        this.dataForm.warehouseName = this.warehouseInfo.name
+        this.shelfSpaceRequestObj.warehouseId = this.warehouseInfo.id
+        this.productRequestObj.warehouseId = this.warehouseInfo.id
         this.formLoading = false
       }
     },

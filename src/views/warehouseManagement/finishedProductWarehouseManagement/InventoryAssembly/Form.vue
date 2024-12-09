@@ -28,8 +28,8 @@
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="组装人" prop="transferBy">
-                        <user-select v-model="dataForm.transferBy" placeholder="请选择组装人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
-                        </user-select>
+                        <PersonSelect v-model="dataForm.transferBy" :projectId="warehouseInfo.id" placeholder="请选择组装人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
+                        </PersonSelect>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
@@ -40,7 +40,7 @@
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="仓库" prop="warehouseId">
-                        <ComSelect-list :requestObj="{ type: 'normal' }" dialogTitle="选择仓库" placeholder="请选择仓库" :value="dataForm.warehouseName" :isdisabled="btnType === 'look'" :method="getWarehouseList" @change="changeWarehouse" :beforeSubmit="beforeWarehoustChange"></ComSelect-list>
+                        <ComSelect-list :requestObj="{ type: 'normal',warehouseId:warehouseInfo.id }" dialogTitle="选择仓库" placeholder="请选择仓库" :value="dataForm.warehouseName" :isdisabled="btnType === 'look'" :method="getWarehouseList" @change="changeWarehouse" :beforeSubmit="beforeWarehoustChange"></ComSelect-list>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
@@ -96,6 +96,7 @@
                     <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType != 'look'" key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="2" />
                     <el-table-column prop="productDrawingNo" label="品名规格" width="300" show-overflow-tooltip />
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                     <!-- <el-table-column prop="productSpec" label="规格型号" width="200" show-overflow-tooltip /> -->
                     <el-table-column prop="warehouseName" label="仓库" width="200" show-overflow-tooltip />
                     <el-table-column prop="shelfSpaceName" label="库位" width="200" show-overflow-tooltip />
@@ -164,8 +165,8 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="组装人" prop="transferBy">
-                    <user-select v-model="dataForm.transferBy" placeholder="请选择组装人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
-                    </user-select>
+                    <PersonSelect v-model="dataForm.transferBy" :projectId="warehouseInfo.id" placeholder="请选择组装人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
+                    </PersonSelect>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
@@ -176,7 +177,7 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="仓库" prop="warehouseId">
-                    <ComSelect-list :requestObj="{ type: 'normal' }" dialogTitle="选择仓库" placeholder="请选择仓库" :value="dataForm.warehouseName" :isdisabled="btnType === 'look'" :method="getWarehouseList" @change="changeWarehouse" :beforeSubmit="beforeWarehoustChange"></ComSelect-list>
+                    <ComSelect-list :requestObj="{ type: 'normal',warehouseId:warehouseInfo.id }" dialogTitle="选择仓库" placeholder="请选择仓库" :value="dataForm.warehouseName" :isdisabled="btnType === 'look'" :method="getWarehouseList" @change="changeWarehouse" :beforeSubmit="beforeWarehoustChange"></ComSelect-list>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
@@ -232,6 +233,7 @@
                 <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType != 'look'" key="1" />
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="2" />
                 <el-table-column prop="productDrawingNo" label="品名规格" width="300" show-overflow-tooltip />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                 <!-- <el-table-column prop="productSpec" label="规格型号" width="200" show-overflow-tooltip /> -->
                 <el-table-column prop="warehouseName" label="仓库" width="200" show-overflow-tooltip />
                 <el-table-column prop="shelfSpaceName" label="库位" width="200" show-overflow-tooltip />
@@ -284,6 +286,8 @@
 </template>
 
 <script>
+import PersonSelect from '@/views/basicData/processSettings/basicProcessSettings/personSelect.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
@@ -301,10 +305,12 @@ import { getProductList } from "@/api/basicData/materialFiles"; // 产品列表
 import { getWarehouseList, getProductionLotList, getBatchNumber } from "@/api/basicData/index"; // 仓库树
 import { TransferBarCode } from "@/api/warehouseManagement/transferManagement";
 export default {
-  mixins: [busFlow, flowMixin],
-  components: { Process, recordList },
+  mixins: [busFlow, flowMixin, getProjectList],
+  components: { Process, recordList, PersonSelect },
   data() {
     return {
+      isProjectSwitch: '',
+      warehouseInfo: {},
       flowTemplateJson: {},
       flowData: {},
       approvalFlag: false,   // 待办事宜等页面 需要
@@ -317,6 +323,7 @@ export default {
       getProductList,
       ProductMethodArr: { method: getcategoryTree, requestObj: { type: "material" } }, // 产品选择弹出框树状列表
       ProductListRequestObj: {
+        warehouseId: '',
         classAttribute: "",
         queryType: 2,
         drawingNo: "",
@@ -352,6 +359,7 @@ export default {
 
       // 选择子表产品
       ProductListRequestObj2: {
+        warehouseId: '',
         accuracyLevel: "",
         availableStock: true,
         availableBatch: 1,
@@ -502,6 +510,9 @@ export default {
       },
 
     };
+  },
+  async created() {
+    await this.getProjectSwitch('system', 'project')
   },
   mounted() {
     this.calcHeight();
@@ -784,11 +795,14 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
     },
-    init(id, btnType, approvalFlag) {
+    init(id, obj, approvalFlag) {
       this.approvalFlag = approvalFlag
       this.formLoading = true
       this.dataForm.id = id || "";
-      this.btnType = btnType;
+      this.btnType = obj.btnType;
+      this.warehouseInfo = obj.warehouseInfo
+      this.ProductListRequestObj2.warehouseId = this.warehouseInfo.id
+      this.ProductListRequestObj.warehouseId = this.warehouseInfo.id
       if (this.btnType === 'add' || this.btnType === 'edit') {
         this.getBusInfo('b061')
         this.fetchData('MSSD')

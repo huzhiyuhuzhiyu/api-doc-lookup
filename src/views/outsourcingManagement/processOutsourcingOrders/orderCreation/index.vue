@@ -1011,19 +1011,6 @@ export default {
 
       console.log(this.dataFormTwo.data[index].planQuantity2, '数量')
     },
-    // 副数量输入事件
-    changePlanQuantity2(index, val) {
-      if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
-        this.dataFormTwo.data[index].planQuantity = this.numberFormat(
-          this.dataFormTwo.data[index].planQuantity2 / this.dataFormTwo.data[index].ratio
-        )
-      } else {
-        this.dataFormTwo.data[index].planQuantity = this.numberFormat(
-          this.dataFormTwo.data[index].planQuantity2 * this.dataFormTwo.data[index].ratio
-        )
-      }
-      console.log(this.dataFormTwo.data[index].planQuantity, '数量')
-    },
     // 产品弹窗
     openSeleceProductDialog() {
       this.$refs['ComSelect-page'].openDialog()
@@ -1095,18 +1082,6 @@ export default {
       } else {
         this.dataFormTwo.data[index].purchaseQuantity2 = this.numberFormat(
           this.dataFormTwo.data[index].purchaseQuantity / this.dataFormTwo.data[index].ratio
-        )
-      }
-    },
-    // 副数量输入事件
-    changePlanQuantity2(index, val) {
-      if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
-        this.dataFormTwo.data[index].purchaseQuantity = this.numberFormat(
-          this.dataFormTwo.data[index].purchaseQuantity2 / this.dataFormTwo.data[index].ratio
-        )
-      } else {
-        this.dataFormTwo.data[index].purchaseQuantity = this.numberFormat(
-          this.dataFormTwo.data[index].purchaseQuantity2 * this.dataFormTwo.data[index].ratio
         )
       }
     },

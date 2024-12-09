@@ -111,9 +111,12 @@ export default {
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
     this.isProjectSwitchFlag = true
-   
+
     this.tabs.forEach((tab, tabInd) => {
       if (this.isProjectSwitch == 1) {
+        if (!this.dataForm.id && this.userInfo.projectId !== '1') {
+          this.dataForm.projectId = this.userInfo.projectId
+        }
         tab.tabContent.splice(2, 0,
           { prop: "projectId", label: "所属项目", value: this.dataForm.projectId, type: 'select', render: true, itemDisabled: this.dataForm.projectId != "", itemRules: [{ required: true, trigger: "change" }], options: this.projectIdDataList, sm: 8 },
 
@@ -272,7 +275,7 @@ export default {
             } else if (val == 'out') {
               this.tabs[0].tabContent.forEach((tc) => {
                 if (tc.prop == 'locationStatus') {
-                  this.$set(tc,'itemDisabled',true)
+                  this.$set(tc, 'itemDisabled', true)
                 }
                 this.dataForm.locationStatus = 'disabled'
               })
@@ -322,7 +325,7 @@ export default {
           this.dataForm.state = res.data.state
           this.dataForm.workshop = res.data.workshop
           this.dataForm.position = res.data.position
-          this.dataForm.locationStatus=res.data.locationStatus
+          this.dataForm.locationStatus = res.data.locationStatus
           this.dataForm.remark = res.data.remark
           this.dataForm.sort = res.data.sort
           this.dataForm.type = res.data.type
@@ -337,7 +340,7 @@ export default {
                 tc.render = true
               }
             })
-          }else if (this.dataForm.type == 'out') {
+          } else if (this.dataForm.type == 'out') {
             this.tabs[0].tabContent.forEach((tc) => {
               if (tc.prop == 'locationStatus') {
                 this.$set(tc, 'itemDisabled', true)

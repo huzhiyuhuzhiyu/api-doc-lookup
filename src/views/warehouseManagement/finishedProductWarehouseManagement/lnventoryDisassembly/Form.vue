@@ -28,7 +28,7 @@
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="拆卸人" prop="transferBy">
-                        <PersonSelect v-model="dataForm.transferBy" :projectId="warehouseInfo.id" placeholder="请选择拆卸人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
+                        <PersonSelect v-model="dataForm.transferBy" :projectId="warehouseInfo.projectId" placeholder="请选择拆卸人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
                         </PersonSelect>
                       </el-form-item>
                     </el-col>
@@ -199,7 +199,7 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="拆卸人" prop="transferBy">
-                    <PersonSelect v-model="dataForm.transferBy" :projectId="warehouseInfo.id" placeholder="请选择拆卸人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
+                    <PersonSelect v-model="dataForm.transferBy" :projectId="warehouseInfo.projectId" placeholder="请选择拆卸人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
                     </PersonSelect>
                   </el-form-item>
                 </el-col>
@@ -512,7 +512,7 @@ export default {
         ]
       },
       ProductListRequestObj: {
-        warehouseId: '',
+        projectId: '',
         drawingNo: '',
         classAttribute: "",
         classAttributeList: ["raw_material", "semi_finished", "finish_product", "accessories"],
@@ -532,7 +532,7 @@ export default {
       },
       btnType: undefined,
       listQuery: {
-        warehouseId: '',
+        projectId: '',
         accuracyLevel: "",
         availableStock: true,
         availableBatch: 1,
@@ -909,8 +909,8 @@ export default {
       this.dataForm.id = id || "";
       this.btnType = obj.btnType;
       this.warehouseInfo = obj.warehouseInfo
-      this.listQuery.warehouseId = this.warehouseInfo.id
-      this.ProductListRequestObj.warehouseId = this.warehouseInfo.id
+      this.listQuery.projectId = this.warehouseInfo.projectId
+      this.ProductListRequestObj.projectId = this.warehouseInfo.projectId
       if (this.btnType === 'add' || this.btnType === 'edit') {
         this.getBusInfo('b062')
         this.fetchData('SPSD')

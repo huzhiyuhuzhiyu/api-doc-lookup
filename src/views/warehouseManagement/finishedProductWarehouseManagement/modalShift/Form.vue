@@ -24,7 +24,7 @@
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="仓库" prop="warehouseName">
-                        <ComSelect-list :requestObj="{ type: 'normal',warehouseId:warehouseInfo.id }" :dialogTitle="'选择仓库'" v-model="dataForm.warehouseName" :warehouseId="dataForm.warehouseId" :isdisabled="btnType === 'look'" :method="getWarehouseList" placeholder="请选择仓库" @change="changeWarehouse" />
+                        <ComSelect-list :requestObj="{ type: 'normal',projectId:warehouseInfo.projectId }" :dialogTitle="'选择仓库'" v-model="dataForm.warehouseName" :warehouseId="dataForm.warehouseId" :isdisabled="btnType === 'look'" :method="getWarehouseList" placeholder="请选择仓库" @change="changeWarehouse" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="24" :xs="24">
@@ -165,7 +165,7 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="仓库" prop="warehouseName">
-                    <ComSelect-list :requestObj="{ type: 'normal',warehouseId:warehouseInfo.id }" :dialogTitle="'选择仓库'" v-model="dataForm.warehouseName" :warehouseId="dataForm.warehouseId" :isdisabled="btnType === 'look'" :method="getWarehouseList" placeholder="请选择仓库" @change="changeWarehouse" />
+                    <ComSelect-list :requestObj="{ type: 'normal',projectId:warehouseInfo.projectId }" :dialogTitle="'选择仓库'" v-model="dataForm.warehouseName" :warehouseId="dataForm.warehouseId" :isdisabled="btnType === 'look'" :method="getWarehouseList" placeholder="请选择仓库" @change="changeWarehouse" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="24" :xs="24">

@@ -28,7 +28,7 @@
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="组装人" prop="transferBy">
-                        <PersonSelect v-model="dataForm.transferBy" :projectId="warehouseInfo.id" placeholder="请选择组装人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
+                        <PersonSelect v-model="dataForm.transferBy" :projectId="warehouseInfo.projectId" placeholder="请选择组装人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
                         </PersonSelect>
                       </el-form-item>
                     </el-col>
@@ -40,7 +40,7 @@
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="仓库" prop="warehouseId">
-                        <ComSelect-list :requestObj="{ type: 'normal',warehouseId:warehouseInfo.id }" dialogTitle="选择仓库" placeholder="请选择仓库" :value="dataForm.warehouseName" :isdisabled="btnType === 'look'" :method="getWarehouseList" @change="changeWarehouse" :beforeSubmit="beforeWarehoustChange"></ComSelect-list>
+                        <ComSelect-list :requestObj="{ type: 'normal',projectId:warehouseInfo.projectId }" dialogTitle="选择仓库" placeholder="请选择仓库" :value="dataForm.warehouseName" :isdisabled="btnType === 'look'" :method="getWarehouseList" @change="changeWarehouse" :beforeSubmit="beforeWarehoustChange"></ComSelect-list>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
@@ -165,7 +165,7 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="组装人" prop="transferBy">
-                    <PersonSelect v-model="dataForm.transferBy" :projectId="warehouseInfo.id" placeholder="请选择组装人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
+                    <PersonSelect v-model="dataForm.transferBy" :projectId="warehouseInfo.projectId" placeholder="请选择组装人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
                     </PersonSelect>
                   </el-form-item>
                 </el-col>
@@ -177,7 +177,7 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="仓库" prop="warehouseId">
-                    <ComSelect-list :requestObj="{ type: 'normal',warehouseId:warehouseInfo.id }" dialogTitle="选择仓库" placeholder="请选择仓库" :value="dataForm.warehouseName" :isdisabled="btnType === 'look'" :method="getWarehouseList" @change="changeWarehouse" :beforeSubmit="beforeWarehoustChange"></ComSelect-list>
+                    <ComSelect-list :requestObj="{ type: 'normal',projectId:warehouseInfo.projectId }" dialogTitle="选择仓库" placeholder="请选择仓库" :value="dataForm.warehouseName" :isdisabled="btnType === 'look'" :method="getWarehouseList" @change="changeWarehouse" :beforeSubmit="beforeWarehoustChange"></ComSelect-list>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
@@ -323,7 +323,7 @@ export default {
       getProductList,
       ProductMethodArr: { method: getcategoryTree, requestObj: { type: "material" } }, // 产品选择弹出框树状列表
       ProductListRequestObj: {
-        warehouseId: '',
+        projectId: '',
         classAttribute: "",
         queryType: 2,
         drawingNo: "",
@@ -359,7 +359,7 @@ export default {
 
       // 选择子表产品
       ProductListRequestObj2: {
-        warehouseId: '',
+        projectId: '',
         accuracyLevel: "",
         availableStock: true,
         availableBatch: 1,
@@ -801,8 +801,8 @@ export default {
       this.dataForm.id = id || "";
       this.btnType = obj.btnType;
       this.warehouseInfo = obj.warehouseInfo
-      this.ProductListRequestObj2.warehouseId = this.warehouseInfo.id
-      this.ProductListRequestObj.warehouseId = this.warehouseInfo.id
+      this.ProductListRequestObj2.projectId = this.warehouseInfo.projectId
+      this.ProductListRequestObj.projectId = this.warehouseInfo.projectId
       if (this.btnType === 'add' || this.btnType === 'edit') {
         this.getBusInfo('b061')
         this.fetchData('MSSD')

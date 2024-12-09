@@ -70,6 +70,19 @@
                           <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                           <el-table-column prop="projectName" label="所属项目" width="120"
                             v-if="isProjectSwitch === '1'"></el-table-column>
+                          <el-table-column prop="productCode" label="产品编码" min-width="200" show-overflow-tooltip
+                            key="productCode">
+                            <template slot-scope="scope">
+                              <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'"
+                                :rules="productRules.productCode">
+                                <div class="viewData">
+                                  <span>{{ scope.row.productCode }}</span>
+                                </div>
+                              </el-form-item>
+                            </template>
+                          </el-table-column>
+                          <el-table-column prop="productName" label="产品名称" width="120"
+                            v-if="isProductNameSwitch === '1'"></el-table-column>
                           <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
                             key="productDrawingNo">
                             <template slot-scope="scope">
@@ -82,17 +95,7 @@
                               </el-form-item>
                             </template>
                           </el-table-column>
-                          <el-table-column prop="productCode" label="产品编码" min-width="200" show-overflow-tooltip
-                            key="productCode">
-                            <template slot-scope="scope">
-                              <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'"
-                                :rules="productRules.productCode">
-                                <div class="viewData">
-                                  <span>{{ scope.row.productCode }}</span>
-                                </div>
-                              </el-form-item>
-                            </template>
-                          </el-table-column>
+
 
                           <el-table-column prop="planQuantity" label="数量" min-width="100" key="planQuantity">
                             <template slot="header">
@@ -217,17 +220,6 @@
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                       <el-table-column prop="projectName" label="所属项目" width="120"
                         v-if="isProjectSwitch === '1'"></el-table-column>
-                      <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
-                        key="productDrawingNo">
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
-                            :rules="productRules.productDrawingNo">
-                            <div class="viewData">
-                              <span>{{ scope.row.productDrawingNo }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
                       <el-table-column prop="productCode" label="产品编码" min-width="200" show-overflow-tooltip
                         key="productCode">
                         <template slot-scope="scope">
@@ -239,7 +231,19 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-
+                      <el-table-column prop="productName" label="产品名称" width="120"
+                        v-if="isProductNameSwitch === '1'"></el-table-column>
+                      <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
+                        key="productDrawingNo">
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
+                            :rules="productRules.productDrawingNo">
+                            <div class="viewData">
+                              <span>{{ scope.row.productDrawingNo }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="planQuantity" label="数量" min-width="200" key="planQuantity">
                         <template slot="header">
                           <span class="required">*</span>
@@ -362,6 +366,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isProductNameSwitch: '',
       tableDataFlag: false,
       isattachmentswitch: '',
       datafilelist: [],
@@ -494,18 +499,12 @@ export default {
         // queryType: 3
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
+        { prop: 'code', label: '产品编码' },
         { prop: 'drawingNo', label: '品名规格' },
-        // { prop: 'name', label: '产品名称', fixed: 'left' },
-        { prop: 'code', label: '产品编码', fixed: 'left' },
-        // { prop: 'spec', label: '规格型号' }
-        // { prop: 'routingName', label: '工艺路线名称', minWidth: 140 },
-        // { prop: 'processName', label: '工序名称' },
-        // { prop: 'classAttributeText', label: '产品分类' },
         { prop: "mainUnit", label: "单位" }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: 'productCode', label: '产品编码', type: 'input' },
-        // { prop: 'productName', label: '产品名称', type: 'input' },
         { prop: 'productDrawingNo', label: '品名规格', type: 'input' }
       ], // 产品选择弹出框搜索条件
       formLoading: false,
@@ -520,27 +519,26 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
     await this.getProjectList()
     this.tableDataFlag = true
     console.log(this.isProjectSwitch)
-    if (this.isProjectSwitch === '1') {
-      this.ProductTableItems = [
-        { prop: 'projectName', label: '所属项目' },
-        { prop: 'drawingNo', label: '品名规格' },
-        // { prop: 'name', label: '产品名称', fixed: 'left' },
-        { prop: 'code', label: '产品编码', fixed: 'left' },
-
-        { prop: "mainUnit", label: "单位" }
-      ]
-    } else {
-      this.ProductTableItems = [
-        { prop: 'drawingNo', label: '品名规格' },
-        { prop: 'code', label: '产品编码', fixed: 'left' },
-
-        { prop: "mainUnit", label: "单位" }
-      ]
+    if (this.isProductNameSwitch === '1') {
+      let codeIndex = this.ProductTableItems.findIndex(obj => obj.prop === 'code');
+      this.ProductTableItems.splice(codeIndex + 1, 0, {
+        prop: 'name',
+        label: '产品名称',
+      })
+      let productCodeIndex = this.ProductTableItems.findIndex(obj => obj.prop === 'productCode');
+      this.ProductTableSearchList.splice(productCodeIndex + 1, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
     }
-
+    if (this.isProjectSwitch === '1') {
+      this.ProductTableItems.unshift({ prop: 'projectName', label: '所属项目' })
+    }
     this.tableDataFlag = true
 
     this.fetchData('QGD')
@@ -548,6 +546,11 @@ export default {
     if (this.type === 'add') this.getBusInfo()
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',

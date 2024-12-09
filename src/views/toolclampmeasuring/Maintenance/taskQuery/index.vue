@@ -73,7 +73,7 @@
                 <el-table-column prop="level" label="保养等级" min-width="140" />
                 <el-table-column prop="cycle" label="周期" width="90" />
                 <el-table-column prop="unit" label="单位" width="90" />
-                <el-table-column prop="nextMaintenanceTime" label="本次保养日期" width="180" sortable="custom" />
+                <el-table-column prop="nextMaintenanceTime" label="计划保养日期" width="180" sortable="custom" />
                 <el-table-column prop="state" label="状态" sortable="custom" width="120" fixed="right" align="center">
                   <template slot-scope="scope">
                     <div v-if="scope.row.state == 'disabled'"><el-tag type="danger">禁用</el-tag></div>

@@ -174,7 +174,7 @@
                     </el-dropdown-item>
 
                     <el-dropdown-item type="text"
-                      :disabled="!((scope.row.businessType == 'inbound_purchase'||scope.row.businessType == 'inbound_external' || scope.row.businessType == 'outbound_external_send' || scope.row.businessType == 'outbound_purchase')  && scope.row.documentStatus == 'submit')"
+                      :disabled="!((scope.row.businessType == 'inbound_purchase'||scope.row.businessType=='outbound_sale_send'||scope.row.businessType == 'inbound_external' || scope.row.businessType == 'outbound_external_send' || scope.row.businessType == 'outbound_purchase')  && scope.row.documentStatus == 'submit')"
                       @click.native="PrintFun(scope.row)">打印</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -498,6 +498,11 @@ export default {
           businessType: 'inbound_external',
           code: "p019",
           fullName: "外协收货单"
+        },
+        {
+          businessType: 'outbound_sale_send',
+          code: "p031",
+          fullName: "销售出库单"
         },
       ],
       enCode: "",

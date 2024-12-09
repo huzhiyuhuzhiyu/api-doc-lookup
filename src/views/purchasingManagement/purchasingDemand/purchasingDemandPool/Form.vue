@@ -445,6 +445,7 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
+import { getPrintBusInfo } from '@/api/system/printDev'
 export default {
   components: {
     sourceForm,
@@ -1610,24 +1611,26 @@ export default {
         insertPurchaseOrder(_data)
           .then((res) => {
             if (res.msg === 'Success') res.msg = '保存成功'
-            this.$message({
-              message: res.msg,
-              type: 'success',
-              duration: 1000,
-              onClose: () => {
-                this.btnLoading = false
-                this.$emit('close', true)
-              }
-            })
+
             if (printType) {
 
-              this.enCode = 'p019'
-              this.formId = res.data.id
+              this.enCode = 'p006'
+              this.formId = res.data
               this.fullName = '外协收货单'
 
               this.printVisible = true
               this.$nextTick(() => {
                 this.$refs.printTemplate.init(this.enCode)
+              })
+            } else {
+              this.$message({
+                message: res.msg,
+                type: 'success',
+                duration: 1000,
+                onClose: () => {
+                  this.btnLoading = false
+                  this.$emit('close', true)
+                }
               })
             }
           })
@@ -1637,6 +1640,25 @@ export default {
       } else {
         this.btnLoading = false
       }
+    },
+    printWarehouse(enCode) {
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          // this.printVisible = false
+          this.prindId = res.data.id
+          this.printBrowseVisible = true
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
+    closePrint() {
+      this.printVisible = false
+    },
+    closePrintPage() {
+      this.$emit('close', true)
     },
     // 删除项
     delequipment_process_relList(index) {

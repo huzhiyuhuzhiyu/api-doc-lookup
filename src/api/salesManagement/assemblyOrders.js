@@ -168,3 +168,29 @@ export function getOrderLineReport(data) {
     data: data
   })
 } 
+
+
+// 销售订单  新增订单时 保存所选的产品属性
+export function addBimProductAttributesRecord(data) {
+  return request({
+    url: `/api/zgt/bimProductAttributesRecord/batchAdd`,
+    method: 'post',
+    data: data
+  })
+} 
+// 获取历史属性数据
+export function getBimProductAttributesRecordList(data) {
+  return request({
+    url: `/api/zgt/bimProductAttributesRecord/list`,
+    method: 'post',
+    data: data
+  })
+} 
+// 删除历史属性
+
+export const delBimProductAttributesRecord = (id) => {
+  return request({
+    url: `/api/zgt/bimProductAttributesRecord/del/${id}`,
+    method: 'delete'
+  })
+}

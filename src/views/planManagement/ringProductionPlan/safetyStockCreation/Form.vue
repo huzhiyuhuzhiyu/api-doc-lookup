@@ -71,6 +71,8 @@
                       <el-input v-model="scope.row.planNo" placeholder="计划单号" />
                     </template>
                   </el-table-column>
+                  <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                  show-overflow-tooltip></el-table-column>
                   <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6"></el-table-column>
                   <el-table-column prop="bomId" label="BOM" width="140" :key="444">
                     <template slot-scope="scope">
@@ -200,12 +202,12 @@
                     <el-input v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
                   </el-form-item>
                 </el-col>
-                <el-col :span="6">
+                <el-col :span="6"  v-if="isProductNameSwitch === '1'">
                   <el-form-item>
                     <el-input v-model="ProductListRequestObj.name" placeholder="请输入产品名称" clearable />
                   </el-form-item>
                 </el-col>
-                <el-col :span="6">
+                <el-col :span="6" >
                   <el-form-item>
                     <el-input v-model="ProductListRequestObj.code" placeholder="请输入产品编码" clearable />
                   </el-form-item>
@@ -226,7 +228,8 @@
               <JNPF-table v-loading="listLoading" :data="allproductData" hasC @sort-change="sortChange"
                 @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
                 <el-table-column prop="drawingNo" label="品名规格" sortable="custom" />
-                <el-table-column prop="name" label="产品名称" sortable="custom" />
+                <el-table-column prop="name" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                show-overflow-tooltip></el-table-column>
                 <el-table-column prop="code" label="产品编码" sortable="custom" width="140"></el-table-column>
                 <el-table-column prop="projectName" label="所属项目" min-width="120" 
                 v-if="isProjectSwitch == 1" />
@@ -371,6 +374,7 @@ export default {
       isProjectSwitchFlag:null,
       projectIdDataList:[],
       originalData:[],
+      isProductNameSwitch:"",
     }
   },
   computed: {
@@ -381,6 +385,8 @@ export default {
 
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
+
     await this.getProjectList()
     this.isProjectSwitchFlag=true
     if(this.isProjectSwitch==1){
@@ -397,6 +403,12 @@ export default {
   beforeDestroy() {
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.isProjectSwitchFlag = true
+      } catch (error) { }
+    },
     changeProject(){
       console.log(this.dataForm.projectId);
       this.productData=this.originalData.filter(item => item.id === this.planForm.projectId); 

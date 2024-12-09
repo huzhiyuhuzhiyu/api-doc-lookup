@@ -227,54 +227,22 @@ export default {
       superQueryJson: [
         {
           prop: 'orderNo',
-          label: "订单号",
+          label: "单号",
           type: 'input'
         },
         {
-          prop: 'cooperativePartnerCode',
+          prop: 'partnerCode',
           label: "客户编码",
           type: 'input'
         },
         {
-          prop: 'cooperativePartnerName',
+          prop: 'partnerName',
           label: "客户名称",
           type: 'input'
-        },
-
+        },  
         {
-          prop: 'orderType',
-          label: "订单类型",
-          type: 'select',
-
-          options: [
-            { label: "正常任务", value: "normal" },
-            { label: "预测订单", value: "prediction" },
-            { label: "样品订单", value: "sample" },
-            { label: "备货订单", value: "stock_up" },
-            { label: "急件订单", value: "urgent" },
-          ]
-
-        },
-        {
-          prop: 'departmentName',
-          label: "所属部门",
-          type: 'custom',
-          component: 'com-select',
-        },
-        {
-          prop: 'salesName',
-          label: "所属销售人员",
-          type: 'custom',
-          component: 'user-select',
-        },
-        {
-          prop: 'workOrderNo',
-          label: "工作令号",
-          type: 'input'
-        },
-        {
-          prop: 'orderDate',
-          label: '订单日期',
+          prop: 'deliverDate',
+          label: '退货日期',
           type: 'daterange',
           valueFormat: "yyyy-MM-dd",
           startPlaceholder: '开始日期',
@@ -282,28 +250,53 @@ export default {
           pickerOptions: this.global.timePickerOptions
         },
         {
-          prop: 'contractNo',
-          label: "客户合同号",
-          type: 'input'
+          prop: 'exchangeGoodsFlag',
+          label: "退货标识",
+          type: 'select',
+
+          options: [
+            { label: "换货", value:true },
+            { label: "退货", value: false},
+           
+          ]
+
         },
         {
-          prop: 'deliveryDate',
-          label: '交货日期',
+          prop: 'deliveryStatus',
+          label: "退货状态",
+          type: 'select',
+
+          options: [
+            { label: "未完成", value:'not_finished' },
+            { label: "已完成", value:'finished' },
+            { label: "已取消", value:'canceled' },
+           
+          ]
+
+        },
+        {
+          prop: 'documentStatus',
+          label: "单据状态",
+          type: 'select',
+
+          options: [
+            { label: "草稿", value:'draft' },
+            { label: "提交", value:'submit' },
+           
+          ]
+
+        },
+        {
+          prop: 'createTime',
+          label: '创建时间',
           type: 'daterange',
-          valueFormat: "yyyy-MM-dd",
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
           startPlaceholder: '开始日期',
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
-        }, {
-          prop: 'orderState',
-          label: "订单状态",
-          type: 'select',
-          options: [
-            { label: "未完成", value: "not_finish" },
-            { label: "已完成", value: "finish" },
-            { label: "部分完成", value: "part_finish" },
-          ]
-        },
+        }, 
+    
+ 
 
 
 

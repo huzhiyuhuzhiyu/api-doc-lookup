@@ -174,7 +174,7 @@
                     </el-dropdown-item>
 
                     <el-dropdown-item type="text"
-                      :disabled="!((scope.row.businessType == 'inbound_purchase'||scope.row.businessType == 'inbound_external' || scope.row.businessType == 'outbound_external_send' || scope.row.businessType == 'outbound_purchase')  && scope.row.documentStatus == 'submit')"
+                      :disabled="!((scope.row.businessType == 'inbound_purchase'||scope.row.businessType=='outbound_sale_send'||scope.row.businessType == 'inbound_external' || scope.row.businessType == 'outbound_external_send' || scope.row.businessType == 'outbound_purchase')  && scope.row.documentStatus == 'submit')"
                       @click.native="PrintFun(scope.row)">打印</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -499,6 +499,11 @@ export default {
           code: "p019",
           fullName: "外协收货单"
         },
+        {
+          businessType: 'outbound_sale_send',
+          code: "p031",
+          fullName: "销售出库单"
+        },
       ],
       enCode: "",
       isProjectSwitch: '',
@@ -590,10 +595,9 @@ export default {
     getWarehouseListFun() {
       getWarehouseTree({ code: this.warehouseCode }).then(res => {
         // 获取仓库详情信息
-        getWarehouseInfo(res.data[0].id).then(response => {
-          this.initListQuery.projectId = this.listQuery.projectId = this.isProjectSwitch === '1' ? res.data[0].projectId || '' : ''
+        this.initListQuery.projectId = this.listQuery.projectId = this.isProjectSwitch === '1' ? res.data[0].projectId || '' : ''
           this.getclassAttributeList()
-        })
+      
       })
     },
     superQuerySearch(query) {
@@ -853,6 +857,7 @@ export default {
       this.listQuery.classAttributeList = this.classAttributeList
       // this.listQuery.approvalStatus = 'ok' 
 
+      this.listQuery.projectId = this.isProjectSwitch === '1' ? this.initListQuery.projectId || '' : ''
       getWarehouseList(this.listQuery).then(res => {
 
         this.tableData = res.data.records ? res.data.records : []

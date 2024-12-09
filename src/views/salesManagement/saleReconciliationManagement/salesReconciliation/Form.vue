@@ -92,7 +92,8 @@
                         </template>
                       </el-table-column>
 
-
+                      <el-table-column prop="productName" label="产品名称"  width="160" v-if="isProductNameSwitch === '1'"
+                      show-overflow-tooltip></el-table-column>
 
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                         <template slot-scope="scope">
@@ -383,11 +384,15 @@ export default {
       flowTemplateJson: {},
       approvalFlag: false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime: 0
+      endTime: 0,
+      isProductNameSwitch: '',
+
     }
   },
-  created() {
+  async created() {
     this.fetchData('DZDH')
+    await this.getProductNameSwitch('product', 'enable_productName')
+     
   },
   computed: {
     ...mapGetters(['userInfo']),
@@ -489,6 +494,11 @@ export default {
     },
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+      } catch (error) { }
+    },
     addAdjustmentBtn() {
       console.log(234, this.dataFormTwo.data);
       this.dataFormTwo.data.push({

@@ -50,6 +50,18 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
+                        <el-form-item label="产品编码" prop="productCode">
+                          <el-input v-model="planForm.productCode" placeholder="请输入产品编码" disabled>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24" v-if="isProductNameSwitch==1">
+                        <el-form-item label="产品名称" prop="productName">
+                          <el-input v-model="planForm.productName" placeholder="请输入产品名称" disabled>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="品名规格" prop="productDrawingNo">
                           <el-input v-model="planForm.productDrawingNo" placeholder="请输入品名规格" disabled>
                           </el-input>
@@ -57,12 +69,6 @@
                       </el-col>
 
 
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="产品编码" prop="productCode">
-                          <el-input v-model="planForm.productCode" placeholder="请输入产品编码" disabled>
-                          </el-input>
-                        </el-form-item>
-                      </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="产品来源" prop="productSource">
                           <el-select v-model="planForm.productSource" placeholder="产品来源" clearable style="width: 100%;"
@@ -203,6 +209,8 @@
                       <el-table-column prop="cooperativePartnerName" show-overflow-tooltip label="客户名称" min-width="180"
                         v-if="planForm.planType == 'order_plan'" :key="6">
                       </el-table-column>
+                      <el-table-column prop="productName" label="产品名称"   width="160" v-if="isProductNameSwitch === '1'"
+                      show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="360" :key="4"
                         show-overflow-tooltip />
                       <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />

@@ -3,7 +3,7 @@
 
   <div class="JNPF-common-layout">
 
-    <div class="JNPF-common-layout-center JNPF-flex-main"  v-if="!orderFormVisible">
+    <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!orderFormVisible">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
@@ -27,7 +27,7 @@
             </template>
 
 
-             
+
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
@@ -39,7 +39,7 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main"  v-loading="listLoading" >
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <el-button type="primary" size="mini" icon="el-icon-download"
               @click="exportForm('dataTable')">导出</el-button>
@@ -53,11 +53,12 @@
                   @click="columnSetFun()" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="search('basic')" />
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
+                  @click="search('basic')" />
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable":data="tableData" :fixedNO="true" v-if="isProjectSwitchFlag"
+          <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true" v-if="isProjectSwitchFlag"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column>
             <el-table-column prop="planNo" label="计划单号" width="180" sortable="custom">
               <template slot-scope="scope">
@@ -66,8 +67,10 @@
                 }}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
+            <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+              v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
               v-if="isProjectSwitch == 1" />
             <el-table-column prop="planStartDate" label="计划开始日期" min-width="150" sortable="custom" />
@@ -155,7 +158,7 @@ export default {
       tableData: [],
       listLoading: false,
       orderForm: {
-        classAttribute: "finish_product", 
+        classAttribute: "finish_product",
         productDrawingNo: "",
         planNo: "",
         planState: "finished",
@@ -183,15 +186,15 @@ export default {
           label: "计划单号",
           type: 'input'
         },
-        {
-          prop: 'drawingNo',
-          label: "品名规格",
-          type: 'input'
-        },
-      
+
         {
           prop: 'productCode',
           label: "产品编码",
+          type: 'input'
+        },
+        {
+          prop: 'drawingNo',
+          label: "品名规格",
           type: 'input'
         },
         {
@@ -296,6 +299,7 @@ export default {
       selectList: [],
       isProjectSwitchFlag: false,
       isProjectSwitch: '',
+      isProductNameSwitch:"",
     }
   },
   watch: {
@@ -304,19 +308,35 @@ export default {
     }
   },
 
- 
+
   computed: {
     ...mapGetters(['userInfo'])
   },
 
   async created() {
     await this.getProjectSwitch('system', 'project')
-    this.isProjectSwitchFlag = true
-    this.superForm=this.orderForm
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProductNameSwitch == 1) {
+      this.superQueryJson.splice(2, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
+      this.searchList.splice(1, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },)
+
+    }
+ 
+    this.superForm = this.orderForm
     this.search('basic')
     this.getProductClassFun()
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.isProjectSwitchFlag = true
+      } catch (error) { }
+    },
     getProductClassFun() {
       let obj0 = {
         pageNum: -1,
@@ -605,7 +625,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName'||prop=='projectName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'productDrawingNo') {
+      if (prop === 'productName' || prop == 'projectName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'productDrawingNo') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'
@@ -621,7 +641,7 @@ export default {
       this.initData()
     },
 
- 
+
 
 
     // 关闭新建编辑页面
@@ -635,8 +655,8 @@ export default {
     },
     initData() {
       this.listLoading = true
-     this.superForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-     getPlanList(this.superForm).then(res => {
+      this.superForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      getPlanList(this.superForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
@@ -678,7 +698,7 @@ export default {
 
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮 
-      this.superForm=this.orderForm = {
+      this.superForm = this.orderForm = {
         classAttribute: "finish_product",
         productName: "",
         productDrawingNo: "",
@@ -696,12 +716,15 @@ export default {
 
         superQuery: {},
       }
-      this.searchList=[
+      this.searchList = [
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ]
       this.$refs.SuperQuery.conditionList = []
+      if (this.isProductNameSwitch == 1) {
+      this.searchList.splice(1, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },)
 
+    }
       this.search('basic')
     },
 
@@ -714,7 +737,7 @@ export default {
       })
 
     },
-  
+
 
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
@@ -792,7 +815,7 @@ export default {
 
 .JNPF-common-search-box {
   padding: 8px 0 !important;
-  margin-left: 0!important; 
+  margin-left: 0 !important;
 
   margin-bottom: 5px;
 }

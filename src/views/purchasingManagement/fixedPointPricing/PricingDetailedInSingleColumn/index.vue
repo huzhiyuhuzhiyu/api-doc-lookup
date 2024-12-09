@@ -537,11 +537,11 @@ export default {
         }
         console.log(includeFieldMap);
         let _data = {
-          ...this.dataForm,
-          exportType: '1110',
-          exportName: '报工记录查询',
+          ...this.listQuery,
+          exportType: '1067',
+          exportName: '定点定价明细列表',
           includeFieldMap,
-          pageSize: data.dataType == 0 ? this.dataForm.pageSize : -1,
+          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
           totalRowFlag: true,
         }
         excelExport(_data).then(res => {

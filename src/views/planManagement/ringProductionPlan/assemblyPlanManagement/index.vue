@@ -3,27 +3,27 @@
 
   <div class="JNPF-common-layout">
 
-    <div class="JNPF-common-layout-center JNPF-flex-main"  v-if="!orderFormVisible">
+    <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!orderFormVisible">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
           <template v-for="item in searchList">
-              <el-col :span="item.searchType === 3 ? 6 : 4">
-                <el-form-item>
-                  <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
-                    @keyup.enter.native="search('basic')" />
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="search('basic')" />
 
-                  <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
-                    clearable>
-                    <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
-                      :value="item2.value"></el-option>
-                  </el-select>
-                  <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
-                    :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
-                    :type="item.dateType"
-                    :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
-                </el-form-item>
-              </el-col>
-            </template>
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
 
           <el-col :span="6">
             <el-form-item>
@@ -36,7 +36,7 @@
 
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main"  v-loading="listLoading">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head">
           <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">导出</el-button>
           <div class="JNPF-common-head-right">
@@ -61,15 +61,17 @@
               }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
-          <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom" 
-          v-if="isProjectSwitch == 1" />
           <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
+          <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+            v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
+          <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+            v-if="isProjectSwitch == 1" />
           <el-table-column prop="planStartDate" label="计划开始日期" min-width="150" sortable="custom" />
           <el-table-column prop="planEndDate" label="计划结束日期" min-width="150" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" width="80" />
           <el-table-column prop="planQuantity" label="需求数量" min-width="120" sortable="custom" />
-            <el-table-column prop="utilizationQuantity" label="利用库存数量" min-width="150" sortable="custom" />
+          <el-table-column prop="utilizationQuantity" label="利用库存数量" min-width="150" sortable="custom" />
           <el-table-column prop="relaxQuantity" label="宽放需求数量" min-width="150" sortable="custom" />
           <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="150" sortable="custom" />
           <!-- <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
@@ -149,7 +151,7 @@ import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'assemblyPlanManagement',
   components: { Form, ExportForm, SuperQuery, OrderForm },
-  mixins:[getProjectList],
+  mixins: [getProjectList],
   data() {
     return {
       superQuery: {},
@@ -185,7 +187,7 @@ export default {
         superQuery: {},
       },
 
- 
+
       total: 0,
       formVisible: false,
       filterText: '',
@@ -195,19 +197,15 @@ export default {
           label: "计划单号",
           type: 'input'
         },
-        {
-          prop: 'drawingNo',
-          label: "品名规格",
-          type: 'input'
-        },
-        {
-          prop: 'productName',
-          label: "产品名称",
-          type: 'input'
-        },
+
         {
           prop: 'productCode',
           label: "产品编码",
+          type: 'input'
+        },
+        {
+          prop: 'drawingNo',
+          label: "品名规格",
           type: 'input'
         },
         {
@@ -223,63 +221,7 @@ export default {
           label: "单位",
           type: 'input'
         },
-        // {
-        //   prop: 'planQuantity',
-        //   label: "计划数量",
-        //   type: 'input'
-        // },
-        // {
-        //   prop: 'relaxQuantity',
-        //   label: "宽放计划数量",
-        //   type: 'input'
-        // },
-        // {
-        //   prop: 'finalPlanQuantity',
-        //   label: "最终计划数量",
-        //   type: 'input'
-        // },
-        // {
-        //   prop: 'sealingCoverTyping',
-        //   label: "打字内容",
-        //   type: 'select',
-        //   options: [],
-        // },
-        // {
-        //   prop: 'accuracyLevel',
-        //   label: "精度等级",
-        //   type: 'select',
-        //   options: [],
-        // },
-        // {
-        //   prop: 'vibrationLevel',
-        //   label: "振动等级",
-        //   type: 'select',
-        //   options: [],
-        // },
-        // {
-        //   prop: 'oil',
-        //   label: "油脂",
-        //   type: 'select',
-        //   options: [],
-        // },
-        // {
-        //   prop: 'oilQuantity',
-        //   label: "油脂量",
-        //   type: 'select',
-        //   options: [],
-        // },
-        // {
-        //   prop: 'clearance',
-        //   label: "游隙",
-        //   type: 'select',
-        //   options: [],
-        // },
-        // {
-        //   prop: 'packagingMethod',
-        //   label: "包装方式",
-        //   type: 'select',
-        //   options: [],
-        // },
+
         {
           prop: 'remark',
           label: "备注",
@@ -310,9 +252,9 @@ export default {
 
       ],
       selectList: [],
-      isProjectSwitch:'',
-      isProjectSwitchFlag:false,
-
+      isProjectSwitch: '',
+      isProjectSwitchFlag: false,
+      isProductNameSwitch:"",
     }
   },
   watch: {
@@ -324,17 +266,31 @@ export default {
     ...mapGetters(['userInfo'])
   },
 
-  
+
   async created() {
     await this.getProjectSwitch('system', 'project')
-    this.isProjectSwitchFlag=true
-    this.superForm=this.orderForm
+    this.superForm = this.orderForm
     this.search('basic')
-   
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProductNameSwitch == 1) {
+      this.superQueryJson.splice(2, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
+      this.searchList.splice(1, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },)
+
+    }
   },
 
 
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.isProjectSwitchFlag = true
+      } catch (error) { }
+    },
     getProductClassFun() {
       let obj0 = {
         pageNum: -1,
@@ -623,7 +579,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName'||prop=='projectName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'productDrawingNo') {
+      if (prop === 'productName' || prop == 'projectName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'productDrawingNo') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'
@@ -654,8 +610,8 @@ export default {
     },
     initData() {
       this.listLoading = true
-     this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-     getPlanList(this.orderForm).then(res => {
+      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      getPlanList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
@@ -694,7 +650,7 @@ export default {
 
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-   
+
       this.superForm = this.orderForm = {
         classAttribute: "semi_finished",
         productName: "",
@@ -717,6 +673,9 @@ export default {
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ]
+      if (this.isProductNameSwitch == 1) {
+        this.searchList.splice(1, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },)
+      }
       this.$refs.SuperQuery.conditionList = []
 
       this.search('basic')

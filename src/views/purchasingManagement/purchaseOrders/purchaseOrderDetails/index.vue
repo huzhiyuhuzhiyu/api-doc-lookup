@@ -120,9 +120,10 @@
                 <div v-if="scope.row.receivingStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
               </template>
             </el-table-column>
-            <el-table-column prop="standardValue" label="规值" width="100" sortable="custom" />
-
-            <el-table-column prop="processName" label="工序" width="100" sortable="custom" />
+            <el-table-column prop="standardValue" label="规值" width="100" sortable="custom"
+              v-if="standardValueFlag === '1'" />
+            <el-table-column prop="colour" label="颜色" width="100" sortable="custom" v-if="colourFlag === '1'" />
+            <el-table-column prop="processName" label="工序" width="100" sortable="custom" v-if="processFlag === '1'" />
             <el-table-column prop="remark" label="备注" min-width="120" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
@@ -194,7 +195,7 @@ import PrintBrowse from '@/components/PrintBrowse'
 import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintDialog from '@/components/no_mount/printDialog'
 import InboundPurchaseForm from '@/views/warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/inboundPurchaseForm.vue'
-import { getBimBusinessDetail } from '@/api/basicData/index'
+import { getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 
 export default {
@@ -275,20 +276,6 @@ export default {
             { label: '已停止', value: 'stopped' }
           ]
         },
-
-        {
-          prop: 'standardValue',
-          label: '规值',
-          type: 'input'
-        },
-
-        {
-          prop: 'processName',
-          label: '工序',
-          type: 'select',
-          options: []
-        },
-
         {
           prop: 'createTime',
           label: '创建时间',
@@ -441,7 +428,6 @@ export default {
         'excludingTaxPrice',
         'taxAmount',
         'excludingTaxAmount',
-        'standardValue',
         'sealingCoverTyping',
         'accuracyLevel',
         'vibrationLevel',
@@ -449,15 +435,26 @@ export default {
         'oilQuantity',
         'clearance',
         'packagingMethod',
-        'processName'
         // 'createByName'
-      ]
+      ],
+      standardValueFlag: '',
+      colourFlag: '',
+      processFlag: '',
+      sealingCoverTypingFlag: '',
+      accuracyLevelFlag: '',
+      vibrationLevelFlag: '',
+      oilFlag: '',
+      oilQuantityFlag: '',
+      clearanceFlag: '',
+      packagingMethodFlag: '',
+      specialRequireFlag: ''
     }
   },
   mounted() {
     this.getProductClassFun()
   },
   async created() {
+    await this.getOrderFiledMap()
     await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
@@ -482,10 +479,38 @@ export default {
         type: 'input'
       })
     }
+    if (this.standardValueFlag === '1') {
+      this.superQueryJson.splice(12, 0, {
+        prop: 'standardValue',
+        label: '规值',
+        type: 'input'
+      })
+    }
+    if (this.colourFlag === '1') {
+      this.superQueryJson.splice(13, 0, {
+        prop: 'colour',
+        label: '颜色',
+        type: 'input'
+      })
+    }
+    if (this.colourFlag === '1') {
+      this.superQueryJson.splice(14, 0, {
+        prop: 'processName',
+        label: '工序',
+        type: 'input'
+      })
+    }
 
     this.detailData()
   },
   methods: {
+    getOrderFiledMap() {
+      getOrderFiledMap('purchase').then(res => {
+        this.standardValueFlag = res.data.standardValue
+        this.colourFlag = res.data.colour
+        this.processFlag = res.data.process
+      })
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)

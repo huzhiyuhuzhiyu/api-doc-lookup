@@ -125,11 +125,11 @@
 
                         <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                         </el-table-column>
+                        <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
+                        <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
+                        min-width="160" />
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                           show-overflow-tooltip> </el-table-column>
-                        <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
-                          min-width="160" />
-                        <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
                         <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
@@ -342,11 +342,11 @@
 
                     <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                     </el-table-column>
+                    <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
+                    <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                       show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
-                    <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                     <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
                     <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
                       <template slot="header">
@@ -498,11 +498,11 @@
                 @selection-change="handleSelectionChangeAllPruduct" ref="form">
                 <el-table-column prop="orderNo" label="订单号" width="200" sortable="custom"> </el-table-column>
                 <el-table-column prop="cooperativePartnerName" label="供应商名称" width="160" sortable="custom" />
-                <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
-                <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
-                  sortable="custom" />
-
                 <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
+                <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
+                sortable="custom" />
+                <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
+
                 <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
                 <el-table-column prop="processName" label="工序名称" width="120" sortable="custom" />
                 <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
@@ -867,27 +867,7 @@ export default {
     // 销售发货选择产品——搜索 如果是销售订单  需要计算待出库数量=订单数量-已出库数量  如果是通知单 则直接取接口返回的待出库数量
     searchProductFun() {
 
-      this.orderForm = { //获取产品数据
-        cooperativePartnerId: this.dataForm.cooperativePartnerId,
-        drawingNo: "",        // customerProductNo: "",
-        customerProductDrawingNo: "",
-        deliverDateEnd: "",
-        deliverDateStart: "",
-        classAttributeList: this.classAttributeList,
-        externalFlag: true,
-        pageNum: 1,
-        pageSize: 20,
-        orderNo: this.dataForm.sourceNo,
-        receivingStatus: "not_finished",
-        receiptQueryFlag: true,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: ""
-        }],
-      }
+
       if (this.deliveryDateArr.length) {
         this.orderForm.deliverDateStart = this.deliveryDateArr[0]
         this.orderForm.deliverDateEnd = this.deliveryDateArr[1]
@@ -895,6 +875,10 @@ export default {
         this.orderForm.deliverDateStart = ""
         this.orderForm.deliverDateEnd = ""
       }
+      this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
+      this.orderForm.receivingStatus = 'not_finished'
+      this.orderForm.orderNo = this.dataForm.sourceNo
+      this.orderForm.classAttributeList = this.classAttributeList
       this.orderForm.projectId = this.isProjectSwitch === '1' ? this.dataForm.projectId || '' : ''
       detailpurchaseOrderList(this.orderForm).then(res => {
         console.log("采购明细",);
@@ -922,8 +906,27 @@ export default {
     // 销售发货选择产品——重置
     resetProductFun() {
       this.deliveryDateArr = []
+      this.orderForm = { //获取产品数据
+        drawingNo: "",        // customerProductNo: "",
+        customerProductDrawingNo: "",
+        deliverDateEnd: "",
+        deliverDateStart: "",
+        classAttributeList: this.classAttributeList,
+        externalFlag: true,
+        pageNum: 1,
+        pageSize: 20,
+        orderNo: this.dataForm.sourceNo,
+        receivingStatus: "not_finished",
+        receiptQueryFlag: true,
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: ""
+        }],
+      }
       this.searchProductFun()
-
     },
     // 选完产品后  渲染在产品信息列表
     submitAllProduct() {

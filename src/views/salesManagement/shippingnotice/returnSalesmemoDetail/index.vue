@@ -75,8 +75,10 @@
             <el-table-column prop="partnerName" label="客户名称" width="160" sortable="custom" />
             <el-table-column prop="deliverDate" label="退货日期" width="120" sortable="custom"></el-table-column>
             <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
-            <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
+            <el-table-column prop="productName" label="产品名称"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
+            show-overflow-tooltip></el-table-column>
+            <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
               v-if="isProjectSwitch == 1" />
             <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
@@ -279,13 +281,13 @@ export default {
           type: 'input'
         },
         {
-          prop: 'productDrawingNo',
-          label: "品名规格",
+          prop: 'productCode',
+          label: "产品编码",
           type: 'input'
         },
         {
-          prop: 'productCode',
-          label: "产品编码",
+          prop: 'productDrawingNo',
+          label: "品名规格",
           type: 'input'
         },
         {
@@ -377,28 +379,24 @@ export default {
           startPlaceholder: '开始日期',
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
-        },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        }, 
       ],
       isProjectSwitch:"",
+      isProductNameSwitch: '',
+
     }
   },
 
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProductNameSwitch == 1) {
+          this.superQueryJson.splice(5, 0, {
+            prop: 'productName',
+            label: '产品名称',
+            type: 'input'
+          })
+    }
     this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.initOrderForm))
     this.search('basic')
   },
@@ -410,11 +408,16 @@ export default {
     this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
     async getMainUnitFun(code, type) {
       this.listLoading = true
       try {
-        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
-        this.tableDataFlag = true
+        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type); 
         this.listLoading = false
 
 
@@ -472,7 +475,8 @@ export default {
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
       }
-      this.superForm.orderItems[0].asc = order !== "descending"
+      this.orderForm.orderItems[0].asc = order !== "descending"
+      this.orderForm.orderItems[0].column = order === null ? "" : newProp
 
       this.initData()
     },
@@ -485,7 +489,7 @@ export default {
       }
     },
     initData() {
-      getQuotationdatasenddatalist(this.superForm).then(res => {
+      getQuotationdatasenddatalist(this.orderForm).then(res => {
         setTimeout(() => {
           res.data.records.forEach(item => {
             if (this.mainUnitFlag == 1) {

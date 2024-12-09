@@ -72,7 +72,7 @@
             <el-table-column prop="projectName" label="所属项目" width="120"
               v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="productsCode" label="产品编码" width="150" sortable="custom" />
-            <el-table-column prop="productName" label="产品名称" width="120"
+            <el-table-column prop="productsName" label="产品名称" width="120"
               v-if="isProductNameSwitch === '1'"></el-table-column>
             <el-table-column prop="drawingNo" label="品名规格" width="150" sortable="custom" />
 
@@ -449,7 +449,7 @@ export default {
     await this.getProductNameSwitch('product', 'enable_productName')
     if (this.isProductNameSwitch === '1') {
       this.searchList.splice(2, 0, {
-        field: 'productName',
+        field: 'productsName',
         fieldValue: '',
         label: '产品名称',
         symbol: 'like',
@@ -457,7 +457,7 @@ export default {
         width: 120
       })
       this.superQueryJson.splice(4, 0, {
-        prop: 'productName',
+        prop: 'productsName',
         label: '产品名称',
         type: 'input'
       })
@@ -883,7 +883,7 @@ export default {
       ]
       if (this.isProductNameSwitch === '1') {
         this.searchList.push({
-          field: 'productName',
+          field: 'productsName',
           fieldValue: '',
           label: '产品名称',
           symbol: 'like',

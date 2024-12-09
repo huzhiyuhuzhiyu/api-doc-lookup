@@ -611,10 +611,10 @@
           <el-table-column prop="departmentName" label="所属部门" min-width="160" sortable="custom"></el-table-column>
           <el-table-column prop="salesName" label="所属销售" min-width="160" sortable="custom" />
           <el-table-column prop="customerProductNo" label="客户料号" min-width="160" sortable="custom" />
-          <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
-          <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
-            sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
+          <el-table-column prop="productName" label="产品名称" v-if="isProductNameSwitch === '1'" min-width="160"
+            sortable="custom" />
+          <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
           <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
           <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="160">
@@ -748,7 +748,7 @@
         </JNPF-table>
         <!-- 采购收货 订单 -->
         <JNPF-table :partentOrChild="'purchasetabForm'" v-loading="listLoading" @sort-change="sortChange"
-          v-if="isProjectSwitch" :data="purchaseList" v-show="categoryType == 'inbound_purchase' && purchaseFlag"
+          v-if="purchorderFlag" :data="purchaseList" v-show="categoryType == 'inbound_purchase' && purchaseFlag"
           custom-column ref="purchasetabForm" :fixedNo="true" hasC @selection-change="handeleselectPurchase"
           :setColumnDisplayList="purchasecolumnList">
           <el-table-column prop="orderNo" label="订单号" min-width="200" sortable="custom">
@@ -761,10 +761,10 @@
           </el-table-column>
           <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="160" sortable="custom" />
           <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="160" sortable="custom" />
-          <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
-          <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
-            sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
+          <el-table-column prop="productName" label="产品名称" v-if="isProductNameSwitch === '1'" min-width="160"
+            sortable="custom" />
+          <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
           <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
@@ -849,18 +849,18 @@
           </el-table-column>
           <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="160" sortable="custom" />
           <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="160" sortable="custom" />
-          <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
-          <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
+          <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
+          <el-table-column prop="productName" label="产品名称" v-if="isProductNameSwitch === '1'" min-width="160"
             sortable="custom" />
+          <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
-          <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
           <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom" />
 
           <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
-          <el-table-column prop="weight" label="重量" min-width="140" ></el-table-column>
-          <el-table-column prop="proportion" label="比重" min-width="140" ></el-table-column>
-          <el-table-column prop="batchNumber" label="批次号" min-width="180" ></el-table-column>
+          <el-table-column prop="weight" label="重量" min-width="140"></el-table-column>
+          <el-table-column prop="proportion" label="比重" min-width="140"></el-table-column>
+          <el-table-column prop="batchNumber" label="批次号" min-width="180"></el-table-column>
           <el-table-column prop="purchaseQuantity" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
           </el-table-column>
           <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
@@ -948,19 +948,19 @@
           <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="140" sortable="custom" />
           <el-table-column prop="cooperativePartnerCode" label="供应商编码" width="200" sortable="custom" />
           <el-table-column prop="deliveryDate" label="交货日期" min-width="140" sortable="custom"></el-table-column>
-          <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
-          
-          <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
-            sortable="custom" />
-        
           <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom"></el-table-column>
+
+          <el-table-column prop="productName" label="产品名称" v-if="isProductNameSwitch === '1'" min-width="160"
+            sortable="custom" />
+          <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
+
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-          v-if="isProjectSwitch == 1" />
+            v-if="isProjectSwitch == 1" />
           <el-table-column prop="processName" label="工序名称" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
-          <el-table-column prop="weight" label="重量" min-width="140" ></el-table-column>
-          <el-table-column prop="proportion" label="比重" min-width="140" ></el-table-column>
-          <el-table-column prop="batchNumber" label="批次号" min-width="180" ></el-table-column>
+          <el-table-column prop="weight" label="重量" min-width="140"></el-table-column>
+          <el-table-column prop="proportion" label="比重" min-width="140"></el-table-column>
+          <el-table-column prop="batchNumber" label="批次号" min-width="180"></el-table-column>
           <el-table-column prop="purchaseQuantity" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
           </el-table-column>
           <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
@@ -1211,9 +1211,9 @@
                     </div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
-                <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
+                <el-table-column prop="productName" label="产品名称" v-if="isProductNameSwitch === '1'" min-width="160"
                   sortable="custom" />
+                <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
                 <el-table-column prop="mainUnit" label="单位" width="80" />
@@ -1311,12 +1311,12 @@
                 :setColumnDisplayList="workColumns">
                 <el-table-column prop="productionOrderNo" label="任务单号" min-width="180" />
                 <el-table-column prop="orderNo" label="工单号" width="200" />
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" />
-                <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
+                <el-table-column prop="productCode" label="产品编码" min-width="160" />
+                <el-table-column prop="productName" label="产品名称" v-if="isProductNameSwitch === '1'" min-width="160"
                   sortable="custom" />
+                <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
-                <el-table-column prop="productCode" label="产品编码" min-width="160" />
                 <el-table-column prop="processName" label="工序名称" min-width="160" />
                 <el-table-column prop="mainUnit" label="单位" min-width="80" />
                 <el-table-column prop="productionQuantity" label="生产数量" min-width="120" />
@@ -1960,7 +1960,7 @@ export default {
       toolVisible: false,
       equipmentVisible: false,
       sparePartsVisible: false,
-      productNameFlag: null,
+      isProductNameSwitch: "",
       requestArr: [
         {
           prop: "sealingCoverTyping",
@@ -2003,7 +2003,8 @@ export default {
       ],
       mainUnitFlag: null,
       tableDataFlag: false,
-      projectId:"",
+      projectId: "",
+      purchorderFlag:true,
     }
   },
   watch: {
@@ -2053,19 +2054,27 @@ export default {
 
   async created() {
     await this.getWarehouseListFun()
-    await this.getProjectSwitch('system', 'project') 
+    await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
+
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
   },
   computed: {
     ...mapGetters(['userInfo'])
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.isProjectSwitchFlag = true
+      } catch (error) { }
+    },
     // 获取仓库
     getWarehouseListFun() {
       getWarehouseTree({ code: this.warehouseCode }).then(res => {
         // 获取仓库详情信息
         getWarehouseInfo(res.data[0].id).then(response => {
-          this.projectId =  this.isProjectSwitch === '1' ? res.data[0].projectId || '' : ''
+          this.projectId = this.isProjectSwitch === '1' ? res.data[0].projectId || '' : ''
           this.getPickingConfig()
 
         })
@@ -2075,7 +2084,9 @@ export default {
       this.listLoading = true
       try {
         this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
-        this.tableDataFlag = true
+        setTimeout(() => {
+          this.tableDataFlag=true
+        }, 1000);
         this.listLoading = false
 
 
@@ -2294,12 +2305,7 @@ export default {
         }
         this.getclassAttributeList()
       })
-      let objs = { "pageSize": -1, "businessCode": "product" }
-      getBimBusinessSwitchConfigList(objs).then(res => {
-        this.productNameFlag = res.data.product[1].configValue1
-        this.isProjectSwitchFlag=true
 
-      })
     },
     getclassAttributeList() {
       getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
@@ -2557,7 +2563,7 @@ export default {
           this.wxflForm.orderItems[0].column = newProp
         } else {
           console.log("外协发料订单");
-          if (prop == 'orderNo' || prop == 'deliveryDate'   || prop == 'mainUnit' || prop == 'purchaseQuantity') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+          if (prop == 'orderNo' || prop == 'deliveryDate' || prop == 'mainUnit' || prop == 'purchaseQuantity') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
           else newProp = prop
           this.exterMaterForm.orderItems[0].asc = order === 'ascending'
           this.exterMaterForm.orderItems[0].column = newProp
@@ -2758,6 +2764,7 @@ export default {
       // 采购收货
       if (this.categoryType == 'inbound_purchase') {
         if (this.purchaseFlag) {
+          this.purchorderFlag=false
           this.purchaseForm.receiptQueryFlag = true
           this.purchaseForm.classAttributeList = this.classAttributeList
           this.purchaseForm.orderType = 'procure'
@@ -2803,6 +2810,9 @@ export default {
             this.purchaseTotal = res.data.total
             this.purchaseList = res.data.records
           })
+          setTimeout(() => {
+            this.purchorderFlag=true
+          }, 500);
         } else {
           this.cgForm.receiptReturnType = 'receipt'
           // this.$set(this.cgForm,'receiptInboundFlag',1)
@@ -3400,13 +3410,13 @@ export default {
             type: 'input'
           },
           {
-            prop: 'drawingNo',
-            label: "品名规格",
+            prop: 'productCode',
+            label: "产品编码",
             type: 'input'
           },
           {
-            prop: 'productCode',
-            label: "产品编码",
+            prop: 'drawingNo',
+            label: "品名规格",
             type: 'input'
           },
           {
@@ -3497,6 +3507,14 @@ export default {
 
 
         ]
+
+        if (this.isProductNameSwitch == 1) {
+          this.superQueryJson.splice(7, 0, {
+            prop: 'productName',
+            label: '产品名称',
+            type: 'input'
+          })
+        }
         this.getProductClassFun()
       }
       // 销售退货通知单
@@ -3687,16 +3705,17 @@ export default {
             type: 'input'
           },
           {
+            prop: 'productCode',
+            label: "产品编码",
+            type: 'input'
+          },
+          {
             prop: 'drawingNo',
             label: "品名规格",
             type: 'input'
           },
-
           {
-            prop: 'productCode',
-            label: "产品编码",
-            type: 'input'
-          }, {
+
             prop: 'mainUnit',
             label: "单位",
             type: 'input'
@@ -3800,6 +3819,13 @@ export default {
 
 
         ]
+        if (this.isProductNameSwitch == 1) {
+          this.superQueryJson.splice(4, 0, {
+            prop: 'productName',
+            label: '产品名称',
+            type: 'input'
+          })
+        }
         this.getProductClassFun()
       }
       // 外协收货通知单
@@ -3879,16 +3905,16 @@ export default {
           },
 
           {
+            prop: 'productCode',
+            label: "产品编码",
+            type: 'input'
+          },
+          {
             prop: 'drawingNo',
             label: "品名规格",
             type: 'input'
           },
 
-          {
-            prop: 'productCode',
-            label: "产品编码",
-            type: 'input'
-          },
           {
             prop: 'processName',
             label: "工序名称",
@@ -3927,6 +3953,13 @@ export default {
 
 
         ]
+        if (this.isProductNameSwitch == 1) {
+          this.superQueryJson.splice(4, 0, {
+            prop: 'productName',
+            label: '产品名称',
+            type: 'input'
+          })
+        }
       }
       // 外协发料通知单    
       if (this.categoryType == 'outbound_external_send' && !this.outboundExternalSendFlag) {
@@ -4061,13 +4094,13 @@ export default {
             pickerOptions: this.global.timePickerOptions
           },
           {
-            prop: 'drawingNo',
-            label: "品名规格",
+            prop: 'productCode',
+            label: "产品编码",
             type: 'input'
           },
           {
-            prop: 'productCode',
-            label: "产品编码",
+            prop: 'drawingNo',
+            label: "品名规格",
             type: 'input'
           },
           {
@@ -4083,6 +4116,13 @@ export default {
 
 
         ]
+        if (this.isProductNameSwitch == 1) {
+          this.superQueryJson.splice(5, 0, {
+            prop: 'productName',
+            label: '产品名称',
+            type: 'input'
+          })
+        }
       }
       // 生产领料   
       if (this.categoryType == 'outbound_pick_out') {
@@ -4391,6 +4431,13 @@ export default {
 
 
           ]
+          if (this.isProductNameSwitch == 1) {
+            this.superQueryJson.splice(2, 0, {
+              prop: 'productName',
+              label: '产品名称',
+              type: 'input'
+            })
+          }
           this.getProductClassFun()
         } else {
           this.superQueryJson = [
@@ -4405,13 +4452,13 @@ export default {
               type: 'input'
             },
             {
-              prop: 'productDrawingNo',
-              label: "品名规格",
+              prop: 'productCode',
+              label: "产品编码",
               type: 'input'
             },
             {
-              prop: 'productCode',
-              label: "产品编码",
+              prop: 'productDrawingNo',
+              label: "品名规格",
               type: 'input'
             },
             {
@@ -4440,6 +4487,13 @@ export default {
 
 
           ]
+          if (this.isProductNameSwitch == 1) {
+            this.superQueryJson.splice(3, 0, {
+              prop: 'productName',
+              label: '产品名称',
+              type: 'input'
+            })
+          }
         }
 
       }

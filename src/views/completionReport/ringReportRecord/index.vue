@@ -5,26 +5,29 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-           
 
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderNoS" placeholder="报工单号" clearable @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="productDrawingNoS" placeholder="品名规格" clearable @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="processNameS" placeholder="工序名称" clearable @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
+
+            <template v-for="item in searchList">
+              <el-col :span="item.searchType === 3 ? 6 : 4">
+                <el-form-item>
+                  <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                    @keyup.enter.native="search('basic')" />
+
+                  <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                    clearable>
+                    <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                      :value="item2.value"></el-option>
+                  </el-select>
+                  <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                    :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                    :type="item.dateType"
+                    :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                </el-form-item>
+              </el-col>
+            </template>
             <el-col :span="6">
               <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
                   {{ $t('common.search') }}</el-button>
                 <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
                 </el-button>
@@ -56,14 +59,16 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable"   :data="tableData" :fixedNO="true"   v-if="isProjectSwitchFlag"
+          <JNPF-table ref="dataTable"  :data="tableData" :fixedNO="true"  v-if="isProjectSwitchFlag"
             header-cell-class-name="all-select" @sort-change="sortChange" custom-column
             :setColumnDisplayList="columnList">
             <el-table-column prop="productionOrderNo" label="任务单号" min-width="220" sortable="custom" />
             <el-table-column prop="workNo" label="工单单号" min-width="220" sortable="custom"></el-table-column>
             <el-table-column prop="orderNo" label="报工单号" min-width="220" sortable="custom"></el-table-column>
+            <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+            <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+            v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
-            <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
             <el-table-column prop="productCategoryName" label="产品分类" min-width="120" sortable="custom" />
@@ -80,16 +85,15 @@
             <el-table-column prop="orderStatus" label="任务状态" min-width="120">
               <template slot-scope="scope">
                 <div v-if="scope.row.orderStatus == 'finish'"><el-tag type="success">已完成</el-tag></div>
-                <div v-else-if="scope.row.orderStatus == 'normal'"><el-tag >进行中</el-tag></div>
+                <div v-else-if="scope.row.orderStatus == 'normal'"><el-tag>进行中</el-tag></div>
                 <div v-else-if="scope.row.orderStatus == 'closed'"><el-tag type="danger">已关闭</el-tag></div>
               </template>
             </el-table-column>
-            
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
             <el-table-column label="操作" width="100" fixed="right">
 
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click="withdrawFun(scope.row)" :disabled="scope.row.orderStatus!='normal'">撤回</el-button>
+                <el-button size="mini" type="text" @click="withdrawFun(scope.row)"  :disabled="scope.row.orderStatus!='normal'">撤回</el-button>
 
               </template>
             </el-table-column>
@@ -110,7 +114,7 @@
 </template>
 
 <script>
-import { getWorkReportList,revokeReport } from "@/api/productOrdes/index.js"
+import { getWorkReportList, revokeReport } from "@/api/productOrdes/index.js"
 import ExportForm from '@/components/no_mount/ExportBox/index'
 
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -124,13 +128,18 @@ export default {
   name: 'assemblyplanManagement',
   components: { SuperQuery, ExportForm },
   mixins: [getProjectList],
-
   data() {
     return {
+      superQuery: {},
+      superForm: {},
+      basicQuery: {},
+      searchList: [
+        { field: 'orderNo', fieldValue: '', label: '报工单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productsDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+      ], 
       columnList: ["productionOrderNo", "productsCode",],
-      orderNoS: "",
-      processNameS: "",
-      productsDrawingNoS: "",
+
       superQueryVisible: false,
       exportFormVisible: false,
 
@@ -159,7 +168,7 @@ export default {
           asc: false,
           column: "create_time"
         }],
-        classAttribute: "semi_finished",
+        classAttribute: "finish_product",
       },
 
 
@@ -186,13 +195,13 @@ export default {
           type: 'input'
         },
         {
-          prop: 'productsDrawingNo',
-          label: "品名规格",
+          prop: 'productsCode',
+          label: "产品编码",
           type: 'input'
         },
         {
-          prop: 'productsCode',
-          label: "产品编码",
+          prop: 'productsDrawingNo',
+          label: "品名规格",
           type: 'input'
         },
         {
@@ -227,8 +236,8 @@ export default {
 
 
         {
-          prop: 'vibrationLevel',
-          label: "振动等级",
+          prop: 'aperture',
+          label: "孔径",
           type: 'select',
           options: []
         },
@@ -248,8 +257,8 @@ export default {
       ],
       requestArr: [
         {
-          prop: "vibrationLevel",
-          typeCode: "pa005"
+          prop: "aperture",
+          typeCode: "pa009"
         },
 
       ],
@@ -257,24 +266,36 @@ export default {
       isProjectSwitch: '',
     }
   },
- 
+  
   computed: {
     ...mapGetters(['userInfo'])
   },
 
   async created() {
     await this.getProjectSwitch('system', 'project')
-    this.isProjectSwitchFlag = true
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isProductNameSwitch == 1) {
+      this.superQueryJson.splice(3, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
+    }
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-    this.search()
+    this.search('basic')
   },
   mounted() {
     this.getProductClassFun()
   },
   methods: {
-
-       // 撤回
-       withdrawFun(data) {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.isProjectSwitchFlag = true
+      } catch (error) { }
+    },
+    // 撤回
+    withdrawFun(data) {
       this.$confirm("您确定撤回该报工数据吗?", "提示", {
         type: 'warning'
       }).then(() => {
@@ -342,8 +363,9 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'partnerCode'||prop=='projectName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName'||prop=='workNo'||prop=='productDrawingNo'||prop=='productionOrderNo'||prop=='productCode'
-      ||prop=='productCategoryName'||prop=='processName'||prop=='producerName') {
+      if (prop === 'partnerCode'||prop=='projectName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'workNo' || prop == 'productDrawingNo' || prop == 'productionOrderNo' || prop == 'productCode'
+        || prop == 'productCategoryName' || prop == 'processName' || prop == 'producerName'
+      ) {
         if (prop === 'createByName') {
           newProp = 'create_by'
         } else {
@@ -365,52 +387,10 @@ export default {
 
 
 
-      if (this.orderNoS) {
-
-        if (this.orderForm.superQuery.condition.length) {
-          let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("orderNo"));
-          filteredData.push({ "field": "orderNo", "fieldValue": this.orderNoS, "symbol": "like" })
-          this.orderForm.superQuery.condition = filteredData
-        } else {
-          this.orderForm.superQuery.condition.push(
-            { "field": "orderNo", "fieldValue": this.orderNoS, "symbol": "like" }
-          )
-        }
-      }
-      if (this.productDrawingNoS) {
-        // this.orderForm.superQuery.condition.push(
-        //   { "field": "productDrawingNo", "fieldValue": this.productDrawingNo, "symbol": "like" }
-        // )
-        if (this.orderForm.superQuery.condition.length) {
-          let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("productsDrawingNo"));
-          filteredData.push({ "field": "productsDrawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" })
-          this.orderForm.superQuery.condition = filteredData
-        } else {
-          this.orderForm.superQuery.condition.push(
-            { "field": "productsDrawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" }
-          )
-        }
-      }
-      if (this.processNameS) {
-        // this.orderForm.superQuery.condition.push(
-        //   { "field": "productDrawingNo", "fieldValue": this.productDrawingNo, "symbol": "like" }
-        // )
-        if (this.orderForm.superQuery.condition.length) {
-          let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("workNo"));
-          filteredData.push({ "field": "workNo", "fieldValue": this.processNameS, "symbol": "like" })
-          this.orderForm.superQuery.condition = filteredData
-        } else {
-          this.orderForm.superQuery.condition.push(
-            { "field": "workNo", "fieldValue": this.processNameS, "symbol": "like" }
-          )
-        }
-      }
-      if (this.customerDrawingNumberS || this.productDrawingNoS || this.processNameS) {
-        this.$set(this.orderForm.superQuery, 'matchLogic', 'AND')
-      }
+      
+ 
      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-
-      getWorkReportList(this.orderForm).then(res => {
+     getWorkReportList(this.orderForm).then(res => {
         console.log("报工记录", res);
         // res.data.records.forEach(item => {
         //   item.selectFlag = false
@@ -423,12 +403,29 @@ export default {
       })
 
     },
-    search() {
+    search(type) {
 
       Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
         let item = this.orderForm[key]
         this.orderForm[key] = typeof item === 'string' ? item.trim() : item
       })
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       this.orderForm.pageNum = 1 // 重置页码
 
       this.initData()
@@ -436,13 +433,15 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
 
-      this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+      this.superForm=this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
 
-      this.processNameS = ""
-      this.orderNoS = ""
-      this.productDrawingNoS = ""
+      this.searchList=[
+        { field: 'orderNo', fieldValue: '', label: '报工单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productsDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+      ]
       this.$refs.SuperQuery.conditionList = []
-      this.search()
+      this.search('basic')
     },
 
 

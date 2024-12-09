@@ -33,8 +33,8 @@
                 <el-input placeholder="产品编码" disabled v-model="dispatchForm.productCode"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :sm="12" :xs="24">
-              <el-form-item label="产品名称" prop="productName">
+            <el-col :sm="12" :xs="24" v-if="isProductNameSwitch==1">
+              <el-form-item label="产品名称" prop="productName" >
                 <el-input placeholder="产品名称" disabled v-model="dispatchForm.productName"></el-input>
               </el-form-item>
             </el-col>
@@ -298,7 +298,8 @@
           <el-table-column type="index" width="70" label="序号" />
           <el-table-column prop="orderNo" label="工单号" min-width="200"></el-table-column>
           <el-table-column prop="productCode" label="产品编码" min-width="120"></el-table-column>
-          <el-table-column prop="productName" label="产品名称" min-width="120"></el-table-column>
+          <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+          v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
           <el-table-column prop="productDrawingNo" label="产品图号" min-width="300" show-overflow-tooltip></el-table-column>
           <el-table-column prop="processCode" label="工序编码" width="100" />
           <el-table-column prop="processName" label="工序名称" width="100" />
@@ -372,6 +373,8 @@ export default {
           { required: true, message: "请选择计划结束日期", trigger: "change" },
         ],
       },
+      isProductNameSwitch:"",
+
     };
   },
   computed: {
@@ -391,10 +394,17 @@ export default {
       }
       return totalNums
     },
+  }, 
+  async created () {
+    await this.getProductNameSwitch('product', 'enable_productName')
+     
   },
-  mounted() { },
   methods: {
-
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+      } catch (error) { }
+    },
 
 
 

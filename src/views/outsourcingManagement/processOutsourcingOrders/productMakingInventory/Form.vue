@@ -79,14 +79,16 @@
                       @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
                       id="table" border height="460">
                       <el-table-column type="selection" width="55" align="center" fixed="left"
-                        :key="0"></el-table-column>
-                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" :key="1" />
+                        :key="1"></el-table-column>
+                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" :key="3" />
                       <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
-                        :key="2"></el-table-column>
+                        :key="5"></el-table-column>
+                      <el-table-column prop="productCode" label="产品编码" width="120" v-if="isProductNameSwitch === '1'"
+                        :key="7"></el-table-column>
                       <el-table-column prop="productName" label="产品名称" width="120" v-if="isProductNameSwitch === '1'"
-                        :key="3"></el-table-column>
+                        :key="9"></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
-                        :key="4">
+                        :key="11">
                         <template slot="header">
                           <span class="required">*</span>
                           品名规格
@@ -98,7 +100,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="productName" label="工序名称" min-width="190" show-overflow-tooltip :key="5">
+                      <el-table-column prop="productName" label="工序名称" min-width="190" show-overflow-tooltip :key="13">
                         <template slot="header">
                           <span class="required">*</span>
                           工序名称
@@ -117,7 +119,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="deliveryDate" label="交货日期" width="195" :key="6">
+                      <el-table-column prop="deliveryDate" label="交货日期" width="195" :key="15">
                         <template slot="header">
                           <span class="required">*</span>
                           交货日期
@@ -132,7 +134,7 @@
                       </el-table-column>
 
 
-                      <el-table-column label="待外协数量" width="110" :key="7">
+                      <el-table-column label="待外协数量" width="110" :key="17">
                         <template slot-scope="scope">
                           <el-form-item>
                             <div class="viewData">
@@ -143,9 +145,9 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
-                        :width="isDeputyUnitSwitch === '1' ? 85 : 60" :key="8" />
+                        :width="isDeputyUnitSwitch === '1' ? 85 : 60" :key="19" />
 
-                      <el-table-column prop="purchaseQuantity" label="数量" min-width="100" :key="9">
+                      <el-table-column prop="purchaseQuantity" label="数量" min-width="100" :key="21">
                         <template slot="header">
                           <span class="required">*</span>
                           {{ isDeputyUnitSwitch === '1' ? '数量(主)' : '数量' }}
@@ -160,7 +162,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'"
-                        :key="10" />
+                        :key="23" />
                       <el-table-column prop="purchaseQuantity2" label="数量(副)" width="85"
                         v-if="isDeputyUnitSwitch === '1'" />
                       <el-table-column prop="price" label="含税单价" width="180">
@@ -508,9 +510,10 @@ export default {
         // queryType: 3
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
+        { prop: 'productCode', label: '产品编码', sortable: 'custom' },
         { prop: 'productDrawingNo', label: '品名规格', sortable: 'custom' },
         // { prop: 'name', label: '产品名称', sortable: 'custom' },
-        { prop: 'productCode', label: '产品编码', sortable: 'custom' },
+
         { prop: 'processName', label: '工序名称', sortable: 'custom' },
         // { prop: 'classAttributeText', label: '产品分类', sortable: 'custom' },
         { prop: 'mainUnit', label: '单位' },
@@ -521,9 +524,10 @@ export default {
         { prop: 'createTime', label: '创建日期', sortable: 'custom' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
+        { prop: 'productCode', label: '产品编码', type: 'input' },
         { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
         // { prop: 'name', label: '产品名称', type: 'input' },
-        { prop: 'productCode', label: '产品编码', type: 'input' }
+
       ], // 产品选择弹出框搜索条件
       formLoading: false,
       codeConfig: {},
@@ -1071,14 +1075,16 @@ export default {
     },
     // 产品弹窗
     openSeleceProductDialog() {
+
+      if (this.isProductNameSwitch === '1') {
+        this.ProductTableItems.splice(1, 0, { prop: 'productName', label: '产品名称' })
+        this.ProductTableSearchList.splice(1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
+      } else {
+
+      }
       if (this.isProjectSwitch === '1') {
         this.ProductTableItems.unshift({ prop: 'projectName', label: '所属项目' })
       } else {
-      }
-      if (this.isProductNameSwitch === '1') {
-        this.ProductTableItems.unshift({ prop: 'productName', label: '产品名称' })
-      } else {
-
       }
       this.$refs['ComSelect-page'].openDialog()
       // this.productVisibled = true

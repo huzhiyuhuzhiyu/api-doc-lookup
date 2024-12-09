@@ -78,6 +78,8 @@
                           <el-input v-model="scope.row.planNo" placeholder="计划单号" />
                         </template>
                       </el-table-column>
+                      <el-table-column prop="productName" label="产品名称"    width="160" v-if="isProductNameSwitch === '1'"
+                      show-overflow-tooltip></el-table-column>
                       <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6"></el-table-column>
                       <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                       <el-table-column prop="bomId" label="BOM" width="140" :key="444">
@@ -211,15 +213,20 @@
                   <el-form @submit.native.prevent>
                     <el-col :span="6">
                       <el-form-item>
+                        <el-input v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="6"  v-if="isProductNameSwitch === '1'">
+                      <el-form-item>
+                        <el-input  v-model="ProductListRequestObj.productName" placeholder="请输入产品名称" clearable />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                      <el-form-item>
                         <el-input v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
                       </el-form-item>
                     </el-col>
 
-                    <el-col :span="6">
-                      <el-form-item>
-                        <el-input v-model="ProductListRequestObj.code" placeholder="请输入产品编码" clearable />
-                      </el-form-item>
-                    </el-col>
                     <el-col :span="6">
                       <el-form-item>
                         <el-button type="primary" size="mini" icon="el-icon-search" @click="searchAllProduct()">
@@ -235,12 +242,14 @@
                 <div class="JNPF-common-layout-main JNPF-flex-main">
                   <JNPF-table v-loading="listLoading" :data="allproductData" hasC @sort-change="sortChange"
                     @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
-                    <el-table-column prop="drawingNo" label="品名规格" sortable="custom" />
-                    <el-table-column prop="code" label="产品编码" sortable="custom" width="140"></el-table-column>
+                    <el-table-column prop="code" label="产品编码" sortable="custom" width="160"></el-table-column>
+                    <el-table-column prop="name" label="产品名称"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
+                      show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="330"/>
                     <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                     <el-table-column prop="mainUnit" label="单位" width="80"></el-table-column>
-                    <el-table-column prop="inventoryQuantity" label="可用库存数量" sortable="custom"></el-table-column>
-                    <el-table-column prop="bomId" label="是否有BOM" sortable="custom">
+                    <el-table-column prop="inventoryQuantity" label="可用库存数量" min-width="160" sortable="custom"></el-table-column>
+                    <el-table-column prop="bomId" label="是否有BOM" sortable="custom" min-width="140">
                       <template slot-scope="scope">
                         {{ scope.row.bomId ? '有' : '无' }}
                       </template>
@@ -327,8 +336,8 @@ export default {
         queryType: 2,
         productStatus: 'enable',
         purchaseFlag: false,
-        code: "",
-        name: "",
+        productCode: "",
+        productName: "",
         orderItems: [{
           "asc": false,
           "column": ""
@@ -377,6 +386,7 @@ export default {
       isProjectSwitch: "",
       isProjectSwitchFlag: null,
       projectIdDataList: [],
+      isProductNameSwitch:"",
     }
   },
   computed: {
@@ -387,8 +397,9 @@ export default {
 
   async created() {
     await this.getProjectSwitch('system', 'project')
-    await this.getProjectList()
-    this.isProjectSwitchFlag = true
+    await this.getProductNameSwitch('product', 'enable_productName')
+
+    await this.getProjectList() 
     if (this.isProjectSwitch == 1) {
       console.log(this.projectIdDataList);
       this.planForm.projectId=this.userInfo.projectId==1?"":this.userInfo.projectId
@@ -404,6 +415,12 @@ export default {
   beforeDestroy() {
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.isProjectSwitchFlag = true
+      } catch (error) { }
+    },
     changeProject() { 
       this.productData = this.productData.filter(item => item.projectId === this.planForm.projectId);
     },
@@ -686,8 +703,8 @@ export default {
         productDrawingNo: "",
         productCategoryId: "",
         queryType: 2,
-        code: "",
-        name: "",
+        productCode: "",
+        productName: "",
         purchaseFlag: false,
         orderItems: [{
           "asc": false,

@@ -48,9 +48,9 @@
 
               <el-table-column prop="partnerName" label="供应商名称" min-width="200" />
               <el-table-column prop="partnerCode" label="供应商编码" min-width="200" />
-              <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" />
               <el-table-column prop="productCode" label="产品编码" width="120" />
               <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
+              <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" />
               <el-table-column prop="weight" label="重量(KG)" min-width="120" sortable="custom" />
               <el-table-column prop="proportion" label="比重" min-width="120" sortable="custom" />
               <el-table-column prop="processName" label="工序名称" min-width="120" />
